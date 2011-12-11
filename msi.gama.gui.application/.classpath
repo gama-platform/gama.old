@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/jts-1.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/hsqldb-1.8.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/geotools-2.7.3/gt-referencing3D-2.7.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="msi/gama/extensions/decision/|msi/gama/gui/application/views/BehaviorInspectView.java|msi/gama/gui/application/views/CopyOfLayeredDisplayView.java|msi/gama/gui/displays/ZoomAction.java|msi/gama/metamodel/environment/quadtree/|msi/gama/skills/TrustingSkill.java|org/jgrapht/demo/JGraphAdapterDemo.java|org/jgrapht/experimental/touchgraph/|org/jgrapht/ext/JGraphModelAdapter.java|msi/gaml/extensions/fipa_acl/|msi/gaml/extensions/human_moving/" kind="src" path="src"/>
-	<classpathentry kind="src" path="generated">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-graph-2.7.3.jar" sourcepath="lib/sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-main-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart/jcommon-1.0.16.jar"/>
@@ -34,7 +26,13 @@
 	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-api-2.7.3.jar" sourcepath="lib/sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/jdom-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-data-2.7.3.jar"/>
-	<classpathentry kind="lib" path="lib/geotools-2.7.3/gt-epsg-wkt-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/hsqldb-1.8.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-referencing3D-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-epsg-wkt-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-validation-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-wfs-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/gt-wms-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geotools-2.7.3/jts-1.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry kind="lib" path="lib/geotools-2.7.3/gt-referencing-2.7.3.jar" sourcepath="lib/sources/geotools-2.7.3"/>
 	<referencedentry kind="lib" path="lib/geotools-2.7.3/gt-api-2.7.3.jar" sourcepath="lib/sources/geotools-2.7.3"/>
