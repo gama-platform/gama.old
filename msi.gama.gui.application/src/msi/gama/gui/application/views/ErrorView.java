@@ -1,0 +1,223 @@
+/*
+ * GAMA - V1.4 http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
+ * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
+ * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
+ * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
+ * - Romain Lavaud, IRD (project-based environment), 2010
+ * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
+ * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
+ */
+package msi.gama.gui.application.views;
+
+import java.util.*;
+import java.util.List;
+import msi.gama.gui.parameters.*;
+import msi.gama.interfaces.IAgent;
+import msi.gama.kernel.GAMA;
+import msi.gama.kernel.exceptions.GamaRuntimeException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+
+public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
+
+	public static String			ID						=
+																"msi.gama.gui.application.view.ErrorView";
+
+	ArrayList<GamaRuntimeException>	exceptions				= new ArrayList();
+	int								numberOfDisplayedErrors	= 10;
+	boolean							mostRecentFirst			= true;
+	boolean							showErrors				= true;
+
+	// ParameterExpandItem parametersItem;
+
+	@Override
+	protected boolean areItemsClosable() {
+		return true;
+	}
+
+	@Override
+	public boolean addItem(final GamaRuntimeException e) {
+		createItem(e, false);
+		return true;
+	}
+
+	public void addNewError(final GamaRuntimeException e) {
+		exceptions.add(e);
+		if ( showErrors ) {
+			reset();
+			displayItems();
+		}
+	}
+
+	@Override
+	public void ownCreatePartControl(final Composite view) {
+		super.ownCreatePartControl(view);
+		Composite intermediate = new Composite(view, SWT.VERTICAL);
+		GridLayout parentLayout = new GridLayout(1, false);
+		parentLayout.marginWidth = 0;
+		parentLayout.marginHeight = 0;
+		parentLayout.verticalSpacing = 0;
+		intermediate.setLayout(parentLayout);
+
+		// ExpandableComposite expandable = new ExpandableComposite(intermediate, SWT.SHADOW_IN);
+		// expandable.setText("Preferences");
+		Composite parameters = new Group(intermediate, SWT.None);
+		// expandable.setClient(parameters);
+		// expandable.addExpansionListener(new ExpansionAdapter() {
+		//
+		// @Override
+		// public void expansionStateChanged(final ExpansionEvent e) {
+		// view.layout(true);
+		// }
+		// });
+		GridLayout layout = new GridLayout(2, false);
+
+		parameters.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		layout.verticalSpacing = 0;
+		parameters.setLayout(layout);
+
+		// final IntEditor ed =
+		EditorFactory.create(parameters, "Display last ", null, numberOfDisplayedErrors, 0, 100, 1,
+			false, new EditorListener<Integer>() {
+
+				@Override
+				public void valueModified(final Integer newValue) {
+					if ( newValue == numberOfDisplayedErrors ) { return; }
+					numberOfDisplayedErrors = newValue;
+					reset();
+					displayItems();
+				}
+
+			});
+
+		EditorFactory.create(parameters, "Pause at the first error", GAMA.TREAT_ERRORS_AS_FATAL,
+			new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+
+					GAMA.TREAT_ERRORS_AS_FATAL = newValue;
+				}
+
+			});
+		EditorFactory.create(parameters, "Treat warnings as errors ",
+			GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+
+					GAMA.TREAT_WARNINGS_AS_ERRORS = newValue;
+				}
+
+			});
+
+		EditorFactory.create(parameters, "Most recent first", mostRecentFirst,
+			new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+
+					mostRecentFirst = newValue;
+					reset();
+					displayItems();
+				}
+
+			});
+		EditorFactory.create(parameters, "Show errors/warnings", showErrors,
+			new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+
+					showErrors = newValue;
+					if ( showErrors ) {
+						reset();
+						displayItems();
+					}
+
+				}
+
+			});
+		parameters.pack();
+		parent = intermediate;
+	}
+
+	@Override
+	protected Composite createItemContentsFor(final GamaRuntimeException e) {
+		Composite compo = new Composite(getViewer(), SWT.NONE);
+		GridLayout layout = new GridLayout(1, false);
+		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layout.verticalSpacing = 5;
+		compo.setLayout(layout);
+		Table t = new Table(compo, SWT.V_SCROLL);
+		t.setLayoutData(firstColData);
+		java.util.List<String> strings = e.getContextAsList();
+		// t.setLinesVisible(true);
+		final TableColumn c = new TableColumn(t, SWT.NONE);
+		c.setResizable(true);
+		final TableColumn column2 = new TableColumn(t, SWT.NONE);
+		for ( int i = 0; i < strings.size(); i++ ) {
+			TableItem item = new TableItem(t, SWT.NONE);
+			item.setText(new String[] { String.valueOf(i), strings.get(i) });
+		}
+		c.pack();
+		column2.pack();
+		t.pack();
+		return compo;
+	}
+
+	@Override
+	public void removeItem(final GamaRuntimeException obj) {
+		exceptions.remove(obj);
+	}
+
+	@Override
+	public void pauseItem(final GamaRuntimeException obj) {}
+
+	@Override
+	public void resumeItem(final GamaRuntimeException obj) {}
+
+	@Override
+	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
+		StringBuilder sb = new StringBuilder();
+		IAgent a = obj.getAgent();
+		if ( a != null ) {
+			sb.append(a.getName()).append(" at ");
+		}
+		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
+			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE)
+			.append(obj.getSuperMessage());
+		return sb.toString();
+	}
+
+	@Override
+	public void focusItem(final GamaRuntimeException data) {}
+
+	@Override
+	public List<GamaRuntimeException> getItems() {
+		List<GamaRuntimeException> errors = new ArrayList();
+		int size = exceptions.size();
+		if ( size == 0 ) { return errors; }
+		int end = size;
+		int begin = end - numberOfDisplayedErrors;
+		begin = begin < 0 ? 0 : begin;
+
+		errors.addAll(exceptions.subList(begin, end));
+		if ( mostRecentFirst ) {
+			Collections.reverse(errors);
+		}
+		return errors;
+	}
+
+	@Override
+	public void updateItemValues() {}
+
+}

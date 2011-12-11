@@ -1,0 +1,247 @@
+/*
+ * GAMA - V1.4 http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
+ * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
+ * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
+ * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
+ * - Romain Lavaud, IRD (project-based environment), 2010
+ * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
+ * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
+ */
+package msi.gama.outputs;
+
+import java.awt.Color;
+import java.awt.image.*;
+import java.io.*;
+import java.util.List;
+import javax.imageio.ImageIO;
+import msi.gama.environment.ModelEnvironment;
+import msi.gama.gui.application.views.LayeredDisplayView;
+import msi.gama.gui.graphics.*;
+import msi.gama.interfaces.*;
+import msi.gama.kernel.GAMA;
+import msi.gama.kernel.exceptions.GamaRuntimeException;
+import msi.gama.outputs.layers.AbstractDisplayLayer;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
+import msi.gama.util.*;
+import msi.gaml.operators.Files;
+
+/**
+ * The Class LayerDisplayOutput.
+ * 
+ * @author drogoul
+ */
+@symbol(name = { ISymbol.DISPLAY }, kind = ISymbolKind.OUTPUT)
+@facets(value = { @facet(name = ISymbol.BACKGROUND, type = IType.COLOR_STR, optional = true),
+	@facet(name = ISymbol.NAME, type = IType.LABEL, optional = false),
+	@facet(name = ISymbol.TYPE, type = IType.LABEL, optional = true),
+	@facet(name = ISymbol.REFRESH_EVERY, type = IType.INT_STR, optional = true) })
+@with_sequence
+@inside(symbols = ISymbol.OUTPUT)
+public class LayerDisplayOutput extends AbstractDisplayOutput {
+
+	public static String snapshotFolder = "snapshots";
+	private List<AbstractDisplayLayer> layers;
+	private Color backgroundColor;
+	protected IDisplaySurface surface;
+	String snapshotFileName;
+	private final boolean openGL = false;
+
+	// private GLContext glcontext;
+	// private GLCanvas glcanvas;
+
+	public LayerDisplayOutput(final IDescription desc) {
+		super(desc);
+		layers = new GamaList<AbstractDisplayLayer>();
+	}
+
+	@Override
+	public void prepare(final ISimulation sim) throws GamaRuntimeException {
+		super.prepare(sim);
+		IExpression color = getFacet(ISymbol.BACKGROUND);
+		if ( color != null ) {
+			setBackgroundColor(Cast.asColor(getOwnScope(), color.value(getOwnScope())));
+		} else {
+			if ( getBackgroundColor() == null ) {
+				setBackgroundColor(Cast.asColor(getOwnScope(), "white"));
+			}
+		}
+		for ( final ISymbol layer : getLayers() ) {
+			try {
+				((AbstractDisplayLayer) layer).prepare(this, getOwnScope());
+			} catch (GamaRuntimeException e) {
+				GAMA.reportError(e);
+			}
+		}
+		createSurface(sim);
+	}
+
+	@Override
+	public void compute(final IScope scope, final Long cycle) throws GamaRuntimeException {
+		// GUI.debug("Computing the expressions of output " + getName() + " at cycle " + cycle);
+		for ( AbstractDisplayLayer layer : getLayers() ) {
+			layer.compute(scope, cycle);
+		}
+	}
+
+	@Override
+	public void update() throws GamaRuntimeException {
+		// GUI.debug("Updating output " + getName());
+		if ( surface != null && surface.canBeUpdated() ) {
+			// GUI.debug("Updating the surface of output " + getName());
+			((AWTDisplaySurface) surface).updateDisplay();
+		}
+	}
+
+	@Override
+	public void schedule() throws GamaRuntimeException {
+		compute(getOwnScope(), 0l);
+		super.schedule();
+	}
+
+	public void save(final ISimulation sim) {
+		try {
+			Files.newFolder(sim.getGlobalScope(), snapshotFolder);
+		} catch (GamaRuntimeException e1) {
+			e1.addContext("Impossible to create folder " + snapshotFolder);
+			GAMA.reportError(e1);
+			e1.printStackTrace();
+			return;
+		}
+		String snapshotFile =
+			sim.getModel().getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
+
+		String file = snapshotFile + sim.getScheduler().getCycle() + ".png";
+		DataOutputStream os = null;
+		try {
+			os = new DataOutputStream(new FileOutputStream(file));
+			RenderedImage im = surface.getImage();
+			ImageIO.write(im, "png", os);
+		} catch (java.io.IOException ex) {
+			GamaRuntimeException e = new GamaRuntimeException(ex);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(e);
+		} finally {
+			try {
+				if ( os != null ) {
+					os.close();
+				}
+			} catch (Exception ex) {
+				GamaRuntimeException e = new GamaRuntimeException(ex);
+				e.addContext("Unable to close output stream for snapshot image");
+				GAMA.reportError(e);
+			}
+		}
+	}
+
+	public void setImageFileName(final String fileName) {
+		snapshotFileName = fileName;
+	}
+
+	@Override
+	public void dispose() {
+		if ( disposed ) { return; }
+		super.dispose();
+		if ( surface != null ) {
+			surface.dispose();
+		}
+		surface = null;
+		getLayers().clear();
+	}
+
+	protected void createSurface(final ISimulation sim) {
+		if ( openGL ) { return; }
+		// TEST SUR OPENGL -> return;
+		// ITopology env = sim.getWorldEnvironment();
+		ModelEnvironment env = sim.getModel().getModelEnvironment();
+		double w = env.getWidth();
+		double h = env.getHeight();
+		if ( surface != null ) {
+			surface.outputChanged(w, h, this);
+			return;
+		}
+		surface = outputManager.getDisplaySurfaceFor(this, w, h);
+		setImageFileName(getName() + "_snapshot");
+	}
+
+	public void setSurface(final IDisplaySurface sur) {
+		surface = sur;
+	}
+
+	@Override
+	public String getViewId() {
+		// The dependency to msi.gama.gui.opengl is put on hold for the moment.
+		return /* openGL ? OpenglLayeredDisplayView.ID : */LayeredDisplayView.ID;
+	}
+
+	// public void setContext(final GLContext cont) {
+	// glcontext = cont;
+	// GL gl = glcontext.getGL();
+	// gl.glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
+	// }
+
+	// public void setCanvas(final GLCanvas can) {
+	// glcanvas = can;
+	// }
+
+	// public GLContext getContext() {
+	// return glcontext;
+	// }
+
+	// public GLCanvas getCanvas() {
+	// return glcanvas;
+	// }
+
+	@Override
+	public IDisplaySurface getSurface() {
+		return surface;
+	}
+
+	@Override
+	public List<? extends ISymbol> getChildren() {
+		return getLayers();
+	}
+
+	@Override
+	public void setChildren(final List<? extends ISymbol> commands) {
+		setLayers((List<AbstractDisplayLayer>) commands);
+	}
+
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	@Override
+	public BufferedImage getImage() {
+		return surface.getImage();
+	}
+
+	@Override
+	public void setBackgroundColor(final Color background) {
+		this.backgroundColor = background;
+		if ( surface != null ) {
+			surface.setBackgroundColor(background);
+		}
+	}
+
+	public void setLayers(final List<AbstractDisplayLayer> layers) {
+		this.layers = layers;
+	}
+
+	List<AbstractDisplayLayer> getLayers() {
+		return layers;
+	}
+
+}

@@ -1,0 +1,89 @@
+14/11/11
+
+================================================= CONTAINERS
+	
+- Addition of a new generic type (container) to GAML
+	a container variable can be a list, a matrix, a map, a population, etc...
+	NEW var c type:container init: [1,2,3];
+	NEW var c type: container init: matrix [[1,2,3],[4,5,6]];
+	NEW var c type: container init: list species1
+
+- Modification of the add, remove, and put syntax with respect to the "all È facet, which now takes a container as argument. 
+	The old syntax (all: boolean) is still maintained, but considered as  deprecated.
+	NEW add all: a_container to: a_container2
+	NEW remove all: a_container/an_object from: a_container2
+		[OLD -- but still usable -- remove item: an_object all: true from: a_container2]
+	NEW put all: an_object in: a_container
+		[OLD -- but still usable -- put item: an_object all:true in: a_container]
+		
+- Addition of the "key" facet as a synonym for "at" and "index" in put and remove
+	NEW remove key: XX from: a_map
+	
+- IGamaContainer now implements Iterable
+	To simplify the development of operators.
+	To allow, in GAML, to iterate (loop over: + operators like collect, select, etc.) over any type of container (incl. files, see below).
+	Rewriting of most Containers operators in Java to take advantage of the improvements above
+
+- IAgent, GamaGeometry, ISpecies no longer implement IGamaContainer
+	members in IAgent can be accessed through the "members" field (a list)
+	geometries in a GamaGeometry can be accessed through the "geometries" field (a list)
+	instances of a species are now accessed through the population instead (not the species anymore, but the syntax Ç list species1 È remains the same)
+
+================================================= FILES
+=== IMPORTANT NOTE: all the changes on the File infrastructure are not functional. What was functional before still remains ok,
+=== but writing to files is not yet implemented, for instance. The goal is to provide the framework in order to progressively 
+=== unify the different accesses to files (shape files in create/save, image files in displays, text files in outputs, etc.)
+=== in GAML and provide both a unified syntax for GAML and a more robust implementation in Java. 
+=== In the near future, new commands will be added: open file / close file / delete file.
+
+- GamaFile now implements IGamaContainer
+	files can be read, written, iterated, using the container operators and commands
+	A little bit experimental right now, but will be improved in the future.
+	
+- Addition of subclasses of GamaFile : GamaTextFile, GamaImageFile, GamaShapeFile, GamaPropertyFile and GamaFolderFile. 
+	Most of the framework is done in order to easily add new classes, with (basically) four things to write : 
+		- declaration of the file extensions considered by this class (Collection<String> getExtensions())
+		- declaration of the keyword used in GAML for declaring this file (String getKeyword())
+		- implementation of two methods : fillBuffer() and flushBuffer(), that can rely on the container declared in GamaFile.
+
+
+- NEW in addition to the "file" (opens a file in read only mode and tries to determine its contents) and "new_folder" operators, things
+	can be specialized with the combination of the "read"/"write" and "image"/"text"/"shapefile"/"properties" unary operators.
+	EX: read(text(a_string)) returns a text file in read-only mode, which contents is immediately accessible, iterable, etc.
+		read(image(a_string)) does the same with an image file.
+		write(properties(a_string)) returns a property file which is available for writing (if it exists, contents will be appended
+		unless it is cleared using the standard container operations). 
+		
+- NEW Addition of the read-only container field "contents" to files 
+	returns the "contents" in the preferred type of the file (either a list, a string, a matrix, or a map)
+	Property files return map(string, string) by default.
+	Image files return matrix(int) by default.
+	Text files retun list(string) by default.
+	Folders return list(string) by default.
+	Shapefiles return list(geometry) by default.
+
+- NEW Addition of the read-only boolean fields "readable"/"writable"/"exists"/"is_folder" to files
+
+- ATTENTION -- CHANGE: suppression of the "is_folder" unary operator
+
+
+	
+================================================= MISC.
+	
+- Simplification of the IValue interface to remove useless or seldom used methods
+	Suppression of intValue(), floatValue(), pointValue(), boolValue(), value(), etc.
+	listValue(), mapValue(),matrixValue() have been now moved to IGamaContainer
+	
+- The "is" operator now accepts types as an argument
+	NEW  c is matrix ... a is species1 -> if left is a direct or indirect instance of the species, or a value of this type (even generic)
+	
+- ATTENTION -- CHANGE : Removal of "is" as a synonym to "="; removal of "isnt" as a synonym to "!="
+
+
+17/11/11
+========
+
+- Addition of a better syntax coloring to the editor
+- ATTENTION -- CHANGE : the "return" facet used in create/capture/release/action will now be replaced :
+		1) by "type" in the "action" command, like in the var/let declarations. This return type can be accompanied by the "of" facet to indicate the content type when necessary.
+		2) by "returns" (with an "s") in "create"/"capture"/"releases", to distinguish it from the "return" command used in the blocks (a bit like the "throws"/"throw" couple in Java).

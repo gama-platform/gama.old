@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<model name="segregation">
+	<include file="../models/segregation_agents.xml"/>
+	<global>
+
+	    <var type="int" name="dimensions" init="50" max="400" min="20" parameter="Width and height of the environment:"
+			category="Environment" />
+	</global>
+	
+	<batch repeat="1" keep_seed="true" until="(time > 40) or ((sum_happy_people/ number_of_people) * 100 > 90)">
+        <param name="neighbours_distance" min="1" max="4" step="1"/>
+        <param name="percent_similar_wanted" min="0.2" max="0.8" step="0.2" />
+        <save to="segregation" data="(sum_happy_people / number_of_people) * 100"  rewrite="false" />
+    </batch>
+</model>

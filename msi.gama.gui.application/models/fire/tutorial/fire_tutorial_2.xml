@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="fire">
+
+	<global>
+
+		<var type="int" name="width" parameter="Width of the environment (in meters):" init="500" min="10"
+			max="1000" category="Environment" />
+		<var type="int" name="height" parameter="Height of the environment (in meters):" init="500"
+			min="10" max="1000" category="Environment" />
+		<var type="int" name="trees_number" parameter="Number of trees:" init="20000" min="1"
+			category="Trees" />
+
+		<!-- new parameter (model 2). Notice the use of "m" as a unit -->
+		<var type="float" name="tree_max_size" parameter="Max. diameter of trees (in meters):" init="10 m"
+			min="1 m" max="30 m" category="Trees" />
+
+		<init>
+			<create species="tree" number="trees_number" />
+		</init>
+
+	</global>
+
+	<environment width="width" height="height" torus="false" />
+
+	<entities>
+
+		<species name="tree" skills="situated, visible">
+			<!-- keep a definition of original color in case it changes later (model 2) -->
+			<var type="rgb" name="original_color" init="rgb [0, rnd 200 + 55, 0]" const="true" />
+
+			<var type="rgb" name="color" init="original_color" />
+
+			<!-- new redefinition of built-in attribute "size". Notice the use of "rnd" -->
+			<var type="float" name="size" init="((rnd 100 / 100) * tree_max_size) + 1" const="true" />
+
+			<var type="point" name="location" init="{rnd width, rnd height}" const="true" />
+
+		</species>
+
+	</entities>
+
+	<output>
+
+		<!-- new addition of a background picture to the display (model 2) -->
+		<display name="Forest">
+			<image name="background" file="'../images/soil.jpg'"/>
+			<species name="tree" transparency="0.2" />
+		</display>
+
+		<!-- new definition of a pie chart. Notice the use of "list", "count" and "each" (model 2) -->
+		<chart type="pie" name="Distribution of sizes" style="exploded" refresh_every="0">
+			<data name="under 4m" value="list tree count (each.size &lt;= 4.0)" />
+			<data name="between 4 - 7m" value="list tree count (each.size &gt; 4.0) and (each.size &lt;= 7.0)" />
+			<data name="above 7m" value="list tree count (each.size &gt; 7.0)" />
+		</chart>
+
+		<!-- new addition of inspectors (individual agents and species) -->
+		<inspect name="Agents" type="agent" />
+		<inspect name="Species" type="species" />
+
+	</output>
+
+</model>

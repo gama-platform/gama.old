@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Content
+Bundle-SymbolicName: msi.gama.gui.helpcontent;singleton:=true
+Bundle-Version: 1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: MSI

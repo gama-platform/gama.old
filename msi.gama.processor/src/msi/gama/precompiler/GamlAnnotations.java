@@ -1,0 +1,453 @@
+/*
+ * GAMA - V1.4  http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC 
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
+ * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
+ * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
+ * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
+ * - Romain Lavaud, IRD (project-based environment), 2010
+ * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
+ * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
+ */
+package msi.gama.precompiler;
+
+import java.lang.annotation.*;
+
+/**
+ * The Class GamlAnnotations.
+ * 
+ * @author Alexis Drogoul, 8 juin 07
+ * 
+ *         These GamlAnnotations are used to tag the procedures and classes that will be used by
+ *         GAML for defining variables and primitives. These annotations wil be subsequently parsed
+ *         by the Species of the agents, in order to collect them.
+ */
+
+public final class GamlAnnotations {
+
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	@Inherited
+	public static @interface facets {
+
+		/**
+		 * @return an Array of @facet, each representing a facet name, type..
+		 */
+		facet[] value();
+
+		combination[] combinations() default {};
+
+		// TODO A VOIR AU NIVEAU DE LA SYNTAXE;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	@Inherited
+	public static @interface facet {
+
+		String name();
+
+		String[] type();
+
+		boolean optional() default false;
+
+		String[] values() default {};
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface combination {
+
+		/**
+		 * Value.
+		 * 
+		 * @return an Array of String, each representing a possible combination of facets names
+		 */
+		String[] value();
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@Target(ElementType.TYPE)
+	public static @interface type {
+
+		/**
+		 * @return a String representing the type name in Gaml
+		 */
+		String value();
+
+		/*
+		 * @return the unique (short) identifier for this type. User-added types can be chosen
+		 * between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
+		 */
+		short id();
+
+		/*
+		 * @return the list of Java Classes this type is "wrapping" (i.e. representing). The first
+		 * one is the one that will be used preferentially throughout GAMA. The other ones are to
+		 * ensure compatibility, in operators, with compatible Java classes (for instance, List and
+		 * GamaList).
+		 */
+		Class[] wraps();
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface skill {
+
+		/**
+		 * Value.
+		 * 
+		 * @return a String representing the skill name in Gaml
+		 */
+		String[] value();
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface inside {
+
+		/**
+		 * Determines where the symbol should be located. Either direct symbol names (in symbols) or
+		 * generic symbol kinds (in contexts, see ISymbolKind) can be used
+		 * 
+		 */
+
+		String[] symbols() default {};
+
+		int[] kinds() default {};
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface remote_context {
+
+		/**
+		 * Indicates that the context of this command is actually an hybrid context: although it
+		 * will be executed in a remote context, any temporary variables declared in the enclosing
+		 * scopes should be passed on as if the command was executed in the current context.
+		 */
+
+	}
+
+	/**
+	 * The Interface species.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface species {
+
+		/**
+		 * Value.
+		 * 
+		 * @return Classes (normally subclass of GamaObject) that denote the objects used by the
+		 *         annotated class and that can be manipulated in GAML. For instance,
+		 *         CommunicatingSkill indicates that it is using "Message.class" and
+		 *         "Conversation.class". This will automatically trigger the creation of the two
+		 *         corresponding species. These classes should indicate, in turn, which keyword to
+		 *         use in GAML for creating or manipulating, respectively, messsages and
+		 *         conversations. This is done with the "species" annotation.
+		 */
+		String value();
+	}
+
+	/**
+	 * The Interface args.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface args {
+
+		/**
+		 * Value.
+		 * 
+		 * @return an Array of strings, each representing an argument that can be passed to a
+		 *         action. Used to tag the method that will implement the action.
+		 */
+		String[] value();
+	}
+
+	/**
+	 * The Interface action.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface action {
+
+		/**
+		 * Value.
+		 * 
+		 * @return the name of the action as it can be used in EMF. Used to tag the method that will
+		 *         implement the action in Java.
+		 */
+		String value();
+	}
+
+	// /**
+	// * The Interface vars.
+	// */
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	public static @interface vars {
+
+		/**
+		 * Value.
+		 * 
+		 * @return an Array of var, each representing a variable
+		 */
+		var[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	public static @interface var {
+
+		/**
+		 * Value.
+		 * 
+		 * @return an Array of strings, each representing a variable name
+		 */
+		String name();
+
+		String type() default "unknown";
+
+		String of() default "";
+
+		boolean constant() default false;
+
+		String init() default "";
+
+		String[] depends_on() default {};
+
+		String species() default "";
+
+		boolean freezable() default false; // TODO REMOVE!
+	}
+
+	/**
+	 * The Interface keyword.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface symbol {
+
+		/**
+		 * Value.
+		 * 
+		 * @return an Array of strings, each representing a possible keyword for a GAML statement.
+		 *         Elements annotated by this annotation should also indicate what kind of symbol
+		 *         they represent ( see ISymbolKind)
+		 */
+		String[] name();
+
+		int kind();
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface no_scope {
+		// Indicates that the command (usually a sequence) does not define its own scope.
+		// I.e. all the temporary variables defined in it are actually defined in the
+		// super-scope
+	}
+
+	/**
+	 * The Interface operator.
+	 */
+	/**
+	 * Written by drogoul Modified on 9 aožt 2010
+	 * 
+	 * @todo Description
+	 * 
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.METHOD, ElementType.TYPE })
+	public static @interface operator {
+
+		/**
+		 * @return an Array of strings, each representing a possible keyword for a GAML operator.
+		 * 
+		 */
+		String[] value();
+
+		/**
+		 * @return true if this operator should be treated as an iterator (i.e.requires initializing
+		 *         the special variable "each" of WorldSkill within the method)
+		 */
+
+		boolean iterator() default false;
+
+		/**
+		 * @return true if this operator should be run on the agent rather than on its child (or
+		 *         statically). Used for operators that rely on simulation or agent-dependent
+		 *         structures (like random numbers, location of the agent, etc.)
+		 */
+		// Now directly computed from the method signature :
+		// boolean context_dependent() default false;
+
+		/**
+		 * @return true if the right-hand child (for the moment) of the binary operator is to be
+		 *         passed as an expression rather than a value (for a later evaluation within the
+		 *         operator)
+		 */
+		// Now directly computed from the method signature :
+		// boolean lazy_evaluation() default false;
+
+		/**
+		 * @return whether or not the operator can be evaluated as a constant if its child (resp.
+		 *         children) is (resp. are) constant.
+		 */
+		boolean can_be_const() default false;
+
+		/**
+		 * @return the type of the content if the returned value is a container. Can be directly a
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the content type is searched in this provider).
+		 */
+		short content_type() default ITypeProvider.NONE;
+
+		/**
+		 * @return the respective priority of the operator w.r.t. to the others. Priorities are
+		 *         classified in several categories, and specified using one of the constants
+		 *         declared in IPriority
+		 */
+		short priority() default IPriority.DEFAULT;
+
+		/**
+		 * 
+		 * @return the type of the expression if it cannot be determined at compile time (i.e. when
+		 *         the return type is "Object"). Can be directly a type in IType or one of the
+		 *         constants declared in ITypeProvider (in which case, the type is searched in this
+		 *         provider).
+		 */
+		short type() default ITypeProvider.NONE;
+	}
+
+	/**
+	 * The Interface getter.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface getter {
+
+		/**
+		 * Value.
+		 * 
+		 * @return the name of the variable for which the annotated method is to be considered as a
+		 *         getter.
+		 */
+		String var();
+
+		/**
+		 * Inits the.
+		 * 
+		 * @return true, if successful
+		 */
+		boolean initializer() default false;
+
+	}
+
+	/**
+	 * The Interface setter.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public static @interface setter {
+
+		/**
+		 * Value.
+		 * 
+		 * @return the name of the variable for which the annotated method is to be considered as a
+		 *         getter.
+		 */
+		String value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface with_sequence {
+		/**
+		 * @return Indicates wether or not a sequence can ou should follow the symbol denoted by
+		 *         this class.
+		 */
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface with_args {
+		/**
+		 * @return Indicates wether or not the symbol denoted by this class has arguments
+		 */
+	}
+
+	/**
+	 * The Interface return_type.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@Target(ElementType.TYPE)
+	public static @interface base {
+
+		/**
+		 * @return The inner type (in terms of GAML) returned by the getter.
+		 */
+		Class value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@Target(ElementType.TYPE)
+	public static @interface commands {
+
+		/**
+		 * @return The classes to register for new commands offered by a species.
+		 */
+		@SuppressWarnings("rawtypes")
+		Class[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface handles {
+
+		/**
+		 * @return The symbol kinds defining the symbols this factory is intended to parse and
+		 *         compile. see ISymbolKind.
+		 */
+		int[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface uses {
+
+		/**
+		 * @return The subfactories that this factory can invocate, based on the kind of symbols
+		 *         they are handling. see ISymbolKind.
+		 */
+		int[] value();
+	}
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public static @interface reserved {
+
+		/**
+		 * @return an Array of strings, each representing a reserved variable.
+		 */
+		String[] value();
+	}
+
+}

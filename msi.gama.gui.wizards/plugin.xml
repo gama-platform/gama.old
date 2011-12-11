@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            name="GAMA"
+            id="msi.gama.gui.wizards.importWizards.GAMA">
+      </category>
+      <wizard
+            name="Import File"
+            icon="platform:/plugin/msi.gama.gui.application/icons/wizards/file.png"
+            category="msi.gama.gui.wizards.importWizards.GAMA"
+            class="msi.gama.gui.wizards.importWizards.ImportWizard"
+            id="msi.gama.gui.wizards.importWizards.ImportWizard">
+         <description>
+            Import a file from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="GAMA"
+            id="msi.gama.gui.wizards.GAMA">
+      </category>
+      <wizard
+            category="msi.gama.gui.wizards.GAMA"
+            class="msi.gama.gui.wizards.newFileWizards.NewFileWizard"
+            icon="platform:/plugin/msi.gama.gui.application/icons/wizards/newFile.png"
+            id="msi.gama.gui.wizards.wizards.SampleNewWizard"
+            name="Model file"
+            project="false">
+      </wizard>
+      <wizard
+            category="msi.gama.gui.wizards.GAMA"
+            class="msi.gama.gui.wizards.newProjectWizards.NewProjectWizard"
+            icon="platform:/plugin/msi.gama.gui.application/icons/wizards/icon.png"
+            id="msi.gama.gui.wizards.newProjectWizard"
+            name="Gama Project"
+            project="true">
+      </wizard>
+   </extension>
+
+</plugin>

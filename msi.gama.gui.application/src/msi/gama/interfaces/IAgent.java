@@ -1,0 +1,270 @@
+/*
+ * GAMA - V1.4  http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC 
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
+ * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
+ * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
+ * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
+ * - Romain Lavaud, IRD (project-based environment), 2010
+ * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
+ * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
+ */
+package msi.gama.interfaces;
+
+import java.util.List;
+
+import msi.gama.environment.ITopology;
+import msi.gama.kernel.IScheduler;
+import msi.gama.kernel.exceptions.GamaRuntimeException;
+
+/**
+ * Written by drogoul Modified on 24 oct. 2010
+ * 
+ * @todo Description
+ * 
+ */
+public interface IAgent extends IScheduler, ISkill, IGeometry, IValue, Comparable<IAgent> {
+
+	public static final String HEADING = "heading";
+
+	public abstract void dispose();
+
+	// TODO move to IScheduler?
+	public abstract void init(IScope scope) throws GamaRuntimeException;
+
+	// TODO move to IScheduler?
+	public abstract void schedule() throws GamaRuntimeException;
+
+	public abstract Object getAttribute(final String name);
+
+	public abstract void setAttribute(final String name, final Object val);
+
+	public abstract int getIndex();
+
+	public abstract void setIndex(int index);
+
+	// @Override
+	public String getName();
+
+	public String getSpeciesName();
+
+	public abstract ISpecies getSpecies();
+
+	public IPopulation getPopulation();
+
+	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
+
+	// TODO remove?
+	public abstract boolean isGridAgent();
+
+	public abstract boolean dead();
+
+	public void setHeading(Integer heading);
+
+	public Integer getHeading();
+
+	public abstract void die() throws GamaRuntimeException;
+
+	public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
+
+	public abstract Object getDirectVarValue(String s) throws GamaRuntimeException;
+
+	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
+
+	public abstract ISimulation getSimulation();
+
+	public abstract boolean contains(IAgent component);
+
+	/**
+	 * Returns the topology which manages this agent.
+	 * 
+	 * @return
+	 */
+	public abstract ITopology getTopology();
+
+	/**
+	 * Finds the corresponding population of a species from the "viewpoint" of this agent.
+	 * 
+	 * An agent can "see" the following populations:
+	 * 		1. populations of its species' direct micro-species;
+	 * 		2. population of its species; populations of its peer species;
+	 * 		3. populations of its direct&in-direct macro-species and of their peers.
+	 * 
+	 * @param microSpecies
+	 * @return
+	 */
+	public abstract IPopulation getPopulationFor(final ISpecies microSpecies);
+
+	/**
+	 * Finds the corresponding population of a species from the "viewpoint" of this agent.
+	 * 
+	 * An agent can "see" the following populations:
+	 * 		1. populations of its species' direct micro-species;
+	 * 		2. population of its species; populations of its peer species;
+	 * 		3. populations of its direct&in-direct macro-species and of their peers.
+	 * 
+	 * @param speciesName the name of the species
+	 * @return
+	 */
+	public abstract IPopulation getPopulationFor(final String speciesName);
+	
+	/**
+	 * Finds a species which is visible from the "viewpoint" of this agent.
+	 * 
+	 * The species of this agent contains a list of visible species.
+	 * This method will search on that on that list.
+	 * It will return the species if found or null otherwise.
+	 * 
+	 * An agent can "see" the following species:
+	 * 		1. its direct micro-species;
+	 * 		2. its species; peers of its species;
+	 * 		3. its direct&in-direct macro-species and their peers.
+	 * 
+	 * @param speciesName
+	 * @return
+	 */
+	public abstract ISpecies getVisibleSpecies(final String speciesName);
+	
+	/**
+	 * Initialize Populations to manage micro-agents.
+	 */
+	public abstract void initializeMicroPopulations(IScope scope) throws GamaRuntimeException;
+	
+	/**
+	 * Returns a list of populations of (direct) micro-species.
+	 * 
+	 * @return
+	 */
+	public abstract List<IPopulation> getMicroPopulations();
+	
+	/**
+	 * Returns the population of the specified (direct) micro-species.
+	 * 
+	 * @param microSpeciesName
+	 * @return
+	 */
+	public abstract IPopulation getMicroPopulation(String microSpeciesName);
+	
+	/**
+	 * Returns the population of the specified (direct) micro-species.
+	 * 
+	 * @param microSpecies
+	 * @return
+	 */
+	public abstract IPopulation getMicroPopulation(ISpecies microSpecies);
+
+	public abstract void setMembers(List<IAgent> members);
+
+	/**
+	 * Returns all the agents which consider this agent as direct host.
+	 * 
+	 * @return
+	 */
+	public abstract List<IAgent> getMembers();
+	
+	public abstract void setAgents(List<IAgent> agents);
+
+	/**
+	 * Returns all the agents which consider this agent as direct or in-direct host.
+	 * 
+	 * @return
+	 */
+	public abstract List<IAgent> getAgents();
+	
+	public abstract void setPeers(List<IAgent> peers);
+
+	/**
+	 * Returns agents having the same species and sharing the same direct macro-agent with this agent.
+	 * 
+	 * @return
+	 */
+	public abstract List<IAgent> getPeers();
+
+	/**
+	 * Verifies if this agent contains micro-agents or not.
+	 * 
+	 * @return true if this agent contains micro-agent(s)
+	 * 			false otherwise
+	 */
+	public abstract boolean hasMembers();
+
+	/**
+	 * Returns the agent which hosts the population of this agent.
+	 * 
+	 * @return
+	 */
+	public abstract IAgent getHost();
+
+	public abstract void setHost(final IAgent hostAgent);
+	
+	/**
+	 * Acquires the object's intrinsic lock.
+	 * 
+	 * Solves the synchronization problem between Execution Thread and Event Dispatch Thread.
+	 *  
+	 * The synchronization problem may happen when 
+	 * 	1. The Event Dispatch Thread is drawing an agent while the Execution Thread tries to it;
+	 *  2. The Execution Thread is disposing the agent while the Event Dispatch Thread tries to draw it.
+	 * 
+	 *  To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before drawing or disposing the agent.
+	 *  After finish the task, the thread invokes "releaseLock" to release the agent's lock.
+	 *  
+	 *  return
+	 *  	true if the agent instance is available for use
+	 *  	false otherwise
+	 */
+	public abstract boolean acquireLock();
+	
+	/**
+	 * Releases the object's intrinsic lock.
+	 */
+	public abstract void releaseLock();
+
+	/**
+	 * Verifies if this agent can capture other agent as the specified micro-species.
+	 * 
+	 * An agent A can capture another agent B as newSpecies if the following conditions are correct:
+	 *  1. other is not this agent; 
+	 *  2. other is not "world" agent;
+	 * 	3. newSpecies is a (direct) micro-species of A's species;
+	 *  4. newSpecies is a direct sub-species of B's species.
+	 * 
+	 * @param other
+	 * @return
+	 * 		true if this agent can capture other agent
+	 * 		false otherwise
+	 */
+	public abstract boolean canCapture(IAgent other, ISpecies newSpecies);
+
+	/**
+	 * Captures some agents as micro-agents with the specified micro-species as their new species.
+	 * 
+	 * @param microSpecies the species that the captured agents will become, this must be a micro-species of this agent's species.
+	 * @param microAgents
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
+	public abstract List<IAgent> captureMicroAgents(final ISpecies microSpecies,
+		final List<IAgent> microAgents) throws GamaRuntimeException;
+
+	/**
+	 * Releases some micro-agents of this agent.
+	 * 
+	 * @param microAgents
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
+	public abstract List<IAgent> releaseMicroAgents(final List<IAgent> microAgents) throws GamaRuntimeException;
+
+	/**
+	 * Tells this agent that the host has changed its shape.
+	 * This agent will then ask the topology to add its to the new ISpatialIndex.
+	 */
+	public abstract void hostChangesShape();
+
+}

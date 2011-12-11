@@ -1,0 +1,83 @@
+/**
+ * Created by drogoul, 26 nov. 2011
+ * 
+ */
+package msi.gama.internal.types;
+
+import msi.gama.environment.*;
+import msi.gama.interfaces.*;
+import msi.gama.kernel.exceptions.GamaRuntimeException;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.util.*;
+import msi.gama.util.graph.GamaSpatialGraph;
+import msi.gama.util.matrix.GamaSpatialMatrix;
+
+/**
+ * The type topology.
+ * 
+ * @author Alexis Drogoul
+ * @since 26 nov. 2011
+ * 
+ */
+@type(value = IType.TOPOLOGY_STR, id = IType.TOPOLOGY, wraps = { ITopology.class })
+public class GamaTopologyType extends GamaType<ITopology> {
+
+	public static ITopology staticCast(final IScope scope, final Object obj, final Object param)
+		throws GamaRuntimeException {
+		// Many cases.
+		if ( obj == null ) { return null; }
+		if ( obj instanceof ITopology ) { return (ITopology) obj; }
+		if ( obj instanceof IPopulation ) { return ((IPopulation) obj).getTopology(); }
+		if ( obj instanceof ISpecies ) { return staticCast(scope, scope.getAgentScope()
+			.getPopulationFor((ISpecies) obj), param); }
+		if ( obj instanceof IGeometry ) { return from(scope, (IGeometry) obj); }
+		if ( obj instanceof IGamaContainer ) { return from(scope, (IGamaContainer) obj); }
+		return staticCast(scope, Cast.asGeometry(scope, obj), param);
+	}
+
+	/**
+	 * @see msi.gama.internal.types.GamaType#cast(msi.gama.interfaces.IScope, java.lang.Object,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public ITopology cast(final IScope scope, final Object obj, final Object param)
+		throws GamaRuntimeException {
+		return staticCast(scope, obj, param);
+	}
+
+	public static ITopology from(final IScope scope, final IGeometry obj) {
+		return new ContinuousTopology(scope, obj);
+	}
+
+	/**
+	 * @throws GamaRuntimeException
+	 * @param scope
+	 * @param obj
+	 * @return
+	 */
+	private static ITopology from(final IScope scope, final IGamaContainer obj)
+		throws GamaRuntimeException {
+		if ( obj instanceof GamaSpatialGraph ) {
+			GamaGeometry env = GamaGeometryType.staticCast(scope, obj, null).getGeometricEnvelope();
+			return new GraphTopology(scope, env, (GamaSpatialGraph) obj);
+		} else if ( obj instanceof GamaSpatialMatrix ) {
+			return new GridTopology(scope, (GamaSpatialMatrix) obj);
+		} else {
+			return new MultipleTopology(scope, obj);
+		}
+	}
+
+	/**
+	 * @see msi.gama.internal.types.GamaType#getDefault()
+	 */
+	@Override
+	public ITopology getDefault() {
+		return null;
+	}
+
+	@Override
+	public IType defaultContentType() {
+		return Types.get(IType.GEOMETRY);
+	}
+
+}

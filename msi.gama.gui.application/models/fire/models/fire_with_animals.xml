@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+
+<model name="fire">
+	<include file = "../tutorial/fire_tutorial_6.xml"/>
+	<global>
+
+		<!-- Anmals parameters -->
+		<var type="int" name="number_of_animals" parameter="Number of animals:" init="500" min="0" category="Animals"/>
+		<var type="int" name="animal_distance_to_fire" parameter="Minimum distance animals must keep with fire:" init="40" min="0" max="200" category="Animals" />
+		<var type="int" name="minimal_distance" parameter="Minimum distance between animals:" init="5" min="0" max="200" category="Animals" />
+		<var type="int" name="cohesion_factor" parameter="Factor of cohesion:" category="Animals" init="100" />
+		<var type="int" name="alignment_factor" parameter="Factor of alignment:" category="Animals" init="30" />
+		<var type="int" name="maximal_turn" parameter="Maximal turn of animals:" category="Animals" init="180" min="0" max="360"/>
+		<var type="int" name="maximal_speed" parameter="Maximal speed of animals:" category="Animals" init="5" min="0" max="360"/>
+		<init>
+		<create species="animal" number="number_of_animals"/>
+	</init>
+	
+	</global>
+	
+	<environment torus="true"/>
+	
+	<entities>
+		<species name="animal" skills="moving,visible">
+			<var type="point" name="location" init="{rnd width,rnd height}"/>
+			<var type="float" name="size" init="4" const="true"/>
+			<var type="rgb" name="color" init="rgb 'yellow'" const="true"/>
+			<var type="float" name="range" value="minimal_distance * 2"/>
+
+			<var type="float" name="speed" max="maximal_speed" init="maximal_speed" />
+			<var type="int" name="heading" max="heading + maximal_turn" min="heading - maximal_turn" />
+			<var type="point" name="velocity" init="{0,0}" />
+			<var type="list" name="others" value="neighbours of_species animal" />
+			
+			
+			<reflex name="separation">
+				<let name="acc" value="{0,0}" />
+				<loop over="(self neighbours_at minimal_distance) of_species animal" var="a">
+					<set name="acc" value="acc - (a.location - location)" />
+				</loop>
+				<set name="velocity" value="velocity + acc" />
+			</reflex>
+			
+			<action name="compute_avg_velocity">
+				<let name="average_velocity" value="{0,0}" />
+				<let name="nb" value="length others" />
+				<if condition="nb &gt; 0">
+					<loop over="others" var="a">
+						<set name="average_velocity" value="average_velocity + a.velocity" />
+					</loop>
+					<set name="average_velocity" value="{(first average_velocity /  nb),  (last average_velocity /  nb)}" />
+				</if>
+				<return value="average_velocity" />
+			</action>
+			
+			<action name="compute_mass_center">
+				<let name="mass_center" value="{0,0}" />
+				<let name="nb" value="length others" />
+				<if condition="nb &gt; 0">
+					<loop over="others" var="a">
+						<set name="mass_center" value="mass_center + a.location" />
+					</loop>
+					<set name="mass_center" value="{(first mass_center /  nb),  (last mass_center /  nb)}" />
+					<return value="mass_center" />
+					<else>
+						<return value="location" />
+					</else>
+				</if>
+			</action>
+			
+			<reflex name="alignment">
+				<do action="compute_avg_velocity" return="average_velocity" />
+				<let name="acc" value="average_velocity - velocity" />
+				<set name="velocity" value="velocity + {first acc / alignment_factor, last acc / alignment_factor}" />
+			</reflex>
+			
+			<reflex name="cohesion">
+				<do action="compute_mass_center" return="mass_center" />
+				<let name="acc" value="mass_center - location" />
+				<set name="acc" value="{first acc / cohesion_factor, last acc / cohesion_factor}" />
+				<set name="velocity" value="velocity + acc" />
+			</reflex>
+			
+			<reflex name="avoid">
+				<let name="acc" value="{0,0}" />
+				<loop over="((self neighbours_at (animal_distance_to_fire)) of_species tree) where (each.state = 'burning')" var="obs">
+					<set name="acc" value="acc - (obs.location - location)" />
+				</loop>
+				<set name="velocity" value="velocity + acc" />
+			</reflex>
+			
+			<action name="do_move">
+				<if condition="(int first velocity =  0) and (int last velocity = 0) ">
+					<set name="velocity" value="{(rnd 4) -2, (rnd 4) - 2}" />
+				</if>
+				<let name="old_location" value="location" />
+				<set name="heading" value="towards (location + velocity)" />
+				<do action="move">
+				</do>
+				<set name="velocity" value="location - old_location" />
+				<set name="speed" value="location distance_to old_location" />
+			</action>
+			
+			<reflex name="movement">
+				<do action="do_move" />
+			</reflex>
+			
+		</species>	
+		
+		
+	</entities>
+	
+	<output>
+		
+		<display name="Forest">
+			<image name="background" file="'../images/soil.jpg'"/>
+			<species name="tree" transparency="tree_transparency" />
+			<species name="dead_tree" />
+			<species name="animal"/>
+			<species name="fireman"/>
+			
+		</display>
+	</output>
+</model>

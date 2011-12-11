@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="fire">
+	<include file="../tutorial/fire_tutorial_6_v4.xml" />
+	<global>
+		<var name="number_of_h_pathways" type="int"
+			parameter="'Number of horizontal pathways:'" init="1" min="0" max="10"
+			category="'Pathways'" />
+		<var name="number_of_v_pathways" type="int"
+			parameter="'Number of vertical pathways:'" init="2" min="0" max="10"
+			category="'Pathways'" />
+		<var name="pathways_width" type="float" parameter="'Width of pathways (in meters):'"
+			init="10" min="1" max="20" category="'Pathways'" />
+		<init>
+			<create species="pathway" number="number_of_v_pathways">
+				<set name="horizontal" value="false" />
+			</create>
+			<create species="pathway" number="number_of_h_pathways">
+				<set name="horizontal" value="true" />
+			</create>
+		</init>
+	</global>
+	<entities>
+		<species name="pathway" skills="situated">
+			<var name="horizontal" type="bool" />
+			<var name="location" type="point"
+				init="{(horizontal?0:rnd(width)),(horizontal?rnd(height):0)}" />
+			<init>
+				<loop over="(tree as list)" var="the_tree">
+					<let var="tree_coord"
+						value="horizontal ? last(location of the_tree) : first(location of the_tree)" />
+					<let var="self_coord" value="(horizontal?last(location):first(location))" />
+					<if
+						condition="((tree_coord &lt; (self_coord + (pathways_width / 2))) and (tree_coord &gt; (self_coord - (pathways_width / 2))))">
+						<ask target="the_tree">
+							<do action="die" />
+						</ask>
+					</if>
+				</loop>
+				<do action="die" />
+			</init>
+		</species>
+	</entities>
+</model>

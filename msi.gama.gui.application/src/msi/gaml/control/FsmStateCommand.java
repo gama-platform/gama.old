@@ -1,0 +1,153 @@
+/*
+ * GAMA - V1.4 http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, IRD (Kernel, Metamodel, XML-based GAML), 2007-2011
+ * - Vo Duc An, IRD & AUF (SWT integration, multi-level architecture), 2008-2011
+ * - Patrick Taillandier, AUF & CNRS (batch framework, GeoTools & JTS integration), 2009-2011
+ * - Pierrick Koch, IRD (XText-based GAML environment), 2010-2011
+ * - Romain Lavaud, IRD (project-based environment), 2010
+ * - Francois Sempe, IRD & AUF (EMF behavioral model, batch framework), 2007-2009
+ * - Edouard Amouroux, IRD (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, IRD (OpenMap integration), 2007-2008
+ */
+package msi.gaml.control;
+
+import java.util.*;
+import msi.gama.interfaces.*;
+import msi.gama.kernel.exceptions.GamaRuntimeException;
+import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
+import msi.gama.util.Cast;
+import msi.gaml.agents.IGamlAgent;
+import msi.gaml.commands.AbstractCommandSequence;
+
+/**
+ * The Class StateCommand.
+ * 
+ * @author drogoul
+ */
+
+@symbol(name = FsmStateCommand.STATE, kind = ISymbolKind.BEHAVIOR)
+@inside(symbols = ISpecies.FSM, kinds = { ISymbolKind.SPECIES })
+@facets(value = { @facet(name = FsmStateCommand.INITIAL, type = IType.BOOL_STR, optional = true),
+	@facet(name = FsmStateCommand.FINAL, type = IType.BOOL_STR, optional = true),
+	@facet(name = ISymbol.NAME, type = IType.ID, optional = false) }, combinations = {
+	@combination({ ISymbol.NAME, FsmStateCommand.FINAL }), @combination({ ISymbol.NAME }),
+	@combination({ ISymbol.NAME, FsmStateCommand.INITIAL }) })
+public class FsmStateCommand extends AbstractCommandSequence {
+
+	public static final String		STATE_MEMORY	= "state_memory";
+
+	protected static final String	INITIAL			= "initial";
+	protected static final String	FINAL			= "final";
+	protected static final String	STATE			= "state";
+	static final String				ENTER			= "enter";
+	static final String				EXIT			= "exit";
+	private FsmEnterCommand			enterActions	= null;
+	private FsmExitCommand			exitActions		= null;
+	List<FsmTransitionCommand>		transitions		= new ArrayList();
+	private int						transitionsSize;
+	boolean							isInitial;
+	boolean							isFinal;
+
+	public FsmStateCommand(final IDescription desc) {
+		super(desc);
+		setName(getLiteral(ISymbol.NAME)); // A VOIR
+		isInitial = Cast.asBool(null, getLiteral(FsmStateCommand.INITIAL));
+		isFinal = Cast.asBool(null, getLiteral(FsmStateCommand.FINAL));
+	}
+
+	@Override
+	public void setChildren(final List<? extends ISymbol> commands) {
+		for ( ISymbol c : commands ) {
+			if ( c instanceof FsmEnterCommand ) {
+				enterActions = (FsmEnterCommand) c;
+			} else if ( c instanceof FsmExitCommand ) {
+				exitActions = (FsmExitCommand) c;
+			} else if ( c instanceof FsmTransitionCommand ) {
+				transitions.add((FsmTransitionCommand) c);
+			}
+		}
+		commands.remove(enterActions);
+		commands.remove(exitActions);
+		commands.removeAll(transitions);
+		transitionsSize = transitions.size();
+		super.setChildren(commands);
+	}
+
+	@Override
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
+		if ( agent.dead() ) { return null; }
+		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
+		if ( memory == null ) {
+			memory = new HashMap();
+			agent.setAttribute(STATE_MEMORY, memory);
+		}
+		for ( Map.Entry<String, Object> entry : memory.entrySet() ) {
+			scope.addVarWithValue(entry.getKey(), entry.getValue());
+		}
+		Boolean enter = (Boolean) agent.getAttribute(ENTER);
+		if ( enter ) {
+			FsmStateCommand stateToExit =
+				(FsmStateCommand) agent.getAttribute(FsmBehavior.STATE_TO_EXIT);
+			if ( stateToExit != null ) {
+				stateToExit.haltOn(scope);
+			}
+			if ( agent.dead() ) { return null; }
+			memory.clear();
+			scope.removeAllVars();
+			if ( enterActions != null ) {
+				enterActions.executeOn(scope);
+			}
+			agent.setAttribute(FsmBehavior.STATE_TO_EXIT, null);
+			agent.setAttribute(ENTER, false);
+		}
+		if ( agent.dead() ) { return null; }
+		super.privateExecuteIn(scope);
+
+		for ( int i = 0; i < transitionsSize; i++ ) {
+			final FsmTransitionCommand transition = transitions.get(i);
+
+			if ( /* agent.isEnabled(futureState) && */transition.evaluatesTrueOn(scope) ) {
+				final String futureState = transition.getName();
+				transition.executeOn(scope);
+				scope.setAgentVarValue(agent, STATE, futureState);
+				return futureState;
+			}
+		}
+		scope.saveAllVarValuesIn(memory);
+		return name;
+	}
+
+	public void haltOn(final IScope scope) throws GamaRuntimeException {
+		if ( exitActions != null ) {
+			exitActions.executeOn(scope);
+		}
+	}
+
+	public FsmExitCommand getExitCommand() {
+		return exitActions;
+	}
+
+	public boolean hasExitActions() {
+		return exitActions != null;
+	}
+
+	public boolean isInitial() {
+		return isInitial;
+	}
+
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+}
