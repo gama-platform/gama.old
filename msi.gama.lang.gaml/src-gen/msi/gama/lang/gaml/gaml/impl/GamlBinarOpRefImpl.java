@@ -1,0 +1,176 @@
+/**
+ * <copyright>
+ * </copyright>
+ *
+
+ */
+package msi.gama.lang.gaml.gaml.impl;
+
+import msi.gama.lang.gaml.gaml.DefBinaryOp;
+import msi.gama.lang.gaml.gaml.GamlBinarOpRef;
+import msi.gama.lang.gaml.gaml.GamlPackage;
+
+import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>Binar Op Ref</b></em>'.
+ * <!-- end-user-doc -->
+ * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlBinarOpRefImpl#getRef <em>Ref</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @generated
+ */
+public class GamlBinarOpRefImpl extends AbstractGamlRefImpl implements GamlBinarOpRef
+{
+  /**
+   * The cached value of the '{@link #getRef() <em>Ref</em>}' reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRef()
+   * @generated
+   * @ordered
+   */
+  protected DefBinaryOp ref;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected GamlBinarOpRefImpl()
+  {
+    super();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  protected EClass eStaticClass()
+  {
+    return GamlPackage.Literals.GAML_BINAR_OP_REF;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DefBinaryOp getRef()
+  {
+    if (ref != null && ref.eIsProxy())
+    {
+      InternalEObject oldRef = (InternalEObject)ref;
+      ref = (DefBinaryOp)eResolveProxy(oldRef);
+      if (ref != oldRef)
+      {
+        if (eNotificationRequired())
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamlPackage.GAML_BINAR_OP_REF__REF, oldRef, ref));
+      }
+    }
+    return ref;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DefBinaryOp basicGetRef()
+  {
+    return ref;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRef(DefBinaryOp newRef)
+  {
+    DefBinaryOp oldRef = ref;
+    ref = newRef;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_BINAR_OP_REF__REF, oldRef, ref));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
+    switch (featureID)
+    {
+      case GamlPackage.GAML_BINAR_OP_REF__REF:
+        if (resolve) return getRef();
+        return basicGetRef();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
+    switch (featureID)
+    {
+      case GamlPackage.GAML_BINAR_OP_REF__REF:
+        setRef((DefBinaryOp)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void eUnset(int featureID)
+  {
+    switch (featureID)
+    {
+      case GamlPackage.GAML_BINAR_OP_REF__REF:
+        setRef((DefBinaryOp)null);
+        return;
+    }
+    super.eUnset(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean eIsSet(int featureID)
+  {
+    switch (featureID)
+    {
+      case GamlPackage.GAML_BINAR_OP_REF__REF:
+        return ref != null;
+    }
+    return super.eIsSet(featureID);
+  }
+
+} //GamlBinarOpRefImpl

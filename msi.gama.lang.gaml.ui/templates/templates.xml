@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+<template 	id="Gaml.Global" 
+			name="global"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the global section"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>global {
+	${cursor}
+}</template>
+<template 	id="Gaml.Environment" 
+			name="environment"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the environment section"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>environment width:${env_width} height:${env_height} torus:${false};</template>
+
+<template 	id="Gaml.Species" 
+			name="species"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the species"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>species ${name} skills:[${skill_list}]{
+${cursor}
+}</template>
+
+<template 	id="Gaml.Grid" 
+			name="grid"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the grid"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>grid ${name} width:${grid_w} height:${grid_h} {
+${cursor}
+}</template>
+
+<template 	id="Gaml.Output" 
+			name="output"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the output section"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>output {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.Experiment" 
+			name="experiment"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the experiment section"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>experiment ${name} type: ${exp_type} {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.Var" 
+			name="var"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the variable"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>var ${var_name} type:${type} init:${expr} ;</template>
+
+<template 	id="Gaml.Const" 
+			name="const"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the constant"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>const ${var_name} type:${type} init:${expr} ;</template>
+
+<template 	id="Gaml.Init" 
+			name="init"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="define the init"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>init {
+	${cursor}
+}</template>
+<template 	id="Gaml.Do" 
+			name="do"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="do action"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>do action: ${action_name} ;</template>
+
+<template 	id="Gaml.DowithArg" 
+			name="do"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="do action with argument"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>do action:${action_name} {
+	arg ${arg_name} value:${arg_value};${cursor}
+}</template>
+
+<template 	id="Gaml.If" 
+			name="if"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="if command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>if condition: ${bool_expr} {
+${cursor}
+}</template>
+
+<template 	id="Gaml.IfElse" 
+			name="if-else"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="if-else command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>if condition: ${bool_expr} {
+	${cursor}
+	else {
+		
+	}
+}</template>
+
+<template 	id="Gaml.LoopTimes" 
+			name="loop-times"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="loop-times command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>loop times: ${an_int_expression} {
+	${cursor} 
+}</template>
+
+<template 	id="Gaml.LoopWhile" 
+			name="loop-while"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="loop-while command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>loop while: ${bool_expr} {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.LoopOver" 
+			name="loop-over"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="loop-over command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>loop ${a_temp_var} over: ${list_expr} {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.LoopFromTo" 
+			name="loop-from-to"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="loop-from-to command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>loop ${a_temp_var} from: ${int_expr1} to: ${int_expr2) {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.Create" 
+			name="create"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="create command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>create species: ${species_name} number: ${int_expr} ;</template>
+
+<template 	id="Gaml.CreatewithReturn" 
+			name="create"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="create command (with return)"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>create species: ${species_name} number: ${int_expr} returns: ${a_temp_var} ;</template>
+
+<template 	id="Gaml.Set" 
+			name="set"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="set command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>set ${var_name} value: ${expr} ;</template>
+
+<template 	id="Gaml.Let" 
+			name="let"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="let command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>let ${a_temp_var} type: ${type} value: ${expr} ;</template>
+
+<template 	id="Gaml.Ask" 
+			name="ask"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="ask command"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>ask target: ${receiver_agents} {
+	${cursor}
+}</template>
+
+<template 	id="Gaml.AskwithCast" 
+			name="ask"
+			context="msi.gama.lang.gaml.Gaml.Definition"
+			description="ask command (with casting)"
+			autoinsert="true" 			 
+			deleted="false" 			 
+			enabled="true" 
+>ask target: ${receiver_agents} as: ${species_expr} {
+	${cursor}
+}</template>
+
+
+</templates>
