@@ -60,3 +60,4 @@ Export-Package: de.regnis.q.sequence,
  org.tmatesoft.svn.util
 Bundle-ClassPath: svnkit.jar,
  .
+Import-Package: msi.gama.gui.application
