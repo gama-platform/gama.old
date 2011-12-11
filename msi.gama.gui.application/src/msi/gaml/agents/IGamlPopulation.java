@@ -15,7 +15,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.kernel;
+package msi.gaml.agents;
 
 import msi.gama.interfaces.IAgent;
 import msi.gama.interfaces.IPopulation;

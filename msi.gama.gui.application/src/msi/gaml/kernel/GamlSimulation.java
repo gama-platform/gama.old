@@ -23,8 +23,9 @@ import msi.gama.kernel.AbstractSimulation;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.util.GamaList;
+import msi.gaml.agents.IGamlPopulation;
+import msi.gaml.agents.GamlPopulation.WorldPopulation;
 import msi.gaml.batch.Solution;
-import msi.gaml.kernel.GamlPopulation.WorldPopulation;
 
 public class GamlSimulation extends AbstractSimulation {
 

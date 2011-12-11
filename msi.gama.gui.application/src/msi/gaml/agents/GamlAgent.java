@@ -27,7 +27,6 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.util.*;
-import msi.gaml.kernel.IGamlPopulation;
 import com.vividsolutions.jts.geom.*;
 
 /**

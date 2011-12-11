@@ -15,7 +15,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.kernel;
+package msi.gaml.agents;
 
 import java.util.*;
 import msi.gama.agents.AbstractPopulation;
@@ -25,7 +25,6 @@ import msi.gama.internal.types.GamaTopologyType;
 import msi.gama.java.JavaConstExpression;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.agents.GamlAgent;
 import msi.gaml.control.IControl;
 
 /**

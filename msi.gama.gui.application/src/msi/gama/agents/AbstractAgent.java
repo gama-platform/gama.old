@@ -25,7 +25,7 @@ import msi.gama.interfaces.*;
 import msi.gama.kernel.GAMA;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.kernel.GamlPopulation;
+import msi.gaml.agents.GamlPopulation;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
