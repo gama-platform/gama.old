@@ -50,10 +50,10 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 			return geometriesToGeometry(agents);
 		}
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
-		if ( obj instanceof IGamaContainer ) {
-			if ( isPoints((IGamaContainer) obj) ) { return pointsToGeometry(scope,
-				(IGamaContainer<?, GamaPoint>) obj); }
-			return geometriesToGeometry((IGamaContainer) obj);
+		if ( obj instanceof IContainer ) {
+			if ( isPoints((IContainer) obj) ) { return pointsToGeometry(scope,
+				(IContainer<?, GamaPoint>) obj); }
+			return geometriesToGeometry((IContainer) obj);
 		}
 
 		// Faire ici tous les casts nécessaires pour construire des géométries (liste, string, etc.)
@@ -64,7 +64,7 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 	 * @param obj
 	 * @return
 	 */
-	private static boolean isPoints(final IGamaContainer obj) {
+	private static boolean isPoints(final IContainer obj) {
 		for ( Object o : obj ) {
 			if ( !(o instanceof GamaPoint) ) { return false; }
 		}
@@ -76,7 +76,7 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 		return null; // Retourner un point; ?
 	}
 
-	public static GamaGeometry geometriesToGeometry(final IGamaContainer<?, ? extends IGeometry> ags)
+	public static GamaGeometry geometriesToGeometry(final IContainer<?, ? extends IGeometry> ags)
 		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty() ) { return null; }
 		Geometry geom = ((IGeometry) ags.first()).getInnerGeometry();
@@ -92,7 +92,7 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 	}
 
 	public static GamaGeometry pointsToGeometry(final IScope scope,
-		final IGamaContainer<?, GamaPoint> coordinates) throws GamaRuntimeException {
+		final IContainer<?, GamaPoint> coordinates) throws GamaRuntimeException {
 		if ( coordinates != null && !coordinates.isEmpty() ) {
 			List<List<GamaPoint>> geoSimp = new GamaList();
 			geoSimp.add(coordinates.listValue(scope));

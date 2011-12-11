@@ -39,7 +39,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	protected boolean writable = false;
 
-	protected IGamaContainer<K, V> buffer;
+	protected IContainer<K, V> buffer;
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		file = new File(scope.getSimulationScope().getModel().getRelativeFilePath(pathName, false));
@@ -68,7 +68,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	protected abstract void flushBuffer() throws GamaRuntimeException;
 
 	@Override
-	public final void setContents(final IGamaContainer<K, V> cont) throws GamaRuntimeException {
+	public final void setContents(final IContainer<K, V> cont) throws GamaRuntimeException {
 		if ( writable ) {
 			buffer = cont;
 		}
@@ -116,7 +116,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		fillBuffer();
 		buffer.addAll(value, param);
 		flushBuffer();
@@ -129,7 +129,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final K index, final IGamaContainer value, final Object param)
+	public void addAll(final K index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		fillBuffer();
 		buffer.addAll(index, value, param);
@@ -262,7 +262,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	@getter(var = CONTENTS)
-	public IGamaContainer getContents() throws GamaRuntimeException {
+	public IContainer getContents() throws GamaRuntimeException {
 		fillBuffer();
 		return buffer;
 	}
@@ -434,7 +434,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
 	 */
 	@Override
-	public boolean removeAll(final IGamaContainer<?, V> value) throws GamaRuntimeException {
+	public boolean removeAll(final IContainer<?, V> value) throws GamaRuntimeException {
 		fillBuffer();
 		boolean result = buffer.removeAll(value);
 		flushBuffer();
@@ -473,7 +473,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public IGamaContainer reverse() throws GamaRuntimeException {
+	public IContainer reverse() throws GamaRuntimeException {
 		fillBuffer();
 		return buffer.reverse();
 		// No side effect

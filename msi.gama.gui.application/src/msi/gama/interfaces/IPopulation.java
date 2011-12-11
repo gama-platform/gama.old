@@ -30,7 +30,7 @@ import msi.gama.util.*;
  * @todo Description
  * 
  */
-public interface IPopulation extends Comparable<IPopulation>, IGamaContainer<Integer, IAgent> {
+public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer, IAgent> {
 
 	public abstract void dispose();
 

@@ -48,11 +48,11 @@ public class RemoveCommand extends AbstractContainerCommand {
 
 	@Override
 	protected void apply(final IScope stack, final Object object, final Object position,
-		final Boolean whole, final IGamaContainer container) throws GamaRuntimeException {
+		final Boolean whole, final IContainer container) throws GamaRuntimeException {
 		if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
 			list.toGaml(), true); }
 		if ( whole ) {
-			container.removeAll((IGamaContainer) object);
+			container.removeAll((IContainer) object);
 		} else if ( position != null ) {
 			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeException(
 				"Index " + position + " out of bounds of " + item.toGaml(), true); }

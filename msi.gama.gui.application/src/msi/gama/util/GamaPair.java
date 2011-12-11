@@ -32,7 +32,7 @@ import msi.gama.util.matrix.GamaObjectMatrix;
  */
 @vars({ @var(name = GamaPair.KEY, type = IType.NONE_STR),
 	@var(name = GamaPair.VALUE, type = IType.NONE_STR) })
-public class GamaPair<K, V> implements IGamaContainer<K, V> {
+public class GamaPair<K, V> implements IContainer<K, V> {
 
 	public static final String KEY = "key";
 
@@ -169,7 +169,7 @@ public class GamaPair<K, V> implements IGamaContainer<K, V> {
 	}
 
 	@Override
-	public boolean removeAll(final IGamaContainer list) {
+	public boolean removeAll(final IContainer list) {
 		for ( Object v : list ) {
 			removeFirst(v);
 		}
@@ -196,7 +196,7 @@ public class GamaPair<K, V> implements IGamaContainer<K, V> {
 	}
 
 	@Override
-	public IGamaContainer reverse() {
+	public IContainer reverse() {
 		return new GamaPair(value, key);
 	}
 
@@ -353,7 +353,7 @@ public class GamaPair<K, V> implements IGamaContainer<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 
 	}
@@ -365,7 +365,7 @@ public class GamaPair<K, V> implements IGamaContainer<K, V> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final K index, final IGamaContainer value, final Object param)
+	public void addAll(final K index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 
 	}

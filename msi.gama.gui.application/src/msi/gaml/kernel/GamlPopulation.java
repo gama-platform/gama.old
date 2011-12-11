@@ -18,11 +18,11 @@
 package msi.gaml.kernel;
 
 import java.util.*;
+import msi.gama.agents.AbstractPopulation;
 import msi.gama.environment.*;
 import msi.gama.interfaces.*;
 import msi.gama.internal.types.GamaTopologyType;
 import msi.gama.java.JavaConstExpression;
-import msi.gama.kernel.AbstractPopulation;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.agents.GamlAgent;

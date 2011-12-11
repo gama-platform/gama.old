@@ -34,12 +34,12 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		if ( obj == null ) { return null; }
 		if ( param == null || !(param instanceof GamaPoint) ) {
 
-			if ( obj instanceof IGamaContainer ) { return ((IGamaContainer) obj).matrixValue(scope,
+			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
 				null); }
 			if ( obj instanceof String ) { return from((String) obj, null); }
 		}
 
-		if ( obj instanceof IGamaContainer ) { return ((IGamaContainer) obj).matrixValue(scope,
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
 			(GamaPoint) param); }
 		if ( obj instanceof String ) { return from((String) obj, (GamaPoint) param); }
 		return with(obj);

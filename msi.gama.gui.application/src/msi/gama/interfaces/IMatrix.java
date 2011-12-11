@@ -37,7 +37,7 @@ import msi.gaml.operators.Maths;
 @vars({ @var(name = IMatrix.DIMENSION, type = IType.POINT_STR),
 	@var(name = IMatrix.ROWS, type = IType.INT_STR),
 	@var(name = IMatrix.COLUMNS, type = IType.INT_STR) })
-public interface IMatrix<T> extends IGamaContainer<GamaPoint, T> {
+public interface IMatrix<T> extends IContainer<GamaPoint, T> {
 
 	/**
 	 * Cols, rows instead of row cols because inte nded to work with xSize and ySize dimensions.

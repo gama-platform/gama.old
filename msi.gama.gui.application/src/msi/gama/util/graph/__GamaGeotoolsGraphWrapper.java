@@ -250,7 +250,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public IGamaContainer<GamaGeometry, GamaGeometry> reverse() throws GamaRuntimeException {
+	public IContainer<GamaGeometry, GamaGeometry> reverse() throws GamaRuntimeException {
 		return this;
 		// No time to write this. Besides, graphs are not supposed to be directed all the time...
 	}
@@ -302,7 +302,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		final double[] weights = new double[value.length()];
 		if ( param instanceof Number ) {
 			Arrays.fill(weights, ((Number) param).doubleValue());
@@ -339,7 +339,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final GamaGeometry index, final IGamaContainer value, final Object param)
+	public void addAll(final GamaGeometry index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		addAll(value, param);
 	}
@@ -392,7 +392,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(msi.gama.interfaces.IGamaContainer)
 	 */
 	@Override
-	public boolean removeAll(final IGamaContainer<?, GamaGeometry> value)
+	public boolean removeAll(final IContainer<?, GamaGeometry> value)
 		throws GamaRuntimeException {
 		boolean removed = true;
 		for ( GamaGeometry o : value ) {

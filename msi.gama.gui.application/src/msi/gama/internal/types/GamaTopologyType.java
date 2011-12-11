@@ -44,7 +44,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 		if ( obj instanceof ISpecies ) { return staticCast(scope, scope.getAgentScope()
 			.getPopulationFor((ISpecies) obj), param); }
 		if ( obj instanceof IGeometry ) { return from(scope, (IGeometry) obj); }
-		if ( obj instanceof IGamaContainer ) { return from(scope, (IGamaContainer) obj); }
+		if ( obj instanceof IContainer ) { return from(scope, (IContainer) obj); }
 		return staticCast(scope, Cast.asGeometry(scope, obj), param);
 	}
 
@@ -68,7 +68,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	 * @param obj
 	 * @return
 	 */
-	private static ITopology from(final IScope scope, final IGamaContainer obj)
+	private static ITopology from(final IScope scope, final IContainer obj)
 		throws GamaRuntimeException {
 		if ( obj instanceof GamaSpatialGraph ) {
 			GamaGeometry env = GamaGeometryType.staticCast(scope, obj, null).getGeometricEnvelope();

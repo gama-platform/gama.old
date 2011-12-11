@@ -41,7 +41,7 @@ public class GamaBoolType extends GamaType<Boolean> {
 		if ( obj == null ) { return false; }
 		if ( obj instanceof Boolean ) { return (Boolean) obj; }
 		if ( obj instanceof IAgent ) { return !((IAgent) obj).dead(); }
-		if ( obj instanceof IGamaContainer ) { return !((IGamaContainer) obj).isEmpty(); }
+		if ( obj instanceof IContainer ) { return !((IContainer) obj).isEmpty(); }
 		if ( obj instanceof File ) { return ((File) obj).exists(); }
 		if ( obj instanceof Integer ) { return !((Integer) obj == 0); }
 		if ( obj instanceof Double ) { return !((Double) obj == 0f); }

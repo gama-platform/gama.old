@@ -28,7 +28,7 @@ import msi.gama.util.*;
  * @todo Description
  * 
  */
-public interface IGamaContainer<KeyType, ValueType> extends IValue, Iterable<ValueType> {
+public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueType> {
 
 	// Operators available in GAML
 
@@ -63,7 +63,7 @@ public interface IGamaContainer<KeyType, ValueType> extends IValue, Iterable<Val
 	public boolean isEmpty();
 
 	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public IGamaContainer<KeyType, ValueType> reverse() throws GamaRuntimeException;
+	public IContainer<KeyType, ValueType> reverse() throws GamaRuntimeException;
 
 	/**
 	 * @return one of the values stored in this container using GAMA.getRandom()
@@ -109,9 +109,9 @@ public interface IGamaContainer<KeyType, ValueType> extends IValue, Iterable<Val
 	 */
 	public boolean checkBounds(KeyType index, boolean forAdding);
 
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException;
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException;
 
-	public void addAll(final KeyType index, final IGamaContainer value, final Object param)
+	public void addAll(final KeyType index, final IContainer value, final Object param)
 		throws GamaRuntimeException;
 
 	public void add(final ValueType value, final Object param) throws GamaRuntimeException;
@@ -121,7 +121,7 @@ public interface IGamaContainer<KeyType, ValueType> extends IValue, Iterable<Val
 
 	public boolean removeFirst(final ValueType value) throws GamaRuntimeException;
 
-	public boolean removeAll(final IGamaContainer<?, ValueType> value) throws GamaRuntimeException;
+	public boolean removeAll(final IContainer<?, ValueType> value) throws GamaRuntimeException;
 
 	public Object removeAt(final KeyType index) throws GamaRuntimeException;
 

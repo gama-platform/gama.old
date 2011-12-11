@@ -36,7 +36,7 @@ import org.jgrapht.*;
 @vars({ @var(name = "spanning_tree", type = IType.LIST_STR),
 	@var(name = "circuit", type = IType.PATH_STR), @var(name = "connected", type = IType.BOOL_STR),
 	@var(name = "edges", type = IType.LIST_STR), @var(name = "vertices", type = IType.LIST_STR) })
-public interface IGraph<K, V> extends IGamaContainer<K, V>, WeightedGraph, DirectedGraph,
+public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
 	UndirectedGraph {
 
 	public abstract double getVertexWeight(final Object v);

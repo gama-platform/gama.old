@@ -28,24 +28,24 @@ import msi.gama.precompiler.GamlAnnotations.type;
  * A generic type for containers. Tentative.
  * 
  */
-@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IGamaContainer.class })
-public class GamaContainerType extends GamaType<IGamaContainer> {
+@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class })
+public class GamaContainerType extends GamaType<IContainer> {
 
-	public static IGamaContainer staticCast(final IScope scope, final Object obj, final Object param)
+	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		return obj instanceof IGamaContainer ? (IGamaContainer) obj : GamaListType.staticCast(
+		return obj instanceof IContainer ? (IContainer) obj : GamaListType.staticCast(
 			scope, obj, param);
 		// reverts by default to a list (most generic type)
 	}
 
 	@Override
-	public IGamaContainer cast(final IScope scope, final Object obj, final Object param)
+	public IContainer cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
 	@Override
-	public IGamaContainer getDefault() {
+	public IContainer getDefault() {
 		return null;
 	}
 

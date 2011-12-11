@@ -70,7 +70,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IGamaContainer container = createContainer(scope);
+		IContainer container = createContainer(scope);
 		Object position = createKey(scope, container);
 		Object object = createItem(scope, container);
 		apply(scope, object, position, asAll, container);
@@ -86,13 +86,13 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 	 * @throws GamaRuntimeException
 	 * @return the container to which this command will be applied
 	 */
-	private IGamaContainer createContainer(final IScope scope) throws GamaRuntimeException {
+	private IContainer createContainer(final IScope scope) throws GamaRuntimeException {
 		final Object cont = list.value(scope);
-		if ( !(cont instanceof IGamaContainer) ) { throw new GamaContainerTypeWarning(list); }
-		return (IGamaContainer) cont;
+		if ( !(cont instanceof IContainer) ) { throw new GamaContainerTypeWarning(list); }
+		return (IContainer) cont;
 	}
 
-	private Object createKey(final IScope scope, final IGamaContainer container)
+	private Object createKey(final IScope scope, final IContainer container)
 		throws GamaRuntimeException {
 		final Object position = index == null ? null : index.value(scope);
 		if ( index != null && !container.checkIndex(position) ) { throw new GamaIndexTypeWarning(
@@ -100,7 +100,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 		return position;
 	}
 
-	private Object createItem(final IScope scope, final IGamaContainer container)
+	private Object createItem(final IScope scope, final IContainer container)
 		throws GamaRuntimeException {
 		if ( all == null ) {
 			if ( item == null ) { return null; }
@@ -122,16 +122,16 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 				getName());
 		}
 		asAll = true;
-		if ( !(whole instanceof IGamaContainer) ) {
+		if ( !(whole instanceof IContainer) ) {
 			whole = GamaList.with(whole);
 		}
-		for ( Object o : (IGamaContainer) whole ) {
+		for ( Object o : (IContainer) whole ) {
 			if ( !container.checkValue(o) ) { throw new GamaValueTypeWarning(o, all.type(), list); }
 		}
 		return whole;
 	}
 
 	protected abstract void apply(IScope stack, Object object, Object position, Boolean whole,
-		IGamaContainer container) throws GamaRuntimeException;
+		IContainer container) throws GamaRuntimeException;
 
 }

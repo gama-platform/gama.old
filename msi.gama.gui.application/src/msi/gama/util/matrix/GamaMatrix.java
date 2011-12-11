@@ -353,7 +353,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public final IGamaContainer<GamaPoint, T> reverse() throws GamaRuntimeException {
+	public final IContainer<GamaPoint, T> reverse() throws GamaRuntimeException {
 		return _reverse();
 	}
 
@@ -373,7 +373,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
 	 */
 	@Override
-	public final boolean removeAll(final IGamaContainer value) throws GamaRuntimeException {
+	public final boolean removeAll(final IContainer value) throws GamaRuntimeException {
 		return _removeAll(value);
 	}
 
@@ -384,7 +384,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 
 	}
@@ -396,7 +396,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final GamaPoint index, final IGamaContainer value, final Object param)
+	public void addAll(final GamaPoint index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 
@@ -541,11 +541,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract boolean _removeFirst(T value) throws GamaRuntimeException;
 
-	protected abstract boolean _removeAll(IGamaContainer<?, T> value) throws GamaRuntimeException;
+	protected abstract boolean _removeAll(IContainer<?, T> value) throws GamaRuntimeException;
 
 	protected abstract void _putAll(T value, Object param) throws GamaRuntimeException;
 
-	protected abstract IGamaContainer<GamaPoint, T> _reverse() throws GamaRuntimeException;
+	protected abstract IContainer<GamaPoint, T> _reverse() throws GamaRuntimeException;
 
 	protected abstract boolean _isEmpty();
 

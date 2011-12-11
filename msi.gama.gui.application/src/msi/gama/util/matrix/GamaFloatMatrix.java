@@ -282,7 +282,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public boolean _removeAll(final IGamaContainer<?, Double> list) {
+	public boolean _removeAll(final IContainer<?, Double> list) {
 		// TODO Exception if o == null
 		for ( Double o : list ) {
 			removeAll(o.doubleValue());

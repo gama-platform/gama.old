@@ -71,14 +71,14 @@ public class ContainerVariable extends Variable {
 		throws GamaRuntimeException {
 		final Object val = value(owner);
 		if ( val == null ) { return; }
-		if ( !(val instanceof IGamaContainer) ) { return; }
+		if ( !(val instanceof IContainer) ) { return; }
 		Object o = scope.evaluate(initial, owner);
-		((IGamaContainer) val).putAll(o, null);
+		((IContainer) val).putAll(o, null);
 	}
 
 	private void setSize(final IScope scope, final IAgent owner, final Object value)
 		throws GamaRuntimeException {
-		IGamaContainer result = null;
+		IContainer result = null;
 		size = value instanceof GamaPoint ? (GamaPoint) value : new GamaPoint(Cast.asInt(value), 1);
 		switch (this.type().id()) {
 			case IType.MATRIX: {

@@ -31,7 +31,7 @@ public abstract class AbstractTopology implements ITopology {
 	protected IScope scope;
 	protected IGeometry environment;
 	protected ISpatialIndex spatialIndex;
-	protected IGamaContainer<?, IGeometry> places;
+	protected IContainer<?, IGeometry> places;
 	protected double environmentWidth, environmentHeight;
 	protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
 	protected double[] steps;
@@ -208,7 +208,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public IGamaContainer<?, IGeometry> getPlaces() {
+	public IContainer<?, IGeometry> getPlaces() {
 		return places;
 	}
 

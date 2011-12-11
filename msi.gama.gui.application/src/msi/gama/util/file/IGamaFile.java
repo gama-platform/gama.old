@@ -40,7 +40,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 	@var(name = IGamaFile.READABLE, type = IType.BOOL_STR),
 	@var(name = IGamaFile.WRITABLE, type = IType.BOOL_STR),
 	@var(name = IGamaFile.CONTENTS, type = IType.CONTAINER_STR) })
-public interface IGamaFile<K, V> extends IGamaContainer<K, V> {
+public interface IGamaFile<K, V> extends IContainer<K, V> {
 
 	public static final String NAME = "name";
 	public static final String EXTENSION = "extension";
@@ -53,7 +53,7 @@ public interface IGamaFile<K, V> extends IGamaContainer<K, V> {
 
 	public abstract void setWritable(final boolean w);
 
-	public abstract void setContents(final IGamaContainer<K, V> cont) throws GamaRuntimeException;
+	public abstract void setContents(final IContainer<K, V> cont) throws GamaRuntimeException;
 
 	@Override
 	public abstract IGamaFile copy();
@@ -71,7 +71,7 @@ public interface IGamaFile<K, V> extends IGamaContainer<K, V> {
 	public abstract String getPath();
 
 	@getter(var = CONTENTS)
-	public abstract IGamaContainer getContents() throws GamaRuntimeException;
+	public abstract IContainer getContents() throws GamaRuntimeException;
 
 	@getter(var = ISFOLDER, initializer = true)
 	public abstract Boolean isFolder();

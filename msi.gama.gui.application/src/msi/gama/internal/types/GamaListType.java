@@ -37,7 +37,7 @@ public class GamaListType extends GamaType<GamaList> {
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaList(); }
 		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).listValue(scope); }
-		if ( obj instanceof IGamaContainer ) { return ((IGamaContainer) obj).listValue(scope); }
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope); }
 		if ( obj instanceof Collection ) { return new GamaList((Collection) obj); }
 		if ( obj instanceof String ) { return GamaStringType.tokenize((String) obj); }
 		return GamaList.with(obj);

@@ -44,7 +44,7 @@ public class GamaSpatialGraph extends GamaGraph<IGeometry, IGeometry> {
 
 	protected VertexRelationship vertexRelation;
 
-	public GamaSpatialGraph(final IScope scope, final IGamaContainer vertices,
+	public GamaSpatialGraph(final IScope scope, final IContainer vertices,
 		final boolean byEdge, final boolean directed, final VertexRelationship rel) {
 		super(scope, vertices, byEdge, directed);
 		vertexRelation = rel;
@@ -78,7 +78,7 @@ public class GamaSpatialGraph extends GamaGraph<IGeometry, IGeometry> {
 	}
 
 	@Override
-	protected void buildByVertices(final IGamaContainer<?, IGeometry> list) {
+	protected void buildByVertices(final IContainer<?, IGeometry> list) {
 		super.buildByVertices(list);
 		for ( IGeometry o1 : list ) { // Try to create automatic edges
 			for ( IGeometry o2 : list ) {

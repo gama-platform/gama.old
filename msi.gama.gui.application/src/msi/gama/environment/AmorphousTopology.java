@@ -174,7 +174,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getPlaces()
 	 */
 	@Override
-	public IGamaContainer<?, IGeometry> getPlaces() {
+	public IContainer<?, IGeometry> getPlaces() {
 		return GamaList.with(expandableEnvironment);
 	}
 

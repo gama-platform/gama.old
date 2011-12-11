@@ -245,7 +245,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IGeometry> {
 	}
 
 	@Override
-	public boolean _removeAll(final IGamaContainer<?, IGeometry> o) {
+	public boolean _removeAll(final IContainer<?, IGeometry> o) {
 		// TODO not allowed for the moment (fixed grid)
 		return false;
 

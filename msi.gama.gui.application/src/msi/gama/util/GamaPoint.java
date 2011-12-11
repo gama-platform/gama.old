@@ -36,7 +36,7 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
  */
 @vars({ @var(name = GamaPoint.X, type = IType.FLOAT_STR),
 	@var(name = GamaPoint.Y, type = IType.FLOAT_STR) })
-public class GamaPoint extends Coordinate implements IGeometry, IGamaContainer<Integer, Double> {
+public class GamaPoint extends Coordinate implements IGeometry, IContainer<Integer, Double> {
 
 	public static final String X = "x";
 
@@ -161,7 +161,7 @@ public class GamaPoint extends Coordinate implements IGeometry, IGamaContainer<I
 	public void add(final Integer index, final Double value, final Object param) {}
 
 	@Override
-	public boolean removeAll(final IGamaContainer<?, Double> value) {
+	public boolean removeAll(final IContainer<?, Double> value) {
 		return false;
 	}
 
@@ -252,7 +252,7 @@ public class GamaPoint extends Coordinate implements IGeometry, IGamaContainer<I
 	}
 
 	@Override
-	public IGamaContainer<Integer, Double> reverse() {
+	public IContainer<Integer, Double> reverse() {
 		return new GamaPoint(y, x);
 	}
 
@@ -319,7 +319,7 @@ public class GamaPoint extends Coordinate implements IGeometry, IGamaContainer<I
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {}
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {}
 
 	/*
 	 * (non-Javadoc)
@@ -328,7 +328,7 @@ public class GamaPoint extends Coordinate implements IGeometry, IGamaContainer<I
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Integer index, final IGamaContainer value, final Object param)
+	public void addAll(final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {}
 
 	/*

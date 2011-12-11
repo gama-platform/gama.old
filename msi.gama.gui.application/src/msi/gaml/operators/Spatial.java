@@ -714,7 +714,7 @@ public abstract class Spatial {
 
 		@operator("distance_between")
 		public static Double opDistanceBetween(final IScope scope, final ITopology t,
-			final IGamaContainer<?, IGeometry> geometries) {
+			final IContainer<?, IGeometry> geometries) {
 			int size = geometries.length();
 			if ( size == 0 || size == 1 ) { return 0d; }
 			IGeometry previous = null;
@@ -732,7 +732,7 @@ public abstract class Spatial {
 
 		@operator(value = "direction_between")
 		public static Integer opDirectionBetween(final IScope scope, final ITopology t,
-			final IGamaContainer<?, IGeometry> geometries) throws GamaRuntimeException {
+			final IContainer<?, IGeometry> geometries) throws GamaRuntimeException {
 			int size = geometries.length();
 			if ( size == 0 || size == 1 ) { return 0; }
 			IGeometry g1 = geometries.first();
@@ -742,7 +742,7 @@ public abstract class Spatial {
 
 		@operator(value = "path_between", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static GamaPath pathBetween(final IScope scope, final ITopology graph,
-			final IGamaContainer<?, IGeometry> nodes) throws GamaRuntimeException {
+			final IContainer<?, IGeometry> nodes) throws GamaRuntimeException {
 			// TODO Assumes that all elements in nodes are vertices of the graph... Should be
 			// checked
 
@@ -1101,7 +1101,7 @@ public abstract class Spatial {
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static List<IAgent> opInside(final IScope scope,
-			final IGamaContainer<?, IGeometry> targets, final IAgent source)
+			final IContainer<?, IGeometry> targets, final IAgent source)
 			throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(source, In.list(scope, targets), true);
@@ -1109,7 +1109,7 @@ public abstract class Spatial {
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static List<IAgent> opInside(final IScope scope,
-			final IGamaContainer<?, IGeometry> targets, final Object toBeCastedIntoGeometry)
+			final IContainer<?, IGeometry> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Casting.asGeometry(scope, toBeCastedIntoGeometry),
@@ -1133,7 +1133,7 @@ public abstract class Spatial {
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static List<IAgent> opOverlapping(final IScope scope,
-			final IGamaContainer<?, IGeometry> targets, final IAgent source)
+			final IContainer<?, IGeometry> targets, final IAgent source)
 			throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(source, In.list(scope, targets), false);
@@ -1141,7 +1141,7 @@ public abstract class Spatial {
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static List<IAgent> opOverlapping(final IScope scope,
-			final IGamaContainer<?, IGeometry> targets, final Object toBeCastedIntoGeometry)
+			final IContainer<?, IGeometry> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Casting.asGeometry(scope, toBeCastedIntoGeometry),
@@ -1165,7 +1165,7 @@ public abstract class Spatial {
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static Object opClosestTo(final IScope scope,
-			final IGamaContainer<?, IGeometry> targets, final Object source)
+			final IContainer<?, IGeometry> targets, final Object source)
 			throws GamaRuntimeException {
 			if ( source instanceof IGeometry ) { return scope.getAgentScope().getTopology()
 				.getAgentClosestTo((IGeometry) source, In.list(scope, targets)); }

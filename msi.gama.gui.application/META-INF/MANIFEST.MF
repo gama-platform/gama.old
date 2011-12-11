@@ -177,7 +177,6 @@ Export-Package: .,
    org.eclipse.swt.widgets",
  msi.gama.gui.application.nature,
  msi.gama.gui.application.perspectives,
- msi.gama.gui.application.splashHandlers,
  msi.gama.gui.application.views;
   uses:="msi.gama.gui.parameters,
    msi.gama.interfaces,

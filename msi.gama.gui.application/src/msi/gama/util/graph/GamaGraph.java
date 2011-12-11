@@ -43,7 +43,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	private int optimizerType = 3;
 	private FloydWarshallShortestPaths optimizer;
 
-	public GamaGraph(final IScope scope, final IGamaContainer vertices, final boolean byEdge,
+	public GamaGraph(final IScope scope, final IContainer vertices, final boolean byEdge,
 		final boolean directed) {
 		this.scope = scope;
 		this.directed = directed;
@@ -77,13 +77,13 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return "(" + renderedVertices + ", " + renderedEdges + ")";
 	}
 
-	protected void buildByVertices(final IGamaContainer<?, V> vertices) {
+	protected void buildByVertices(final IContainer<?, V> vertices) {
 		for ( V p : vertices ) {
 			addVertex(p);
 		}
 	}
 
-	protected void buildByEdge(final IGamaContainer vertices) {
+	protected void buildByEdge(final IContainer vertices) {
 		for ( Object p : vertices ) {
 			addEdge(p);
 		}
@@ -567,7 +567,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public boolean removeAll(final IGamaContainer list) throws GamaRuntimeException {
+	public boolean removeAll(final IContainer list) throws GamaRuntimeException {
 		boolean result = true;
 		for ( Object value : list ) {
 			result = removeFirst(value) & result;
@@ -710,7 +710,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		if ( value instanceof GamaGraph ) {
 			for ( Object o : ((IGraph) value).getEdges() ) {
 				addEdge(o);
@@ -729,7 +729,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Object index, final IGamaContainer value, final Object param)
+	public void addAll(final Object index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		addAll(value, null);
 

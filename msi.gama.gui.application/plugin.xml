@@ -100,11 +100,6 @@
             id="msi.gama.gui.application.perspectives.SimulationPerspective"
             name="Simulation">
       </perspective>
-      <perspective
-            class="msi.gama.gui.application.perspectives.BatchPerspective"
-            id="msi.gama.gui.application.perspectives.BatchPerspective"
-            name="Batch">
-      </perspective>
    </extension>
    <extension
          id="product"
@@ -1479,11 +1474,6 @@
             defaultHandler="msi.gama.gui.application.commands.ConvertXmlToGamlHandler"
             id="msi.gama.gui.application.commands.ConvertXmlToGaml"
             name="Convert to Gaml">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.application.commands.ConvertGamlToXmlHandler"
-            id="msi.gama.gui.application.commands.ConvertGamlToXml"
-            name="Convert to Xml">
       </command>
       <command
             id="msi.gama.gui.application.commands.AddMonitor"

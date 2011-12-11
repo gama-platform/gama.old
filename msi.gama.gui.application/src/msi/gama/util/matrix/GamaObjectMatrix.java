@@ -247,7 +247,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	public boolean _removeAll(final IGamaContainer<?, Object> list) throws GamaRuntimeException {
+	public boolean _removeAll(final IContainer<?, Object> list) throws GamaRuntimeException {
 		boolean removed = false;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( list.contains(matrix[i]) ) {

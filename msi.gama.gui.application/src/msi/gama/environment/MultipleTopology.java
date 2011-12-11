@@ -36,7 +36,7 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @param scope
 	 * @param environment
 	 */
-	public MultipleTopology(final IScope scope, final IGamaContainer<?, IGeometry> places)
+	public MultipleTopology(final IScope scope, final IContainer<?, IGeometry> places)
 		throws GamaRuntimeException {
 		// For the moment, use the geometric envelope in order to simplify the "environment".
 		super(scope, GamaGeometryType.geometriesToGeometry(places).getGeometricEnvelope());

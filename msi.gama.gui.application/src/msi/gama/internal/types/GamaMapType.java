@@ -34,7 +34,7 @@ public class GamaMapType extends GamaType<Map> {
 		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).mapValue(scope); }
 
 		if ( obj instanceof AbstractAgent ) { return ((AbstractAgent) obj).toMap(); }
-		if ( obj instanceof IGamaContainer ) { return ((IGamaContainer) obj).mapValue(scope); }
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope); }
 		final GamaMap result = new GamaMap();
 		result.put(obj, obj);
 		return result;

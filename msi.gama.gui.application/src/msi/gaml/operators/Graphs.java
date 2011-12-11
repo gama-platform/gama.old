@@ -206,14 +206,14 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_intersection_graph")
-	public static IGraph spatialFromVertices(final IScope scope, final IGamaContainer vertices,
+	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
 		final Double tolerance) {
 		return new GamaSpatialGraph(scope, vertices, false, false, new IntersectionRelation(
 			tolerance));
 	}
 
 	@operator(value = "as_distance_graph")
-	public static IGraph spatialDistanceGraph(final IScope scope, final IGamaContainer vertices,
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance) {
 		return new GamaSpatialGraph(scope, vertices, false, false, new DistanceRelation(distance));
 	}

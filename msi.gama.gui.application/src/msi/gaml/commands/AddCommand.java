@@ -53,13 +53,13 @@ public class AddCommand extends AbstractContainerCommand {
 
 	@Override
 	protected void apply(final IScope stack, final Object object, final Object position,
-		final Boolean whole, final IGamaContainer container) throws GamaRuntimeException {
+		final Boolean whole, final IContainer container) throws GamaRuntimeException {
 		if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
 			list.toGaml(), true); }
 		Object param = weight == null ? null : weight.value(stack);
 		if ( position == null ) {
 			if ( asAll ) {
-				container.addAll((IGamaContainer) object, param);
+				container.addAll((IContainer) object, param);
 			} else {
 				container.add(object, param);
 			}
@@ -69,7 +69,7 @@ public class AddCommand extends AbstractContainerCommand {
 			if ( !asAll ) {
 				container.add(position, object, param);
 			} else {
-				container.addAll(position, (IGamaContainer) object, param);
+				container.addAll(position, (IContainer) object, param);
 			}
 		}
 	}

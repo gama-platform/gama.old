@@ -43,7 +43,7 @@ public class Stats {
 	}
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static Object getMean(final IScope scope, final IGamaContainer l)
+	public static Object getMean(final IScope scope, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l.length() == 0 ) { return Double.valueOf(0d); }
 		Object s = l.sum();
@@ -91,7 +91,7 @@ public class Stats {
 	}
 
 	@operator(value = { "frequency_of" }, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaMap frequencyOf(final IScope scope, final IGamaContainer original,
+	public static GamaMap frequencyOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();

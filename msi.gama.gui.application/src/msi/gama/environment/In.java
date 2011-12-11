@@ -23,7 +23,7 @@ import msi.gama.kernel.exceptions.GamaRuntimeException;
 
 public abstract class In implements IAgentFilter {
 
-	public static In list(final IScope scope, final IGamaContainer<?, IGeometry> targets)
+	public static In list(final IScope scope, final IContainer<?, IGeometry> targets)
 		throws GamaRuntimeException {
 		return new InList(new HashSet(targets.listValue(scope)));
 	}

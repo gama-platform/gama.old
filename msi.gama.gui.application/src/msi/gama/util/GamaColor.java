@@ -37,7 +37,7 @@ import msi.gama.util.matrix.GamaIntMatrix;
 	@var(name = GamaColor.COLOR_BLUE, type = IType.INT_STR),
 	@var(name = GamaColor.BRIGHTER, type = IType.COLOR_STR),
 	@var(name = GamaColor.DARKER, type = IType.COLOR_STR) })
-public class GamaColor extends Color implements IGamaContainer<Integer, Integer> {
+public class GamaColor extends Color implements IContainer<Integer, Integer> {
 
 	// public final static Map<Integer, GamaColor> instancesArray = new HashMap(1000);
 
@@ -185,7 +185,7 @@ public class GamaColor extends Color implements IGamaContainer<Integer, Integer>
 	}
 
 	@Override
-	public boolean removeAll(final IGamaContainer<?, Integer> value) throws GamaRuntimeException {
+	public boolean removeAll(final IContainer<?, Integer> value) throws GamaRuntimeException {
 		immutableException();
 		return false;
 
@@ -391,7 +391,7 @@ public class GamaColor extends Color implements IGamaContainer<Integer, Integer>
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		immutableException();
 
 	}
@@ -403,7 +403,7 @@ public class GamaColor extends Color implements IGamaContainer<Integer, Integer>
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Integer index, final IGamaContainer value, final Object param)
+	public void addAll(final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		immutableException();
 	}

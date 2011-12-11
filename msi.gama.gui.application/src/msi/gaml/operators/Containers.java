@@ -103,7 +103,7 @@ public class Containers {
 	}
 
 	@operator(value = "contains_all", can_be_const = true)
-	public static Boolean opContainsAll(final IGamaContainer m, final IGamaContainer l)
+	public static Boolean opContainsAll(final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty() ) { return true; }
 		for ( Object o : l ) {
@@ -113,10 +113,10 @@ public class Containers {
 	}
 
 	@operator(value = "contains_any", can_be_const = true)
-	public static Boolean opContainsAny(final IGamaContainer m, final IGamaContainer l)
+	public static Boolean opContainsAny(final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty() ) { return false; }
-		IGamaContainer c = m;
+		IContainer c = m;
 		for ( Object o : l ) {
 			if ( c.contains(o) ) { return true; }
 		}
@@ -133,7 +133,7 @@ public class Containers {
 	}
 
 	@operator(value = "in", can_be_const = true)
-	public static Boolean opIn(final Object o, final IGamaContainer source)
+	public static Boolean opIn(final Object o, final IContainer source)
 		throws GamaRuntimeException {
 		if ( source == null ) { return false; }
 		return source.contains(o);
@@ -264,7 +264,7 @@ public class Containers {
 	// ITERATORS
 
 	@operator(value = { "group_by" }, priority = IPriority.ITERATOR)
-	public static GamaMap groupBy(final IScope scope, final IGamaContainer original,
+	public static GamaMap groupBy(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
@@ -280,7 +280,7 @@ public class Containers {
 	}
 
 	@operator(value = { "last_with" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static Object last_with(final IScope scope, final IGamaContainer original,
+	public static Object last_with(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		for ( Object each : original.reverse() ) {
@@ -291,7 +291,7 @@ public class Containers {
 	}
 
 	@operator(value = { "max_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
-	public static Object maxOf(final IScope scope, final IGamaContainer original,
+	public static Object maxOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.type().getDefault(); }
 		if ( filter.type().id() == IType.INT ) {
@@ -317,7 +317,7 @@ public class Containers {
 	}
 
 	@operator(value = { "min_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
-	public static Object minOf(final IScope scope, final IGamaContainer original,
+	public static Object minOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.type().getDefault(); }
 		if ( filter.type().id() == IType.INT ) {
@@ -360,7 +360,7 @@ public class Containers {
 	}
 
 	@operator(value = "among", content_type = ITypeProvider.RIGHT_CONTENT_TYPE)
-	public static List opAmong(final IScope scope, final Integer number, final IGamaContainer c)
+	public static List opAmong(final IScope scope, final Integer number, final IContainer c)
 		throws GamaRuntimeException {
 		if ( c == null ) { return new GamaList(); }
 		final GamaList result = new GamaList();
@@ -383,7 +383,7 @@ public class Containers {
 	}
 
 	@operator(value = { "sort", "sort_by" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaList sort(final IScope scope, final IGamaContainer original,
+	public static GamaList sort(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		final GamaList lv = original.listValue(scope).copy();
@@ -427,7 +427,7 @@ public class Containers {
 	}
 
 	@operator(value = { "where", "select" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static List where(final IScope scope, final IGamaContainer original,
+	public static List where(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return GamaList.EMPTY_LIST; }
 		final GamaList result = new GamaList(original.length());
@@ -441,7 +441,7 @@ public class Containers {
 	}
 
 	@operator(value = { "with_max_of" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static Object withMaxOf(final IScope scope, final IGamaContainer original,
+	public static Object withMaxOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.type().getDefault(); }
 		double max = Double.MIN_VALUE;
@@ -458,7 +458,7 @@ public class Containers {
 	}
 
 	@operator(value = { "with_min_of" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static Object withMinOf(final IScope scope, final IGamaContainer original,
+	public static Object withMinOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		double min = Double.MAX_VALUE;
@@ -529,7 +529,7 @@ public class Containers {
 	}
 
 	@operator(value = { "count" }, priority = IPriority.ITERATOR, iterator = true)
-	public static Integer count(final IScope scope, final IGamaContainer original,
+	public static Integer count(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return 0; }
 		Integer result = 0;
@@ -543,7 +543,7 @@ public class Containers {
 	}
 
 	@operator(value = { "first_with" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static Object first_with(final IScope scope, final IGamaContainer original,
+	public static Object first_with(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		for ( Object each : original ) {
@@ -554,7 +554,7 @@ public class Containers {
 	}
 
 	@operator(value = { "as_map" }, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaMap asMap(final IScope scope, final IGamaContainer original,
+	public static GamaMap asMap(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaMap result = new GamaMap();
 		if ( original == null || original.isEmpty() ) { return result; }

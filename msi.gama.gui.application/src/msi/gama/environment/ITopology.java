@@ -108,7 +108,7 @@ public interface ITopology extends IValue {
 	 * @return an instance of IGamaContainer, which geometries can be iterated.
 	 */
 	@getter(var = PLACES)
-	public abstract IGamaContainer<?, IGeometry> getPlaces();
+	public abstract IContainer<?, IGeometry> getPlaces();
 
 	/**
 	 * Return the environment of this topology (i.e. the IGeometry that defines its boundaries).

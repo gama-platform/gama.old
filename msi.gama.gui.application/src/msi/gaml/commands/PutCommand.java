@@ -59,8 +59,8 @@ public class PutCommand extends AbstractContainerCommand {
 
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
-		final Boolean whole, final IGamaContainer container) throws GamaRuntimeException {
-		Object casted = whole ? ((IGamaContainer) object).get(0) : object;
+		final Boolean whole, final IContainer container) throws GamaRuntimeException {
+		Object casted = whole ? ((IContainer) object).get(0) : object;
 		casted =
 			listType == IType.FLOAT ? Cast.asFloat(scope, casted) : listType == IType.INT ? Cast
 				.asInt(scope, casted) : casted;

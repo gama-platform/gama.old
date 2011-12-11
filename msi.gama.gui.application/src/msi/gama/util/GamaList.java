@@ -30,7 +30,7 @@ import msi.gama.util.matrix.GamaObjectMatrix;
  * @todo Description
  */
 
-public class GamaList<E> extends ArrayList<E> implements IGamaContainer<Integer, E> {
+public class GamaList<E> extends ArrayList<E> implements IContainer<Integer, E> {
 
 	public static final GamaList EMPTY_LIST = new Immutable();
 
@@ -273,7 +273,7 @@ public class GamaList<E> extends ArrayList<E> implements IGamaContainer<Integer,
 	}
 
 	@Override
-	public boolean removeAll(final IGamaContainer<?, E> list) {
+	public boolean removeAll(final IContainer<?, E> list) {
 		boolean removed = false;
 		boolean result = true;
 		for ( Object value : list ) {
@@ -583,7 +583,7 @@ public class GamaList<E> extends ArrayList<E> implements IGamaContainer<Integer,
 	}
 
 	@Override
-	public IGamaContainer<Integer, E> reverse() {
+	public IContainer<Integer, E> reverse() {
 		GamaList list = clone();
 		Collections.reverse(list);
 		return list;
@@ -660,7 +660,7 @@ public class GamaList<E> extends ArrayList<E> implements IGamaContainer<Integer,
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer list, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer list, final Object param) throws GamaRuntimeException {
 		for ( Object o : list ) {
 			add((E) o);
 		}
@@ -673,7 +673,7 @@ public class GamaList<E> extends ArrayList<E> implements IGamaContainer<Integer,
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Integer index, final IGamaContainer list, final Object param)
+	public void addAll(final Integer index, final IContainer list, final Object param)
 		throws GamaRuntimeException {
 		int i = index;
 		for ( Object o : list ) {

@@ -49,7 +49,7 @@ public class Casting {
 	}
 
 	@operator(value = IType.CONTAINER_STR, content_type = ITypeProvider.CHILD_CONTENT_TYPE, priority = IPriority.CAST)
-	public static IGamaContainer asContainer(final IScope scope, final Object val)
+	public static IContainer asContainer(final IScope scope, final Object val)
 		throws GamaRuntimeException {
 		return GamaContainerType.staticCast(scope, val, null);
 	}

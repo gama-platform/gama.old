@@ -286,7 +286,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public boolean _removeAll(final IGamaContainer<?, Integer> list) {
+	public boolean _removeAll(final IContainer<?, Integer> list) {
 		for ( Integer o : list ) {
 			removeAll(o.intValue());
 		}

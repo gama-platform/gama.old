@@ -15,7 +15,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.kernel;
+package msi.gama.agents;
 
 import java.util.*;
 import msi.gama.environment.*;

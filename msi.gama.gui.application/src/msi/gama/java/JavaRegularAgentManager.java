@@ -18,8 +18,8 @@
 package msi.gama.java;
 
 import java.util.*;
+import msi.gama.agents.AbstractPopulation;
 import msi.gama.interfaces.*;
-import msi.gama.kernel.AbstractPopulation;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 

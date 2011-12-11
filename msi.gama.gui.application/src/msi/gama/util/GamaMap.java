@@ -33,7 +33,7 @@ import msi.gama.util.matrix.GamaObjectMatrix;
 @vars({ @var(name = GamaMap.KEYS, type = IType.LIST_STR),
 	@var(name = GamaMap.VALUES, type = IType.LIST_STR),
 	@var(name = GamaMap.PAIRS, type = IType.LIST_STR, of = IType.PAIR_STR) })
-public class GamaMap extends HashMap implements IGamaContainer {
+public class GamaMap extends HashMap implements IContainer {
 
 	public static final String KEYS = "keys";
 
@@ -165,7 +165,7 @@ public class GamaMap extends HashMap implements IGamaContainer {
 	}
 
 	@Override
-	public boolean removeAll(final IGamaContainer list) throws GamaRuntimeException {
+	public boolean removeAll(final IContainer list) throws GamaRuntimeException {
 		for ( Object value : list ) {
 			removeFirst(value);
 		}
@@ -292,7 +292,7 @@ public class GamaMap extends HashMap implements IGamaContainer {
 	}
 
 	@Override
-	public IGamaContainer reverse() {
+	public IContainer reverse() {
 		toReverseProcedure.init(size());
 		for ( Map.Entry<Object, Object> entry : entrySet() ) {
 			toReverseProcedure.execute(entry.getKey(), entry.getValue());
@@ -378,7 +378,7 @@ public class GamaMap extends HashMap implements IGamaContainer {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IGamaContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		if ( value instanceof GamaMap ) {
 			putAll((GamaMap) value);
 		} else {
@@ -395,7 +395,7 @@ public class GamaMap extends HashMap implements IGamaContainer {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Object index, final IGamaContainer value, final Object param)
+	public void addAll(final Object index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		addAll(value, null);
 	}
