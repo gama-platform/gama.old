@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -26,7 +26,7 @@ import msi.gama.interfaces.*;
 import msi.gama.kernel.GAMA;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.outputs.layers.*;
-import msi.gama.util.*;
+import msi.gama.util.ImageCache;
 import msi.gama.util.matrix.GamaSpatialMatrix;
 import org.eclipse.swt.widgets.Composite;
 import com.vividsolutions.jts.geom.Envelope;
@@ -217,7 +217,7 @@ public class SpeciesDisplay extends AgentDisplay {
 		supportImage.setRGB(0, 0, gridAgentStorage.numCols, gridAgentStorage.numRows,
 			gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
 
-		GamaGeometry hostShape = host.getGeometry();
+		IGeometry hostShape = host.getGeometry();
 		// GamaPoint hostLocation = hostShape.getLocation();
 		Envelope hostEnv = hostShape.getEnvelope();
 

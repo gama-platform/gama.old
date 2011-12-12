@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -17,8 +17,7 @@
  */
 package msi.gama.util.graph;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import msi.gama.environment.*;
 import msi.gama.interfaces.*;
 import msi.gama.internal.types.GamaGeometryType;
@@ -52,14 +51,13 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 	public static final String SEGMENTS = "segments";
 	public static final String GRAPH = "graph";
 	public static final String AGENTS = "agents";
-	
 
 	GamaList<IGeometry> segments;
 	GamaMap agents;
 	final IGeometry source, target;
 	final ITopology topology;
 	GamaMap segmentsInGraph;
-	
+
 	public GamaPath(final ITopology t, final IGeometry start, final IGeometry target,
 		final List<IGeometry> edges) {
 		source = start;
@@ -68,7 +66,7 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 		segments = new GamaList<IGeometry>();
 		segmentsInGraph = new GamaMap();
 		agents = new GamaMap();
-		
+
 		Geometry firstLine =
 			edges == null || edges.isEmpty() ? null : edges.get(0).getInnerGeometry();
 		Coordinate pt = null;
@@ -78,7 +76,7 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 				firstLine.getCoordinates()[firstLine.getNumPoints() - 1]);
 		if ( firstLine != null ) {
 			if ( edges.size() > 1 ) {
-				GamaGeometry secondLine = edges.get(1).getGeometry();
+				IGeometry secondLine = edges.get(1).getGeometry();
 				pt =
 					pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0
 						: pt1;
@@ -99,9 +97,10 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 					edge2 = edge;
 					pt = c1;
 				}
-				if (ag != null)
+				if ( ag != null ) {
 					agents.put(edge2, ag);
-				
+				}
+
 				segments.add(edge2);
 				segmentsInGraph.put(edge2, edge);
 			}
@@ -121,13 +120,14 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 			segments.add(GamaGeometry.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
 				.getLocation()));
 			IAgent ag = nodes.get(i).getAgent();
-			if (ag != null) {
+			if ( ag != null ) {
 				agents.putAll(nodes.get(i).getGeometry(), ag);
 			}
 		}
-		IAgent ag = nodes.get(nodes.size()-1).getAgent();
-		if (ag != null)
-			agents.putAll(nodes.get(nodes.size()-1).getGeometry(), ag);
+		IAgent ag = nodes.get(nodes.size() - 1).getAgent();
+		if ( ag != null ) {
+			agents.putAll(nodes.get(nodes.size() - 1).getGeometry(), ag);
+		}
 		topology = t;
 
 	}
@@ -172,7 +172,7 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 		ags.addAll(new HashSet<IAgent>(agents.values()));
 		return ags;
 	}
-	
+
 	public GamaList<GamaPoint> getVertexList() {
 		return new GamaList(Graphs.getPathVertexList(this));
 		// return getPoints();
@@ -202,7 +202,7 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 		computeGeometry();
 		return super.getLocation();
 	}
-	
+
 	/**
 	 * Private method intended to compute the geometry of the path (a polyline) from the list of
 	 * segments.
@@ -284,12 +284,12 @@ public class GamaPath extends GamaGeometry implements GraphPath {
 	public ITopology getTopology() {
 		return topology;
 	}
-	
-	public void setAgents(GamaMap agents){
+
+	public void setAgents(final GamaMap agents) {
 		this.agents = agents;
 	}
-	
-	public IAgent getAgent(Object obj){
+
+	public IAgent getAgent(final Object obj) {
 		return (IAgent) agents.get(obj);
 	}
 

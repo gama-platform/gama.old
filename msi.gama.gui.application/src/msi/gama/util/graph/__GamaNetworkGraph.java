@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,6 +18,7 @@
 package msi.gama.util.graph;
 
 import msi.gama.environment.GeometricFunctions;
+import msi.gama.interfaces.IGeometry;
 import msi.gama.util.*;
 import org.geotools.graph.build.line.BasicLineGraphGenerator;
 import org.geotools.graph.structure.*;
@@ -33,7 +34,7 @@ import com.vividsolutions.jts.geom.*;
 public abstract class __GamaNetworkGraph extends __GamaGeotoolsGraphWrapper {
 
 	@Override
-	protected void add(final GamaGeometry value, final double weight) {
+	protected void add(final IGeometry value, final double weight) {
 		Geometry g = value.getInnerGeometry();
 		// if the inner geometry is a line string, add it directly to the graph.
 		if ( g instanceof LineString ) {
@@ -55,7 +56,7 @@ public abstract class __GamaNetworkGraph extends __GamaGeotoolsGraphWrapper {
 	}
 
 	@Override
-	protected void remove(final GamaGeometry value) {
+	protected void remove(final IGeometry value) {
 		Geometry g = value.getInnerGeometry();
 		// if the inner geometry is a line string, add it directly to the graph.
 		if ( g instanceof LineString ) {
@@ -81,7 +82,7 @@ public abstract class __GamaNetworkGraph extends __GamaGeotoolsGraphWrapper {
 
 		@Override
 		public Graphable add(final Object obj) {
-			LineString ls = (LineString) ((GamaGeometry) obj).getInnerGeometry();
+			LineString ls = (LineString) ((IGeometry) obj).getInnerGeometry();
 			// must be a line string as the class is private
 			// parent class expects a line segment
 			Edge e =
@@ -94,7 +95,7 @@ public abstract class __GamaNetworkGraph extends __GamaGeotoolsGraphWrapper {
 
 		@Override
 		public Graphable remove(final Object obj) {
-			LineString ls = (LineString) ((GamaGeometry) obj).getInnerGeometry();
+			LineString ls = (LineString) ((IGeometry) obj).getInnerGeometry();
 			// must be a line string as the class is private
 			// parent ecpexts a line segment
 			return super.remove(new LineSegment(ls.getCoordinateN(0), ls.getCoordinateN(ls

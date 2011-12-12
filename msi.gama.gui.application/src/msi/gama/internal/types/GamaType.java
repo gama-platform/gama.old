@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -49,7 +49,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 
 	protected short id;
 	protected String name;
-	protected Class support;
+	protected Class[] supports;
 	Map<String, IExpression> getters = new HashMap();
 
 	public GamaType() {
@@ -57,7 +57,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		if ( annotation != null ) {
 			name = annotation.value();
 			id = annotation.id();
-			support = annotation.wraps()[0];
+			supports = annotation.wraps();
 		}
 	}
 
@@ -65,7 +65,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	public void initFieldGetters() {
 		// GUI.debug("FIELDS : Initializing fields for " + name);
 		try {
-			List<IDescription> vars = GamlCompiler.getVarDescriptions(support);
+			List<IDescription> vars = GamlCompiler.getVarDescriptions(supports[0]);
 			for ( IDescription v : vars ) {
 
 				String n = v.getName();
@@ -74,8 +74,8 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 				IType type = v.getType();
 				IType cType = v.getContentType();
 				IFieldGetter g =
-					GamlCompiler.getFieldGetter(support, v.getFacets().getString(ISymbol.GETTER),
-						type.toClass());
+					GamlCompiler.getFieldGetter(supports[0], v.getFacets()
+						.getString(ISymbol.GETTER), type.toClass());
 				getters.put(n, new TypeFieldExpression(n, type, cType, g));
 			}
 		} catch (GamlException e) {
@@ -114,7 +114,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 
 	@Override
 	public Class toClass() {
-		return support;
+		return supports[0];
 	}
 
 	@Override
@@ -138,7 +138,10 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	@Override
 	public boolean isSuperTypeOf(final IType type) {
 		Class remote = type.toClass();
-		return support.isAssignableFrom(remote);
+		for ( int i = 0; i < supports.length; i++ ) {
+			if ( supports[i].isAssignableFrom(remote) ) { return true; }
+		}
+		return false;
 	}
 
 	@Override

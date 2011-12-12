@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -40,8 +40,7 @@ public class GamaPointType extends GamaType<GamaPoint> {
 
 	public static GamaPoint staticCast(final IScope scope, final Object obj, final Object param) {
 		if ( obj instanceof GamaPoint ) { return (GamaPoint) obj; }
-		if ( obj instanceof IAgent ) { return ((IAgent) obj).getLocation(); }
-		if ( obj instanceof GamaGeometry ) { return ((GamaGeometry) obj).getLocation(); }
+		if ( obj instanceof IGeometry ) { return ((IGeometry) obj).getLocation(); }
 		if ( obj instanceof List ) {
 			List l = (List) obj;
 			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(l.get(0)), Cast.asFloat(l

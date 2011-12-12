@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -58,12 +58,12 @@ public class GraphTopology extends AbstractTopology {
 		Object s2 = null;
 		Object t2 = null;
 
-		GamaGeometry edgeS = null, edgeT = null;
+		IGeometry edgeS = null, edgeT = null;
 		double dist1 = Double.MAX_VALUE;
 		double dist2 = Double.MAX_VALUE;
 
 		for ( Object o : getPlaces().getEdges() ) {
-			GamaGeometry eg;
+			IGeometry eg;
 			try {
 				eg = Cast.asGeometry(o);
 				double d1 = eg.euclidianDistanceTo(source);
@@ -90,8 +90,8 @@ public class GraphTopology extends AbstractTopology {
 		} else {
 			Object nodeT = t1;
 			try {
-				GamaGeometry g1 = Cast.asGeometry(t1);
-				GamaGeometry g2 = Cast.asGeometry(t2);
+				IGeometry g1 = Cast.asGeometry(t1);
+				IGeometry g2 = Cast.asGeometry(t2);
 				if ( g1.euclidianDistanceTo(target) > g2.euclidianDistanceTo(target) ) {
 					nodeT = t2;
 				}
@@ -100,8 +100,8 @@ public class GraphTopology extends AbstractTopology {
 			}
 			Object nodeS = s1;
 			try {
-				GamaGeometry g1 = Cast.asGeometry(s1);
-				GamaGeometry g2 = Cast.asGeometry(s2);
+				IGeometry g1 = Cast.asGeometry(s1);
+				IGeometry g2 = Cast.asGeometry(s2);
 				if ( s1 == nodeT || s2 != nodeT &&
 					g1.euclidianDistanceTo(source) > g2.euclidianDistanceTo(source) ) {
 					nodeS = s2;

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -176,7 +176,7 @@ public class MovingSkill extends GeometricSkill {
 		} else {
 			Object bounds = scope.getArg("bounds");
 			if ( bounds != null ) {
-				GamaGeometry geom = GamaGeometryType.staticCast(scope, bounds, null);
+				IGeometry geom = GamaGeometryType.staticCast(scope, bounds, null);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
@@ -215,7 +215,7 @@ public class MovingSkill extends GeometricSkill {
 		} else {
 			Object bounds = scope.getArg("bounds");
 			if ( bounds != null ) {
-				GamaGeometry geom = GamaGeometryType.staticCast(scope, bounds, null);
+				IGeometry geom = GamaGeometryType.staticCast(scope, bounds, null);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
@@ -325,8 +325,8 @@ public class MovingSkill extends GeometricSkill {
 					Coordinate s = coords[i];
 					Coordinate t = coords[i + 1];
 					Coordinate[] seg = { s, t };
-					GamaGeometry segment =
-						new GamaGeometry(GamaGeometry.getFactory().createLineString(seg));
+					IGeometry segment =
+						new GamaGeometry(GamaGeometryType.getFactory().createLineString(seg));
 					double distS = segment.euclidianDistanceTo(currentLocation);
 					if ( distS < distanceS ) {
 						distanceS = distS;
@@ -346,8 +346,8 @@ public class MovingSkill extends GeometricSkill {
 				Coordinate s = coords[i];
 				Coordinate t = coords[i + 1];
 				Coordinate[] seg = { s, t };
-				GamaGeometry segment =
-					new GamaGeometry(GamaGeometry.getFactory().createLineString(seg));
+				IGeometry segment =
+					new GamaGeometry(GamaGeometryType.getFactory().createLineString(seg));
 				double distT = segment.euclidianDistanceTo(falseTarget);
 				if ( distT < distanceT ) {
 					distanceT = distT;
@@ -375,7 +375,7 @@ public class MovingSkill extends GeometricSkill {
 					double ratio = distance / dist;
 					currentLocation.x = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					currentLocation.y = currentLocation.y + ratio * (pt.y - currentLocation.y);
-					GamaGeometry gl = GamaGeometry.buildLine(pto, currentLocation.copy());
+					IGeometry gl = GamaGeometry.buildLine(pto, currentLocation.copy());
 					if ( line.getAgent() != null ) {
 						agents.put(gl, line.getAgent());
 					}
@@ -383,7 +383,7 @@ public class MovingSkill extends GeometricSkill {
 					distance = 0;
 					break;
 				} else if ( distance > dist ) {
-					GamaGeometry gl = GamaGeometry.buildLine(currentLocation.copy(), pt.copy());
+					IGeometry gl = GamaGeometry.buildLine(currentLocation.copy(), pt.copy());
 					if ( line.getAgent() != null ) {
 						agents.put(gl, line.getAgent());
 					}
@@ -395,7 +395,7 @@ public class MovingSkill extends GeometricSkill {
 					}
 					indexSegment++;
 				} else {
-					GamaGeometry gl = GamaGeometry.buildLine(currentLocation.copy(), pt.copy());
+					IGeometry gl = GamaGeometry.buildLine(currentLocation.copy(), pt.copy());
 					if ( line.getAgent() != null ) {
 						agents.put(gl, line.getAgent());
 					}
@@ -520,7 +520,7 @@ public class MovingSkill extends GeometricSkill {
 	 * @return the success, failure, running state of the action
 	 */
 	public GamaPoint gotoTargetInsideGeom(final IScope scope, final GamaPoint target,
-		final GamaGeometry geom, final GamaSpatialGraph graph, final GamaIntMatrix matrix,
+		final IGeometry geom, final GamaSpatialGraph graph, final GamaIntMatrix matrix,
 		final Boolean triangulation, final Double squareSize) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		double speed = getSpeed(agent);
@@ -972,7 +972,7 @@ public class MovingSkill extends GeometricSkill {
 			// path.getNodes().remove(0);
 			// Impossible de retirer un noeud de cette façon... Est-ce nécessaire ?
 			nt = nodes.get(i);
-			GamaGeometry edge = (GamaGeometry) path.getGraph().getEdge(ns, nt);
+			IGeometry edge = (GamaGeometry) path.getGraph().getEdge(ns, nt);
 			path.getEdgeList().remove(0);
 			double dist = path.getGraph().getEdgeWeight(edge);
 			if ( dist < distRemain ) {
@@ -1116,8 +1116,8 @@ public class MovingSkill extends GeometricSkill {
 			Coordinate s = coords[i];
 			Coordinate t = coords[i + 1];
 			Coordinate[] seg = { s, t };
-			GamaGeometry segment =
-				new GamaGeometry(GamaGeometry.getFactory().createLineString(seg));
+			IGeometry segment =
+				new GamaGeometry(GamaGeometryType.getFactory().createLineString(seg));
 			double distS = m.distanceBetween(segment, source);
 			if ( distS < distanceS ) {
 				distanceS = distS;
@@ -1190,9 +1190,10 @@ public class MovingSkill extends GeometricSkill {
 	 */
 	private boolean isGoodLineString(final LineString cl, final GamaPoint source,
 		final GamaPoint target, final double distance) {
-		return cl.intersects(GamaGeometry.getFactory().createPoint(source)
+		return cl.intersects(GamaGeometryType.getFactory().createPoint(source)
 			.buffer(distance / 1000.0)) &&
-			cl.intersects(GamaGeometry.getFactory().createPoint(target).buffer(distance / 1000.0));
+			cl.intersects(GamaGeometryType.getFactory().createPoint(target)
+				.buffer(distance / 1000.0));
 	}
 
 	/**
@@ -1202,15 +1203,16 @@ public class MovingSkill extends GeometricSkill {
 	 * @param distance max displacement distance
 	 * @return true if the polygon contains both the source and the target
 	 */
-	private boolean isGoodPolygon(final IScope scope, final GamaGeometry cp,
-		final GamaPoint source, final GamaPoint target) {
+	private boolean isGoodPolygon(final IScope scope, final IGeometry cp, final GamaPoint source,
+		final GamaPoint target) {
 		return cp.intersects(source) && cp.intersects(target);
 	}
 
 	private GamaPoint computeLocationForward(final IScope scope, final double dist,
 		final GamaPoint loc, final Geometry geom) {
 
-		Point locPt = GamaGeometry.getFactory().createPoint(getCurrentAgent(scope).getLocation());
+		Point locPt =
+			GamaGeometryType.getFactory().createPoint(getCurrentAgent(scope).getLocation());
 		Geometry buff = locPt.buffer(dist);
 		Geometry test = locPt.buffer(dist / 100, 4);
 		Geometry frontier = null;

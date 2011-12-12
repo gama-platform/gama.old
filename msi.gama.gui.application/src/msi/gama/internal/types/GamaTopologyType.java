@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -71,7 +71,9 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	private static ITopology from(final IScope scope, final IContainer obj)
 		throws GamaRuntimeException {
 		if ( obj instanceof GamaSpatialGraph ) {
-			GamaGeometry env = GamaGeometryType.staticCast(scope, obj, null).getGeometricEnvelope();
+			IGeometry env =
+				new GamaGeometry(GamaGeometryType.staticCast(scope, obj, null).getInnerGeometry()
+					.getEnvelope());
 			return new GraphTopology(scope, env, (GamaSpatialGraph) obj);
 		} else if ( obj instanceof GamaSpatialMatrix ) {
 			return new GridTopology(scope, (GamaSpatialMatrix) obj);

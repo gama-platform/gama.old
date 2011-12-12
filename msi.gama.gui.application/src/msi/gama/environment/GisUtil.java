@@ -18,7 +18,7 @@
 package msi.gama.environment;
 
 import java.io.*;
-import msi.gama.util.GamaGeometry;
+import msi.gama.internal.types.GamaGeometryType;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.data.shapefile.prj.PrjFileReader;
@@ -59,7 +59,7 @@ public class GisUtil {
 	}
 
 	public static Geometry fromGISToAbsolute(final Geometry geom) {
-		Geometry geom2 = GamaGeometry.getFactory().createGeometry(geom);
+		Geometry geom2 = GamaGeometryType.getFactory().createGeometry(geom);
 		for ( Coordinate coord : geom2.getCoordinates() ) {
 			coord.x = coord.x - XMinComp;
 			coord.y = absEnvHeight - (coord.y - YMinComp);
@@ -68,7 +68,7 @@ public class GisUtil {
 	}
 
 	public static Geometry fromAbsoluteToGis(final Geometry geom) {
-		Geometry geom2 = GamaGeometry.getFactory().createGeometry(geom);
+		Geometry geom2 = GamaGeometryType.getFactory().createGeometry(geom);
 		for ( Coordinate coord : geom2.getCoordinates() ) {
 			coord.x += XMinComp;
 			coord.y = absEnvHeight - coord.y + YMinComp;

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -59,7 +59,7 @@ public class GamaDeclarativeGeometry extends GamaGeometry {
 	 */
 	public void refresh() {
 		try {
-			setGeometry(buildGeometry());
+			setGeometry((GamaGeometry) buildGeometry());
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e);
 			setGeometry((Geometry) null, false);
@@ -72,7 +72,7 @@ public class GamaDeclarativeGeometry extends GamaGeometry {
 	 * @return the "real" geometry
 	 * @throws GamaRuntimeException if the expression cannot be evaluated
 	 */
-	private GamaGeometry buildGeometry() throws GamaRuntimeException {
+	private IGeometry buildGeometry() throws GamaRuntimeException {
 		if ( expression == null ) { throw new GamaRuntimeException(
 			"The expression defining a declarative geometry is null"); }
 		return Cast.asGeometry(scope, expression.value(scope));

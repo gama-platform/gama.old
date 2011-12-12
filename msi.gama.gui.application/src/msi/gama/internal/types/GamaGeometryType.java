@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -31,16 +31,18 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-@type(value = IType.GEOM_STR, id = IType.GEOMETRY, wraps = { GamaGeometry.class })
-public class GamaGeometryType extends GamaType<GamaGeometry> {
+@type(value = IType.GEOM_STR, id = IType.GEOMETRY, wraps = { GamaGeometry.class, IGeometry.class })
+public class GamaGeometryType extends GamaType<IGeometry> {
+
+	public static GeometryFactory factory = new GeometryFactory();
 
 	@Override
-	public GamaGeometry cast(final IScope scope, final Object obj, final Object param)
+	public IGeometry cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
-	public static GamaGeometry staticCast(final IScope scope, final Object obj, final Object param)
+	public static IGeometry staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj instanceof IGeometry ) { return ((IGeometry) obj).getGeometry(); }
 		if ( obj instanceof GamaPoint ) { return GamaGeometry.createPoint((GamaPoint) obj); }
@@ -76,6 +78,10 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 		return null; // Retourner un point; ?
 	}
 
+	public static GeometryFactory getFactory() {
+		return factory;
+	}
+
 	public static GamaGeometry geometriesToGeometry(final IContainer<?, ? extends IGeometry> ags)
 		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty() ) { return null; }
@@ -104,11 +110,11 @@ public class GamaGeometryType extends GamaType<GamaGeometry> {
 		return null;
 	}
 
-	public static GamaGeometry pairToGeometry(final IScope scope, final GamaPair p)
+	public static IGeometry pairToGeometry(final IScope scope, final GamaPair p)
 		throws GamaRuntimeException {
-		GamaGeometry first = staticCast(scope, p.first(), null);
+		IGeometry first = staticCast(scope, p.first(), null);
 		if ( first == null ) { return null; }
-		GamaGeometry second = staticCast(scope, p.last(), null);
+		IGeometry second = staticCast(scope, p.last(), null);
 		if ( second == null ) { return null; }
 		return new GamaDynamicLink(first, second);
 	}

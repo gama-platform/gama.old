@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -34,7 +34,7 @@ import org.geotools.graph.structure.*;
  * @todo Description
  * 
  */
-public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry, GamaGeometry> {
+public abstract class __GamaGeotoolsGraphWrapper implements IGraph<IGeometry, IGeometry> {
 
 	private static final double DEFAULT_EDGE_WEIGHT = 0;
 	// protected Graph graph;
@@ -108,7 +108,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<GamaGeometry> iterator() {
+	public Iterator<IGeometry> iterator() {
 		return edgeBased ? generator.getGraph().getEdges().iterator() : generator.getGraph()
 			.getNodes().iterator();
 	}
@@ -119,9 +119,9 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#get(java.lang.Object)
 	 */
 	@Override
-	public GamaGeometry get(final GamaGeometry index) throws GamaRuntimeException {
+	public IGeometry get(final IGeometry index) throws GamaRuntimeException {
 		Graphable g = generator.get(index);
-		if ( g != null ) { return (GamaGeometry) g.getObject(); }
+		if ( g != null ) { return (IGeometry) g.getObject(); }
 		return null;
 		// Actually, since the index is the geometry itself... it will return the geometry or null
 		// if it is not in the graph. Not sure this function has any interest here.
@@ -143,7 +143,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public GamaGeometry first() throws GamaRuntimeException {
+	public IGeometry first() throws GamaRuntimeException {
 		return iterator().hasNext() ? iterator().next() : null;
 		// Does not mean anything in this context.
 	}
@@ -154,7 +154,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#last()
 	 */
 	@Override
-	public GamaGeometry last() throws GamaRuntimeException {
+	public IGeometry last() throws GamaRuntimeException {
 		return null;
 		// Does not mean anything in this context. Or the last "added" ?
 	}
@@ -176,7 +176,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#max()
 	 */
 	@Override
-	public GamaGeometry max() throws GamaRuntimeException {
+	public IGeometry max() throws GamaRuntimeException {
 		double max = -Double.MAX_VALUE;
 		Graphable maxObj = null;
 		for ( Map.Entry<Graphable, Double> entry : weights.entrySet() ) {
@@ -185,7 +185,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 				maxObj = entry.getKey();
 			}
 		}
-		return (GamaGeometry) maxObj;
+		return (IGeometry) maxObj;
 	}
 
 	/*
@@ -194,7 +194,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#min()
 	 */
 	@Override
-	public GamaGeometry min() throws GamaRuntimeException {
+	public IGeometry min() throws GamaRuntimeException {
 		double min = Double.MAX_VALUE;
 		Graphable minObj = null;
 		for ( Map.Entry<Graphable, Double> entry : weights.entrySet() ) {
@@ -203,7 +203,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 				minObj = entry.getKey();
 			}
 		}
-		return (GamaGeometry) minObj;
+		return (IGeometry) minObj;
 	}
 
 	/*
@@ -250,7 +250,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public IContainer<GamaGeometry, GamaGeometry> reverse() throws GamaRuntimeException {
+	public IContainer<IGeometry, IGeometry> reverse() throws GamaRuntimeException {
 		return this;
 		// No time to write this. Besides, graphs are not supposed to be directed all the time...
 	}
@@ -282,7 +282,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 */
 	@Override
 	public boolean checkValue(final Object value) {
-		return value instanceof GamaGeometry;
+		return value instanceof IGeometry;
 	}
 
 	/*
@@ -291,7 +291,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	@Override
-	public boolean checkBounds(final GamaGeometry index, final boolean forAdding) {
+	public boolean checkBounds(final IGeometry index, final boolean forAdding) {
 		return true;
 	}
 
@@ -313,7 +313,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 		}
 		int i = 0;
 		for ( Object obj : value ) {
-			add((GamaGeometry) obj, weights[i]);
+			add((IGeometry) obj, weights[i]);
 			i++;
 			// Is that all ? Seems strange. Must probably derive my own generator to build
 			// LineSegments for networks ? And polygons for the others ?
@@ -339,7 +339,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final GamaGeometry index, final IContainer value, final Object param)
+	public void addAll(final IGeometry index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		addAll(value, param);
 	}
@@ -350,7 +350,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void add(final GamaGeometry value, final Object param) throws GamaRuntimeException {
+	public void add(final IGeometry value, final Object param) throws GamaRuntimeException {
 		add(null, value, param);
 	}
 
@@ -361,7 +361,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * java.lang.Object)
 	 */
 	@Override
-	public void add(final GamaGeometry index, final GamaGeometry value, final Object param)
+	public void add(final IGeometry index, final IGeometry value, final Object param)
 		throws GamaRuntimeException {
 		double weight =
 			param instanceof Number ? ((Number) param).doubleValue() : DEFAULT_EDGE_WEIGHT;
@@ -372,9 +372,9 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @param value
 	 * @return
 	 */
-	protected abstract void add(GamaGeometry value, double weight);
+	protected abstract void add(IGeometry value, double weight);
 
-	protected abstract void remove(GamaGeometry value);
+	protected abstract void remove(IGeometry value);
 
 	/*
 	 * (non-Javadoc)
@@ -382,7 +382,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
 	 */
 	@Override
-	public boolean removeFirst(final GamaGeometry value) throws GamaRuntimeException {
+	public boolean removeFirst(final IGeometry value) throws GamaRuntimeException {
 		return removeAt(value) != null;
 	}
 
@@ -392,10 +392,9 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(msi.gama.interfaces.IGamaContainer)
 	 */
 	@Override
-	public boolean removeAll(final IContainer<?, GamaGeometry> value)
-		throws GamaRuntimeException {
+	public boolean removeAll(final IContainer<?, IGeometry> value) throws GamaRuntimeException {
 		boolean removed = true;
-		for ( GamaGeometry o : value ) {
+		for ( IGeometry o : value ) {
 			removed = removed && removeFirst(o);
 		}
 		return removed;
@@ -407,7 +406,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#removeAt(java.lang.Object)
 	 */
 	@Override
-	public Object removeAt(final GamaGeometry index) throws GamaRuntimeException {
+	public Object removeAt(final IGeometry index) throws GamaRuntimeException {
 		Graphable g = generator.remove(index);
 		if ( g != null ) {
 			weights.remove(g);
@@ -422,7 +421,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void putAll(final GamaGeometry value, final Object param) throws GamaRuntimeException {
+	public void putAll(final IGeometry value, final Object param) throws GamaRuntimeException {
 		add(value, param);
 	}
 
@@ -433,7 +432,7 @@ public abstract class __GamaGeotoolsGraphWrapper implements IGraph<GamaGeometry,
 	 * java.lang.Object)
 	 */
 	@Override
-	public void put(final GamaGeometry index, final GamaGeometry value, final Object param)
+	public void put(final IGeometry index, final IGeometry value, final Object param)
 		throws GamaRuntimeException {
 		add(index, value, param); // ??
 	}

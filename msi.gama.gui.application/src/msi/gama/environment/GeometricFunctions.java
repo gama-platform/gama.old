@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,7 +18,8 @@
 package msi.gama.environment;
 
 import java.util.*;
-import msi.gama.interfaces.IScope;
+import msi.gama.interfaces.*;
+import msi.gama.internal.types.GamaGeometryType;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
@@ -84,7 +85,7 @@ public class GeometricFunctions {
 			Coordinate coord1 = new Coordinate(x, yMin);
 			Coordinate coord2 = new Coordinate(x, yMax);
 			Coordinate[] coords = { coord1, coord2 };
-			Geometry line = GamaGeometry.getFactory().createLineString(coords);
+			Geometry line = GamaGeometryType.getFactory().createLineString(coords);
 			line = line.intersection(poly);
 
 			return pointInGeom(line, rand);
@@ -99,7 +100,7 @@ public class GeometricFunctions {
 	 * @param pt a point
 	 * @param geom a GamaGeometry
 	 */
-	public static GamaPoint getFarthestPoint(final GamaPoint pt, final GamaGeometry geom) {
+	public static GamaPoint getFarthestPoint(final GamaPoint pt, final IGeometry geom) {
 		Coordinate[] cg = geom.getInnerGeometry().getCoordinates();
 		if ( cg.length == 0 ) { return pt; }
 		Coordinate pt_max = cg[0];
@@ -115,7 +116,7 @@ public class GeometricFunctions {
 	}
 
 	private static Coordinate[] minimiseLength(final Coordinate[] coords) {
-		GeometryFactory geomFact = GamaGeometry.getFactory();
+		GeometryFactory geomFact = GamaGeometryType.getFactory();
 		double dist1 = geomFact.createLineString(coords).getLength();
 		Coordinate[] coordstest1 = new Coordinate[3];
 		coordstest1[0] = coords[0];
@@ -141,9 +142,9 @@ public class GeometricFunctions {
 		Coordinate[] c1 = { coords[0], coords[1] };
 		Coordinate[] c2 = { coords[1], coords[2] };
 		Coordinate[] c3 = { coords[2], coords[3] };
-		LineString l1 = GamaGeometry.getFactory().createLineString(c1);
-		LineString l2 = GamaGeometry.getFactory().createLineString(c2);
-		LineString l3 = GamaGeometry.getFactory().createLineString(c3);
+		LineString l1 = GamaGeometryType.getFactory().createLineString(c1);
+		LineString l2 = GamaGeometryType.getFactory().createLineString(c2);
+		LineString l3 = GamaGeometryType.getFactory().createLineString(c3);
 		Coordinate[] pts = new Coordinate[degree];
 		if ( degree == 3 ) {
 			pts[0] = l1.getCentroid().getCoordinate();
@@ -183,7 +184,7 @@ public class GeometricFunctions {
 		GamaList polys = triangulation(geom);
 		GamaGraph graph = buildPolygonGraph(scope, polys);
 		Collection<GamaGeometry> nodes = graph.vertexSet();
-		GeometryFactory geomFact = GamaGeometry.getFactory();
+		GeometryFactory geomFact = GamaGeometryType.getFactory();
 		for ( GamaGeometry node : nodes ) {
 			Coordinate[] coordsArr =
 				extractPoints((Polygon) node.getInnerGeometry(), geom, graph.degreeOf(node));
@@ -201,7 +202,7 @@ public class GeometricFunctions {
 		int x = 0;
 		int i = 0;
 
-		GeometryFactory geomFact = GamaGeometry.getFactory();
+		GeometryFactory geomFact = GamaGeometryType.getFactory();
 		int facteur = 10;
 		double sizeP = size * facteur;
 		int jmax = 1 + (int) (yMax / (facteur * size));
@@ -267,7 +268,7 @@ public class GeometricFunctions {
 			double yMax = env.getMaxY();
 			double x = env.getMinX();
 			double y = env.getMinY();
-			GeometryFactory geomFact = GamaGeometry.getFactory();
+			GeometryFactory geomFact = GamaGeometryType.getFactory();
 			while (x < xMax) {
 				y = env.getMinY();
 				while (y < yMax) {
@@ -340,7 +341,7 @@ public class GeometricFunctions {
 			dtb.setConstraints(polygon);
 			dtb.setTolerance(0.01);
 			GeometryCollection tri =
-				(GeometryCollection) dtb.getTriangles(GamaGeometry.getFactory());
+				(GeometryCollection) dtb.getTriangles(GamaGeometryType.getFactory());
 			// GeometryCollection tri = (GeometryCollection)
 			// dtb.getDiagram(BasicTransfomartions.geomFactory);
 
@@ -423,13 +424,13 @@ public class GeometricFunctions {
 		Object t1 = null;
 		// Object s2 = null;
 		// Object t2 = null;
-		GamaGeometry edgeS = null, edgeT = null;
+		IGeometry edgeS = null, edgeT = null;
 		double dist1 = Double.MAX_VALUE;
 		double dist2 = Double.MAX_VALUE;
 		// System.out.println("source : " + source);
 
 		for ( Object o : edges ) {
-			GamaGeometry eg = Cast.asGeometry(o);
+			IGeometry eg = Cast.asGeometry(o);
 			double d1 = m.distanceBetween(eg, source);
 			// System.out.println(d1 + " -> " + eg);
 
@@ -484,8 +485,8 @@ public class GeometricFunctions {
 	// }
 
 	public static Geometry removeHoles(final Geometry geom) {
-		if ( geom instanceof Polygon ) { return GamaGeometry.getFactory().createPolygon(
-			GamaGeometry.getFactory().createLinearRing(
+		if ( geom instanceof Polygon ) { return GamaGeometryType.getFactory().createPolygon(
+			GamaGeometryType.getFactory().createLinearRing(
 				((Polygon) geom).getExteriorRing().getCoordinates()), null); }
 		if ( geom instanceof MultiPolygon ) {
 			MultiPolygon mp = (MultiPolygon) geom;
@@ -493,7 +494,7 @@ public class GeometricFunctions {
 			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 				polys[i] = (Polygon) removeHoles(mp.getGeometryN(i));
 			}
-			return GamaGeometry.getFactory().createMultiPolygon(polys);
+			return GamaGeometryType.getFactory().createMultiPolygon(polys);
 		}
 		return geom;
 	}
@@ -515,14 +516,14 @@ public class GeometricFunctions {
 			for ( int i = 0; i < nb; i++ ) {
 				geoms[i] = (Point) buildPoint(listPoints.get(i));
 			}
-			return GamaGeometry.getFactory().createMultiPoint(geoms);
+			return GamaGeometryType.getFactory().createMultiPoint(geoms);
 		} else if ( geometryType == MULTILINE ) {
 			int nb = listPoints.size();
 			LineString[] geoms = new LineString[nb];
 			for ( int i = 0; i < nb; i++ ) {
 				geoms[i] = (LineString) buildLine(listPoints.get(i));
 			}
-			return GamaGeometry.getFactory().createMultiLineString(geoms);
+			return GamaGeometryType.getFactory().createMultiLineString(geoms);
 		} else if ( geometryType == MULTIPOLYGON ) {
 			int nb = listPoints.size();
 			Polygon[] geoms = new Polygon[nb];
@@ -532,13 +533,13 @@ public class GeometricFunctions {
 			// System.out.println("buildGeometryJTS : Multipolygon : " +
 			// GamaGeometryType.getFactory().createMultiPolygon(geoms).getArea());
 
-			return GamaGeometry.getFactory().createMultiPolygon(geoms);
+			return GamaGeometryType.getFactory().createMultiPolygon(geoms);
 		}
 		return null;
 	}
 
 	private static Geometry buildPoint(final List<List<GamaPoint>> listPoints) {
-		return GamaGeometry.getFactory().createPoint(listPoints.get(0).get(0).toCoordinate());
+		return GamaGeometryType.getFactory().createPoint(listPoints.get(0).get(0).toCoordinate());
 	}
 
 	private static Geometry buildLine(final List<List<GamaPoint>> listPoints) {
@@ -548,7 +549,7 @@ public class GeometricFunctions {
 		for ( int i = 0; i < nb; i++ ) {
 			coordinates[i] = coords.get(i).toCoordinate();
 		}
-		return GamaGeometry.getFactory().createLineString(coordinates);
+		return GamaGeometryType.getFactory().createLineString(coordinates);
 	}
 
 	private static Geometry buildPolygon(final List<List<GamaPoint>> listPoints) {
@@ -569,12 +570,12 @@ public class GeometricFunctions {
 				for ( int j = 0; j < nbp; j++ ) {
 					coordinatesH[j] = coordsH.get(j).toCoordinate();
 				}
-				holes[i] = GamaGeometry.getFactory().createLinearRing(coordinatesH);
+				holes[i] = GamaGeometryType.getFactory().createLinearRing(coordinatesH);
 			}
 		}
 		Polygon poly =
-			GamaGeometry.getFactory().createPolygon(
-				GamaGeometry.getFactory().createLinearRing(coordinates), holes);
+			GamaGeometryType.getFactory().createPolygon(
+				GamaGeometryType.getFactory().createLinearRing(coordinates), holes);
 		return poly;
 	}
 
@@ -664,7 +665,7 @@ public class GeometricFunctions {
 					GeometricFunctions.rotation((Polygon) ((MultiPolygon) geom).getGeometryN(i),
 						angle);
 			}
-			return GamaGeometry.getFactory().createMultiPolygon(polys);
+			return GamaGeometryType.getFactory().createMultiPolygon(polys);
 		} else if ( geom.getClass().equals(LineString.class) ) {
 			return GeometricFunctions.rotation((LineString) geom, angle);
 		} else if ( geom.getClass().equals(MultiLineString.class) ) {
@@ -675,7 +676,7 @@ public class GeometricFunctions {
 					GeometricFunctions.rotation(
 						(LineString) ((MultiLineString) geom).getGeometryN(i), angle);
 			}
-			return GamaGeometry.getFactory().createMultiLineString(lines);
+			return GamaGeometryType.getFactory().createMultiLineString(lines);
 		}
 		return geom;
 
@@ -693,7 +694,7 @@ public class GeometricFunctions {
 			coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
 		}
 
-		return rotation(GamaGeometry.getFactory().createLineString(coord_), c, angle);
+		return rotation(GamaGeometryType.getFactory().createLineString(coord_), c, angle);
 	}
 
 	// angle: angle de la direction de l'affinite, a partir de l'axe des x
@@ -709,7 +710,7 @@ public class GeometricFunctions {
 			coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
 		}
 
-		LinearRing lr = GamaGeometry.getFactory().createLinearRing(coord_);
+		LinearRing lr = GamaGeometryType.getFactory().createLinearRing(coord_);
 
 		// les trous
 		LinearRing[] trous = new LinearRing[rot.getNumInteriorRing()];
@@ -720,9 +721,9 @@ public class GeometricFunctions {
 				hole_coord_[i] =
 					new Coordinate(c.x + coef * (hole_coord[i].x - c.x), hole_coord[i].y);
 			}
-			trous[j] = GamaGeometry.getFactory().createLinearRing(hole_coord_);
+			trous[j] = GamaGeometryType.getFactory().createLinearRing(hole_coord_);
 		}
-		return rotation(new Polygon(lr, trous, GamaGeometry.getFactory()), c, angle);
+		return rotation(new Polygon(lr, trous, GamaGeometryType.getFactory()), c, angle);
 	}
 
 	static LineString affinite(final LineString geom, final double angle, final double scale) {
@@ -744,7 +745,7 @@ public class GeometricFunctions {
 					GeometricFunctions.affinite((Polygon) ((MultiPolygon) geom).getGeometryN(i),
 						angle, scale);
 			}
-			return GamaGeometry.getFactory().createMultiPolygon(polys);
+			return GamaGeometryType.getFactory().createMultiPolygon(polys);
 		} else if ( geom.getClass().equals(LineString.class) ) {
 			return GeometricFunctions.affinite((LineString) geom, angle, scale);
 		} else if ( geom.getClass().equals(MultiLineString.class) ) {
@@ -755,7 +756,7 @@ public class GeometricFunctions {
 					GeometricFunctions.affinite(
 						(LineString) ((MultiLineString) geom).getGeometryN(i), angle, scale);
 			}
-			return GamaGeometry.getFactory().createMultiLineString(lines);
+			return GamaGeometryType.getFactory().createMultiLineString(lines);
 		} else {
 			return geom;
 		}
@@ -771,7 +772,7 @@ public class GeometricFunctions {
 			coord_[i] =
 				new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
 		}
-		LinearRing lr = GamaGeometry.getFactory().createLinearRing(coord_);
+		LinearRing lr = GamaGeometryType.getFactory().createLinearRing(coord_);
 
 		// les trous
 		LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
@@ -783,9 +784,9 @@ public class GeometricFunctions {
 					new Coordinate(x0 + scale * (hole_coord[i].x - x0), y0 + scale *
 						(hole_coord[i].y - y0));
 			}
-			trous[j] = GamaGeometry.getFactory().createLinearRing(hole_coord_);
+			trous[j] = GamaGeometryType.getFactory().createLinearRing(hole_coord_);
 		}
-		return GamaGeometry.getFactory().createPolygon(lr, trous);
+		return GamaGeometryType.getFactory().createPolygon(lr, trous);
 	}
 
 	static LineString homothetie(final LineString geom, final double x0, final double y0,
@@ -796,7 +797,7 @@ public class GeometricFunctions {
 			coord_[i] =
 				new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
 		}
-		return GamaGeometry.getFactory().createLineString(coord_);
+		return GamaGeometryType.getFactory().createLineString(coord_);
 	}
 
 	private static LineString homothetie(final LineString geom, final double scale) {
@@ -818,7 +819,7 @@ public class GeometricFunctions {
 					GeometricFunctions.homothetie((Polygon) ((MultiPolygon) geom).getGeometryN(i),
 						scale);
 			}
-			return GamaGeometry.getFactory().createMultiPolygon(polys);
+			return GamaGeometryType.getFactory().createMultiPolygon(polys);
 		} else if ( geom.getClass().equals(LineString.class) ) {
 			return GeometricFunctions.homothetie((LineString) geom, scale);
 		} else if ( geom.getClass().equals(MultiLineString.class) ) {
@@ -829,7 +830,7 @@ public class GeometricFunctions {
 					GeometricFunctions.homothetie(
 						(LineString) ((MultiLineString) geom).getGeometryN(i), scale);
 			}
-			return GamaGeometry.getFactory().createMultiLineString(lines);
+			return GamaGeometryType.getFactory().createMultiLineString(lines);
 		}
 		return geom;
 
@@ -847,15 +848,17 @@ public class GeometricFunctions {
 			trous[j] = translation((LinearRing) geom.getInteriorRingN(j), dx, dy);
 		}
 
-		return GamaGeometry.getFactory().createPolygon(lr, trous);
+		return GamaGeometryType.getFactory().createPolygon(lr, trous);
 	}
 
 	private static LinearRing translation(final LinearRing lr, final double dx, final double dy) {
-		return GamaGeometry.getFactory().createLinearRing(translation(lr.getCoordinates(), dx, dy));
+		return GamaGeometryType.getFactory().createLinearRing(
+			translation(lr.getCoordinates(), dx, dy));
 	}
 
 	static LineString translation(final LineString ls, final double dx, final double dy) {
-		return GamaGeometry.getFactory().createLineString(translation(ls.getCoordinates(), dx, dy));
+		return GamaGeometryType.getFactory().createLineString(
+			translation(ls.getCoordinates(), dx, dy));
 	}
 
 	private static Coordinate[] translation(final Coordinate[] coord, final double dx,
@@ -870,7 +873,7 @@ public class GeometricFunctions {
 
 	public static Geometry translation(final Geometry geom, final double dx, final double dy) {
 		if ( geom instanceof Point ) {
-			return GamaGeometry.getFactory().createPoint(
+			return GamaGeometryType.getFactory().createPoint(
 				new Coordinate(dx + geom.getCoordinate().x, dy + geom.getCoordinate().y));
 		} else if ( geom instanceof MultiPoint ) {
 			int num = ((MultiPoint) geom).getNumGeometries();
@@ -880,7 +883,7 @@ public class GeometricFunctions {
 					(Point) GeometricFunctions.translation(((MultiPoint) geom).getGeometryN(i), dx,
 						dy);
 			}
-			return GamaGeometry.getFactory().createMultiPoint(polys);
+			return GamaGeometryType.getFactory().createMultiPoint(polys);
 		} else if ( geom instanceof Polygon ) {
 			return GeometricFunctions.translation((Polygon) geom, dx, dy);
 		} else if ( geom instanceof MultiPolygon ) {
@@ -891,7 +894,7 @@ public class GeometricFunctions {
 					GeometricFunctions.translation((Polygon) ((MultiPolygon) geom).getGeometryN(i),
 						dx, dy);
 			}
-			return GamaGeometry.getFactory().createMultiPolygon(polys);
+			return GamaGeometryType.getFactory().createMultiPolygon(polys);
 		} else if ( geom.getClass().equals(LineString.class) ) {
 			return GeometricFunctions.translation((LineString) geom, dx, dy);
 		} else if ( geom.getClass().equals(MultiLineString.class) ) {
@@ -902,7 +905,7 @@ public class GeometricFunctions {
 					GeometricFunctions.translation(
 						(LineString) ((MultiLineString) geom).getGeometryN(i), dx, dy);
 			}
-			return GamaGeometry.getFactory().createMultiLineString(lines);
+			return GamaGeometryType.getFactory().createMultiLineString(lines);
 		}
 		return geom;
 	}
@@ -918,7 +921,7 @@ public class GeometricFunctions {
 				new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
 					cos * (y - c.y));
 		}
-		return GamaGeometry.getFactory().createLineString(coord_);
+		return GamaGeometryType.getFactory().createLineString(coord_);
 	}
 
 	// angle en radian, rotation dans le sens direct de centre c
@@ -934,7 +937,7 @@ public class GeometricFunctions {
 				new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
 					cos * (y - c.y));
 		}
-		LinearRing lr = GamaGeometry.getFactory().createLinearRing(coord_);
+		LinearRing lr = GamaGeometryType.getFactory().createLinearRing(coord_);
 
 		// rotation des trous
 		LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
@@ -947,9 +950,9 @@ public class GeometricFunctions {
 					new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
 						cos * (y - c.y));
 			}
-			trous[j] = GamaGeometry.getFactory().createLinearRing(coord2_);
+			trous[j] = GamaGeometryType.getFactory().createLinearRing(coord2_);
 		}
-		return GamaGeometry.getFactory().createPolygon(lr, trous);
+		return GamaGeometryType.getFactory().createPolygon(lr, trous);
 	}
 
 	// angle en radian, rotation dans le sens direct
@@ -965,7 +968,7 @@ public class GeometricFunctions {
 	// slit a line at a given point (cutpoint)
 	public static GamaList<Geometry> splitLine(final LineString geom, final GamaPoint cutPoint) {
 		Coordinate[] coords = geom.getCoordinates();
-		Point pt = GamaGeometry.getFactory().createPoint(cutPoint.toCoordinate());
+		Point pt = GamaGeometryType.getFactory().createPoint(cutPoint.toCoordinate());
 		int nb = coords.length;
 		int indexTarget = -1;
 		double distanceT = Double.MAX_VALUE;
@@ -973,7 +976,7 @@ public class GeometricFunctions {
 			Coordinate s = coords[i];
 			Coordinate t = coords[i + 1];
 			Coordinate[] seg = { s, t };
-			Geometry segment = GamaGeometry.getFactory().createLineString(seg);
+			Geometry segment = GamaGeometryType.getFactory().createLineString(seg);
 			double distT = segment.distance(pt);
 			if ( distT < distanceT ) {
 				distanceT = distT;
@@ -996,8 +999,8 @@ public class GeometricFunctions {
 			k++;
 		}
 		GamaList<Geometry> geoms = new GamaList<Geometry>();
-		geoms.add(GamaGeometry.getFactory().createLineString(coords1));
-		geoms.add(GamaGeometry.getFactory().createLineString(coords2));
+		geoms.add(GamaGeometryType.getFactory().createLineString(coords1));
+		geoms.add(GamaGeometryType.getFactory().createLineString(coords2));
 		return geoms;
 	}
 

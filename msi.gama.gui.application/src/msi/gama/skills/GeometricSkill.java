@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2011
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2011
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2011
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2011
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2011
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -20,7 +20,7 @@ package msi.gama.skills;
 import java.util.*;
 import msi.gama.environment.*;
 import msi.gama.interfaces.*;
-import msi.gama.internal.types.Types;
+import msi.gama.internal.types.*;
 import msi.gama.kernel.exceptions.GamaRuntimeException;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -88,8 +88,8 @@ public class GeometricSkill extends Skill {
 			coordinates[1] = prec;
 			coordinates[2] = next;
 			coordinates[3] = coord_loc;
-			LinearRing closeRing = GamaGeometry.getFactory().createLinearRing(coordinates);
-			Geometry percept = GamaGeometry.getFactory().createPolygon(closeRing, null);
+			LinearRing closeRing = GamaGeometryType.getFactory().createLinearRing(coordinates);
+			Geometry percept = GamaGeometryType.getFactory().createPolygon(closeRing, null);
 
 			Geometry areaPerc = null;
 			Geometry frontier = null;
@@ -157,7 +157,7 @@ public class GeometricSkill extends Skill {
 	 */
 	@action("neighbourhood_exclusive")
 	@args({ "distance", "species", "buffer_others", "buffer_in" })
-	public GamaGeometry primNeighbourhoodExclu(final IScope scope) throws GamaRuntimeException {
+	public IGeometry primNeighbourhoodExclu(final IScope scope) throws GamaRuntimeException {
 		Double distance = scope.hasArg("distance") ? Cast.asFloat(scope.getArg("distance")) : null;
 		if ( distance == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -404,8 +404,8 @@ public class GeometricSkill extends Skill {
 						IAgent ag = (IAgent) obj;
 						geomsBuff.put(ag, ag.getInnerGeometry().buffer(0.5));
 					}
-					Collection<GamaGeometry> edges = graph.edgeSet();
-					for ( GamaGeometry n : edges ) {
+					Collection<IGeometry> edges = graph.edgeSet();
+					for ( IGeometry n : edges ) {
 						for ( IAgent ag : geomsBuff.keySet() ) {
 							if ( geomsBuff.get(ag).covers(n.getInnerGeometry()) ) {
 								Double var = Cast.asFloat(scope.getAgentVarValue(ag, strWgtExp));
@@ -469,8 +469,8 @@ public class GeometricSkill extends Skill {
 					if ( !agsGeom.isEmpty() && graph != null ) {
 						// System.out.println("wgts2 : " + wgts2);
 
-						Collection<GamaGeometry> nodes = graph.vertexSet();
-						for ( GamaGeometry n : nodes ) {
+						Collection<IGeometry> nodes = graph.vertexSet();
+						for ( IGeometry n : nodes ) {
 							Polygon geom = (Polygon) n.getInnerGeometry();
 							Double w = agsGeom.get(geom);
 							// System.out.println("sp : " + sp);
@@ -535,8 +535,8 @@ public class GeometricSkill extends Skill {
 
 					if ( !agsGeom.isEmpty() && graph != null ) {
 
-						Collection<GamaGeometry> nodes = graph.vertexSet();
-						for ( GamaGeometry n : nodes ) {
+						Collection<IGeometry> nodes = graph.vertexSet();
+						for ( IGeometry n : nodes ) {
 							// Polygon gg = (Polygon) n.getGeom();
 							Double w = agsGeom.get(geom);
 

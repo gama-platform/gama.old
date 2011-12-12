@@ -20,7 +20,7 @@ package msi.gama.util;
 import java.util.List;
 import msi.gama.environment.GeometricFunctions;
 import msi.gama.interfaces.*;
-import msi.gama.internal.types.Types;
+import msi.gama.internal.types.*;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -52,8 +52,6 @@ public class GamaGeometry implements IGeometry {
 	private Operations optimizedOperations;
 	private IAgent agent;
 
-	public static GeometryFactory factory = new GeometryFactory();
-
 	public GamaGeometry(final Geometry geom) {
 		setInnerGeometry(geom);
 	}
@@ -63,7 +61,7 @@ public class GamaGeometry implements IGeometry {
 	}
 
 	public GamaGeometry(final GamaPoint point) {
-		this(GamaGeometry.getFactory().createPoint(point.toCoordinate()));
+		this(GamaGeometryType.getFactory().createPoint(point.toCoordinate()));
 	}
 
 	public GamaGeometry() {
@@ -232,7 +230,7 @@ public class GamaGeometry implements IGeometry {
 			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
-			result = GamaGeometry.getFactory().createMultiLineString(lines);
+			result = GamaGeometryType.getFactory().createMultiLineString(lines);
 
 		}
 		return new GamaGeometry(result);
@@ -323,14 +321,10 @@ public class GamaGeometry implements IGeometry {
 		if ( o instanceof Geometry ) { return getInnerGeometry().covers((Geometry) o); }
 		if ( o instanceof GamaGeometry ) { return getInnerGeometry().covers(
 			((GamaGeometry) o).getInnerGeometry()); }
-		if ( o instanceof GamaPoint ) { return contains(GamaGeometry.getFactory().createPoint(
+		if ( o instanceof GamaPoint ) { return contains(GamaGeometryType.getFactory().createPoint(
 			((GamaPoint) o).toCoordinate())); }
 		return false;
 
-	}
-
-	public static GeometryFactory getFactory() {
-		return factory;
 	}
 
 	/**
@@ -349,8 +343,8 @@ public class GamaGeometry implements IGeometry {
 		}
 
 		LinearRing geom =
-			GamaGeometry.factory.createLinearRing(coordinates.toArray(new Coordinate[0]));
-		Polygon p = GamaGeometry.factory.createPolygon(geom, null);
+			GamaGeometryType.factory.createLinearRing(coordinates.toArray(new Coordinate[0]));
+		Polygon p = GamaGeometryType.factory.createPolygon(geom, null);
 		if ( p.isValid() ) { return new GamaGeometry(p.buffer(0.0)); }
 		return buildPolyline(points);
 
@@ -360,7 +354,7 @@ public class GamaGeometry implements IGeometry {
 		Coordinate coordinates[] =
 			{ location1 == null ? new GamaPoint(0, 0) : location1,
 				location2 == null ? new GamaPoint(0, 0) : location2 };
-		return new GamaGeometry(GamaGeometry.factory.createLineString(coordinates));
+		return new GamaGeometry(GamaGeometryType.factory.createLineString(coordinates));
 	}
 
 	public static GamaGeometry buildPolyline(final List<GamaPoint> points) {
@@ -369,12 +363,12 @@ public class GamaGeometry implements IGeometry {
 		for ( GamaPoint p : points ) {
 			coordinates.add(p.toCoordinate());
 		}
-		return new GamaGeometry(GamaGeometry.factory.createLineString(coordinates
+		return new GamaGeometry(GamaGeometryType.factory.createLineString(coordinates
 			.toArray(new Coordinate[0])));
 	}
 
 	public static GamaGeometry createPoint(final GamaPoint location) {
-		return new GamaGeometry(GamaGeometry.factory.createPoint(location == null ? new GamaPoint(
+		return new GamaGeometry(GamaGeometryType.factory.createPoint(location == null ? new GamaPoint(
 			0, 0) : location));
 	}
 
@@ -387,8 +381,8 @@ public class GamaGeometry implements IGeometry {
 		coordinates[1] = new Coordinate(x - side_size / sqrt2, y + side_size / sqrt2);
 		coordinates[2] = new Coordinate(x + side_size / sqrt2, y + side_size / sqrt2);
 		coordinates[3] = coordinates[0];
-		LinearRing geom = GamaGeometry.factory.createLinearRing(coordinates);
-		return new GamaGeometry(GamaGeometry.factory.createPolygon(geom, null));
+		LinearRing geom = GamaGeometryType.factory.createLinearRing(coordinates);
+		return new GamaGeometry(GamaGeometryType.factory.createPolygon(geom, null));
 	}
 
 	public static GamaGeometry buildSquare(final double side_size, final GamaPoint location) {
@@ -406,13 +400,13 @@ public class GamaGeometry implements IGeometry {
 		coordinates[2] = new Coordinate(x + width / 2.0, y - height / 2.0);
 		coordinates[3] = new Coordinate(x - width / 2.0, y - height / 2.0);
 		coordinates[4] = coordinates[0];
-		LinearRing geom = GamaGeometry.factory.createLinearRing(coordinates);
-		return new GamaGeometry(GamaGeometry.factory.createPolygon(geom, null));
+		LinearRing geom = GamaGeometryType.factory.createLinearRing(coordinates);
+		return new GamaGeometry(GamaGeometryType.factory.createPolygon(geom, null));
 	}
 
 	public static GamaGeometry buildCircle(final double radius, final GamaPoint location) {
 		Geometry geom =
-			GamaGeometry.factory.createPoint(location == null ? new GamaPoint(0, 0) : location);
+			GamaGeometryType.factory.createPoint(location == null ? new GamaPoint(0, 0) : location);
 		return new GamaGeometry(geom.buffer(radius));
 	}
 
