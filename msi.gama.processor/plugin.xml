@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="msi.gama.precompiler.GamaProcessor"
+         name="msi.gama.precompiler.GamaProcessor"
+         point="org.eclipse.jdt.apt.core.annotationProcessorFactory">
+      <java6processors
+            enableDefault="true">
+         <java6processor
+               class="msi.gama.precompiler.GamaProcessor">
+         </java6processor>
+      </java6processors>
+   </extension>
+
+</plugin>
