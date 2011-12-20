@@ -1,0 +1,288 @@
+/*
+ * GAMA - V1.4  http://gama-platform.googlecode.com
+ * 
+ * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
+ * 
+ * Developers :
+ * 
+ * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
+ * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
+ * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
+ * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
+ * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
+ * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
+ * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
+ */
+package msi.gama.common.interfaces;
+
+/**
+ * The class IKeyword.
+ * 
+ * @author drogoul
+ * @since 13 déc. 2011
+ * 
+ */
+public interface IKeyword {
+
+	public static final String _DOT = ".";
+	public static final String ACTION = "action";
+	public static final String ADD = "add";
+	public static final String AGENT = "agent";
+	public static final String AGENTS = "agents";
+	public static final String AGGREGATION = "aggregation";
+	public static final String ALL = "all";
+	public static final String AMONG = "among";
+	public static final String ANNEALING = "annealing";
+	public static final String AREA = "area";
+	public static final String ARG = "arg";
+	public static final String AS = "as";
+	public static final String ASK = "ask";
+	public static final String ASPECT = "aspect";
+	public static final String AT = "at";
+	public static final String AUTHOR = "author";
+	public static final String AXES = "axes";
+	public static final String BACKGROUND = "background";
+	public static final String BAR = "bar";
+	public static final String BASE = "base";
+	public final static String BATCH = "batch";
+	public static final String BEHAVIOR = "behavior";
+	public static final String BEHAVIORS = "behaviors";
+	public static final String BOUNDS = "bounds";
+	public static final String CAPTURE = "capture";
+	public static final String CATEGORY = "category";
+	public static final String CELLULAR = "cellular";
+	public static final String CHART = "chart";
+	public static final String CLOSE_EXP = ")";
+	public static final String CLOSE_LIST = "]";
+	public static final String CLOSE_POINT = "}";
+	public static final String COLOR = "color";
+	public static final String COMMA = ",";
+	public static final String CONDITION = "condition";
+	public static final String CONST = "const";
+	public static final String CONTENTS = "contents";
+	public static final String CONTRIBUTE = "contribute";
+	public static final String CONTROL = "control";
+	public static final String CREATE = "create";
+	public static final String CSV = "csv";
+	public static final String CURRENT_STATE = "currentState";
+	public static final String DATA = "data";
+	public static final String DECAY = "decay";
+	public static final String DEFAULT = "default";
+	public static final String DEFAULT_EXPERIMENT = "default";
+	public static final String DEPENDS_ON = "depends_on";
+	public static final String DESTINATION = "destination";
+	public static final String DIFFUSION = "diffusion";
+	public static final String DISABLE = "disable";
+	public static final String DISPLAY = "display";
+	public static final String DISTANCE_CACHE = "distance_cache_enabled";
+	public final static String DIVIDE = "/";
+	public static final String DO = "do";
+	public static final String DOT = "dot";
+	public static final String DRAW = "draw";
+	public static final String DYNAMIC = "dynamic";
+	public static final String EACH = "each";
+	public static final String EDGE = "edge";
+	public static final String ELSE = "else";
+	public static final String EMPTY = "empty";
+	public static final String ENABLE = "enable";
+	public static final String ENTER = "enter";
+	public static final String ENTITIES = "entities";
+	public static final String ENVIRONMENT = "environment";
+	public static final String EXHAUSTIVE = "exhaustive";
+	public static final String EXISTS = "exists";
+	public static final String EXPERIMENT = "experiment";
+	public static final String EXPLODED = "exploded";
+	public static final String EXTENSION = "extension";
+	public static final String FALSE = "false";
+	public static final String FILE = "file";
+	public static final String FILL_WITH = "fill_with";
+	public static final String FOCUS = "focus";
+	public static final String FONT = "font";
+	public static final String FOOTER = "footer";
+	public static final String FREQUENCY = "frequency";
+	public static final String FROM = "from";
+	/* public static final String EMF = "emf"; */
+	public static final String FSM = "fsm";
+	public static final String GAML = "gaml";
+	public static final String GENETIC = "genetic";
+	public static final String GETTER = "getter";
+	public static final String GIS = "gis";
+	public static final String GLOBAL = "global";
+	public static final String GRADIENT = "gradient";
+	public static final String GRAPH = "graph";
+	public static final String GRID = "grid";
+	public static final String GRID_X = "grid_x";
+	public static final String GRID_Y = "grid_y";
+	public static final String GROUP = "group";
+	public final static String GUI_ = "gui";
+	public static final String HEADER = "header";
+	public static final String HEADING = "heading";
+	public static final String HEIGHT = "height";
+	public static final String HER = "her";
+	public static final String HILL_CLIMBING = "hill_climbing";
+	public static final String HIS = "his";
+	public static final String HISTOGRAM = "histogram";
+	public static final String HOST = "host";
+	public static final String IF = "if";
+	public static final String IMAGE = "image";
+	public static final String IN = "in";
+	public static final String INCLUDE = "include";
+	public static final String INDEX = "index";
+	public static final String INIT = "init";
+	public static final String INITER = "initer";
+	public static final String INSPECT = "inspect";
+	public static final String IS = "is";
+	public static final String ISFOLDER = "is_folder";
+	public static final String ITEM = "item";
+	public static final String ITS = "its";
+	public static final String JAVA = "java";
+	public static final String KEEP = "keep";
+	public static final String KEEP_SEED = "keep_seed";
+	public static final String KEY = "key";
+	public static final String KEYWORD = "keyword";
+	public static final String KILL = "kill";
+	public static final String LEAVE_GROUP = "leave_group";
+	public static final String LET = "let";
+	public static final String LINE = "line";
+	public static final String LINES = "lines";
+	public static final String LOCATION = "location";
+	public static final String LOOP = "loop";
+	public static final String MAPPING = "mapping";
+	public static final String MAX = "max";
+	public static final String MAXIMIZE = "maximize";
+	public static final String MEMBERS = "members";
+	public static final String MERSENNE = "mersenne";
+	public static final String METHOD = "method";
+
+	public static final String MICRO = "micro";
+	public static final String MICRO_LAYER = "micro_layer";
+	public static final String MIN = "min";
+	public static final String MINIMIZE = "minimize";
+	public final static String MINUS = "-";
+	public static final String MODEL = "model";
+	public static final String MONITOR = "monitor";
+	public final static String MULTIPLY = "*";
+	public static final String MY = "my";
+	public static final String MYSELF = "myself";
+	public static final String NAME = "name";
+	public static final String NEIGHBOURS = "neighbours";
+	public static final String NULL = "nil";
+	public static final String NUMBER = "number";
+	public static final String OF = "of";
+	public static final String ON = "on";
+	public static final String OPEN_EXP = "(";
+	public static final String OPEN_LIST = "[";
+	public static final String OPEN_POINT = "{";
+	public static final String OUTPUT = "output";
+	public static final String OVER = "over";
+	public static final String PARAM = "param";
+	public static final String PARAMETER = "parameter";
+	public static final String PARENT = "parent";
+	public static final String PATH = "path";
+	public static final String PEERS = "peers";
+	public static final String PIE = "pie";
+	public static final String PLACES = "places";
+	public final static String PLUS = "+";
+	public static final String POSITION = "position";
+	public static final String PRIMITIVE = "primitive";
+	public static final String PRIORITY = "priority";
+	public static final String PROPAGATION = "propagation";
+	public static final String PROPORTION = "proportion";
+	public static final String PUT = "put";
+	public static final String QUADTREE = "quadtree";
+	public static final String RANDOM_SPECIES_NAME = "random_builder";
+	public static final String RANGE = "range";
+	public static final String REACTIVE_TABU = "reactive_tabu";
+	public static final String READABLE = "readable";
+	public static final String REFLEX = "reflex";
+	public static final String REFRESH_EVERY = "refresh_every";
+	public static final String REGISTER = "register";
+	public static final String RELEASE = "release";
+	public final static String REMOTE = "remote";
+	public static final String REMOVE = "remove";
+	public static final String REPEAT = "repeat";
+	public static final String RETURN = "return";
+	public static final String RETURNS = "returns";
+	public static final String REWRITE = "rewrite";
+	public static final String RING = "ring";
+	public static final String RNG = "rng";
+	public static final String ROTATE = "rotate";
+	public static final String SAVE = "save";
+	public static final String SCALE = "scale";
+	public static final String SCHEDULE = "schedule";
+	public static final String SCHEDULES = "schedules";
+	public static final String SEED = "seed";
+	public static final String SEGMENTS = "segments";
+	public static final String SELF = "self";
+	public static final String SERIES = "series";
+	public static final String SET = "set";
+	public static final String SETTER = "setter";
+	public static final String SHAPE = "shape";
+	public static final String SIGNAL = "signal";
+	public static final String SIMULATION = "simulation";
+	public static final String SIZE = "size";
+	public static final String SKILL_NAME = "moving";
+	public static final String SKILLS = "skills";
+	public static final String SOURCE = "source";
+	public static final String SPECIES = "species";
+	public static final String SPEED = "speed";
+	public static final String SPLINE = "spline";
+	public static final String STACK = "stack";
+	// custom attributes
+	public static final String STATE = "state";
+	public static final String STATE_TO_EXIT = "stateToExit";
+	public static final String STATES = "states";
+	public static final String STEP = "step";
+	public static final String STRATEGY = "scheduling_strategy";
+	public static final String STYLE = "style";
+	public static final String TABU = "tabu";
+	public static final String TARGET = "target";
+	public static final String TARGETS = "scheduling_targets";
+	public static final String TEXT = "text";
+	public static final String THE = "the";
+	public static final String THEIR = "their";
+	public static final String THREE_D = "3d";
+	public static final String TIME = "time";
+	public static final String TIMES = "times";
+	public static final String TITLE = "title";
+	public static final String TO = "to";
+	public static final String TOPOLOGY = "topology";
+	public static final String TORUS = "torus";
+	public static final String TRANSPARENCY = "transparency";
+	public static final String TRUE = "true";
+	public static final String TYPE = "type";
+	public static final String UNIT = "unit";
+	public static final String UNTIL = "until";
+	public static final String UPDATE = "update";
+	public static final String VALUE = "value";
+	public static final String VALUES = "values";
+	public static final String VAR = "var";
+	public static final String VARIATION = "variation";
+	public static final String VERSION = "version";
+	public static final String VERTEX = "vertex";
+	public static final String WEIGHT = "weight";
+	public static final String WHEN = "when";
+	public static final String WHILE = "while";
+	public static final String WIDTH = "width";
+	public static final String WITH = "with";
+	public static final String WORLD_AGENT_NAME = "world";
+	public static final String WORLD_SPECIES_NAME = "world_species";
+	public static final String WRITABLE = "writable";
+	public static final String X = "x";
+	public static final String XML = "xml";
+	public static final String XOR = "xor";
+	public static final String XY = "xy";
+	public static final String Y = "y";
+
+	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
+		REACTIVE_TABU, EXHAUSTIVE };
+	public static final String COLOR_RED = "red";
+	public static final String DARKER = "darker";
+	public static final String BRIGHTER = "brighter";
+	public static final String COLOR_GREEN = "green";
+	public static final String COLOR_BLUE = "blue";
+
+}
