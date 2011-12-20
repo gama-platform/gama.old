@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="fire">
+	<global>
+
+		<!-- Environment parameters -->
+		<var type="int" name="width" parameter="Width of the environment (in meters):" init="500" min="10"
+			max="1000" category="Environment" />
+		<var type="int" name="height" parameter="Height of the environment (in meters):" init="500"
+			min="10" max="1000" category="Environment" />
+		<var type="int" name="fires_number" parameter="Number of fire starting points:" init="10" min="0"
+			category="Environment" />
+
+		<!-- Tree parameters -->
+		<var type="int" name="trees_number" parameter="Number of trees:" init="5000" min="1" category="Trees" />
+		<var type="float" name="tree_max_size" parameter="Max. diameter of trees (in meters):" init="12 m"
+			min="1 m" max="30 m" category="Trees" />
+
+		<!-- new tree parameters (model 3) -->
+		<var type="float" name="tree_propagation_probability" init="0.7"
+			parameter="Probability for each burning tree to propagate fire:" category="Trees" />
+		<var type="int" name="tree_propagation_distance" init="6"
+			parameter="Max. propagation distance for fire between trees (in meters):" category="Trees" />
+		<var type="int" name="tree_burning_time" init="100"
+			parameter="Number of steps taken by a tree to burn entirely:" category="Trees" />
+		<var type="int" name="tree_propagating_time" init="35"
+			parameter="Number of steps before a tree begins to propagate the fire:" category="Trees" />
+
+		<init>
+
+			<create species="tree" number="trees_number" />
+			<!-- new initialization. Notice the use of "among" (model 3) -->
+			<ask target="fires_number among (list tree)">
+				<set name="state" value="'burning'" />
+			</ask>
+
+		</init>
+
+	</global>
+
+	<environment width="width" height="height" torus="false" />
+
+	<entities>
+		<!-- notice the addition of "control" on the species (model 3) -->
+		<species name="tree" skills="situated, visible" control="fsm">
+			<var type="rgb" name="original_color" init="rgb [0, rnd 200 + 55, 0]" const="true" />
+			<var type="rgb" name="color" init="original_color" />
+			<var type="float" name="size" init="((rnd 100 / 100) * tree_max_size) + 1" const="true" />
+			<var type="point" name="location" init="{rnd width,rnd height}" const="true" />
+
+			<!-- new redefinition of built-in attribute "range" -->
+			<var type="float" name="range" init="tree_propagation_distance + (size / 2)" const="true" />
+
+			<!-- new attribute (model 3) -->
+			<var type="int" name="own_max_burning_time" init="tree_burning_time - (tree_burning_time / size)"
+				const="true" />
+
+			<!-- new state (model 3) -->
+			<state name="intact" initial="true">
+				<enter>
+					<set name="color" value="original_color" />
+				</enter>
+			</state>
+
+			<!-- new state (model 3) -->
+			<state name="burning">
+				<enter>
+					<let name="duration" value="0" />
+				</enter>
+				<set name="duration" value="duration + 1" />
+				<set name="color" value="rgb [255,rnd 255, 0]" />
+				<if condition="(duration > tree_propagating_time) and (flip tree_propagation_probability)">
+
+					<!-- notice how to "talk" to other agents and the use of the built-in attribute "neighbours" -->
+					<ask target="(neighbours of_species tree) where (each.state = 'intact')">
+						<!-- notice how to manipulate their state directly -->
+						<set name="state" value="'burning'" />
+					</ask>
+
+				</if>
+				<transition to="destroyed" when="duration >= own_max_burning_time" />
+			</state>
+
+			<!-- new state (model 3) -->
+			<state name="destroyed">
+				<enter>
+					<create species="dead_tree" number="1">
+						<set name="location" value="myself.location" />
+					</create>
+				</enter>
+				<do action="die" />
+			</state>
+
+		</species>
+
+		<!-- new species : fake agents used to mark the environment (model 3) -->
+		<species name="dead_tree" skills="situated,visible">
+			<var type="rgb" name="color" value="rgb [rnd 100,rnd 30, rnd 30]" const="true" />
+			<var type="float" name="size" value="3" const="true" />
+		</species>
+
+	</entities>
+
+	<output>
+
+		<display name="Forest" >
+			<image name="background" file="'../images/soil.jpg'"/>
+			<species name="dead_tree" />
+			<species name="tree" transparency="0.2" />
+		</display>
+
+		<chart type="pie" name="Distribution of sizes" style="exploded" refresh_every="1">
+			<data name="under 4m" value="list tree count (each.size &lt;= 4)" />
+			<data name="between 4 - 7m" value="list tree count (each.size &gt; 4) and (each.size &lt;= 7)" />
+			<data name="above 7m" value="list tree count (each.size &gt; 7)" />
+		</chart>
+
+		<!-- notice the addition of two monitors for keeping track of burnt trees and time (model 3) -->
+		<monitor name="% burnt" value=" string int ((int dead_tree / trees_number) * 100) + '%'" />
+		<monitor name="Time" value="time" />
+
+		<inspect name="Agents" type="agent" />
+
+		<inspect name="Species" type="species" />
+
+	</output>
+</model>
