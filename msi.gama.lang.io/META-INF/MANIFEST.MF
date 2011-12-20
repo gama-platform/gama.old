@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Gaml IO
+Bundle-SymbolicName: msi.gama.lang.io;singleton:=true
+Bundle-Version: 1.4.2
+Bundle-Vendor: MSI
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: msi.gama.lang.gaml.gaml,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.ecore.resource
+Export-Package: msi.gama.lang.utils,
+ msi.gama.lang.utils.internal;x-internal:=true,
+ msi.gaml.parser.xml
+Require-Bundle: org.eclipse.xtext.ui,
+ org.jdom,
+ msi.gama.lang.gaml.ui;bundle-version="1.4.2"
