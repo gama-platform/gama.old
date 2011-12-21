@@ -1505,11 +1505,6 @@
             parentId="msi.gama.application.simulation.context">
       </context>
       <context
-            id="msi.gama.application.modeling.xml.context"
-            name="Modeling (XML)"
-            parentId="org.eclipse.core.runtime.xml">
-      </context>
-      <context
             id="msi.gama.application.modeling.gaml.context"
             name="Modeling (GAML)"
             parentId="org.eclipse.xtext.ui.XtextEditorScope">
@@ -1845,28 +1840,7 @@
             commandId="msi.gama.application.command.LayerControls"
             icon="icons/button_side_controls.png">
       </image>
-   </extension>
-      <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="msi.gama.gui.xmleditor.GAMLXMLEditor"
-            default="true"
-            extensions="xml"
-            icon="icons/xml_editor.png"
-            id="msi.gama.gui.xmleditor.editors.GAMLEditor"
-            name="GAML_XML Editor">
-      </editor>
-   </extension>    <extension
-          point="org.eclipse.wst.sse.ui.editorConfiguration">
-       <sourceViewerConfiguration
-             class="msi.gama.gui.xmleditor.editors.GAMLXMLViewerConfiguration"
-             target="msi.gama.gui.gamlEditor.gaml">
-       </sourceViewerConfiguration>
-       <contentOutlineConfiguration
-             class="msi.gama.gui.xmleditor.editors.GAMLXMLContentOutlineConfiguration"
-             target="msi.gama.gui.gamlEditor.gaml">
-       </contentOutlineConfiguration>
-    </extension>   <extension
+   </extension> <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.eclipse.core.runtime.xml"
@@ -1876,8 +1850,6 @@
             name="GAML Source"
             priority="high">
       </content-type>
-   </extension>   <extension
-         point="org.eclipse.wst.sse.ui.editorConfiguration">
    </extension>
       <extension
          point="org.eclipse.ui.importWizards">
