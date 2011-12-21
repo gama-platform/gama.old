@@ -34,11 +34,13 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.apache.log4j.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.ISourceProviderService;
 
 /**
@@ -48,6 +50,18 @@ import org.eclipse.ui.services.ISourceProviderService;
  * 
  */
 public class SwtGui implements IGui {
+
+	public static final String PLUGIN_ID = "msi.gama.application";
+
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in relative path
+	 * 
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(final String path) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 
 	static {
 		System.out.println("Configuring user interface access through SWT");
@@ -65,30 +79,22 @@ public class SwtGui implements IGui {
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder();
 	private static int dialogReturnCode;
-	public static Image speciesImage = Activator.getImageDescriptor("/icons/display_species.png")
+	public static Image speciesImage = getImageDescriptor("/icons/display_species.png")
 		.createImage();
-	public static Image agentImage = Activator.getImageDescriptor("/icons/display_agents.png")
+	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
+	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
+	public static Image experimentMenuImage = getImageDescriptor("/icons/menu_run.png")
 		.createImage();
-	public static Image editImage = Activator.getImageDescriptor("/icons/button_edit.png")
+	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png")
 		.createImage();
-	public static Image experimentMenuImage = Activator.getImageDescriptor("/icons/menu_run.png")
+	public static Image expand = getImageDescriptor("/icons/small_button_plus.png").createImage();
+	public static Image collapse = getImageDescriptor("/icons/small_button_minus.png")
 		.createImage();
-	public static Image noExperimentImage = Activator.getImageDescriptor(
-		"/icons/menu_experiment_error.png").createImage();
-	public static Image expand = Activator.getImageDescriptor("/icons/small_button_plus.png")
-		.createImage();
-	public static Image collapse = Activator.getImageDescriptor("/icons/small_button_minus.png")
-		.createImage();
-	public static Image close = Activator.getImageDescriptor("/icons/small_button_close.png")
-		.createImage();
-	public static Image pause = Activator.getImageDescriptor("/icons/small_button_pause.png")
-		.createImage();
-	public static Image play = Activator.getImageDescriptor("/icons/small_button_play.png")
-		.createImage();
-	public static Image lock = Activator.getImageDescriptor("/icons/small_button_lock.png")
-		.createImage();
-	public static Image unlock = Activator.getImageDescriptor("/icons/small_button_unlock.png")
-		.createImage();
+	public static Image close = getImageDescriptor("/icons/small_button_close.png").createImage();
+	public static Image pause = getImageDescriptor("/icons/small_button_pause.png").createImage();
+	public static Image play = getImageDescriptor("/icons/small_button_play.png").createImage();
+	public static Image lock = getImageDescriptor("/icons/small_button_lock.png").createImage();
+	public static Image unlock = getImageDescriptor("/icons/small_button_unlock.png").createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);

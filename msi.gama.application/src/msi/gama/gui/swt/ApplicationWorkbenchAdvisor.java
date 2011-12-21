@@ -90,7 +90,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		/* Save workspace before closing the application */
 		final MultiStatus status =
-			new MultiStatus(Activator.PLUGIN_ID, 0, "Saving Workspace....", null);
+			new MultiStatus(SwtGui.PLUGIN_ID, 0, "Saving Workspace....", null);
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 

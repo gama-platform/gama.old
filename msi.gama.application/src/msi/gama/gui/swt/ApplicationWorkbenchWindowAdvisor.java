@@ -23,6 +23,7 @@ import msi.gama.lang.gaml.descript.GamlDescriptIO;
 import msi.gama.lang.utils.Convert;
 import msi.gaml.compilation.*;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Point;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
+import org.osgi.service.prefs.BackingStoreException;
 
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
@@ -85,8 +87,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	@Override
 	public boolean preWindowShellClose() {
-		IPreferenceStore preferenceStore = Activator.plugin.getPreferenceStore();
-		boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT);
+		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID);
+		boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT, false);
 
 		if ( !promptOnExit ) {
 			MessageDialogWithToggle dlg =
@@ -96,10 +98,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 			if ( dlg.getReturnCode() != IDialogConstants.OK_ID ) { return false; }
 
-			Activator.plugin.getPreferenceStore().setValue(PROMPT_ON_EXIT, dlg.getToggleState());
-
-			// TODO .. use InstanceScope.getNode(<bundleId>).flush()
-			Activator.plugin.savePluginPreferences();
+			InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT,
+				dlg.getToggleState());
+			try {
+				InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID).flush();
+			} catch (BackingStoreException e) {
+				System.out.println("Preferences can not be saved");
+				e.printStackTrace();
+			}
 		}
 		return super.preWindowShellClose();
 	}
