@@ -64,7 +64,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.ext"/>
       <plugin id="msi.gama.lang.gaml"/>
       <plugin id="msi.gama.lang.gaml.ui"/>
-      <plugin id="msi.gama.lang.io"/>
       <plugin id="msi.gama.models"/>
       <plugin id="msi.gama.processor"/>
       <plugin id="org.antlr.runtime"/>
@@ -151,8 +150,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ltk.core.refactoring"/>
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
       <plugin id="org.eclipse.osgi"/>
-      <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.eclipse.osgi.util"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
@@ -191,17 +188,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.wb.jdt.fragment" fragment="true"/>
-      <plugin id="org.eclipse.wst.common.core"/>
-      <plugin id="org.eclipse.wst.common.environment"/>
-      <plugin id="org.eclipse.wst.common.frameworks"/>
-      <plugin id="org.eclipse.wst.common.project.facet.core"/>
-      <plugin id="org.eclipse.wst.common.ui"/>
-      <plugin id="org.eclipse.wst.common.uriresolver"/>
-      <plugin id="org.eclipse.wst.sse.core"/>
-      <plugin id="org.eclipse.wst.sse.ui"/>
-      <plugin id="org.eclipse.wst.validation"/>
-      <plugin id="org.eclipse.wst.xml.core"/>
-      <plugin id="org.eclipse.wst.xml.ui"/>
       <plugin id="org.eclipse.xtext"/>
       <plugin id="org.eclipse.xtext.builder"/>
       <plugin id="org.eclipse.xtext.common.types"/>
