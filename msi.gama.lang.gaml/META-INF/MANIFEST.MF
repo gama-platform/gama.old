@@ -31,5 +31,9 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.scoping,
  msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.services,
- msi.gama.lang.gaml.validation
-Import-Package: org.eclipse.core.resources
+ msi.gama.lang.gaml.validation,
+ msi.gama.lang.utils
+Import-Package: org.eclipse.core.resources,
+ org.jdom,
+ org.jdom.input,
+ org.jdom.output
