@@ -23,11 +23,14 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.descript.GamlDescriptIO;
+import msi.gama.lang.gaml.ui.GamlResourceSet;
 import msi.gama.lang.utils.Convert;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.factories.*;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -85,7 +88,7 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 				try {
 					model[0] =
 						(IModel) DescriptionFactory.getModelFactory().compile(
-							new ModelStructure(file.filePath, Convert.getDocMap(file.fileToRun)));
+							new ModelStructure(file.filePath, Convert.getDocMap(file.resource)));
 				} catch (final GamlException e1) {
 					e1.printStackTrace();
 					MenuItem experiments = new MenuItem(menu, SWT.NONE);
@@ -209,12 +212,19 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 	private static class FileIdentifier {
 
 		String filePath;
-		private IFile fileToRun;
+		IFile fileToRun;
+		Resource resource;
 
 		void setFileToRun(final IFile fileToRun) {
 			this.fileToRun = fileToRun;
 			if ( fileToRun != null && filePath == null ) {
 				filePath = GamlDescriptIO.getPath(fileToRun);
+			}
+			if ( fileToRun != null ) {
+				ResourceSet rs = GamlResourceSet.get(fileToRun.getProject());
+				String p = fileToRun.getFullPath().toString();
+				URI u = URI.createPlatformResourceURI(p, true);
+				resource = rs.getResource(u, true);
 			}
 		}
 
@@ -222,9 +232,6 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 			return fileToRun == null && (filePath == null || filePath.trim().length() == 0);
 		}
 
-		// boolean isGaml() {
-		// return fileToRun != null && filePath != null && filePath.endsWith(".gaml");
-		// }
 	}
 
 }
