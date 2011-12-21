@@ -4,3 +4,4 @@ Bundle-Name: Models
 Bundle-SymbolicName: msi.gama.models
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: MSI
+Eclipse-BundleShape: dir
