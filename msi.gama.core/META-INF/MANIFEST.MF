@@ -5,7 +5,7 @@ Bundle-SymbolicName: msi.gama.core
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
  msi.gama.processor;bundle-version="1.4.0",
- msi.gama.lang.io;bundle-version="1.4.2"
+ msi.gama.lang.gaml;bundle-version="1.4.2"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.common.interfaces;uses:="msi.gama.runtime,msi.gama.metamodel.shape,msi.gaml.types",
