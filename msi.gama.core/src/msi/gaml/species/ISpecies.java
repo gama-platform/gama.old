@@ -22,9 +22,9 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
-import msi.gaml.control.IControl;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -183,9 +183,9 @@ public interface ISpecies extends IValue, ISymbol {
 
 	public abstract IList<ICommand> getBehaviors();
 
-	public abstract IControl getControl();
+	public abstract IArchitecture getArchitecture();
 
-	public abstract String getControlName();
+	public abstract String getArchitectureName();
 
 	public abstract ISpecies getMacroSpecies();
 

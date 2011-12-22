@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -78,17 +78,25 @@ public class MovingSkill extends GeometricSkill {
 		// READ_ONLY
 	}
 
-	public double getSpeed(final IAgent agent) throws GamaRuntimeException {
-		return (Double) agent.getDirectVarValue(IKeyword.SPEED);
+	@getter(var = IKeyword.SPEED)
+	public double getSpeed(final IAgent agent) {
+		return (Double) agent.getAttribute(IKeyword.SPEED);
 	}
 
-	public void setSpeed(final IScope scope, final IAgent agent, final double s)
-		throws GamaRuntimeException {
-		scope.setAgentVarValue(agent, IKeyword.SPEED, s);
+	@setter(IKeyword.SPEED)
+	public void setSpeed(final IAgent agent, final double s) {
+		agent.setAttribute(IKeyword.SPEED, s);
+		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
-	public int getHeading(final IAgent agent) throws GamaRuntimeException {
-		return (Integer) agent.getDirectVarValue(IKeyword.HEADING);
+	@getter(var = IKeyword.HEADING)
+	public int getHeading(final IAgent agent) {
+		return agent.getHeading();
+	}
+
+	@setter(IKeyword.HEADING)
+	public void setHeading(final IAgent agent, final int heading) {
+		agent.setHeading(heading);
 	}
 
 	/**

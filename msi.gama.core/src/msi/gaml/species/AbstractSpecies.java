@@ -25,10 +25,10 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.commands.*;
 import msi.gaml.commands.ICommand.WithArgs;
 import msi.gaml.compilation.*;
-import msi.gaml.control.IControl;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
@@ -324,7 +324,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IControl getControl() {
+	public IArchitecture getArchitecture() {
 		return getDescription().getControl();
 	}
 
@@ -417,7 +417,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	private void createControl() {
-		IControl control = getControl();
+		IArchitecture control = getArchitecture();
 		List<ICommand> behaviors = getBehaviors();
 		try {
 			control.setChildren(behaviors);

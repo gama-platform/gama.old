@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -22,9 +22,10 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.utils.ISyntacticElement;
 import msi.gama.util.*;
+import msi.gaml.architecture.*;
+import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
-import msi.gaml.control.*;
 import msi.gaml.expressions.*;
 import msi.gaml.skills.*;
 import msi.gaml.types.IType;
@@ -45,7 +46,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	protected Class javaBase;
 	protected IAgentConstructor agentConstructor;
 
-	protected IControl control;
+	protected IArchitecture control;
 
 	protected int varCount = 0;
 	protected SpeciesDescription macroSpecies;
@@ -138,10 +139,12 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 
 	protected void createControl() {
 		String keyword = getControlName();
-		control = IKeyword.FSM.equals(keyword) ? new FsmBehavior()/*
-																 * : ISpecies.EMF.equals(keyword)
-																 * ? new EmfBehavior()
-																 */: new ReflexControl();
+		Class c = Skill.getSkillClassFor(keyword);
+		if ( c == null ) {
+			control = new ReflexArchitecture();
+		} else {
+			control = (IArchitecture) Skill.createSharedSkillFor(c);
+		}
 	}
 
 	public ISkill getSharedSkill(final Class c) {
@@ -160,7 +163,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		for ( final Class c : new HashSet<Class>(skillsMethods.values()) ) {
 			if ( Skill.class.isAssignableFrom(c) ) {
 				ISkill skill;
-				if ( IControl.class.isAssignableFrom(c) && control != null ) {
+				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
 					// In order to avoid having two objects of the same class
 					skill = control;
 				} else {
@@ -289,7 +292,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		return builtIn;
 	}
 
-	public IControl getControl() {
+	public IArchitecture getControl() {
 		return control;
 	}
 

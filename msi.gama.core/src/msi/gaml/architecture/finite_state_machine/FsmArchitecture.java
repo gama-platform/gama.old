@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.control;
+package msi.gaml.architecture.finite_state_machine;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
@@ -29,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.ICommand;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.species.ISpecies;
@@ -43,7 +44,7 @@ import msi.gaml.types.IType;
 @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
 	@var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
 @skill(IKeyword.FSM)
-public class FsmBehavior extends ReflexControl {
+public class FsmArchitecture extends ReflexArchitecture {
 
 	protected Map<String, FsmStateCommand> states = new HashMap();
 	protected GamaList<String> stateNames;

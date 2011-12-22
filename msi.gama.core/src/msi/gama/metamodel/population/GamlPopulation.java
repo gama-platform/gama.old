@@ -28,7 +28,7 @@ import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.control.IControl;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -65,13 +65,13 @@ public class GamlPopulation extends AbstractPopulation implements IGamlPopulatio
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		IControl c = species.getControl();
+		IArchitecture c = species.getArchitecture();
 		c.executeOn(scope);
 	}
 
 	@Override
 	public void init(final IScope scope) throws GamaRuntimeException {
-		IControl control = species.getControl();
+		IArchitecture control = species.getArchitecture();
 		control.init(scope);
 	}
 
