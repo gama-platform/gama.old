@@ -46,7 +46,6 @@ Require-Bundle: msi.gama.processor,
  org.eclipse.ui.navigator,
  org.eclipse.ui.navigator.resources;bundle-version="3.4.300",
  org.eclipse.team.ui;bundle-version="3.6.100",
- org.eclipse.ui.forms;bundle-version="3.5.100",
  org.eclipse.team.svn.ui;bundle-version="0.7.9",
  msi.gama.models;bundle-version="1.0.0"
 Bundle-Vendor: MSI

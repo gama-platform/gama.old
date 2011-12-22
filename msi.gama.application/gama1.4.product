@@ -55,10 +55,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.google.collect"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.servlet.jsp"/>
-      <plugin id="javax.xml"/>
-      <plugin id="javax.xml.stream"/>
       <plugin id="msi.gama.application"/>
       <plugin id="msi.gama.core"/>
       <plugin id="msi.gama.ext"/>
@@ -68,14 +64,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.processor"/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.aopalliance"/>
-      <plugin id="org.apache.ant"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.log4j"/>
-      <plugin id="org.apache.lucene"/>
-      <plugin id="org.apache.lucene.core"/>
-      <plugin id="org.apache.xerces"/>
-      <plugin id="org.apache.xml.resolver"/>
-      <plugin id="org.apache.xml.serializer"/>
       <plugin id="org.eclipse.amalgam.discovery.core"/>
       <plugin id="org.eclipse.amalgam.discovery.ui"/>
       <plugin id="org.eclipse.compare"/>
@@ -192,7 +182,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtext.builder"/>
       <plugin id="org.eclipse.xtext.common.types"/>
       <plugin id="org.eclipse.xtext.common.types.ui"/>
-      <plugin id="org.eclipse.xtext.junit"/>
       <plugin id="org.eclipse.xtext.logging" fragment="true"/>
       <plugin id="org.eclipse.xtext.ui"/>
       <plugin id="org.eclipse.xtext.ui.codetemplates"/>
@@ -200,7 +189,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtext.ui.shared"/>
       <plugin id="org.eclipse.xtext.util"/>
       <plugin id="org.jdom"/>
-      <plugin id="org.mozilla.javascript"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
    </plugins>
