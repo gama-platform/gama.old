@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.*;
 import msi.gama.lang.gaml.descript.*;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.precompiler.ISyntacticElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.URI;

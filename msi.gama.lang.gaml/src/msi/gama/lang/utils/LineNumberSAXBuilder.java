@@ -20,6 +20,7 @@ package msi.gama.lang.utils;
 
 import java.io.*;
 import msi.gama.lang.utils.*;
+import msi.gama.precompiler.ISyntacticElement;
 import org.jdom.*;
 import org.jdom.input.*;
 import org.xml.sax.*;

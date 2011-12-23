@@ -21,6 +21,7 @@ package msi.gama.lang.utils;
 import java.io.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
+import msi.gama.precompiler.ISyntacticElement;
 import org.eclipse.emf.common.util.EList;
 import org.jdom.*;
 import org.jdom.output.XMLOutputter;
