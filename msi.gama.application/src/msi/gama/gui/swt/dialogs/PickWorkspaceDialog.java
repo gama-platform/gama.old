@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.swt.dialogs;
 
+// import java.awt.GridLayout;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -26,9 +27,8 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import za.co.quirk.layout.*;
 
 /**
  * Dialog that lets/forces a user to enter/select a workspace that will be used when saving all
@@ -119,22 +119,23 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		try {
 			Composite inner = new Composite(parent, SWT.NONE);
-			double[][] layout =
-				new double[][] {
-					{ 5, LatticeConstants.PREFERRED, 5, 250, 5, LatticeConstants.PREFERRED, 5 },
-					{ 5, LatticeConstants.PREFERRED, 5, LatticeConstants.PREFERRED, 40 } };
-			inner.setLayout(new LatticeLayout(layout));
+			GridLayout l = new GridLayout(5, false);
+			// double[][] layout =
+			// new double[][] {
+			// { 5, LatticeConstants.PREFERRED, 5, 250, 5, LatticeConstants.PREFERRED, 5 },
+			// { 5, LatticeConstants.PREFERRED, 5, LatticeConstants.PREFERRED, 40 } };
+			inner.setLayout(l);
 			inner.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_END |
 				GridData.GRAB_HORIZONTAL));
 
 			/* Label on the left */
 			CLabel label = new CLabel(inner, SWT.NONE);
 			label.setText("Workspace Root Path");
-			label.setLayoutData(new LatticeData("1, 1"));
+			label.setLayoutData(new GridData());
 
 			/* Combo in the middle */
 			workspacePathCombo = new Combo(inner, SWT.BORDER);
-			workspacePathCombo.setLayoutData(new LatticeData("3, 1"));
+			workspacePathCombo.setLayoutData(new GridData());
 			String wsRoot = preferences.get(keyWorkspaceRootDir, "");
 			if ( wsRoot == null || wsRoot.length() == 0 ) {
 				wsRoot = getWorkspacePathSuggestion();
@@ -144,7 +145,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			/* Checkbox below */
 			rememberWorkspaceButton = new Button(inner, SWT.CHECK);
 			rememberWorkspaceButton.setText("Remember workspace");
-			rememberWorkspaceButton.setLayoutData(new LatticeData("3, 3, 5, 3"));
+			rememberWorkspaceButton.setLayoutData(new GridData());
 			rememberWorkspaceButton.setSelection(preferences
 				.getBoolean(keyRememberWorkspace, false));
 
@@ -163,8 +164,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			/* Browse button on the right */
 			Button browse = new Button(inner, SWT.PUSH);
 			browse.setText("Browse...");
-			browse.setLayoutData(new LatticeData("5, 1, 5, 1"));
+			browse.setLayoutData(new GridData());
 			browse.addListener(SWT.Selection, new Listener() {
+
 				@Override
 				public void handleEvent(final Event event) {
 					DirectoryDialog dd = new DirectoryDialog(getParentShell());
@@ -172,8 +174,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					dd.setMessage(strInfo);
 					dd.setFilterPath(workspacePathCombo.getText());
 					String pick = dd.open();
-					if (pick == null) {
-						if (workspacePathCombo.getText().length() == 0) {
+					if ( pick == null ) {
+						if ( workspacePathCombo.getText().length() == 0 ) {
 							setMessage(strError, IMessageProvider.ERROR);
 						}
 					} else {
