@@ -19,7 +19,7 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.lang.utils.ISyntacticElement;
+import msi.gama.precompiler.ISyntacticElement;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;

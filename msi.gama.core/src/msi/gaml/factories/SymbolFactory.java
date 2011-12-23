@@ -22,7 +22,6 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
-import msi.gama.lang.utils.ISyntacticElement;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;

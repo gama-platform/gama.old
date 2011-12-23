@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.utils.ISyntacticElement;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;

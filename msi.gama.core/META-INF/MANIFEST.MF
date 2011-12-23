@@ -4,8 +4,7 @@ Bundle-Name: Core
 Bundle-SymbolicName: msi.gama.core
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
- msi.gama.processor;bundle-version="1.4.0",
- msi.gama.lang.gaml;bundle-version="1.4.2"
+ msi.gama.processor;bundle-version="1.4.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.common.interfaces;
@@ -226,33 +225,8 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.metamodel.agent,
    msi.gaml.skills,
    msi.gaml.types",
- msi.gaml.architecture.finite_state_machine,
- msi.gaml.architecture.reflex,
- msi.gaml.architecture.weighted_tasks,
- msi.gaml.commands;
-  uses:="msi.gaml.expressions,
-   msi.gama.runtime,
-   msi.gama.util,
-   msi.gaml.types,
-   msi.gaml.compilation,
-   msi.gama.common.interfaces,
-   msi.gama.metamodel.shape,
-   msi.gaml.descriptions,
-   msi.gama.metamodel.agent,
-   msi.gama.runtime.exceptions",
- msi.gaml.compilation;
-  uses:="msi.gaml.expressions,
-   msi.gama.runtime,
-   msi.gaml.skills,
-   msi.gama.lang.utils,
-   msi.gaml.types,
-   msi.gama.common.interfaces,
-   org.codehaus.janino,
-   msi.gama.kernel.simulation,
-   msi.gama.metamodel.population,
-   msi.gaml.descriptions,
-   org.codehaus.commons.compiler,
-   msi.gama.metamodel.agent",
+ msi.gaml.commands,
+ msi.gaml.compilation,
  msi.gaml.descriptions;
   uses:="msi.gaml.expressions,
    msi.gaml.commands,
@@ -270,8 +244,6 @@ Export-Package: msi.gama.common.interfaces;
    msi.gaml.factories,
    msi.gaml.compilation,
    msi.gaml.types",
- msi.gaml.extensions.cluster_builder,
- msi.gaml.extensions.multi_criteria,
  msi.gaml.factories;
   uses:="msi.gama.common.interfaces,
    msi.gama.outputs.layers,
