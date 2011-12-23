@@ -117,8 +117,6 @@ Export-Package: com.keypoint,
  javax.media.jai.util,
  javax.media.jai.widget,
  javax.vecmath,
- net.miginfocom.layout,
- net.miginfocom.swt,
  org.apache.commons.pool,
  org.apache.commons.pool.impl,
  org.apache.html.dom,
@@ -499,8 +497,6 @@ Export-Package: com.keypoint,
  weka.gui.streams,
  weka.gui.treevisualizer,
  weka.gui.visualize,
- weka.gui.visualize.plugins,
- za.co.quirk.layout
-Require-Bundle: org.eclipse.amalgam.discovery.ui
+ weka.gui.visualize.plugins
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

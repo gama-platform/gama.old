@@ -26,8 +26,6 @@
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-experimental.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-swt.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="layout.jar"/>
-	<classpathentry exported="true" kind="lib" path="miglayout-3.7.3-swt.jar"/>
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry kind="lib" path="hsqldb-1.8.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
