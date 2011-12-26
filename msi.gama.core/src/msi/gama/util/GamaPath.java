@@ -102,6 +102,9 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			target = nodes.get(nodes.size() - 1);
 		}
 		segments = new GamaList();
+		segmentsInGraph = new GamaMap();
+		agents = new GamaMap();
+
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
 			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
 				.getLocation()));
