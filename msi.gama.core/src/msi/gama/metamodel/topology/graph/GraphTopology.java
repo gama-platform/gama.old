@@ -18,7 +18,12 @@
  */
 package msi.gama.metamodel.topology.graph;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+
+import com.vividsolutions.jts.geom.Coordinate;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -120,10 +125,15 @@ public class GraphTopology extends AbstractTopology {
 			GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(this, nodeS, nodeT);
 			IList edges = new GamaList(path.getEdgeList());
 			if ( edges.isEmpty() ) { return null; }
-			if ( edges.get(0) != edgeS ) {
+			HashSet edgesSetInit = new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));
+			HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+			if ( !(edgesSetS.equals(edgesSetInit)) ) {
 				edges.add(0, edgeS);
 			}
-			if ( edges.get(edges.size() - 1) != edgeT ) {
+			HashSet edgesSetEnd = new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry().getCoordinates()));
+			HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+			
+			if ( !(edgesSetT.equals(edgesSetEnd)) ) {
 				edges.add(edgeT);
 			}
 			pathComplete = new GamaPath(this, source, target, edges);
