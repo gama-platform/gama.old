@@ -305,6 +305,7 @@ public class MovingSkill extends GeometricSkill {
 		int index = 0;
 		int indexSegment = 1;
 		ILocation currentLocation = agent.getLocation();
+		ILocation startLocation = agent.getLocation().copy();
 		int nb = path.getEdgeList().size(); // instead of getGeometries() ?? Faster, and more
 											// reliable. But is it the same ?
 		GamaList<IShape> segments = new GamaList();
@@ -433,10 +434,10 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		if ( segments.isEmpty() ) { return null; }
-		agent.setLocation(currentLocation);
 		IPath followedPath =
-			new GamaPath(agent.getTopology(), agent.getLocation(), currentLocation, segments);
+			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);
 		followedPath.setAgents(agents);
+		agent.setLocation(currentLocation);
 		return followedPath;
 	}
 

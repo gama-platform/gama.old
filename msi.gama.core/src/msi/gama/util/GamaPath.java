@@ -86,11 +86,10 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				if ( ag != null ) {
 					agents.put(edge2, ag);
 				}
-
 				segments.add(edge2);
-				segmentsInGraph.put(edge2, edge);
+				segmentsInGraph.put(agents, agents);
 			}
-		}
+		}		
 	}
 
 	public GamaPath(final ITopology t, final List<ILocation> nodes) {
