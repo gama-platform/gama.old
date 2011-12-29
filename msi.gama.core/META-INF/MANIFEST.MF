@@ -225,6 +225,9 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.metamodel.agent,
    msi.gaml.skills,
    msi.gaml.types",
+ msi.gaml.architecture.finite_state_machine,
+ msi.gaml.architecture.reflex,
+ msi.gaml.architecture.weighted_tasks,
  msi.gaml.commands,
  msi.gaml.compilation,
  msi.gaml.descriptions;
@@ -244,6 +247,8 @@ Export-Package: msi.gama.common.interfaces;
    msi.gaml.factories,
    msi.gaml.compilation,
    msi.gaml.types",
+ msi.gaml.extensions.cluster_builder,
+ msi.gaml.extensions.multi_criteria,
  msi.gaml.factories;
   uses:="msi.gama.common.interfaces,
    msi.gama.outputs.layers,
