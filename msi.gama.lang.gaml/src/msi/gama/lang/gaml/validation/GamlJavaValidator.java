@@ -21,10 +21,10 @@ package msi.gama.lang.gaml.validation;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import msi.gama.precompiler.MultiProperties;
 import msi.gama.lang.gaml.descript.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
-import msi.gama.precompiler.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -58,7 +58,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	private static final String generatedPath =
 		getPath("platform:/plugin/msi.gama.core/generated/");
 	private static final MultiProperties allowedFacets = MultiProperties.loadFrom(new File(
-		generatedPath + GamaProcessor.FACETS), GamaProcessor.FACETS);
+		generatedPath + MultiProperties.FACETS), MultiProperties.FACETS);
 
 	private static String getPath(final String strURI) {
 		try {

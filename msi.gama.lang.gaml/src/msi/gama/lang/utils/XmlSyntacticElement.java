@@ -19,7 +19,7 @@
 package msi.gama.lang.utils;
 
 import java.util.*;
-import msi.gama.precompiler.ISyntacticElement;
+import msi.gama.common.interfaces.ISyntacticElement;
 import org.jdom.Attribute;
 
 /**
