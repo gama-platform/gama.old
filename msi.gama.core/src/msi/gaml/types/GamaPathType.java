@@ -22,11 +22,11 @@ import java.util.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.operators.Cast;
 
 @type(value = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class })

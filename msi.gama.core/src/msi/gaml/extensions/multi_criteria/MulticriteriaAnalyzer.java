@@ -22,12 +22,10 @@ import java.util.*;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.precompiler.GamlAnnotations.*;
 
 @species("multicriteria_analyzer")
 public class MulticriteriaAnalyzer extends GamlAgent {

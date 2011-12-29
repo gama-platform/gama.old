@@ -20,11 +20,11 @@ package msi.gaml.commands;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;

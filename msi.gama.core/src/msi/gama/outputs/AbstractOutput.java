@@ -23,11 +23,11 @@ import msi.gama.common.interfaces.*;
 
 import msi.gama.kernel.*;
 import msi.gama.kernel.simulation.*;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;

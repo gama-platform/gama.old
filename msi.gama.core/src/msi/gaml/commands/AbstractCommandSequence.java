@@ -23,10 +23,10 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 
 
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 

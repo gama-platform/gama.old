@@ -23,8 +23,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.util.graph.IGraph;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 
 /**

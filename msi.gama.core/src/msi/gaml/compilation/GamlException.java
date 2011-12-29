@@ -20,7 +20,7 @@ package msi.gaml.compilation;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.precompiler.ISyntacticElement;
+import msi.gama.common.interfaces.ISyntacticElement;
 
 /**
  * The Class GamlException.

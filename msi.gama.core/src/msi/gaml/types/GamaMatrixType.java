@@ -22,11 +22,11 @@ import java.io.*;
 import msi.gama.common.interfaces.*;
 
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 
 @type(value = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
 	GamaFloatMatrix.class, GamaObjectMatrix.class })

@@ -27,10 +27,10 @@ import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 

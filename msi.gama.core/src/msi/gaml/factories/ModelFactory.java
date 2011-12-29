@@ -19,13 +19,13 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -46,7 +46,7 @@ public class ModelFactory extends SymbolFactory {
 
 	static {
 		try {
-			MultiProperties mp = FileUtils.getGamaProperties(GamaProcessor.SPECIES);
+			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.SPECIES);
 			for ( String className : mp.keySet() ) {
 				BUILT_IN_SPECIES_CLASSES.put(mp.getFirst(className), Class.forName(className));
 			}
@@ -141,6 +141,9 @@ public class ModelFactory extends SymbolFactory {
 				break;
 			}
 		}
+
+		if ( worldSpeciesDesc == null ) { throw new GamlException(
+			"Unable to load the built-in 'world' species"); }
 
 		// Add built-in species to "world_species"
 		for ( final SpeciesDescription spd : builtIn ) {

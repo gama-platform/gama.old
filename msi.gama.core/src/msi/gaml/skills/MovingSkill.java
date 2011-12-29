@@ -65,7 +65,7 @@ public class MovingSkill extends GeometricSkill {
 	 *             current heading
 	 */
 	@getter(var = IKeyword.DESTINATION)
-	public ILocation getDestination(final IAgent agent) throws GamaRuntimeException {
+	public ILocation getDestination(final IAgent agent) {
 		final ILocation actualLocation = agent.getLocation();
 		// if ( actualLocation == null ) { return null; }
 		final double dist = getSpeed(agent) /* agent.getSimulation().getScheduler().getStep() */;
@@ -1068,7 +1068,7 @@ public class MovingSkill extends GeometricSkill {
 	 */
 	public ILocation nextLocationTriangle(final IScope scope, final IPath path, ILocation source,
 		final ILocation target, final double distance) {
-		ITopology m = scope.getAgentScope().getTopology();
+		// ITopology m = scope.getAgentScope().getTopology();
 		ILocation loc = null;
 		Graph<IShape, IShape> g = path.getGraph();
 		double distRemain = distance;

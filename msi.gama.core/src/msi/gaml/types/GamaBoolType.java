@@ -21,10 +21,10 @@ package msi.gaml.types;
 import java.io.File;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.precompiler.GamlAnnotations.type;
 
 /**
  * Written by drogoul Modified on 1 aožt 2010

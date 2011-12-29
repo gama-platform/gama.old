@@ -22,8 +22,8 @@ import msi.gama.common.interfaces.*;
 
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 

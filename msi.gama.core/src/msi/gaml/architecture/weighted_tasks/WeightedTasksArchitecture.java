@@ -5,11 +5,11 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.ICommand;
+import msi.gama.precompiler.GamlAnnotations.skill;
 
 /**
  * The class WeightedTasksArchitecture. A simple architecture of competing tasks, where one can be

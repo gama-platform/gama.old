@@ -20,11 +20,11 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;

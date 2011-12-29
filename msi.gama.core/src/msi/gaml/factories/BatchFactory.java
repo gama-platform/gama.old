@@ -18,11 +18,10 @@
  */
 package msi.gaml.factories;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.*;
-import msi.gaml.compilation.ISymbolKind;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 
 /**

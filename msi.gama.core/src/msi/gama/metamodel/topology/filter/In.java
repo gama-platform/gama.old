@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,12 +19,11 @@
 package msi.gama.metamodel.topology.filter;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
+import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
 public abstract class In implements IAgentFilter {
@@ -41,6 +40,17 @@ public abstract class In implements IAgentFilter {
 	@Override
 	public abstract boolean accept(IShape source, IShape a);
 
+	@Override
+	public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags) {
+		List<IShape> result = new GamaList(ags.size());
+		for ( IShape s : ags ) {
+			if ( accept(source, s) ) {
+				result.add(s);
+			}
+		}
+		return result;
+	}
+
 	private static class InList extends In {
 
 		final Set<IShape> agents;
@@ -52,6 +62,11 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public boolean accept(final IShape source, final IShape a) {
 			return a.getGeometry() != source.getGeometry() && agents.contains(a);
+		}
+
+		@Override
+		public boolean filterSpecies(final ISpecies s) {
+			return false;
 		}
 
 	}
@@ -68,6 +83,11 @@ public abstract class In implements IAgentFilter {
 		public boolean accept(final IShape source, final IShape a) {
 			return a.getGeometry() != source.getGeometry() &&
 				((IAgent) a).isInstanceOf(species, true);
+		}
+
+		@Override
+		public boolean filterSpecies(final ISpecies s) {
+			return species == s;
 		}
 
 	}

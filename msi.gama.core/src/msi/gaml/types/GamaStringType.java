@@ -19,9 +19,9 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.precompiler.GamlAnnotations.type;
 
 /**
  * 

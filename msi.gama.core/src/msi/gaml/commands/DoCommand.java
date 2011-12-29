@@ -20,10 +20,10 @@ package msi.gaml.commands;
 
 import java.util.Map;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;

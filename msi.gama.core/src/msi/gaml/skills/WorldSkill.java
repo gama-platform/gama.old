@@ -22,8 +22,8 @@ import msi.gama.common.interfaces.*;
 
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 
 /**

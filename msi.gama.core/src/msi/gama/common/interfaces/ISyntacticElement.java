@@ -16,41 +16,42 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.metamodel.shape;
+package msi.gama.common.interfaces;
 
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.*;
-import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.Coordinate;
+import java.util.*;
 
 /**
- * The class ILocation.
+ * Written by drogoul
+ * Modified on 18 nov. 2011
  * 
- * @author drogoul
- * @since 15 déc. 2011
+ * An interface to manipulate syntactic elements (either jdom elements or EObjects)
  * 
  */
-@vars({ @var(name = IKeyword.X, type = IType.FLOAT_STR),
-	@var(name = IKeyword.Y, type = IType.FLOAT_STR) })
-public interface ILocation extends IShape, Comparable {
+public interface ISyntacticElement {
 
-	@getter(var = IKeyword.X)
-	public abstract double getX();
+	String getName();
 
-	@getter(var = IKeyword.Y)
-	public abstract double getY();
+	String getAttribute(String name);
 
-	public abstract boolean equals(final Coordinate o);
+	Map<String, String> getAttributes();
 
-	public abstract void setLocation(final double xx, final double yy);
+	void setAttribute(String string, String string2);
 
-	public abstract void add(final double delta, final double delta2);
+	List<ISyntacticElement> getChildren();
 
-	public abstract Coordinate toCoordinate();
+	List<ISyntacticElement> getChildren(String name);
 
-	public abstract double distance(ILocation targ);
+	ISyntacticElement getChild(String name);
 
-	@Override
-	public ILocation copy();
+	boolean hasParent(String name);
+
+	/*
+	 * Returns either a LineNumberElement or a Statement
+	 */
+	Object getUnderlyingElement();
+
+	int getLineNumber();
+
+	String getFilename();
 
 }

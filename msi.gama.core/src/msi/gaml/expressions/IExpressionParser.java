@@ -21,8 +21,8 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.precompiler.GamlAnnotations.reserved;
 import msi.gaml.compilation.GamlException;
+import msi.gama.precompiler.GamlAnnotations.reserved;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.*;
 

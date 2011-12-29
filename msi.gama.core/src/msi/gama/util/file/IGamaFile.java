@@ -20,9 +20,9 @@ package msi.gama.util.file;
 
 import msi.gama.common.interfaces.*;
 
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 
 /**

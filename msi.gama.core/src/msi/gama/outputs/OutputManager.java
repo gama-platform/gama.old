@@ -25,13 +25,11 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 
 /**

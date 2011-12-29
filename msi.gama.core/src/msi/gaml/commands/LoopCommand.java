@@ -21,11 +21,11 @@ package msi.gaml.commands;
 import msi.gama.common.interfaces.*;
 
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;

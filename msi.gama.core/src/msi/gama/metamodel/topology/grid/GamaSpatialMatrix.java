@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -22,13 +22,14 @@ import java.util.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
-import msi.gama.metamodel.topology.filter.In;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
@@ -37,7 +38,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
  * This matrix contains geometries and can serve to organize the agents of a population as a grid in
  * the environment, or as a support for grid topologies
  */
-public class GamaSpatialMatrix extends GamaMatrix<IShape> {
+public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatialIndex */{
 
 	public class SpatialMatrixIterator implements Iterator<IShape> {
 
@@ -85,6 +86,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> {
 	int actualNumberOfCells;
 	int firstCell, lastCell;
 	SpatialMatrixIterator iterator = new SpatialMatrixIterator();
+	private ISpecies cellSpecies;
+	private IAgentFilter cellFilter;
 
 	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
 		final boolean usesVN) {
@@ -268,11 +271,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> {
 		GamaList result = new GamaList(actualNumberOfCells);
 		if ( actualNumberOfCells == 0 ) { return new GamaList(); }
 		for ( IShape a : this ) {
-			if ( a.getAgent() != null ) {
-				result.add(a.getAgent());
-			} else {
-				result.add(a);
-			}
+			IAgent ag = a.getAgent();
+			result.add(ag == null ? a : ag);
 		}
 		return result;
 	}
@@ -312,13 +312,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> {
 	}
 
 	@Override
-	public IAgent _max(IScope scope) {
+	public IAgent _max(final IScope scope) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IAgent _min(IScope scope) {
+	public IAgent _min(final IScope scope) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -405,10 +405,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> {
 	 */
 	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
 		final IShape shape, final Double distance) throws GamaRuntimeException {
-		if ( shape.isPoint() || shape instanceof IAgent && ((IAgent) shape).getTopology() == t ) { return getNeighbourhood()
+		if ( shape.isPoint() || shape.getAgent() != null &&
+			shape.getAgent().getSpecies() == cellSpecies ) { return getNeighbourhood()
 			.getNeighboursIn(getPlaceIndexAt(shape.getLocation()), distance.intValue()); }
-		final List<IAgent> coveredPlaces =
-			t.getAgentsIn(shape, In.list(scope, listValue(scope)), true);
+		final Collection<? extends IAgent> coveredPlaces =
+			getAgentsCoveredBy(shape, cellFilter, true);
 		Set<IAgent> result = new HashSet();
 		for ( IAgent a : coveredPlaces ) {
 			result.addAll(getNeighbourhood().getNeighboursIn(getPlaceIndexAt(a.getLocation()),
@@ -535,4 +536,45 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> {
 		final double range) {
 		getDiffuser(scope).diffuseVariable(name, value, type, prop, variation, location, range);
 	}
+
+	/**
+	 * @param source
+	 * @param f
+	 * @param covered
+	 * @return
+	 */
+	public Collection<? extends IAgent> getAgentsCoveredBy(final IShape source,
+		final IAgentFilter f, final boolean covered) {
+		if ( !f.filterSpecies(cellSpecies) ) { return Collections.EMPTY_LIST; }
+		Envelope env = source.getEnvelope();
+		int minX = getX(env.getMinX());
+		int minY = getY(env.getMinY());
+		int maxX = getX(env.getMaxX());
+		int maxY = getY(env.getMaxY());
+		Set<IAgent> ags = new HashSet();
+		for ( int i = minX; i < maxX; i++ ) {
+			for ( int j = minY; j < maxY; j++ ) {
+				int index = getPlaceIndexAt(i, j);
+				if ( index != 1 ) {
+					IAgent a = matrix[index].getAgent();
+					if ( a != null ) {
+						if ( covered && source.covers(a) || !covered && source.intersects(a) ) {
+							ags.add(a);
+						}
+					}
+				}
+			}
+		}
+		return ags;
+
+	}
+
+	/**
+	 * @param species
+	 */
+	public void setCellSpecies(final ISpecies species) {
+		cellSpecies = species;
+		cellFilter = In.species(cellSpecies);
+	}
+
 }

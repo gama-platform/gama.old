@@ -21,8 +21,8 @@ package msi.gama.util.graph;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 import org.jgrapht.*;
 

@@ -19,11 +19,10 @@
 package msi.gaml.factories;
 
 import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gaml.commands.Facets;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.precompiler.*;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 

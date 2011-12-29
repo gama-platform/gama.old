@@ -22,11 +22,11 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 
 import msi.gama.metamodel.agent.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;

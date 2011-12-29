@@ -20,10 +20,10 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gaml.compilation.GamlException;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.expressions.IExpression;
 
 /**

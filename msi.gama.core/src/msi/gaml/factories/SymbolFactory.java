@@ -20,9 +20,8 @@ package msi.gaml.factories;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
-import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -35,6 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
@@ -56,7 +56,7 @@ public class SymbolFactory implements ISymbolFactory {
 
 	static {
 		try {
-			MultiProperties mp = FileUtils.getGamaProperties(GamaProcessor.KINDS);
+			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.KINDS);
 			for ( String ks : mp.keySet() ) {
 				Integer i = Integer.decode(ks);
 				CLASSES_BY_KIND.put(i, new ArrayList());
@@ -68,7 +68,7 @@ public class SymbolFactory implements ISymbolFactory {
 					}
 				}
 			}
-			mp = FileUtils.getGamaProperties(GamaProcessor.FACTORIES);
+			mp = FileUtils.getGamaProperties(MultiProperties.FACTORIES);
 
 			for ( String ks : mp.keySet() ) {
 				Integer i = Integer.decode(ks);

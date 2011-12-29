@@ -20,10 +20,9 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
-import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.expressions.IExpressionParser;
 import msi.gaml.types.IType;
 

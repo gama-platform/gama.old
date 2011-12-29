@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -35,9 +35,8 @@ import org.uncommons.maths.number.NumberGenerator;
  * The Class ParamSpaceExploAlgorithm.
  */
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnable {
+public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExploration {
 
-	public final static short C_MAX = 0, C_MIN = 1, C_MEAN = 2;
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
 	public static final Class[] CLASSES = { GeneticAlgorithm.class, SimulatedAnnealing.class,
 		HillClimbing.class, TabuSearch.class, TabuSearchReactive.class, ExhaustiveSearch.class };
@@ -51,14 +50,14 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnabl
 	protected Double bestFitness;
 	protected short combination;
 
-	public abstract ParametersSet findBestSolution() throws GamaRuntimeException;
+	protected abstract ParametersSet findBestSolution() throws GamaRuntimeException;
 
-	@SuppressWarnings("unused")
+	@Override
 	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
 		currentExperiment = f;
 	}
 
-	public NumberGenerator<Double> getRandUniform() {
+	protected NumberGenerator<Double> getRandUniform() {
 		if ( randUniform == null ) {
 			randUniform = GAMA.getRandom().createUniform(0., 1.);
 		}
@@ -75,6 +74,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnabl
 
 	}
 
+	@Override
 	public String getCombinationName() {
 		return COMBINATIONS[combination];
 	}
@@ -89,6 +89,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnabl
 		GAMA.getExperiment().stop();
 	}
 
+	@Override
 	public void start() {
 		new Thread(this, getName() + " thread").start();
 	}
@@ -100,6 +101,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnabl
 		return isMaximize;
 	}
 
+	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		exp.addMethodParameter(new ParameterAdapter("Exploration method",
 			IExperiment.BATCH_CATEGORY_NAME, IType.STRING) {
@@ -113,18 +115,22 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements Runnabl
 		});
 	}
 
+	@Override
 	public Double getBestFitness() {
 		return bestFitness;
 	}
 
+	@Override
 	public IExpression getFitnessExpression() {
 		return fitnessExpression;
 	}
 
+	@Override
 	public ParametersSet getBestSolution() {
 		return bestSolution;
 	}
 
+	@Override
 	public short getCombination() {
 		return combination;
 	}

@@ -22,9 +22,7 @@ import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.*;
 
 /**

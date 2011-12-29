@@ -5,8 +5,7 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gaml.compilation.GamlException;
 
 public class SpeciesStructure {

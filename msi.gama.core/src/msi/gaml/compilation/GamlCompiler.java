@@ -25,7 +25,6 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -36,6 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
@@ -636,7 +636,7 @@ public class GamlCompiler {
 
 		GuiUtils.debug("===> Generating support structures for GAML.");
 		final long startTime = System.nanoTime();
-		MultiProperties mp = FileUtils.getGamaProperties(GamaProcessor.FACTORIES);
+		MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.FACTORIES);
 		try {
 			DescriptionFactory.setFactoryClass((Class<ISymbolFactory>) Class.forName(mp
 				.getFirst(String.valueOf(ISymbolKind.MODEL))));
@@ -644,13 +644,13 @@ public class GamlCompiler {
 
 		}
 
-		MultiProperties types = FileUtils.getGamaProperties(GamaProcessor.TYPES);
+		MultiProperties types = FileUtils.getGamaProperties(MultiProperties.TYPES);
 		final Set<String> classNames =
-			new HashSet(FileUtils.getGamaProperties(GamaProcessor.SKILLS).keySet());
+			new HashSet(FileUtils.getGamaProperties(MultiProperties.SKILLS).keySet());
 		classNames.addAll(types.keySet());
-		classNames.addAll(FileUtils.getGamaProperties(GamaProcessor.UNARIES).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(GamaProcessor.BINARIES).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(GamaProcessor.SYMBOLS).keySet());
+		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.UNARIES).keySet());
+		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.BINARIES).keySet());
+		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.SYMBOLS).keySet());
 		ClassLoader cl = GamlCompiler.class.getClassLoader();
 		Types.initWith(types, cl);
 		Set<Class> classes = new HashSet();

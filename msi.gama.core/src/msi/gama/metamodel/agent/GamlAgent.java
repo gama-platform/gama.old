@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -251,8 +251,8 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	 */
 	private class SavedAgent {
 
-		Map<String, Object> attributes;
-		Map<String, List<SavedAgent>> microPopulations;
+		Map<String, Object> variables;
+		Map<String, List<SavedAgent>> innerPopulations;
 
 		SavedAgent(final IAgent agent) throws GamaRuntimeException {
 			saveAttributes(agent);
@@ -266,17 +266,17 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		 * @throws GamaRuntimeException
 		 */
 		private void saveAttributes(final IAgent agent) throws GamaRuntimeException {
-			attributes = new HashMap<String, Object>();
+			variables = new HashMap<String, Object>();
 
 			ISpecies species = agent.getSpecies();
 			for ( String specVar : species.getVarNames() ) {
 				if ( specVar.equals(IKeyword.SHAPE) ) {
-					attributes.put(specVar, new GamaShape(((GamaShape) species.getVar(specVar)
+					variables.put(specVar, new GamaShape(((GamaShape) species.getVar(specVar)
 						.value(agent)).getInnerGeometry()));
 					continue;
 				}
 
-				attributes.put(specVar, species.getVar(specVar).value(agent));
+				variables.put(specVar, species.getVar(specVar).value(agent));
 			}
 		}
 
@@ -287,7 +287,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		 * @throws GamaRuntimeException
 		 */
 		private void saveMicroAgents(final IAgent agent) throws GamaRuntimeException {
-			microPopulations = new HashMap<String, List<SavedAgent>>();
+			innerPopulations = new HashMap<String, List<SavedAgent>>();
 
 			for ( IPopulation microPop : agent.getMicroPopulations() ) {
 				List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
@@ -296,7 +296,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 					savedAgents.add(new SavedAgent(micro));
 				}
 
-				microPopulations.put(microPop.getSpecies().getName(), savedAgents);
+				innerPopulations.put(microPop.getSpecies().getName(), savedAgents);
 			}
 		}
 
@@ -309,7 +309,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		 */
 		IAgent restoreTo(final IPopulation targetPopulation) throws GamaRuntimeException {
 			List<Map<String, Object>> agentAttrs = new GamaList<Map<String, Object>>();
-			agentAttrs.add(attributes);
+			agentAttrs.add(variables);
 			List<? extends IAgent> restoredAgents =
 				targetPopulation.createAgents(simulation.getExecutionScope(), 1, agentAttrs, true);
 			restoreMicroAgents(restoredAgents.get(0));
@@ -326,14 +326,14 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		void restoreMicroAgents(final IAgent host) throws GamaRuntimeException {
 			IScope scope = simulation.getExecutionScope();
 
-			for ( String microPopName : microPopulations.keySet() ) {
+			for ( String microPopName : innerPopulations.keySet() ) {
 				IPopulation microPop = host.getMicroPopulation(microPopName);
 
 				if ( microPop != null ) {
-					List<SavedAgent> savedMicros = microPopulations.get(microPopName);
+					List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
 					List<Map<String, Object>> microAttrs = new GamaList<Map<String, Object>>();
 					for ( SavedAgent sa : savedMicros ) {
-						microAttrs.add(sa.attributes);
+						microAttrs.add(sa.variables);
 					}
 
 					List<? extends IAgent> microAgents =

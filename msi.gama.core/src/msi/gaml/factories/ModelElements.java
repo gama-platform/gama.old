@@ -5,9 +5,8 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
-import msi.gama.precompiler.ISyntacticElement;
 import msi.gaml.compilation.GamlException;
 
 /**

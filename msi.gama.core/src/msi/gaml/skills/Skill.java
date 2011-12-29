@@ -21,7 +21,7 @@ package msi.gaml.skills;
 import java.util.*;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.MultiProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.*;
 
@@ -32,7 +32,7 @@ public abstract class Skill implements ISkill {
 	static {
 		classes = new HashMap();
 		try {
-			MultiProperties mp = FileUtils.getGamaProperties(GamaProcessor.SKILLS);
+			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.SKILLS);
 
 			for ( String className : mp.keySet() ) {
 				for ( String keyword : mp.get(className) ) {

@@ -23,8 +23,8 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 
 /**

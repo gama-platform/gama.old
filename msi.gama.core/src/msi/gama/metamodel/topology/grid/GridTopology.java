@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,20 +19,35 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GridTopology extends AbstractTopology {
 
 	public GridTopology(final IScope scope, final GamaSpatialMatrix matrix) {
 		super(scope, matrix.environmentFrame);
 		places = matrix;
+	}
+
+	@Override
+	public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
+		final ILocation previousLoc, final Envelope previousEnv) {
+		// TODO grid agents should not be added to the spatial index. However, it may break some
+		// algorithms.
+	}
+
+	@Override
+	public void initialize(final IPopulation pop) throws GamaRuntimeException {
+		getPlaces().setCellSpecies(pop.getSpecies());
+		super.initialize(pop);
 	}
 
 	@Override
@@ -48,7 +63,12 @@ public class GridTopology extends AbstractTopology {
 
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
-		return ((GamaSpatialMatrix) places).getAgentAt(source.getLocation());
+		// We first grab the cell at the location closest to the centroid of the source
+		IAgent place = getPlaces().getAgentAt(source.getLocation());
+		// If the filter accepts it, we return it
+		if ( filter.accept(source, place) ) { return place; }
+		// Otherwise we get the "normal" closest agent (in the spatial index)
+		return super.getAgentClosestTo(source, filter);
 	}
 
 	/**
@@ -88,8 +108,7 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(final IShape source, final IShape target)
-		throws GamaRuntimeException {
+	public IPath pathBetween(final IShape source, final IShape target) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
 
@@ -145,6 +164,8 @@ public class GridTopology extends AbstractTopology {
 				result.add(ag);
 			}
 		}
+		// We then add the corresponding cells (if they are accepted by the filter).
+		result.addAll(getPlaces().getAgentsCoveredBy(source, f, covered));
 		return result;
 	}
 

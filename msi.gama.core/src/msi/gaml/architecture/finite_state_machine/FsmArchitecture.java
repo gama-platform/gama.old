@@ -21,17 +21,13 @@ package msi.gaml.architecture.finite_state_machine;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.*;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.ICommand;
 import msi.gaml.compilation.GamlException;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 

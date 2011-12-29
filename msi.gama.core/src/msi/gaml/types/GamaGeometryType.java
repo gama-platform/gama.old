@@ -24,10 +24,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 

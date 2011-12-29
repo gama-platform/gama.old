@@ -19,12 +19,12 @@
 package msi.gaml.architecture.finite_state_machine;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 
 import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;

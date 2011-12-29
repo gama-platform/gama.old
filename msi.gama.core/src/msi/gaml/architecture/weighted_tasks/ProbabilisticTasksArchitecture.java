@@ -5,10 +5,10 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.skill;
 
 /**
  * The class ProbabilisticTasksArchitecture. Contrary to its parent, this class uses the weights

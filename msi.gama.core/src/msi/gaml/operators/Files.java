@@ -23,10 +23,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.*;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gaml.types.GamaFileType;
 import org.opengis.feature.simple.SimpleFeature;
 

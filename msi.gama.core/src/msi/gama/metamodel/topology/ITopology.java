@@ -23,9 +23,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Envelope;
 

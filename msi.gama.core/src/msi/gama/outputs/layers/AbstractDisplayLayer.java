@@ -22,10 +22,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 

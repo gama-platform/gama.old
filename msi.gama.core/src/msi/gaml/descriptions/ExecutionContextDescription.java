@@ -19,8 +19,7 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.ReflexArchitecture;

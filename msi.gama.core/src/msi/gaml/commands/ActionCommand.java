@@ -20,10 +20,10 @@ package msi.gaml.commands;
 
 import static msi.gama.runtime.ExecutionStatus.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gaml.compilation.*;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 

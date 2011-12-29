@@ -21,10 +21,10 @@ package msi.gaml.types;
 import java.awt.Color;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.species.ISpecies;
 
 @type(value = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class })

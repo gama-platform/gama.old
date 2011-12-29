@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -352,8 +352,8 @@ public class GeometricSkill extends Skill {
 		// c.start();
 		IList network = scope.getListArg("network");
 		GamaGraph graph = null;
-		boolean polygon = true;
-		String nameGp = scope.getStringArg("name");
+		// boolean polygon = true;
+		// String nameGp = scope.getStringArg("name");
 		Double sizeParts = scope.getFloatArg("size_parts");
 		/*
 		 * 
@@ -382,7 +382,7 @@ public class GeometricSkill extends Skill {
 		 */
 		Map<Object, Double> weights = new HashMap<Object, Double>();
 		if ( network != null && !network.isEmpty() ) {
-			polygon = false;
+			// polygon = false;
 			GamaList<LineString> lines = new GamaList();
 			if ( network.first() instanceof IAgent ) {
 				for ( Object ag : network ) {
@@ -522,7 +522,7 @@ public class GeometricSkill extends Skill {
 				GamaList triangles = new GamaList();
 				if ( sizeParts != null && sizeParts.doubleValue() > 0 ) {
 					List<Geometry> parts = GeometryUtils.discretisation(geom, sizeParts, true);
-					int i = 0;
+					// int i = 0;
 					for ( Geometry gg : parts ) {
 						// if (i < imax) {
 						// } else {
@@ -533,7 +533,7 @@ public class GeometricSkill extends Skill {
 						// p.add(ts);
 						// partsTg.add(p);
 						triangles.addAll(ts);
-						i++;
+						// i++;
 					}
 				} else {
 

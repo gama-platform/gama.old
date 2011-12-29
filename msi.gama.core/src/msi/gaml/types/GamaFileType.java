@@ -22,10 +22,10 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.file.IGamaFile;
+import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.operators.Files;
 
 /**

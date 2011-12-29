@@ -22,11 +22,11 @@ import java.awt.Color;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.operators.Cast;
 
 /**
