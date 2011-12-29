@@ -2,8 +2,7 @@ Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
 Bundle-Name: GamaApplication
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: msi.gama.processor,
- org.eclipse.ui.ide,
+Require-Bundle: org.eclipse.ui.ide,
  msi.gama.lang.gaml.ui,
  org.eclipse.xtext.ui,
  org.eclipse.ui.console;bundle-version="3.5.0",
@@ -18,6 +17,7 @@ Bundle-Version: 1.4
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
 Import-Package: msi.gama.lang.gaml.descript,
+ msi.gama.precompiler,
  org.apache.log4j
 Bundle-ClassPath: .
 
