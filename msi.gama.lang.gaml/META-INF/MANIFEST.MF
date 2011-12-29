@@ -14,8 +14,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.xtext.common.types,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.mwe.utils;resolution:=optional,
- org.eclipse.core.runtime;bundle-version="3.7.0",
- msi.gama.processor;bundle-version="1.4.0"
+ org.eclipse.core.runtime;bundle-version="3.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.descript,
@@ -31,7 +30,10 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.services,
  msi.gama.lang.gaml.validation,
  msi.gama.lang.utils
-Import-Package: org.eclipse.core.resources,
+Import-Package: msi.gama.common.interfaces,
+ msi.gama.common.util,
+ msi.gama.precompiler,
+ org.eclipse.core.resources,
  org.jdom,
  org.jdom.input,
  org.jdom.output
