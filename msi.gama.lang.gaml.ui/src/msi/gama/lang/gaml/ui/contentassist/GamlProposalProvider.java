@@ -21,9 +21,9 @@ package msi.gama.lang.gaml.ui.contentassist;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
+import msi.gama.precompiler.MultiProperties;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
-import msi.gama.precompiler.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -200,8 +200,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	private static Set<String> getTypelist() {
 		if ( typeList == null ) {
 			typeList =
-				MultiProperties.loadFrom(new File(generatedPath + GamaProcessor.TYPES),
-					GamaProcessor.TYPES).values();
+				MultiProperties.loadFrom(new File(generatedPath + MultiProperties.TYPES),
+					MultiProperties.TYPES).values();
 		}
 		return typeList;
 	}
@@ -209,8 +209,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	private static MultiProperties getAllowedfacets() {
 		if ( allowedFacets == null ) {
 			allowedFacets =
-				MultiProperties.loadFrom(new File(generatedPath + GamaProcessor.FACETS),
-					GamaProcessor.FACETS);
+				MultiProperties.loadFrom(new File(generatedPath + MultiProperties.FACETS),
+					MultiProperties.FACETS);
 		}
 		return allowedFacets;
 	}
