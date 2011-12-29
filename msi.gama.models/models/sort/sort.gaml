@@ -1,6 +1,5 @@
 model sort
 // gen by Xml2Gaml
-import "platform:/plugin/msi.gama.application/generated/std.gaml"
 
 global {
 	var white type: rgb init: rgb('white') ;
@@ -25,6 +24,7 @@ global {
 environment width: 100 height: 100 {
 	grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 torus: true {
 		var color type: rgb init: (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) as rgb : world.black ;
+		const neighbours type: list of: ant_grid init: self neighbours_at 1;
 	}
 }
 entities {
@@ -37,8 +37,7 @@ entities {
 			}
 		}
 		state empty initial: true {
-			let neighbours var: neighbours value: place neighbours_at 1 of: ant_grid ;
-			transition to: full when: (place.color != black) and ((neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
+			transition to: full when: (place.color != black) and ((place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
 				set color var: color value: place.color ;
 				set place.color var: place.color value: black ;
 			}
