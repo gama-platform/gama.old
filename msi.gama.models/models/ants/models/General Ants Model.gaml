@@ -11,7 +11,7 @@ global {
 	var grid_frequency type: int init: 1 min: 1 max: 100 parameter:
 	'Grid updates itself every:' category: 'Environment and Population';
 	var number_of_food_places type: int init: 5 min: 1 parameter: 
-	'Number of food depots:' category: 'Environment and Population'; 
+	'Number of food depots:' category: 'Environment and Population';   
 	var grid_transparency type: float init: 0.4;
 	const ant_shape_empty type: string init: '../icons/ant.png';
 	const ant_shape_full type: string init: '../icons/full_ant.png';
@@ -151,9 +151,7 @@ experiment Complete type: gui {
 	parameter name: 'Number of food depots:' var: number_of_food_places init: 5
 	min: 1 category: 'Environment and Population';
 	output {
-		display toto {
-			species ant aspect: icon;
-		}
+
 		display Ants background: rgb ( 'white' ) refresh_every: 1 {
 			image name: 'Background' file: '../images/soil.jpg' position: { 0.05 , 0.05
 			} size: { 0.9 , 0.9 };
