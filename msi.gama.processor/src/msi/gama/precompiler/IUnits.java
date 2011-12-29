@@ -18,7 +18,9 @@
  */
 package msi.gama.precompiler;
 
-public interface Units {
+import java.util.*;
+
+public interface IUnits {
 
 	/*
 	 * 
@@ -128,5 +130,7 @@ public interface Units {
 
 	/** The Constant square mile. */
 	public final static double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
+
+	public final static Map<String, Double> UNITS = new HashMap();
 
 }

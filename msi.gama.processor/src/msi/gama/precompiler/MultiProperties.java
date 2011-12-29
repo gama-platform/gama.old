@@ -43,6 +43,33 @@ public class MultiProperties {
 
 	Map<String, Set<String>> map;
 
+	public final static String GRAMMAR = "std.gaml";
+
+	public final static String SKILLS = "skills.properties";
+
+	public final static String UNARIES = "unaries.properties";
+
+	public final static String BINARIES = "binaries.properties";
+
+	public final static String TYPES = "types.properties";
+
+	public final static String SYMBOLS = "symbols.properties";
+
+	public final static String CHILDREN = "children.properties";
+
+	public final static String FACETS = "facets.properties";
+
+	public final static String KINDS = "kinds.properties";
+
+	public final static String FACTORIES = "factories.properties";
+
+	public final static String SPECIES = "species.properties";
+
+	public final static String VARS = "vars.properties";
+
+	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES, SYMBOLS,
+	CHILDREN, FACETS, KINDS, FACTORIES, SPECIES, VARS };
+
 	static final String NULL = "";
 
 	public MultiProperties() {
