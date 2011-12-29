@@ -25,10 +25,10 @@ environment width: environment_width height: environment_height {
 
 	grid grid width: environment_width height: environment_height neighbours: 8  {
 		var color type: rgb init: 'black';
-		var color type: rgb init: rgb('white') value: (centers with_min_of (world.topology distance_between [location,each.location])).color;
+		var color type: rgb init: rgb('white') value: (centers closest_to (shape)).color;
 	}
 entities { 
-	species center skills: [situated, visible, moving] {
+	species center skills: [moving] {
 		rgb color;
 		reflex {
 			do action: wander {
