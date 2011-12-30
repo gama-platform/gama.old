@@ -29,6 +29,9 @@ public class SimulationClock {
 
 	public static boolean TREAT_ERRORS_AS_FATAL = false;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
+	public static int FASTEST = 10;
+	public static int SLOWEST = 0;
+	private static int currentDelay = FASTEST;
 	private static int currentCycle = 0;
 	private static int currentTime = 0;
 	private static int currentStep = 1;
@@ -61,6 +64,10 @@ public class SimulationClock {
 		return currentTime;
 	}
 
+	public static int getDelay() {
+		return currentDelay;
+	}
+
 	public static void setStep(final int i) {
 		currentStep = i <= 0 ? 1 : i;
 	}
@@ -85,11 +92,29 @@ public class SimulationClock {
 		incrementCycle();
 		incrementTime();
 		computeStepLength();
+		waitDelay();
+	}
+
+	public static void waitDelay() {
+		if ( currentDelay == FASTEST ) { return; }
+		try {
+			Thread.sleep(1000 - currentDelay * 100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void reset() {
 		setCycle(0);
 		setTime(0);
+	}
+
+	/**
+	 * @param selection
+	 */
+	public static void setDelay(final int selection) {
+		// From 0 (slowest) to 10 (fastest)
+		currentDelay = selection;
 	}
 
 }

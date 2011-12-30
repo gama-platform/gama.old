@@ -593,6 +593,21 @@
                   class="msi.gama.gui.swt.controls.StatusControlContribution"
                   id="msi.gama.application.status">
             </control>
+            <control
+                  class="msi.gama.gui.swt.controls.SpeedControlContribution"
+                  id="msi.gama.application.speed">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </control>
             <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="icons/menu_cancel.png"
