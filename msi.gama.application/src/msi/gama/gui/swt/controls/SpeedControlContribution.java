@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.swt.controls;
 
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.simulation.SimulationClock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -49,18 +50,17 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 		layout.marginWidth = 4;
 		c.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		GridData labelData = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		data.widthHint = 50;
+		GridData labelData = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		Label slow = new Label(c, SWT.None);
-		slow.setText("slow");
+		slow.setImage(SwtGui.collapse);
 		slow.setLayoutData(labelData);
 		final Scale l = new Scale(c, SWT.HORIZONTAL);
 		Label fast = new Label(c, SWT.None);
-		fast.setText("fast");
+		fast.setImage(SwtGui.expand);
 		fast.setLayoutData(labelData);
 		l.setLayoutData(data);
-		// l.setBackground(SwtGui.COLOR_OK);
-		// l.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		// l.setSize(200, 20);
+		l.setSize(50, 20);
 		l.setMinimum(SimulationClock.SLOWEST);
 		l.setMaximum(SimulationClock.FASTEST);
 		l.setIncrement(1);
@@ -79,8 +79,6 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 			}
 
 		});
-		// l.pack();
-		// SwtGui.setStatusControl(l);
 		return c;
 	}
 
