@@ -79,10 +79,10 @@ entities {
 		var my_path type: path;
 	
 		aspect default {
-			draw shape: circle color: 'green' size: 0.0005 ;
+			draw shape: circle color: 'green' size: 50 ;
 		}
 		reflex {
-			let followedPath type: path value: self.goto [on:: the_graph,target:: goal.location,speed::0.000005];
+			let followedPath type: path value: self.goto [on:: the_graph,target:: goal.location,speed::50];
 		}
 	}
 }
