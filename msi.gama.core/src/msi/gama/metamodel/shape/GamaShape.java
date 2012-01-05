@@ -52,6 +52,7 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
+	private static double dx = 0, dy = 0;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -140,9 +141,10 @@ public class GamaShape implements IShape {
 		location = l;
 		if ( previous != null ) {
 			// if ( isPoint ) {
-			translation.setTranslation(location.getX() - previous.getX(), location.getY() -
-				previous.getY());
-			getInnerGeometry().apply(translation);
+			dx = isPoint ? location.getX() : location.getX() - previous.getX();
+			dy = isPoint ? location.getY() : location.getY() - previous.getY();
+			geometry.apply(isPoint ? modification : translation);
+			geometry.geometryChanged();
 			// } else {
 			// Geometry g =
 			// GeometryUtils.translation(getInnerGeometry(),
@@ -160,33 +162,28 @@ public class GamaShape implements IShape {
 	// return geometry.equals(((GamaGeometry) o).geometry);
 	// }
 
-	private static Translation translation = new Translation();
+	private static Translation2 translation = new Translation2();
+	private static PointModification modification = new PointModification();
 
-	private static class Translation implements CoordinateSequenceFilter {
+	private static class Translation2 implements CoordinateFilter {
 
-		double dx = 0, dy = 0;
-
-		void setTranslation(final double x, final double y) {
-			dx = x;
-			dy = y;
+		/**
+		 * @see com.vividsolutions.jts.geom.CoordinateFilter#filter(com.vividsolutions.jts.geom.Coordinate)
+		 */
+		@Override
+		public void filter(final Coordinate coord) {
+			coord.x = coord.x + dx;
+			coord.y = coord.y + dy;
 		}
 
-		@Override
-		public void filter(final CoordinateSequence seq, final int i) {
-			double xp = seq.getOrdinate(i, 0) + dx;
-			double yp = seq.getOrdinate(i, 1) + dy;
-			seq.setOrdinate(i, 0, xp);
-			seq.setOrdinate(i, 1, yp);
-		}
+	}
+
+	private static class PointModification implements CoordinateFilter {
 
 		@Override
-		public boolean isDone() {
-			return false;
-		}
-
-		@Override
-		public boolean isGeometryChanged() {
-			return true;
+		public void filter(final Coordinate c) {
+			c.x = dx;
+			c.y = dy;
 		}
 
 	}
@@ -364,9 +361,8 @@ public class GamaShape implements IShape {
 		// if ( getInnerGeometry() != null ) {
 		// setInnerGeometry((Geometry) null);
 		// }
-		// TODO IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
-		// in
-		// topologies, etc.
+		// IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
+		// in topologies, etc.
 		optimizedOperations = null;
 		agent = null;
 	}
@@ -389,7 +385,9 @@ public class GamaShape implements IShape {
 
 	@Override
 	public IShape copy() {
-		return new GamaShape(geometry.buffer(0.0));
+
+		// TODO Attention : in case of points and lines, buffer(0,0) returns an empty polygon !!!!!
+		return new GamaShape((Geometry) geometry.clone());
 	}
 
 	/**
