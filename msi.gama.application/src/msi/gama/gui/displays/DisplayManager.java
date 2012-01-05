@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -35,6 +35,7 @@ public class DisplayManager implements IDisplayManager {
 	public final IList<IDisplay> enabledDisplays = new GamaList();
 	final IList<IDisplay> disabledDisplays = new GamaList();
 	final IDisplaySurface surface;
+	final PauseDisplay pd = new PauseDisplay(0d, 0d, null, null);
 
 	public DisplayManager(final IDisplaySurface surface) {
 		this.surface = surface;
@@ -48,6 +49,7 @@ public class DisplayManager implements IDisplayManager {
 		for ( IDisplay d : disabledDisplays ) {
 			d.dispose();
 		}
+		pd.dispose();
 		enabledDisplays.clear();
 		disabledDisplays.clear();
 	}
@@ -117,16 +119,20 @@ public class DisplayManager implements IDisplayManager {
 
 	@Override
 	public void drawDisplaysOn(final IGraphics g) {
-		for ( int i = 0, n = enabledDisplays.size(); i < n; i++ ) {
-			final IDisplay dis = enabledDisplays.get(i);
-			try {
+		try {
+			for ( int i = 0, n = enabledDisplays.size(); i < n; i++ ) {
+				final IDisplay dis = enabledDisplays.get(i);
 				dis.drawDisplay(g);
-			} catch (GamaRuntimeException e) {
-				// e.addContext("in drawing layer " + dis.getMenuName());
-				// throw e;
-				// Temporarily disabled so that it does not appear on the interface.
-				e.printStackTrace();
+
 			}
+			if ( surface.isPaused() ) {
+				pd.drawDisplay(g);
+			}
+		} catch (GamaRuntimeException e) {
+			// e.addContext("in drawing layer " + dis.getMenuName());
+			// throw e;
+			// Temporarily disabled so that it does not appear on the interface.
+			e.printStackTrace();
 		}
 	}
 

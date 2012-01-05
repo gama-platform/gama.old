@@ -49,8 +49,10 @@ public abstract class AbstractDisplay implements IDisplay {
 	protected AbstractDisplay(final double env_width, final double env_height,
 		final IDisplayLayer layer, final IGraphics dg) {
 		model = layer;
-		model.setPhysicalLayer(this);
-		setName(model.getName());
+		if ( model != null ) {
+			model.setPhysicalLayer(this);
+			setName(model.getName());
+		}
 		size = new Point(0, 0);
 		position = new Point(0, 0);
 		this.env_width = env_width;
@@ -148,8 +150,10 @@ public abstract class AbstractDisplay implements IDisplay {
 	@Override
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
-		g.setOpacity(model.getTransparency());
-		setPositionAndSize(model.getBoundingBox(), g);
+		if ( model != null ) {
+			g.setOpacity(model.getTransparency());
+			setPositionAndSize(model.getBoundingBox(), g);
+		}
 		privateDrawDisplay(g);
 	}
 

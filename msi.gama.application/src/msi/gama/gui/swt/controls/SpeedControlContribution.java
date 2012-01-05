@@ -21,7 +21,6 @@ package msi.gama.gui.swt.controls;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.simulation.SimulationClock;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
@@ -42,8 +41,8 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		final Composite c = new Composite(parent, SWT.BORDER);
-		GridLayout layout = new GridLayout(3, false);
+		final Composite c = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 4;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
@@ -51,35 +50,20 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 		c.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = 50;
-		GridData labelData = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		Label slow = new Label(c, SWT.None);
-		slow.setImage(SwtGui.collapse);
-		slow.setLayoutData(labelData);
-		final Scale l = new Scale(c, SWT.HORIZONTAL);
-		Label fast = new Label(c, SWT.None);
-		fast.setImage(SwtGui.expand);
-		fast.setLayoutData(labelData);
+		final CoolSlider l =
+			new CoolSlider(c, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, SwtGui.line, SwtGui.line,
+				SwtGui.thumb, SwtGui.thumb, SwtGui.thumb_pushed, SwtGui.line, SwtGui.line);
 		l.setLayoutData(data);
 		l.setSize(50, 20);
-		l.setMinimum(SimulationClock.SLOWEST);
-		l.setMaximum(SimulationClock.FASTEST);
-		l.setIncrement(1);
-		l.setPageIncrement(1);
-		l.setSelection(SimulationClock.FASTEST);
-		l.addSelectionListener(new SelectionListener() {
+		l.updateSlider(SimulationClock.getDelay());
+		l.addPositionChangeListener(new CoolSliderPositionChangeListener() {
 
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				SimulationClock.setDelay(l.getSelection());
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-				widgetSelected(e);
+			public void positionChanged(final double position) {
+				SimulationClock.setDelay(position);
 			}
 
 		});
 		return c;
 	}
-
 }
