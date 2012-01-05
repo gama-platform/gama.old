@@ -139,16 +139,16 @@ public class GamaShape implements IShape {
 		final ILocation previous = location;
 		location = l;
 		if ( previous != null ) {
-			if ( isPoint ) {
-				translation.setTranslation(location.getX() - previous.getX(), location.getY() -
-					previous.getY());
-				getInnerGeometry().apply(translation);
-			} else {
-				Geometry g =
-					GeometryUtils.translation(getInnerGeometry(),
-						location.getX() - previous.getX(), location.getY() - previous.getY());
-				setGeometry(g, false);
-			}
+			// if ( isPoint ) {
+			translation.setTranslation(location.getX() - previous.getX(), location.getY() -
+				previous.getY());
+			getInnerGeometry().apply(translation);
+			// } else {
+			// Geometry g =
+			// GeometryUtils.translation(getInnerGeometry(),
+			// location.getX() - previous.getX(), location.getY() - previous.getY());
+			// setGeometry(g, false);
+			// }
 		}
 	}
 
@@ -197,14 +197,6 @@ public class GamaShape implements IShape {
 		final static Point point = GeometryUtils.getFactory().createPoint(new Coordinate(0, 0));
 		final static PointPairDistance ppd = new PointPairDistance();
 		final static PointLocator pl = new PointLocator();
-		final static public CoordinateFilter cf = new CoordinateFilter() {
-
-			@Override
-			public void filter(final Coordinate arg0) {
-				arg0.x = currentPoint.x;
-				arg0.y = currentPoint.y;
-			}
-		};
 
 		final Geometry cached;
 		IndexedFacetDistance distance;

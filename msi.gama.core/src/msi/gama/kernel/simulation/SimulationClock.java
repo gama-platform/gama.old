@@ -29,9 +29,7 @@ public class SimulationClock {
 
 	public static boolean TREAT_ERRORS_AS_FATAL = false;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
-	public static int FASTEST = 10;
-	public static int SLOWEST = 0;
-	private static int currentDelay = FASTEST;
+	private static double currentDelay = 1d;
 	private static int currentCycle = 0;
 	private static int currentTime = 0;
 	private static int currentStep = 1;
@@ -64,10 +62,6 @@ public class SimulationClock {
 		return currentTime;
 	}
 
-	public static int getDelay() {
-		return currentDelay;
-	}
-
 	public static void setStep(final int i) {
 		currentStep = i <= 0 ? 1 : i;
 	}
@@ -96,9 +90,9 @@ public class SimulationClock {
 	}
 
 	public static void waitDelay() {
-		if ( currentDelay == FASTEST ) { return; }
+		if ( currentDelay == 1d ) { return; }
 		try {
-			Thread.sleep(1000 - currentDelay * 100);
+			Thread.sleep((long) (1000 - currentDelay * 1000));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -112,9 +106,13 @@ public class SimulationClock {
 	/**
 	 * @param selection
 	 */
-	public static void setDelay(final int selection) {
-		// From 0 (slowest) to 10 (fastest)
+	public static void setDelay(final double selection) {
+		// From 0 (slowest) to 1 (fastest)
 		currentDelay = selection;
+	}
+
+	public static double getDelay() {
+		return currentDelay;
 	}
 
 }
