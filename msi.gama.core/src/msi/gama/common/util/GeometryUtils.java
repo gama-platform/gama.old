@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -379,312 +379,318 @@ public class GeometryUtils {
 		return POLYGON;
 	}
 
-	public static Geometry rotation(final Geometry geom, final double angle) {
-		if ( geom.getClass().equals(Polygon.class) ) {
-			return GeometryUtils.rotation((Polygon) geom, angle);
-		} else if ( geom.getClass().equals(MultiPolygon.class) ) {
-			int num = ((MultiPolygon) geom).getNumGeometries();
-			Polygon[] polys = new Polygon[num];
-			for ( int i = 0; i < num; i++ ) {
-				polys[i] =
-					GeometryUtils.rotation((Polygon) ((MultiPolygon) geom).getGeometryN(i), angle);
-			}
-			return getFactory().createMultiPolygon(polys);
-		} else if ( geom.getClass().equals(LineString.class) ) {
-			return GeometryUtils.rotation((LineString) geom, angle);
-		} else if ( geom.getClass().equals(MultiLineString.class) ) {
-			int num = ((MultiLineString) geom).getNumGeometries();
-			LineString[] lines = new LineString[num];
-			for ( int i = 0; i < num; i++ ) {
-				lines[i] =
-					GeometryUtils.rotation((LineString) ((MultiLineString) geom).getGeometryN(i),
-						angle);
-			}
-			return getFactory().createMultiLineString(lines);
-		}
-		return geom;
-
-	}
-
-	// angle: angle de la direction de l'affinite, a partir de l'axe des x
-	private static LineString affinite(final LineString ls, final Coordinate c, final double angle,
-		final double coef) {
-		// rotation
-		LineString rot = rotation(ls, c, -1.0 * angle);
-
-		Coordinate[] coord = rot.getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
-		}
-
-		return rotation(getFactory().createLineString(coord_), c, angle);
-	}
+	// public static Geometry rotation(final Geometry geom, final double angle) {
+	// if ( geom.getClass().equals(Polygon.class) ) {
+	// return GeometryUtils.rotation((Polygon) geom, angle);
+	// } else if ( geom.getClass().equals(MultiPolygon.class) ) {
+	// int num = ((MultiPolygon) geom).getNumGeometries();
+	// Polygon[] polys = new Polygon[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// polys[i] =
+	// GeometryUtils.rotation((Polygon) ((MultiPolygon) geom).getGeometryN(i), angle);
+	// }
+	// return getFactory().createMultiPolygon(polys);
+	// } else if ( geom.getClass().equals(LineString.class) ) {
+	// return GeometryUtils.rotation((LineString) geom, angle);
+	// } else if ( geom.getClass().equals(MultiLineString.class) ) {
+	// int num = ((MultiLineString) geom).getNumGeometries();
+	// LineString[] lines = new LineString[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// lines[i] =
+	// GeometryUtils.rotation((LineString) ((MultiLineString) geom).getGeometryN(i),
+	// angle);
+	// }
+	// return getFactory().createMultiLineString(lines);
+	// }
+	// return geom;
+	//
+	// }
 
 	// angle: angle de la direction de l'affinite, a partir de l'axe des x
-	public static Polygon affinite(final Polygon geom, final Coordinate c, final double angle,
-		final double coef) {
-		// pivote le polygone
-		Polygon rot = rotation(geom, c, -1.0 * angle);
+	// private static LineString affinite(final LineString ls, final Coordinate c, final double
+	// angle,
+	// final double coef) {
+	// // rotation
+	// LineString rot = rotation(ls, c, -1.0 * angle);
+	//
+	// Coordinate[] coord = rot.getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
+	// }
+	//
+	// return rotation(getFactory().createLineString(coord_), c, angle);
+	// }
 
-		// le contour externe
-		Coordinate[] coord = rot.getExteriorRing().getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
-		}
+	// angle: angle de la direction de l'affinite, a partir de l'axe des x
+	// public static Polygon affinite(final Polygon geom, final Coordinate c, final double angle,
+	// final double coef) {
+	// // pivote le polygone
+	// Polygon rot = rotation(geom, c, -1.0 * angle);
+	//
+	// // le contour externe
+	// Coordinate[] coord = rot.getExteriorRing().getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// coord_[i] = new Coordinate(c.x + coef * (coord[i].x - c.x), coord[i].y);
+	// }
+	//
+	// LinearRing lr = getFactory().createLinearRing(coord_);
+	//
+	// // les trous
+	// LinearRing[] trous = new LinearRing[rot.getNumInteriorRing()];
+	// for ( int j = 0; j < rot.getNumInteriorRing(); j++ ) {
+	// Coordinate[] hole_coord = rot.getInteriorRingN(j).getCoordinates();
+	// Coordinate[] hole_coord_ = new Coordinate[hole_coord.length];
+	// for ( int i = 0; i < hole_coord.length; i++ ) {
+	// hole_coord_[i] =
+	// new Coordinate(c.x + coef * (hole_coord[i].x - c.x), hole_coord[i].y);
+	// }
+	// trous[j] = getFactory().createLinearRing(hole_coord_);
+	// }
+	// return rotation(new Polygon(lr, trous, getFactory()), c, angle);
+	// }
+	//
+	// public static LineString affinite(final LineString geom, final double angle, final double
+	// scale) {
+	// return affinite(geom, geom.getCentroid().getCoordinate(), angle, scale);
+	// }
 
-		LinearRing lr = getFactory().createLinearRing(coord_);
+	//
+	// static Polygon affinite(final Polygon geom, final double angle, final double scale) {
+	// return affinite(geom, geom.getCentroid().getCoordinate(), angle, scale);
+	// }
 
-		// les trous
-		LinearRing[] trous = new LinearRing[rot.getNumInteriorRing()];
-		for ( int j = 0; j < rot.getNumInteriorRing(); j++ ) {
-			Coordinate[] hole_coord = rot.getInteriorRingN(j).getCoordinates();
-			Coordinate[] hole_coord_ = new Coordinate[hole_coord.length];
-			for ( int i = 0; i < hole_coord.length; i++ ) {
-				hole_coord_[i] =
-					new Coordinate(c.x + coef * (hole_coord[i].x - c.x), hole_coord[i].y);
-			}
-			trous[j] = getFactory().createLinearRing(hole_coord_);
-		}
-		return rotation(new Polygon(lr, trous, getFactory()), c, angle);
-	}
+	// public static Geometry affinite(final Geometry geom, final double angle, final double scale)
+	// {
+	// if ( geom.getClass().equals(Polygon.class) ) {
+	// return GeometryUtils.affinite((Polygon) geom, angle, scale);
+	// } else if ( geom.getClass().equals(MultiPolygon.class) ) {
+	// int num = ((MultiPolygon) geom).getNumGeometries();
+	// Polygon[] polys = new Polygon[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// polys[i] =
+	// GeometryUtils.affinite((Polygon) ((MultiPolygon) geom).getGeometryN(i), angle,
+	// scale);
+	// }
+	// return getFactory().createMultiPolygon(polys);
+	// } else if ( geom.getClass().equals(LineString.class) ) {
+	// return GeometryUtils.affinite((LineString) geom, angle, scale);
+	// } else if ( geom.getClass().equals(MultiLineString.class) ) {
+	// int num = ((MultiLineString) geom).getNumGeometries();
+	// LineString[] lines = new LineString[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// lines[i] =
+	// GeometryUtils.affinite((LineString) ((MultiLineString) geom).getGeometryN(i),
+	// angle, scale);
+	// }
+	// return getFactory().createMultiLineString(lines);
+	// } else {
+	// return geom;
+	// }
+	// }
 
-	public static LineString affinite(final LineString geom, final double angle, final double scale) {
-		return affinite(geom, geom.getCentroid().getCoordinate(), angle, scale);
-	}
+	// private static Polygon homothetie(final Polygon geom, final double x0, final double y0,
+	// final double scale) {
+	//
+	// // le contour externe
+	// Coordinate[] coord = geom.getExteriorRing().getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// coord_[i] =
+	// new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
+	// }
+	// LinearRing lr = getFactory().createLinearRing(coord_);
+	//
+	// // les trous
+	// LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
+	// for ( int j = 0; j < geom.getNumInteriorRing(); j++ ) {
+	// Coordinate[] hole_coord = geom.getInteriorRingN(j).getCoordinates();
+	// Coordinate[] hole_coord_ = new Coordinate[hole_coord.length];
+	// for ( int i = 0; i < hole_coord.length; i++ ) {
+	// hole_coord_[i] =
+	// new Coordinate(x0 + scale * (hole_coord[i].x - x0), y0 + scale *
+	// (hole_coord[i].y - y0));
+	// }
+	// trous[j] = getFactory().createLinearRing(hole_coord_);
+	// }
+	// return getFactory().createPolygon(lr, trous);
+	// }
+	//
+	// public static LineString homothetie(final LineString geom, final double x0, final double y0,
+	// final double scale) {
+	// Coordinate[] coord = geom.getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// coord_[i] =
+	// new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
+	// }
+	// return getFactory().createLineString(coord_);
+	// }
 
-	static Polygon affinite(final Polygon geom, final double angle, final double scale) {
-		return affinite(geom, geom.getCentroid().getCoordinate(), angle, scale);
-	}
+	// private static LineString homothetie(final LineString geom, final double scale) {
+	// return homothetie(geom, geom.getCentroid().getX(), geom.getCentroid().getY(), scale);
+	// }
+	//
+	// public static Polygon homothetie(final Polygon geom, final double scale) {
+	// return homothetie(geom, geom.getCentroid().getX(), geom.getCentroid().getY(), scale);
+	// }
+	//
+	// public static Geometry homothetie(final Geometry geom, final double scale) {
+	// if ( geom.getClass().equals(Polygon.class) ) {
+	// return GeometryUtils.homothetie((Polygon) geom, scale);
+	// } else if ( geom.getClass().equals(MultiPolygon.class) ) {
+	// int num = ((MultiPolygon) geom).getNumGeometries();
+	// Polygon[] polys = new Polygon[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// polys[i] =
+	// GeometryUtils
+	// .homothetie((Polygon) ((MultiPolygon) geom).getGeometryN(i), scale);
+	// }
+	// return getFactory().createMultiPolygon(polys);
+	// } else if ( geom.getClass().equals(LineString.class) ) {
+	// return GeometryUtils.homothetie((LineString) geom, scale);
+	// } else if ( geom.getClass().equals(MultiLineString.class) ) {
+	// int num = ((MultiLineString) geom).getNumGeometries();
+	// LineString[] lines = new LineString[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// lines[i] =
+	// GeometryUtils.homothetie((LineString) ((MultiLineString) geom).getGeometryN(i),
+	// scale);
+	// }
+	// return getFactory().createMultiLineString(lines);
+	// }
+	// return geom;
+	//
+	// }
 
-	public static Geometry affinite(final Geometry geom, final double angle, final double scale) {
-		if ( geom.getClass().equals(Polygon.class) ) {
-			return GeometryUtils.affinite((Polygon) geom, angle, scale);
-		} else if ( geom.getClass().equals(MultiPolygon.class) ) {
-			int num = ((MultiPolygon) geom).getNumGeometries();
-			Polygon[] polys = new Polygon[num];
-			for ( int i = 0; i < num; i++ ) {
-				polys[i] =
-					GeometryUtils.affinite((Polygon) ((MultiPolygon) geom).getGeometryN(i), angle,
-						scale);
-			}
-			return getFactory().createMultiPolygon(polys);
-		} else if ( geom.getClass().equals(LineString.class) ) {
-			return GeometryUtils.affinite((LineString) geom, angle, scale);
-		} else if ( geom.getClass().equals(MultiLineString.class) ) {
-			int num = ((MultiLineString) geom).getNumGeometries();
-			LineString[] lines = new LineString[num];
-			for ( int i = 0; i < num; i++ ) {
-				lines[i] =
-					GeometryUtils.affinite((LineString) ((MultiLineString) geom).getGeometryN(i),
-						angle, scale);
-			}
-			return getFactory().createMultiLineString(lines);
-		} else {
-			return geom;
-		}
-	}
+	// public static Polygon translation(final Polygon geom, final double dx, final double dy) {
+	//
+	// // le contour externe
+	// LinearRing lr = translation((LinearRing) geom.getExteriorRing(), dx, dy);
+	//
+	// // les trous
+	// int n = geom.getNumInteriorRing();
+	// LinearRing[] trous = new LinearRing[n];
+	// for ( int j = 0; j < n; j++ ) {
+	// trous[j] = translation((LinearRing) geom.getInteriorRingN(j), dx, dy);
+	// }
+	//
+	// return getFactory().createPolygon(lr, trous);
+	// }
 
-	private static Polygon homothetie(final Polygon geom, final double x0, final double y0,
-		final double scale) {
+	// private static LinearRing translation(final LinearRing lr, final double dx, final double dy)
+	// {
+	// return getFactory().createLinearRing(translation(lr.getCoordinates(), dx, dy));
+	// }
+	//
+	// static LineString translation(final LineString ls, final double dx, final double dy) {
+	// return getFactory().createLineString(translation(ls.getCoordinates(), dx, dy));
+	// }
+	//
+	// private static Coordinate[] translation(final Coordinate[] coord, final double dx,
+	// final double dy) {
+	//
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// coord_[i] = new Coordinate(coord[i].x + dx, coord[i].y + dy);
+	// }
+	// return coord_;
+	// }
 
-		// le contour externe
-		Coordinate[] coord = geom.getExteriorRing().getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			coord_[i] =
-				new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
-		}
-		LinearRing lr = getFactory().createLinearRing(coord_);
-
-		// les trous
-		LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
-		for ( int j = 0; j < geom.getNumInteriorRing(); j++ ) {
-			Coordinate[] hole_coord = geom.getInteriorRingN(j).getCoordinates();
-			Coordinate[] hole_coord_ = new Coordinate[hole_coord.length];
-			for ( int i = 0; i < hole_coord.length; i++ ) {
-				hole_coord_[i] =
-					new Coordinate(x0 + scale * (hole_coord[i].x - x0), y0 + scale *
-						(hole_coord[i].y - y0));
-			}
-			trous[j] = getFactory().createLinearRing(hole_coord_);
-		}
-		return getFactory().createPolygon(lr, trous);
-	}
-
-	public static LineString homothetie(final LineString geom, final double x0, final double y0,
-		final double scale) {
-		Coordinate[] coord = geom.getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			coord_[i] =
-				new Coordinate(x0 + scale * (coord[i].x - x0), y0 + scale * (coord[i].y - y0));
-		}
-		return getFactory().createLineString(coord_);
-	}
-
-	private static LineString homothetie(final LineString geom, final double scale) {
-		return homothetie(geom, geom.getCentroid().getX(), geom.getCentroid().getY(), scale);
-	}
-
-	public static Polygon homothetie(final Polygon geom, final double scale) {
-		return homothetie(geom, geom.getCentroid().getX(), geom.getCentroid().getY(), scale);
-	}
-
-	public static Geometry homothetie(final Geometry geom, final double scale) {
-		if ( geom.getClass().equals(Polygon.class) ) {
-			return GeometryUtils.homothetie((Polygon) geom, scale);
-		} else if ( geom.getClass().equals(MultiPolygon.class) ) {
-			int num = ((MultiPolygon) geom).getNumGeometries();
-			Polygon[] polys = new Polygon[num];
-			for ( int i = 0; i < num; i++ ) {
-				polys[i] =
-					GeometryUtils
-						.homothetie((Polygon) ((MultiPolygon) geom).getGeometryN(i), scale);
-			}
-			return getFactory().createMultiPolygon(polys);
-		} else if ( geom.getClass().equals(LineString.class) ) {
-			return GeometryUtils.homothetie((LineString) geom, scale);
-		} else if ( geom.getClass().equals(MultiLineString.class) ) {
-			int num = ((MultiLineString) geom).getNumGeometries();
-			LineString[] lines = new LineString[num];
-			for ( int i = 0; i < num; i++ ) {
-				lines[i] =
-					GeometryUtils.homothetie((LineString) ((MultiLineString) geom).getGeometryN(i),
-						scale);
-			}
-			return getFactory().createMultiLineString(lines);
-		}
-		return geom;
-
-	}
-
-	public static Polygon translation(final Polygon geom, final double dx, final double dy) {
-
-		// le contour externe
-		LinearRing lr = translation((LinearRing) geom.getExteriorRing(), dx, dy);
-
-		// les trous
-		int n = geom.getNumInteriorRing();
-		LinearRing[] trous = new LinearRing[n];
-		for ( int j = 0; j < n; j++ ) {
-			trous[j] = translation((LinearRing) geom.getInteriorRingN(j), dx, dy);
-		}
-
-		return getFactory().createPolygon(lr, trous);
-	}
-
-	private static LinearRing translation(final LinearRing lr, final double dx, final double dy) {
-		return getFactory().createLinearRing(translation(lr.getCoordinates(), dx, dy));
-	}
-
-	static LineString translation(final LineString ls, final double dx, final double dy) {
-		return getFactory().createLineString(translation(ls.getCoordinates(), dx, dy));
-	}
-
-	private static Coordinate[] translation(final Coordinate[] coord, final double dx,
-		final double dy) {
-
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			coord_[i] = new Coordinate(coord[i].x + dx, coord[i].y + dy);
-		}
-		return coord_;
-	}
-
-	public static Geometry translation(final Geometry geom, final double dx, final double dy) {
-		if ( geom instanceof Point ) {
-			return getFactory().createPoint(
-				new Coordinate(dx + geom.getCoordinate().x, dy + geom.getCoordinate().y));
-		} else if ( geom instanceof MultiPoint ) {
-			int num = ((MultiPoint) geom).getNumGeometries();
-			Point[] polys = new Point[num];
-			for ( int i = 0; i < num; i++ ) {
-				polys[i] =
-					(Point) GeometryUtils.translation(((MultiPoint) geom).getGeometryN(i), dx, dy);
-			}
-			return getFactory().createMultiPoint(polys);
-		} else if ( geom instanceof Polygon ) {
-			return GeometryUtils.translation((Polygon) geom, dx, dy);
-		} else if ( geom instanceof MultiPolygon ) {
-			int num = ((MultiPolygon) geom).getNumGeometries();
-			Polygon[] polys = new Polygon[num];
-			for ( int i = 0; i < num; i++ ) {
-				polys[i] =
-					GeometryUtils.translation((Polygon) ((MultiPolygon) geom).getGeometryN(i), dx,
-						dy);
-			}
-			return getFactory().createMultiPolygon(polys);
-		} else if ( geom.getClass().equals(LineString.class) ) {
-			return GeometryUtils.translation((LineString) geom, dx, dy);
-		} else if ( geom.getClass().equals(MultiLineString.class) ) {
-			int num = ((MultiLineString) geom).getNumGeometries();
-			LineString[] lines = new LineString[num];
-			for ( int i = 0; i < num; i++ ) {
-				lines[i] =
-					GeometryUtils.translation(
-						(LineString) ((MultiLineString) geom).getGeometryN(i), dx, dy);
-			}
-			return getFactory().createMultiLineString(lines);
-		}
-		return geom;
-	}
-
-	public static LineString rotation(final LineString ls, final Coordinate c, final double angle) {
-		double cos = Math.cos(angle), sin = Math.sin(angle);
-
-		Coordinate[] coord = ls.getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			double x = coord[i].x, y = coord[i].y;
-			coord_[i] =
-				new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
-					cos * (y - c.y));
-		}
-		return getFactory().createLineString(coord_);
-	}
+	// public static Geometry translation(final Geometry geom, final double dx, final double dy) {
+	// if ( geom instanceof Point ) {
+	// return getFactory().createPoint(
+	// new Coordinate(dx + geom.getCoordinate().x, dy + geom.getCoordinate().y));
+	// } else if ( geom instanceof MultiPoint ) {
+	// int num = ((MultiPoint) geom).getNumGeometries();
+	// Point[] polys = new Point[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// polys[i] =
+	// (Point) GeometryUtils.translation(((MultiPoint) geom).getGeometryN(i), dx, dy);
+	// }
+	// return getFactory().createMultiPoint(polys);
+	// } else if ( geom instanceof Polygon ) {
+	// return GeometryUtils.translation((Polygon) geom, dx, dy);
+	// } else if ( geom instanceof MultiPolygon ) {
+	// int num = ((MultiPolygon) geom).getNumGeometries();
+	// Polygon[] polys = new Polygon[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// polys[i] =
+	// GeometryUtils.translation((Polygon) ((MultiPolygon) geom).getGeometryN(i), dx,
+	// dy);
+	// }
+	// return getFactory().createMultiPolygon(polys);
+	// } else if ( geom.getClass().equals(LineString.class) ) {
+	// return GeometryUtils.translation((LineString) geom, dx, dy);
+	// } else if ( geom.getClass().equals(MultiLineString.class) ) {
+	// int num = ((MultiLineString) geom).getNumGeometries();
+	// LineString[] lines = new LineString[num];
+	// for ( int i = 0; i < num; i++ ) {
+	// lines[i] =
+	// GeometryUtils.translation(
+	// (LineString) ((MultiLineString) geom).getGeometryN(i), dx, dy);
+	// }
+	// return getFactory().createMultiLineString(lines);
+	// }
+	// return geom;
+	// }
+	//
+	// public static LineString rotation(final LineString ls, final Coordinate c, final double
+	// angle) {
+	// double cos = Math.cos(angle), sin = Math.sin(angle);
+	//
+	// Coordinate[] coord = ls.getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// double x = coord[i].x, y = coord[i].y;
+	// coord_[i] =
+	// new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
+	// cos * (y - c.y));
+	// }
+	// return getFactory().createLineString(coord_);
+	// }
 
 	// angle en radian, rotation dans le sens direct de centre c
-	public static Polygon rotation(final Polygon geom, final Coordinate c, final double angle) {
-		double cos = Math.cos(angle), sin = Math.sin(angle);
-
-		// rotation de l'enveloppe
-		Coordinate[] coord = geom.getExteriorRing().getCoordinates();
-		Coordinate[] coord_ = new Coordinate[coord.length];
-		for ( int i = 0; i < coord.length; i++ ) {
-			double x = coord[i].x, y = coord[i].y;
-			coord_[i] =
-				new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
-					cos * (y - c.y));
-		}
-		LinearRing lr = getFactory().createLinearRing(coord_);
-
-		// rotation des trous
-		LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
-		for ( int j = 0; j < geom.getNumInteriorRing(); j++ ) {
-			Coordinate[] coord2 = geom.getInteriorRingN(j).getCoordinates();
-			Coordinate[] coord2_ = new Coordinate[coord2.length];
-			for ( int i = 0; i < coord2.length; i++ ) {
-				double x = coord2[i].x, y = coord2[i].y;
-				coord2_[i] =
-					new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
-						cos * (y - c.y));
-			}
-			trous[j] = getFactory().createLinearRing(coord2_);
-		}
-		return getFactory().createPolygon(lr, trous);
-	}
+	// public static Polygon rotation(final Polygon geom, final Coordinate c, final double angle) {
+	// double cos = Math.cos(angle), sin = Math.sin(angle);
+	//
+	// // rotation de l'enveloppe
+	// Coordinate[] coord = geom.getExteriorRing().getCoordinates();
+	// Coordinate[] coord_ = new Coordinate[coord.length];
+	// for ( int i = 0; i < coord.length; i++ ) {
+	// double x = coord[i].x, y = coord[i].y;
+	// coord_[i] =
+	// new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
+	// cos * (y - c.y));
+	// }
+	// LinearRing lr = getFactory().createLinearRing(coord_);
+	//
+	// // rotation des trous
+	// LinearRing[] trous = new LinearRing[geom.getNumInteriorRing()];
+	// for ( int j = 0; j < geom.getNumInteriorRing(); j++ ) {
+	// Coordinate[] coord2 = geom.getInteriorRingN(j).getCoordinates();
+	// Coordinate[] coord2_ = new Coordinate[coord2.length];
+	// for ( int i = 0; i < coord2.length; i++ ) {
+	// double x = coord2[i].x, y = coord2[i].y;
+	// coord2_[i] =
+	// new Coordinate(c.x + cos * (x - c.x) - sin * (y - c.y), c.y + sin * (x - c.x) +
+	// cos * (y - c.y));
+	// }
+	// trous[j] = getFactory().createLinearRing(coord2_);
+	// }
+	// return getFactory().createPolygon(lr, trous);
+	// }
+	//
+	// angle en radian, rotation dans le sens direct
+	// static LineString rotation(final LineString geom, final double angle) {
+	// return rotation(geom, geom.getCentroid().getCoordinate(), angle);
+	// }
 
 	// angle en radian, rotation dans le sens direct
-	static LineString rotation(final LineString geom, final double angle) {
-		return rotation(geom, geom.getCentroid().getCoordinate(), angle);
-	}
-
-	// angle en radian, rotation dans le sens direct
-	static Polygon rotation(final Polygon geom, final double angle) {
-		return rotation(geom, geom.getCentroid().getCoordinate(), angle);
-	}
+	// static Polygon rotation(final Polygon geom, final double angle) {
+	// return rotation(geom, geom.getCentroid().getCoordinate(), angle);
+	// }
 
 	/*
 	 * public static int[][] discretisationGrid(Geometry geom, double size, double xMax, double
@@ -702,7 +708,6 @@ public class GeometryUtils {
 	 * System.out.println("TEMPS CONSTRUCTION MATRICE : " + c.getMilliSec()); return matrix; }
 	 */
 
-	// TODO UCdetector: Remove unused code:
 	// public static List<Polygon> triangulationDC(final Geometry geom, final boolean allTriangle,
 	// final double size) {
 	// GamaList<Polygon> geoms = new GamaList<Polygon>();
@@ -718,7 +723,6 @@ public class GeometryUtils {
 	// return geoms2;
 	// }
 
-	// TODO UCdetector: Remove unused code:
 	// public static FeatureCollection buildBasicFeatureCollection(final List<Geometry> geoms)
 	// throws SchemaException, IOException {
 	// if ( geoms.isEmpty() ) { return null; }

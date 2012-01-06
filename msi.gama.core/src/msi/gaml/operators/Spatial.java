@@ -455,7 +455,8 @@ public abstract class Spatial {
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" }, priority = IPriority.PRODUCT)
 		public static IShape opScaledBy(final IShape g, final Double coefficient) {
-			return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
+			return ((GamaShape) g.getGeometry()).scaledBy(coefficient);
+			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
@@ -500,16 +501,12 @@ public abstract class Spatial {
 		 */
 		@operator("rotated_by")
 		public static IShape primRotation(final IShape g1, final Double angle) {
-			if ( g1.isPoint() ) { return g1; }
-			return new GamaShape(GeometryUtils.rotation(g1.getInnerGeometry(), angle));
+			return ((GamaShape) g1.getGeometry()).rotatedBy(angle);
 		}
 
 		@operator("rotated_by")
 		public static IShape primRotation(final IShape g1, final Integer angle) {
-			// angle in degrees
-			if ( g1.isPoint() ) { return g1; }
-			return new GamaShape(GeometryUtils.rotation(g1.getInnerGeometry(), angle * Maths.toRad)); // A
-			// VERIFIER
+			return ((GamaShape) g1.getGeometry()).rotatedBy(angle);
 		}
 
 		/**
@@ -521,28 +518,29 @@ public abstract class Spatial {
 		 */
 		@operator("transformed_by")
 		public static IShape primAffinite(final IShape g, final GamaPoint p) {
-			double angle = p.x;
-			double coefficient = p.y;
-			return new GamaShape(GeometryUtils.affinite(g.getInnerGeometry(), coefficient, angle));
+			return opScaledBy(primRotation(g, p.x), p.y);
 		}
 
 		/**
-		 * Apply a translation operation (vector (dx, dy)) to the agent geometry
+		 * @throws GamaRuntimeException
+		 *             Apply a translation operation (vector (dx, dy)) to the agent geometry
 		 * 
 		 * @param args : dx -> double; dy -> double
 		 * @return the prim CommandStatus
 		 */
 		@operator("translated_by")
-		public static IShape primTranslationBy(final IShape g, final GamaPoint p) {
-			double dx = p.x;
-			double dy = p.y;
-			return new GamaShape(GeometryUtils.translation(g.getInnerGeometry(), dx, dy));
+		public static IShape primTranslationBy(final IShape g, final GamaPoint p)
+			throws GamaRuntimeException {
+			return primTranslationTo(g,
+				msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
 		}
 
 		@operator(value = { "at_location", "translated_to" })
-		public static IShape primTranslationTo(final IShape g, final ILocation p) {
-			return new GamaShape(GeometryUtils.translation(g.getInnerGeometry(), p.getX() -
-				g.getLocation().getX(), p.getY() - g.getLocation().getY()));
+		public static IShape primTranslationTo(final IShape g, final ILocation p)
+			throws GamaRuntimeException {
+			GamaShape newShape = (GamaShape) g.copy();
+			newShape.setLocation(p);
+			return newShape;
 		}
 
 		@operator(value = { "without_holes", "solid" })
@@ -561,13 +559,15 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
-		public static IMatrix opAsGrid(final IScope scope, final IShape g, final GamaPoint dim) {
+		public static IMatrix opAsGrid(final IScope scope, final IShape g, final GamaPoint dim)
+			throws GamaRuntimeException {
 			// cols, rows
 			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false);
 		}
 
 		@operator(value = "as_4_grid", content_type = IType.GEOMETRY)
-		public static IMatrix opAs4Grid(final IScope scope, final IShape g, final GamaPoint dim) {
+		public static IMatrix opAs4Grid(final IScope scope, final IShape g, final GamaPoint dim)
+			throws GamaRuntimeException {
 			// cols, rows
 			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, true);
 		}

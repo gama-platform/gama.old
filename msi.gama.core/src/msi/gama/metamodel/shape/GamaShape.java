@@ -24,11 +24,13 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.util.*;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.algorithm.distance.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.geom.util.AffineTransformation;
 import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 
 /**
@@ -52,7 +54,8 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
-	private static double dx = 0, dy = 0;
+
+	// private static double dx = 0, dy = 0;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -116,15 +119,6 @@ public class GamaShape implements IShape {
 		return result;
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// // TODO False now
-	// return "new " + getClass().getCanonicalName() + "(" +
-	// GeometricFunctions.class.getCanonicalName() + ".buildGeometryJTS(" +
-	// Cast.toJava(getGeometries()) + "))";
-	// }
-
 	@Override
 	public String toString() {
 		return getInnerGeometry().toText() + " at " + getLocation();
@@ -140,17 +134,15 @@ public class GamaShape implements IShape {
 		final ILocation previous = location;
 		location = l;
 		if ( previous != null ) {
-			// if ( isPoint ) {
-			dx = isPoint ? location.getX() : location.getX() - previous.getX();
-			dy = isPoint ? location.getY() : location.getY() - previous.getY();
-			geometry.apply(isPoint ? modification : translation);
+			if ( isPoint ) {
+				geometry.apply(modification.with((Coordinate) location));
+			} else {
+				// if ( isPoint ) {
+				double dx = location.getX() - previous.getX();
+				double dy = location.getY() - previous.getY();
+				geometry.apply(translation.by(dx, dy));
+			}
 			geometry.geometryChanged();
-			// } else {
-			// Geometry g =
-			// GeometryUtils.translation(getInnerGeometry(),
-			// location.getX() - previous.getX(), location.getY() - previous.getY());
-			// setGeometry(g, false);
-			// }
 		}
 	}
 
@@ -162,28 +154,87 @@ public class GamaShape implements IShape {
 	// return geometry.equals(((GamaGeometry) o).geometry);
 	// }
 
-	private static Translation2 translation = new Translation2();
-	private static PointModification modification = new PointModification();
+	public GamaShape rotatedBy(final int angle) {
+		return rotatedBy(Maths.toRad * angle);
+	}
 
-	private static class Translation2 implements CoordinateFilter {
+	public GamaShape rotatedBy(final double angle) {
+		if ( isPoint ) { return copy(); }
+		Geometry newGeom = (Geometry) geometry.clone();
+		newGeom.apply(rotation.of(angle, (Coordinate) location));
+		return new GamaShape(newGeom);
+	}
+
+	public GamaShape scaledBy(final double coeff) {
+		if ( isPoint ) { return copy(); }
+		Geometry newGeom = (Geometry) geometry.clone();
+		newGeom.apply(scaling.of(coeff, (Coordinate) location));
+		return new GamaShape(newGeom);
+	}
+
+	private static Translation translation = new Translation();
+	private static Modification modification = new Modification();
+	private static Rotation rotation = new Rotation();
+	private static Scaling scaling = new Scaling();
+
+	private static class Translation implements CoordinateFilter {
+
+		double dx, dy;
 
 		/**
 		 * @see com.vividsolutions.jts.geom.CoordinateFilter#filter(com.vividsolutions.jts.geom.Coordinate)
 		 */
 		@Override
 		public void filter(final Coordinate coord) {
-			coord.x = coord.x + dx;
-			coord.y = coord.y + dy;
+			coord.x += dx;
+			coord.y += dy;
+		}
+
+		/**
+		 * @param dx
+		 * @param dy
+		 * @return
+		 */
+		public Translation by(final double dx, final double dy) {
+			this.dx = dx;
+			this.dy = dy;
+			return this;
 		}
 
 	}
 
-	private static class PointModification implements CoordinateFilter {
+	private static class Scaling extends AffineTransformation {
+
+		Scaling of(final double coeff, final Coordinate c) {
+			setToTranslation(-c.x, -c.y);
+			scale(coeff, coeff);
+			translate(c.x, c.y);
+			return this;
+		}
+
+	}
+
+	private static class Rotation extends AffineTransformation {
+
+		Rotation of(final double theta, final Coordinate c) {
+			setToRotation(theta, c.x, c.y);
+			return this;
+		}
+
+	}
+
+	private static class Modification implements CoordinateFilter {
+
+		Coordinate modif;
 
 		@Override
 		public void filter(final Coordinate c) {
-			c.x = dx;
-			c.y = dy;
+			c.setCoordinate(modif);
+		}
+
+		public Modification with(final Coordinate c) {
+			modif = c;
+			return this;
 		}
 
 	}
@@ -384,7 +435,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public IShape copy() {
+	public GamaShape copy() {
 
 		// TODO Attention : in case of points and lines, buffer(0,0) returns an empty polygon !!!!!
 		return new GamaShape((Geometry) geometry.clone());

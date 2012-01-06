@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,15 +19,13 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-
-import msi.gama.common.util.*;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 
@@ -86,23 +84,27 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * Builds a (cleansed) polygon from a list of points. The input points must be valid to create a
 	 * linear ring (first point and last point are duplicated). It is the responsible of the caller
 	 * to assure the validity of the input parameter.
+	 * Update: the coordinate sequence is now validated before creating the polygon, and any
+	 * necessary point is added.
 	 * 
 	 * @param points
 	 * @return
 	 */
 	public static IShape buildPolygon(final List<GamaPoint> points) {
-		List<Coordinate> coordinates = new ArrayList<Coordinate>();
-
-		for ( ILocation p : points ) {
-			coordinates.add(p.toCoordinate());
+		CoordinateSequenceFactory fact = GeometryUtils.getFactory().getCoordinateSequenceFactory();
+		int size = points.size();
+		CoordinateSequence cs = fact.create(size, 2);
+		for ( int i = 0; i < size; i++ ) {
+			Coordinate p = points.get(i);
+			cs.setOrdinate(i, 0, p.x);
+			cs.setOrdinate(i, 1, p.y);
 		}
-
-		LinearRing geom =
-			GeometryUtils.getFactory().createLinearRing(coordinates.toArray(new Coordinate[0]));
+		cs = CoordinateSequences.ensureValidRing(fact, cs);
+		LinearRing geom = GeometryUtils.getFactory().createLinearRing(cs);
 		Polygon p = GeometryUtils.getFactory().createPolygon(geom, null);
 		if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); }
 		return buildPolyline(points);
-
+		// / ???
 	}
 
 	public static IShape buildLine(final ILocation location1, final ILocation location2) {
@@ -135,7 +137,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coordinates[0] = new Coordinate(x, y - side_size / sqrt2);
 		coordinates[1] = new Coordinate(x - side_size / sqrt2, y + side_size / sqrt2);
 		coordinates[2] = new Coordinate(x + side_size / sqrt2, y + side_size / sqrt2);
-		coordinates[3] = coordinates[0];
+		coordinates[3] = (Coordinate) coordinates[0].clone();
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
 		return new GamaShape(GeometryUtils.getFactory().createPolygon(geom, null));
 	}
@@ -154,7 +156,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coordinates[1] = new Coordinate(x + width / 2.0, y + height / 2.0);
 		coordinates[2] = new Coordinate(x + width / 2.0, y - height / 2.0);
 		coordinates[3] = new Coordinate(x - width / 2.0, y - height / 2.0);
-		coordinates[4] = coordinates[0];
+		coordinates[4] = (Coordinate) coordinates[0].clone();
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
 		return new GamaShape(GeometryUtils.getFactory().createPolygon(geom, null));
 	}

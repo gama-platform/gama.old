@@ -56,7 +56,8 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows,
-		final int columns, /* final boolean isTorus, */final boolean usesVN) {
+		final int columns, /* final boolean isTorus, */final boolean usesVN)
+		throws GamaRuntimeException {
 		super(scope, environment/* , isTorus */);
 		places = new GamaSpatialMatrix(environment, rows, columns,/* , isTorus, */usesVN);
 	}
@@ -88,10 +89,11 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
+	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy() {
+	protected ITopology _copy() throws GamaRuntimeException {
 		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(),
 			((GamaSpatialMatrix) places).getCols(),
 			((GamaSpatialMatrix) places).neighbourhood.isVN());

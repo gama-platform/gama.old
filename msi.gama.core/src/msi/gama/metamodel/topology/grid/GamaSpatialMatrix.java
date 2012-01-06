@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -28,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
-import msi.gaml.operators.Maths;
+import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
@@ -90,7 +90,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	private IAgentFilter cellFilter;
 
 	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
-		final boolean usesVN) {
+		final boolean usesVN) throws GamaRuntimeException {
 		super(cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -113,15 +113,17 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		matrix = new IShape[size];
 	}
 
-	public void createCells(final boolean partialCells) {
-		Geometry g = environmentFrame.getInnerGeometry();
-		boolean isRectangle = g.isRectangle();
+	public void createCells(final boolean partialCells) throws GamaRuntimeException {
+		// Geometry g = environmentFrame.getInnerGeometry();
+		boolean isRectangle = environmentFrame.getInnerGeometry().isRectangle();
 		GamaPoint p = new GamaPoint(0, 0);
 		GamaPoint origin =
 			new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
 				.getMinY());
 
-		Geometry translatedReferenceFrame = GeometryUtils.translation(g, -origin.x, -origin.y);
+		IShape translatedReferenceFrame =
+			Spatial.Transformations.primTranslationBy(environmentFrame, origin);
+		// GeometryUtils.translation(g, -origin.x, -origin.y);
 
 		double cmx = cellWidth / 2;
 		double cmy = cellHeight / 2;
@@ -131,11 +133,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			p.x = xx * cellWidth + cmx;
 			p.y = yy * cellHeight + cmy;
 			IShape rect = GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-			boolean ok = isRectangle || rect.getInnerGeometry().coveredBy(translatedReferenceFrame);
-			if ( partialCells && !ok &&
-				rect.getInnerGeometry().intersects(translatedReferenceFrame) ) {
-				rect.setInnerGeometry(rect.getInnerGeometry()
-					.intersection(translatedReferenceFrame));
+			boolean ok = isRectangle || translatedReferenceFrame.covers(rect);
+			if ( partialCells && !ok && rect.intersects(translatedReferenceFrame) ) {
+				rect.setGeometry(Spatial.Operators.opInter(rect, translatedReferenceFrame));
 				ok = true;
 			}
 			if ( ok ) {
@@ -324,10 +324,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public IMatrix copy() {
+	public IMatrix copy() throws GamaRuntimeException {
 		GamaSpatialMatrix result =
 			new GamaSpatialMatrix(environmentFrame, numCols, numRows/* , isTorus */, usesVN);
-		System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
+		java.lang.System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
 		return result;
 	}
 
