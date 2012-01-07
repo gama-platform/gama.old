@@ -304,7 +304,7 @@ public class MovingSkill extends GeometricSkill {
 	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, double distance) {
 		int index = 0;
 		int indexSegment = 1;
-		ILocation currentLocation = agent.getLocation();
+		ILocation currentLocation = agent.getLocation().copy();
 		ILocation startLocation = agent.getLocation().copy();
 		int nb = path.getEdgeList().size(); // instead of getGeometries() ?? Faster, and more
 											// reliable. But is it the same ?
