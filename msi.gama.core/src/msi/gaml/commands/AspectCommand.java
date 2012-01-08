@@ -21,7 +21,6 @@ package msi.gaml.commands;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -52,9 +51,9 @@ public class AspectCommand extends AbstractCommandSequence implements IAspect {
 			Rectangle2D r =
 				((IGraphics) scope.getContext()).drawGeometry(agent.getGeometry()
 					.getInnerGeometry(), c == null ? Color.YELLOW : c, true, 0);
-			GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
-				agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +
-				agent.getLocation().getY() / r.getCenterY());
+			// GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
+			// agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +
+			// agent.getLocation().getY() / r.getCenterY());
 			return r;
 
 		}
