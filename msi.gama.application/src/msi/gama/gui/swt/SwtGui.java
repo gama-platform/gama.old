@@ -31,6 +31,7 @@ import msi.gama.outputs.*;
 import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamlException;
 import org.apache.log4j.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -322,7 +323,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void runtimeError(final GamaRuntimeException g) {
+	public void runtimeError(final GamlException g) {
 		g.printStackTrace();
 		final ErrorView v = (ErrorView) GuiUtils.showView(ErrorView.ID, null);
 		if ( v != null ) {

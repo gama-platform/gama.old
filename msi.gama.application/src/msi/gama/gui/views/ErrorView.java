@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -25,15 +25,16 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamlException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
+public class ErrorView extends ExpandableItemsView<GamlException> {
 
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
 
-	ArrayList<GamaRuntimeException> exceptions = new ArrayList();
+	ArrayList<GamlException> exceptions = new ArrayList();
 	int numberOfDisplayedErrors = 10;
 	boolean mostRecentFirst = true;
 	boolean showErrors = true;
@@ -46,12 +47,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	public boolean addItem(final GamaRuntimeException e) {
+	public boolean addItem(final GamlException e) {
 		createItem(e, false);
 		return true;
 	}
 
-	public void addNewError(final GamaRuntimeException e) {
+	public void addNewError(final GamlException e) {
 		exceptions.add(e);
 		if ( showErrors ) {
 			reset();
@@ -153,7 +154,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	protected Composite createItemContentsFor(final GamaRuntimeException e) {
+	protected Composite createItemContentsFor(final GamlException e) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
 		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -177,22 +178,24 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	public void removeItem(final GamaRuntimeException obj) {
+	public void removeItem(final GamlException obj) {
 		exceptions.remove(obj);
 	}
 
 	@Override
-	public void pauseItem(final GamaRuntimeException obj) {}
+	public void pauseItem(final GamlException obj) {}
 
 	@Override
-	public void resumeItem(final GamaRuntimeException obj) {}
+	public void resumeItem(final GamlException obj) {}
 
 	@Override
-	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
+	public String getItemDisplayName(final GamlException obj, final String previousName) {
 		StringBuilder sb = new StringBuilder();
-		String a = obj.getAgent();
-		if ( a != null ) {
-			sb.append(a).append(" at ");
+		if ( obj instanceof GamaRuntimeException ) {
+			String a = ((GamaRuntimeException) obj).getAgent();
+			if ( a != null ) {
+				sb.append(a).append(" at ");
+			}
 		}
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
 			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE)
@@ -201,11 +204,11 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	public void focusItem(final GamaRuntimeException data) {}
+	public void focusItem(final GamlException data) {}
 
 	@Override
-	public List<GamaRuntimeException> getItems() {
-		List<GamaRuntimeException> errors = new ArrayList();
+	public List<GamlException> getItems() {
+		List<GamlException> errors = new ArrayList();
 		int size = exceptions.size();
 		if ( size == 0 ) { return errors; }
 		int end = size;
