@@ -1,6 +1,4 @@
 model tutorial_gis_city_traffic
-// gen by Xml2Gaml
-import "platform:/plugin/msi.gama.application/generated/std.gaml"
 
 global {
 	var shape_file_buildings type: string init: '../includes/building.shp' parameter: 'Shapefile for the buildings:' category: 'GIS' ;
@@ -58,9 +56,8 @@ entities {
 		var end_work type: int ;
 		var objectif type: string ;
 		var the_target type: point init: nil ;
-		aspect base {
-			draw shape: circle color: color size: 10 ;
-		}
+		var shape type: geometry init: circle(5);
+
 		reflex time_to_work when: day_time = start_work {
 			set objectif value: 'working' ;
 			set the_target value: any_location_in (working_place.shape);
@@ -78,6 +75,9 @@ entities {
 				set the_target value: nil ;
 			}
 		}
+				aspect default {
+			draw shape: geometry color: color ;
+		}
 	}
 }
 environment bounds: shape_file_bounds ;
@@ -85,6 +85,6 @@ output {
 	display city_display refresh_every: 1 {
 		species building aspect: base ;
 		species road aspect: base ;
-		species people aspect: base ;
+		species people  ;
 	}
 }
