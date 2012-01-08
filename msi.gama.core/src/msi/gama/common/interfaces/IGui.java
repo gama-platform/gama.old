@@ -21,7 +21,7 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamlException;
 
 /**
  * The class IGui.
@@ -64,7 +64,7 @@ public interface IGui {
 
 	void warn(String string);
 
-	void runtimeError(GamaRuntimeException g);
+	void runtimeError(GamlException g);
 
 	IEditorFactory getEditorFactory();
 

@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamlException;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -167,7 +167,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void runtimeError(final GamaRuntimeException g) {
+	public static void runtimeError(final GamlException g) {
 		if ( gui != null ) {
 			gui.runtimeError(g);
 		}

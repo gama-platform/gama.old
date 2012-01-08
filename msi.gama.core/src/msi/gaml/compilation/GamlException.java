@@ -179,4 +179,23 @@ public class GamlException extends Exception {
 		return false;
 	}
 
+	/**
+	 * @return
+	 */
+	public long getCycle() {
+		return 0;
+	}
+
+	public String getContextAsLine() {
+		StringBuilder sb = new StringBuilder();
+		for ( String s : context ) {
+			sb.append(s).append(" / ");
+		}
+		return sb.toString();
+	}
+
+	public List<String> getContextAsList() {
+		return context;
+	}
+
 }

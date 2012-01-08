@@ -93,7 +93,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		for ( final ISymbol layer : getLayers() ) {
 			try {
 				((IDisplayLayer) layer).prepare(this, getOwnScope());
-			} catch (GamaRuntimeException e) {
+			} catch (GamlException e) {
 				GAMA.reportError(e);
 			}
 		}

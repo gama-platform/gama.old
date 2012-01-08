@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -24,13 +24,18 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
 import msi.gaml.types.IType;
 import org.jfree.chart.*;
@@ -82,6 +87,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	private final Map<String, Integer> expressions_index = new HashMap();
 	private Dataset dataset;
 	private boolean exploded;
+	String xAxisName = "time";
 	List<Data> datas;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
@@ -108,45 +114,56 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 		}
 	}
 
-	void createSeries(final IScope scope) {
-		int i = 0;
+	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamlException {
 		final XYPlot plot = (XYPlot) chart.getPlot();
-		for ( final Data e : datas ) {
-			dataset = new DefaultTableXYDataset();
-			final String legend = e.getName();
-			final XYSeries serie = new XYSeries(legend, false, false);
-			((DefaultTableXYDataset) dataset).addSeries(serie);
-			expressions_index.put(legend, i);
-			plot.setRenderer(i, e.getRenderer(), false);
-			final Color c = e.getColor();
-			// plot.getRenderer(i).setBasePaint(c);
-			plot.getRenderer(i).setSeriesPaint(0, c);
+		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+		if ( isTimeSeries ) {
 			// set the range axis to display integers only...
-			final NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
-			rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-			rangeAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
-			final LegendTitle ll = chart.getLegend();
-			if ( ll != null ) {
-				ll.setItemFont(new Font("SansSerif", Font.PLAIN, 10));
-			}
+			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+			Data timeSeriesXData =
+				(Data) DescriptionFactory.getModelFactory().compileDescription(
+					DescriptionFactory.createDescription(IKeyword.DATA, description, IKeyword.NAME,
+						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME), GAMA.getExpressionFactory());
+			timeSeriesXData.prepare(scope);
+			datas.add(0, timeSeriesXData);
 
+		}
+		domainAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
+		domainAxis.setLabel(datas.get(0).getName());
+		final LegendTitle ll = chart.getLegend();
+		if ( ll != null ) {
+			ll.setItemFont(new Font("SansSerif", Font.PLAIN, 10));
+		}
+
+		for ( int i = 0; i < datas.size(); i++ ) {
+			Data e = datas.get(i);
+			final String legend = e.getName();
+			if ( i != 0 ) { // the first data is the domain
+				dataset = new DefaultTableXYDataset();
+				final XYSeries serie = new XYSeries(legend, false, false);
+				((DefaultTableXYDataset) dataset).addSeries(serie);
+				expressions_index.put(legend, i);
+				plot.setRenderer(i, e.getRenderer(), false);
+				final Color c = e.getColor();
+				plot.getRenderer(i).setSeriesPaint(0, c);
+			}
 			history.append(legend);
 			history.append(',');
 			plot.setDataset(i, (DefaultTableXYDataset) dataset);
-			i++;
 		}
 
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
+
 	}
 
-	private void createData(final IScope scope) throws GamaRuntimeException {
+	private void createData(final IScope scope) throws GamlException {
 		for ( Data e : datas ) {
 			e.prepare(scope);
 		}
 		switch (type) {
 			case SERIES_CHART: {
-				createSeries(scope);
+				createSeries(scope, true);
 				break;
 			}
 			case PIE_CHART: {
@@ -157,8 +174,8 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 				createBars(scope);
 				break;
 			}
-			default:
-				createSeries(scope);
+			case XY_CHART:
+				createSeries(scope, false);
 				break;
 		}
 	}
@@ -248,9 +265,9 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 				}
 				break;
 			}
-			default:
+			case XY_CHART:
 				chart =
-					ChartFactory.createXYLineChart("", "time", "", null, PlotOrientation.VERTICAL,
+					ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL,
 						true, false, false);
 				break;
 		}
@@ -294,7 +311,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
+	public void prepare(final IDisplayOutput out, final IScope scope) throws GamlException {
 		super.prepare(out, scope);
 		history = new StringBuilder();
 		IExpression string1 = getFacet(IKeyword.TYPE);
@@ -327,6 +344,13 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
 		super.compute(scope, cycle);
 		lastComputeCycle = cycle;
+		switch (type) {
+			case XY_CHART:
+			case SERIES_CHART:
+				computeSeries(scope, cycle);
+				return;
+		}
+
 		for ( final Data d : datas ) {
 			lastValues.put(d.getName(), d.getValue(scope));
 		}
@@ -334,14 +358,6 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 			String s = d.getKey();
 			final double n = d.getValue();
 			switch (type) {
-				case SERIES_CHART: {
-					XYPlot plot = (XYPlot) chart.getPlot();
-					DefaultTableXYDataset data =
-						(DefaultTableXYDataset) plot.getDataset(expressions_index.get(s));
-					XYSeries serie = data.getSeries(0);
-					serie.addOrUpdate(lastComputeCycle.doubleValue(), n);
-					break;
-				}
 				case PIE_CHART: {
 					((DefaultPieDataset) dataset).setValue(s, n);
 					break;
@@ -356,6 +372,29 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
+	}
+
+	/**
+	 * @throws GamaRuntimeException
+	 * @param scope
+	 * @param cycle
+	 */
+	private void computeSeries(final IScope scope, final long cycle) throws GamaRuntimeException {
+		double x = datas.get(0).getValue(scope);
+		history.append(x);
+		history.append(',');
+		for ( int i = 1; i < datas.size(); i++ ) {
+			XYPlot plot = (XYPlot) chart.getPlot();
+			DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
+			XYSeries serie = data.getSeries(0);
+			double n = datas.get(i).getValue(scope);
+			serie.addOrUpdate(x, n);
+			history.append(n);
+			history.append(',');
+		}
+		history.deleteCharAt(history.length() - 1);
+		history.append(nl);
+
 	}
 
 	@Override

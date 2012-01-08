@@ -43,22 +43,22 @@ public class Maths {
 	 * The Class Units.
 	 */
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Integer pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue()).intValue();
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
-	@operator(value = { "^", "**" }, can_be_const = true)
+	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Double pow(final Double a, final Double b) {
 		// Based on the Taylor series approximation.
 		double a1 = a.doubleValue();
@@ -430,25 +430,25 @@ public class Maths {
 	}
 
 	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
-	public static Integer opDiv(final Integer a, final Integer b) throws GamaRuntimeException {
+	public static Integer div(final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return a / b;
 	}
 
 	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
-	public static Integer opDiv(final Double a, final Integer b) throws GamaRuntimeException {
+	public static Integer div(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
-	public static Integer opDiv(final Integer a, final Double b) throws GamaRuntimeException {
+	public static Integer div(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
-	public static Integer opDiv(final Double a, final Double b) throws GamaRuntimeException {
+	public static Integer div(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
 		return (int) (a / b);
 	}
