@@ -54,7 +54,7 @@ public class MatrixEditor extends AbstractEditor {
 		button.setAlignment(SWT.LEFT);
 		button.addSelectionListener(this);
 
-		currentValue = originalValue;
+		currentValue = getOriginalValue();
 		return button;
 
 	}

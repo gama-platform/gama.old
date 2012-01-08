@@ -52,7 +52,7 @@ public class ListEditor extends AbstractEditor {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		currentValue = originalValue;
+		currentValue = getOriginalValue();
 		Composite comp = new Composite(compo, SWT.None);
 		comp.setLayoutData(getParameterGridData());
 		final GridLayout layout = new GridLayout(2, false);

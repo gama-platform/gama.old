@@ -74,8 +74,8 @@ public class IntEditor extends NumberEditor {
 	@Override
 	protected Integer normalizeValues() throws GamaRuntimeException {
 		Integer valueToConsider =
-			originalValue == null ? 0 : Cast.asInt(GAMA.getDefaultScope(), originalValue);
-		currentValue = originalValue == null ? null : valueToConsider;
+			getOriginalValue() == null ? 0 : Cast.asInt(GAMA.getDefaultScope(), getOriginalValue());
+		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.intValue();
 		maxValue = maxValue == null ? null : maxValue.intValue();
 		return valueToConsider;

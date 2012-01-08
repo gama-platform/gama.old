@@ -49,7 +49,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	protected final String name;
 	protected Label titleLabel = null, unitLabel = null;
 	protected final IParameter param;
-	protected Object originalValue = null;
+	private Object originalValue = null;
 	protected Object currentValue = null;
 	protected GamaList possibleValues = null;
 	protected final Boolean isCombo, isEditable, hasUnit;
@@ -157,12 +157,12 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		internalModification = true;
 		titleLabel = SwtGui.createLeftLabel(parent, name);
 		try {
-			originalValue = getParameterValue();
+			setOriginalValue(getParameterValue());
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
 			GAMA.reportError(e1);
 		}
-		currentValue = originalValue;
+		currentValue = getOriginalValue();
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		final GridLayout layout = new GridLayout(hasUnit ? 2 : 1, false);
@@ -236,8 +236,8 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected Control createLabelParameterControl(final Composite composite) {
 		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setText(originalValue instanceof String ? (String) originalValue : StringUtils
-			.toGaml(originalValue));
+		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils
+			.toGaml(getOriginalValue()));
 		return fixedValue;
 	}
 
@@ -253,7 +253,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		}
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		combo.setItems(valuesAsString);
-		combo.select(possibleValues.indexOf(originalValue));
+		combo.select(possibleValues.indexOf(getOriginalValue()));
 		combo.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -268,7 +268,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	@Override
 	public boolean isValueModified() {
-		return isValueDifferent(originalValue);
+		return isValueDifferent(getOriginalValue());
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	@Override
 	public void revertToDefaultValue() {
-		modifyAndDisplayValue(originalValue);
+		modifyAndDisplayValue(getOriginalValue());
 	}
 
 	@Override
@@ -302,7 +302,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 				"\nrange: [" + (minValue != null ? StringUtils.toGaml(minValue) : "?") + ".." +
 					(maxValue != null ? StringUtils.toGaml(maxValue) : "?") + "]";
 		}
-		modifiedTooltip = originalTooltip + "\ninit: " + StringUtils.toGaml(originalValue);
+		modifiedTooltip = originalTooltip + "\ninit: " + StringUtils.toGaml(getOriginalValue());
 		setTooltip(originalTooltip);
 	}
 
@@ -370,6 +370,14 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	public String getTooltipText() {
 		return isValueModified() ? modifiedTooltip : originalTooltip;
+	}
+
+	protected Object getOriginalValue() {
+		return originalValue;
+	}
+
+	protected void setOriginalValue(Object originalValue) {
+		this.originalValue = originalValue;
 	}
 
 }

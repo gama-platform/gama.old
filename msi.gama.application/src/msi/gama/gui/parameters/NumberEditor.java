@@ -78,8 +78,8 @@ public abstract class NumberEditor extends AbstractEditor {
 			layout.marginWidth = 0;
 			internalComposite.setLayout(layout);
 			defineButton = new Button(internalComposite, SWT.CHECK);
-			defineButton.setText(originalValue != null ? "Define:" : "Not defined");
-			defineButton.setSelection(originalValue != null);
+			defineButton.setText(getOriginalValue() != null ? "Define:" : "Not defined");
+			defineButton.setSelection(getOriginalValue() != null);
 			defineButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 			defineButton.pack();
 			defineButton.addSelectionListener(new SelectionAdapter() {
