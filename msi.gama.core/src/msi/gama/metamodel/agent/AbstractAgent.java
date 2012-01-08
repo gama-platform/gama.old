@@ -24,7 +24,7 @@ import msi.gama.common.util.*;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology; 
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -154,7 +154,7 @@ public abstract class AbstractAgent implements IAgent {
 		acquireLock();
 		// population = null;
 		attributes.clear();
-		attributes = null;
+		// attributes = null;
 		if ( geometry != null ) {
 			geometry.dispose();
 		}

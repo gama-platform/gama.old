@@ -211,8 +211,7 @@ public abstract class AbstractTopology implements ITopology {
 		// IGeometry g = getRandomPlace();
 		// return GeometricFunctions.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 		// FIXME temporary restriction as places can evolve (since they are agents).
-		return new GamaPoint(GeometryUtils.pointInGeom(environment.getInnerGeometry(),
-			GAMA.getRandom()));
+		return GeometryUtils.pointInGeom(environment.getInnerGeometry(), GAMA.getRandom());
 	}
 
 	@Override

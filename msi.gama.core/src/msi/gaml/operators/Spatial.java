@@ -545,7 +545,27 @@ public abstract class Spatial {
 
 		@operator(value = { "without_holes", "solid" })
 		public static IShape opWithoutHoles(final IShape g) {
-			return new GamaShape(GeometryUtils.removeHoles(g.getInnerGeometry()));
+			Geometry geom = g.getInnerGeometry();
+			Geometry result = geom;
+
+			if ( geom instanceof Polygon ) {
+				result =
+					GeometryUtils.getFactory().createPolygon(
+						GeometryUtils.getFactory().createLinearRing(
+							((Polygon) geom).getExteriorRing().getCoordinates()), null);
+			} else if ( geom instanceof MultiPolygon ) {
+				MultiPolygon mp = (MultiPolygon) geom;
+				Polygon[] polys = new Polygon[mp.getNumGeometries()];
+				for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
+					Polygon p = (Polygon) mp.getGeometryN(i);
+					polys[i] =
+						GeometryUtils.getFactory().createPolygon(
+							GeometryUtils.getFactory().createLinearRing(
+								p.getExteriorRing().getCoordinates()), null);
+				}
+				result = GeometryUtils.getFactory().createMultiPolygon(polys);
+			}
+			return new GamaShape(result);
 		}
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
@@ -806,8 +826,7 @@ public abstract class Spatial {
 
 		@operator(value = { "any_location_in", "any_point_in" })
 		public static ILocation opAnyLocationIn(final IScope scope, final IShape g) {
-			ILocation p =
-				new GamaPoint(GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom()));
+			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
 		}
 

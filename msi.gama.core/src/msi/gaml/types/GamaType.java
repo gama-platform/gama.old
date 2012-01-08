@@ -127,6 +127,22 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
+	public boolean canBeTypeOf(final IScope scope, final Object c) {
+		if ( c == null ) { return acceptNullInstances(); }
+		for ( int i = 0; i < supports.length; i++ ) {
+			if ( supports[i].isAssignableFrom(c.getClass()) ) { return true; }
+		}
+		return false;
+	}
+
+	/**
+	 * @return true if this type can have nil as an instance
+	 */
+	protected boolean acceptNullInstances() {
+		return getDefault() == null;
+	}
+
+	@Override
 	public IType coerce(final IType expr) throws GamlException {
 		// Nothing to do in the general case : we rely on Java polymorphism.
 		return null;

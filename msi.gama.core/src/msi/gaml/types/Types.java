@@ -20,10 +20,10 @@ package msi.gaml.types;
 
 import static msi.gaml.types.IType.*;
 import java.util.*;
-import msi.gama.precompiler.MultiProperties;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.precompiler.GamlAnnotations.type;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -103,7 +103,7 @@ public class Types {
 			for ( Map.Entry<Class, IType> c : classToIType.entrySet() ) {
 				if ( c.getKey() != Object.class && c.getKey().isAssignableFrom(type) ) {
 					t = c.getValue();
-					classToIType.put(type, t);
+					// classToIType.put(type, t);
 					return t;
 				}
 			}

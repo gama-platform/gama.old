@@ -116,6 +116,8 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public boolean isAssignableFrom(IType l);
 
+	// public boolean
+
 	/**
 	 * @throws GamlException
 	 * @param expr
@@ -137,5 +139,11 @@ public interface IType<Inner> extends Comparable<IType> {
 	 * @param typeFieldExpression
 	 */
 	public void addFieldGetter(String n, IExpression typeFieldExpression);
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	boolean canBeTypeOf(IScope s, Object c);
 
 }
