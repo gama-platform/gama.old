@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,11 +19,10 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.*;
-import msi.gaml.compilation.GamlException;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -74,16 +73,6 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public Inner cast(final Object obj) throws GamaRuntimeException {
-		return cast(null, obj);
-	}
-
-	@Override
-	public Inner cast(final IScope scope, final Object obj) throws GamaRuntimeException {
-		return cast(scope, obj, null);
-	}
-
-	@Override
 	public abstract Inner cast(IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException;
 
@@ -120,8 +109,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		return null;
 	}
 
-	@Override
-	public boolean isSuperTypeOf(final IType type) {
+	protected boolean isSuperTypeOf(final IType type) {
 		Class remote = type.toClass();
 		for ( int i = 0; i < supports.length; i++ ) {
 			if ( supports[i].isAssignableFrom(remote) ) { return true; }
@@ -129,9 +117,8 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		return false;
 	}
 
-	@Override
-	public final boolean isSubTypeOf(final IType type) {
-		return type.isSuperTypeOf(this);
+	protected final boolean isSubTypeOf(final IType type) {
+		return ((GamaType) type).isSuperTypeOf(this);
 	}
 
 	@Override
