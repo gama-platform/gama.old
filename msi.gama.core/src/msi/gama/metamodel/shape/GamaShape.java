@@ -18,7 +18,7 @@
  */
 package msi.gama.metamodel.shape;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -54,8 +54,6 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
-
-	// private static double dx = 0, dy = 0;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -391,6 +389,10 @@ public class GamaShape implements IShape {
 	protected void setGeometry(final Geometry geom, final boolean computeLoc) {
 		geometry = geom;
 		if ( geom == null ) { return; }
+		if ( !computeLoc ) {
+			GuiUtils.debug("Agent " + getAgent() + " setGeometry location: " + location +
+				" centroid:" + geometry.getCentroid().getCoordinate());
+		}
 		isPoint = geom.getNumPoints() == 1;
 		if ( computeLoc ) {
 			computeLocation();
