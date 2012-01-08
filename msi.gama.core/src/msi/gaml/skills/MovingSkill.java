@@ -301,13 +301,16 @@ public class MovingSkill extends GeometricSkill {
 	 * @param distance max displacement distance
 	 * @return the next location
 	 */
-	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, double distance) {
+	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
 		int index = 0;
 		int indexSegment = 1;
 		ILocation currentLocation = agent.getLocation().copy();
 		ILocation startLocation = agent.getLocation().copy();
-		int nb = path.getEdgeList().size(); // instead of getGeometries() ?? Faster, and more
-											// reliable. But is it the same ?
+		IList<IShape> edges = path.getEdgeList();
+		Coordinate[] temp = new Coordinate[2];
+		int nb = edges.size();
+		// instead of getGeometries() ?? Faster, more reliable. But is it the same ?
+		double distance = d;
 		GamaList<IShape> segments = new GamaList();
 		if ( path.isVisitor(agent) ) {
 			index = path.indexOf(agent);
@@ -317,27 +320,26 @@ public class MovingSkill extends GeometricSkill {
 			double distanceS = Double.MAX_VALUE;
 			IShape line = null;
 			for ( int i = 0; i < nb; i++ ) {
-				line = path.getEdgeList().get(i);
+				line = edges.get(i);
 				double distS = line.euclidianDistanceTo(currentLocation);
 				if ( distS < distanceS ) {
 					distanceS = distS;
 					index = i;
 				}
 			}
-			line = path.getEdgeList().get(index);
-			currentLocation = Points.opClosestPointTo(currentLocation, line);
+			line = edges.get(index);
 
+			currentLocation = Points.opClosestPointTo(currentLocation, line);
+			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
 				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 				int nbSp = coords.length;
 				for ( int i = 0; i < nbSp - 1; i++ ) {
-					Coordinate s = coords[i];
-					Coordinate t = coords[i + 1];
-					Coordinate[] seg = { s, t };
-					IShape segment =
-						new GamaShape(GeometryUtils.getFactory().createLineString(seg));
-					double distS = segment.euclidianDistanceTo(currentLocation);
+					temp[0] = coords[i];
+					temp[1] = coords[i + 1];
+					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					double distS = segment.distance(pointGeom);
 					if ( distS < distanceS ) {
 						distanceS = distS;
 						indexSegment = i + 1;
@@ -345,19 +347,19 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 		}
-		IShape lineEnd = path.getEdgeList().get(nb - 1);
+		IShape lineEnd = edges.get(nb - 1);
 		ILocation falseTarget = Points.opClosestPointTo(path.getEndVertex(), lineEnd);
 		int endIndexSegment = 1;
+		Point pointGeom = (Point) falseTarget.getInnerGeometry();
 		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
 			double distanceT = Double.MAX_VALUE;
 			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
 			int nbSp = coords.length;
 			for ( int i = 0; i < nbSp - 1; i++ ) {
-				Coordinate s = coords[i];
-				Coordinate t = coords[i + 1];
-				Coordinate[] seg = { s, t };
-				IShape segment = new GamaShape(GeometryUtils.getFactory().createLineString(seg));
-				double distT = segment.euclidianDistanceTo(falseTarget);
+				temp[0] = coords[i];
+				temp[1] = coords[i + 1];
+				LineString segment = GeometryUtils.getFactory().createLineString(temp);
+				double distT = segment.distance(pointGeom);
 				if ( distT < distanceT ) {
 					distanceT = distT;
 					endIndexSegment = i + 1;
@@ -366,7 +368,7 @@ public class MovingSkill extends GeometricSkill {
 		}
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
-			IShape line = path.getEdgeList().get(i);
+			IShape line = edges.get(i);
 			double weight = path.getWeight(line) / line.getGeometry().getPerimeter();
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
@@ -437,6 +439,10 @@ public class MovingSkill extends GeometricSkill {
 		IPath followedPath =
 			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);
 		followedPath.setAgents(agents);
+		// double dist = agent.getLocation().distance(currentLocation);
+		// if ( (int) dist > (int) d ) {
+		// java.lang.System.out.println("...");
+		// }
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}
