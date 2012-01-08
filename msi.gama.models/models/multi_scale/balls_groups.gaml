@@ -118,7 +118,7 @@ entities {
 				if condition: (self.in_bounds [ a_point :: tmp_location ] ) {
 					set location var: location value: tmp_location ;
 					do action: separation {
-						arg nearby_balls value: (((agents_overlapping (shape + ball_separation)) of_species ball) - self) ;
+						arg nearby_balls value: ((((agents_overlapping (shape + ball_separation)) as list) of_species ball) - self) ;
 					}
 				}
 			}

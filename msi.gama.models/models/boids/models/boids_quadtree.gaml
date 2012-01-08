@@ -23,7 +23,7 @@ global {
 	var wind_vector type: point init: {0,0} parameter: 'true';
 	var goal_duration type: int init: 30 value: goal_duration - 1;
 	var goal type: point init: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
-	var images type: list of: string value: ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
+	var images type: list of: string init: ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
 	var xmin type: int value: bounds;
 	var ymin type: int value: bounds;
 	var xmax type: int value: width_and_height_of_environment - bounds;
@@ -98,16 +98,16 @@ entities {
 		}
 		action bounding {
 			if condition: !torus_environment {
-				if condition: first(location) < xmin {
+				if condition: (location.x) < xmin {
 					set velocity value: velocity + {bounds,0};
 				}
-				if condition: first(location) > xmax {
+				if condition: (location.x) > xmax {
 					set velocity value: velocity - {bounds,0};
 				}
-				if condition: last(location) < ymin {
+				if condition: (location.y) < ymin {
 					set velocity value: velocity + {0,bounds};
 				}
-				if condition: last(location) > ymax {
+				if condition: (location.y) > ymax {
 					set velocity value: velocity - {0,bounds};
 				}
 			}
@@ -119,7 +119,7 @@ entities {
 			set velocity value: velocity + wind_vector;
 		}
 		action do_move {
-			if condition: (first(velocity) as int = 0) and (last(velocity) as int = 0) {
+			if condition: ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
 				set velocity value: {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			let old_location value: location;

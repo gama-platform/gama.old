@@ -23,7 +23,7 @@ global {
 	var wind_vector type: point init: {0,0} parameter: 'true';
 	var goal_duration type: int init: 30 value: goal_duration - 1;
 	var goal type: point init: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
-	var images type: list of: string value: ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
+	var images type: list of: string init: ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
 	var xmin type: int init: bounds; 
 	var ymin type: int init: bounds;
 	var xmax type: int init: width_and_height_of_environment - bounds;
