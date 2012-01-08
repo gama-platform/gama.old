@@ -22,7 +22,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlException;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
@@ -127,7 +127,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 		try {
 			Object value = GAMA.evaluateExpression(s, editor.getAgent());
 			String string = "Result: " + StringUtils.toGaml(value);
-			if ( expectedType.isAssignableFrom(Types.get(value.getClass())) ) {
+			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {
 				result.setBackground(SwtGui.COLOR_OK);
 			} else {
 				result.setBackground(SwtGui.COLOR_WARNING);
@@ -190,7 +190,8 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	 */
 	@Override
 	public void mouseExit(final MouseEvent e) {
-		widgetDefaultSelected(null);
+		popup.setVisible(false);
+		// widgetDefaultSelected(null);
 
 	}
 

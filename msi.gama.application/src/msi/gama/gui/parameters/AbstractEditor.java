@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -49,6 +49,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	protected final String name;
 	protected Label titleLabel = null, unitLabel = null;
 	protected final IParameter param;
+	boolean acceptNull = true;
 	private Object originalValue = null;
 	protected Object currentValue = null;
 	protected GamaList possibleValues = null;
@@ -236,8 +237,8 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected Control createLabelParameterControl(final Composite composite) {
 		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils
-			.toGaml(getOriginalValue()));
+		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue()
+			: StringUtils.toGaml(getOriginalValue()));
 		return fixedValue;
 	}
 
@@ -376,7 +377,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return originalValue;
 	}
 
-	protected void setOriginalValue(Object originalValue) {
+	protected void setOriginalValue(final Object originalValue) {
 		this.originalValue = originalValue;
 	}
 

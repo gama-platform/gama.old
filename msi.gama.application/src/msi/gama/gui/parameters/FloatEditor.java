@@ -98,9 +98,4 @@ public class FloatEditor extends NumberEditor {
 		minus.setEnabled(minValue == null || applyMinus() > minValue.doubleValue());
 	}
 
-	@Override
-	public boolean isValueDifferent(final Object newVal) {
-		return super.isValueDifferent(newVal);
-	}
-
 }

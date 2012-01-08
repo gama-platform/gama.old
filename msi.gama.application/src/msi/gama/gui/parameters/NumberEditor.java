@@ -33,7 +33,6 @@ public abstract class NumberEditor extends AbstractEditor {
 	ExpressionControl expression;
 	ToolItem plus, minus;
 	Number stepValue;
-	boolean acceptNull = false;
 	Button defineButton;
 	Composite internalComposite;
 

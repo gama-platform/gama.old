@@ -54,12 +54,12 @@ public class GenericEditor extends AbstractEditor {
 
 	}
 
-	@Override
-	public boolean isValueDifferent(final Object newVal) {
-		return true;
-		// Necessary since some objects (eg GamaGeometry) will not report any
-		// modification.
-	}
+	// @Override
+	// public boolean isValueDifferent(final Object newVal) {
+	// return true;
+	// // Necessary since some objects (eg GamaGeometry) will not report any
+	// // modification.
+	// }
 
 	@Override
 	protected void displayParameterValue() {
