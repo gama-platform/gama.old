@@ -54,7 +54,7 @@ public class Cast {
 			if ( v instanceof IAgent ) { return ((IAgent) v).isInstanceOf(s, false); }
 			return false;
 		}
-		return a.type().isSubTypeOf(type);
+		return type.isAssignableFrom(a.type());
 	}
 
 	//
@@ -97,7 +97,7 @@ public class Cast {
 
 	@operator(value = IType.AGENT_STR)
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (IAgent) Types.typeToIType[IType.AGENT].cast(scope, val);
+		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
 
 	@operator(value = "as", type = ITypeProvider.RIGHT_CONTENT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
@@ -150,7 +150,7 @@ public class Cast {
 
 	@operator(value = IType.MAP_STR, can_be_const = true)
 	public static GamaMap asMap(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (GamaMap) Types.get(IType.MAP).cast(scope, val);
+		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null);
 	}
 
 	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
@@ -162,7 +162,7 @@ public class Cast {
 	@operator(value = "as_matrix", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
 	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
 		throws GamaRuntimeException {
-		return (IMatrix) Types.typeToIType[IType.MATRIX].cast(scope, val, size);
+		return (IMatrix) Types.get(IType.MATRIX).cast(scope, val, size);
 	}
 
 	@operator(value = IType.NONE_STR, can_be_const = true)
@@ -172,7 +172,7 @@ public class Cast {
 
 	@operator(value = IType.PAIR_STR, can_be_const = true)
 	public static GamaPair asPair(final IScope scope, final Object val) throws GamaRuntimeException {
-		return (GamaPair) Types.get(IType.PAIR).cast(scope, val);
+		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null);
 	}
 
 	@operator(value = IType.POINT_STR, can_be_const = true)
@@ -183,7 +183,7 @@ public class Cast {
 	@operator(value = { IType.SPECIES_STR, "species_of" }, content_type = ITypeProvider.CHILD_TYPE)
 	public static ISpecies asSpecies(final IScope scope, final Object val)
 		throws GamaRuntimeException {
-		return (ISpecies) Types.typeToIType[IType.SPECIES].cast(scope, val);
+		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
 	}
 
 	@operator(value = IType.STRING_STR, can_be_const = true)
