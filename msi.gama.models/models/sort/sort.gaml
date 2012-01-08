@@ -1,5 +1,4 @@
 model sort
-// gen by Xml2Gaml
 
 global {
 	var white type: rgb init: rgb('white') ;
