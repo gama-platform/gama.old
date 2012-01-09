@@ -404,6 +404,7 @@ public class Maths {
 		return whole + fract;
 	}
 
+	@operator(value = "floor", can_be_const = true)
 	public static final double floor(final double d) {
 		int i;
 		if ( d >= 0 ) {
@@ -414,6 +415,7 @@ public class Maths {
 		return i;
 	}
 
+	@operator(value = "ceil", can_be_const = true)
 	public static final double ceil(final double d) {
 		int i;
 		if ( d >= 0 ) {
