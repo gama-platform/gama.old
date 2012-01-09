@@ -21,8 +21,10 @@ Visit http://code.google.com/p/gama-platform/
 
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean -consoleLog</programArgs>
-      <vmArgs>-Xms40m -Xmx1024m</vmArgs>
-      <vmArgsMac>-Xdock:icon=../Resources/Eclipse.icns -Dorg.eclipse.swt.internal.carbon.smallFonts -Xms512m -Xmx1024m -d32</vmArgsMac>
+      <vmArgs>-Xm512m -Xmx2048m -XX:+UseConcMarkSweepGC
+-XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled
+-XX:MaxPermSize=512m</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Xdock:name=&quot;Gama 1.4&quot; -Xdock:icon=../Resources/icon.icns -Dorg.eclipse.swt.internal.carbon.smallFonts -d32</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/msi.gama.application/icons/launcher_icons/alt_window_16.gif" i32="/msi.gama.application/icons/launcher_icons/alt_window_32.gif" i48="/msi.gama.application/icons/launcher_icons/icon-48x48x32b.gif" i64="/msi.gama.application/icons/launcher_icons/icon-64x64x32b.gif" i128="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
@@ -32,7 +34,7 @@ Visit http://code.google.com/p/gama-platform/
       startupProgressRect="25,420,400,10"
       startupMessageRect="25,400,400,20"
       startupForegroundColor="AB2741" />
-   <launcher name="Gama">
+   <launcher name="Gama 1.4">
       <linux icon="/msi.gama.application/icons/launcher_icons/icon-32x32x32b.xpm"/>
       <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
       <solaris/>
@@ -46,6 +48,9 @@ Visit http://code.google.com/p/gama-platform/
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
+
+   <vm>
+   </vm>
 
    <license>
         <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
