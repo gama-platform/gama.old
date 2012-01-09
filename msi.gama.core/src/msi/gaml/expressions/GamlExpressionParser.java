@@ -274,6 +274,12 @@ public class GamlExpressionParser implements IExpressionParser {
 	private IExpression compileFieldExpr(final IExpression target, final String var)
 		throws GamlException {
 		IType type = target.type();
+		if ( GamlExpressionParser.isDottedExpr(var) ) {
+
+			final String[] ss = var.split("\\.");
+			return compileFieldExpr(compileFieldExpr(target, ss[0]), ss[1]);
+
+		}
 		ExecutionContextDescription contextDesc =
 			(ExecutionContextDescription) getContext().getModelDescription().getSpeciesDescription(
 				type.getSpeciesName());
