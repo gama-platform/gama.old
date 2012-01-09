@@ -164,7 +164,7 @@ public class SpeciesDisplay extends AgentDisplay {
 
 			// draw the population
 			for ( IAgent a : _agents ) {
-				if ( !a.dead() ) {
+				if ( a != null && !a.dead() ) {
 					shapes.put(aspect.draw(scope, a), a);
 				}
 			}
