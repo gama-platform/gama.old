@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -21,7 +21,6 @@ package msi.gama.lang.utils;
 import java.io.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.*;
 import org.eclipse.emf.common.util.EList;
 import org.jdom.*;
 import org.jdom.output.XMLOutputter;
@@ -57,18 +56,18 @@ public class Gaml2JDOM {
 			if ( stm instanceof SetEval ) {
 				elt.addContent(convSetEval((SetEval) stm));
 			} else {
-				boolean isAbstract = true;
+				// boolean isAbstract = true;
 				try {
 					SubStatement substm = (SubStatement) stm;
 					GamlKeywordRef key = substm.getKey();
 					DefKeyword ref = key.getRef();
 					String name = ref.getName();
-					isAbstract = name.equals("abstract");
+					// isAbstract = name.equals("abstract");
 					// ((SubStatement) stm).getKey().getRef().getName().equals("abstract");
 				} catch (Exception e) {}
-				if ( !isAbstract ) {
-					elt.addContent(convStatement(stm));
-				}
+				// if ( !isAbstract ) {
+				elt.addContent(convStatement(stm));
+				// }
 			}
 		}
 	}
@@ -145,28 +144,7 @@ public class Gaml2JDOM {
 
 		if ( expr == null ) {
 			throw new NullPointerException("an Expression was expected");
-			// } else if (expr instanceof Assign) {
-			// s = "(" + convExpression(((Assign) expr).getLeft()) + "="
-			// + convExpression(((Assign) expr).getRight()) + ")";
-		} /*
-		 * else if ( expr instanceof AssignPlus ) {
-		 * s =
-		 * "(" + convExpression(((AssignPlus) expr).getLeft()) + "+=" +
-		 * convExpression(((AssignPlus) expr).getRight()) + ")";
-		 * } else if ( expr instanceof AssignMin ) {
-		 * s =
-		 * "(" + convExpression(((AssignMin) expr).getLeft()) + "-=" +
-		 * convExpression(((AssignMin) expr).getRight()) + ")";
-		 * } else if ( expr instanceof AssignMult ) {
-		 * s =
-		 * "(" + convExpression(((AssignMult) expr).getLeft()) + "*=" +
-		 * convExpression(((AssignMult) expr).getRight()) + ")";
-		 * } else if ( expr instanceof AssignDiv ) {
-		 * s =
-		 * "(" + convExpression(((AssignDiv) expr).getLeft()) + "/=" +
-		 * convExpression(((AssignDiv) expr).getRight()) + ")";
-		 * }
-		 */else if ( expr instanceof Or ) {
+		} else if ( expr instanceof Or ) {
 			s =
 				"(" + convExpression(((Or) expr).getLeft()) + " or " +
 					convExpression(((Or) expr).getRight()) + ")";
@@ -230,64 +208,64 @@ public class Gaml2JDOM {
 		} else if ( expr instanceof TerminalExpression ) {
 			s = convTermExpr((TerminalExpression) expr);
 		} else if ( expr instanceof Pow ) {
-			s = convPow((Pow) expr);
+			Pow expr1 = (Pow) expr;
+			s = convExpression(expr1.getLeft()) + "^" + convExpression(expr1.getRight());
 		} else if ( expr instanceof Pair ) {
-			s = convPair((Pair) expr);
+			Pair expr1 = (Pair) expr;
+			String s1 = convExpression(expr1.getLeft()) + "::" + convExpression(expr1.getRight());
+			s = noParenthesisAroundPairs ? s1 : "(" + s1 + ")";
 		} else if ( expr instanceof Unit ) {
-			s = convUnit((Unit) expr);
+			Unit expr1 = (Unit) expr;
+			s = convExpression(expr1.getLeft()) + " " + expr1.getRight().getRef().getName();
 		} else if ( expr instanceof Point ) {
-			s = convPoint((Point) expr);
+			Point expr1 = (Point) expr;
+			s = "{" + convExpression(expr1.getX()) + "," + convExpression(expr1.getY()) + "}";
 		} else if ( expr instanceof Matrix ) {
-			s = convMatrix((Matrix) expr);
+			String s1 = "[";
+			for ( final Row r : ((Matrix) expr).getRows() ) {
+				if ( s1.length() > 1 ) {
+					s1 += "; ";
+				}
+				s1 += convRow(r);
+			}
+			s = s1 + "]";
 		} else if ( expr instanceof Ternary ) {
 			s =
 				"(" + convExpression(((Ternary) expr).getCondition()) + '?' +
 					convExpression(((Ternary) expr).getIfTrue()) + ':' +
 					convExpression(((Ternary) expr).getIfFalse()) + ")";
 		} else if ( expr instanceof VariableRef ) {
-			s = convVarRef((VariableRef) expr);
+			s = ((VariableRef) expr).getRef().getName();
 		} else if ( expr instanceof FunctionRef ) {
-			s = convFuncRef((FunctionRef) expr);
+			FunctionRef expr1 = (FunctionRef) expr;
+			String s1 = "(";
+			for ( final Expression arg : expr1.getArgs() ) {
+				if ( s1.length() > 2 ) {
+					s1 += ", ";
+				}
+				s1 += convExpression(arg);
+			}
+			String args = s1 + ")";
+			s = expr1.getFunc().getRef().getName() + args;
 		} else if ( expr instanceof ArrayRef ) {
-			s = convArrayRef((ArrayRef) expr);
+			ArrayRef expr1 = (ArrayRef) expr;
+			s = expr1.getArray().getRef().getName() + convArrayKey(expr1.getArgs());
 		} else if ( expr instanceof MemberRefR ) {
-			s = convMemRefR((MemberRefR) expr);
+			MemberRefR expr1 = (MemberRefR) expr;
+			String left = convExpression(expr1.getLeft());
+			s = "self".equals(left) ?
+			// TO DO cheat "self.action []" -> "self action []"
+				"self " + convExpression(expr1.getRight()) :
+				// Addition of the parentheses
+				"" + left + "." + convExpression(expr1.getRight());
 		} else if ( expr instanceof MemberRefP ) {
-			s = convMemRefP((MemberRefP) expr);
+			MemberRefP expr1 = (MemberRefP) expr;
+			s = "(" + convExpression(expr1.getLeft()) + ")." + convExpression(expr1.getRight());
 		} else {
 			System.err.println("Gaml2JDOM.convExpression(" + expr + ") unknown type");
 		}
 
 		return s;
-	}
-
-	private static String convPow(final Pow expr) {
-		return convExpression(expr.getLeft()) + "^" + convExpression(expr.getRight());
-	}
-
-	private static String convUnit(final Unit expr) {
-		return convExpression(expr.getLeft()) + " " + expr.getRight().getRef().getName();
-	}
-
-	private static String convPair(final Pair expr) {
-
-		String s = convExpression(expr.getLeft()) + "::" + convExpression(expr.getRight());
-		return noParenthesisAroundPairs ? s : "(" + s + ")";
-	}
-
-	private static String convPoint(final Point expr) {
-		return "{" + convExpression(expr.getX()) + "," + convExpression(expr.getY()) + "}";
-	}
-
-	private static String convMatrix(final Matrix expr) {
-		String s = "[";
-		for ( final Row r : expr.getRows() ) {
-			if ( s.length() > 1 ) {
-				s += "; ";
-			}
-			s += convRow(r);
-		}
-		return s + "]";
 	}
 
 	private static String convRow(final Row r) {
@@ -319,33 +297,6 @@ public class Gaml2JDOM {
 		return "";
 	}
 
-	private static String convMemRefP(final MemberRefP expr) {
-		return "(" + convExpression(expr.getLeft()) + ")." + convExpression(expr.getRight());
-	}
-
-	private static String convMemRefR(final MemberRefR expr) {
-		String left = convExpression(expr.getLeft());
-		// TODO not working for schelling/segregation_gis2.xml.gaml
-		// but needed for ants and boids models...
-		if ( "self".equals(left) ) {
-			// TO DO cheat "self.action []" -> "self action []"
-			return "self " + convExpression(expr.getRight());
-		}
-		return left + "." + convExpression(expr.getRight());
-	}
-
-	private static String convArrayRef(final ArrayRef expr) {
-		return convVarRef(expr.getArray()) + convArrayKey(expr.getArgs());
-	}
-
-	private static String convFuncRef(final FunctionRef expr) {
-		return convVarRef(expr.getFunc()) + convArgs(expr.getArgs());
-	}
-
-	private static String convVarRef(final VariableRef expr) {
-		return expr.getRef().getName();
-	}
-
 	private static String convArrayKey(final EList<Expression> args) {
 		if ( args.isEmpty() ) { return "[]"; }
 		noParenthesisAroundPairs = true;
@@ -358,18 +309,6 @@ public class Gaml2JDOM {
 		}
 		noParenthesisAroundPairs = false;
 		return s + "]";
-	}
-
-	private static String convArgs(final EList<Expression> args) {
-		if ( args.isEmpty() ) { return "()"; }
-		String s = "(";
-		for ( final Expression arg : args ) {
-			if ( s.length() > 2 ) {
-				s += ", ";
-			}
-			s += convExpression(arg);
-		}
-		return s + ")";
 	}
 
 	public static void writeTo(final Document doc, final OutputStream os) throws IOException {
