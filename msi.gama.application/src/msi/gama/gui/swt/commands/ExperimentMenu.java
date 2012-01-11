@@ -148,8 +148,9 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 
 					@Override
 					public void widgetSelected(final SelectionEvent evt) {
+						String name = (String) exp.getData("EXP");
 						GuiUtils.openSimulationPerspective();
-						GAMA.newExperiment((String) exp.getData("EXP"), model[0]);
+						GAMA.newExperiment(name, model[0]);
 					}
 
 				});
