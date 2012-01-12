@@ -1,6 +1,4 @@
 model boids
-// gen by Xml2Gaml
-
 
 global {
 	var number_of_agents type: int parameter: 'true' init: 500 min: 1 max: 1000000;
@@ -57,7 +55,7 @@ entities {
 			draw shape: circle color: 'orange' size: 40 empty: true;
 		}
 	}
-	species boids skills: [moving, situated, visible] {
+	species boids skills: [moving] {
 		var speed type: float max: maximal_speed init: maximal_speed;
 		var range type: float init: minimal_distance * 2;
 		var heading type: int max: heading + maximal_turn min: heading - maximal_turn;
@@ -139,7 +137,7 @@ entities {
 			draw shape: triangle size: 7 rotate: heading color: 'yellow';
 		}
 	}
-	species obstacle skills: [situated,visible, moving] {
+	species obstacle skills: [moving] {
 		var speed type: float init: 0.1;
 		reflex when: moving_obstacles {
 			if condition: flip(0.5) {

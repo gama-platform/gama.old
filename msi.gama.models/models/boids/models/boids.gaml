@@ -320,7 +320,7 @@ entities {
 	}
 }
 
-experiment with_flocks type: gui {
+/*experiment with_flocks type: gui {
 	parameter name: 'Create flock?' var: create_flock init: true category: 'Flock: ';
 	
 	output {
@@ -337,7 +337,7 @@ experiment with_flocks type: gui {
 		
 		monitor flocks value: length (flock);
 	}
-}
+}*/
 
 experiment without_flocks type: gui {
 	output {

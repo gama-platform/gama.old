@@ -1,7 +1,6 @@
 model Network
 // Proposed by Patrick Taillandier
 
-
 global {
 	var shape_file_in type: string init: '../includes/gis/roads.shp' ;
 	var the_graph type: graph;

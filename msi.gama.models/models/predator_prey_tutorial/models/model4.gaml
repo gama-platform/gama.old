@@ -1,6 +1,4 @@
 model prey_predator
-// gen by Xml2Gaml
-import "platform:/plugin/msi.gama.application/generated/std.gaml"
 
 global {
 	var nb_preys_init type: int init: 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;

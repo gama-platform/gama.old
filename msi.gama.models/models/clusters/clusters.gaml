@@ -1,6 +1,4 @@
 model clusters
-// gen by Xml2Gaml
-
 
 global {
 	var number_of_agents type: int parameter: 'true' init: 1000 min: 1 max: 5000 ;

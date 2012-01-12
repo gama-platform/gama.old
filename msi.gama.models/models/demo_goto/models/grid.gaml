@@ -1,7 +1,6 @@
 model Grid
 // proposed by Patrick Taillandier
 
-
 global {
 	init {    
 		create species: but number: 1 {

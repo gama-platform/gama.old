@@ -1,6 +1,4 @@
 model voronoi
-// gen by Xml2Gaml
-
 
 global {
 	var number_of_points type: int parameter: 'Number of points:' init: 15 min: 1 max: 1000;

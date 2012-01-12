@@ -1,6 +1,4 @@
 model ants
-// gen by Xml2Gaml
-
 
 global {
 	var ants_number type: int init: 100 parameter: 'Number of ants:' min: 1 max: 2000 category: 'Model' ;

@@ -232,17 +232,16 @@ entities {
 	}
 }
 
-experiment default_expr type: gui {
-	output {
-		display name: 'Display' {
-			species road aspect: default transparency: 0.1;
-	//		species roadwidth aspect: default transparency: 0.1;
-			species building aspect: default transparency: 0.8;
-			species beach aspect: default transparency: 0.9;
-			species river aspect: default transparency: 0.5;
-			species destination aspect: default transparency: 0.1;
-			species people aspect: default;
-		}
+output {
+	display name: 'Display' {
+		species road aspect: default transparency: 0.1;
+	//	species roadwidth aspect: default transparency: 0.1;
+		species building aspect: default transparency: 0.8;
+		species beach aspect: default transparency: 0.9;
+		species river aspect: default transparency: 0.5;
+		species destination aspect: default transparency: 0.1;
+		species people aspect: default;
+	}
 		
 		/*
 		display macro_patches {
@@ -251,20 +250,19 @@ experiment default_expr type: gui {
 		}
 		*/
 		
-		monitor people_number value: length (people);
-		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
+	monitor people_number value: length (people);
+	monitor captured_people_number value: sum (list(road) collect (length (each.members)));
 
-		display Execution_Time refresh_every: 5 {
-			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
-			}
-		}
-		
-		display People_vs_Captured_People refresh_every: 5 {
-			chart name: 'People_vs._Captured_People' type: series background: rgb ('black') {
-				data people value: length (list (people)) color: rgb ('blue');
-				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
-			}
+	display Execution_Time refresh_every: 5 {
+		chart name: 'Simulation step length' type: series background: rgb('black') {
+			data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
 		}
 	}
+		
+	display People_vs_Captured_People refresh_every: 5 {
+		chart name: 'People_vs._Captured_People' type: series background: rgb ('black') {
+			data people value: length (list (people)) color: rgb ('blue');				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
+		}
+	}
+	
 }
