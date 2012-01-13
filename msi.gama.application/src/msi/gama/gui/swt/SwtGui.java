@@ -91,10 +91,11 @@ public class SwtGui implements IGui {
 	public static Image expand = getImageDescriptor("/icons/small_button_plus.png").createImage();
 	public static Image collapse = getImageDescriptor("/icons/small_button_minus.png")
 		.createImage();
-	public static Image thumb = getImageDescriptor("/icons/time_green.png").createImage();
-	public static Image thumb_pushed = getImageDescriptor("/icons/time_green_pushed.png")
-		.createImage();
-	public static Image line = getImageDescriptor("/icons/line.png").createImage();
+	public static Image thumb = getImageDescriptor("/icons/knobNormal.png").createImage();
+	public static Image thumb_over = getImageDescriptor("/icons/knobHover.png").createImage();
+	public static Image line = getImageDescriptor("/icons/trackFill.png").createImage();
+	public static Image line_left = getImageDescriptor("/icons/trackCapLeft.png").createImage();
+	public static Image line_right = getImageDescriptor("/icons/trackCapRight.png").createImage();
 	public static Image close = getImageDescriptor("/icons/small_button_close.png").createImage();
 	public static Image pause = getImageDescriptor("/icons/small_button_pause.png").createImage();
 	public static Image play = getImageDescriptor("/icons/small_button_play.png").createImage();
