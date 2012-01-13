@@ -81,16 +81,22 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		if ( editor.internalModification ) { return; }
-		displayPopup();
+		Object newValue = null;
+		try {
+			newValue = modifyValue();
+		} catch (GamlException e) {
+			// e.printStackTrace();
+		}
+		displayPopup(newValue);
 	}
 
-	private void displayPopup() {
+	private void displayPopup(final Object currentValue) {
 		String string = text.getText();
 		if ( string.length() == 0 ) {
 			popup.setVisible(false);
 			return;
 		}
-		string = getEvaluationContent(string);
+		string = getPopupBody(currentValue);
 		if ( string == null || string.isEmpty() ) {
 			popup.setVisible(false);
 			return;
@@ -114,18 +120,25 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 			if ( me != null && me.detail == SWT.CANCEL ) {
 				text.setText(StringUtils.toGaml(editor.getOriginalValue()));
 			}
-			editor.modifyAndDisplayValue(editor.evaluateExpression() ? GAMA.evaluateExpression(
-				text.getText(), editor.getAgent()) : GAMA.compileExpression(text.getText(),
-				editor.getAgent()));
+			modifyValue();
 			popup.setVisible(false);
 		} catch (GamlException e) {
 
 		} catch (Exception e) {}
 	}
 
-	String getEvaluationContent(final String s) {
+	private Object modifyValue() throws GamlException {
+		Object newValue =
+			editor.evaluateExpression() ? GAMA
+				.evaluateExpression(text.getText(), editor.getAgent()) : GAMA.compileExpression(
+				text.getText(), editor.getAgent());
+		editor.modifyValue(newValue);
+		return newValue;
+	}
+
+	String getPopupBody(final Object value) {
 		try {
-			Object value = GAMA.evaluateExpression(s, editor.getAgent());
+			// Object value = GAMA.evaluateExpression(s, editor.getAgent());
 			String string = "Result: " + StringUtils.toGaml(value);
 			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {
 				result.setBackground(SwtGui.COLOR_OK);
