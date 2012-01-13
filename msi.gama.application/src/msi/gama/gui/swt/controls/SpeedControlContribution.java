@@ -27,6 +27,8 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 public class SpeedControlContribution extends WorkbenchWindowControlContribution {
 
+	private static int SIZE = 30;
+
 	public SpeedControlContribution() {}
 
 	public SpeedControlContribution(final String id) {
@@ -36,7 +38,7 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 	//
 	@Override
 	protected int computeWidth(final Control control) {
-		return control.computeSize(50, SWT.DEFAULT, true).x;
+		return control.computeSize(SIZE, SWT.DEFAULT, true).x;
 	}
 
 	@Override
@@ -49,10 +51,11 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 		layout.marginWidth = 4;
 		c.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.widthHint = 50;
+		data.widthHint = 30;
 		final CoolSlider l =
-			new CoolSlider(c, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, SwtGui.line, SwtGui.line,
-				SwtGui.thumb, SwtGui.thumb, SwtGui.thumb_pushed, SwtGui.line, SwtGui.line);
+			new CoolSlider(c, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, SwtGui.line_left,
+				SwtGui.line, SwtGui.thumb, SwtGui.thumb, SwtGui.thumb_over, SwtGui.line,
+				SwtGui.line_right);
 		l.setLayoutData(data);
 		l.setSize(50, 20);
 		l.updateSlider(SimulationClock.getDelay());
@@ -64,6 +67,7 @@ public class SpeedControlContribution extends WorkbenchWindowControlContribution
 			}
 
 		});
+		l.setToolTipText("Adjust simulation speed");
 		return c;
 	}
 }

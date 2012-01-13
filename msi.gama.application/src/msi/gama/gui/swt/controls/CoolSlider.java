@@ -835,4 +835,14 @@ public class CoolSlider extends Composite {
 		}
 		return new Point(width, height);
 	}
+
+	@Override
+	public void setToolTipText(final String string) {
+		super.setToolTipText(string);
+		thumb.setToolTipText(string);
+		rightRegion.setToolTipText(string);
+		leftRegion.setToolTipText(string);
+		leftmostRegion.setToolTipText(string);
+		rightmostRegion.setToolTipText(string);
+	}
 }
