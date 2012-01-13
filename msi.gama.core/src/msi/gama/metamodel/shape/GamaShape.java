@@ -64,7 +64,8 @@ public class GamaShape implements IShape {
 	}
 
 	public GamaShape(final ILocation point) {
-		this(GeometryUtils.getFactory().createPoint(point.toCoordinate()));
+		this(GeometryUtils.getFactory().createPoint(
+			point instanceof Coordinate ? (Coordinate) point : point.toCoordinate()));
 	}
 
 	public GamaShape() {
@@ -270,20 +271,21 @@ public class GamaShape implements IShape {
 			if ( g2.isPoint() ) {
 				// if (isPoint()) {return getLocation().distance(g2.getLocation());
 				ppd.initialize();
-				DistanceToPoint.computeDistance(cached, g2.getLocation().toCoordinate(), ppd);
+				DistanceToPoint.computeDistance(cached, (Coordinate) g2.getLocation(), ppd);
 				return ppd.getDistance();
 			}
 			return distanceOp().getDistance(g2.getInnerGeometry());
 		}
 
 		public boolean covers(final IShape g) {
-			return g.isPoint() ? pl.intersects(g.getLocation().toCoordinate(), cached)
-				: preparedOp().covers(g.getInnerGeometry());
+			// TODO Eliminate toCoordinate() by doing a casting (Coordinate)
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
+				.covers(g.getInnerGeometry());
 		}
 
 		public boolean intersects(final IShape g) {
-			return g.isPoint() ? pl.intersects(g.getLocation().toCoordinate(), cached)
-				: preparedOp().intersects(g.getInnerGeometry());
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
+				.intersects(g.getInnerGeometry());
 		}
 	}
 
@@ -420,16 +422,16 @@ public class GamaShape implements IShape {
 		agent = null;
 	}
 
-	public boolean contains(final Object o) {
-		if ( o == null ) { return false; }
-		if ( o instanceof Geometry ) { return getInnerGeometry().covers((Geometry) o); }
-		if ( o instanceof GamaShape ) { return getInnerGeometry().covers(
-			((GamaShape) o).getInnerGeometry()); }
-		if ( o instanceof ILocation ) { return contains(GeometryUtils.getFactory().createPoint(
-			((ILocation) o).toCoordinate())); }
-		return false;
-
-	}
+	//
+	// public boolean contains(final Object o) {
+	// if ( o == null ) { return false; }
+	// if ( o instanceof Geometry ) { return getInnerGeometry().covers((Geometry) o); }
+	// if ( o instanceof GamaShape ) { return getInnerGeometry().covers(
+	// ((GamaShape) o).getInnerGeometry()); }
+	// if ( o instanceof ILocation ) { return contains(GeometryUtils.getFactory().createPoint(
+	// ((ILocation) o).toCoordinate())); }
+	// return false;
+	// }
 
 	@Override
 	public boolean equals(final Object o) {

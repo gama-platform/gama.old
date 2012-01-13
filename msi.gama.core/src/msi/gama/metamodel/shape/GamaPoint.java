@@ -283,6 +283,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public double distance(final ILocation targ) {
+		if ( targ instanceof Coordinate ) { return distance((Coordinate) targ); }
 		return distance(targ.toCoordinate());
 	}
 
