@@ -38,10 +38,11 @@ import com.vividsolutions.jts.geom.*;
 public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	GamaList<IShape> segments;
-	GamaMap agents;
+	Map<IShape, IAgent> agents;
 	final IShape source, target;
 	final ITopology topology;
-	GamaMap segmentsInGraph;
+
+	// GamaMap segmentsInGraph;
 
 	public GamaPath(final ITopology t, final IShape start, final IShape target,
 		final IList<IShape> edges) {
@@ -49,8 +50,8 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		this.target = target;
 		topology = t;
 		segments = new GamaList<IShape>();
-		segmentsInGraph = new GamaMap();
-		agents = new GamaMap();
+		// segmentsInGraph = new HashMap();
+		agents = new HashMap();
 
 		Geometry firstLine =
 			edges == null || edges.isEmpty() ? null : edges.get(0).getInnerGeometry();
@@ -86,7 +87,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 					agents.put(edge2, ag);
 				}
 				segments.add(edge2);
-				segmentsInGraph.put(agents, agents);
+				// segmentsInGraph.put(agents, agents);
 			}
 		}
 	}
@@ -100,7 +101,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			target = nodes.get(nodes.size() - 1);
 		}
 		segments = new GamaList();
-		segmentsInGraph = new GamaMap();
+		// segmentsInGraph = new GamaMap();
 		agents = new GamaMap();
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
@@ -108,12 +109,14 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				.getLocation()));
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
-				agents.putAll(nodes.get(i).getGeometry(), ag);
+				// MODIF: put?
+				agents.put(nodes.get(i).getGeometry(), ag);
 			}
 		}
 		IAgent ag = nodes.get(nodes.size() - 1).getAgent();
 		if ( ag != null ) {
-			agents.putAll(nodes.get(nodes.size() - 1).getGeometry(), ag);
+			// MODIF: put?
+			agents.put(nodes.get(nodes.size() - 1).getGeometry(), ag);
 		}
 		topology = t;
 
@@ -171,9 +174,11 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public double getWeight(final IShape line) {
-		if ( getGraph() == null || !getGraph().containsEdge(segmentsInGraph.get(line)) ) { return line
-			.getGeometry().getPerimeter(); }
-		return getGraph().getEdgeWeight(segmentsInGraph.get(line));
+		return line.getGeometry().getPerimeter(); // workaround for the moment
+		// if ( getGraph() == null || !getGraph().containsEdge(segmentsInGraph.get(line)) ) { return
+		// line
+		// .getGeometry().getPerimeter(); }
+		// return getGraph().getEdgeWeight(segmentsInGraph.get(line));
 	}
 
 	@Override
@@ -283,12 +288,12 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public void setAgents(final Map agents) {
-		this.agents = (GamaMap) agents;
+		this.agents = agents;
 	}
 
 	@Override
 	public IAgent getAgent(final Object obj) {
-		return (IAgent) agents.get(obj);
+		return agents.get(obj);
 	}
 
 }
