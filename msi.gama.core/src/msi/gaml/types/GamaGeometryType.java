@@ -109,8 +109,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildLine(final ILocation location1, final ILocation location2) {
 		Coordinate coordinates[] =
-			{ location1 == null ? new GamaPoint(0, 0) : location1.toCoordinate(),
-				location2 == null ? new GamaPoint(0, 0) : location2.toCoordinate() };
+			{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1,
+				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2 };
 		return new GamaShape(GeometryUtils.getFactory().createLineString(coordinates));
 	}
 
@@ -118,7 +118,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		List<Coordinate> coordinates = new ArrayList<Coordinate>();
 
 		for ( ILocation p : points ) {
-			coordinates.add(p.toCoordinate());
+			coordinates.add((Coordinate) p);
 		}
 		return new GamaShape(GeometryUtils.getFactory().createLineString(
 			coordinates.toArray(new Coordinate[0])));
@@ -126,7 +126,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape createPoint(final ILocation location) {
 		return new GamaShape(GeometryUtils.getFactory().createPoint(
-			location == null ? new GamaPoint(0, 0) : location.toCoordinate()));
+			location == null ? new GamaPoint(0, 0) : (Coordinate) location));
 	}
 
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
@@ -164,7 +164,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildCircle(final double radius, final ILocation location) {
 		Geometry geom =
 			GeometryUtils.getFactory().createPoint(
-				location == null ? new GamaPoint(0, 0) : location.toCoordinate());
+				location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
 		return new GamaShape(geom.buffer(radius));
 	}
 
