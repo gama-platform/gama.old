@@ -37,8 +37,8 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
+	protected IDisplayManager manager;
 	boolean paused;
-	IDisplayManager manager;
 	private volatile boolean canBeUpdated = true;
 	double widthHeightConstraint = 1.0;
 	private PopupMenu agentsMenu = new PopupMenu();
@@ -85,13 +85,13 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public boolean isPaused() {
-		return paused;
+	public IDisplayManager getManager() {
+		return manager;
 	}
 
 	@Override
-	public IDisplayManager getManager() {
-		return manager;
+	public boolean isPaused() {
+		return paused;
 	}
 
 	public AuxiliaryDisplaySurface getNavigator() {
