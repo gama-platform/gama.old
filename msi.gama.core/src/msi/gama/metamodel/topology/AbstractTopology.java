@@ -77,7 +77,7 @@ public abstract class AbstractTopology implements ITopology {
 		final IShape g = agent.getGeometry();
 		if ( g == null ) { return; }
 		if ( g.isPoint() ) {
-			spatialIndex.remove(g.getLocation().toCoordinate(), agent);
+			spatialIndex.remove((GamaPoint) g.getLocation(), agent);
 		} else {
 			spatialIndex.remove(g.getEnvelope(), agent);
 		}
@@ -109,14 +109,14 @@ public abstract class AbstractTopology implements ITopology {
 	public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
 		final ILocation previousLoc, final Envelope previousEnv) {
 		if ( previousShapeIsPoint && previousLoc != null ) {
-			spatialIndex.remove(previousLoc.toCoordinate(), agent);
+			spatialIndex.remove((GamaPoint) previousLoc, agent);
 		} else if ( !previousShapeIsPoint && previousEnv != null ) {
 			spatialIndex.remove(previousEnv, agent);
 		}
 
 		IShape currentShape = agent.getGeometry();
 		if ( currentShape == null || currentShape.isPoint() ) {
-			spatialIndex.insert(agent.getLocation().toCoordinate(), agent);
+			spatialIndex.insert((GamaPoint) agent.getLocation(), agent);
 		} else {
 			spatialIndex.insert(currentShape.getEnvelope(), agent);
 		}
