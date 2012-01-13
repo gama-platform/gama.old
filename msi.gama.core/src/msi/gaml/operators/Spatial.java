@@ -246,7 +246,7 @@ public abstract class Spatial {
 		@operator(IKeyword.PLUS)
 		public static IShape opPlus(final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
-			Coordinate point = p.toCoordinate();
+			Coordinate point = (Coordinate) p;
 			Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;
 			int nb = geometry.getCoordinates().length;
@@ -385,7 +385,7 @@ public abstract class Spatial {
 			if ( geom.getInnerGeometry() instanceof LineString ) {
 				geoms = splitLine((LineString) geom.getInnerGeometry(), pt);
 			} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
-				Point point = GeometryUtils.getFactory().createPoint(pt.toCoordinate());
+				Point point = GeometryUtils.getFactory().createPoint((Coordinate) pt);
 				Geometry geom2 = null;
 				double distMin = Double.MAX_VALUE;
 				MultiLineString ml = (MultiLineString) geom.getInnerGeometry();
@@ -409,7 +409,7 @@ public abstract class Spatial {
 		// slit a line at a given point (cutpoint)
 		public static GamaList<Geometry> splitLine(final LineString geom, final ILocation cutPoint) {
 			Coordinate[] coords = geom.getCoordinates();
-			Point pt = GeometryUtils.getFactory().createPoint(cutPoint.toCoordinate());
+			Point pt = GeometryUtils.getFactory().createPoint((Coordinate) cutPoint);
 			int nb = coords.length;
 			int indexTarget = -1;
 			double distanceT = Double.MAX_VALUE;
@@ -429,11 +429,11 @@ public abstract class Spatial {
 			for ( int i = 0; i <= indexTarget; i++ ) {
 				coords1[i] = coords[i];
 			}
-			coords1[indexTarget + 1] = cutPoint.toCoordinate();
+			coords1[indexTarget + 1] = (Coordinate) cutPoint;
 
 			nbSp = coords.length - indexTarget;
 			Coordinate[] coords2 = new Coordinate[nbSp];
-			coords2[0] = cutPoint.toCoordinate();
+			coords2[0] = (Coordinate) cutPoint;
 			int k = 1;
 			for ( int i = indexTarget + 1; i < coords.length; i++ ) {
 				coords2[k] = coords[i];
