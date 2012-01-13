@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -22,14 +22,16 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -307,7 +309,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 	public IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
 		final double w, final double h) {
 		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(layerDisplayOutput, w, h); }
-		return new ImageDisplaySurface(w, h);
+		return null;
+		// return new ImageDisplaySurface(w, h);
 	}
 
 	@Override
