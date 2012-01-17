@@ -443,6 +443,11 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
+	public int hashCode() {
+		return geometry == null ? super.hashCode() : geometry.hashCode();
+	}
+
+	@Override
 	public Geometry getInnerGeometry() {
 		return geometry;
 	}
