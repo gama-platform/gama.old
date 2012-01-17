@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -100,22 +100,34 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 				}).getEditor();
 
-		EditorFactory.createExpression(
-			compo,
-			"Expression:",
-			output.getValue() == null ? "Enter a new GAML expression..." : output
-				.getExpressionText(), new EditorListener<IExpression>() {
+		Text c =
+			(Text) EditorFactory.createExpression(
+				compo,
+				"Expression:",
+				output.getValue() == null ? "Enter a new GAML expression..." : output
+					.getExpressionText(), new EditorListener<IExpression>() {
 
-				@Override
-				public void valueModified(final IExpression newValue) throws GamaRuntimeException,
-					GamlException {
-					output.setNewExpression(newValue);
-					update(output);
-					getViewer().collapseItemWithData(output);
-				}
+					@Override
+					public void valueModified(final IExpression newValue)
+						throws GamaRuntimeException, GamlException {
+						output.setNewExpression(newValue);
+						update(output);
+						// getViewer().collapseItemWithData(output);
+					}
 
-			}, Types.get(IType.NONE)).getEditor();
+				}, Types.get(IType.NONE)).getEditor();
 
+		c.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {}
+
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e) {
+				getViewer().collapseItemWithData(output);
+			}
+
+		});
 		titleEditor.addModifyListener(new ModifyListener() {
 
 			@Override

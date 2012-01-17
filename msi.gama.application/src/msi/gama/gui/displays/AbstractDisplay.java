@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -92,7 +91,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				public void valueModified(final Boolean newValue) {
 
 					container.getManager().enableDisplay(AbstractDisplay.this, newValue);
-					if ( SwtGui.isFrontmostDisplayPaused() ) {
+					if ( container.isPaused() ) {
 						container.updateDisplay();
 					}
 				}
@@ -103,7 +102,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				@Override
 				public void valueModified(final Double newValue) {
 					setOpacity(1d - newValue);
-					if ( SwtGui.isFrontmostDisplayPaused() ) {
+					if ( container.isPaused() ) {
 						container.updateDisplay();
 					}
 				}
@@ -115,7 +114,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				@Override
 				public void valueModified(final GamaPoint newValue) {
 					setPosition(newValue);
-					if ( SwtGui.isFrontmostDisplayPaused() ) {
+					if ( container.isPaused() ) {
 						container.updateDisplay();
 					}
 				}
@@ -127,7 +126,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				@Override
 				public void valueModified(final GamaPoint newValue) {
 					setExtent(newValue);
-					if ( SwtGui.isFrontmostDisplayPaused() ) {
+					if ( container.isPaused() ) {
 						container.updateDisplay();
 					}
 				}

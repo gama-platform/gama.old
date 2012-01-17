@@ -36,7 +36,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	private static final Shell popup;
 	private static final Label result;
 	AbstractEditor editor;
-	IType expectedType;
+	// IType expectedType;
 	Listener deactivatePopup;
 
 	static {
@@ -51,7 +51,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 		text = createTextBox(comp);
 		GridData d = ed.getParameterGridData();
 		text.setLayoutData(d);
-		expectedType = ed.getExpectedType();
+		// expectedType = ed.getExpectedType();
 		// popup = new Shell(GUI.getDisplay(), SWT.ON_TOP);
 		// popup.setLayout(new FillLayout());
 		// result = new Label(popup, SWT.NONE);
@@ -81,22 +81,21 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		if ( editor.internalModification ) { return; }
-		Object newValue = null;
 		try {
-			newValue = modifyValue();
+			modifyValue();
 		} catch (GamlException e) {
 			// e.printStackTrace();
 		}
-		displayPopup(newValue);
+		displayPopup();
 	}
 
-	private void displayPopup(final Object currentValue) {
+	private void displayPopup() {
 		String string = text.getText();
 		if ( string.length() == 0 ) {
 			popup.setVisible(false);
 			return;
 		}
-		string = getPopupBody(currentValue);
+		string = getPopupBody();
 		if ( string == null || string.isEmpty() ) {
 			popup.setVisible(false);
 			return;
@@ -127,19 +126,23 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 		} catch (Exception e) {}
 	}
 
+	private Object computeValue() throws GamlException {
+		return editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
+			editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
+
+	}
+
 	private Object modifyValue() throws GamlException {
-		Object newValue =
-			editor.evaluateExpression() ? GAMA
-				.evaluateExpression(text.getText(), editor.getAgent()) : GAMA.compileExpression(
-				text.getText(), editor.getAgent());
+		Object newValue = computeValue();
 		editor.modifyValue(newValue);
 		return newValue;
 	}
 
-	String getPopupBody(final Object value) {
+	String getPopupBody() {
 		try {
-			// Object value = GAMA.evaluateExpression(s, editor.getAgent());
+			Object value = computeValue();
 			String string = "Result: " + StringUtils.toGaml(value);
+			IType expectedType = editor.getExpectedType();
 			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {
 				result.setBackground(SwtGui.COLOR_OK);
 			} else {
@@ -159,7 +162,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		modifyText(null);
+		displayPopup();
 	}
 
 	@Override
@@ -193,7 +196,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	 */
 	@Override
 	public void mouseEnter(final MouseEvent e) {
-		modifyText(null);
+		displayPopup();
 	}
 
 	/*

@@ -36,7 +36,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractEditor implements SelectionListener, ModifyListener, EditorListener,
-	MouseTrackListener, Comparable<AbstractEditor>, IParameterEditor {
+/* MouseTrackListener, */Comparable<AbstractEditor>, IParameterEditor {
 
 	public static final Color normal_bg = Display.getDefault().getSystemColor(
 		SWT.COLOR_WIDGET_BACKGROUND);
@@ -59,7 +59,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	private Combo combo;
 	private CLabel fixedValue;
 	protected EditorToolTip tooltip;
-	public String originalTooltip, modifiedTooltip;
+	// public String originalTooltip, modifiedTooltip;
 	protected volatile boolean internalModification;
 	private final EditorListener listener;
 
@@ -131,26 +131,26 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return absLoc;
 	}
 
-	@Override
-	public void mouseEnter(final MouseEvent e) {
-		if ( tooltip != null ) {
-			tooltip.show(getLocation());
-		}
-	}
+	// @Override
+	// public void mouseEnter(final MouseEvent e) {
+	// if ( tooltip != null ) {
+	// tooltip.show(getLocation());
+	// }
+	// }
 
-	@Override
-	public void mouseExit(final MouseEvent e) {
-		if ( tooltip != null ) {
-			tooltip.hide();
-		}
-	}
+	// @Override
+	// public void mouseExit(final MouseEvent e) {
+	// if ( tooltip != null ) {
+	// tooltip.hide();
+	// }
+	// }
 
-	@Override
-	public void mouseHover(final MouseEvent e) {
-		if ( tooltip != null ) {
-			tooltip.show(getLocation());
-		}
-	}
+	// @Override
+	// public void mouseHover(final MouseEvent e) {
+	// if ( tooltip != null ) {
+	// tooltip.show(getLocation());
+	// }
+	// }
 
 	public void createComposite(final Composite parent) {
 		// Fixer automatiquement le layout du parent. Ou alors utiliser un nouveau composite.
@@ -188,10 +188,10 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			displayParameterValue();
 		}
 		// if ( acceptTooltip() ) {
-		createToolTip(paramControl);
+		// createToolTip(paramControl);
 		// }
-		paramControl.addMouseTrackListener(this);
-		titleLabel.addMouseTrackListener(this);
+		// paramControl.addMouseTrackListener(this);
+		// titleLabel.addMouseTrackListener(this);
 		if ( hasUnit ) {
 			unitLabel = new Label(comp, SWT.READ_ONLY);
 			unitLabel.setFont(SwtGui.unitFont);
@@ -287,32 +287,31 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return param;
 	}
 
-	public final void setTooltip(final String s) {
-		if ( tooltip != null ) {
-			tooltip.setText(s.trim());
-		}
-	}
+	// public final void setTooltip(final String s) {
+	// if ( tooltip != null ) {
+	// tooltip.setText(s.trim());
+	// }
+	// }
 
-	public final void createToolTip(final Control control) {
-		// if ( acceptTooltip() ) {
-		// tooltip = new EditorToolTip(control, org.eclipse.jface.window.ToolTip.RECREATE, true);
-		// }
-		originalTooltip = "name: " + param.getName() + "\n" + "type: " + param.type().toString();
-		if ( minValue != null && maxValue != null ) {
-			originalTooltip +=
+	protected String getTooltipText() {
+		String s = "name: " + param.getName() + "\n" + "type: " + getExpectedType().toString();
+		if ( minValue != null || maxValue != null ) {
+			s +=
 				"\nrange: [" + (minValue != null ? StringUtils.toGaml(minValue) : "?") + ".." +
 					(maxValue != null ? StringUtils.toGaml(maxValue) : "?") + "]";
 		}
-		modifiedTooltip = originalTooltip + "\ninit: " + StringUtils.toGaml(getOriginalValue());
-		setTooltip(originalTooltip);
+		if ( isValueModified() ) {
+			s += "\ninit: " + StringUtils.toGaml(getOriginalValue());
+		}
+		return s;
 	}
 
 	protected final void modifyValue(final Object val) {
 		currentValue = val;
 		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
-		if ( tooltip != null ) {
-			tooltip.setText(getTooltipText());
-		}
+		// if ( tooltip != null ) {
+		// tooltip.setText(getTooltipText());
+		// }
 		if ( !internalModification ) {
 			setParameterValue(val);
 		}
@@ -367,10 +366,6 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	public Label getUnitLabel() {
 		return unitLabel;
-	}
-
-	public String getTooltipText() {
-		return isValueModified() ? modifiedTooltip : originalTooltip;
 	}
 
 	protected Object getOriginalValue() {

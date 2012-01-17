@@ -683,13 +683,6 @@ public class SwtGui implements IGui {
 		return parts[0];
 	}
 
-	public static boolean isFrontmostDisplayPaused() {
-		if ( GAMA.getFrontmostSimulation().isPaused() ) { return true; }
-		IWorkbenchPart part = getPage().getActivePart();
-		if ( part instanceof IGamaView && ((IGamaView) part).getOutput().isPaused() ) { return true; }
-		return false;
-	}
-
 	@Override
 	public boolean isModelingPerspective() {
 		return getCurrentPerspective().getId().equals(PERSPECTIVE_MODELING_ID) ? true : false;
