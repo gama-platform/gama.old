@@ -140,7 +140,7 @@ entities {
 			if condition: (self.in_bounds [ a_point :: tmp_location]) {
 				set location var: location value: tmp_location ;
 				do action: separation {
-					arg nearby_balls value: (((agents_overlapping (shape + ball_separation)) of_species ball) - self) ;
+					arg nearby_balls value: ((((agents_overlapping (shape + ball_separation)) as list) of_species ball) - self) ;
 				}
 			}
 			
@@ -179,7 +179,7 @@ entities {
 		
 		action separate_components {
 			loop com over: (list (ball_delegation)) {
-				let nearby_balls type: list of: ball_delegation value:  (((agents_overlapping ((ball_delegation (com)).shape + ball_separation)) - com)  of_species ball_delegation) where (each in members) ;
+				let nearby_balls type: list of: ball_delegation value:  ((((agents_overlapping ((ball_delegation (com)).shape + ball_separation)) - com) as list)  of_species ball_delegation) where (each in members) ;
 
 				let repulsive_dx type: float value: 0 ;
 				let repulsive_dy type: float value: 0 ;
@@ -203,7 +203,7 @@ entities {
 		}
 		
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
-			let nearby_free_balls type: list of: ball value: (((agents_overlapping (shape + perception_range))) of_species ball) where ( (each.state = 'follow_nearest_ball') ) ;
+			let nearby_free_balls type: list of: ball value: ((((agents_overlapping (shape + perception_range))) as list) of_species ball) where ( (each.state = 'follow_nearest_ball') ) ;
 			if condition: !(empty (nearby_free_balls)) {
 				capture target: nearby_free_balls as: ball_delegation;
 			}
@@ -220,7 +220,7 @@ entities {
 		
 		reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
 			if condition: (target != nil) and ((species_of (target)) = group) {
-				let nearby_groups type: list of: group value: ((agents_overlapping (shape + perception_range)) of_species group) - self ;
+				let nearby_groups type: list of: group value: (((agents_overlapping (shape + perception_range)) as list) of_species group) - self ;
 				
 				if condition: target in nearby_groups {
 					if condition: (rnd(10)) < (merge_possibility * 10) {
