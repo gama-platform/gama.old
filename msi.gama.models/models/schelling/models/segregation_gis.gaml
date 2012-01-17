@@ -8,7 +8,7 @@ global {
 	var all_places type: list init: [] of: space;
 	var neighbours_distance type: int init: 50 min: 1 parameter: 'Distance of perception:' category: 'Population' max: 1000;
 	var shape_file_name type: string init: '../gis/nha2.shp' parameter: 'Path of shapefile to load:' category: 'GIS specific';
-	var square_meters_per_people type: int init: 100 parameter: 'Occupancy of people (in m2):' category: 'GIS specific';
+	var square_meters_per_people type: int init: 200 parameter: 'Occupancy of people (in m2):' category: 'GIS specific';
 	var dimensions type: int;
 	action initialize_people {
 		create species: space from: shape_file_name with: [surface :: read('AREA')];
@@ -31,7 +31,7 @@ entities {
 		var current_building type: space init: nil;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people;
 		action move_to_new_place {
-			set current_building value: (all_places first_with ((each.capacity) > 0));
+			set current_building value: (shuffle(all_places) first_with ((each.capacity) > 0));
 			ask target: current_building {
 				do action: accept {
 					arg one_people value: myself;
@@ -56,11 +56,11 @@ entities {
 		var insiders type: list of: people init: [];
 		var color type: rgb init: [255, 255, 255] as rgb;
 		var surface type: float;
-		var capacity type: int init: surface / square_meters_per_people;
+		var capacity type: int init: 1 + surface / square_meters_per_people;
 		action accept {
 			arg one_people;
 			add item: one_people to: insiders of self;
-			set location of (one_people as people) value: my location + {rnd(10) - 5, rnd(10) - 5};
+			set location of (one_people as people) value: any_location_in(shape);
 			set capacity value: capacity - 1;
 		}
 		action remove {

@@ -18,10 +18,10 @@ global {
 	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y depends_on: environment_bounds ;
 	var ball_color type: rgb init: rgb('green');
 	var chaos_ball_color type: rgb init: rgb('red');
-	var ball_size type: float init: 0.5; 
+	var ball_size type: float init: 3; 
 	var ball_speed type: float init: 1;
 	var chaos_ball_speed type: float init: 8 * ball_speed;
-	var ball_number type: int init: 500 min: 2 max: 1000;
+	var ball_number type: int init: 100 min: 2 max: 1000;
 	const ball_shape type: geometry init: circle (ball_size) ;
 	var ball_separation type: float init: 6 * ball_size;
 	var create_group type: bool init: true;
@@ -155,7 +155,7 @@ entities {
 	species group parent: base {
 		var color type: rgb init: rgb [ rnd(255), rnd(255), rnd(255) ] ;
 		
-		var shape type: geometry init: polygon ( (list (ball_delegation)) collect each.location) ;
+		var shape type: geometry init: convex_hull(polygon ( (list (ball_delegation)) collect each.location)) ;
 		
 		var speed type: float value: group_base_speed ;
 		var perception_range type: float value: base_perception_range + (rnd(5)) ;
@@ -291,7 +291,7 @@ entities {
 				set (ball_delegation (com)).location value: (ball_delegation (com)).location + {dx, dy} ;
 			}
 			
-			set shape value:  (polygon ((list (ball_delegation)) collect (ball_delegation (each)).location)) + 2.0 ;
+			set shape value:  convex_hull((polygon ((list (ball_delegation)) collect (ball_delegation (each)).location)) + 2.0) ;
 		}
 		
 		reflex self_disaggregate {

@@ -4,7 +4,7 @@ model prey_predator
 global {
 	var nb_preys_init type: int init: 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
 	var nb_predator_init type: int init: 20 min: 0 max: 200 parameter: 'Initial number of predators ' category: 'Predator' ;
-	var map_init type: string init: '../includes/data/raster_map.png' parameter: 'Initial environement: ' category: 'Environment' ;
+	var map_init type: file init: '../includes/data/raster_map.png' parameter: 'Initial environement: ' category: 'Environment' ;
 	var prey_max_energy type: float init: 1 parameter: 'Prey max energy: ' category: 'Prey' ;
 	var prey_max_transfert type: float init: 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
 	var prey_energy_consum type: float init: 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
@@ -22,7 +22,7 @@ global {
 	var nb_animals type: int value: nb_preys + nb_predators init: nb_preys_init + nb_predator_init ;
 	
 	init {
-		let init_data type: matrix value: file(map_init) as_matrix {50,50} ;
+		let init_data type: matrix value: map_init as_matrix {50,50} ;
 		create species: prey number: nb_preys_init ;
 		create species: predator number: nb_predator_init ;
 		ask target: (vegetation_cell as list) {
