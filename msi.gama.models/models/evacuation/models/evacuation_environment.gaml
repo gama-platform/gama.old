@@ -10,12 +10,12 @@ global {
 	var shape_file_bounds type: string init: '../gis/bounds.shp';
 	var shape_file_destination type: string init: '../gis/Destination.shp';
 
-	var insideRoadCoeff type: float init: 0.1 min: 0.05 max: 0.4 parameter: "Size of the external parts of the roads:";
+	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 	var people_speed type: float init: 2;
-	var people_number type: int init: 10000;
+	var people_number type: int init: 1000 parameter: "Number of agents";
 	var people_shape_buffer type: float init: 0.01;
 	
-	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
+	var capture_pedestrian type: bool init: false parameter: "Capture pedestrian?";
 
 	var theRoadInitializer type: initializerRoad;
 
@@ -57,6 +57,7 @@ entities {
 		var extremity2 type: geometry;
 		
 		var macro_patch type: geometry;
+		var macro_patch_buffer type: geometry;
 
 		species captured_people parent: people schedules: [] {
 			var released_time type: int;
@@ -68,22 +69,15 @@ entities {
 		}
 
 		reflex capture_people when: capture_pedestrian {
-			
-			// performace issue!!!
-			/*
-			let to_be_captured_people type: list of: people value: (list (people)) where (  
+
+			let to_be_captured_people type: list of: people value: (people overlapping (macro_patch_buffer));
+			if condition: ! (empty(to_be_captured_people)) {
+				set to_be_captured_people value: to_be_captured_people where (
 				(each.last_road != self)
 				and (each.previous_location != nil) 
-				and (each.location != ((each.goal).location))
-				and ( (each.shape_buffer) intersects macro_patch )
-			);
-			 */
-			
-			let to_be_captured_people type: list of: people value: (people overlapping macro_patch) where (
-				(each.last_road != self)
-				and (each.previous_location != nil) 
-				and (each.location != ((each.goal).location))
-			);
+				and (each.location != ((each.goal).location)));
+			}
+
 
 			
 			if condition: !(empty (to_be_captured_people)) {
@@ -178,7 +172,7 @@ entities {
 
 		var goal type: destination ;
 		var my_path type: path;
-		var shape_buffer type: geometry init: shape + people_shape_buffer value: shape + people_shape_buffer depends_on: [shape];
+		//var shape_buffer type: geometry init: shape + people_shape_buffer value: shape + people_shape_buffer depends_on: [shape];
 
 /*	
 		aspect default {
@@ -187,8 +181,20 @@ entities {
 	 */
 	 
 		reflex when: (location != goal.location) {
-			let followedPath type: path value: self.goto [on::the_graph, target::goal.location, speed::people_speed];
-			set previous_location value: followedPath.source;
+			set previous_location value: location;
+			do action:goto with: [on::the_graph, target::goal.location, speed::people_speed];
+			//set previous_location value: followedPath.source;
+			
+		//	loop s over: followedPath.segments {
+		//		do action: write {
+		//			arg name: message value: 'At time: ' + (string (time)) + ' ' + name + ' with ' + (string (followedPath agent_from_geometry s));
+		//		}
+		//	}
+			
+		//	let the_road type: road value: followedPath agent_from_geometry (last (followedPath.segments));
+		//	do action: write {
+		//		arg name: message value: name + ' is current on ' + (string (the_road));
+		//	}
 		}
 	}
 
@@ -218,6 +224,7 @@ entities {
 			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
 			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
 			set the_road.macro_patch value: inside_road_geom;
+			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
 			
 			create species: insideRoad {
 				set shape value: inside_road_geom;
@@ -251,7 +258,8 @@ output {
 		*/
 		
 	monitor people_number value: length (people);
-	monitor captured_people_number value: sum (list(road) collect (length (each.members)));
+	monitor captured_people_number value: length (list(road) collect (length (each.members)));
+		monitor step_length_monitor value: step_length;
 
 	display Execution_Time refresh_every: 5 {
 		chart name: 'Simulation step length' type: series background: rgb('black') {
