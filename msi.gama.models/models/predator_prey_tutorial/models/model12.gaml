@@ -46,8 +46,8 @@ entities {
 		const energy_reproduce type: float ;
 		const proba_reproduce type: float ;
 		const nb_max_offsprings type: int ;
-		const my_icon type: string ;
-		var myCell type: vegetation_cell init: one_of (vegetation_cell as list) ;
+		const my_icon type: string;
+		var myCell type: vegetation_cell init: one_of (vegetation_cell as list);
 		var energy type: float init: (rnd(1000) / 1000) * max_energy  value: energy - energy_consum max: max_energy ;
 		init {
 			set location value: myCell.location ;
