@@ -44,14 +44,15 @@ entities {
 		const vision type: int init: rnd(maxRange) min: 1;
 		const maxAge type: int min: minDeathAge max: maxDeathAge init: rnd (maxDeathAge - minDeathAge) + minDeathAge;
 		var age type: int max: maxAge init: 0 value: age + step;
-		var place type: sugar_cell init: location as sugar_cell;
+		var place type: sugar_cell init: location as sugar_cell; 
 		const size type: float init: 0.5;
 		
-		reflex basic_move {
+		reflex basic_move { 
 			set sugar value: sugar + place.sugar;
 			set place.sugar value: 0;
-			let poss_targets type: list of: sugar_cell value: ((place neighbours_at vision) of_species sugar_cell) where (each.sugar > 0);
-			set place value: empty(poss_targets) ? one_of ((place neighbours_at vision) of_species sugar_cell) : one_of (poss_targets);
+			let neighbours value: topology(sugar_cell) neighbours_of (place::vision) of_species sugar_cell;
+			let poss_targets type: list of: sugar_cell value: (neighbours) where (each.sugar > 0);
+			set place value: empty(poss_targets) ? one_of (neighbours) : one_of (poss_targets);
 			set location value: place.location;
 		}
 		reflex end_of_life when: (sugar = 0) or (age = maxAge) {
