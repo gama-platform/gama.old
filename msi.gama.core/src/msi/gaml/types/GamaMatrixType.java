@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,14 +19,12 @@
 package msi.gaml.types;
 
 import java.io.*;
-import msi.gama.common.interfaces.*;
-
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 
 @type(value = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
 	GamaFloatMatrix.class, GamaObjectMatrix.class })
@@ -90,7 +88,7 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 				str = allLines.get(i);
 				splitStr = str.split(delim, -1);
 				for ( int j = 0; j < splitStr.length; j++ ) {
-					matrix.put(j, i, splitStr[j]);
+					matrix.set(j, i, splitStr[j]);
 				}
 			}
 			return matrix;
@@ -102,19 +100,19 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 
 	public static IMatrix with(final Object val) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaObjectMatrix(1, 1);
-		matrix.put(0, 0, val);
+		matrix.set(0, 0, val);
 		return matrix;
 	}
 
 	public static IMatrix with(final Object val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaObjectMatrix((int) p.x, (int) p.y);
-		matrix.put(0, 0, val);
+		matrix.set(0, 0, val);
 		return matrix;
 	}
 
 	public static IMatrix with(final int val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaIntMatrix((int) p.x, (int) p.y);
-		matrix.put(0, 0, val);
+		matrix.set(0, 0, val);
 		return matrix;
 	}
 }

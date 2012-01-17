@@ -208,7 +208,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		IMatrix result = new GamaFloatMatrix(numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				result.put(j, i, get(i, j));
+				result.set(j, i, get(i, j));
 			}
 		}
 		return result;

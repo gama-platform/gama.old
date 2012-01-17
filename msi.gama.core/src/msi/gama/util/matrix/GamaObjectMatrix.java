@@ -194,7 +194,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		IMatrix result = new GamaObjectMatrix(numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				result.put(j, i, get(i, j));
+				result.set(j, i, get(i, j));
 			}
 		}
 		return result;

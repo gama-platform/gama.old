@@ -211,7 +211,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		IMatrix result = new GamaIntMatrix(numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				result.put(j, i, get(i, j));
+				result.set(j, i, get(i, j));
 			}
 		}
 		return result;
