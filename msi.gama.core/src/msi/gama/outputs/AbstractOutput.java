@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,15 +19,12 @@
 package msi.gama.outputs;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-
-import msi.gama.kernel.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.*;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -52,9 +49,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		super(desc);
 		name = getLiteral(IKeyword.NAME);
 		if ( name != null ) {
-			name.replace(':', '_');
-			name.replace('/', '_');
-			name.replace('\\', '_');
+			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');
 			if ( name.length() == 0 ) {
 				name = "output";
 			}
