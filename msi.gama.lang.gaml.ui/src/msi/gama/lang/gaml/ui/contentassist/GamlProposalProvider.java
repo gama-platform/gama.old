@@ -21,14 +21,13 @@ package msi.gama.lang.gaml.ui.contentassist;
 import java.io.File;
 import java.net.URL;
 import java.util.Set;
-import msi.gama.precompiler.MultiProperties;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
+import msi.gama.precompiler.MultiProperties;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.Assignment;
@@ -98,17 +97,17 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		// return null;
 	}
 
-	@Override
-	protected ConfigurableCompletionProposal doCreateProposal(final String proposal,
-		final StyledString displayString, final Image image, final int priority,
-		final ContentAssistContext context) {
-
-		ConfigurableCompletionProposal result = null;
-		if ( displayString.toString().endsWith(" ") ) {
-			result = super.doCreateProposal(proposal, displayString, image, priority, context);
-		}
-		return result;
-	}
+	// @Override
+	// protected ConfigurableCompletionProposal doCreateProposal(final String proposal,
+	// final StyledString displayString, final Image image, final int priority,
+	// final ContentAssistContext context) {
+	//
+	// ConfigurableCompletionProposal result = null;
+	// if ( displayString.toString().endsWith(" ") ) {
+	// result = super.doCreateProposal(proposal, displayString, image, priority, context);
+	// }
+	// return result;
+	// }
 
 	public void completeFacetExpr_Expr(final FacetExpr f, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
