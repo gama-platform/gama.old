@@ -981,6 +981,8 @@ public abstract class Spatial {
 			final GamaPair pair) throws GamaRuntimeException {
 			if ( pair == null ) { return GamaList.EMPTY_LIST; }
 			Object a = pair.key;
+			if ( a == null ) { throw new GamaRuntimeException(
+				"Cannot compute neighbours of a null agent"); }
 			if ( !(a instanceof IShape) ) { throw new GamaRuntimeException(
 				"The operator neighbours_of expects a pair agent::float as its right member"); }
 			Object d = pair.value;
