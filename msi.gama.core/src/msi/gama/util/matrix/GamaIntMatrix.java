@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -21,7 +21,7 @@ package msi.gama.util.matrix;
 import java.util.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -97,7 +97,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		} else {
 			for ( int i = 0; i < numRows; i++ ) {
 				for ( int j = 0; j < numCols; j++ ) {
-					put(j, i, Cast.asInt(null, ((List) objects.get(j)).get(i)));
+					set(j, i, Cast.asInt(null, ((List) objects.get(j)).get(i)));
 				}
 			}
 		}
@@ -146,7 +146,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public Integer _max(IScope scope) {
+	public Integer _max(final IScope scope) {
 		Integer max = Integer.MIN_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] > max ) {
@@ -157,7 +157,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public Integer _min(IScope scope) {
+	public Integer _min(final IScope scope) {
 		Integer min = Integer.MAX_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] < min ) {
@@ -230,6 +230,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return Arrays.equals(this.matrix, mat.matrix);
 	}
 
+	@Override
+	public int hashCode() {
+		return matrix.hashCode();
+	}
+
 	public void fillWith(final int o) {
 		Arrays.fill(matrix, o);
 	}
@@ -244,15 +249,17 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return cellSize;
 	}
 
-	@Override
-	public void put(final int col, final int row, final int obj) {
+	// @Override
+	public void set(final int col, final int row, final int obj) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
 		matrix[row * numCols + col] = obj;
 	}
 
 	@Override
-	public void put(final int col, final int row, final Integer obj) {
-		put(col, row, obj.intValue());
+	public void set(final int col, final int row, final Object obj) {
+		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
+		matrix[row * numCols + col] = Cast.asInt(GAMA.getDefaultScope(), obj);
+		// put(col, row, Cast.asInt(GAMA.getDefaultScope(), obj).intValue());
 	}
 
 	public boolean remove(final int o) {

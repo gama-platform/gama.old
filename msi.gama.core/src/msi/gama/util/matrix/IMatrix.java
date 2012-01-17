@@ -85,13 +85,14 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 
 	public abstract T get(final int col, final int row);
 
-	public abstract void put(final int col, final int row, final T obj) throws GamaRuntimeException;
-
-	public abstract void put(final int col, final int row, final double obj)
+	public abstract void set(final int col, final int row, final Object obj)
 		throws GamaRuntimeException;
 
-	public abstract void put(final int col, final int row, final int obj)
-		throws GamaRuntimeException;
+	// public abstract void put(final int col, final int row, final double obj)
+	// throws GamaRuntimeException;
+
+	// public abstract void put(final int col, final int row, final int obj)
+	// throws GamaRuntimeException;
 
 	public abstract Object remove(final int col, final int row) throws GamaRuntimeException;
 

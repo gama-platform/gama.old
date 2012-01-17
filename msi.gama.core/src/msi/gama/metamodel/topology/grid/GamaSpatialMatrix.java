@@ -236,9 +236,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public void put(final int col, final int row, final IShape obj) throws GamaRuntimeException {
+	public void set(final int col, final int row, final Object obj) throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
-
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,10 +19,9 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -97,7 +96,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		} else {
 			for ( int i = 0; i < numRows; i++ ) {
 				for ( int j = 0; j < numCols; j++ ) {
-					put(j, i, Cast.asFloat(null, ((List) objects.get(j)).get(i)));
+					set(j, i, Cast.asFloat(null, ((List) objects.get(j)).get(i)));
 				}
 			}
 		}
@@ -144,7 +143,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public Double _max(IScope scope) {
+	public Double _max(final IScope scope) {
 		Double max = Double.MIN_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] > max ) {
@@ -155,7 +154,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public Double _min(IScope scope) {
+	public Double _min(final IScope scope) {
 		Double min = Double.MAX_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] < min ) {
@@ -166,7 +165,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public Double _product(IScope scope) {
+	public Double _product(final IScope scope) {
 		double result = 1.0;
 		for ( int i = 0, n = matrix.length; i < n; i++ ) {
 			result *= matrix[i];
@@ -175,7 +174,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public Double _sum(IScope scope) {
+	public Double _sum(final IScope scope) {
 		double result = 0.0;
 		for ( int i = 0, n = matrix.length; i < n; i++ ) {
 			result += matrix[i];
@@ -229,6 +228,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
+	public int hashCode() {
+		return matrix.hashCode();
+	}
+
+	@Override
 	public void _putAll(final Double o, final Object param) throws GamaRuntimeException {
 		// Exception if o == null
 		Arrays.fill(matrix, o.doubleValue());
@@ -240,15 +244,18 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return matrix[row * numCols + col];
 	}
 
-	@Override
-	public void put(final int col, final int row, final double obj) {
-		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
-		matrix[row * numCols + col] = obj;
-	}
+	// public void put(final int col, final int row, final double obj) {
+	// if ( !(col >= numCols || col < 0 || row >= numRows || row < 0) ) {
+	// matrix[row * numCols + col] = obj;
+	// }
+	// }
 
 	@Override
-	public void put(final int col, final int row, final Double obj) throws GamaRuntimeException {
-		put(col, row, obj.doubleValue());
+	public void set(final int col, final int row, final Object obj) throws GamaRuntimeException {
+		if ( !(col >= numCols || col < 0 || row >= numRows || row < 0) ) {
+			matrix[row * numCols + col] = Cast.asFloat(GAMA.getDefaultScope(), obj);
+		}
+		// put(col, row, Cast.asFloat(GAMA.getDefaultScope(), obj).doubleValue());
 	}
 
 	private boolean remove(final double o) {

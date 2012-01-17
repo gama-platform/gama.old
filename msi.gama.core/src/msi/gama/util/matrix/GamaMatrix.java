@@ -148,17 +148,18 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public abstract T get(final int col, final int row);
 
 	@Override
-	public abstract void put(final int col, final int row, final T obj) throws GamaRuntimeException;
+	public abstract void set(final int col, final int row, final Object obj)
+		throws GamaRuntimeException;
 
-	@Override
-	public void put(final int col, final int row, final double obj) {
-		put(col, row, Double.valueOf(obj));
-	}
+	// @Override
+	// public void put(final int col, final int row, final double obj) throws GamaRuntimeException {
+	// put(col, row, new Double(obj));
+	// }
 
-	@Override
-	public void put(final int col, final int row, final int obj) {
-		put(col, row, Integer.valueOf(obj));
-	}
+	// @Override
+	// public void put(final int col, final int row, final int obj) throws GamaRuntimeException {
+	// put(col, row, new Integer(obj));
+	// }
 
 	@Override
 	public abstract Object remove(final int col, final int row);
@@ -220,7 +221,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	public final void put(final ILocation p, final T value, final Object param)
 		throws GamaRuntimeException {
-		put((int) p.getX(), (int) p.getY(), value);
+		set((int) p.getX(), (int) p.getY(), value);
 	}
 
 	@Override
