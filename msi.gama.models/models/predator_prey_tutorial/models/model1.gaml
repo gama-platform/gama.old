@@ -3,9 +3,8 @@ model prey_predator
 
 global {
 	var nb_preys_init type: int init: 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
-	var nb_preys type: int value: length (prey as list) init: nb_preys_init ;
 	init {
-		create species: prey number: nb_preys ;
+		create species: prey number: nb_preys_init ;
 	}
 }
 entities {

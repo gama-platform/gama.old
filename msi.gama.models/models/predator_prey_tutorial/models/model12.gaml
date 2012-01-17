@@ -1,4 +1,5 @@
 model prey_predator
+//Model 12 of the predator/prey tutorial
 
 global {
 	var nb_preys_init type: int init: 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
@@ -23,10 +24,10 @@ global {
 	var nb_predators type: int value: length (predator as list) init: nb_predator_init ;
 	
 	init {
-		let init_data type: matrix value: file(map_init) as_matrix {50,50} ;
+		let init_data type: matrix value: file(map_init) as_matrix {50,50};
 		create species: prey number: nb_preys_init ;
-		create species: predator number: nb_predators ;
-		ask target: (the_grid as list) {
+		create species: predator number: nb_predator_init ;
+		ask target: (vegetation_cell as list) {
 			set color value: rgb (init_data at {grid_x,grid_y}) ;
 			set food value: 1 - (((color as list) at 0) / 255) ;
 			set foodProd value: food / 100 ;
@@ -46,7 +47,7 @@ entities {
 		const proba_reproduce type: float ;
 		const nb_max_offsprings type: int ;
 		const my_icon type: string ;
-		var myCell type: the_grid init: one_of (the_grid as list) ;
+		var myCell type: vegetation_cell init: one_of (vegetation_cell as list) ;
 		var energy type: float init: (rnd(1000) / 1000) * max_energy  value: energy - energy_consum max: max_energy ;
 		init {
 			set location value: myCell.location ;
@@ -114,7 +115,7 @@ entities {
 			set energy value: energy + energy_transfert ;
 		}
 		action choose_cell {
-			let myCell_tmp type: the_grid value: shuffle(myCell.neighbours) first_with (!(empty (agents_inside(each) of_species prey)));
+			let myCell_tmp type: vegetation_cell value: shuffle(myCell.neighbours) first_with (!(empty (agents_inside(each) of_species prey)));
 			if condition: myCell_tmp != nil {
 				set myCell value: myCell_tmp;
 				else {
@@ -127,17 +128,17 @@ entities {
 }
 
 environment width: 100 height: 100 {
-	grid the_grid width: 50 height: 50 neighbours: 4 {
+	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
 		const maxFood type: float init: 1.0 ;
 		const foodProd type: float init: (rnd(1000) / 1000) * 0.01 ;
 		var food type: float init: (rnd(1000) / 1000) value: min [maxFood, food + foodProd] ;
 		var color type: rgb value: [255 * (1 - food), 255, 255 * (1 - food)] init: [255 * (1 - food), 255, 255 * (1 - food)] ;
-		var neighbours type: list of: the_grid init: (self neighbours_at 2) of_species the_grid;
+		var neighbours type: list of: vegetation_cell init: (self neighbours_at 2) of_species vegetation_cell;
 	}
 }
 output {
 	display main_display {
-		grid the_grid lines: 'black' ;
+		grid vegetation_cell lines: 'black' ;
 		species prey aspect: base ;
 		species predator aspect: base ;
 	}
