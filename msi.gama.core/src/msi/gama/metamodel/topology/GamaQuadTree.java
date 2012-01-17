@@ -20,7 +20,6 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.*;
-import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import msi.gama.metamodel.agent.IAgent;
@@ -154,7 +153,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		return new GamaList(findIntersects(source, envelope, f));
 	}
 
-	private class QuadNode implements Serializable {
+	private class QuadNode {
 
 		private final Envelope bounds;
 		private final double hw, hh, minx, miny;
