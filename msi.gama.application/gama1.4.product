@@ -70,6 +70,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.aopalliance"/>
       <plugin id="org.apache.commons.lang"/>
+      <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
@@ -184,6 +185,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtext.ui.codetemplates.ui"/>
       <plugin id="org.eclipse.xtext.ui.shared"/>
       <plugin id="org.eclipse.xtext.util"/>
+      <plugin id="org.eclipse.xtext.xbase.lib"/>
+      <plugin id="org.eclipse.xtext.xtend2.lib"/>
       <plugin id="org.jdom"/>
    </plugins>
 
