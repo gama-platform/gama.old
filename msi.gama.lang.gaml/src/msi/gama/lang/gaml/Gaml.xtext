@@ -114,13 +114,10 @@ Addition returns Expression:
 	Multiplication (({Plus.left=current}'+'|{Minus.left=current}'-') right=Multiplication)*;
 
 Multiplication returns Expression:
-	GamlBinExpr (({Multi.left=current}'*'|{Div.left=current}'/') right=GamlBinExpr)*;
+	GamlBinExpr (({Multi.left=current}'*'|{Div.left=current}'/'|{Pow.left=current}'^') right=GamlBinExpr)*;
 
 GamlBinExpr returns Expression:
-	Power (({GamlBinary.left=current} op=GamlBinarOpRef) right=Power)*;
-
-Power returns Expression:
-	GamlUnitExpr (({Pow.left=current}'^') right=GamlUnitExpr)*;
+	GamlUnitExpr (({GamlBinary.left=current} op=GamlBinarOpRef) right=GamlUnitExpr)*;
 
 GamlUnitExpr returns Expression:
 	GamlUnaryExpr (({Unit.left=current}'#') right=GamlUnitRef)?;

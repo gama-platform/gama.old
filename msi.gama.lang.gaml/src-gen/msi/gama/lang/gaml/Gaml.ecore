@@ -244,16 +244,16 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GamlBinary" eSuperTypes="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="Pow" eSuperTypes="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="op" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinarOpRef"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Pow" eSuperTypes="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="GamlBinary" eSuperTypes="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="op" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinarOpRef"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="ecore:EClass platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Expression"
         containment="true"/>

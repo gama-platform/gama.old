@@ -208,8 +208,9 @@ public class Gaml2JDOM {
 		} else if ( expr instanceof TerminalExpression ) {
 			s = convTermExpr((TerminalExpression) expr);
 		} else if ( expr instanceof Pow ) {
-			Pow expr1 = (Pow) expr;
-			s = convExpression(expr1.getLeft()) + "^" + convExpression(expr1.getRight());
+			s =
+				"(" + convExpression(((Pow) expr).getLeft()) + " ^ " +
+					convExpression(((Pow) expr).getRight()) + ")";
 		} else if ( expr instanceof Pair ) {
 			Pair expr1 = (Pair) expr;
 			String s1 = convExpression(expr1.getLeft()) + "::" + convExpression(expr1.getRight());

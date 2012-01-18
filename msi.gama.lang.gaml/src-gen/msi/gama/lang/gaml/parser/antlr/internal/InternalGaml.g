@@ -2102,19 +2102,30 @@ ruleMultiplication returns [EObject current=null]
     {
     	newLeafNode(otherlv_4, grammarAccess.getMultiplicationAccess().getSolidusKeyword_1_0_1_1());
     }
+)
+    |((
+    {
+        $current = forceCreateModelElementAndSet(
+            grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0(),
+            $current);
+    }
+)	otherlv_6='^' 
+    {
+    	newLeafNode(otherlv_6, grammarAccess.getMultiplicationAccess().getCircumflexAccentKeyword_1_0_2_1());
+    }
 ))(
 (
 		{ 
 	        newCompositeNode(grammarAccess.getMultiplicationAccess().getRightGamlBinExprParserRuleCall_1_1_0()); 
 	    }
-		lv_right_5_0=ruleGamlBinExpr		{
+		lv_right_7_0=ruleGamlBinExpr		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getMultiplicationRule());
 	        }
        		set(
        			$current, 
        			"right",
-        		lv_right_5_0, 
+        		lv_right_7_0, 
         		"GamlBinExpr");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -2143,11 +2154,11 @@ ruleGamlBinExpr returns [EObject current=null]
     @after { leaveRule(); }:
 (
     { 
-        newCompositeNode(grammarAccess.getGamlBinExprAccess().getPowerParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getGamlBinExprAccess().getGamlUnitExprParserRuleCall_0()); 
     }
-    this_Power_0=rulePower
+    this_GamlUnitExpr_0=ruleGamlUnitExpr
     { 
-        $current = $this_Power_0.current; 
+        $current = $this_GamlUnitExpr_0.current; 
         afterParserOrEnumRuleCall();
     }
 (((
@@ -2177,69 +2188,11 @@ ruleGamlBinExpr returns [EObject current=null]
 ))(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getGamlBinExprAccess().getRightPowerParserRuleCall_1_1_0()); 
-	    }
-		lv_right_3_0=rulePower		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getGamlBinExprRule());
-	        }
-       		set(
-       			$current, 
-       			"right",
-        		lv_right_3_0, 
-        		"Power");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-))*)
-;
-
-
-
-
-
-// Entry rule entryRulePower
-entryRulePower returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getPowerRule()); }
-	 iv_rulePower=rulePower 
-	 { $current=$iv_rulePower.current; } 
-	 EOF 
-;
-
-// Rule Power
-rulePower returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-(
-    { 
-        newCompositeNode(grammarAccess.getPowerAccess().getGamlUnitExprParserRuleCall_0()); 
-    }
-    this_GamlUnitExpr_0=ruleGamlUnitExpr
-    { 
-        $current = $this_GamlUnitExpr_0.current; 
-        afterParserOrEnumRuleCall();
-    }
-(((
-    {
-        $current = forceCreateModelElementAndSet(
-            grammarAccess.getPowerAccess().getPowLeftAction_1_0_0(),
-            $current);
-    }
-)	otherlv_2='^' 
-    {
-    	newLeafNode(otherlv_2, grammarAccess.getPowerAccess().getCircumflexAccentKeyword_1_0_1());
-    }
-)(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getPowerAccess().getRightGamlUnitExprParserRuleCall_1_1_0()); 
+	        newCompositeNode(grammarAccess.getGamlBinExprAccess().getRightGamlUnitExprParserRuleCall_1_1_0()); 
 	    }
 		lv_right_3_0=ruleGamlUnitExpr		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getPowerRule());
+	            $current = createModelElementForParent(grammarAccess.getGamlBinExprRule());
 	        }
        		set(
        			$current, 

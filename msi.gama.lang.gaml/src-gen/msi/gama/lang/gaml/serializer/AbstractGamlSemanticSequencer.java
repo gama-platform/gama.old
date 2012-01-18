@@ -1,21 +1,3 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
- * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
- * 
- * Developers :
- * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
 package msi.gama.lang.gaml.serializer;
 
 import com.google.inject.Inject;
@@ -139,12 +121,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -184,12 +165,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -230,12 +210,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -274,12 +253,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -318,12 +296,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -362,12 +339,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -412,12 +388,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -457,12 +432,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -542,12 +516,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -586,12 +559,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -647,12 +619,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -700,12 +671,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -777,12 +747,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -834,12 +803,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -880,12 +848,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -924,12 +891,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -968,12 +934,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1013,12 +978,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1063,12 +1027,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1107,12 +1070,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1151,12 +1113,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1195,12 +1156,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1239,13 +1199,12 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
 				   context == grammarAccess.getPointRule() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1284,12 +1243,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1302,7 +1260,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getRelationalAccess().getRelNotEqLeftAction_1_0_0_0() ||
 				   context == grammarAccess.getTernExpRule() ||
 				   context == grammarAccess.getTernExpAccess().getTernaryConditionAction_1_0()) {
-					sequence_Power(context, (Pow) semanticObject); 
+					sequence_Multiplication(context, (Pow) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1328,12 +1286,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1372,12 +1329,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1416,12 +1372,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1460,12 +1415,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1504,12 +1458,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1548,12 +1501,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1592,12 +1544,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1649,12 +1600,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1694,12 +1644,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1738,12 +1687,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -1785,12 +1733,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getMultiplicationRule() ||
 				   context == grammarAccess.getMultiplicationAccess().getDivLeftAction_1_0_1_0() ||
 				   context == grammarAccess.getMultiplicationAccess().getMultiLeftAction_1_0_0_0() ||
+				   context == grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0() ||
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getOrLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
 				   context == grammarAccess.getPairExprAccess().getPairLeftAction_1_0_0() ||
-				   context == grammarAccess.getPowerRule() ||
-				   context == grammarAccess.getPowerAccess().getPowLeftAction_1_0_0() ||
 				   context == grammarAccess.getPrePrimaryExprRule() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
@@ -2144,7 +2091,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (left=GamlBinExpr_GamlBinary_1_0_0 op=GamlBinarOpRef right=Power)
+	 *     (left=GamlBinExpr_GamlBinary_1_0_0 op=GamlBinarOpRef right=GamlUnitExpr)
 	 *
 	 * Features:
 	 *    left[1, 1]
@@ -2164,7 +2111,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getGamlBinExprAccess().getGamlBinaryLeftAction_1_0_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getGamlBinExprAccess().getOpGamlBinarOpRefParserRuleCall_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getGamlBinExprAccess().getRightPowerParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.accept(grammarAccess.getGamlBinExprAccess().getRightGamlUnitExprParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
 	}
 	
@@ -2456,6 +2403,29 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (left=Multiplication_Pow_1_0_2_0 right=GamlBinExpr)
+	 *
+	 * Features:
+	 *    left[1, 1]
+	 *    right[1, 1]
+	 */
+	protected void sequence_Multiplication(EObject context, Pow semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.POW__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.POW__LEFT));
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.POW__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.POW__RIGHT));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getMultiplicationAccess().getRightGamlBinExprParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (left=OrExp_Or_1_0 right=AndExp)
 	 *
 	 * Features:
@@ -2519,29 +2489,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getPointAccess().getXExpressionParserRuleCall_0_0(), semanticObject.getX());
 		feeder.accept(grammarAccess.getPointAccess().getYExpressionParserRuleCall_2_0(), semanticObject.getY());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (left=Power_Pow_1_0_0 right=GamlUnitExpr)
-	 *
-	 * Features:
-	 *    left[1, 1]
-	 *    right[1, 1]
-	 */
-	protected void sequence_Power(EObject context, Pow semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.POW__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.POW__LEFT));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.POW__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.POW__RIGHT));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getPowerAccess().getPowLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getPowerAccess().getRightGamlUnitExprParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
 	}
 	

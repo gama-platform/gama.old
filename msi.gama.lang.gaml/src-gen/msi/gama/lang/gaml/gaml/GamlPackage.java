@@ -1,20 +1,7 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
- * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
- * 
- * Developers :
- * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
+/**
+ * <copyright>
+ * </copyright>
+ *
  */
 package msi.gama.lang.gaml.gaml;
 
@@ -1822,6 +1809,43 @@ public interface GamlPackage extends EPackage
   int DIV_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.PowImpl <em>Pow</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.PowImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPow()
+   * @generated
+   */
+  int POW = 48;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int POW__LEFT = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int POW__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Pow</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int POW_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
+
+  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.GamlBinaryImpl <em>Binary</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1829,7 +1853,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlBinary()
    * @generated
    */
-  int GAML_BINARY = 48;
+  int GAML_BINARY = 49;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1866,43 +1890,6 @@ public interface GamlPackage extends EPackage
    * @ordered
    */
   int GAML_BINARY_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 3;
-
-  /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.PowImpl <em>Pow</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.PowImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPow()
-   * @generated
-   */
-  int POW = 49;
-
-  /**
-   * The feature id for the '<em><b>Left</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int POW__LEFT = EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Right</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int POW__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Pow</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int POW_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.UnitImpl <em>Unit</em>}' class.
@@ -3628,6 +3615,38 @@ public interface GamlPackage extends EPackage
   EReference getDiv_Right();
 
   /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Pow <em>Pow</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Pow</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pow
+   * @generated
+   */
+  EClass getPow();
+
+  /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Pow#getLeft <em>Left</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Left</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pow#getLeft()
+   * @see #getPow()
+   * @generated
+   */
+  EReference getPow_Left();
+
+  /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Pow#getRight <em>Right</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Right</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pow#getRight()
+   * @see #getPow()
+   * @generated
+   */
+  EReference getPow_Right();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.GamlBinary <em>Binary</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3669,38 +3688,6 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EReference getGamlBinary_Right();
-
-  /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Pow <em>Pow</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Pow</em>'.
-   * @see msi.gama.lang.gaml.gaml.Pow
-   * @generated
-   */
-  EClass getPow();
-
-  /**
-   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Pow#getLeft <em>Left</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Left</em>'.
-   * @see msi.gama.lang.gaml.gaml.Pow#getLeft()
-   * @see #getPow()
-   * @generated
-   */
-  EReference getPow_Left();
-
-  /**
-   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Pow#getRight <em>Right</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Right</em>'.
-   * @see msi.gama.lang.gaml.gaml.Pow#getRight()
-   * @see #getPow()
-   * @generated
-   */
-  EReference getPow_Right();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Unit <em>Unit</em>}'.
@@ -5143,6 +5130,32 @@ public interface GamlPackage extends EPackage
     EReference DIV__RIGHT = eINSTANCE.getDiv_Right();
 
     /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.PowImpl <em>Pow</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.PowImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPow()
+     * @generated
+     */
+    EClass POW = eINSTANCE.getPow();
+
+    /**
+     * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference POW__LEFT = eINSTANCE.getPow_Left();
+
+    /**
+     * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference POW__RIGHT = eINSTANCE.getPow_Right();
+
+    /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.GamlBinaryImpl <em>Binary</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5175,32 +5188,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference GAML_BINARY__RIGHT = eINSTANCE.getGamlBinary_Right();
-
-    /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.PowImpl <em>Pow</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.PowImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPow()
-     * @generated
-     */
-    EClass POW = eINSTANCE.getPow();
-
-    /**
-     * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference POW__LEFT = eINSTANCE.getPow_Left();
-
-    /**
-     * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference POW__RIGHT = eINSTANCE.getPow_Right();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.UnitImpl <em>Unit</em>}' class.

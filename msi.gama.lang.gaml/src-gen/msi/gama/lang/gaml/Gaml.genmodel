@@ -180,14 +180,14 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Div/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Div/right"/>
     </genClasses>
+    <genClasses ecoreClass="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow/right"/>
+    </genClasses>
     <genClasses ecoreClass="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinary">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinary/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinary/op"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//GamlBinary/right"/>
-    </genClasses>
-    <genClasses ecoreClass="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow/left"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Pow/right"/>
     </genClasses>
     <genClasses ecoreClass="platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Unit">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/Gaml.ecore#//Unit/left"/>

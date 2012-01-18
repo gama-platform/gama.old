@@ -1,20 +1,7 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
- * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
- * 
- * Developers :
- * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
+/**
+ * <copyright>
+ * </copyright>
+ *
  */
 package msi.gama.lang.gaml.gaml.util;
 
@@ -461,19 +448,19 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.GAML_BINARY:
-      {
-        GamlBinary gamlBinary = (GamlBinary)theEObject;
-        T result = caseGamlBinary(gamlBinary);
-        if (result == null) result = caseExpression(gamlBinary);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.POW:
       {
         Pow pow = (Pow)theEObject;
         T result = casePow(pow);
         if (result == null) result = caseExpression(pow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.GAML_BINARY:
+      {
+        GamlBinary gamlBinary = (GamlBinary)theEObject;
+        T result = caseGamlBinary(gamlBinary);
+        if (result == null) result = caseExpression(gamlBinary);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1343,22 +1330,6 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Binary</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Binary</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseGamlBinary(GamlBinary object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Pow</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1370,6 +1341,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T casePow(Pow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Binary</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Binary</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGamlBinary(GamlBinary object)
   {
     return null;
   }

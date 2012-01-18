@@ -1,21 +1,3 @@
-/*
- * GAMA - V1.4  http://gama-platform.googlecode.com
- * 
- * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
- * 
- * Developers :
- * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
- * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
- * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
- * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
- * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
- * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
- * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
- * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
- */
 package msi.gama.lang.gaml.parser.antlr.internal; 
 
 import org.eclipse.xtext.*;
@@ -2616,24 +2598,24 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             if ( (LA16_0==RULE_ID) ) {
                 int LA16_1 = input.LA(2);
 
-                if ( (LA16_1==17||LA16_1==20||LA16_1==27||LA16_1==33) ) {
-                    alt16=2;
-                }
-                else if ( (LA16_1==RULE_ID) ) {
-                    int LA16_3 = input.LA(3);
+                if ( (LA16_1==RULE_ID) ) {
+                    int LA16_2 = input.LA(3);
 
-                    if ( (LA16_3==27) ) {
-                        alt16=2;
-                    }
-                    else if ( (LA16_3==RULE_ID||LA16_3==17||LA16_3==20||LA16_3==33) ) {
+                    if ( (LA16_2==RULE_ID||LA16_2==17||LA16_2==20||LA16_2==33) ) {
                         alt16=1;
+                    }
+                    else if ( (LA16_2==27) ) {
+                        alt16=2;
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 16, 3, input);
+                            new NoViableAltException("", 16, 2, input);
 
                         throw nvae;
                     }
+                }
+                else if ( (LA16_1==17||LA16_1==20||LA16_1==27||LA16_1==33) ) {
+                    alt16=2;
                 }
                 else {
                     NoViableAltException nvae =
@@ -5474,25 +5456,26 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMultiplication"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2071:1: ruleMultiplication returns [EObject current=null] : (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )* ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2071:1: ruleMultiplication returns [EObject current=null] : (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )* ) ;
     public final EObject ruleMultiplication() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_2=null;
         Token otherlv_4=null;
+        Token otherlv_6=null;
         EObject this_GamlBinExpr_0 = null;
 
-        EObject lv_right_5_0 = null;
+        EObject lv_right_7_0 = null;
 
 
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2074:28: ( (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )* ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2075:1: (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2074:28: ( (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )* ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2075:1: (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )* )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2075:1: (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )* )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2076:5: this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2075:1: (this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2076:5: this_GamlBinExpr_0= ruleGamlBinExpr ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )*
             {
              
                     newCompositeNode(grammarAccess.getMultiplicationAccess().getGamlBinExprParserRuleCall_0()); 
@@ -5506,37 +5489,46 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     current = this_GamlBinExpr_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:1: ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) ) )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:1: ( ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) ) )*
             loop37:
             do {
                 int alt37=2;
                 int LA37_0 = input.LA(1);
 
-                if ( ((LA37_0>=50 && LA37_0<=51)) ) {
+                if ( ((LA37_0>=50 && LA37_0<=52)) ) {
                     alt37=1;
                 }
 
 
                 switch (alt37) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:2: ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) ) ( (lv_right_5_0= ruleGamlBinExpr ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:2: ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) ) ( (lv_right_7_0= ruleGamlBinExpr ) )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:2: ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) )
-            	    int alt36=2;
-            	    int LA36_0 = input.LA(1);
-
-            	    if ( (LA36_0==50) ) {
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:2: ( ( () otherlv_2= '*' ) | ( () otherlv_4= '/' ) | ( () otherlv_6= '^' ) )
+            	    int alt36=3;
+            	    switch ( input.LA(1) ) {
+            	    case 50:
+            	        {
             	        alt36=1;
-            	    }
-            	    else if ( (LA36_0==51) ) {
+            	        }
+            	        break;
+            	    case 51:
+            	        {
             	        alt36=2;
-            	    }
-            	    else {
+            	        }
+            	        break;
+            	    case 52:
+            	        {
+            	        alt36=3;
+            	        }
+            	        break;
+            	    default:
             	        NoViableAltException nvae =
             	            new NoViableAltException("", 36, 0, input);
 
             	        throw nvae;
             	    }
+
             	    switch (alt36) {
             	        case 1 :
             	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2084:3: ( () otherlv_2= '*' )
@@ -5592,20 +5584,47 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             	            }
             	            break;
+            	        case 3 :
+            	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:6: ( () otherlv_6= '^' )
+            	            {
+            	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:6: ( () otherlv_6= '^' )
+            	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:7: () otherlv_6= '^'
+            	            {
+            	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:7: ()
+            	            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2107:5: 
+            	            {
+
+            	                    current = forceCreateModelElementAndSet(
+            	                        grammarAccess.getMultiplicationAccess().getPowLeftAction_1_0_2_0(),
+            	                        current);
+            	                
+
+            	            }
+
+            	            otherlv_6=(Token)match(input,52,FOLLOW_52_in_ruleMultiplication4733); 
+
+            	                	newLeafNode(otherlv_6, grammarAccess.getMultiplicationAccess().getCircumflexAccentKeyword_1_0_2_1());
+            	                
+
+            	            }
+
+
+            	            }
+            	            break;
 
             	    }
 
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2105:3: ( (lv_right_5_0= ruleGamlBinExpr ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:1: (lv_right_5_0= ruleGamlBinExpr )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2116:3: ( (lv_right_7_0= ruleGamlBinExpr ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2117:1: (lv_right_7_0= ruleGamlBinExpr )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2106:1: (lv_right_5_0= ruleGamlBinExpr )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2107:3: lv_right_5_0= ruleGamlBinExpr
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2117:1: (lv_right_7_0= ruleGamlBinExpr )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2118:3: lv_right_7_0= ruleGamlBinExpr
             	    {
             	     
             	    	        newCompositeNode(grammarAccess.getMultiplicationAccess().getRightGamlBinExprParserRuleCall_1_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4727);
-            	    lv_right_5_0=ruleGamlBinExpr();
+            	    pushFollow(FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4756);
+            	    lv_right_7_0=ruleGamlBinExpr();
 
             	    state._fsp--;
 
@@ -5616,7 +5635,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             	           		set(
             	           			current, 
             	           			"right",
-            	            		lv_right_5_0, 
+            	            		lv_right_7_0, 
             	            		"GamlBinExpr");
             	    	        afterParserOrEnumRuleCall();
             	    	    
@@ -5656,7 +5675,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleGamlBinExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2131:1: entryRuleGamlBinExpr returns [EObject current=null] : iv_ruleGamlBinExpr= ruleGamlBinExpr EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2142:1: entryRuleGamlBinExpr returns [EObject current=null] : iv_ruleGamlBinExpr= ruleGamlBinExpr EOF ;
     public final EObject entryRuleGamlBinExpr() throws RecognitionException {
         EObject current = null;
 
@@ -5664,17 +5683,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2132:2: (iv_ruleGamlBinExpr= ruleGamlBinExpr EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2133:2: iv_ruleGamlBinExpr= ruleGamlBinExpr EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2143:2: (iv_ruleGamlBinExpr= ruleGamlBinExpr EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2144:2: iv_ruleGamlBinExpr= ruleGamlBinExpr EOF
             {
              newCompositeNode(grammarAccess.getGamlBinExprRule()); 
-            pushFollow(FOLLOW_ruleGamlBinExpr_in_entryRuleGamlBinExpr4765);
+            pushFollow(FOLLOW_ruleGamlBinExpr_in_entryRuleGamlBinExpr4794);
             iv_ruleGamlBinExpr=ruleGamlBinExpr();
 
             state._fsp--;
 
              current =iv_ruleGamlBinExpr; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlBinExpr4775); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlBinExpr4804); 
 
             }
 
@@ -5692,11 +5711,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleGamlBinExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2140:1: ruleGamlBinExpr returns [EObject current=null] : (this_Power_0= rulePower ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )* ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2151:1: ruleGamlBinExpr returns [EObject current=null] : (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* ) ;
     public final EObject ruleGamlBinExpr() throws RecognitionException {
         EObject current = null;
 
-        EObject this_Power_0 = null;
+        EObject this_GamlUnitExpr_0 = null;
 
         EObject lv_op_2_0 = null;
 
@@ -5706,25 +5725,25 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2143:28: ( (this_Power_0= rulePower ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )* ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2144:1: (this_Power_0= rulePower ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2154:28: ( (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2155:1: (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2144:1: (this_Power_0= rulePower ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )* )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2145:5: this_Power_0= rulePower ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2155:1: (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2156:5: this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )*
             {
              
-                    newCompositeNode(grammarAccess.getGamlBinExprAccess().getPowerParserRuleCall_0()); 
+                    newCompositeNode(grammarAccess.getGamlBinExprAccess().getGamlUnitExprParserRuleCall_0()); 
                 
-            pushFollow(FOLLOW_rulePower_in_ruleGamlBinExpr4822);
-            this_Power_0=rulePower();
+            pushFollow(FOLLOW_ruleGamlUnitExpr_in_ruleGamlBinExpr4851);
+            this_GamlUnitExpr_0=ruleGamlUnitExpr();
 
             state._fsp--;
 
              
-                    current = this_Power_0; 
+                    current = this_GamlUnitExpr_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2153:1: ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) ) )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2164:1: ( ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )*
             loop38:
             do {
                 int alt38=2;
@@ -5743,13 +5762,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                 switch (alt38) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2153:2: ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= rulePower ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2164:2: ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) ) ( (lv_right_3_0= ruleGamlUnitExpr ) )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2153:2: ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2153:3: () ( (lv_op_2_0= ruleGamlBinarOpRef ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2164:2: ( () ( (lv_op_2_0= ruleGamlBinarOpRef ) ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2164:3: () ( (lv_op_2_0= ruleGamlBinarOpRef ) )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2153:3: ()
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2154:5: 
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2164:3: ()
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2165:5: 
             	    {
 
             	            current = forceCreateModelElementAndSet(
@@ -5759,16 +5778,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2159:2: ( (lv_op_2_0= ruleGamlBinarOpRef ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2160:1: (lv_op_2_0= ruleGamlBinarOpRef )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2170:2: ( (lv_op_2_0= ruleGamlBinarOpRef ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2171:1: (lv_op_2_0= ruleGamlBinarOpRef )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2160:1: (lv_op_2_0= ruleGamlBinarOpRef )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2161:3: lv_op_2_0= ruleGamlBinarOpRef
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2171:1: (lv_op_2_0= ruleGamlBinarOpRef )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2172:3: lv_op_2_0= ruleGamlBinarOpRef
             	    {
             	     
             	    	        newCompositeNode(grammarAccess.getGamlBinExprAccess().getOpGamlBinarOpRefParserRuleCall_1_0_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleGamlBinarOpRef_in_ruleGamlBinExpr4853);
+            	    pushFollow(FOLLOW_ruleGamlBinarOpRef_in_ruleGamlBinExpr4882);
             	    lv_op_2_0=ruleGamlBinarOpRef();
 
             	    state._fsp--;
@@ -5793,17 +5812,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2177:3: ( (lv_right_3_0= rulePower ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2178:1: (lv_right_3_0= rulePower )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2188:3: ( (lv_right_3_0= ruleGamlUnitExpr ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2189:1: (lv_right_3_0= ruleGamlUnitExpr )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2178:1: (lv_right_3_0= rulePower )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2179:3: lv_right_3_0= rulePower
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2189:1: (lv_right_3_0= ruleGamlUnitExpr )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2190:3: lv_right_3_0= ruleGamlUnitExpr
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getGamlBinExprAccess().getRightPowerParserRuleCall_1_1_0()); 
+            	    	        newCompositeNode(grammarAccess.getGamlBinExprAccess().getRightGamlUnitExprParserRuleCall_1_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_rulePower_in_ruleGamlBinExpr4875);
-            	    lv_right_3_0=rulePower();
+            	    pushFollow(FOLLOW_ruleGamlUnitExpr_in_ruleGamlBinExpr4904);
+            	    lv_right_3_0=ruleGamlUnitExpr();
 
             	    state._fsp--;
 
@@ -5815,7 +5834,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             	           			current, 
             	           			"right",
             	            		lv_right_3_0, 
-            	            		"Power");
+            	            		"GamlUnitExpr");
             	    	        afterParserOrEnumRuleCall();
             	    	    
 
@@ -5853,172 +5872,8 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleGamlBinExpr"
 
 
-    // $ANTLR start "entryRulePower"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2203:1: entryRulePower returns [EObject current=null] : iv_rulePower= rulePower EOF ;
-    public final EObject entryRulePower() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_rulePower = null;
-
-
-        try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2204:2: (iv_rulePower= rulePower EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2205:2: iv_rulePower= rulePower EOF
-            {
-             newCompositeNode(grammarAccess.getPowerRule()); 
-            pushFollow(FOLLOW_rulePower_in_entryRulePower4913);
-            iv_rulePower=rulePower();
-
-            state._fsp--;
-
-             current =iv_rulePower; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePower4923); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRulePower"
-
-
-    // $ANTLR start "rulePower"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2212:1: rulePower returns [EObject current=null] : (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* ) ;
-    public final EObject rulePower() throws RecognitionException {
-        EObject current = null;
-
-        Token otherlv_2=null;
-        EObject this_GamlUnitExpr_0 = null;
-
-        EObject lv_right_3_0 = null;
-
-
-         enterRule(); 
-            
-        try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2215:28: ( (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2216:1: (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* )
-            {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2216:1: (this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )* )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2217:5: this_GamlUnitExpr_0= ruleGamlUnitExpr ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )*
-            {
-             
-                    newCompositeNode(grammarAccess.getPowerAccess().getGamlUnitExprParserRuleCall_0()); 
-                
-            pushFollow(FOLLOW_ruleGamlUnitExpr_in_rulePower4970);
-            this_GamlUnitExpr_0=ruleGamlUnitExpr();
-
-            state._fsp--;
-
-             
-                    current = this_GamlUnitExpr_0; 
-                    afterParserOrEnumRuleCall();
-                
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2225:1: ( ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) ) )*
-            loop39:
-            do {
-                int alt39=2;
-                int LA39_0 = input.LA(1);
-
-                if ( (LA39_0==52) ) {
-                    alt39=1;
-                }
-
-
-                switch (alt39) {
-            	case 1 :
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2225:2: ( () otherlv_2= '^' ) ( (lv_right_3_0= ruleGamlUnitExpr ) )
-            	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2225:2: ( () otherlv_2= '^' )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2225:3: () otherlv_2= '^'
-            	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2225:3: ()
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2226:5: 
-            	    {
-
-            	            current = forceCreateModelElementAndSet(
-            	                grammarAccess.getPowerAccess().getPowLeftAction_1_0_0(),
-            	                current);
-            	        
-
-            	    }
-
-            	    otherlv_2=(Token)match(input,52,FOLLOW_52_in_rulePower4992); 
-
-            	        	newLeafNode(otherlv_2, grammarAccess.getPowerAccess().getCircumflexAccentKeyword_1_0_1());
-            	        
-
-            	    }
-
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2235:2: ( (lv_right_3_0= ruleGamlUnitExpr ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:1: (lv_right_3_0= ruleGamlUnitExpr )
-            	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:1: (lv_right_3_0= ruleGamlUnitExpr )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2237:3: lv_right_3_0= ruleGamlUnitExpr
-            	    {
-            	     
-            	    	        newCompositeNode(grammarAccess.getPowerAccess().getRightGamlUnitExprParserRuleCall_1_1_0()); 
-            	    	    
-            	    pushFollow(FOLLOW_ruleGamlUnitExpr_in_rulePower5014);
-            	    lv_right_3_0=ruleGamlUnitExpr();
-
-            	    state._fsp--;
-
-
-            	    	        if (current==null) {
-            	    	            current = createModelElementForParent(grammarAccess.getPowerRule());
-            	    	        }
-            	           		set(
-            	           			current, 
-            	           			"right",
-            	            		lv_right_3_0, 
-            	            		"GamlUnitExpr");
-            	    	        afterParserOrEnumRuleCall();
-            	    	    
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop39;
-                }
-            } while (true);
-
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "rulePower"
-
-
     // $ANTLR start "entryRuleGamlUnitExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2261:1: entryRuleGamlUnitExpr returns [EObject current=null] : iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2214:1: entryRuleGamlUnitExpr returns [EObject current=null] : iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF ;
     public final EObject entryRuleGamlUnitExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6026,17 +5881,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2262:2: (iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2263:2: iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2215:2: (iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2216:2: iv_ruleGamlUnitExpr= ruleGamlUnitExpr EOF
             {
              newCompositeNode(grammarAccess.getGamlUnitExprRule()); 
-            pushFollow(FOLLOW_ruleGamlUnitExpr_in_entryRuleGamlUnitExpr5052);
+            pushFollow(FOLLOW_ruleGamlUnitExpr_in_entryRuleGamlUnitExpr4942);
             iv_ruleGamlUnitExpr=ruleGamlUnitExpr();
 
             state._fsp--;
 
              current =iv_ruleGamlUnitExpr; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlUnitExpr5062); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlUnitExpr4952); 
 
             }
 
@@ -6054,7 +5909,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleGamlUnitExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2270:1: ruleGamlUnitExpr returns [EObject current=null] : (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2223:1: ruleGamlUnitExpr returns [EObject current=null] : (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? ) ;
     public final EObject ruleGamlUnitExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6067,16 +5922,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2273:28: ( (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2274:1: (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2226:28: ( (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2227:1: (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2274:1: (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2275:5: this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2227:1: (this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2228:5: this_GamlUnaryExpr_0= ruleGamlUnaryExpr ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )?
             {
              
                     newCompositeNode(grammarAccess.getGamlUnitExprAccess().getGamlUnaryExprParserRuleCall_0()); 
                 
-            pushFollow(FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnitExpr5109);
+            pushFollow(FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnitExpr4999);
             this_GamlUnaryExpr_0=ruleGamlUnaryExpr();
 
             state._fsp--;
@@ -6085,22 +5940,22 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     current = this_GamlUnaryExpr_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2283:1: ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )?
-            int alt40=2;
-            int LA40_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:1: ( ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) ) )?
+            int alt39=2;
+            int LA39_0 = input.LA(1);
 
-            if ( (LA40_0==53) ) {
-                alt40=1;
+            if ( (LA39_0==53) ) {
+                alt39=1;
             }
-            switch (alt40) {
+            switch (alt39) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2283:2: ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:2: ( () otherlv_2= '#' ) ( (lv_right_3_0= ruleGamlUnitRef ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2283:2: ( () otherlv_2= '#' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2283:3: () otherlv_2= '#'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:2: ( () otherlv_2= '#' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:3: () otherlv_2= '#'
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2283:3: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2284:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2236:3: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2237:5: 
                     {
 
                             current = forceCreateModelElementAndSet(
@@ -6110,23 +5965,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_2=(Token)match(input,53,FOLLOW_53_in_ruleGamlUnitExpr5131); 
+                    otherlv_2=(Token)match(input,53,FOLLOW_53_in_ruleGamlUnitExpr5021); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getGamlUnitExprAccess().getNumberSignKeyword_1_0_1());
                         
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2293:2: ( (lv_right_3_0= ruleGamlUnitRef ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2294:1: (lv_right_3_0= ruleGamlUnitRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2246:2: ( (lv_right_3_0= ruleGamlUnitRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2247:1: (lv_right_3_0= ruleGamlUnitRef )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2294:1: (lv_right_3_0= ruleGamlUnitRef )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2295:3: lv_right_3_0= ruleGamlUnitRef
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2247:1: (lv_right_3_0= ruleGamlUnitRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2248:3: lv_right_3_0= ruleGamlUnitRef
                     {
                      
                     	        newCompositeNode(grammarAccess.getGamlUnitExprAccess().getRightGamlUnitRefParserRuleCall_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleGamlUnitRef_in_ruleGamlUnitExpr5153);
+                    pushFollow(FOLLOW_ruleGamlUnitRef_in_ruleGamlUnitExpr5043);
                     lv_right_3_0=ruleGamlUnitRef();
 
                     state._fsp--;
@@ -6175,7 +6030,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleGamlUnaryExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2319:1: entryRuleGamlUnaryExpr returns [EObject current=null] : iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2272:1: entryRuleGamlUnaryExpr returns [EObject current=null] : iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF ;
     public final EObject entryRuleGamlUnaryExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6183,17 +6038,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2320:2: (iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2321:2: iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2273:2: (iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2274:2: iv_ruleGamlUnaryExpr= ruleGamlUnaryExpr EOF
             {
              newCompositeNode(grammarAccess.getGamlUnaryExprRule()); 
-            pushFollow(FOLLOW_ruleGamlUnaryExpr_in_entryRuleGamlUnaryExpr5191);
+            pushFollow(FOLLOW_ruleGamlUnaryExpr_in_entryRuleGamlUnaryExpr5081);
             iv_ruleGamlUnaryExpr=ruleGamlUnaryExpr();
 
             state._fsp--;
 
              current =iv_ruleGamlUnaryExpr; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlUnaryExpr5201); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGamlUnaryExpr5091); 
 
             }
 
@@ -6211,7 +6066,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleGamlUnaryExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2328:1: ruleGamlUnaryExpr returns [EObject current=null] : (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2281:1: ruleGamlUnaryExpr returns [EObject current=null] : (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) ) ;
     public final EObject ruleGamlUnaryExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6225,33 +6080,33 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2331:28: ( (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2332:1: (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2284:28: ( (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2285:1: (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2332:1: (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) )
-            int alt41=2;
-            int LA41_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2285:1: (this_PrePrimaryExpr_0= rulePrePrimaryExpr | ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) ) )
+            int alt40=2;
+            int LA40_0 = input.LA(1);
 
-            if ( ((LA41_0>=RULE_STRING && LA41_0<=RULE_BOOLEAN)||LA41_0==17||LA41_0==22||LA41_0==59) ) {
-                alt41=1;
+            if ( ((LA40_0>=RULE_STRING && LA40_0<=RULE_BOOLEAN)||LA40_0==17||LA40_0==22||LA40_0==59) ) {
+                alt40=1;
             }
-            else if ( (LA41_0==49||(LA41_0>=54 && LA41_0<=57)) ) {
-                alt41=2;
+            else if ( (LA40_0==49||(LA40_0>=54 && LA40_0<=57)) ) {
+                alt40=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 41, 0, input);
+                    new NoViableAltException("", 40, 0, input);
 
                 throw nvae;
             }
-            switch (alt41) {
+            switch (alt40) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2333:5: this_PrePrimaryExpr_0= rulePrePrimaryExpr
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2286:5: this_PrePrimaryExpr_0= rulePrePrimaryExpr
                     {
                      
                             newCompositeNode(grammarAccess.getGamlUnaryExprAccess().getPrePrimaryExprParserRuleCall_0()); 
                         
-                    pushFollow(FOLLOW_rulePrePrimaryExpr_in_ruleGamlUnaryExpr5248);
+                    pushFollow(FOLLOW_rulePrePrimaryExpr_in_ruleGamlUnaryExpr5138);
                     this_PrePrimaryExpr_0=rulePrePrimaryExpr();
 
                     state._fsp--;
@@ -6264,13 +6119,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2342:6: ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2295:6: ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2342:6: ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2342:7: () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2295:6: ( () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2295:7: () ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2342:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2343:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2295:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2296:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -6280,19 +6135,19 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2348:2: ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2348:3: ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2301:2: ( ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2301:3: ( (lv_op_2_0= ruleUnarOp ) ) ( (lv_right_3_0= ruleGamlUnaryExpr ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2348:3: ( (lv_op_2_0= ruleUnarOp ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2349:1: (lv_op_2_0= ruleUnarOp )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2301:3: ( (lv_op_2_0= ruleUnarOp ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2302:1: (lv_op_2_0= ruleUnarOp )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2349:1: (lv_op_2_0= ruleUnarOp )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2350:3: lv_op_2_0= ruleUnarOp
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2302:1: (lv_op_2_0= ruleUnarOp )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2303:3: lv_op_2_0= ruleUnarOp
                     {
                      
                     	        newCompositeNode(grammarAccess.getGamlUnaryExprAccess().getOpUnarOpParserRuleCall_1_1_0_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleUnarOp_in_ruleGamlUnaryExpr5285);
+                    pushFollow(FOLLOW_ruleUnarOp_in_ruleGamlUnaryExpr5175);
                     lv_op_2_0=ruleUnarOp();
 
                     state._fsp--;
@@ -6314,16 +6169,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2366:2: ( (lv_right_3_0= ruleGamlUnaryExpr ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2367:1: (lv_right_3_0= ruleGamlUnaryExpr )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2319:2: ( (lv_right_3_0= ruleGamlUnaryExpr ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2320:1: (lv_right_3_0= ruleGamlUnaryExpr )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2367:1: (lv_right_3_0= ruleGamlUnaryExpr )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2368:3: lv_right_3_0= ruleGamlUnaryExpr
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2320:1: (lv_right_3_0= ruleGamlUnaryExpr )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2321:3: lv_right_3_0= ruleGamlUnaryExpr
                     {
                      
                     	        newCompositeNode(grammarAccess.getGamlUnaryExprAccess().getRightGamlUnaryExprParserRuleCall_1_1_1_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnaryExpr5306);
+                    pushFollow(FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnaryExpr5196);
                     lv_right_3_0=ruleGamlUnaryExpr();
 
                     state._fsp--;
@@ -6375,7 +6230,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnarOp"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2392:1: entryRuleUnarOp returns [String current=null] : iv_ruleUnarOp= ruleUnarOp EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2345:1: entryRuleUnarOp returns [String current=null] : iv_ruleUnarOp= ruleUnarOp EOF ;
     public final String entryRuleUnarOp() throws RecognitionException {
         String current = null;
 
@@ -6383,17 +6238,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2393:2: (iv_ruleUnarOp= ruleUnarOp EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2394:2: iv_ruleUnarOp= ruleUnarOp EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2346:2: (iv_ruleUnarOp= ruleUnarOp EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2347:2: iv_ruleUnarOp= ruleUnarOp EOF
             {
              newCompositeNode(grammarAccess.getUnarOpRule()); 
-            pushFollow(FOLLOW_ruleUnarOp_in_entryRuleUnarOp5345);
+            pushFollow(FOLLOW_ruleUnarOp_in_entryRuleUnarOp5235);
             iv_ruleUnarOp=ruleUnarOp();
 
             state._fsp--;
 
              current =iv_ruleUnarOp.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleUnarOp5356); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleUnarOp5246); 
 
             }
 
@@ -6411,7 +6266,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnarOp"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2401:1: ruleUnarOp returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2354:1: ruleUnarOp returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' ) ;
     public final AntlrDatatypeRuleToken ruleUnarOp() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -6420,49 +6275,49 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2404:28: ( (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2405:1: (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2357:28: ( (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2358:1: (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2405:1: (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' )
-            int alt42=5;
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2358:1: (kw= '-' | kw= '!' | kw= 'my' | kw= 'the' | kw= 'not' )
+            int alt41=5;
             switch ( input.LA(1) ) {
             case 49:
                 {
-                alt42=1;
+                alt41=1;
                 }
                 break;
             case 54:
                 {
-                alt42=2;
+                alt41=2;
                 }
                 break;
             case 55:
                 {
-                alt42=3;
+                alt41=3;
                 }
                 break;
             case 56:
                 {
-                alt42=4;
+                alt41=4;
                 }
                 break;
             case 57:
                 {
-                alt42=5;
+                alt41=5;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 42, 0, input);
+                    new NoViableAltException("", 41, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt42) {
+            switch (alt41) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2406:2: kw= '-'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2359:2: kw= '-'
                     {
-                    kw=(Token)match(input,49,FOLLOW_49_in_ruleUnarOp5394); 
+                    kw=(Token)match(input,49,FOLLOW_49_in_ruleUnarOp5284); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getUnarOpAccess().getHyphenMinusKeyword_0()); 
@@ -6471,9 +6326,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2413:2: kw= '!'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2366:2: kw= '!'
                     {
-                    kw=(Token)match(input,54,FOLLOW_54_in_ruleUnarOp5413); 
+                    kw=(Token)match(input,54,FOLLOW_54_in_ruleUnarOp5303); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getUnarOpAccess().getExclamationMarkKeyword_1()); 
@@ -6482,9 +6337,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2420:2: kw= 'my'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2373:2: kw= 'my'
                     {
-                    kw=(Token)match(input,55,FOLLOW_55_in_ruleUnarOp5432); 
+                    kw=(Token)match(input,55,FOLLOW_55_in_ruleUnarOp5322); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getUnarOpAccess().getMyKeyword_2()); 
@@ -6493,9 +6348,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2427:2: kw= 'the'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2380:2: kw= 'the'
                     {
-                    kw=(Token)match(input,56,FOLLOW_56_in_ruleUnarOp5451); 
+                    kw=(Token)match(input,56,FOLLOW_56_in_ruleUnarOp5341); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getUnarOpAccess().getTheKeyword_3()); 
@@ -6504,9 +6359,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2434:2: kw= 'not'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2387:2: kw= 'not'
                     {
-                    kw=(Token)match(input,57,FOLLOW_57_in_ruleUnarOp5470); 
+                    kw=(Token)match(input,57,FOLLOW_57_in_ruleUnarOp5360); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getUnarOpAccess().getNotKeyword_4()); 
@@ -6535,7 +6390,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePrePrimaryExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2447:1: entryRulePrePrimaryExpr returns [EObject current=null] : iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2400:1: entryRulePrePrimaryExpr returns [EObject current=null] : iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF ;
     public final EObject entryRulePrePrimaryExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6543,17 +6398,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2448:2: (iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2449:2: iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2401:2: (iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2402:2: iv_rulePrePrimaryExpr= rulePrePrimaryExpr EOF
             {
              newCompositeNode(grammarAccess.getPrePrimaryExprRule()); 
-            pushFollow(FOLLOW_rulePrePrimaryExpr_in_entryRulePrePrimaryExpr5510);
+            pushFollow(FOLLOW_rulePrePrimaryExpr_in_entryRulePrePrimaryExpr5400);
             iv_rulePrePrimaryExpr=rulePrePrimaryExpr();
 
             state._fsp--;
 
              current =iv_rulePrePrimaryExpr; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePrePrimaryExpr5520); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePrePrimaryExpr5410); 
 
             }
 
@@ -6571,7 +6426,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePrePrimaryExpr"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2456:1: rulePrePrimaryExpr returns [EObject current=null] : (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2409:1: rulePrePrimaryExpr returns [EObject current=null] : (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef ) ;
     public final EObject rulePrePrimaryExpr() throws RecognitionException {
         EObject current = null;
 
@@ -6585,11 +6440,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2459:28: ( (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2460:1: (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2412:28: ( (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2413:1: (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2460:1: (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef )
-            int alt43=3;
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2413:1: (this_TerminalExpression_0= ruleTerminalExpression | this_RightMemberRef_1= ruleRightMemberRef | this_MemberRef_2= ruleMemberRef )
+            int alt42=3;
             switch ( input.LA(1) ) {
             case RULE_STRING:
             case RULE_DOUBLE:
@@ -6597,36 +6452,36 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             case RULE_COLOR:
             case RULE_BOOLEAN:
                 {
-                alt43=1;
+                alt42=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt43=2;
+                alt42=2;
                 }
                 break;
             case 17:
             case 22:
             case 59:
                 {
-                alt43=3;
+                alt42=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 43, 0, input);
+                    new NoViableAltException("", 42, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt43) {
+            switch (alt42) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2461:5: this_TerminalExpression_0= ruleTerminalExpression
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2414:5: this_TerminalExpression_0= ruleTerminalExpression
                     {
                      
                             newCompositeNode(grammarAccess.getPrePrimaryExprAccess().getTerminalExpressionParserRuleCall_0()); 
                         
-                    pushFollow(FOLLOW_ruleTerminalExpression_in_rulePrePrimaryExpr5567);
+                    pushFollow(FOLLOW_ruleTerminalExpression_in_rulePrePrimaryExpr5457);
                     this_TerminalExpression_0=ruleTerminalExpression();
 
                     state._fsp--;
@@ -6639,12 +6494,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2471:5: this_RightMemberRef_1= ruleRightMemberRef
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2424:5: this_RightMemberRef_1= ruleRightMemberRef
                     {
                      
                             newCompositeNode(grammarAccess.getPrePrimaryExprAccess().getRightMemberRefParserRuleCall_1()); 
                         
-                    pushFollow(FOLLOW_ruleRightMemberRef_in_rulePrePrimaryExpr5594);
+                    pushFollow(FOLLOW_ruleRightMemberRef_in_rulePrePrimaryExpr5484);
                     this_RightMemberRef_1=ruleRightMemberRef();
 
                     state._fsp--;
@@ -6657,12 +6512,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2481:5: this_MemberRef_2= ruleMemberRef
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2434:5: this_MemberRef_2= ruleMemberRef
                     {
                      
                             newCompositeNode(grammarAccess.getPrePrimaryExprAccess().getMemberRefParserRuleCall_2()); 
                         
-                    pushFollow(FOLLOW_ruleMemberRef_in_rulePrePrimaryExpr5621);
+                    pushFollow(FOLLOW_ruleMemberRef_in_rulePrePrimaryExpr5511);
                     this_MemberRef_2=ruleMemberRef();
 
                     state._fsp--;
@@ -6695,7 +6550,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMemberRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2497:1: entryRuleMemberRef returns [EObject current=null] : iv_ruleMemberRef= ruleMemberRef EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2450:1: entryRuleMemberRef returns [EObject current=null] : iv_ruleMemberRef= ruleMemberRef EOF ;
     public final EObject entryRuleMemberRef() throws RecognitionException {
         EObject current = null;
 
@@ -6703,17 +6558,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2498:2: (iv_ruleMemberRef= ruleMemberRef EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2499:2: iv_ruleMemberRef= ruleMemberRef EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2451:2: (iv_ruleMemberRef= ruleMemberRef EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2452:2: iv_ruleMemberRef= ruleMemberRef EOF
             {
              newCompositeNode(grammarAccess.getMemberRefRule()); 
-            pushFollow(FOLLOW_ruleMemberRef_in_entryRuleMemberRef5656);
+            pushFollow(FOLLOW_ruleMemberRef_in_entryRuleMemberRef5546);
             iv_ruleMemberRef=ruleMemberRef();
 
             state._fsp--;
 
              current =iv_ruleMemberRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleMemberRef5666); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleMemberRef5556); 
 
             }
 
@@ -6731,7 +6586,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMemberRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2506:1: ruleMemberRef returns [EObject current=null] : (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2459:1: ruleMemberRef returns [EObject current=null] : (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) ;
     public final EObject ruleMemberRef() throws RecognitionException {
         EObject current = null;
 
@@ -6744,16 +6599,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2509:28: ( (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2510:1: (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2462:28: ( (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2463:1: (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2510:1: (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2511:5: this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2463:1: (this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2464:5: this_PrimaryExpression_0= rulePrimaryExpression ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
             {
              
                     newCompositeNode(grammarAccess.getMemberRefAccess().getPrimaryExpressionParserRuleCall_0()); 
                 
-            pushFollow(FOLLOW_rulePrimaryExpression_in_ruleMemberRef5713);
+            pushFollow(FOLLOW_rulePrimaryExpression_in_ruleMemberRef5603);
             this_PrimaryExpression_0=rulePrimaryExpression();
 
             state._fsp--;
@@ -6762,19 +6617,19 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     current = this_PrimaryExpression_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2519:1: ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
-            int alt44=2;
-            int LA44_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2472:1: ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
+            int alt43=2;
+            int LA43_0 = input.LA(1);
 
-            if ( (LA44_0==58) ) {
-                alt44=1;
+            if ( (LA43_0==58) ) {
+                alt43=1;
             }
-            switch (alt44) {
+            switch (alt43) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2519:2: () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2472:2: () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2519:2: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2520:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2472:2: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2473:5: 
                     {
 
                             current = forceCreateModelElementAndSet(
@@ -6784,20 +6639,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_2=(Token)match(input,58,FOLLOW_58_in_ruleMemberRef5734); 
+                    otherlv_2=(Token)match(input,58,FOLLOW_58_in_ruleMemberRef5624); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getMemberRefAccess().getFullStopKeyword_1_1());
                         
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2529:1: ( (lv_right_3_0= ruleRightMemberRef ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2530:1: (lv_right_3_0= ruleRightMemberRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2482:1: ( (lv_right_3_0= ruleRightMemberRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2483:1: (lv_right_3_0= ruleRightMemberRef )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2530:1: (lv_right_3_0= ruleRightMemberRef )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2531:3: lv_right_3_0= ruleRightMemberRef
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2483:1: (lv_right_3_0= ruleRightMemberRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2484:3: lv_right_3_0= ruleRightMemberRef
                     {
                      
                     	        newCompositeNode(grammarAccess.getMemberRefAccess().getRightRightMemberRefParserRuleCall_1_2_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleRightMemberRef_in_ruleMemberRef5755);
+                    pushFollow(FOLLOW_ruleRightMemberRef_in_ruleMemberRef5645);
                     lv_right_3_0=ruleRightMemberRef();
 
                     state._fsp--;
@@ -6846,7 +6701,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePrimaryExpression"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2555:1: entryRulePrimaryExpression returns [EObject current=null] : iv_rulePrimaryExpression= rulePrimaryExpression EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2508:1: entryRulePrimaryExpression returns [EObject current=null] : iv_rulePrimaryExpression= rulePrimaryExpression EOF ;
     public final EObject entryRulePrimaryExpression() throws RecognitionException {
         EObject current = null;
 
@@ -6854,17 +6709,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2556:2: (iv_rulePrimaryExpression= rulePrimaryExpression EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2557:2: iv_rulePrimaryExpression= rulePrimaryExpression EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2509:2: (iv_rulePrimaryExpression= rulePrimaryExpression EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2510:2: iv_rulePrimaryExpression= rulePrimaryExpression EOF
             {
              newCompositeNode(grammarAccess.getPrimaryExpressionRule()); 
-            pushFollow(FOLLOW_rulePrimaryExpression_in_entryRulePrimaryExpression5793);
+            pushFollow(FOLLOW_rulePrimaryExpression_in_entryRulePrimaryExpression5683);
             iv_rulePrimaryExpression=rulePrimaryExpression();
 
             state._fsp--;
 
              current =iv_rulePrimaryExpression; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePrimaryExpression5803); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePrimaryExpression5693); 
 
             }
 
@@ -6882,7 +6737,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePrimaryExpression"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2564:1: rulePrimaryExpression returns [EObject current=null] : ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2517:1: rulePrimaryExpression returns [EObject current=null] : ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) ) ;
     public final EObject rulePrimaryExpression() throws RecognitionException {
         EObject current = null;
 
@@ -6902,49 +6757,49 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2567:28: ( ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2568:1: ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2520:28: ( ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2521:1: ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2568:1: ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) )
-            int alt45=3;
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2521:1: ( (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' ) | (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' ) | (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' ) )
+            int alt44=3;
             switch ( input.LA(1) ) {
             case 59:
                 {
-                alt45=1;
+                alt44=1;
                 }
                 break;
             case 22:
                 {
-                alt45=2;
+                alt44=2;
                 }
                 break;
             case 17:
                 {
-                alt45=3;
+                alt44=3;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 45, 0, input);
+                    new NoViableAltException("", 44, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt45) {
+            switch (alt44) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2568:2: (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2521:2: (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2568:2: (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2568:4: otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2521:2: (otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2521:4: otherlv_0= '(' this_Expression_1= ruleExpression otherlv_2= ')'
                     {
-                    otherlv_0=(Token)match(input,59,FOLLOW_59_in_rulePrimaryExpression5841); 
+                    otherlv_0=(Token)match(input,59,FOLLOW_59_in_rulePrimaryExpression5731); 
 
                         	newLeafNode(otherlv_0, grammarAccess.getPrimaryExpressionAccess().getLeftParenthesisKeyword_0_0());
                         
                      
                             newCompositeNode(grammarAccess.getPrimaryExpressionAccess().getExpressionParserRuleCall_0_1()); 
                         
-                    pushFollow(FOLLOW_ruleExpression_in_rulePrimaryExpression5863);
+                    pushFollow(FOLLOW_ruleExpression_in_rulePrimaryExpression5753);
                     this_Expression_1=ruleExpression();
 
                     state._fsp--;
@@ -6953,7 +6808,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             current = this_Expression_1; 
                             afterParserOrEnumRuleCall();
                         
-                    otherlv_2=(Token)match(input,60,FOLLOW_60_in_rulePrimaryExpression5874); 
+                    otherlv_2=(Token)match(input,60,FOLLOW_60_in_rulePrimaryExpression5764); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getPrimaryExpressionAccess().getRightParenthesisKeyword_0_2());
                         
@@ -6964,19 +6819,19 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2586:6: (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2539:6: (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2586:6: (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2586:8: otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2539:6: (otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2539:8: otherlv_3= '[' this_Matrix_4= ruleMatrix otherlv_5= ']'
                     {
-                    otherlv_3=(Token)match(input,22,FOLLOW_22_in_rulePrimaryExpression5894); 
+                    otherlv_3=(Token)match(input,22,FOLLOW_22_in_rulePrimaryExpression5784); 
 
                         	newLeafNode(otherlv_3, grammarAccess.getPrimaryExpressionAccess().getLeftSquareBracketKeyword_1_0());
                         
                      
                             newCompositeNode(grammarAccess.getPrimaryExpressionAccess().getMatrixParserRuleCall_1_1()); 
                         
-                    pushFollow(FOLLOW_ruleMatrix_in_rulePrimaryExpression5916);
+                    pushFollow(FOLLOW_ruleMatrix_in_rulePrimaryExpression5806);
                     this_Matrix_4=ruleMatrix();
 
                     state._fsp--;
@@ -6985,7 +6840,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             current = this_Matrix_4; 
                             afterParserOrEnumRuleCall();
                         
-                    otherlv_5=(Token)match(input,24,FOLLOW_24_in_rulePrimaryExpression5927); 
+                    otherlv_5=(Token)match(input,24,FOLLOW_24_in_rulePrimaryExpression5817); 
 
                         	newLeafNode(otherlv_5, grammarAccess.getPrimaryExpressionAccess().getRightSquareBracketKeyword_1_2());
                         
@@ -6996,19 +6851,19 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2604:6: (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2557:6: (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2604:6: (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2604:8: otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2557:6: (otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2557:8: otherlv_6= '{' this_Point_7= rulePoint otherlv_8= '}'
                     {
-                    otherlv_6=(Token)match(input,17,FOLLOW_17_in_rulePrimaryExpression5947); 
+                    otherlv_6=(Token)match(input,17,FOLLOW_17_in_rulePrimaryExpression5837); 
 
                         	newLeafNode(otherlv_6, grammarAccess.getPrimaryExpressionAccess().getLeftCurlyBracketKeyword_2_0());
                         
                      
                             newCompositeNode(grammarAccess.getPrimaryExpressionAccess().getPointParserRuleCall_2_1()); 
                         
-                    pushFollow(FOLLOW_rulePoint_in_rulePrimaryExpression5969);
+                    pushFollow(FOLLOW_rulePoint_in_rulePrimaryExpression5859);
                     this_Point_7=rulePoint();
 
                     state._fsp--;
@@ -7017,7 +6872,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             current = this_Point_7; 
                             afterParserOrEnumRuleCall();
                         
-                    otherlv_8=(Token)match(input,18,FOLLOW_18_in_rulePrimaryExpression5980); 
+                    otherlv_8=(Token)match(input,18,FOLLOW_18_in_rulePrimaryExpression5870); 
 
                         	newLeafNode(otherlv_8, grammarAccess.getPrimaryExpressionAccess().getRightCurlyBracketKeyword_2_2());
                         
@@ -7048,7 +6903,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePoint"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2629:1: entryRulePoint returns [EObject current=null] : iv_rulePoint= rulePoint EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2582:1: entryRulePoint returns [EObject current=null] : iv_rulePoint= rulePoint EOF ;
     public final EObject entryRulePoint() throws RecognitionException {
         EObject current = null;
 
@@ -7056,17 +6911,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2630:2: (iv_rulePoint= rulePoint EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2631:2: iv_rulePoint= rulePoint EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2583:2: (iv_rulePoint= rulePoint EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2584:2: iv_rulePoint= rulePoint EOF
             {
              newCompositeNode(grammarAccess.getPointRule()); 
-            pushFollow(FOLLOW_rulePoint_in_entryRulePoint6017);
+            pushFollow(FOLLOW_rulePoint_in_entryRulePoint5907);
             iv_rulePoint=rulePoint();
 
             state._fsp--;
 
              current =iv_rulePoint; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePoint6027); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePoint5917); 
 
             }
 
@@ -7084,7 +6939,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePoint"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2638:1: rulePoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2591:1: rulePoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) ) ;
     public final EObject rulePoint() throws RecognitionException {
         EObject current = null;
 
@@ -7097,22 +6952,22 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2641:28: ( ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2642:1: ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2594:28: ( ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2595:1: ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2642:1: ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2642:2: ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2595:1: ( ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2595:2: ( (lv_x_0_0= ruleExpression ) ) otherlv_1= ',' ( (lv_y_2_0= ruleExpression ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2642:2: ( (lv_x_0_0= ruleExpression ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2643:1: (lv_x_0_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2595:2: ( (lv_x_0_0= ruleExpression ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2596:1: (lv_x_0_0= ruleExpression )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2643:1: (lv_x_0_0= ruleExpression )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2644:3: lv_x_0_0= ruleExpression
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2596:1: (lv_x_0_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2597:3: lv_x_0_0= ruleExpression
             {
              
             	        newCompositeNode(grammarAccess.getPointAccess().getXExpressionParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleExpression_in_rulePoint6073);
+            pushFollow(FOLLOW_ruleExpression_in_rulePoint5963);
             lv_x_0_0=ruleExpression();
 
             state._fsp--;
@@ -7134,20 +6989,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,23,FOLLOW_23_in_rulePoint6085); 
+            otherlv_1=(Token)match(input,23,FOLLOW_23_in_rulePoint5975); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPointAccess().getCommaKeyword_1());
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2664:1: ( (lv_y_2_0= ruleExpression ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2665:1: (lv_y_2_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2617:1: ( (lv_y_2_0= ruleExpression ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2618:1: (lv_y_2_0= ruleExpression )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2665:1: (lv_y_2_0= ruleExpression )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2666:3: lv_y_2_0= ruleExpression
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2618:1: (lv_y_2_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2619:3: lv_y_2_0= ruleExpression
             {
              
             	        newCompositeNode(grammarAccess.getPointAccess().getYExpressionParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_ruleExpression_in_rulePoint6106);
+            pushFollow(FOLLOW_ruleExpression_in_rulePoint5996);
             lv_y_2_0=ruleExpression();
 
             state._fsp--;
@@ -7190,7 +7045,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMatrix"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2690:1: entryRuleMatrix returns [EObject current=null] : iv_ruleMatrix= ruleMatrix EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2643:1: entryRuleMatrix returns [EObject current=null] : iv_ruleMatrix= ruleMatrix EOF ;
     public final EObject entryRuleMatrix() throws RecognitionException {
         EObject current = null;
 
@@ -7198,17 +7053,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2691:2: (iv_ruleMatrix= ruleMatrix EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2692:2: iv_ruleMatrix= ruleMatrix EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2644:2: (iv_ruleMatrix= ruleMatrix EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2645:2: iv_ruleMatrix= ruleMatrix EOF
             {
              newCompositeNode(grammarAccess.getMatrixRule()); 
-            pushFollow(FOLLOW_ruleMatrix_in_entryRuleMatrix6142);
+            pushFollow(FOLLOW_ruleMatrix_in_entryRuleMatrix6032);
             iv_ruleMatrix=ruleMatrix();
 
             state._fsp--;
 
              current =iv_ruleMatrix; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleMatrix6152); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleMatrix6042); 
 
             }
 
@@ -7226,7 +7081,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMatrix"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2699:1: ruleMatrix returns [EObject current=null] : ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2652:1: ruleMatrix returns [EObject current=null] : ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? ) ;
     public final EObject ruleMatrix() throws RecognitionException {
         EObject current = null;
 
@@ -7239,14 +7094,14 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2702:28: ( ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2703:1: ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2655:28: ( ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2656:1: ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2703:1: ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2703:2: () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2656:1: ( () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2656:2: () ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )?
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2703:2: ()
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2704:5: 
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2656:2: ()
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2657:5: 
             {
 
                     current = forceCreateModelElement(
@@ -7256,27 +7111,27 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2709:2: ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )?
-            int alt47=2;
-            int LA47_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2662:2: ( ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )* )?
+            int alt46=2;
+            int LA46_0 = input.LA(1);
 
-            if ( ((LA47_0>=RULE_STRING && LA47_0<=RULE_BOOLEAN)||LA47_0==17||LA47_0==22||LA47_0==49||(LA47_0>=54 && LA47_0<=57)||LA47_0==59) ) {
-                alt47=1;
+            if ( ((LA46_0>=RULE_STRING && LA46_0<=RULE_BOOLEAN)||LA46_0==17||LA46_0==22||LA46_0==49||(LA46_0>=54 && LA46_0<=57)||LA46_0==59) ) {
+                alt46=1;
             }
-            switch (alt47) {
+            switch (alt46) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2709:3: ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )*
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2662:3: ( (lv_rows_1_0= ruleRow ) ) (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )*
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2709:3: ( (lv_rows_1_0= ruleRow ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2710:1: (lv_rows_1_0= ruleRow )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2662:3: ( (lv_rows_1_0= ruleRow ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2663:1: (lv_rows_1_0= ruleRow )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2710:1: (lv_rows_1_0= ruleRow )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2711:3: lv_rows_1_0= ruleRow
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2663:1: (lv_rows_1_0= ruleRow )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2664:3: lv_rows_1_0= ruleRow
                     {
                      
                     	        newCompositeNode(grammarAccess.getMatrixAccess().getRowsRowParserRuleCall_1_0_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleRow_in_ruleMatrix6208);
+                    pushFollow(FOLLOW_ruleRow_in_ruleMatrix6098);
                     lv_rows_1_0=ruleRow();
 
                     state._fsp--;
@@ -7298,35 +7153,35 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2727:2: (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )*
-                    loop46:
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2680:2: (otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) ) )*
+                    loop45:
                     do {
-                        int alt46=2;
-                        int LA46_0 = input.LA(1);
+                        int alt45=2;
+                        int LA45_0 = input.LA(1);
 
-                        if ( (LA46_0==20) ) {
-                            alt46=1;
+                        if ( (LA45_0==20) ) {
+                            alt45=1;
                         }
 
 
-                        switch (alt46) {
+                        switch (alt45) {
                     	case 1 :
-                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2727:4: otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) )
+                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2680:4: otherlv_2= ';' ( (lv_rows_3_0= ruleRow ) )
                     	    {
-                    	    otherlv_2=(Token)match(input,20,FOLLOW_20_in_ruleMatrix6221); 
+                    	    otherlv_2=(Token)match(input,20,FOLLOW_20_in_ruleMatrix6111); 
 
                     	        	newLeafNode(otherlv_2, grammarAccess.getMatrixAccess().getSemicolonKeyword_1_1_0());
                     	        
-                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2731:1: ( (lv_rows_3_0= ruleRow ) )
-                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2732:1: (lv_rows_3_0= ruleRow )
+                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2684:1: ( (lv_rows_3_0= ruleRow ) )
+                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2685:1: (lv_rows_3_0= ruleRow )
                     	    {
-                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2732:1: (lv_rows_3_0= ruleRow )
-                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2733:3: lv_rows_3_0= ruleRow
+                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2685:1: (lv_rows_3_0= ruleRow )
+                    	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2686:3: lv_rows_3_0= ruleRow
                     	    {
                     	     
                     	    	        newCompositeNode(grammarAccess.getMatrixAccess().getRowsRowParserRuleCall_1_1_1_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_ruleRow_in_ruleMatrix6242);
+                    	    pushFollow(FOLLOW_ruleRow_in_ruleMatrix6132);
                     	    lv_rows_3_0=ruleRow();
 
                     	    state._fsp--;
@@ -7353,7 +7208,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     	    break;
 
                     	default :
-                    	    break loop46;
+                    	    break loop45;
                         }
                     } while (true);
 
@@ -7384,7 +7239,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRow"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2757:1: entryRuleRow returns [EObject current=null] : iv_ruleRow= ruleRow EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2710:1: entryRuleRow returns [EObject current=null] : iv_ruleRow= ruleRow EOF ;
     public final EObject entryRuleRow() throws RecognitionException {
         EObject current = null;
 
@@ -7392,17 +7247,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2758:2: (iv_ruleRow= ruleRow EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2759:2: iv_ruleRow= ruleRow EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2711:2: (iv_ruleRow= ruleRow EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2712:2: iv_ruleRow= ruleRow EOF
             {
              newCompositeNode(grammarAccess.getRowRule()); 
-            pushFollow(FOLLOW_ruleRow_in_entryRuleRow6282);
+            pushFollow(FOLLOW_ruleRow_in_entryRuleRow6172);
             iv_ruleRow=ruleRow();
 
             state._fsp--;
 
              current =iv_ruleRow; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleRow6292); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleRow6182); 
 
             }
 
@@ -7420,7 +7275,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRow"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2766:1: ruleRow returns [EObject current=null] : ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2719:1: ruleRow returns [EObject current=null] : ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) ;
     public final EObject ruleRow() throws RecognitionException {
         EObject current = null;
 
@@ -7433,22 +7288,22 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2769:28: ( ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2770:1: ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2722:28: ( ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2723:1: ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2770:1: ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2770:2: ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2723:1: ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2723:2: ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )*
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2770:2: ( (lv_exprs_0_0= ruleExpression ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2771:1: (lv_exprs_0_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2723:2: ( (lv_exprs_0_0= ruleExpression ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2724:1: (lv_exprs_0_0= ruleExpression )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2771:1: (lv_exprs_0_0= ruleExpression )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2772:3: lv_exprs_0_0= ruleExpression
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2724:1: (lv_exprs_0_0= ruleExpression )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2725:3: lv_exprs_0_0= ruleExpression
             {
              
             	        newCompositeNode(grammarAccess.getRowAccess().getExprsExpressionParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleExpression_in_ruleRow6338);
+            pushFollow(FOLLOW_ruleExpression_in_ruleRow6228);
             lv_exprs_0_0=ruleExpression();
 
             state._fsp--;
@@ -7470,35 +7325,35 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2788:2: (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )*
-            loop48:
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2741:2: (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )*
+            loop47:
             do {
-                int alt48=2;
-                int LA48_0 = input.LA(1);
+                int alt47=2;
+                int LA47_0 = input.LA(1);
 
-                if ( (LA48_0==23) ) {
-                    alt48=1;
+                if ( (LA47_0==23) ) {
+                    alt47=1;
                 }
 
 
-                switch (alt48) {
+                switch (alt47) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2788:4: otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2741:4: otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) )
             	    {
-            	    otherlv_1=(Token)match(input,23,FOLLOW_23_in_ruleRow6351); 
+            	    otherlv_1=(Token)match(input,23,FOLLOW_23_in_ruleRow6241); 
 
             	        	newLeafNode(otherlv_1, grammarAccess.getRowAccess().getCommaKeyword_1_0());
             	        
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2792:1: ( (lv_exprs_2_0= ruleExpression ) )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2793:1: (lv_exprs_2_0= ruleExpression )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2745:1: ( (lv_exprs_2_0= ruleExpression ) )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2746:1: (lv_exprs_2_0= ruleExpression )
             	    {
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2793:1: (lv_exprs_2_0= ruleExpression )
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2794:3: lv_exprs_2_0= ruleExpression
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2746:1: (lv_exprs_2_0= ruleExpression )
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2747:3: lv_exprs_2_0= ruleExpression
             	    {
             	     
             	    	        newCompositeNode(grammarAccess.getRowAccess().getExprsExpressionParserRuleCall_1_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleExpression_in_ruleRow6372);
+            	    pushFollow(FOLLOW_ruleExpression_in_ruleRow6262);
             	    lv_exprs_2_0=ruleExpression();
 
             	    state._fsp--;
@@ -7525,7 +7380,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop48;
+            	    break loop47;
                 }
             } while (true);
 
@@ -7550,7 +7405,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRightMemberRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2818:1: entryRuleRightMemberRef returns [EObject current=null] : iv_ruleRightMemberRef= ruleRightMemberRef EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2771:1: entryRuleRightMemberRef returns [EObject current=null] : iv_ruleRightMemberRef= ruleRightMemberRef EOF ;
     public final EObject entryRuleRightMemberRef() throws RecognitionException {
         EObject current = null;
 
@@ -7558,17 +7413,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2819:2: (iv_ruleRightMemberRef= ruleRightMemberRef EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2820:2: iv_ruleRightMemberRef= ruleRightMemberRef EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2772:2: (iv_ruleRightMemberRef= ruleRightMemberRef EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2773:2: iv_ruleRightMemberRef= ruleRightMemberRef EOF
             {
              newCompositeNode(grammarAccess.getRightMemberRefRule()); 
-            pushFollow(FOLLOW_ruleRightMemberRef_in_entryRuleRightMemberRef6410);
+            pushFollow(FOLLOW_ruleRightMemberRef_in_entryRuleRightMemberRef6300);
             iv_ruleRightMemberRef=ruleRightMemberRef();
 
             state._fsp--;
 
              current =iv_ruleRightMemberRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleRightMemberRef6420); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleRightMemberRef6310); 
 
             }
 
@@ -7586,7 +7441,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRightMemberRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2827:1: ruleRightMemberRef returns [EObject current=null] : (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2780:1: ruleRightMemberRef returns [EObject current=null] : (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) ;
     public final EObject ruleRightMemberRef() throws RecognitionException {
         EObject current = null;
 
@@ -7599,16 +7454,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2830:28: ( (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2831:1: (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2783:28: ( (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2784:1: (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2831:1: (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2832:5: this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2784:1: (this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2785:5: this_AbrstractRef_0= ruleAbrstractRef ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
             {
              
                     newCompositeNode(grammarAccess.getRightMemberRefAccess().getAbrstractRefParserRuleCall_0()); 
                 
-            pushFollow(FOLLOW_ruleAbrstractRef_in_ruleRightMemberRef6467);
+            pushFollow(FOLLOW_ruleAbrstractRef_in_ruleRightMemberRef6357);
             this_AbrstractRef_0=ruleAbrstractRef();
 
             state._fsp--;
@@ -7617,19 +7472,19 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     current = this_AbrstractRef_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2840:1: ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
-            int alt49=2;
-            int LA49_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2793:1: ( () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) ) )?
+            int alt48=2;
+            int LA48_0 = input.LA(1);
 
-            if ( (LA49_0==58) ) {
-                alt49=1;
+            if ( (LA48_0==58) ) {
+                alt48=1;
             }
-            switch (alt49) {
+            switch (alt48) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2840:2: () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2793:2: () otherlv_2= '.' ( (lv_right_3_0= ruleRightMemberRef ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2840:2: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2841:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2793:2: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2794:5: 
                     {
 
                             current = forceCreateModelElementAndSet(
@@ -7639,20 +7494,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_2=(Token)match(input,58,FOLLOW_58_in_ruleRightMemberRef6488); 
+                    otherlv_2=(Token)match(input,58,FOLLOW_58_in_ruleRightMemberRef6378); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getRightMemberRefAccess().getFullStopKeyword_1_1());
                         
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2850:1: ( (lv_right_3_0= ruleRightMemberRef ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:1: (lv_right_3_0= ruleRightMemberRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2803:1: ( (lv_right_3_0= ruleRightMemberRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2804:1: (lv_right_3_0= ruleRightMemberRef )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:1: (lv_right_3_0= ruleRightMemberRef )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2852:3: lv_right_3_0= ruleRightMemberRef
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2804:1: (lv_right_3_0= ruleRightMemberRef )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2805:3: lv_right_3_0= ruleRightMemberRef
                     {
                      
                     	        newCompositeNode(grammarAccess.getRightMemberRefAccess().getRightRightMemberRefParserRuleCall_1_2_0()); 
                     	    
-                    pushFollow(FOLLOW_ruleRightMemberRef_in_ruleRightMemberRef6509);
+                    pushFollow(FOLLOW_ruleRightMemberRef_in_ruleRightMemberRef6399);
                     lv_right_3_0=ruleRightMemberRef();
 
                     state._fsp--;
@@ -7701,7 +7556,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAbrstractRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2876:1: entryRuleAbrstractRef returns [EObject current=null] : iv_ruleAbrstractRef= ruleAbrstractRef EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2829:1: entryRuleAbrstractRef returns [EObject current=null] : iv_ruleAbrstractRef= ruleAbrstractRef EOF ;
     public final EObject entryRuleAbrstractRef() throws RecognitionException {
         EObject current = null;
 
@@ -7709,17 +7564,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2877:2: (iv_ruleAbrstractRef= ruleAbrstractRef EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2878:2: iv_ruleAbrstractRef= ruleAbrstractRef EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2830:2: (iv_ruleAbrstractRef= ruleAbrstractRef EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2831:2: iv_ruleAbrstractRef= ruleAbrstractRef EOF
             {
              newCompositeNode(grammarAccess.getAbrstractRefRule()); 
-            pushFollow(FOLLOW_ruleAbrstractRef_in_entryRuleAbrstractRef6547);
+            pushFollow(FOLLOW_ruleAbrstractRef_in_entryRuleAbrstractRef6437);
             iv_ruleAbrstractRef=ruleAbrstractRef();
 
             state._fsp--;
 
              current =iv_ruleAbrstractRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAbrstractRef6557); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAbrstractRef6447); 
 
             }
 
@@ -7737,7 +7592,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAbrstractRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2885:1: ruleAbrstractRef returns [EObject current=null] : (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2838:1: ruleAbrstractRef returns [EObject current=null] : (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? ) ;
     public final EObject ruleAbrstractRef() throws RecognitionException {
         EObject current = null;
 
@@ -7761,16 +7616,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2888:28: ( (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2889:1: (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2841:28: ( (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2842:1: (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2889:1: (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2890:5: this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2842:1: (this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2843:5: this_VariableRef_0= ruleVariableRef ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )?
             {
              
                     newCompositeNode(grammarAccess.getAbrstractRefAccess().getVariableRefParserRuleCall_0()); 
                 
-            pushFollow(FOLLOW_ruleVariableRef_in_ruleAbrstractRef6604);
+            pushFollow(FOLLOW_ruleVariableRef_in_ruleAbrstractRef6494);
             this_VariableRef_0=ruleVariableRef();
 
             state._fsp--;
@@ -7779,25 +7634,25 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     current = this_VariableRef_0; 
                     afterParserOrEnumRuleCall();
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2898:1: ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )?
-            int alt54=3;
-            int LA54_0 = input.LA(1);
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:1: ( ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' ) | ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' ) )?
+            int alt53=3;
+            int LA53_0 = input.LA(1);
 
-            if ( (LA54_0==59) ) {
-                alt54=1;
+            if ( (LA53_0==59) ) {
+                alt53=1;
             }
-            else if ( (LA54_0==22) ) {
-                alt54=2;
+            else if ( (LA53_0==22) ) {
+                alt53=2;
             }
-            switch (alt54) {
+            switch (alt53) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2898:2: ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:2: ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2898:2: ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2898:3: () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:2: ( () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:3: () otherlv_2= '(' ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )? otherlv_6= ')'
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2898:3: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2899:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2851:3: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2852:5: 
                     {
 
                             current = forceCreateModelElementAndSet(
@@ -7807,31 +7662,31 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_2=(Token)match(input,59,FOLLOW_59_in_ruleAbrstractRef6626); 
+                    otherlv_2=(Token)match(input,59,FOLLOW_59_in_ruleAbrstractRef6516); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getAbrstractRefAccess().getLeftParenthesisKeyword_1_0_1());
                         
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2908:1: ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )?
-                    int alt51=2;
-                    int LA51_0 = input.LA(1);
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2861:1: ( ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )* )?
+                    int alt50=2;
+                    int LA50_0 = input.LA(1);
 
-                    if ( ((LA51_0>=RULE_STRING && LA51_0<=RULE_BOOLEAN)||LA51_0==17||LA51_0==22||LA51_0==49||(LA51_0>=54 && LA51_0<=57)||LA51_0==59) ) {
-                        alt51=1;
+                    if ( ((LA50_0>=RULE_STRING && LA50_0<=RULE_BOOLEAN)||LA50_0==17||LA50_0==22||LA50_0==49||(LA50_0>=54 && LA50_0<=57)||LA50_0==59) ) {
+                        alt50=1;
                     }
-                    switch (alt51) {
+                    switch (alt50) {
                         case 1 :
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2908:2: ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )*
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2861:2: ( (lv_args_3_0= ruleExpression ) ) (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )*
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2908:2: ( (lv_args_3_0= ruleExpression ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2909:1: (lv_args_3_0= ruleExpression )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2861:2: ( (lv_args_3_0= ruleExpression ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2862:1: (lv_args_3_0= ruleExpression )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2909:1: (lv_args_3_0= ruleExpression )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2910:3: lv_args_3_0= ruleExpression
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2862:1: (lv_args_3_0= ruleExpression )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2863:3: lv_args_3_0= ruleExpression
                             {
                              
                             	        newCompositeNode(grammarAccess.getAbrstractRefAccess().getArgsExpressionParserRuleCall_1_0_2_0_0()); 
                             	    
-                            pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6648);
+                            pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6538);
                             lv_args_3_0=ruleExpression();
 
                             state._fsp--;
@@ -7853,35 +7708,35 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                             }
 
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2926:2: (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )*
-                            loop50:
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2879:2: (otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) ) )*
+                            loop49:
                             do {
-                                int alt50=2;
-                                int LA50_0 = input.LA(1);
+                                int alt49=2;
+                                int LA49_0 = input.LA(1);
 
-                                if ( (LA50_0==23) ) {
-                                    alt50=1;
+                                if ( (LA49_0==23) ) {
+                                    alt49=1;
                                 }
 
 
-                                switch (alt50) {
+                                switch (alt49) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2926:4: otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2879:4: otherlv_4= ',' ( (lv_args_5_0= ruleExpression ) )
                             	    {
-                            	    otherlv_4=(Token)match(input,23,FOLLOW_23_in_ruleAbrstractRef6661); 
+                            	    otherlv_4=(Token)match(input,23,FOLLOW_23_in_ruleAbrstractRef6551); 
 
                             	        	newLeafNode(otherlv_4, grammarAccess.getAbrstractRefAccess().getCommaKeyword_1_0_2_1_0());
                             	        
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2930:1: ( (lv_args_5_0= ruleExpression ) )
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2931:1: (lv_args_5_0= ruleExpression )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2883:1: ( (lv_args_5_0= ruleExpression ) )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2884:1: (lv_args_5_0= ruleExpression )
                             	    {
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2931:1: (lv_args_5_0= ruleExpression )
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2932:3: lv_args_5_0= ruleExpression
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2884:1: (lv_args_5_0= ruleExpression )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2885:3: lv_args_5_0= ruleExpression
                             	    {
                             	     
                             	    	        newCompositeNode(grammarAccess.getAbrstractRefAccess().getArgsExpressionParserRuleCall_1_0_2_1_1_0()); 
                             	    	    
-                            	    pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6682);
+                            	    pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6572);
                             	    lv_args_5_0=ruleExpression();
 
                             	    state._fsp--;
@@ -7908,7 +7763,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             	    break;
 
                             	default :
-                            	    break loop50;
+                            	    break loop49;
                                 }
                             } while (true);
 
@@ -7918,7 +7773,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_6=(Token)match(input,60,FOLLOW_60_in_ruleAbrstractRef6698); 
+                    otherlv_6=(Token)match(input,60,FOLLOW_60_in_ruleAbrstractRef6588); 
 
                         	newLeafNode(otherlv_6, grammarAccess.getAbrstractRefAccess().getRightParenthesisKeyword_1_0_3());
                         
@@ -7929,13 +7784,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2953:6: ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2906:6: ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2953:6: ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2953:7: () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2906:6: ( () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2906:7: () otherlv_8= '[' ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )? otherlv_12= ']'
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2953:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2954:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2906:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2907:5: 
                     {
 
                             current = forceCreateModelElementAndSet(
@@ -7945,31 +7800,31 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_8=(Token)match(input,22,FOLLOW_22_in_ruleAbrstractRef6727); 
+                    otherlv_8=(Token)match(input,22,FOLLOW_22_in_ruleAbrstractRef6617); 
 
                         	newLeafNode(otherlv_8, grammarAccess.getAbrstractRefAccess().getLeftSquareBracketKeyword_1_1_1());
                         
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2963:1: ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )?
-                    int alt53=2;
-                    int LA53_0 = input.LA(1);
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2916:1: ( ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )* )?
+                    int alt52=2;
+                    int LA52_0 = input.LA(1);
 
-                    if ( ((LA53_0>=RULE_STRING && LA53_0<=RULE_BOOLEAN)||LA53_0==17||LA53_0==22||LA53_0==49||(LA53_0>=54 && LA53_0<=57)||LA53_0==59) ) {
-                        alt53=1;
+                    if ( ((LA52_0>=RULE_STRING && LA52_0<=RULE_BOOLEAN)||LA52_0==17||LA52_0==22||LA52_0==49||(LA52_0>=54 && LA52_0<=57)||LA52_0==59) ) {
+                        alt52=1;
                     }
-                    switch (alt53) {
+                    switch (alt52) {
                         case 1 :
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2963:2: ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )*
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2916:2: ( (lv_args_9_0= ruleExpression ) ) (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )*
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2963:2: ( (lv_args_9_0= ruleExpression ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2964:1: (lv_args_9_0= ruleExpression )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2916:2: ( (lv_args_9_0= ruleExpression ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2917:1: (lv_args_9_0= ruleExpression )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2964:1: (lv_args_9_0= ruleExpression )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2965:3: lv_args_9_0= ruleExpression
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2917:1: (lv_args_9_0= ruleExpression )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2918:3: lv_args_9_0= ruleExpression
                             {
                              
                             	        newCompositeNode(grammarAccess.getAbrstractRefAccess().getArgsExpressionParserRuleCall_1_1_2_0_0()); 
                             	    
-                            pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6749);
+                            pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6639);
                             lv_args_9_0=ruleExpression();
 
                             state._fsp--;
@@ -7991,35 +7846,35 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                             }
 
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2981:2: (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )*
-                            loop52:
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2934:2: (otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) ) )*
+                            loop51:
                             do {
-                                int alt52=2;
-                                int LA52_0 = input.LA(1);
+                                int alt51=2;
+                                int LA51_0 = input.LA(1);
 
-                                if ( (LA52_0==23) ) {
-                                    alt52=1;
+                                if ( (LA51_0==23) ) {
+                                    alt51=1;
                                 }
 
 
-                                switch (alt52) {
+                                switch (alt51) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2981:4: otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2934:4: otherlv_10= ',' ( (lv_args_11_0= ruleExpression ) )
                             	    {
-                            	    otherlv_10=(Token)match(input,23,FOLLOW_23_in_ruleAbrstractRef6762); 
+                            	    otherlv_10=(Token)match(input,23,FOLLOW_23_in_ruleAbrstractRef6652); 
 
                             	        	newLeafNode(otherlv_10, grammarAccess.getAbrstractRefAccess().getCommaKeyword_1_1_2_1_0());
                             	        
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2985:1: ( (lv_args_11_0= ruleExpression ) )
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2986:1: (lv_args_11_0= ruleExpression )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2938:1: ( (lv_args_11_0= ruleExpression ) )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2939:1: (lv_args_11_0= ruleExpression )
                             	    {
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2986:1: (lv_args_11_0= ruleExpression )
-                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2987:3: lv_args_11_0= ruleExpression
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2939:1: (lv_args_11_0= ruleExpression )
+                            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2940:3: lv_args_11_0= ruleExpression
                             	    {
                             	     
                             	    	        newCompositeNode(grammarAccess.getAbrstractRefAccess().getArgsExpressionParserRuleCall_1_1_2_1_1_0()); 
                             	    	    
-                            	    pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6783);
+                            	    pushFollow(FOLLOW_ruleExpression_in_ruleAbrstractRef6673);
                             	    lv_args_11_0=ruleExpression();
 
                             	    state._fsp--;
@@ -8046,7 +7901,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                             	    break;
 
                             	default :
-                            	    break loop52;
+                            	    break loop51;
                                 }
                             } while (true);
 
@@ -8056,7 +7911,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_12=(Token)match(input,24,FOLLOW_24_in_ruleAbrstractRef6799); 
+                    otherlv_12=(Token)match(input,24,FOLLOW_24_in_ruleAbrstractRef6689); 
 
                         	newLeafNode(otherlv_12, grammarAccess.getAbrstractRefAccess().getRightSquareBracketKeyword_1_1_3());
                         
@@ -8090,7 +7945,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVariableRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:1: entryRuleVariableRef returns [EObject current=null] : iv_ruleVariableRef= ruleVariableRef EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2968:1: entryRuleVariableRef returns [EObject current=null] : iv_ruleVariableRef= ruleVariableRef EOF ;
     public final EObject entryRuleVariableRef() throws RecognitionException {
         EObject current = null;
 
@@ -8098,17 +7953,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3016:2: (iv_ruleVariableRef= ruleVariableRef EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3017:2: iv_ruleVariableRef= ruleVariableRef EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2969:2: (iv_ruleVariableRef= ruleVariableRef EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2970:2: iv_ruleVariableRef= ruleVariableRef EOF
             {
              newCompositeNode(grammarAccess.getVariableRefRule()); 
-            pushFollow(FOLLOW_ruleVariableRef_in_entryRuleVariableRef6838);
+            pushFollow(FOLLOW_ruleVariableRef_in_entryRuleVariableRef6728);
             iv_ruleVariableRef=ruleVariableRef();
 
             state._fsp--;
 
              current =iv_ruleVariableRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleVariableRef6848); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleVariableRef6738); 
 
             }
 
@@ -8126,7 +7981,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVariableRef"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3024:1: ruleVariableRef returns [EObject current=null] : ( (otherlv_0= RULE_ID ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2977:1: ruleVariableRef returns [EObject current=null] : ( (otherlv_0= RULE_ID ) ) ;
     public final EObject ruleVariableRef() throws RecognitionException {
         EObject current = null;
 
@@ -8135,21 +7990,21 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3027:28: ( ( (otherlv_0= RULE_ID ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3028:1: ( (otherlv_0= RULE_ID ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2980:28: ( ( (otherlv_0= RULE_ID ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2981:1: ( (otherlv_0= RULE_ID ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3028:1: ( (otherlv_0= RULE_ID ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3029:1: (otherlv_0= RULE_ID )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2981:1: ( (otherlv_0= RULE_ID ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2982:1: (otherlv_0= RULE_ID )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3029:1: (otherlv_0= RULE_ID )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3030:3: otherlv_0= RULE_ID
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2982:1: (otherlv_0= RULE_ID )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:2983:3: otherlv_0= RULE_ID
             {
 
             			if (current==null) {
             	            current = createModelElement(grammarAccess.getVariableRefRule());
             	        }
                     
-            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleVariableRef6892); 
+            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleVariableRef6782); 
 
             		newLeafNode(otherlv_0, grammarAccess.getVariableRefAccess().getRefAbstractDefinitionCrossReference_0()); 
             	
@@ -8177,7 +8032,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTerminalExpression"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3049:1: entryRuleTerminalExpression returns [EObject current=null] : iv_ruleTerminalExpression= ruleTerminalExpression EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3002:1: entryRuleTerminalExpression returns [EObject current=null] : iv_ruleTerminalExpression= ruleTerminalExpression EOF ;
     public final EObject entryRuleTerminalExpression() throws RecognitionException {
         EObject current = null;
 
@@ -8185,17 +8040,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3050:2: (iv_ruleTerminalExpression= ruleTerminalExpression EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3051:2: iv_ruleTerminalExpression= ruleTerminalExpression EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3003:2: (iv_ruleTerminalExpression= ruleTerminalExpression EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3004:2: iv_ruleTerminalExpression= ruleTerminalExpression EOF
             {
              newCompositeNode(grammarAccess.getTerminalExpressionRule()); 
-            pushFollow(FOLLOW_ruleTerminalExpression_in_entryRuleTerminalExpression6927);
+            pushFollow(FOLLOW_ruleTerminalExpression_in_entryRuleTerminalExpression6817);
             iv_ruleTerminalExpression=ruleTerminalExpression();
 
             state._fsp--;
 
              current =iv_ruleTerminalExpression; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleTerminalExpression6937); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleTerminalExpression6827); 
 
             }
 
@@ -8213,7 +8068,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTerminalExpression"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3058:1: ruleTerminalExpression returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3011:1: ruleTerminalExpression returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) ) ;
     public final EObject ruleTerminalExpression() throws RecognitionException {
         EObject current = null;
 
@@ -8226,53 +8081,53 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3061:28: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:1: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3014:28: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:1: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:1: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) )
-            int alt55=5;
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:1: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_DOUBLE ) ) ) | ( () ( (lv_value_5_0= RULE_COLOR ) ) ) | ( () ( (lv_value_7_0= RULE_STRING ) ) ) | ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) ) )
+            int alt54=5;
             switch ( input.LA(1) ) {
             case RULE_INT:
                 {
-                alt55=1;
+                alt54=1;
                 }
                 break;
             case RULE_DOUBLE:
                 {
-                alt55=2;
+                alt54=2;
                 }
                 break;
             case RULE_COLOR:
                 {
-                alt55=3;
+                alt54=3;
                 }
                 break;
             case RULE_STRING:
                 {
-                alt55=4;
+                alt54=4;
                 }
                 break;
             case RULE_BOOLEAN:
                 {
-                alt55=5;
+                alt54=5;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 55, 0, input);
+                    new NoViableAltException("", 54, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt55) {
+            switch (alt54) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:2: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:2: ( () ( (lv_value_1_0= RULE_INT ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:2: ( () ( (lv_value_1_0= RULE_INT ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:3: () ( (lv_value_1_0= RULE_INT ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:2: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:3: () ( (lv_value_1_0= RULE_INT ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3062:3: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3063:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3015:3: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3016:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -8282,13 +8137,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3068:2: ( (lv_value_1_0= RULE_INT ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3069:1: (lv_value_1_0= RULE_INT )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3021:2: ( (lv_value_1_0= RULE_INT ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3022:1: (lv_value_1_0= RULE_INT )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3069:1: (lv_value_1_0= RULE_INT )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3070:3: lv_value_1_0= RULE_INT
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3022:1: (lv_value_1_0= RULE_INT )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3023:3: lv_value_1_0= RULE_INT
                     {
-                    lv_value_1_0=(Token)match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleTerminalExpression6989); 
+                    lv_value_1_0=(Token)match(input,RULE_INT,FOLLOW_RULE_INT_in_ruleTerminalExpression6879); 
 
                     			newLeafNode(lv_value_1_0, grammarAccess.getTerminalExpressionAccess().getValueINTTerminalRuleCall_0_1_0()); 
                     		
@@ -8315,13 +8170,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3087:6: ( () ( (lv_value_3_0= RULE_DOUBLE ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3040:6: ( () ( (lv_value_3_0= RULE_DOUBLE ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3087:6: ( () ( (lv_value_3_0= RULE_DOUBLE ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3087:7: () ( (lv_value_3_0= RULE_DOUBLE ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3040:6: ( () ( (lv_value_3_0= RULE_DOUBLE ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3040:7: () ( (lv_value_3_0= RULE_DOUBLE ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3087:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3088:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3040:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3041:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -8331,13 +8186,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3093:2: ( (lv_value_3_0= RULE_DOUBLE ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3094:1: (lv_value_3_0= RULE_DOUBLE )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3046:2: ( (lv_value_3_0= RULE_DOUBLE ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3047:1: (lv_value_3_0= RULE_DOUBLE )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3094:1: (lv_value_3_0= RULE_DOUBLE )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3095:3: lv_value_3_0= RULE_DOUBLE
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3047:1: (lv_value_3_0= RULE_DOUBLE )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3048:3: lv_value_3_0= RULE_DOUBLE
                     {
-                    lv_value_3_0=(Token)match(input,RULE_DOUBLE,FOLLOW_RULE_DOUBLE_in_ruleTerminalExpression7028); 
+                    lv_value_3_0=(Token)match(input,RULE_DOUBLE,FOLLOW_RULE_DOUBLE_in_ruleTerminalExpression6918); 
 
                     			newLeafNode(lv_value_3_0, grammarAccess.getTerminalExpressionAccess().getValueDOUBLETerminalRuleCall_1_1_0()); 
                     		
@@ -8364,13 +8219,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3112:6: ( () ( (lv_value_5_0= RULE_COLOR ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3065:6: ( () ( (lv_value_5_0= RULE_COLOR ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3112:6: ( () ( (lv_value_5_0= RULE_COLOR ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3112:7: () ( (lv_value_5_0= RULE_COLOR ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3065:6: ( () ( (lv_value_5_0= RULE_COLOR ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3065:7: () ( (lv_value_5_0= RULE_COLOR ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3112:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3113:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3065:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3066:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -8380,13 +8235,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3118:2: ( (lv_value_5_0= RULE_COLOR ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3119:1: (lv_value_5_0= RULE_COLOR )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3071:2: ( (lv_value_5_0= RULE_COLOR ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3072:1: (lv_value_5_0= RULE_COLOR )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3119:1: (lv_value_5_0= RULE_COLOR )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3120:3: lv_value_5_0= RULE_COLOR
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3072:1: (lv_value_5_0= RULE_COLOR )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3073:3: lv_value_5_0= RULE_COLOR
                     {
-                    lv_value_5_0=(Token)match(input,RULE_COLOR,FOLLOW_RULE_COLOR_in_ruleTerminalExpression7067); 
+                    lv_value_5_0=(Token)match(input,RULE_COLOR,FOLLOW_RULE_COLOR_in_ruleTerminalExpression6957); 
 
                     			newLeafNode(lv_value_5_0, grammarAccess.getTerminalExpressionAccess().getValueCOLORTerminalRuleCall_2_1_0()); 
                     		
@@ -8413,13 +8268,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3137:6: ( () ( (lv_value_7_0= RULE_STRING ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3090:6: ( () ( (lv_value_7_0= RULE_STRING ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3137:6: ( () ( (lv_value_7_0= RULE_STRING ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3137:7: () ( (lv_value_7_0= RULE_STRING ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3090:6: ( () ( (lv_value_7_0= RULE_STRING ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3090:7: () ( (lv_value_7_0= RULE_STRING ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3137:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3138:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3090:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3091:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -8429,13 +8284,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3143:2: ( (lv_value_7_0= RULE_STRING ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3144:1: (lv_value_7_0= RULE_STRING )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3096:2: ( (lv_value_7_0= RULE_STRING ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3097:1: (lv_value_7_0= RULE_STRING )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3144:1: (lv_value_7_0= RULE_STRING )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3145:3: lv_value_7_0= RULE_STRING
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3097:1: (lv_value_7_0= RULE_STRING )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3098:3: lv_value_7_0= RULE_STRING
                     {
-                    lv_value_7_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleTerminalExpression7106); 
+                    lv_value_7_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleTerminalExpression6996); 
 
                     			newLeafNode(lv_value_7_0, grammarAccess.getTerminalExpressionAccess().getValueSTRINGTerminalRuleCall_3_1_0()); 
                     		
@@ -8462,13 +8317,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3162:6: ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3115:6: ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3162:6: ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3162:7: () ( (lv_value_9_0= RULE_BOOLEAN ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3115:6: ( () ( (lv_value_9_0= RULE_BOOLEAN ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3115:7: () ( (lv_value_9_0= RULE_BOOLEAN ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3162:7: ()
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3163:5: 
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3115:7: ()
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3116:5: 
                     {
 
                             current = forceCreateModelElement(
@@ -8478,13 +8333,13 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3168:2: ( (lv_value_9_0= RULE_BOOLEAN ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3169:1: (lv_value_9_0= RULE_BOOLEAN )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3121:2: ( (lv_value_9_0= RULE_BOOLEAN ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3122:1: (lv_value_9_0= RULE_BOOLEAN )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3169:1: (lv_value_9_0= RULE_BOOLEAN )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3170:3: lv_value_9_0= RULE_BOOLEAN
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3122:1: (lv_value_9_0= RULE_BOOLEAN )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3123:3: lv_value_9_0= RULE_BOOLEAN
                     {
-                    lv_value_9_0=(Token)match(input,RULE_BOOLEAN,FOLLOW_RULE_BOOLEAN_in_ruleTerminalExpression7145); 
+                    lv_value_9_0=(Token)match(input,RULE_BOOLEAN,FOLLOW_RULE_BOOLEAN_in_ruleTerminalExpression7035); 
 
                     			newLeafNode(lv_value_9_0, grammarAccess.getTerminalExpressionAccess().getValueBOOLEANTerminalRuleCall_4_1_0()); 
                     		
@@ -8531,7 +8386,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFQN"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3194:1: entryRuleFQN returns [String current=null] : iv_ruleFQN= ruleFQN EOF ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3147:1: entryRuleFQN returns [String current=null] : iv_ruleFQN= ruleFQN EOF ;
     public final String entryRuleFQN() throws RecognitionException {
         String current = null;
 
@@ -8539,17 +8394,17 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3195:2: (iv_ruleFQN= ruleFQN EOF )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3196:2: iv_ruleFQN= ruleFQN EOF
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3148:2: (iv_ruleFQN= ruleFQN EOF )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3149:2: iv_ruleFQN= ruleFQN EOF
             {
              newCompositeNode(grammarAccess.getFQNRule()); 
-            pushFollow(FOLLOW_ruleFQN_in_entryRuleFQN7188);
+            pushFollow(FOLLOW_ruleFQN_in_entryRuleFQN7078);
             iv_ruleFQN=ruleFQN();
 
             state._fsp--;
 
              current =iv_ruleFQN.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleFQN7199); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleFQN7089); 
 
             }
 
@@ -8567,7 +8422,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFQN"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3203:1: ruleFQN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3156:1: ruleFQN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken ruleFQN() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8578,40 +8433,40 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3206:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3207:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3159:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3160:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3207:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3207:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3160:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3160:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleFQN7239); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleFQN7129); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getFQNAccess().getIDTerminalRuleCall_0()); 
                 
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3214:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop56:
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3167:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop55:
             do {
-                int alt56=2;
-                int LA56_0 = input.LA(1);
+                int alt55=2;
+                int LA55_0 = input.LA(1);
 
-                if ( (LA56_0==58) ) {
-                    alt56=1;
+                if ( (LA55_0==58) ) {
+                    alt55=1;
                 }
 
 
-                switch (alt56) {
+                switch (alt55) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3215:2: kw= '.' this_ID_2= RULE_ID
+            	    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3168:2: kw= '.' this_ID_2= RULE_ID
             	    {
-            	    kw=(Token)match(input,58,FOLLOW_58_in_ruleFQN7258); 
+            	    kw=(Token)match(input,58,FOLLOW_58_in_ruleFQN7148); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getFQNAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleFQN7273); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleFQN7163); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -8623,7 +8478,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop56;
+            	    break loop55;
                 }
             } while (true);
 
@@ -8833,105 +8688,101 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_ruleMultiplication_in_ruleAddition4557 = new BitSet(new long[]{0x0003000000000002L});
     public static final BitSet FOLLOW_ruleMultiplication_in_entryRuleMultiplication4595 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleMultiplication4605 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4652 = new BitSet(new long[]{0x000C000000000002L});
+    public static final BitSet FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4652 = new BitSet(new long[]{0x001C000000000002L});
     public static final BitSet FOLLOW_50_in_ruleMultiplication4675 = new BitSet(new long[]{0x0BC20000004203F0L});
     public static final BitSet FOLLOW_51_in_ruleMultiplication4704 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4727 = new BitSet(new long[]{0x000C000000000002L});
-    public static final BitSet FOLLOW_ruleGamlBinExpr_in_entryRuleGamlBinExpr4765 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleGamlBinExpr4775 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePower_in_ruleGamlBinExpr4822 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_ruleGamlBinarOpRef_in_ruleGamlBinExpr4853 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_rulePower_in_ruleGamlBinExpr4875 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_rulePower_in_entryRulePower4913 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePower4923 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_rulePower4970 = new BitSet(new long[]{0x0010000000000002L});
-    public static final BitSet FOLLOW_52_in_rulePower4992 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_rulePower5014 = new BitSet(new long[]{0x0010000000000002L});
-    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_entryRuleGamlUnitExpr5052 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleGamlUnitExpr5062 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnitExpr5109 = new BitSet(new long[]{0x0020000000000002L});
-    public static final BitSet FOLLOW_53_in_ruleGamlUnitExpr5131 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_ruleGamlUnitRef_in_ruleGamlUnitExpr5153 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_entryRuleGamlUnaryExpr5191 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleGamlUnaryExpr5201 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePrePrimaryExpr_in_ruleGamlUnaryExpr5248 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleUnarOp_in_ruleGamlUnaryExpr5285 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnaryExpr5306 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleUnarOp_in_entryRuleUnarOp5345 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleUnarOp5356 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_49_in_ruleUnarOp5394 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_54_in_ruleUnarOp5413 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_55_in_ruleUnarOp5432 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_56_in_ruleUnarOp5451 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_57_in_ruleUnarOp5470 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePrePrimaryExpr_in_entryRulePrePrimaryExpr5510 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePrePrimaryExpr5520 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleTerminalExpression_in_rulePrePrimaryExpr5567 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleRightMemberRef_in_rulePrePrimaryExpr5594 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleMemberRef_in_rulePrePrimaryExpr5621 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleMemberRef_in_entryRuleMemberRef5656 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleMemberRef5666 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePrimaryExpression_in_ruleMemberRef5713 = new BitSet(new long[]{0x0400000000000002L});
-    public static final BitSet FOLLOW_58_in_ruleMemberRef5734 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_ruleRightMemberRef_in_ruleMemberRef5755 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePrimaryExpression_in_entryRulePrimaryExpression5793 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePrimaryExpression5803 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_59_in_rulePrimaryExpression5841 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_rulePrimaryExpression5863 = new BitSet(new long[]{0x1000000000000000L});
-    public static final BitSet FOLLOW_60_in_rulePrimaryExpression5874 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_22_in_rulePrimaryExpression5894 = new BitSet(new long[]{0x0BC20000014203F0L});
-    public static final BitSet FOLLOW_ruleMatrix_in_rulePrimaryExpression5916 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_24_in_rulePrimaryExpression5927 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_17_in_rulePrimaryExpression5947 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_rulePoint_in_rulePrimaryExpression5969 = new BitSet(new long[]{0x0000000000040000L});
-    public static final BitSet FOLLOW_18_in_rulePrimaryExpression5980 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePoint_in_entryRulePoint6017 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePoint6027 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleExpression_in_rulePoint6073 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_23_in_rulePoint6085 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_rulePoint6106 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleMatrix_in_entryRuleMatrix6142 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleMatrix6152 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleRow_in_ruleMatrix6208 = new BitSet(new long[]{0x0000000000100002L});
-    public static final BitSet FOLLOW_20_in_ruleMatrix6221 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleRow_in_ruleMatrix6242 = new BitSet(new long[]{0x0000000000100002L});
-    public static final BitSet FOLLOW_ruleRow_in_entryRuleRow6282 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleRow6292 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleRow6338 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_23_in_ruleRow6351 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleRow6372 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_ruleRightMemberRef_in_entryRuleRightMemberRef6410 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleRightMemberRef6420 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAbrstractRef_in_ruleRightMemberRef6467 = new BitSet(new long[]{0x0400000000000002L});
-    public static final BitSet FOLLOW_58_in_ruleRightMemberRef6488 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_ruleRightMemberRef_in_ruleRightMemberRef6509 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAbrstractRef_in_entryRuleAbrstractRef6547 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAbrstractRef6557 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleVariableRef_in_ruleAbrstractRef6604 = new BitSet(new long[]{0x0800000000400002L});
-    public static final BitSet FOLLOW_59_in_ruleAbrstractRef6626 = new BitSet(new long[]{0x1BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6648 = new BitSet(new long[]{0x1000000000800000L});
-    public static final BitSet FOLLOW_23_in_ruleAbrstractRef6661 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6682 = new BitSet(new long[]{0x1000000000800000L});
-    public static final BitSet FOLLOW_60_in_ruleAbrstractRef6698 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_22_in_ruleAbrstractRef6727 = new BitSet(new long[]{0x0BC20000014203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6749 = new BitSet(new long[]{0x0000000001800000L});
-    public static final BitSet FOLLOW_23_in_ruleAbrstractRef6762 = new BitSet(new long[]{0x0BC20000004203F0L});
-    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6783 = new BitSet(new long[]{0x0000000001800000L});
-    public static final BitSet FOLLOW_24_in_ruleAbrstractRef6799 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleVariableRef_in_entryRuleVariableRef6838 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleVariableRef6848 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleVariableRef6892 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleTerminalExpression_in_entryRuleTerminalExpression6927 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleTerminalExpression6937 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_in_ruleTerminalExpression6989 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_DOUBLE_in_ruleTerminalExpression7028 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_COLOR_in_ruleTerminalExpression7067 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleTerminalExpression7106 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_BOOLEAN_in_ruleTerminalExpression7145 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFQN_in_entryRuleFQN7188 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleFQN7199 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleFQN7239 = new BitSet(new long[]{0x0400000000000002L});
-    public static final BitSet FOLLOW_58_in_ruleFQN7258 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleFQN7273 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_52_in_ruleMultiplication4733 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleGamlBinExpr_in_ruleMultiplication4756 = new BitSet(new long[]{0x001C000000000002L});
+    public static final BitSet FOLLOW_ruleGamlBinExpr_in_entryRuleGamlBinExpr4794 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleGamlBinExpr4804 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_ruleGamlBinExpr4851 = new BitSet(new long[]{0x0000000000000022L});
+    public static final BitSet FOLLOW_ruleGamlBinarOpRef_in_ruleGamlBinExpr4882 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_ruleGamlBinExpr4904 = new BitSet(new long[]{0x0000000000000022L});
+    public static final BitSet FOLLOW_ruleGamlUnitExpr_in_entryRuleGamlUnitExpr4942 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleGamlUnitExpr4952 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnitExpr4999 = new BitSet(new long[]{0x0020000000000002L});
+    public static final BitSet FOLLOW_53_in_ruleGamlUnitExpr5021 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_ruleGamlUnitRef_in_ruleGamlUnitExpr5043 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_entryRuleGamlUnaryExpr5081 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleGamlUnaryExpr5091 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePrePrimaryExpr_in_ruleGamlUnaryExpr5138 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleUnarOp_in_ruleGamlUnaryExpr5175 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleGamlUnaryExpr_in_ruleGamlUnaryExpr5196 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleUnarOp_in_entryRuleUnarOp5235 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleUnarOp5246 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_49_in_ruleUnarOp5284 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_54_in_ruleUnarOp5303 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_55_in_ruleUnarOp5322 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_56_in_ruleUnarOp5341 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_57_in_ruleUnarOp5360 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePrePrimaryExpr_in_entryRulePrePrimaryExpr5400 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePrePrimaryExpr5410 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleTerminalExpression_in_rulePrePrimaryExpr5457 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleRightMemberRef_in_rulePrePrimaryExpr5484 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleMemberRef_in_rulePrePrimaryExpr5511 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleMemberRef_in_entryRuleMemberRef5546 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleMemberRef5556 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePrimaryExpression_in_ruleMemberRef5603 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_58_in_ruleMemberRef5624 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_ruleRightMemberRef_in_ruleMemberRef5645 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePrimaryExpression_in_entryRulePrimaryExpression5683 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePrimaryExpression5693 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_59_in_rulePrimaryExpression5731 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_rulePrimaryExpression5753 = new BitSet(new long[]{0x1000000000000000L});
+    public static final BitSet FOLLOW_60_in_rulePrimaryExpression5764 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_22_in_rulePrimaryExpression5784 = new BitSet(new long[]{0x0BC20000014203F0L});
+    public static final BitSet FOLLOW_ruleMatrix_in_rulePrimaryExpression5806 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_24_in_rulePrimaryExpression5817 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_17_in_rulePrimaryExpression5837 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_rulePoint_in_rulePrimaryExpression5859 = new BitSet(new long[]{0x0000000000040000L});
+    public static final BitSet FOLLOW_18_in_rulePrimaryExpression5870 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePoint_in_entryRulePoint5907 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePoint5917 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleExpression_in_rulePoint5963 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_23_in_rulePoint5975 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_rulePoint5996 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleMatrix_in_entryRuleMatrix6032 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleMatrix6042 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleRow_in_ruleMatrix6098 = new BitSet(new long[]{0x0000000000100002L});
+    public static final BitSet FOLLOW_20_in_ruleMatrix6111 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleRow_in_ruleMatrix6132 = new BitSet(new long[]{0x0000000000100002L});
+    public static final BitSet FOLLOW_ruleRow_in_entryRuleRow6172 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleRow6182 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleRow6228 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_23_in_ruleRow6241 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleRow6262 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_ruleRightMemberRef_in_entryRuleRightMemberRef6300 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleRightMemberRef6310 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAbrstractRef_in_ruleRightMemberRef6357 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_58_in_ruleRightMemberRef6378 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_ruleRightMemberRef_in_ruleRightMemberRef6399 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAbrstractRef_in_entryRuleAbrstractRef6437 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAbrstractRef6447 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleVariableRef_in_ruleAbrstractRef6494 = new BitSet(new long[]{0x0800000000400002L});
+    public static final BitSet FOLLOW_59_in_ruleAbrstractRef6516 = new BitSet(new long[]{0x1BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6538 = new BitSet(new long[]{0x1000000000800000L});
+    public static final BitSet FOLLOW_23_in_ruleAbrstractRef6551 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6572 = new BitSet(new long[]{0x1000000000800000L});
+    public static final BitSet FOLLOW_60_in_ruleAbrstractRef6588 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_22_in_ruleAbrstractRef6617 = new BitSet(new long[]{0x0BC20000014203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6639 = new BitSet(new long[]{0x0000000001800000L});
+    public static final BitSet FOLLOW_23_in_ruleAbrstractRef6652 = new BitSet(new long[]{0x0BC20000004203F0L});
+    public static final BitSet FOLLOW_ruleExpression_in_ruleAbrstractRef6673 = new BitSet(new long[]{0x0000000001800000L});
+    public static final BitSet FOLLOW_24_in_ruleAbrstractRef6689 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleVariableRef_in_entryRuleVariableRef6728 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleVariableRef6738 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleVariableRef6782 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleTerminalExpression_in_entryRuleTerminalExpression6817 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleTerminalExpression6827 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_in_ruleTerminalExpression6879 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_DOUBLE_in_ruleTerminalExpression6918 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_COLOR_in_ruleTerminalExpression6957 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleTerminalExpression6996 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_BOOLEAN_in_ruleTerminalExpression7035 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFQN_in_entryRuleFQN7078 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleFQN7089 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleFQN7129 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_58_in_ruleFQN7148 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleFQN7163 = new BitSet(new long[]{0x0400000000000002L});
 
 }
