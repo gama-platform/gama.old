@@ -19,7 +19,6 @@
 package msi.gama.precompiler;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.*;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -45,21 +44,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 @SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class GamaProcessor extends AbstractProcessor {
-
-	static {
-
-		for ( final Field f : IUnits.class.getDeclaredFields() ) {
-			try {
-				if ( f.getType().equals(double.class) ) {
-					IUnits.UNITS.put(f.getName(), f.getDouble(IUnits.class));
-				}
-			} catch (final IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (final IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	// here util.MathUtils is a copy of msi.gama.util.MathUtils
 	private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();

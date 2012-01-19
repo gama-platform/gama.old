@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,9 +18,10 @@
  */
 package msi.gama.precompiler;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
-public interface IUnits {
+public class IUnits {
 
 	/*
 	 * 
@@ -42,16 +43,16 @@ public interface IUnits {
 	public final static double km = 1000 * m, kilometer = km, kilometers = km;
 
 	/** The Constant mile. */
-	public final static double mile = 1.609344f * km, miles = mile;
+	public final static double mile = 1.609344d * km, miles = mile;
 
 	/** The Constant yard. */
-	public final static double yard = 0.9144f * m, yards = yard;
+	public final static double yard = 0.9144d * m, yards = yard;
 
 	/** The Constant inch. */
-	public final static double inch = 2.54f * cm, inches = inch;
+	public final static double inch = 2.54d * cm, inches = inch;
 
 	/** The Constant foot. */
-	public final static double foot = 30.48f * cm, feet = foot, ft = foot;
+	public final static double foot = 30.48d * cm, feet = foot, ft = foot;
 
 	/*
 	 * 
@@ -132,5 +133,20 @@ public interface IUnits {
 	public final static double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
 
 	public final static Map<String, Double> UNITS = new HashMap();
+
+	static {
+
+		for ( final Field f : IUnits.class.getDeclaredFields() ) {
+			try {
+				if ( f.getType().equals(double.class) ) {
+					UNITS.put(f.getName(), f.getDouble(IUnits.class));
+				}
+			} catch (final IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (final IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }
