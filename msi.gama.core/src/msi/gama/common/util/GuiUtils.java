@@ -146,6 +146,8 @@ public class GuiUtils {
 	public static void run(final Runnable block) {
 		if ( gui != null ) {
 			gui.run(block);
+		} else {
+			block.run();
 		}
 	}
 
@@ -289,5 +291,14 @@ public class GuiUtils {
 	public static IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
 		final double w, final double h) {
 		return gui != null ? gui.getDisplaySurfaceFor(layerDisplayOutput, w, h) : null;
+	}
+
+	/**
+	 * 
+	 */
+	public static void clearErrors() {
+		if ( gui != null ) {
+			gui.clearErrors();
+		}
 	}
 }
