@@ -99,4 +99,6 @@ public interface IGui {
 	public abstract IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
 		final double w, final double h);
 
+	void clearErrors();
+
 }
