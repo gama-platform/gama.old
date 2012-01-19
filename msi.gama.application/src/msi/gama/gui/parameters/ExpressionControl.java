@@ -20,61 +20,35 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class ExpressionControl implements SelectionListener, ModifyListener, FocusListener,
-	MouseTrackListener {
+public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener,
+	FocusListener {
 
 	Text text;
-	private static final Shell popup;
-	private static final Label result;
+	Popup popup;
 	AbstractEditor editor;
-	// IType expectedType;
-	Listener deactivatePopup;
+	Color background;
 
-	static {
-		popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP);
-		popup.setLayout(new FillLayout());
-		result = new Label(popup, SWT.NONE);
-		result.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-	}
+	// IType expectedType;
 
 	public ExpressionControl(final Composite comp, final AbstractEditor ed) {
 		editor = ed;
 		text = createTextBox(comp);
 		GridData d = ed.getParameterGridData();
 		text.setLayoutData(d);
-		// expectedType = ed.getExpectedType();
-		// popup = new Shell(GUI.getDisplay(), SWT.ON_TOP);
-		// popup.setLayout(new FillLayout());
-		// result = new Label(popup, SWT.NONE);
-		// result.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		text.addModifyListener(this);
 		text.addFocusListener(this);
 		text.addSelectionListener(this);
-		text.addMouseTrackListener(this);
-		deactivatePopup = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if ( !popup.isDisposed() ) {
-					popup.setVisible(false);
-				}
-			}
-		};
-
-		comp.getShell().addListener(SWT.Move, deactivatePopup);
-		comp.getShell().addListener(SWT.Resize, deactivatePopup);
-		comp.getShell().addListener(SWT.Close, deactivatePopup);
-		comp.getShell().addListener(SWT.Deactivate, deactivatePopup);
-		comp.getShell().addListener(SWT.Hide, deactivatePopup);
+		popup = new Popup(this, text);
 
 	}
 
@@ -86,31 +60,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 		} catch (GamlException e) {
 			// e.printStackTrace();
 		}
-		displayPopup();
-	}
-
-	private void displayPopup() {
-		String string = text.getText();
-		if ( string.length() == 0 ) {
-			popup.setVisible(false);
-			return;
-		}
-		string = getPopupBody();
-		if ( string == null || string.isEmpty() ) {
-			popup.setVisible(false);
-			return;
-		}
-		setPopupText(string);
-		final Point point = text.toDisplay(text.getLocation().x, text.getSize().y);
-		popup.pack();
-		popup.setLocation(point.x, point.y);
-		popup.setVisible(true);
-	}
-
-	private void setPopupText(final String s) {
-		String t = s;
-		t += "\n" + editor.getTooltipText();
-		result.setText(t);
+		popup.display();
 	}
 
 	@Override
@@ -120,7 +70,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 				text.setText(StringUtils.toGaml(editor.getOriginalValue()));
 			}
 			modifyValue();
-			popup.setVisible(false);
+			Popup.hide();
 		} catch (GamlException e) {
 
 		} catch (Exception e) {}
@@ -144,14 +94,14 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 			String string = "Result: " + StringUtils.toGaml(value);
 			IType expectedType = editor.getExpectedType();
 			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {
-				result.setBackground(SwtGui.COLOR_OK);
+				background = SwtGui.COLOR_OK;
 			} else {
-				result.setBackground(SwtGui.COLOR_WARNING);
+				background = SwtGui.COLOR_WARNING;
 				string += "\nWarning: should be of type " + expectedType.toString();
 			}
 			return string;
 		} catch (Exception e) {
-			result.setBackground(SwtGui.COLOR_ERROR);
+			background = SwtGui.COLOR_ERROR;
 			return e.getMessage();
 		}
 	}
@@ -162,7 +112,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		displayPopup();
+		popup.display();
 	}
 
 	@Override
@@ -174,7 +124,7 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 			public void run() {
 				if ( SwtGui.getDisplay().isDisposed() ) { return; }
 				final Control control = SwtGui.getDisplay().getFocusControl();
-				if ( control == null || control != text && control != result && !popup.isDisposed() ) {
+				if ( control == null || control != text ) {
 					widgetDefaultSelected(null);
 				}
 			}
@@ -189,41 +139,34 @@ public class ExpressionControl implements SelectionListener, ModifyListener, Foc
 	@Override
 	public void widgetSelected(final SelectionEvent e) {}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseEnter(final MouseEvent e) {
-		displayPopup();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseExit(final MouseEvent e) {
-		popup.setVisible(false);
-		// widgetDefaultSelected(null);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseHover(final MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void setFocus() {
 		text.setFocus();
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 */
+	@Override
+	public String getPopupText() {
+		if ( text.getText().isEmpty() ) { return null; }
+		String string = getPopupBody() + "\n" + editor.getTooltipText();
+		return string;
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
+	 */
+	@Override
+	public Control getPositionControl() {
+		return text;
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
+	 */
+	@Override
+	public Color getPopupBackground() {
+		return background;
 	}
 
 }

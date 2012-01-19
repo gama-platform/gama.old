@@ -60,6 +60,15 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 		}
 	}
 
+	/**
+	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
+	 */
+	@Override
+	protected Integer[] getToolbarActionsId() {
+		// TODO Need to be defined and usable (not the case now)
+		return new Integer[] { PAUSE /* , CLEAR */};
+	}
+
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		super.ownCreatePartControl(view);
@@ -224,5 +233,13 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 
 	@Override
 	public void updateItemValues() {}
+
+	/**
+	 * 
+	 */
+	public void clearErrors() {
+		this.reset();
+		displayItems();
+	}
 
 }

@@ -32,6 +32,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 
@@ -40,8 +41,23 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 	private Composite swingCompo;
 
 	@Override
+	public void init(final IViewSite site) throws PartInitException {
+		super.init(site);
+		setPartName(output.getViewName());
+	}
+
+	@Override
 	public void setFocus() {
 		swingCompo.setFocus();
+	}
+
+	/**
+	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
+	 */
+	@Override
+	protected Integer[] getToolbarActionsId() {
+		return new Integer[] { PAUSE, REFRESH, SEPARATOR, LAYERS, SNAPSHOT, SEPARATOR, ZOOM_IN,
+			ZOOM_OUT, ZOOM_FIT, FOCUS };
 	}
 
 	protected IDisplayManager getDisplayManager() {
@@ -148,4 +164,5 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 
 	@Override
 	public void updateItemValues() {}
+
 }

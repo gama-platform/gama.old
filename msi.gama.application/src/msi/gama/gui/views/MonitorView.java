@@ -60,6 +60,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 		}
 	}
 
+	/**
+	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
+	 */
+	@Override
+	protected Integer[] getToolbarActionsId() {
+		return new Integer[] { PAUSE, REFRESH, SEPARATOR, NEW_MONITOR };
+	}
+
 	@Override
 	public void setOutput(final IDisplayOutput output) {
 		// always consider the latest monitor as the output

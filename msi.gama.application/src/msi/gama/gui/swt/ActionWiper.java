@@ -22,7 +22,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.GAMA;
 import org.eclipse.ui.*;
 
-public class ActionWiper implements IStartup, IPerspectiveListener {
+public class ActionWiper implements IStartup, IPerspectiveListener, IPartListener {
 
 	// IContextActivation simulationContext;
 
@@ -32,12 +32,21 @@ public class ActionWiper implements IStartup, IPerspectiveListener {
 		"org.eclipse.ui.externaltools.ExternalToolsSet", "org.eclipse.update.ui.softwareUpdates" };
 
 	@Override
+	public void partActivated(final IWorkbenchPart part) {
+		// Possibility to track parts, here ?
+		// GuiUtils.debug("Part activated: " + part.getId()) ?
+		if ( !(part instanceof IEditorPart) ) { return; }
+		GuiUtils.openModelingPerspective();
+	}
+
+	@Override
 	public void earlyStartup() {
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for ( int i = 0; i < windows.length; i++ ) {
 			IWorkbenchPage page = windows[i].getActivePage();
 			if ( page != null ) {
 				wipeActions(page);
+				page.addPartListener(new ActionWiper());
 			}
 			windows[i].addPerspectiveListener(this);
 		}
@@ -84,6 +93,26 @@ public class ActionWiper implements IStartup, IPerspectiveListener {
 	public void perspectiveChanged(final IWorkbenchPage page,
 		final IPerspectiveDescriptor perspective, final String changeId) {
 
+	}
+
+	@Override
+	public void partBroughtToTop(final IWorkbenchPart part) {
+		// nothing to do
+	}
+
+	@Override
+	public void partClosed(final IWorkbenchPart part) {
+		// nothing to do
+	}
+
+	@Override
+	public void partDeactivated(final IWorkbenchPart part) {
+		// nothing to do
+	}
+
+	@Override
+	public void partOpened(final IWorkbenchPart part) {
+		// nothing to do
 	}
 
 }

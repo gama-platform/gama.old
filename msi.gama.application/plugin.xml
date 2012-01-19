@@ -48,7 +48,7 @@
             class="msi.gama.gui.views.LayeredDisplayView"
             icon="icons/view_layers.png"
             id="msi.gama.application.view.LayeredDisplayView"
-            name="Display (AWT)"
+            name="Display"
             restorable="false">
       </view>
       <view
@@ -641,7 +641,7 @@
                </visibleWhen>
             </command>
                         <control
-                  class="msi.gama.gui.swt.controls.SpeedControlContribution"
+                  class="msi.gama.gui.swt.controls.SimulationSpeedContributionItem"
                   id="msi.gama.application.speed">
                <visibleWhen
                      checkEnabled="false">
@@ -709,7 +709,7 @@
        </menuContribution>
       <menuContribution
             allPopups="true"
-            locationURI="popup:org.eclipse.ui.popup.any">
+            locationURI="popup:org.eclipse.ui.popup.any ">
          <command
                commandId="msi.gama.application.commands.ConvertXmlToGaml"
                label="Convert to Gaml"
@@ -757,236 +757,6 @@
                class="msi.gama.gui.swt.commands.ExperimentMenu"
                id="msi.gama.application.menus.ExperimentMenu">
          </dynamic>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:msi.gama.application.view.MonitorView">
-         <command
-               commandId="msi.gama.application.commands.AddMonitor"
-               icon="icons/button_add_monitor.png"
-               label="Add Monitor"
-               style="push"
-               tooltip="Add a new monitor">
-         </command>
-         <separator
-               name="msi.gama.application.separator2"
-               visible="true">
-         </separator>
-         <command
-               commandId="msi.gama.application.command.ChangeRefreshRate"
-               label="Change refresh rate..."
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.application.command.ResumeView"
-               label="Resume output"
-               style="push"
-               tooltip="Resume the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="msi.gama.application.view.paused">
-                  <equals
-                        value="true">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.command.PauseView"
-               label="Pause output"
-               style="push"
-               tooltip="Pause the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <not>
-                  <with
-                        variable="msi.gama.application.view.paused">
-                     <equals
-                           value="true">
-                     </equals>
-                  </with>
-               </not>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:msi.gama.application.view.LayeredDisplayView">
-         <command
-               commandId="msi.gama.application.command.ChangeRefreshRate"
-               label="Change refresh rate..."
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.application.command.PauseView"
-               label="Pause output"
-               style="push"
-               tooltip="Pause the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <not>
-                  <with
-                        variable="msi.gama.application.view.paused">
-                     <equals
-                           value="true">
-                     </equals>
-                  </with>
-               </not>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.command.ResumeView"
-               label="Resume output"
-               style="push"
-               tooltip="Resume the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="msi.gama.application.view.paused">
-                  <equals
-                        value="true">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-         <separator
-               name="msi.gama.application.separator3"
-               visible="true">
-         </separator>
-         <command
-               commandId="msi.gama.application.command.LayerControls"
-               label="Show/hide layer controls"
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.application.command.TakeSnapshot"
-               label="Take a snapshot"
-               style="push"
-               tooltip="Take a snapshot of the current graphical view">
-         </command>
-         <separator
-               name="msi.gama.application.separator1"
-               visible="true">
-         </separator>
-         <command
-               commandId="msi.gama.application.command.ZoomIn"
-               label="Zoom  In"
-               style="push"
-               tooltip="Zoom In">
-         </command>
-         <command
-               commandId="msi.gama.application.command.ZoomOut"
-               label="Zoom Out"
-               style="push"
-               tooltip="Zoom out">
-         </command>
-         <command
-               commandId="msi.gama.application.command.ZoomFit"
-               label="Fit in view"
-               style="push"
-               tooltip="Fit in view">
-         </command>
-         <command
-               commandId="msi.gama.application.command.FocusMenu"
-               label="Focus on..."
-               style="pulldown">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:msi.gama.application.view.AgentInspectView">
-         <command
-               commandId="msi.gama.application.command.ChangeRefreshRate"
-               label="Change refresh rate..."
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.application.command.PauseView"
-               label="Pause output"
-               style="push"
-               tooltip="Pause the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <not>
-                  <with
-                        variable="msi.gama.application.view.paused">
-                     <equals
-                           value="true">
-                     </equals>
-                  </with>
-               </not>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.command.ResumeView"
-               label="Resume output"
-               style="push"
-               tooltip="Resume the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="msi.gama.application.view.paused">
-                  <equals
-                        value="true">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-       <menuContribution
-            locationURI="toolbar:msi.gama.application.view.ParameterView">
-         <command
-               commandId="msi.gama.gui.parameter.saveParametersCommand"
-               label="Save Current Parameters"
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.gui.parameter.revertParametersCommand"
-               label="Revert to initial parameters"
-               style="push">
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:msi.gama.application.view.DynamicAgentInspectView">
-         <command
-               commandId="msi.gama.application.command.ChangeRefreshRate"
-               label="Change refresh rate..."
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.application.command.PauseView"
-               label="Pause output"
-               style="push"
-               tooltip="Pause the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <not>
-                  <with
-                        variable="msi.gama.application.view.paused">
-                     <equals
-                           value="true">
-                     </equals>
-                  </with>
-               </not>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.command.ResumeView"
-               label="Resume output"
-               style="push"
-               tooltip="Resume the current output">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="msi.gama.application.view.paused">
-                  <equals
-                        value="true">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
       </menuContribution>
       <menuContribution
             allPopups="true"
@@ -1313,6 +1083,10 @@
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.jdt\.debug\.ui/.*">
       </activityPatternBinding>
+      <activityPatternBinding
+            activityId="msi.gama.application.activities"
+            pattern="MarkOccurrences">
+      </activityPatternBinding>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -1359,7 +1133,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="msi.gama.gui.swt.commands.AddMonitorHandler"
+                  class="msi.gama.gui.swt.commands.AddMonitorHandler"
             commandId="msi.gama.application.commands.AddMonitor">
          <activeWhen>
             <reference
@@ -1410,34 +1184,6 @@
             commandId="msi.gama.application.commands.InspectSpecies">
       </handler>
       <handler
-            class="msi.gama.gui.swt.commands.TakeSnapshotHandler"
-            commandId="msi.gama.application.command.TakeSnapshot">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ZoomFitHandler"
-            commandId="msi.gama.application.command.ZoomFit">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ZoomInHandler"
-            commandId="msi.gama.application.command.ZoomIn">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ZoomOutHandler"
-            commandId="msi.gama.application.command.ZoomOut">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ChangeRefreshRate"
-            commandId="msi.gama.application.command.ChangeRefreshRate">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.PauseResumeView"
-            commandId="msi.gama.application.command.PauseView">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.PauseResumeView"
-            commandId="msi.gama.application.command.ResumeView">
-      </handler>
-      <handler
             class="msi.gama.gui.swt.commands.RunModel"
             commandId="msi.gama.application.commands.RunModel">
       </handler>
@@ -1448,13 +1194,6 @@
             provider="msi.gama.gui.swt.commands.SimulationStateProvider">
          <variable
                name="msi.gama.application.commands.SimulationRunningState"
-               priorityLevel="workbench">
-         </variable>
-      </sourceProvider>
-       <sourceProvider
-            provider="msi.gama.gui.views.ViewSourceProvider">
-         <variable
-               name="msi.gama.application.view.paused"
                priorityLevel="workbench">
          </variable>
       </sourceProvider>
@@ -1697,48 +1436,10 @@
             name="Show Species Inspector">
       </command>
       <command
-            id="msi.gama.application.command.TakeSnapshot"
-            name="Take a snapshot">
-      </command>
-      <command
-            id="msi.gama.application.command.ZoomIn"
-            name="Zoom In">
-      </command>
-      <command
-            id="msi.gama.application.command.ZoomOut"
-            name="Zoom Out">
-      </command>
-      <command
-            id="msi.gama.application.command.ZoomFit"
-            name="Fit in View">
-      </command>
-      <command
-            id="msi.gama.application.command.ChangeRefreshRate"
-            name="Change refresh rate...">
-      </command>
-      <command
-            id="msi.gama.application.command.PauseView"
-            name="Pause view">
-      </command>
-      <command
-            id="msi.gama.application.command.ResumeView"
-            name="Resume view">
-      </command>
-      <command
             id="msi.gama.application.view.Title"
             name="Title of the active part">
       </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.SaveParametersHandler"
-            id="msi.gama.gui.parameter.saveParametersCommand"
-            name="Save Current Parameters">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.RevertParametersHandler"
-            id="msi.gama.gui.parameter.revertParametersCommand"
-            name="Revert To Initial Parameters">
-      </command>
-      <command
+     <command
             defaultHandler="msi.gama.gui.swt.commands.InspectDynamicAgentHandler"
             id="msi.gama.application.commands.InspectDynamicAgent"
             name="Show dynamic agent inspector">
@@ -1762,11 +1463,6 @@
             defaultHandler="msi.gama.gui.swt.commands.FocusMenuHandler"
             id="msi.gama.application.command.FocusMenu"
             name="Focus menu">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.LayerControlsHandler"
-            id="msi.gama.application.command.LayerControls"
-            name="Show/hide layer controls">
       </command>
       <command
             defaultHandler="msi.gama.gui.navigator.commands.OpenBrowserHandler"
@@ -1807,48 +1503,8 @@
    <extension
          point="org.eclipse.ui.commandImages">
       <image
-            commandId="msi.gama.application.command.TakeSnapshot"
-            icon="icons/button_snapshot.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.ZoomIn"
-            icon="icons/button_zoomin.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.ZoomOut"
-            icon="icons/button_zoomout.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.ZoomFit"
-            icon="icons/button_zoomfit.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.ChangeRefreshRate"
-            icon="icons/button_refresh.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.PauseView"
-            icon="icons/button_pause.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.ResumeView"
-            icon="icons/button_play.png">
-      </image>
-      <image
             commandId="msi.gama.application.command.FocusMenu"
-            icon="icons/button_focus.png">
-      </image>
-      <image
-            commandId="msi.gama.gui.parameter.saveParametersCommand"
-            icon="icons/button_save.png">
-      </image>
-      <image
-            commandId="msi.gama.gui.parameter.revertParametersCommand"
-            icon="icons/button_undo.png">
-      </image>
-      <image
-            commandId="msi.gama.application.command.LayerControls"
-            icon="icons/button_side_controls.png">
+            icon="icons/old_buttons_gray/button_focus.png">
       </image>
    </extension> <extension
          point="org.eclipse.core.contenttype.contentTypes">

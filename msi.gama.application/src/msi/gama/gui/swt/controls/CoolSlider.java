@@ -47,13 +47,20 @@ import org.eclipse.swt.widgets.*;
  * Sample on how to use the <code>CoolSlider</code> is provided in the samples package. <br>
  * <br>
  * 
- * @author Code Crofter <br>
- *         On behalf Polymorph Systems
+ * @author Code Crofter & Alexis Drogoul (popup contribution)
  * 
  * @since RCP Toolbox v0.1 <br>
  * 
  */
-public class CoolSlider extends Composite {
+public class CoolSlider extends Composite implements IPopupProvider {
+
+	IPositionChangeListener popupListener = new IPositionChangeListener() {
+
+		@Override
+		public void positionChanged(final double position) {
+			popup.display();
+		}
+	};
 
 	public static final int SMOOTH_STYLE = 0;
 	public static final int SNAP_STYLE = 1;
@@ -85,14 +92,14 @@ public class CoolSlider extends Composite {
 	 * The class implementing this interface will be asked to give a user understandable
 	 * <code>String</code> to the slider's current position
 	 */
-	private CoolSliderToolTipInterpreter toolTipInterperter;
+	private IToolTipProvider toolTipInterperter;
 	/** the minimum width of the slider */
 	private final int minWidth;
 	/** the minimum height of the slider */
 	private final int minHeight;
 	/** A list of position changed listeners */
-	private final List<CoolSliderPositionChangeListener> positionChangedListeners =
-		new ArrayList<CoolSliderPositionChangeListener>();
+	private final List<IPositionChangeListener> positionChangedListeners =
+		new ArrayList<IPositionChangeListener>();
 	/** stores the previous position that was sent out to the position changed listeners */
 	private double previousPosition = -1;
 
@@ -102,6 +109,9 @@ public class CoolSlider extends Composite {
 	private final boolean snapStyle;
 	private final List<Integer> snapPoints = new ArrayList<Integer>();
 	private int jumpIncrement = 1;
+
+	private Color popupColor;
+	private final Popup popup;
 
 	/**
 	 * The constructor for the <code>CoolSlider</code> to
@@ -283,8 +293,7 @@ public class CoolSlider extends Composite {
 				}
 				synchronized (tooltipIntLock) {
 					if ( toolTipInterperter != null ) {
-						final String tooltip =
-							toolTipInterperter.getToolTipForPositionOnMouseHover(perc);
+						final String tooltip = toolTipInterperter.getToolTipText(perc);
 						if ( tooltip != null ) {
 							thumb.setToolTipText(tooltip);
 						}
@@ -469,15 +478,18 @@ public class CoolSlider extends Composite {
 				e.doit = true;
 			}
 		});
+		addPositionChangeListener(popupListener);
+		popup = new Popup(this, leftmostRegion, leftRegion, thumb, rightRegion, rightmostRegion);
+
 	}
 
-	public void removePositionChangeListener(final CoolSliderPositionChangeListener listener) {
+	public void removePositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
 			positionChangedListeners.remove(listener);
 		}
 	}
 
-	public void addPositionChangeListener(final CoolSliderPositionChangeListener listener) {
+	public void addPositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
 			if ( !positionChangedListeners.contains(listener) ) {
 				positionChangedListeners.add(listener);
@@ -499,8 +511,7 @@ public class CoolSlider extends Composite {
 	private void updatePostionListeners(final double perc) {
 		if ( previousPosition != -1 && perc != previousPosition ) {
 			synchronized (positionChangedListeners) {
-				final Iterator<CoolSliderPositionChangeListener> iter =
-					positionChangedListeners.iterator();
+				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 				while (iter.hasNext()) {
 					iter.next().positionChanged(perc);
 				}
@@ -511,8 +522,7 @@ public class CoolSlider extends Composite {
 	private void updateTooltipMoving(final double perc) {
 		synchronized (tooltipIntLock) {
 			if ( toolTipInterperter != null ) {
-				final String tooltip =
-					toolTipInterperter.getToolTipForPositionOnMouseMoveOver(perc);
+				final String tooltip = toolTipInterperter.getToolTipText(perc);
 				if ( tooltip != null ) {
 					thumb.setToolTipText(tooltip);
 				}
@@ -799,7 +809,7 @@ public class CoolSlider extends Composite {
 	 * 
 	 * @param toolTipInterperter
 	 */
-	public void setTooltipInterperter(final CoolSliderToolTipInterpreter toolTipInterperter) {
+	public void setTooltipInterperter(final IToolTipProvider toolTipInterperter) {
 		checkWidget();
 		synchronized (tooltipIntLock) {
 			this.toolTipInterperter = toolTipInterperter;
@@ -820,6 +830,10 @@ public class CoolSlider extends Composite {
 		leftmostRegion.setBackground(color);
 		rightmostRegion.setBackground(color);
 		super.setBackground(color);
+	}
+
+	public void setPopupBackground(final Color color) {
+		popupColor = color;
 	}
 
 	@Override
@@ -844,5 +858,31 @@ public class CoolSlider extends Composite {
 		leftRegion.setToolTipText(string);
 		leftmostRegion.setToolTipText(string);
 		rightmostRegion.setToolTipText(string);
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 */
+	@Override
+	public String getPopupText() {
+		double value = getCurrentPosition();
+		return toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter
+			.getToolTipText(value);
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
+	 */
+	@Override
+	public Control getPositionControl() {
+		return leftmostRegion;
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
+	 */
+	@Override
+	public Color getPopupBackground() {
+		return popupColor;
 	}
 }

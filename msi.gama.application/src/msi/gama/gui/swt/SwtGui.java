@@ -42,7 +42,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -93,6 +92,9 @@ public class SwtGui implements IGui {
 		.createImage();
 	public static Image thumb = getImageDescriptor("/icons/knobNormal.png").createImage();
 	public static Image thumb_over = getImageDescriptor("/icons/knobHover.png").createImage();
+	public static Image thumb_blue = getImageDescriptor("/icons/knobNormal_blue.png").createImage();
+	public static Image thumb_over_blue = getImageDescriptor("/icons/knobHover_blue.png")
+		.createImage();
 	public static Image line = getImageDescriptor("/icons/trackFill.png").createImage();
 	public static Image line_left = getImageDescriptor("/icons/trackCapLeft.png").createImage();
 	public static Image line_right = getImageDescriptor("/icons/trackCapRight.png").createImage();
@@ -336,7 +338,13 @@ public class SwtGui implements IGui {
 				}
 			});
 		}
+	}
 
+	@Override
+	public void clearErrors() {
+		ErrorView v = (ErrorView) getPage().findView(ErrorView.ID);
+		if ( v == null ) { return; }
+		v.clearErrors();
 	}
 
 	@Override
@@ -520,10 +528,10 @@ public class SwtGui implements IGui {
 		@Override
 		public void partActivated(final IWorkbenchPart partRef) {
 
-			ViewSourceProvider state =
-				(ViewSourceProvider) ((ISourceProviderService) getWindow().getService(
-					ISourceProviderService.class)).getSourceProvider(ViewSourceProvider.var);
-			state.changeState();
+			// ViewSourceProvider state =
+			// (ViewSourceProvider) ((ISourceProviderService) getWindow().getService(
+			// ISourceProviderService.class)).getSourceProvider(ViewSourceProvider.var);
+			// state.changeState();
 
 		}
 
@@ -685,12 +693,12 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean isModelingPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_MODELING_ID) ? true : false;
+		return getCurrentPerspective().getId().equals(PERSPECTIVE_MODELING_ID);
 	}
 
 	@Override
 	public boolean isSimulationPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_SIMULATION_ID) ? true : false;
+		return getCurrentPerspective().getId().equals(PERSPECTIVE_SIMULATION_ID);
 	}
 
 	@Override

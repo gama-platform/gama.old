@@ -7,7 +7,7 @@ package msi.gama.gui.swt.controls;
  * 
  * @since RCP Toolbox v0.1 <br>
  */
-public interface CoolSliderPositionChangeListener {
+public interface IPositionChangeListener {
 	/**
 	 * SMOOTH STYLE:<br>
 	 * Puts the position of the thumb of the slider after a change has occurred.
