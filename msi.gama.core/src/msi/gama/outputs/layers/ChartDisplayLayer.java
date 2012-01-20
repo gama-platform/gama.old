@@ -91,6 +91,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	List<Data> datas;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
+	Data timeSeriesXData = null;
 
 	public JFreeChart getChart() {
 		return chart;
@@ -117,10 +118,10 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamlException {
 		final XYPlot plot = (XYPlot) chart.getPlot();
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-		if ( isTimeSeries ) {
+		if ( isTimeSeries && timeSeriesXData == null ) {
 			// set the range axis to display integers only...
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-			Data timeSeriesXData =
+			timeSeriesXData =
 				(Data) DescriptionFactory.getModelFactory().compileDescription(
 					DescriptionFactory.createDescription(IKeyword.DATA, description, IKeyword.NAME,
 						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME), GAMA.getExpressionFactory());
@@ -146,10 +147,11 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 				plot.setRenderer(i, e.getRenderer(), false);
 				final Color c = e.getColor();
 				plot.getRenderer(i).setSeriesPaint(0, c);
+				plot.setDataset(i, (DefaultTableXYDataset) dataset);
 			}
 			history.append(legend);
 			history.append(',');
-			plot.setDataset(i, (DefaultTableXYDataset) dataset);
+
 		}
 
 		history.deleteCharAt(history.length() - 1);
