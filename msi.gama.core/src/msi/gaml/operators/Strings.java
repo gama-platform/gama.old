@@ -26,6 +26,8 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import org.joda.time.*;
+import org.joda.time.format.*;
 
 /**
  * Written by drogoul Modified on 10 déc. 2010
@@ -216,5 +218,29 @@ public class Strings {
 	@operator(value = { "at", "@" }, can_be_const = true)
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
+	}
+
+	static PeriodFormatter dateFormat = new PeriodFormatterBuilder().appendYears()
+		.appendSuffix(" year", " years").appendSeparator(", ").appendMonths()
+		.appendSuffix(" month", " months").appendSeparator(", ").appendWeeks()
+		.appendSuffix(" week", " weeks").appendSeparator(", ").appendDays()
+		.appendSuffix(" day", " days").appendSeparator(" ").toFormatter();
+
+	static PeriodFormatter timeFormat = new PeriodFormatterBuilder().printZeroAlways()
+		.minimumPrintedDigits(2).appendHours().appendLiteral(":").appendMinutes()
+		.appendLiteral(":").appendSeconds().appendLiteral(":").toFormatter();
+
+	@operator(value = "as_date", can_be_const = true)
+	public static String asDate(final int cycles) {
+		PeriodType pt = PeriodType.yearMonthDayTime();
+		return dateFormat.print(new Period(new Duration((long) cycles * 1000), GamaChronology
+			.getInstance()).normalizedStandard(pt));
+	}
+
+	@operator(value = "as_time", can_be_const = true)
+	public static String asTime(final int cycles) {
+		PeriodType pt = PeriodType.yearMonthDayTime();
+		return timeFormat.print(new Period(new Duration((long) cycles * 1000), GamaChronology
+			.getInstance()).normalizedStandard(pt));
 	}
 }
