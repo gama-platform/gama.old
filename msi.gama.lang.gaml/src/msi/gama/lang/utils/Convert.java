@@ -30,6 +30,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.xtext.EcoreUtil2;
 import org.jdom.*;
 import org.jdom.output.*;
 
@@ -87,9 +88,13 @@ public class Convert implements IUpdateOnChange {
 			String importUri = imp.getImportURI();
 			if ( !importUri.startsWith("platform:") ) {
 				URI iu = URI.createURI(importUri).resolve(r.getURI());
-				Resource ir = rs.getResource(iu, true);
-				// EcoreUtil.resolveAll(ir);
-				docs.putAll(getDocMap(ir)); // (!) recursive
+				if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
+					Resource ir = rs.getResource(iu, true);
+					// EcoreUtil.resolveAll(ir);
+					if ( ir != r ) {
+						docs.putAll(getDocMap(ir)); // (!) recursive
+					}
+				}
 			}
 		}
 		URL url = FileLocator.resolve(new URL(r.getURI().toString()));

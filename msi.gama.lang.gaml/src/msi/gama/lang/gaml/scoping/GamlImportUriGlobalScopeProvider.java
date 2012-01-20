@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,17 +18,37 @@
  */
 package msi.gama.lang.gaml.scoping;
 
-import java.util.LinkedHashSet;
+import java.util.*;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
+import com.google.common.base.Predicate;
 
 public class GamlImportUriGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	@Override
 	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
 		LinkedHashSet<URI> temp = super.getImportedUris(resource);
+		Iterator<URI> uriIter = temp.iterator();
+		while (uriIter.hasNext()) {
+			URI uri = uriIter.next();
+			if ( uri == null || uri.isEmpty() ) {
+				uriIter.remove();
+			}
+		}
 		temp.add(URI.createURI("platform:/plugin/msi.gama.core/generated/std.gaml"));
 		return temp;
 	}
+
+	@Override
+	protected IScope createLazyResourceScope(final IScope parent, final URI uri,
+		final IResourceDescriptions descriptions, final EClass type,
+		final Predicate<IEObjectDescription> filter, final boolean ignoreCase) {
+		if ( uri == null || uri.isEmpty() ) { return parent; }
+		return super.createLazyResourceScope(parent, uri, descriptions, type, filter, ignoreCase);
+	}
+
 }
