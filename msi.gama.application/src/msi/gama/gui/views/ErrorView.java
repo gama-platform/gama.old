@@ -239,6 +239,7 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	 */
 	public void clearErrors() {
 		this.reset();
+		exceptions.clear();
 		displayItems();
 	}
 
