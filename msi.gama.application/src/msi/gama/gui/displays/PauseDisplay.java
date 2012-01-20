@@ -49,6 +49,7 @@ public class PauseDisplay extends AbstractDisplay {
 	protected void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
 		g.fill(Color.DARK_GRAY, 0.5);
 		g.setFont(new Font("Helvetica", Font.BOLD, 18));
+		g.setDrawingOffset(0, 0);
 		g.setDrawingCoordinates(20, 20);
 		g.setOpacity(1);
 		g.drawString("Display paused", Color.white, 0);
