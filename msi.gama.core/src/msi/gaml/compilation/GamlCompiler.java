@@ -710,9 +710,9 @@ public class GamlCompiler {
 
 	public static void scanBuiltIn(final Set<Class> classes) {
 		for ( Class c : classes ) {
-			if ( !c.getCanonicalName().startsWith("msi") ) {
-				continue;
-			}
+			// if ( !c.getCanonicalName().startsWith("msi") ) {
+			// continue;
+			// }
 			boolean isISkill = ISkill.class.isAssignableFrom(c);
 			boolean isSkill = Skill.class.isAssignableFrom(c);
 			// GUI.debug("Processing " + c.getSimpleName());
