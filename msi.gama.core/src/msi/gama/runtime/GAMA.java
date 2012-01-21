@@ -18,15 +18,11 @@
  */
 package msi.gama.runtime;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.descriptions.ExpressionDescription;
@@ -112,9 +108,9 @@ public class GAMA {
 		if ( currentExperiment == null ) {
 			return;
 		} else if ( !currentExperiment.isRunning() || currentExperiment.isPaused() ) {
-			startExperiment();
+			currentExperiment.start();
 		} else {
-			pauseExperiment();
+			currentExperiment.pause();
 		}
 	}
 
@@ -124,17 +120,10 @@ public class GAMA {
 		}
 	}
 
-	private static void startExperiment() {
-		currentExperiment.start();
-	}
-
-	private static void pauseExperiment() {
-		currentExperiment.pause();
-	}
-
 	private static boolean verifyClose() {
-		pauseExperiment();
-		return GuiUtils.confirmClose(getExperiment());
+		if ( currentExperiment == null ) { return true; }
+		currentExperiment.pause();
+		return GuiUtils.confirmClose(currentExperiment);
 	}
 
 	public static ISimulation getFrontmostSimulation() {
@@ -179,7 +168,7 @@ public class GAMA {
 		currentExperiment.reportError(g);
 		if ( SimulationClock.TREAT_ERRORS_AS_FATAL ) {
 			if ( !g.isWarning() ) {
-				pauseExperiment();
+				currentExperiment.pause();
 			}
 		}
 	}
@@ -235,37 +224,38 @@ public class GAMA {
 		}
 	}
 
-	private static IDisplayOutput getOutput(final String outputName) {
-		IOutputManager man = getExperiment().getOutputManager();
-		if ( man == null ) { return null; }
-		IOutput out = man.getOutput(outputName);
-		if ( out == null || !(out instanceof IDisplayOutput) ) { return null; }
-		return (IDisplayOutput) out;
-	}
-
-	public static BufferedImage getImage(final String outputName) {
-		IDisplayOutput out = getOutput(outputName);
-		return out == null ? null : out.getImage();
-	}
-
-	public static BufferedImage getImage(final String outputName, final int width, final int height) {
-		IDisplayOutput out = getOutput(outputName);
-		IDisplaySurface surface = out.getSurface();
-		surface.resizeImage(width, height);
-		surface.updateDisplay();
-		return surface.getImage();
-	}
-
-	public static void getImage(final String outputName, final Image im) {
-		if ( im == null ) { return; }
-		IDisplayOutput out = getOutput(outputName);
-		IDisplaySurface surface = out.getSurface();
-		surface.resizeImage(im.getWidth(null), im.getHeight(null));
-		surface.updateDisplay();
-		Graphics2D g2d = (Graphics2D) im.getGraphics();
-		g2d.drawImage(surface.getImage(), 0, 0, null);
-		g2d.dispose();
-	}
+	// private static IDisplayOutput getOutput(final String outputName) {
+	// IOutputManager man = getExperiment().getOutputManager();
+	// if ( man == null ) { return null; }
+	// IOutput out = man.getOutput(outputName);
+	// if ( out == null || !(out instanceof IDisplayOutput) ) { return null; }
+	// return (IDisplayOutput) out;
+	// }
+	//
+	// public static BufferedImage getImage(final String outputName) {
+	// IDisplayOutput out = getOutput(outputName);
+	// return out == null ? null : out.getImage();
+	// }
+	//
+	// public static BufferedImage getImage(final String outputName, final int width, final int
+	// height) {
+	// IDisplayOutput out = getOutput(outputName);
+	// IDisplaySurface surface = out.getSurface();
+	// surface.resizeImage(width, height);
+	// surface.updateDisplay();
+	// return surface.getImage();
+	// }
+	//
+	// public static void getImage(final String outputName, final Image im) {
+	// if ( im == null ) { return; }
+	// IDisplayOutput out = getOutput(outputName);
+	// IDisplaySurface surface = out.getSurface();
+	// surface.resizeImage(im.getWidth(null), im.getHeight(null));
+	// surface.updateDisplay();
+	// Graphics2D g2d = (Graphics2D) im.getGraphics();
+	// g2d.drawImage(surface.getImage(), 0, 0, null);
+	// g2d.dispose();
+	// }
 
 	public static void releaseScope(final IScope scope) {
 		if ( currentExperiment == null || currentExperiment.getCurrentSimulation() == null ) { return; }
