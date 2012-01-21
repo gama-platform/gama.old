@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,7 +19,6 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.util.*;
 import msi.gama.gui.swt.SwtGui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -53,12 +52,10 @@ public class ParameterExpandItem extends Item {
 	boolean expanded;
 	int x, y, width, height;
 	static int imageHeight = 10, imageWidth = 10;
-	// boolean isClosable;
 	boolean isPaused;
 	static final int TEXT_INSET = 4;
 	static final int SEPARATION = 4;
 	static final int BORDER = 1;
-
 	static final int CHEVRON_SIZE = 20;
 
 	/**
@@ -89,7 +86,7 @@ public class ParameterExpandItem extends Item {
 	 * @see Widget#getStyle
 	 */
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style) {
-		this(parent, style, data, checkNull(parent).getItemCount());
+		this(parent, style, data, parent.getItemCount());
 	}
 
 	/**
@@ -128,45 +125,26 @@ public class ParameterExpandItem extends Item {
 		super(parent, style);
 		this.parent = parent;
 		setData(data);
-		// isClosable = parent.isClosable;
 		parent.createItem(this, style, index);
-	}
-
-	static ParameterExpandBar checkNull(final ParameterExpandBar control) {
-		if ( control == null ) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		return control;
 	}
 
 	@Override
 	public void dispose() {
 		if ( isDisposed() ) { return; }
+		// GuiUtils.debug("ParameterItem being disposed");
 		// if (!isValidThread ()) error (SWT.ERROR_THREAD_INVALID_ACCESS);
 		parent.destroyItem(this);
 		super.dispose();
-		disposeControl(false);
+		if ( control != null ) {
+			control.dispose();
+			control = null;
+		}
 		parent = null;
 
 	}
 
-	public void disposeControl(final boolean display) {
-		if ( control != null ) {
-			control.dispose();
-			control = null;
-			if ( display ) {
-				setHeight(0);
-				setExpanded(false);
-			}
-		}
-	}
-
-	public boolean isControlDisposed() {
-		return control == null || control.isDisposed();
-	}
-
 	void drawItem(final GC gc, final boolean drawFocus) {
-		int headerHeight = parent.getBandHeight();
+		int headerHeight = parent.bandHeight;
 		Display display = getDisplay();
 		gc.setForeground(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		gc.drawRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
@@ -232,39 +210,6 @@ public class ParameterExpandItem extends Item {
 	}
 
 	/**
-	 * Returns the control that is shown when the item is expanded. If no control has been set,
-	 * return <code>null</code>.
-	 * 
-	 * @return the control
-	 * 
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
-	 *                </ul>
-	 */
-	public Control getControl() {
-		checkWidget();
-		return control;
-	}
-
-	/**
-	 * Returns <code>true</code> if the receiver is expanded, and false otherwise.
-	 * 
-	 * @return the expanded state
-	 * 
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
-	 *                </ul>
-	 */
-	public boolean getExpanded() {
-		checkWidget();
-		return expanded;
-	}
-
-	/**
 	 * Returns the height of the receiver's header
 	 * 
 	 * @return the height of the header
@@ -276,40 +221,8 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public int getHeaderHeight() {
-		checkWidget();
-		return Math.max(parent.getBandHeight(), imageHeight);
-	}
-
-	/**
-	 * Gets the height of the receiver.
-	 * 
-	 * @return the height
-	 * 
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
-	 *                </ul>
-	 */
-	public int getHeight() {
-		checkWidget();
-		return height;
-	}
-
-	/**
-	 * Returns the receiver's parent, which must be a <code>ExpandBar</code>.
-	 * 
-	 * @return the receiver's parent
-	 * 
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
-	 *                </ul>
-	 */
-	public ParameterExpandBar getParent() {
-		checkWidget();
-		return parent;
+		// checkWidget();
+		return Math.max(parent.bandHeight, imageHeight);
 	}
 
 	int getPreferredWidth(final GC gc) {
@@ -325,7 +238,7 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void redraw() {
-		int headerHeight = parent.getBandHeight();
+		int headerHeight = parent.bandHeight;
 		if ( imageHeight > headerHeight ) {
 			parent.redraw(x + ParameterExpandItem.TEXT_INSET, y + headerHeight - imageHeight,
 				imageWidth, imageHeight, false);
@@ -336,7 +249,7 @@ public class ParameterExpandItem extends Item {
 	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
 		final boolean size) {
 		redraw();
-		int headerHeight = parent.getBandHeight();
+		int headerHeight = parent.bandHeight;
 		int y1 = y;
 		if ( move ) {
 			if ( imageHeight > headerHeight ) {
@@ -377,7 +290,7 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setControl(final Control control) {
-		checkWidget();
+		// checkWidget();
 		if ( control != null ) {
 			if ( control.isDisposed() ) {
 				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -389,7 +302,7 @@ public class ParameterExpandItem extends Item {
 		this.control = control;
 		if ( control != null ) {
 			control.setVisible(expanded);
-			int headerHeight = parent.getBandHeight();
+			int headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 				Math.max(0, height - BORDER));
 		}
@@ -407,9 +320,8 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
-		checkWidget();
+		// checkWidget();
 		this.expanded = expanded;
-		// setImage(expanded ? ParameterExpandBar.collapse : ParameterExpandBar.expand);
 		parent.showItem(this);
 	}
 
@@ -458,21 +370,19 @@ public class ParameterExpandItem extends Item {
 		redraw();
 	}
 
-	public boolean closeRequested(final int x2, final int y2) {
-		int xmin = x + width - ParameterExpandItem.TEXT_INSET - imageWidth;
+	private boolean clickIn(final int x2, final int y2, final int xmin) {
 		int xmax = xmin + imageWidth;
-		int headerHeight = parent.getBandHeight();
+		int headerHeight = parent.bandHeight;
 		int ymin = y + (headerHeight - imageHeight) / 2;
 		int ymax = ymin + imageHeight;
 		return x2 >= xmin && x2 <= xmax && y2 >= ymin && y2 <= ymax;
 	}
 
+	public boolean closeRequested(final int x2, final int y2) {
+		return clickIn(x2, y2, x + width - ParameterExpandItem.TEXT_INSET - imageWidth);
+	}
+
 	public boolean pauseRequested(final int x2, final int y2) {
-		int xmin = x + width - 2 * ParameterExpandItem.TEXT_INSET - 2 * imageWidth;
-		int xmax = xmin + imageWidth;
-		int headerHeight = parent.getBandHeight();
-		int ymin = y + (headerHeight - imageHeight) / 2;
-		int ymax = ymin + imageHeight;
-		return x2 >= xmin && x2 <= xmax && y2 >= ymin && y2 <= ymax;
+		return clickIn(x2, y2, x + width - 2 * ParameterExpandItem.TEXT_INSET - 2 * imageWidth);
 	}
 }

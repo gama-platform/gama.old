@@ -25,12 +25,17 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
 
+	IExperiment experiment;
+
 	public void addItem(final IExperiment exp) {
-		if ( exp != null ) {
+		if ( exp != null && exp != experiment ) {
+			experiment = exp;
 			reset();
 			editors = (EditorsList<String>) exp.getParametersEditors();
 			if ( editors == null ) { return; }
 			displayItems();
+		} else {
+			experiment = null;
 		}
 	}
 

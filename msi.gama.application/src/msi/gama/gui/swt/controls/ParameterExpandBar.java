@@ -58,11 +58,12 @@ public class ParameterExpandBar extends Composite {
 	ParameterExpandItem[] items;
 	private ParameterExpandItem focusItem;
 	int spacing, yCurrentScroll, itemCount;
-	Font font;
+	// Font font;
 	Color foreground;
 	Listener listener;
 	boolean inDispose, isClosable, isPausable;
 	ItemList underlyingObjects;
+	int bandHeight = ParameterExpandItem.CHEVRON_SIZE;
 
 	/**
 	 * @param underlyingObjects Constructs a new instance of this class given its parent and a style
@@ -253,12 +254,12 @@ public class ParameterExpandBar extends Composite {
 		this.update();
 	}
 
-	int getBandHeight() {
-		if ( font == null ) { return ParameterExpandItem.CHEVRON_SIZE; }
+	void computeBandHeight() {
+		if ( getFont() == null ) { return; }
 		GC gc = new GC(this);
 		FontMetrics metrics = gc.getFontMetrics();
 		gc.dispose();
-		return Math.max(ParameterExpandItem.CHEVRON_SIZE, metrics.getHeight());
+		bandHeight = Math.max(ParameterExpandItem.CHEVRON_SIZE, metrics.getHeight());
 	}
 
 	@Override
@@ -282,17 +283,8 @@ public class ParameterExpandBar extends Composite {
 	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of
 	 *                elements in the list minus 1 (inclusive)</li>
 	 *                </ul>
-	 * @exception SWTException <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
-	 *                </ul>
 	 */
 	public ParameterExpandItem getItem(final int index) {
-		checkWidget();
-		if ( !(0 <= index && index < itemCount) ) {
-			SWT.error(SWT.ERROR_INVALID_RANGE);
-		}
 		return items[index];
 	}
 
@@ -409,7 +401,7 @@ public class ParameterExpandBar extends Composite {
 	@Override
 	public void setFont(final Font font) {
 		super.setFont(font);
-		this.font = font;
+		computeBandHeight();
 		layoutItems(0, true);
 	}
 
@@ -425,7 +417,7 @@ public class ParameterExpandBar extends Composite {
 		if ( verticalBar == null ) { return; }
 		int height = getClientArea().height;
 		ParameterExpandItem item = items[itemCount - 1];
-		int maxHeight = item.y + getBandHeight() + spacing;
+		int maxHeight = item.y + bandHeight + spacing;
 		if ( item.expanded ) {
 			maxHeight += item.height;
 		}
@@ -493,7 +485,6 @@ public class ParameterExpandBar extends Composite {
 			items[i].dispose();
 		}
 		items = null;
-		font = null;
 		foreground = null;
 		setFocusItem(null);
 	}
@@ -543,8 +534,7 @@ public class ParameterExpandBar extends Composite {
 		for ( int i = 0; i < itemCount; i++ ) {
 			ParameterExpandItem item = items[i];
 			boolean hover =
-				item.x <= x && x < item.x + item.width && item.y <= y &&
-					y < item.y + getBandHeight();
+				item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
 			if ( !hover ) {
 				continue;
 			}
@@ -582,7 +572,7 @@ public class ParameterExpandBar extends Composite {
 		int y = event.y;
 		boolean hover =
 			getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width &&
-				getFocusItem().y <= y && y < getFocusItem().y + getBandHeight();
+				getFocusItem().y <= y && y < getFocusItem().y + bandHeight;
 		if ( hover ) {
 			if ( isPausable && getFocusItem().pauseRequested(x, y) ) { return; }
 
