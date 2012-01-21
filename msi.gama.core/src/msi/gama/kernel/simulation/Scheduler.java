@@ -55,7 +55,7 @@ public class Scheduler implements IScheduler {
 
 	private IAgent world;
 
-	protected Scheduler(final ISimulation sim) {
+	protected Scheduler(final ISimulation sim) throws GamaRuntimeException {
 		simulation = sim;
 		paused = true;
 		threadCount++;
@@ -148,8 +148,7 @@ public class Scheduler implements IScheduler {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		SimulationClock.resetStepLength();
-		GuiUtils.informStatus("step " + SimulationClock.getCycle());
+		SimulationClock.beginCycle();
 		executeBeginActions(scope);
 		// Another strategy would be to run these agents hierarchically (all the level 1 first, then
 		// all the level 2, etc.). Maybe we can propose this strategy.

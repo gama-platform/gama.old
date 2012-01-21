@@ -19,7 +19,9 @@
 package msi.gaml.operators;
 
 import java.util.*;
+import java.util.regex.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
@@ -27,6 +29,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import org.joda.time.*;
+import org.joda.time.chrono.*;
+import org.joda.time.field.PreciseDurationField;
 import org.joda.time.format.*;
 
 /**
@@ -228,19 +232,178 @@ public class Strings {
 
 	static PeriodFormatter timeFormat = new PeriodFormatterBuilder().printZeroAlways()
 		.minimumPrintedDigits(2).appendHours().appendLiteral(":").appendMinutes()
-		.appendLiteral(":").appendSeconds().appendLiteral(":").toFormatter();
+		.appendLiteral(":").appendSeconds().toFormatter();
+
+	static final GamaChronology chronology = new GamaChronology(
+		GregorianChronology.getInstanceUTC());
+
+	private static final class GamaChronology extends AssembledChronology {
+
+		private GamaChronology(final Chronology base) {
+			super(base, null);
+		}
+
+		@Override
+		protected void assemble(final AssembledChronology.Fields fields) {
+			fields.months =
+				new PreciseDurationField(DurationFieldType.months(), (long) IUnits.month * 1000);
+			fields.years =
+				new PreciseDurationField(DurationFieldType.years(), (long) IUnits.year * 1000);
+		}
+
+		@Override
+		public Chronology withUTC() {
+			return this;
+		}
+
+		@Override
+		public Chronology withZone(final DateTimeZone zone) {
+			return this;
+		}
+
+		@Override
+		public String toString() {
+			return "GAMA Chronology : 1 yr = 12 months ; 1 month = 30 days ";
+		}
+
+	}
+
+	static Pattern p = Pattern.compile("%[YMDhms]");
+
+	static PeriodFormatterBuilder format = new PeriodFormatterBuilder();
 
 	@operator(value = "as_date", can_be_const = true)
-	public static String asDate(final int cycles) {
+	public static String asDate(final double time, final String pattern) {
+		// Pattern should include : "%Y %M %D %h %m %s" for outputting years, months, days, hours,
+		// minutes, seconds
+		if ( pattern == null || pattern.isEmpty() ) { return asDate(time) + " " + asTime(time); }
+		format.clear();
+		List<String> dateList = new ArrayList();
+		final Matcher m = p.matcher(pattern);
+		int i = 0;
+		while (m.find()) {
+			String tmp = m.group();
+			if ( i != m.start() ) {
+				dateList.add(pattern.substring(i, m.start()));
+			}
+			dateList.add(tmp);
+			i = m.end();
+		}
+		if ( i != pattern.length() ) {
+			dateList.add(pattern.substring(i));
+		}
+		GuiUtils.debug("Output find: " + dateList);
+
+		// String[] strings = p.split(pattern);
+		// GuiUtils.debug("Output split: " + Arrays.toString(strings));
+		for ( i = 0; i < dateList.size(); i++ ) {
+			String s = dateList.get(i);
+			if ( s.charAt(0) == '%' && s.length() == 2 ) {
+				Character c = s.charAt(1);
+				switch (c) {
+					case 'Y':
+						format.appendYears();
+						break;
+					case 'M':
+						format.appendMonths();
+						break;
+					case 'D':
+						format.appendDays();
+						break;
+					case 'h':
+						format.appendHours();
+						break;
+					case 'm':
+						format.appendMinutes();
+						break;
+					case 's':
+						format.appendSeconds();
+						break;
+					default:
+						format.appendLiteral(s);
+				}
+			} else {
+				format.appendLiteral(s);
+			}
+		}
+
+		// for ( String s : strings ) {
+		// Character c = s.charAt(0);
+		// switch (c) {
+		// case 'Y':
+		// format.appendYears();
+		// break;
+		// case 'M':
+		// format.appendMonths();
+		// break;
+		// case 'D':
+		// format.appendDays();
+		// break;
+		// case 'h':
+		// format.appendHours();
+		// break;
+		// case 'm':
+		// format.appendMinutes();
+		// break;
+		// case 's':
+		// format.appendSeconds();
+		// break;
+		// default:
+		// format.appendLiteral(c.toString());
+		// }
+		// format.appendLiteral(s.substring(1));
+		// }
+
+		// for ( int i = 0, n = pattern.length(); i < n; i++ ) {
+		// Character c = pattern.charAt(i);
+		// if ( c != '%' ) {
+		// if ( patternFound ) {
+		// patternFound = false;
+		// switch (c) {
+		// case 'Y':
+		// format.appendYears();
+		// break;
+		// case 'M':
+		// format.appendMonths();
+		// break;
+		// case 'D':
+		// format.appendDays();
+		// break;
+		// case 'h':
+		// format.appendHours();
+		// break;
+		// case 'm':
+		// format.appendMinutes();
+		// break;
+		// case 's':
+		// format.appendSeconds();
+		// break;
+		// }
+		// } else {
+		// format.appendLiteral(c.toString()); // not very efficient...
+		// }
+		// } else {
+		// patternFound = true;
+		// }
+		// }
+		PeriodFormatter pf = format.toFormatter();
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return dateFormat.print(new Period(new Duration((long) cycles * 1000), GamaChronology
-			.getInstance()).normalizedStandard(pt));
+		return pf.print(new Period(new Duration((long) time * 1000), chronology)
+			.normalizedStandard(pt));
+
+	}
+
+	@operator(value = "as_date", can_be_const = true)
+	public static String asDate(final double time) {
+		PeriodType pt = PeriodType.yearMonthDayTime();
+		return dateFormat.print(new Period(new Duration((long) time * 1000), chronology)
+			.normalizedStandard(pt));
 	}
 
 	@operator(value = "as_time", can_be_const = true)
-	public static String asTime(final int cycles) {
+	public static String asTime(final double cycles) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return timeFormat.print(new Period(new Duration((long) cycles * 1000), GamaChronology
-			.getInstance()).normalizedStandard(pt));
+		return timeFormat.print(new Period(new Duration((long) cycles * 1000), chronology)
+			.normalizedStandard(pt));
 	}
 }

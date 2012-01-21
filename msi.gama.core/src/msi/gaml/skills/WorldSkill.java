@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,12 +18,19 @@
  */
 package msi.gaml.skills;
 
-import msi.gama.common.interfaces.*;
-
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.setter;
+import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 
 /**
@@ -40,26 +47,26 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.RNG, type = IType.STRING_STR, init = "'" + IKeyword.MERSENNE + "'"),
 	@var(name = IKeyword.STEP, type = IType.INT_STR, constant = true),
 	@var(name = GAMA._UQR, type = IType.BOOL_STR, init = "true"),
-	@var(name = WorldSkill.STEP_LENGTH, type = IType.STRING_STR) })
+	@var(name = WorldSkill.DURATION, type = IType.STRING_STR) })
 @skill({ IKeyword.GLOBAL, IKeyword.WORLD_SPECIES_NAME })
 @species(IKeyword.WORLD_SPECIES_NAME)
 @SuppressWarnings("static-method")
 public class WorldSkill extends GeometricSkill {
 
-	public static final String STEP_LENGTH = "step_length";
+	public static final String DURATION = "duration";
 
-	@getter(var = STEP_LENGTH)
-	public String getStepLength(final IAgent agent) {
-		return Long.toString(SimulationClock.getStepLength());
+	@getter(var = DURATION)
+	public String gertDuration(final IAgent agent) {
+		return Long.toString(SimulationClock.getDuration());
 	}
 
 	@getter(var = IKeyword.TIME)
-	public int getTime(final IAgent agent) {
+	public double getTime(final IAgent agent) {
 		return SimulationClock.getTime();
 	}
 
 	@setter(IKeyword.TIME)
-	public void setTime(final IAgent agent, final int t) {
+	public void setTime(final IAgent agent, final double t) throws GamaRuntimeException {
 		SimulationClock.setTime(t);
 	}
 
@@ -94,12 +101,12 @@ public class WorldSkill extends GeometricSkill {
 	}
 
 	@getter(var = IKeyword.STEP)
-	public int getTimeStep(final IAgent agent) {
+	public double getTimeStep(final IAgent agent) {
 		return SimulationClock.getStep();
 	}
 
 	@setter(IKeyword.STEP)
-	public void setTimeStep(final IAgent agent, final int t) {
+	public void setTimeStep(final IAgent agent, final double t) throws GamaRuntimeException {
 		SimulationClock.setStep(t);
 	}
 
