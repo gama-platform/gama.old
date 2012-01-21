@@ -217,7 +217,9 @@ public class Gaml2JDOM {
 			s = noParenthesisAroundPairs ? s1 : "(" + s1 + ")";
 		} else if ( expr instanceof Unit ) {
 			Unit expr1 = (Unit) expr;
-			s = convExpression(expr1.getLeft()) + " " + expr1.getRight().getRef().getName();
+			s =
+				"(" + convExpression(expr1.getLeft()) + " " + expr1.getRight().getRef().getName() +
+					")";
 		} else if ( expr instanceof Point ) {
 			Point expr1 = (Point) expr;
 			s = "{" + convExpression(expr1.getX()) + "," + convExpression(expr1.getY()) + "}";
