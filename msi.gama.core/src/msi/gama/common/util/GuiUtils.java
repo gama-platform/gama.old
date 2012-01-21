@@ -112,7 +112,6 @@ public class GuiUtils {
 		if ( gui != null ) {
 			gui.setStatus(string, IGui.INFORM);
 		}
-
 	}
 
 	public static void asyncRun(final Runnable block) {
