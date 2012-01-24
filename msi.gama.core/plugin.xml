@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="gaml.grammar.addition" name="Addition to the grammar of GAML" schema="schema/gaml.grammar.addition.exsd"/>
+   <extension
+         point="gaml.grammar.addition">
+      <path
+            name="gaml">
+      </path>
+   </extension>
+
+</plugin>

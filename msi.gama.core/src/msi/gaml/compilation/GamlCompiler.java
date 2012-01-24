@@ -28,11 +28,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
@@ -43,6 +39,9 @@ import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.types.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.emf.common.util.URI;
+import org.osgi.framework.*;
 
 /**
  * The Class GamlActionCompiler.
@@ -64,7 +63,6 @@ public class GamlCompiler {
 	private static Map<Class, IAgentConstructor> agentConstructors = new HashMap();
 	private static Map<Class, ISymbolConstructor> symbolConstructors = new HashMap();
 	private static Map<Class, ISkillConstructor> skillConstructors = new HashMap();
-
 	private static void addSkillMethod(final Class c, final String name) {
 		List<String> names = skillMethodsToAdd.get(c);
 		if ( names == null ) {
@@ -632,48 +630,14 @@ public class GamlCompiler {
 		return args.length > 1 && IExpression.class.isAssignableFrom(args[args.length - 1]);
 	}
 
-	public static void preBuild() throws GamlException {
+	public final static List<URI> gamlAdditionsURIs = new ArrayList();
 
-		GuiUtils.debug("===> Generating support structures for GAML.");
-		final long startTime = System.nanoTime();
-		MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.FACTORIES);
-		try {
-			DescriptionFactory.setFactoryClass((Class<ISymbolFactory>) Class.forName(mp
-				.getFirst(String.valueOf(ISymbolKind.MODEL))));
-		} catch (ClassNotFoundException e1) {
-
-		}
-
-		MultiProperties types = FileUtils.getGamaProperties(MultiProperties.TYPES);
-		final Set<String> classNames =
-			new HashSet(FileUtils.getGamaProperties(MultiProperties.SKILLS).keySet());
-		classNames.addAll(types.keySet());
-		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.UNARIES).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.BINARIES).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(MultiProperties.SYMBOLS).keySet());
-		ClassLoader cl = GamlCompiler.class.getClassLoader();
-		Types.initWith(types, cl);
-		Set<Class> classes = new HashSet();
-
-		for ( String className : classNames ) {
-			try {
-				Class c = cl.loadClass(className);
-				classes.add(c);
-				type s = (type) c.getAnnotation(type.class);
-				if ( s != null ) {
-					classes.addAll(Arrays.asList(s.wraps()));
-				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		numberOfClasses = classes.size();
-		scanBuiltIn(classes);
-		long endTime = System.nanoTime();
-		GuiUtils.debug("===> Scanning of " + numberOfClasses + " support classes in " +
-			(endTime - startTime) / 1000000000d + " seconds.");
-
+	public static void addGamlExtension(final String pluginName, final String pathName) {
+		String result = "platform:/plugin/" + pluginName + "/" + pathName + "/std.gaml";
+		gamlAdditionsURIs.add(URI.createURI(result));
 	}
+
+	
 
 	// public static Set<Annotation> getAllAnnotationsForMethod(final Method m, final Class c) {
 	// // Retrieves direct and inherited annotations (from interfaces)
@@ -708,64 +672,6 @@ public class GamlCompiler {
 		return true; // ...
 	}
 
-	public static void scanBuiltIn(final Set<Class> classes) {
-		for ( Class c : classes ) {
-			// if ( !c.getCanonicalName().startsWith("msi") ) {
-			// continue;
-			// }
-			boolean isISkill = ISkill.class.isAssignableFrom(c);
-			boolean isSkill = Skill.class.isAssignableFrom(c);
-			// GUI.debug("Processing " + c.getSimpleName());
-			skill skillAnnotation = (skill) c.getAnnotation(skill.class);
-			if ( skillAnnotation != null ) {
-				getSkillConstructor(c);
-			}
-			species speciesAnnotation = (species) c.getAnnotation(species.class);
-			if ( speciesAnnotation != null && !isSkill ) {
-				getAgentConstructor(c);
-			}
-			for ( final Method m : c.getMethods() ) {
-				Annotation[] annotations = m.getAnnotations();
-				for ( Annotation vp : annotations ) {
-					// GUI.debug(">> Scanning annotation " + vp.toString());
-					if ( vp instanceof action ) {
-						action prim = (action) vp;
-						getPrimitive(c, m.getName());
-						registerNewFunction(prim.value());
-					} else if ( vp instanceof getter ) {
-						if ( isISkill ) {
-							getGetter(c, m.getName(), m.getReturnType());
-						} else {
-							getFieldGetter(c, m.getName(), m.getReturnType());
-						}
-					} else if ( vp instanceof setter ) {
-						Class[] paramClasses = m.getParameterTypes();
-						Class paramClass =
-							paramClasses.length == 1 ? paramClasses[0] : paramClasses[1];
-						getSetter(c, m.getName(), paramClass);
-					} else if ( vp instanceof operator ) {
-						operator op = (operator) vp;
-						boolean isStatic = Modifier.isStatic(m.getModifiers());
-						Class[] args = m.getParameterTypes();
-						for ( String keyword : op.value() ) {
-							registerNewOperator(keyword.intern(), m.getName(),
-								m.getDeclaringClass(), m.getReturnType(), args,
-								isUnary(args, isStatic), isContextual(args, isStatic),
-								isLazy(args, isStatic), op.iterator(), isStatic, op.priority(),
-								op.can_be_const(), op.type(), op.content_type());
-						}
-					}
-				}
-			}
-		}
-		for ( IType type : Types.getSortedTypes() ) {
-			if ( type != null ) {
-				initFieldGetters(type);
-			}
-		}
-		// ModelFactory.computeBuiltInSpecies(new ModelDescription());
-	}
-
 	public static void initFieldGetters(final IType theType) {
 		try {
 			List<IDescription> vars = getFieldDescriptions(theType.toClass());
@@ -787,6 +693,33 @@ public class GamlCompiler {
 
 	}
 
-	private static int numberOfClasses;
+	/**
+	 * @return
+	 */
+	public static Map<String, Class> getBuiltInSpeciesClasses() {
+		return GamaBundleLoader.builtInSpeciesClasses;
+	}
+
+	/**
+	 * @return
+	 */
+	public static Map<String, Class> getSkillClasses() {
+		return GamaBundleLoader.skillClasses;
+	}
+
+	/**
+	 * @param kind
+	 * @return
+	 */
+	public static Class getFactoriesByKind(final int kind) {
+		return GamaBundleLoader.FACTORIES_BY_KIND.get(kind);
+	}
+
+	/**
+	 * @return
+	 */
+	public static Map<Integer, List<Class>> getClassesByKind() {
+		return GamaBundleLoader.CLASSES_BY_KIND;
+	}
 
 }

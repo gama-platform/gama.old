@@ -6,8 +6,9 @@ package msi.gama.common.util;
 
 import java.io.*;
 import msi.gama.common.interfaces.IFileAccess;
-import msi.gama.precompiler.MultiProperties;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlException;
+import org.osgi.framework.Bundle;
 
 /**
  * The class FileUtils.
@@ -24,10 +25,11 @@ public class FileUtils {
 		fileAccess = fa;
 	}
 
-	public static MultiProperties getGamaProperties(final String fileName) throws GamlException {
+	public static GamlProperties getGamaProperties(final Bundle pluginName,
+		final String pathToAdditions, final String fileName) throws GamlException {
 		if ( fileAccess == null ) { throw new GamlException("Properties " + fileName +
 			" not accessible"); }
-		return fileAccess.getGamaProperties(fileName);
+		return fileAccess.getGamaProperties(pluginName, pathToAdditions, fileName);
 	}
 
 	/**

@@ -33,19 +33,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class Types {
 
-	public static IType[] typeToIType;
-	public static HashMap<String, IType> stringToIType;
-	public static HashMap<Class, IType> classToIType;
+	public final static IType[] typeToIType = new IType[256];
+	public final static HashMap<String, IType> stringToIType = new HashMap();
+	public final static HashMap<Class, IType> classToIType = new HashMap();
 
 	public final static IType NO_TYPE = new GamaNoType();
 
 	// private final static Map<Short, GamlModelTypes> managers;
 
-	public static void initWith(final MultiProperties mp, final ClassLoader cl) {
-		typeToIType = new IType[256];
-		classToIType = new HashMap();
-		stringToIType = new HashMap();
-
+	public static void initWith(final GamlProperties mp, final ClassLoader cl) {
 		Class c;
 		for ( String className : mp.keySet() ) {
 			try {

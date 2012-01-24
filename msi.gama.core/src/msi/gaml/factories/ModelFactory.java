@@ -20,12 +20,11 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -42,22 +41,8 @@ import msi.gaml.skills.Skill;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelFactory extends SymbolFactory {
 
-	private static final Map<String, Class> BUILT_IN_SPECIES_CLASSES = new HashMap();
-
-	static {
-		try {
-			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.SPECIES);
-			for ( String className : mp.keySet() ) {
-				BUILT_IN_SPECIES_CLASSES.put(mp.getFirst(className), Class.forName(className));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	public static boolean isBuiltIn(final String name) {
-		return BUILT_IN_SPECIES_CLASSES.containsKey(name);
+		return GamlCompiler.getBuiltInSpeciesClasses().containsKey(name);
 	}
 
 	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
@@ -202,16 +187,18 @@ public class ModelFactory extends SymbolFactory {
 		// Firstly, create "world_species" (defined in WorldSkill) SpeciesDescription with
 		// ModelDescription as SuperDescription
 		String facets[] = new String[0];
-		Class worldSkill = BUILT_IN_SPECIES_CLASSES.get(IKeyword.WORLD_SPECIES_NAME);
+		Class worldSkill = GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.WORLD_SPECIES_NAME);
 		skill s = (skill) worldSkill.getAnnotation(skill.class);
 		if ( s != null ) {
 			String[] names = s.value();
 			String skillName = names[0];
 			facets =
-				new String[] { /* ISymbol.SPECIES, */IKeyword.NAME, IKeyword.WORLD_SPECIES_NAME,
+				new String[] { /* ISymbol.SPECIES, */
+					IKeyword.NAME,
+					IKeyword.WORLD_SPECIES_NAME,
 					IKeyword.BASE,
-					BUILT_IN_SPECIES_CLASSES.get(IKeyword.DEFAULT).getCanonicalName(),
-					IKeyword.SKILLS, skillName };
+					GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
+						.getCanonicalName(), IKeyword.SKILLS, skillName };
 		}
 		SpeciesDescription worldSpeciesDescription =
 			(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES, model,
@@ -220,9 +207,9 @@ public class ModelFactory extends SymbolFactory {
 
 		// Secondly, create other built-in SpeciesDescriptions with worldSpeciesDescription as
 		// SuperDescription
-		for ( String speciesName : BUILT_IN_SPECIES_CLASSES.keySet() ) {
+		for ( String speciesName : GamlCompiler.getBuiltInSpeciesClasses().keySet() ) {
 			if ( !IKeyword.WORLD_SPECIES_NAME.equals(speciesName) ) {
-				Class c = BUILT_IN_SPECIES_CLASSES.get(speciesName);
+				Class c = GamlCompiler.getBuiltInSpeciesClasses().get(speciesName);
 				facets =
 					new String[] { /* ISymbol.SPECIES, */IKeyword.NAME, speciesName,
 						IKeyword.BASE, c.getCanonicalName() };
@@ -232,10 +219,12 @@ public class ModelFactory extends SymbolFactory {
 						String[] names = s.value();
 						String skillName = names[0];
 						facets =
-							new String[] { /* ISymbol.SPECIES, */IKeyword.NAME, speciesName,
+							new String[] { /* ISymbol.SPECIES, */
+								IKeyword.NAME,
+								speciesName,
 								IKeyword.BASE,
-								BUILT_IN_SPECIES_CLASSES.get(IKeyword.DEFAULT).getCanonicalName(),
-								IKeyword.SKILLS, skillName };
+								GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
+									.getCanonicalName(), IKeyword.SKILLS, skillName };
 					}
 				}
 				SpeciesDescription sd =

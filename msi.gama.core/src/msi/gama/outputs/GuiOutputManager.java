@@ -74,6 +74,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				GuiUtils.clearErrors();
 				// GUI.debug("Displaying the console");
 				GuiUtils.showConsoleView();
+				// GuiUtils.showView("org.eclipse.swt.tools.views.SpyView", null);
 				// GUI.debug("Hiding the monitors (if any)");
 				GuiUtils.hideMonitorView();
 				// GUI.debug("Setting the title of the workbench");
@@ -83,11 +84,12 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 					// GUI.debug("Redisplaying the monitors");
 					GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
 				}
-				if ( !exp.getParametersToDisplay().isEmpty() ) {
-					// GUI.debug("Showing the parameters view");
-					GuiUtils.showParameterView(exp);
-				}
-				GuiUtils.informStatus(" Simulation ready ");
+				// if ( !exp.getParametersToDisplay().isEmpty() ) {
+				// GUI.debug("Showing the parameters view");
+				GuiUtils.showParameterView(exp);
+				// }
+				GuiUtils.informStatus(" Simulation of experiment " + exp.getName() + " of model " +
+					exp.getModel().getName() + " ready.");
 			}
 		});
 	}

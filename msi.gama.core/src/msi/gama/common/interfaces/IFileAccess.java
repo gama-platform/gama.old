@@ -4,8 +4,9 @@
  */
 package msi.gama.common.interfaces;
 
-import msi.gama.precompiler.MultiProperties;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlException;
+import org.osgi.framework.Bundle;
 
 /**
  * The class IFileAccess.
@@ -16,6 +17,7 @@ import msi.gaml.compilation.GamlException;
  */
 public interface IFileAccess {
 
-	MultiProperties getGamaProperties(final String fileName) throws GamlException;
+	GamlProperties getGamaProperties(final Bundle plugin, final String pathToAdditions,
+		final String fileName) throws GamlException;
 
 }

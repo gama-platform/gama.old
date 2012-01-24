@@ -21,6 +21,7 @@ package msi.gaml.skills;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -133,7 +134,9 @@ public class MovingSkill extends GeometricSkill {
 		// We do not change the speed of the agent anymore. Only the current primitive is affected
 		Double s =
 			scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
-		return s /* getTimeStep(scope) */;
+		// 20/1/2012 Change : The speed of the agent is multiplied by the timestep in order to
+		// obtain the maximal distance it can cover in one step.
+		return s * SimulationClock.getStep()/* getTimeStep(scope) */;
 	}
 
 	private ILocation computeTarget(final IScope scope, final IAgent agent)
@@ -172,7 +175,7 @@ public class MovingSkill extends GeometricSkill {
 	@args({ IKeyword.SPEED, "amplitude", "bounds" })
 	public IPath primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
-		IPath pathFollowed;
+		IPath pathFollowed = null;
 		ILocation location = agent.getLocation();
 		int heading = computeHeadingFromAmplitude(scope, agent);
 		double dist = computeDistance(scope, agent);
@@ -181,7 +184,7 @@ public class MovingSkill extends GeometricSkill {
 
 		if ( loc == null ) {
 			agent.setHeading(heading - 180);
-			pathFollowed = null;
+			// pathFollowed = null;
 		} else {
 			Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
@@ -190,7 +193,7 @@ public class MovingSkill extends GeometricSkill {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
 			}
-			pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
+			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
 			agent.setLocation(loc);
 		}
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
@@ -212,7 +215,7 @@ public class MovingSkill extends GeometricSkill {
 	@args({ IKeyword.SPEED, IKeyword.HEADING, "bounds" })
 	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
-		IPath pathFollowed;
+		IPath pathFollowed = null;
 		ILocation location = agent.getLocation();
 		double dist = computeDistance(scope, agent);
 		int heading = computeHeading(scope, agent);
@@ -220,7 +223,7 @@ public class MovingSkill extends GeometricSkill {
 		ILocation loc = getTopology(agent).getDestination(location, heading, dist, true);
 		if ( loc == null ) {
 			agent.setHeading(heading - 180);
-			pathFollowed = null;
+			// pathFollowed = null;
 		} else {
 			Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if ( bounds != null ) {
@@ -229,7 +232,7 @@ public class MovingSkill extends GeometricSkill {
 					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
 				}
 			}
-			pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
+			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
 			agent.setLocation(loc);
 		}
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
@@ -247,13 +250,15 @@ public class MovingSkill extends GeometricSkill {
 
 		GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		if ( path != null && !path.getEdgeList().isEmpty() ) {
-			pathFollowed = moveToNextLocAlongPath(agent, path, dist);
-			scope.setStatus(pathFollowed == null ? ExecutionStatus.failure
-				: ExecutionStatus.success);
-			return pathFollowed;
+			pathFollowed = moveToNextLocAlongPathSimplified(agent, path, dist);
+			scope.setStatus(/*
+							 * pathFollowed == null ? ExecutionStatus.failure
+							 * :
+							 */ExecutionStatus.success);
+			return path /* Followed */;
 		}
 		edges.add(new GamaShape(location));
-		pathFollowed = new GamaPath(getTopology(agent), location, location, edges);
+		// pathFollowed = new GamaPath(getTopology(agent), location, location, edges);
 		scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
@@ -283,13 +288,15 @@ public class MovingSkill extends GeometricSkill {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist);
-		if ( pathFollowed == null ) {
-			scope.setStatus(ExecutionStatus.failure);
-			return null;
-		}
+		IPath pathFollowed = moveToNextLocAlongPathSimplified(agent, path, maxDist);
+		/*
+		 * if ( pathFollowed == null ) {
+		 * scope.setStatus(ExecutionStatus.failure);
+		 * return null;
+		 * }
+		 */
 		scope.setStatus(ExecutionStatus.success);
-		return pathFollowed;
+		return path /* Followed */;
 	}
 
 	/**
@@ -301,11 +308,128 @@ public class MovingSkill extends GeometricSkill {
 	 * @param distance max displacement distance
 	 * @return the next location
 	 */
+
+	private IPath moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
+		final double d) {
+		int index = 0;
+		int indexSegment = 1;
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		IList<IShape> edges = path.getEdgeList();
+		int nb = edges.size();
+		double distance = d;
+		if ( path.isVisitor(agent) ) {
+			index = path.indexOf(agent);
+			indexSegment = path.indexSegmentOf(agent);
+		} else {
+			path.acceptVisitor(agent);
+			double distanceS = Double.MAX_VALUE;
+			IShape line = null;
+			for ( int i = 0; i < nb; i++ ) {
+				line = edges.get(i);
+				double distS = line.euclidianDistanceTo(currentLocation);
+				if ( distS < distanceS ) {
+					distanceS = distS;
+					index = i;
+				}
+			}
+			line = edges.get(index);
+
+			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
+			Point pointGeom = (Point) currentLocation.getInnerGeometry();
+			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
+				distanceS = Double.MAX_VALUE;
+				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+				int nbSp = coords.length;
+				Coordinate[] temp = new Coordinate[2];
+				for ( int i = 0; i < nbSp - 1; i++ ) {
+					temp[0] = coords[i];
+					temp[1] = coords[i + 1];
+					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					double distS = segment.distance(pointGeom);
+					if ( distS < distanceS ) {
+						distanceS = distS;
+						indexSegment = i + 1;
+					}
+				}
+			}
+		}
+		IShape lineEnd = edges.get(nb - 1);
+		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
+		int endIndexSegment = 1;
+		Point pointGeom = (Point) falseTarget.getInnerGeometry();
+		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
+			double distanceT = Double.MAX_VALUE;
+			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
+			int nbSp = coords.length;
+			Coordinate[] temp = new Coordinate[2];
+			for ( int i = 0; i < nbSp - 1; i++ ) {
+				temp[0] = coords[i];
+				temp[1] = coords[i + 1];
+				LineString segment = GeometryUtils.getFactory().createLineString(temp);
+				double distT = segment.distance(pointGeom);
+				if ( distT < distanceT ) {
+					distanceT = distT;
+					endIndexSegment = i + 1;
+				}
+			}
+		}
+		for ( int i = index; i < nb; i++ ) {
+			IShape line = edges.get(i);
+			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+
+			for ( int j = indexSegment; j < coords.length; j++ ) {
+				GamaPoint pt = null;
+				if ( i == nb - 1 && j == endIndexSegment ) {
+					pt = falseTarget;
+				} else {
+					pt = new GamaPoint(coords[j]);
+				}
+				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
+				if ( distance < dist ) {
+					double ratio = distance / dist;
+					double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
+					double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
+					currentLocation.setLocation(newX, newY);
+					distance = 0;
+					break;
+				} else if ( distance > dist ) {
+					currentLocation = pt;
+					distance = distance - dist;
+					if ( i == nb - 1 && j == endIndexSegment ) {
+						break;
+					}
+					indexSegment++;
+				} else {
+					currentLocation = pt;
+					distance = 0;
+					if ( indexSegment < coords.length - 1 ) {
+						indexSegment++;
+					} else {
+						index++;
+					}
+					break;
+				}
+			}
+			if ( distance == 0 ) {
+				break;
+			}
+			indexSegment = 1;
+			index++;
+		}
+		if ( currentLocation.equals(falseTarget) ) {
+			currentLocation = (GamaPoint) path.getEndVertex();
+		}
+		path.setIndexSegementOf(agent, indexSegment);
+		path.setIndexOf(agent, index);
+		agent.setLocation(currentLocation);
+		return null;
+	}
+
 	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
 		int index = 0;
 		int indexSegment = 1;
-		ILocation currentLocation = agent.getLocation().copy();
-		ILocation startLocation = agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
 		IList<IShape> edges = path.getEdgeList();
 		Coordinate[] temp = new Coordinate[2];
 		int nb = edges.size();
@@ -329,7 +453,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 			line = edges.get(index);
 
-			currentLocation = Points.opClosestPointTo(currentLocation, line);
+			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
@@ -348,7 +472,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 		}
 		IShape lineEnd = edges.get(nb - 1);
-		ILocation falseTarget = Points.opClosestPointTo(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
 		int endIndexSegment = 1;
 		Point pointGeom = (Point) falseTarget.getInnerGeometry();
 		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -369,37 +493,39 @@ public class MovingSkill extends GeometricSkill {
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
-			double weight = path.getWeight(line) / line.getGeometry().getPerimeter();
+			// The weight computed here is absolutely useless.. since getWeight() returns the
+			// perimeter.
+			// double weight = path.getWeight(line) / line.getGeometry().getPerimeter();
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
-				ILocation pt = null;
+				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
 					pt = falseTarget;
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
-				dist = weight * dist;
+				// dist = weight * dist;
 				if ( distance < dist ) {
-					ILocation pto = currentLocation.copy();
+					GamaPoint pto = currentLocation.copy();
 					double ratio = distance / dist;
-					double newX =
-						currentLocation.getX() + ratio * (pt.getX() - currentLocation.getX());
-					double newY =
-						currentLocation.getY() + ratio * (pt.getY() - currentLocation.getY());
+					double newX = pto.x + ratio * (pt.x - pto.x);
+					double newY = pto.y + ratio * (pt.y - pto.y);
 					currentLocation.setLocation(newX, newY);
-					IShape gl = GamaGeometryType.buildLine(pto, currentLocation.copy());
-					if ( line.getAgent() != null ) {
-						agents.put(gl, line.getAgent());
+					IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
+					IAgent a = line.getAgent();
+					if ( a != null ) {
+						agents.put(gl, a);
 					}
 					segments.add(gl);
 					distance = 0;
 					break;
 				} else if ( distance > dist ) {
-					IShape gl = GamaGeometryType.buildLine(currentLocation.copy(), pt.copy());
-					if ( line.getAgent() != null ) {
-						agents.put(gl, line.getAgent());
+					IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
+					IAgent a = line.getAgent();
+					if ( a != null ) {
+						agents.put(gl, a);
 					}
 					segments.add(gl);
 					currentLocation = pt;
@@ -409,9 +535,10 @@ public class MovingSkill extends GeometricSkill {
 					}
 					indexSegment++;
 				} else {
-					IShape gl = GamaGeometryType.buildLine(currentLocation.copy(), pt.copy());
-					if ( line.getAgent() != null ) {
-						agents.put(gl, line.getAgent());
+					IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
+					IAgent a = line.getAgent();
+					if ( a != null ) {
+						agents.put(gl, a);
 					}
 					segments.add(gl);
 					currentLocation = pt;
@@ -431,7 +558,7 @@ public class MovingSkill extends GeometricSkill {
 			index++;
 		}
 		if ( currentLocation.equals(falseTarget) ) {
-			currentLocation = path.getEndVertex();
+			currentLocation = (GamaPoint) path.getEndVertex();
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
@@ -439,10 +566,6 @@ public class MovingSkill extends GeometricSkill {
 		IPath followedPath =
 			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);
 		followedPath.setAgents(agents);
-		// double dist = agent.getLocation().distance(currentLocation);
-		// if ( (int) dist > (int) d ) {
-		// java.lang.System.out.println("...");
-		// }
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}
@@ -524,7 +647,6 @@ public class MovingSkill extends GeometricSkill {
 	 * 
 	 * }
 	 */
-	
 
 	/**
 	 * Method used by square discretisation pathfinder to find the valid neighborhood of a location
@@ -574,7 +696,6 @@ public class MovingSkill extends GeometricSkill {
 		if ( j < jMax && matrix.get(i, j + 1) == cpt ) { return new IntPoint(i, j + 1); }
 		return null;
 	}
-
 
 	/**
 	 * Find the next location toward a target in a geometry using a triangulation

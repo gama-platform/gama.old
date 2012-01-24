@@ -18,42 +18,18 @@
  */
 package msi.gaml.skills;
 
-import java.util.*;
-import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.MultiProperties;
 import msi.gama.runtime.IScope;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamlCompiler;
 
 public abstract class Skill implements ISkill {
-
-	private static final Map<String, Class> classes;
-
-	static {
-		classes = new HashMap();
-		try {
-			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.SKILLS);
-
-			for ( String className : mp.keySet() ) {
-				for ( String keyword : mp.get(className) ) {
-					try {
-						classes.put(keyword, Class.forName(className));
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} catch (GamlException e1) {
-			e1.printStackTrace();
-		}
-	}
 
 	protected IAgent getCurrentAgent(final IScope scope) {
 		return scope.getAgentScope();
 	}
 
 	public static Class getSkillClassFor(final String sn) {
-		return classes.get(sn);
+		return GamlCompiler.getSkillClasses().get(sn);
 	}
 
 	public static ISkill createSharedSkillFor(final Class c) {

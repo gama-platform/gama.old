@@ -74,7 +74,7 @@ public class BatchExperiment extends AbstractExperiment {
 	private final List<IParameter.Batch> methodParameters = new ArrayList();
 	private IScheduledAction haltAction;
 	private final Semaphore innerLoopSemaphore = new Semaphore(1, false);
-	private volatile int runNumber, innerLoopIndex;
+	private/* volatile */int runNumber, innerLoopIndex;
 
 	public BatchExperiment(final IDescription description) throws GamaRuntimeException {
 		super(description);
@@ -205,7 +205,7 @@ public class BatchExperiment extends AbstractExperiment {
 		throws GamaRuntimeException {
 		currentSolution = sol;
 		fitnessValues.clear();
-		runNumber++;
+		runNumber = runNumber + 1;
 		for ( innerLoopIndex = 0; innerLoopIndex < seeds.length; innerLoopIndex++ ) {
 			try {
 				innerLoopSemaphore.acquire(1);

@@ -189,8 +189,7 @@ public class GamaCompiler {
 	private static byte[] data;
 	private static final Class[] emptyClassArray = new Class[0];
 	static final StrippedCompiler compiler = new StrippedCompiler();
-	private static final CustomLoader loader =
-		new CustomLoader(GamaCompiler.class.getClassLoader());
+	private static final CustomLoader loader = new CustomLoader(GamaClassLoader.getInstance());
 	private static IClassLoader iClassLoader = new ClassLoaderIClassLoader(loader);
 	private static int id = 0;
 	private static final Class[] oneClassArray = new Class[1];

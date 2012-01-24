@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -34,7 +33,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
@@ -50,40 +48,9 @@ import msi.gaml.expressions.*;
 @handles({ ISymbolKind.ENVIRONMENT })
 public class SymbolFactory implements ISymbolFactory {
 
-	public static Map<Integer, List<Class>> CLASSES_BY_KIND = new HashMap();
-	public static Map<Integer, Class> FACTORIES_BY_KIND = new HashMap();
 	public static Map<String, String> KEYWORD_TAGS = new HashMap();
 
 	static {
-		try {
-			MultiProperties mp = FileUtils.getGamaProperties(MultiProperties.KINDS);
-			for ( String ks : mp.keySet() ) {
-				Integer i = Integer.decode(ks);
-				CLASSES_BY_KIND.put(i, new ArrayList());
-				for ( String className : mp.get(ks) ) {
-					try {
-						CLASSES_BY_KIND.get(i).add(Class.forName(className));
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			mp = FileUtils.getGamaProperties(MultiProperties.FACTORIES);
-
-			for ( String ks : mp.keySet() ) {
-				Integer i = Integer.decode(ks);
-				String factory_name = new ArrayList<String>(mp.get(ks)).get(0);
-				try {
-					FACTORIES_BY_KIND.put(i, Class.forName(factory_name));
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-			}
-		} catch (GamlException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-
-		}
 		// KEYWORD_TAGS.put(ISymbol.SPECIES, ISpecies.CONTROL);
 		KEYWORD_TAGS.put(IKeyword.VAR, IKeyword.TYPE);
 		KEYWORD_TAGS.put(IKeyword.METHOD, IKeyword.NAME);
@@ -111,7 +78,7 @@ public class SymbolFactory implements ISymbolFactory {
 		uses annot = getClass().getAnnotation(uses.class);
 		if ( annot == null ) { return; }
 		for ( int kind : annot.value() ) {
-			Class c = FACTORIES_BY_KIND.get(kind);
+			Class c = GamlCompiler.getFactoriesByKind(kind);
 			Constructor cc = null;
 			try {
 				cc = c.getConstructor();
@@ -135,7 +102,7 @@ public class SymbolFactory implements ISymbolFactory {
 		handles annot = getClass().getAnnotation(handles.class);
 		if ( annot == null ) { return; }
 		for ( int c : annot.value() ) {
-			List<Class> classes = CLASSES_BY_KIND.get(c);
+			List<Class> classes = GamlCompiler.getClassesByKind().get(c);
 			for ( Class clazz : classes ) {
 				register(clazz);
 			}
@@ -182,7 +149,7 @@ public class SymbolFactory implements ISymbolFactory {
 				contexts.add(p);
 			}
 			for ( int kind : parents.kinds() ) {
-				List<Class> classes = CLASSES_BY_KIND.get(kind);
+				List<Class> classes = GamlCompiler.getClassesByKind().get(kind);
 				for ( Class clazz : classes ) {
 					symbol names = (symbol) clazz.getAnnotation(symbol.class);
 					if ( names != null ) {
