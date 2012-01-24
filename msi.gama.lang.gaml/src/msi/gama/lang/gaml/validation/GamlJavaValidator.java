@@ -161,6 +161,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		if ( kName == null ) { return; }
 		if ( key.getBlock() != null ) {
 			Set<String> facets1 = allowedFacets.get(kName);// list of facets allowed in this key
+			// if ( facets1 == null ) {
+			// facets1 = Collections.EMPTY_SET;
+			// }
 			Set<String> facets2 = null;
 			if ( f.getKey() != null ) {
 				final String keyofRule = specialRules.get(kName);
@@ -188,7 +191,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				}
 			}
 			if ( f.getKey() != null &&
-				!(facets1.contains(f.getKey().getRef().getName()) || facets2 != null &&
+				!(facets1 == null || facets1.contains(f.getKey().getRef().getName()) || facets2 != null &&
 					facets2.contains(f.getKey().getRef().getName())) ) {
 				warning(f.getKey().getRef().getName() + " is not a facet of " + kName,
 					GamlPackage.Literals.FACET_EXPR__KEY, QF_NOTFACETOFKEY);

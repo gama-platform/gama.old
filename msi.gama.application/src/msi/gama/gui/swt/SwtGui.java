@@ -452,14 +452,21 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void showParameterView(final IExperiment exp) {
-		final ExperimentParametersView view =
-			(ExperimentParametersView) showView(ExperimentParametersView.ID, null);
+
 		run(new Runnable() {
 
 			@Override
 			public void run() {
-				view.addItem(exp);
+				try {
+					ExperimentParametersView view =
+						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID,
+							null, IWorkbenchPage.VIEW_VISIBLE);
+					view.addItem(exp);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
 			}
+
 		});
 	}
 
@@ -492,7 +499,8 @@ public class SwtGui implements IGui {
 					.addGamaSelectionListener((GamaSelectionListener) o);
 
 			}
-			return (IGamaView) o;
+			if ( o instanceof IGamaView ) { return (IGamaView) o; }
+			o = new GamaRuntimeException("Impossible to open view " + viewId);
 		}
 		if ( o instanceof Exception ) {
 			GAMA.reportError(new GamaRuntimeException((Exception) o));

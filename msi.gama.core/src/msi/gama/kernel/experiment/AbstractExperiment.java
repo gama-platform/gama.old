@@ -146,7 +146,10 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 	public void run() {
 		while (isOpen) {
 			try {
-				processCommand(commands.take());
+				Integer i = commands.take();
+				if ( i == null ) { throw new InterruptedException(
+					"Internal error. Shutting down the simulation"); }
+				processCommand(i);
 			} catch (InterruptedException e) {
 				GuiUtils.errorStatus("Cancelled");
 				close();

@@ -20,10 +20,10 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.Facets;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
@@ -78,7 +78,7 @@ public class SpeciesFactory extends SymbolFactory {
 		}
 		if ( facets.containsKey(IKeyword.BASE) ) {
 			try {
-				base = Class.forName(facets.getString(IKeyword.BASE));
+				base = GamaClassLoader.getInstance().loadClass(facets.getString(IKeyword.BASE));
 			} catch (ClassNotFoundException e) {
 				throw new GamlException("Impossible to instantiate '" + keyword + "' because: " +
 					e.getMessage(), source);
