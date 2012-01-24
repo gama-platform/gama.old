@@ -27,57 +27,41 @@ import java.util.*;
  * @todo Description
  * 
  */
-public class MultiProperties {
+public class GamlProperties {
 
-	private final static Map<String, MultiProperties> cache = new HashMap();
-
-	public static MultiProperties readCache(final String s) {
-		// System.out.println("Reading cached properties " + s);
-		return cache.get(s);
-	}
-
-	public static void writeCache(final String s, final MultiProperties mp) {
-		// System.out.println("Caching properties " + s + "; Keys : " + mp.keySet());
-		cache.put(s, mp);
-	}
+	private final static Map<String, GamlProperties> globalRegistry = new HashMap();
+	private final static Map<String, Map<String, GamlProperties>> registriesByPlugin =
+		new HashMap();
 
 	Map<String, Set<String>> map;
 
 	public final static String GRAMMAR = "std.gaml";
-
 	public final static String SKILLS = "skills.properties";
-
 	public final static String UNARIES = "unaries.properties";
-
 	public final static String BINARIES = "binaries.properties";
-
 	public final static String TYPES = "types.properties";
-
 	public final static String SYMBOLS = "symbols.properties";
-
 	public final static String CHILDREN = "children.properties";
-
 	public final static String FACETS = "facets.properties";
-
 	public final static String KINDS = "kinds.properties";
-
 	public final static String FACTORIES = "factories.properties";
-
 	public final static String SPECIES = "species.properties";
-
 	public final static String VARS = "vars.properties";
-
 	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES, SYMBOLS,
-	CHILDREN, FACETS, KINDS, FACTORIES, SPECIES, VARS };
+		CHILDREN, FACETS, KINDS, FACTORIES, SPECIES, VARS };
 
 	static final String NULL = "";
 
-	public MultiProperties() {
+	public GamlProperties() {
 		map = new HashMap();
 	}
 
 	public Set<String> keySet() {
 		return map.keySet();
+	}
+
+	public boolean isEmpty() {
+		return map.isEmpty();
 	}
 
 	public Set<String> values() {
@@ -116,7 +100,7 @@ public class MultiProperties {
 		}
 	}
 
-	public void putAll(final MultiProperties m) {
+	public void putAll(final GamlProperties m) {
 		for ( String key : m.keySet() ) {
 			put(key, m.get(key));
 		}
@@ -188,24 +172,47 @@ public class MultiProperties {
 		} catch (IOException e) {}
 	}
 
-	public static MultiProperties loadFrom(final File file, final String title) {
-		if ( file == null ) { return new MultiProperties(); }
-		if ( cache.containsKey(title) ) { return readCache(title); }
-		MultiProperties mp = new MultiProperties();
-		try {
-			mp.load(new FileReader(file));
-		} catch (FileNotFoundException e) {}
-		writeCache(title, mp);
-		return mp;
+	public static GamlProperties loadFrom(final String title) {
+		if ( globalRegistry.containsKey(title) ) { return globalRegistry.get(title); }
+		return new GamlProperties();
 	}
 
-	public static MultiProperties loadFrom(final InputStream stream, final String title) {
-		if ( stream == null ) { return new MultiProperties(); }
-		if ( cache.containsKey(title) ) { return readCache(title); }
-		MultiProperties mp = new MultiProperties();
-		mp.load(new InputStreamReader(stream));
-		writeCache(title, mp);
-		return mp;
+	public static GamlProperties loadFrom(final InputStream stream, final String plugin,
+		final String title) {
+		if ( stream == null ) { return new GamlProperties(); }
+		if ( !registriesByPlugin.containsKey(plugin) ) {
+			registriesByPlugin.put(plugin, new HashMap());
+		}
+		Map<String, GamlProperties> local = registriesByPlugin.get(plugin);
+		if ( !local.containsKey(title) ) {
+			GamlProperties mp = new GamlProperties();
+			mp.load(new InputStreamReader(stream));
+			local.put(title, mp);
+			if ( !globalRegistry.containsKey(title) ) {
+				globalRegistry.put(title, new GamlProperties());
+			}
+			globalRegistry.get(title).putAll(mp);
+		}
+		return local.get(title);
+	}
 
+	private static void reconsolidate() {
+		globalRegistry.clear();
+		for ( String s : registriesByPlugin.keySet() ) {
+			Map<String, GamlProperties> local = registriesByPlugin.get(s);
+			for ( String prop : local.keySet() ) {
+				if ( !globalRegistry.containsKey(prop) ) {
+					globalRegistry.put(prop, new GamlProperties());
+				}
+				globalRegistry.get(prop).putAll(local.get(prop));
+			}
+		}
+	}
+
+	public static void removePluginProperties(final String plugin) {
+		Map<String, GamlProperties> local = registriesByPlugin.get(plugin);
+		if ( local == null || local.isEmpty() ) { return; }
+		registriesByPlugin.remove(plugin);
+		reconsolidate();
 	}
 }

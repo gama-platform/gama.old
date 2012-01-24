@@ -54,20 +54,20 @@ public class GamaProcessor extends AbstractProcessor {
 		"::", "|", "?", ">", "=", "<", "3d");
 	private final List<String> lreserved = new ArrayList<String>();
 
-	private final Map<String, MultiProperties> store = new HashMap<String, MultiProperties>();
+	private final Map<String, GamlProperties> store = new HashMap<String, GamlProperties>();
 
 	public GamaProcessor() {}
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		for ( String f : MultiProperties.FILES ) {
+		for ( String f : GamlProperties.FILES ) {
 			store.put(f, initProperties(f));
 		}
 	}
 
-	private MultiProperties initProperties(final String name) {
-		MultiProperties prop = new MultiProperties();
+	private GamlProperties initProperties(final String name) {
+		GamlProperties prop = new GamlProperties();
 		Filer filer = processingEnv.getFiler();
 		try {
 			prop.load(filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name).openReader(true));
@@ -109,7 +109,7 @@ public class GamaProcessor extends AbstractProcessor {
 				svars.add(a);
 			}
 		}
-		store.get(MultiProperties.VARS).put("reserved", svars);
+		store.get(GamlProperties.VARS).put("reserved", svars);
 	}
 
 	private void processArgs(final Set<? extends Element> set) {
@@ -119,7 +119,7 @@ public class GamaProcessor extends AbstractProcessor {
 				svars.add(a);
 			}
 		}
-		store.get(MultiProperties.VARS).put("actions_args", svars);
+		store.get(GamlProperties.VARS).put("actions_args", svars);
 	}
 
 	private void processAction(final Set<? extends Element> set) {
@@ -127,7 +127,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : set ) {
 			sactions.add(e.getAnnotation(action.class).value());
 		}
-		store.get(MultiProperties.VARS).put("actions", sactions);
+		store.get(GamlProperties.VARS).put("actions", sactions);
 	}
 
 	private void processVar(final Set<? extends Element> set) {
@@ -137,7 +137,7 @@ public class GamaProcessor extends AbstractProcessor {
 				svars.add(v.name());
 			}
 		}
-		store.get(MultiProperties.VARS).put("vars", svars);
+		store.get(GamlProperties.VARS).put("vars", svars);
 	}
 
 	private void processFactories(final Set<? extends Element> types) {
@@ -151,7 +151,7 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( fact_annot != null ) {
 				int[] kinds = fact_annot.value();
 				for ( int kind : kinds ) {
-					store.get(MultiProperties.FACTORIES).put(String.valueOf(kind), className);
+					store.get(GamlProperties.FACTORIES).put(String.valueOf(kind), className);
 				}
 			}
 		}
@@ -171,14 +171,14 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( skill_annot != null ) {
 				String[] skill_names = skill_annot.value();
 				for ( String skill_name : skill_names ) {
-					store.get(MultiProperties.SKILLS).put(className, skill_name);
+					store.get(GamlProperties.SKILLS).put(className, skill_name);
 				}
 			} /* else */
 
 			species species_annot = e.getAnnotation(species.class);
 			if ( species_annot != null ) {
-				store.get(MultiProperties.SKILLS).put(className, species_annot.value());
-				store.get(MultiProperties.SPECIES).put(className, species_annot.value());
+				store.get(GamlProperties.SKILLS).put(className, species_annot.value());
+				store.get(GamlProperties.SPECIES).put(className, species_annot.value());
 			}
 
 		}
@@ -191,7 +191,7 @@ public class GamaProcessor extends AbstractProcessor {
 				type type_annot = element.getAnnotation(type.class);
 				if ( type_annot != null ) {
 					String typeName = type_annot.value();
-					store.get(MultiProperties.TYPES).put(className, typeName);
+					store.get(GamlProperties.TYPES).put(className, typeName);
 				}
 			}
 		}
@@ -223,17 +223,17 @@ public class GamaProcessor extends AbstractProcessor {
 		Set<Modifier> m = element.getModifiers();
 		List<? extends VariableElement> args = element.getParameters();
 		boolean isStatic = m.contains(Modifier.STATIC);
-		if ( args.size() == 0 && !isStatic ) { return MultiProperties.UNARIES; }
+		if ( args.size() == 0 && !isStatic ) { return GamlProperties.UNARIES; }
 		boolean contextual = args.get(0).asType().toString().contains("IScope");
-		if ( args.size() == 1 && !isStatic && contextual ) { return MultiProperties.UNARIES; }
-		if ( args.size() == 1 && isStatic ) { return MultiProperties.UNARIES; }
-		if ( args.size() == 2 && isStatic && contextual ) { return MultiProperties.UNARIES; }
+		if ( args.size() == 1 && !isStatic && contextual ) { return GamlProperties.UNARIES; }
+		if ( args.size() == 1 && isStatic ) { return GamlProperties.UNARIES; }
+		if ( args.size() == 2 && isStatic && contextual ) { return GamlProperties.UNARIES; }
 
 		// Etendre cette m�thode en faisant un check plus approfondi et en
 		// �mettant une erreur si la m�thode est mal form�e.
 		// L'ensemble des annotations pourrait etre check� de cette facon.
 
-		return MultiProperties.BINARIES;
+		return GamlProperties.BINARIES;
 	}
 
 	private void processSymbols(final Set<? extends Element> types) {
@@ -258,11 +258,11 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			String[] k_names = mirror.name();
 			for ( String k : k_names ) {
-				store.get(MultiProperties.FACETS).put(k, facet_names);
-				store.get(MultiProperties.SYMBOLS).put(className, k);
-				store.get(MultiProperties.KINDS).put(String.valueOf(mirror.kind()), className);
+				store.get(GamlProperties.FACETS).put(k, facet_names);
+				store.get(GamlProperties.SYMBOLS).put(className, k);
+				store.get(GamlProperties.KINDS).put(String.valueOf(mirror.kind()), className);
 			}
-			store.get(MultiProperties.VARS).put("facets_values", facet_values);
+			store.get(GamlProperties.VARS).put("facets_values", facet_values);
 		}
 	}
 
@@ -277,18 +277,18 @@ public class GamaProcessor extends AbstractProcessor {
 				for ( String k : k_names ) {
 					String[] parents = parent_decl.symbols();
 					for ( String p : parents ) {
-						store.get(MultiProperties.CHILDREN).put(p, k);
+						store.get(GamlProperties.CHILDREN).put(p, k);
 					}
 					int[] parent_kinds = parent_decl.kinds();
 					for ( int i : parent_kinds ) {
 						Set<String> classes_in_kind =
-							store.get(MultiProperties.KINDS).get(String.valueOf(i));
+							store.get(GamlProperties.KINDS).get(String.valueOf(i));
 						if ( classes_in_kind != null ) {
 							for ( String class_in_kind : classes_in_kind ) {
 								Set<String> keywords_in_kind =
-									store.get(MultiProperties.SYMBOLS).get(class_in_kind);
+									store.get(GamlProperties.SYMBOLS).get(class_in_kind);
 								for ( String keyword_in_kind : keywords_in_kind ) {
-									store.get(MultiProperties.CHILDREN).put(keyword_in_kind, k);
+									store.get(GamlProperties.CHILDREN).put(keyword_in_kind, k);
 								}
 							}
 						}
@@ -299,27 +299,27 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private void dumpFiles() {
-		for ( String file : MultiProperties.FILES ) {
+		for ( String file : GamlProperties.FILES ) {
 			store.get(file).store(createWriter(file));
 		}
 
-		final PrintWriter grammarWriter = new PrintWriter(createWriter(MultiProperties.GRAMMAR));
+		final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
 		grammarWriter.append("model std").append('\n').println("_gaml {");
-		printProps(grammarWriter, "Facets keywords", "_facet", store.get(MultiProperties.FACETS));
+		printProps(grammarWriter, "Facets keywords", "_facet", store.get(GamlProperties.FACETS));
 		grammarWriter.println("// Symbol keywords");
-		for ( String s : store.get(MultiProperties.SYMBOLS).values() ) {
+		for ( String s : store.get(GamlProperties.SYMBOLS).values() ) {
 			if ( !FORBIDDEN_KEYWORDS.contains(s) ) {
 				grammarWriter.append("\t_keyword ").append(s).println(" {");
-				printGamlList(grammarWriter, "\t\t_facets", store.get(MultiProperties.FACETS)
+				printGamlList(grammarWriter, "\t\t_facets", store.get(GamlProperties.FACETS)
 					.get(s));
-				printGamlList(grammarWriter, "\t\t_children", store.get(MultiProperties.CHILDREN)
+				printGamlList(grammarWriter, "\t\t_children", store.get(GamlProperties.CHILDREN)
 					.get(s));
 				grammarWriter.println("\t}\n");
 			}
 		}
 		for ( String s : BUILT_IN_KEYWORDS ) {
 			grammarWriter.append("\t_keyword ").append(s).println(" {");
-			printGamlList(grammarWriter, "\t\t_children", store.get(MultiProperties.CHILDREN)
+			printGamlList(grammarWriter, "\t\t_children", store.get(GamlProperties.CHILDREN)
 				.get(s));
 			grammarWriter.println("\t}\n");
 		}
@@ -328,28 +328,28 @@ public class GamaProcessor extends AbstractProcessor {
 			grammarWriter.append("\t_unit ").append(s).println(";");
 		}
 
-		printProps(grammarWriter, "Binary keywords", "_binary", store.get(MultiProperties.BINARIES));
+		printProps(grammarWriter, "Binary keywords", "_binary", store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
 		lreserved.addAll(FORBIDDEN_OPERATORS);
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_reserved",
-			store.get(MultiProperties.UNARIES));
+			store.get(GamlProperties.UNARIES));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
-			store.get(MultiProperties.SKILLS));
+			store.get(GamlProperties.SKILLS));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
-			store.get(MultiProperties.TYPES));
+			store.get(GamlProperties.TYPES));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (vars)", "_reserved",
-			store.get(MultiProperties.VARS));
+			store.get(GamlProperties.VARS));
 		grammarWriter.println("}");
 		grammarWriter.close();
 	}
 
 	private void printGamlList(final PrintWriter writer, final String string, final Set<String> set) {
 		if ( set == null || set.isEmpty() ) { return; }
-		writer.append(string).append(" [").append(MultiProperties.toStringWoSet(set)).println("]");
+		writer.append(string).append(" [").append(GamlProperties.toStringWoSet(set)).println("]");
 	}
 
 	private void printPropsNoDoublons(final PrintWriter writer, final String t, final String prop,
-		final MultiProperties map) {
+		final GamlProperties map) {
 		writer.append("\n//").println(t);
 		for ( String s : map.values() ) {
 			if ( !lreserved.contains(s) ) {
@@ -361,7 +361,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private void printProps(final PrintWriter writer, final String t, final String prop,
-		final MultiProperties map) {
+		final GamlProperties map) {
 		writer.append("\n//").println(t);
 		for ( String s : map.values() ) {
 			if ( !FORBIDDEN_OPERATORS.contains(s) ) { // exclude the forbidden name
