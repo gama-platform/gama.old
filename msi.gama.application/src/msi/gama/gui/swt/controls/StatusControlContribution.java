@@ -22,12 +22,16 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.simulation.SimulationClock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements
 	MouseListener {
+
+	Composite compo;
+	Label label;
 
 	public StatusControlContribution() {}
 
@@ -43,26 +47,21 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		final Composite c = new Composite(parent, SWT.BORDER);
-		GridLayout layout = new GridLayout(1, true);
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
+		compo = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
-		layout.marginWidth = 4;
-
-		c.setLayout(layout);
+		layout.marginWidth = 2;
+		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = 200;
-		Label l = new Label(c, SWT.CENTER);
-		l.setLayoutData(data);
-		l.setBackground(SwtGui.COLOR_OK);
-		l.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		// l.setSize(200, 20);
-		l.setText("No simulation running");
-		// l.pack();
-		l.addMouseListener(this);
-		SwtGui.setStatusControl(l);
-		return c;
+		label = new Label(compo, SWT.CENTER);
+		label.setLayoutData(data);
+		label.setBackground(SwtGui.COLOR_OK);
+		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		label.setText("No simulation running");
+		label.addMouseListener(this);
+		SwtGui.setStatusControl(this);
+		return compo;
 	}
 
 	/**
@@ -84,5 +83,33 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public void mouseUp(final MouseEvent e) {}
+
+	/**
+	 * @return
+	 */
+	public boolean isDisposed() {
+		return label.isDisposed();
+	}
+
+	/**
+	 * @return
+	 */
+	public Color getBackground() {
+		return label.getBackground();
+	}
+
+	/**
+	 * @param color
+	 */
+	public void setBackground(final Color color) {
+		label.setBackground(color);
+	}
+
+	/**
+	 * @param message
+	 */
+	public void setText(final String message) {
+		label.setText(message);
+	}
 
 }

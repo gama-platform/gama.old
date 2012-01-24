@@ -435,7 +435,7 @@
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu_reload.png"
                   label="Reload "
-                  style="push">
+                  style="pulldown">
             </command>
             <separator
                   name="msi.gama.application.separator2"
@@ -666,7 +666,7 @@
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu_reload.png"
                   label="Reload"
-                  style="push">
+                  style="pulldown">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -683,26 +683,20 @@
                   icon="icons/menu_run.png"
                   label="Load experiment..."
                   mnemonic="R"
-                  mode="FORCE_TEXT"
                   style="pulldown">
                <visibleWhen
                      checkEnabled="false">
-                  <or>
-                     <with
-                           variable="activePartId">
-                        <or>
-                           <equals
-                                 value="msi.gama.lang.gaml.Gaml">
-                           </equals>
-                           <equals
-                                 value="msi.gama.gui.xmleditor.editors.GAMLEditor">
-                           </equals>
-                        </or>
-                     </with>
-                     <reference
-                           definitionId="isSimulationExisting">
-                     </reference>
-                  </or>
+                  <with
+                        variable="activePartId">
+                     <or>
+                        <equals
+                              value="msi.gama.lang.gaml.Gaml">
+                        </equals>
+                        <equals
+                              value="msi.gama.gui.xmleditor.editors.GAMLEditor">
+                        </equals>
+                     </or>
+                  </with>
                </visibleWhen>
             </command>
          </toolbar>
@@ -753,6 +747,14 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:msi.gama.application.commands.RunModel">
+         <dynamic
+               class="msi.gama.gui.swt.commands.ExperimentMenu"
+               id="msi.gama.application.menus.ExperimentMenu">
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:msi.gama.application.commands.ReloadSimulation">
          <dynamic
                class="msi.gama.gui.swt.commands.ExperimentMenu"
                id="msi.gama.application.menus.ExperimentMenu">

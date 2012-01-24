@@ -6,9 +6,10 @@ package msi.gama.gui.swt;
 
 import java.io.*;
 import msi.gama.common.interfaces.IFileAccess;
-import msi.gama.precompiler.MultiProperties;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlException;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 /**
  * The class SwtIO.
@@ -20,12 +21,13 @@ import org.eclipse.core.runtime.*;
 public class SwtIO implements IFileAccess {
 
 	@Override
-	public MultiProperties getGamaProperties(final String fileName) throws GamlException {
+	public GamlProperties getGamaProperties(final Bundle plugin, final String pathToAdditions,
+		final String fileName) throws GamlException {
 		try {
 			InputStream inputStream =
-				FileLocator.openStream(Platform.getBundle("msi.gama.core"), new Path("generated/" +
-					fileName), false);
-			MultiProperties mp = MultiProperties.loadFrom(inputStream, fileName);
+				FileLocator.openStream(plugin, new Path(pathToAdditions + "/" + fileName), false);
+			GamlProperties mp =
+				GamlProperties.loadFrom(inputStream, plugin.getSymbolicName(), fileName);
 			return mp;
 		} catch (IOException e) {
 			throw new GamlException("Impossible to locate the support file " + fileName +

@@ -28,6 +28,8 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 
 	private static final String[] ACTIONS_2_WIPE = new String[] {
 		"org.eclipse.ui.edit.text.actionSet.presentation",
+		"org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences",
+		"org.eclipse.cdt.ui.text.c.actionSet.presentation",
 		"org.eclipse.jdt.ui.text.java.actionSet.presentation",
 		"org.eclipse.ui.externaltools.ExternalToolsSet", "org.eclipse.update.ui.softwareUpdates" };
 

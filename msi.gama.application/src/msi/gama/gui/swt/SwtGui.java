@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.*;
 import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperiment;
@@ -185,7 +186,7 @@ public class SwtGui implements IGui {
 
 		Thread runThread;
 		final BlockingQueue<Message> messages;
-		private volatile Label control;
+		private volatile StatusControlContribution control;
 
 		private class Message {
 
@@ -232,7 +233,7 @@ public class SwtGui implements IGui {
 			}
 		}
 
-		public void setControl(final Label l) {
+		public void setControl(final StatusControlContribution l) {
 			control = l;
 			if ( runThread == null ) {
 				runThread = new Thread(this, "Status thread");
@@ -353,7 +354,7 @@ public class SwtGui implements IGui {
 			: COLOR_OK);
 	}
 
-	public static void setStatusControl(final Label l) {
+	public static void setStatusControl(final StatusControlContribution l) {
 		status.setControl(l);
 	}
 

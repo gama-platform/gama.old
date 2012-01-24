@@ -75,7 +75,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		try {
 			System.out.println("Configuring file access through SWT");
 			FileUtils.setFileAccess(new SwtIO());
-			GamlCompiler.preBuild();
+			GamaBundleLoader.preBuildContributions();
 			GamlDescriptIO.getInstance().setCallback(new Convert());
 		} catch (GamlException e1) {
 			e1.printStackTrace();
