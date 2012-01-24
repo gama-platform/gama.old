@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Set;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
-import msi.gama.precompiler.MultiProperties;
+import msi.gama.precompiler.GamlProperties;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -40,10 +40,14 @@ import org.eclipse.xtext.ui.editor.contentassist.*;
  */
 public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
-	private static final String generatedPath =
-		getPath("platform:/plugin/msi.gama.core/generated/");
 	private static Set<String> typeList;
-	private static MultiProperties allowedFacets;
+	private static GamlProperties allowedFacets;
+	private static Image rgbImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
+		"/icons/_rgb.png").createImage();
+	private static Image facetImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
+		"/icons/_facet.png").createImage();
+	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
+		"/icons/_type.png").createImage();
 
 	private static String getPath(final String strURI) {
 		try {
@@ -83,20 +87,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		return null;
 	}
 
-	private Image getImage(final Device d, final String fname) {
-		return ImageDescriptor.createFromFile(this.getClass(), "/icons/" + fname).createImage();
-		// try {
-		// InputStream streamImg = null;
-		// try {
-		// streamImg = getClass().getResourceAsStream("/icons/" + fname);
-		// return new Image(d, streamImg);
-		// } finally {
-		// streamImg.close();
-		// }
-		// } catch (IOException e) {}
-		// return null;
-	}
-
 	// @Override
 	// protected ConfigurableCompletionProposal doCreateProposal(final String proposal,
 	// final StyledString displayString, final Image image, final int priority,
@@ -121,10 +111,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		if ( keyName.equals("init") || keyName.equals("value") ) {
 			if ( valueExpr != null && valueExpr.equals("rgb") || defKeyName.equals("rgb") ) {
 
-				Image img = getImage(context.getViewer().getTextWidget().getDisplay(), "_rgb.png");
 				ConfigurableCompletionProposal editColor =
 					(ConfigurableCompletionProposal) createCompletionProposal("Edit color...",
-						" Edit color... ", img, context);
+						" Edit color... ", rgbImage, context);
 				if ( editColor != null ) {
 					editColor.setTextApplier(new ReplacementTextApplier() {
 
@@ -140,19 +129,23 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 						}
 					});
 
-					acceptor.accept(createCompletionProposal("'white'", " white ", img, context));
-					acceptor.accept(createCompletionProposal("'black'", " black ", img, context));
-					acceptor.accept(createCompletionProposal("'red'", " red ", img, context));
-					acceptor.accept(createCompletionProposal("'yellow'", " yellow ", img, context));
-					acceptor.accept(createCompletionProposal("'green'", " green ", img, context));
-					acceptor.accept(createCompletionProposal("'blue'", " blue ", img, context));
+					acceptor.accept(createCompletionProposal("'white'", " white ", rgbImage,
+						context));
+					acceptor.accept(createCompletionProposal("'black'", " black ", rgbImage,
+						context));
+					acceptor.accept(createCompletionProposal("'red'", " red ", rgbImage, context));
+					acceptor.accept(createCompletionProposal("'yellow'", " yellow ", rgbImage,
+						context));
+					acceptor.accept(createCompletionProposal("'green'", " green ", rgbImage,
+						context));
+					acceptor
+						.accept(createCompletionProposal("'blue'", " blue ", rgbImage, context));
 					acceptor.accept(editColor);
 				}
 			}
 		} else if ( keyName.equals("type") ) {
-			Image img = getImage(context.getViewer().getTextWidget().getDisplay(), "_type.png");
 			for ( String st : getTypelist() ) {
-				acceptor.accept(createCompletionProposal(st, " " + st + " ", img, context));
+				acceptor.accept(createCompletionProposal(st, " " + st + " ", typeImage, context));
 			}
 
 		} else if ( keyName.equals("torus") ) {
@@ -164,14 +157,14 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	public void completeDefinition_Facets(final Definition d, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		Image img = getImage(context.getViewer().getTextWidget().getDisplay(), "_facet.png");
 		// !!!!
 		if ( d.getKey() != null && d.getKey().getRef() != null &&
 			d.getKey().getRef().getName() != null ) {
 			Set<String> facets = getAllowedfacets().get(d.getKey().getRef().getName());
 			if ( facets != null ) {
 				for ( String st : facets ) {
-					acceptor.accept(createCompletionProposal(st, " " + st + " ", img, context));
+					acceptor.accept(createCompletionProposal(st, " " + st + " ", facetImage,
+						context));
 				}
 			}
 		}
@@ -179,37 +172,31 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	public void completeEvaluation_Facets(final Evaluation e, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		Image img = getImage(context.getViewer().getTextWidget().getDisplay(), "_facet.png");
 		Set<String> facets = getAllowedfacets().get(e.getKey().getRef().getName());
 		if ( facets != null ) {
 			for ( String st : facets ) {
-				acceptor.accept(createCompletionProposal(st, " " + st + " ", img, context));
+				acceptor.accept(createCompletionProposal(st, " " + st + " ", facetImage, context));
 			}
 		}
 	}
 
 	public void completeSetEval_Facets(final SetEval s, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		Image img = getImage(context.getViewer().getTextWidget().getDisplay(), "_facet.png");
 		for ( String st : getAllowedfacets().get("set") ) {
-			acceptor.accept(createCompletionProposal(st, " " + st + " ", img, context));
+			acceptor.accept(createCompletionProposal(st, " " + st + " ", facetImage, context));
 		}
 	}
 
 	private static Set<String> getTypelist() {
 		if ( typeList == null ) {
-			typeList =
-				MultiProperties.loadFrom(new File(generatedPath + MultiProperties.TYPES),
-					MultiProperties.TYPES).values();
+			typeList = GamlProperties.loadFrom(GamlProperties.TYPES).values();
 		}
 		return typeList;
 	}
 
-	private static MultiProperties getAllowedfacets() {
+	private static GamlProperties getAllowedfacets() {
 		if ( allowedFacets == null ) {
-			allowedFacets =
-				MultiProperties.loadFrom(new File(generatedPath + MultiProperties.FACETS),
-					MultiProperties.FACETS);
+			allowedFacets = GamlProperties.loadFrom(GamlProperties.FACETS);
 		}
 		return allowedFacets;
 	}
