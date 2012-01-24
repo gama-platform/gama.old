@@ -18,14 +18,11 @@
  */
 package msi.gama.lang.gaml.validation;
 
-import java.io.File;
-import java.net.URL;
 import java.util.*;
-import msi.gama.precompiler.MultiProperties;
 import msi.gama.lang.gaml.descript.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
-import org.eclipse.core.runtime.FileLocator;
+import msi.gama.precompiler.GamlProperties;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -55,17 +52,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			put("experiment", "type");
 		}
 	};
-	private static final String generatedPath =
-		getPath("platform:/plugin/msi.gama.core/generated/");
-	private static final MultiProperties allowedFacets = MultiProperties.loadFrom(new File(
-		generatedPath + MultiProperties.FACETS), MultiProperties.FACETS);
 
-	private static String getPath(final String strURI) {
-		try {
-			return FileLocator.toFileURL(new URL(strURI)).getPath();
-		} catch (Exception e) {}
-		return null;
-	}
+	private static final GamlProperties allowedFacets = GamlProperties
+		.loadFrom(GamlProperties.FACETS);
 
 	// for context
 	private DefKeyword getParentName(final EObject container) {

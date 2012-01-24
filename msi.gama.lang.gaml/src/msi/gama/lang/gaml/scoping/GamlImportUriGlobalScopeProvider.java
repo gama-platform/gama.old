@@ -19,6 +19,7 @@
 package msi.gama.lang.gaml.scoping;
 
 import java.util.*;
+import msi.gaml.compilation.GamlCompiler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -39,7 +40,9 @@ public class GamlImportUriGlobalScopeProvider extends ImportUriGlobalScopeProvid
 				uriIter.remove();
 			}
 		}
-		temp.add(URI.createURI("platform:/plugin/msi.gama.core/generated/std.gaml"));
+		for ( URI uri : GamlCompiler.gamlAdditionsURIs ) {
+			temp.add(uri);
+		}
 		return temp;
 	}
 
