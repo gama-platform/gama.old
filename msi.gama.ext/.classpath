@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler-jdk.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler.jar"/>
-	<classpathentry exported="true" kind="lib" path="janino.jar"/>
+	<classpathentry exported="true" kind="lib" path="janino.jar" sourcepath="sources/janino-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jdom.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="weka.jar"/>
