@@ -15,7 +15,9 @@ global {
 	var people_number type: int init: 1000 parameter: "Number of agents";
 	var people_shape_buffer type: float init: 0.01;
 	
-	var capture_pedestrian type: bool init: false parameter: "Capture pedestrian?";
+	var speed_tube_length_coeff type: int init: 20 parameter: "People speed and tube length coefficient";
+	
+	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
 
 	var theRoadInitializer type: initializerRoad;
 
@@ -68,8 +70,18 @@ entities {
 			}
 		}
 
-		reflex capture_people when: capture_pedestrian {
-
+		reflex capture_people when: ( (capture_pedestrian) and (macro_patch != nil) ) {
+			
+			// performance issue!!!
+			/*
+			let to_be_captured_people type: list of: people value: (list (people)) where (  
+				(each.last_road != self)
+				and (each.previous_location != nil) 
+				and (each.location != ((each.goal).location))
+				and ( (each.shape_buffer) intersects macro_patch )
+			);
+			 */
+			
 			let to_be_captured_people type: list of: people value: (people overlapping (macro_patch_buffer));
 			if condition: ! (empty(to_be_captured_people)) {
 				set to_be_captured_people value: to_be_captured_people where (
@@ -93,7 +105,7 @@ entities {
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
 						
-						else { // agent moves towards extremity2 
+						else { // agent moves towards extremity1
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
@@ -111,7 +123,7 @@ entities {
 			}
 		}
 		
-		reflex release_captured_people {
+		reflex release_captured_people when: (macro_patch != nil) {
 			let to_be_released_people type: list of: captured_people value: (members) where ( (captured_people(each).released_time) <= time );
 			
 			
@@ -223,12 +235,17 @@ entities {
 			
 			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
 			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
-			set the_road.macro_patch value: inside_road_geom;
 			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
 			
-			create species: insideRoad {
-				set shape value: inside_road_geom;
+			if condition: (inside_road_geom.perimeter > (speed_tube_length_coeff * people_speed) ) {
+				set the_road.macro_patch value: inside_road_geom;
+				set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+
+				create species: insideRoad {
+					set shape value: inside_road_geom;
+				}
 			}
+			
 		}
 	}
 
@@ -257,20 +274,27 @@ output {
 		}
 		*/
 		
-	monitor people_number value: length (people);
-	monitor captured_people_number value: length (list(road) collect (length (each.members)));
-		monitor step_length_monitor value: step_length;
+		monitor people_number value: length (people);
+		monitor macro_patch_number value: length (insideRoad);
+		monitor road_number value: length (road);
+		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
+		monitor people_number value: length (people);
+		monitor captured_people_number value: length (list(road) collect (length (each.members)));
+		monitor step_length_monitor value: duration;
+		monitor step_length_monitor value: duration;
 
-	display Execution_Time refresh_every: 5 {
-		chart name: 'Simulation step length' type: series background: rgb('black') {
-			data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+		display Execution_Time {
+			chart name: 'Simulation step length' type: series background: rgb('black') {
+				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+			}
 		}
-	}
-		
-	display People_vs_Captured_People refresh_every: 5 {
-		chart name: 'People_vs._Captured_People' type: series background: rgb ('black') {
-			data people value: length (list (people)) color: rgb ('blue');				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
-		}
+
+		display People_vs_Captured_People {
+			chart name: 'People_vs._Captured_People' type: series background: rgb ('black') {
+				data people value: length (list (people)) color: rgb ('blue');
+				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
+			}
+
 	}
 	
 }
