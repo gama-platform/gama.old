@@ -17,11 +17,11 @@ global {
 	var shape_file_ward type: string init: '/gis/wards.shp';
 	var shape_file_zone type: string init: '/gis/zone.shp';
 	 
-	var sheep_speed type: float init: 0.0001;
+	var sheep_speed type: float init: 1;
 	var sheep_size type: float init: 1 const: true;
 	var sheep_color type: rgb init: rgb('green');
 	 
-	var fox_speed type: float init: 20;
+	var fox_speed type: float init: 1;
 	 
 	var pedestrian_perception_range type: int init: 20;
 	
@@ -38,19 +38,22 @@ global {
 	var road_graph type: graph;
 	
 	init {
-		 create species: road from: shape_file_road;
-		 create species: beach from: shape_file_beach;
+		create species: road from: shape_file_road;
+		create species: beach from: shape_file_beach;
 		 
-		 create species: ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
-		 	do action: init_overlapping_roads;
-		 }
+		create species: ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
+			do action: init_overlapping_roads;
+		}
 		 
-		 create species: zone from: shape_file_zone with: [id :: read('ID')];
-		 create species: building from: shape_file_building with: [ floor :: read('STAGE'), x :: read('X'), y :: read('Y')];
-		 create species: roadwidth from: shape_file_roadwidth;
-		 create species: river from: shape_file_rivers;
-		 create species: destination from: ( (list(building)) where (each.floor > 3) );
-		 
+		create species: zone from: shape_file_zone with: [id :: read('ID')];
+		create species: building from: shape_file_building with: [ floor :: read('STAGE'), x :: read('X'), y :: read('Y')];
+		create species: roadwidth from: shape_file_roadwidth;
+		create species: river from: shape_file_rivers;
+		
+		loop b over: ( (list(building)) where (each.floor > 3) ) {
+			create species: destination with: [shape :: b.shape];
+		}
+		
 		set road_graph value: as_edge_graph (list(road) collect (each.shape));
 
 		loop w over: list(ward) {
@@ -192,7 +195,7 @@ entities {
 		}
 		
  		aspect base {
-//     			draw shape: circle color: sheep_color size: 0.1;
+//   			draw shape: circle color: sheep_color size: 1;
  			draw shape: geometry color: sheep_color;
  		}
 	}
@@ -202,7 +205,7 @@ experiment default_expr type: gui {
 	output {
 		display pedestrian_road_network {
 		 	species road aspect: base transparency: 0.1;
-		 	species roadwidth aspect: base transparency: 0.1;
+//		 	species roadwidth aspect: base transparency: 0.1;
 		 	species building aspect: base transparency: 0.1;
 		 	species destination aspect: base transparency: 0.1;
 		 	species beach aspect: base transparency: 0.9;
