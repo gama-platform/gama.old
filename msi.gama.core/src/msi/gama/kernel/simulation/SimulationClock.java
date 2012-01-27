@@ -196,7 +196,7 @@ public class SimulationClock {
 	 * Gets the total duration in milliseconds since the beginning of the current simulation.
 	 * @return a duration in milliseconds
 	 */
-	public static double getTotalDuration() {
+	public static long getTotalDuration() {
 		return total_duration;
 	}
 

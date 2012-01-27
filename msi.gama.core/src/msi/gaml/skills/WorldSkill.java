@@ -47,17 +47,33 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.RNG, type = IType.STRING_STR, init = "'" + IKeyword.MERSENNE + "'"),
 	@var(name = IKeyword.STEP, type = IType.INT_STR, constant = true),
 	@var(name = GAMA._UQR, type = IType.BOOL_STR, init = "true"),
-	@var(name = WorldSkill.DURATION, type = IType.STRING_STR) })
+	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
+	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
+	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
 @skill({ IKeyword.GLOBAL, IKeyword.WORLD_SPECIES_NAME })
 @species(IKeyword.WORLD_SPECIES_NAME)
 @SuppressWarnings("static-method")
 public class WorldSkill extends GeometricSkill {
 
 	public static final String DURATION = "duration";
+	
+	public static final String TOTAL_DURATION = "total_duration";
+	
+	public static final String AVERAGE_DURATION = "average_duration";
 
 	@getter(var = DURATION)
-	public String gertDuration(final IAgent agent) {
+	public String getDuration(final IAgent agent) {
 		return Long.toString(SimulationClock.getDuration());
+	}
+	
+	@getter(var = TOTAL_DURATION)
+	public String getTotalDuration(final IAgent agent) {
+		return Long.toString(SimulationClock.getTotalDuration());
+	}
+	
+	@getter(var = AVERAGE_DURATION)
+	public String getAverageDuration(final IAgent agent) {
+		return Double.toString(SimulationClock.getAverageDuration());
 	}
 
 	@getter(var = IKeyword.TIME)
