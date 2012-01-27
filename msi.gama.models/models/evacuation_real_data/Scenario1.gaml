@@ -1,11 +1,10 @@
 model Scenario1
 
 global {
-	// Parameters of the time in a day and the toursit season
 	var initial_time type: float parameter: 'Time in day' init: 8.5 min: 0 max: 24;
 	var tourist_season type: bool parameter: 'In tourist season?' init: true;
-	var fox_rate type: float parameter: 'Percent of fox in the population' init: 0.9 min: 0 max: 1;
-	var population_scale type: float init: 0.2 const: true;
+	var fox_rate type: float parameter: 'Percent of fox in the population' init: 0.1 min: 0 max: 1;
+	var simulated_population_rate type: float init: 0.2 const: true;
 	 
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -17,14 +16,15 @@ global {
 	var shape_file_ward type: string init: '/gis/wards.shp';
 	var shape_file_zone type: string init: '/gis/zone.shp';
 	 
-	var sheep_speed type: float init: 1;
-	var sheep_size type: float init: 1 const: true;
-	var sheep_color type: rgb init: rgb('green');
+	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
+
+	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?
+	var pedestrian_size type: float init: 1 const: true;
+	var pedestrian_color type: rgb init: rgb('green');
 	 
-	var fox_speed type: float init: 1;
-	 
-	var pedestrian_perception_range type: int init: 20;
-	
+	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
+	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
+
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
 	
@@ -56,21 +56,42 @@ global {
 		
 		set road_graph value: as_edge_graph (list(road) collect (each.shape));
 
+		create species: road_initializer;
+		let ri type: road_initializer value: first (road_initializer as list);
+		loop rd over: (road as list) {
+			ask target: (ri) {
+				do action: initialize {
+					arg the_road value: rd;
+				}
+			}
+		}
+
 		loop w over: list(ward) {
-			create species: sheep number: int ( (w.population * population_scale) * (1 - fox_rate) ) {
+			create species: pedestrian number: int ( (w.population * simulated_population_rate) * (1 - fox_rate) ) {
 				set location value: any_location_in (one_of (w.roads));
 			}
 		}
 	}	 
 	
+	/*
+	WHY THIS NEVER HAPPENS?
 	reflex stop_simulation {
-		if condition: ((length ( ( list (sheep) ) where ((each.reach_target) = true) )) = (length (list(sheep)))) {
+		if condition: ((length ( ( list (pedestrian) ) where ((each.reach_target) = true) )) = (length (list(pedestrian)))) {
 			do action: write {
-				arg name: message value: 'All ' + (string (length (list(sheep)))) + ' reach safe building at time ' + (string (time));
+				arg name: message value: 'All ' + (string (length (list(pedestrian)))) + ' reach safe building at time ' + (string (time));
 			}
 			
 			do action: halt;
 		}
+	}
+	*/
+	
+	reflex stop_simulation when: (time = 1800) {
+		do action: write {
+			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + ' and average duration: ' + average_duration;
+		}
+		
+		do action: halt;
 	}
 }
 
@@ -78,14 +99,78 @@ environment bounds: shape_file_bounds;
 
 entities {
 	species road {
-	 	aspect base {
+		var extremity1 type: geometry;
+		var extremity2 type: geometry;
+		
+		var macro_patch type: geometry;
+		var macro_patch_buffer type: geometry;
+
+		species captured_pedestrian parent: pedestrian schedules: [] {
+			var released_time type: int;
+			var released_location type: point;
+			
+			aspect default {
+				
+			}
+		}
+
+		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
+			
+			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer));
+			
+			
+			if condition: ! (empty(to_be_captured_people)) {
+				set to_be_captured_people value: to_be_captured_people where (
+					(each.last_road != self)
+					and (each.previous_location != nil) 
+					and (each.location != ((each.safe_building).location)));
+			}
+			
+			if condition: !(empty (to_be_captured_people)) {
+				
+				capture target: to_be_captured_people as: captured_pedestrian returns: c_people;
+				
+				loop cp over: c_people {
+					let road_source_to_previous_location type: geometry value: ( shape split_at (cp.previous_location) ) first_with ( geometry(each).points contains (cp.previous_location) ) ;
+					let road_source_to_current_location type: geometry value: ( shape split_at (cp.location) ) first_with ( geometry(each).points contains cp.location);
+					
+					let skip_distance type: float value: 0;
+					
+					if condition: (road_source_to_previous_location.perimeter < road_source_to_current_location.perimeter) { // agent moves towards extremity2
+						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
+						set cp.released_location value: last (macro_patch.points);
+						
+						else { // agent moves towards extremity1
+							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
+							set cp.released_location value: first (macro_patch.points);
+						}
+					}
+
+					set cp.last_road value: self;
+					set cp.released_time value: time + (skip_distance / pedestrian_speed);
+				}
+			}
+		}
+		
+		reflex release_captured_people when: (macro_patch != nil) {
+			let to_be_released_people type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
+			
+			
+			if condition: !(empty (to_be_released_people)) {
+				loop rp over: to_be_released_people {
+					let r_position type: point value: rp.released_location;
+					release target: rp returns: r_people;
+					set pedestrian(first (list (r_people))).location value: r_position;
+				}
+			}
+		}
+		
+		aspect base {
 	 		draw shape: geometry color: rgb('yellow');
 	 	}
 	}
 	 
 	species destination {
-	 	var st type: int;
-	 	
 	 	aspect base {
 	 		draw shape: geometry color: rgb('magenta');
 	 	}
@@ -172,21 +257,25 @@ entities {
 		}
 	}
 
-	species sheep skills: moving {
+	species pedestrian skills: moving {
 		var color type: rgb init: rgb('green');
+
+		var previous_location type: point;
+		var last_road type: road;
 		var safe_building type: building;
-		
 		var reach_target type: bool init: false;
 		
 		init {
-			set safe_building value: ((list (building)) where (each.floor >= 3)) closest_to shape;
+			set safe_building value: (list (destination)) closest_to shape;
 		}
 		
 		reflex move when: !(reach_target) {
+			set previous_location value: location;
+			
 			do action: goto {
 				arg target value: safe_building;
 				arg on value: road_graph;
-				arg speed value: sheep_speed;
+				arg speed value: pedestrian_speed;
 			}
 			
 			if condition: (location = (safe_building.location)) {
@@ -195,28 +284,89 @@ entities {
 		}
 		
  		aspect base {
-//   			draw shape: circle color: sheep_color size: 1;
- 			draw shape: geometry color: sheep_color;
+ 			draw shape: geometry color: pedestrian_color;
  		}
+	}
+
+	species road_initializer skills: [moving] {
+		action initialize {
+			arg the_road type: road;
+			
+			let inside_road_geom type: geometry value: the_road.shape;
+			set speed value: (the_road.shape).perimeter * insideRoadCoeff;
+			let point1 type: point value: first(inside_road_geom.points);
+			let point2 type: point value: last(inside_road_geom.points);
+			set location value: point1;
+			
+			do action: goto {
+				arg target value: point2;
+				arg on value: road_graph; 
+			}
+
+			let lines1 type: list of: geometry value: (inside_road_geom split_at location);
+			set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
+			set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
+			set location value: point2;
+			do action: goto {
+				arg target value: point1;
+				arg on value: road_graph; 
+			}
+			let lines2 type: list of: geometry value: (inside_road_geom split_at location);
+			
+			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
+			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
+			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+			
+			if condition: (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_speed) ) {
+				set the_road.macro_patch value: inside_road_geom;
+				set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+			}
+			
+		}
 	}
 }
 
 experiment default_expr type: gui {
 	output {
-		display pedestrian_road_network {
+		display full_detail {
 		 	species road aspect: base transparency: 0.1;
-//		 	species roadwidth aspect: base transparency: 0.1;
+		 	species roadwidth aspect: base transparency: 0.1;
 		 	species building aspect: base transparency: 0.1;
 		 	species destination aspect: base transparency: 0.1;
 		 	species beach aspect: base transparency: 0.9;
 		 	species zone aspect: base transparency: 0.9;
 		 	species river aspect: base transparency: 0.5;
 		 	species ward aspect: base transparency: 0.9;
-		 	species sheep aspect: base transparency: 0.1;
+		 	species pedestrian aspect: base transparency: 0.1;
 		}
 		
-		monitor length_sheep value: length(list(sheep));
-		monitor length_sheep_reach_target value: length(list(sheep) where (each.reach_target));
-		monitor length_sheep_NOT_reach_target value: length(list(sheep) where !(each.reach_target));
+		display pedestrian_road_network {
+		 	species road aspect: base transparency: 0.1;
+		 	species destination aspect: base transparency: 0.1;
+		 	species pedestrian aspect: base transparency: 0.1;
+		}
+		
+		display Execution_Time {
+			chart name: 'Simulation step length' type: series background: rgb('black') {
+				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+			}
+		}
+
+		display Pedestrian_vs_Captured_Pedestrian {
+			chart name: 'Pedestrian_vs._Captured_Pedestrian' type: series background: rgb ('black') {
+				data pedestrians value: length (list (pedestrian)) color: rgb ('blue');
+				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
+			}
+		}
+
+		monitor pedestrians value: length (list(pedestrian));
+		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
+
+		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_target));
+		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_target));
+		monitor step_duration value: duration;
+		monitor simulation_duration value: total_duration;
+		monitor step_average_duration value: average_duration;
+		monitor destinations value: length(destination as list);
 	}
 }
