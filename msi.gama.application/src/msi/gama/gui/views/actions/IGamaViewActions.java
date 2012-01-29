@@ -25,5 +25,6 @@ public interface IGamaViewActions {
 	public final static int SAVE = 9;
 	public final static int REVERT = 10;
 	public final static int SEPARATOR = 11;
+	public final static int SYNCHRONIZE = 12;
 
 }

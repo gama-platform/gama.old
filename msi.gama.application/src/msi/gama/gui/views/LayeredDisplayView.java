@@ -19,17 +19,17 @@
 package msi.gama.gui.views;
 
 import java.awt.Color;
+import java.awt.event.MouseWheelEvent;
 import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.*;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
 import msi.gama.outputs.LayerDisplayOutput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -38,7 +38,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
-	private Composite swingCompo;
+	private EmbeddedSwingComposite swingCompo;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -56,8 +56,8 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 	 */
 	@Override
 	protected Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH, SEPARATOR, LAYERS, SNAPSHOT, SEPARATOR, ZOOM_IN,
-			ZOOM_OUT, ZOOM_FIT, FOCUS };
+		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, SNAPSHOT, SEPARATOR,
+			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS };
 	}
 
 	protected IDisplayManager getDisplayManager() {
@@ -73,33 +73,31 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 		GridLayout layout = new GridLayout(2, false);
 
 		general.setLayout(layout);
-		final Button label = new Button(general, SWT.CHECK);
-		label.setFont(SwtGui.labelFont);
-		label.setLayoutData(SwtGui.labelData);
-		label.setText("");
-		label.addSelectionListener(new SelectionAdapter() {
+		// final Button label = new Button(general, SWT.CHECK);
+		// label.setFont(SwtGui.labelFont);
+		// label.setLayoutData(SwtGui.labelData);
+		// label.setText("");
+		// label.setSelection(false);
+		// label.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// ((AWTDisplaySurface) ((LayerDisplayOutput) getOutput()).getSurface())
+		// .setNavigationImageEnabled(label.getSelection());
+		// }
+		//
+		// });
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				((AWTDisplaySurface) ((LayerDisplayOutput) getOutput()).getSurface())
-					.setNavigationImageEnabled(label.getSelection());
-			}
-
-		});
-		label.setSelection(true);
-		EmbeddedSwingComposite nav =
-			new EmbeddedSwingComposite(general, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND,
-				getOutput()) {
-
-				@Override
-				protected JComponent createSwingComponent() {
-					return ((AWTDisplaySurface) getOutput().getSurface()).getNavigator();
-				}
-			};
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		Control aux =
+			new SWTAuxiliaryDisplaySurface(general, SWT.None, (AWTDisplaySurface) getOutput()
+				.getSurface());
+		GridData data = new GridData(SWT.CENTER, SWT.FILL, true, true);
 		data.minimumHeight = 200;
-		nav.setLayoutData(data);
-		EditorFactory.create(general, "Background:", output.getBackgroundColor(),
+		data.heightHint = 200;
+		data.widthHint = 200;
+		data.horizontalSpan = 2;
+		aux.setLayoutData(data);
+		EditorFactory.create(general, "Color:", output.getBackgroundColor(),
 			new EditorListener<Color>() {
 
 				@Override
@@ -107,19 +105,112 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 					output.setBackgroundColor(newValue);
 				}
 			});
-		createItem("General", null, general, true);
-		nav.populate();
+		createItem("Navigation", null, general, true);
+		// nav.populate();
 		displayItems();
+		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
+
+			@Override
+			public void mouseReleased(final java.awt.event.MouseEvent e) {}
+
+			@Override
+			public void mousePressed(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() { // (shift to SWT thread)
+
+						@Override
+						public void run() {
+							swingCompo.forceFocus();
+						}
+					});
+			}
+
+			@Override
+			public void mouseExited(final java.awt.event.MouseEvent e) {}
+
+			@Override
+			public void mouseEntered(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						swingCompo.forceFocus();
+					}
+				});
+			}
+
+			@Override
+			public void mouseClicked(final java.awt.event.MouseEvent e) {}
+		};
+		final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionListener() {
+
+			@Override
+			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						swingCompo.forceFocus();
+					}
+				});
+			}
+
+			@Override
+			public void mouseDragged(final java.awt.event.MouseEvent e) {}
+		};
+
 		swingCompo =
 			new EmbeddedSwingComposite(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND,
 				getOutput()) {
 
 				@Override
 				protected JComponent createSwingComponent() {
-					return (AWTDisplaySurface) getOutput().getSurface();
+					JComponent frameAwt = (AWTDisplaySurface) getOutput().getSurface();
+					getFrame().addMouseListener(mlAwt);
+					getFrame().addMouseMotionListener(mlAwt2);
+					return frameAwt;
 				}
 			};
-		((EmbeddedSwingComposite) swingCompo).populate();
+
+		swingCompo.populate();
+
+		swingCompo.addMouseWheelListener(new MouseWheelListener() {
+
+			@Override
+			public void mouseScrolled(final org.eclipse.swt.events.MouseEvent event) {
+
+				// (shift to AWT thread)
+				java.awt.EventQueue.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+
+						java.awt.Component c =
+							javax.swing.SwingUtilities.getDeepestComponentAt(swingCompo.getFrame(),
+								event.x, event.y);
+						if ( c != null ) {
+							java.awt.Point bp = swingCompo.getFrame().getLocationOnScreen();
+							java.awt.Point cp = c.getLocationOnScreen();
+							java.awt.event.MouseEvent e =
+								new java.awt.event.MouseWheelEvent(c,
+									java.awt.event.MouseEvent.MOUSE_WHEEL,
+									event.time & 0xFFFFFFFFL,
+									0, // modifiers
+									event.x - (cp.x - bp.x), event.y - (cp.y - bp.y),
+									0, // click count
+									false, MouseWheelEvent.WHEEL_UNIT_SCROLL, -event.count,
+									-event.count);
+							// System.out.println("dispatching AWT event "+e);
+							c.dispatchEvent(e);
+						}
+
+					}
+				});
+
+			}
+		});
 		((SashForm) parent).setWeights(new int[] { 1, 2 });
 		((SashForm) parent).setMaximizedControl(swingCompo);
 	}

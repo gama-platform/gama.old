@@ -137,8 +137,9 @@ public class SwtGui implements IGui {
 					page.findViewReference(output.getViewId(),
 						output.isUnique() ? null : output.getName());
 				if ( ref == null ) { return; }
-				final IGamaView view = (IGamaView) ref.getView(true);
-				if ( view == null ) { return; }
+				IViewPart part = ref.getView(true);
+				if ( !(part instanceof IGamaView) ) { return; }
+				final IGamaView view = (IGamaView) part;
 				switch (action) {
 					case close1:
 						try {

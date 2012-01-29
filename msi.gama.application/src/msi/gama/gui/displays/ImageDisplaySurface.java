@@ -234,4 +234,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return false;
 	}
 
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSynchronized(boolean)
+	 */
+	@Override
+	public void setSynchronized(final boolean checked) {}
+
 }

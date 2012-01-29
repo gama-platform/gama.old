@@ -22,11 +22,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.swing.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
@@ -52,9 +53,10 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	protected Point mousePosition;
 	Dimension previousPanelSize;
 	protected boolean navigationImageEnabled = true;
-	protected AuxiliaryDisplaySurface navigator;
+	protected SWTAuxiliaryDisplaySurface navigator;
 	private final AffineTransform translation = new AffineTransform();
 	private final Semaphore paintingNeeded = new Semaphore(1, true);
+	private boolean synchronous = false;
 	private final Thread animationThread = new Thread(new Runnable() {
 
 		@Override
@@ -94,12 +96,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		return paused;
 	}
 
-	public AuxiliaryDisplaySurface getNavigator() {
-		if ( navigator == null ) {
-			navigator = new AuxiliaryDisplaySurface(this);
-		}
-		return navigator;
-	}
+	// public SWTAuxiliaryDisplaySurface getNavigator() {
+	// if ( navigator == null ) {
+	// navigator = new SWTAuxiliaryDisplaySurface(this);
+	// }
+	// return navigator;
+	// }
 
 	protected Cursor createCursor() {
 		Image im =
@@ -277,7 +279,17 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void updateDisplay() {
-		EventQueue.invokeLater(displayBlock);
+		if ( synchronous && !EventQueue.isDispatchThread() ) {
+			try {
+				EventQueue.invokeAndWait(displayBlock);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		} else {
+			EventQueue.invokeLater(displayBlock);
+		}
 		if ( ex[0] != null ) {
 			GAMA.reportError(ex[0]);
 			ex[0] = null;
@@ -331,6 +343,21 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
+		redrawNavigator();
+	}
+
+	void redrawNavigator() {
+		if ( navigator == null ) { return; }
+		if ( !navigationImageEnabled ) { return; }
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				navigator.redraw();
+				navigator.update();
+			}
+
+		});
 	}
 
 	@Override
@@ -384,9 +411,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 				displayGraphics.setGraphics((Graphics2D) newImage.getGraphics());
 			}
 			displayGraphics.setClipping(getImageClipBounds());
-			if ( navigationImageEnabled ) {
-				navigator.repaint();
-			}
+			redrawNavigator();
 			canBeUpdated(true);
 			return true;
 		}
@@ -485,20 +510,22 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	public void setNavigationImageEnabled(final boolean enabled) {
 		navigationImageEnabled = enabled;
-		getNavigator().toggle(enabled);
+		// getNavigator().toggle(enabled);
 	}
 
 	protected void setOrigin(final Point origin) {
 		this.origin = origin;
 		translation.setToTranslation(origin.x, origin.y);
 		displayGraphics.setClipping(getImageClipBounds());
-		if ( navigationImageEnabled ) {
-			navigator.repaint();
-		}
+		redrawNavigator();
 	}
 
 	/**
-	 * 
+	 * @param checked
 	 */
+	@Override
+	public void setSynchronized(final boolean checked) {
+		synchronous = checked;
+	}
 
 }

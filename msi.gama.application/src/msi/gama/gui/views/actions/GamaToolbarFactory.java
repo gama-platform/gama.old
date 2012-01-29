@@ -43,6 +43,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new RevertItem(view);
 			case PAUSE:
 				return new PauseItem(view);
+			case SYNCHRONIZE:
+				return new SynchronizeItem(view);
 
 		}
 		return null;
