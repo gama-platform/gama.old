@@ -319,4 +319,6 @@ Export-Package: msi.gama.common.interfaces;
  org.uncommons.maths.number,
  org.uncommons.maths.random;uses:="org.uncommons.maths.number",
  org.uncommons.maths.statistics
-Import-Package: org.eclipse.emf.common.util
+Import-Package: org.eclipse.emf.common.util,
+ org.eclipse.swt,
+ org.eclipse.swt.graphics
