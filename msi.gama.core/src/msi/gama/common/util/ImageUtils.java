@@ -19,9 +19,9 @@
 package msi.gama.common.util;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.util.*;
-import msi.gaml.operators.Maths;
+import org.eclipse.swt.graphics.*;
 
 public class ImageUtils {
 
@@ -163,7 +163,58 @@ public class ImageUtils {
 	private BufferedImage get(final String s, final int angle) {
 		BufferedImage[] map = cache.get(s);
 		if ( map == null ) { return null; }
-		int position = Maths.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		int position = (int)Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
+	}
+
+	public static ImageData convertToSWT(final BufferedImage bufferedImage) {
+		if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
+			DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
+			PaletteData palette =
+				new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(),
+					colorModel.getBlueMask());
+			ImageData data =
+				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
+					colorModel.getPixelSize(), palette);
+			WritableRaster raster = bufferedImage.getRaster();
+			int[] pixelArray = new int[3];
+			for ( int y = 0; y < data.height; y++ ) {
+				for ( int x = 0; x < data.width; x++ ) {
+					raster.getPixel(x, y, pixelArray);
+					int pixel =
+						palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
+					data.setPixel(x, y, pixel);
+				}
+			}
+			return data;
+		} else if ( bufferedImage.getColorModel() instanceof IndexColorModel ) {
+			IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
+			int size = colorModel.getMapSize();
+			byte[] reds = new byte[size];
+			byte[] greens = new byte[size];
+			byte[] blues = new byte[size];
+			colorModel.getReds(reds);
+			colorModel.getGreens(greens);
+			colorModel.getBlues(blues);
+			RGB[] rgbs = new RGB[size];
+			for ( int i = 0; i < rgbs.length; i++ ) {
+				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
+			}
+			PaletteData palette = new PaletteData(rgbs);
+			ImageData data =
+				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
+					colorModel.getPixelSize(), palette);
+			data.transparentPixel = colorModel.getTransparentPixel();
+			WritableRaster raster = bufferedImage.getRaster();
+			int[] pixelArray = new int[1];
+			for ( int y = 0; y < data.height; y++ ) {
+				for ( int x = 0; x < data.width; x++ ) {
+					raster.getPixel(x, y, pixelArray);
+					data.setPixel(x, y, pixelArray[0]);
+				}
+			}
+			return data;
+		}
+		return null;
 	}
 }
