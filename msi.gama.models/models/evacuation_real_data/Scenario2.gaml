@@ -1,7 +1,7 @@
-model debug_goto
+model Scenario2
 
 global {
-	var population_scale type: float init: 0.2 const: true;
+	var simulated_population_rate type: float init: 0.02 const: true;
 	
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -45,7 +45,7 @@ global {
 		}
 
 		loop w over: list(ward) {
-			create species: pedestrian number: int ( (w.population * population_scale) ) {
+			create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 				set location value: any_location_in (one_of (w.roads));
 			}
 		}
@@ -53,7 +53,9 @@ global {
 
 	reflex stop_simulation when: (time = 5400) {
 		do action: write {
-			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + ' and average duration: ' + average_duration;
+			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
+				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
+				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where (each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
 		
 		do action: halt;
@@ -79,7 +81,7 @@ entities {
 
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
-			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer));
+			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where !(each.reach_shelter);
 			if condition: ! (empty(to_be_captured_people)) {
 				set to_be_captured_people value: to_be_captured_people where (
 					(each.last_road != self)
@@ -171,18 +173,17 @@ entities {
 	}
 
 	species pedestrian skills: moving {
-		var color type: rgb init: rgb('red');
 		var current_panel type: panel init: nil;
 		
 		var previous_location type: point;
 		var last_road type: road;
-		var reach_target type: bool init: false;
+		var reach_shelter type: bool init: false;
 
 		init {
 			set current_panel value: (list (panel)) closest_to shape;
 		}
 		
-		reflex move when: ( !(reach_target) and (current_panel != nil) and (location != (current_panel.location)) ) {
+		reflex move when: ( !(reach_shelter) and (current_panel != nil) and (location != (current_panel.location)) ) {
 			set previous_location value: location;
 			
 			do action: goto {
@@ -192,13 +193,13 @@ entities {
 			}
 		}
 		
-		reflex switch_panel_or_die when: !(reach_target) and (location = (current_panel.location)) {
+		reflex switch_panel when: !(reach_shelter) and (location = (current_panel.location)) {
 			if condition: !(current_panel.is_terminal) {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
 				
 				else {
-					set reach_target value: true;
+					set reach_shelter value: true;
 				}
 			}
 		}
@@ -262,20 +263,20 @@ experiment default_expr type: gui {
 			}
 		}
 
-		display People_vs_Captured_People {
+		display Pedetrian_vs_Captured_Pedetrian {
 			chart name: 'Pedestrian_vs._Captured_Pedestrian' type: series background: rgb ('black') {
 				data pedestrians value: length (list (pedestrian)) color: rgb ('blue');
-				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
+				data captured_pedestrian value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
 			}
 		}
 		
 		monitor pedestrians value: length (list(pedestrian));
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
 
-		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_target));
-		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_target));
+		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_shelter));
+		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_shelter));
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
-		monitor step_average_duration value: average_duration;
+		monitor average_step_duration value: average_duration;
 	}
 }
