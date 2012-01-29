@@ -68,4 +68,9 @@ public interface IDisplaySurface {
 
 	public boolean isPaused();
 
+	/**
+	 * @param checked
+	 */
+	void setSynchronized(boolean checked);
+
 }
