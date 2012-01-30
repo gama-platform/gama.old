@@ -1,7 +1,7 @@
 model Scenario2
 
 global {
-	var simulated_population_rate type: float init: 0.02 const: true;
+	var simulated_population_rate type: float init: 0.1 const: true;
 	
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -31,7 +31,9 @@ global {
 		create species: ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
 			do action: init_overlapping_roads;
 		}
+		
 		create species: panel from: shape_file_panel with: [next_panel_id :: read('TARGET'), id :: read('ID')];
+		
 		set road_graph value: as_edge_graph (list(road) collect (each.shape));
 
 		create species: road_initializer;
@@ -44,6 +46,12 @@ global {
 			}
 		}
 
+		loop times: 10 {
+			create species: pedestrian {
+				set location value: any_location_in (one_of (list(road)));
+			}
+		}
+
 		loop w over: list(ward) {
 			create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 				set location value: any_location_in (one_of (w.roads));
@@ -51,11 +59,11 @@ global {
 		}
 	}	 
 
-	reflex stop_simulation when: (time = 5400) {
+	reflex stop_simulation when: ( (time = 5400) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
-				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where (each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
+				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where !(each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
 		
 		do action: halt;
@@ -81,18 +89,15 @@ entities {
 
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
-			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where !(each.reach_shelter);
-			if condition: ! (empty(to_be_captured_people)) {
-				set to_be_captured_people value: to_be_captured_people where (
-					(each.last_road != self)
-					and (each.previous_location != nil) 
-					and (each.location != ((each.current_panel).location)));
-			}
+			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where ( !(each.reach_shelter)
+				and (each.last_road != self)
+				and (each.previous_location != nil) 
+				and (each.location != ((each.current_panel).location)) );
 			
 			if condition: !(empty (to_be_captured_people)) {
-				capture target: to_be_captured_people as: captured_pedestrian returns: c_people;
+				capture target: to_be_captured_people as: captured_pedestrian returns: c_pedestrians;
 				
-				loop cp over: c_people {
+				loop cp over: c_pedestrians {
 					let road_source_to_previous_location type: geometry value: ( shape split_at (cp.previous_location) ) first_with ( geometry(each).points contains (cp.previous_location) ) ;
 					let road_source_to_current_location type: geometry value: ( shape split_at (cp.location) ) first_with ( geometry(each).points contains cp.location);
 					
@@ -193,7 +198,7 @@ entities {
 			}
 		}
 		
-		reflex switch_panel when: !(reach_shelter) and (location = (current_panel.location)) {
+		reflex switch_panel when: ( !(reach_shelter) and (location = (current_panel.location)) ) {
 			if condition: !(current_panel.is_terminal) {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
@@ -213,36 +218,38 @@ entities {
 		action initialize {
 			arg the_road type: road;
 			
-			let inside_road_geom type: geometry value: the_road.shape;
-			set speed value: (the_road.shape).perimeter * insideRoadCoeff;
-			let point1 type: point value: first(inside_road_geom.points);
-			let point2 type: point value: last(inside_road_geom.points);
-			set location value: point1;
-			
-			do action: goto {
-				arg target value: point2;
-				arg on value: road_graph; 
-			}
-
-			let lines1 type: list of: geometry value: (inside_road_geom split_at location);
-			set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
-			set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
-			set location value: point2;
-			do action: goto {
-				arg target value: point1;
-				arg on value: road_graph; 
-			}
-			let lines2 type: list of: geometry value: (inside_road_geom split_at location);
-			
-			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
-			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
-			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
-			
-			if condition: (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_speed) ) {
-				set the_road.macro_patch value: inside_road_geom;
+			let intersecting_terminal_panels type: list of: panel value: ((list(panel)) where (each.id in terminal_panel_ids) ) overlapping the_road.shape;
+			if condition: empty(intersecting_terminal_panels) {
+				let inside_road_geom type: geometry value: the_road.shape;
+				set speed value: (the_road.shape).perimeter * insideRoadCoeff;
+				let point1 type: point value: first(inside_road_geom.points);
+				let point2 type: point value: last(inside_road_geom.points);
+				set location value: point1;
+				
+				do action: goto {
+					arg target value: point2;
+					arg on value: road_graph; 
+				}
+	
+				let lines1 type: list of: geometry value: (inside_road_geom split_at location);
+				set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
+				set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
+				set location value: point2;
+				do action: goto {
+					arg target value: point1;
+					arg on value: road_graph; 
+				}
+				let lines2 type: list of: geometry value: (inside_road_geom split_at location);
+				
+				set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
+				set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
 				set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+				
+				if condition: (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_speed) )   {
+					set the_road.macro_patch value: inside_road_geom;
+					set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+				}
 			}
-			
 		}
 	}
 }
@@ -255,6 +262,12 @@ experiment default_expr type: gui {
 		 	species road aspect: base transparency: 0.1;
 		 	species panel aspect: base transparency: 0.01;
  			species pedestrian aspect: base transparency: 0.1;
+		}
+
+		display guider_road_network {
+		 	species road aspect: base transparency: 0.1;
+		 	species panel aspect: base transparency: 0.01;
+ 			species guider aspect: base transparency: 0.1;
 		}
 
 		display Execution_Time {
@@ -274,9 +287,15 @@ experiment default_expr type: gui {
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
 
 		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_shelter));
-		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_shelter));
+		monitor pedestrians_NOT_reach_shelter value: ( length( list(pedestrian) where ( !(each.reach_shelter) ) ) + ( sum ( list(road) collect (length (each.members)) ) ) );
+		
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
+		
+		monitor terminal_panels value: (list(panel)) where each.is_terminal;
+
+		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
+		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));
 	}
 }

@@ -1,8 +1,8 @@
 model Scenario4
 
 global {
-	var guider_rate type: float parameter: 'Percent of fox in the population' init: 0.1 min: 0 max: 1;
-	var simulated_population_rate type: float init: 0.1 const: true;
+	var guiders_per_road type: int parameter: 'Number of guider per road' init: 1 min: 0 max: 10;
+	var simulated_population_rate type: float init: 0.001 const: true;
 	
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -12,9 +12,12 @@ global {
 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
-	var pedestrian_speed type: float init: 1;
+	var pedestrian_speed type: float init: 1; // this is 1m/s?
 	var pedestrian_color type: rgb init: rgb('green') const: true;
-	var pedestrian_perception_range type: float init: 100; // 100 meters
+	var pedestrian_perception_range type: float init: 50; // 50 meters
+	
+	var guider_speed type: float init: 1;
+	var guider_color type: rgb init: rgb('blue');
 	
 	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
@@ -48,22 +51,22 @@ global {
 
 		loop w over: list(ward) {
 			if condition: !(empty(w.roads)) {
-				create species: pedestrian number: int ( (w.population * simulated_population_rate) * (1 - guider_rate) ) {
-					set location value: any_location_in (one_of (w.roads));
-				}
-				
-				create species: guider number: int ( (w.population * simulated_population_rate) * guider_rate ) {
+				create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 					set location value: any_location_in (one_of (w.roads));
 				}
 			}
 		}
+		
+		loop r over: list(road) {
+			create species: guider number: guiders_per_road with: [ managed_road :: r ];
+		}
 	}	 
 
-	reflex stop_simulation when: (time = 5400) {
+	reflex stop_simulation when: ( (time = 5400) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
-				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where (each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
+				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where !(each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
 		
 		do action: halt;
@@ -77,7 +80,7 @@ entities {
 		
 		var macro_patch type: geometry;
 		var macro_patch_buffer type: geometry;
-
+		
 		species captured_pedestrian parent: pedestrian schedules: [] {
 			var released_time type: int;
 			var released_location type: point;
@@ -89,18 +92,18 @@ entities {
 
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
-			let to_be_captured_people type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where !(each.reach_shelter);
-			if condition: ! (empty(to_be_captured_people)) {
-				set to_be_captured_people value: to_be_captured_people where (
+			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where !(each.reach_shelter);
+			if condition: ! (empty(to_be_captured_pedestrian)) {
+				set to_be_captured_pedestrian value: to_be_captured_pedestrian where (
 					(each.last_road != self)
 					and (each.previous_location != nil) 
 					and (each.location != ((each.current_panel).location)));
 			}
 			
-			if condition: !(empty (to_be_captured_people)) {
-				capture target: to_be_captured_people as: captured_pedestrian returns: c_people;
+			if condition: !(empty (to_be_captured_pedestrian)) {
+				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
 				
-				loop cp over: c_people {
+				loop cp over: c_pedestrian {
 					let road_source_to_previous_location type: geometry value: ( shape split_at (cp.previous_location) ) first_with ( geometry(each).points contains (cp.previous_location) ) ;
 					let road_source_to_current_location type: geometry value: ( shape split_at (cp.location) ) first_with ( geometry(each).points contains cp.location);
 					
@@ -116,20 +119,20 @@ entities {
 						}
 					}
 
-					set cp.last_road value: self;
 					set cp.released_time value: time + (skip_distance / pedestrian_speed);
 				}
 			}
 		}
 		
-		reflex release_captured_people when: (macro_patch != nil) {
-			let to_be_released_people type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
+		reflex release_captured_pedestrian when: (macro_patch != nil) {
+			let to_be_released_pedestrian type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
 			
 			
-			if condition: !(empty (to_be_released_people)) {
-				loop rp over: to_be_released_people {
+			if condition: !(empty (to_be_released_pedestrian)) {
+				loop rp over: to_be_released_pedestrian {
 					let r_position type: point value: rp.released_location;
 					release target: rp returns: r_people;
+					set pedestrian(first (list (r_people))).last_road value: self;
 					set pedestrian(first (list (r_people))).location value: r_position;
 				}
 			}
@@ -150,7 +153,6 @@ entities {
 	  	action init_overlapping_roads {
 	  		set roads value: road overlapping shape;
 	  	}
-	  	
 	  	
 	  	aspect base {
 	  		draw shape: geometry color: color;
@@ -181,22 +183,67 @@ entities {
 	}
 
 	species guider skills: moving {
+		var managed_road type: road;
+		var target1 type: point;
+		var target2 type: point;
+		var reach_target1 type: bool init: false;
+		var reach_target2 type: bool init: false;
+		var finish_patrolling type: bool init: false;
+		
 		var current_panel type: panel init: nil;
 		var reach_shelter type: bool init: false;
 
 		init {
+			set location value: any_location_in(managed_road.shape);
+			set target1 value: first ((managed_road.shape).points);
+			set target2 value: last ((managed_road.shape).points);
+			
 			set current_panel value: (list (panel)) closest_to shape;
 		}
 		
-		reflex move when: ( !(reach_shelter) and (current_panel != nil) and (location != (current_panel.location)) ) {
-			do action: goto {
-				arg target value: current_panel;
-				arg on value: road_graph;
-				arg speed value: pedestrian_speed;
+		reflex patrol when: !(finish_patrolling) {
+			if condition: !(reach_target1) {
+				
+				do action: goto {
+					arg target value: target1;
+					arg on value: road_graph;
+					arg speed value: guider_speed;
+				}
+
+				if condition: (location = target1) {
+					set reach_target1 value: true;
+				}
+				
+				else {
+					if condition: !(reach_target2) {
+						
+						do action: goto {
+							arg target value: target2;
+							arg on value: road_graph;
+							arg speed value: guider_speed;
+						}
+						
+						if condition: (location = target2) {
+							set reach_target2 value: true;
+						}
+						
+						else {
+							set finish_patrolling value: true;
+						}
+					}
+				}
 			}
 		}
 		
-		reflex switch_panel when: !(reach_shelter) and (location = (current_panel.location)) {
+		reflex move_to_shelter when: ( finish_patrolling and !(reach_shelter) and (current_panel != nil) and (location != (current_panel.location)) ) {
+			do action: goto {
+				arg target value: current_panel;
+				arg on value: road_graph;
+				arg speed value: guider_speed;
+			}
+		}
+		
+		reflex switch_panel when: ( finish_patrolling and !(reach_shelter) and (location = (current_panel.location)) ) {
 			if condition: !(current_panel.is_terminal) {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
@@ -208,7 +255,7 @@ entities {
 		}
 		
 		aspect base {
-			draw shape: geometry color: pedestrian_color;
+			draw shape: geometry color: guider_color;
 		}
 	}
 	
@@ -238,7 +285,6 @@ entities {
 					}
 				}
 			}
-			
 		}
 		
 		reflex move when: !(reach_shelter) and (current_panel != nil) {
@@ -271,36 +317,39 @@ entities {
 		action initialize {
 			arg the_road type: road;
 			
-			let inside_road_geom type: geometry value: the_road.shape;
-			set speed value: (the_road.shape).perimeter * insideRoadCoeff;
-			let point1 type: point value: first(inside_road_geom.points);
-			let point2 type: point value: last(inside_road_geom.points);
-			set location value: point1;
-			
-			do action: goto {
-				arg target value: point2;
-				arg on value: road_graph; 
-			}
-
-			let lines1 type: list of: geometry value: (inside_road_geom split_at location);
-			set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
-			set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
-			set location value: point2;
-			do action: goto {
-				arg target value: point1;
-				arg on value: road_graph; 
-			}
-			let lines2 type: list of: geometry value: (inside_road_geom split_at location);
-			
-			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
-			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
-			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
-			
-			if condition: (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_speed) ) {
-				set the_road.macro_patch value: inside_road_geom;
+			let intersecting_terminal_panels type: list of: panel value: ( (list(panel)) where (terminal_panel_ids contains each.id) ) overlapping the_road.shape;
+			if condition: empty(intersecting_terminal_panels) {
+				
+				let inside_road_geom type: geometry value: the_road.shape;
+				set speed value: (the_road.shape).perimeter * insideRoadCoeff;
+				let point1 type: point value: first(inside_road_geom.points);
+				let point2 type: point value: last(inside_road_geom.points);
+				set location value: point1;
+				
+				do action: goto {
+					arg target value: point2;
+					arg on value: road_graph; 
+				}
+	
+				let lines1 type: list of: geometry value: (inside_road_geom split_at location);
+				set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
+				set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
+				set location value: point2;
+				do action: goto {
+					arg target value: point1;
+					arg on value: road_graph; 
+				}
+				let lines2 type: list of: geometry value: (inside_road_geom split_at location);
+				
+				set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
+				set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
 				set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+				
+				if condition: (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_speed) ) {
+					set the_road.macro_patch value: inside_road_geom;
+					set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
+				}
 			}
-			
 		}
 	}
 }
@@ -313,6 +362,11 @@ experiment default_expr type: gui {
 		 	species road aspect: base transparency: 0.1;
 		 	species panel aspect: base transparency: 0.01;
  			species pedestrian aspect: base transparency: 0.1;
+		}
+		
+		display guider_road_network {
+		 	species road aspect: base transparency: 0.1;
+		 	species panel aspect: base transparency: 0.01;
  			species guider aspect: base transparency: 0.1;
 		}
 
@@ -332,10 +386,20 @@ experiment default_expr type: gui {
 		monitor pedestrians value: length (list(pedestrian));
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
 
-		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_shelter));
-		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_shelter));
+		monitor pedestrians_reach_shelter value: length(list(pedestrian) where (each.reach_shelter));
+		monitor pedestrians_NOT_reach_shelter value: length(list(pedestrian) where !(each.reach_shelter));
+		
+		monitor pedestrians_WITH_panel_info value: length(list(pedestrian) where (each.current_panel != nil));
+		monitor pedestrian_WITHOUT_panel_info value: length(list(pedestrian) where (each.current_panel = nil));
+
+		monitor guiders_reach_shelter value: length(list(guider) where (each.reach_shelter));
+		monitor guiders_NOT_reach_shelter value: length(list(guider) where !(each.reach_shelter));
+		
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
+		
+		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
+		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));
 	}
 }

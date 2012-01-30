@@ -1,8 +1,16 @@
 model Scenario3
 
+/*
+this scenario is not necessary infact
+
+ incase we have under 30 minutes of evacuation, pedestrians just find high level building to enter!!!
+ 
+ Scenario1 is enough!
+ */
+ 
 global {
-	var guider_rate type: float parameter: 'Percent of fox in the population' init: 0.1 min: 0 max: 1;
-	var simulated_population_rate type: float init: 0.01 const: true;
+	var guiders_per_road type: int parameter: 'Number of guider per road' init: 1 min: 0 max: 10;
+	var simulated_population_rate type: float init: 0.1 const: true;
 	
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -22,6 +30,7 @@ global {
 	var pedestrian_perception_range type: float init: 100; // 100 meters
 	
 	var guider_speed type: float init: 1;
+	var guider_color type: rgb init: rgb('blue');
 	 
 	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
@@ -69,22 +78,22 @@ global {
 
 		loop w over: list(ward) {
 			if condition: !(empty(w.roads)) {
-				create species: pedestrian number: int ( (w.population * simulated_population_rate) * (1 - guider_rate) ) {
-					set location value: any_location_in (one_of (w.roads));
-				}
-				
-				create species: guider number: int ( (w.population * simulated_population_rate) * guider_rate ) {
+				create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 					set location value: any_location_in (one_of (w.roads));
 				}
 			}
 		}
+
+		loop r over: list(road) {
+			create species: guider number: guiders_per_road with: [ managed_road :: r ];
+		}
 	}	 
 
-	reflex stop_simulation when: (time = 1800) {
+	reflex stop_simulation when: ( (time = 1800) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
-				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where (each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
+				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where !(each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
 		
 		do action: halt;
@@ -252,14 +261,59 @@ entities {
 	}
 	
 	species guider skills: moving {
+		var managed_road type: road;
+		var target1 type: point;
+		var target2 type: point;
+		var reach_target1 type: bool init: false;
+		var reach_target2 type: bool init: false;
+		var finish_patrolling type: bool init: false;
+
 		var safe_building type: destination;
-		var reach_target type: bool init: false;
+		var reach_shelter type: bool init: false;
 		
 		init {
+			set location value: any_location_in(managed_road.shape);
+			set target1 value: first ((managed_road.shape).points);
+			set target2 value: last ((managed_road.shape).points);
+
 			set safe_building value: (list (destination)) closest_to shape;
 		}
 		
-		reflex move when: !(reach_target) {
+		reflex patrol when: !(finish_patrolling) {
+			if condition: !(reach_target1) {
+				
+				do action: goto {
+					arg target value: target1;
+					arg on value: road_graph;
+					arg speed value: guider_speed;
+				}
+
+				if condition: (location = target1) {
+					set reach_target1 value: true;
+				}
+				
+				else {
+					if condition: !(reach_target2) {
+						
+						do action: goto {
+							arg target value: target2;
+							arg on value: road_graph;
+							arg speed value: guider_speed;
+						}
+						
+						if condition: (location = target2) {
+							set reach_target2 value: true;
+						}
+						
+						else {
+							set finish_patrolling value: true;
+						}
+					}
+				}
+			}
+		}
+
+		reflex move_to_shelter when: ( finish_patrolling and !(reach_shelter) ) {
 			do action: goto {
 				arg target value: safe_building;
 				arg on value: road_graph;
@@ -267,12 +321,12 @@ entities {
 			}
 			
 			if condition: (location = (safe_building.location)) {
-				set reach_target value: true;
+				set reach_shelter value: true;
 			}
 		}
 		
  		aspect base {
- 			draw shape: geometry color: pedestrian_color;
+ 			draw shape: geometry color: guider_color;
  		}
 	}
 
@@ -406,13 +460,21 @@ experiment default_expr type: gui {
 		monitor pedestrians value: length (list(pedestrian));
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
 
-		monitor pedestrians_reach_target value: length(list(pedestrian) where (each.reach_shelter));
-		monitor pedestrians_NOT_reach_target value: length(list(pedestrian) where !(each.reach_shelter));
+		monitor pedestrians_reach_shelter value: length(list(pedestrian) where (each.reach_shelter));
+		monitor pedestrians_NOT_reach_shelter value: length(list(pedestrian) where !(each.reach_shelter));
+		
+		monitor guiders_reach_shelter value: length(list(guider) where (each.reach_shelter));
+		monitor guiders_NOT_reach_shelter value: length(list(guider) where !(each.reach_shelter));
+				
 		monitor pedestrians_WITH_shelter_info value: length(list(pedestrian) where (each.shelter != nil));
 		monitor pedestrian_WITHOUT_shelter_info value: length(list(pedestrian) where (each.shelter = nil));
+		
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
 		monitor destinations value: length(destination as list);
+
+		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
+		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));
 	}
 }

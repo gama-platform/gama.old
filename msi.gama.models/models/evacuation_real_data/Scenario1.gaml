@@ -1,10 +1,7 @@
 model Scenario1
 
 global {
-	var initial_time type: float parameter: 'Time in day' init: 8.5 min: 0 max: 24;
-	var tourist_season type: bool parameter: 'In tourist season?' init: true;
-	var fox_rate type: float parameter: 'Percent of fox in the population' init: 0.1 min: 0 max: 1;
-	var simulated_population_rate type: float init: 0.02 const: true;
+	var simulated_population_rate type: float init: 0.1 const: true;
 	 
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -67,30 +64,17 @@ global {
 		}
 
 		loop w over: list(ward) {
-			create species: pedestrian number: int ( (w.population * simulated_population_rate) * (1 - fox_rate) ) {
+			create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 				set location value: any_location_in (one_of (w.roads));
 			}
 		}
 	}	 
 	
-	/*
-	WHY THIS NEVER HAPPENS?
-	reflex stop_simulation {
-		if condition: ((length ( ( list (pedestrian) ) where ((each.reach_target) = true) )) = (length (list(pedestrian)))) {
-			do action: write {
-				arg name: message value: 'All ' + (string (length (list(pedestrian)))) + ' reach safe building at time ' + (string (time));
-			}
-			
-			do action: halt;
-		}
-	}
-	*/
-	
-	reflex stop_simulation when: (time = 1800) {
+	reflex stop_simulation when: ( (time = 1800) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
-				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where (each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
+				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where !(each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
 		
 		do action: halt;
@@ -118,20 +102,13 @@ entities {
 
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
-			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where !(each.reach_shelter);
-			
-			
-			if condition: ! (empty(to_be_captured_pedestrian)) {
-				set to_be_captured_pedestrian value: to_be_captured_pedestrian where (
-					(each.last_road != self)
-					and (each.previous_location != nil));
-			}
+			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where 
+				( !(each.reach_shelter) and (each.last_road != self) and (each.previous_location != nil) );
 			
 			if condition: !(empty (to_be_captured_pedestrian)) {
+				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
 				
-				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_people;
-				
-				loop cp over: c_people {
+				loop cp over: c_pedestrian {
 					let road_source_to_previous_location type: geometry value: ( shape split_at (cp.previous_location) ) first_with ( geometry(each).points contains (cp.previous_location) ) ;
 					let road_source_to_current_location type: geometry value: ( shape split_at (cp.location) ) first_with ( geometry(each).points contains cp.location);
 					
@@ -153,15 +130,14 @@ entities {
 			}
 		}
 		
-		reflex release_captured_people when: (macro_patch != nil) {
+		reflex release_captured_people when: ( (macro_patch != nil) and !(empty(members)) ) {
 			let to_be_released_people type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
-			
 			
 			if condition: !(empty (to_be_released_people)) {
 				loop rp over: to_be_released_people {
 					let r_position type: point value: rp.released_location;
-					release target: rp returns: r_people;
-					set pedestrian(first (list (r_people))).location value: r_position;
+					release target: rp returns: r_pedestrian;
+					set pedestrian(first (list (r_pedestrian))).location value: r_position;
 				}
 			}
 		}
@@ -212,14 +188,13 @@ entities {
 	   	var floor type: int;
 	   	var x type: float;
 	   	var y type: float;
-	   	var zone_id type: int;
 	   	var color type: rgb init: zone3_building_color;
 	   	
 	   	init {
 	   		let overlapping_zone type: list of: zone value: zone overlapping shape;
 	   		if condition: !(empty (overlapping_zone)) {
 	   			
-	   			set zone_id value: (first(overlapping_zone)).id;
+	   			let zone_id type: int value: (first(overlapping_zone)).id;
 	   			
 	   			if condition: (zone_id = 1) {
 	   				set color value: zone1_building_color;
@@ -360,10 +335,13 @@ experiment default_expr type: gui {
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
 
 		monitor pedestrians_reach_shelter value: length(list(pedestrian) where (each.reach_shelter));
-		monitor pedestrians_NOT_reach_shelter value: length(list(pedestrian) where !(each.reach_shelter));
+		monitor pedestrians_NOT_reach_shelter value: ( length(list(pedestrian) where ( !(each.reach_shelter) ) ) + ( sum (list(road) collect (length (each.members))) ) );
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
 		monitor destinations value: length(destination as list);
+
+		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
+		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));
 	}
 }
