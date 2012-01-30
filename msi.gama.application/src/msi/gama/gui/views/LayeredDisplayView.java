@@ -60,7 +60,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS };
 	}
 
-	protected IDisplayManager getDisplayManager() {
+	public IDisplayManager getDisplayManager() {
 		return ((LayerDisplayOutput) getOutput()).getSurface().getManager();
 	}
 
@@ -89,8 +89,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 		// });
 
 		Control aux =
-			new SWTAuxiliaryDisplaySurface(general, SWT.None, (AWTDisplaySurface) getOutput()
-				.getSurface());
+			new SWTNavigationPanel(general, SWT.None, (AWTDisplaySurface) getOutput().getSurface());
 		GridData data = new GridData(SWT.CENTER, SWT.FILL, true, true);
 		data.minimumHeight = 200;
 		data.heightHint = 200;
