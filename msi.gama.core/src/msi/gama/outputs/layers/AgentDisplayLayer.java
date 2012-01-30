@@ -105,7 +105,7 @@ public class AgentDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.AGENTS;
+		return IDisplayLayer.AGENTS;
 	}
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {

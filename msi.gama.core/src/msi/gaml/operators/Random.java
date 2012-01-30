@@ -96,7 +96,8 @@ public class Random {
 	}
 
 	@operator(value = "shuffle", content_type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static IList opShuffle(final IScope scope, final ISpecies target) {
+	public static IList opShuffle(final IScope scope, final ISpecies target)
+		throws GamaRuntimeException {
 		return opShuffle(scope, scope.getAgentScope().getPopulationFor(target).getAgentsList());
 	}
 
@@ -114,7 +115,7 @@ public class Random {
 	}
 
 	@operator(value = { "any", "one_of" }, type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static IAgent opAny(final IScope scope, final ISpecies l) {
+	public static IAgent opAny(final IScope scope, final ISpecies l) throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(l).getAgentsList().any();
 	}
 

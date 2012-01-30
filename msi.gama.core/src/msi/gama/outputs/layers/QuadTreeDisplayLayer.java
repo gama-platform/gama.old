@@ -76,7 +76,7 @@ public class QuadTreeDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.QUADTREE;
+		return IDisplayLayer.QUADTREE;
 	}
 
 	@Override

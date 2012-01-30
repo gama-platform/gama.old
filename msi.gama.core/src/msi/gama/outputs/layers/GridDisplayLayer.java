@@ -19,9 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.IDisplayOutput;
@@ -61,7 +59,8 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 	GamaSpatialMatrix grid;
 	IExpression lineColor;
 	GamaColor currentColor, constantColor;
-	BufferedImage supportImage;
+
+	// BufferedImage supportImage;
 
 	@Override
 	public void prepare(final IDisplayOutput out, final IScope sim) throws GamlException {
@@ -78,14 +77,10 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 			"not a grid environment for: " + getName()); }
 
 		grid = (GamaSpatialMatrix) gridPop.getTopology().getPlaces();
-		if ( supportImage != null ) {
-			supportImage.flush();
-		}
-		supportImage = ImageUtils.createCompatibleImage(grid.numCols, grid.numRows);
-	}
-
-	public BufferedImage getSupportImage() {
-		return supportImage;
+		// if ( supportImage != null ) {
+		// supportImage.flush();
+		// }
+		// supportImage = ImageUtils.createCompatibleImage(grid.numCols, grid.numRows);
 	}
 
 	public GamaSpatialMatrix getEnvironment() {
@@ -94,7 +89,7 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.GRID;
+		return IDisplayLayer.GRID;
 	}
 
 	public Color getLineColor() {
@@ -108,8 +103,7 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 	@Override
 	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
 		super.compute(sim, cycle);
-		supportImage.setRGB(0, 0, grid.numCols, grid.numRows, grid.getDisplayData(), 0,
-			grid.numCols);
+
 		if ( lineColor == null || constantColor != null ) { return; }
 		currentColor = Cast.asColor(sim, lineColor.value(sim));
 	}

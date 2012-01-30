@@ -110,7 +110,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.SPECIES;
+		return IDisplayLayer.SPECIES;
 	}
 
 	public List<String> getAspects() {

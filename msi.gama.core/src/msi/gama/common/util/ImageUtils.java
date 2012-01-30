@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,7 +20,10 @@ package msi.gama.common.util;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.*;
+import javax.imageio.ImageIO;
+import msi.gama.runtime.GAMA;
 import org.eclipse.swt.graphics.*;
 
 public class ImageUtils {
@@ -94,12 +97,29 @@ public class ImageUtils {
 
 	// private final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
-	public ImageUtils() {
+	private static ImageUtils instance = new ImageUtils();
+
+	public static ImageUtils getInstance() {
+		return instance;
+	}
+
+	private ImageUtils() {
 		cache = new HashMap();
 	}
 
 	public boolean contains(final String s) {
 		return cache.containsKey(s);
+	}
+
+	public BufferedImage getImageFromFile(final String fileName) throws IOException {
+		BufferedImage image = get(fileName);
+		if ( image != null ) { return image; }
+
+		File f =
+			new File(GAMA.getFrontmostSimulation().getModel().getRelativeFilePath(fileName, true));
+		image = ImageIO.read(f);
+		add(fileName, image);
+		return image;
 	}
 
 	public void add(final String s, final BufferedImage image) {
@@ -163,7 +183,8 @@ public class ImageUtils {
 	private BufferedImage get(final String s, final int angle) {
 		BufferedImage[] map = cache.get(s);
 		if ( map == null ) { return null; }
-		int position = (int)Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		int position =
+			(int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
 	}
 

@@ -74,7 +74,7 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.TEXT;
+		return IDisplayLayer.TEXT;
 	}
 
 	public String getFontName() {

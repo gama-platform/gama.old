@@ -19,7 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.INamed;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,6 +34,15 @@ import msi.gaml.compilation.GamlException;
  */
 public interface IDisplayLayer extends INamed {
 
+	public final static short GRID = 1;
+	public final static short AGENTS = 2;
+	public final static short SPECIES = 3;
+	public final static short TEXT = 4;
+	public final static short IMAGE = 5;
+	public final static short GIS = 6;
+	public final static short CHART = 7;
+	public final static short QUADTREE = 8;
+
 	public abstract void prepare(final IDisplayOutput out, final IScope sim) throws GamlException;
 
 	public abstract short getType();
@@ -46,7 +55,7 @@ public interface IDisplayLayer extends INamed {
 
 	public abstract IDisplayLayerBox getBox();
 
-	public abstract void setPhysicalLayer(IDisplay abstractDisplay);
+	// public abstract void setPhysicalLayer(IDisplay abstractDisplay);
 
 	public abstract void setOpacity(Double opacity);
 

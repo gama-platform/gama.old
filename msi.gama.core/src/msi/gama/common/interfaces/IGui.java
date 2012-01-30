@@ -20,7 +20,6 @@ package msi.gama.common.interfaces;
 
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gaml.compilation.GamlException;
 
 /**
@@ -82,7 +81,7 @@ public interface IGui {
 
 	IGamaView hideView(String viewId);
 
-	IDisplay createDisplay(IDisplayLayer layer, double w, double h, IGraphics g);
+	// IDisplay createDisplay(IDisplayLayer layer, double w, double h, IGraphics g);
 
 	boolean isModelingPerspective();
 

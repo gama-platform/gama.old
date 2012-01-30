@@ -401,7 +401,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplay.CHART;
+		return IDisplayLayer.CHART;
 	}
 
 	@Override

@@ -21,6 +21,7 @@ package msi.gaml.types;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -35,7 +36,8 @@ import msi.gaml.species.ISpecies;
 public class GamaSpeciesType extends GamaType<ISpecies> {
 
 	@Override
-	public ISpecies cast(final IScope scope, final Object obj, final Object param) {
+	public ISpecies cast(final IScope scope, final Object obj, final Object param)
+		throws GamaRuntimeException {
 		ISpecies species =
 			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj
 				: obj instanceof IAgent ? ((IAgent) obj).getSpecies() : obj instanceof String

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,7 +18,9 @@
  */
 package msi.gama.common.interfaces;
 
-import java.awt.*;
+import java.awt.Point;
+import java.util.Set;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -29,32 +31,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface IDisplay extends INamed, Comparable<IDisplay> {
 
-	public final static short GRID = 1;
-	public final static short AGENTS = 2;
-	public final static short SPECIES = 3;
-	public final static short TEXT = 4;
-	public final static short IMAGE = 5;
-	public final static short GIS = 6;
-	public final static short CHART = 7;
-	public final static short QUADTREE = 8;
-
 	String getMenuName();
-
-	// Image getMenuImage();
 
 	void drawDisplay(IGraphics simGraphics) throws GamaRuntimeException;
 
-	void collectAgentsAt(int x, int y);
+	Set<IAgent> collectAgentsAt(int x, int y);
 
 	public boolean containsScreenPoint(final int x, final int y);
 
 	void dispose();
-
-	public void putMenuItemsIn(final Menu inMenu, int x, int y);
-
-	void initMenuItems(IDisplaySurface displaySurface);
-
-	Point getSize();
 
 	Point getPosition();
 
@@ -66,8 +51,15 @@ public interface IDisplay extends INamed, Comparable<IDisplay> {
 
 	void updateEnvDimensions(double env_width, double env_height);
 
-	Integer getOrder();
+	// Integer getOrder();
 
-	void setOrder(Integer order);
+	// void setOrder(Integer order);
+	// Image getMenuImage();
+	// TODO Let the menu be managed entirely by the surface (not the display)
+	// public void putMenuItemsIn(final Menu inMenu, int x, int y);
+
+	// void initMenuItems(IDisplaySurface displaySurface);
+
+	// Point getSize();
 
 }

@@ -66,18 +66,21 @@ public class Containers {
 	}
 
 	@operator(value = "length")
-	public static Integer getLength(final IScope scope, final ISpecies s) {
+	public static Integer getLength(final IScope scope, final ISpecies s)
+		throws GamaRuntimeException {
 		if ( s == null ) { return 0; }
 		return scope.getAgentScope().getPopulationFor(s).size();
 	}
 
 	@operator(value = { "at", "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val) {
+	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
+		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
 	}
 
 	@operator(value = { "at", "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static IAgent getAgent(final IScope scope, final ISpecies s, final Integer val) {
+	public static IAgent getAgent(final IScope scope, final ISpecies s, final Integer val)
+		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
 	}
 

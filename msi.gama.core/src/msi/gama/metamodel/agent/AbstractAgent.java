@@ -511,7 +511,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public IList<IAgent> getPeers() {
+	public IList<IAgent> getPeers() throws GamaRuntimeException {
 		IAgent host = getHost();
 		if ( host != null ) {
 			IPopulation pop = host.getPopulationFor(this.getSpecies());
@@ -523,12 +523,12 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final ISpecies species) {
+	public IPopulation getPopulationFor(final ISpecies species) throws GamaRuntimeException {
 		return getPopulationFor(species.getName());
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final String speciesName) {
+	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
 		IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
 

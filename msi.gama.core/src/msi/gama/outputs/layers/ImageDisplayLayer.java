@@ -19,10 +19,8 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
 import java.util.*;
-import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.outputs.IDisplayOutput;
@@ -67,8 +65,6 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) })
 public class ImageDisplayLayer extends AbstractDisplayLayer {
 
-	private static ImageUtils cachedImages = new ImageUtils();
-
 	public ImageDisplayLayer(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
@@ -80,23 +76,14 @@ public class ImageDisplayLayer extends AbstractDisplayLayer {
 
 	private GisLayer gisLayer = null;
 
-	public BufferedImage getImage(final String fileName) throws IOException {
-		BufferedImage image;
-		File f =
-			new File(GAMA.getFrontmostSimulation().getModel().getRelativeFilePath(fileName, true));
-		image = ImageIO.read(f);
-		cachedImages.add(fileName, image);
-		return cachedImages.get(fileName);
-	}
-
 	public GisLayer getGisLayer() {
 		return gisLayer;
 	}
 
 	@Override
 	public short getType() {
-		if ( getFacet(IKeyword.GIS) == null ) { return IDisplay.IMAGE; }
-		return IDisplay.GIS;
+		if ( getFacet(IKeyword.GIS) == null ) { return IDisplayLayer.IMAGE; }
+		return IDisplayLayer.GIS;
 	}
 
 	public String getImageFileName() {
@@ -133,7 +120,7 @@ public class ImageDisplayLayer extends AbstractDisplayLayer {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
 					currentImage = constantImage;
 					try {
-						getImage(constantImage);
+						ImageUtils.getInstance().getImageFromFile(constantImage);
 					} catch (final Exception ex) {
 						constantImage = null;
 						throw new GamaRuntimeException(ex);

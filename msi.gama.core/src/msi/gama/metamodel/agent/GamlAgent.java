@@ -60,7 +60,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		}
 	}
 
-	protected IGamlPopulation findPopulation(final ISimulation sim) {
+	protected IGamlPopulation findPopulation(final ISimulation sim) throws GamaRuntimeException {
 		IGamlPopulation spec;
 		final species sa = this.getClass().getAnnotation(species.class);
 		String speciesName = null;

@@ -20,7 +20,7 @@ package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.IScope;
@@ -42,7 +42,8 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	IExpression title;
 	String constantTitle;
 	IDisplayOutput output;
-	protected IDisplay physicalLayer;
+
+	// protected IDisplay physicalLayer;
 
 	public AbstractDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -108,8 +109,8 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	/**
 	 * @param abstractDisplay
 	 */
-	@Override
-	public void setPhysicalLayer(final IDisplay abstractDisplay) {
-		physicalLayer = abstractDisplay;
-	}
+	// @Override
+	// public void setPhysicalLayer(final IDisplay abstractDisplay) {
+	// physicalLayer = abstractDisplay;
+	// }
 }

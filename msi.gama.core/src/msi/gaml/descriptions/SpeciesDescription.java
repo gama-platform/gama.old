@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlException;
@@ -321,6 +322,17 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		SpeciesDescription parent = getParentSpecies();
 
 		if ( parent != null ) {
+			if ( !parent.javaBase.isAssignableFrom(javaBase) ) {
+				if ( javaBase == GamlAgent.class ) { // default base class
+					javaBase = parent.javaBase;
+					agentConstructor = parent.agentConstructor;
+				} else {
+					throw new GamlException("Species " + getName() + " Java base class (" +
+						javaBase.getSimpleName() + ") is not a subclass of its parent species " +
+						parent.getName() + " Java base class (" +
+						parent.getJavaBase().getSimpleName() + ")");
+				}
+			}
 			skillsClasses.addAll(parent.skillsClasses);
 			skillsMethods.putAll(parent.skillsMethods);
 

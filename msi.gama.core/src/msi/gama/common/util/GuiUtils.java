@@ -21,7 +21,6 @@ package msi.gama.common.util;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gaml.compilation.GamlException;
 
 /**
@@ -225,11 +224,13 @@ public class GuiUtils {
 		}
 	}
 
-	public static IDisplay createDisplay(final IDisplayLayer layer, final double w, final double h,
-		final IGraphics g) {
-		if ( gui != null ) { return gui.createDisplay(layer, w, h, g); }
-		return null;
-	}
+	//
+	// public static IDisplay createDisplay(final IDisplayLayer layer, final double w, final double
+	// h,
+	// final IGraphics g) {
+	// if ( gui != null ) { return gui.createDisplay(layer, w, h, g); }
+	// return null;
+	// }
 
 	/**
 	 * @return

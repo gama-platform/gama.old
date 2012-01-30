@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -30,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.ModelFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -118,6 +119,24 @@ public class GamlPopulation extends AbstractPopulation implements IGamlPopulatio
 				location = new GamaPoint(width / 2, height / 2);
 				geometry = GamaGeometryType.buildRectangle(width, height, location);
 			}
+
+			@Override
+			// Special case for built-in species handled by the world (and not created before)
+			public IPopulation getPopulationFor(final String speciesName)
+				throws GamaRuntimeException {
+				IPopulation pop = super.getPopulationFor(speciesName);
+				if ( pop != null ) { return pop; }
+				if ( ModelFactory.isBuiltIn(speciesName) ) {
+					ISpecies microSpec = this.getVisibleSpecies(speciesName);
+					pop = new GamlPopulation(this, microSpec);
+					microPopulations.put(microSpec, pop);
+					pop.initializeFor(this.getSimulation().getExecutionScope());
+					return pop;
+				}
+				throw new GamaRuntimeException("The population of " + speciesName +
+					" is not accessible from " + this);
+			}
+
 		}
 
 		public WorldPopulation(final ISpecies expr) {

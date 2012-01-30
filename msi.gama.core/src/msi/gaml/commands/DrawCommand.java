@@ -21,9 +21,8 @@ package msi.gaml.commands;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -69,7 +68,6 @@ combinations = {
 @inside(symbols = { IKeyword.ASPECT }, kinds = { ISymbolKind.SEQUENCE_COMMAND })
 public class DrawCommand extends AbstractCommandSequence {
 
-	private static ImageUtils cachedImages = new ImageUtils();
 	private static final Map<String, Integer> STYLES = new HashMap();
 	private static final Map<String, Integer> SHAPES = new HashMap();
 	static {
@@ -308,10 +306,12 @@ public class DrawCommand extends AbstractCommandSequence {
 					constantSize.getX(), g));
 			String img =
 				constantImage == null ? Cast.asString(scope, image.value(scope)) : constantImage;
-			if ( !cachedImages.contains(img) ) {
-				loadImage(scope, img);
+			BufferedImage image;
+			try {
+				image = ImageUtils.getInstance().getImageFromFile(img);
+			} catch (IOException e) {
+				throw new GamaRuntimeException(e);
 			}
-			BufferedImage image = cachedImages.get(img);
 			int image_width = image.getWidth();
 			int image_height = image.getHeight();
 			double ratio = image_width / (double) image_height;
@@ -362,20 +362,6 @@ public class DrawCommand extends AbstractCommandSequence {
 			return g.drawImage(image, angle);
 		}
 
-		private void loadImage(final IScope scope, final String s) {
-			BufferedImage img = null;
-			try {
-				img =
-					ImageIO.read(new File(scope.getSimulationScope().getModel()
-						.getRelativeFilePath(s, true)));
-				if ( img != null ) {
-					cachedImages.add(s, img);
-				}
-
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	private class TextExecuter extends DrawExecuter {

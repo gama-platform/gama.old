@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,8 +19,9 @@
 package msi.gaml.species;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.commands.*;
@@ -36,8 +37,6 @@ import msi.gaml.variables.IVariable;
  * 
  */
 public interface ISpecies extends IValue, ISymbol {
-
-	
 
 	// public static final String SPATIAL_LEVEL = "spatial_level";
 
@@ -150,16 +149,18 @@ public interface ISpecies extends IValue, ISymbol {
 
 	// TODO THESE METHODS ARE INTENDED TO BE PORTED ON IPopulation instead
 	/**
+	 * @throws GamaRuntimeException
 	 * @param scope
 	 * @return
 	 */
-	IList listValue(IScope scope);
+	IList listValue(IScope scope) throws GamaRuntimeException;
 
 	/**
+	 * @throws GamaRuntimeException
 	 * @param scope
 	 * @return
 	 */
-	Map mapValue(IScope scope);
+	Map mapValue(IScope scope) throws GamaRuntimeException;
 
 	public abstract void addAction(final ICommand ce);
 

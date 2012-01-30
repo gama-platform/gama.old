@@ -238,7 +238,7 @@ public abstract class Spatial {
 
 		@operator(IKeyword.MINUS)
 		public static IShape opDifferenceSpecies(final IScope scope, final IShape g1,
-			final ISpecies target) {
+			final ISpecies target) throws GamaRuntimeException {
 			IList agents = target.listValue(scope);
 			return opDifferenceAgents(g1, agents);
 		}
