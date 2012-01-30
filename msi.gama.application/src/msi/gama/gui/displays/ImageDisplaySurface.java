@@ -240,4 +240,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void setSynchronized(final boolean checked) {}
 
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setQualityRendering(boolean)
+	 */
+	@Override
+	public void setQualityRendering(final boolean quality) {
+		displayGraphics.setQualityRendering(quality);
+	}
+
 }

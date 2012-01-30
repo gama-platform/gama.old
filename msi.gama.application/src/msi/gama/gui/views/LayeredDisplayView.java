@@ -56,8 +56,8 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 	 */
 	@Override
 	protected Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, SNAPSHOT, SEPARATOR,
-			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS };
+		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
+			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS };
 	}
 
 	public IDisplayManager getDisplayManager() {

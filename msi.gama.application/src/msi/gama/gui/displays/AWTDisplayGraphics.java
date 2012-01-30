@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -117,7 +116,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	public void setGraphics(final Graphics2D g) {
 		ready = true;
 		g2 = g;
-		setQualityRendering(GAMA.USE_QUALITY_RENDERING);
+		setQualityRendering(false);
 		g2.setFont(defaultFont);
 	}
 
@@ -272,15 +271,15 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final boolean smooth) {
 		AffineTransform saved = g2.getTransform();
-		RenderingHints hints = g2.getRenderingHints();
+		// RenderingHints hints = g2.getRenderingHints();
 		if ( angle != null ) {
 			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		if ( !smooth ) {
-			g2.setRenderingHints(SPEED_RENDERING);
-		}
+		// if ( !smooth ) {
+		// g2.setRenderingHints(SPEED_RENDERING);
+		// }
 		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
-		g2.setRenderingHints(hints);
+		// g2.setRenderingHints(hints);
 		g2.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();

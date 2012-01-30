@@ -45,6 +45,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new PauseItem(view);
 			case SYNCHRONIZE:
 				return new SynchronizeItem(view);
+			case RENDERING:
+				return new RenderingItem(view);
 
 		}
 		return null;

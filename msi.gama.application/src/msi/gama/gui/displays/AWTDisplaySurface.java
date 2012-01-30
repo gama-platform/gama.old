@@ -623,4 +623,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		synchronous = checked;
 	}
 
+	@Override
+	public void setQualityRendering(final boolean quality) {
+		if ( displayGraphics == null ) { return; }
+		displayGraphics.setQualityRendering(quality);
+		if ( isPaused() ) {
+			updateDisplay();
+		}
+	}
 }

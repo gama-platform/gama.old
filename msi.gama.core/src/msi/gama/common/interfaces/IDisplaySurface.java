@@ -68,6 +68,8 @@ public interface IDisplaySurface {
 
 	public boolean isPaused();
 
+	public void setQualityRendering(boolean quality);
+
 	/**
 	 * @param checked
 	 */
