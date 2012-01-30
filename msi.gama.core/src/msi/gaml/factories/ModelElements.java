@@ -43,6 +43,9 @@ public class ModelElements implements IKeyword {
 		List<ISyntacticElement> globalNodes = new ArrayList();
 		for ( final String fn : filesToParse ) {
 			ISyntacticElement doc = documents.get(fn);
+			if ( doc == null ) {
+				continue;
+			}
 			if ( root == null ) {
 				root = doc;
 				if ( root.getAttribute(NAME) == null ) {
@@ -114,6 +117,7 @@ public class ModelElements implements IKeyword {
 		if ( filesToParse.contains(fileName) ) { return; }
 		filesToParse.add(0, fileName);
 		ISyntacticElement doc = documents.get(fileName);
+		if ( doc == null ) { return; }
 		for ( final ISyntacticElement e : doc.getChildren("include") ) {
 			String s = e.getAttribute("file");
 			if ( s != null ) {
