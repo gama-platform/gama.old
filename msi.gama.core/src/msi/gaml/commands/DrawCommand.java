@@ -355,11 +355,11 @@ public class DrawCommand extends AbstractCommandSequence {
 				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				// g2d.dispose();
 
-				Rectangle2D result = g.drawImage(workImage, angle);
+				Rectangle2D result = g.drawImage(workImage, angle, true);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(image, angle);
+			return g.drawImage(image, angle, true);
 		}
 
 	}

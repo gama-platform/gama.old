@@ -239,7 +239,7 @@ public class SpeciesDisplay extends AgentDisplay {
 		g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale() * 2),
 			(int) (gridAgentStorage.numCols * g.getYScale()));
 		g.setOpacity(layer.getTransparency());
-		g.drawImage(supportImage, null);
+		g.drawImage(supportImage, null, false);
 
 		// System.out.println("xScale = " + g.getXScale() + "; yScale = " + g.getYScale());
 

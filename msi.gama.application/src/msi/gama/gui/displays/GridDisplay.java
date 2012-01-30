@@ -77,7 +77,9 @@ public class GridDisplay extends ImageDisplay {
 
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
-		super.privateDrawDisplay(dg);
+		buildImage();
+		if ( image == null ) { return; }
+		dg.drawImage(image, null, false);
 		if ( turnGridOn ) {
 			lineColor = ((GridDisplayLayer) model).getLineColor();
 			if ( lineColor == null ) {

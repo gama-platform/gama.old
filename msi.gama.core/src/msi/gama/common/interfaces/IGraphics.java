@@ -193,4 +193,12 @@ public interface IGraphics {
 
 	public abstract Rectangle getClipping();
 
+	/**
+	 * @param img
+	 * @param angle
+	 * @param smooth
+	 * @return
+	 */
+	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth);
+
 }

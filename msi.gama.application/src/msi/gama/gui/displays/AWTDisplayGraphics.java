@@ -262,7 +262,7 @@ public class AWTDisplayGraphics implements IGraphics {
 		}
 	}
 
-	private final AffineTransform at = new AffineTransform();
+	// private final AffineTransform at = new AffineTransform();
 
 	/**
 	 * Method drawImage.
@@ -270,16 +270,25 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle) {
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final boolean smooth) {
+		AffineTransform saved = g2.getTransform();
+		RenderingHints hints = g2.getRenderingHints();
 		if ( angle != null ) {
-			at.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
+			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		at.translate(curX, curY);
-		at.scale((double) curWidth / img.getWidth(), (double) curHeight / img.getHeight());
-		g2.drawRenderedImage(img, at);
-		at.setToIdentity();
+		if ( !smooth ) {
+			g2.setRenderingHints(SPEED_RENDERING);
+		}
+		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
+		g2.setRenderingHints(hints);
+		g2.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
+	}
+
+	@Override
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle) {
+		return drawImage(img, angle, true);
 	}
 
 	/**
