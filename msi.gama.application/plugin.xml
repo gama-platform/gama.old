@@ -762,14 +762,6 @@
       </menuContribution>
       <menuContribution
             allPopups="true"
-            locationURI="menu:msi.gama.application.command.FocusMenu">
-         <dynamic
-               class="msi.gama.gui.swt.commands.FocusMenu"
-               id="msi.gama.application.command.layers.menu">
-         </dynamic>
-      </menuContribution>
-      <menuContribution
-            allPopups="true"
             locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
          <dynamic
                class="msi.gama.gui.swt.commands.ExperimentMenu"
@@ -1462,11 +1454,6 @@
             name="Close all">
       </command>
       <command
-            defaultHandler="msi.gama.gui.swt.commands.FocusMenuHandler"
-            id="msi.gama.application.command.FocusMenu"
-            name="Focus menu">
-      </command>
-      <command
             defaultHandler="msi.gama.gui.navigator.commands.OpenBrowserHandler"
             id="msi.gama.application.commands.OpenBrowser"
             name="Open Html Browser">
@@ -1502,13 +1489,7 @@
             name="Checkout Project From Repository">
       </command>
    </extension>
-   <extension
-         point="org.eclipse.ui.commandImages">
-      <image
-            commandId="msi.gama.application.command.FocusMenu"
-            icon="icons/old_buttons_gray/button_focus.png">
-      </image>
-   </extension> <extension
+ <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.eclipse.core.runtime.xml"
