@@ -4,13 +4,22 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.commands.FocusMenu;
+import java.util.*;
+import msi.gama.common.interfaces.*;
+import msi.gama.gui.displays.*;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.views.*;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import org.eclipse.jface.action.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
 /**
- * The class SnapshotItem.
+ * The class FocusItem.
  * 
  * @author drogoul
  * @since 19 janv. 2012
@@ -18,9 +27,22 @@ import org.eclipse.swt.widgets.*;
  */
 public class FocusItem extends GamaViewItem implements IMenuCreator {
 
-	/**
-	 * @param view
-	 */
+	private static Map<Class, Image> images = new HashMap();
+
+	static {
+		images.put(GridDisplay.class, SwtGui.getImageDescriptor("/icons/display_grid.png")
+			.createImage());
+		images.put(AgentDisplay.class, SwtGui.getImageDescriptor("/icons/display_agents.png")
+			.createImage());
+		images.put(ImageDisplay.class, SwtGui.getImageDescriptor("/icons/display_image.png")
+			.createImage());
+		images.put(TextDisplay.class, SwtGui.getImageDescriptor("/icons/display_text.png")
+			.createImage());
+		images.put(SpeciesDisplay.class, SwtGui.getImageDescriptor("/icons/display_species.png")
+			.createImage());
+		images.put(ChartDisplay.class, SwtGui.getImageDescriptor("/icons/display_chart.png")
+			.createImage());
+	}
 
 	Menu menu;
 
@@ -45,10 +67,10 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 		return new ActionContributionItem(action);
 	}
 
-	@Override
-	public boolean isDynamic() {
-		return true;
-	}
+	// @Override
+	// public boolean isDynamic() {
+	// return true;
+	// }
 
 	/**
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
@@ -59,7 +81,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 			menu.dispose();
 		}
 		menu = new Menu(parent);
-		new FocusMenu().fill(menu, -1);
+		fill(menu, -1);
 		return menu;
 	}
 
@@ -69,5 +91,117 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	public Menu getMenu(final Menu parent) {
 		return null;
+	}
+
+	SelectionAdapter adapter = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			final IDisplay d = (IDisplay) mi.getData("display");
+			final IDisplaySurface s = (IDisplaySurface) mi.getData("surface");
+			if ( a != null && !a.dead() ) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						while (!s.canBeUpdated()) {
+							try {
+								Thread.sleep(10);
+							} catch (InterruptedException e) {
+
+							}
+						}
+						if ( !a.dead() ) {
+							s.focusOn(a.getGeometry(), d);
+						}
+
+					}
+				}).start();
+
+			}
+		}
+	};
+
+	private class FocusOnSelection extends SelectionAdapter {
+
+		IDisplay display;
+		IDisplaySurface surface;
+
+		FocusOnSelection(final IDisplay display, final IDisplaySurface surface) {
+			this.display = display;
+			this.surface = surface;
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						while (!surface.canBeUpdated()) {
+							try {
+								Thread.sleep(10);
+							} catch (InterruptedException e) {
+
+							}
+						}
+						if ( !a.dead() ) {
+							surface.focusOn(a.getGeometry(), display);
+						}
+
+					}
+				}).start();
+
+			}
+		}
+
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return true;
+	}
+
+	@Override
+	public void fill(final Menu menu, final int index) {
+		LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
+		final IDisplaySurface displaySurface = view.getDisplaySurface();
+		for ( final IDisplay item : view.getDisplayManager().getItems() ) {
+			FocusOnSelection adapter = new FocusOnSelection(item, displaySurface);
+			if ( item instanceof SpeciesDisplay ) {
+				SpeciesDisplay display = (SpeciesDisplay) item;
+				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				displayMenu.setText(display.getType() + ": " + display.getName());
+				displayMenu.setImage(images.get(display.getClass()));
+				AgentsMenu.createSpeciesSubMenu(displayMenu, GAMA.getFrontmostSimulation()
+					.getWorld().getMicroPopulation(display.getName()), adapter);
+			} else if ( item instanceof AgentDisplay ) {
+				AgentDisplay display = (AgentDisplay) item;
+				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				displayMenu.setText(display.getType() + ": " + display.getName());
+				displayMenu.setImage(images.get(display.getClass()));
+				Menu agentsMenu = new Menu(displayMenu);
+				Set<IAgent> agents = display.getAgentsForMenu();
+				for ( IAgent agent : agents ) {
+					MenuItem agentItem = new MenuItem(agentsMenu, SWT.PUSH);
+					agentItem.setData("agent", agent);
+					agentItem.setText(agent.getName());
+					agentItem.addSelectionListener(adapter);
+				}
+				displayMenu.setMenu(agentsMenu);
+			} else if ( item instanceof GridDisplay ) {
+				GridDisplay display = (GridDisplay) item;
+				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				displayMenu.setText("Grid layer: " + display.getName());
+				displayMenu.setImage(images.get(display.getClass()));
+				AgentsMenu.createSpeciesSubMenu(displayMenu, GAMA.getFrontmostSimulation()
+					.getWorld().getMicroPopulation(display.getName()), adapter);
+			}
+		}
 	}
 }
