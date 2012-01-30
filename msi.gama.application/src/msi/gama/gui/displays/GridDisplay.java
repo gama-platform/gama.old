@@ -18,12 +18,14 @@
  */
 package msi.gama.gui.displays;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlException;
@@ -33,12 +35,20 @@ public class GridDisplay extends ImageDisplay {
 
 	private boolean turnGridOn;
 	private Color lineColor;
-	private IAgent placeSelected;
-	private ActionListener placeMenuListener;
 
 	public GridDisplay(final double env_width, final double env_height, final IDisplayLayer model,
 		final IGraphics dg) {
 		super(env_width, env_height, model, dg);
+		turnGridOn = ((GridDisplayLayer) model).drawLines();
+	}
+
+	@Override
+	public void updateEnvDimensions(final double env_width, final double env_height) {
+		super.updateEnvDimensions(env_width, env_height);
+		if ( image != null ) {
+			image.flush();
+			image = null;
+		}
 	}
 
 	@Override
@@ -57,22 +67,22 @@ public class GridDisplay extends ImageDisplay {
 
 	@Override
 	protected void buildImage() {
-		// GridDisplayLayer g = (GridDisplayLayer) model;
-		// image = g.getSupportImage();
-		// turnGridOn = g.drawLines();
-		// if ( turnGridOn ) {
-		// lineColor = ((GridDisplayLayer) model).getLineColor();
-		// }
+		GridDisplayLayer g = (GridDisplayLayer) model;
+		GamaSpatialMatrix m = g.getEnvironment();
+		if ( image == null ) {
+			image = ImageUtils.createCompatibleImage(m.numCols, m.numRows);
+		}
+		image.setRGB(0, 0, m.numCols, m.numRows, m.getDisplayData(), 0, m.numCols);
 	}
 
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
-		if ( disposed ) { return; }
-		GridDisplayLayer g = (GridDisplayLayer) model;
-		image = g.getSupportImage();
-		dg.drawImage(image, null);
-		if ( g.drawLines() ) {
-			lineColor = g.getLineColor();
+		super.privateDrawDisplay(dg);
+		if ( turnGridOn ) {
+			lineColor = ((GridDisplayLayer) model).getLineColor();
+			if ( lineColor == null ) {
+				lineColor = Color.black;
+			}
 			displayGrid(dg);
 		}
 	}
@@ -97,28 +107,10 @@ public class GridDisplay extends ImageDisplay {
 	}
 
 	@Override
-	public void putMenuItemsIn(final Menu inMenu, final int x, final int y) {
-		super.putMenuItemsIn(inMenu, x, y);
-		placeSelected = getPlaceAt(this.getModelCoordinatesFrom(x, y));
-		if ( placeSelected != null ) {
-			inMenu.addSeparator();
-			MenuItem mi = new MenuItem(placeSelected.getName());
-			inMenu.add(mi);
-			mi.addActionListener(placeMenuListener);
-		}
-	}
-
-	@Override
-	public void initMenuItems(final IDisplaySurface surface) {
-		placeMenuListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				surface.fireSelectionChanged(placeSelected);
-				placeSelected = null;
-			}
-
-		};
+	public Set<IAgent> collectAgentsAt(final int x, final int y) {
+		Set<IAgent> result = new HashSet();
+		result.add(getPlaceAt(this.getModelCoordinatesFrom(x, y)));
+		return result;
 	}
 
 	@Override

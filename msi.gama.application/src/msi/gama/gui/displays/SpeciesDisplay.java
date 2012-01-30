@@ -19,7 +19,7 @@
 package msi.gama.gui.displays;
 
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.*;
@@ -60,12 +60,18 @@ public class SpeciesDisplay extends AgentDisplay {
 			});
 	}
 
+	@Override
+	public Set<IAgent> getAgentsForMenu() {
+		return new HashSet(GAMA.getDefaultScope().getWorldScope()
+			.getMicroPopulation(((SpeciesDisplayLayer) model).getSpecies()).getAgentsList());
+	}
+
 	private void changeAspect(final String s) {
 		((SpeciesDisplayLayer) model).setAspect(s);
 	}
 
 	@Override
-	protected String getType() {
+	public String getType() {
 		return "Species layer";
 	}
 

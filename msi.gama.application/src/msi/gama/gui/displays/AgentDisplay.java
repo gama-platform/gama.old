@@ -18,11 +18,8 @@
  */
 package msi.gama.gui.displays;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -32,7 +29,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import org.eclipse.swt.widgets.Composite;
 
@@ -45,46 +41,13 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentDisplay extends AbstractDisplay {
 
-	private ActionListener menuListener;
-	private ActionListener focusListener;
-
 	private final Set<IAgent> agents = new HashSet();
-	private final Set<SelectedAgent> selectedAgents = new HashSet<SelectedAgent>();
+
+	// private final Set<SelectedAgent> selectedAgents = new HashSet<SelectedAgent>();
 
 	public AgentDisplay(final double env_width, final double env_height, final IDisplayLayer layer,
 		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
-	}
-
-	@Override
-	public void initMenuItems(final IDisplaySurface surface) {
-		super.initMenuItems(surface);
-		menuListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
-				if ( a != null ) {
-					surface.fireSelectionChanged(a);
-				}
-			}
-
-		};
-
-		focusListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
-				if ( a != null ) {
-					surface.focusOn(a.getGeometry(), AgentDisplay.this);
-				}
-			}
-
-		};
-
 	}
 
 	@Override
@@ -105,20 +68,6 @@ public class AgentDisplay extends AbstractDisplay {
 		}
 	}
 
-	@Override
-	public void putMenuItemsIn(final Menu inMenu, final int x, final int y) {
-		super.putMenuItemsIn(inMenu, x, y);
-		collectAgentsAt(x, y);
-
-		if ( !selectedAgents.isEmpty() ) {
-			inMenu.addSeparator();
-
-			for ( SelectedAgent sa : selectedAgents ) {
-				sa.buildMenuItems(inMenu);
-			}
-		}
-	}
-
 	protected final Map<Rectangle2D, IAgent> shapes = new HashMap();
 
 	@Override
@@ -131,9 +80,9 @@ public class AgentDisplay extends AbstractDisplay {
 		if ( scope != null ) {
 			scope.setContext(g);
 			for ( IAgent a : getAgentsToDisplay() ) {
-				if ( disposed ) {
-					break;
-				}
+				// if ( disposed ) {
+				// break;
+				// }
 				if ( a != null && !a.dead() ) {
 					IAspect aspect = a.getSpecies().getAspect(aspectName);
 					if ( aspect == null ) {
@@ -146,62 +95,20 @@ public class AgentDisplay extends AbstractDisplay {
 		}
 	}
 
+	public Set<IAgent> getAgentsForMenu() {
+		if ( shapes.isEmpty() ) { return getAgentsToDisplay(); }
+		// Avoid recalculating the agents
+		return new HashSet(shapes.values());
+	}
+
 	public Set<IAgent> getAgentsToDisplay() {
 		// return agents;
 		return ((AgentDisplayLayer) model).getAgentsToDisplay();
 	}
 
-	private static class AgentMenuItem extends MenuItem {
-
-		private final IAgent agent;
-
-		AgentMenuItem(final String name, final IAgent agent) {
-			super(name);
-			this.agent = agent;
-		}
-
-		IAgent getAgent() {
-			return agent;
-		}
-	}
-
-	private class SelectedAgent {
-
-		IAgent macro;
-		Map<ISpecies, List<SelectedAgent>> micros;
-
-		void buildMenuItems(final Menu parentMenu) {
-			Menu macroMenu = new Menu(macro.getName());
-			parentMenu.add(macroMenu);
-
-			MenuItem inspectItem = new AgentMenuItem("Inspect", macro);
-			inspectItem.addActionListener(menuListener);
-			macroMenu.add(inspectItem);
-
-			MenuItem focusItem = new AgentMenuItem("Focus", macro);
-			focusItem.addActionListener(focusListener);
-			macroMenu.add(focusItem);
-
-			if ( micros != null && !micros.isEmpty() ) {
-				Menu microsMenu = new Menu("Micro agents");
-				macroMenu.add(microsMenu);
-
-				Menu microSpecMenu;
-				for ( ISpecies microSpec : micros.keySet() ) {
-					microSpecMenu = new Menu("Species " + microSpec.getName());
-					microsMenu.add(microSpecMenu);
-
-					for ( SelectedAgent micro : micros.get(microSpec) ) {
-						micro.buildMenuItems(microSpecMenu);
-					}
-				}
-			}
-		}
-	}
-
 	@Override
-	public void collectAgentsAt(final int x, final int y) {
-		selectedAgents.clear();
+	public Set<IAgent> collectAgentsAt(final int x, final int y) {
+		final Set<IAgent> selectedAgents = new HashSet();
 
 		// GamaGeometry selectionPoint = new GamaGeometry(getModelCoordinatesFrom(x, y));
 		// Envelope selectionEnvelope = selectionPoint.getEnvelope();
@@ -217,18 +124,19 @@ public class AgentDisplay extends AbstractDisplay {
 			IDisplaySurface.SELECTION_SIZE / 2);
 		// Point2D p = new Point2D.Double(x, y);
 
-		Collection<IAgent> closeAgents = new HashSet();
+		// Set<IAgent> closeAgents = new HashSet();
 		for ( Map.Entry<Rectangle2D, IAgent> entry : shapes.entrySet() ) {
 			if ( entry.getKey().intersects(selection) ) {
-				closeAgents.add(entry.getValue());
+				selectedAgents.add(entry.getValue());
 			}
 		}
 
-		for ( IAgent agent : closeAgents ) {
-			SelectedAgent sa = new SelectedAgent();
-			sa.macro = agent;
-			selectedAgents.add(sa);
-		}
+		// for ( IAgent agent : closeAgents ) {
+		// selectedAgents.add(agent);
+		// SelectedAgent sa = new SelectedAgent();
+		// sa.macro = agent;
+		// selectedAgents.add(sa);
+		// }
 
 		// direct micro-populations of "world"
 		// List<IPopulation> microPopulations =
@@ -252,6 +160,8 @@ public class AgentDisplay extends AbstractDisplay {
 		 * selectedAgents.add(sa);
 		 * }
 		 */
+
+		return selectedAgents;
 	}
 
 	// private void collectMicroAgentsIn(final SelectedAgent targetMacro,
@@ -302,18 +212,8 @@ public class AgentDisplay extends AbstractDisplay {
 	// }
 
 	@Override
-	protected String getType() {
+	public String getType() {
 		return "Agents layer";
 	}
 
-	/**
-	 * @param agents
-	 */
-	public void setAgentsToDisplay(final HashSet<IAgent> agents) {
-		synchronized (this.agents) {
-			this.agents.clear();
-			this.agents.addAll(agents);
-		}
-
-	}
 }

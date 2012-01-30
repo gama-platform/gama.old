@@ -29,7 +29,6 @@ import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.*;
-import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlException;
@@ -770,23 +769,25 @@ public class SwtGui implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#createDisplay(msi.gama.outputs.layers.IDisplayLayer,
 	 *      double, double, msi.gama.common.interfaces.IGraphics)
 	 */
-	@Override
-	public IDisplay createDisplay(final IDisplayLayer layer, final double w, final double h,
-		final IGraphics g) {
-		return DisplayManager.createDisplay(layer, w, h, g);
-	}
+	// @Override
+	// public IDisplay createDisplay(final IDisplayLayer layer, final double w, final double h,
+	// final IGraphics g) {
+	// return DisplayManager.createDisplay(layer, w, h, g);
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGui#newGraphics(int, int)
 	 */
 	@Override
 	public IGraphics newGraphics(final int width, final int height) {
+		// TODO Hook OpenGL here
 		return new AWTDisplayGraphics(width, height);
 	}
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
 		final double w, final double h) {
+		// TODO Hook OpenGL here
 		return new AWTDisplaySurface(w, h, layerDisplayOutput);
 	}
 

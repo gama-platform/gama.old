@@ -180,28 +180,28 @@ public class DisplayManager implements IDisplayManager {
 	public static IDisplay createDisplay(final IDisplayLayer layer, final double env_width,
 		final double env_height, final IGraphics dg) {
 		switch (layer.getType()) {
-			case IDisplay.GRID: {
+			case IDisplayLayer.GRID: {
 				return new GridDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.AGENTS: {
+			case IDisplayLayer.AGENTS: {
 				return new AgentDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.SPECIES: {
+			case IDisplayLayer.SPECIES: {
 				return new SpeciesDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.TEXT: {
+			case IDisplayLayer.TEXT: {
 				return new TextDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.IMAGE: {
+			case IDisplayLayer.IMAGE: {
 				return new ImageDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.GIS: {
+			case IDisplayLayer.GIS: {
 				return new GisDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.CHART: {
+			case IDisplayLayer.CHART: {
 				return new ChartDisplay(env_width, env_height, layer, dg);
 			}
-			case IDisplay.QUADTREE: {
+			case IDisplayLayer.QUADTREE: {
 				return new QuadTreeDisplay(env_width, env_height, layer, dg);
 			}
 			default:

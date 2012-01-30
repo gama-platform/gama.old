@@ -20,6 +20,7 @@ package msi.gama.gui.displays;
 
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.outputs.layers.*;
 import org.eclipse.swt.widgets.Composite;
@@ -49,7 +50,7 @@ public class ImageDisplay extends AbstractDisplay {
 			image = null;
 		} else {
 			try {
-				image = ((ImageDisplayLayer) model).getImage(imageFileName);
+				image = ImageUtils.getInstance().getImageFromFile(imageFileName);
 			} catch (Exception e) {
 				image = null;
 				e.printStackTrace();
@@ -76,7 +77,6 @@ public class ImageDisplay extends AbstractDisplay {
 
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
-		if ( disposed ) { return; }
 		buildImage();
 		if ( image == null ) { return; }
 		dg.drawImage(image, null);

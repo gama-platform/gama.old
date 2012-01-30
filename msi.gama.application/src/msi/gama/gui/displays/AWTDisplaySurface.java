@@ -23,17 +23,20 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.swing.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
 public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -53,10 +56,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	protected Point mousePosition;
 	Dimension previousPanelSize;
 	protected boolean navigationImageEnabled = true;
-	protected SWTAuxiliaryDisplaySurface navigator;
+	protected SWTNavigationPanel navigator;
 	private final AffineTransform translation = new AffineTransform();
 	private final Semaphore paintingNeeded = new Semaphore(1, true);
 	private boolean synchronous = false;
+	private ActionListener menuListener;
+	private ActionListener focusListener;
 	private final Thread animationThread = new Thread(new Runnable() {
 
 		@Override
@@ -174,6 +179,60 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
+	static class AgentMenuItem extends MenuItem {
+
+		private final IAgent agent;
+		private final IDisplay display;
+
+		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
+			super(name);
+			this.agent = agent;
+			this.display = display;
+		}
+
+		IAgent getAgent() {
+			return agent;
+		}
+
+		IDisplay getDisplay() {
+			return display;
+		}
+	}
+
+	public class SelectedAgent {
+
+		IAgent macro;
+		Map<ISpecies, List<SelectedAgent>> micros;
+
+		void buildMenuItems(final Menu parentMenu, final IDisplay display) {
+			Menu macroMenu = new Menu(macro.getName());
+			parentMenu.add(macroMenu);
+
+			MenuItem inspectItem = new AWTDisplaySurface.AgentMenuItem("Inspect", macro, display);
+			inspectItem.addActionListener(menuListener);
+			macroMenu.add(inspectItem);
+
+			MenuItem focusItem = new AWTDisplaySurface.AgentMenuItem("Focus", macro, display);
+			focusItem.addActionListener(focusListener);
+			macroMenu.add(focusItem);
+
+			if ( micros != null && !micros.isEmpty() ) {
+				Menu microsMenu = new Menu("Micro agents");
+				macroMenu.add(microsMenu);
+
+				Menu microSpecMenu;
+				for ( ISpecies microSpec : micros.keySet() ) {
+					microSpecMenu = new Menu("Species " + microSpec.getName());
+					microsMenu.add(microSpecMenu);
+
+					for ( SelectedAgent micro : micros.get(microSpec) ) {
+						micro.buildMenuItems(microSpecMenu, display);
+					}
+				}
+			}
+		}
+	}
+
 	public AWTDisplaySurface(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
 
@@ -230,6 +289,32 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
+		menuListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				AWTDisplaySurface.AgentMenuItem source = (AgentMenuItem) e.getSource();
+				IAgent a = source.getAgent();
+				if ( a != null ) {
+					fireSelectionChanged(a);
+				}
+			}
+
+		};
+
+		focusListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				AWTDisplaySurface.AgentMenuItem source = (AgentMenuItem) e.getSource();
+				IAgent a = source.getAgent();
+				if ( a != null ) {
+					focusOn(a.getGeometry(), source.getDisplay());
+				}
+			}
+
+		};
+
 		// if ( manager != null ) {
 		// manager.dispose();
 		// }
@@ -240,7 +325,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 				IDisplay d =
 					manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer,
 						env_width, env_height, displayGraphics));
-				d.initMenuItems(this);
+				// d.initMenuItems(this);
 			}
 
 		} else {
@@ -271,7 +356,16 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		final List<IDisplay> displays = manager.getDisplays(xc, yc);
 		for ( IDisplay display : displays ) {
 			java.awt.Menu m = new java.awt.Menu(display.getName());
-			display.putMenuItemsIn(m, xc, yc);
+			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
+			if ( !agents.isEmpty() ) {
+				m.addSeparator();
+
+				for ( IAgent agent : agents ) {
+					SelectedAgent sa = new SelectedAgent();
+					sa.macro = agent;
+					sa.buildMenuItems(m, display);
+				}
+			}
 			agentsMenu.add(m);
 		}
 		agentsMenu.show(this, x, y);
@@ -284,6 +378,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				// TODO Problème si un modèle est relancé. Blocage.
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}

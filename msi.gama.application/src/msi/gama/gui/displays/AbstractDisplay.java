@@ -20,9 +20,10 @@ package msi.gama.gui.displays;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,14 +43,13 @@ public abstract class AbstractDisplay implements IDisplay {
 	private String name;
 	private final java.awt.Point position; // The position in pixels
 	protected java.awt.Point size; // The extension (from the position) in pixels
-	protected java.util.List<java.awt.MenuItem> menuItems = new ArrayList();
 	protected double env_width, env_height;
 
 	protected AbstractDisplay(final double env_width, final double env_height,
 		final IDisplayLayer layer, final IGraphics dg) {
 		model = layer;
 		if ( model != null ) {
-			model.setPhysicalLayer(this);
+			// model.setPhysicalLayer(this);
 			setName(model.getName());
 		}
 		size = new Point(0, 0);
@@ -64,22 +64,20 @@ public abstract class AbstractDisplay implements IDisplay {
 		this.env_height = env_height;
 	}
 
-	@Override
-	public void initMenuItems(final IDisplaySurface surface) {}
+	// @Override
+	// public void initMenuItems(final IDisplaySurface surface) {}
 
-	@Override
 	public void setOrder(final Integer o) {
 		order = o;
 	}
 
-	@Override
 	public Integer getOrder() {
 		return order;
 	}
 
 	@Override
 	public int compareTo(final IDisplay o) {
-		return order.compareTo(o.getOrder());
+		return order.compareTo(((AbstractDisplay) o).getOrder());
 	}
 
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
@@ -132,13 +130,6 @@ public abstract class AbstractDisplay implements IDisplay {
 				}
 
 			});
-	}
-
-	@Override
-	public void putMenuItemsIn(final java.awt.Menu inMenu, final int x, final int y) {
-		for ( java.awt.MenuItem mi : menuItems ) {
-			inMenu.add(mi);
-		}
 	}
 
 	@Override
@@ -209,7 +200,6 @@ public abstract class AbstractDisplay implements IDisplay {
 		return size.y;
 	}
 
-	@Override
 	public Point getSize() {
 		return size;
 	}
@@ -245,8 +235,9 @@ public abstract class AbstractDisplay implements IDisplay {
 	protected abstract void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException;
 
 	@Override
-	public void collectAgentsAt(final int x, final int y) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y) {
 		// Nothing to do by default
+		return Collections.EMPTY_SET;
 	}
 
 	@Override

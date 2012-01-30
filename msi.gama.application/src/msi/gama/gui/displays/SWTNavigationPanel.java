@@ -26,7 +26,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class SWTAuxiliaryDisplaySurface extends Canvas implements PaintListener, MouseListener,
+public class SWTNavigationPanel extends Canvas implements PaintListener, MouseListener,
 	MouseTrackListener, MouseMoveListener {
 
 	boolean mouseDown;
@@ -36,7 +36,7 @@ public class SWTAuxiliaryDisplaySurface extends Canvas implements PaintListener,
 
 	private final AWTDisplaySurface surface;
 
-	public SWTAuxiliaryDisplaySurface(final Composite parent, final int style,
+	public SWTNavigationPanel(final Composite parent, final int style,
 		final AWTDisplaySurface surface) {
 		super(parent, style);
 		this.surface = surface;
