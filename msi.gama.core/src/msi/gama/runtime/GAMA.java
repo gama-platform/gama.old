@@ -55,6 +55,10 @@ public class GAMA {
 
 	public static void newExperiment(final String id, final IModel model) {
 		final IExperiment newExperiment = model.getExperiment(id);
+		if ( newExperiment == currentExperiment ) {
+			currentExperiment.reload();
+			return;
+		}
 		// TODO if newExperiment.isGui() ...
 		if ( currentExperiment != null ) {
 			IModel m = currentExperiment.getModel();
