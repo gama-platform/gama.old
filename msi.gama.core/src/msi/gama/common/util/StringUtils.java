@@ -25,6 +25,7 @@ import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.IUnits;
 import msi.gaml.expressions.IExpressionParser;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * The class StringUtils.
@@ -43,18 +44,18 @@ public class StringUtils {
 	 * @return the list of tokens found in the expression
 	 */
 
-	final static String operators = "::|<>|!=|>=|<=|//|";
+	final static String strings = "'(?:[^\\\\']+|\\\\.)*'"; // Old: '[^'\\\r\n]*(?:\\.[^'\\\r\n]*)*'
+	final static String operators = "::|<>|!=|>=|<=|//";
 	public final static String ponctuation = "\\p{Punct}";
-	public final static String literals =
-		"\\w+\\$\\w+|'[^'\\\r\n]*(?:\\.[^'\\\r\n]*)*'|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+|";
-	final static String regex = literals + operators + ponctuation;
+	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
+	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
 	final static Pattern p = Pattern.compile(regex);
 
 	static public String toGamlString(final String s) {
 		if ( s == null ) { return null; }
 		StringBuilder sb = new StringBuilder();
 		sb.append('\'');
-		sb.append(s);
+		sb.append(StringEscapeUtils.escapeJavaScript(s));
 		sb.append('\'');
 		return sb.toString();
 	}
