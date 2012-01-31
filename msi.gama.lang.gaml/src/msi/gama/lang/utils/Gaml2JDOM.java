@@ -20,6 +20,8 @@ package msi.gama.lang.utils;
 
 import java.io.*;
 import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.util.StringUtils;
+import msi.gama.lang.gaml.descript.GamlDescriptError;
 import msi.gama.lang.gaml.gaml.*;
 import org.eclipse.emf.common.util.EList;
 import org.jdom.*;
@@ -28,15 +30,16 @@ import org.jdom.output.XMLOutputter;
 public class Gaml2JDOM {
 
 	private static boolean noParenthesisAroundPairs = false;
+	private static Statement currentStatement;
 
-	public static ISyntacticElement doConvert(final Model m) {
+	public static ISyntacticElement doConvert(final Model m) throws GamlDescriptError {
 		// final Document doc = new Document();
 		final LineNumberElement model = convModel(m);
 		// doc.addContent(model);
 		return new XmlSyntacticElement(model);
 	}
 
-	private static LineNumberElement convModel(final Model m) {
+	private static LineNumberElement convModel(final Model m) throws GamlDescriptError {
 		final LineNumberElement model = new LineNumberElement("model");
 		model.setAttribute("name", m.getName());
 		for ( final Import i : m.getImports() ) {
@@ -51,20 +54,21 @@ public class Gaml2JDOM {
 		return model;
 	}
 
-	private static void convStatements(final Element elt, final EList<Statement> ss) {
+	private static void convStatements(final Element elt, final EList<Statement> ss)
+		throws GamlDescriptError {
 		for ( final Statement stm : ss ) {
 			if ( stm instanceof SetEval ) {
 				elt.addContent(convSetEval((SetEval) stm));
 			} else {
 				// boolean isAbstract = true;
-				try {
-					SubStatement substm = (SubStatement) stm;
-					GamlKeywordRef key = substm.getKey();
-					DefKeyword ref = key.getRef();
-					String name = ref.getName();
-					// isAbstract = name.equals("abstract");
-					// ((SubStatement) stm).getKey().getRef().getName().equals("abstract");
-				} catch (Exception e) {}
+				// try {
+				// SubStatement substm = (SubStatement) stm;
+				// GamlKeywordRef key = substm.getKey();
+				// DefKeyword ref = key.getRef();
+				// String name = ref.getName();
+				// isAbstract = name.equals("abstract");
+				// ((SubStatement) stm).getKey().getRef().getName().equals("abstract");
+				// } catch (Exception e) {}
 				// if ( !isAbstract ) {
 				elt.addContent(convStatement(stm));
 				// }
@@ -72,7 +76,8 @@ public class Gaml2JDOM {
 		}
 	}
 
-	private static Element convSetEval(final SetEval stm) {
+	private static Element convSetEval(final SetEval stm) throws GamlDescriptError {
+		currentStatement = stm;
 		final LineNumberElement elt = new LineNumberElement("set");// , stm);
 		elt.setAttribute("var", convExpression(stm.getVar()));
 		for ( final FacetExpr f : stm.getFacets() ) {
@@ -81,13 +86,15 @@ public class Gaml2JDOM {
 		return elt;
 	}
 
-	private static Element convStatement(final Statement stm) {
+	private static Element convStatement(final Statement stm) throws GamlDescriptError {
+		currentStatement = stm;
 		if ( stm instanceof Definition ) { return convDefinition((Definition) stm); }
 		// if (stm instanceof Evaluation)
 		return convEval((Evaluation) stm);
 	}
 
-	private static Element convEval(final Evaluation swd) {
+	private static Element convEval(final Evaluation swd) throws GamlDescriptError {
+		currentStatement = swd;
 		final LineNumberElement elt = new LineNumberElement(swd.getKey().getRef().getName(), swd);
 
 		if ( swd.getVar() != null ) {
@@ -107,7 +114,8 @@ public class Gaml2JDOM {
 		return elt;
 	}
 
-	private static Element convDefinition(final Definition d) {
+	private static Element convDefinition(final Definition d) throws GamlDescriptError {
+		currentStatement = d;
 		final String kw = d.getKey().getRef().getName();
 		final LineNumberElement elt = new LineNumberElement(kw, d);
 		if ( kw.equals("const") ) {
@@ -139,11 +147,11 @@ public class Gaml2JDOM {
 		return elt;
 	}
 
-	private static String convExpression(final Expression expr) {
+	private static String convExpression(final Expression expr) throws GamlDescriptError {
 		String s = "";
 
 		if ( expr == null ) {
-			throw new NullPointerException("an Expression was expected");
+			throw new GamlDescriptError("an expression is expected", currentStatement);
 		} else if ( expr instanceof Or ) {
 			s =
 				"(" + convExpression(((Or) expr).getLeft()) + " or " +
@@ -271,7 +279,7 @@ public class Gaml2JDOM {
 		return s;
 	}
 
-	private static String convRow(final Row r) {
+	private static String convRow(final Row r) throws GamlDescriptError {
 		String s = "";
 		for ( final Expression e : r.getExprs() ) {
 			if ( s.length() > 0 ) {
@@ -288,7 +296,8 @@ public class Gaml2JDOM {
 		} else if ( expr instanceof ColorLiteral ) {
 			return ((ColorLiteral) expr).getValue();
 		} else if ( expr instanceof StringLiteral ) {
-			return "'" + ((StringLiteral) expr).getValue() + "'";
+			String s = StringUtils.toGamlString(((StringLiteral) expr).getValue());
+			return s;
 		} else if ( expr instanceof BooleanLiteral ) {
 			return Boolean.toString(((BooleanLiteral) expr).isValue());
 		} else if ( expr instanceof IntLiteral ) {
@@ -300,7 +309,7 @@ public class Gaml2JDOM {
 		return "";
 	}
 
-	private static String convArrayKey(final EList<Expression> args) {
+	private static String convArrayKey(final EList<Expression> args) throws GamlDescriptError {
 		if ( args.isEmpty() ) { return "[]"; }
 		noParenthesisAroundPairs = true;
 		String s = "[";

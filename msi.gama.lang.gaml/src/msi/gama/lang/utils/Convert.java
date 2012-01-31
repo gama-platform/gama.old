@@ -27,8 +27,7 @@ import msi.gama.lang.gaml.gaml.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.*;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.jdom.*;
 import org.jdom.output.*;
@@ -67,48 +66,6 @@ public class Convert implements IUpdateOnChange {
 		return new LineNumberSAXBuilder().parse(file);
 	}
 
-	public static Map<String, ISyntacticElement> getDocMapOld(final Resource r) throws Exception {
-		ResourceSet rs = r.getResourceSet();
-		if ( !r.getErrors().isEmpty() ) {
-			StringBuilder sb =
-				new StringBuilder("The Resource contains errors! ").append(r.getURI());
-			for ( Diagnostic e : r.getErrors() ) {
-				sb.append('\n').append(e.getMessage());
-			}
-			throw new Exception(sb.toString());
-		}
-		Map<String, ISyntacticElement> docs = new HashMap();
-		// xrs.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		// EcoreUtil.resolveAll(r);
-		// get include from 'r'
-		Model m = (Model) r.getContents().get(0);
-		// Model m = (Model) EcoreUtil.copy(r.getContents().get(0));
-		// convert 'r' + include in 'rs'
-		for ( Import imp : m.getImports() ) {
-			String importUri = imp.getImportURI();
-			if ( !importUri.startsWith("platform:") ) {
-				URI iu = URI.createURI(importUri).resolve(r.getURI());
-				if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
-					Resource ir = rs.getResource(iu, true);
-					// EcoreUtil.resolveAll(ir);
-					if ( ir != r ) {
-						URL url = FileLocator.resolve(new URL(ir.getURI().toString()));
-						String path = new File(url.getFile()).getAbsolutePath();
-						System.out.println("Converting " + path);
-						docs.put(path, null);
-						if ( !docs.containsKey(path) ) {
-							docs.putAll(getDocMapOld(ir)); // (!) recursive
-						}
-					}
-				}
-			}
-		}
-		URL url = FileLocator.resolve(new URL(r.getURI().toString()));
-		String path = new File(url.getFile()).getAbsolutePath();
-		docs.put(path, Gaml2JDOM.doConvert(m));
-		return docs;
-	}
-
 	public static Map<String, ISyntacticElement> getDocMap(final Resource r) throws Exception {
 		Map<String, ISyntacticElement> docs = new HashMap();
 		getDocMapRecursive(docs, r);
@@ -120,8 +77,8 @@ public class Convert implements IUpdateOnChange {
 	 * @param r
 	 * @return
 	 */
-	private static void getDocMapRecursive(final Map<String, ISyntacticElement> docs, final Resource r)
-		throws Exception {
+	private static void getDocMapRecursive(final Map<String, ISyntacticElement> docs,
+		final Resource r) throws Exception {
 		// ResourceSet rs = r.getResourceSet();
 		// if ( !r.getErrors().isEmpty() ) {
 		// StringBuilder sb =
