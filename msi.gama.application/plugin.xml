@@ -662,6 +662,10 @@
                   </reference>
                </visibleWhen>
             </command>
+            <separator
+                  name="msi.gama.application.separator1"
+                  visible="true">
+            </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu_reload.png"
@@ -674,10 +678,6 @@
                   </reference>
                </visibleWhen>
             </command>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
             <command
                   commandId="msi.gama.application.commands.RunModel"
                   icon="icons/menu_run.png"
@@ -1378,6 +1378,7 @@
             name="Next Step">
       </command>
       <command
+            defaultHandler="msi.gama.gui.swt.commands.ReloadSimulationHandler"
             id="msi.gama.application.commands.ReloadSimulation"
             name="Reload Simulation">
       </command>
