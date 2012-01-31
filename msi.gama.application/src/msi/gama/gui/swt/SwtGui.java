@@ -191,11 +191,13 @@ public class SwtGui implements IGui {
 		private class Message {
 
 			String message = "";
-			Color color = COLOR_OK;
+			// Color color = COLOR_OK;
+			int code = IGui.INFORM;
 
-			Message(final String s, final Color c) {
-				message = s;
-				color = c;
+			Message(final String msg, final int s) {
+				message = msg;
+				// color = c;
+				code = s;
 			}
 		}
 
@@ -203,8 +205,8 @@ public class SwtGui implements IGui {
 			messages = new LinkedBlockingQueue(4);
 		}
 
-		public void setMessage(final String s, final Color c) {
-			messages.offer(new Message(s, c));
+		public void setMessage(final String s, final int status) {
+			messages.offer(new Message(s, status));
 		}
 
 		@Override
@@ -219,10 +221,7 @@ public class SwtGui implements IGui {
 						@Override
 						public void run() {
 							if ( !control.isDisposed() ) {
-								if ( control.getBackground() != m.color ) {
-									control.setBackground(m.color);
-								}
-								control.setText(m.message);
+								control.setText(m.message, m.code);
 							}
 						}
 					});
@@ -350,8 +349,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void setStatus(final String msg, final int code) {
-		status.setMessage(msg, code == ERROR ? COLOR_ERROR : code == WAIT ? COLOR_WARNING
-			: COLOR_OK);
+		status.setMessage(msg, code);
 	}
 
 	public static void setStatusControl(final StatusControlContribution l) {

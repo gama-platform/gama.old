@@ -130,17 +130,19 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 			int i = 0;
 			MenuItem title = new MenuItem(menu, SWT.BOLD, i++);
 			IExperiment current = GAMA.getExperiment();
-			title.setText("Experiments defined for model " + model[0].getName());
+			title.setText("Experiments defined for '" + model[0].getName() + "'");
+			title.setImage(SwtGui.experimentMenuImage);
+			new MenuItem(menu, SWT.SEPARATOR, i++);
 			title.setEnabled(false);
 			for ( IExperiment e : model[0].getExperiments() ) {
 				final MenuItem exp = new MenuItem(menu, SWT.CHECK, i++);
-				exp.setImage(SwtGui.experimentMenuImage);
+				// exp.setImage(SwtGui.experimentMenuImage);
 				if ( current != null && current.getName().equals(e.getName()) &&
 					current.getModel().getFileName().equals(e.getModel().getFileName()) ) {
-					exp.setText("Reload '" + e.getName() + "'");
+					exp.setText("     Reload '" + e.getName() + "'");
 					exp.setSelection(true);
 				} else {
-					exp.setText("Load '" + e.getName() + "'");
+					exp.setText("     Load '" + e.getName() + "'");
 				}
 				exp.setData("EXP", e.getName());
 

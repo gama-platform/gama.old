@@ -40,21 +40,25 @@ public class Popup {
 		@Override
 		public void mouseEnter(final MouseEvent e) {
 			display();
+			isVisible = true;
 		}
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
 			hide();
+			isVisible = false;
 		}
 
 		@Override
 		public void mouseHover(final MouseEvent e) {
 			display();
+			isVisible = true;
 		}
 
 	};
 
 	private final IPopupProvider provider;
+	private boolean isVisible;
 
 	/*
 	 * 
@@ -89,6 +93,10 @@ public class Popup {
 		popup.pack();
 		popup.setLocation(point.x, point.y);
 		popup.setVisible(true);
+	}
+
+	public boolean isVisible() {
+		return isVisible;
 	}
 
 	public static void hide() {

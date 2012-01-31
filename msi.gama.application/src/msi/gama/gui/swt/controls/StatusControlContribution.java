@@ -18,20 +18,26 @@
  */
 package msi.gama.gui.swt.controls;
 
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import org.jfree.util.StringUtils;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements
-	MouseListener {
+	IPopupProvider {
 
 	Composite compo;
 	Label label;
+	Popup popup;
+	int status;
 
 	public StatusControlContribution() {}
 
@@ -48,68 +54,81 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	protected Control createControl(final Composite parent) {
 		compo = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 2;
 		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.widthHint = 200;
+		data.widthHint = 150;
 		label = new Label(compo, SWT.CENTER);
 		label.setLayoutData(data);
 		label.setBackground(SwtGui.COLOR_OK);
 		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		label.setText("No simulation running");
-		label.addMouseListener(this);
+		label.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDown(final MouseEvent e) {
+				SimulationClock.toggleDisplay();
+			}
+		});
+		popup = new Popup(this, label);
 		SwtGui.setStatusControl(this);
 		return compo;
 	}
 
-	/**
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseDoubleClick(final MouseEvent e) {}
-
-	/**
-	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseDown(final MouseEvent e) {
-		SimulationClock.toggleDisplay();
-	}
-
-	/**
-	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public void mouseUp(final MouseEvent e) {}
-
-	/**
-	 * @return
-	 */
 	public boolean isDisposed() {
 		return label.isDisposed();
 	}
 
 	/**
-	 * @return
-	 */
-	public Color getBackground() {
-		return label.getBackground();
-	}
-
-	/**
-	 * @param color
-	 */
-	public void setBackground(final Color color) {
-		label.setBackground(color);
-	}
-
-	/**
 	 * @param message
 	 */
-	public void setText(final String message) {
+	public void setText(final String message, final int code) {
+		status = code;
+		label.setBackground(getPopupBackground());
 		label.setText(message);
+		if ( popup.isVisible() ) {
+			popup.display();
+		}
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 */
+	@Override
+	public String getPopupText() {
+		if ( !GuiUtils.isSimulationPerspective() ) { return null; }
+		if ( status == IGui.ERROR || status == IGui.WAIT ) { return label.getText(); }
+		StringBuilder sb = new StringBuilder();
+		String nl = StringUtils.getLineSeparator();
+		sb.append("Cycles elapsed: ").append("\t").append(SimulationClock.getCycle()).append(nl);
+		sb.append("Simulated time: ").append("\t")
+			.append(Strings.asDate(SimulationClock.getTime(), null)).append(nl);
+		sb.append("Cycle duration: ").append("\t").append("\t")
+			.append(SimulationClock.getDuration()).append("ms").append(nl);
+		sb.append("Average duration: ").append("\t")
+			.append((int) SimulationClock.getAverageDuration()).append("ms").append(nl);
+		sb.append("Total duration: ").append("\t").append("\t")
+			.append(SimulationClock.getTotalDuration()).append("ms");
+		return sb.toString();
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
+	 */
+	@Override
+	public Control getPositionControl() {
+		return label;
+	}
+
+	/**
+	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
+	 */
+	@Override
+	public Color getPopupBackground() {
+		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT
+			? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK;
 	}
 
 }
