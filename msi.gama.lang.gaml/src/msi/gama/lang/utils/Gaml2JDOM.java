@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.descript.GamlDescriptError;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
 import org.jdom.*;
 import org.jdom.output.XMLOutputter;
@@ -98,7 +99,14 @@ public class Gaml2JDOM {
 		final LineNumberElement elt = new LineNumberElement(swd.getKey().getRef().getName(), swd);
 
 		if ( swd.getVar() != null ) {
-			elt.setAttribute("var", convExpression(swd.getVar()));
+			String kw = swd.getKey().getRef().getName();
+			String defaultFacet =
+				DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(kw);
+			if ( defaultFacet != null ) {
+				elt.setAttribute(defaultFacet, convExpression(swd.getVar()));
+			} else {
+				elt.setAttribute("var", convExpression(swd.getVar()));
+			}
 		}
 		for ( final FacetExpr f : swd.getFacets() ) {
 			if ( f.getName() != null ) {
