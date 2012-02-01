@@ -282,5 +282,7 @@ public interface IKeyword {
 	public static final String BRIGHTER = "brighter";
 	public static final String COLOR_GREEN = "green";
 	public static final String COLOR_BLUE = "blue";
+	public static final String SWITCH = "switch";
+	public static final String MATCH = "match";
 
 }
