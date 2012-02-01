@@ -442,16 +442,15 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	void redrawNavigator() {
-		if ( navigator == null ) { return; }
 		if ( !navigationImageEnabled ) { return; }
 		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
+				if ( navigator == null || navigator.isDisposed() ) { return; }
 				navigator.redraw();
-				navigator.update();
+				// navigator.update();
 			}
-
 		});
 	}
 
