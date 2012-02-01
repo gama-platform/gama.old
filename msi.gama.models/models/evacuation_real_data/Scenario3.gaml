@@ -89,7 +89,7 @@ global {
 		}
 	}	 
 
-	reflex stop_simulation when: ( (time = 1800) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
+	reflex stop_simulation when: ( (time = 1800) or (  ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) and ( ( sum (list(road) collect (length (each.members))) ) = 0 ) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
@@ -110,6 +110,14 @@ entities {
 		var macro_patch type: geometry;
 		var macro_patch_buffer type: geometry;
 
+		var nearby_destinations type: list of: destination init: [];
+
+		init {
+			if condition: (macro_patch != nil) {
+				set nearby_destinations value: destination overlapping (shape + 10); // 10m buffer
+			}
+		}
+
 		species captured_pedestrian parent: pedestrian schedules: [] {
 			var released_time type: int;
 			var released_location type: point;
@@ -121,13 +129,10 @@ entities {
 
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
-			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where ( (each.shelter != nil) and !(each.reach_shelter));
-			
-			if condition: ! (empty(to_be_captured_pedestrian)) {
-				set to_be_captured_pedestrian value: to_be_captured_pedestrian where (
-					(each.last_road != self)
-					and (each.previous_location != nil) );
-			}
+			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where ( 
+					(each.shelter != nil) and !(each.reach_shelter) and !(each.shelter in nearby_destinations)
+					and (each.last_road != self) and (each.previous_location != nil)
+			);
 			
 			if condition: !(empty (to_be_captured_pedestrian)) {
 				
@@ -369,6 +374,8 @@ entities {
 		}
 		
 		reflex move_to_shelter when: ( (shelter != nil) and !(reach_shelter) ) {
+			set previous_location value: location;
+			
 			do action: goto {
 				arg target value: shelter;
 				arg on value: road_graph;

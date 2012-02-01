@@ -70,9 +70,9 @@ global {
 		}
 	}	 
 	
-	reflex stop_simulation when: ( (time = 1800) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
+	reflex stop_simulation when: ( (time = 1800) or (  ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) and ( ( sum (list(road) collect (length (each.members))) ) = 0 ) ) ) {
 		do action: write {
-			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
+			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ; average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
 				+ '\\n ; pedestrians NOT reach shelter: ' + (string ( (length( (list(pedestrian)) where !(each.reach_shelter) )) + ( sum (list(road) collect (length (each.members))) ) ) );
 		}
@@ -90,6 +90,14 @@ entities {
 		
 		var macro_patch type: geometry;
 		var macro_patch_buffer type: geometry;
+		
+		var nearby_destinations type: list of: destination init: [];
+		
+		init {
+			if condition: (macro_patch != nil) {
+				set nearby_destinations value: destination overlapping (shape + 10); // 10m buffer
+			}
+		}
 
 		species captured_pedestrian parent: pedestrian schedules: [] {
 			var released_time type: int;
@@ -103,7 +111,7 @@ entities {
 		reflex capture_pedestrian when: ( (capture_pedestrian) and (macro_patch != nil) ) {
 			
 			let to_be_captured_pedestrian type: list of: pedestrian value: (pedestrian overlapping (macro_patch_buffer)) where 
-				( !(each.reach_shelter) and (each.last_road != self) and (each.previous_location != nil) );
+				( !(each.reach_shelter) and (each.last_road != self) and (each.previous_location != nil) and !(each.safe_building in nearby_destinations) );
 			
 			if condition: !(empty (to_be_captured_pedestrian)) {
 				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
@@ -130,11 +138,11 @@ entities {
 			}
 		}
 		
-		reflex release_captured_people when: ( (macro_patch != nil) and !(empty(members)) ) {
-			let to_be_released_people type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
+		reflex release_captured_pedestrian when: ( (macro_patch != nil) and !(empty(members)) ) {
+			let to_be_released_pedestrian type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
 			
-			if condition: !(empty (to_be_released_people)) {
-				loop rp over: to_be_released_people {
+			if condition: !(empty (to_be_released_pedestrian)) {
+				loop rp over: to_be_released_pedestrian {
 					let r_position type: point value: rp.released_location;
 					release target: rp returns: r_pedestrian;
 					set pedestrian(first (list (r_pedestrian))).location value: r_position;

@@ -2,7 +2,7 @@ model Scenario4
 
 global {
 	var guiders_per_road type: int parameter: 'Number of guider per road' init: 1 min: 0 max: 10;
-	var simulated_population_rate type: float init: 0.001 const: true;
+	var simulated_population_rate type: float init: 0.1 const: true;
 	
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp';
@@ -62,7 +62,7 @@ global {
 		}
 	}	 
 
-	reflex stop_simulation when: ( (time = 5400) or ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) ) {
+	reflex stop_simulation when: ( (time = 5400) or (  ( (length(list(pedestrian))) = (length(list(pedestrian) where each.reach_shelter)) ) and ( ( sum (list(road) collect (length (each.members))) ) = 0 ) ) ) {
 		do action: write {
 			arg message value: 'Simulation stops at time: ' + (string(time)) + ' with total duration: ' + total_duration + '\\n ;average duration: ' + average_duration
 				+ '\\n ; pedestrians reach shelter: ' + (string(length( (list(pedestrian)) where (each.reach_shelter) )))
@@ -127,13 +127,12 @@ entities {
 		reflex release_captured_pedestrian when: (macro_patch != nil) {
 			let to_be_released_pedestrian type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
 			
-			
 			if condition: !(empty (to_be_released_pedestrian)) {
 				loop rp over: to_be_released_pedestrian {
 					let r_position type: point value: rp.released_location;
-					release target: rp returns: r_people;
-					set pedestrian(first (list (r_people))).last_road value: self;
-					set pedestrian(first (list (r_people))).location value: r_position;
+					release target: rp returns: r_pedestrian;
+					set pedestrian(first (list (r_pedestrian))).last_road value: self;
+					set pedestrian(first (list (r_pedestrian))).location value: r_position;
 				}
 			}
 		}
