@@ -20,6 +20,8 @@ package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
 
+import msi.gama.util.GamaList;
+
 /**
  * Classe implémentant la prise de décision à l'aide des fonctions de croyance
  * @author PTaillandier
@@ -53,7 +55,7 @@ public class EvidenceTheory {
 	 * @param masses : ensemble de MassesCroyances : les masses de croyances à fusionner
 	 * @return les masses de croyances correspondant à la fusion de l'ensemble des masses
 	 */
-	private MassesCroyances fusionLesMassesLocales(final Set<MassesCroyances> masses) {
+	private MassesCroyances fusionLesMassesLocales(final LinkedList<MassesCroyances> masses) {
 		MassesCroyances fusion = null;
 		// Parcours de l'ensemble des masses de croyances
 		for ( MassesCroyances mc : masses ) {
@@ -87,9 +89,9 @@ public class EvidenceTheory {
 	 *            Clef : Strign : nom du critï¿½re -> Valeur : Double : sa valeur
 	 * @return MassesCroyances correspondant ï¿½ la fusion des critï¿½res
 	 */
-	private MassesCroyances fusionCriteres(final Set<CritereFonctionsCroyances> criteres,
+	private MassesCroyances fusionCriteres(final LinkedList<CritereFonctionsCroyances> criteres,
 		final Map<String, Double> valeursCourantes) {
-		Set<MassesCroyances> masses = new HashSet<MassesCroyances>();
+		LinkedList<MassesCroyances> masses = new LinkedList<MassesCroyances>();
 		// Parcours des critï¿½res
 		for ( CritereFonctionsCroyances cfc : criteres ) {
 			double valC = valeursCourantes.get(cfc.getNom()).doubleValue();
@@ -109,8 +111,8 @@ public class EvidenceTheory {
 	 * @param criteres : Ensemble de CritereFonctionsCroyances (les critï¿½res pour cette mï¿½thode)
 	 * @return le meilleur candidat
 	 */
-	public Candidate decision(final Set<CritereFonctionsCroyances> criteres,
-		final Set<Candidate> cands) {
+	public Candidate decision(final LinkedList<CritereFonctionsCroyances> criteres,
+		final LinkedList<Candidate> cands) {
 		// Parcours de l'ensemble des candidats possibles
 		Map<Candidate, MassesCroyances> candidats = new HashMap<Candidate, MassesCroyances>();
 		for ( Candidate cand : cands ) {
@@ -133,7 +135,7 @@ public class EvidenceTheory {
 	 * @param candidates : l'ensemble des candidats possibles
 	 * @return le meilleur candidat
 	 */
-	private Candidate choixCandidat(final Propositions propositions, final Set<Candidate> candidates) {
+	private Candidate choixCandidat(final Propositions propositions, final LinkedList<Candidate> candidates) {
 		// Parcours de l'ensemble des candidats
 		Candidate bestCand = null;
 		double probaMax = -1;
@@ -157,7 +159,7 @@ public class EvidenceTheory {
 			 */
 	double probaPignistic(final Candidate cand, final Propositions propositions) {
 		// on calcul le coefficient de normalisation
-		double coeffNorm = 1.0 / (1.0 - propositions.getConflit());
+		double coeffNorm = propositions.getCoeffNorm();
 		// On parcours la liste des propositions
 		double proba = 0;
 		for ( Proposition prop : propositions.propositions ) {
@@ -248,18 +250,26 @@ public class EvidenceTheory {
 		// Ensemble de Candidate : les hypothï¿½ses reprï¿½sente les candidats
 		// une proposition peut avoir comme hypothï¿½se {bon, moyen}, c'est ï¿½ dire que le jeu de K
 		// courant est pour cette proposition soit bon, soit mauvais
-		private final Set<Candidate> hypothese;
+		private final LinkedList<Candidate> hypothese;
 		// valeur de la masse de croyance associï¿½e ï¿½ cette proposition
 		private double masseCroyance;
+		
+		private int id;
 
 		/**
 		 * @param hypothese : ensemble de String
 		 * @param masseCroyance
 		 */
-		public Proposition(final Set<Candidate> hypothese, final double masseCroyance) {
+		public Proposition(final LinkedList<Candidate> hypothese, final double masseCroyance) {
 			super();
 			this.hypothese = hypothese;
 			this.masseCroyance = masseCroyance;
+			GamaList<Integer> cands = new GamaList<Integer>();
+			for (Candidate cand: hypothese) {
+				cands.add(cand.getIndex());
+			}
+			Collections.sort(cands);
+			id = cands.hashCode();
 		}
 
 		@Override
@@ -271,33 +281,41 @@ public class EvidenceTheory {
 			return masseCroyance;
 		}
 
-		public Set<Candidate> getHypothese() {
+		public LinkedList<Candidate> getHypothese() {
 			return hypothese;
 		}
 
 		@Override
 		public int hashCode() {
-			// code gï¿½nï¿½rï¿½ automatiquement par Eclipse (pour la comparaison de deux
-			// propositions)
-			final int PRIME = 31;
+			final int prime = 31;
 			int result = 1;
-			result = PRIME * result + (hypothese == null ? 0 : hypothese.hashCode());
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + id;
 			return result;
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
-			// code gï¿½nï¿½rï¿½ automatiquement par Eclipse (pour la comparaison de deux
-			// propositions)
-			if ( this == obj ) { return true; }
-			if ( obj == null ) { return false; }
-			if ( getClass() != obj.getClass() ) { return false; }
-			final Proposition other = (Proposition) obj;
-			if ( hypothese == null ) {
-				if ( other.hypothese != null ) { return false; }
-			} else if ( !hypothese.equals(other.hypothese) ) { return false; }
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Proposition other = (Proposition) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (id != other.id)
+				return false;
 			return true;
 		}
+
+		private EvidenceTheory getOuterType() {
+			return EvidenceTheory.this;
+		}
+
+		
+		
 
 	}
 
@@ -309,7 +327,8 @@ public class EvidenceTheory {
 	private class Propositions {
 
 		// L'ensemble des Proposition
-		private Set<Proposition> propositions;
+		private LinkedList<Proposition> propositions;
+		private double coeffNorm;
 
 		/**
 		 * Constructeur qui va permettre la fusion des hypothï¿½ses et fournir l'ensemble des
@@ -318,8 +337,8 @@ public class EvidenceTheory {
 		 *            Valeur : MassesCroyances associï¿½es au candidat
 		 */
 		public Propositions(final Map<Candidate, MassesCroyances> candidats) {
-			this.propositions = new HashSet<Proposition>();
-
+			this.propositions = new LinkedList<Proposition>();
+			coeffNorm = 0;
 			// Parcours de l'ensemble des candidats
 			for ( Candidate cand : candidats.keySet() ) {
 				MassesCroyances mc1 = candidats.get(cand);
@@ -335,7 +354,7 @@ public class EvidenceTheory {
 
 					// initialisation proposition pour : il faut apparier le vecteur de valeurs
 					// courant avec cet intervalle
-					Set<Candidate> pourSet = new HashSet<Candidate>();
+					LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
 					pourSet.add(cand);
 					Proposition propp = new Proposition(pourSet, mc1.pour);
 
@@ -346,8 +365,8 @@ public class EvidenceTheory {
 					// l'un des autres intervalles
 					// initialisation proposition ignorance : il faut apparier le vecteur de valeurs
 					// courant avec l'un des intervalles
-					Set<Candidate> contreSet = new HashSet<Candidate>();
-					Set<Candidate> ignoSet = new HashSet<Candidate>();
+					LinkedList<Candidate> contreSet = new LinkedList<Candidate>();
+					LinkedList<Candidate> ignoSet = new LinkedList<Candidate>();
 					for ( Candidate cand2 : candidats.keySet() ) {
 						ignoSet.add(cand2);
 						if ( cand == cand2 ) {
@@ -361,10 +380,10 @@ public class EvidenceTheory {
 					// initialisation proposition conflit (deux critï¿½res qui donne des indications
 					// contradictoires)
 					Proposition propConflit =
-						new Proposition(new HashSet<Candidate>(), mc1.conflit);
+						new Proposition(new LinkedList<Candidate>(), mc1.conflit);
 
-					Map<Set<Candidate>, Proposition> propositionsTmp =
-						new HashMap<Set<Candidate>, Proposition>();
+					Map<Integer, Proposition> propositionsTmp =
+						new HashMap<Integer, Proposition>();
 					// on fusionne ces nouvelles propositions avec les propositions dï¿½jï¿½
 					// prï¿½sentes
 					// dans l'ensemble propositions
@@ -378,10 +397,11 @@ public class EvidenceTheory {
 						Proposition propFus4 = fusionPropositions(propConflit, prop);
 						ajouteProposition(propositionsTmp, propFus4);
 					}
-					propositions = new HashSet<Proposition>();
+					propositions = new LinkedList<Proposition>();
 					propositions.addAll(propositionsTmp.values());
 				}
 			}
+			computeCoeffNorm();
 		}
 
 		/**
@@ -390,17 +410,17 @@ public class EvidenceTheory {
 		 *            proposition -> Valeur : Proposition : proposition correspondante
 		 * @param propFus : la nouvelle proposition
 		 */
-		public void ajouteProposition(final Map<Set<Candidate>, Proposition> propositionsTmp,
+		public void ajouteProposition(final Map<Integer, Proposition> propositionsTmp,
 			final Proposition propFus) {
 			// s'il y a dï¿½jï¿½ une proposition similaire (avec le mï¿½me nom) dans le dictionnaire
 			// propositionsTmp, on la rï¿½cupï¿½re
-			Proposition propExiste = propositionsTmp.get(propFus.getHypothese());
+			Proposition propExiste = propositionsTmp.get(propFus.id);
 			// si il n'y en a pas, on ajoute directement la nouvelle proposition
 			if ( propExiste == null ) {
-				propositionsTmp.put(propFus.getHypothese(), propFus);
+				propositionsTmp.put(propFus.id, propFus);
 			} else {
 				propExiste.masseCroyance += propFus.masseCroyance;
-				propositionsTmp.put(propExiste.getHypothese(), propExiste);
+				propositionsTmp.put(propExiste.id, propExiste);
 			}
 		}
 
@@ -412,7 +432,7 @@ public class EvidenceTheory {
 		 */
 		public Proposition fusionPropositions(final Proposition prop1, final Proposition prop2) {
 			Proposition propFus = null;
-			Set<Candidate> fusSet = new HashSet<Candidate>();
+			LinkedList<Candidate> fusSet = new LinkedList<Candidate>();
 			// La proposition obtenue aprï¿½s fusion a pour ensemble d'hypothï¿½ses, l'intersection
 			// entre l'ensemble d'hypothï¿½se de prop1 et de prop2
 			for ( Candidate hyp : prop1.getHypothese() ) {
@@ -436,7 +456,7 @@ public class EvidenceTheory {
 		public void initPropositions(final Candidate cand, final MassesCroyances mc1,
 			final Map<Candidate, MassesCroyances> candidats) {
 			// initialisation proposition pour : ce candidat est le meilleur
-			Set<Candidate> pourSet = new HashSet<Candidate>();
+			LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
 
 			Proposition propp = new Proposition(pourSet, mc1.pour);
 			propositions.add(propp);
@@ -444,8 +464,8 @@ public class EvidenceTheory {
 			// initialisation proposition contre : ce candidat n est pas le meilleur
 			// ï¿½quivalent ï¿½ propotion : l'un des autres candidats est meilleur
 			// initialisation proposition ignorance : l'un des candidats est le meilleur
-			Set<Candidate> contreSet = new HashSet<Candidate>();
-			Set<Candidate> ignoSet = new HashSet<Candidate>();
+			LinkedList<Candidate> contreSet = new LinkedList<Candidate>();
+			LinkedList<Candidate> ignoSet = new LinkedList<Candidate>();
 			for ( Candidate c : candidats.keySet() ) {
 				ignoSet.add(c);
 				if ( c != cand ) {
@@ -460,18 +480,22 @@ public class EvidenceTheory {
 
 			// initialisation proposition conflit (deux critï¿½res qui donne des indications
 			// contradictoires)
-			Proposition propConflit = new Proposition(new HashSet<Candidate>(), mc1.conflit);
+			Proposition propConflit = new Proposition(new LinkedList<Candidate>(), mc1.conflit);
 			propositions.add(propConflit);
 		}
 
-		/**
-		 * @return la valeur du conflit pour l'ensemble des propositions
-		 */
-		public double getConflit() {
+		public void computeCoeffNorm() {
 			for ( Proposition prop : propositions ) {
-				if ( prop.hypothese.isEmpty() ) { return prop.masseCroyance; }
+				if ( prop.hypothese.isEmpty() ) { 
+					coeffNorm = 1.0 / (1.0 - prop.masseCroyance);
+					return;
+				}
 			}
-			return 0;
+		}
+		
+
+		public double getCoeffNorm() {
+			return coeffNorm;
 		}
 
 		@Override

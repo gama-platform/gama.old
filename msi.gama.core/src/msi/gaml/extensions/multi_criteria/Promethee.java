@@ -53,7 +53,7 @@ public class Promethee {
 		}
 	}
 
-	public Candidate decision(final Set<Candidate> locations) {
+	public Candidate decision(final LinkedList<Candidate> locations) {
 		Candidate meilleureLoc = null;
 		double outRankingMax = -Double.MAX_VALUE;
 		for ( Candidate loc1 : locations ) {

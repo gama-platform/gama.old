@@ -43,8 +43,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		if ( cands == null || cands.isEmpty() ) { return -1;
 
 		}
-		List<String> criteriaStr = new GamaList<String>();
-		Map<String, Double> weight = new Hashtable<String, Double>();
+		List<String> criteriaStr = new LinkedList<String>();
+		Map<String, Double> weight = new HashMap<String, Double>();
 		for ( Map<String, Object> critMap : criteriaMap ) {
 			String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -88,9 +88,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 		}
 		int cpt = 0;
-		Set<Candidate> candidates = new HashSet<Candidate>();
-		List<String> criteriaStr = new GamaList<String>();
-		Map<String, FonctionPreference> fctPrefCrit = new Hashtable<String, FonctionPreference>();
+		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		List<String> criteriaStr = new LinkedList<String>();
+		Map<String, FonctionPreference> fctPrefCrit = new HashMap<String, FonctionPreference>();
 		Map<String, Double> weight = new Hashtable<String, Double>();
 		for ( Map<String, Object> critMap : criteriaMap ) {
 			String name = (String) critMap.get("name");
@@ -156,7 +156,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		Set<Candidate> candsFilter = filtering(candidates);
+		LinkedList<Candidate> candsFilter = filtering(candidates);
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
 		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>(candsFilter).first()
 			.getIndex(); }
@@ -178,7 +178,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		int cpt = 0;
 		List<Candidate> candidates = new GamaList<Candidate>();
 		List<String> criteriaStr = new GamaList<String>();
-		Map<String, Double> weight = new Hashtable<String, Double>();
+		Map<String, Double> weight = new HashMap<String, Double>();
 		Map<String, Double> preference = new HashMap<String, Double>();
 		Map<String, Double> indifference = new HashMap<String, Double>();
 		Map<String, Double> veto = new HashMap<String, Double>();
@@ -237,9 +237,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		Set<Candidate> candsFilter = filtering(candidates);
+		LinkedList<Candidate> candsFilter = filtering(candidates);
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
-		Candidate decision = electre.decision(new GamaList<Candidate>(candsFilter));
+		Candidate decision = electre.decision(candsFilter);
 		return decision.getIndex();
 
 	}
@@ -251,9 +251,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
-		Set<Candidate> candidates = new HashSet<Candidate>();
-		List<String> criteriaStr = new GamaList<String>();
-		Set<CritereFonctionsCroyances> criteresFC = new HashSet<CritereFonctionsCroyances>();
+		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		List<String> criteriaStr = new LinkedList<String>();
+		LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<CritereFonctionsCroyances>();
 		for ( Map<String, Object> critMap : criteriaMap ) {
 			String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -322,8 +322,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		Set<Candidate> candsFilter = filtering(candidates);
-		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1);
+		LinkedList<Candidate> candsFilter = filtering(candidates);
+		if ( candsFilter.isEmpty() ) { 
+			return GAMA.getRandom().between(0, candidates.size() - 1);
 
 		}
 		Candidate decision = evt.decision(criteresFC, candsFilter);
@@ -331,8 +332,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	private Set<Candidate> filtering(final Collection<Candidate> candidates) {
-		Set<Candidate> cands = new HashSet<Candidate>();
+	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates) {
+		LinkedList<Candidate> cands = new LinkedList<Candidate>();
 		for ( Candidate c1 : candidates ) {
 			boolean paretoFront = true;
 			for ( Candidate c2 : candidates ) {
