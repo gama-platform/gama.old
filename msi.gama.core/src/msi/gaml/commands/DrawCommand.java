@@ -64,7 +64,7 @@ combinations = {
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY, IKeyword.ROTATE }),
 	@combination({ IKeyword.TEXT, IKeyword.SIZE, IKeyword.COLOR, IKeyword.AT, IKeyword.ROTATE }),
 	@combination({ IKeyword.IMAGE, IKeyword.SIZE, IKeyword.AT, IKeyword.SCALE, IKeyword.ROTATE,
-		IKeyword.COLOR }) })
+		IKeyword.COLOR }) }, omissible = IKeyword.SHAPE)
 @inside(symbols = { IKeyword.ASPECT }, kinds = { ISymbolKind.SEQUENCE_COMMAND })
 public class DrawCommand extends AbstractCommandSequence {
 

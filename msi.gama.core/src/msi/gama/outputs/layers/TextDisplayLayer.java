@@ -19,7 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -35,13 +35,13 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({ @facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) })
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
 public class TextDisplayLayer extends AbstractDisplayLayer {
 
 	private final IExpression color;

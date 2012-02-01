@@ -19,14 +19,14 @@
 package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IContainer;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -38,13 +38,13 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets({ @facet(name = IKeyword.TO, type = { IType.CONTAINER_STR }, optional = false),
+@facets(value = { @facet(name = IKeyword.TO, type = { IType.CONTAINER_STR }, optional = false),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.EDGE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VERTEX, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT_STR, optional = true) })
+	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 public class AddCommand extends AbstractContainerCommand {

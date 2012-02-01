@@ -21,7 +21,7 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -56,13 +56,13 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 @symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({ @facet(name = IKeyword.FILE, type = IType.STRING_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GIS, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) })
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
 public class ImageDisplayLayer extends AbstractDisplayLayer {
 
 	public ImageDisplayLayer(/* final ISymbol context, */final IDescription desc)

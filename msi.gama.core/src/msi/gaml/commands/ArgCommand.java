@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -33,7 +33,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = true),
 	@facet(name = IKeyword.DEFAULT, type = { IType.NONE_STR }, optional = true) }, combinations = {
 	@combination({ IKeyword.NAME, IKeyword.DEFAULT }), @combination({ IKeyword.NAME }),
-	@combination({ IKeyword.NAME, IKeyword.VALUE }) })
+	@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
 public class ArgCommand extends AbstractPlaceHolderCommand {

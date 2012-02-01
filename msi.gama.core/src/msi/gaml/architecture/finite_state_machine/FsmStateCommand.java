@@ -21,14 +21,14 @@ package msi.gaml.architecture.finite_state_machine;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IGamlAgent;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
@@ -46,7 +46,7 @@ import msi.gaml.types.IType;
 	@facet(name = FsmStateCommand.FINAL, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, combinations = {
 	@combination({ IKeyword.NAME, FsmStateCommand.FINAL }), @combination({ IKeyword.NAME }),
-	@combination({ IKeyword.NAME, FsmStateCommand.INITIAL }) })
+	@combination({ IKeyword.NAME, FsmStateCommand.INITIAL }) }, omissible = IKeyword.NAME)
 public class FsmStateCommand extends AbstractCommandSequence {
 
 	public static final String STATE_MEMORY = "state_memory";

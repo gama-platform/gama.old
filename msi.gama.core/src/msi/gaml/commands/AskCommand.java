@@ -21,14 +21,14 @@ package msi.gaml.commands;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.remote_context;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -37,9 +37,9 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed on remote agents.
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_COMMAND)
-@facets({
+@facets(value = {
 	@facet(name = IKeyword.TARGET, type = { IType.LIST_STR, IType.AGENT_STR }, optional = false),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true) })
+	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 @remote_context
 public class AskCommand extends AbstractCommandSequence {

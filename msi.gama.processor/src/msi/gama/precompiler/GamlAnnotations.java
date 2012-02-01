@@ -44,6 +44,8 @@ public final class GamlAnnotations {
 
 		combination[] combinations() default {};
 
+		String omissible();
+
 		// TODO A VOIR AU NIVEAU DE LA SYNTAXE;
 	}
 

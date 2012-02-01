@@ -19,7 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -42,13 +42,13 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({ @facet(name = IKeyword.VALUE, type = IType.LIST_STR, optional = false),
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.LIST_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FOCUS, type = IType.AGENT_STR, optional = true),
-	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true) })
+	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class AgentDisplayLayer extends AbstractDisplayLayer {
 
 	private IExpression setOfAgents;

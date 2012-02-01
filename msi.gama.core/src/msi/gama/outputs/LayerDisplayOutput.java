@@ -52,7 +52,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
-	@facet(name = "autosave", type = IType.BOOL_STR, optional = true) })
+	@facet(name = "autosave", type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
 @inside(symbols = IKeyword.OUTPUT)
 public class LayerDisplayOutput extends AbstractDisplayOutput {

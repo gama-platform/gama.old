@@ -20,10 +20,19 @@ package msi.gaml.species;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.precompiler.GamlAnnotations.base;
+import msi.gama.precompiler.GamlAnnotations.commands;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gaml.architecture.reflex.ReflexCommand;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.ISymbolKind;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -38,7 +47,7 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
 @commands({ AspectCommand.class, ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class })
-@facets({
+@facets(value = {
 	@facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT_STR, optional = true),
@@ -50,7 +59,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.BASE, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.LIST_STR, optional = true),
-	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) })
+	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) }, omissible = IKeyword.NAME)
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR) })
 public class GamlSpecies extends AbstractSpecies {
 

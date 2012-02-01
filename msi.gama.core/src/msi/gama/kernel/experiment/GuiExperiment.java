@@ -41,10 +41,10 @@ import msi.gaml.variables.IVariable;
  */
 @symbol(name = { IKeyword.EXPERIMENT, IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT)
 @with_sequence
-@facets({
+@facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
-		IKeyword.GUI_ }, optional = false) })
+		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.MODEL)
 public class GuiExperiment extends AbstractExperiment {
 

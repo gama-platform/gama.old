@@ -37,13 +37,13 @@ import org.jfree.chart.renderer.xy.*;
 
 @symbol(name = IKeyword.DATA, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.CHART)
-@facets({
+@facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK,
-		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) })
+		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.NAME)
 public class Data extends Symbol {
 
 	GamaColor color;

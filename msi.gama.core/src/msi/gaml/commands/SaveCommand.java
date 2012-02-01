@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,15 +20,17 @@ package msi.gaml.commands;
 
 import java.io.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
-
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -44,11 +46,11 @@ import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
-@facets({ @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) })
+	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) }, omissible = IKeyword.ITEM)
 public class SaveCommand extends AbstractCommandSequence {
 
 	private WithCommand att;
@@ -69,7 +71,7 @@ public class SaveCommand extends AbstractCommandSequence {
 		try {
 			path =
 				scope.getSimulationScope().getModel()
-					.getRelativeFilePath(Cast.asString(scope,file.value(scope)), false);
+					.getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
 		} catch (GamlException e) {
 			e.printStackTrace();
 		}
@@ -86,8 +88,7 @@ public class SaveCommand extends AbstractCommandSequence {
 			List<? extends IAgent> agents;
 			if ( item == null ) {
 				IExpression speciesExpr = getFacet(IKeyword.SPECIES);
-				if ( speciesExpr == null ||
-					Cast.asSpecies(scope, speciesExpr.value(scope)) == null ) {
+				if ( speciesExpr == null || Cast.asSpecies(scope, speciesExpr.value(scope)) == null ) {
 					scope.setStatus(ExecutionStatus.failure);
 					return null;
 				}
@@ -111,7 +112,7 @@ public class SaveCommand extends AbstractCommandSequence {
 			saveText(type, item, fileTxt, scope);
 			// }
 		}
-		return Cast.asString(scope,file.value(scope));
+		return Cast.asString(scope, file.value(scope));
 	}
 
 	public void saveShape(final List<? extends IAgent> agents, final String path, final IScope scope)
@@ -133,8 +134,10 @@ public class SaveCommand extends AbstractCommandSequence {
 		try {
 			if ( attributes != null ) {
 				for ( IExpression e : (Set<IExpression>) attributes.keySet() ) {
-					specs.append(',')
-						.append(Cast.asString(scope,((IExpression) attributes.get(e)).value(scope)))
+					specs
+						.append(',')
+						.append(
+							Cast.asString(scope, ((IExpression) attributes.get(e)).value(scope)))
 						.append(':').append(type(e.getContentType()));
 				}
 			}
@@ -157,19 +160,19 @@ public class SaveCommand extends AbstractCommandSequence {
 
 			if ( item != null ) {
 				if ( type.equals("text") ) {
-					fw.write(Cast.asString(scope,item.value(scope)) +
+					fw.write(Cast.asString(scope, item.value(scope)) +
 						System.getProperty("line.separator"));
 				} else if ( type.equals("csv") ) {
 					item.getContentType();
 					if ( item.type().id() == IType.LIST ) {
 						IList values = Cast.asList(scope, item.value(scope));
 						for ( int i = 0; i < values.size() - 1; i++ ) {
-							fw.write(Cast.asString(scope,values.get(i)) + ",");
+							fw.write(Cast.asString(scope, values.get(i)) + ",");
 						}
-						fw.write(Cast.asString(scope,values.last()) +
+						fw.write(Cast.asString(scope, values.last()) +
 							System.getProperty("line.separator"));
 					} else {
-						fw.write(Cast.asString(scope,item.value(scope)) +
+						fw.write(Cast.asString(scope, item.value(scope)) +
 							System.getProperty("line.separator"));
 					}
 				}

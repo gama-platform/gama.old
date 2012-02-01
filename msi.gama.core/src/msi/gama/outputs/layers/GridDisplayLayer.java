@@ -19,7 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.IDisplayOutput;
@@ -44,11 +44,11 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.GRID, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({ @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true) })
+	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
 public class GridDisplayLayer extends AbstractDisplayLayer {
 
 	public GridDisplayLayer(/* final ISymbol context, */final IDescription desc)

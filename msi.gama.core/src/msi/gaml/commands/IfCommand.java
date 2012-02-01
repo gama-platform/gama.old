@@ -20,12 +20,12 @@ package msi.gaml.commands;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
-@facets(value = { @facet(name = IKeyword.CONDITION, type = IType.BOOL_STR, optional = false) })
+@facets(value = { @facet(name = IKeyword.CONDITION, type = IType.BOOL_STR, optional = false) }, omissible = IKeyword.CONDITION)
 public class IfCommand extends AbstractCommandSequence {
 
 	public ICommand alt;

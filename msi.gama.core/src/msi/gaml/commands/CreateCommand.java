@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,17 +20,21 @@ package msi.gaml.commands;
 
 import java.io.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
-
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.remote_context;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.ModelFactory;
@@ -63,14 +67,14 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 @symbol(name = IKeyword.CREATE, kind = ISymbolKind.SEQUENCE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
-@facets({ @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true),
 	@facet(name = IKeyword.FROM, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.NUMBER, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true),
 	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
 	@facet(name = IKeyword.SIZE, type = { IType.FLOAT_STR }, optional = true),
-	@facet(name = IKeyword.TYPE, type = { IType.STRING_STR }, optional = true) })
+	@facet(name = IKeyword.TYPE, type = { IType.STRING_STR }, optional = true) }, omissible = IKeyword.SPECIES)
 @remote_context
 @with_args
 public class CreateCommand extends AbstractCommandSequence implements ICommand.WithArgs {
@@ -205,7 +209,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			}
 			IExpression typeDisc = getFacet(IKeyword.TYPE);
 			if ( typeDisc != null ) {
-				typeDiscretisation = Cast.asString(scope,typeDisc.value(scope));
+				typeDiscretisation = Cast.asString(scope, typeDisc.value(scope));
 				if ( typeDiscretisation == null ) {
 					typeDiscretisation = "";
 				}
@@ -377,7 +381,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		try {
 			shapeFile =
 				scope.getSimulationScope().getModel()
-					.getRelativeFilePath(Cast.asString(scope,from.value(scope)), true);
+					.getRelativeFilePath(Cast.asString(scope, from.value(scope)), true);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}

@@ -50,10 +50,29 @@ public class SymbolFactory implements ISymbolFactory {
 
 	public static Map<String, String> KEYWORD_TAGS = new HashMap();
 
+	/**
+	 * TODO This map should be built dynamically in the future !
+	 * Contains the "default" facet of most commands (ie the facet that does not need to be declared
+	 * explicitely in the syntax : "command: expression ..." -> "command default_facet: expression")
+	 */
+	// public static Map<String, String> DEFAULT_FACETS = new HashMap();
+
 	static {
 		// KEYWORD_TAGS.put(ISymbol.SPECIES, ISpecies.CONTROL);
 		KEYWORD_TAGS.put(IKeyword.VAR, IKeyword.TYPE);
 		KEYWORD_TAGS.put(IKeyword.METHOD, IKeyword.NAME);
+		//
+		// DEFAULT_FACETS.put(IKeyword.DO, IKeyword.ACTION);
+		// DEFAULT_FACETS.put(IKeyword.ADD, IKeyword.ITEM);
+		// DEFAULT_FACETS.put(IKeyword.ASK, IKeyword.TARGET);
+		// DEFAULT_FACETS.put(IKeyword.CAPTURE, IKeyword.TARGET);
+		// DEFAULT_FACETS.put(IKeyword.IF, IKeyword.CONDITION);
+		// DEFAULT_FACETS.put(IKeyword.PUT, IKeyword.ITEM);
+		// DEFAULT_FACETS.put(IKeyword.RELEASE, IKeyword.TARGET);
+		// DEFAULT_FACETS.put(IKeyword.REMOVE, IKeyword.ITEM);
+		// DEFAULT_FACETS.put(IKeyword.SWITCH, IKeyword.VALUE);
+		// DEFAULT_FACETS.put(IKeyword.MATCH, IKeyword.VALUE);
+		// DEFAULT_FACETS.put(IKeyword.CREATE, IKeyword.SPECIES);
 	}
 
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
@@ -124,6 +143,7 @@ public class SymbolFactory implements ISymbolFactory {
 
 	public void register(final Class c) {
 		Class baseClass = null;
+		String omissible = null;
 		// GUI.debug(c.getSimpleName() + " registered in " + getClass().getSimpleName());
 		boolean isTopLevel =
 			((symbol) c.getAnnotation(symbol.class)).kind() == ISymbolKind.BEHAVIOR;
@@ -142,6 +162,8 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( ff != null ) {
 			facets = Arrays.asList(ff.value());
 			combinations = Arrays.asList(ff.combinations());
+			omissible = ff.omissible();
+
 		}
 		if ( c.getAnnotation(inside.class) != null ) {
 			inside parents = (inside) c.getAnnotation(inside.class);
@@ -165,8 +187,8 @@ public class SymbolFactory implements ISymbolFactory {
 		for ( String k : keywords ) {
 			// try {
 			registeredSymbols.put(k, new SymbolMetaDescription(c, baseClass, k, canHaveSequence,
-				canHaveArgs, isTopLevel, doesNotHaveScope, facets, combinations, contexts,
-				isRemoteContext));
+				canHaveArgs, isTopLevel, doesNotHaveScope, facets, omissible, combinations,
+				contexts, isRemoteContext));
 			// } catch (GamlException e) {
 			// e.addContext("In compiling the meta description of: " + k);
 			// e.printStackTrace();
@@ -183,6 +205,28 @@ public class SymbolFactory implements ISymbolFactory {
 			return f.getMetaDescriptionFor(keyword);
 		}
 		return md;
+	}
+
+	@Override
+	public String getOmissibleFacetForSymbol(final String keyword) {
+		SymbolMetaDescription md;
+		try {
+			md = getMetaDescriptionFor(keyword);
+			return md.getOmissible();
+		} catch (GamlException e) {
+			return null;
+		}
+
+	}
+
+	public boolean isSymbolADefinition(final String keyword) {
+		try {
+			SymbolMetaDescription md = getMetaDescriptionFor(keyword);
+			return md.isDefinition();
+		} catch (GamlException e) {
+			return false;
+		}
+
 	}
 
 	protected String getKeyword(final IDescription desc) {

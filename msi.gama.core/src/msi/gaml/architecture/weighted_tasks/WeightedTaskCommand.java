@@ -19,11 +19,14 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.compilation.ISymbolKind;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -42,7 +45,7 @@ import msi.gaml.types.IType;
 @inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES })
 @facets(value = {
 	@facet(name = WeightedTaskCommand.WEIGHT, type = IType.FLOAT_STR, optional = false),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) })
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, omissible = IKeyword.NAME)
 public class WeightedTaskCommand extends AbstractCommandSequence {
 
 	protected static final String WEIGHT = "weight";

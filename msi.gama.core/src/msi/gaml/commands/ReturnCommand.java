@@ -19,13 +19,13 @@
 package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(symbols = IKeyword.ACTION, kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) })
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.VALUE)
 public class ReturnCommand extends AbstractCommand {
 
 	final IExpression value;

@@ -22,7 +22,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -56,7 +56,7 @@ import org.jfree.ui.RectangleInsets;
  */
 @symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({
+@facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING_STR, optional = true), */
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
@@ -69,7 +69,7 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) })
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
 public class ChartDisplayLayer extends AbstractDisplayLayer {
 

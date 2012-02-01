@@ -22,11 +22,11 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-@facets(value = { @facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = false) })
+@facets(value = { @facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.INIT)
 @symbol(name = { IKeyword.WITH }, kind = ISymbolKind.SINGLE_COMMAND)
 public class WithCommand extends AbstractPlaceHolderCommand {
 

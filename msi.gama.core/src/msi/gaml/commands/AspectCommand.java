@@ -36,8 +36,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR)
 @inside(kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) })
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class AspectCommand extends AbstractCommandSequence implements IAspect {
 
 	public static IAspect DEFAULT_ASPECT = new IAspect() {

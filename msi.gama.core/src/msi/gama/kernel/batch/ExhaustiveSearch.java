@@ -21,23 +21,23 @@ package msi.gama.kernel.batch;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.METHOD, IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets({
+@facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) })
+		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	public ExhaustiveSearch(final IDescription desc) {

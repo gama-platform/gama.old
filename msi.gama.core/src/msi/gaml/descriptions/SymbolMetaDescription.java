@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,9 +20,10 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.combination;
+import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.expressions.IExpressionParser;
 import msi.gaml.types.IType;
 
@@ -40,14 +41,14 @@ public class SymbolMetaDescription {
 		String name;
 		String[] types;
 		boolean optional;
-		boolean label;
+		boolean isLabel;
 		String[] values;
 
 		FacetMetaDescription(final facet f) {
 			name = f.name();
 			types = f.type();
 			optional = f.optional();
-			label = ids.contains(types[0]);
+			isLabel = ids.contains(types[0]);
 			values = f.values();
 		}
 	}
@@ -64,8 +65,9 @@ public class SymbolMetaDescription {
 	private final Map<String, FacetMetaDescription> possibleFacets = new HashMap();
 	private final List<String[]> combinations = new ArrayList();
 	private final List<String> mandatoryFacets = new ArrayList();
+	private final String omissibleFacet;
 
-	private final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
+	private static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
 	// private final facet keywordFacet;
@@ -73,8 +75,8 @@ public class SymbolMetaDescription {
 	public SymbolMetaDescription(final Class instantiationClass, final Class baseClass,
 		final String keyword, final boolean hasSequence, final boolean hasArgs,
 		final boolean isTopLevel, final boolean doesNotHaveScope, final List<facet> possibleFacets,
-		final List<combination> possibleCombinations, final List<String> contexts,
-		final boolean isRemoteContext) {
+		final String omissible, final List<combination> possibleCombinations,
+		final List<String> contexts, final boolean isRemoteContext) {
 		facet k = getClass().getAnnotation(facet.class);
 		setInstantiationClass(instantiationClass);
 		setBaseClass(baseClass);
@@ -82,6 +84,7 @@ public class SymbolMetaDescription {
 		// this.keyword = keyword;
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);
+		this.omissibleFacet = omissible;
 		this.isTopLevel = isTopLevel;
 		this.hasScope = !doesNotHaveScope;
 		getPossibleFacets().put(k.name(), new FacetMetaDescription(k));
@@ -114,7 +117,15 @@ public class SymbolMetaDescription {
 	public boolean isLabel(final String s) {
 		FacetMetaDescription f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
-		return f.label;
+		return f.isLabel;
+	}
+
+	public boolean isDefinition() {
+		return isLabel(omissibleFacet);
+	}
+
+	public boolean isControl() {
+		return !isDefinition();
 	}
 
 	public void setInstantiationClass(final Class instantiationClass) {
@@ -244,5 +255,12 @@ public class SymbolMetaDescription {
 
 	public ISymbolConstructor getConstructor() {
 		return constructor;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getOmissible() {
+		return omissibleFacet;
 	}
 }

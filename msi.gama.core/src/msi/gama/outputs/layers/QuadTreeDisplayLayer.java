@@ -20,7 +20,7 @@ package msi.gama.outputs.layers;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.IDisplayOutput;
@@ -42,10 +42,10 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets({ @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false) })
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false) }, omissible = IKeyword.NAME)
 public class QuadTreeDisplayLayer extends AbstractDisplayLayer {
 
 	BufferedImage supportImage;

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,10 +20,13 @@ package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -32,7 +35,7 @@ import msi.gaml.types.IType;
 /**
  * The Class IntVariable.
  */
-@facets({ @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.INT_STR, optional = true),
@@ -46,7 +49,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) })
+	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IType.FLOAT_STR, IType.INT_STR }, kind = ISymbolKind.VARIABLE)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 public class NumberVariable extends Variable {
@@ -107,14 +110,12 @@ public class NumberVariable extends Variable {
 		throws GamaRuntimeException {
 		if ( min != null ) {
 			final Integer m =
-				minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent))
-					: (Integer) minVal;
+				minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent)) : (Integer) minVal;
 			if ( f < m ) { return m; }
 		}
 		if ( max != null ) {
 			final Integer m =
-				maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent))
-					: (Integer) maxVal;
+				maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent)) : (Integer) maxVal;
 			if ( f > m ) { return m; }
 		}
 		return f;
@@ -124,14 +125,12 @@ public class NumberVariable extends Variable {
 		throws GamaRuntimeException {
 		if ( min != null ) {
 			final Double fmin =
-				minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent))
-					: (Double) minVal;
+				minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent)) : (Double) minVal;
 			if ( f < fmin ) { return fmin; }
 		}
 		if ( max != null ) {
 			final Double fmax =
-				maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent))
-					: (Double) maxVal;
+				maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent)) : (Double) maxVal;
 			if ( f > fmax ) { return fmax; }
 		}
 		return f;

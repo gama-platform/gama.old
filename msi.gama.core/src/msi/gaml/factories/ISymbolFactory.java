@@ -51,6 +51,8 @@ public interface ISymbolFactory {
 
 	public abstract IExpressionFactory getDefaultExpressionFactory();
 
+	public abstract String getOmissibleFacetForSymbol(String symbol);
+
 	/**
 	 * @param structure
 	 * @return
