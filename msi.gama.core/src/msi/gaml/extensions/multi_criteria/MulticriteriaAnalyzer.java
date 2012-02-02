@@ -316,7 +316,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			int i = 0;
 			for ( String crit : criteriaStr ) {
 				Object val = cand.get(i);
-				if (val instanceof Integer) valCriteria.put(crit, ((Integer) val).doubleValue());
+				if (val instanceof Integer) 
+					valCriteria.put(crit, ((Integer) val).doubleValue());
 				else valCriteria.put(crit, (Double) val);
 				i++;
 			}
