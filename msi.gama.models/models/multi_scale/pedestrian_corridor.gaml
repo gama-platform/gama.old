@@ -211,10 +211,10 @@ experiment default_expr type: gui{
 
 		display Execution_Time refresh_every: 25 {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: duration color: (rgb ('green'));
 			}
 		}
-		
+	 	
 		display Captured_Pedestrians refresh_every: 25 {
 			chart name: 'Captured Pedestrian' type: series background: rgb ('black') {
 				data captured_pedestrians value: length ( ((list (corridor)) at 0).members ) color: rgb ('blue');
@@ -222,8 +222,5 @@ experiment default_expr type: gui{
 			}
 		}
  
-    file pedestrian_flow_results type: text refresh_every: 50 data: 'cycle: ' + (time as string) 
-         + '; pedestrians: ' + ((length (pedestrians)) as string) + '; captured pedestrians: ' + (length ( ( (list (corridor)) at 0 ).members ) )
-         + '; step_length: ' + (step_length as string);
 	}
 }
