@@ -247,7 +247,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	@action("evidence_theory_DM")
 	@args({ "candidates", "criteria" })
 	public Integer evidenceTheoryDecisionMaking(final IScope scope) throws GamaRuntimeException {
-		List<List<Double>> cands = scope.getListArg("candidates");
+		List<List> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
@@ -311,11 +311,13 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			criteresFC.add(cfc);
 		}
 		EvidenceTheory evt = new EvidenceTheory();
-		for ( List<Double> cand : cands ) {
+		for ( List cand : cands ) {
 			Map<String, Double> valCriteria = new HashMap<String, Double>();
 			int i = 0;
 			for ( String crit : criteriaStr ) {
-				valCriteria.put(crit, cand.get(i));
+				Object val = cand.get(i);
+				if (val instanceof Integer) valCriteria.put(crit, ((Integer) val).doubleValue());
+				else valCriteria.put(crit, (Double) val);
 				i++;
 			}
 			Candidate c = new Candidate(cpt, valCriteria);
