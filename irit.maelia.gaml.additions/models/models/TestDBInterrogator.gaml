@@ -15,11 +15,19 @@ global {
 		create species: DBInterrogator number: 1 {
 			do action: activate with: [DBName::DB];	
 		}
-		create species: toto number: 1;
+		
+		create species: skilledAgent number: 1;
+		
+		create species: inheritantAgent number: 1{
+			do action: activate with: [DBName::DB];					
+			let t value: self.maeliaInterrogateDB[request::"SELECT id_point, temp_min FROM points WHERE month='1' AND day='14';"];
+			set listRes value: t;			
+		}
 	}
 } 
+
 entities { 
-	species toto skills: [MAELIA] {
+	species skilledAgent skills: [MAELIA] {
 		var listRes type: list init:[];
 		
 		init {		
@@ -28,5 +36,9 @@ entities {
 				set myself.listRes value: t;					 
 			}		
 		}
+	}
+	
+	species inheritantAgent parent: DBInterrogator {
+		var listRes type: list init:[];		
 	}
 }
