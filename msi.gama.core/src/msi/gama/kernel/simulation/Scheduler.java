@@ -83,11 +83,16 @@ public class Scheduler implements IScheduler {
 					m.updateOutputs();
 				}
 
+				// HACK TO TEST
+
+				simulation.getModel().getModelEnvironment().getSpatialIndex().cleanCache();
+
 				paused = stepped ? true : paused;
 				stepped = false;
 
 				if ( !paused && alive ) {
 					IScheduler.SCHEDULER_AUTHORIZATION.release();
+
 				}
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);

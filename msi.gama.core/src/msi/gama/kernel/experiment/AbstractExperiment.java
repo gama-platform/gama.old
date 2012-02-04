@@ -339,8 +339,9 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 		getParameter(IKeyword.SEED).setValue(seed);
 		random = new RandomUtils(seed);
 		// GUI.debug("Instanciating a new simulation");
-		currentSimulation = new GamlSimulation(this, sol);
+		currentSimulation = new GamlSimulation(this);
 		// GUI.debug("Building the outputs of the new simulation");
+		currentSimulation.initialize(sol);
 		buildOutputs();
 	}
 
