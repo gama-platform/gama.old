@@ -3,32 +3,27 @@ model balls_groups
 
 
 global {
-	var USE_SWT_DISPLAY type: bool init: false ;
-	var USE_SEPARATE_DISPLAY_THREAD type: bool init: true ;
-	var USE_DIRECT_AWT type: bool init: true ;
-	var USE_AWT_RENDERER_IN_SWT_DISPLAY type: bool init: true ;
-	var USE_DISTANCE_CACHE type: bool init: false ;
-	const environment_bounds type: point init: {300, 300};
+	const environment_bounds type: point init: {500, 500};
 	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) depends_on: environment_bounds ;
 	const inner_bounds_y type: int init: ((environment_bounds.y) / 20) depends_on: environment_bounds ;
 	var xmin type: int init: inner_bounds_x ;
-	var ymin type: int init: inner_bounds_y ;
+	var ymin type: int init: inner_bounds_y ; 
 	var xmax type: int init: (environment_bounds.x) - inner_bounds_x ;
 	var ymax type: int init: (environment_bounds.y) - inner_bounds_y ;
 	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y depends_on: environment_bounds ;
 	var ball_color type: rgb init: rgb('green');
 	var chaos_ball_color type: rgb init: rgb('red');
-	var ball_size type: float init: 3; 
+	var ball_size type: float init: 3;  
 	var ball_speed type: float init: 1;
 	var chaos_ball_speed type: float init: 8 * ball_speed;
-	var ball_number type: int init: 100 min: 2 max: 1000;
+	var ball_number type: int init: 500 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
 	var ball_separation type: float init: 6 * ball_size;
 	var create_group type: bool init: true;
 	var group_creation_distance type: int init: ball_separation + 1;
 	var min_group_member type: int init: 3;
 	var group_base_speed type: int init: (ball_speed * 1.5);
-	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1;
+	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1;  
 	var creation_frequency type: int init: 3;
 	var update_frequency type: int init: 3;
 	var merge_frequency type: int init: 3;
@@ -37,9 +32,9 @@ global {
 	init {
 		create species: ball number: ball_number ;
 		
-		create species: text_viewer number: 1 {
-			set shape value: myself.shape ;
-		}
+//		create species: text_viewer number: 1 {
+//			set shape value: myself.shape ;
+//		}
 	}
 	
 	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
@@ -63,7 +58,7 @@ entities {
 	species base skills: [situated, moving] ;
 	
 	species ball parent: base control: fsm {
-		var shape type: geometry init: ball_shape at_location location ;
+		//var shape type: geometry init: ball_shape at_location location ;
 		var speed type: float init: ball_speed ;
 		var color type: rgb init: ball_color ;
 		var beginning_chaos_time type: int ;
@@ -108,7 +103,7 @@ entities {
 				set speed value: ball_speed ;
 			}
 			
-			let nearest_free_ball type: ball value: ( ( ((list (ball)) - self) where ((each.state) = 'follow_nearest_ball') ) closest_to self ) ;
+			let nearest_free_ball type: ball value: ( ( (list (ball) - self) where ((each.state) = 'follow_nearest_ball') ) closest_to self ) ;
 			if condition: nearest_free_ball != nil {
 				set heading value: self towards (nearest_free_ball) ;
 				let step_distance type: float value: speed * step ;
@@ -118,7 +113,7 @@ entities {
 				if condition: (self.in_bounds [ a_point :: tmp_location ] ) {
 					set location var: location value: tmp_location ;
 					do action: separation {
-						arg nearby_balls value: ((((agents_overlapping (shape + ball_separation)) as list) of_species ball) - self) ;
+						arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 					}
 				}
 			}
@@ -140,7 +135,7 @@ entities {
 			if condition: (self.in_bounds [ a_point :: tmp_location]) {
 				set location var: location value: tmp_location ;
 				do action: separation {
-					arg nearby_balls value: ((((agents_overlapping (shape + ball_separation)) as list) of_species ball) - self) ;
+					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 				}
 			}
 			
@@ -155,7 +150,7 @@ entities {
 	species group parent: base {
 		var color type: rgb init: rgb [ rnd(255), rnd(255), rnd(255) ] ;
 		
-		var shape type: geometry init: convex_hull(polygon ( (list (ball_delegation)) collect each.location)) ;
+		var shape type: geometry init: (polygon ( (list (ball_delegation)) )) buffer  10 ;
 		
 		var speed type: float value: group_base_speed ;
 		var perception_range type: float value: base_perception_range + (rnd(5)) ;
@@ -168,8 +163,8 @@ entities {
 				return value: nil ;
 			}
 			
-			let distance_to_ball type: float value: (nearest_free_ball != nil) ? (shape distance_to nearest_free_ball.shape) : MAX_DISTANCE ;
-			let distance_to_group type: float value: (nearest_smaller_group != nil) ? (shape distance_to nearest_smaller_group.shape) : MAX_DISTANCE ;
+			let distance_to_ball type: float value: (nearest_free_ball != nil) ? (self distance_to nearest_free_ball) : MAX_DISTANCE ;
+			let distance_to_group type: float value: (nearest_smaller_group != nil) ? (self distance_to nearest_smaller_group) : MAX_DISTANCE ;
 			if condition: (distance_to_ball < distance_to_group) {
 				return value: nearest_free_ball ;
 			}
@@ -179,8 +174,7 @@ entities {
 		
 		action separate_components {
 			loop com over: (list (ball_delegation)) {
-				let nearby_balls type: list of: ball_delegation value:  ((((agents_overlapping ((ball_delegation (com)).shape + ball_separation)) - com) as list)  of_species ball_delegation) where (each in members) ;
-
+				let nearby_balls type: list of: ball_delegation value:  ((ball_delegation overlapping (com.shape + ball_separation)) - com) where (each in members) ;
 				let repulsive_dx type: float value: 0 ;
 				let repulsive_dy type: float value: 0 ;
 				loop nb over: nearby_balls { 
@@ -196,14 +190,19 @@ entities {
 		
 		species ball_delegation parent: ball topology: (world).shape  {
 			
+			float my_age init: 1 value: my_age + 0.01;
+			 
 			state follow_nearest_ball initial: true { }
 			
 			state chaos { }
 			
+			aspect default {
+				draw shape: circle color: (host as group).color.darker size: my_age ;
+			}
 		}
 		
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
-			let nearby_free_balls type: list of: ball value: ((((agents_overlapping (shape + perception_range))) as list) of_species ball) where ( (each.state = 'follow_nearest_ball') ) ;
+			let nearby_free_balls type: list value: (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if condition: !(empty (nearby_free_balls)) {
 				capture target: nearby_free_balls as: ball_delegation;
 			}
@@ -220,7 +219,7 @@ entities {
 		
 		reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
 			if condition: (target != nil) and ((species_of (target)) = group) {
-				let nearby_groups type: list of: group value: (((agents_overlapping (shape + perception_range)) as list) of_species group) - self ;
+				let nearby_groups type: list of: group value: (group overlapping (shape + perception_range)) - self ;
 				
 				if condition: target in nearby_groups {
 					if condition: (rnd(10)) < (merge_possibility * 10) {
@@ -301,7 +300,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color ;
+			draw shape: geometry color: color;
 		}
 	}
 	
