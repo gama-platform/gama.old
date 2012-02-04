@@ -233,7 +233,7 @@ public abstract class AbstractPopulation extends GamaList<IAgent> implements IPo
 
 	@Override
 	public IAgent getAgent(final ILocation coord) {
-		return topology.getAgentClosestTo(coord, In.species(species));
+		return topology.getAgentClosestTo(coord, In.population(this));
 	}
 
 	@Override
