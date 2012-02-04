@@ -1,38 +1,40 @@
 model Scenario1
-
+ 
 global {
-	var simulated_population_rate type: float init: 0.1 const: true;
+	var simulated_population_rate type: float init: 0.5 const: true;
 	 
-	// GIS data
-	var shape_file_road type: string init: '/gis/roadlines.shp';
-	var shape_file_rivers type: string init: '/gis/rivers.shp';
+	// GIS data 
+	var shape_file_road type: string init: '/gis/roadlines.shp'; 
+	var shape_file_rivers type: string init: '/gis/rivers.shp'; 
 	var shape_file_beach type: string init: '/gis/Beacha.shp';
 	var shape_file_roadwidth type: string init: '/gis/roads.shp';
-	var shape_file_building type: string init: '/gis/buildr.shp';
-	var shape_file_bounds type: string init: '/gis/bounds.shp';
-	var shape_file_ward type: string init: '/gis/wards.shp';
+	var shape_file_building type: string init: '/gis/buildr.shp'; 
+	var shape_file_bounds type: string init: '/gis/bounds.shp'; 
+	var shape_file_ward type: string init: '/gis/wards.shp'; 
 	var shape_file_zone type: string init: '/gis/zone.shp';
 	 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
 	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?
-	var pedestrian_size type: float init: 1 const: true;
+	var pedestrian_size type: float init: 1 const: true; 
 	var pedestrian_color type: rgb init: rgb('green');
 	 
-	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
+	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient"; 
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
 
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
 	
-	var agents_reach_target type: int init: 0;
-	var average_reaching_target_time type: float init: 0.0;
+	var agents_reach_target type: int init: 0; 
+	var average_reaching_target_time type: float init: 0.0; 
 	
 	var zone1_building_color type: rgb init: rgb('orange');
 	var zone2_building_color type: rgb init: rgb('gray');
 	var zone3_building_color type: rgb init: rgb('yellow');
+
 	
 	var road_graph type: graph;
+
 	
 	init {
 		create species: road from: shape_file_road;
@@ -51,8 +53,10 @@ global {
 			create species: destination with: [shape :: b.shape];
 		}
 		
-		set road_graph value: as_edge_graph (list(road) collect (each.shape));
-
+		set road_graph value: as_edge_graph (list(road));
+		
+ 
+		
 		create species: road_initializer;
 		let ri type: road_initializer value: first (road_initializer as list);
 		loop rd over: (road as list) {
@@ -64,6 +68,7 @@ global {
 		}
 
 		loop w over: list(ward) {
+			do: write with: message::("Ward " + w.wardname + " Pop: " + w.population);
 			create species: pedestrian number: int ( (w.population * simulated_population_rate) ) {
 				set location value: any_location_in (one_of (w.roads));
 			}
@@ -239,14 +244,14 @@ entities {
 		}
 	}
 
-	species pedestrian skills: moving {
+	species pedestrian skills: moving schedules: list(pedestrian) select !each.reach_shelter {
 		var previous_location type: point;
 		var last_road type: road;
 		var safe_building type: destination;
 		var reach_shelter type: bool init: false;
 		
-		init {
-			set safe_building value: (list (destination)) closest_to shape;
+		init { 
+			set safe_building value: destination closest_to self;
 		}
 		
 		reflex move when: !(reach_shelter) {
@@ -262,7 +267,7 @@ entities {
 				set reach_shelter value: true;
 			}
 		}
-		
+		 
  		aspect base {
  			draw shape: geometry color: pedestrian_color;
  		}
@@ -306,8 +311,8 @@ entities {
 	}
 }
 
-experiment default_expr type: gui {
-	output {
+experiment default_expr type: gui { 
+	output { 
 		display full_detail {
 		 	species road aspect: base transparency: 0.1;
 		 	species roadwidth aspect: base transparency: 0.1;
@@ -326,18 +331,18 @@ experiment default_expr type: gui {
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
 		
-		display Execution_Time {
-			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
-			}
-		}
-
-		display Pedestrian_vs_Captured_Pedestrian {
-			chart name: 'Pedestrian_vs._Captured_Pedestrian' type: series background: rgb ('black') {
-				data pedestrians value: length (list (pedestrian)) color: rgb ('blue');
-				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
-			}
-		}
+//		display Execution_Time {
+//			chart name: 'Simulation step length' type: series background: rgb('black') {
+//				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+//			}
+//		}
+//
+//		display Pedestrian_vs_Captured_Pedestrian {
+//			chart name: 'Pedestrian_vs._Captured_Pedestrian' type: series background: rgb ('black') {
+//				data pedestrians value: length (list (pedestrian)) color: rgb ('blue');
+//				data captured_people value: sum (list(road) collect (length (each.members))) color: rgb ('white');  
+//			}
+//		}
 
 		monitor pedestrians value: length (list(pedestrian));
 		monitor captured_pedestrians value: sum (list(road) collect (length (each.members)));
