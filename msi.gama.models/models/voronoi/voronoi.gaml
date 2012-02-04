@@ -23,14 +23,14 @@ environment width: environment_width height: environment_height {
 
 	grid grid width: environment_width height: environment_height neighbours: 8  {
 		var color type: rgb init: 'black';
-		var color type: rgb init: rgb('white') value: (centers closest_to (shape)).color;
+		var color type: rgb init: rgb('white') value: (center closest_to (self)).color;
 	}
 entities { 
 	species center skills: [moving] {
 		rgb color;
 		reflex {
 			do action: wander {
-				arg amplitude value: 90;
+				arg amplitude value: 90; 
 			} 
 		}
 		aspect default {
