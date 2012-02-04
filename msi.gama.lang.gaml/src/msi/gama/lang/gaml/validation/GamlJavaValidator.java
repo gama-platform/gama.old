@@ -175,7 +175,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 					}
 					if ( facetList != null ) {
 						for ( FacetExpr fe : facetList ) {
-							if ( fe != null && fe.getKey().getRef().getName().equals(keyofRule) ) {
+							if ( fe != null && keyofRule.equals(fe.getKey().getRef().getName()) ) {
 								if ( fe.getExpr() instanceof VariableRef ) {
 									correspondingFacetName =
 										((VariableRef) fe.getExpr()).getRef().getName();
