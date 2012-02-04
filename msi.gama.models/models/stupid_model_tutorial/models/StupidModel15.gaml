@@ -8,16 +8,16 @@ global {
     var initialBugSizeMean type: float init: 0.1 parameter: 'initialBugSizeMean';
     var initialBugSizeSD type: float init: 0.03 parameter: 'initialBugSizeSD';
     var init_data type: matrix init: matrix(file('../data/Stupid_Cell.Data')) const: true;
-    var width type: int init: ((init_data column_at 0) copy_between {3, length(rows_list(init_data)) - 1}) max_of each const: true;
-    var height type: int init: ((init_data column_at 1) copy_between {3,length(rows_list(init_data)) - 1}) max_of each const: true;
+    var width type: int init: ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}) max_of each const: true;
+    var height type: int init: ((init_data column_at 1) copy_between {3,init_data.rows - 1}) max_of each const: true;
     init {
         create species: bug number: numberBugs;
         
         let i type: int value: 0;
-		loop from: 3 to: length(rows_list(init_data)) - 1 var: i {
+		loop from: 3 to: ((init_data.rows)) - 1 var: i {
 			let ind_i type: int value: init_data at {0,i};
 			let ind_j type: int value: init_data at {1,i};
-			ask target: (stupid_grid ) at {ind_i,ind_j} {
+			ask target: (stupid_grid ) grid_at {ind_i,ind_j} {
 				set foodProd value: init_data at {2,i};
 			}
 		}
@@ -27,7 +27,7 @@ global {
     }
 }
 
-environment {
+environment{
     grid stupid_grid width: width height: height torus: false {
         var color type: rgb init: [0,[255, food * 255 *2] min_of each, 0] as rgb value: [0,[255, food * 255 * 2] min_of each, 0] as rgb;
         var maxFoodProdRate type: float value: globalMaxFoodProdRate;
