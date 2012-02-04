@@ -31,9 +31,9 @@ entities {
 		var color type: rgb init: white ;
 		var place type: ant_grid value: ant_grid (location) ;
 		reflex wandering {
-			do action: wander {
-				arg amplitude type: int value: 120 ;
-			}
+			do action: wander { 
+				arg  amplitude type: int value: 120 ;
+			} 
 		}
 		state empty initial: true {
 			transition to: full when: (place.color != black) and ((place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
