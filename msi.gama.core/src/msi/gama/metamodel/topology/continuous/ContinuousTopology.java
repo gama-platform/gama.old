@@ -117,4 +117,13 @@ public class ContinuousTopology extends AbstractTopology {
 		return g1.euclidianDistanceTo(g2);
 	}
 
+	@Override
+	public Double distanceBetween(final ILocation g1, final ILocation g2) {
+		// if ( !isValidLocation(g1) ) { return Double.MAX_VALUE; }
+		// TODO is it useful to keep these tests ?
+		// if ( !isValidLocation(g2) ) { return Double.MAX_VALUE; }
+		if ( g1 == g2 ) { return 0d; }
+		return g1.euclidianDistanceTo(g2);
+	}
+
 }

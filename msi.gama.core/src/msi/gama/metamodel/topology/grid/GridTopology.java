@@ -42,16 +42,17 @@ public class GridTopology extends AbstractTopology {
 		final ILocation previousLoc, final Envelope previousEnv) {
 		// TODO grid agents should not be added to the spatial index. However, it may break some
 		// algorithms.
+		// super.updateAgent(agent, previousShapeIsPoint, previousLoc, previousEnv);
 	}
 
 	@Override
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {
-		getPlaces().setCellSpecies(pop.getSpecies());
+		getPlaces().setCellSpecies(pop);
 		super.initialize(pop);
 	}
 
 	@Override
-	protected boolean createAgents() {
+	protected boolean canCreateAgents() {
 		return true;
 	}
 
@@ -66,6 +67,16 @@ public class GridTopology extends AbstractTopology {
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
 		IAgent place = getPlaces().getAgentAt(source.getLocation());
+		// If the filter accepts it, we return it
+		if ( filter.accept(source, place) ) { return place; }
+		// Otherwise we get the "normal" closest agent (in the spatial index)
+		return super.getAgentClosestTo(source, filter);
+	}
+
+	@Override
+	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
+		// We first grab the cell at the location closest to the centroid of the source
+		IAgent place = getPlaces().getAgentAt(source);
 		// If the filter accepts it, we return it
 		if ( filter.accept(source, place) ) { return place; }
 		// Otherwise we get the "normal" closest agent (in the spatial index)
@@ -114,6 +125,12 @@ public class GridTopology extends AbstractTopology {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
 
+	@Override
+	public IPath pathBetween(final ILocation source, final ILocation target)
+		throws GamaRuntimeException {
+		return getPlaces().computeShortestPathBetween(scope, source, target, this);
+	}
+
 	/**
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
@@ -142,6 +159,13 @@ public class GridTopology extends AbstractTopology {
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
+	@Override
+	public Double distanceBetween(final ILocation source, final ILocation target) {
+		if ( !isValidLocation(source) || !isValidLocation(target) ) { return Double.MAX_VALUE; }
+		// TODO null or Double.MAX_VALUE ?
+		return (double) getPlaces().manhattanDistanceBetween(source, target);
+	}
+
 	/**
 	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.interfaces.IGeometry)
@@ -162,7 +186,7 @@ public class GridTopology extends AbstractTopology {
 		List<IAgent> agents = super.getAgentsIn(source, f, covered);
 		GamaList<IAgent> result = new GamaList();
 		for ( IAgent ag : agents ) {
-			if ( isValidGeometry(ag) ) {
+			if ( !ag.dead() && isValidGeometry(ag) ) {
 				result.add(ag);
 			}
 		}
@@ -173,6 +197,12 @@ public class GridTopology extends AbstractTopology {
 
 	@Override
 	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
+	}
+
+	@Override
+	public GamaList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
 	}

@@ -22,11 +22,10 @@ import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
-import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.IScope;
+import msi.gama.metamodel.topology.filter.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Maths;
 
 /**
@@ -48,12 +47,110 @@ public class GraphTopology extends AbstractTopology {
 		places = graph;
 	}
 
+	// The default topologies for graphs.
+	public GraphTopology(final GamaSpatialGraph graph) {
+		this(GAMA.getDefaultScope(), GAMA.getDefaultScope().getWorldScope().getGeometry(), graph);
+	}
+
 	@Override
-	protected boolean createAgents() {
+	protected boolean canCreateAgents() {
 		return true;
 	}
 
 	/**
+	 * @throws GamaRuntimeException
+	 * @throws GamaRuntimeException
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
+	 *      msi.gama.interfaces.IGeometry)
+	 */
+
+	// public IPath pathBetweenOld(final IShape source, final IShape target) {
+	// IShape s1 = null;
+	// IShape t1 = null;
+	// IShape s2 = null;
+	// IShape t2 = null;
+	//
+	// IShape edgeS = null, edgeT = null;
+	// double dist1 = Double.MAX_VALUE;
+	// double dist2 = Double.MAX_VALUE;
+	//
+	// IList<IShape> objects = getPlaces().getEdges();
+	//
+	// for ( Object o : getPlaces().getEdges() ) {
+	// IShape eg = (IShape) o;
+	// // try {
+	// // eg = Cast.asGeometry(scope, o);
+	// double d1 = eg.euclidianDistanceTo(source);
+	// if ( d1 < dist1 ) {
+	// edgeS = eg;
+	// s1 = (IShape) getPlaces().getEdgeSource(o);
+	// s2 = (IShape) getPlaces().getEdgeTarget(o);
+	// dist1 = d1;
+	// }
+	// double d2 = eg.euclidianDistanceTo(target);
+	// if ( d2 < dist2 ) {
+	// edgeT = eg;
+	// t1 = (IShape) getPlaces().getEdgeSource(o);
+	// t2 = (IShape) getPlaces().getEdgeTarget(o);
+	// dist2 = d2;
+	// }
+	// // } catch (GamaRuntimeException e) {
+	// // return null;
+	// // }
+	// }
+	// IPath pathComplete = null;
+	// if ( edgeS == edgeT ) {
+	// pathComplete = new GamaPath(this, source, target, GamaList.with(edgeS));
+	// } else {
+	// IShape nodeT = t1;
+	// // try {
+	// // IShape g1 = t1; // Cast.asGeometry(scope, t1);
+	// // IShape g2 = t2; // Cast.asGeometry(scope, t2);
+	// if ( t1.euclidianDistanceTo(target) > t2.euclidianDistanceTo(target) ) {
+	// nodeT = t2;
+	// }
+	// // } catch (GamaRuntimeException e) {
+	// // return null;
+	// // }
+	// Object nodeS = s1;
+	// // try {
+	// // g1 = s1; // Cast.asGeometry(scope, s1);
+	// // g2 = s2; // Cast.asGeometry(scope, s2);
+	// if ( s1 == nodeT || s2 != nodeT &&
+	// s1.euclidianDistanceTo(source) > s2.euclidianDistanceTo(source) ) {
+	// nodeS = s2;
+	// }
+	// // } catch (GamaRuntimeException e) {
+	// // return null;
+	// // }
+	//
+	// GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(nodeS, nodeT);
+	// IList edges = new GamaList(path.getEdgeList());
+	// if ( edges.isEmpty() ) { return null; }
+	// HashSet edgesSetInit =
+	// new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry()
+	// .getCoordinates()));
+	// HashSet edgesSetS =
+	// new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+	// if ( !edgesSetS.equals(edgesSetInit) ) {
+	// edges.add(0, edgeS);
+	// }
+	// HashSet edgesSetEnd =
+	// new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry()
+	// .getCoordinates()));
+	// HashSet edgesSetT =
+	// new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+	//
+	// if ( !edgesSetT.equals(edgesSetEnd) ) {
+	// edges.add(edgeT);
+	// }
+	// pathComplete = new GamaPath(this, source, target, edges);
+	// }
+	// return pathComplete;
+	// }
+
+	/**
+	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.interfaces.IGeometry)
@@ -64,82 +161,117 @@ public class GraphTopology extends AbstractTopology {
 		IShape t1 = null;
 		IShape s2 = null;
 		IShape t2 = null;
-
 		IShape edgeS = null, edgeT = null;
-		double dist1 = Double.MAX_VALUE;
-		double dist2 = Double.MAX_VALUE;
 
-		for ( Object o : getPlaces().getEdges() ) {
-			IShape eg = (IShape) o;
-			// try {
-			// eg = Cast.asGeometry(scope, o);
-			double d1 = eg.euclidianDistanceTo(source);
-			if ( d1 < dist1 ) {
-				edgeS = eg;
-				s1 = (IShape) getPlaces().getEdgeSource(o);
-				s2 = (IShape) getPlaces().getEdgeTarget(o);
-				dist1 = d1;
-			}
-			double d2 = eg.euclidianDistanceTo(target);
-			if ( d2 < dist2 ) {
-				edgeT = eg;
-				t1 = (IShape) getPlaces().getEdgeSource(o);
-				t2 = (IShape) getPlaces().getEdgeTarget(o);
-				dist2 = d2;
-			}
-			// } catch (GamaRuntimeException e) {
-			// return null;
-			// }
+		IAgentFilter filter = In.edgesOf(getPlaces());
+
+		edgeS =
+			source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter)
+				: getAgentClosestTo(source, filter);
+		edgeT =
+			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter)
+				: getAgentClosestTo(target, filter);
+
+		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
+
+		t1 = (IShape) getPlaces().getEdgeSource(edgeT);
+		t2 = (IShape) getPlaces().getEdgeTarget(edgeT);
+		s1 = (IShape) getPlaces().getEdgeSource(edgeS);
+		s2 = (IShape) getPlaces().getEdgeTarget(edgeS);
+
+		IShape nodeT = t1;
+		if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation()
+			.euclidianDistanceTo(target.getLocation()) ) {
+			nodeT = t2;
 		}
-		IPath pathComplete = null;
-		if ( edgeS == edgeT ) {
-			pathComplete = new GamaPath(this, source, target, GamaList.with(edgeS));
-		} else {
-			IShape nodeT = t1;
-			// try {
-			// IShape g1 = t1; // Cast.asGeometry(scope, t1);
-			// IShape g2 = t2; // Cast.asGeometry(scope, t2);
-			if ( t1.euclidianDistanceTo(target) > t2.euclidianDistanceTo(target) ) {
-				nodeT = t2;
-			}
-			// } catch (GamaRuntimeException e) {
-			// return null;
-			// }
-			Object nodeS = s1;
-			// try {
-			// g1 = s1; // Cast.asGeometry(scope, s1);
-			// g2 = s2; // Cast.asGeometry(scope, s2);
-			if ( s1 == nodeT || s2 != nodeT &&
-				s1.euclidianDistanceTo(source) > s2.euclidianDistanceTo(source) ) {
-				nodeS = s2;
-			}
-			// } catch (GamaRuntimeException e) {
-			// return null;
-			// }
 
-			GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(this, nodeS, nodeT);
-			IList edges = new GamaList(path.getEdgeList());
-			if ( edges.isEmpty() ) { return null; }
-			HashSet edgesSetInit =
-				new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry()
-					.getCoordinates()));
-			HashSet edgesSetS =
-				new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
-			if ( !edgesSetS.equals(edgesSetInit) ) {
-				edges.add(0, edgeS);
-			}
-			HashSet edgesSetEnd =
-				new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry()
-					.getCoordinates()));
-			HashSet edgesSetT =
-				new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
-
-			if ( !edgesSetT.equals(edgesSetEnd) ) {
-				edges.add(edgeT);
-			}
-			pathComplete = new GamaPath(this, source, target, edges);
+		Object nodeS = s1;
+		if ( s1 == nodeT ||
+			s2 != nodeT &&
+			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
+				.euclidianDistanceTo(source.getLocation()) ) {
+			nodeS = s2;
 		}
-		return pathComplete;
+		// } catch (GamaRuntimeException e) {
+		// return null;
+		// }
+
+		GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(nodeS, nodeT);
+		IList edges = new GamaList(path.getEdgeList());
+		if ( edges.isEmpty() ) { return null; }
+		HashSet edgesSetInit =
+			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));
+		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+		if ( !edgesSetS.equals(edgesSetInit) ) {
+			edges.add(0, edgeS);
+		}
+		HashSet edgesSetEnd =
+			new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry()
+				.getCoordinates()));
+		HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+
+		if ( !edgesSetT.equals(edgesSetEnd) ) {
+			edges.add(edgeT);
+		}
+		return new GamaPath(this, source, target, edges);
+	}
+
+	@Override
+	public IPath pathBetween(final ILocation source, final ILocation target) {
+
+		IShape s1 = null;
+		IShape t1 = null;
+		IShape s2 = null;
+		IShape t2 = null;
+		IShape edgeS = null, edgeT = null;
+		IAgentFilter filter = In.edgesOf(getPlaces());
+
+		edgeS = getAgentClosestTo(source, filter);
+		edgeT = getAgentClosestTo(target, filter);
+
+		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
+
+		t1 = (IShape) getPlaces().getEdgeSource(edgeT);
+		t2 = (IShape) getPlaces().getEdgeTarget(edgeT);
+		s1 = (IShape) getPlaces().getEdgeSource(edgeS);
+		s2 = (IShape) getPlaces().getEdgeTarget(edgeS);
+
+		IShape nodeT = t1;
+		if ( t1.getLocation().euclidianDistanceTo(target) > t2.getLocation().euclidianDistanceTo(
+			target) ) {
+			nodeT = t2;
+		}
+
+		Object nodeS = s1;
+		if ( s1 == nodeT ||
+			s2 != nodeT &&
+			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
+				.euclidianDistanceTo(source.getLocation()) ) {
+			nodeS = s2;
+		}
+		// } catch (GamaRuntimeException e) {
+		// return null;
+		// }
+
+		GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(nodeS, nodeT);
+		IList edges = new GamaList(path.getEdgeList());
+		if ( edges.isEmpty() ) { return null; }
+		HashSet edgesSetInit =
+			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));
+		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+		if ( !edgesSetS.equals(edgesSetInit) ) {
+			edges.add(0, edgeS);
+		}
+		HashSet edgesSetEnd =
+			new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry()
+				.getCoordinates()));
+		HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+
+		if ( !edgesSetT.equals(edgesSetEnd) ) {
+			edges.add(edgeT);
+		}
+		return new GamaPath(this, source, target, edges);
+
 	}
 
 	/**
@@ -171,7 +303,7 @@ public class GraphTopology extends AbstractTopology {
 	 */
 
 	@Override
-	public IGraph<IShape, IShape> getPlaces() {
+	public ISpatialGraph getPlaces() {
 		return (GamaSpatialGraph) super.getPlaces();
 	}
 
@@ -197,6 +329,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	/**
+	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
@@ -208,7 +341,16 @@ public class GraphTopology extends AbstractTopology {
 		// return d <= max_distance ? d : null;
 	}
 
+	@Override
+	public Double distanceBetween(final ILocation source, final ILocation target) {
+		IPath path = this.pathBetween(source, target);
+		if ( path == null ) { return Double.MAX_VALUE; }
+		return path.getDistance();
+		// return d <= max_distance ? d : null;
+	}
+
 	/**
+	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.interfaces.IGeometry)
 	 */
@@ -234,7 +376,7 @@ public class GraphTopology extends AbstractTopology {
 		List<IAgent> agents = super.getAgentsIn(source, f, covered);
 		GamaList<IAgent> result = new GamaList();
 		for ( IAgent ag : agents ) {
-			if ( isValidGeometry(ag) ) {
+			if ( !ag.dead() && isValidGeometry(ag) ) {
 				result.add(ag);
 			}
 		}

@@ -21,6 +21,7 @@ package msi.gama.metamodel.topology.grid;
 import java.util.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.*;
@@ -403,10 +404,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	 * @return
 	 */
 	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
-		final IShape shape, final Double distance) throws GamaRuntimeException {
+		final IShape shape, final Double distance) {
 		if ( shape.isPoint() || shape.getAgent() != null &&
-			shape.getAgent().getSpecies() == cellSpecies ) { return getNeighbourhood()
-			.getNeighboursIn(getPlaceIndexAt(shape.getLocation()), distance.intValue()); }
+			shape.getAgent().getSpecies() == cellSpecies ) { return getNeighboursOf(scope, t,
+			shape.getLocation(), distance); }
 		final Collection<? extends IAgent> coveredPlaces =
 			getAgentsCoveredBy(shape, cellFilter, true);
 		Set<IAgent> result = new HashSet();
@@ -416,6 +417,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		}
 		result.removeAll(coveredPlaces);
 		return new GamaList(result);
+	}
+
+	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
+		final ILocation shape, final Double distance) {
+		return getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
 	}
 
 	public IPath computeShortestPathBetween(final IScope scope, final IShape source,
@@ -571,9 +577,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	/**
 	 * @param species
 	 */
-	public void setCellSpecies(final ISpecies species) {
-		cellSpecies = species;
-		cellFilter = In.species(cellSpecies);
+	public void setCellSpecies(final IPopulation pop) {
+		cellSpecies = pop.getSpecies();
+		cellFilter = In.population(pop);
 	}
 
 }

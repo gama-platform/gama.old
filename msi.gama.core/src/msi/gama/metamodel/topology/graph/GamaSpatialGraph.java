@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,16 +19,21 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
-import msi.gama.runtime.IScope;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import org.jgrapht.Graphs;
 
-public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
+public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph {
+
+	private FloydWarshallStaticOptimizer pathFinder;
+	/*
+	 * Own topology of the graph. Lazily instantiated, and invalidated at each modification of the
+	 * graph.
+	 */
+	private ITopology topology;
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -40,7 +45,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 		 * @param p1 a geometrical object
 		 * @param p2 another geometrical object
 		 */
-		boolean related(IScope scope, IShape p1, IShape p2);
+		boolean related(IShape p1, IShape p2);
 
 		boolean equivalent(IShape p1, IShape p2);
 
@@ -48,9 +53,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 
 	protected VertexRelationship vertexRelation;
 
-	public GamaSpatialGraph(final IScope scope, final IContainer vertices, final boolean byEdge,
+	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel) {
-		super(scope, vertices, byEdge, directed);
+		super(vertices, byEdge, directed);
 		vertexRelation = rel;
 	}
 
@@ -64,21 +69,24 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 	@Override
 	public GamaSpatialGraph copy() {
 		GamaSpatialGraph g =
-			new GamaSpatialGraph(scope, GamaList.EMPTY_LIST, true, directed, vertexRelation);
+			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation);
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
 
 	@Override
-	public IPath computeShortestPathBetween(final ITopology topology, final Object source,
-		final Object target) {
-		return (IPath) super.computeShortestPathBetween(topology, source, target);
+	public IPath computeShortestPathBetween(final Object source, final Object target) {
+		if ( pathFinder == null ) {
+			pathFinder = new FloydWarshallStaticOptimizer(this);
+		}
+		return pathFromEdges(source, target,
+			pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
+		// return (IPath) super.computeShortestPathBetween(topology, source, target);
 	}
 
 	@Override
-	protected IPath pathFromEdges(final ITopology topology, final Object source,
-		final Object target, final IList edges) {
-		return new GamaPath(topology, (IShape) source, (IShape) target, edges);
+	protected IPath pathFromEdges(final Object source, final Object target, final IList edges) {
+		return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
 	}
 
 	@Override
@@ -89,7 +97,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 				if ( o1 == o2 || vertexRelation.equivalent(o1, o2) ) {
 					continue;
 				}
-				if ( vertexRelation.related(scope, o1, o2) ) {
+				if ( vertexRelation.related(o1, o2) ) {
 					addEdge(o1, o2);
 				}
 			}
@@ -121,7 +129,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 		boolean added = super.addVertex(v);
 		if ( added && vertexRelation != null ) {
 			for ( IShape o : vertexSet() ) {
-				if ( vertexRelation.related(scope, v, o) && !vertexRelation.equivalent(v, o) ) {
+				if ( vertexRelation.related(v, o) && !vertexRelation.equivalent(v, o) ) {
 					addEdge(v, o);
 				}
 			}
@@ -142,12 +150,27 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> {
 		return result;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IGraph#isSpatial()
-	 */
 	@Override
-	public boolean isSpatial() {
-		return true;
+	public ITopology getTopology() {
+		if ( topology == null ) {
+			setTopology(new GraphTopology(this));
+		}
+		return topology;
+	}
+
+	@Override
+	public void invalidateTopology() {
+		// Nothing to do, actually, as the topology relies entirely on the graph to do computations
+		// (I.e. no caches are being made)
+	}
+
+	protected void setTopology(final ITopology topology) {
+		this.topology = topology;
+	}
+
+	@Override
+	public IPath getCircuit() {
+		return (IPath) super.getCircuit();
 	}
 
 }

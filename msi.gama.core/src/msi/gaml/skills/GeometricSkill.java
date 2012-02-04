@@ -49,14 +49,14 @@ import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 @skill({ "situated", "geometric" })
 public class GeometricSkill extends Skill {
 
-	public static GamaSpatialGraph buildPolygonGraph(final IScope scope, final IList polys) {
-		return new GamaSpatialGraph(scope, polys, false, false, null);
+	public static GamaSpatialGraph buildPolygonGraph(final IList polys) {
+		return new GamaSpatialGraph(polys, false, false, null);
 	}
 
 	public static GamaSpatialGraph buildNetworkGraph(final IScope scope, final IList lines,
 		final boolean splitLines) throws GamaRuntimeException {
-		return new GamaSpatialGraph(scope, splitLines ? Spatial.Transformations.splitLines(scope,
-			lines) : lines, true, false, null);
+		return new GamaSpatialGraph(splitLines ? Spatial.Transformations.splitLines(scope, lines)
+			: lines, true, false, null);
 	}
 
 	/**
@@ -239,8 +239,8 @@ public class GeometricSkill extends Skill {
 		if ( path == null ) { return Double.MAX_VALUE;
 
 		}
-		double distance = path.getStartVertex().distance(source);
-		distance += path.getEndVertex().distance(targ);
+		double distance = path.getStartVertex().euclidianDistanceTo(source);
+		distance += path.getEndVertex().euclidianDistanceTo(targ);
 		Collection<IShape> edges = path.getEdgeList();
 		for ( IShape g : edges ) {
 			distance += g.getInnerGeometry().getLength();
@@ -480,7 +480,7 @@ public class GeometricSkill extends Skill {
 				}
 
 				if ( !triangles.isEmpty() ) {
-					graph = buildPolygonGraph(scope, triangles);
+					graph = buildPolygonGraph(triangles);
 					// System.out.println("wgts : " + wgts);
 					if ( !agsGeom.isEmpty() && graph != null ) {
 						// System.out.println("wgts2 : " + wgts2);
@@ -545,7 +545,7 @@ public class GeometricSkill extends Skill {
 
 				if ( !triangles.isEmpty() ) {
 					// c1.start();
-					graph = buildPolygonGraph(scope, triangles);
+					graph = buildPolygonGraph(triangles);
 					// c1.stop();
 					// System.out.println("TEMPS build graph : " + c1.getMilliSec());
 
@@ -605,7 +605,7 @@ public class GeometricSkill extends Skill {
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		IList<LineString> network = new GamaList<LineString>();
 		IList polys = new GamaList(GeometryUtils.triangulation(geom));
-		GamaGraph graph = buildPolygonGraph(scope, polys);
+		GamaGraph graph = buildPolygonGraph(polys);
 		Collection<GamaShape> nodes = graph.vertexSet();
 		GeometryFactory geomFact = GeometryUtils.getFactory();
 		for ( GamaShape node : nodes ) {

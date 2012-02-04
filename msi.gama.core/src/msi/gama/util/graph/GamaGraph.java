@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -39,18 +38,16 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	protected final Map<K, _Edge<K>> edgeMap;
 	protected boolean directed;
 	protected boolean edgeBased;
-	protected IScope scope;
+	// protected IScope scope;
 
 	public static int FloydWarshall = 1;
 	public static int BellmannFord = 2;
 	public static int Djikstra = 3;
 
-	private int optimizerType = 3;
+	private int optimizerType = 1;
 	private FloydWarshallShortestPaths optimizer;
 
-	public GamaGraph(final IScope scope, final IContainer vertices, final boolean byEdge,
-		final boolean directed) {
-		this.scope = scope;
+	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
@@ -381,15 +378,14 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public IValue computeShortestPathBetween(final ITopology topology, final Object source,
-		final Object target) {
+	public IValue computeShortestPathBetween(final Object source, final Object target) {
 		switch (optimizerType) {
 			case 1:
-				return FWShortestPath(topology, source, target);
+				return FWShortestPath(source, target);
 			case 2:
-				return BFShortestPath(topology, source, target);
+				return BFShortestPath(source, target);
 			case 3:
-				return DShortestPath(topology, source, target);
+				return DShortestPath(source, target);
 		}
 		return null;
 	}
@@ -398,31 +394,30 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return directed ? this : new AsUndirectedGraph(this);
 	}
 
-	private IValue DShortestPath(final ITopology topology, final Object source, final Object target) {
+	private IValue DShortestPath(final Object source, final Object target) {
 		DijkstraShortestPath<GamaShape, GamaShape> p =
 			new DijkstraShortestPath(getProxyGraph(), source, target);
-		return pathFromEdges(topology, source, target, new GamaList(p.getPathEdgeList()));
+		return pathFromEdges(source, target, new GamaList(p.getPathEdgeList()));
 	}
 
-	private IValue BFShortestPath(final ITopology topology, final Object source, final Object target) {
+	private IValue BFShortestPath(final Object source, final Object target) {
 		BellmanFordShortestPath p = new BellmanFordShortestPath(getProxyGraph(), source);
-		return pathFromEdges(topology, source, target, new GamaList(p.getPathEdgeList(target)));
+		return pathFromEdges(source, target, new GamaList(p.getPathEdgeList(target)));
 	}
 
-	private IValue FWShortestPath(final ITopology topology, final Object source, final Object target) {
+	private IValue FWShortestPath(final Object source, final Object target) {
 		if ( optimizer == null ) {
 			optimizer = new FloydWarshallShortestPaths(getProxyGraph());
 		}
 		GraphPath p = optimizer.getShortestPath(source, target);
-		return pathFromEdges(topology, source, target, new GamaList(p.getEdgeList()));
+		return pathFromEdges(source, target, new GamaList(p.getEdgeList()));
 	}
 
 	/*
 	 * In "regular" (non spatial) graphs, we return a list. And a path in spatial graphs. IValue is
 	 * the smallest denominator
 	 */
-	protected IValue pathFromEdges(final ITopology topology, final Object source,
-		final Object target, final IList edges) {
+	protected IValue pathFromEdges(final Object source, final Object target, final IList edges) {
 		return new GamaList(edges);
 	}
 
@@ -488,7 +483,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	@Override
 	public void add(final Object index, final Object value, final Object param)
 		throws GamaRuntimeException {
-		double weight = param == null ? DEFAULT_EDGE_WEIGHT : Cast.asFloat(scope, param);
+		double weight =
+			param == null ? DEFAULT_EDGE_WEIGHT : Cast.asFloat(GAMA.getDefaultScope(), param);
 		if ( index == null ) {
 			if ( value instanceof GamaPair ) {
 				Object v = addEdge(((GamaPair) value).first(), ((GamaPair) value).last());
@@ -605,7 +601,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public GamaGraph reverse() {
-		GamaGraph g = new GamaGraph(scope, new GamaList(), false, directed);
+		GamaGraph g = new GamaGraph(new GamaList(), false, directed);
 		Graphs.addGraphReversed(g, this);
 		return g;
 	}
@@ -633,7 +629,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public IPath getCircuit() {
+	public IValue getCircuit() {
 		SimpleWeightedGraph g = new SimpleWeightedGraph(getEdgeFactory());
 		Graphs.addAllEdges(g, this, edgeSet());
 		List vertices = HamiltonianCycle.getApproximateOptimalForCompleteGraph(g);
@@ -642,7 +638,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		for ( int i = 0; i < size - 1; i++ ) {
 			edges.add(this.getEdge(vertices.get(i), vertices.get(i + 1)));
 		}
-		return (IPath) pathFromEdges(null, null, null, edges);
+		return pathFromEdges(null, null, edges);
 	}
 
 	@Override
@@ -668,7 +664,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public IGraph copy() {
-		GamaGraph g = new GamaGraph(scope, GamaList.EMPTY_LIST, true, directed);
+		GamaGraph g = new GamaGraph(GamaList.EMPTY_LIST, true, directed);
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
@@ -722,7 +718,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	@Override
 	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		if ( value instanceof GamaGraph ) {
-			for ( Object o : ((IGraph) value).getEdges() ) {
+			for ( Object o : ((GamaGraph) value).edgeSet() ) {
 				addEdge(o);
 			}
 		} else {
@@ -778,14 +774,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		V[] array = (V[]) vertexMap.keySet().toArray();
 		int i = GAMA.getRandom().between(0, array.length - 1);
 		return array[i];
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGraph#isSpatial()
-	 */
-	@Override
-	public boolean isSpatial() {
-		return false;
 	}
 
 }

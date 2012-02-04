@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -23,9 +23,11 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -54,14 +56,20 @@ public interface ITopology extends IValue {
 
 	public abstract IAgent getAgentClosestTo(final IShape source, IAgentFilter filter);
 
+	public abstract IAgent getAgentClosestTo(final ILocation source, IAgentFilter filter);
+
 	public abstract IList<IAgent> getNeighboursOf(final IShape source, final Double distance,
+		IAgentFilter filter) throws GamaRuntimeException;
+
+	public abstract IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
 		IAgentFilter filter) throws GamaRuntimeException;
 
 	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
 		boolean covered);
 
 	/**
-	 * Distance between two geometries in this topology.
+	 * @throws GamaRuntimeException
+	 *             Distance between two geometries in this topology.
 	 * 
 	 * @param source the source geometry (cannot be null)
 	 * @param target the target (cannot be null)
@@ -70,7 +78,12 @@ public interface ITopology extends IValue {
 	 */
 	public abstract Double distanceBetween(final IShape source, final IShape target);
 
+	public abstract Double distanceBetween(final ILocation source, final ILocation target);
+
 	public abstract IPath pathBetween(final IShape source, final IShape target)
+		throws GamaRuntimeException;
+
+	public abstract IPath pathBetween(final ILocation source, final ILocation target)
 		throws GamaRuntimeException;
 
 	/**
@@ -127,9 +140,12 @@ public interface ITopology extends IValue {
 	public abstract ILocation normalizeLocation(final ILocation p, boolean nullIfOutside);
 
 	/**
-	 * Called by a population to tell this topology that the shape of its host has changed. If the
-	 * environment of the topology depends on the shape of the host, the topology can choose to
-	 * adapt in consequence.
+	 * @throws GamaRuntimeException
+	 *             Called by a population to tell this topology that the shape of its host has
+	 *             changed. If the
+	 *             environment of the topology depends on the shape of the host, the topology can
+	 *             choose to
+	 *             adapt in consequence.
 	 * 
 	 * @param pop the population to which this topology is attached.
 	 */
@@ -146,6 +162,7 @@ public interface ITopology extends IValue {
 	public abstract boolean isValidGeometry(IShape g);
 
 	/**
+	 * @throws GamaRuntimeException
 	 * @param source
 	 * @param target
 	 * @return the direction or null if one these two geometries are invalid in this topology

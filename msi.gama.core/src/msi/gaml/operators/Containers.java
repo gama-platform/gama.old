@@ -22,6 +22,8 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -76,6 +78,18 @@ public class Containers {
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
+	}
+
+	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
+		throws GamaRuntimeException {
+		ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();
+		IContainer<?, IShape> m = t.getPlaces();
+		if ( m instanceof GamaSpatialMatrix ) {
+			IShape shp = ((GamaSpatialMatrix) m).get(val);
+			if ( shp != null ) { return shp.getAgent(); }
+		}
+		return null;
 	}
 
 	@operator(value = { "at", "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)

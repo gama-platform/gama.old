@@ -18,8 +18,8 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import java.util.List;
-import msi.gama.metamodel.shape.IShape;
+import java.util.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.util.GamaList;
 import msi.gaml.species.ISpecies;
 
@@ -55,4 +55,53 @@ public class Different implements IAgentFilter {
 	public boolean filterSpecies(final ISpecies s) {
 		return false;
 	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.metamodel.shape.ILocation,
+	 *      msi.gama.metamodel.shape.IShape)
+	 */
+	@Override
+	public boolean accept(final ILocation source, final IShape a) {
+		return !a.getLocation().equals(source);
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.metamodel.shape.ILocation,
+	 *      java.util.List)
+	 */
+	@Override
+	public List<? extends IShape> filter(final ILocation source, final List<? extends IShape> ags) {
+		List<IShape> result = new GamaList(ags.size());
+		for ( IShape s : ags ) {
+			if ( accept(source, s) ) {
+				result.add(s);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
+	 */
+	@Override
+	public Collection<? extends IShape> getShapes() {
+		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#identicalTo(msi.gama.metamodel.topology.filter.IAgentFilter)
+	 */
+	@Override
+	public boolean identicalTo(final IAgentFilter f) {
+		return f instanceof Different;
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
+	 */
+	@Override
+	public int getSize() {
+		return 0;
+	}
+
 }

@@ -173,7 +173,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public double getWeight(final IShape line) {
+	public double getWeight(final IShape line) throws GamaRuntimeException {
 		return line.getGeometry().getPerimeter(); // workaround for the moment
 		// if ( getGraph() == null || !getGraph().containsEdge(segmentsInGraph.get(line)) ) { return
 		// line

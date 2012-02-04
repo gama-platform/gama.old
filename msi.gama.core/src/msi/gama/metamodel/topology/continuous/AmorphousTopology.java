@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -21,7 +21,7 @@ package msi.gama.metamodel.topology.continuous;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -132,6 +132,11 @@ public class AmorphousTopology implements ITopology {
 	 */
 	@Override
 	public Double distanceBetween(final IShape source, final IShape target) {
+		return source.euclidianDistanceTo(target);
+	}
+
+	@Override
+	public Double distanceBetween(final ILocation source, final ILocation target) {
 		return source.euclidianDistanceTo(target);
 	}
 
@@ -247,6 +252,35 @@ public class AmorphousTopology implements ITopology {
 		final double dy = y2 - source.getY();
 		final double result = Maths.aTan2(dy, dx) * Maths.toDeg;
 		return Maths.checkHeading((int) result);
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.ITopology#getAgentClosestTo(msi.gama.metamodel.shape.ILocation,
+	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
+	 */
+	@Override
+	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
+		return null;
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation,
+	 *      java.lang.Double, msi.gama.metamodel.topology.filter.IAgentFilter)
+	 */
+	@Override
+	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		return GamaList.EMPTY_LIST;
+	}
+
+	/**
+	 * @see msi.gama.metamodel.topology.ITopology#pathBetween(msi.gama.metamodel.shape.ILocation,
+	 *      msi.gama.metamodel.shape.ILocation)
+	 */
+	@Override
+	public IPath pathBetween(final ILocation source, final ILocation target)
+		throws GamaRuntimeException {
+		return new GamaPath(this, GamaList.with(source, target));
 	}
 
 }

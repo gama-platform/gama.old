@@ -25,7 +25,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -61,6 +61,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 public class MovingSkill extends GeometricSkill {
 
 	/**
+	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException Gets the destination of the agent. The destination is the next
 	 *             absolute coordinates the agent could reach if it keeps the current speed and the
 	 *             current heading
@@ -142,32 +143,21 @@ public class MovingSkill extends GeometricSkill {
 	private ILocation computeTarget(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
 		final Object target = scope.getArg("target", IType.NONE);
-		if ( target == null || !(target instanceof ILocated) ||
-			((ILocated) target).getLocation() == null ) {
-			scope.setStatus(ExecutionStatus.failure);
-			return null;
+		ILocation result = null;
+		if ( target != null && target instanceof ILocated ) {
+			result = ((ILocated) target).getLocation();
 		}
-		return ((ILocated) target).getLocation();
+		if ( result == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+		}
+		return result;
 	}
 
 	private ITopology computeTopology(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
-		ITopology topo = agent.getTopology();
 		final Object on = scope.getArg("on", IType.NONE);
-		if ( on != null ) {
-			if ( on instanceof GamaGraph ) {
-				GamaSpatialGraph graph = (GamaSpatialGraph) on;
-				topo =
-					new GraphTopology(scope, agent.getTopology().getEnvironment().getGeometry(),
-						graph);
-			} else {
-				try {
-					topo = Cast.asTopology(scope, on);
-				} catch (GamaRuntimeException e) {
-					return null;
-				}
-			}
-		}
+		ITopology topo = Cast.asTopology(scope, on);
+		if ( topo == null ) { return agent.getTopology(); }
 		return topo;
 	}
 
@@ -280,7 +270,7 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ) {
+		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ) {
 			path = topo.pathBetween(source, goal);
 		}
 
@@ -300,7 +290,8 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	/**
-	 * Return the next location toward a target on a line
+	 * @throws GamaRuntimeException
+	 *             Return the next location toward a target on a line
 	 * 
 	 * @param coords coordinates of the line
 	 * @param source current location
@@ -425,7 +416,8 @@ public class MovingSkill extends GeometricSkill {
 		return null;
 	}
 
-	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
+	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d)
+		throws GamaRuntimeException {
 		int index = 0;
 		int indexSegment = 1;
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
@@ -698,7 +690,8 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	/**
-	 * Find the next location toward a target in a geometry using a triangulation
+	 * @throws GamaRuntimeException
+	 *             Find the next location toward a target in a geometry using a triangulation
 	 * 
 	 * @param geom background geometry
 	 * @param source current location
@@ -707,10 +700,11 @@ public class MovingSkill extends GeometricSkill {
 	 * @return the next location
 	 */
 	private ILocation findnextLocTowardPolygonUsingTriangulation(final IScope scope, IPath path,
-		final Polygon geom, final ILocation source, final ILocation target, final double distance) {
+		final Polygon geom, final ILocation source, final ILocation target, final double distance)
+		throws GamaRuntimeException {
 		if ( path == null ) {
 			IList<Polygon> triangles = new GamaList(GeometryUtils.triangulation(geom));
-			GamaGraph graph = buildPolygonGraph(scope, triangles);
+			GamaGraph graph = buildPolygonGraph(triangles);
 			// graph.setPolygon(true);
 			path = GamaPathType.pathBetween(scope, source, target, graph);
 		}
@@ -814,7 +808,8 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	/**
-	 * Find the next location toward a target in a geometry from a path
+	 * @throws GamaRuntimeException
+	 *             Find the next location toward a target in a geometry from a path
 	 * 
 	 * @param path path to reach the target
 	 * @param source current location
@@ -827,7 +822,7 @@ public class MovingSkill extends GeometricSkill {
 		double distRemain = distance;
 
 		if ( path == null || path.getEdgeList().isEmpty() ) {
-			double distInit = target.distance(source);
+			double distInit = target.euclidianDistanceTo(source);
 			if ( distInit < distRemain ) { return target; }
 			double ratio = distRemain / distInit;
 			double x_s = source.getX();
@@ -902,7 +897,8 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	/**
-	 * Find the next location toward a target in a geometry from a path
+	 * @throws GamaRuntimeException
+	 *             Find the next location toward a target in a geometry from a path
 	 * 
 	 * @param path path to reach the target
 	 * @param source current location
@@ -937,7 +933,7 @@ public class MovingSkill extends GeometricSkill {
 					targ = Points.opClosestPointTo(geom, gb.getLocation());
 				}
 			}
-			double dist = targ.distance(source);
+			double dist = targ.euclidianDistanceTo(source);
 			if ( dist > distRemain ) {
 				double ratio = distRemain / dist;
 				double x_s = source.getX();
@@ -959,7 +955,7 @@ public class MovingSkill extends GeometricSkill {
 
 		}
 		if ( distRemain > 0 ) {
-			double dist = target.distance(source);
+			double dist = target.euclidianDistanceTo(source);
 			if ( dist <= distRemain ) { return target; }
 			double ratio = distRemain / dist;
 			double x_s = source.getX();
@@ -985,7 +981,8 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	/**
-	 * Return the next location toward a target on a line
+	 * @throws GamaRuntimeException
+	 *             Return the next location toward a target on a line
 	 * 
 	 * @param coords coordinates of the line
 	 * @param source current location

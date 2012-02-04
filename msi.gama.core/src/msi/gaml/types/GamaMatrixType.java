@@ -61,14 +61,14 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		try {
 			final BufferedReader in = new BufferedReader(new StringReader(string));
 			final String delim = ";|,|\\s|\t|\n|\r|\f|\\|";
-			final GamaList<String> allLines = new GamaList();
+			final GamaList<String[]> allLines = new GamaList();
 			String[] splitStr;
 			String str;
 			int columns = 0;
 			str = in.readLine();
 			while (str != null) {
-				allLines.add(str);
 				splitStr = str.split(delim, -1);
+				allLines.add(splitStr);
 				if ( splitStr.length > columns ) {
 					columns = splitStr.length;
 				}
@@ -85,8 +85,7 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 			}
 			final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize);
 			for ( int i = 0; i < lineSize; i++ ) {
-				str = allLines.get(i);
-				splitStr = str.split(delim, -1);
+				splitStr = allLines.get(i);
 				for ( int j = 0; j < splitStr.length; j++ ) {
 					matrix.set(j, i, splitStr[j]);
 				}

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,13 +20,13 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.operators.Cast;
 
 @type(value = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class })
@@ -82,8 +82,7 @@ public class GamaPathType extends GamaType<IPath> {
 				break;
 			}
 		}
-		return (GamaPath) graph.computeShortestPathBetween(scope.getAgentScope().getTopology(), s,
-			t);
+		return (GamaPath) graph.computeShortestPathBetween(s, t);
 	}
 
 	public static IPath pathBetweenPoints(final IScope scope, final ILocation source,
@@ -125,7 +124,7 @@ public class GamaPathType extends GamaType<IPath> {
 			path = new GamaPath(m, source, target, GamaList.with(edgeS));
 			return path;
 		}
-		path = graph.computeShortestPathBetween(m, s1, t1);
+		path = graph.computeShortestPathBetween(s1, t1);
 		if ( path == null ) { return null; }
 
 		return path;

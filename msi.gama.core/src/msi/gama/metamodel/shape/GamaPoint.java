@@ -23,7 +23,6 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
  * AgentLocation.
@@ -69,17 +68,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return true;
 	}
 
-	@Override
-	public boolean equals(final Object o) {
-		if ( o instanceof Coordinate ) { return IntervalSize.isZeroWidth(x, ((Coordinate) o).x) &&
-			IntervalSize.isZeroWidth(y, ((Coordinate) o).y); }
-		return false;
-	}
+	// @Override
+	// public boolean equals(final Object o) {
+	// if ( o instanceof Coordinate ) { return IntervalSize.isZeroWidth(x, ((Coordinate) o).x) &&
+	// IntervalSize.isZeroWidth(y, ((Coordinate) o).y); }
+	// return false;
+	// }
 
-	@Override
-	public boolean equals(final Coordinate o) {
-		return o != null && IntervalSize.isZeroWidth(x, o.x) && IntervalSize.isZeroWidth(y, o.y);
-	}
+	// @Override
+	// public boolean equals(final Coordinate o) {
+	// return o != null && IntervalSize.isZeroWidth(x, o.x) && IntervalSize.isZeroWidth(y, o.y);
+	// }
 
 	@Override
 	public int hashCode() {
@@ -218,11 +217,13 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		if ( g.isPoint() ) {
-			ILocation p = g.getLocation();
-			return Maths.hypot(x, p.getX(), y, p.getY());
-		}
+		if ( g.isPoint() ) { return euclidianDistanceTo(g.getLocation()); }
 		return g.euclidianDistanceTo(this);
+	}
+
+	@Override
+	public double euclidianDistanceTo(final ILocation p) {
+		return Maths.hypot(x, p.getX(), y, p.getY());
 	}
 
 	/**
@@ -233,13 +234,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if ( g.isPoint() ) { return g.getLocation().equals(this); }
 		return g.intersects(this);
 	}
-
-	//
-	// @Override
-	// public Double any() {
-	// int i = GAMA.getRandom().between(0, 1);
-	// return i == 0 ? x : y;
-	// }
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getAgent()
@@ -277,14 +271,5 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void dispose() {}
-
-	/**
-	 * @see msi.gama.common.util.ILocation#distance(msi.gama.common.util.ILocation)
-	 */
-	@Override
-	public double distance(final ILocation targ) {
-		if ( targ instanceof Coordinate ) { return distance((Coordinate) targ); }
-		return distance(targ.toCoordinate());
-	}
 
 }

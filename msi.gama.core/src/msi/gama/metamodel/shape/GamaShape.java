@@ -454,8 +454,6 @@ public class GamaShape implements IShape {
 
 	@Override
 	public GamaShape copy() {
-
-		// TODO Attention : in case of points and lines, buffer(0,0) returns an empty polygon !!!!!
 		return new GamaShape((Geometry) geometry.clone());
 	}
 
@@ -473,6 +471,12 @@ public class GamaShape implements IShape {
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
 		if ( isPoint() ) { return g.euclidianDistanceTo(this.getLocation()); }
+		return operations().getDistance(g);
+	}
+
+	@Override
+	public double euclidianDistanceTo(final ILocation g) {
+		if ( isPoint ) { return g.euclidianDistanceTo(getLocation()); }
 		return operations().getDistance(g);
 	}
 

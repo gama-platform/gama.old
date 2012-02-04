@@ -24,7 +24,7 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.types.*;
@@ -46,7 +46,7 @@ public class Graphs {
 		}
 
 		@Override
-		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
+		public boolean related(final IShape p1, final IShape p2) {
 			return Spatial.Properties.opIntersects(
 				Spatial.Transformations.opBuffer(p1.getGeometry(), tolerance),
 				Spatial.Transformations.opBuffer(p1.getGeometry(), tolerance));
@@ -68,15 +68,18 @@ public class Graphs {
 		}
 
 		/**
+		 * @throws GamaRuntimeException
 		 * @see msi.gama.util.graph.GamaSpatialGraph.VertexRelationship#related(msi.gama.interfaces.IScope,
 		 *      msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 		 */
 		@Override
-		public boolean related(final IScope scope, final IShape g1, final IShape g2) {
-			return Spatial.Relations.opDistanceTo(scope, g1.getGeometry(), g2.getGeometry()) <= distance;
+		public boolean related(final IShape g1, final IShape g2) {
+			return Spatial.Relations.opDistanceTo(GAMA.getDefaultScope(), g1.getGeometry(),
+				g2.getGeometry()) <= distance;
 		}
 
 		/**
+		 * @throws GamaRuntimeException
 		 * @see msi.gama.util.graph.GamaSpatialGraph.VertexRelationship#equivalent(msi.gama.interfaces.IGeometry,
 		 *      msi.gama.interfaces.IGeometry)
 		 */
@@ -189,7 +192,7 @@ public class Graphs {
 
 	@operator(value = "as_edge_graph")
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
-		return new GamaSpatialGraph(scope, edges, true, false, null);
+		return new GamaSpatialGraph(edges, true, false, null);
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -201,7 +204,7 @@ public class Graphs {
 	@operator(value = "as_edge_graph")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
-		return GamaGraphType.from(scope, edges, true);
+		return GamaGraphType.from(edges, true);
 	}
 
 	// @operator(value = "graph_from_vertices")
@@ -212,14 +215,13 @@ public class Graphs {
 	@operator(value = "as_intersection_graph")
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
 		final Double tolerance) {
-		return new GamaSpatialGraph(scope, vertices, false, false, new IntersectionRelation(
-			tolerance));
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance));
 	}
 
 	@operator(value = "as_distance_graph")
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance) {
-		return new GamaSpatialGraph(scope, vertices, false, false, new DistanceRelation(distance));
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance));
 	}
 
 	// @operator(value = "spatialize")

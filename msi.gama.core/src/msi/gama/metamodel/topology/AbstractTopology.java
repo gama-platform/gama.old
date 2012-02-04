@@ -50,7 +50,7 @@ public abstract class AbstractTopology implements ITopology {
 			scope.getSimulationScope().getModel().getModelEnvironment().getSpatialIndex();
 	}
 
-	protected boolean createAgents() {
+	protected boolean canCreateAgents() {
 		return false;
 	}
 
@@ -60,7 +60,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {
 		// Create the population from the places of the topology
-		if ( !createAgents() ) { return; }
+		if ( !canCreateAgents() ) { return; }
 		List<Map<String, Object>> initialValues = new GamaList(places.length());
 		Map<String, Object> vars;
 		for ( IShape g : places ) {
@@ -91,6 +91,12 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public IPath pathBetween(final IShape source, final IShape target) throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
+	}
+
+	@Override
+	public IPath pathBetween(final ILocation source, final ILocation target)
+		throws GamaRuntimeException {
+		return new GamaPath(this, GamaList.with(source, target));
 	}
 
 	private void setEnvironmentBounds() {
@@ -184,12 +190,6 @@ public abstract class AbstractTopology implements ITopology {
 		return _copy();
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// return "";
-	// }
-
 	@Override
 	public String toGaml() {
 		return _toGaml();
@@ -221,17 +221,56 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
+		IAgent result = null;
 		for ( int i = 0; i < steps.length; i++ ) {
-			IAgent min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
-			if ( min_neighbour != null ) { return min_neighbour; }
+			IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
+			if ( min_neighbour != null ) {
+				result = min_neighbour.getAgent();
+				break;
+			}
 		}
-		return null;
+		return result;
+	}
+
+	@Override
+	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
+		IAgent result = null;
+		for ( int i = 0; i < steps.length; i++ ) {
+			IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
+			if ( min_neighbour != null ) {
+				result = min_neighbour.getAgent();
+				break;
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public IList<IAgent> getNeighboursOf(final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		return spatialIndex.allAtDistance(source, distance, filter);
+		IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+		IList<IAgent> agents = new GamaList(shapes.size());
+		for ( IShape s : shapes ) {
+			IAgent a = s.getAgent();
+			if ( a != null && !a.dead() ) {
+				agents.add(a);
+			}
+		}
+		return agents;
+	}
+
+	@Override
+	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+		IList<IAgent> agents = new GamaList(shapes.size());
+		for ( IShape s : shapes ) {
+			IAgent a = s.getAgent();
+			if ( a != null && !a.dead() ) {
+				agents.add(a);
+			}
+		}
+		return agents;
 	}
 
 	@Override
@@ -278,12 +317,13 @@ public abstract class AbstractTopology implements ITopology {
 		GamaList<IAgent> result = new GamaList();
 		if ( !isValidGeometry(source) ) { return result; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
-		List<IAgent> agents = spatialIndex.allInEnvelope(source, envelope, f, covered);
+		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
 		GamaShape sg =
 			new GamaShape(source.getInnerGeometry().intersection(environment.getInnerGeometry()));
-		for ( IAgent ag : agents ) {
+		for ( IShape sh : shapes ) {
+			IAgent ag = sh.getAgent();
 			// Geometry g = ag.getInnerGeometry();
-			if ( covered ? sg.covers(ag) : sg.intersects(ag) ) {
+			if ( ag != null && !ag.dead() && (covered ? sg.covers(ag) : sg.intersects(ag)) ) {
 				result.add(ag);
 			}
 		}

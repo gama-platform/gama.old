@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,14 +19,11 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-
-import msi.gama.common.util.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 
 /**
@@ -49,8 +46,8 @@ public class GamaPointType extends GamaType<ILocation> {
 		if ( obj instanceof IShape ) { return ((IShape) obj).getLocation(); }
 		if ( obj instanceof List ) {
 			List l = (List) obj;
-			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(scope,l.get(0)), Cast.asFloat(scope,l
-				.get(1))); }
+			if ( l.size() > 1 ) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(
+				scope, l.get(1))); }
 			return null;
 		}
 		if ( obj instanceof Map ) {
@@ -60,7 +57,8 @@ public class GamaPointType extends GamaType<ILocation> {
 			// double z = TypeManager.asFloat(get("z"));
 			return new GamaPoint(x, y);
 		}
-		if ( obj instanceof GamaPair ) { return new GamaPoint(Cast.asFloat(null, ((GamaPair) obj).first()), Cast.asFloat(null, ((GamaPair) obj).last())); }
+		if ( obj instanceof GamaPair ) { return new GamaPoint(Cast.asFloat(null,
+			((GamaPair) obj).first()), Cast.asFloat(null, ((GamaPair) obj).last())); }
 		if ( obj == null ) { return null; }
 		final double dval = Cast.asFloat(scope, obj);
 		return new GamaPoint(dval, dval);

@@ -49,7 +49,7 @@ public class MultipleTopology extends ContinuousTopology {
 	}
 
 	@Override
-	protected boolean createAgents() {
+	protected boolean canCreateAgents() {
 		return true;
 	}
 

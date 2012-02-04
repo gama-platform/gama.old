@@ -42,7 +42,7 @@ public interface ILocation extends IShape, Comparable {
 	@getter(var = IKeyword.Y)
 	public abstract double getY();
 
-	public abstract boolean equals(final Coordinate o);
+	// public abstract boolean equals(final Coordinate o);
 
 	public abstract void setLocation(final double xx, final double yy);
 
@@ -50,7 +50,7 @@ public interface ILocation extends IShape, Comparable {
 
 	public abstract Coordinate toCoordinate();
 
-	public abstract double distance(ILocation targ);
+	public abstract double euclidianDistanceTo(ILocation targ);
 
 	@Override
 	public ILocation copy();

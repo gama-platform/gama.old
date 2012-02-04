@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.*;
@@ -494,7 +495,8 @@ public abstract class Spatial {
 		// }
 
 		/**
-		 * Apply a rotation (of a given angle) to the agent geometry
+		 * @throws GamaRuntimeException
+		 *             Apply a rotation (of a given angle) to the agent geometry
 		 * 
 		 * @param args : angle -> double, rad
 		 * @return the prim CommandStatus
@@ -510,8 +512,10 @@ public abstract class Spatial {
 		}
 
 		/**
-		 * Apply a affinite operation (of a given coefficient and angle)to the agent geometry. Angle
-		 * is given by the point.x ; Coefficient by the point.y
+		 * @throws GamaRuntimeException
+		 *             Apply a affinite operation (of a given coefficient and angle)to the agent
+		 *             geometry. Angle
+		 *             is given by the point.x ; Coefficient by the point.y
 		 * 
 		 * @param args : coefficient -> double; angle -> double, rad
 		 * @return the prim CommandStatus
@@ -705,6 +709,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for ( IShape gg : nodes ) {
 				if ( previous != null ) {
+					// TODO Take the case of ILocation
 					edges.addAll(graph.pathBetween(previous, gg).getEdgeList());
 				}
 				previous = gg;
@@ -718,8 +723,21 @@ public abstract class Spatial {
 			return scope.getAgentScope().getTopology().distanceBetween(source, target);
 		}
 
+		@operator(value = "distance_to")
+		public static Double opDistanceTo(final IScope scope, final GamaPoint source,
+			final GamaPoint target) {
+			return scope.getAgentScope().getTopology().distanceBetween(source, target);
+		}
+
 		@operator("path_to")
 		public static IPath opPathTo(final IScope scope, final IShape g, final IShape g1)
+			throws GamaRuntimeException {
+			if ( g == null ) { return null; }
+			return scope.getAgentScope().getTopology().pathBetween(g1, g);
+		}
+
+		@operator("path_to")
+		public static IPath opPathTo(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
 			return scope.getAgentScope().getTopology().pathBetween(g1, g);
@@ -952,7 +970,8 @@ public abstract class Spatial {
 		}
 
 		/**
-		 * determine the closest point of a geometry to another given point.
+		 * @throws GamaRuntimeException
+		 *             determine the closest point of a geometry to another given point.
 		 * 
 		 * @param pt a point
 		 * @param poly a polygon
@@ -988,11 +1007,31 @@ public abstract class Spatial {
 			Object d = pair.value;
 			if ( !(d instanceof Number) ) { throw new GamaRuntimeException(
 				"The operator neighbours_of expects a pair agent::float as its right member"); }
+			if ( a instanceof ILocation ) { return t.getNeighboursOf((ILocation) a,
+				Cast.asFloat(scope, d), Different.with()); }
 			return t.getNeighboursOf((IShape) a, Cast.asFloat(scope, d), Different.with());
 		}
 
+		// / CHANGES AS OF 02/02/12
+		// / Topologies are computed dynamically w.r.t. to the last agent mentioned
+		// / For instance :
+		// / cell neighbours_at 4 will "correctly" use the topology of cell (and not the topology of
+		// the agent that calls this expression)
+
 		@operator(value = "neighbours_at")
 		public static IList opNeighboursAt(final IScope scope, final IShape agent,
+			final Double distance) throws GamaRuntimeException {
+			if ( agent == null ) { return GamaList.EMPTY_LIST; }
+			// CHANGE
+			IAgent target = agent.getAgent();
+			ITopology t =
+				target == null ? scope.getAgentScope().getTopology() : target.getTopology();
+			// ITopology t = scope.getAgentScope().getTopology();
+			return t.getNeighboursOf(agent, distance, Different.with());
+		}
+
+		@operator(value = "neighbours_at")
+		public static IList opNeighboursAt(final IScope scope, final GamaPoint agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			return scope.getAgentScope().getTopology()
@@ -1011,9 +1050,13 @@ public abstract class Spatial {
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static IList<IAgent> opInside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
+			if ( pop == null ) { return new GamaList(); }
+			// CHANGE
+			ITopology t = pop.getTopology();
+			// ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
-				In.species(targets), true);
+				In.population(pop), true);
 		}
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
@@ -1028,15 +1071,30 @@ public abstract class Spatial {
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static IList<IAgent> opOverlapping(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
+			if ( pop == null ) { return new GamaList(); }
+			// CHANGE
+			ITopology t = pop.getTopology();
+			IList<IAgent> temp =
+				t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop),
+					false);
+			for ( IAgent a : temp ) {
+				if ( a.dead() ) {
+					GuiUtils.debug("Dead agent inside");
+				}
+			}
+			// ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
-				In.species(targets), false);
+				In.population(pop), false);
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static Object opClosestTo(final IScope scope, final IContainer<?, IShape> targets,
 			final Object source) throws GamaRuntimeException {
-			if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
+			if ( source instanceof ILocation ) {
+				return scope.getAgentScope().getTopology()
+					.getAgentClosestTo((ILocation) source, In.list(scope, targets));
+			} else if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
 				.getAgentClosestTo((IShape) source, In.list(scope, targets)); }
 			throw new GamaRuntimeException(StringUtils.toGaml(source) +
 				" is not a geometrical object");
@@ -1045,8 +1103,15 @@ public abstract class Spatial {
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static IAgent opClosestTo(final IScope scope, final ISpecies targets,
 			final Object source) throws GamaRuntimeException {
-			if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
-				.getAgentClosestTo((IShape) source, In.species(targets)); }
+			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
+			if ( pop == null ) { return null; }
+			// CHANGE
+			ITopology t = pop.getTopology();
+			// ITopology t = scope.getAgentScope().getTopology();
+			if ( source instanceof ILocation ) {
+				return t.getAgentClosestTo((ILocation) source, In.population(pop));
+			} else if ( source instanceof IShape ) { return t.getAgentClosestTo((IShape) source,
+				In.population(pop)); }
 			throw new GamaRuntimeException(StringUtils.toGaml(source) +
 				" is not a geometrical object");
 		}
@@ -1054,7 +1119,10 @@ public abstract class Spatial {
 		@operator(value = "agent_closest_to", type = IType.NONE)
 		public static IAgent opAgentsClosestTo(final IScope scope, final Object source)
 			throws GamaRuntimeException {
-			if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
+			if ( source instanceof ILocation ) {
+				return scope.getAgentScope().getTopology()
+					.getAgentClosestTo((ILocation) source, Different.with());
+			} else if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
 				.getAgentClosestTo((IShape) source, Different.with()); }
 			throw new GamaRuntimeException(StringUtils.toGaml(source) +
 				" is not a geometrical object");
