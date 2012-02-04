@@ -1,25 +1,26 @@
 model ants
 global {
+	//float step init: 10 # seconds;
 	var evaporation_rate type: float init: 0.10 min: 0 max: 1 parameter:
 	'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	var diffusion_rate type: float init: 0.5 min: 0 max: 1 parameter:
 	'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	var gridsize type: int init: 120 min: 30 parameter:
-	'Width and Height of the grid:' category: 'Environment and Population';
-	var ants_number type: int init: 200 min: 1 parameter: 'Number of ants:' 
-	category: 'Environment and Population';
-	var grid_frequency type: int init: 1 min: 1 max: 100 parameter:
-	'Grid updates itself every:' category: 'Environment and Population';
-	var number_of_food_places type: int init: 5 min: 1 parameter: 
-	'Number of food depots:' category: 'Environment and Population';   
-	var grid_transparency type: float init: 0.4;
-	const ant_shape_empty type: string init: '../icons/ant.png';
+	'Width and Height of the grid:' category: 'Environment and Population'; 
+	var ants_number type: int init: 200 min: 1 parameter: 'Number of ants:'
+	category: 'Environment and Population'; 
+	var grid_frequency type: int init: 1 min: 1 max: 100 parameter: 
+	'Grid updates itself every:' category: 'Environment and Population'; 
+	var number_of_food_places type: int init: 5 min: 1 parameter:
+	'Number of food depots:' category: 'Environment and Population';
+	var grid_transparency type: float init: 0.4; 
+	const ant_shape_empty type: string init: '../icons/ant.png';  
 	const ant_shape_full type: string init: '../icons/full_ant.png';
 	const center type: point init: { round ( gridsize / 2 ) , round ( gridsize / 2
 	) };
 	var food_gathered type: int init: 0;
 	var food_placed type: int init: 0;
-	const background type: rgb init: rgb ( #999999 ); 
+	const background type: rgb init: rgb ( #999999 );
 	const food_color type: rgb init: rgb ( #312200 );
 	const nest_color type: rgb init: rgb ( #000000 );
 	init {
@@ -38,43 +39,32 @@ global {
 		create species: ant number: ants_number {
 			set location value: center ;
 		}
+
 	}
 }
-environment width: gridsize height: gridsize {}
-
-
-
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false
-	frequency: grid_frequency {
-		const is_nest type: bool init: ( topology(ant_grid) distance_between [self, center] ) < 4;
-		var food type: int init: 0;
-		aspect default {
-			draw shape: geometry color: is_nest ? nest_color : ( ( food > 0 ) ?
-			food_color : ( ( float ( road ) < 0.001 ) ? background : rgb ( #009900 ) +
-			int ( road * 5 ) ) );
-		}
+environment width: gridsize height: gridsize { }
+grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false
+frequency: grid_frequency {
+	const neighbours type: list of: ant_grid init: self neighbours_at 1;
+	const is_nest type: bool init: ( topology ( ant_grid ) distance_between [ self
+	, center ] ) < 4;
+	var food type: int init: 0;
+	aspect default {
+		draw shape: geometry color: is_nest ? nest_color : ( ( food > 0 ) ?
+		food_color : ( ( float ( road ) < 0.001 ) ? background : rgb ( #009900 ) +
+		int ( road * 5 ) ) ); 
 	}
-	
-
+}
 entities {
 
-	species link {
-		var shape type: geometry init: one_of ( ant as list ) :: one_of ( ant as list
-		);
-		var color type: rgb init: rgb ( 'white' );
-	}
-	
-	
-	species ant skills: [ moving  ] control: fsm schedules: shuffle (
-	list ( ant ) )  {
-		
+	species ant skills: [ moving ] control: fsm {
+		float speed init: 1 ;
 		const color type: rgb init: 'red';
 		var has_food type: bool init: false;
 		var road type: signal value: has_food ? 240 : 0 decay: evaporation_rate
 		proportion: diffusion_rate environment: ant_grid;
-		
 		action pick {
-			set has_food var: has_food value: true ;
+			set has_food var: has_food value: true ; 
 			let place var: place value: ant_grid ( location );
 			set place . food var: place . food value: place . food - 1 ;
 		}
@@ -84,37 +74,34 @@ entities {
 			set heading var: heading value: heading - 180 ;
 		}
 		action choose_best_place type: point {
-			let list_places type: container value: ( ant_grid ( location ) )
-			neighbours_at 1 of: ant_grid;
+			let list_places type: container value: ( ant_grid ( location ) ) .
+			neighbours;
 			if condition: ( list_places count ( each . food > 0 ) ) > 0 {
 				return value: point ( list_places first_with ( each . food > 0 ) );
 				else {
 					set list_places value: ( list_places where ( ( each . road > 0 ) and ( (
 					each distance_to center ) > ( self distance_to center ) ) ) ) sort_by (
 					each . road ) ;
-					return value: point ( last ( list_places ) );  
-	 			}
-			} 
+					return value: point ( last ( list_places ) );
+				}
+			}
 		}
-		
-		reflex when: has_food and ( ant_grid ( location ) ) . is_nest { 
-			do action: drop; 
+		reflex when: has_food and ( ant_grid ( location ) ) . is_nest {
+			do action: drop;
 		}
 		reflex when: ! has_food and ( ant_grid ( location ) ) . food > 0 {
-			do action: pick; 
+			do action: pick;
 		}
-		
-		
 		state wandering initial: true {
 			do action: wander {
-				arg amplitude type: int value: 90; 
+				arg amplitude type: int value: 90;
 			}
 			let pr var: pr value: ( ant_grid ( location ) ) . road;
 			transition to: carryingFood when: has_food;
 			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );
 		}
 		state carryingFood {
-			do action: goto with: [target::center, speed::1.0];
+			do action: goto with: [ target :: center ];
 			transition to: wandering when: ! has_food;
 		}
 		state followingRoad {
@@ -124,19 +111,17 @@ entities {
 			transition to: carryingFood when: has_food;
 			transition to: wandering when: ( pr < 0.05 ) or ( next_place = nil );
 		}
-		
-		
 		aspect info {
 			draw shape: circle at: location size: 1 rotate: heading empty: ! has_food;
 			draw shape: line at: location to: destination + ( ( destination - location )
 			) color: rgb ( 'white' );
 			draw shape: circle at: location size: 4 empty: true color: 'white';
 			draw text: self as int color: rgb ( 'white' ) size: 1;
-			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 };
+			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 }; 
 		}
 		aspect icon {
 			draw image: ant_shape_empty at: my location size: 5 rotate: my heading;
-		}
+		} 
 		aspect default {
 			draw shape: square at: my location empty: ! has_food color: 'white' size: 1
 			rotate: my heading;
@@ -148,13 +133,13 @@ experiment Complete type: gui {
 	'Environment and Population';
 	parameter name: 'Grid dimension:' var: gridsize init: 100 unit:
 	'(number of rows and columns)' category: 'Environment and Population';
-	parameter name: 'Number of food depots:' var: number_of_food_places init: 5
+	parameter name: 'Number of food depots:' var: number_of_food_places init: 5 
 	min: 1 category: 'Environment and Population';
 	output {
-
 		display Ants background: rgb ( 'white' ) refresh_every: 1 {
 			image name: 'Background' file: '../images/soil.jpg' position: { 0.05 , 0.05
 			} size: { 0.9 , 0.9 };
+// 			grid ant_grid lines: rgb ('black') position: { 0.05 , 0.05 } transparency: grid_transparency size: { 0.9 , 0.9 };
 			agents ant_grid transparency: grid_transparency position: { 0.05 , 0.05 }
 			size: { 0.9 , 0.9 } value: ant_grid as list where ( ( each . food > 0 ) or (
 			each . road > 0 ) or ( each . is_nest ) );
@@ -162,13 +147,13 @@ experiment Complete type: gui {
 			text food value: 'Food foraged : ' + string ( ( ( food_gathered /
 			food_placed ) * 100 ) with_precision 2 ) + '%' position: { 0.05 , 0.03 }
 			color: rgb ( 'black' ) size: { 1 , 0.02 };
-			text agents value: 'Carrying ants : ' + string ( int ( ant as list count (
+			text agents value: 'Carrying ants : ' + string ( int ( ant as list count (  
 			each . has_food ) ) + int ( ant as list count ( each . state =
 			'followingRoad' ) ) ) position: { 0.5 , 0.03 } color: rgb ( 'black' ) size:
 			{ 1 , 0.02 };
 		}
 	}
-}
+} 
 experiment Batch type: batch repeat: 2 keep_seed: true until: ( food_gathered =
 food_placed ) or ( time > 400 ) {
 	parameter name: 'Size of the grid:' var: gridsize init: 75 unit: ( width and
@@ -177,7 +162,7 @@ food_placed ) or ( time > 400 ) {
 	parameter name: 'Evaporation:' var: evaporation_rate among: [ 0.1 , 0.2 , 0.5
 	, 0.8 , 1.0 ] unit: 'rate every cycle (1.0 means 100%)';
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit:
-	'rate every cycle (1.0 means 100%)' step: 0.3;
+	'rate every cycle (1.0 means 100%)' step: 0.3; 
 	method exhaustive maximize: food_gathered;
 	save to: 'ant_exhaustive' data: time rewrite: false;
 }
@@ -188,8 +173,8 @@ experiment Genetic type: batch repeat: 2 keep_seed: true until: ( food_gathered
 	parameter name: 'Number:' var: ants_number init: 200 unit: 'ants';
 	parameter name: 'Evaporation:' var: evaporation_rate among: [ 0.1 , 0.2 , 0.5
 	, 0.8 , 1.0 ] unit: 'rate every cycle (1.0 means 100%)';
-	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit:
-	'rate every cycle (1.0 means 100%)' step: 0.3; 
+	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 
+	'rate every cycle (1.0 means 100%)' step: 0.3;
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7
 	mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
 	save to: 'ant_genetic' data: time rewrite: false;
@@ -200,11 +185,10 @@ experiment name: 'Show Quadtree' type: gui {
 		display QuadTree {
 			quadtree qt;
 		}
-				display Ants background: rgb ( 'white' ) refresh_every: 1 {
+		display Ants background: rgb ( 'white' ) refresh_every: 1 {
 			grid ant_grid lines: rgb ( 'black' );
 			species ant aspect: default;
 		}
 	}
-
 }
 output;
