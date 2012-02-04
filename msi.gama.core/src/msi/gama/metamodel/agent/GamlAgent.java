@@ -246,7 +246,10 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return releasedAgents;
 	}
 
+	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS);
+
 	/**
+	 * 
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
 	 */
 	private class SavedAgent {
@@ -270,12 +273,17 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 
 			ISpecies species = agent.getSpecies();
 			for ( String specVar : species.getVarNames() ) {
+				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
+					continue;
+				}
 				if ( specVar.equals(IKeyword.SHAPE) ) {
+					// variables.put(specVar, geometry.copy());
+					// Changed 3/2/12: is it necessary to make the things below ?
 					variables.put(specVar, new GamaShape(((GamaShape) species.getVar(specVar)
 						.value(agent)).getInnerGeometry()));
 					continue;
 				}
-
+				// variables.put(specVar, agent.getAttribute(specVar));
 				variables.put(specVar, species.getVar(specVar).value(agent));
 			}
 		}
@@ -387,6 +395,12 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
+		IShape gg = getGeometry();
+		return gg == null ? 0d : gg.euclidianDistanceTo(g);
+	}
+
+	@Override
+	public double euclidianDistanceTo(final ILocation g) {
 		IShape gg = getGeometry();
 		return gg == null ? 0d : gg.euclidianDistanceTo(g);
 	}
