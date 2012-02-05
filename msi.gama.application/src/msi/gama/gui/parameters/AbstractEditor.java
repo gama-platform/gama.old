@@ -31,7 +31,7 @@ import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -125,11 +125,11 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected abstract Control getEditorControl();
 
-	private Point getLocation() {
-		Point absLoc = new Point(0, 3);
-		absLoc.y = absLoc.y + titleLabel.getBounds().height + 5;
-		return absLoc;
-	}
+	// private Point getLocation() {
+	// Point absLoc = new Point(0, 3);
+	// absLoc.y = absLoc.y + titleLabel.getBounds().height + 5;
+	// return absLoc;
+	// }
 
 	// @Override
 	// public void mouseEnter(final MouseEvent e) {
