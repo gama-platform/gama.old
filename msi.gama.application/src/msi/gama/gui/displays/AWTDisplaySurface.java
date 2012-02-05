@@ -322,9 +322,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			manager = new DisplayManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				IDisplay d =
-					manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer,
-						env_width, env_height, displayGraphics));
+				// IDisplay d =
+				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
+					env_height, displayGraphics));
 				// d.initMenuItems(this);
 			}
 
