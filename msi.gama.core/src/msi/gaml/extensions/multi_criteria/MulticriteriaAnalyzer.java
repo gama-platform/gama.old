@@ -19,6 +19,7 @@
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
+
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -156,7 +157,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		LinkedList<Candidate> candsFilter = filtering(candidates);
+		LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
 		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>(candsFilter).first()
 			.getIndex(); }
@@ -237,7 +238,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		LinkedList<Candidate> candsFilter = filtering(candidates);
+		LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
 		Candidate decision = electre.decision(candsFilter);
 		return decision.getIndex();
@@ -251,6 +252,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
+		Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
 		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
 		List<String> criteriaStr = new LinkedList<String>();
 		LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<CritereFonctionsCroyances>();
@@ -306,6 +308,10 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					v2Contre = (Double) v2cr;
 				}
 			}
+			Object max = critMap.get("maximize");
+			if ( max != null && max instanceof Boolean ) {
+				maximizeCrit.put(name, (Boolean) max);
+			}
 			CritereFonctionsCroyances cfc =
 				new CritereFctCroyancesBasique(name, s1, v2Pour, v1Pour, v1Contre, v2Contre, s2);
 			criteresFC.add(cfc);
@@ -325,7 +331,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
-		LinkedList<Candidate> candsFilter = filtering(candidates);
+		LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
 		if ( candsFilter.isEmpty() ) { 
 			return GAMA.getRandom().between(0, candidates.size() - 1);
 
@@ -335,7 +341,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates) {
+	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates, Map<String, Boolean> maximizeCrit) {
 		LinkedList<Candidate> cands = new LinkedList<Candidate>();
 		for ( Candidate c1 : candidates ) {
 			boolean paretoFront = true;
@@ -343,7 +349,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 				if ( c1 == c2 ) {
 					continue;
 				}
-				if ( paretoInf(c1, c2) ) {
+				if ( paretoInf(c1, c2, maximizeCrit) ) {
 					paretoFront = false;
 					break;
 				}
@@ -355,12 +361,17 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		return cands;
 	}
 
-	private boolean paretoInf(final Candidate c1, final Candidate c2) {
+	private boolean paretoInf(final Candidate c1, final Candidate c2, final Map<String, Boolean> maximizeCrit) {
 		int equals = 0;
 		for ( String crit : c1.getValCriteria().keySet() ) {
+			boolean maximize = ! (maximizeCrit.containsKey(crit)) ? true : maximizeCrit.get(crit);
 			double v1 = c1.getValCriteria().get(crit);
 			double v2 = c2.getValCriteria().get(crit);
-			if ( v1 > v2 ) { return false; }
+			if (maximize) {
+				if ( v1 > v2 ) { return false; }
+			} else {
+				if ( v1 < v2 ) { return false; }
+			}
 			if ( v1 == v2 ) {
 				equals++;
 			}
