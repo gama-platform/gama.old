@@ -343,6 +343,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates, Map<String, Boolean> maximizeCrit) {
 		LinkedList<Candidate> cands = new LinkedList<Candidate>();
+		LinkedList<Map<String, Double>> paretoVals = new LinkedList<Map<String, Double>>();
 		for ( Candidate c1 : candidates ) {
 			boolean paretoFront = true;
 			for ( Candidate c2 : candidates ) {
@@ -354,8 +355,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					break;
 				}
 			}
-			if ( paretoFront ) {
+			if ( paretoFront && ! (paretoVals.contains(c1.getValCriteria()))) {
 				cands.add(c1);
+				paretoVals.add(c1.getValCriteria());
 			}
 		}
 		return cands;
