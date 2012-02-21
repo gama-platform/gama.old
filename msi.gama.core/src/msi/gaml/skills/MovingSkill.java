@@ -254,7 +254,7 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	@action("goto")
-	@args({ "target", IKeyword.SPEED, "on" })
+	@args({ "target", IKeyword.SPEED, "on", "return_path" })
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy();
@@ -270,7 +270,7 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ) {
+		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) || !( path.getStartVertex().equals(source))) {
 			path = topo.pathBetween(source, goal);
 		}
 
@@ -278,15 +278,19 @@ public class MovingSkill extends GeometricSkill {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		IPath pathFollowed = moveToNextLocAlongPathSimplified(agent, path, maxDist);
-		/*
-		 * if ( pathFollowed == null ) {
-		 * scope.setStatus(ExecutionStatus.failure);
-		 * return null;
-		 * }
-		 */
+		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+		if (returnPath != null && returnPath) {
+			IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist);
+			if ( pathFollowed == null ) {
+				 scope.setStatus(ExecutionStatus.failure);
+				 return null;
+			}
+			scope.setStatus(ExecutionStatus.success);
+			return pathFollowed;
+		}
+		moveToNextLocAlongPathSimplified(agent, path, maxDist);
 		scope.setStatus(ExecutionStatus.success);
-		return path /* Followed */;
+		return null ;
 	}
 
 	/**
@@ -413,6 +417,8 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
+		path.setSource(currentLocation.copy());
+		
 		return null;
 	}
 
@@ -554,6 +560,7 @@ public class MovingSkill extends GeometricSkill {
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
+		path.setSource(currentLocation.copy());
 		if ( segments.isEmpty() ) { return null; }
 		IPath followedPath =
 			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);

@@ -94,5 +94,9 @@ public interface IPath extends IShape {
 	public abstract void setAgents(final Map agents);
 
 	public abstract IAgent getAgent(final Object obj);
+	
+	public void setSource(IShape source);
+
+	public void setTarget(IShape target);
 
 }

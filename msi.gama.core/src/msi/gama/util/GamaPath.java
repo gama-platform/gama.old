@@ -39,7 +39,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	GamaList<IShape> segments;
 	Map<IShape, IAgent> agents;
-	final IShape source, target;
+	IShape source, target;
 	final ITopology topology;
 
 	// GamaMap segmentsInGraph;
@@ -295,5 +295,15 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	public IAgent getAgent(final Object obj) {
 		return agents.get(obj);
 	}
+
+	public void setSource(IShape source) {
+		this.source = source;
+	}
+
+	public void setTarget(IShape target) {
+		this.target = target;
+	}
+	
+	
 
 }
