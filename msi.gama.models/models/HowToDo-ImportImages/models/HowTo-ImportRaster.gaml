@@ -33,7 +33,7 @@ global {
 		create species: izard number: nbIzard; 
     }
 }
-
+ 
 // We create a grid as environment with the same dimensions as the matrix in which we want to store the image
 // Note that the height (resp. the width) of the grid corresponds to the number of rows (resp. of columns) of the matrix:
 // - in the creation of a matrix: ([...] as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;)

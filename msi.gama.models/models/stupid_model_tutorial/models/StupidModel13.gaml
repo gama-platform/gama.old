@@ -25,7 +25,7 @@ environment {
 entities {
     species bug schedules: (list (bug)) sort_by each.size {
         var size type: float init: 1;
-        var color type: rgb value: rgb [255, 255/size, 255/size];
+        var color type: rgb value: rgb ([255, 255/size, 255/size]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;
         
@@ -36,8 +36,8 @@ entities {
                 set myPlace value: (location as stupid_grid);                
             }
         }
-        reflex grow {
-            let transfer value: min [maxConsumption, myPlace.food];
+        reflex grow { 
+            let transfer value: min ([maxConsumption, myPlace.food]);
             set size value: size + transfer;
             set myPlace.food value: myPlace.food - transfer;
         }
@@ -92,7 +92,7 @@ output {
         + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
     display series_display {
         chart name: 'Population history' type: series background: rgb('lightGray') {
-            data name: 'Bugs' value: length((bug as list)) color: 'blue';            
+            data name: 'Bugs' value: length((bug as list)) color: rgb( 'blue');            
         }
     }
 }

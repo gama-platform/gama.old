@@ -34,13 +34,13 @@ entities {
 	}
 	species people skills: [moving] {
 		var goal type: but ;
-		var my_path type: path;
+		var my_path type: path; 
 	
 		aspect default {
 			draw shape: circle color: 'green' size: 10 ;
 		}
 		reflex {
-			let followed_path type: path value: self.goto [on::the_graph, target::goal.location, speed::1];
+			let followed_path type: path value: self goto [on::the_graph, target::goal.location, speed::1];
 		}
 	}
 }

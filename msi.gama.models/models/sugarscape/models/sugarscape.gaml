@@ -31,7 +31,7 @@ environment width: 50 height: 50 {
 	grid sugar_cell width: 50 height: 50 neighbours: 4 {
 		const multiagent type: bool init: false;
 		var maxSugar type: int;
-		var sugar type: int init: maxSugar value: min [maxSugar, sugar + sugarGrowthRate];
+		var sugar type: int init: maxSugar value: min ([maxSugar, sugar + sugarGrowthRate]);
 		var color type: rgb value: [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
 	}
 }

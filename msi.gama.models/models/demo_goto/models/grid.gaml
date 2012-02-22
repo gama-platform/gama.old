@@ -34,7 +34,7 @@ entities {
 			let neighs type: list of: cell value: nil;
 			ask target: cell(location) { set neighs value: self neighbours_at myself.speed;}
 			add item: cell(location) to: neighs;
-			let followed_path type: path value: self.goto [on::cell, target::goal.location, speed::speed];
+			let followed_path type: path value: self goto [on::cell, target::goal.location, speed::speed];
 			let path_geom type: geometry value: followed_path.segments;
 			ask target: (neighs where (each.shape intersects path_geom)) {
 				set color value: 'magenta';

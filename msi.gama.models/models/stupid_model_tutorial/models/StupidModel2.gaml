@@ -15,7 +15,7 @@ environment {
 entities {
     species bug {
         var size type: float init: 1;
-        var color type: rgb value: rgb [255, 255/size, 255/size];
+        var color type: rgb value: rgb ([255, 255/size, 255/size]);
         
         reflex basic_move {
             let place type: stupid_grid value: location as stupid_grid;

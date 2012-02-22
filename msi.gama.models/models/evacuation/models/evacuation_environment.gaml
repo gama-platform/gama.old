@@ -104,12 +104,12 @@ entities {
 					if condition: (road_source_to_previous_location.perimeter < road_source_to_current_location.perimeter) { // agent moves towards extremity2
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
-						
+	
+					}					
 						else { // agent moves towards extremity1
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
-					}
 
 /*
 					do action: write {

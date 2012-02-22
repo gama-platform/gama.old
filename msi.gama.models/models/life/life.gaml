@@ -8,9 +8,9 @@ global {
 	var torus_environment type: bool init: true parameter: 'Torus?:' category: 'Board' ;
 	var density type: int init: 25 min: 1 max: 99 parameter: 'Initial density of live cells:' category: 'Cells' ;
 	var living_conditions type: list init: [2,3] parameter: 'Numbers of live neighbours required to stay alive:' category: 'Cells' ;
-	var birth_conditions type: list init: [3] parameter: 'Numbers of live neighbours required to become alive:' category: 'Cells' ;
+	var birth_conditions type: list init: [3] parameter: 'Numbers of live neighbours required to become alive:' category: 'Cells' ; 
 	var livingcolor type: rgb init: rgb('white') parameter: 'Color of live cells:' category: 'Colors' ;
-	var dyingcolor type: rgb init: rgb('red') parameter: 'Color of dying cells:' category: 'Colors' ;
+	var dyingcolor type: rgb init: rgb('red') parameter: 'Color of dying cells:' category: 'Colors' ; 
 	var emergingcolor type: rgb init: rgb('orange') parameter: 'Color of emerging cells:' category: 'Colors' ;
 	var deadcolor type: rgb init: rgb('black') parameter: 'Color of dead cells:' category: 'Colors' ;
 	action description  {
@@ -19,11 +19,11 @@ global {
 		}
 	}
 	init {
-		do action: description ;
+		do action: description ; 
 	}
 	reflex main {
-		ask target: list (life_cell) {
-			do action: evolve;
+		ask target: list (life_cell) {   
+			do action: evolve ;
 		}
 		ask target: list (life_cell) {
 			do action: update;
@@ -41,11 +41,10 @@ global {
 			if condition: state {
 				set new_state value: living in living_conditions ;
 				set color value: new_state? livingcolor : dyingcolor ;
-				else {
+			} else {
 					set new_state value: living in birth_conditions ;
 					set color value: new_state? emergingcolor : deadcolor ;
 				}
-			}
 		}
 		
 		action update {

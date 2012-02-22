@@ -34,16 +34,14 @@ entities {
 			set current_building value: (shuffle(all_places) first_with ((each.capacity) > 0));
 			ask target: current_building {
 				do action: accept {
-					arg one_people value: myself;
+					arg one_people value: myself; 
 				}
 			}
 		}
 		reflex migrate when: !is_happy {
 			if condition: current_building != nil {
 				ask target: current_building {
-					do action: remove {
-						arg one_people value: myself;
-					}
+					do  remove_one one_people:  myself;
 				}
 			}
 			do action: move_to_new_place;
@@ -52,18 +50,19 @@ entities {
 			draw shape: geometry size: 5;
 		}
 	}
-	species space skills: situated {
-		var insiders type: list of: people init: [];
+	species space skills: situated skills:[moving]
+	{	var insiders type: list of: people init: [];
 		var color type: rgb init: [255, 255, 255] as rgb;
 		var surface type: float;
 		var capacity type: int init: 1 + surface / square_meters_per_people;
+		reflex {do wander;}
 		action accept {
 			arg one_people;
 			add item: one_people to: insiders of self;
 			set location of (one_people as people) value: any_location_in(shape);
 			set capacity value: capacity - 1;
 		}
-		action remove {
+		action remove_one {
 			arg one_people type:people;
 			remove item: one_people from: insiders of self;
 			set capacity value: capacity + 1;

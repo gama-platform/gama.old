@@ -80,7 +80,7 @@ entities {
 		const nb_max_offsprings type: int init: prey_nb_max_offsprings ;
 		const my_icon type: string init: '../includes/data/sheep.png' ;
 		reflex eat when: myCell.food > 0 {
-			let energy_transfert value: min [max_transfert, myCell.food] ;
+			let energy_transfert value: min([max_transfert, myCell.food]) ;
 			set myCell.food value: myCell.food - energy_transfert ;
 			set energy value: energy + energy_transfert ;
 		}
@@ -107,10 +107,11 @@ entities {
 			let myCell_tmp type: vegetation_cell value: shuffle(myCell.neighbours) first_with (!(empty (agents_inside(each) of_species prey)));
 			if condition: myCell_tmp != nil {
 				set myCell value: myCell_tmp;
-				else {
+
+			}
+							else {
 					set myCell value: one_of (myCell.neighbours);
 				} 
-			}
 		} 
 	}
 
@@ -120,7 +121,7 @@ environment width: 100 height: 100 {
 	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
 		const maxFood type: float init: 1.0 ;
 		const foodProd type: float init: (rnd(1000) / 1000) * 0.01 ;
-		var food type: float init: (rnd(1000) / 1000) value: min [maxFood, food + foodProd] ;
+		var food type: float init: (rnd(1000) / 1000) value: min([maxFood, food + foodProd]) ;
 		var color type: rgb value: [255 * (1 - food), 255, 255 * (1 - food)] init: [255 * (1 - food), 255, 255 * (1 - food)] ;
 		var neighbours type: list of: vegetation_cell init: (self neighbours_at 2) of_species vegetation_cell;
 	}

@@ -24,10 +24,10 @@ environment {
 
 entities {
     species bug schedules: (list (bug)) sort_by each.size {
-        var size type: float init: 1;
-        var color type: rgb value: rgb [255, 255/size, 255/size];
-        var maxConsumption type: float value: globalMaxConsumption;
-        var myPlace type: stupid_grid value: location as stupid_grid;
+        float size<- 1;
+        rgb color value: rgb ([255, 255/size, 255/size]);
+        float maxConsumption <- globalMaxConsumption;
+        stupid_grid myPlace value: stupid_grid at location;
         
         reflex basic_move {
             let destination type: stupid_grid value: last (((myPlace neighbours_at 4) where empty(each.agents)) sort_by (each.food));
@@ -37,12 +37,12 @@ entities {
             }
         }
         reflex grow {
-            let transfer value: min [maxConsumption, (location as stupid_grid).food];
-            set size value: size + transfer;
+            let transfer value: min ([maxConsumption, (location as stupid_grid).food]);
+            set size <- size + transfer;
             set (location as stupid_grid).food value: (location as stupid_grid).food - transfer;
         }
         reflex shallDie when: ((rnd(100)) / 100.0) > survivalProbability {
-            do action: die;
+            do action: die; 
         }
         reflex multiply {
             if condition: size > 10 {

@@ -12,7 +12,7 @@ global {
 	// Constants
 	const heightImg type: int init: 5587;
 	const widthImg type: int init: 6201;	
-	const boundsMNT type: file init: '../images/mnt/boundsMNT.shp';
+	const boundsMNT type: file init: "../images/mnt/boundsMNT.shp"; 
 	
 	// Parameters related to the MNT
 	var mntImageRaster type: file init: '../images/mnt/testAG.png' parameter: 'MNT file' category: 'MNT' ;
@@ -30,7 +30,7 @@ global {
 
 
 	// Local variable
-	var mapColor type: matrix ;
+	var mapColor type: matrix ; 
 			
 	// Initialization of grid and creation of the izard agents.
 	// Creation of managmentUnit and rivers agents from the corresponding shapefile

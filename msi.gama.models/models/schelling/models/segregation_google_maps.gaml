@@ -28,7 +28,7 @@ environment width: dimensions height: dimensions {
 	grid space width: dimensions height: dimensions neighbours: 8 torus: true ;
 }
 entities {
-	species people parent: base skills: situated {
+	species people parent: base skills: situated { 
 		var location type: point init: all_places first_with empty(each.agents) ;
 		const color type: rgb init: colors at (rnd (number_of_groups - 1)) ;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people ;
@@ -51,7 +51,7 @@ entities {
 	}
 }
 output {
-	display Segregation background: 'black' {
+	display Segregation background: rgb('black') {
 		image name: 'bg' file: bitmap_file_name size: {0.6,0.6} position: {0.35,0.35} ;
 		agents agents value: agents of_species people transparency: 0.5 size: {0.6,0.6} position: {0.35,0.35} ;
 		grid space size: {0.6,0.6} position: {0.05,0.05} transparency: 0 ;

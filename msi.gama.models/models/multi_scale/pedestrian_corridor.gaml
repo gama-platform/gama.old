@@ -104,12 +104,12 @@ entities {
 						arg name: heading value: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2};
 					} 
 					
-					else {
+
+				} else {
 						do action: move {
 							arg name: heading value: self towards {environment_size / 2, environment_size / 2};
 						} 
 					}
-				}
 			}
 			
 			if condition: ( (target_location.x - location.x) <= speed ) {

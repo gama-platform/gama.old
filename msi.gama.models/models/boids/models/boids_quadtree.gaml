@@ -25,7 +25,7 @@ global {
 	var xmin type: int value: bounds;
 	var ymin type: int value: bounds;
 	var xmax type: int value: width_and_height_of_environment - bounds;
-	var ymax type: int value: width_and_height_of_environment - bounds;
+	var ymax type: int value: width_and_height_of_environment - bounds; 
 	init {
 		create species: boids number: number_of_agents {
 			set location value: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
@@ -38,16 +38,14 @@ global {
 		}
 	}
 }
+
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
 entities {
 	species boids_goal skills: moving {
 		const range type: float init: 20;
 		const size type: float init: 10;
 		reflex {
-			do action: wander {
-				arg amplitude value: 45;
-				arg speed value: 20;
-			}
+			do  wander amplitude:45 speed: 20 ;
 			set goal value: location;
 		}
 		aspect default {
@@ -69,7 +67,7 @@ entities {
 		reflex separation when: apply_separation {
 			let acc value: {0,0};
 	
-			loop boid over: (self.others_at [distance:: minimal_distance]) of_species boids  {
+			loop boid over: (self others_at [distance:: minimal_distance]) of_species boids  {
 				set acc value: acc - ((location of boid) - my location);
 			}
 			set velocity value: velocity + acc;
@@ -82,14 +80,14 @@ entities {
 			set velocity value: velocity + (acc / alignment_factor);
 		}
 		reflex cohesion when: apply_cohesion {
-			let acc value: ((self.compute_mass_center []) as point) - location;
+			let acc value: ((self compute_mass_center []) as point) - location;
 			set acc value: acc / cohesion_factor;
 			set velocity value: velocity + acc;
 		}
 		reflex avoid when: apply_avoid {
 			let acc value: {0,0};
 
-			loop obs over: (self.others_at [distance::(minimal_distance * 2)]) of_species obstacle  {
+			loop obs over: (self others_at [distance::(minimal_distance * 2)]) of_species obstacle  {
 				set acc value: acc - ((location of obs) - my location);
 			}
 			set velocity value: velocity + acc;
@@ -117,18 +115,17 @@ entities {
 			set velocity value: velocity + wind_vector;
 		}
 		action do_move {
-			if condition: ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
+			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
 				set velocity value: {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			let old_location value: location;
-			do action: goto {
-				arg target value: location + velocity;
+			do goto target: location + velocity;
 			}
 			set velocity value: location - old_location;
 		}
 		reflex movement {
-			do action: bounding;
-			do action: do_move;
+			do  bounding;
+			do  do_move;
 		}
 		aspect image {
 			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black';
@@ -140,22 +137,16 @@ entities {
 	species obstacle skills: [moving] {
 		var speed type: float init: 0.1;
 		reflex when: moving_obstacles {
-			if condition: flip(0.5) {
-				do action: goto {
-					arg target value: one_of(boids) as list;
-				}
-				else {
-					do action: wander {
-						arg amplitude value: 360;
-					}
-				}
-			}
+			if condition: flip(0.5) 
+				{do goto target: one_of(boids) as list;}
+			else 
+				{do wander amplitude: 360;}
 		}
 		aspect default {
 			draw shape: triangle color: rgb('yellow') size: 10;
 		}
 	}
-}
+	
 output {
 	inspect name: 'Inspector' type: agent;
 	display Sky refresh_every: 1 {

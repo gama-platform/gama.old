@@ -30,4 +30,4 @@ output {
         grid stupid_grid;
         species bug aspect: basic;
     }
-}
+} 

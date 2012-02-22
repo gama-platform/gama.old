@@ -10,21 +10,19 @@ global {
     var init_data type: matrix init: matrix(file('../data/Stupid_Cell.Data')) const: true;
     var width type: int init: ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}) max_of each const: true;
     var height type: int init: ((init_data column_at 1) copy_between {3,init_data.rows - 1}) max_of each const: true;
-    init {
+    init { 
         create species: bug number: numberBugs;
-        
-        let i type: int value: 0;
-		loop from: 3 to: ((init_data.rows)) - 1 var: i {
+		loop i from: 3 to: ((init_data.rows)) - 1 {
 			let ind_i type: int value: init_data at {0,i};
 			let ind_j type: int value: init_data at {1,i};
-			ask target: (stupid_grid ) grid_at {ind_i,ind_j} {
+			ask stupid_grid grid_at {ind_i,ind_j} {
 				set foodProd value: init_data at {2,i};
 			}
 		}
     }
     reflex shouldHalt when: (time > 1000) or (empty (bug as list)) {
         do action: halt;
-    }
+    } 
 }
 
 environment{
@@ -39,7 +37,7 @@ environment{
 entities {
     species bug schedules: (list (bug)) sort_by each.size {
         var size type: float init: gauss({initialBugSizeMean,initialBugSizeSD});
-        var color type: rgb value: (size > 0) ? rgb [255, 255/size, 255/size] : rgb [255, 255, 255];
+        var color type: rgb value: (size > 0) ? rgb ([255, 255/size, 255/size]) : rgb ([255, 255, 255]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;
         
@@ -56,7 +54,7 @@ entities {
             }
         }
         reflex grow {
-            let transfer value: min [maxConsumption, myPlace.food];
+            let transfer value: min ([maxConsumption, myPlace.food]);
             set size value: size + transfer;
             set myPlace.food value: myPlace.food - transfer;
         }
@@ -111,7 +109,7 @@ output {
         + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
     display series_display {
         chart name: 'Population history' type: series background: rgb('lightGray') {
-            data name: 'Bugs' value: length((bug as list)) color: 'blue';            
+            data name: 'Bugs' value: length((bug as list)) color: rgb('blue');            
         }
     }
 }

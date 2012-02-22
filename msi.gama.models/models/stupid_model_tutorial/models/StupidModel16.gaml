@@ -15,15 +15,15 @@ global {
         create species: predator number: 200; 
         let i type: int value: 0;  
     	loop from: 3 to: ((init_data.rows)) - 1 var: i {
-   			let ind_i type: int value: init_data at {0,i};
-   			let ind_j type: int value: init_data at {1,i};
+   			let ind_i type: int value: init_data at {0,i}; 
+   			let ind_j type: int value: init_data at {1,i}; 
 			ask target: (stupid_grid ) grid_at {ind_i,ind_j} {
    				set foodProd value: init_data at {2,i};
 			} 
 		}
     }
     reflex shouldHalt when: (time > 1000) or (empty (bug as list)) {
-        do action: halt;
+        do action: halt ;
     }
 }
 
@@ -37,9 +37,9 @@ environment  {
 }
 
 entities {
-    species bug schedules: (list (bug)) sort_by each.size {
+    species bug schedules: (list (bug)) sort_by each.size skills: 1 {
         var size type: float init: gauss({initialBugSizeMean,initialBugSizeSD});
-        var color type: rgb value: (size > 0) ? rgb [255, 255/size, 255/size] : rgb [255, 255, 255];
+        var color type: rgb value: (size > 0) ? rgb( [255, 255/size, 255/size]) : rgb ([255, 255, 255]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;
         
@@ -56,7 +56,7 @@ entities {
             }
         }
         reflex grow {
-            let transfer value: min [maxConsumption, myPlace.food];
+            let transfer value: min ([maxConsumption, myPlace.food]);
             set size value: size + transfer;
             set myPlace.food value: myPlace.food - transfer;
         }
@@ -83,29 +83,29 @@ entities {
 	species predator{
 	    var color type:rgb init:'blue';
         var myPlace type: stupid_grid value:location as stupid_grid;
-		
+		 
 		reflex hunt {
 			let the_neighbours type: list value: myPlace neighbours_at 1;
 			let the_neighbours_bug type:list value: the_neighbours accumulate (each.agents of_species bug);
-     		let chosenPrey type: bug value: one_of(the_neighbours_bug);
+     		let chosenPrey type: bug value: one_of( the_neighbours_bug);
 		    if condition: chosenPrey != nil {
 		     	let new_loc type: stupid_grid value: chosenPrey.location as stupid_grid;	
-		     	if condition: empty(new_loc.agents of_species predator){
-		     		set location value: new_loc;
+		     	if condition: empty(new_loc.agents of_species predator ){
+		     		set location value: new_loc ;
 		     		ask target: chosenPrey {
 		     			do action: die;
 		     		}
 		     	}
 		     else {
-		     	set location value: one_of(the_neighbours as list);
+		     	set location value: one_of(the_neighbours as list);  
 		     	set myPlace value: location as stupid_grid;
-		     }
-		     
+		     } 
+		      
 		     }
 		} 
 		
-		aspect basic{
-			draw shape: circle color: color size: 2;
+		aspect basic{ 
+			draw shape: circle color:  color size: 2 ;
 		}
 	}  
 }

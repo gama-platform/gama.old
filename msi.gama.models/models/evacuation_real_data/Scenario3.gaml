@@ -23,7 +23,7 @@ global {
 	var shape_file_zone type: string init: '/gis/zone.shp';
 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
-
+ 
 	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?
 	var pedestrian_size type: float init: 1 const: true;
 	var pedestrian_color type: rgb init: rgb('green');
@@ -148,11 +148,12 @@ entities {
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
 						
-						else { // agent moves towards extremity1
+
+					}
+					else { // agent moves towards extremity1
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
-					}
 
 					set cp.last_road value: self;
 					set cp.released_time value: time + (skip_distance / pedestrian_speed);
@@ -222,34 +223,35 @@ entities {
 	   	var x type: float;
 	   	var y type: float;
 	   	var zone_id type: int;
-	   	var color type: rgb init: zone3_building_color;
+	   	var color type: rgb init: zone3_building_color; 
 	   	
 	   	init {
 	   		let overlapping_zone type: list of: zone value: zone overlapping shape;
-	   		if condition: !(empty (overlapping_zone)) {
+	   		if condition: !(empty (overlapping_zone)) { 
 	   			
 	   			set zone_id value: (first(overlapping_zone)).id;
 	   			
 	   			if condition: (zone_id = 1) {
 	   				set color value: zone1_building_color;
 	   				
-	   				else {
+	   				
+	   			}
+	   			else {
 	   					if condition: (zone_id = 2) {
 	   						set color value: zone2_building_color;
 	   					}
 	   				}
-	   			}
 	   		}
 	   	}
 	   	
-	   	aspect base {
+	   	aspect base { 
 	   		draw shape: geometry color: color;
-	   	}
+	   	} 
 	}
 	   
 	species beach {
 	   	aspect base {
-	   		draw shape: geometry color: rgb('green');
+	   		draw shape: geometry color: rgb('green'); /// essai
 	   	}
 	}
 		
@@ -307,7 +309,7 @@ entities {
 						}
 						
 						if condition: (location = target2) {
-							set reach_target2 value: true;
+							set reach_target2 value: true; 
 						}
 						
 						else {
@@ -351,23 +353,21 @@ entities {
 			let nearest_shelter type: destination value: destination closest_to self;
 			if condition: ( (nearest_shelter != nil) and ( (nearest_shelter distance_to self) <= pedestrian_perception_range ) ) {
 				set shelter value: nearest_shelter;
-				
-				else {
+			}
+			else {
 					let nearest_guider type: guider value: guider closest_to self;
 					if condition: ( (nearest_guider != nil) and ( (nearest_guider distance_to self) <= pedestrian_perception_range ) ) {
 						set shelter value: nearest_guider.safe_building;
-						
-						else {
+					}
+					else {
 							let neighbour_with_shelter type: pedestrian value: one_of ( ( pedestrian overlapping (shape + pedestrian_perception_range) ) where (each.shelter != nil) );
 							
 							if condition: (neighbour_with_shelter != nil) {
 								set shelter value: neighbour_with_shelter.shelter;
 							}
 						}
-					}
+					}		
 				}
-			}
-		}
 		
 		reflex wander_around when: (shelter = nil) {
 			

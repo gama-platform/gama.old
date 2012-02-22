@@ -68,7 +68,7 @@ global {
 		
 		do action: halt;
 	}
-}
+} 
 
 entities {
 	species road {
@@ -107,12 +107,12 @@ entities {
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
 						
-						else { // agent moves towards extremity1
+						
+					}
+					else { // agent moves towards extremity1
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
-					}
-
 					set cp.last_road value: self;
 					set cp.released_time value: time + (skip_distance / pedestrian_speed);
 				}
@@ -203,10 +203,11 @@ entities {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
 				
-				else {
+
+			}
+			else {
 					set reach_shelter value: true;
 				}
-			}
 		}
 		
 		aspect base {
@@ -264,11 +265,11 @@ experiment default_expr type: gui {
  			species pedestrian aspect: base transparency: 0.1;
 		}
 
-		display guider_road_network {
-		 	species road aspect: base transparency: 0.1;
-		 	species panel aspect: base transparency: 0.01;
- 			species guider aspect: base transparency: 0.1;
-		}
+//		display guider_road_network {
+//		 	species road aspect: base transparency: 0.1;
+//		 	species panel aspect: base transparency: 0.01;
+// 			species guider aspect: base transparency: 0.1;
+//		}
 
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {

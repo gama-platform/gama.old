@@ -25,7 +25,7 @@ global {
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
 
-	var shapeSign type: string init: '/icons/CaliforniaEvacuationRoute.jpg' const: true;
+	var shapeSign type: string init: '/icons/CaliforniaEvacuationRoute.jpg' const: true; 
 
 	var terminal_panel_ids type: list of: int init: [8];
 
@@ -113,11 +113,11 @@ entities {
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
 						
-						else { // agent moves towards extremity1
+
+					} else { // agent moves towards extremity1
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
-					}
 
 					set cp.released_time value: time + (skip_distance / pedestrian_speed);
 				}
@@ -246,11 +246,11 @@ entities {
 			if condition: !(current_panel.is_terminal) {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
-				
+
+			}				
 				else {
 					set reach_shelter value: true;
 				}
-			}
 		}
 		
 		aspect base {
@@ -270,20 +270,20 @@ entities {
 			if condition: ( (nearest_panel != nil) and ( (nearest_panel distance_to self) <= pedestrian_perception_range ) ) {
 				set current_panel value: nearest_panel;
 				
-				else {
+
+			}				else {
 					let nearest_guider type: guider value: guider closest_to self;
 					if condition: ( (nearest_guider != nil) and ( (nearest_guider distance_to self) <= pedestrian_perception_range ) ) {
 						set current_panel value: nearest_guider.current_panel;
-						
+
+					}						
 						else {
 							let neighbour_with_panel_info type: pedestrian value: one_of ( (pedestrian overlapping (shape + nearest_guider)) where (each.current_panel != nil) );
 							if condition: (neighbour_with_panel_info != nil) {
 								set current_panel value: neighbour_with_panel_info.current_panel;
 							}
 						}
-					}
 				}
-			}
 		}
 		
 		reflex move when: !(reach_shelter) and (current_panel != nil) {
@@ -297,14 +297,14 @@ entities {
 		}
 		
 		reflex switch_panel when: (current_panel != nil) and !(reach_shelter) and (location = current_panel.location) {
-			if condition: !(current_panel.is_terminal) {
+			if  !(current_panel.is_terminal) {
 				
 				set current_panel value: one_of ( (list (panel)) where (each.id =  current_panel.next_panel_id) ) ;
 				
-				else {
+				
+			}else {
 					set reach_shelter value: true;
 				}
-			}
 		}
 		
  		aspect base {

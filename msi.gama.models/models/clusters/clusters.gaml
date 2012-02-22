@@ -27,7 +27,7 @@ entities {
 		const speed type: float init: speed_of_agents  ;
 		var leader type: cells init: self ;
 		var heading type: int init: rnd(359) value: leader.heading ;
-		reflex move {
+		reflex move { 
 			do action: move ;
 		}
 		reflex when: (leader != self) and (self distance_to leader > (leader.range - (leader.range / 10.0))) {

@@ -82,7 +82,7 @@ entities {
 			set the_target value: any_location_in (living_place.shape); 
 		}
 		reflex move when: the_target != nil { 
-			let path_followed type: path value: self.goto [target::the_target, on::the_graph];
+			let path_followed type: path value: self goto [target::the_target, on::the_graph];
 			let segments type: list of: geometry value: path_followed.segments;
 			loop line over: segments {
 				let dist type: float value: line.perimeter;

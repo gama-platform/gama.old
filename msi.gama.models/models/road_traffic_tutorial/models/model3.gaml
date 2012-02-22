@@ -14,15 +14,15 @@ global {
 	var max_speed type: float init: 100 parameter: 'maximal speed' category: 'People' ;
 	var the_graph type: graph;
 	init {
-		create species: building from: shape_file_buildings with: [type::read('NATURE')] {
-			if condition: type='Industrial' {
+		create building from: shape_file_buildings with: [type::read('NATURE')] {
+			if  type='Industrial' {
 				set color value: rgb('blue') ;
 			}
 		}
 		create species: road from: shape_file_roads ;
 		set the_graph value: as_edge_graph(list(road));
 		
-		let residential_buildings type: list value: (building as list) where (each.type='Residential') ;
+		let residential_buildings type: list value: (building as list) where (each.type='Residential') ; 
 		let industrial_buildings type: list value: (building as list) where (each.type='Industrial') ;
 		create species: people number: nb_people {
 			set speed value: min_speed + rnd (max_speed - min_speed) ;
@@ -47,14 +47,14 @@ entities {
 		aspect base {
 			draw shape: geometry color: color ;
 		}
-	}
+	} 
 	species people skills: [moving]{
 		var color type: rgb init: rgb('yellow') ;
 		var living_place type: building init: nil ;
 		var working_place type: building init: nil ;
 		var start_work type: int ;
 		var end_work type: int ;
-		var objectif type: string ;
+		var objectif type: string ; 
 		var the_target type: point init: nil ;
 		var shape type: geometry init: circle(5);
 
@@ -65,24 +65,21 @@ entities {
 		reflex time_to_go_home when: day_time = end_work {
 			set objectif value: 'go home' ;
 			set the_target value: any_location_in (living_place.shape); 
-		}
+		}  
 		reflex move when: the_target != nil {
-			do action: goto {
-				arg target value: the_target ;
-				arg on value: the_graph;
-			}
-			if condition: the_target = location {
-				set the_target value: nil ;
+			do goto target: the_target on: the_graph ; 
+			switch the_target { 
+				match location {set the_target value: nil ;}
 			}
 		}
-				aspect default {
+		aspect default {
 			draw shape: geometry color: color ;
 		}
 	}
 }
 environment bounds: shape_file_bounds ;
 output {
-	display city_display refresh_every: 1 {
+		display city_display refresh_every: 1 {
 		species building aspect: base ;
 		species road aspect: base ;
 		species people  ;

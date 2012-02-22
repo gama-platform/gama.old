@@ -19,22 +19,20 @@ environment {
     grid stupid_grid width: 100 height: 100 torus: true {
         var color type: rgb init: rgb('black');
         var maxFoodProdRate type: float value: globalMaxFoodProdRate;
-        var foodProd type: float value: (rnd(1000) / 1000) * maxFoodProdRate;
-        var food type: float init: 0.0 value: food + foodProd;
+        float foodProd <- (rnd(1000) / 1000) * maxFoodProdRate;
+        float food <- 0.0 update: food + foodProd; 
     }
-}
+} 
 
 entities {
-    species bug schedules: (list (bug)) sort_by each.size {
-        var size type: float init: gauss({initialBugSizeMean,initialBugSizeSD});
-        var color type: rgb value: (size > 0) ? rgb [255, 255/size, 255/size] : rgb [255, 255, 255];
-        var maxConsumption type: float value: globalMaxConsumption;
-        var myPlace type: stupid_grid value: location as stupid_grid;
- 
+    species bug schedules: (list (bug)) sort_by each.size { 
+        float size <- gauss({initialBugSizeMean,initialBugSizeSD});
+        rgb color update: (size > 0) ? rgb ([255, 255/size, 255/size]) : rgb ([255, 255, 255]);
+        float maxConsumption <- globalMaxConsumption;
+        stupid_grid myPlace <- location as stupid_grid ;   
+   
         init {
-        	if condition: size<0 {
-        		set size value: 0;
-        	}
+        	if size<0 { set size <- 0; }
         }
         reflex basic_move {
             let destination type: stupid_grid value: last (((myPlace neighbours_at 4) where empty(each.agents)) sort_by (each.food));
@@ -44,7 +42,7 @@ entities {
             }
         }
         reflex grow {
-            let transfer value: min [maxConsumption, myPlace.food];
+            let transfer value: min ([maxConsumption, myPlace.food]);
             set size value: size + transfer;
             set myPlace.food value: myPlace.food - transfer;
         }
@@ -99,7 +97,7 @@ output {
         + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
     display series_display {
         chart name: 'Population history' type: series background: rgb('lightGray') {
-            data name: 'Bugs' value: length((bug as list)) color: 'blue';            
+            data name: 'Bugs' value: length((bug as list)) color: rgb('blue');            
         }
     }
 }

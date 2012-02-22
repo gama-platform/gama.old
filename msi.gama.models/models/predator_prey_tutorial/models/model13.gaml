@@ -92,7 +92,7 @@ entities {
 		const my_icon type: string init: '../includes/data/sheep.png' ;
 		var speed type: float value: prey_speed;
 		reflex eat when: myPatch.food > 0 {
-			let energy_transfert value: min [max_transfert, myPatch.food] ;
+			let energy_transfert value: min ([max_transfert, myPatch.food]) ;
 			set myPatch.food value: myPatch.food - energy_transfert ;
 			set energy value: energy + energy_transfert ;
 		}
@@ -117,7 +117,7 @@ entities {
 	species vegetation skills: situated {
 		var max_food type: float value: 100 ;
 		var foodProd type: float ;
-		var food type: float value: min [max_food, food + foodProd] ;
+		var food type: float value: min([max_food, food + foodProd] );
 		var color type: rgb value: [255 * ((max_food - food) / max_food), 255, 255 * ((max_food - food) / max_food)] ;
 		aspect base {
 			draw shape: geometry color: color ;

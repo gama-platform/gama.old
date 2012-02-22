@@ -2,8 +2,8 @@ model balls_groups
 
 
 
-global {
-	const environment_bounds type: point init: {500, 500};
+global { 
+	const environment_bounds type: point init: {500, 500}; 
 	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) depends_on: environment_bounds ;
 	const inner_bounds_y type: int init: ((environment_bounds.y) / 20) depends_on: environment_bounds ;
 	var xmin type: int init: inner_bounds_x ;
@@ -11,15 +11,15 @@ global {
 	var xmax type: int init: (environment_bounds.x) - inner_bounds_x ;
 	var ymax type: int init: (environment_bounds.y) - inner_bounds_y ;
 	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y depends_on: environment_bounds ;
-	var ball_color type: rgb init: rgb('green');
+	var ball_color type: rgb init: rgb('green'); 
 	var chaos_ball_color type: rgb init: rgb('red');
 	var ball_size type: float init: 3;  
 	var ball_speed type: float init: 1;
-	var chaos_ball_speed type: float init: 8 * ball_speed;
+	var chaos_ball_speed type: float init: 8 * ball_speed;  
 	var ball_number type: int init: 500 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
-	var ball_separation type: float init: 6 * ball_size;
-	var create_group type: bool init: true;
+	var ball_separation type: float init: 6 * ball_size; 
+	var create_group type: bool init: true; 
 	var group_creation_distance type: int init: ball_separation + 1;
 	var min_group_member type: int init: 3;
 	var group_base_speed type: int init: (ball_speed * 1.5);
@@ -59,18 +59,18 @@ entities {
 	
 	species ball parent: base control: fsm {
 		//var shape type: geometry init: ball_shape at_location location ;
-		var speed type: float init: ball_speed ;
+		var speed type: float init: ball_speed ; 
 		var color type: rgb init: ball_color ;
-		var beginning_chaos_time type: int ;
+		var beginning_chaos_time type: int ; 
 		var time_in_chaos_state type: int ;
 		
 		init {
-			let continue_loop type: bool value: true ;
+			let continue_loop type: bool value: true ; 
 			loop while: continue_loop {
 				let tmp_location type: point value: {(rnd (xmax - xmin)) + xmin, (rnd (ymax - ymin)) + ymin} ;
-				let potential_geom type: geometry value: ball_shape at_location tmp_location ;
+				let potential_geom type: geometry value: ball_shape at_location tmp_location ; 
 				
-				if condition: ( empty ( (ball as list) where  ( each.shape intersects potential_geom ) ) )  {
+				if ( empty ( (ball as list) where  ( each.shape intersects potential_geom ) ) )  {
 					set location value: tmp_location ;
 					set continue_loop value: false ;
 				}
@@ -85,8 +85,8 @@ entities {
 			loop nb over: nearby_balls {
 				let repulsive_distance var: repulsive_distance type: float value: ball_separation - ( location distance_to (ball (nb)).location ) ;
 				let repulsive_direction var: repulsive_direction type: int value: ((ball (nb)).location) towards (location) ;
-				set repulsive_dx var: repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
-				set repulsive_dy var: repulsive_dy value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
+				set repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
+				set repulsive_dy  value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 			}
 			set location value: location + {repulsive_dx, repulsive_dy} ;
 		}
@@ -96,7 +96,7 @@ entities {
 			
 			return value: ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
-		
+		 
 		state follow_nearest_ball initial: true {
 			enter {
 				set color value: ball_color ;
@@ -110,8 +110,8 @@ entities {
 				let step_x type: float value: step_distance * (cos (heading)) ;
 				let step_y type: float value: step_distance * (sin (heading)) ;
 				let tmp_location var: tmp_location type: point value: location + {step_x, step_y} ;
-				if condition: (self.in_bounds [ a_point :: tmp_location ] ) {
-					set location var: location value: tmp_location ;
+				if condition: (self in_bounds [ a_point :: tmp_location ] ) {
+					set location value: tmp_location ;
 					do action: separation {
 						arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 					}
@@ -121,19 +121,19 @@ entities {
 		
 		state chaos {
 			enter {
-				set beginning_chaos_time var: beginning_chaos_time value: time ;
-				set time_in_chaos_state var: time_in_chaos_state value: 10 + (rnd(10)) ;
-				set color var: color value: chaos_ball_color ;
-				set speed var: speed value: chaos_ball_speed ;
-				set heading var: heading value: rnd(359) ;
+				set beginning_chaos_time value: time ;
+				set time_in_chaos_state value: 10 + (rnd(10)) ;
+				set color value: chaos_ball_color ;
+				set speed value: chaos_ball_speed ;
+				set heading value: rnd(359) ;
 			}
 			
 			let step_distance var: step_distance type: float value: speed * step ;
 			let step_x var: step_x type: float value: step_distance * (cos (heading)) ;
 			let step_y var: step_y type: float value: step_distance * (sin (heading)) ;
 			let tmp_location type: point value: location + {step_x, step_y} ;
-			if condition: (self.in_bounds [ a_point :: tmp_location]) {
-				set location var: location value: tmp_location ;
+			if condition: (self in_bounds [ a_point :: tmp_location]) {
+				set location value: tmp_location ;
 				do action: separation {
 					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 				}
@@ -148,7 +148,7 @@ entities {
 	}
 	
 	species group parent: base {
-		var color type: rgb init: rgb [ rnd(255), rnd(255), rnd(255) ] ;
+		var color type: rgb init: rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
 		var shape type: geometry init: (polygon ( (list (ball_delegation)) )) buffer  10 ;
 		
@@ -156,7 +156,7 @@ entities {
 		var perception_range type: float value: base_perception_range + (rnd(5)) ;
 		var nearest_free_ball type: ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		var nearest_smaller_group type: group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		var target type: base value: (self.get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
+		var target type: base value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
 		action get_nearer_target type: base {
 			if condition: (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
@@ -188,7 +188,7 @@ entities {
 			}
 		}
 		
-		species ball_delegation parent: ball topology: (world).shape  {
+		species ball_delegation parent: ball topology: topology((world).shape)  {
 			
 			float my_age init: 1 value: my_age + 0.01;
 			 
@@ -197,7 +197,7 @@ entities {
 			state chaos { }
 			
 			aspect default {
-				draw shape: circle color: (host as group).color.darker size: my_age ;
+				draw shape: circle color: ((host as group).color).darker size: my_age ;
 			}
 		}
 		
@@ -221,24 +221,18 @@ entities {
 			if condition: (target != nil) and ((species_of (target)) = group) {
 				let nearby_groups type: list of: group value: (group overlapping (shape + perception_range)) - self ;
 				
-				if condition: target in nearby_groups {
-					if condition: (rnd(10)) < (merge_possibility * 10) {
+				if target in nearby_groups {
+					if (rnd(10)) < (merge_possibility * 10) {
 						let target_coms var: target_coms type: list of: ball_delegation value: target.members ;
 						let released_balls type: list of: ball value: [];
-						ask target: target {
-							release target: target_coms returns: released_coms;
+						ask target {
+							release target_coms returns: released_coms;
 							set released_balls value: released_coms;
-							do action: die ;
+							do die ;
 						}
-
 						capture target: released_balls as: ball_delegation; 
-						
-						else {
-							ask target: target as group {
-								do action: disaggregate ;
-							}
-						}
 					}
+				else { ask target as group {do disaggregate ;} }
 				}
 			}
 		}
@@ -266,25 +260,25 @@ entities {
 				let tmp_dx value: dx + topleft_point.x ;
 				set dx value: dx - tmp_dx ;
 				
-				else {
+
+			}				else {
 					if condition: (dx + bottomright_point.x) > (environment_bounds.x) {
 						let tmp_dx value: (dx + bottomright_point.x) - environment_bounds.x ;
 						set dx value: dx - tmp_dx ;
 					}
 				}
-			}
 			
-			if condition: (dy + topleft_point.y) < 0 {
+			if  (dy + topleft_point.y) < 0 {
 				let tmp_dy value: dy + topleft_point.y ;
 				set dy value: dy - tmp_dy ;
 				
-				else {
+				
+			}else {
 					if condition: (dy + topleft_point.y) > (environment_bounds.y) {
 						let tmp_dy value: (dy + bottomright_point.y) - (environment_bounds.y) ;
 						set dy value: dy - tmp_dy ;
 					}
 				}
-			}
 			
 			loop com over: (list (ball_delegation)) {
 				set (ball_delegation (com)).location value: (ball_delegation (com)).location + {dx, dy} ;

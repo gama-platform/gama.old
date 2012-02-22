@@ -35,8 +35,8 @@ entities {
 			remove item: location as space from: free_places;
 		}
 		
-		aspect default{
-			draw shape:circle size:1.2 color: color;
+		aspect default{ 
+			draw shape:circle size:1.2 color: color; 
 		}
 	}
 }

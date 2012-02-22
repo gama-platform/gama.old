@@ -24,7 +24,7 @@ environment {
 entities {
     species bug schedules: (list (bug)) sort_by each.size {
         var size type: float init: 1;
-        var color type: rgb value: rgb [255, 255/size, 255/size];
+        var color type: rgb value: rgb ([255, 255/size, 255/size]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;
         
@@ -36,8 +36,8 @@ entities {
             }
         }
         reflex grow {
-            let transfer value: min [maxConsumption, myPlace.food];
-            set size value: size + transfer;
+            let transfer value: min ([maxConsumption, myPlace.food]);
+            set size value: size + transfer; 
             set myPlace.food value: myPlace.food - transfer;
         }
         aspect basic {

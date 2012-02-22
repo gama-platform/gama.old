@@ -2,17 +2,16 @@ model segregation
 // gen by Xml2Gaml
 
 
-import "../include/schelling_common.xml.gaml"
+import "../include/schelling_common.gaml"
 global {
 	var dimensions type: int;
 	var neighbours_distance type: int init: 50 max: 100 min: 1 parameter: 'Distance of perception:' category: 'Population';
 	var shape_file_name type: string init: '../gis/nha2.shp' parameter: 'Path of shapefile to load:' category: 'GIS specific';
 	action initialize_people {
-		abstract all_places;
 		set number_of_people value: density_of_people * length(all_places);
 		create species: people number: number_of_people {
 			set location value: one_of(space);
-		}
+		} 
 		set all_people value: people as list;
 	}
 	action description {
@@ -36,3 +35,4 @@ entities {
 }
 environment width: 5#km height: 4#km;
 output;
+ 

@@ -67,7 +67,7 @@ entities {
 		}
 
 		reflex move when: (goal != nil) {
-			let followedPath type: path value: self.goto [on::the_graph, target::goal.location, speed::6];
+			let followedPath type: path value: self goto [on::the_graph, target::goal.location, speed::6];
 			let segments type: list of: geometry value: followedPath.segments;
 			
 			if condition: ( (length (segments)) > 1 ) {
@@ -78,12 +78,13 @@ entities {
 							arg name: message value: 'time step: ' + (string (time)) + ' ag: ' + (ag) ;
 						}
 						
-						else {
+
+					}
+					else {
 							do action: write {
 								arg name: message value: '(followedPath agent_from_geometry line) returns NIL';
 							}
 						}
-					}
 				}
 			}
 			

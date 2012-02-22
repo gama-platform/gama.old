@@ -5,17 +5,17 @@ global {
 	'Evaporation Rate:';
 	const diffusion_rate type: float init: 0.5 min: 0 max: 1 parameter:
 	'Diffusion Rate:';
-	const gridsize type: int init: 75;
+	const gridsize type: int init: 75; 
 	const ants_number type: int init: 100 min: 1 max: 200 parameter:
 	'Number of Ants:';
 	var food_remaining type: int value: list ( ant_grid ) count ( each . food > 0
 	) init: 10;
-	const center type: point init: { round ( gridsize / 2 ) , round ( gridsize / 2 )
+	const center type: point init: { round ( gridsize / 2 ) , round ( gridsize / 2 ) 
 	};
-	const types type: file init: file ( '../images/environment75x75_scarce.pgm' );
+	const types type: file init: file ( '../images/environment75x75_scarce.pgm' ); 
 	init {
 		create species: ant number: ants_number with: [ location :: center ];
-	}
+	} 
 
 }
 environment width: gridsize height: gridsize {
@@ -51,15 +51,15 @@ entities {
 			let goal value: list_places first_with ( each . food > 0 );
 			if condition: goal != nil {
 				set location value: goal ;
-				else {
+
+			} else {
 					let min_nest value: ( list_places min_of ( each . nest ) );
 					set list_places value: list_places sort ( ( each . nest = min_nest ) ?
 					each . road : 0.0 ) ;
 					set location value: point ( last ( list_places ) ) ;
 				}
-			}
 		}
-		reflex taking when: ( ! hasFood ) and ( place . food > 0 ) {
+		reflex taking when: ( ! hasFood ) and ( place . food > 0 ) { 
 			set hasFood value: true ;
 			set place . food value: place . food - 1 ;
 		}
@@ -81,8 +81,7 @@ experiment name: 'Simple' type: gui {
 		display Ants refresh_every: 2 {
 			grid ant_grid;
 			species ant aspect: default;
-			text tt value: string ( food_remaining ) size: 24 position: { 20 , 20 }
-			color: rgb ( 'white' );
+			text tt value: string ( food_remaining ) size: 24 position: { 20 , 20 } color: rgb ( 'white' );
 		}
 	}
 }
@@ -97,7 +96,7 @@ until: ( food_remaining = 0 ) or ( time > 400 ) {
 	parameter name: 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:
 	0.3;
 	method exhaustive minimize: time;
-	save to: 'ant_exhaustive_optimization' rewrite: false;
+	save  nil to:'ant_exhaustive_optimization' rewrite: false;
 }
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
@@ -108,7 +107,7 @@ food_remaining = 0 ) or ( time > 400 ) {
 	0.5 , 0.8 , 1.0 ];
 	parameter name: 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:
 	0.3;
-	save to: 'ant_exhaustive' data: time rewrite: false;
+	save nil to: 'ant_exhaustive' data: time rewrite: false;
 }
 
 // This experiment explores two parameters with a GA strategy, 
@@ -122,5 +121,5 @@ experiment Genetic type: batch keep_seed: true repeat: 3 until: ( food_remaining
 	0.01;
 	method genetic pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1
 	nb_prelim_gen: 1 max_gen: 20 minimize: time;
-	save to: 'ant_genetic_algorithm' rewrite: false;
+	save nil to: 'ant_genetic_algorithm' rewrite: false;
 }
