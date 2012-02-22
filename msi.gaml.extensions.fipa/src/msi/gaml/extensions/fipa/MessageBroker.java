@@ -132,8 +132,7 @@ public class MessageBroker {
 	 * @throws ProtocolErrorException the protocol error exception
 	 * @throws GamlException the gaml exception
 	 */
-	public void scheduleForDelivery(final Message m, final Integer protocol)
-		throws GamaRuntimeException {
+	public void scheduleForDelivery(final Message m, final Integer protocol) {
 		Conversation conv;
 		try {
 			conv = new Conversation(m.getSimulation(), protocol, m);
