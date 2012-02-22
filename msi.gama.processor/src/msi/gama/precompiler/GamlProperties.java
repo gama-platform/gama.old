@@ -41,6 +41,7 @@ public class GamlProperties {
 	public final static String BINARIES = "binaries.properties";
 	public final static String TYPES = "types.properties";
 	public final static String SYMBOLS = "symbols.properties";
+	public final static String DEFINITIONS = "definitions.properties";
 	public final static String CHILDREN = "children.properties";
 	public final static String FACETS = "facets.properties";
 	public final static String KINDS = "kinds.properties";
@@ -48,7 +49,7 @@ public class GamlProperties {
 	public final static String SPECIES = "species.properties";
 	public final static String VARS = "vars.properties";
 	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES, SYMBOLS,
-		CHILDREN, FACETS, KINDS, FACTORIES, SPECIES, VARS };
+		DEFINITIONS, CHILDREN, /* FACETS, */KINDS, FACTORIES, SPECIES, VARS };
 
 	static final String NULL = "";
 
@@ -141,9 +142,9 @@ public class GamlProperties {
 		if ( !strings.isEmpty() ) {
 			StringBuilder sb = new StringBuilder();
 			for ( String value : strings ) {
-				if ( !value.trim().equals("set") ) {
-					sb.append(value).append(',');
-				}
+				// if ( !value.trim().equals("set") ) {
+				sb.append(value).append(',');
+				// }
 			}
 			sb.setLength(sb.length() - 1);
 			return sb.toString();
