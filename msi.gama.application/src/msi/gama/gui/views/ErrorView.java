@@ -208,7 +208,7 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 		}
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
 			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE)
-			.append(obj.getSuperMessage());
+			.append(obj.getMessage());
 		return sb.toString();
 	}
 
@@ -234,9 +234,6 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	@Override
 	public void updateItemValues() {}
 
-	/**
-	 * 
-	 */
 	public void clearErrors() {
 		this.reset();
 		exceptions.clear();

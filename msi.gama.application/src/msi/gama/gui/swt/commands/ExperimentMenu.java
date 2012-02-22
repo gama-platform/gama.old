@@ -22,12 +22,9 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.descript.GamlDescriptIO;
 import msi.gama.lang.gaml.ui.GamlResourceSet;
-import msi.gama.lang.utils.Convert;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamlException;
-import msi.gaml.factories.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.*;
@@ -59,122 +56,102 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 
 	FileIdentifier file;
 
-	// private void cleanUpInterface() {
-	// GUI.getPage().saveAllEditors(true);
-	// if ( GUI.isSimulationPerspective() ) {
-	// GUI.hideParameterView();
-	// GUI.eraseConsole();
-	// } else if ( GUI.isBatchPerspective() ) {
-	// GUI.hideView("msi.gama.application.view.BatchSummaryView");
-	// }
-	// /* Clear the list of views */
-	// ContributionItem.clearDynamicDisplayList();
-	// }
-
 	@Override
 	public void fill(final Menu menu, final int index) {
 
-		try {
+		// try {
+
+		identifyFile();
+
+		final IModel[] model = new IModel[] { identifyModel() };
+		if ( file.isNull() && model[0] == null ) { return; }
+		if ( model[0] == null ) {
+			GuiUtils.waitStatus("Compiling model");
+			// Validate the file
+			GamlJavaValidator.validate(file.resource);
 			waitForBuilder();
-			// cleanUpInterface();
-			identifyFile();
-			// Convert.getDocMap(file.fileToRun, GamlResourceSet.get(file.fileToRun.getProject()));
-
-			final IModel[] model = new IModel[] { identifyModel() };
-			if ( file.isNull() && model[0] == null ) { return; }
-			if ( model[0] == null ) {
-				GuiUtils.waitStatus("Compiling model");
-
-				try {
-					model[0] =
-						(IModel) DescriptionFactory.getModelFactory().compile(
-							new ModelStructure(file.filePath, Convert.getDocMap(file.resource)));
-				} catch (final GamlException e1) {
-					e1.printStackTrace();
-					MenuItem experiments = new MenuItem(menu, SWT.NONE);
-					experiments.setText("No experiment available (select to see the errors)");
-					experiments.setImage(SwtGui.noExperimentImage);
-					experiments.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent evt) {
-							GuiUtils.raise(e1);
-						}
-
-					});
-
-					return;
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					MenuItem experiments = new MenuItem(menu, SWT.NONE);
-					experiments.setText("No experiment available (interrupted)");
-					experiments.setImage(SwtGui.noExperimentImage);
-					return;
-				} catch (final Exception e) {
-					e.printStackTrace();
-					MenuItem experiments = new MenuItem(menu, SWT.NONE);
-					experiments.setText("No experiment available (errors)");
-					experiments.setImage(SwtGui.noExperimentImage);
-					experiments.addSelectionListener(new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent evt) {
-							GuiUtils.raise(e);
-						}
-
-					});
-					return;
-
-				}
-			}
-			int i = 0;
-			MenuItem title = new MenuItem(menu, SWT.BOLD, i++);
-			IExperiment current = GAMA.getExperiment();
-			title.setText("Experiments defined for '" + model[0].getName() + "'");
-			title.setImage(SwtGui.experimentMenuImage);
-			new MenuItem(menu, SWT.SEPARATOR, i++);
-			title.setEnabled(false);
-			for ( IExperiment e : model[0].getExperiments() ) {
-				final MenuItem exp = new MenuItem(menu, SWT.CHECK, i++);
-				// exp.setImage(SwtGui.experimentMenuImage);
-				if ( current != null && current.getName().equals(e.getName()) &&
-					current.getModel().getFileName().equals(e.getModel().getFileName()) ) {
-					exp.setText("     Reload '" + e.getName() + "'");
-					exp.setSelection(true);
-				} else {
-					exp.setText("     Load '" + e.getName() + "'");
-				}
-				exp.setData("EXP", e.getName());
-
-				exp.addSelectionListener(new SelectionAdapter() {
+			// final EList<Resource.Diagnostic> errors = file.resource.getErrors();
+			if ( /* !errors.isEmpty() || */GamlJavaValidator.getCompiledModel(file.resource) == null ) {
+				// e1.printStackTrace();
+				MenuItem experiments = new MenuItem(menu, SWT.NONE, 0);
+				experiments.setText("No experiment available (compilation errors)");
+				experiments.setImage(SwtGui.noExperimentImage);
+				new MenuItem(menu, SWT.SEPARATOR, 1);
+				experiments.addSelectionListener(new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(final SelectionEvent evt) {
-						String name = (String) exp.getData("EXP");
-						GuiUtils.openSimulationPerspective();
-						GAMA.newExperiment(name, model[0]);
+						// int line = 0;
+						// if ( !errors.isEmpty() ) {
+						// line = errors.get(0).getLine();
+						// }
+						// try {
+						// IFile f = ResourceUtil.getFile(file.resource);
+						// IEditorInput input = new FileEditorInput(f);
+						// XtextEditor ed =
+						// (XtextEditor) SwtGui.getPage().openEditor(input,
+						// "msi.gama.lang.gaml.Gaml");
+						// ed.getInternalSourceViewer().setTopIndex(line);
+						// } catch (PartInitException e) {
+						// return;
+						// }
 					}
 
 				});
+
+				return;
+
 			}
-			if ( i < menu.getItemCount() && (menu.getItem(i).getStyle() & SWT.SEPARATOR) == 0 ) {
-				new MenuItem(menu, SWT.SEPARATOR, i);
-			}
-			// experiments.setMenu(expMenu);
-			GuiUtils.informStatus("Ready");
-		} finally {
-			GamlDescriptIO.getInstance().canRun(true);
 		}
+		model[0] = GamlJavaValidator.getCompiledModel(file.resource);
+		int i = 0;
+		MenuItem title = new MenuItem(menu, SWT.BOLD, i++);
+		IExperiment current = GAMA.getExperiment();
+		title.setText("Experiments defined for '" + model[0].getName() + "'");
+		title.setImage(SwtGui.experimentMenuImage);
+		new MenuItem(menu, SWT.SEPARATOR, i++);
+		title.setEnabled(false);
+		for ( IExperiment e : model[0].getExperiments() ) {
+			final MenuItem exp = new MenuItem(menu, SWT.CHECK, i++);
+			// exp.setImage(SwtGui.experimentMenuImage);
+			if ( current != null && current.getName().equals(e.getName()) &&
+				current.getModel().getFileName().equals(e.getModel().getFileName()) ) {
+				exp.setText("     Reload '" + e.getName() + "'");
+				exp.setSelection(true);
+			} else {
+				exp.setText("     Load '" + e.getName() + "'");
+			}
+			exp.setData("EXP", e.getName());
+
+			exp.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent evt) {
+					String name = (String) exp.getData("EXP");
+					GuiUtils.openSimulationPerspective();
+					GAMA.newExperiment(name, model[0]);
+				}
+
+			});
+		}
+		if ( i < menu.getItemCount() && (menu.getItem(i).getStyle() & SWT.SEPARATOR) == 0 ) {
+			new MenuItem(menu, SWT.SEPARATOR, i);
+		}
+		// experiments.setMenu(expMenu);
+		GuiUtils.informStatus("Ready");
+		// } finally {
+		// GamlDescriptIO.getInstance().canRun(true);
+		// }
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static void waitForBuilder() {
 		// synchronize with GamlCompilCallback in case it is running
 
-		GamlDescriptIO.getInstance().canRun(false);
-		while (GamlDescriptIO.getInstance().isBuilding()) {
+		// GamlDescriptIO.getInstance().canRun(false);
+		while (GamlJavaValidator.isBuilding()) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {}
@@ -222,7 +199,7 @@ public class ExperimentMenu extends org.eclipse.jface.action.ContributionItem {
 		void setFileToRun(final IFile fileToRun) {
 			this.fileToRun = fileToRun;
 			if ( fileToRun != null && filePath == null ) {
-				filePath = GamlDescriptIO.getPath(fileToRun);
+				filePath = fileToRun.getLocation().toOSString();
 			}
 			if ( fileToRun != null ) {
 				ResourceSet rs = GamlResourceSet.get(fileToRun.getProject());

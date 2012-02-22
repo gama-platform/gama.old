@@ -57,9 +57,10 @@ Visit http://code.google.com/p/gama-platform/
    </license>
 
    <plugins>
-      <plugin id="com.google.collect"/>
+      <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
+      <plugin id="javax.inject"/>
       <plugin id="msi.gama.application"/>
       <plugin id="msi.gama.core"/>
       <plugin id="msi.gama.ext"/>
@@ -70,7 +71,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gaml.additions.trial"/>
       <plugin id="msi.gaml.extensions.fipa"/>
       <plugin id="org.antlr.runtime"/>
-      <plugin id="org.aopalliance"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.log4j"/>
@@ -130,6 +130,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
+      <plugin id="org.eclipse.team.svn"/>
       <plugin id="org.eclipse.team.svn.core"/>
       <plugin id="org.eclipse.team.svn.ui"/>
       <plugin id="org.eclipse.team.ui"/>
@@ -141,13 +142,15 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ui.editors"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.ide"/>
+      <plugin id="org.eclipse.ui.intro"/>
+      <plugin id="org.eclipse.ui.intro.universal"/>
       <plugin id="org.eclipse.ui.navigator"/>
       <plugin id="org.eclipse.ui.navigator.resources"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
-      <plugin id="org.eclipse.wb.jdt.fragment" fragment="true"/>
+      <plugin id="org.eclipse.xtend2.lib"/>
       <plugin id="org.eclipse.xtext"/>
       <plugin id="org.eclipse.xtext.builder"/>
       <plugin id="org.eclipse.xtext.common.types"/>
@@ -160,7 +163,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtext.util"/>
       <plugin id="org.eclipse.xtext.xbase.lib"/>
       <plugin id="org.eclipse.xtext.xtend2.lib"/>
-      <plugin id="org.jdom"/>
       <plugin id="org.polarion.eclipse.team.svn.connector"/>
       <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
    </plugins>

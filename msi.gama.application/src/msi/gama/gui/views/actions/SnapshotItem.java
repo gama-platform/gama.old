@@ -5,8 +5,6 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.gui.views.*;
-import msi.gama.outputs.LayerDisplayOutput;
-import msi.gama.runtime.GAMA;
 import org.eclipse.jface.action.*;
 
 /**
@@ -35,7 +33,7 @@ public class SnapshotItem extends GamaViewItem {
 
 			@Override
 			public void run() {
-				((LayerDisplayOutput) getView().getOutput()).save(GAMA.getDefaultScope());
+				((LayeredDisplayView) getView()).getDisplaySurface().snapshot();
 			}
 		};
 		action.setImageDescriptor(getImageDescriptor("icons/button_snapshot.png"));

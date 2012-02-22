@@ -248,4 +248,22 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		displayGraphics.setQualityRendering(quality);
 	}
 
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
+	 */
+	@Override
+	public void setAutoSave(final boolean autosave) {}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSnapshotFileName(java.lang.String)
+	 */
+	@Override
+	public void setSnapshotFileName(final String string) {}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
+	 */
+	@Override
+	public void snapshot() {}
+
 }

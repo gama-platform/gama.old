@@ -31,7 +31,7 @@ public class SwtIO implements IFileAccess {
 			return mp;
 		} catch (IOException e) {
 			throw new GamlException("Impossible to locate the support file " + fileName +
-				" for GAML");
+				" for GAML", e);
 		}
 		// return new MultiProperties();
 	}

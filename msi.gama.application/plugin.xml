@@ -704,20 +704,6 @@
       <menuContribution
             allPopups="true"
             locationURI="popup:org.eclipse.ui.popup.any ">
-         <command
-               commandId="msi.gama.application.commands.ConvertXmlToGaml"
-               label="Convert to Gaml"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="msi.gama.gui.xmleditor.editors.GAMLEditor">
-                  </equals>
-               </with>
-            </visibleWhen>
-         </command>
          <dynamic
                class="msi.gama.gui.swt.commands.ExperimentMenu"
                id="msi.gama.application.menu.ExperimentMenu">
@@ -819,28 +805,6 @@
                   <iterate>
                      <adapt
                            type="org.eclipse.core.resources.IProject">
-                     </adapt>
-                  </iterate>
-                  <count
-                        value="1">
-                  </count>
-               </and>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="msi.gama.application.commands.ConvertXmlToGaml"
-               label="Convert to Gaml"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <and>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.name"
-                              value="*.xml">
-                        </test>
                      </adapt>
                   </iterate>
                   <count
@@ -1399,11 +1363,6 @@
             defaultHandler="msi.gama.gui.swt.commands.SwitchWorkspaceHandler"
             id="msi.gama.application.commands.SwitchWorkspace"
             name="Switch Workspace">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.ConvertXmlToGamlHandler"
-            id="msi.gama.application.commands.ConvertXmlToGaml"
-            name="Convert to Gaml">
       </command>
       <command
             id="msi.gama.application.commands.AddMonitor"

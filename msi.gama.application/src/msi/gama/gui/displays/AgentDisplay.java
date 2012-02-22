@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentDisplay extends AbstractDisplay {
 
-	private final Set<IAgent> agents = new HashSet();
+	// private final Set<IAgent> agents = new HashSet();
 
 	// private final Set<SelectedAgent> selectedAgents = new HashSet<SelectedAgent>();
 

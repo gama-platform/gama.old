@@ -21,26 +21,33 @@ package msi.gama.gui.displays;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
 public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
+	private boolean autosave = false;
+	private String snapshotFileName;
+	public static String snapshotFolder = "snapshots";
 	protected IDisplayManager manager;
 	boolean paused;
 	private volatile boolean canBeUpdated = true;
@@ -84,6 +91,41 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			}
 		}
 	});
+
+	public void save(final IScope scope, final RenderedImage image) {
+		try {
+			Files.newFolder(scope, snapshotFolder);
+		} catch (GamaRuntimeException e1) {
+			e1.addContext("Impossible to create folder " + snapshotFolder);
+			GAMA.reportError(e1);
+			e1.printStackTrace();
+			return;
+		}
+		String snapshotFile =
+			scope.getSimulationScope().getModel()
+				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
+
+		String file = snapshotFile + SimulationClock.getCycle() + ".png";
+		DataOutputStream os = null;
+		try {
+			os = new DataOutputStream(new FileOutputStream(file));
+			ImageIO.write(image, "png", os);
+		} catch (java.io.IOException ex) {
+			GamaRuntimeException e = new GamaRuntimeException(ex);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(e);
+		} finally {
+			try {
+				if ( os != null ) {
+					os.close();
+				}
+			} catch (Exception ex) {
+				GamaRuntimeException e = new GamaRuntimeException(ex);
+				e.addContext("Unable to close output stream for snapshot image");
+				GAMA.reportError(e);
+			}
+		}
+	}
 
 	@Override
 	public void setPaused(final boolean flag) {
@@ -438,6 +480,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
+		if ( autosave ) {
+			snapshot();
+		}
 		redrawNavigator();
 	}
 
@@ -476,9 +521,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public BufferedImage getImage() {
 		Rectangle clip = displayGraphics.getClipping();
 		// updateDisplay();
-		paused = false;
+		// paused = false;
 		drawDisplaysWithoutRepainting();
-		paused = true;
+		// paused = true;
 		displayGraphics.setClipping(clip);
 		return buffImage;
 	}
@@ -629,5 +674,26 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( isPaused() ) {
 			updateDisplay();
 		}
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
+	 */
+	@Override
+	public void setAutoSave(final boolean autosave) {
+		this.autosave = autosave;
+	}
+
+	@Override
+	public void setSnapshotFileName(final String file) {
+		snapshotFileName = file;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
+	 */
+	@Override
+	public void snapshot() {
+		save(GAMA.getDefaultScope(), buffImage);
 	}
 }

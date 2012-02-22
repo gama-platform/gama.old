@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import msi.gama.gui.navigator.FileBean;
 import msi.gama.gui.swt.perspectives.*;
-import msi.gama.lang.gaml.descript.GamlDescriptIO;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -117,7 +117,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 
 		try {
-			GamlDescriptIO.getInstance().canRun(false); // stop builder
+			GamlJavaValidator.canRun(false); // stop builder
 			GAMA.closeCurrentExperiment();
 		} catch (Exception e) {
 			e.printStackTrace();

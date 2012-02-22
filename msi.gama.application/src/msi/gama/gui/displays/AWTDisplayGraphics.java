@@ -397,26 +397,31 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
 		final Integer angle) {
-		Rectangle2D r = s.getBounds2D();
+		try {
+			Rectangle2D r = s.getBounds2D();
 
-		// if ( clipping != null && !r.intersects(clipping) ) { return; }
-		// Graphics2D g3 = (Graphics2D) g2.create();
-		AffineTransform saved = g2.getTransform();
-		if ( angle != null ) {
-			g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() /
-				2);
+			// if ( clipping != null && !r.intersects(clipping) ) { return; }
+			// Graphics2D g3 = (Graphics2D) g2.create();
+			AffineTransform saved = g2.getTransform();
+			if ( angle != null ) {
+				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2,
+					r.getY() + r.getHeight() / 2);
+			}
+			// g3.setColor(c);
+			setDrawingColor(c);
+			if ( fill ) {
+				g2.fill(s);
+				// g3.setColor(Color.black);
+				setDrawingColor(Color.black);
+			}
+			g2.draw(s);
+			// g3.dispose();
+			g2.setTransform(saved);
+			return r;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		// g3.setColor(c);
-		setDrawingColor(c);
-		if ( fill ) {
-			g2.fill(s);
-			// g3.setColor(Color.black);
-			setDrawingColor(Color.black);
-		}
-		g2.draw(s);
-		// g3.dispose();
-		g2.setTransform(saved);
-		return r;
 	}
 
 	// @Override

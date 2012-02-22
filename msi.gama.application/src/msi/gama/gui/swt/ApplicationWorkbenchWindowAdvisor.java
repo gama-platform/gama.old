@@ -19,8 +19,7 @@
 package msi.gama.gui.swt;
 
 import msi.gama.common.util.FileUtils;
-import msi.gama.lang.gaml.descript.GamlDescriptIO;
-import msi.gama.lang.utils.Convert;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gaml.compilation.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
@@ -76,7 +75,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			System.out.println("Configuring file access through SWT");
 			FileUtils.setFileAccess(new SwtIO());
 			GamaBundleLoader.preBuildContributions();
-			GamlDescriptIO.getInstance().setCallback(new Convert());
+			GamlJavaValidator.canRun(true);
 		} catch (GamlException e1) {
 			e1.printStackTrace();
 		}
