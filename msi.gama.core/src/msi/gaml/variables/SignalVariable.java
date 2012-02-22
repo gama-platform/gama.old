@@ -88,6 +88,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES_STR, optional = false),
 	@facet(name = IKeyword.DECAY, type = IType.FLOAT_STR, optional = false),
 	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION,
@@ -129,7 +131,8 @@ public class SignalVariable extends NumberVariable {
 		rangeExpr = getFacet(IKeyword.RANGE);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
 		if ( envName == null || sd.getModelDescription().getSpeciesDescription(envName) == null ) { throw new GamlException(
-			"Environment of signal " + this.getName() + " cannot be determined."); }
+			"Environment of signal " + this.getName() + " cannot be determined.",
+			description.getSourceInformation()); }
 		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;

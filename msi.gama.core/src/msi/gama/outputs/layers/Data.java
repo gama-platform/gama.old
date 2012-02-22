@@ -52,6 +52,9 @@ public class Data extends Symbol {
 
 	public Data(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.VALUE);
+		verifyFacetType(IKeyword.COLOR);
+		verifyFacetType(IKeyword.STYLE);
 		computeRenderer();
 	}
 

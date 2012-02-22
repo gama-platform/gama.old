@@ -79,11 +79,11 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	@Override
 	public Object getDirectVarValue(final String n) throws GamaRuntimeException {
 		IVariable var = population.getVar(this, n);
-		if ( var != null ) { return var.value(this); }
+		if ( var != null ) { return var.value(simulation.getExecutionScope(), this); }
 		IAgent host = this.getHost();
 		if ( host != null ) {
 			IVariable varOfHost = host.getPopulation().getVar(host, n);
-			if ( varOfHost != null ) { return varOfHost.value(host); }
+			if ( varOfHost != null ) { return varOfHost.value(simulation.getExecutionScope(), host); }
 		}
 
 		return null;
@@ -270,8 +270,8 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		 */
 		private void saveAttributes(final IAgent agent) throws GamaRuntimeException {
 			variables = new HashMap<String, Object>();
-
 			ISpecies species = agent.getSpecies();
+			IScope scope = simulation.getExecutionScope();
 			for ( String specVar : species.getVarNames() ) {
 				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
 					continue;
@@ -280,11 +280,11 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 					// variables.put(specVar, geometry.copy());
 					// Changed 3/2/12: is it necessary to make the things below ?
 					variables.put(specVar, new GamaShape(((GamaShape) species.getVar(specVar)
-						.value(agent)).getInnerGeometry()));
+						.value(scope, agent)).getInnerGeometry()));
 					continue;
 				}
 				// variables.put(specVar, agent.getAttribute(specVar));
-				variables.put(specVar, species.getVar(specVar).value(agent));
+				variables.put(specVar, species.getVar(specVar).value(scope, agent));
 			}
 		}
 

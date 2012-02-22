@@ -37,13 +37,11 @@ import msi.gaml.types.*;
 // A group of commands that can be executed repeatedly.
 
 @symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_COMMAND)
-@facets(value = {
-	@facet(name = IKeyword.FROM, type = IType.INT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.OVER, type = { IType.LIST_STR, IType.POINT_STR, IType.MATRIX_STR,
-		IType.MAP_STR }, optional = true),
+	@facet(name = IKeyword.OVER, type = { IType.CONTAINER_STR, IType.POINT_STR }, optional = true),
 	@facet(name = IKeyword.WHILE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TIMES, type = IType.INT_STR, optional = true) },
 
@@ -72,7 +70,12 @@ public class LoopCommand extends AbstractCommandSequence {
 		boolean isWhile = getFacet(IKeyword.WHILE) != null;
 		boolean isList = getFacet(IKeyword.OVER) != null;
 		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
-
+		verifyFacetType(IKeyword.FROM);
+		verifyFacetType(IKeyword.TO);
+		verifyFacetType(IKeyword.STEP);
+		verifyFacetType(IKeyword.TIMES);
+		verifyFacetType(IKeyword.WHILE);
+		verifyFacetType(IKeyword.OVER);
 		executer =
 			isWhile ? new LoopWhileExecuter(this) : isList
 				? getFacet(IKeyword.OVER).type().id() == IType.POINT ? new LoopIntervalExecuter(

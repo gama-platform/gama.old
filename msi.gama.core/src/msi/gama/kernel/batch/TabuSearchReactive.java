@@ -68,6 +68,17 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 	public TabuSearchReactive(final IDescription species) {
 		super(species);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
+		verifyFacetType(ITER_MAX);
+		verifyFacetType(LIST_SIZE_INIT);
+		verifyFacetType(LIST_SIZE_MAX);
+		verifyFacetType(LIST_SIZE_MIN);
+		verifyFacetType(NB_TESTS_MAX);
+		verifyFacetType(CYCLE_SIZE_MAX);
+		verifyFacetType(CYCLE_SIZE_MIN);
+
 	}
 
 	int iterMax = 100;

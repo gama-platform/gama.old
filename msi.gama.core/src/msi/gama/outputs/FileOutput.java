@@ -62,6 +62,12 @@ public class FileOutput extends AbstractOutput {
 	 */
 	public FileOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.DATA);
+		verifyFacetType(IKeyword.REFRESH_EVERY);
+		verifyFacetType(IKeyword.HEADER);
+		verifyFacetType(IKeyword.FOOTER);
+		verifyFacetType(IKeyword.REWRITE);
+		verifyFacetType(IKeyword.TYPE);
 	}
 
 	private PrintWriter writer = null;

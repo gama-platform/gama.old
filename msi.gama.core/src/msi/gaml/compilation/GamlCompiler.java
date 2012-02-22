@@ -20,10 +20,9 @@ package msi.gaml.compilation;
 
 import static msi.gaml.compilation.GamaCompiler.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -31,17 +30,13 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.*;
-import msi.gaml.skills.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
-import org.osgi.framework.*;
 
 /**
  * The Class GamlActionCompiler.
@@ -63,6 +58,7 @@ public class GamlCompiler {
 	private static Map<Class, IAgentConstructor> agentConstructors = new HashMap();
 	private static Map<Class, ISymbolConstructor> symbolConstructors = new HashMap();
 	private static Map<Class, ISkillConstructor> skillConstructors = new HashMap();
+
 	private static void addSkillMethod(final Class c, final String name) {
 		List<String> names = skillMethodsToAdd.get(c);
 		if ( names == null ) {
@@ -72,7 +68,7 @@ public class GamlCompiler {
 		names.add(name);
 	}
 
-	public static List<String> getSkillMethods(final Class clazz) throws GamlException {
+	public static List<String> getSkillMethods(final Class clazz) {
 		if ( !skillMethodsToAdd.containsKey(clazz) ) {
 			skillMethodsToAdd.put(clazz, new ArrayList());
 			collectBuiltInAttributes(clazz);
@@ -80,7 +76,7 @@ public class GamlCompiler {
 		return skillMethodsToAdd.get(clazz);
 	}
 
-	public static List<IDescription> getVarDescriptions(final Class clazz) throws GamlException {
+	public static List<IDescription> getVarDescriptions(final Class clazz) {
 		if ( !varDescriptions.containsKey(clazz) ) {
 			// varDescriptions.put(clazz, new ArrayList());
 			collectBuiltInAttributes(clazz);
@@ -88,7 +84,7 @@ public class GamlCompiler {
 		return varDescriptions.get(clazz);
 	}
 
-	public static List<IDescription> getFieldDescriptions(final Class clazz) throws GamlException {
+	public static List<IDescription> getFieldDescriptions(final Class clazz) {
 		List<Class> classes = collectImplementationClasses(clazz, Collections.EMPTY_SET);
 		Map<String, IDescription> fieldsMap = new HashMap();
 		for ( Class c : classes ) {
@@ -102,14 +98,14 @@ public class GamlCompiler {
 		return descs;
 	}
 
-	public static List<IDescription> getCommandDescriptions(final Class clazz) throws GamlException {
+	public static List<IDescription> getCommandDescriptions(final Class clazz) {
 		if ( !commandDescriptions.containsKey(clazz) ) {
 			collectBuiltInActions(clazz);
 		}
 		return commandDescriptions.get(clazz);
 	}
 
-	private static void collectBuiltInAttributes(final Class c) throws GamlException {
+	private static void collectBuiltInAttributes(final Class c) {
 		final Map<String, IDescription> varList = new HashMap();
 		vars va = null;
 		getter vp = null;
@@ -140,7 +136,9 @@ public class GamlCompiler {
 				facetArray = ffacets.toArray(facetArray);
 				IDescription vd =
 					DescriptionFactory.createDescription(s.type(), (IDescription) null, facetArray);
-				varList.put(s.name(), vd);
+				if ( vd != null ) {
+					varList.put(s.name(), vd);
+				}
 			}
 		}
 		final ArrayList<Method> methods = new ArrayList(Arrays.asList(c.getDeclaredMethods()));
@@ -174,7 +172,7 @@ public class GamlCompiler {
 		varDescriptions.put(c, new GamaList(varList.values()));
 	}
 
-	private static void collectBuiltInActions(final Class c) throws GamlException {
+	private static void collectBuiltInActions(final Class c) {
 		IDescription model = null;/* new ModelDescription(); */
 		final HashMap<String, String> names = new HashMap();
 		final HashMap<String, IType> returns = new HashMap();
@@ -207,13 +205,17 @@ public class GamlCompiler {
 			for ( String s : arguments.get(n) ) {
 				IDescription arg =
 					DescriptionFactory.createDescription(IKeyword.ARG, model, IKeyword.NAME, s);
-				args.add(arg);
+				if ( arg != null ) {
+					args.add(arg);
+				}
 			}
 			IDescription prim =
 				DescriptionFactory.createDescription(IKeyword.PRIMITIVE, model, args,
 					IKeyword.NAME, n, IKeyword.RETURNS, returns.get(n).toString(), IKeyword.JAVA,
 					names.get(n));
-			commands.add(prim);
+			if ( prim != null ) {
+				commands.add(prim);
+			}
 		}
 		commandDescriptions.put(c, commands);
 	}
@@ -633,11 +635,9 @@ public class GamlCompiler {
 	public final static List<URI> gamlAdditionsURIs = new ArrayList();
 
 	public static void addGamlExtension(final String pluginName, final String pathName) {
-		String result = "platform:/plugin/" + pluginName + "/" + pathName + "/std.gaml";
-		gamlAdditionsURIs.add(URI.createURI(result));
+		gamlAdditionsURIs.add(URI.createURI("platform:/plugin/" + pluginName + "/" + pathName +
+			"/std.gaml"));
 	}
-
-	
 
 	// public static Set<Annotation> getAllAnnotationsForMethod(final Method m, final Class c) {
 	// // Retrieves direct and inherited annotations (from interfaces)
@@ -673,22 +673,18 @@ public class GamlCompiler {
 	}
 
 	public static void initFieldGetters(final IType theType) {
-		try {
-			List<IDescription> vars = getFieldDescriptions(theType.toClass());
-			for ( IDescription v : vars ) {
+		List<IDescription> vars = getFieldDescriptions(theType.toClass());
+		for ( IDescription v : vars ) {
 
-				String n = v.getName();
+			String n = v.getName();
 
-				// GUI.debug("\tFIELDS : Initializing field" + n + " for " + name);
-				IType type = v.getType();
-				IType cType = v.getContentType();
-				IFieldGetter g =
-					getFieldGetter(theType.toClass(), v.getFacets().getString(IKeyword.GETTER),
-						type.toClass());
-				theType.addFieldGetter(n, new TypeFieldExpression(n, type, cType, g));
-			}
-		} catch (GamlException e) {
-			e.printStackTrace();
+			// GUI.debug("\tFIELDS : Initializing field" + n + " for " + name);
+			IType type = v.getType();
+			IType cType = v.getContentType();
+			IFieldGetter g =
+				getFieldGetter(theType.toClass(), v.getFacets().getString(IKeyword.GETTER),
+					type.toClass());
+			theType.addFieldGetter(n, new TypeFieldExpression(n, type, cType, g));
 		}
 
 	}

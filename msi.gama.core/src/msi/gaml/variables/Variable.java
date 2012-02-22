@@ -45,6 +45,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
@@ -70,13 +72,10 @@ import msi.gaml.types.*;
 // PENSER A ELIMINER LA LISTE PRECEDENTE EN RAJOUTANT L'INFORMATION DE LA CLASSE DE VARIABLES
 // AU TYPE
 // TODO
-// TODO
-// PENSER A FAIRE UN TEST CONCERNANT LES PARAMETRES: INIT doit etre const; pas de VALUE, etc.
-// TODO
 //
 public class Variable extends Symbol implements IVariable {
 
-	protected IExpression updateExpression, initExpression, amongExpression;
+	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
 	protected IType type, contentType;
 	protected boolean isNotModifiable, doUpdate;
 	private final int definitionOrder;
@@ -93,13 +92,17 @@ public class Variable extends Symbol implements IVariable {
 		setName(getFacet(IKeyword.NAME).literalValue());
 		computeParameterName();
 		computeCategoryName();
-		updateExpression = getFacet(IKeyword.VALUE);
+		updateExpression = getFacet(IKeyword.VALUE, getFacet(IKeyword.UPDATE));
+		functionExpression = getFacet(IKeyword.FUNCTION);
 		initExpression = getFacet(IKeyword.INIT);
 		amongExpression = getFacet(IKeyword.AMONG);
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getType();
 		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
+
+		if ( functionExpression != null && (initExpression != null || updateExpression != null) ) { throw new GamlException(
+			"A function cannot have an 'init' or 'update' facet", sd.getSourceInformation()); }
 
 		if ( desc.isBuiltIn() ) {
 			ExecutionContextDescription context =
@@ -122,14 +125,16 @@ public class Variable extends Symbol implements IVariable {
 		if ( contentType.id() == IType.NONE ) {
 			IType cType =
 				updateExpression != null ? updateExpression.getContentType()
-					: initExpression != null ? initExpression.getContentType() : Types.NO_TYPE;
+					: initExpression != null ? initExpression.getContentType()
+						: functionExpression != null ? functionExpression.getContentType()
+							: Types.NO_TYPE;
 			contentType = cType == null ? Types.NO_TYPE : cType;
 			desc.setContentType(contentType);
 		}
 
 		if ( amongExpression != null && type.id() != amongExpression.getContentType().id() ) { throw new GamlException(
 			"Var " + getName() + " of type " + type.toString() + " cannot be chosen among " +
-				amongExpression.toGaml()); }
+				amongExpression.toGaml(), sd.getSourceInformation()); }
 
 		assertCanBeParameter();
 
@@ -140,16 +145,20 @@ public class Variable extends Symbol implements IVariable {
 		String p = "Parameter " + getTitle() + " ";
 		IExpression min = getFacet(IKeyword.MIN);
 		IExpression max = getFacet(IKeyword.MAX);
+		if ( functionExpression != null ) { throw new GamlException(
+			"Functions cannot be used as parameters", description.getSourceInformation()); }
 		if ( min != null && !min.isConst() ) { throw new GamlException(p +
-			"min value must be constant"); }
+			" min value must be constant", description.getSourceInformation()); }
 		if ( max != null && !max.isConst() ) { throw new GamlException(p +
-			"max value must be constant"); }
+			" max value must be constant", description.getSourceInformation()); }
 		if ( initExpression == null ) { throw new GamlException(
-			"parameters must have an initial value"); }
+			"parameters must have an initial value", description.getSourceInformation()); }
 		if ( !initExpression.isConst() ) { throw new GamlException(p +
-			"initial value must be constant"); }
-		if ( updateExpression != null ) { throw new GamlException(p + "cannot have a 'value' facet"); }
-		if ( isNotModifiable ) { throw new GamlException(p + "cannot be declared as constant"); }
+			"initial value must be constant", description.getSourceInformation()); }
+		if ( updateExpression != null ) { throw new GamlException(p +
+			"cannot have an 'update' or 'value' facet", description.getSourceInformation()); }
+		if ( isNotModifiable ) { throw new GamlException(p + " cannot be declared as constant ",
+			description.getSourceInformation()); }
 	}
 
 	private void buildHelpers(final ExecutionContextDescription context) {
@@ -349,12 +358,13 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return value(scope.getAgentScope());
+		return value(scope, scope.getAgentScope());
 	}
 
 	@Override
-	public Object value(final IAgent agent) throws GamaRuntimeException {
+	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		if ( getter != null ) { return getter.execute(agent, gSkill == null ? agent : gSkill); }
+		if ( functionExpression != null ) { return scope.evaluate(functionExpression, agent); }
 		return agent.getAttribute(name);
 	}
 

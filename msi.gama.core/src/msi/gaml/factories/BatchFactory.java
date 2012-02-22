@@ -21,7 +21,7 @@ package msi.gaml.factories;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -48,6 +48,7 @@ public class BatchFactory extends SymbolFactory {
 
 	@Override
 	protected String getKeyword(final IDescription desc) {
+		if ( desc == null ) { return null; }
 		if ( desc.getKeyword().equals(IKeyword.METHOD) ) { return desc.getName(); }
 		return super.getKeyword(desc);
 	}

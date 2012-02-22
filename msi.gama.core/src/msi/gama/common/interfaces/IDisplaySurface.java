@@ -70,9 +70,12 @@ public interface IDisplaySurface {
 
 	public void setQualityRendering(boolean quality);
 
-	/**
-	 * @param checked
-	 */
 	void setSynchronized(boolean checked);
+
+	void setAutoSave(boolean autosave);
+
+	void setSnapshotFileName(String string);
+
+	void snapshot();
 
 }

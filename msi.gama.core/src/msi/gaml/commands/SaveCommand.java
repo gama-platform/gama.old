@@ -49,8 +49,10 @@ import com.vividsolutions.jts.geom.Geometry;
 @facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.DATA, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) }, omissible = IKeyword.ITEM)
+	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) }, omissible = IKeyword.DATA)
 public class SaveCommand extends AbstractCommandSequence {
 
 	private WithCommand att;
@@ -84,7 +86,7 @@ public class SaveCommand extends AbstractCommandSequence {
 			type = typeExp.value(scope).toString();
 		}
 		if ( type.equals("shp") ) {
-			IExpression item = getFacet(IKeyword.ITEM);
+			IExpression item = getFacet(IKeyword.ITEM, getFacet(IKeyword.DATA));
 			List<? extends IAgent> agents;
 			if ( item == null ) {
 				IExpression speciesExpr = getFacet(IKeyword.SPECIES);
@@ -107,7 +109,7 @@ public class SaveCommand extends AbstractCommandSequence {
 			saveShape(agents, path, scope);
 		} else if ( type.equals("text") || type.equals("csv") ) {
 			File fileTxt = new File(path);
-			IExpression item = getFacet(IKeyword.ITEM);
+			IExpression item = getFacet(IKeyword.ITEM, getFacet(IKeyword.DATA));
 			// if (fileTxt != null) {
 			saveText(type, item, fileTxt, scope);
 			// }

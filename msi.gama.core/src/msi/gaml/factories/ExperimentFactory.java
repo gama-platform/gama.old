@@ -20,10 +20,10 @@ package msi.gaml.factories;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gaml.commands.Facets;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gaml.compilation.*;
+import msi.gaml.commands.Facets;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 
 /**
@@ -49,7 +49,7 @@ public class ExperimentFactory extends SymbolFactory {
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
-		final SymbolMetaDescription md) throws GamlException {
-		return new ExperimentDescription(keyword, superDesc, facets, commands, source);
+		final SymbolMetaDescription md) {
+		return new ExperimentDescription(keyword, superDesc, facets, commands, source, md);
 	}
 }

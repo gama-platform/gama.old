@@ -94,6 +94,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 
 	public CreateCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.NUMBER);
 		returnString = getLiteral(IKeyword.RETURNS);
 		from = getFacet(IKeyword.FROM);
 		number = getFacet(IKeyword.NUMBER);
@@ -112,7 +113,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of create ");
 		sequence.setChildren(com);

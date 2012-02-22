@@ -88,11 +88,12 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 	protected void verifyArgs(final Arguments args) throws GamlException {
 		for ( String arg : formalArgs.keySet() ) {
 			if ( formalArgs.getExpr(arg) == null && !args.containsKey(arg) ) { throw new GamlException(
-				"Missing argument " + arg + " in call to " + getName()); }
+				"Missing argument " + arg + " in call to " + getName(), getDescription()
+					.getSourceInformation()); }
 		}
 		for ( String arg : args.keySet() ) {
 			if ( !formalArgs.containsKey(arg) ) { throw new GamlException("Unknown argument" + arg +
-				" in call to " + getName()); }
+				" in call to " + getName(), getDescription().getSourceInformation()); }
 		}
 	}
 

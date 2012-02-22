@@ -49,12 +49,14 @@ public class FsmTransitionCommand extends AbstractCommandSequence {
 
 	public FsmTransitionCommand(final IDescription desc) throws GamlException {
 		super(desc);
+		verifyFacetType(IKeyword.WHEN);
 		String stateName = getLiteral(TO);
 
 		ExecutionContextDescription context =
 			(ExecutionContextDescription) desc.getSpeciesContext();
 		if ( !context.hasBehavior(stateName) ) { throw new GamlException(
-			"Transition is not correct. State " + stateName + " does not exist. "); }
+			"Transition is not correct. State " + stateName + " does not exist. ",
+			desc.getSourceInformation()); }
 		setName(stateName);
 		when = getFacet(IKeyword.WHEN);
 	}

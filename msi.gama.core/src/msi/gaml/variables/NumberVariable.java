@@ -39,6 +39,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),

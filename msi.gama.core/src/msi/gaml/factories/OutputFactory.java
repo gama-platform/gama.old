@@ -22,11 +22,10 @@ import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayerDisplayOutput;
 import msi.gama.outputs.layers.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gaml.compilation.*;
+import msi.gama.util.GamaList;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -41,13 +40,10 @@ public class OutputFactory extends SymbolFactory {
 	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
 
 	public static LayerDisplayOutput createDisplay(final String name, final int refresh,
-		final Color background, final IDisplayLayer ... layers) throws GamaRuntimeException {
+		final Color background, final IDisplayLayer ... layers) {
 		IDescription desc;
-		try {
-			desc = DescriptionFactory.createDescription(IKeyword.DISPLAY, IKeyword.NAME, name);
-		} catch (GamlException e) {
-			throw new GamaRuntimeException(e);
-		}
+		desc = DescriptionFactory.createDescription(IKeyword.DISPLAY, IKeyword.NAME, name);
+		if ( desc == null ) { return null; }
 		LayerDisplayOutput l = new LayerDisplayOutput(desc);
 		l.setRefreshRate(refresh);
 		l.setBackgroundColor(background);
@@ -56,16 +52,15 @@ public class OutputFactory extends SymbolFactory {
 	}
 
 	public static LayerDisplayOutput createDisplay(final String name, final int refresh,
-		final Color background) throws GamaRuntimeException {
+		final Color background) {
 		return createDisplay(name, refresh, background, new IDisplayLayer[0]);
 	}
 
-	public static LayerDisplayOutput createDisplay(final String name, final int refresh)
-		throws GamaRuntimeException {
+	public static LayerDisplayOutput createDisplay(final String name, final int refresh) {
 		return createDisplay(name, refresh, Color.white);
 	}
 
-	public static LayerDisplayOutput createDisplay(final String name) throws GamaRuntimeException {
+	public static LayerDisplayOutput createDisplay(final String name) {
 		return createDisplay(name, 1);
 	}
 

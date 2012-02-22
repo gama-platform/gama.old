@@ -35,7 +35,6 @@ public class GamaRuntimeException extends GamlException {
 	private static final String WARNING = "Warning: \n";
 	private final long cycle;
 	private String agent;
-	private boolean isWarning = false;
 
 	public GamaRuntimeException(final Throwable ex) {
 		super(ERROR + ex.toString(), ex);
@@ -55,7 +54,7 @@ public class GamaRuntimeException extends GamlException {
 	}
 
 	public void addContext(final IGamlable setCommand) {
-		addContext("in command " + setCommand.toGaml());
+		addContext("in " + setCommand.toGaml());
 	}
 
 	public void addAgent(final String agent) {

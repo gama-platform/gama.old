@@ -19,7 +19,7 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;
@@ -36,13 +36,13 @@ import msi.gaml.types.IType;
 @facet(name = IKeyword.KEYWORD, type = IType.ID, optional = true)
 public class SymbolMetaDescription {
 
-	private class FacetMetaDescription {
+	public static class FacetMetaDescription {
 
-		String name;
-		String[] types;
-		boolean optional;
-		boolean isLabel;
-		String[] values;
+		public String name;
+		public String[] types;
+		public boolean optional;
+		public boolean isLabel;
+		public String[] values;
 
 		FacetMetaDescription(final facet f) {
 			name = f.name();
@@ -81,7 +81,6 @@ public class SymbolMetaDescription {
 		setInstantiationClass(instantiationClass);
 		setBaseClass(baseClass);
 		setRemoteContext(isRemoteContext);
-		// this.keyword = keyword;
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);
 		this.omissibleFacet = omissible;
@@ -177,19 +176,25 @@ public class SymbolMetaDescription {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final Set<String> facets) throws GamlException {
+	public void verifyMandatoryFacets(final ISyntacticElement e, final Set<String> facets)
+		throws GamlException {
 		for ( String s : mandatoryFacets ) {
-			if ( !facets.contains(s) ) { throw new GamlException("Missing facet " + s); }
+			if ( !facets.contains(s) ) {
+				;
+				throw new GamlException("Missing facet " + s, e);
+			}
 		}
 	}
 
-	public void verifyFacetsValidity(final Set<String> facets) throws GamlException {
+	public void verifyFacetsValidity(final ISyntacticElement e, final Set<String> facets)
+		throws GamlException {
 		for ( String s : facets ) {
-			if ( !possibleFacets.containsKey(s) ) { throw new GamlException("Unknown facet " + s); }
+			if ( !possibleFacets.containsKey(s) ) { throw new GamlException("Unknown facet " + s, e); }
 		}
 	}
 
-	public void verifyFacetsCombinations(final Set<String> facets) throws GamlException {
+	public void verifyFacetsCombinations(final ISyntacticElement e, final Set<String> facets)
+		throws GamlException {
 		if ( getPossibleCombinations().isEmpty() ) { return; }
 		for ( String[] c : getPossibleCombinations() ) {
 			boolean allPresent = true;
@@ -198,14 +203,15 @@ public class SymbolMetaDescription {
 			}
 			if ( allPresent ) { return; }
 		}
-		throw new GamlException("Wrong combination of facets " + facets);
+		throw new GamlException("Wrong combination of facets " + facets, e);
 	}
 
 	public boolean verifyContext(final String context) {
 		return possibleContexts.contains(context);
 	}
 
-	public void verifyFacetsIds(final Facets facets) throws GamlException {
+	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets)
+		throws GamlException {
 		for ( String s : facets.keySet() ) {
 			FacetMetaDescription f = possibleFacets.get(s);
 			if ( f.types[0].equals(IType.LABEL) ) {
@@ -218,7 +224,7 @@ public class SymbolMetaDescription {
 						}
 					}
 					if ( !found ) { throw new GamlException("The value of facet " + s +
-						"must be one of " + String.valueOf(f.values)); }
+						"must be one of " + String.valueOf(f.values), e); }
 				}
 
 			} else if ( IType.ID.equals(f.types[0]) || IType.NEW_TEMP_ID.equals(f.types[0]) ||
@@ -227,13 +233,13 @@ public class SymbolMetaDescription {
 				String id = facets.getString(s).trim();
 
 				if ( IExpressionParser.RESERVED.contains(id) ) { throw new GamlException(id +
-					" is a reserved keyword. It cannot be used as an identifiant"); }
-				if ( !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw new GamlException(
+					" is a reserved keyword. It cannot be used as an identifiant", e); }
+				if ( !id.isEmpty() && !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw new GamlException(
 					"Character " + id.charAt(0) + " not allowed at the beginning of identifiant" +
-						id); }
+						id, e); }
 				for ( char ch : id.toCharArray() ) {
 					if ( !Character.isJavaIdentifierPart(ch) ) { throw new GamlException(
-						"Character " + ch + " not allowed in identifiant " + id); }
+						"Character " + ch + " not allowed in identifiant " + id, e); }
 				}
 
 			}
@@ -241,12 +247,12 @@ public class SymbolMetaDescription {
 		}
 	}
 
-	public void verifyFacets(final Facets facets) throws GamlException {
+	public void verifyFacets(final ISyntacticElement e, final Facets facets) throws GamlException {
 		Set<String> tags = facets.keySet();
-		verifyMandatoryFacets(tags);
-		verifyFacetsValidity(tags);
-		verifyFacetsCombinations(tags);
-		verifyFacetsIds(facets);
+		verifyMandatoryFacets(e, tags);
+		verifyFacetsValidity(e, tags);
+		verifyFacetsCombinations(e, tags);
+		verifyFacetsIds(e, facets);
 	}
 
 	public boolean isTopLevel() {

@@ -34,10 +34,10 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.CAPTURE }, kind = ISymbolKind.SINGLE_COMMAND)
+@symbol(name = { IKeyword.CAPTURE }, kind = ISymbolKind.SEQUENCE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.AGENT_STR, IType.LIST_STR }, optional = false),
+	@facet(name = IKeyword.TARGET, type = { IType.AGENT_STR, IType.CONTAINER_STR }, optional = false),
 	@facet(name = IKeyword.AS, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.TARGET)
 public class CaptureCommand extends AbstractCommandSequence {
@@ -52,10 +52,13 @@ public class CaptureCommand extends AbstractCommandSequence {
 	public CaptureCommand(final IDescription desc) throws GamlException {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
+		verifyFacetType(IKeyword.TARGET);
 		microSpeciesName = getLiteral(IKeyword.AS);
 		returnString = getLiteral(IKeyword.RETURNS);
 		verifyMicroSpecies();
-		setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).toGaml());
+		if ( hasFacet(IKeyword.TARGET) ) {
+			setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).toGaml());
+		}
 	}
 
 	private void verifyMicroSpecies() throws GamlException {
@@ -77,7 +80,7 @@ public class CaptureCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

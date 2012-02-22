@@ -20,12 +20,11 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.Skill;
@@ -55,12 +54,10 @@ public class ModelFactory extends SymbolFactory {
 	 * @throws GamlException
 	 */
 	private void addMicroSpecies(final SpeciesDescription macroSpecies,
-		final SpeciesStructure microSpecies) throws GamlException {
-		// lose the SourceCodeInformation
-		// in fact, the information of (line, column, row) in the org.jdom.Element object is not
-		// correct
+		final SpeciesStructure microSpecies) {
+
 		SpeciesDescription microSpeciesDesc =
-			(SpeciesDescription) createDescription(macroSpecies, null,
+			(SpeciesDescription) createDescription(microSpecies.getNode(), macroSpecies, null,
 				convertTags(microSpecies.getNode()));
 		macroSpecies.addChild(microSpeciesDesc);
 
@@ -77,7 +74,7 @@ public class ModelFactory extends SymbolFactory {
 	 * @param microSpeciesStructure the structure of micro-species
 	 */
 	private void complementSpecies(final SpeciesDescription macroSpecies,
-		final SpeciesStructure microSpeciesStructure) throws GamlException {
+		final SpeciesStructure microSpeciesStructure) {
 		ISyntacticElement microSpeciesNode = microSpeciesStructure.getNode();
 		SpeciesDescription speciesDesc =
 			macroSpecies.getMicroSpecies(microSpeciesNode.getAttribute(IKeyword.NAME));
@@ -91,12 +88,14 @@ public class ModelFactory extends SymbolFactory {
 		for ( ISyntacticElement child : children ) {
 			// if micro-species were already added, no need to re-add them
 			if ( !ModelFactory.SPECIES_NODES.contains(child.getName()) ) {
-				IDescription desc = f.createDescription(child, speciesDesc);
+				IDescription desc;
+				desc = f.createDescription(child, speciesDesc);
 				subDescs.add(desc);
 
 				if ( desc instanceof VariableDescription ) {
 					userRedefinedOrNewVars.add(desc.getName());
 				}
+
 			}
 		}
 		speciesDesc.addChildren(subDescs);
@@ -109,8 +108,8 @@ public class ModelFactory extends SymbolFactory {
 	}
 
 	@SuppressWarnings("null")
-	private synchronized ModelDescription parse(final ModelStructure structure)
-		throws GamlException {
+	private synchronized ModelDescription parse(final ModelStructure structure,
+		final ErrorCollector collect) {
 		ModelDescription model = new ModelDescription(structure.getPath());
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
@@ -127,8 +126,12 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		if ( worldSpeciesDesc == null ) { throw new GamlException(
-			"Unable to load the built-in 'world' species"); }
+		if ( worldSpeciesDesc == null ) {
+			model.flagError(new GamlException(
+				"Unable to load the built-in 'world' species. Halting compilation", model
+					.getSourceInformation()));
+			return model;
+		}
 
 		// Add built-in species to "world_species"
 		for ( final SpeciesDescription spd : builtIn ) {
@@ -149,12 +152,14 @@ public class ModelFactory extends SymbolFactory {
 		Set<String> userRedefinedOrNewVars = new HashSet<String>();
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
-				IDescription desc = f.createDescription(child, worldSpeciesDesc);
+				IDescription desc;
+				desc = f.createDescription(child, worldSpeciesDesc);
 				subDescs.add(desc);
 
 				if ( desc instanceof VariableDescription ) {
 					userRedefinedOrNewVars.add(desc.getName());
 				}
+
 			}
 		}
 		worldSpeciesDesc.addChildren(subDescs);
@@ -167,21 +172,27 @@ public class ModelFactory extends SymbolFactory {
 
 		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species &
 		// sub-species
-		worldSpeciesDesc.finalizeDescription();
+		try {
+			worldSpeciesDesc.finalizeDescription();
+		} catch (GamlException e1) {
+			worldSpeciesDesc.flagError(e1);
+		}
 
 		// Inheritance of micro-species between parent-species & sub-species
 		worldSpeciesDesc.inheritMicroSpecies();
 
 		// Parse the other definitions (output, environment, batch...)
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {
-			model.addChild(createDescription(e, model));
+			IDescription dd = createDescription(e, model);
+			if ( dd != null ) {
+				model.addChild(dd);
+			}
 		}
 
 		return model;
 	}
 
-	public static Set<SpeciesDescription> computeBuiltInSpecies(final ModelDescription model)
-		throws GamlException {
+	public static Set<SpeciesDescription> computeBuiltInSpecies(final ModelDescription model) {
 		Set<SpeciesDescription> builtInSpecies = new HashSet();
 
 		// Firstly, create "world_species" (defined in WorldSkill) SpeciesDescription with
@@ -200,9 +211,12 @@ public class ModelFactory extends SymbolFactory {
 					GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
 						.getCanonicalName(), IKeyword.SKILLS, skillName };
 		}
-		SpeciesDescription worldSpeciesDescription =
+		SpeciesDescription worldSpeciesDescription;
+		worldSpeciesDescription =
 			(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES, model,
 				facets);
+		if ( worldSpeciesDescription == null ) { return Collections.EMPTY_SET; // FIXME Exception ?
+		}
 		builtInSpecies.add(worldSpeciesDescription);
 
 		// Secondly, create other built-in SpeciesDescriptions with worldSpeciesDescription as
@@ -227,10 +241,14 @@ public class ModelFactory extends SymbolFactory {
 									.getCanonicalName(), IKeyword.SKILLS, skillName };
 					}
 				}
-				SpeciesDescription sd =
+				SpeciesDescription sd;
+				sd =
 					(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES,
 						worldSpeciesDescription, facets);
-				builtInSpecies.add(sd);
+				if ( sd != null ) {
+					builtInSpecies.add(sd);
+				}
+
 				// OutputManager.debug("Built-in species " + speciesName +
 				// " created with Java support in " + c.getSimpleName());
 			}
@@ -246,17 +264,20 @@ public class ModelFactory extends SymbolFactory {
 	// }
 
 	@Override
-	public synchronized ISymbol compile(final ModelStructure structure) throws GamlException,
-		GamaRuntimeException, InterruptedException {
+	public synchronized ISymbol compile(final ModelStructure structure, final ErrorCollector collect)
+		throws InterruptedException {
 		IModel m = null;
 		// long startTime = System.nanoTime();
-		ModelDescription md = parse(structure);
+		ModelDescription md = parse(structure, collect);
 		GuiUtils.stopIfCancelled();
 		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
-			IDescription sim =
+			IDescription sim;
+			sim =
 				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
 					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
-			md.addChild(sim);
+			if ( sim != null ) {
+				md.addChild(sim);
+			}
 		}
 		GuiUtils.stopIfCancelled();
 		m =

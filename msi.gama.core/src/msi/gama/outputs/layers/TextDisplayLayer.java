@@ -54,9 +54,9 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 	private Color currentColor = null;
 	private String currentFont = null;
 
-	public TextDisplayLayer(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+	public TextDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+		verifyFacetType(IKeyword.COLOR);
 		IExpression c = getFacet(IKeyword.COLOR);
 		color = c == null ? new JavaConstExpression(Cast.asColor(null, "white")) : c;
 		c = getFacet(IKeyword.FONT);

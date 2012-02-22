@@ -116,7 +116,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 				}
 				throw new GamlException("Content types of left and right operands do not match (" +
 					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression");
+					"). Impossible to infer the content type of the expression", (Throwable) null);
 			}
 			return;
 		}
@@ -159,7 +159,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 				}
 				throw new GamlException("Content types of left and right operands do not match (" +
 					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression");
+					"). Impossible to infer the content type of the expression", (Throwable) null);
 			}
 			return;
 		}

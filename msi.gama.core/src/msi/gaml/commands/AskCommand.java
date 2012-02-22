@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_COMMAND)
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.LIST_STR, IType.AGENT_STR }, optional = false),
+	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER_STR, IType.AGENT_STR }, optional = false),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 @remote_context
@@ -52,10 +52,11 @@ public class AskCommand extends AbstractCommandSequence {
 		super(desc);
 		setName("ask " + getFacet(IKeyword.TARGET).toGaml());
 		target = getFacet(IKeyword.TARGET);
+		verifyFacetType(IKeyword.TARGET);
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

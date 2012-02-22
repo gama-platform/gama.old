@@ -20,9 +20,9 @@ package msi.gama.outputs.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gaml.compilation.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
@@ -52,12 +52,7 @@ public class OutputLayerFactory extends SymbolFactory {
 		final IExpression listOfAgents, final String aspect, final IDisplayLayerBox box)
 		throws GamaRuntimeException {
 		IDescription desc;
-		try {
-			desc =
-				DescriptionFactory.createOutputDescription(IKeyword.AGENTS, IKeyword.NAME, title);
-		} catch (GamlException e) {
-			throw new GamaRuntimeException(e);
-		}
+		desc = DescriptionFactory.createOutputDescription(IKeyword.AGENTS, IKeyword.NAME, title);
 		AgentDisplayLayer l = new AgentDisplayLayer(desc);
 		l.setAspect(aspect);
 		l.setBox(box);
@@ -78,13 +73,9 @@ public class OutputLayerFactory extends SymbolFactory {
 	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species,
 		final String aspect, final IDisplayLayerBox box) throws GamaRuntimeException {
 		IDescription desc;
-		try {
-			desc =
-				DescriptionFactory.createOutputDescription(IKeyword.SPECIES, IKeyword.NAME,
-					species.getName());
-		} catch (GamlException e) {
-			throw new GamaRuntimeException(e);
-		}
+		desc =
+			DescriptionFactory.createOutputDescription(IKeyword.SPECIES, IKeyword.NAME,
+				species.getName());
 		SpeciesDisplayLayer l = new SpeciesDisplayLayer(desc);
 		l.setAspect(aspect);
 		l.setBox(box);
@@ -109,11 +100,7 @@ public class OutputLayerFactory extends SymbolFactory {
 	public static IDisplayLayer createTextLayer(final String title, final IExpression text,
 		final Color color, final IDisplayLayerBox box) throws GamaRuntimeException {
 		IDescription desc;
-		try {
-			desc = DescriptionFactory.createOutputDescription(IKeyword.TEXT, IKeyword.NAME, title);
-		} catch (GamlException e) {
-			throw new GamaRuntimeException(e);
-		}
+		desc = DescriptionFactory.createOutputDescription(IKeyword.TEXT, IKeyword.NAME, title);
 		TextDisplayLayer l = new TextDisplayLayer(desc);
 		l.setTextExpr(text);
 		l.setBox(box);

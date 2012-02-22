@@ -48,6 +48,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.REFRESH_EVERY);
 		value = getFacet(IKeyword.VALUE);
 		expressionText = value == null ? "" : value.toGaml();
 	}

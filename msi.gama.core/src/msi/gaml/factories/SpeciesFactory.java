@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -36,6 +35,8 @@ import msi.gaml.expressions.IExpressionFactory;
 @handles({ ISymbolKind.SPECIES })
 @uses({ ISymbolKind.BEHAVIOR, ISymbolKind.ACTION, ISymbolKind.VARIABLE })
 public class SpeciesFactory extends SymbolFactory {
+
+	private VariableFactory varFactory;
 
 	// public static AbstractSpecies createSpecies(final String id, final Class base,
 	// final boolean grid, final IModel model) throws GamaRuntimeException {
@@ -63,8 +64,10 @@ public class SpeciesFactory extends SymbolFactory {
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
 		final String keyword, final List<IDescription> children, final Facets facets,
-		final IDescription superDesc, final SymbolMetaDescription md) throws GamlException {
+		final IDescription superDesc, final SymbolMetaDescription md) {
 		String name = facets.getString(IKeyword.NAME);
+		varFactory.addSpeciesNameAsType(name);
+		registeredFactories.get(varFactory).add(name);
 		Class base = md.getBaseClass();
 		String secondBase = facets.getString(IKeyword.BASE);
 
@@ -80,8 +83,8 @@ public class SpeciesFactory extends SymbolFactory {
 			try {
 				base = GamaClassLoader.getInstance().loadClass(facets.getString(IKeyword.BASE));
 			} catch (ClassNotFoundException e) {
-				throw new GamlException("Impossible to instantiate '" + keyword + "' because: " +
-					e.getMessage(), source);
+				superDesc.flagError(new GamlException("Impossible to instantiate '" + keyword +
+					"' because: " + e.getMessage(), source));
 			}
 		}
 		if ( facets.containsKey(IKeyword.SKILLS) ) {
@@ -90,15 +93,23 @@ public class SpeciesFactory extends SymbolFactory {
 			facets.putAsLabel(IKeyword.SKILLS, keyword);
 		}
 		SpeciesDescription sd =
-			new SpeciesDescription(keyword, superDesc, facets, children, base, source);
+			new SpeciesDescription(keyword, superDesc, facets, children, base, source, md);
 
 		return sd;
 
 	}
 
 	@Override
+	public void registerFactory(final ISymbolFactory f) {
+		super.registerFactory(f);
+		if ( f instanceof VariableFactory ) {
+			varFactory = (VariableFactory) f;
+		}
+	}
+
+	@Override
 	protected void privateCompileChildren(final IDescription sd, final ISymbol cs,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) {
 		List<ISymbol> lce = new ArrayList();
 		SpeciesDescription desc = (SpeciesDescription) sd.getSpeciesContext();
 		// we first compile the variables in the right order
@@ -111,7 +122,11 @@ public class SpeciesFactory extends SymbolFactory {
 				lce.add(compileDescription(s, factory));
 			}
 		}
-		cs.setChildren(lce);
+		try {
+			cs.setChildren(lce);
+		} catch (GamlException e) {
+			sd.flagError(e);
+		}
 
 	}
 

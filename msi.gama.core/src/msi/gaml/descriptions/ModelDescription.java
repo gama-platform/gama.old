@@ -26,6 +26,7 @@ import msi.gama.precompiler.IUnits;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
 
 /**
@@ -46,8 +47,9 @@ public class ModelDescription extends SymbolDescription {
 	private String baseDirectory;
 	private SpeciesDescription worldSpecies;
 
-	public ModelDescription(final String fileName) throws GamlException {
-		super(IKeyword.MODEL, null, new Facets(), new ArrayList(), null);
+	public ModelDescription(final String fileName) {
+		super(IKeyword.MODEL, null, new Facets(), new ArrayList(), null, DescriptionFactory
+			.getModelFactory().getMetaDescriptionFor(null, IKeyword.MODEL));
 		id = id_provider++;
 		types = new TypesManager();
 		setModelFileName(fileName);
@@ -57,7 +59,7 @@ public class ModelDescription extends SymbolDescription {
 		try {
 			return FileUtils.constructAbsoluteFilePath(filePath, fileName, mustExist);
 		} catch (GamlException e) {
-			e.printStackTrace();
+			flagError(e);
 			return filePath;
 		}
 	}
@@ -102,12 +104,16 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IDescription addChild(final IDescription child) throws GamlException {
+	public IDescription addChild(final IDescription child) {
 		child.setSuperDescription(this);
 		String keyword = child.getKeyword();
 		if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
-			addType(worldSpecies);
+			try {
+				addType(worldSpecies);
+			} catch (GamlException e) {
+				this.flagError(e);
+			}
 		} else if ( keyword.equals(IKeyword.OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
@@ -204,21 +210,23 @@ public class ModelDescription extends SymbolDescription {
 
 	public void verifyVarName(final String name, final short modelId) throws GamlException {
 		if ( name == null ) { throw new GamlException(
-			"The attribute 'name' is missing. Variables must be named."); }
+			"The attribute 'name' is missing. Variables must be named.", getSourceInformation()); }
 		if ( IExpressionParser.RESERVED.contains(name) ) { throw new GamlException(
 			name +
 				" is a reserved keyword. It cannot be used as a variable name. Reserved keywords are: " +
-				IExpressionParser.RESERVED); }
+				IExpressionParser.RESERVED, getSourceInformation()); }
 		if ( IExpressionParser.BINARIES.containsKey(name) ) { throw new GamlException(name +
-			" is a binary operator name. It cannot be used as a variable name"); }
+			" is a binary operator name. It cannot be used as a variable name",
+			getSourceInformation()); }
 		if ( IExpressionParser.UNARIES.containsKey(name) ) { throw new GamlException(name +
-			" is a unary operator name. It cannot be used as a variable name"); }
+			" is a unary operator name. It cannot be used as a variable name",
+			getSourceInformation()); }
 		if ( types.getTypeNames().contains(name) ) { throw new GamlException(name +
 			" is a type name. It cannot be used as a variable name. Types in this model are :" +
-			types.getTypeNames()); }
+			types.getTypeNames(), getSourceInformation()); }
 		if ( IUnits.UNITS.containsKey(name) ) { throw new GamlException(name +
 			" is a unit name. It cannot be used as a variable name. Units in this model are :" +
-			String.valueOf(IUnits.UNITS.keySet())); }
+			String.valueOf(IUnits.UNITS.keySet()), getSourceInformation()); }
 	}
 
 	@Override

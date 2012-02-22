@@ -53,6 +53,7 @@ public class AddCommand extends AbstractContainerCommand {
 
 	public AddCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.TO);
 		weight = getFacet(IKeyword.WEIGHT);
 		setName("add to " + list.toGaml());
 	}

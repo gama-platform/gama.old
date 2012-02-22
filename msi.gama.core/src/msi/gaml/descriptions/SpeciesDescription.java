@@ -43,10 +43,14 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final List<IDescription> children, final Class base,
-		final ISyntacticElement source) throws GamlException {
-		super(keyword, superDesc, facets, children, source);
+		final ISyntacticElement source, final SymbolMetaDescription md) {
+		super(keyword, superDesc, facets, children, source, md);
 		setSkills(facets.getTokens(IKeyword.SKILLS));
-		setJavaBase(base);
+		try {
+			setJavaBase(base);
+		} catch (GamlException e) {
+			superDesc.flagError(e);
+		}
 	}
 
 	/**
@@ -62,10 +66,10 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 */
 	public SpeciesDescription(final SpeciesDescription originalSpecies,
 		final List<IDescription> childrenWithoutMicroSpecies,
-		final SpeciesDescription newMacroSpecies) throws GamlException {
+		final SpeciesDescription newMacroSpecies, final SymbolMetaDescription md) {
 
 		super(originalSpecies.getKeyword(), newMacroSpecies, originalSpecies.getFacets(),
-			childrenWithoutMicroSpecies, originalSpecies.getSourceInformation());
+			childrenWithoutMicroSpecies, originalSpecies.getSourceInformation(), md);
 		isCopy = true;
 		skillsClasses.addAll(originalSpecies.skillsClasses);
 		skillsMethods.putAll(originalSpecies.skillsMethods);
@@ -82,7 +86,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		// recursively copy micro-species
 		for ( SpeciesDescription microSpec : originalSpecies.sortedMicroSpecies() ) {
 			this.addMicroSpecies(new SpeciesDescription(microSpec,
-				getChildrenWithoutMicroSpec(microSpec), this));
+				getChildrenWithoutMicroSpec(microSpec), this, md));
 		}
 	}
 
@@ -95,14 +99,14 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	}
 
 	@Override
-	public SpeciesDescription shallowCopy(final IDescription superDesc) throws GamlException {
+	public SpeciesDescription shallowCopy(final IDescription superDesc) {
 		return this; // SpeciesDescription sd =
 		// new SpeciesDescription(getKeyword(), superDesc, facets, children, javaBase, source);
 		// return sd;
 	}
 
 	@Override
-	public IDescription addChild(final IDescription child) throws GamlException {
+	public IDescription addChild(final IDescription child) {
 		IDescription desc = super.addChild(child);
 
 		if ( desc.getKeyword().equals(IKeyword.INIT) ) {
@@ -141,12 +145,17 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @param microSpec
 	 * @throws GamlException
 	 */
-	private void addMicroSpecies(final SpeciesDescription microSpec) throws GamlException {
+	private void addMicroSpecies(final SpeciesDescription microSpec) {
 
 		// this micro-species is inherited from the parent species, so we don't need to re-add it to
 		// the type manager.
 		if ( !microSpec.isCopy ) {
-			this.getModelDescription().addType(microSpec);
+			try {
+				this.getModelDescription().addType(microSpec);
+			} catch (GamlException e) {
+				flagError(e);
+				return;
+			}
 		}
 		microSpecies.put(microSpec.getName(), microSpec);
 	}
@@ -330,7 +339,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					throw new GamlException("Species " + getName() + " Java base class (" +
 						javaBase.getSimpleName() + ") is not a subclass of its parent species " +
 						parent.getName() + " Java base class (" +
-						parent.getJavaBase().getSimpleName() + ")");
+						parent.getJavaBase().getSimpleName() + ")", getSourceInformation());
 				}
 			}
 			skillsClasses.addAll(parent.skillsClasses);
@@ -420,7 +429,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return result;
 	}
 
-	public void complementWith(final SpeciesDescription sd) throws GamlException {
+	public void complementWith(final SpeciesDescription sd) {
 		addChildren(sd.getChildren());
 		skillsClasses.addAll(sd.skillsClasses);
 		skillsMethods.putAll(sd.skillsMethods);
@@ -430,8 +439,8 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		if ( javaBase == null ) {
 			javaBase = sd.javaBase;
 		}
-		if ( source == null ) {
-			source = sd.source;
+		if ( getSource() == null ) {
+			setSource(sd.getSource());
 		}
 	}
 
@@ -599,15 +608,19 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * 
 	 * @return
 	 */
-	private List<SpeciesDescription> sortedMicroSpecies() throws GamlException {
+	private List<SpeciesDescription> sortedMicroSpecies() {
 
 		Collection<SpeciesDescription> allMicroSpecies = microSpecies.values();
 		// validate and set the parent parent of each micro-species
 		for ( SpeciesDescription microSpec : allMicroSpecies ) {
-			microSpec.verifyAndSetParent();
+			try {
+				microSpec.verifyAndSetParent();
+			} catch (GamlException e) {
+				microSpec.flagError(e);
+			}
 		}
 
-		List<SpeciesDescription> sortedMicroSpecs = new GamaList<SpeciesDescription>();;
+		List<SpeciesDescription> sortedMicroSpecs = new GamaList<SpeciesDescription>();
 		for ( SpeciesDescription microSpec : allMicroSpecies ) {
 			List<SpeciesDescription> parents = microSpec.getSelfWithParents();
 
@@ -624,7 +637,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	/**
 	 * Inheritance of micro-species from the parent-species.
 	 */
-	public void inheritMicroSpecies() throws GamlException {
+	public void inheritMicroSpecies() {
 		if ( parentSpecies != null ) {
 
 			// copy the micro-species from the parent species.
@@ -648,8 +661,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @param newMacroSpecies
 	 * @return
 	 */
-	public List<SpeciesDescription> copyMicroSpecies(final SpeciesDescription newMacroSpecies)
-		throws GamlException {
+	public List<SpeciesDescription> copyMicroSpecies(final SpeciesDescription newMacroSpecies) {
 
 		List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
 		SpeciesDescription copiedMicroSpec;
@@ -658,7 +670,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		for ( SpeciesDescription microSpec : this.sortedMicroSpecies() ) {
 			copiedMicroSpec =
 				new SpeciesDescription(microSpec, getChildrenWithoutMicroSpec(microSpec),
-					newMacroSpecies);
+					newMacroSpecies, meta);
 
 			retVal.add(copiedMicroSpec);
 		}

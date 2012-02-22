@@ -18,9 +18,9 @@
  */
 package msi.gaml.compilation;
 
-import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.util.ErrorCollector;
 
 /**
  * The Class GamlException.
@@ -28,56 +28,25 @@ import msi.gama.common.interfaces.ISyntacticElement;
 @SuppressWarnings("serial")
 public class GamlException extends Exception {
 
-	public static class ErrorContext {
-
-		int lineNumber = 0;
-		String fileName = "";
-		String error = "error";
-
-		public ErrorContext(final int n, final String f, final String e) {
-			lineNumber = n;
-			fileName = f;
-			error = e;
-		}
-
-		public String editorName() {
-			if ( fileName == null ) { return ""; }
-			File f = new File(fileName);
-			return f.getName();
-		}
-
-		public int getLineNumber() {
-			return lineNumber;
-		}
-
-		public String getFileName() {
-			return fileName;
-		}
-
-		public String getError() {
-			return error;
-		}
-	}
-
-	public static ErrorContext errorLocation;
-
 	protected final List<String> context = new ArrayList();
-
-	private/** The node. */
-	ISyntacticElement source = null;
-
-	public Object getStatement() {
-		if ( source != null ) { return source.getUnderlyingElement(); }
-		return null;
-	}
+	protected boolean isWarning = false;
+	/**
+	 * This element normally contains a reference to the initial statement in GAML
+	 */
+	private ISyntacticElement source = null;
 
 	/**
 	 * Instantiates a new gaml exception.
 	 * 
 	 * @param message the message
 	 */
-	public GamlException(final String message) {
+	protected GamlException(final String message) {
 		super(message);
+	}
+
+	public Object getStatement() {
+		if ( source == null ) { return null; }
+		return source.getUnderlyingElement(facet);
 	}
 
 	/**
@@ -85,20 +54,22 @@ public class GamlException extends Exception {
 	 * @param sourceInformation
 	 */
 	public GamlException(final String string, final ISyntacticElement sourceInformation) {
-		super(string);
-		source = sourceInformation;
+		this(string);
+		addSource(sourceInformation);
+	}
+
+	public GamlException(final String string, final ISyntacticElement sourceInformation,
+		final boolean warning) {
+		this(string);
+		addSource(sourceInformation);
+		isWarning = warning;
 	}
 
 	public GamlException(final String string, final Throwable ex) {
-		super(string);
-		addContext(ex.toString());
-	}
-
-	/**
-	 * @param ex
-	 */
-	public GamlException(final Throwable ex) {
-		super(ex);
+		this(string);
+		if ( ex != null ) {
+			addContext(ex.toString());
+		}
 	}
 
 	/**
@@ -108,67 +79,20 @@ public class GamlException extends Exception {
 	 */
 	public void addContext(final String c) {
 		context.add(c);
-		// context = context + "\r" + "(" + i++ + ") " + c;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		String mes = super.getMessage();
-		if ( mes == null ) {
-			mes = "";
-		}
-		return mes + getContext();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	public String getSuperMessage() {
-		return super.getMessage();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Throwable#toString()
-	 */
 	@Override
 	public String toString() {
 		return getMessage();
 	}
 
-	/**
-	 * Gets the context.
-	 * 
-	 * @return the context
-	 */
-	public String getContext() {
-		if ( errorLocation == null && source != null ) {
-			String xmlContext = "";
-			int n = source.getLineNumber();
-			xmlContext += "line " + n;
-			String fileName = source.getFilename();
-			xmlContext += " of " + fileName;
-			addContext(xmlContext);
-			errorLocation = new ErrorContext(n, fileName, super.getMessage());
-		}
-		StringBuilder sb = new StringBuilder();
-		for ( String s : context ) {
-			sb.append(s).append(System.getProperty("line.separator"));
-		}
-		return sb.toString();
-	}
-
 	public void addSource(final ISyntacticElement cur) {
 		if ( source == null ) {
 			source = cur;
+			ErrorCollector collect = cur.getErrorCollector();
+			if ( collect != null ) {
+				collect.add(this);
+			}
 		}
 	}
 
@@ -176,7 +100,7 @@ public class GamlException extends Exception {
 	 * @return always false
 	 */
 	public boolean isWarning() {
-		return false;
+		return isWarning;
 	}
 
 	/**
@@ -196,6 +120,22 @@ public class GamlException extends Exception {
 
 	public List<String> getContextAsList() {
 		return context;
+	}
+
+	private String facet;
+
+	/**
+	 * @param key
+	 */
+	public void setFacetOfInterest(final String key) {
+		facet = key;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setWarning(final boolean b) {
+		isWarning = true;
 	}
 
 }

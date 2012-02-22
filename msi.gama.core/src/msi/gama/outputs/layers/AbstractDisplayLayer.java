@@ -47,6 +47,9 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 
 	public AbstractDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+		verifyFacetType(IKeyword.TRANSPARENCY);
+		verifyFacetType(IKeyword.POSITION);
+		verifyFacetType(IKeyword.SIZE);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION),
 			getFacet(IKeyword.SIZE)));
 		title = getFacet(IKeyword.NAME);

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,6 +19,7 @@
 package msi.gama.common.interfaces;
 
 import java.util.*;
+import msi.gama.common.util.ErrorCollector;
 
 /**
  * Written by drogoul
@@ -35,7 +36,7 @@ public interface ISyntacticElement {
 
 	Map<String, String> getAttributes();
 
-	void setAttribute(String string, String string2);
+	void setAttribute(String string, String string2, Object underlyingExpression);
 
 	List<ISyntacticElement> getChildren();
 
@@ -48,10 +49,30 @@ public interface ISyntacticElement {
 	/*
 	 * Returns either a LineNumberElement or a Statement
 	 */
-	Object getUnderlyingElement();
+	Object getUnderlyingElement(String facet);
 
-	int getLineNumber();
+	/**
+	 * @param string
+	 */
+	void setName(String string);
 
-	String getFilename();
+	/**
+	 * @param elseElt
+	 */
+	void addContent(ISyntacticElement elseElt);
+
+	/**
+	 * @param basicSyntacticElement
+	 */
+	void setParent(ISyntacticElement basicSyntacticElement);
+
+	/**
+	 * @return
+	 */
+	ErrorCollector getErrorCollector();
+
+	// int getLineNumber();
+
+	// String getFilename();
 
 }

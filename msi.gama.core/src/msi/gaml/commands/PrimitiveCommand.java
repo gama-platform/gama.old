@@ -90,7 +90,7 @@ public class PrimitiveCommand extends ActionCommand {
 		// For the moment, primitive arguments are not considered as "mandatory"
 		for ( String arg : args.keySet() ) {
 			if ( !formalArgs.containsKey(arg) ) { throw new GamlException("Unknown argument " +
-				arg + " in call to " + getName()); }
+				arg + " in call to " + getName(), getDescription().getSourceInformation()); }
 		}
 	}
 

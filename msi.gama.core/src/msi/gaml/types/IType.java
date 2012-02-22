@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlException;
@@ -32,11 +33,11 @@ import msi.gaml.expressions.IExpression;
 public interface IType<Inner> extends Comparable<IType> {
 
 	/** Constant fields to indicate the types of facets */
-	public static final String LABEL = "label";
-	public static final String ID = "id";
-	public static final String TYPE_ID = "type";
-	public static final String NEW_VAR_ID = "new_var";
-	public static final String NEW_TEMP_ID = "new_temp";
+	public static final String LABEL = IFacetType.LABEL;
+	public static final String ID = IFacetType.ID;
+	public static final String TYPE_ID = IFacetType.TYPE_ID;
+	public static final String NEW_VAR_ID = IFacetType.NEW_VAR_ID;
+	public static final String NEW_TEMP_ID = IFacetType.NEW_TEMP_ID;
 	/** Constant field NO_TYPE. */
 	public static final short NONE = 0;
 	public static final String NONE_STR = "unknown";

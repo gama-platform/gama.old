@@ -422,8 +422,7 @@ public class MovingSkill extends GeometricSkill {
 		return null;
 	}
 
-	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d)
-		throws GamaRuntimeException {
+	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
 		int index = 0;
 		int indexSegment = 1;
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
@@ -707,8 +706,7 @@ public class MovingSkill extends GeometricSkill {
 	 * @return the next location
 	 */
 	private ILocation findnextLocTowardPolygonUsingTriangulation(final IScope scope, IPath path,
-		final Polygon geom, final ILocation source, final ILocation target, final double distance)
-		throws GamaRuntimeException {
+		final Polygon geom, final ILocation source, final ILocation target, final double distance) {
 		if ( path == null ) {
 			IList<Polygon> triangles = new GamaList(GeometryUtils.triangulation(geom));
 			GamaGraph graph = buildPolygonGraph(triangles);

@@ -71,11 +71,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		SpeciesDescription wd = md.getWorldSpecies();
 		VariableDescription vd = wd.getVariable(varName);
 		if ( vd == null ) { throw new GamlException(p + "cannot refer to the non-global variable " +
-			varName); }
+			varName, sd.getSourceInformation()); }
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = vd.getType();
 		} else if ( type.id() != vd.getType().id() ) { throw new GamlException(p +
-			"type must be the same as that of " + varName); }
+			"type must be the same as that of " + varName, sd.getSourceInformation()); }
 		setCategory(desc.getFacets().getString(IKeyword.CATEGORY));
 		IExpression init = assertFacet(desc, IKeyword.INIT, type);
 		IExpression min = assertFacet(desc, IKeyword.MIN, type);
@@ -83,10 +83,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		IExpression step = assertFacet(desc, IKeyword.STEP, type);
 		IExpression among = assertFacet(desc, IKeyword.AMONG, Types.get(IType.LIST));
 		boolean isNotModifiable = desc.isNotModifiable();
-		if ( isNotModifiable ) { throw new GamlException(p + "cannot be declared as constant"); }
+		if ( isNotModifiable ) { throw new GamlException(p + "cannot be declared as constant",
+			sd.getSourceInformation()); }
 		order = desc.getDefinitionOrder();
 		if ( among != null && type.id() != among.getContentType().id() ) { throw new GamlException(
-			p + " of type " + type.toString() + " cannot be chosen among " + among.toGaml()); }
+			p + " of type " + type.toString() + " cannot be chosen among " + among.toGaml(),
+			sd.getSourceInformation()); }
 		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
 		stepValue = step == null ? null : (Number) step.value(GAMA.getDefaultScope());
@@ -129,9 +131,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		IExpression expr = d.getFacets().getExpr(name);
 		if ( expr == null ) { return null; }
 		if ( !expr.isConst() ) { throw new GamlException("Parameter " + getTitle() + " " + name +
-			" facet must be constant"); }
+			" facet must be constant", d.getSourceInformation()); }
 		if ( type != null && !expr.type().equals(type) ) { throw new GamlException("Parameter " +
-			getTitle() + " " + name + " facet must be of type " + type.toString()); }
+			getTitle() + " " + name + " facet must be of type " + type.toString(),
+			d.getSourceInformation()); }
 		return expr;
 	}
 
@@ -313,7 +316,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Object value(final IAgent agent) throws GamaRuntimeException {
+	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		return value;
 	}
 

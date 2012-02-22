@@ -52,6 +52,7 @@ public class LetCommand extends SetCommand {
 	public LetCommand(final IDescription desc) throws GamlException {
 		super(desc);
 		setName(IKeyword.LET + " " + varExpr.literalValue());
+		if ( value == null ) { return; }
 		varExpr.setType(hasFacet(IKeyword.TYPE) ? desc.getTypeOf(getLiteral(IKeyword.TYPE)) : value
 			.type());
 		varExpr.setContentType(hasFacet(IKeyword.OF) ? desc.getTypeOf(getLiteral(IKeyword.OF))

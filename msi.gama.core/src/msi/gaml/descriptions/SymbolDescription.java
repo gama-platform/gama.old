@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.ErrorCollector;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.*;
@@ -34,21 +35,43 @@ import msi.gaml.types.*;
 public class SymbolDescription /* extends Base */implements IDescription {
 
 	protected final Facets facets;
-	protected ISyntacticElement source;
+	private ISyntacticElement source;
 	protected IDescription enclosing = null;
 	protected List<IDescription> children;
+	protected SymbolMetaDescription meta;
 
 	// protected ModelDescription model;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source)
-		throws GamlException {
+		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final SymbolMetaDescription md) {
 		initFields();
 		this.facets = facets;
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
-		this.source = source;
+		setSource(source);
+		meta = md;
 		setSuperDescription(superDesc);
 		copyChildren(children);
+	}
+
+	@Override
+	public SymbolMetaDescription getMeta() {
+		return meta;
+	}
+
+	@Override
+	public void flagError(final GamlException e) {
+		if ( getSource() == null ) { return; }
+		ErrorCollector collect = getSource().getErrorCollector();
+		if ( collect != null ) {
+			collect.add(e);
+		}
+	}
+
+	@Override
+	public void flagWarning(final GamlException e) {
+		e.setWarning(true);
+		flagError(e);
 	}
 
 	@Override
@@ -79,27 +102,23 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return (ModelDescription) enclosing.getModelDescription();
 	}
 
-	protected void copyChildren(final List<IDescription> originalChildren) throws GamlException {
+	protected void copyChildren(final List<IDescription> originalChildren) {
 		children = new ArrayList();
 		addChildren(originalChildren);
 	}
 
 	// To add children from outside
 	@Override
-	public void addChildren(final List<IDescription> originalChildren) throws GamlException {
+	public void addChildren(final List<IDescription> originalChildren) {
 		for ( IDescription c : originalChildren ) {
-			try {
+			if ( c != null ) {
 				addChild(c);
-			} catch (GamlException g) {
-				// add source code info for instant error in editor
-				g.addSource(c.getSourceInformation());
-				throw g;
 			}
 		}
 	}
 
 	@Override
-	public IDescription addChild(final IDescription child) throws GamlException {
+	public IDescription addChild(final IDescription child) {
 		IDescription cc = child.shallowCopy(this);
 		cc.setSuperDescription(this);
 		children.add(cc);
@@ -107,17 +126,17 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	}
 
 	@Override
-	public void setSuperDescription(final IDescription desc) throws GamlException {
+	public void setSuperDescription(final IDescription desc) {
 		enclosing = desc;
 	}
 
 	@Override
 	public ISyntacticElement getSourceInformation() {
-		return source;
+		return getSource();
 	}
 
 	@Override
-	public IDescription shallowCopy(final IDescription superDesc) throws GamlException {
+	public IDescription shallowCopy(final IDescription superDesc) {
 		return this;
 	}
 
@@ -231,6 +250,14 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		IDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getWorldSpecies();
+	}
+
+	protected ISyntacticElement getSource() {
+		return source;
+	}
+
+	protected void setSource(final ISyntacticElement source) {
+		this.source = source;
 	}
 
 }

@@ -148,7 +148,7 @@ public class GamlExpressionParser implements IExpressionParser {
 				String castingString = words.get(opIndex + 1);
 				return isSpeciesName(castingString) ? factory.createBinaryExpr(operator, expr1,
 					compileExpr(new ExpressionDescription(castingString)), context) : factory
-					.createUnaryExpr(castingString, expr1);
+					.createUnaryExpr(castingString, expr1, context);
 			} else if ( IKeyword.IS.equals(operator) && isTypeName(words.get(opIndex + 1)) ) {
 				return factory.createBinaryExpr(operator, expr1,
 					factory.createConst(words.get(opIndex + 1)), context);
@@ -157,10 +157,11 @@ public class GamlExpressionParser implements IExpressionParser {
 					(ExecutionContextDescription) getContext().getModelDescription()
 						.getSpeciesDescription(expr1.getContentType().getSpeciesName());
 				if ( sd == null ) { throw new GamlException("the left side of " + operator +
-					" is not an agent"); }
+					" is not an agent", context.getSourceInformation()); }
 				CommandDescription cd = sd.getAction(operator);
 				if ( cd == null ) { throw new GamlException(operator +
-					" is not available for agents of species " + sd.getName()); }
+					" is not available for agents of species " + sd.getName(),
+					context.getSourceInformation()); }
 				expr2 = compileArguments(cd, words.subList(opIndex + 2, words.size() - 1));
 			} else {
 				// In case the operator is an iterator, we assign the content type of
@@ -193,7 +194,7 @@ public class GamlExpressionParser implements IExpressionParser {
 				return compileExpr(words.subList(opIndex + 1, words.size()));
 			}
 			final IExpression expr1 = compileExpr(words.subList(opIndex + 1, words.size()));
-			return factory.createUnaryExpr(firstWord, expr1);
+			return factory.createUnaryExpr(firstWord, expr1, context);
 		}
 
 		if ( isSpeciesName(firstWord) ) {
@@ -202,21 +203,22 @@ public class GamlExpressionParser implements IExpressionParser {
 			return factory.createBinaryExpr(IKeyword.AS, expr1, expr2, context);
 		}
 
-		throw new GamlException("malformed expression : " + words);
+		throw new GamlException("malformed expression : " + words, context.getSourceInformation());
 	}
 
 	private static void assertBalancing(final int par, final String openExp, final String closeExp)
 		throws GamlException {
 		if ( par == 0 ) { return; }
-		if ( par > 0 ) { throw new GamlException("Missing '" + closeExp + "'"); }
-		if ( par < 0 ) { throw new GamlException("Missing '" + openExp + "'"); }
+		if ( par > 0 ) { throw new GamlException("Missing '" + closeExp + "'", (Throwable) null); }
+		if ( par < 0 ) { throw new GamlException("Missing '" + openExp + "'", (Throwable) null); }
 	}
 
 	private IExpression compileTerminalExpr(final String s) throws GamlException {
 		// If the string is a Gama string we return a constant string expression
 		if ( StringUtils.isGamaString(s) ) { return factory.createConst(
 			StringUtils.unescapeJava(s.substring(1, s.length() - 1)), Types.get(IType.STRING)); }
-		if ( s.charAt(0) == '\'' ) { throw new GamlException("Malformed string: " + s); }
+		if ( s.charAt(0) == '\'' ) { throw new GamlException("Malformed string: " + s,
+			context.getSourceInformation()); }
 		// If the string is a number, we built it apart
 		if ( Strings.isGamaNumber(s) ) { return compileNumberExpr(s); }
 		// If the string is a literal constant we return the expression
@@ -250,7 +252,7 @@ public class GamlExpressionParser implements IExpressionParser {
 			IVarExpression var = (IVarExpression) desc.getVarExpr(s, factory);
 			return var;
 		}
-		throw new GamlException("malformed variable :" + s);
+		throw new GamlException("malformed variable :" + s, context.getSourceInformation());
 	}
 
 	private ExecutionContextDescription getSpeciesContext(final String e) {
@@ -287,13 +289,14 @@ public class GamlExpressionParser implements IExpressionParser {
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) { throw new GamlException("Field " + var +
-				" unknown for expression " + target.toGaml() + " of type " + type); }
+				" unknown for expression " + target.toGaml() + " of type " + type,
+				context.getSourceInformation()); }
 			expr = expr.copyWith(target);
 			return expr;
 		}
 		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var, factory);
 		if ( expr == null ) { throw new GamlException("Unknown variable :" + var + " in " +
-			contextDesc.getName()); }
+			contextDesc.getName(), context.getSourceInformation()); }
 		return factory.createBinaryExpr(IKeyword._DOT, target, expr, context);
 
 	}
@@ -308,11 +311,13 @@ public class GamlExpressionParser implements IExpressionParser {
 				try {
 					val = Integer.decode(s);
 				} catch (final NumberFormatException e2) {
-					throw new GamlException("Malformed number: " + s);
+					throw new GamlException("Malformed number: " + s,
+						context.getSourceInformation());
 				}
 			}
 		}
-		if ( val == null ) { throw new GamlException("\"" + s + "\" not recognized as a number"); }
+		if ( val == null ) { throw new GamlException("\"" + s + "\" not recognized as a number",
+			context.getSourceInformation()); }
 		if ( (val instanceof Long || val instanceof Integer) && !s.contains(IKeyword._DOT) ) { return factory
 			.createConst(val.intValue(), Types.get(IType.INT)); }
 		return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
@@ -369,13 +374,13 @@ public class GamlExpressionParser implements IExpressionParser {
 			}
 			String arg = words.get(begin);
 			if ( !action.containsArg(arg) ) { throw new GamlException("Argument " + arg +
-				"not defined for action " + action.getName()); }
+				"not defined for action " + action.getName(), context.getSourceInformation()); }
 			words.set(begin, StringUtils.toGamlString(arg));
 			List<String> pair = words.subList(begin, end);
 			final IExpression item = compileExpr(pair);
 			if ( item.type().id() != IType.PAIR ) { throw new GamlException(
 				"Arguments must be provided as pairs arg::value; " + item.toGaml() +
-					" is not a pair"); }
+					" is not a pair", context.getSourceInformation()); }
 			list.add(item);
 			begin = end + 1;
 			end = begin;

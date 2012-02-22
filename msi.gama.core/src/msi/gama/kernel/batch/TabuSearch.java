@@ -53,6 +53,12 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 	public TabuSearch(final IDescription species) {
 		super(species);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
+		verifyFacetType(ITER_MAX);
+		verifyFacetType(LIST_SIZE);
+
 	}
 
 	@Override

@@ -62,6 +62,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	public ModelEnvironment(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.HEIGHT);
+		verifyFacetType(IKeyword.TORUS);
+		verifyFacetType(IKeyword.WIDTH);
+		verifyFacetType(IKeyword.BOUNDS);
 		boundsExp = getFacet(IKeyword.BOUNDS);
 		widthExp = getFacet(IKeyword.WIDTH);
 		heightExp = getFacet(IKeyword.HEIGHT);

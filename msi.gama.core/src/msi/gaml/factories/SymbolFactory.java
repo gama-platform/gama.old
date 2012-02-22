@@ -21,6 +21,7 @@ package msi.gaml.factories;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.ErrorCollector;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -45,40 +46,10 @@ import msi.gaml.expressions.*;
  * @todo Description
  * 
  */
-@handles({ ISymbolKind.ENVIRONMENT })
+@handles({ ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
 public class SymbolFactory implements ISymbolFactory {
 
-	public static Map<String, String> KEYWORD_TAGS = new HashMap();
-
-	/**
-	 * TODO This map should be built dynamically in the future !
-	 * Contains the "default" facet of most commands (ie the facet that does not need to be declared
-	 * explicitely in the syntax : "command: expression ..." -> "command default_facet: expression")
-	 */
-	// public static Map<String, String> DEFAULT_FACETS = new HashMap();
-
-	static {
-		// KEYWORD_TAGS.put(ISymbol.SPECIES, ISpecies.CONTROL);
-		KEYWORD_TAGS.put(IKeyword.VAR, IKeyword.TYPE);
-		KEYWORD_TAGS.put(IKeyword.METHOD, IKeyword.NAME);
-		//
-		// DEFAULT_FACETS.put(IKeyword.DO, IKeyword.ACTION);
-		// DEFAULT_FACETS.put(IKeyword.ADD, IKeyword.ITEM);
-		// DEFAULT_FACETS.put(IKeyword.ASK, IKeyword.TARGET);
-		// DEFAULT_FACETS.put(IKeyword.CAPTURE, IKeyword.TARGET);
-		// DEFAULT_FACETS.put(IKeyword.IF, IKeyword.CONDITION);
-		// DEFAULT_FACETS.put(IKeyword.PUT, IKeyword.ITEM);
-		// DEFAULT_FACETS.put(IKeyword.RELEASE, IKeyword.TARGET);
-		// DEFAULT_FACETS.put(IKeyword.REMOVE, IKeyword.ITEM);
-		// DEFAULT_FACETS.put(IKeyword.SWITCH, IKeyword.VALUE);
-		// DEFAULT_FACETS.put(IKeyword.MATCH, IKeyword.VALUE);
-		// DEFAULT_FACETS.put(IKeyword.CREATE, IKeyword.SPECIES);
-	}
-
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
-
-	// private final IExpressionFactory defaultExpressionFactory = new GamlExpressionFactory(
-	// new GamlExpressionParser(), null);
 
 	@Override
 	public IExpressionFactory getDefaultExpressionFactory() {
@@ -88,7 +59,6 @@ public class SymbolFactory implements ISymbolFactory {
 	protected final Map<ISymbolFactory, Set<String>> registeredFactories = new HashMap();
 
 	public SymbolFactory() {
-		// GUI.debug(getClass().getSimpleName() + " initialized");
 		registerAnnotatedFactories();
 		registerAnnotatedSymbols();
 	}
@@ -130,7 +100,8 @@ public class SymbolFactory implements ISymbolFactory {
 
 	@Override
 	public Set<String> getKeywords() {
-		return registeredSymbols.keySet();
+		return new HashSet(registeredSymbols.keySet());
+		// Necessary to copy, since this list can be modified dynamically (esp. by SpeciesFactory)
 	}
 
 	public void registerFactory(final ISymbolFactory f) {
@@ -197,39 +168,32 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public SymbolMetaDescription getMetaDescriptionFor(final String keyword) throws GamlException {
+	public SymbolMetaDescription getMetaDescriptionFor(final IDescription desc, final String keyword) {
 		SymbolMetaDescription md = registeredSymbols.get(keyword);
 		if ( md == null ) {
-			ISymbolFactory f = chooseFactoryFor(keyword, null);
-			if ( f == null ) { throw new GamlException("Unknown symbol " + keyword); }
-			return f.getMetaDescriptionFor(keyword);
+			ISymbolFactory f = chooseFactoryFor(keyword, getKeyword(desc));
+			if ( f == null ) {
+				if ( desc != null ) {
+					desc.flagError(new GamlException("Unknown symbol " + keyword, desc
+						.getSourceInformation()));
+				}
+				return null;
+			}
+			return f.getMetaDescriptionFor(desc, keyword);
 		}
 		return md;
 	}
 
 	@Override
-	public String getOmissibleFacetForSymbol(final String keyword) {
+	public String getOmissibleFacetForSymbol(final ISyntacticElement e, final String keyword) {
 		SymbolMetaDescription md;
-		try {
-			md = getMetaDescriptionFor(keyword);
-			return md.getOmissible();
-		} catch (GamlException e) {
-			return null;
-		}
-
-	}
-
-	public boolean isSymbolADefinition(final String keyword) {
-		try {
-			SymbolMetaDescription md = getMetaDescriptionFor(keyword);
-			return md.isDefinition();
-		} catch (GamlException e) {
-			return false;
-		}
+		md = getMetaDescriptionFor(null, keyword);
+		return md == null ? IKeyword.NAME /* by default */: md.getOmissible();
 
 	}
 
 	protected String getKeyword(final IDescription desc) {
+		if ( desc == null ) { return null; }
 		return desc.getKeyword();
 	}
 
@@ -238,17 +202,16 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	public IDescription createSymbolDescription(final ISyntacticElement cur,
-		final IDescription superDesc, final String ... additionalFacets) throws GamlException {
+		final IDescription superDesc, final String ... additionalFacets) {
 		int n = additionalFacets.length;
 		for ( int i = 0; i < n; i += 2 ) {
-			cur.setAttribute(additionalFacets[i], additionalFacets[i + 1]);
+			cur.setAttribute(additionalFacets[i], additionalFacets[i + 1], null);
 		}
 		return createDescription(cur, superDesc);
 	}
 
 	@Override
-	public IDescription createDescription(final ISyntacticElement cur, final IDescription superDesc)
-		throws GamlException {
+	public IDescription createDescription(final ISyntacticElement cur, final IDescription superDesc) {
 		if ( cur == null ) { return null; }
 		String keyword = getKeyword(cur);
 
@@ -258,44 +221,54 @@ public class SymbolFactory implements ISymbolFactory {
 		}
 
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
-		if ( f == null ) { throw new GamlException("Impossible to parse keyword " + keyword); }
+		if ( f == null ) {
+			if ( superDesc != null ) {
+				superDesc
+					.flagError(new GamlException("Impossible to parse keyword " + keyword, cur));
+			}
+			return null;
+		}
 		if ( f != this ) { return f.createDescription(cur, superDesc); }
 
 		ISyntacticElement source = cur;
 
-		try {
-			SymbolMetaDescription md = getMetaDescriptionFor(keyword);
-			Facets facets = new Facets();
-			Map<String, String> attributes = cur.getAttributes();
-			for ( Map.Entry<String, String> a : attributes.entrySet() ) {
-				facets.put(a.getKey(), a.getValue().trim());
-			}
-			md.verifyFacets(facets);
-			List<IDescription> commands = new ArrayList();
-
-			for ( ISyntacticElement e : cur.getChildren() ) {
-				// Instead of having to consider this specific case, find a better solution.
-
-				if ( !cur.getName().equals(IKeyword.SPECIES) ) {
-					commands.add(createDescription(e, superDesc));
-				} else if ( cur.hasParent(IKeyword.DISPLAY) ) { // "species" declared in "display"
-																// section
-					commands.add(createDescription(e, superDesc));
-				}
-			}
-
-			return buildDescription(source, keyword, commands, facets, superDesc, md);
-		} catch (GamlException e) {
-			e.addSource(source);
-			throw e;
+		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
+		Facets facets = new Facets();
+		Map<String, String> attributes = cur.getAttributes();
+		for ( Map.Entry<String, String> a : attributes.entrySet() ) {
+			facets.put(a.getKey(), a.getValue());
 		}
+		if ( md != null ) {
+			try {
+				md.verifyFacets(source, facets);
+			} catch (GamlException e1) {
+				if ( superDesc != null ) {
+					superDesc.flagError(e1);
+				}
+				return null;
+			}
+		}
+		List<IDescription> commands = new ArrayList();
+
+		for ( ISyntacticElement e : cur.getChildren() ) {
+			// Instead of having to consider this specific case, find a better solution.
+
+			if ( !cur.getName().equals(IKeyword.SPECIES) ) {
+				commands.add(createDescription(e, superDesc));
+			} else if ( cur.hasParent(IKeyword.DISPLAY) ) { // "species" declared in "display"
+															// section
+				commands.add(createDescription(e, superDesc));
+			}
+		}
+
+		return buildDescription(source, keyword, commands, facets, superDesc, md);
 	}
 
 	@Override
 	public ISymbolFactory chooseFactoryFor(final String keyword) {
 		if ( registeredSymbols.containsKey(keyword) ) { return this; }
 		for ( ISymbolFactory f : registeredFactories.keySet() ) {
-			if ( f.getKeywords().contains(keyword) ) { return f; }
+			if ( registeredFactories.get(f).contains(keyword) ) { return f; }
 		}
 		for ( ISymbolFactory f : registeredFactories.keySet() ) {
 			ISymbolFactory f2 = f.chooseFactoryFor(keyword);
@@ -323,55 +296,67 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public IDescription createDescription(final IDescription superDesc,
-		final List<IDescription> children, final String ... strings) throws GamlException {
+	public IDescription createDescription(final ISyntacticElement cur,
+		final IDescription superDesc, final List<IDescription> children, final String ... strings) {
 		String keyword = strings[0];
 		ISymbolFactory f = chooseFactoryFor(keyword, null);
-		if ( f == null ) { throw new GamlException("Impossible to parse keyword " + keyword); }
-		if ( f != this ) { return f.createDescription(superDesc, children, strings); }
+		if ( f == null ) {
+			superDesc.flagError(new GamlException("Impossible to parse keyword " + keyword,
+				superDesc.getSourceInformation()));
+			return null;
+		}
+		if ( f != this ) { return f.createDescription(cur, superDesc, children, strings); }
 		List<IDescription> commandList;
 		commandList = children == null ? new ArrayList() : children;
-		SymbolMetaDescription md = getMetaDescriptionFor(keyword);
 		Facets facets = new Facets();
-		facets.addAll(strings);
-		md.verifyFacets(facets);
-		return buildDescription(null, keyword, commandList, facets, superDesc, md);
+		SymbolMetaDescription md;
+		try {
+			md = getMetaDescriptionFor(superDesc, keyword);
+			facets.addAll(strings);
+			md.verifyFacets(null, facets);
+		} catch (GamlException e) {
+			superDesc.flagError(e);
+			return null;
+		}
+		return buildDescription(cur, keyword, commandList, facets, superDesc, md);
 	}
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
-		final SymbolMetaDescription md) throws GamlException {
-		return new SymbolDescription(keyword, superDesc, facets, commands, source);
+		final SymbolMetaDescription md) {
+		return new SymbolDescription(keyword, superDesc, facets, commands, source, md);
 	}
 
 	@Override
-	public ISymbol compileDescription(final IDescription desc, final IExpressionFactory factory)
-		throws GamlException, GamaRuntimeException {
+	public ISymbol compileDescription(final IDescription desc, final IExpressionFactory factory) {
 		IDescription superDesc = desc.getSuperDescription();
 		ISymbolFactory f =
 			chooseFactoryFor(desc.getKeyword(), superDesc == null ? null : superDesc.getKeyword());
-		if ( f == null ) { throw new GamlException("Impossible to compile keyword " +
-			desc.getKeyword(), desc.getSourceInformation()); }
-		if ( f != this ) { return f.compileDescription(desc, factory); }
-		SymbolMetaDescription md = getMetaDescriptionFor(desc.getKeyword());
-		try {
-			return privateCompile(desc, md, factory);
-		} catch (GamlException e) {
-			e.addContext("In compiling " + desc.getKeyword() + " " + desc.getName());
-			e.addSource(desc.getSourceInformation());
-			throw e;
+		if ( f == null ) {
+			desc.flagError(new GamlException("Impossible to compile keyword " + desc.getKeyword(),
+				desc.getSourceInformation()));
+			return null;
 		}
+		if ( f != this ) { return f.compileDescription(desc, factory); }
+		SymbolMetaDescription md = getMetaDescriptionFor(desc, desc.getKeyword());
+		return privateCompile(desc, md, factory);
 	}
 
 	protected Facets compileFacets(final IDescription sd, final SymbolMetaDescription md,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) {
 		Facets rawFacets = sd.getFacets();
 		// Addition of a facet to keep track of the keyword
 		rawFacets.putAsLabel(IKeyword.KEYWORD, sd.getKeyword());
 
 		for ( String s : new ArrayList<String>(rawFacets.keySet()) ) {
-			IExpression e = compileFacet(s, sd, md, factory);
-			rawFacets.put(s, e);
+			IExpression e;
+			try {
+				e = compileFacet(s, sd, md, factory);
+				rawFacets.put(s, e);
+			} catch (GamlException e1) {
+				sd.flagError(e1);
+			}
+
 		}
 		return rawFacets;
 	}
@@ -384,24 +369,24 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	protected ISymbol privateCompile(final IDescription desc, final SymbolMetaDescription md,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
-
+		final IExpressionFactory factory) {
+		if ( md == null ) { return null; }
+		compileFacets(desc, md, factory);
+		ISymbol cs;
 		try {
-
-			compileFacets(desc, md, factory);
-			ISymbol cs = compileSymbol(desc, md.getConstructor());
-			if ( md.hasSequence() ) {
-				if ( md.isRemoteContext() ) {
-					desc.copyTempsAbove();
-				}
-				privateCompileChildren(desc, cs, factory);
-			}
-			return cs;
-
+			cs = compileSymbol(desc, md.getConstructor());
 		} catch (GamlException e) {
-			e.addContext("Unable to compile  " + desc.getKeyword());
-			throw e;
+			desc.flagError(e);
+			return null;
 		}
+		if ( md.hasSequence() ) {
+			if ( md.isRemoteContext() ) {
+				desc.copyTempsAbove();
+			}
+			privateCompileChildren(desc, cs, factory);
+		}
+		return cs;
+
 	}
 
 	protected ISymbol compileSymbol(final IDescription desc, final ISymbolConstructor c)
@@ -411,12 +396,19 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	protected void privateCompileChildren(final IDescription desc, final ISymbol cs,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) {
 		List<ISymbol> lce = new ArrayList();
 		for ( IDescription sd : desc.getChildren() ) {
-			lce.add(compileDescription(sd, factory));
+			ISymbol s = compileDescription(sd, factory);
+			if ( s != null ) {
+				lce.add(s);
+			}
 		}
-		cs.setChildren(lce);
+		try {
+			cs.setChildren(lce);
+		} catch (GamlException e) {
+			desc.flagError(e);
+		}
 	}
 
 	protected String[] convertTags(final ISyntacticElement e) {
@@ -433,8 +425,8 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public ISymbol compile(final ModelStructure struct) throws GamlException, GamaRuntimeException,
-		InterruptedException {
+	public ISymbol compile(final ModelStructure struct, final ErrorCollector collect)
+		throws InterruptedException {
 		return null;
 	}
 

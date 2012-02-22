@@ -59,6 +59,14 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	public SimulatedAnnealing(final IDescription species) {
 		super(species);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
+		verifyFacetType(TEMP_END);
+		verifyFacetType(TEMP_DECREASE);
+		verifyFacetType(TEMP_INIT);
+		verifyFacetType(NB_ITER);
+
 	}
 
 	@Override

@@ -33,7 +33,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SINGLE_COMMAND)
+@symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SEQUENCE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 @facets(value = {
 	@facet(name = IKeyword.TARGET, type = { IType.AGENT_STR, IType.LIST_STR }, optional = false),
@@ -48,6 +48,7 @@ public class ReleaseCommand extends AbstractCommandSequence {
 
 	public ReleaseCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.TARGET);
 		target = getFacet(IKeyword.TARGET);
 		returnString = getLiteral(IKeyword.RETURNS);
 	}
@@ -61,7 +62,7 @@ public class ReleaseCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

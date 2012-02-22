@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.LIST_STR, optional = false),
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.CONTAINER_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
@@ -60,6 +60,7 @@ public class AgentDisplayLayer extends AbstractDisplayLayer {
 
 	public AgentDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+		verifyFacetType(IKeyword.VALUE);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
 		aspectExpr = getFacet(IKeyword.ASPECT);
 		if ( aspectExpr != null && aspectExpr.isConst() ) {

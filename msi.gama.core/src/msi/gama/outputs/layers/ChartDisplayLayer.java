@@ -100,6 +100,11 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	public ChartDisplayLayer(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
+		verifyFacetType(IKeyword.BACKGROUND);
+		verifyFacetType(IKeyword.AXES);
+		verifyFacetType(IKeyword.COLOR);
+		verifyFacetType(IKeyword.STYLE);
+		verifyFacetType(IKeyword.TYPE);
 		axesColor = Cast.asColor(null, "black");
 		lastValues = new HashMap();
 		lastComputeCycle = 0l;

@@ -113,6 +113,7 @@ public class DrawCommand extends AbstractCommandSequence {
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
 			IScope scope = GAMA.getDefaultScope();
+			verifyFacetType(IKeyword.SIZE);
 			size = getFacet(IKeyword.SIZE);
 			if ( size == null ) {
 				constantSize = new GamaPoint(1.0, 1.0);

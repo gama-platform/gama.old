@@ -65,13 +65,15 @@ public class FsmStateCommand extends AbstractCommandSequence {
 
 	public FsmStateCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(INITIAL);
+		verifyFacetType(FINAL);
 		setName(getLiteral(IKeyword.NAME)); // A VOIR
 		isInitial = Cast.asBool(null, getLiteral(FsmStateCommand.INITIAL));
 		isFinal = Cast.asBool(null, getLiteral(FsmStateCommand.FINAL));
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
 		for ( ISymbol c : commands ) {
 			if ( c instanceof FsmEnterCommand ) {
 				enterActions = (FsmEnterCommand) c;

@@ -58,6 +58,7 @@ public class PutCommand extends AbstractContainerCommand {
 
 	public PutCommand(final IDescription desc) {
 		super(desc);
+		this.verifyFacetType(IKeyword.IN);
 		listType = list.getContentType().id();
 		setName("put in " + list.toGaml());
 	}

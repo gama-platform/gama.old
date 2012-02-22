@@ -28,7 +28,7 @@ public class FileUtils {
 	public static GamlProperties getGamaProperties(final Bundle pluginName,
 		final String pathToAdditions, final String fileName) throws GamlException {
 		if ( fileAccess == null ) { throw new GamlException("Properties " + fileName +
-			" not accessible"); }
+			" not accessible", (Throwable) null); }
 		return fileAccess.getGamaProperties(pluginName, pathToAdditions, fileName);
 	}
 
@@ -80,7 +80,7 @@ public class FileUtils {
 		String baseDirectory = new File(referenceFile).getParent();
 		final GamlException ex =
 			new GamlException("File denoted by " + filePath +
-				" not found! Tried the following paths : ");
+				" not found! Tried the following paths : ", (Throwable) null);
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
 			file = new File(filePath);

@@ -19,13 +19,11 @@
 package msi.gama.outputs;
 
 import java.awt.Color;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
-import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -39,7 +37,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -52,12 +50,11 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
-	@facet(name = "autosave", type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
 @inside(symbols = IKeyword.OUTPUT)
 public class LayerDisplayOutput extends AbstractDisplayOutput {
 
-	public static String snapshotFolder = "snapshots";
 	private List<AbstractDisplayLayer> layers;
 	private Color backgroundColor;
 	protected IDisplaySurface surface;
@@ -70,6 +67,8 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	public LayerDisplayOutput(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.BACKGROUND);
+		verifyFacetType(IKeyword.AUTOSAVE);
 		layers = new GamaList<AbstractDisplayLayer>();
 	}
 
@@ -85,7 +84,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 		/***/
-		IExpression auto = getFacet("autosave");
+		IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
 		}
@@ -115,51 +114,12 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 			// GUI.debug("Updating the surface of output " + getName());
 			surface.updateDisplay();
 		}
-		if ( autosave ) {
-			save(getOwnScope());
-		}
 	}
 
 	@Override
 	public void schedule() throws GamaRuntimeException {
 		compute(getOwnScope(), 0);
 		super.schedule();
-	}
-
-	public void save(final IScope scope) {
-		try {
-			Files.newFolder(scope, snapshotFolder);
-		} catch (GamaRuntimeException e1) {
-			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1);
-			e1.printStackTrace();
-			return;
-		}
-		String snapshotFile =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
-
-		String file = snapshotFile + SimulationClock.getCycle() + ".png";
-		DataOutputStream os = null;
-		try {
-			os = new DataOutputStream(new FileOutputStream(file));
-			RenderedImage im = surface.getImage();
-			ImageIO.write(im, "png", os);
-		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = new GamaRuntimeException(ex);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e);
-		} finally {
-			try {
-				if ( os != null ) {
-					os.close();
-				}
-			} catch (Exception ex) {
-				GamaRuntimeException e = new GamaRuntimeException(ex);
-				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e);
-			}
-		}
 	}
 
 	public void setImageFileName(final String fileName) {
@@ -189,7 +149,8 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 			return;
 		}
 		surface = outputManager.getDisplaySurfaceFor(this, w, h);
-		setImageFileName(getName() + "_snapshot");
+		surface.setSnapshotFileName(getName() + "_snapshot");
+		surface.setAutoSave(autosave);
 	}
 
 	public void setSurface(final IDisplaySurface sur) {

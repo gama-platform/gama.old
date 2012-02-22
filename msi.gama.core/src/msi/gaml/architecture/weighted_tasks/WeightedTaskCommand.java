@@ -54,6 +54,7 @@ public class WeightedTaskCommand extends AbstractCommandSequence {
 
 	public WeightedTaskCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(WEIGHT);
 		setName(getLiteral(IKeyword.NAME));
 		weight = getFacet(WEIGHT);
 	}

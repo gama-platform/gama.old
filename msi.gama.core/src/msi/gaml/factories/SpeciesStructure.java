@@ -6,6 +6,7 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.ErrorCollector;
 import msi.gaml.compilation.GamlException;
 
 public class SpeciesStructure {
@@ -16,11 +17,14 @@ public class SpeciesStructure {
 
 	private boolean isGrid = false;
 
-	public SpeciesStructure(final ISyntacticElement node) throws GamlException {
-		if ( node == null ) { throw new GamlException("Species element is null!"); }
-
-		this.node = node;
+	public SpeciesStructure(final ISyntacticElement node, final ErrorCollector collect) {
 		microSpecies = new ArrayList<SpeciesStructure>();
+		if ( node == null ) {
+			collect.add(new GamlException("Species element is null!", node));
+			this.node = null;
+			return;
+		}
+		this.node = node;
 		isGrid = node.getName().equals(IKeyword.GRID);
 	}
 

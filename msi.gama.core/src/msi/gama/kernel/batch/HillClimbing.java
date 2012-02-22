@@ -50,6 +50,11 @@ public class HillClimbing extends LocalSearchAlgorithm {
 
 	public HillClimbing(final IDescription species) {
 		super(species);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
+		verifyFacetType(ITER_MAX);
+
 	}
 
 	@Override

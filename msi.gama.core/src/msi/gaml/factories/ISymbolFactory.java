@@ -20,8 +20,8 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gama.common.util.ErrorCollector;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
 
@@ -33,25 +33,22 @@ import msi.gaml.expressions.IExpressionFactory;
  */
 public interface ISymbolFactory {
 
-	public abstract IDescription createDescription(final IDescription superDescription,
-		final List<IDescription> children, final String ... facets) throws GamlException;
+	public abstract IDescription createDescription(ISyntacticElement cur,
+		final IDescription superDescription, final List<IDescription> children,
+		final String ... facets);
 
-	public abstract IDescription createDescription(ISyntacticElement cur, IDescription superDesc)
-		throws GamlException;
+	public abstract IDescription createDescription(ISyntacticElement cur, IDescription superDesc);
 
 	public abstract ISymbol compileDescription(final IDescription desc,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException;
+		final IExpressionFactory factory);
 
 	public abstract ISymbolFactory chooseFactoryFor(String keyword);
-
-	public abstract SymbolMetaDescription getMetaDescriptionFor(String keyword)
-		throws GamlException;
 
 	public abstract Set<String> getKeywords();
 
 	public abstract IExpressionFactory getDefaultExpressionFactory();
 
-	public abstract String getOmissibleFacetForSymbol(String symbol);
+	public abstract String getOmissibleFacetForSymbol(ISyntacticElement elmt, String symbol);
 
 	/**
 	 * @param structure
@@ -60,7 +57,14 @@ public interface ISymbolFactory {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	ISymbol compile(ModelStructure structure) throws GamlException, GamaRuntimeException,
-		InterruptedException;
+	ISymbol compile(ModelStructure structure, ErrorCollector collect) throws InterruptedException;
+
+	/**
+	 * @param desc
+	 * @param keyword
+	 * @return
+	 * @throws GamlException
+	 */
+	SymbolMetaDescription getMetaDescriptionFor(IDescription desc, String keyword);
 
 }

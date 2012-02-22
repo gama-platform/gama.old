@@ -58,13 +58,20 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = IKeyword.BASE, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.SCHEDULES, type = IType.LIST_STR, optional = true),
+	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER_STR, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) }, omissible = IKeyword.NAME)
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR) })
 public class GamlSpecies extends AbstractSpecies {
 
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.WIDTH);
+		verifyFacetType(IKeyword.HEIGHT);
+		verifyFacetType(IKeyword.NEIGHBOURS);
+		verifyFacetType(IKeyword.TORUS);
+		verifyFacetType(IKeyword.FREQUENCY);
+		verifyFacetType(IKeyword.SCHEDULES);
+		verifyFacetType(IKeyword.TOPOLOGY);
 	}
 
 	@Override

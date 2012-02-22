@@ -33,6 +33,10 @@ import msi.gaml.types.IType;
  */
 public interface IDescription {
 
+	public void flagError(final GamlException e);
+
+	public void flagWarning(final GamlException e);
+
 	public abstract String getKeyword();
 
 	public abstract String getName();
@@ -43,9 +47,11 @@ public interface IDescription {
 
 	public abstract IDescription getModelDescription();
 
-	public abstract void setSuperDescription(final IDescription desc) throws GamlException;
+	public abstract void setSuperDescription(final IDescription desc);
 
 	public abstract ISyntacticElement getSourceInformation();
+
+	public abstract SymbolMetaDescription getMeta();
 
 	public abstract Facets getFacets();
 
@@ -67,16 +73,15 @@ public interface IDescription {
 	public abstract IExpression addTemp(final String name, final IType type,
 		final IType contentType, IExpressionFactory f);
 
-	public abstract IDescription shallowCopy(final IDescription superDescription)
-		throws GamlException;
+	public abstract IDescription shallowCopy(final IDescription superDescription);
 
 	public abstract void dispose();
 
 	public abstract List<IDescription> getChildren();
 
-	public abstract void addChildren(List<IDescription> children) throws GamlException;
+	public abstract void addChildren(List<IDescription> children);
 
-	public abstract IDescription addChild(IDescription child) throws GamlException;
+	public abstract IDescription addChild(IDescription child);
 
 	public abstract IType getTypeOf(String s);
 

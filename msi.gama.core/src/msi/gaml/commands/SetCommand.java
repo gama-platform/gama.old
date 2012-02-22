@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.VAR, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false) }, combinations = {
-	@combination({ IKeyword.VAR, IKeyword.VALUE }), @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
+	@combination({ IKeyword.VAR, IKeyword.VALUE }), @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 public class SetCommand extends AbstractCommand {
@@ -52,8 +52,11 @@ public class SetCommand extends AbstractCommand {
 	public SetCommand(final IDescription desc) throws GamlException {
 		super(desc);
 		IExpression expr = getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
+		if ( expr == null ) { throw new GamlException("No references to a variables can be found",
+			getDescription().getSourceInformation()); }
 		if ( !(expr instanceof IVarExpression) ) { throw new GamlException("The expression " +
-			expr.toGaml() + " is not a reference to a variable "); }
+			expr.toGaml() + " is not a reference to a variable ", getDescription()
+			.getSourceInformation()); }
 		value = getFacet(IKeyword.VALUE, getFacet(IKeyword.WITH));
 		varExpr = (IVarExpression) expr;
 		setName("set " + varExpr.toGaml());

@@ -76,10 +76,14 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 	}
 
 	public void verifyArgs(final Map<String, ?> args) throws GamlException {
-		CommandDescription executer =
-			((ExecutionContextDescription) description.getDescriptionDeclaringAction(name))
-				.getAction(name);
-		if ( executer == null ) { throw new GamlException("Unknown action " + getName()); }
+		ExecutionContextDescription declPlace =
+			(ExecutionContextDescription) description.getDescriptionDeclaringAction(name);
+		CommandDescription executer = null;
+		if ( declPlace != null ) {
+			executer = declPlace.getAction(name);
+		}
+		if ( executer == null ) { throw new GamlException("Unknown action " + getName(),
+			getDescription().getSourceInformation()); }
 		executer.verifyArgs(args.keySet());
 	}
 

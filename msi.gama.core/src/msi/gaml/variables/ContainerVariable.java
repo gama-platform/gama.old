@@ -39,6 +39,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
@@ -77,7 +79,7 @@ public class ContainerVariable extends Variable {
 
 	private void setInitialValues(final IScope scope, final IAgent owner, final IExpression initial)
 		throws GamaRuntimeException {
-		final Object val = value(owner);
+		final Object val = value(scope, owner);
 		if ( val == null ) { return; }
 		if ( !(val instanceof IContainer) ) { return; }
 		Object o = scope.evaluate(initial, owner);
@@ -92,7 +94,7 @@ public class ContainerVariable extends Variable {
 				Cast.asInt(scope, value), 1);
 		switch (this.type().id()) {
 			case IType.MATRIX: {
-				Object v = value(owner);
+				Object v = value(scope, owner);
 				if ( !(v instanceof IMatrix) ) {
 					v = null;
 				}
@@ -117,7 +119,7 @@ public class ContainerVariable extends Variable {
 			}
 			case IType.LIST: {
 				result = new GamaList<Object>((int) size.x);
-				Object v = value(owner);
+				Object v = value(scope, owner);
 				if ( v instanceof GamaList ) {
 					if ( ((GamaList) v).size() < size.x ) {
 						((GamaList) result).addAll((GamaList) v);

@@ -6,7 +6,7 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.*;
 import msi.gaml.compilation.GamlException;
 
 /**
@@ -28,16 +28,17 @@ public class ModelElements implements IKeyword {
 		documents = nodes;
 	}
 
-	private List<String> buildFileList(final String fileName) throws GamlException {
+	private List<String> buildFileList(final String fileName, final ErrorCollector collect) {
 		List<String> filesToParse = new ArrayList<String>();
-		buildFileList(filesToParse, fileName);
+		buildFileList(filesToParse, fileName, collect);
 		return filesToParse;
 	}
 
-	Map<String, List<ISyntacticElement>> getNodesFrom(final String fileName) throws GamlException {
+	Map<String, List<ISyntacticElement>> getNodesFrom(final String fileName,
+		final ErrorCollector collect) {
 		ISyntacticElement root = null;
 		List<String> filesToParse;
-		filesToParse = buildFileList(fileName);
+		filesToParse = buildFileList(fileName, collect);
 		List<ISyntacticElement> allNodes = new ArrayList();
 		List<ISyntacticElement> speciesNodes = new ArrayList();
 		List<ISyntacticElement> globalNodes = new ArrayList();
@@ -49,7 +50,7 @@ public class ModelElements implements IKeyword {
 			if ( root == null ) {
 				root = doc;
 				if ( root.getAttribute(NAME) == null ) {
-					root.setAttribute(NAME, root.getName());
+					root.setAttribute(NAME, root.getName(), null);
 				}
 			}
 			List<ISyntacticElement> listOfNodes = doc.getChildren();
@@ -112,8 +113,8 @@ public class ModelElements implements IKeyword {
 		}
 	}
 
-	private void buildFileList(final List<String> filesToParse, final String fileName)
-		throws GamlException {
+	private void buildFileList(final List<String> filesToParse, final String fileName,
+		final ErrorCollector collect) {
 		if ( filesToParse.contains(fileName) ) { return; }
 		filesToParse.add(0, fileName);
 		ISyntacticElement doc = documents.get(fileName);
@@ -121,8 +122,13 @@ public class ModelElements implements IKeyword {
 		for ( final ISyntacticElement e : doc.getChildren("include") ) {
 			String s = e.getAttribute("file");
 			if ( s != null ) {
-				s = FileUtils.constructAbsoluteFilePath(s, fileName, true);
-				buildFileList(filesToParse, s);
+				try {
+					s = FileUtils.constructAbsoluteFilePath(s, fileName, true);
+				} catch (GamlException e1) {
+					collect.add(e1);
+					continue;
+				}
+				buildFileList(filesToParse, s, collect);
 			}
 		}
 	}

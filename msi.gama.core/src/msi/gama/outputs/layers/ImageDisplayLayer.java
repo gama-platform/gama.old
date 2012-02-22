@@ -65,9 +65,11 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
 public class ImageDisplayLayer extends AbstractDisplayLayer {
 
-	public ImageDisplayLayer(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+	public ImageDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+		verifyFacetType(IKeyword.FILE);
+		verifyFacetType(IKeyword.GIS);
+		verifyFacetType(IKeyword.COLOR);
 	}
 
 	IExpression imageFileExpression = null;

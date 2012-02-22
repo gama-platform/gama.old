@@ -141,10 +141,12 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	}
 
 	@Override
-	public IExpression createUnaryExpr(final String op, final IExpression c) throws GamlException {
+	public IExpression createUnaryExpr(final String op, final IExpression c,
+		final IDescription context) throws GamlException {
 		IExpression child = c;
 
-		if ( child == null ) { throw new GamlException("Operand of '" + op + "' is malformed"); }
+		if ( child == null ) { throw new GamlException("Operand of '" + op + "' is malformed",
+			context.getSourceInformation()); }
 		if ( UNARIES.containsKey(op) ) {
 			Map<IType, IOperator> ops = UNARIES.get(op);
 			IType childType = child.type();
@@ -160,7 +162,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				if ( types.size() == 0 ) { throw new GamlException(
 					"No operator found for applying '" + op + "' to " + childType +
 						" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
-						")"); }
+						")", context.getSourceInformation()); }
 				childType = types.get(0);
 				int dist = childType.distanceTo(originalChildType);
 				for ( int i = 1, n = types.size(); i < n; i++ ) {
@@ -172,7 +174,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				}
 				IType coercingType = childType.coerce(child.type());
 				if ( coercingType != null ) {
-					child = createUnaryExpr(coercingType.toString(), child);
+					child = createUnaryExpr(coercingType.toString(), child, context);
 				}
 			}
 
@@ -182,7 +184,8 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// }
 			return helper.copy().init(op, child, null);
 		}
-		throw new GamlException("Unary operator " + op + " does not exist");
+		throw new GamlException("Unary operator " + op + " does not exist",
+			context.getSourceInformation());
 
 	}
 
@@ -191,8 +194,10 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		throws GamlException {
 		IExpression left = l;
 		IExpression right = r;
-		if ( left == null ) { throw new GamlException("Left member of '" + op + "' is malformed"); }
-		if ( right == null ) { throw new GamlException("Right member of '" + op + "' is malformed"); }
+		if ( left == null ) { throw new GamlException("Left member of '" + op + "' is malformed",
+			context.getSourceInformation()); }
+		if ( right == null ) { throw new GamlException("Right member of '" + op + "' is malformed",
+			context.getSourceInformation()); }
 
 		if ( BINARIES.containsKey(op) ) {
 			// We get the possible pairs of types registered
@@ -210,7 +215,8 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				// No pair is matching the operand types, we throw an exception
 				throw new GamlException("No binary operator found for applying '" + op +
 					"' to left operand " + leftType.toString() + " and " + rightType.toString() +
-					" (operators available for " + map.keySet() + ")");
+					" (operators available for " + map.keySet() + ")",
+					context.getSourceInformation());
 			}
 			// We gather the first one
 			TypePair pair = list.get(0);
@@ -234,11 +240,11 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// We coerce the two expressions to closely match the pair of types declared
 			IType coercingType = pair.left().coerce(left.type());
 			if ( coercingType != null ) {
-				left = createUnaryExpr(coercingType.toString(), left);
+				left = createUnaryExpr(coercingType.toString(), left, context);
 			}
 			coercingType = pair.right().coerce(right.type());
 			if ( coercingType != null ) {
-				right = createUnaryExpr(coercingType.toString(), right);
+				right = createUnaryExpr(coercingType.toString(), right, context);
 			}
 			// We add the species context in case this operator is a primitive
 			if ( operator instanceof PrimitiveOperator ) {
@@ -247,7 +253,8 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// And we return it.
 			return operator.init(op, left, right);
 		}
-		throw new GamlException("Operator: " + op + " does not exist");
+		throw new GamlException("Operator: " + op + " does not exist",
+			context.getSourceInformation());
 	}
 
 	@Override

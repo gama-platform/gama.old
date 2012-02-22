@@ -67,6 +67,14 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	public GeneticAlgorithm(final IDescription species) {
 		super(species);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
+		verifyFacetType(POP_DIM);
+		verifyFacetType(CROSSOVER_PROB);
+		verifyFacetType(MUTATION_PROB);
+		verifyFacetType(NB_GEN);
+		verifyFacetType(MAX_GEN);
 	}
 
 	@Override

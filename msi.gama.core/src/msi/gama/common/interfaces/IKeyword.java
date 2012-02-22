@@ -28,6 +28,7 @@ package msi.gama.common.interfaces;
 public interface IKeyword {
 
 	public static final String _DOT = ".";
+	public static final String AUTOSAVE = "autosave";
 	public static final String ACTION = "action";
 	public static final String ADD = "add";
 	public static final String AGENT = "agent";
@@ -105,6 +106,7 @@ public interface IKeyword {
 	public static final String FREQUENCY = "frequency";
 	public static final String FROM = "from";
 	public static final String FSM = "fsm";
+	public static final String FUNCTION = "function";
 	public static final String GAML = "gaml";
 	public static final String GENETIC = "genetic";
 	public static final String GETTER = "getter";
@@ -274,7 +276,6 @@ public interface IKeyword {
 	public static final String XOR = "xor";
 	public static final String XY = "xy";
 	public static final String Y = "y";
-
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
 		REACTIVE_TABU, EXHAUSTIVE };
 	public static final String COLOR_RED = "red";
@@ -284,5 +285,6 @@ public interface IKeyword {
 	public static final String COLOR_BLUE = "blue";
 	public static final String SWITCH = "switch";
 	public static final String MATCH = "match";
-
+	public static final String MATCH_ONE = "match_one";
+	public static final String MATCH_BETWEEN = "match_between";
 }

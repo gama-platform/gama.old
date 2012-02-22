@@ -78,6 +78,9 @@ public class BatchExperiment extends AbstractExperiment {
 
 	public BatchExperiment(final IDescription description) throws GamaRuntimeException {
 		super(description);
+		verifyFacetType(IKeyword.KEEP_SEED);
+		verifyFacetType(IKeyword.REPEAT);
+		verifyFacetType(IKeyword.UNTIL);
 		IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
 			keep_seed = Cast.asBool(getExperimentScope(), expr.value(getExperimentScope()));

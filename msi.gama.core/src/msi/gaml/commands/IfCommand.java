@@ -52,13 +52,16 @@ public class IfCommand extends AbstractCommandSequence {
 	 */
 	public IfCommand(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.CONDITION);
 		cond = getFacet(IKeyword.CONDITION);
-		setName("if " + cond.toGaml());
+		if ( cond != null ) {
+			setName("if " + cond.toGaml());
+		}
 
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
 		for ( ISymbol c : commands ) {
 			if ( c instanceof ElseCommand ) {
 				alt = (ICommand) c;

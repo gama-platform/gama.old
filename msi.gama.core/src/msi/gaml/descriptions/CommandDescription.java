@@ -46,8 +46,8 @@ public class CommandDescription extends SymbolDescription {
 
 	public CommandDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final List<IDescription> children, final boolean hasScope,
-		final boolean hasArgs, final ISyntacticElement source) throws GamlException {
-		super(keyword, superDesc, facets, children, source);
+		final boolean hasArgs, final ISyntacticElement source, final SymbolMetaDescription md) {
+		super(keyword, superDesc, facets, children, source, md);
 		this.verifyMandatoryArgs = !keyword.equals(IKeyword.PRIMITIVE);
 
 		/*
@@ -63,7 +63,11 @@ public class CommandDescription extends SymbolDescription {
 		}
 		if ( hasArgs ) {
 			args = new HashMap();
-			collectArgs();
+			try {
+				collectArgs();
+			} catch (GamlException e) {
+				superDesc.flagError(e);
+			}
 		} else {
 			args = null;
 		}
@@ -122,7 +126,8 @@ public class CommandDescription extends SymbolDescription {
 			String sep = words.get(begin + parenthesis + 1);
 			if ( !sep.equals("::") ) { throw new GamlException(
 				"Arguments must be provided as pairs arg::value; " +
-					words.subConcatenation(begin, end) + " is not a pair"); }
+					words.subConcatenation(begin, end) + " is not a pair",
+				this.getSourceInformation()); }
 			String expr = words.subConcatenation(begin + parenthesis + 2, end - parenthesis);
 			// String[] facetArray = new String[] { IKeyword.NAME, arg, IKeyword.VALUE, expr };
 			// GuiUtils.debug("Found a new argument:" + Arrays.toString(facetArray));
@@ -142,7 +147,7 @@ public class CommandDescription extends SymbolDescription {
 			String varName = facets.getString(facetName);
 			if ( getSuperDescription() == null ||
 				!(getSuperDescription() instanceof CommandDescription) ) { throw new GamlException(
-				"Impossible to return " + varName); }
+				"Impossible to return " + varName, getSourceInformation()); }
 			// TODO ExpressionParser.getInstance().verifyVarName(varName, getModel());
 			return (IVarExpression) ((CommandDescription) getSuperDescription()).addTemp(varName,
 				type == null ? Types.NO_TYPE : getTypeOf(type), contentType == null ? Types.NO_TYPE
@@ -165,14 +170,14 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	@Override
-	public CommandDescription shallowCopy(final IDescription superDescription) throws GamlException {
+	public CommandDescription shallowCopy(final IDescription superDescription) {
 		List<IDescription> children = new ArrayList();
 		children.addAll(getChildren());
 		if ( args != null ) {
 			children.addAll(args.values());
 		}
 		return new CommandDescription(getKeyword(), null, facets, children, temps != null,
-			args != null, source);
+			args != null, getSource(), meta);
 	}
 
 	@Override
@@ -213,12 +218,12 @@ public class CommandDescription extends SymbolDescription {
 		if ( verifyMandatoryArgs ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.contains(arg) ) { throw new GamlException("Missing argument " + arg +
-					" in call to " + getName()); }
+					" in call to " + getName(), getSourceInformation()); }
 			}
 		}
 		for ( String arg : names ) {
 			if ( !allArgs.contains(arg) ) { throw new GamlException("Unknown argument" + arg +
-				" in call to " + getName()); }
+				" in call to " + getName(), getSourceInformation()); }
 		}
 	}
 

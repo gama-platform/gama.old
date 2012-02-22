@@ -20,9 +20,9 @@ package msi.gaml.factories;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -41,16 +41,20 @@ public class CommandFactory extends SymbolFactory {
 	@Override
 	protected CommandDescription buildDescription(final ISyntacticElement source, final String kw,
 		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
-		final SymbolMetaDescription md) throws GamlException {
+		final SymbolMetaDescription md) {
 		return new CommandDescription(kw, superDesc, facets, commands, md.hasScope(), md.hasArgs(),
-			source);
+			source, md);
 	}
 
 	@Override
 	protected void privateCompileChildren(final IDescription desc, final ISymbol cs,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) {
 		if ( ((CommandDescription) desc).hasArgs() ) {
-			compileArgs(desc, cs, factory);
+			try {
+				compileArgs(desc, cs, factory);
+			} catch (GamlException e) {
+				desc.flagError(e);
+			}
 		}
 		String actualSpecies = computeSpecies(cs);
 

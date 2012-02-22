@@ -42,6 +42,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	public ExhaustiveSearch(final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.MAXIMIZE);
+		verifyFacetType(IKeyword.MINIMIZE);
+		verifyFacetType(IKeyword.AGGREGATION);
 	}
 
 	@Override

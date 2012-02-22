@@ -20,11 +20,11 @@ package msi.gaml.factories;
 
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gaml.commands.Facets;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gaml.compilation.*;
+import msi.gaml.commands.Facets;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 26 nov. 2008
@@ -45,7 +45,8 @@ public class VariableFactory extends SymbolFactory {
 		if ( keyword == null ) {
 			keyword = cur.getName();
 		}
-		if ( Types.get(keyword) == Types.NO_TYPE && !keyword.equals(IKeyword.SIGNAL) ) { return IType.AGENT_STR; }
+		// if ( /* Types.get(keyword) == Types.NO_TYPE && */!keyword.equals(IKeyword.SIGNAL) ) {
+		// return IType.AGENT_STR; }
 		return keyword;
 		// WARNING : no further test made here; can be totally false.
 	}
@@ -53,7 +54,7 @@ public class VariableFactory extends SymbolFactory {
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> children, final Facets facets, final IDescription superDesc,
-		final SymbolMetaDescription md) throws GamlException {
+		final SymbolMetaDescription md) {
 
 		if ( keyword.equals(IKeyword.SIGNAL) && facets.containsKey(IKeyword.ENVIRONMENT) ) {
 			String env = facets.getString(IKeyword.ENVIRONMENT);
@@ -61,8 +62,8 @@ public class VariableFactory extends SymbolFactory {
 			String name = facets.getString(IKeyword.NAME);
 			final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 			VariableDescription vd =
-				(VariableDescription) createDescription(superDesc, null, IType.FLOAT_STR,
-					IKeyword.NAME, name, IKeyword.TYPE, IType.FLOAT_STR, IKeyword.VALUE, value,
+				(VariableDescription) createDescription(source, superDesc, null, IType.FLOAT_STR,
+					IKeyword.NAME, name, IKeyword.TYPE, IType.FLOAT_STR, IKeyword.UPDATE, value,
 					IKeyword.MIN, "0");
 
 			SpeciesDescription environment =
@@ -70,7 +71,14 @@ public class VariableFactory extends SymbolFactory {
 			environment.addChild(vd);
 		}
 
-		return new VariableDescription(keyword, superDesc, facets, children, source);
+		return new VariableDescription(keyword, superDesc, facets, children, source, md);
+	}
+
+	/**
+	 * @param name
+	 */
+	public void addSpeciesNameAsType(final String name) {
+		registeredSymbols.put(name, registeredSymbols.get(IKeyword.AGENT));
 	}
 
 }

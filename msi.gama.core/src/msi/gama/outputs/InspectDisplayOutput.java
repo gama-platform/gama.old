@@ -29,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
@@ -67,6 +67,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.REFRESH_EVERY);
+		verifyFacetType(IKeyword.TYPE);
 		String type = getLiteral(IKeyword.TYPE);
 		if ( value != null ) {
 			target = INSPECT_DYNAMIC;
@@ -75,7 +77,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 		}
 	}
 
-	public InspectDisplayOutput(final String name, final short type) throws GamlException {
+	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
 		super(DescriptionFactory.createDescription(IKeyword.INSPECT, IKeyword.NAME, name +
 			(type != INSPECT_SPECIES ? count++ : ""), IKeyword.TYPE, types.get(type)));

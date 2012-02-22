@@ -41,6 +41,7 @@ public class BatchOutput extends Symbol {
 
 	public BatchOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
+		verifyFacetType(IKeyword.REWRITE);
 	}
 
 	@Override

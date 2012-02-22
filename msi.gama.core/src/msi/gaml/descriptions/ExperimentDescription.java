@@ -21,14 +21,13 @@ package msi.gaml.descriptions;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
 
 public class ExperimentDescription extends SymbolDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source)
-		throws GamlException {
-		super(keyword, superDesc, facets, children, source);
+		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final SymbolMetaDescription md) {
+		super(keyword, superDesc, facets, children, source, md);
 	}
 
 	@Override

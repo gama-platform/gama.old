@@ -50,7 +50,8 @@ public class GamaBundleLoader {
 		String core = "msi.gama.core";
 		String corePath = additions.get(core);
 		if ( corePath == null ) { throw new GamlException(
-			"Core implementation of GAML not found. Please check that msi.gama.core is in the application bundles"); }
+			"Core implementation of GAML not found. Please check that msi.gama.core is in the application bundles",
+			(Throwable) null); }
 		preBuildBundle(core, corePath);
 		additions.remove(core);
 		for ( String pluginName : additions.keySet() ) {
@@ -155,7 +156,11 @@ public class GamaBundleLoader {
 		} catch (ClassNotFoundException e1) {
 
 		}
-
+		// Necessary to load this in advanvce for it to be accessible by the parser later
+		// (which does not have a clue about available plugins)
+		FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.CHILDREN);
+		// FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.FACETS);
+		//
 		GamlProperties types =
 			FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.TYPES);
 		final Set<String> classNames =
@@ -168,6 +173,8 @@ public class GamaBundleLoader {
 			GamlProperties.BINARIES).keySet());
 		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
 			GamlProperties.SYMBOLS).keySet());
+		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
+			GamlProperties.DEFINITIONS).keySet());
 		ClassLoader cl = GamaClassLoader.getInstance().addBundle(plugin);
 		// GamlCompiler.class.getClassLoader();
 

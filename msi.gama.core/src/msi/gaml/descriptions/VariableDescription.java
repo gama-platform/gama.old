@@ -44,9 +44,9 @@ public class VariableDescription extends SymbolDescription {
 	private boolean isGlobal;
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source)
-		throws GamlException {
-		super(keyword, superDesc, facets, children, source);
+		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final SymbolMetaDescription md) {
+		super(keyword, superDesc, facets, children, source, md);
 		isBuiltIn = source == null;
 		isUserDefined = source != null;
 		facets.putIfAbsent(IKeyword.TYPE, keyword);
@@ -64,7 +64,7 @@ public class VariableDescription extends SymbolDescription {
 	// }
 
 	@Override
-	public void setSuperDescription(final IDescription s) throws GamlException {
+	public void setSuperDescription(final IDescription s) {
 		isGlobal = s != null && IKeyword.WORLD_SPECIES_NAME.equals(s.getName());
 		super.setSuperDescription(s);
 	}
@@ -86,13 +86,15 @@ public class VariableDescription extends SymbolDescription {
 		String keyword = facets.getString(IKeyword.TYPE, super.getKeyword());
 		if ( this.getModelDescription().getSpeciesDescription(keyword) != null &&
 			!keyword.equals(IKeyword.SIGNAL) ) { return IType.AGENT_STR; }
+		// FIXME Still necessary now that the species are added dynamically to the list of symbols
+		// accepted by VariableFactory ?
 		return keyword;
 	}
 
 	@Override
-	public VariableDescription shallowCopy(final IDescription superDesc) throws GamlException {
+	public VariableDescription shallowCopy(final IDescription superDesc) {
 		VariableDescription copy =
-			new VariableDescription(getKeyword(), superDesc, facets, children, source);
+			new VariableDescription(getKeyword(), superDesc, facets, children, getSource(), meta);
 		copy.isBuiltIn = this.isBuiltIn;
 		return copy;
 	}
@@ -123,6 +125,8 @@ public class VariableDescription extends SymbolDescription {
 		names.addAll(builtInDependencies);
 		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.INIT)));
 		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.VALUE)));
+		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.UPDATE)));
+		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.FUNCTION)));
 		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.MIN)));
 		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.MAX)));
 		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.SIZE)));
@@ -179,11 +183,16 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public boolean isUpdatable() {
-		return !isNotModifiable() && facets.containsKey(IKeyword.VALUE);
+		return !isNotModifiable() &&
+			(facets.containsKey(IKeyword.VALUE) || facets.containsKey(IKeyword.UPDATE));
+	}
+
+	public boolean isFunction() {
+		return facets.containsKey(IKeyword.FUNCTION);
 	}
 
 	public boolean isNotModifiable() {
-		return facets.equals(IKeyword.CONST, "true") && !isParameter();
+		return isFunction() || facets.equals(IKeyword.CONST, "true") && !isParameter();
 	}
 
 	public boolean isParameter() {
