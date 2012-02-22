@@ -19,6 +19,12 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -27,6 +33,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.Spatial.Points;
 
 /**
  * The class GraphTopology.
@@ -338,7 +345,6 @@ public class GraphTopology extends AbstractTopology {
 		IPath path = this.pathBetween(source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
 		return path.getDistance();
-		// return d <= max_distance ? d : null;
 	}
 
 	@Override
@@ -346,7 +352,6 @@ public class GraphTopology extends AbstractTopology {
 		IPath path = this.pathBetween(source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
 		return path.getDistance();
-		// return d <= max_distance ? d : null;
 	}
 
 	/**
@@ -382,5 +387,4 @@ public class GraphTopology extends AbstractTopology {
 		}
 		return result;
 	}
-
 }

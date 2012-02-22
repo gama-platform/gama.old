@@ -19,6 +19,8 @@
 package msi.gama.util;
 
 import java.util.*;
+
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -27,6 +29,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Spatial.Points;
 import msi.gaml.types.GamaGeometryType;
 import org.jgrapht.*;
 import com.vividsolutions.jts.geom.*;
@@ -274,11 +277,112 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public double getDistance() {
-		double d = 0d;
-		for ( IShape g : segments ) {
-			d += g.getInnerGeometry().getLength();
+		if (getEdgeList() == null ||  getEdgeList().isEmpty())
+			return Double.MAX_VALUE;
+		Coordinate[] coordsSource = getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		Coordinate[] coordsTarget = getEdgeList().get(getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
+		if (coordsSource.length == 0 || coordsTarget.length == 0)
+			return Double.MAX_VALUE;
+		GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
+		GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
+		boolean keepSource = source.getLocation().equals(sourceEdges);
+		boolean keepTarget = target.getLocation().equals(targetEdges);
+		if (keepSource && keepTarget) {
+			double d = 0d;
+			for ( IShape g : segments ) {
+				d += g.getInnerGeometry().getLength();
+			}
+			return d;
 		}
-		return d;
+		return getDistanceComplex(keepSource, keepTarget);
+	}
+
+	
+	private double getDistanceComplex(final boolean keepSource, final boolean keepTarget) {
+		double distance = 0;
+		int index = 0;
+		int indexSegment = 1;
+		ILocation currentLocation = source.getLocation().copy();
+		IList<IShape> edges = getEdgeList();
+		int nb = edges.size();
+		if (! keepSource) {
+			double distanceS = Double.MAX_VALUE;
+			IShape line = null;
+			for ( int i = 0; i < nb; i++ ) {
+				line = edges.get(i);
+				double distS = line.euclidianDistanceTo(currentLocation);
+				if ( distS < distanceS ) {
+					distanceS = distS;
+					index = i;
+				}
+			}
+			line = edges.get(index);
+			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
+			Point pointGeom = (Point) currentLocation.getInnerGeometry();
+			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
+				distanceS = Double.MAX_VALUE;
+				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+				int nbSp = coords.length;
+				Coordinate[] temp = new Coordinate[2];
+				for ( int i = 0; i < nbSp - 1; i++ ) {
+					temp[0] = coords[i];
+					temp[1] = coords[i + 1];
+					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					double distS = segment.distance(pointGeom);
+					if ( distS < distanceS ) {
+						distanceS = distS;
+						indexSegment = i + 1;
+					}
+				}
+			}
+		}
+		IShape lineEnd = edges.get(nb - 1);
+		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
+		GamaPoint falseTarget = new GamaPoint(target.getLocation());
+		if (! keepTarget) {
+			falseTarget = (GamaPoint) Points.opClosestPointTo(getEndVertex(), lineEnd);
+			endIndexSegment = 1;
+			Point pointGeom = (Point) falseTarget.getInnerGeometry();
+			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
+				double distanceT = Double.MAX_VALUE;
+				Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
+				int nbSp = coords.length;
+				Coordinate[] temp = new Coordinate[2];
+				for ( int i = 0; i < nbSp - 1; i++ ) {
+					temp[0] = coords[i];
+					temp[1] = coords[i + 1];
+					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					double distT = segment.distance(pointGeom);
+					if ( distT < distanceT ) {
+						distanceT = distT;
+						endIndexSegment = i + 1;
+					}
+				}
+			}
+		} 
+		for ( int i = index; i < nb; i++ ) {
+			IShape line = edges.get(i);
+			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+
+			for ( int j = indexSegment; j < coords.length; j++ ) {
+				GamaPoint pt = null;
+				if ( i == nb - 1 && j == endIndexSegment ) {
+					pt = falseTarget;
+				} else {
+					pt = new GamaPoint(coords[j]);
+				}
+				double dist = currentLocation.euclidianDistanceTo(pt);
+				currentLocation = pt;
+				distance = distance + dist;
+				if ( i == nb - 1 && j == endIndexSegment ) {
+					break;
+				}
+				indexSegment++;
+			}
+			indexSegment = 1;
+			index++;
+		}
+		return distance;
 	}
 
 	@Override
