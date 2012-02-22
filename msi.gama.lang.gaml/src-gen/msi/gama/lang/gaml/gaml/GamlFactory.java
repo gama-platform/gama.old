@@ -53,33 +53,6 @@ public interface GamlFactory extends EFactory
   GamlLangDef createGamlLangDef();
 
   /**
-   * Returns a new object of class '<em>Def Keyword</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Keyword</em>'.
-   * @generated
-   */
-  DefKeyword createDefKeyword();
-
-  /**
-   * Returns a new object of class '<em>Block</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Block</em>'.
-   * @generated
-   */
-  GamlBlock createGamlBlock();
-
-  /**
-   * Returns a new object of class '<em>Def Facet</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Facet</em>'.
-   * @generated
-   */
-  DefFacet createDefFacet();
-
-  /**
    * Returns a new object of class '<em>Def Binary Op</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -98,67 +71,13 @@ public interface GamlFactory extends EFactory
   DefReserved createDefReserved();
 
   /**
-   * Returns a new object of class '<em>Def Unit</em>'.
+   * Returns a new object of class '<em>Def Unary</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Unit</em>'.
+   * @return a new object of class '<em>Def Unary</em>'.
    * @generated
    */
-  DefUnit createDefUnit();
-
-  /**
-   * Returns a new object of class '<em>Abstract Gaml Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Abstract Gaml Ref</em>'.
-   * @generated
-   */
-  AbstractGamlRef createAbstractGamlRef();
-
-  /**
-   * Returns a new object of class '<em>Keyword Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Keyword Ref</em>'.
-   * @generated
-   */
-  GamlKeywordRef createGamlKeywordRef();
-
-  /**
-   * Returns a new object of class '<em>Facet Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Facet Ref</em>'.
-   * @generated
-   */
-  GamlFacetRef createGamlFacetRef();
-
-  /**
-   * Returns a new object of class '<em>Binar Op Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Binar Op Ref</em>'.
-   * @generated
-   */
-  GamlBinarOpRef createGamlBinarOpRef();
-
-  /**
-   * Returns a new object of class '<em>Unit Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unit Ref</em>'.
-   * @generated
-   */
-  GamlUnitRef createGamlUnitRef();
-
-  /**
-   * Returns a new object of class '<em>Reserved Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Reserved Ref</em>'.
-   * @generated
-   */
-  GamlReservedRef createGamlReservedRef();
+  DefUnary createDefUnary();
 
   /**
    * Returns a new object of class '<em>Statement</em>'.
@@ -170,24 +89,6 @@ public interface GamlFactory extends EFactory
   Statement createStatement();
 
   /**
-   * Returns a new object of class '<em>Sub Statement</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Sub Statement</em>'.
-   * @generated
-   */
-  SubStatement createSubStatement();
-
-  /**
-   * Returns a new object of class '<em>Set Eval</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Set Eval</em>'.
-   * @generated
-   */
-  SetEval createSetEval();
-
-  /**
    * Returns a new object of class '<em>Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -197,13 +98,31 @@ public interface GamlFactory extends EFactory
   Definition createDefinition();
 
   /**
-   * Returns a new object of class '<em>Evaluation</em>'.
+   * Returns a new object of class '<em>Facet Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Evaluation</em>'.
+   * @return a new object of class '<em>Facet Ref</em>'.
    * @generated
    */
-  Evaluation createEvaluation();
+  FacetRef createFacetRef();
+
+  /**
+   * Returns a new object of class '<em>Facet Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Facet Ref</em>'.
+   * @generated
+   */
+  GamlFacetRef createGamlFacetRef();
+
+  /**
+   * Returns a new object of class '<em>Function Gaml Facet Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function Gaml Facet Ref</em>'.
+   * @generated
+   */
+  FunctionGamlFacetRef createFunctionGamlFacetRef();
 
   /**
    * Returns a new object of class '<em>Facet Expr</em>'.
@@ -215,6 +134,42 @@ public interface GamlFactory extends EFactory
   FacetExpr createFacetExpr();
 
   /**
+   * Returns a new object of class '<em>Definition Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Definition Facet Expr</em>'.
+   * @generated
+   */
+  DefinitionFacetExpr createDefinitionFacetExpr();
+
+  /**
+   * Returns a new object of class '<em>Name Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Name Facet Expr</em>'.
+   * @generated
+   */
+  NameFacetExpr createNameFacetExpr();
+
+  /**
+   * Returns a new object of class '<em>Returns Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Returns Facet Expr</em>'.
+   * @generated
+   */
+  ReturnsFacetExpr createReturnsFacetExpr();
+
+  /**
+   * Returns a new object of class '<em>Function Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function Facet Expr</em>'.
+   * @generated
+   */
+  FunctionFacetExpr createFunctionFacetExpr();
+
+  /**
    * Returns a new object of class '<em>Block</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -222,15 +177,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Block createBlock();
-
-  /**
-   * Returns a new object of class '<em>Abstract Definition</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Abstract Definition</em>'.
-   * @generated
-   */
-  AbstractDefinition createAbstractDefinition();
 
   /**
    * Returns a new object of class '<em>Expression</em>'.
@@ -242,33 +188,6 @@ public interface GamlFactory extends EFactory
   Expression createExpression();
 
   /**
-   * Returns a new object of class '<em>Point</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Point</em>'.
-   * @generated
-   */
-  Point createPoint();
-
-  /**
-   * Returns a new object of class '<em>Matrix</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Matrix</em>'.
-   * @generated
-   */
-  Matrix createMatrix();
-
-  /**
-   * Returns a new object of class '<em>Row</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Row</em>'.
-   * @generated
-   */
-  Row createRow();
-
-  /**
    * Returns a new object of class '<em>Variable Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -276,6 +195,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   VariableRef createVariableRef();
+
+  /**
+   * Returns a new object of class '<em>Var Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Var Ref</em>'.
+   * @generated
+   */
+  GamlVarRef createGamlVarRef();
 
   /**
    * Returns a new object of class '<em>Terminal Expression</em>'.
@@ -287,229 +215,76 @@ public interface GamlFactory extends EFactory
   TerminalExpression createTerminalExpression();
 
   /**
-   * Returns a new object of class '<em>Assign Plus</em>'.
+   * Returns a new object of class '<em>Tern Exp</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Assign Plus</em>'.
+   * @return a new object of class '<em>Tern Exp</em>'.
    * @generated
    */
-  AssignPlus createAssignPlus();
+  TernExp createTernExp();
 
   /**
-   * Returns a new object of class '<em>Assign Min</em>'.
+   * Returns a new object of class '<em>Pair Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Assign Min</em>'.
+   * @return a new object of class '<em>Pair Expr</em>'.
    * @generated
    */
-  AssignMin createAssignMin();
+  PairExpr createPairExpr();
 
   /**
-   * Returns a new object of class '<em>Assign Mult</em>'.
+   * Returns a new object of class '<em>Binary Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Assign Mult</em>'.
+   * @return a new object of class '<em>Binary Expr</em>'.
    * @generated
    */
-  AssignMult createAssignMult();
+  GamlBinaryExpr createGamlBinaryExpr();
 
   /**
-   * Returns a new object of class '<em>Assign Div</em>'.
+   * Returns a new object of class '<em>Unit Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Assign Div</em>'.
+   * @return a new object of class '<em>Unit Expr</em>'.
    * @generated
    */
-  AssignDiv createAssignDiv();
+  GamlUnitExpr createGamlUnitExpr();
 
   /**
-   * Returns a new object of class '<em>Ternary</em>'.
+   * Returns a new object of class '<em>Unary Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Ternary</em>'.
+   * @return a new object of class '<em>Unary Expr</em>'.
    * @generated
    */
-  Ternary createTernary();
+  GamlUnaryExpr createGamlUnaryExpr();
 
   /**
-   * Returns a new object of class '<em>Or</em>'.
+   * Returns a new object of class '<em>Member Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Or</em>'.
+   * @return a new object of class '<em>Member Ref</em>'.
    * @generated
    */
-  Or createOr();
+  MemberRef createMemberRef();
 
   /**
-   * Returns a new object of class '<em>And</em>'.
+   * Returns a new object of class '<em>Array</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>And</em>'.
+   * @return a new object of class '<em>Array</em>'.
    * @generated
    */
-  And createAnd();
+  Array createArray();
 
   /**
-   * Returns a new object of class '<em>Rel Not Eq</em>'.
+   * Returns a new object of class '<em>Point</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Not Eq</em>'.
+   * @return a new object of class '<em>Point</em>'.
    * @generated
    */
-  RelNotEq createRelNotEq();
-
-  /**
-   * Returns a new object of class '<em>Rel Eq</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Eq</em>'.
-   * @generated
-   */
-  RelEq createRelEq();
-
-  /**
-   * Returns a new object of class '<em>Rel Eq Eq</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Eq Eq</em>'.
-   * @generated
-   */
-  RelEqEq createRelEqEq();
-
-  /**
-   * Returns a new object of class '<em>Rel Lt Eq</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Lt Eq</em>'.
-   * @generated
-   */
-  RelLtEq createRelLtEq();
-
-  /**
-   * Returns a new object of class '<em>Rel Gt Eq</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Gt Eq</em>'.
-   * @generated
-   */
-  RelGtEq createRelGtEq();
-
-  /**
-   * Returns a new object of class '<em>Rel Lt</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Lt</em>'.
-   * @generated
-   */
-  RelLt createRelLt();
-
-  /**
-   * Returns a new object of class '<em>Rel Gt</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rel Gt</em>'.
-   * @generated
-   */
-  RelGt createRelGt();
-
-  /**
-   * Returns a new object of class '<em>Pair</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Pair</em>'.
-   * @generated
-   */
-  Pair createPair();
-
-  /**
-   * Returns a new object of class '<em>Plus</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Plus</em>'.
-   * @generated
-   */
-  Plus createPlus();
-
-  /**
-   * Returns a new object of class '<em>Minus</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Minus</em>'.
-   * @generated
-   */
-  Minus createMinus();
-
-  /**
-   * Returns a new object of class '<em>Multi</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Multi</em>'.
-   * @generated
-   */
-  Multi createMulti();
-
-  /**
-   * Returns a new object of class '<em>Div</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Div</em>'.
-   * @generated
-   */
-  Div createDiv();
-
-  /**
-   * Returns a new object of class '<em>Pow</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Pow</em>'.
-   * @generated
-   */
-  Pow createPow();
-
-  /**
-   * Returns a new object of class '<em>Binary</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Binary</em>'.
-   * @generated
-   */
-  GamlBinary createGamlBinary();
-
-  /**
-   * Returns a new object of class '<em>Unit</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unit</em>'.
-   * @generated
-   */
-  Unit createUnit();
-
-  /**
-   * Returns a new object of class '<em>Unary</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unary</em>'.
-   * @generated
-   */
-  GamlUnary createGamlUnary();
-
-  /**
-   * Returns a new object of class '<em>Member Ref P</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Member Ref P</em>'.
-   * @generated
-   */
-  MemberRefP createMemberRefP();
-
-  /**
-   * Returns a new object of class '<em>Member Ref R</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Member Ref R</em>'.
-   * @generated
-   */
-  MemberRefR createMemberRefR();
+  Point createPoint();
 
   /**
    * Returns a new object of class '<em>Function Ref</em>'.
@@ -519,15 +294,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   FunctionRef createFunctionRef();
-
-  /**
-   * Returns a new object of class '<em>Array Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Array Ref</em>'.
-   * @generated
-   */
-  ArrayRef createArrayRef();
 
   /**
    * Returns a new object of class '<em>Int Literal</em>'.

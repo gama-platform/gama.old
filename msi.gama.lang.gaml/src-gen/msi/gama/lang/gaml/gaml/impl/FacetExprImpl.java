@@ -7,7 +7,7 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.FacetExpr;
-import msi.gama.lang.gaml.gaml.GamlFacetRef;
+import msi.gama.lang.gaml.gaml.FacetRef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,7 +33,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
+public class FacetExprImpl extends MinimalEObjectImpl.Container implements FacetExpr
 {
   /**
    * The cached value of the '{@link #getKey() <em>Key</em>}' containment reference.
@@ -42,7 +43,7 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
    * @generated
    * @ordered
    */
-  protected GamlFacetRef key;
+  protected FacetRef key;
 
   /**
    * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
@@ -80,7 +81,7 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlFacetRef getKey()
+  public FacetRef getKey()
   {
     return key;
   }
@@ -90,9 +91,9 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetKey(GamlFacetRef newKey, NotificationChain msgs)
+  public NotificationChain basicSetKey(FacetRef newKey, NotificationChain msgs)
   {
-    GamlFacetRef oldKey = key;
+    FacetRef oldKey = key;
     key = newKey;
     if (eNotificationRequired())
     {
@@ -107,7 +108,7 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setKey(GamlFacetRef newKey)
+  public void setKey(FacetRef newKey)
   {
     if (newKey != key)
     {
@@ -218,7 +219,7 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
     switch (featureID)
     {
       case GamlPackage.FACET_EXPR__KEY:
-        setKey((GamlFacetRef)newValue);
+        setKey((FacetRef)newValue);
         return;
       case GamlPackage.FACET_EXPR__EXPR:
         setExpr((Expression)newValue);
@@ -238,7 +239,7 @@ public class FacetExprImpl extends AbstractDefinitionImpl implements FacetExpr
     switch (featureID)
     {
       case GamlPackage.FACET_EXPR__KEY:
-        setKey((GamlFacetRef)null);
+        setKey((FacetRef)null);
         return;
       case GamlPackage.FACET_EXPR__EXPR:
         setExpr((Expression)null);

@@ -19,8 +19,11 @@
 package msi.gama.lang.gaml.ui;
 
 import msi.gama.lang.gaml.ui.highlight.*;
+import msi.gama.lang.gaml.ui.hover.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import com.google.inject.Binder;
 
@@ -54,6 +57,20 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return GamlHighlightingConfiguration.class;
+	}
+
+	// @Override
+	// public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback>
+	// bindIXtextEditorCallback() {
+	// return GamlValidationEditorCallback.class;
+	// }
+
+	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+		return GamlHoverProvider.class;
+	}
+
+	public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
+		return GamlDocumentationProvider.class;
 	}
 
 }

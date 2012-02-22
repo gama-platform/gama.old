@@ -16,6 +16,6 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface Definition extends SubStatement, AbstractDefinition
+public interface Definition extends Statement, GamlVarRef
 {
 } // Definition

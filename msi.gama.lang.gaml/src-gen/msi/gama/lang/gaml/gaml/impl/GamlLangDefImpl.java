@@ -8,10 +8,8 @@ package msi.gama.lang.gaml.gaml.impl;
 import java.util.Collection;
 
 import msi.gama.lang.gaml.gaml.DefBinaryOp;
-import msi.gama.lang.gaml.gaml.DefFacet;
-import msi.gama.lang.gaml.gaml.DefKeyword;
 import msi.gama.lang.gaml.gaml.DefReserved;
-import msi.gama.lang.gaml.gaml.DefUnit;
+import msi.gama.lang.gaml.gaml.DefUnary;
 import msi.gama.lang.gaml.gaml.GamlLangDef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
@@ -34,11 +32,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getK <em>K</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getF <em>F</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getB <em>B</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getR <em>R</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getU <em>U</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlLangDefImpl#getUnaries <em>Unaries</em>}</li>
  * </ul>
  * </p>
  *
@@ -46,26 +42,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements GamlLangDef
 {
-  /**
-   * The cached value of the '{@link #getK() <em>K</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getK()
-   * @generated
-   * @ordered
-   */
-  protected EList<DefKeyword> k;
-
-  /**
-   * The cached value of the '{@link #getF() <em>F</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getF()
-   * @generated
-   * @ordered
-   */
-  protected EList<DefFacet> f;
-
   /**
    * The cached value of the '{@link #getB() <em>B</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -87,14 +63,14 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   protected EList<DefReserved> r;
 
   /**
-   * The cached value of the '{@link #getU() <em>U</em>}' containment reference list.
+   * The cached value of the '{@link #getUnaries() <em>Unaries</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getU()
+   * @see #getUnaries()
    * @generated
    * @ordered
    */
-  protected EList<DefUnit> u;
+  protected EList<DefUnary> unaries;
 
   /**
    * <!-- begin-user-doc -->
@@ -115,34 +91,6 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.GAML_LANG_DEF;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<DefKeyword> getK()
-  {
-    if (k == null)
-    {
-      k = new EObjectContainmentEList<DefKeyword>(DefKeyword.class, this, GamlPackage.GAML_LANG_DEF__K);
-    }
-    return k;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<DefFacet> getF()
-  {
-    if (f == null)
-    {
-      f = new EObjectContainmentEList<DefFacet>(DefFacet.class, this, GamlPackage.GAML_LANG_DEF__F);
-    }
-    return f;
   }
 
   /**
@@ -178,13 +126,13 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<DefUnit> getU()
+  public EList<DefUnary> getUnaries()
   {
-    if (u == null)
+    if (unaries == null)
     {
-      u = new EObjectContainmentEList<DefUnit>(DefUnit.class, this, GamlPackage.GAML_LANG_DEF__U);
+      unaries = new EObjectContainmentEList<DefUnary>(DefUnary.class, this, GamlPackage.GAML_LANG_DEF__UNARIES);
     }
-    return u;
+    return unaries;
   }
 
   /**
@@ -197,16 +145,12 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   {
     switch (featureID)
     {
-      case GamlPackage.GAML_LANG_DEF__K:
-        return ((InternalEList<?>)getK()).basicRemove(otherEnd, msgs);
-      case GamlPackage.GAML_LANG_DEF__F:
-        return ((InternalEList<?>)getF()).basicRemove(otherEnd, msgs);
       case GamlPackage.GAML_LANG_DEF__B:
         return ((InternalEList<?>)getB()).basicRemove(otherEnd, msgs);
       case GamlPackage.GAML_LANG_DEF__R:
         return ((InternalEList<?>)getR()).basicRemove(otherEnd, msgs);
-      case GamlPackage.GAML_LANG_DEF__U:
-        return ((InternalEList<?>)getU()).basicRemove(otherEnd, msgs);
+      case GamlPackage.GAML_LANG_DEF__UNARIES:
+        return ((InternalEList<?>)getUnaries()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -221,16 +165,12 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   {
     switch (featureID)
     {
-      case GamlPackage.GAML_LANG_DEF__K:
-        return getK();
-      case GamlPackage.GAML_LANG_DEF__F:
-        return getF();
       case GamlPackage.GAML_LANG_DEF__B:
         return getB();
       case GamlPackage.GAML_LANG_DEF__R:
         return getR();
-      case GamlPackage.GAML_LANG_DEF__U:
-        return getU();
+      case GamlPackage.GAML_LANG_DEF__UNARIES:
+        return getUnaries();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -246,14 +186,6 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   {
     switch (featureID)
     {
-      case GamlPackage.GAML_LANG_DEF__K:
-        getK().clear();
-        getK().addAll((Collection<? extends DefKeyword>)newValue);
-        return;
-      case GamlPackage.GAML_LANG_DEF__F:
-        getF().clear();
-        getF().addAll((Collection<? extends DefFacet>)newValue);
-        return;
       case GamlPackage.GAML_LANG_DEF__B:
         getB().clear();
         getB().addAll((Collection<? extends DefBinaryOp>)newValue);
@@ -262,9 +194,9 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
         getR().clear();
         getR().addAll((Collection<? extends DefReserved>)newValue);
         return;
-      case GamlPackage.GAML_LANG_DEF__U:
-        getU().clear();
-        getU().addAll((Collection<? extends DefUnit>)newValue);
+      case GamlPackage.GAML_LANG_DEF__UNARIES:
+        getUnaries().clear();
+        getUnaries().addAll((Collection<? extends DefUnary>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -280,20 +212,14 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   {
     switch (featureID)
     {
-      case GamlPackage.GAML_LANG_DEF__K:
-        getK().clear();
-        return;
-      case GamlPackage.GAML_LANG_DEF__F:
-        getF().clear();
-        return;
       case GamlPackage.GAML_LANG_DEF__B:
         getB().clear();
         return;
       case GamlPackage.GAML_LANG_DEF__R:
         getR().clear();
         return;
-      case GamlPackage.GAML_LANG_DEF__U:
-        getU().clear();
+      case GamlPackage.GAML_LANG_DEF__UNARIES:
+        getUnaries().clear();
         return;
     }
     super.eUnset(featureID);
@@ -309,16 +235,12 @@ public class GamlLangDefImpl extends MinimalEObjectImpl.Container implements Gam
   {
     switch (featureID)
     {
-      case GamlPackage.GAML_LANG_DEF__K:
-        return k != null && !k.isEmpty();
-      case GamlPackage.GAML_LANG_DEF__F:
-        return f != null && !f.isEmpty();
       case GamlPackage.GAML_LANG_DEF__B:
         return b != null && !b.isEmpty();
       case GamlPackage.GAML_LANG_DEF__R:
         return r != null && !r.isEmpty();
-      case GamlPackage.GAML_LANG_DEF__U:
-        return u != null && !u.isEmpty();
+      case GamlPackage.GAML_LANG_DEF__UNARIES:
+        return unaries != null && !unaries.isEmpty();
     }
     return super.eIsSet(featureID);
   }

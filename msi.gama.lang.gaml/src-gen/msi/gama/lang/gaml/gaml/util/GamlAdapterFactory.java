@@ -93,21 +93,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createGamlLangDefAdapter();
       }
       @Override
-      public Adapter caseDefKeyword(DefKeyword object)
-      {
-        return createDefKeywordAdapter();
-      }
-      @Override
-      public Adapter caseGamlBlock(GamlBlock object)
-      {
-        return createGamlBlockAdapter();
-      }
-      @Override
-      public Adapter caseDefFacet(DefFacet object)
-      {
-        return createDefFacetAdapter();
-      }
-      @Override
       public Adapter caseDefBinaryOp(DefBinaryOp object)
       {
         return createDefBinaryOpAdapter();
@@ -118,39 +103,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createDefReservedAdapter();
       }
       @Override
-      public Adapter caseDefUnit(DefUnit object)
+      public Adapter caseDefUnary(DefUnary object)
       {
-        return createDefUnitAdapter();
-      }
-      @Override
-      public Adapter caseAbstractGamlRef(AbstractGamlRef object)
-      {
-        return createAbstractGamlRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlKeywordRef(GamlKeywordRef object)
-      {
-        return createGamlKeywordRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlFacetRef(GamlFacetRef object)
-      {
-        return createGamlFacetRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlBinarOpRef(GamlBinarOpRef object)
-      {
-        return createGamlBinarOpRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlUnitRef(GamlUnitRef object)
-      {
-        return createGamlUnitRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlReservedRef(GamlReservedRef object)
-      {
-        return createGamlReservedRefAdapter();
+        return createDefUnaryAdapter();
       }
       @Override
       public Adapter caseStatement(Statement object)
@@ -158,24 +113,24 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createStatementAdapter();
       }
       @Override
-      public Adapter caseSubStatement(SubStatement object)
-      {
-        return createSubStatementAdapter();
-      }
-      @Override
-      public Adapter caseSetEval(SetEval object)
-      {
-        return createSetEvalAdapter();
-      }
-      @Override
       public Adapter caseDefinition(Definition object)
       {
         return createDefinitionAdapter();
       }
       @Override
-      public Adapter caseEvaluation(Evaluation object)
+      public Adapter caseFacetRef(FacetRef object)
       {
-        return createEvaluationAdapter();
+        return createFacetRefAdapter();
+      }
+      @Override
+      public Adapter caseGamlFacetRef(GamlFacetRef object)
+      {
+        return createGamlFacetRefAdapter();
+      }
+      @Override
+      public Adapter caseFunctionGamlFacetRef(FunctionGamlFacetRef object)
+      {
+        return createFunctionGamlFacetRefAdapter();
       }
       @Override
       public Adapter caseFacetExpr(FacetExpr object)
@@ -183,14 +138,29 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createFacetExprAdapter();
       }
       @Override
+      public Adapter caseDefinitionFacetExpr(DefinitionFacetExpr object)
+      {
+        return createDefinitionFacetExprAdapter();
+      }
+      @Override
+      public Adapter caseNameFacetExpr(NameFacetExpr object)
+      {
+        return createNameFacetExprAdapter();
+      }
+      @Override
+      public Adapter caseReturnsFacetExpr(ReturnsFacetExpr object)
+      {
+        return createReturnsFacetExprAdapter();
+      }
+      @Override
+      public Adapter caseFunctionFacetExpr(FunctionFacetExpr object)
+      {
+        return createFunctionFacetExprAdapter();
+      }
+      @Override
       public Adapter caseBlock(Block object)
       {
         return createBlockAdapter();
-      }
-      @Override
-      public Adapter caseAbstractDefinition(AbstractDefinition object)
-      {
-        return createAbstractDefinitionAdapter();
       }
       @Override
       public Adapter caseExpression(Expression object)
@@ -198,24 +168,14 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createExpressionAdapter();
       }
       @Override
-      public Adapter casePoint(Point object)
-      {
-        return createPointAdapter();
-      }
-      @Override
-      public Adapter caseMatrix(Matrix object)
-      {
-        return createMatrixAdapter();
-      }
-      @Override
-      public Adapter caseRow(Row object)
-      {
-        return createRowAdapter();
-      }
-      @Override
       public Adapter caseVariableRef(VariableRef object)
       {
         return createVariableRefAdapter();
+      }
+      @Override
+      public Adapter caseGamlVarRef(GamlVarRef object)
+      {
+        return createGamlVarRefAdapter();
       }
       @Override
       public Adapter caseTerminalExpression(TerminalExpression object)
@@ -223,139 +183,49 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createTerminalExpressionAdapter();
       }
       @Override
-      public Adapter caseAssignPlus(AssignPlus object)
+      public Adapter caseTernExp(TernExp object)
       {
-        return createAssignPlusAdapter();
+        return createTernExpAdapter();
       }
       @Override
-      public Adapter caseAssignMin(AssignMin object)
+      public Adapter casePairExpr(PairExpr object)
       {
-        return createAssignMinAdapter();
+        return createPairExprAdapter();
       }
       @Override
-      public Adapter caseAssignMult(AssignMult object)
+      public Adapter caseGamlBinaryExpr(GamlBinaryExpr object)
       {
-        return createAssignMultAdapter();
+        return createGamlBinaryExprAdapter();
       }
       @Override
-      public Adapter caseAssignDiv(AssignDiv object)
+      public Adapter caseGamlUnitExpr(GamlUnitExpr object)
       {
-        return createAssignDivAdapter();
+        return createGamlUnitExprAdapter();
       }
       @Override
-      public Adapter caseTernary(Ternary object)
+      public Adapter caseGamlUnaryExpr(GamlUnaryExpr object)
       {
-        return createTernaryAdapter();
+        return createGamlUnaryExprAdapter();
       }
       @Override
-      public Adapter caseOr(Or object)
+      public Adapter caseMemberRef(MemberRef object)
       {
-        return createOrAdapter();
+        return createMemberRefAdapter();
       }
       @Override
-      public Adapter caseAnd(And object)
+      public Adapter caseArray(Array object)
       {
-        return createAndAdapter();
+        return createArrayAdapter();
       }
       @Override
-      public Adapter caseRelNotEq(RelNotEq object)
+      public Adapter casePoint(Point object)
       {
-        return createRelNotEqAdapter();
-      }
-      @Override
-      public Adapter caseRelEq(RelEq object)
-      {
-        return createRelEqAdapter();
-      }
-      @Override
-      public Adapter caseRelEqEq(RelEqEq object)
-      {
-        return createRelEqEqAdapter();
-      }
-      @Override
-      public Adapter caseRelLtEq(RelLtEq object)
-      {
-        return createRelLtEqAdapter();
-      }
-      @Override
-      public Adapter caseRelGtEq(RelGtEq object)
-      {
-        return createRelGtEqAdapter();
-      }
-      @Override
-      public Adapter caseRelLt(RelLt object)
-      {
-        return createRelLtAdapter();
-      }
-      @Override
-      public Adapter caseRelGt(RelGt object)
-      {
-        return createRelGtAdapter();
-      }
-      @Override
-      public Adapter casePair(Pair object)
-      {
-        return createPairAdapter();
-      }
-      @Override
-      public Adapter casePlus(Plus object)
-      {
-        return createPlusAdapter();
-      }
-      @Override
-      public Adapter caseMinus(Minus object)
-      {
-        return createMinusAdapter();
-      }
-      @Override
-      public Adapter caseMulti(Multi object)
-      {
-        return createMultiAdapter();
-      }
-      @Override
-      public Adapter caseDiv(Div object)
-      {
-        return createDivAdapter();
-      }
-      @Override
-      public Adapter casePow(Pow object)
-      {
-        return createPowAdapter();
-      }
-      @Override
-      public Adapter caseGamlBinary(GamlBinary object)
-      {
-        return createGamlBinaryAdapter();
-      }
-      @Override
-      public Adapter caseUnit(Unit object)
-      {
-        return createUnitAdapter();
-      }
-      @Override
-      public Adapter caseGamlUnary(GamlUnary object)
-      {
-        return createGamlUnaryAdapter();
-      }
-      @Override
-      public Adapter caseMemberRefP(MemberRefP object)
-      {
-        return createMemberRefPAdapter();
-      }
-      @Override
-      public Adapter caseMemberRefR(MemberRefR object)
-      {
-        return createMemberRefRAdapter();
+        return createPointAdapter();
       }
       @Override
       public Adapter caseFunctionRef(FunctionRef object)
       {
         return createFunctionRefAdapter();
-      }
-      @Override
-      public Adapter caseArrayRef(ArrayRef object)
-      {
-        return createArrayRefAdapter();
       }
       @Override
       public Adapter caseIntLiteral(IntLiteral object)
@@ -450,51 +320,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefKeyword <em>Def Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefKeyword
-   * @generated
-   */
-  public Adapter createDefKeywordAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlBlock <em>Block</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlBlock
-   * @generated
-   */
-  public Adapter createGamlBlockAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefFacet <em>Def Facet</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefFacet
-   * @generated
-   */
-  public Adapter createDefFacetAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefBinaryOp <em>Def Binary Op</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -525,106 +350,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefUnit <em>Def Unit</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefUnary <em>Def Unary</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefUnit
+   * @see msi.gama.lang.gaml.gaml.DefUnary
    * @generated
    */
-  public Adapter createDefUnitAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AbstractGamlRef <em>Abstract Gaml Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AbstractGamlRef
-   * @generated
-   */
-  public Adapter createAbstractGamlRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlKeywordRef <em>Keyword Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlKeywordRef
-   * @generated
-   */
-  public Adapter createGamlKeywordRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlFacetRef <em>Facet Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlFacetRef
-   * @generated
-   */
-  public Adapter createGamlFacetRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlBinarOpRef <em>Binar Op Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlBinarOpRef
-   * @generated
-   */
-  public Adapter createGamlBinarOpRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnitRef <em>Unit Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlUnitRef
-   * @generated
-   */
-  public Adapter createGamlUnitRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlReservedRef <em>Reserved Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlReservedRef
-   * @generated
-   */
-  public Adapter createGamlReservedRefAdapter()
+  public Adapter createDefUnaryAdapter()
   {
     return null;
   }
@@ -645,36 +380,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.SubStatement <em>Sub Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.SubStatement
-   * @generated
-   */
-  public Adapter createSubStatementAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.SetEval <em>Set Eval</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.SetEval
-   * @generated
-   */
-  public Adapter createSetEvalAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Definition <em>Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -690,16 +395,46 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Evaluation <em>Evaluation</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FacetRef <em>Facet Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Evaluation
+   * @see msi.gama.lang.gaml.gaml.FacetRef
    * @generated
    */
-  public Adapter createEvaluationAdapter()
+  public Adapter createFacetRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlFacetRef <em>Facet Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.GamlFacetRef
+   * @generated
+   */
+  public Adapter createGamlFacetRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FunctionGamlFacetRef <em>Function Gaml Facet Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.FunctionGamlFacetRef
+   * @generated
+   */
+  public Adapter createFunctionGamlFacetRefAdapter()
   {
     return null;
   }
@@ -720,6 +455,66 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefinitionFacetExpr <em>Definition Facet Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.DefinitionFacetExpr
+   * @generated
+   */
+  public Adapter createDefinitionFacetExprAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.NameFacetExpr <em>Name Facet Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.NameFacetExpr
+   * @generated
+   */
+  public Adapter createNameFacetExprAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ReturnsFacetExpr <em>Returns Facet Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ReturnsFacetExpr
+   * @generated
+   */
+  public Adapter createReturnsFacetExprAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FunctionFacetExpr <em>Function Facet Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.FunctionFacetExpr
+   * @generated
+   */
+  public Adapter createFunctionFacetExprAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Block <em>Block</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -730,21 +525,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createBlockAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AbstractDefinition <em>Abstract Definition</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AbstractDefinition
-   * @generated
-   */
-  public Adapter createAbstractDefinitionAdapter()
   {
     return null;
   }
@@ -765,51 +545,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Point <em>Point</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Point
-   * @generated
-   */
-  public Adapter createPointAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Matrix <em>Matrix</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Matrix
-   * @generated
-   */
-  public Adapter createMatrixAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Row <em>Row</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Row
-   * @generated
-   */
-  public Adapter createRowAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -820,6 +555,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createVariableRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlVarRef <em>Var Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.GamlVarRef
+   * @generated
+   */
+  public Adapter createGamlVarRefAdapter()
   {
     return null;
   }
@@ -840,376 +590,121 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AssignPlus <em>Assign Plus</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.TernExp <em>Tern Exp</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AssignPlus
+   * @see msi.gama.lang.gaml.gaml.TernExp
    * @generated
    */
-  public Adapter createAssignPlusAdapter()
+  public Adapter createTernExpAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AssignMin <em>Assign Min</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.PairExpr <em>Pair Expr</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AssignMin
+   * @see msi.gama.lang.gaml.gaml.PairExpr
    * @generated
    */
-  public Adapter createAssignMinAdapter()
+  public Adapter createPairExprAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AssignMult <em>Assign Mult</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlBinaryExpr <em>Binary Expr</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AssignMult
+   * @see msi.gama.lang.gaml.gaml.GamlBinaryExpr
    * @generated
    */
-  public Adapter createAssignMultAdapter()
+  public Adapter createGamlBinaryExprAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AssignDiv <em>Assign Div</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnitExpr <em>Unit Expr</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AssignDiv
+   * @see msi.gama.lang.gaml.gaml.GamlUnitExpr
    * @generated
    */
-  public Adapter createAssignDivAdapter()
+  public Adapter createGamlUnitExprAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Ternary <em>Ternary</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnaryExpr <em>Unary Expr</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Ternary
+   * @see msi.gama.lang.gaml.gaml.GamlUnaryExpr
    * @generated
    */
-  public Adapter createTernaryAdapter()
+  public Adapter createGamlUnaryExprAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Or <em>Or</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.MemberRef <em>Member Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Or
+   * @see msi.gama.lang.gaml.gaml.MemberRef
    * @generated
    */
-  public Adapter createOrAdapter()
+  public Adapter createMemberRefAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.And <em>And</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Array <em>Array</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.And
+   * @see msi.gama.lang.gaml.gaml.Array
    * @generated
    */
-  public Adapter createAndAdapter()
+  public Adapter createArrayAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelNotEq <em>Rel Not Eq</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Point <em>Point</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelNotEq
+   * @see msi.gama.lang.gaml.gaml.Point
    * @generated
    */
-  public Adapter createRelNotEqAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelEq <em>Rel Eq</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelEq
-   * @generated
-   */
-  public Adapter createRelEqAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelEqEq <em>Rel Eq Eq</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelEqEq
-   * @generated
-   */
-  public Adapter createRelEqEqAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelLtEq <em>Rel Lt Eq</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelLtEq
-   * @generated
-   */
-  public Adapter createRelLtEqAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelGtEq <em>Rel Gt Eq</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelGtEq
-   * @generated
-   */
-  public Adapter createRelGtEqAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelLt <em>Rel Lt</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelLt
-   * @generated
-   */
-  public Adapter createRelLtAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.RelGt <em>Rel Gt</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.RelGt
-   * @generated
-   */
-  public Adapter createRelGtAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Pair <em>Pair</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Pair
-   * @generated
-   */
-  public Adapter createPairAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Plus <em>Plus</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Plus
-   * @generated
-   */
-  public Adapter createPlusAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Minus <em>Minus</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Minus
-   * @generated
-   */
-  public Adapter createMinusAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Multi <em>Multi</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Multi
-   * @generated
-   */
-  public Adapter createMultiAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Div <em>Div</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Div
-   * @generated
-   */
-  public Adapter createDivAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Pow <em>Pow</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Pow
-   * @generated
-   */
-  public Adapter createPowAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlBinary <em>Binary</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlBinary
-   * @generated
-   */
-  public Adapter createGamlBinaryAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Unit <em>Unit</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Unit
-   * @generated
-   */
-  public Adapter createUnitAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnary <em>Unary</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlUnary
-   * @generated
-   */
-  public Adapter createGamlUnaryAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.MemberRefP <em>Member Ref P</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.MemberRefP
-   * @generated
-   */
-  public Adapter createMemberRefPAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.MemberRefR <em>Member Ref R</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.MemberRefR
-   * @generated
-   */
-  public Adapter createMemberRefRAdapter()
+  public Adapter createPointAdapter()
   {
     return null;
   }
@@ -1225,21 +720,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ArrayRef <em>Array Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ArrayRef
-   * @generated
-   */
-  public Adapter createArrayRefAdapter()
   {
     return null;
   }

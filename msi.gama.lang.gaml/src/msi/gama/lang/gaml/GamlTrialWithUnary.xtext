@@ -1,0 +1,137 @@
+grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate gaml "http://www.gama.msi/lang/gaml/Gaml"
+
+Model :
+	'model' name=ID
+	(imports+=Import)*
+	(('_gaml {{' gaml=GamlLangDef '}}')? 
+	(statements+=Statement)* );
+
+
+Import : 'import' importURI=STRING; // feature must be named importURI
+
+// META-GRAMMAR: used to parse the tokens introduced automatically in the imports by GAMA
+
+GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
+DefBinaryOp: '_binary &' name=ID'&;';
+DefReserved: '_reserved &' name=ID'&;';
+DefUnary: '_unary &'name=ID '&;';
+
+// Built-in keywords (corresponding to special constructions)
+
+BuiltIn:  ('match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
+
+GamlFacetRef: ref = ID ':';
+
+Statement:
+	 (IfEval | ClassicStatement | Definition);
+	
+ClassicStatement returns Statement:
+	key=BuiltIn ref=GamlFacetRef? expr=Expression (facets+=FacetExpr)* (block=Block | ';');
+
+IfEval returns Statement:
+	key='if' ref=GamlFacetRef? expr=Expression block=Block ('else' else=Block)?;
+
+Definition: 
+	key=ID (name=ID)? (facets+=FacetExpr)* (block=Block | ';');
+
+FacetExpr:
+	ReturnsFacetExpr | (key=GamlFacetRef expr=Expression);
+
+ReturnsFacetExpr:
+	'returns:' name=ID;
+	
+Block:
+	{Block} '{' (statements+=Statement)* '}';
+
+Expression:
+	TernExp;
+
+TernExp returns Expression:
+	OrExp ({TernExp.left=current} op='?' right=OrExp ':' ifFalse=OrExp)?; 
+
+OrExp returns Expression:
+	AndExp ({Expression.left=current} op='or' right=AndExp)*;
+
+AndExp returns Expression:
+	Relational ({Expression.left = current} op='and' right=Relational)*;
+
+Relational returns Expression:
+	 PairExpr (({Expression.left=current}op=('!='|'='|'>='|'<='|'<'|'>')) right=PairExpr)?;
+
+PairExpr returns Expression:
+	Addition (({PairExpr.left= current}op='::') right=Addition)?;
+
+Addition returns Expression:
+	Multiplication (({Expression.left=current}op='+'|{Expression.left=current}op='-') right=Multiplication)*;
+
+Multiplication returns Expression:
+	GamlBinaryExpr (({Expression.left=current}op='*'|{Expression.left=current}op='/'|{Expression.left=current}op='^') right=GamlBinaryExpr)*;
+
+GamlBinaryExpr returns Expression:
+	GamlUnitExpr (({GamlBinaryExpr.left=current} op=ID) right=GamlUnitExpr)*;
+
+GamlUnitExpr returns Expression:
+	PrePrimaryExpr (({GamlUnitExpr.left=current}op='#') right=PrePrimaryExpr)?;
+
+//GamlUnaryExpr returns Expression:
+//	PrePrimaryExpr | 
+//	{GamlUnaryExpr} ({GamlUnaryExpr.left=current}op=('-'|'!'|'my'|'the'|'not') right=GamlUnaryExpr);
+
+PrePrimaryExpr returns Expression:
+	TerminalExpression | MemberRef; 
+
+MemberRef returns Expression :
+	PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)?;
+
+PrimaryExpression returns Expression:
+	AbstractRef |
+	'('Expression')' |
+	'[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' |
+	'{' {Point} (left=Expression op=',' right=Expression ) '}';
+
+AbstractRef returns Expression:
+	VariableRef ({FunctionRef.left=current} (right=Expression ) )?;
+	
+VariableRef : 
+	{VariableRef} (ref=[GamlVarRef] | name= ('-'|'!'|'my'|'the'|'not'));
+	
+GamlVarRef:
+	ReturnsFacetExpr | Definition | DefReserved | DefUnary;
+
+TerminalExpression:
+	{IntLiteral} value=INTEGER | {DoubleLiteral}  value=DOUBLE  | {ColorLiteral}   value=COLOR   | {StringLiteral}  value=STRING  | {BooleanLiteral} value=BOOLEAN ;
+
+// -----
+
+
+terminal INTEGER :
+	'0' | ('1'..'9' ('0'..'9')*);
+
+terminal BOOLEAN :
+	'true' | 'false';
+
+terminal ID :
+	('a'..'z'|'A'..'Z'|'_'|'0'..'9')+ ('$' ('a'..'z'|'A'..'Z'|'_'|'0'..'9')+)?;
+
+terminal COLOR:
+	'#' ('0'..'9'|'A'..'F')+ ;
+
+terminal DOUBLE:
+	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? ;
+
+terminal STRING :
+	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|'\\') | !('\\'|'"') )* '"' | "'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|"'"|'\\') | !('\\'|"'") )* "'" ; 
+
+terminal ML_COMMENT	:
+	'/*' -> '*/';
+
+terminal SL_COMMENT :
+	'//' !('\n'|'\r')* ('\r'? '\n')?;
+
+terminal WS :
+	(' '|'\t'|'\r'|'\n')+;
+
+terminal ANY_OTHER : .;

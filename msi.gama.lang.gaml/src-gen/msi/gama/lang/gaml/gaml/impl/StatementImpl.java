@@ -8,7 +8,9 @@ package msi.gama.lang.gaml.gaml.impl;
 import java.util.Collection;
 
 import msi.gama.lang.gaml.gaml.Block;
+import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.FacetExpr;
+import msi.gama.lang.gaml.gaml.GamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Statement;
 
@@ -33,8 +35,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getRef <em>Ref</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getElse <em>Else</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,6 +48,46 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class StatementImpl extends MinimalEObjectImpl.Container implements Statement
 {
+  /**
+   * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected static final String KEY_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected String key = KEY_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getRef() <em>Ref</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRef()
+   * @generated
+   * @ordered
+   */
+  protected GamlFacetRef ref;
+
+  /**
+   * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected Expression expr;
+
   /**
    * The cached value of the '{@link #getFacets() <em>Facets</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -63,6 +109,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   protected Block block;
 
   /**
+   * The cached value of the '{@link #getElse() <em>Else</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getElse()
+   * @generated
+   * @ordered
+   */
+  protected Block else_;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -81,6 +137,125 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.STATEMENT;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getKey()
+  {
+    return key;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setKey(String newKey)
+  {
+    String oldKey = key;
+    key = newKey;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__KEY, oldKey, key));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GamlFacetRef getRef()
+  {
+    return ref;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRef(GamlFacetRef newRef, NotificationChain msgs)
+  {
+    GamlFacetRef oldRef = ref;
+    ref = newRef;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__REF, oldRef, newRef);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRef(GamlFacetRef newRef)
+  {
+    if (newRef != ref)
+    {
+      NotificationChain msgs = null;
+      if (ref != null)
+        msgs = ((InternalEObject)ref).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__REF, null, msgs);
+      if (newRef != null)
+        msgs = ((InternalEObject)newRef).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__REF, null, msgs);
+      msgs = basicSetRef(newRef, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__REF, newRef, newRef));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getExpr()
+  {
+    return expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExpr(Expression newExpr, NotificationChain msgs)
+  {
+    Expression oldExpr = expr;
+    expr = newExpr;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__EXPR, oldExpr, newExpr);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpr(Expression newExpr)
+  {
+    if (newExpr != expr)
+    {
+      NotificationChain msgs = null;
+      if (expr != null)
+        msgs = ((InternalEObject)expr).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__EXPR, null, msgs);
+      if (newExpr != null)
+        msgs = ((InternalEObject)newExpr).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__EXPR, null, msgs);
+      msgs = basicSetExpr(newExpr, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__EXPR, newExpr, newExpr));
   }
 
   /**
@@ -150,15 +325,69 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  public Block getElse()
+  {
+    return else_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetElse(Block newElse, NotificationChain msgs)
+  {
+    Block oldElse = else_;
+    else_ = newElse;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ELSE, oldElse, newElse);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setElse(Block newElse)
+  {
+    if (newElse != else_)
+    {
+      NotificationChain msgs = null;
+      if (else_ != null)
+        msgs = ((InternalEObject)else_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ELSE, null, msgs);
+      if (newElse != null)
+        msgs = ((InternalEObject)newElse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ELSE, null, msgs);
+      msgs = basicSetElse(newElse, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ELSE, newElse, newElse));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__REF:
+        return basicSetRef(null, msgs);
+      case GamlPackage.STATEMENT__EXPR:
+        return basicSetExpr(null, msgs);
       case GamlPackage.STATEMENT__FACETS:
         return ((InternalEList<?>)getFacets()).basicRemove(otherEnd, msgs);
       case GamlPackage.STATEMENT__BLOCK:
         return basicSetBlock(null, msgs);
+      case GamlPackage.STATEMENT__ELSE:
+        return basicSetElse(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -173,10 +402,18 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__KEY:
+        return getKey();
+      case GamlPackage.STATEMENT__REF:
+        return getRef();
+      case GamlPackage.STATEMENT__EXPR:
+        return getExpr();
       case GamlPackage.STATEMENT__FACETS:
         return getFacets();
       case GamlPackage.STATEMENT__BLOCK:
         return getBlock();
+      case GamlPackage.STATEMENT__ELSE:
+        return getElse();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -192,12 +429,24 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__KEY:
+        setKey((String)newValue);
+        return;
+      case GamlPackage.STATEMENT__REF:
+        setRef((GamlFacetRef)newValue);
+        return;
+      case GamlPackage.STATEMENT__EXPR:
+        setExpr((Expression)newValue);
+        return;
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         getFacets().addAll((Collection<? extends FacetExpr>)newValue);
         return;
       case GamlPackage.STATEMENT__BLOCK:
         setBlock((Block)newValue);
+        return;
+      case GamlPackage.STATEMENT__ELSE:
+        setElse((Block)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -213,11 +462,23 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__KEY:
+        setKey(KEY_EDEFAULT);
+        return;
+      case GamlPackage.STATEMENT__REF:
+        setRef((GamlFacetRef)null);
+        return;
+      case GamlPackage.STATEMENT__EXPR:
+        setExpr((Expression)null);
+        return;
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         return;
       case GamlPackage.STATEMENT__BLOCK:
         setBlock((Block)null);
+        return;
+      case GamlPackage.STATEMENT__ELSE:
+        setElse((Block)null);
         return;
     }
     super.eUnset(featureID);
@@ -233,12 +494,37 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__KEY:
+        return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+      case GamlPackage.STATEMENT__REF:
+        return ref != null;
+      case GamlPackage.STATEMENT__EXPR:
+        return expr != null;
       case GamlPackage.STATEMENT__FACETS:
         return facets != null && !facets.isEmpty();
       case GamlPackage.STATEMENT__BLOCK:
         return block != null;
+      case GamlPackage.STATEMENT__ELSE:
+        return else_ != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (key: ");
+    result.append(key);
+    result.append(')');
+    return result.toString();
   }
 
 } //StatementImpl

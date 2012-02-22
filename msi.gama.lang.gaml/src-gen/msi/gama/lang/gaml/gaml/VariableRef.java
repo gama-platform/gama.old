@@ -33,12 +33,12 @@ public interface VariableRef extends Expression
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Ref</em>' reference.
-   * @see #setRef(AbstractDefinition)
+   * @see #setRef(GamlVarRef)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getVariableRef_Ref()
    * @model
    * @generated
    */
-  AbstractDefinition getRef();
+  GamlVarRef getRef();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.VariableRef#getRef <em>Ref</em>}' reference.
@@ -48,6 +48,6 @@ public interface VariableRef extends Expression
    * @see #getRef()
    * @generated
    */
-  void setRef(AbstractDefinition value);
+  void setRef(GamlVarRef value);
 
 } // VariableRef

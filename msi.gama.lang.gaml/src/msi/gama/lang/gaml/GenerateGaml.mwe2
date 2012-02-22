@@ -57,9 +57,9 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
-            //  options = {
-            //      backtrack = true
-            //  }
+//              options = {
+//                  backtrack = true
+//              }
             }
 
             // java-based API for validation
@@ -81,6 +81,7 @@ Workflow {
             fragment = generator.GeneratorFragment {
                 generateMwe = true
                 generateJavaMain = true
+                
             }
 
             // formatter API
@@ -112,10 +113,10 @@ Workflow {
             // }
 
             // provides the necessary bindings for java types integration
-            fragment = types.TypesGeneratorFragment {}
+            //fragment = types.TypesGeneratorFragment {}
 
             // generates the required bindings only if the grammar inherits from Xbase
-            fragment = xbase.XbaseGeneratorFragment {}
+            //fragment = xbase.XbaseGeneratorFragment {}
 
             // provides a preference page for template proposals
             fragment = templates.CodetemplatesGeneratorFragment {}

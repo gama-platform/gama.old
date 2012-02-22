@@ -70,59 +70,33 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.GAML_LANG_DEF: return createGamlLangDef();
-      case GamlPackage.DEF_KEYWORD: return createDefKeyword();
-      case GamlPackage.GAML_BLOCK: return createGamlBlock();
-      case GamlPackage.DEF_FACET: return createDefFacet();
       case GamlPackage.DEF_BINARY_OP: return createDefBinaryOp();
       case GamlPackage.DEF_RESERVED: return createDefReserved();
-      case GamlPackage.DEF_UNIT: return createDefUnit();
-      case GamlPackage.ABSTRACT_GAML_REF: return createAbstractGamlRef();
-      case GamlPackage.GAML_KEYWORD_REF: return createGamlKeywordRef();
-      case GamlPackage.GAML_FACET_REF: return createGamlFacetRef();
-      case GamlPackage.GAML_BINAR_OP_REF: return createGamlBinarOpRef();
-      case GamlPackage.GAML_UNIT_REF: return createGamlUnitRef();
-      case GamlPackage.GAML_RESERVED_REF: return createGamlReservedRef();
+      case GamlPackage.DEF_UNARY: return createDefUnary();
       case GamlPackage.STATEMENT: return createStatement();
-      case GamlPackage.SUB_STATEMENT: return createSubStatement();
-      case GamlPackage.SET_EVAL: return createSetEval();
       case GamlPackage.DEFINITION: return createDefinition();
-      case GamlPackage.EVALUATION: return createEvaluation();
+      case GamlPackage.FACET_REF: return createFacetRef();
+      case GamlPackage.GAML_FACET_REF: return createGamlFacetRef();
+      case GamlPackage.FUNCTION_GAML_FACET_REF: return createFunctionGamlFacetRef();
       case GamlPackage.FACET_EXPR: return createFacetExpr();
+      case GamlPackage.DEFINITION_FACET_EXPR: return createDefinitionFacetExpr();
+      case GamlPackage.NAME_FACET_EXPR: return createNameFacetExpr();
+      case GamlPackage.RETURNS_FACET_EXPR: return createReturnsFacetExpr();
+      case GamlPackage.FUNCTION_FACET_EXPR: return createFunctionFacetExpr();
       case GamlPackage.BLOCK: return createBlock();
-      case GamlPackage.ABSTRACT_DEFINITION: return createAbstractDefinition();
       case GamlPackage.EXPRESSION: return createExpression();
-      case GamlPackage.POINT: return createPoint();
-      case GamlPackage.MATRIX: return createMatrix();
-      case GamlPackage.ROW: return createRow();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
+      case GamlPackage.GAML_VAR_REF: return createGamlVarRef();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
-      case GamlPackage.ASSIGN_PLUS: return createAssignPlus();
-      case GamlPackage.ASSIGN_MIN: return createAssignMin();
-      case GamlPackage.ASSIGN_MULT: return createAssignMult();
-      case GamlPackage.ASSIGN_DIV: return createAssignDiv();
-      case GamlPackage.TERNARY: return createTernary();
-      case GamlPackage.OR: return createOr();
-      case GamlPackage.AND: return createAnd();
-      case GamlPackage.REL_NOT_EQ: return createRelNotEq();
-      case GamlPackage.REL_EQ: return createRelEq();
-      case GamlPackage.REL_EQ_EQ: return createRelEqEq();
-      case GamlPackage.REL_LT_EQ: return createRelLtEq();
-      case GamlPackage.REL_GT_EQ: return createRelGtEq();
-      case GamlPackage.REL_LT: return createRelLt();
-      case GamlPackage.REL_GT: return createRelGt();
-      case GamlPackage.PAIR: return createPair();
-      case GamlPackage.PLUS: return createPlus();
-      case GamlPackage.MINUS: return createMinus();
-      case GamlPackage.MULTI: return createMulti();
-      case GamlPackage.DIV: return createDiv();
-      case GamlPackage.POW: return createPow();
-      case GamlPackage.GAML_BINARY: return createGamlBinary();
-      case GamlPackage.UNIT: return createUnit();
-      case GamlPackage.GAML_UNARY: return createGamlUnary();
-      case GamlPackage.MEMBER_REF_P: return createMemberRefP();
-      case GamlPackage.MEMBER_REF_R: return createMemberRefR();
+      case GamlPackage.TERN_EXP: return createTernExp();
+      case GamlPackage.PAIR_EXPR: return createPairExpr();
+      case GamlPackage.GAML_BINARY_EXPR: return createGamlBinaryExpr();
+      case GamlPackage.GAML_UNIT_EXPR: return createGamlUnitExpr();
+      case GamlPackage.GAML_UNARY_EXPR: return createGamlUnaryExpr();
+      case GamlPackage.MEMBER_REF: return createMemberRef();
+      case GamlPackage.ARRAY: return createArray();
+      case GamlPackage.POINT: return createPoint();
       case GamlPackage.FUNCTION_REF: return createFunctionRef();
-      case GamlPackage.ARRAY_REF: return createArrayRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
       case GamlPackage.COLOR_LITERAL: return createColorLiteral();
@@ -171,39 +145,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DefKeyword createDefKeyword()
-  {
-    DefKeywordImpl defKeyword = new DefKeywordImpl();
-    return defKeyword;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlBlock createGamlBlock()
-  {
-    GamlBlockImpl gamlBlock = new GamlBlockImpl();
-    return gamlBlock;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DefFacet createDefFacet()
-  {
-    DefFacetImpl defFacet = new DefFacetImpl();
-    return defFacet;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public DefBinaryOp createDefBinaryOp()
   {
     DefBinaryOpImpl defBinaryOp = new DefBinaryOpImpl();
@@ -226,76 +167,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DefUnit createDefUnit()
+  public DefUnary createDefUnary()
   {
-    DefUnitImpl defUnit = new DefUnitImpl();
-    return defUnit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public AbstractGamlRef createAbstractGamlRef()
-  {
-    AbstractGamlRefImpl abstractGamlRef = new AbstractGamlRefImpl();
-    return abstractGamlRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlKeywordRef createGamlKeywordRef()
-  {
-    GamlKeywordRefImpl gamlKeywordRef = new GamlKeywordRefImpl();
-    return gamlKeywordRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlFacetRef createGamlFacetRef()
-  {
-    GamlFacetRefImpl gamlFacetRef = new GamlFacetRefImpl();
-    return gamlFacetRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlBinarOpRef createGamlBinarOpRef()
-  {
-    GamlBinarOpRefImpl gamlBinarOpRef = new GamlBinarOpRefImpl();
-    return gamlBinarOpRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlUnitRef createGamlUnitRef()
-  {
-    GamlUnitRefImpl gamlUnitRef = new GamlUnitRefImpl();
-    return gamlUnitRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlReservedRef createGamlReservedRef()
-  {
-    GamlReservedRefImpl gamlReservedRef = new GamlReservedRefImpl();
-    return gamlReservedRef;
+    DefUnaryImpl defUnary = new DefUnaryImpl();
+    return defUnary;
   }
 
   /**
@@ -314,28 +189,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public SubStatement createSubStatement()
-  {
-    SubStatementImpl subStatement = new SubStatementImpl();
-    return subStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public SetEval createSetEval()
-  {
-    SetEvalImpl setEval = new SetEvalImpl();
-    return setEval;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Definition createDefinition()
   {
     DefinitionImpl definition = new DefinitionImpl();
@@ -347,10 +200,32 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Evaluation createEvaluation()
+  public FacetRef createFacetRef()
   {
-    EvaluationImpl evaluation = new EvaluationImpl();
-    return evaluation;
+    FacetRefImpl facetRef = new FacetRefImpl();
+    return facetRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GamlFacetRef createGamlFacetRef()
+  {
+    GamlFacetRefImpl gamlFacetRef = new GamlFacetRefImpl();
+    return gamlFacetRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FunctionGamlFacetRef createFunctionGamlFacetRef()
+  {
+    FunctionGamlFacetRefImpl functionGamlFacetRef = new FunctionGamlFacetRefImpl();
+    return functionGamlFacetRef;
   }
 
   /**
@@ -369,10 +244,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Block createBlock()
+  public DefinitionFacetExpr createDefinitionFacetExpr()
   {
-    BlockImpl block = new BlockImpl();
-    return block;
+    DefinitionFacetExprImpl definitionFacetExpr = new DefinitionFacetExprImpl();
+    return definitionFacetExpr;
   }
 
   /**
@@ -380,10 +255,43 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AbstractDefinition createAbstractDefinition()
+  public NameFacetExpr createNameFacetExpr()
   {
-    AbstractDefinitionImpl abstractDefinition = new AbstractDefinitionImpl();
-    return abstractDefinition;
+    NameFacetExprImpl nameFacetExpr = new NameFacetExprImpl();
+    return nameFacetExpr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ReturnsFacetExpr createReturnsFacetExpr()
+  {
+    ReturnsFacetExprImpl returnsFacetExpr = new ReturnsFacetExprImpl();
+    return returnsFacetExpr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FunctionFacetExpr createFunctionFacetExpr()
+  {
+    FunctionFacetExprImpl functionFacetExpr = new FunctionFacetExprImpl();
+    return functionFacetExpr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Block createBlock()
+  {
+    BlockImpl block = new BlockImpl();
+    return block;
   }
 
   /**
@@ -402,43 +310,21 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Point createPoint()
-  {
-    PointImpl point = new PointImpl();
-    return point;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Matrix createMatrix()
-  {
-    MatrixImpl matrix = new MatrixImpl();
-    return matrix;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Row createRow()
-  {
-    RowImpl row = new RowImpl();
-    return row;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public VariableRef createVariableRef()
   {
     VariableRefImpl variableRef = new VariableRefImpl();
     return variableRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GamlVarRef createGamlVarRef()
+  {
+    GamlVarRefImpl gamlVarRef = new GamlVarRefImpl();
+    return gamlVarRef;
   }
 
   /**
@@ -457,10 +343,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AssignPlus createAssignPlus()
+  public TernExp createTernExp()
   {
-    AssignPlusImpl assignPlus = new AssignPlusImpl();
-    return assignPlus;
+    TernExpImpl ternExp = new TernExpImpl();
+    return ternExp;
   }
 
   /**
@@ -468,10 +354,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AssignMin createAssignMin()
+  public PairExpr createPairExpr()
   {
-    AssignMinImpl assignMin = new AssignMinImpl();
-    return assignMin;
+    PairExprImpl pairExpr = new PairExprImpl();
+    return pairExpr;
   }
 
   /**
@@ -479,10 +365,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AssignMult createAssignMult()
+  public GamlBinaryExpr createGamlBinaryExpr()
   {
-    AssignMultImpl assignMult = new AssignMultImpl();
-    return assignMult;
+    GamlBinaryExprImpl gamlBinaryExpr = new GamlBinaryExprImpl();
+    return gamlBinaryExpr;
   }
 
   /**
@@ -490,10 +376,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AssignDiv createAssignDiv()
+  public GamlUnitExpr createGamlUnitExpr()
   {
-    AssignDivImpl assignDiv = new AssignDivImpl();
-    return assignDiv;
+    GamlUnitExprImpl gamlUnitExpr = new GamlUnitExprImpl();
+    return gamlUnitExpr;
   }
 
   /**
@@ -501,10 +387,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Ternary createTernary()
+  public GamlUnaryExpr createGamlUnaryExpr()
   {
-    TernaryImpl ternary = new TernaryImpl();
-    return ternary;
+    GamlUnaryExprImpl gamlUnaryExpr = new GamlUnaryExprImpl();
+    return gamlUnaryExpr;
   }
 
   /**
@@ -512,10 +398,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Or createOr()
+  public MemberRef createMemberRef()
   {
-    OrImpl or = new OrImpl();
-    return or;
+    MemberRefImpl memberRef = new MemberRefImpl();
+    return memberRef;
   }
 
   /**
@@ -523,10 +409,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public And createAnd()
+  public Array createArray()
   {
-    AndImpl and = new AndImpl();
-    return and;
+    ArrayImpl array = new ArrayImpl();
+    return array;
   }
 
   /**
@@ -534,197 +420,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public RelNotEq createRelNotEq()
+  public Point createPoint()
   {
-    RelNotEqImpl relNotEq = new RelNotEqImpl();
-    return relNotEq;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelEq createRelEq()
-  {
-    RelEqImpl relEq = new RelEqImpl();
-    return relEq;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelEqEq createRelEqEq()
-  {
-    RelEqEqImpl relEqEq = new RelEqEqImpl();
-    return relEqEq;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelLtEq createRelLtEq()
-  {
-    RelLtEqImpl relLtEq = new RelLtEqImpl();
-    return relLtEq;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelGtEq createRelGtEq()
-  {
-    RelGtEqImpl relGtEq = new RelGtEqImpl();
-    return relGtEq;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelLt createRelLt()
-  {
-    RelLtImpl relLt = new RelLtImpl();
-    return relLt;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public RelGt createRelGt()
-  {
-    RelGtImpl relGt = new RelGtImpl();
-    return relGt;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Pair createPair()
-  {
-    PairImpl pair = new PairImpl();
-    return pair;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Plus createPlus()
-  {
-    PlusImpl plus = new PlusImpl();
-    return plus;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Minus createMinus()
-  {
-    MinusImpl minus = new MinusImpl();
-    return minus;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Multi createMulti()
-  {
-    MultiImpl multi = new MultiImpl();
-    return multi;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Div createDiv()
-  {
-    DivImpl div = new DivImpl();
-    return div;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Pow createPow()
-  {
-    PowImpl pow = new PowImpl();
-    return pow;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlBinary createGamlBinary()
-  {
-    GamlBinaryImpl gamlBinary = new GamlBinaryImpl();
-    return gamlBinary;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Unit createUnit()
-  {
-    UnitImpl unit = new UnitImpl();
-    return unit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlUnary createGamlUnary()
-  {
-    GamlUnaryImpl gamlUnary = new GamlUnaryImpl();
-    return gamlUnary;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public MemberRefP createMemberRefP()
-  {
-    MemberRefPImpl memberRefP = new MemberRefPImpl();
-    return memberRefP;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public MemberRefR createMemberRefR()
-  {
-    MemberRefRImpl memberRefR = new MemberRefRImpl();
-    return memberRefR;
+    PointImpl point = new PointImpl();
+    return point;
   }
 
   /**
@@ -736,17 +435,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     FunctionRefImpl functionRef = new FunctionRefImpl();
     return functionRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ArrayRef createArrayRef()
-  {
-    ArrayRefImpl arrayRef = new ArrayRefImpl();
-    return arrayRef;
   }
 
   /**

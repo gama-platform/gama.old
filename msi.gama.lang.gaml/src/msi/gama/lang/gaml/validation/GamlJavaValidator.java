@@ -18,20 +18,29 @@
  */
 package msi.gama.lang.gaml.validation;
 
+import java.io.*;
+import java.net.*;
 import java.util.*;
-import msi.gama.lang.gaml.descript.*;
+import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.util.ErrorCollector;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.descript.GamlXtextException;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.gaml.impl.GamlKeywordRefImpl;
-import msi.gama.precompiler.GamlProperties;
-import org.eclipse.emf.common.util.EList;
+import msi.gama.lang.utils.GamlToSyntacticElements;
+import msi.gaml.compilation.GamlException;
+import msi.gaml.factories.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Check;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	final static List<String> modelChilds = Arrays.asList("global", "environment", "entities",
-		"output", "experiment");
+	// TODO Move the codes of errors to GamlXtextException in order to make the link with
+	// QuickFixes
 
 	public static final String QF_NOTFACETOFKEY = "NOTFACETOFKEY";
 	public static final String QF_UNKNOWNFACET = "UNKNOWNFACET";
@@ -39,168 +48,111 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public static final String QF_NOTKEYOFCONTEXT = "NOTKEYOFCONTEXT";
 	public static final String QF_NOTKEYOFMODEL = "NOTKEYOFMODEL";
 	public static final String QF_INVALIDSETVAR = "INVALIDSETVAR";
-
-	private GamlDescriptError autoBuildError;
-	private static long lastTimeCompil = 0;
-
-	// used to validating some "special facet"
-	// (for ex, "min, max" are only allowed in "var" if "type" is "int" or "float")
-	private final Map<String, String> specialRules = new HashMap<String, String>() {
-
-		{
-			put("var", "type");
-			put("experiment", "type");
-		}
-	};
-
-	private static final GamlProperties allowedFacets = GamlProperties
-		.loadFrom(GamlProperties.FACETS);
-
-	// for context
-	private DefKeyword getParentName(final EObject container) {
-		if ( container instanceof Block ) { return getKey(container.eContainer()); }
-		return null;
-	}
-
-	// for facet
-	private DefKeyword getKey(final EObject container) {
-		if ( container instanceof SubStatement ) {
-			SubStatement stm = (SubStatement) container;
-			GamlKeywordRefImpl key = (GamlKeywordRefImpl) stm.getKey();
-			if ( key.basicGetRef() != null ) { return key.basicGetRef(); }
-		}
-		return null;
-	}
+	public static final String QF_BADEXPRESSION = "QF_BADEXPRESSION";
+	private static Map<Resource, IModel> models = new HashMap();
+	private static volatile boolean canRun;
+	private static volatile boolean isRunning;
 
 	@Check
 	public void checkModel(final Model m) {
-
-		// TODO test if we are saving the model (auto-build slow down the
-		// writing)
-		// TODO test if the model being validated is the one being edited (to
-		// prevent slow down)
-		long current = System.currentTimeMillis();
-		// no more than 1 compilation/second
-		if ( current - lastTimeCompil > 1000 ) {
-			// test if there is others errors (background compilation)
+		if ( m == null ) { return; }
+		ErrorCollector collect = new ErrorCollector();
+		System.out.println("Validator checking " + m.getName());
+		IModel compiledModel = null;
+		Resource r = m.eResource();
+		models.remove(r);
+		if ( canRun && !isRunning ) {
+			isRunning = true;
 			try {
-				autoBuildError = null;
-				// Deactivate temporarily the automatic background validation...
-				GamlDescriptIO.getInstance().process(m.eResource());
-			} catch (Exception e) {
-				if ( e instanceof GamlDescriptError ) {
-					autoBuildError = (GamlDescriptError) e;
+				URL url = FileLocator.resolve(new URL(r.getURI().toString()));
+				String filePath = new File(url.getFile()).getAbsolutePath();
+				Map<String, ISyntacticElement> elements = buildSyntacticTree(r, collect);
+				if ( collect.getErrors().isEmpty() ) {
+					ModelStructure ms = new ModelStructure(filePath, elements, collect);
+					compiledModel =
+						(IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
 				}
+			} catch (Exception e1) {
+				System.out.println("An exception has occured in the validation process:");
+				e1.printStackTrace();
+			} finally {
+				isRunning = false;
 			}
-			lastTimeCompil = current;
 		}
-	}
-
-	/**
-	 * Read Project Builders and Natures
-	 * 
-	 * @see http://www.eclipse.org/articles/Article-Builders/builders.html <br/>
-	 *      Handling exceptions and reporting problems
-	 * @see http://www.eclipse.org/articles/Article-Builders/builders.html#1c
-	 * @see http://www.google.com/search?q=Eclipse+builder
-	 * @see http
-	 *      ://www.eclipse.org/articles/Article-Mark%20My%20Words/mark-my-words
-	 *      .html
-	 * @see http://www.eclipse.org/resources/?category=Builders
-	 * @see org.eclipse.xtext.ui.editor.model.IXtextDocument#addModelListener(org.eclipse.xtext.ui.editor.model.IXtextModelListener)
-	 * @see org.eclipse.xtext.ui.editor.model.IXtextModelListener
-	 */
-	@Check
-	public void checkSubStatement(final SubStatement s) {
-		DefKeyword parent = getParentName(s.eContainer());
-		String sName = s.getKey().getRef().getName();
-		if ( sName == null ) { return; }
-		if ( parent != null && parent.getBlock() != null ) {
-			EList<DefKeyword> keys = parent.getBlock().getChilds();
-			if ( !keys.contains(s.getKey().getRef()) ) {
-				error("Can not declare " + sName + " in " + parent.getName(),
-					GamlPackage.Literals.SUB_STATEMENT__KEY, QF_NOTKEYOFCONTEXT);
-			} else {
-				final String parentName = parent.getName();
-				if ( parentName.equals("entities") || parentName.equals("species") ) {
-					if ( sName.equals("global") ) {
-						error("Can not declare " + sName + " in " + parentName,
-							GamlPackage.Literals.SUB_STATEMENT__KEY, QF_NOTKEYOFCONTEXT);
-					}
-				}
-			}
+		if ( collect.getErrors().isEmpty() ) {
+			models.put(r, compiledModel);
 		} else {
-			if ( s.eContainer() instanceof Model ) {
-				// no other way to do, since Model is define in the grammar
-				if ( !modelChilds.contains(sName) ) {
-					warning(s.getKey().getRef().getName() + " is not a section of the model",
-						GamlPackage.Literals.SUB_STATEMENT__KEY, QF_NOTKEYOFMODEL);
+			for ( GamlException e : collect.getErrors() ) {
+				if ( e.isWarning() ) {
+					warning(e.getMessage(), (EObject) e.getStatement(), null, 0);
+				} else {
+					error(e.getMessage(), (EObject) e.getStatement(), null, 0);
 				}
-			} else {
-				warning("this context has no key", GamlPackage.Literals.SUB_STATEMENT__KEY);
 			}
 		}
-
-		if ( autoBuildError != null && EcoreUtil.equals(s, autoBuildError.getStatement()) ) {
-			error(autoBuildError.getMessage(), GamlPackage.Literals.SUB_STATEMENT__KEY);
-		}
 	}
 
-	@Check
-	public void checkSetEval(final SetEval s) {
-		if ( autoBuildError != null && EcoreUtil.equals(s, autoBuildError.getStatement()) ) {
-			error(autoBuildError.getMessage(), GamlPackage.Literals.SET_EVAL__VAR, QF_INVALIDSETVAR);
-		}
+	public static void validate(final Resource resource) {
+		EObject myModel = resource.getContents().get(0);
+		Diagnostician.INSTANCE.validate(myModel);
 	}
 
-	@Check
-	public void checkFacetExpr(final FacetExpr f) {
-		DefKeyword key = getKey(f.eContainer());
-		if ( key == null ) { return; }
-		final String kName = key.getName();
-		if ( kName == null ) { return; }
-		if ( key.getBlock() != null ) {
-			Set<String> facets1 = allowedFacets.get(kName);// list of facets allowed in this key
-			// if ( facets1 == null ) {
-			// facets1 = Collections.EMPTY_SET;
-			// }
-			Set<String> facets2 = null;
-			if ( f.getKey() != null ) {
-				final String keyofRule = specialRules.get(kName);
-				if ( keyofRule != null ) {
-					String correspondingFacetName = null;
-					EList<FacetExpr> facetList = null;
-					if ( f.eContainer() instanceof Definition ) {
-						facetList = ((Definition) f.eContainer()).getFacets();
-					}
-					if ( facetList != null ) {
-						for ( FacetExpr fe : facetList ) {
-							if ( fe != null && keyofRule.equals(fe.getKey().getRef().getName()) ) {
-								if ( fe.getExpr() instanceof VariableRef ) {
-									correspondingFacetName =
-										((VariableRef) fe.getExpr()).getRef().getName();
-								}
-								break;
-							}
+	public static boolean isBuilding() {
+		return isRunning;
+	}
+
+	public static void canRun(final boolean b) {
+		canRun = b;
+	}
+
+	public static IModel getCompiledModel(final Resource resource) {
+		return models.get(resource);
+	}
+
+	public static Map<String, ISyntacticElement> buildSyntacticTree(final Resource r,
+		final ErrorCollector collect) {
+		Map<String, ISyntacticElement> docs = new HashMap();
+		buildRecursiveSyntacticTree(docs, r, collect);
+		return docs;
+	}
+
+	private static void buildRecursiveSyntacticTree(final Map<String, ISyntacticElement> docs,
+		final Resource r, final ErrorCollector collect) {
+		Model m = (Model) r.getContents().get(0);
+		URL url;
+		try {
+			url = FileLocator.resolve(new URL(r.getURI().toString()));
+		} catch (MalformedURLException e) {
+			collect.add(new GamlXtextException(e));
+			return;
+		} catch (IOException e) {
+			collect.add(new GamlXtextException(e));
+			return;
+		}
+		String path = new File(url.getFile()).getAbsolutePath();
+		docs.put(path, GamlToSyntacticElements.doConvert(m, collect));
+		for ( Import imp : m.getImports() ) {
+			String importUri = imp.getImportURI();
+			if ( !importUri.startsWith("platform:") ) {
+				URI iu = URI.createURI(importUri).resolve(r.getURI());
+				if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
+					Resource ir = r.getResourceSet().getResource(iu, true);
+					if ( ir != r ) {
+						try {
+							url = FileLocator.resolve(new URL(ir.getURI().toString()));
+						} catch (MalformedURLException e) {
+							collect.add(new GamlXtextException(e));
+							continue;
+						} catch (IOException e) {
+							collect.add(new GamlXtextException(e));
+							continue;
+						}
+						path = new File(url.getFile()).getAbsolutePath();
+						if ( !docs.containsKey(path) ) {
+							buildRecursiveSyntacticTree(docs, ir, collect);
 						}
 					}
-					if ( correspondingFacetName != null ) {
-						facets2 = allowedFacets.get(correspondingFacetName);
-					}
-
 				}
-			}
-			if ( f.getKey() != null &&
-				!(facets1 == null || facets1.contains(f.getKey().getRef().getName()) || facets2 != null &&
-					facets2.contains(f.getKey().getRef().getName())) ) {
-				warning(f.getKey().getRef().getName() + " is not a facet of " + kName,
-					GamlPackage.Literals.FACET_EXPR__KEY, QF_NOTFACETOFKEY);
-			}
-
-		} else if ( f.getKey() != null ) {
-			if ( !kName.equals("set") ) {
-				warning("this key has no facet", GamlPackage.Literals.FACET_EXPR__KEY,
-					QF_KEYHASNOFACET);
 			}
 		}
 	}

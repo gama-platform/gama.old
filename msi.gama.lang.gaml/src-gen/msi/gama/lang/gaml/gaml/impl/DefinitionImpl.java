@@ -5,9 +5,9 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.AbstractDefinition;
 import msi.gama.lang.gaml.gaml.Definition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.GamlVarRef;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class DefinitionImpl extends SubStatementImpl implements Definition
+public class DefinitionImpl extends StatementImpl implements Definition
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -168,11 +168,11 @@ public class DefinitionImpl extends SubStatementImpl implements Definition
   @Override
   public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass)
   {
-    if (baseClass == AbstractDefinition.class)
+    if (baseClass == GamlVarRef.class)
     {
       switch (derivedFeatureID)
       {
-        case GamlPackage.DEFINITION__NAME: return GamlPackage.ABSTRACT_DEFINITION__NAME;
+        case GamlPackage.DEFINITION__NAME: return GamlPackage.GAML_VAR_REF__NAME;
         default: return -1;
       }
     }
@@ -187,11 +187,11 @@ public class DefinitionImpl extends SubStatementImpl implements Definition
   @Override
   public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass)
   {
-    if (baseClass == AbstractDefinition.class)
+    if (baseClass == GamlVarRef.class)
     {
       switch (baseFeatureID)
       {
-        case GamlPackage.ABSTRACT_DEFINITION__NAME: return GamlPackage.DEFINITION__NAME;
+        case GamlPackage.GAML_VAR_REF__NAME: return GamlPackage.DEFINITION__NAME;
         default: return -1;
       }
     }

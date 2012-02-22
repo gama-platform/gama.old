@@ -10,17 +10,13 @@ import java.util.Collection;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.FunctionRef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.VariableRef;
 
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -32,7 +28,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionRefImpl#getFunc <em>Func</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionRefImpl#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
@@ -41,16 +36,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
 {
-  /**
-   * The cached value of the '{@link #getFunc() <em>Func</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFunc()
-   * @generated
-   * @ordered
-   */
-  protected VariableRef func;
-
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -87,54 +72,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public VariableRef getFunc()
-  {
-    return func;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetFunc(VariableRef newFunc, NotificationChain msgs)
-  {
-    VariableRef oldFunc = func;
-    func = newFunc;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION_REF__FUNC, oldFunc, newFunc);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setFunc(VariableRef newFunc)
-  {
-    if (newFunc != func)
-    {
-      NotificationChain msgs = null;
-      if (func != null)
-        msgs = ((InternalEObject)func).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION_REF__FUNC, null, msgs);
-      if (newFunc != null)
-        msgs = ((InternalEObject)newFunc).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION_REF__FUNC, null, msgs);
-      msgs = basicSetFunc(newFunc, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION_REF__FUNC, newFunc, newFunc));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<Expression> getArgs()
   {
     if (args == null)
@@ -154,8 +91,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION_REF__FUNC:
-        return basicSetFunc(null, msgs);
       case GamlPackage.FUNCTION_REF__ARGS:
         return ((InternalEList<?>)getArgs()).basicRemove(otherEnd, msgs);
     }
@@ -172,8 +107,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION_REF__FUNC:
-        return getFunc();
       case GamlPackage.FUNCTION_REF__ARGS:
         return getArgs();
     }
@@ -191,9 +124,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION_REF__FUNC:
-        setFunc((VariableRef)newValue);
-        return;
       case GamlPackage.FUNCTION_REF__ARGS:
         getArgs().clear();
         getArgs().addAll((Collection<? extends Expression>)newValue);
@@ -212,9 +142,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION_REF__FUNC:
-        setFunc((VariableRef)null);
-        return;
       case GamlPackage.FUNCTION_REF__ARGS:
         getArgs().clear();
         return;
@@ -232,8 +159,6 @@ public class FunctionRefImpl extends ExpressionImpl implements FunctionRef
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION_REF__FUNC:
-        return func != null;
       case GamlPackage.FUNCTION_REF__ARGS:
         return args != null && !args.isEmpty();
     }

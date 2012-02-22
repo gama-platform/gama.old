@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,11 +18,18 @@
  */
 package msi.gama.lang.gaml.ui.highlight;
 
+import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.*;
+import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.*;
+import java.util.*;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.utils.EGaml;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.*;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
+
 /**
  * 
  * @author Pierrick
@@ -31,39 +38,95 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
  */
 public class GamlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 
+	private IHighlightedPositionAcceptor acceptor;
+	Set<INode> done = new HashSet();
+
 	@Override
 	public void provideHighlightingFor(final XtextResource resource,
-		final IHighlightedPositionAcceptor acceptor) {
-		if ( resource == null || resource.getParseResult() == null) { return; }
+		final IHighlightedPositionAcceptor a) {
+		acceptor = a;
+		if ( resource == null || resource.getParseResult() == null ) { return; }
+		TreeIterator<EObject> root = resource.getAllContents();
+		while (root.hasNext()) {
+			EObject obj = root.next();
+			// System.out.println("Highlighting :" + EGaml.getKeyOf(obj) + " of class " +
+			// obj.getClass().getSimpleName());
+			if ( obj != null ) {
+				if ( obj instanceof Statement ) {
 
-		Iterable<INode> allNodes = resource.getParseResult().getRootNode().getAsTreeIterable();
-				
-		for ( INode node : allNodes ) {
-						
-		//Cuong: Because comment is hidden rule, we can not get it as a semantic object	
-			final String tokentext = node.getText();
-			if (tokentext.startsWith("//") || (tokentext.startsWith("/*") && tokentext.endsWith("*/"))) {
-				continue;				
-			}	
-			
-			EObject elt = NodeModelUtils.findActualSemanticObjectFor(node);					
-			// apply style to our Gaml defined Keyword / facet / operators
-				
-			if ( elt instanceof msi.gama.lang.gaml.gaml.GamlKeywordRef ) {
-				acceptor.addPosition(node.getOffset(), node.getLength(),
-					DefaultHighlightingConfiguration.KEYWORD_ID);
-			} else if ( elt instanceof msi.gama.lang.gaml.gaml.GamlBinarOpRef ) {
-				acceptor.addPosition(node.getOffset(), node.getLength(),
-					GamlHighlightingConfiguration.BINARY_ID);
-			} else if ( elt instanceof msi.gama.lang.gaml.gaml.GamlFacetRef ) {
-				acceptor.addPosition(node.getOffset(), node.getLength(),
-					GamlHighlightingConfiguration.FACET_ID);
-			} else if ( elt instanceof msi.gama.lang.gaml.gaml.DoubleLiteral ||
-				elt instanceof msi.gama.lang.gaml.gaml.ColorLiteral ||
-				elt instanceof msi.gama.lang.gaml.gaml.BooleanLiteral ) {
-				acceptor.addPosition(node.getOffset(), node.getLength(),
-					DefaultHighlightingConfiguration.NUMBER_ID);
-			} 	
+					if ( obj instanceof Definition ) {
+						setStyle(obj, GamlHighlightingConfiguration.VARDEF_ID,
+							((Definition) obj).getName());
+					} else {
+						GamlFacetRef ref = ((Statement) obj).getRef();
+						if ( ref != null ) {
+							setStyle(ref, FACET_ID, ref.getRef());
+						}
+					}
+					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
+				} else if ( obj instanceof GamlBinaryExpr ) {
+					setStyle(obj, BINARY_ID, ((GamlBinaryExpr) obj).getOp());
+				} else if ( obj instanceof FacetExpr ) {
+					setStyle(obj, FACET_ID, EGaml.getKeyOf(obj));
+				} else if ( obj instanceof DoubleLiteral || obj instanceof ColorLiteral ||
+					obj instanceof BooleanLiteral || obj instanceof IntLiteral ) {
+					setStyle(obj, NUMBER_ID, 0);
+				} else if ( obj instanceof FunctionRef ) {
+					setStyle(((FunctionRef) obj).getLeft(), BINARY_ID, 0);
+				} else if ( obj instanceof DefUnary ) {
+					setStyle(obj, BINARY_ID, ((DefUnary) obj).getName());
+				} else if ( obj instanceof VariableRef && ((VariableRef) obj).getRef() != null ) {
+					setStyle(obj, VARIABLE_ID, ((VariableRef) obj).getRef().getName());
+				}
+
+				// Ajouter la notion de scope pour pouvoir highlighter les variables globales
+
+			}
+		}
+		done.clear();
+	}
+
+	private void setStyle(final EObject obj, final String s, final int position) {
+		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
+		if ( obj != null && s != null ) {
+			INode n = NodeModelUtils.getNode(obj);
+			if ( position > -1 ) {
+				int i = 0;
+				for ( ILeafNode node : n.getLeafNodes() ) {
+					if ( !node.isHidden() ) {
+						if ( position == i ) {
+							n = node;
+							break;
+						}
+						i++;
+					}
+				}
+			}
+			if ( !done.contains(n) ) {
+				done.add(n);
+				acceptor.addPosition(n.getOffset(), n.getLength(), s);
+			}
+		}
+	}
+
+	private void setStyle(final EObject obj, final String s, final String text) {
+		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
+		if ( text == null ) { return; }
+		if ( obj != null && s != null ) {
+			INode n = NodeModelUtils.getNode(obj);
+			for ( ILeafNode node : n.getLeafNodes() ) {
+				if ( !node.isHidden() ) {
+					if ( NodeModelUtils.getTokenText(node).startsWith(text) ) {
+						n = node;
+						break;
+					}
+				}
+			}
+
+			if ( !done.contains(n) ) {
+				done.add(n);
+				acceptor.addPosition(n.getOffset(), n.getLength(), s);
+			}
 		}
 	}
 }

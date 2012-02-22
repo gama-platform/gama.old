@@ -5,6 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,7 +24,7 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface FacetExpr extends AbstractDefinition
+public interface FacetExpr extends EObject
 {
   /**
    * Returns the value of the '<em><b>Key</b></em>' containment reference.
@@ -34,12 +35,12 @@ public interface FacetExpr extends AbstractDefinition
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Key</em>' containment reference.
-   * @see #setKey(GamlFacetRef)
+   * @see #setKey(FacetRef)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getFacetExpr_Key()
    * @model containment="true"
    * @generated
    */
-  GamlFacetRef getKey();
+  FacetRef getKey();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.FacetExpr#getKey <em>Key</em>}' containment reference.
@@ -49,7 +50,7 @@ public interface FacetExpr extends AbstractDefinition
    * @see #getKey()
    * @generated
    */
-  void setKey(GamlFacetRef value);
+  void setKey(FacetRef value);
 
   /**
    * Returns the value of the '<em><b>Expr</b></em>' containment reference.
