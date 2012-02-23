@@ -41,6 +41,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getBuiltInAccess().getAlternatives(), "rule__BuiltIn__Alternatives");
 					put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 					put(grammarAccess.getClassicStatementAccess().getAlternatives_4(), "rule__ClassicStatement__Alternatives_4");
+					put(grammarAccess.getIfEvalAccess().getElseAlternatives_4_1_0(), "rule__IfEval__ElseAlternatives_4_1_0");
 					put(grammarAccess.getDefinitionAccess().getAlternatives_1(), "rule__Definition__Alternatives_1");
 					put(grammarAccess.getDefinitionAccess().getAlternatives_3(), "rule__Definition__Alternatives_3");
 					put(grammarAccess.getFacetRefAccess().getAlternatives(), "rule__FacetRef__Alternatives");

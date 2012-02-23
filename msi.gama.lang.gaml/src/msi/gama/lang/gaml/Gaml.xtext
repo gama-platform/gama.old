@@ -24,7 +24,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
  */ 
 	Statement: (IfEval | ClassicStatement | Definition);
 	ClassicStatement returns Statement: key=BuiltIn ref=GamlFacetRef? expr=Expression (facets+=FacetExpr)* (block=Block | ';');
-	IfEval returns Statement: key='if' ref=GamlFacetRef? expr=Expression block=Block ('else' else=Block)?;
+	IfEval returns Statement: key='if' ref=GamlFacetRef? expr=Expression block=Block (=>'else' else=(Statement | Block))?;
 	Definition: key=ID (name=ID|name=STRING)? (facets+=FacetExpr)* (block=Block | ';');
 
 /**

@@ -25,6 +25,7 @@ import msi.gama.lang.gaml.descript.GamlXtextException;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 
 public class GamlToSyntacticElements {
 
@@ -125,11 +126,15 @@ public class GamlToSyntacticElements {
 
 	private static void convElse(final Statement stm, final ISyntacticElement elt,
 		final ErrorCollector collect) {
-		Block elseBlock = stm.getElse();
+		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
 			BasicSyntacticElement elseElt =
 				new BasicSyntacticElement(IKeyword.ELSE, elseBlock, elt.getErrorCollector());
-			convStatements(elseElt, elseBlock.getStatements(), collect);
+			if ( elseBlock instanceof Statement ) {
+				elseElt.addContent(convStatement((Statement) elseBlock, collect));
+			} else {
+				convStatements(elseElt, ((Block) elseBlock).getStatements(), collect);
+			}
 			elt.addContent(elseElt);
 		}
 	}

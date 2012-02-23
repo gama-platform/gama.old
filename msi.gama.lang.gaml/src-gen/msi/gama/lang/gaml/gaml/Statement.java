@@ -161,12 +161,12 @@ public interface Statement extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Else</em>' containment reference.
-   * @see #setElse(Block)
+   * @see #setElse(EObject)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Else()
    * @model containment="true"
    * @generated
    */
-  Block getElse();
+  EObject getElse();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getElse <em>Else</em>}' containment reference.
@@ -176,6 +176,6 @@ public interface Statement extends EObject
    * @see #getElse()
    * @generated
    */
-  void setElse(Block value);
+  void setElse(EObject value);
 
 } // Statement

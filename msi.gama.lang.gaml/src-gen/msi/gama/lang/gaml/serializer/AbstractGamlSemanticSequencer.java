@@ -972,7 +972,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key='if' ref=GamlFacetRef? expr=Expression block=Block else=Block?)
+	 *     (key='if' ref=GamlFacetRef? expr=Expression block=Block (else=Statement | else=Block)?)
 	 */
 	protected void sequence_IfEval(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1131,7 +1131,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (
-	 *         (key='if' ref=GamlFacetRef? expr=Expression block=Block else=Block?) | 
+	 *         (key='if' ref=GamlFacetRef? expr=Expression block=Block (else=Statement | else=Block)?) | 
 	 *         (key=BuiltIn ref=GamlFacetRef? expr=Expression facets+=FacetExpr* block=Block?)
 	 *     )
 	 */

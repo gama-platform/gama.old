@@ -399,13 +399,15 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
 		private final Keyword cElseKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
 		private final Assignment cElseAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cElseBlockParserRuleCall_4_1_0 = (RuleCall)cElseAssignment_4_1.eContents().get(0);
+		private final Alternatives cElseAlternatives_4_1_0 = (Alternatives)cElseAssignment_4_1.eContents().get(0);
+		private final RuleCall cElseStatementParserRuleCall_4_1_0_0 = (RuleCall)cElseAlternatives_4_1_0.eContents().get(0);
+		private final RuleCall cElseBlockParserRuleCall_4_1_0_1 = (RuleCall)cElseAlternatives_4_1_0.eContents().get(1);
 		
 		//IfEval returns Statement:
-		//	key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=Block)?;
+		//	key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=(Statement | Block))?;
 		public ParserRule getRule() { return rule; }
 
-		//key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=Block)?
+		//key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=(Statement | Block))?
 		public Group getGroup() { return cGroup; }
 
 		//key="if"
@@ -432,17 +434,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//Block
 		public RuleCall getBlockBlockParserRuleCall_3_0() { return cBlockBlockParserRuleCall_3_0; }
 
-		//("else" else=Block)?
+		//(=> "else" else=(Statement | Block))?
 		public Group getGroup_4() { return cGroup_4; }
 
-		//"else"
+		//=> "else"
 		public Keyword getElseKeyword_4_0() { return cElseKeyword_4_0; }
 
-		//else=Block
+		//else=(Statement | Block)
 		public Assignment getElseAssignment_4_1() { return cElseAssignment_4_1; }
 
+		//Statement | Block
+		public Alternatives getElseAlternatives_4_1_0() { return cElseAlternatives_4_1_0; }
+
+		//Statement
+		public RuleCall getElseStatementParserRuleCall_4_1_0_0() { return cElseStatementParserRuleCall_4_1_0_0; }
+
 		//Block
-		public RuleCall getElseBlockParserRuleCall_4_1_0() { return cElseBlockParserRuleCall_4_1_0; }
+		public RuleCall getElseBlockParserRuleCall_4_1_0_1() { return cElseBlockParserRuleCall_4_1_0_1; }
 	}
 
 	public class DefinitionElements extends AbstractParserRuleElementFinder {
@@ -1915,7 +1923,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IfEval returns Statement:
-	//	key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=Block)?;
+	//	key="if" ref=GamlFacetRef? expr=Expression block=Block ("else" else=(Statement | Block))?;
 	public IfEvalElements getIfEvalAccess() {
 		return (pIfEval != null) ? pIfEval : (pIfEval = new IfEvalElements());
 	}

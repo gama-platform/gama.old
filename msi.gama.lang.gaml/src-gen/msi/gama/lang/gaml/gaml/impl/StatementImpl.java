@@ -20,6 +20,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -116,7 +117,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    * @ordered
    */
-  protected Block else_;
+  protected EObject else_;
 
   /**
    * <!-- begin-user-doc -->
@@ -325,7 +326,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  public Block getElse()
+  public EObject getElse()
   {
     return else_;
   }
@@ -335,9 +336,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetElse(Block newElse, NotificationChain msgs)
+  public NotificationChain basicSetElse(EObject newElse, NotificationChain msgs)
   {
-    Block oldElse = else_;
+    EObject oldElse = else_;
     else_ = newElse;
     if (eNotificationRequired())
     {
@@ -352,7 +353,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setElse(Block newElse)
+  public void setElse(EObject newElse)
   {
     if (newElse != else_)
     {
@@ -446,7 +447,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         setBlock((Block)newValue);
         return;
       case GamlPackage.STATEMENT__ELSE:
-        setElse((Block)newValue);
+        setElse((EObject)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -478,7 +479,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         setBlock((Block)null);
         return;
       case GamlPackage.STATEMENT__ELSE:
-        setElse((Block)null);
+        setElse((EObject)null);
         return;
     }
     super.eUnset(featureID);

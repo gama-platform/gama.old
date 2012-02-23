@@ -796,26 +796,45 @@ ruleIfEval returns [EObject current=null]
 	    }
 
 )
-)(	otherlv_4='else' 
+)(((	'else' 
+)=>	otherlv_4='else' 
     {
     	newLeafNode(otherlv_4, grammarAccess.getIfEvalAccess().getElseKeyword_4_0());
     }
+)(
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0()); 
+	        newCompositeNode(grammarAccess.getIfEvalAccess().getElseStatementParserRuleCall_4_1_0_0()); 
 	    }
-		lv_else_5_0=ruleBlock		{
+		lv_else_5_1=ruleStatement		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getIfEvalRule());
 	        }
        		set(
        			$current, 
        			"else",
-        		lv_else_5_0, 
+        		lv_else_5_1, 
+        		"Statement");
+	        afterParserOrEnumRuleCall();
+	    }
+
+    |		{ 
+	        newCompositeNode(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0_1()); 
+	    }
+		lv_else_5_2=ruleBlock		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getIfEvalRule());
+	        }
+       		set(
+       			$current, 
+       			"else",
+        		lv_else_5_2, 
         		"Block");
 	        afterParserOrEnumRuleCall();
 	    }
+
+)
 
 )
 ))?)

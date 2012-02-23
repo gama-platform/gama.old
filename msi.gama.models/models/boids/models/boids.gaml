@@ -1,31 +1,31 @@
 model boids
 
 global { 
-	int number_of_agents parameter: 'Number of agents' init: 100 min: 1 max: 1000000;
-	int number_of_obstacles parameter: 'Number of obstacles' init: 0 min: 0;
-	float maximal_speed parameter: 'Maximal speed' init: 15 min: 0.1 max: 15;
-	var cohesion_factor type: int parameter: 'true' init: 200;
-	var alignment_factor type: int parameter: 'true' init: 100;
-	var minimal_distance type: float parameter: 'true' init: 10.0;
-	var maximal_turn type: int parameter: 'true' init: 90 min: 0 max: 359; 
-	var width_and_height_of_environment type: int parameter: 'true' init: 800;  
-	var torus_environment type: bool parameter: 'true' init: false; 
-	var apply_cohesion type: bool init: true parameter: 'true'; 
-	var apply_alignment type: bool init: true parameter: 'true'; 
-	var apply_separation type: bool init: true parameter: 'true';  
-	var apply_goal type: bool init: true parameter: 'true';
-	var apply_avoid type: bool init: true parameter: 'true'; 
-	var apply_wind type: bool init: true parameter: 'true';  
-	var moving_obstacles type: bool init: false parameter: 'true';
-	var bounds type: int init: (width_and_height_of_environment / 20) depends_on: width_and_height_of_environment;
-	var wind_vector type: point init: {0,0} parameter: 'true';
-	var goal_duration type: int init: 30 value: (goal_duration - 1); 
-	var goal type: point init: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
-	var images type: list of: string init: (['../images/bird1.png','../images/bird2.png','../images/bird3.png']);
-	var xmin type: int init: bounds; 
-	var ymin type: int init: bounds;
-	var xmax type: int init: (width_and_height_of_environment - bounds);  
-	var ymax type: int init: (width_and_height_of_environment - bounds);  
+	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
+	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
+	float maximal_speed parameter: 'Maximal speed' <- 15 min: 0.1 max: 15;
+	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
+	int alignment_factor parameter: 'Alignment Factor' <- 100;
+	float minimal_distance parameter: 'Minimal Distance' <- 10.0;
+	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
+	int width_and_height_of_environment parameter: 'Width/Height of the Environment' <- 800;  
+	bool torus_environment parameter: 'Toroidal Environment ?' <- false; 
+	bool apply_cohesion <- true parameter: 'Apply Cohesion ?'; 
+	bool apply_alignment <- true parameter: 'Apply Alignment ?'; 
+	bool apply_separation <- true parameter: 'Apply Separation ?';  
+	bool apply_goal <- true parameter: 'Follow Goal ?';
+	bool apply_avoid <- true parameter: 'Apply Avoidance ?'; 
+	bool apply_wind <- true parameter: 'Apply Wind ?';  
+	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';
+	int bounds <- (width_and_height_of_environment / 20);
+	point wind_vector <- {0,0} parameter: 'Direction of the wind';
+	int goal_duration <- 30 value: (goal_duration - 1); 
+	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
+	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
+	int xmin <- bounds; 
+	int ymin <- bounds;
+	int xmax <- (width_and_height_of_environment - bounds);  
+	int ymax <- (width_and_height_of_environment - bounds);  
 
 	// flock's parameter
 	const two_boids_distance type: int init: 30;
@@ -34,15 +34,15 @@ global {
 	
 	init {
 		create boids number: number_of_agents {
-			set location value: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
+			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		}
 		
 		create obstacle number: number_of_obstacles {
-			set location value: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
+			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
 		
 		create  boids_goal number: 1 {
-			set location value: goal;
+			set location <- goal;
 		}
 	}
 	
@@ -52,7 +52,9 @@ global {
 	 		let potentialBoidsNeighboursMap type: map value: ([] as map);
 	 		
 	 		loop one_boids over: free_boids {
-	 			let free_neighbours type: list of: boids value: ( ( list ((agents_overlapping (one_boids.shape + (float (two_boids_distance)))) ) of_species boids) );
+	 			let free_neighbours 
+	 				type: list of: boids 
+	 				value: ( ( list ((agents_overlapping (one_boids.shape + (float (two_boids_distance)))) ) of_species boids) );
 	 			remove one_boids from: free_neighbours;  
 
 	 			if !(empty (free_neighbours)) {
@@ -146,13 +148,13 @@ entities {
 		
 		reflex capture_release_boids {
 			 let removed_components type: list of: boids_delegation value: (list (boids_delegation)) where ((each distance_to location) > cohesionIndex );
-			 if condition: !(empty (removed_components)) {
-			 	release target: removed_components;
+			 if !(empty (removed_components)) {
+			 	release removed_components;
 			 }
 			 
 			 let added_components type: list of: boids value: (list (boids)) where ((each distance_to location) < cohesionIndex );
 			 if !(empty (added_components)) {
-			 	capture target: added_components as: boids_delegation;
+			 	capture added_components as: boids_delegation;
 			 }
 		}
 		
@@ -210,15 +212,15 @@ entities {
 		
 		reflex separation when: apply_separation {
 			let acc value: {0,0};
-			loop boid over:  (self others_at [distance :: minimal_distance])  {
+			loop boid over: (self others_at [distance :: minimal_distance])  {
 				set acc <- acc - ((location of boid) - location);
 			} 
 			set velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
-			let acc value: (mean (others collect (each.velocity)) as point) - velocity;
-			set velocity value: velocity + (acc / alignment_factor);
+			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
+			set velocity <- velocity + (acc / alignment_factor);
 		}
 		
 		reflex cohesion when: apply_cohesion {
@@ -228,10 +230,8 @@ entities {
 		}
 		
 		reflex avoid when: apply_avoid {
-			let acc value: {0,0};
-			
+			let acc <- {0,0};
 			let nearby_obstacles <- (obstacle overlapping (shape + (minimal_distance * 2)) );
-			
 			loop obs over: nearby_obstacles {
 				set acc <- acc - ((location of obs) - my (location));
 			}
@@ -242,16 +242,16 @@ entities {
 			if  !(torus_environment) {
 				if  (location.x) < xmin {
 					set velocity <- velocity + {bounds,0};
-				}
-				if (location.x) > xmax {
+				} else if (location.x) > xmax {
 					set velocity <- velocity - {bounds,0};
 				}
+				
 				if (location.y) < ymin {
 					set velocity <- velocity + {0,bounds};
-				}
-				if (location.y) > ymax {
+				} else if (location.y) > ymax {
 					set velocity <- velocity - {0,bounds};
 				}
+				
 			}
 		}
 		
@@ -265,7 +265,7 @@ entities {
 		 
 		action do_move {
 			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
-				set velocity value: {(rnd(4)) -2, (rnd(4)) - 2};
+				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			let old_location <- location;
 			do  goto target: location + velocity;
@@ -273,8 +273,8 @@ entities {
 		}
 		
 		reflex movement {
-			do action: bounding;
-			do action: do_move;
+			do bounding;
+			do do_move;
 		}
 		
 		aspect image {
@@ -290,7 +290,7 @@ entities {
 		float speed <- 0.1;
 		
 		reflex when: moving_obstacles {
-			if flip(0.5) { do goto target: one_of(boids) as list;} else {do wander amplitude: 360;}
+			if flip(0.5) { do goto target: one_of(boids) as list;} else do wander amplitude: 360;
 		}
 		
 		aspect default {

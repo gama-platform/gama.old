@@ -5,6 +5,7 @@ grammar InternalGaml;
 
 options {
 	superClass=AbstractInternalContentAssistParser;
+	backtrack=true;
 	
 }
 
@@ -1271,6 +1272,28 @@ rule__ClassicStatement__Alternatives_4
 	';' 
 
 { after(grammarAccess.getClassicStatementAccess().getSemicolonKeyword_4_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__IfEval__ElseAlternatives_4_1_0
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getIfEvalAccess().getElseStatementParserRuleCall_4_1_0_0()); }
+	ruleStatement
+{ after(grammarAccess.getIfEvalAccess().getElseStatementParserRuleCall_4_1_0_0()); }
+)
+
+    |(
+{ before(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0_1()); }
+	ruleBlock
+{ after(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0_1()); }
 )
 
 ;
@@ -2680,9 +2703,9 @@ rule__IfEval__Group_4__0__Impl
 :
 (
 { before(grammarAccess.getIfEvalAccess().getElseKeyword_4_0()); }
-
+(
 	'else' 
-
+)
 { after(grammarAccess.getIfEvalAccess().getElseKeyword_4_0()); }
 )
 
@@ -7103,8 +7126,9 @@ rule__IfEval__ElseAssignment_4_1
     }
 :
 (
-{ before(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0()); }
-	ruleBlock{ after(grammarAccess.getIfEvalAccess().getElseBlockParserRuleCall_4_1_0()); }
+{ before(grammarAccess.getIfEvalAccess().getElseAlternatives_4_1_0()); }
+(rule__IfEval__ElseAlternatives_4_1_0)
+{ after(grammarAccess.getIfEvalAccess().getElseAlternatives_4_1_0()); }
 )
 
 ;
