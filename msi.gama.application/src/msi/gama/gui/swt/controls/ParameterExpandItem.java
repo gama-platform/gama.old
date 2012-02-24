@@ -133,7 +133,9 @@ public class ParameterExpandItem extends Item {
 		if ( isDisposed() ) { return; }
 		// GuiUtils.debug("ParameterItem being disposed");
 		// if (!isValidThread ()) error (SWT.ERROR_THREAD_INVALID_ACCESS);
-		parent.destroyItem(this);
+		if ( parent != null ) {
+			parent.destroyItem(this);
+		}
 		super.dispose();
 		if ( control != null ) {
 			control.dispose();
@@ -144,6 +146,7 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void drawItem(final GC gc, final boolean drawFocus) {
+		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		Display display = getDisplay();
 		gc.setForeground(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
@@ -222,6 +225,7 @@ public class ParameterExpandItem extends Item {
 	 */
 	public int getHeaderHeight() {
 		// checkWidget();
+		if ( parent == null ) { return imageHeight; }
 		return Math.max(parent.bandHeight, imageHeight);
 	}
 
@@ -238,6 +242,7 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void redraw() {
+		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		if ( imageHeight > headerHeight ) {
 			parent.redraw(x + ParameterExpandItem.TEXT_INSET, y + headerHeight - imageHeight,
@@ -249,6 +254,7 @@ public class ParameterExpandItem extends Item {
 	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
 		final boolean size) {
 		redraw();
+		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		int y1 = y;
 		if ( move ) {
@@ -320,6 +326,7 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
+		if ( parent == null ) { return; }
 		// checkWidget();
 		this.expanded = expanded;
 		parent.showItem(this);
@@ -336,7 +343,7 @@ public class ParameterExpandItem extends Item {
 		} else {
 			imageHeight = imageWidth = 0;
 		}
-		if ( oldImageHeight != imageHeight ) {
+		if ( oldImageHeight != imageHeight && parent != null ) {
 			parent.layoutItems(parent.indexOf(this), true);
 		} else {
 			redraw();
@@ -356,10 +363,10 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setHeight(final int height) {
-		checkWidget();
+		// checkWidget();
 		if ( height < 0 ) { return; }
 		setBounds(0, 0, width, height, false, true);
-		if ( expanded ) {
+		if ( expanded && parent != null ) {
 			parent.layoutItems(parent.indexOf(this) + 1, true);
 		}
 	}
