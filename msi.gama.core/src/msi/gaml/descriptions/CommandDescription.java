@@ -280,7 +280,8 @@ public class CommandDescription extends SymbolDescription {
 	@Override
 	public IType getTypeOf(final String s) {
 		if ( s == null ) { return Types.NO_TYPE; }
-		return this.getSpeciesContext().getTypeOf(s);
+		IDescription species = getSpeciesContext();
+		return species == null ? Types.NO_TYPE : species.getTypeOf(s);
 	}
 
 }
