@@ -101,9 +101,9 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	public void buildOutputs(final IExperiment exp) {
 		if ( exp.isGui() ) {
-			GuiUtils.debug("Building the GUI output manager");
+			// GuiUtils.debug("Building the GUI output manager");
 			if ( displays != null ) {
-				GuiUtils.debug("Cancelling any previous selection");
+				// GuiUtils.debug("Cancelling any previous selection");
 				displays.fireSelectionChanged(null);
 			}
 			displays = new GuiOutputManager(this);
@@ -122,7 +122,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 				for ( final IOutput output : outputs.values() ) {
 					if ( !output.isPermanent() ) {
 						try {
-							GuiUtils.debug("Preparing output " + output.getName());
+							// GuiUtils.debug("Preparing output " + output.getName());
 							output.prepare(exp.getCurrentSimulation());
 						} catch (GamaRuntimeException e) {
 							e.addContext("in preparing output " + output.getName());
@@ -135,7 +135,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 							e.printStackTrace();
 						}
 						try {
-							GuiUtils.debug("Scheduling and opening output " + output.getName());
+							// GuiUtils.debug("Scheduling and opening output " + output.getName());
 							output.schedule();
 							output.open();
 							output.update();
@@ -156,7 +156,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
-			GuiUtils.debug("Disposing the outputs");
+			// GuiUtils.debug("Disposing the outputs");
 			outputsToUpdateNow.clear();
 			if ( displays != null ) {
 				displays.dispose();
@@ -170,7 +170,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 				}
 			}
 			outputs.clear();
-			GuiUtils.debug("Ouputs disposed");
+			// GuiUtils.debug("Ouputs disposed");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
