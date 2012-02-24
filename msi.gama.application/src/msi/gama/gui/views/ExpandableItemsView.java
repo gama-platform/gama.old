@@ -103,9 +103,13 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected abstract Composite createItemContentsFor(T data);
 
 	protected void disposeViewer() {
-		if ( viewer != null ) {
-			viewer.dispose();
-			viewer = null;
+		try {
+			if ( viewer != null ) {
+				viewer.dispose();
+				viewer = null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
