@@ -89,6 +89,7 @@ public class GamlException extends Exception {
 	public void addSource(final ISyntacticElement cur) {
 		if ( source == null ) {
 			source = cur;
+			if ( cur == null ) { return; }
 			ErrorCollector collect = cur.getErrorCollector();
 			if ( collect != null ) {
 				collect.add(this);
