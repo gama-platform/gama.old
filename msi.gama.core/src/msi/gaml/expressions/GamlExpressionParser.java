@@ -143,6 +143,8 @@ public class GamlExpressionParser implements IExpressionParser {
 			final IExpression expr1 = compileExpr(words.subList(0, opIndex));
 			IExpression expr2 = null;
 			if ( IKeyword._DOT.equals(operator) ) {
+				if ( words.size() < opIndex + 2 ) { throw new GamlException(
+					"The '.' cannot end an expression", context.getSourceInformation()); }
 				return compileFieldExpr(expr1, words.get(opIndex + 1));
 			} else if ( IKeyword.AS.equals(operator) ) {
 				String castingString = words.get(opIndex + 1);
