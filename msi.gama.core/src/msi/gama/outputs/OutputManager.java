@@ -37,15 +37,6 @@ import msi.gaml.descriptions.IDescription;
 /**
  * The Class OutputManager.
  * 
- * 
- * 
- * 
- * FAIRE UN GUI-LESS OUTPUTMANAGER, qui n'ait aucune référence a Eclipse. Et une sous-classe qui
- * redéfinit les méthodes faisant appel au GUI
- * 
- * 
- * 
- * 
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
 @symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT)
@@ -110,9 +101,9 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	public void buildOutputs(final IExperiment exp) {
 		if ( exp.isGui() ) {
-			// GUI.debug("Building the GUI output manager");
+			GuiUtils.debug("Building the GUI output manager");
 			if ( displays != null ) {
-				// GUI.debug("Cancelling any previous selection");
+				GuiUtils.debug("Cancelling any previous selection");
 				displays.fireSelectionChanged(null);
 			}
 			displays = new GuiOutputManager(this);
@@ -131,7 +122,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 				for ( final IOutput output : outputs.values() ) {
 					if ( !output.isPermanent() ) {
 						try {
-							// GUI.debug("Preparing output " + output.getName());
+							GuiUtils.debug("Preparing output " + output.getName());
 							output.prepare(exp.getCurrentSimulation());
 						} catch (GamaRuntimeException e) {
 							e.addContext("in preparing output " + output.getName());
@@ -140,9 +131,11 @@ public class OutputManager extends Symbol implements IOutputManager {
 							continue;
 						} catch (GamlException e) {
 							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						try {
-							// GUI.debug("Scheduling and opening output " + output.getName());
+							GuiUtils.debug("Scheduling and opening output " + output.getName());
 							output.schedule();
 							output.open();
 							output.update();
@@ -151,6 +144,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 							e.addContext("output " + output.getName() + " has not been opened");
 							GAMA.reportError(e);
 							continue;
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 
 					}
@@ -160,21 +155,25 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	public synchronized void dispose(final boolean includingBatch) {
-		// GUI.debug("Disposing the outputs");
-		outputsToUpdateNow.clear();
-		if ( displays != null ) {
-			displays.dispose();
-		}
-		outputsToUnschedule.clear();
-		scheduledOutputs.clear();
-		for ( final IOutput output : outputs.values() ) {
-			if ( includingBatch || !output.isPermanent() ) {
-				// GUI.debug("Disposing of output " + output.getName());
-				output.dispose();
+		try {
+			GuiUtils.debug("Disposing the outputs");
+			outputsToUpdateNow.clear();
+			if ( displays != null ) {
+				displays.dispose();
 			}
+			outputsToUnschedule.clear();
+			scheduledOutputs.clear();
+			for ( final IOutput output : outputs.values() ) {
+				if ( includingBatch || !output.isPermanent() ) {
+					GuiUtils.debug("Disposing of output " + output.getName());
+					output.dispose();
+				}
+			}
+			outputs.clear();
+			GuiUtils.debug("Ouputs disposed");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		outputs.clear();
-		// GUI.debug("Ouputs disposed");
 	}
 
 	@Override
