@@ -99,9 +99,10 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		from = getFacet(IKeyword.FROM);
 		number = getFacet(IKeyword.NUMBER);
 		speciesExpr = getFacet(IKeyword.SPECIES);
+		setName("create");
 		// asExpr = getFacet(ISymbol.AS);
-		setName("create " + speciesExpr == null ? description.getSpeciesContext().getName()
-			: speciesExpr.toGaml());
+		// setName("create " + speciesExpr == null ? description.getSpeciesContext().getName()
+		// : speciesExpr.toGaml());
 	}
 
 	public CreateCommand() {
