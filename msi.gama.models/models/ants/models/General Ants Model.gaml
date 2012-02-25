@@ -21,7 +21,7 @@ global {
 		loop times: number_of_food_places {
 			let loc value: { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };
 			let food_places value: (ant_grid as list where ( ( each distance_to loc ) < 5)); 
-			ask target: food_places {
+			ask target: food_places { 
 				if food = 0 {
 					set food value: 5 ;
 					set food_placed value: food_placed + 5 ;
@@ -78,9 +78,9 @@ entities {
 		}
 		state wandering initial: true { 
 			do wander amplitude: 90;
-			let pr value: ( ant_grid ( location ) ) . road;
+			let pr value: ( ant_grid ( location ) ) . road; 
 			transition to: carryingFood when: has_food;
- 			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );  
+ 			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );   
 		}
 		state carryingFood {
 			do goto target: center  ;
@@ -92,14 +92,14 @@ entities {
 			set location value: next_place ;
 			transition to: carryingFood when: has_food;
 			transition to: wandering when: ( pr < 0.05 ) or ( next_place = nil );
-		}
+		} 
 		aspect info {
 			draw shape: circle at: location size: 1 rotate: my heading empty: ! has_food;
 			draw shape: line at: location to: destination + ( ( destination - location ) 
-			) color: rgb ( 'white' ); 
+			) color: rgb ( 'white' );  
 			draw shape: circle at: location size: 4 empty: true color: 'white'; 
-			draw text: self as int color: rgb ( 'white' ) size: 1;
-			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 };
+			draw text: self as int color: rgb ( 'white' ) size: 1;  
+			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 }; 
 		}
 		aspect icon {
 			draw image: ant_shape_empty at: my location size: 5 rotate: my heading; 
