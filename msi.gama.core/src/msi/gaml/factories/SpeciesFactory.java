@@ -67,7 +67,7 @@ public class SpeciesFactory extends SymbolFactory {
 		final IDescription superDesc, final SymbolMetaDescription md) {
 		String name = facets.getString(IKeyword.NAME);
 		varFactory.addSpeciesNameAsType(name);
-		registeredFactories.get(varFactory).add(name);
+		// registeredFactories.get(varFactory).add(name);
 		Class base = md.getBaseClass();
 		String secondBase = facets.getString(IKeyword.BASE);
 

@@ -56,7 +56,7 @@ public class SymbolFactory implements ISymbolFactory {
 		return (IExpressionFactory) chooseFactoryFor(IKeyword.GAML);
 	}
 
-	protected final Map<ISymbolFactory, Set<String>> registeredFactories = new HashMap();
+	protected final Set<ISymbolFactory> registeredFactories = new HashSet();
 
 	public SymbolFactory() {
 		registerAnnotatedFactories();
@@ -105,7 +105,7 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	public void registerFactory(final ISymbolFactory f) {
-		registeredFactories.put(f, f.getKeywords());
+		registeredFactories.add(f);
 
 		// OutputManager.debug(this.getClass().getSimpleName() + " registers factory " +
 		// f.getClass().getSimpleName() + " for keywords " + f.getKeywords());
@@ -265,34 +265,43 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
+	public boolean handlesKeyword(final String keyword) {
+		return registeredSymbols.containsKey(keyword);
+	}
+
+	@Override
 	public ISymbolFactory chooseFactoryFor(final String keyword) {
-		if ( registeredSymbols.containsKey(keyword) ) { return this; }
-		for ( ISymbolFactory f : registeredFactories.keySet() ) {
-			if ( registeredFactories.get(f).contains(keyword) ) { return f; }
+		if ( handlesKeyword(keyword) ) { return this; }
+		for ( ISymbolFactory f : registeredFactories ) {
+			if ( f.handlesKeyword(keyword) ) { return f; }
 		}
-		for ( ISymbolFactory f : registeredFactories.keySet() ) {
+		for ( ISymbolFactory f : registeredFactories ) {
 			ISymbolFactory f2 = f.chooseFactoryFor(keyword);
 			if ( f2 != null ) { return f2; }
 		}
 		return null;
 	}
 
-	protected ISymbolFactory chooseFactoryFor(final String keyword, final String context) {
-		try {
-			Set<String> factoryNames = new HashSet();
-			for ( ISymbolFactory s : registeredFactories.keySet() ) {
-				factoryNames.add(s.getClass().getSimpleName());
-			}
+	//
+	// @Override
+	// public ISymbolFactory chooseFactoryFor(final String keyword) {
+	// if ( registeredSymbols.containsKey(keyword) ) { return this; }
+	// for ( ISymbolFactory f : registeredFactories.keySet() ) {
+	// if ( registeredFactories.get(f).contains(keyword) ) { return f; }
+	// }
+	// for ( ISymbolFactory f : registeredFactories.keySet() ) {
+	// ISymbolFactory f2 = f.chooseFactoryFor(keyword);
+	// if ( f2 != null ) { return f2; }
+	// }
+	// return null;
+	// }
 
-			ISymbolFactory contextFactory = context != null ? chooseFactoryFor(context) : this;
-			if ( contextFactory == null ) {
-				contextFactory = this;
-			}
-			return contextFactory.chooseFactoryFor(keyword);
-		} catch (StackOverflowError soe) {
-			soe.printStackTrace();
-			throw soe;
+	protected ISymbolFactory chooseFactoryFor(final String keyword, final String context) {
+		ISymbolFactory contextFactory = context != null ? chooseFactoryFor(context) : this;
+		if ( contextFactory == null ) {
+			contextFactory = this;
 		}
+		return contextFactory.chooseFactoryFor(keyword);
 	}
 
 	@Override
