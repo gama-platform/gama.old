@@ -11,7 +11,7 @@ global {
 	var shape_file_destination type: string init: '../gis/Destination.shp';
 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
-	var people_speed type: float init: 2;
+	var people_speed type: float init: 2; 
 	var people_number type: int init: 1000 parameter: "Number of agents";
 	var people_shape_buffer type: float init: 0.01;
 	
@@ -23,14 +23,14 @@ global {
 
 	const building_colors type: list init: ['orange', 'red', 'blue', 'black', 'gray', 'magenta'];
 	var the_graph type: graph;
-	
+	 
 	
 	init {
-		create species: road from: shape_file_road returns: the_roads;
+		create species: road from: shape_file_road returns: the_roads; 
 //		create species: beach from: shape_file_beach;
 //		create species: building from: shape_file_building; 
 //		create species: roadwidth from: shape_file_roadwidth;
-//		create species: river from: shape_file_rivers;
+//		create species: river from: shape_file_rivers; 
 		create species: destination from: shape_file_destination with: [fid :: read ('IND')];
 		set the_graph value: as_edge_graph (list(road) collect (each.shape));
 
@@ -82,7 +82,7 @@ entities {
 			);
 			 */
 			
-			let to_be_captured_people type: list of: people value: (people overlapping (macro_patch_buffer));
+			let to_be_captured_people type: list of: people value: (people overlapping (macro_patch_buffer)); 
 			if condition: ! (empty(to_be_captured_people)) {
 				set to_be_captured_people value: to_be_captured_people where (
 				(each.last_road != self)
@@ -285,9 +285,9 @@ output {
 
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+				data simulation_step_duration_in_mili_second value: float(duration) color: (rgb ('green'));
 			}
-		}
+		} 
 
 		display People_vs_Captured_People {
 			chart name: 'People_vs._Captured_People' type: series background: rgb ('black') {
