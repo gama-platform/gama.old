@@ -42,11 +42,16 @@ public final class GamlAnnotations {
 		 */
 		facet[] value();
 
+		/*
+		 * The different combinations of facets that are allowed. Not completely functional yet.
+		 */
 		combination[] combinations() default {};
 
+		/*
+		 * Return the facet that can be safely omitted by the modeler (provided its value is the
+		 * first following the keyword of the statement).
+		 */
 		String omissible();
-
-		// TODO A VOIR AU NIVEAU DE LA SYNTAXE;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -54,12 +59,26 @@ public final class GamlAnnotations {
 	@Inherited
 	public static @interface facet {
 
+		/**
+		 * @return the name of the facet. Must be unique within a symbol.
+		 */
 		String name();
+
+		/**
+		 * @return The string values of the different types that can be taken by this facet.
+		 */
 
 		String[] type();
 
+		/**
+		 * @return whether or not this facet is optional or mandatory.
+		 */
+
 		boolean optional() default false;
 
+		/**
+		 * @return the values that can be taken by this facet.
+		 */
 		String[] values() default {};
 	}
 
@@ -85,19 +104,25 @@ public final class GamlAnnotations {
 		 */
 		String value();
 
-		/*
+		/**
 		 * @return the unique (short) identifier for this type. User-added types can be chosen
-		 * between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
+		 *         between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
 		 */
 		short id();
 
-		/*
+		/**
 		 * @return the list of Java Classes this type is "wrapping" (i.e. representing). The first
-		 * one is the one that will be used preferentially throughout GAMA. The other ones are to
-		 * ensure compatibility, in operators, with compatible Java classes (for instance, List and
-		 * GamaList).
+		 *         one is the one that will be used preferentially throughout GAMA. The other ones
+		 *         are to ensure compatibility, in operators, with compatible Java classes (for
+		 *         instance, List and GamaList).
 		 */
 		Class[] wraps();
+
+		/**
+		 * @return the kind of Variable used to store this type. see IVariableKind.
+		 */
+
+		int kind() /* default IVariableKind.REGULAR */;
 
 	}
 
