@@ -36,6 +36,8 @@ public class GamaBundleLoader {
 	static Map<String, Class> builtInSpeciesClasses = new HashMap();
 	static Map<Integer, List<Class>> CLASSES_BY_KIND = new HashMap();
 	static Map<Integer, Class> FACTORIES_BY_KIND = new HashMap();
+	public static volatile boolean contributionsLoaded = false;
+	public final static Map<Bundle, String> gamlAdditionsBundleAndFiles = new HashMap();
 
 	public static void preBuildContributions() throws GamlException {
 		Map<String, String> additions = new HashMap();
@@ -59,6 +61,7 @@ public class GamaBundleLoader {
 			preBuildBundle(pluginName, pathName);
 
 		}
+		contributionsLoaded = true;
 	}
 
 	public final static void preBuildBundle(final String pluginName, final String pathName)
@@ -66,7 +69,7 @@ public class GamaBundleLoader {
 		Bundle bundle = Platform.getBundle(pluginName);
 		try {
 			bundle.start();
-			GamlCompiler.addGamlExtension(pluginName, pathName);
+			GamaBundleLoader.addGamlExtension(bundle, pathName);
 			preBuild(bundle, pathName);
 		} catch (BundleException e1) {
 			throw new GamlException("GAML additions in " + pluginName +
@@ -259,6 +262,10 @@ public class GamaBundleLoader {
 			}
 		}
 		// ModelFactory.computeBuiltInSpecies(new ModelDescription());
+	}
+
+	public static void addGamlExtension(final Bundle bundle, final String pathName) {
+		gamlAdditionsBundleAndFiles.put(bundle, pathName + "/std.gaml");
 	}
 
 }

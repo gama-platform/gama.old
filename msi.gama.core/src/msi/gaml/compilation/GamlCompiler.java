@@ -36,7 +36,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.util.URI;
 
 /**
  * The Class GamlActionCompiler.
@@ -630,13 +629,6 @@ public class GamlCompiler {
 
 	public static boolean isLazy(final Class[] args, final boolean isStatic) {
 		return args.length > 1 && IExpression.class.isAssignableFrom(args[args.length - 1]);
-	}
-
-	public final static List<URI> gamlAdditionsURIs = new ArrayList();
-
-	public static void addGamlExtension(final String pluginName, final String pathName) {
-		gamlAdditionsURIs.add(URI.createURI("platform:/plugin/" + pluginName + "/" + pathName +
-			"/std.gaml"));
 	}
 
 	// public static Set<Annotation> getAllAnnotationsForMethod(final Method m, final Class c) {
