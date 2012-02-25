@@ -4,10 +4,10 @@ global {
 	var simulated_population_rate type: float init: 0.3 const: true;
 	 
 	// GIS data 
-	var shape_file_road type: string init: '/gis/roadlines.shp'; 
+	var shape_file_road type: string init: '/gis/roadlines.shp';  
 	var shape_file_rivers type: string init: '/gis/rivers.shp';  
 	var shape_file_beach type: string init: '/gis/Beacha.shp';
-	string shape_file_roadwidth init: '/gis/roads.shp';
+	string shape_file_roadwidth init: '/gis/roads.shp'; 
 	string shape_file_building init: '/gis/buildr.shp'; 
 	var shape_file_bounds type: string init: '/gis/bounds.shp'; 
 	var shape_file_ward type: string init: '/gis/wards.shp'; 
@@ -31,7 +31,7 @@ global {
 	var zone1_building_color type: rgb init: rgb('orange');
 	var zone2_building_color type: rgb init: rgb('gray'); 
 	var zone3_building_color type: rgb init: rgb('yellow') ; 
-
+  
 
 	 
 	var road_graph type: graph;
@@ -65,7 +65,7 @@ global {
 				do action: initialize { 
 					arg the_road value: rd;
 				}
-			}
+			} 
 		}
 
 		loop w over: list(ward) {

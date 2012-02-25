@@ -25,7 +25,7 @@ global {
 	int xmin <- bounds; 
 	int ymin <- bounds;
 	int xmax <- (width_and_height_of_environment - bounds);  
-	int ymax <- (width_and_height_of_environment - bounds);  
+	int ymax <- (width_and_height_of_environment - bounds);   
 
 	// flock's parameter
 	const two_boids_distance type: int init: 30;

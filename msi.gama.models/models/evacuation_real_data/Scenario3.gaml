@@ -13,7 +13,7 @@ global {
 	var simulated_population_rate type: float init: 0.1 const: true;
 	
 	// GIS data
-	var shape_file_road type: string init: '/gis/roadlines.shp';
+	var shape_file_road type: string init: '/gis/roadlines.shp'; 
 	var shape_file_rivers type: string init: '/gis/rivers.shp';
 	var shape_file_beach type: string init: '/gis/Beacha.shp';
 	var shape_file_roadwidth type: string init: '/gis/roads.shp';
@@ -453,7 +453,7 @@ experiment default_expr type: gui {
 		
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+				data simulation_step_duration_in_mili_second value: float(duration) color: (rgb ('green'));
 			}
 		}
 

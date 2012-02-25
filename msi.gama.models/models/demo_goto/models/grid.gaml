@@ -10,16 +10,16 @@ global {
 			set goal value: one_of (but as list);
 			set location value: one_of (list(cell));
 		}
-	}
+	} 
 }
-environment bounds: {50,50} {
+environment bounds: {50,50} { 
 	grid cell width: 50 height: 50 neighbours: 4 torus: false frequency: 1 {
 		var color type: rgb init:'white';
-	}
+	} 
 }
 entities {
 	species but {
-		aspect default {
+		aspect default { 
 			draw shape: circle color: 'red' size: 0.5 ;
 		}
 	}

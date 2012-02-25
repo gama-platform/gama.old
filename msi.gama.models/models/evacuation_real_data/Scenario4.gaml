@@ -25,7 +25,7 @@ global {
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
 
-	var shapeSign type: string init: '/icons/CaliforniaEvacuationRoute.jpg' const: true; 
+	var shapeSign type: string init: '/icons/CaliforniaEvacuationRoute.jpg' const: true;  
 
 	var terminal_panel_ids type: list of: int init: [8];
 

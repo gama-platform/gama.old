@@ -68,11 +68,11 @@ entities {
 			set capacity value: capacity + 1;
 		}
 		aspect simple {
-			let color value: empty(insiders) ? rgb('white') : rgb [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)];
+			let color value: empty(insiders) ? rgb('white') : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			draw shape: square color: color size: 40;
 		}
 		aspect gis {
-			let color value: empty(insiders) ? rgb('white') : rgb [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)];
+			let color value: empty(insiders) ? rgb('white') : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			let pp value: one_of(space as list);
 			draw shape: geometry color: color;
 		} 

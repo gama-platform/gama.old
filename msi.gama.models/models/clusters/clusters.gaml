@@ -12,9 +12,9 @@ global {
 		create species: cells number: number_of_agents ;
 	}
 	reflex when: every(rnd(30)) {
-		ask target: (cells as list) where (each.leader = each) {
+		ask target: (cells as list) where (each.leader = each) {  
 			set heading value: heading + (rnd(45)) - (rnd(45)) ;
-		}
+		} 
 	}
 }
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus ;

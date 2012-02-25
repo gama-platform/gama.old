@@ -16,7 +16,7 @@ global {
 			set goal value: one_of (but as list) ;
 			let my_road type: road value: one_of (list(road));
 			set location value:any_location_in (my_road.shape);
-		}
+		} 
 	}
 }
 environment bounds: shape_file_in ; 

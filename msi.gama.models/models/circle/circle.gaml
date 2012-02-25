@@ -14,7 +14,7 @@ global {
 		create species: cells number: number_of_agents { 
 			set location value: {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
 		}
-	} 
+	}  
 } 
 
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true; 
