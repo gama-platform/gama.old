@@ -49,7 +49,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public static final String QF_NOTKEYOFMODEL = "NOTKEYOFMODEL";
 	public static final String QF_INVALIDSETVAR = "INVALIDSETVAR";
 	public static final String QF_BADEXPRESSION = "QF_BADEXPRESSION";
-	private static Map<Resource, IModel> models = new HashMap();
+	private static Map<Resource, IModel> MODELS = new HashMap();
+
 	private static volatile boolean canRun;
 	private static volatile boolean isRunning;
 
@@ -60,7 +61,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		System.out.println("Validator checking " + m.getName());
 		IModel compiledModel = null;
 		Resource r = m.eResource();
-		models.remove(r);
+		MODELS.remove(r);
 		if ( canRun && !isRunning ) {
 			isRunning = true;
 			try {
@@ -80,7 +81,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			}
 		}
 		if ( collect.getErrors().isEmpty() ) {
-			models.put(r, compiledModel);
+			MODELS.put(r, compiledModel);
 		} else {
 			for ( GamlException e : collect.getErrors() ) {
 				if ( e.isWarning() ) {
@@ -106,7 +107,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public static IModel getCompiledModel(final Resource resource) {
-		return models.get(resource);
+		return MODELS.get(resource);
 	}
 
 	public static Map<String, ISyntacticElement> buildSyntacticTree(final Resource r,

@@ -42,7 +42,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 /**
  * Blocks. Just an ordered list of statements inside curly brackets
  */ 
-Block: {Block} '{' (statements+=Statement)* '}';
+	Block: {Block} '{' (statements+=Statement)* '}';
 
 /**
  * Expressions
