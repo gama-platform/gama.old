@@ -401,75 +401,75 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			}
 		});
 
-		thumb.addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyPressed(final KeyEvent e) {
-				if ( CoolSlider.this.horizontal ) {
-					final int currentThumbPos =
-						leftmostRegion.getBounds().width + leftRegion.getBounds().width +
-							thumb.getBounds().width / 2;
-					if ( e.keyCode == SWT.ARROW_LEFT ) {
-						int newPos = 0;
-						if ( snapStyle ) {
-							newPos =
-								currentThumbPos -
-									(int) (getClientArea().width / ((maximum - minimum) * 1.0 / jumpIncrement));
-						} else {
-							newPos = currentThumbPos - (int) (getClientArea().width * jumpSize);
-						}
-						if ( newPos < 0 ) {
-							newPos = 0;
-						}
-						moveThumbHorizontally(newPos);
-					} else if ( e.keyCode == SWT.ARROW_RIGHT ) {
-						int newPos = 0;
-						if ( snapStyle ) {
-							newPos =
-								currentThumbPos +
-									(int) (getClientArea().width / ((maximum - minimum) * 1.0 / jumpIncrement));
-						} else {
-							newPos = currentThumbPos + (int) (getClientArea().width * jumpSize);
-						}
-						if ( newPos > getClientArea().width ) {
-							newPos = getClientArea().width;
-						}
-						moveThumbHorizontally(newPos);
-					}
-				} else {
-					final int currentThumbPos =
-						leftmostRegion.getBounds().height + leftRegion.getBounds().height +
-							thumb.getBounds().height / 2;
-					if ( e.keyCode == SWT.ARROW_UP ) {
-						int newPos = 0;
-						if ( snapStyle ) {
-							newPos =
-								currentThumbPos -
-									(int) (getClientArea().height / ((maximum - minimum) * 1.0 / jumpIncrement));
-						} else {
-							newPos = currentThumbPos - (int) (getClientArea().height * jumpSize);
-						}
-						if ( newPos < 0 ) {
-							newPos = 0;
-						}
-						moveThumbVertically(newPos);
-					} else if ( e.keyCode == SWT.ARROW_DOWN ) {
-						int newPos = 0;
-						if ( snapStyle ) {
-							newPos =
-								currentThumbPos +
-									(int) (getClientArea().height / ((maximum - minimum) * 1.0 / jumpIncrement));
-						} else {
-							newPos = currentThumbPos + (int) (getClientArea().height * jumpSize);
-						}
-						if ( newPos > getClientArea().height ) {
-							newPos = getClientArea().height;
-						}
-						moveThumbVertically(newPos);
-					}
-				}
-			}
-		});
+		// thumb.addKeyListener(new KeyAdapter() {
+		//
+		// @Override
+		// public void keyPressed(final KeyEvent e) {
+		// if ( CoolSlider.this.horizontal ) {
+		// final int currentThumbPos =
+		// leftmostRegion.getBounds().width + leftRegion.getBounds().width +
+		// thumb.getBounds().width / 2;
+		// if ( e.keyCode == SWT.ARROW_LEFT ) {
+		// int newPos = 0;
+		// if ( snapStyle ) {
+		// newPos =
+		// currentThumbPos -
+		// (int) (getClientArea().width / ((maximum - minimum) * 1.0 / jumpIncrement));
+		// } else {
+		// newPos = currentThumbPos - (int) (getClientArea().width * jumpSize);
+		// }
+		// if ( newPos < 0 ) {
+		// newPos = 0;
+		// }
+		// moveThumbHorizontally(newPos);
+		// } else if ( e.keyCode == SWT.ARROW_RIGHT ) {
+		// int newPos = 0;
+		// if ( snapStyle ) {
+		// newPos =
+		// currentThumbPos +
+		// (int) (getClientArea().width / ((maximum - minimum) * 1.0 / jumpIncrement));
+		// } else {
+		// newPos = currentThumbPos + (int) (getClientArea().width * jumpSize);
+		// }
+		// if ( newPos > getClientArea().width ) {
+		// newPos = getClientArea().width;
+		// }
+		// moveThumbHorizontally(newPos);
+		// }
+		// } else {
+		// final int currentThumbPos =
+		// leftmostRegion.getBounds().height + leftRegion.getBounds().height +
+		// thumb.getBounds().height / 2;
+		// if ( e.keyCode == SWT.ARROW_UP ) {
+		// int newPos = 0;
+		// if ( snapStyle ) {
+		// newPos =
+		// currentThumbPos -
+		// (int) (getClientArea().height / ((maximum - minimum) * 1.0 / jumpIncrement));
+		// } else {
+		// newPos = currentThumbPos - (int) (getClientArea().height * jumpSize);
+		// }
+		// if ( newPos < 0 ) {
+		// newPos = 0;
+		// }
+		// moveThumbVertically(newPos);
+		// } else if ( e.keyCode == SWT.ARROW_DOWN ) {
+		// int newPos = 0;
+		// if ( snapStyle ) {
+		// newPos =
+		// currentThumbPos +
+		// (int) (getClientArea().height / ((maximum - minimum) * 1.0 / jumpIncrement));
+		// } else {
+		// newPos = currentThumbPos + (int) (getClientArea().height * jumpSize);
+		// }
+		// if ( newPos > getClientArea().height ) {
+		// newPos = getClientArea().height;
+		// }
+		// moveThumbVertically(newPos);
+		// }
+		// }
+		// }
+		// });
 
 		addTraverseListener(new TraverseListener() {
 

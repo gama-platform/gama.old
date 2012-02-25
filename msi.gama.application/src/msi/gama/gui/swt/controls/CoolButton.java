@@ -517,22 +517,22 @@ public class CoolButton extends Canvas {
 			}
 		});
 
-		addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyPressed(final KeyEvent e) {
-				currentState.mouseDown();
-			}
-
-			@Override
-			public void keyReleased(final KeyEvent e) {
-				if ( isToggleButton ) {
-					isToggled = !isToggled;
-				}
-				doReleaseEvents();
-				currentState.mouseExit();
-			}
-		});
+		// addKeyListener(new KeyListener() {
+		//
+		// @Override
+		// public void keyPressed(final KeyEvent e) {
+		// currentState.mouseDown();
+		// }
+		//
+		// @Override
+		// public void keyReleased(final KeyEvent e) {
+		// if ( isToggleButton ) {
+		// isToggled = !isToggled;
+		// }
+		// doReleaseEvents();
+		// currentState.mouseExit();
+		// }
+		// });
 
 		addFocusListener(new FocusListener() {
 
