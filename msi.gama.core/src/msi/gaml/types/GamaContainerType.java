@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,12 +18,11 @@
  */
 package msi.gaml.types;
 
-import msi.gama.common.interfaces.*;
-
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
-import msi.gama.precompiler.GamlAnnotations.type;
 
 /**
  * Written by drogoul
@@ -32,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
  * A generic type for containers. Tentative.
  * 
  */
-@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class })
+@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = IVariableKind.CONTAINER)
 public class GamaContainerType extends GamaType<IContainer> {
 
 	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)

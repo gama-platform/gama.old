@@ -21,13 +21,14 @@ package msi.gaml.types;
 import java.util.Map;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.operators.Cast;
 
-@type(value = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class })
+@type(value = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class }, kind = IVariableKind.CONTAINER)
 public class GamaGraphType extends GamaType<IGraph> {
 
 	@Override

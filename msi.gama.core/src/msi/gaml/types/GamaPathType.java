@@ -23,13 +23,14 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 
-@type(value = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class })
+@type(value = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = IVariableKind.REGULAR)
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override
