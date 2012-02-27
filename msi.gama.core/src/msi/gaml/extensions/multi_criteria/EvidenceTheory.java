@@ -81,6 +81,12 @@ public class EvidenceTheory {
 		Propositions fusion = new Propositions(candidats);
 		return fusion;
 	}
+	
+	private Propositions buildPropositions(final Map<Candidate, MassesCroyances> candidats) {
+		return new Propositions(candidats, true);
+	}
+	
+	
 
 	/**
 	 * M�thode assurant la fusion de l'ensemble des crit�res
@@ -95,6 +101,7 @@ public class EvidenceTheory {
 		// Parcours des crit�res
 		for ( CritereFonctionsCroyances cfc : criteres ) {
 			double valC = valeursCourantes.get(cfc.getNom()).doubleValue();
+			
 			// Pour chaque crit�re, on instancie � un objet MassesCroyances. Initialisation des
 			// masses de croyances
 			MassesCroyances mc =
@@ -112,7 +119,7 @@ public class EvidenceTheory {
 	 * @return le meilleur candidat
 	 */
 	public Candidate decision(final LinkedList<CritereFonctionsCroyances> criteres,
-		final LinkedList<Candidate> cands) {
+		final LinkedList<Candidate> cands, boolean simple) {
 		// Parcours de l'ensemble des candidats possibles
 		Map<Candidate, MassesCroyances> candidats = new HashMap<Candidate, MassesCroyances>();
 		for ( Candidate cand : cands ) {
@@ -120,13 +127,19 @@ public class EvidenceTheory {
 			// crit�res
 			candidats.put(cand, fusionCriteres(criteres, cand.getValCriteria()));
 		}
+
 		// on fusionne entre elles les hypoth�ses
-		Propositions propositions = fusionHypotheses(candidats);
+		Propositions propositions = null;
+		if (simple)
+			propositions = buildPropositions(candidats);
+		else 
+			propositions = fusionHypotheses(candidats);
 
 		// on choisit le meilleur candidat (le meilleur intervalle) : celui qui maximise la
 		// probabilit� pignistique
 		return choixCandidat(propositions, cands);
 	}
+	
 
 	/**
 	 * Fonction de choix d'un candidat
@@ -274,7 +287,7 @@ public class EvidenceTheory {
 
 		@Override
 		public String toString() {
-			return this.hypothese.toString();
+			return this.hypothese.toString() + " : " + masseCroyance;
 		}
 
 		public double getMasseCroyance() {
@@ -338,71 +351,85 @@ public class EvidenceTheory {
 		 */
 		public Propositions(final Map<Candidate, MassesCroyances> candidats) {
 			this.propositions = new LinkedList<Proposition>();
-			coeffNorm = 0;
-			// Parcours de l'ensemble des candidats
+			coeffNorm = 1;
+			init(candidats, false);
+		}
+		
+		public Propositions(final Map<Candidate, MassesCroyances> candidats, boolean simple) {
+			this.propositions = new LinkedList<Proposition>();
+			coeffNorm = 1;
+			init(candidats, simple);
+		}
+		
+		private void init(final Map<Candidate, MassesCroyances> candidats, boolean simple) {
 			for ( Candidate cand : candidats.keySet() ) {
 				MassesCroyances mc1 = candidats.get(cand);
-
-				// si c'est le premier candidat que l'on traite, on initialise les propositions avec
-				// celui-ci
-				if ( propositions.isEmpty() ) {
+				if (simple) {
 					initPropositions(cand, mc1, candidats);
 				} else {
-					// cas o� des candidats ont d�j� �t� trait�s -> dans ce cas fusion
-					// des
-					// propositions pr�c�dement obtenues avec ces nouvelles propositions
-
-					// initialisation proposition pour : il faut apparier le vecteur de valeurs
-					// courant avec cet intervalle
-					LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
-					pourSet.add(cand);
-					Proposition propp = new Proposition(pourSet, mc1.pour);
-
-					// initialisation proposition contre : il ne faut pas apparier le vecteur de
-					// valeurs courant avec cet intervalle
-					// �quivalent � propotion : il faut apparier le vecteur de valeurs courant
-					// avec
-					// l'un des autres intervalles
-					// initialisation proposition ignorance : il faut apparier le vecteur de valeurs
-					// courant avec l'un des intervalles
-					LinkedList<Candidate> contreSet = new LinkedList<Candidate>();
-					LinkedList<Candidate> ignoSet = new LinkedList<Candidate>();
-					for ( Candidate cand2 : candidats.keySet() ) {
-						ignoSet.add(cand2);
-						if ( cand == cand2 ) {
-							continue;
+					// si c'est le premier candidat que l'on traite, on initialise les propositions avec
+					// celui-ci
+					if ( propositions.isEmpty() ) {
+						initPropositions(cand, mc1, candidats);
+					} else {
+						// cas o� des candidats ont d�j� �t� trait�s -> dans ce cas fusion
+						// des
+						// propositions pr�c�dement obtenues avec ces nouvelles propositions
+	
+						// initialisation proposition pour : il faut apparier le vecteur de valeurs
+						// courant avec cet intervalle
+						LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
+						pourSet.add(cand);
+						Proposition propp = new Proposition(pourSet, mc1.pour);
+	
+						// initialisation proposition contre : il ne faut pas apparier le vecteur de
+						// valeurs courant avec cet intervalle
+						// �quivalent � propotion : il faut apparier le vecteur de valeurs courant
+						// avec
+						// l'un des autres intervalles
+						// initialisation proposition ignorance : il faut apparier le vecteur de valeurs
+						// courant avec l'un des intervalles
+						LinkedList<Candidate> contreSet = new LinkedList<Candidate>();
+						LinkedList<Candidate> ignoSet = new LinkedList<Candidate>();
+						for ( Candidate cand2 : candidats.keySet() ) {
+							ignoSet.add(cand2);
+							if ( cand == cand2 ) {
+								continue;
+							}
+							contreSet.add(cand2);
 						}
-						contreSet.add(cand2);
+						Proposition propc = new Proposition(contreSet, mc1.contre);
+						Proposition propi = new Proposition(ignoSet, mc1.ignorance);
+	
+						// initialisation proposition conflit (deux crit�res qui donne des indications
+						// contradictoires)
+						Proposition propConflit =
+							new Proposition(new LinkedList<Candidate>(), mc1.conflit);
+	
+						Map<Integer, Proposition> propositionsTmp =
+							new HashMap<Integer, Proposition>();
+						// on fusionne ces nouvelles propositions avec les propositions d�j�
+						// pr�sentes
+						// dans l'ensemble propositions
+						for ( Proposition prop : propositions ) {
+							Proposition propFus1 = fusionPropositions(propp, prop);
+							ajouteProposition(propositionsTmp, propFus1);
+							Proposition propFus2 = fusionPropositions(propc, prop);
+							ajouteProposition(propositionsTmp, propFus2);
+							Proposition propFus3 = fusionPropositions(propi, prop);
+							ajouteProposition(propositionsTmp, propFus3);
+							Proposition propFus4 = fusionPropositions(propConflit, prop);
+							ajouteProposition(propositionsTmp, propFus4);
+						}
+						propositions = new LinkedList<Proposition>();
+						propositions.addAll(propositionsTmp.values());
 					}
-					Proposition propc = new Proposition(contreSet, mc1.contre);
-					Proposition propi = new Proposition(ignoSet, mc1.ignorance);
-
-					// initialisation proposition conflit (deux crit�res qui donne des indications
-					// contradictoires)
-					Proposition propConflit =
-						new Proposition(new LinkedList<Candidate>(), mc1.conflit);
-
-					Map<Integer, Proposition> propositionsTmp =
-						new HashMap<Integer, Proposition>();
-					// on fusionne ces nouvelles propositions avec les propositions d�j�
-					// pr�sentes
-					// dans l'ensemble propositions
-					for ( Proposition prop : propositions ) {
-						Proposition propFus1 = fusionPropositions(propp, prop);
-						ajouteProposition(propositionsTmp, propFus1);
-						Proposition propFus2 = fusionPropositions(propc, prop);
-						ajouteProposition(propositionsTmp, propFus2);
-						Proposition propFus3 = fusionPropositions(propi, prop);
-						ajouteProposition(propositionsTmp, propFus3);
-						Proposition propFus4 = fusionPropositions(propConflit, prop);
-						ajouteProposition(propositionsTmp, propFus4);
-					}
-					propositions = new LinkedList<Proposition>();
-					propositions.addAll(propositionsTmp.values());
 				}
+				computeCoeffNorm();
 			}
-			computeCoeffNorm();
 		}
+		
+		
 
 		/**
 		 * M�thode qui permet d'ajouter une proposition � un dictionnaire de propositions
@@ -457,6 +484,7 @@ public class EvidenceTheory {
 			final Map<Candidate, MassesCroyances> candidats) {
 			// initialisation proposition pour : ce candidat est le meilleur
 			LinkedList<Candidate> pourSet = new LinkedList<Candidate>();
+			pourSet.add(cand);
 
 			Proposition propp = new Proposition(pourSet, mc1.pour);
 			propositions.add(propp);

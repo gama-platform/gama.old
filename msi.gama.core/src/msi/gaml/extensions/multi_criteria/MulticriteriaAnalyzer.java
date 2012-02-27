@@ -246,12 +246,15 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	}
 
 	@action("evidence_theory_DM")
-	@args({ "candidates", "criteria" })
+	@args({ "candidates", "criteria", "simple"})
 	public Integer evidenceTheoryDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
+		Boolean simple = scope.getBoolArg("simple");
+		if (simple == null) 
+			simple = false;
 		Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
 		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
 		List<String> criteriaStr = new LinkedList<String>();
@@ -312,6 +315,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			if ( max != null && max instanceof Boolean ) {
 				maximizeCrit.put(name, (Boolean) max);
 			}
+			//System.out.println(name + " s1 : " + s1 + " s2: " + s2 + " v1Pour : " + v1Pour + " v2Pour : " + v2Pour  + " v1Contre : " + v1Contre + " v2Contre : " + v2Contre);
 			CritereFonctionsCroyances cfc =
 				new CritereFctCroyancesBasique(name, s1, v2Pour, v1Pour, v1Contre, v2Contre, s2);
 			criteresFC.add(cfc);
@@ -331,12 +335,16 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			candidates.add(c);
 			cpt++;
 		}
+		//System.out.println("candidates : " + candidates.size());
 		LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
 		if ( candsFilter.isEmpty() ) { 
 			return GAMA.getRandom().between(0, candidates.size() - 1);
 
 		}
-		Candidate decision = evt.decision(criteresFC, candsFilter);
+		//System.out.println("candfilter : " + candsFilter);
+		Candidate decision = evt.decision(criteresFC, candsFilter, simple);
+		//System.out.println("decision : " + decision.getIndex());
+		
 		return decision.getIndex();
 
 	}

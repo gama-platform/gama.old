@@ -28,6 +28,11 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 	private double v1Contre;
 	private double v2Contre;
 	private double s2;
+	private double cdPour;
+	private double rPour;
+	private double cdContre;
+	private double rContre;
+	
 	
 
 
@@ -40,6 +45,10 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 		this.v1Contre = v1Contre;
 		this.v2Contre = v2Contre;
 		this.s2 = s2;
+		cdPour = (s1 == s2) ? 0 : (v1Pour - v2Pour) / (s1 - s2);
+		rPour = v1Pour - (cdPour * s1);
+		cdContre = (s1 == s2) ? 0 : (v1Contre - v2Contre) / (s1 - s2);
+		rContre = v1Contre - (cdContre * s1);
 	}
 
 	public double getS1() {
@@ -92,15 +101,13 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 
 	@Override
 	public double masseCroyanceContre(double a) {
+		if ((s2-s1) == 0)
+			return v1Contre;
 		if (a <= s1)
 			return v1Contre;
-		if (a <= s2)
+		if (a >= s2)
 			return v2Contre;
-		if ((s2-s1) == 0)
-			return v2Contre;
-		double cd = (v2Contre - v1Contre) / (s2 - s1);
-		double b = v2Contre - a * cd;
-		return a * cd + b;
+		return a * cdContre + rContre;
 	}
 
 	@Override
@@ -110,15 +117,13 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 
 	@Override
 	public double masseCroyancePour(double a) {
-		if (a <= s1)
-			return v2Pour;
-		if (a <= s2)
-			return v1Pour;
 		if ((s2-s1) == 0)
 			return v1Pour;
-		double cd = (v1Pour - v2Pour) / (s2 - s1);
-		double b = v1Pour - a * cd;
-		return a * cd + b;
+		if (a <= s1)
+			return v1Pour;
+		if (a >= s2)
+			return v2Pour;
+		return a * cdPour + rPour;
 	}
 
 
