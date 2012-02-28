@@ -34,6 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -201,7 +202,8 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
 
 		if ( from != null ) {
-			IExpression size = getFacet(IKeyword.SIZE);
+			IType type = from.type();
+			/*IExpression size = getFacet(IKeyword.SIZE);
 			if ( size != null ) {
 				double ss = Cast.asFloat(scope, size.value(scope));
 				if ( ss > 0 ) {
@@ -216,7 +218,6 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 					typeDiscretisation = "";
 				}
 			}
-			IType type = from.type();
 			if ( type.isSpeciesType() ) {
 				IAgent ff = (IAgent) from.value(scope);
 				if ( ff != null ) {
@@ -238,7 +239,8 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 						}
 					}
 				}
-			} else if ( type.id() == IType.STRING ) {
+			} else */
+			if ( type.id() == IType.STRING  || type.id() == IType.FILE ) {
 				FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
 				final List<Map<String, Object>> initialValues = new GamaList();
 				if ( it3 != null ) {
@@ -381,9 +383,10 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	private FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
 		String shapeFile = "";
 		try {
-			shapeFile =
-				scope.getSimulationScope().getModel()
-					.getRelativeFilePath(Cast.asString(scope, from.value(scope)), true);
+			Object shfile = from.value(scope);
+			shapeFile = shfile instanceof String ? scope.getSimulationScope().getModel()
+					.getRelativeFilePath(Cast.asString(scope, shfile), true) : ((GamaFile) shfile).getPath();
+				
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}
