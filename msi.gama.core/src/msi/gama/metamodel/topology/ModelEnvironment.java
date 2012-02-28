@@ -30,6 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -82,8 +83,8 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			GamaPoint wh = (GamaPoint) bounds;
 			width = wh.x;
 			height = wh.y;
-		} else if ( bounds instanceof String ) {
-			String boundsStr = (String) bounds;
+		} else if ( bounds instanceof String || bounds instanceof GamaFile) {
+			String boundsStr = bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
 			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
 				try {
 					File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
