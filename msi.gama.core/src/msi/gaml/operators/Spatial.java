@@ -575,12 +575,7 @@ public abstract class Spatial {
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		public static GamaList<IShape> primTriangulate(final IShape g) {
-			List<Polygon> netw = GeometryUtils.triangulation(g.getInnerGeometry());
-			GamaList<IShape> geoms = new GamaList(netw.size());
-			for ( Polygon ps : netw ) {
-				geoms.add(new GamaShape(ps));
-			}
-			return geoms;
+			return GeometryUtils.triangulation(g.getInnerGeometry());
 		}
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
@@ -617,8 +612,7 @@ public abstract class Spatial {
 
 		@operator(value = "skeletonize", content_type = IType.GEOMETRY)
 		public static GamaList<IShape> primSkeletonization(final IScope scope, final IShape g) {
-			// java.lang.System.out.println(" g : " + g);
-			List<LineString> netw = GeometricSkill.squeletisation(scope, g.getInnerGeometry());
+			List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
 			GamaList<IShape> geoms = new GamaList();
 			for ( LineString ls : netw ) {
 				geoms.add(new GamaShape(ls));

@@ -297,7 +297,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		return agents;
 	}
 
-	private void createAgentsFromAgent(final IScope scope, final IAgent agent,
+	/*private void createAgentsFromAgent(final IScope scope, final IAgent agent,
 		final GamaList<IAgent> agents, final IPopulation realSpecies,
 		final List<Map<String, Object>> initialValues) throws GamaRuntimeException {
 		IShape geom = agent.getGeometry();
@@ -334,7 +334,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		for ( int i = 0, n = agents.size(); i < n; i++ ) {
 			((GamaShape) agents.get(i).getGeometry()).setInnerGeometry(finalGeoms.get(i));
 		}
-	}
+	}*/
 
 	/**
 	 * @throws GamaRuntimeException

@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -38,6 +39,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	protected final Map<K, _Edge<K>> edgeMap;
 	protected boolean directed;
 	protected boolean edgeBased;
+
+	protected VertexRelationship vertexRelation;
 	// protected IScope scope;
 
 	public static int FloydWarshall = 1;
@@ -52,6 +55,20 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
 		edgeBased = byEdge;
+		vertexRelation = null;
+		if ( byEdge ) {
+			buildByEdge(vertices);
+		} else {
+			buildByVertices(vertices);
+		}
+	}
+	
+	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed, final VertexRelationship rel) {
+		this.directed = directed;
+		vertexMap = new GamaMap();
+		edgeMap = new GamaMap();
+		edgeBased = byEdge;
+		vertexRelation = rel;
 		if ( byEdge ) {
 			buildByEdge(vertices);
 		} else {

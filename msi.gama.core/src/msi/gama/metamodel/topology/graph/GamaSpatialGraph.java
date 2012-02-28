@@ -51,12 +51,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	}
 
-	protected VertexRelationship vertexRelation;
 
 	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel) {
-		super(vertices, byEdge, directed);
-		vertexRelation = rel;
+		super(vertices, byEdge, directed, rel);
 	}
 
 	@Override
@@ -101,7 +99,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 					addEdge(o1, o2);
 				}
 			}
-		}
+		} 
 	}
 
 	@Override

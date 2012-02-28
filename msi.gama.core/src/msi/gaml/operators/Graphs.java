@@ -49,7 +49,23 @@ public class Graphs {
 		public boolean related(final IShape p1, final IShape p2) {
 			return Spatial.Properties.opIntersects(
 				Spatial.Transformations.opBuffer(p1.getGeometry(), tolerance),
-				Spatial.Transformations.opBuffer(p1.getGeometry(), tolerance));
+				Spatial.Transformations.opBuffer(p2.getGeometry(), tolerance));
+		}
+
+		@Override
+		public boolean equivalent(final IShape p1, final IShape p2) {
+			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
+		}
+	};
+	
+	private static class IntersectionRelationLine implements VertexRelationship {
+
+		IntersectionRelationLine() {
+		}
+
+		@Override
+		public boolean related(final IShape p1, final IShape p2) {
+			return p1.getInnerGeometry().relate(p2.getInnerGeometry(), "****1****");
 		}
 
 		@Override
@@ -216,6 +232,10 @@ public class Graphs {
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
 		final Double tolerance) {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance));
+	}
+	
+	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine());
 	}
 
 	@operator(value = "as_distance_graph")

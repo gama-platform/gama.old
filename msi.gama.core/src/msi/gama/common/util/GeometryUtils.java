@@ -19,7 +19,15 @@
 package msi.gama.common.util;
 
 import java.util.*;
+
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
+import msi.gama.util.graph.IGraph;
+import msi.gaml.operators.Graphs;
+import msi.gaml.types.GamaGeometryType;
+
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
@@ -106,9 +114,9 @@ public class GeometryUtils {
 		return coords;
 	}
 
-	public static Coordinate[] extractPoints(final Polygon poly, final Geometry geom,
+	public static Coordinate[] extractPoints(final IShape triangle, final Geometry geom,
 		final int degree) {
-		Coordinate[] coords = poly.getCoordinates();
+		Coordinate[] coords = triangle.getInnerGeometry().getCoordinates();
 		Coordinate[] c1 = { coords[0], coords[1] };
 		Coordinate[] c2 = { coords[1], coords[2] };
 		Coordinate[] c3 = { coords[2], coords[3] };
@@ -204,8 +212,8 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static List<Polygon> triangulation(final Geometry geom) {
-		List<Polygon> geoms = new ArrayList<Polygon>();
+	public static GamaList<IShape> triangulation(final Geometry geom) {
+		GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
@@ -228,7 +236,7 @@ public class GeometryUtils {
 				Geometry gg = tri.getGeometryN(i);
 				// try {
 				if ( gg.isValid() && gg.intersection(geom).getArea() > 0.001 ) {
-					geoms.add((Polygon) gg);
+					geoms.add(new GamaShape(gg));
 					// }
 					// } catch (AssertionFailedException e) {
 					// if ( gg.isValid() && gg.intersection(geom.buffer(0.0001)).getArea() > 1.0 ) {
@@ -238,6 +246,24 @@ public class GeometryUtils {
 			}
 		}
 		return geoms;
+	}
+	
+	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
+		IList<LineString> network = new GamaList<LineString>();
+		IList polys = new GamaList(GeometryUtils.triangulation(geom));
+		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
+		
+		Collection<GamaShape> nodes = graph.vertexSet();
+		GeometryFactory geomFact = GeometryUtils.getFactory();
+		for ( GamaShape node : nodes ) {
+			Coordinate[] coordsArr =
+				GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
+			if ( coordsArr != null ) {
+				network.add(geomFact.createLineString(coordsArr));
+			}
+		}
+
+		return network;
 	}
 
 	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
@@ -271,9 +297,6 @@ public class GeometryUtils {
 			for ( int i = 0; i < nb; i++ ) {
 				geoms[i] = (Polygon) buildPolygon(listPoints.get(i));
 			}
-			// System.out.println("buildGeometryJTS : Multipolygon : " +
-			// GamaGeometryType.getFactory().createMultiPolygon(geoms).getArea());
-
 			return getFactory().createMultiPolygon(geoms);
 		}
 		return null;
