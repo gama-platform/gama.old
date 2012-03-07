@@ -46,6 +46,14 @@ import msi.gaml.types.IType;
 @skill({ "MAELIA" })
 public class MAELIASkill extends Skill {
 
+	
+	@action("maeliaTimeStamp")
+	@args({})	
+	public Long maeliaTimeStamp(final IScope scope) throws GamaRuntimeException {
+		Long timeStamp = System.currentTimeMillis();
+		return timeStamp;
+	}
+	
 	@action("maeliaWrite")
 	@args({})	
 	public Object maelwrite(final IScope scope) throws GamaRuntimeException {
