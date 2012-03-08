@@ -32,6 +32,7 @@ import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.GamaGraph;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial.Points;
 
@@ -231,10 +232,28 @@ public class GraphTopology extends AbstractTopology {
 		IShape s2 = null;
 		IShape t2 = null;
 		IShape edgeS = null, edgeT = null;
-		IAgentFilter filter = In.edgesOf(getPlaces());
-
-		edgeS = getAgentClosestTo(source, filter);
-		edgeT = getAgentClosestTo(target, filter);
+		
+		if (! this.getPlaces().getEdges().isEmpty() ) {
+			if (this.getPlaces() instanceof GamaSpatialGraph &&  !(((GamaSpatialGraph) this.getPlaces()).isAgentEdge())) {
+				double distMinT = Double.MAX_VALUE;
+				double distMinS = Double.MAX_VALUE;
+				for (IShape shp : this.getPlaces().getEdges()) {
+					double distS = shp.euclidianDistanceTo(source);
+					double distT = shp.euclidianDistanceTo(target);
+					if (distS < distMinS) {
+						distMinS = distS;
+						edgeS = shp;
+					}
+					if (distT < distMinT) {
+						distMinT = distT;
+						edgeT = shp;
+					}
+				}
+			} else {
+				IAgentFilter filter = In.edgesOf(getPlaces());
+				edgeS = getAgentClosestTo(source, filter);
+				edgeT = getAgentClosestTo(target, filter);			}
+		}
 
 		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
 
@@ -242,7 +261,6 @@ public class GraphTopology extends AbstractTopology {
 		t2 = (IShape) getPlaces().getEdgeTarget(edgeT);
 		s1 = (IShape) getPlaces().getEdgeSource(edgeS);
 		s2 = (IShape) getPlaces().getEdgeTarget(edgeS);
-
 		IShape nodeT = t1;
 		if ( t1.getLocation().euclidianDistanceTo(target) > t2.getLocation().euclidianDistanceTo(
 			target) ) {

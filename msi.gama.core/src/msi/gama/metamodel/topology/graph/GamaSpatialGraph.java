@@ -19,6 +19,8 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.List;
+
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,6 +36,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * graph.
 	 */
 	private ITopology topology;
+	private boolean agentEdge;
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -55,6 +58,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel) {
 		super(vertices, byEdge, directed, rel);
+		try {
+			agentEdge = byEdge && vertices != null && !(vertices.isEmpty()) && (vertices.first() instanceof IAgent);
+		} catch (GamaRuntimeException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	@Override
@@ -62,6 +71,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		if ( v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink(
 			(IShape) v1, (IShape) v2); }
 		return super.createNewEdgeObjectFromVertices(v1, v2);
+	}
+	
+	public boolean isAgentEdge() {
+		return agentEdge;
 	}
 
 	@Override
