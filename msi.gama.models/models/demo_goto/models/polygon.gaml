@@ -29,7 +29,7 @@ global {
 		create species: but number: 1 {
 			set location <- any_location_in (one_of(skeleton as list));
 		}
-		create species: people number: 1 {
+		create species: people number: 100 {
 			set goal <- one_of (but as list) ;
 			set location value:any_location_in (one_of(skeleton as list));
 		} 
@@ -43,12 +43,9 @@ entities {
 		}
 	}
 	species triangle  {
-		rgb color <- rgb([rnd(255),rnd(255),rnd(255)]);
+		rgb color <- rgb([150 +rnd(100),150 + rnd(100),150 + rnd(100)]);
 		aspect default {
 			draw shape: geometry color: color ;
-		}
-		aspect yellow {
-			draw shape: geometry color: 'yellow' ;
 		}
 	}
 	species skeleton  {
@@ -76,7 +73,7 @@ entities {
 output {
 	display objects_display {
 		species object aspect: default ;
-		species triangle aspect: yellow ;
+		species triangle aspect: default ;
 		species skeleton aspect: default ;
 		species people aspect: default ;
 		species but aspect: default ;

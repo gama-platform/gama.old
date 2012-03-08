@@ -12,7 +12,7 @@ global {
 			let my_road type: road <- one_of (list(road));
 			set location <- any_location_in (my_road.shape);
 		}
-		create species: people number: 1 {
+		create species: people number: 100 {
 			set goal <- one_of (but as list) ;
 			let my_road type: road <- one_of (list(road));
 			set location <- any_location_in (my_road.shape);
