@@ -2,27 +2,27 @@ model Network
 // Proposed by Patrick Taillandier
 
 global {
-	var shape_file_in type: string init: '../includes/gis/roads.shp' ;
-	var the_graph type: graph;
+	file shape_file_in <- file('../includes/gis/roads.shp') ;
+	graph the_graph;
 	init {    
 		create species: road from: shape_file_in ;
-		set the_graph value: as_edge_graph(list(road) collect (each.shape));
+		set the_graph <- as_edge_graph(list(road));
 		
 		create species: but number: 1 {
-			let my_road type: road value: one_of (list(road));
-			set location value:any_location_in (my_road.shape);
+			let my_road type: road <- one_of (list(road));
+			set location <- any_location_in (my_road.shape);
 		}
-		create species: people number: 100 {
-			set goal value: one_of (but as list) ;
-			let my_road type: road value: one_of (list(road));
-			set location value:any_location_in (my_road.shape);
+		create species: people number: 1 {
+			set goal <- one_of (but as list) ;
+			let my_road type: road <- one_of (list(road));
+			set location <- any_location_in (my_road.shape);
 		} 
 	}
 }
 environment bounds: shape_file_in ; 
 entities {
 	species road  {
-		var speed_coef type: float ;
+		float speed_coef ;
 		aspect default {
 			draw shape: geometry color: 'black' ;
 		}
@@ -33,14 +33,14 @@ entities {
 		}
 	}
 	species people skills: [moving] {
-		var goal type: but ;
-		var my_path type: path; 
+		but goal;
+		path my_path; 
 	
 		aspect default {
 			draw shape: circle color: 'green' size: 10 ;
 		}
 		reflex {
-			let followed_path type: path value: self goto [on::the_graph, target::goal.location, speed::1];
+			do goto on:the_graph target:goal.location speed:1;
 		}
 	}
 }
