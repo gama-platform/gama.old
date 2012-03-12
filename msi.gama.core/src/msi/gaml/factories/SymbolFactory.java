@@ -252,11 +252,14 @@ public class SymbolFactory implements ISymbolFactory {
 
 		for ( ISyntacticElement e : cur.getChildren() ) {
 			// Instead of having to consider this specific case, find a better solution.
+			
+			if (IKeyword.SPECIES.equals(e.getName())) {
+				System.out.println();
+			}
 
 			if ( !cur.getName().equals(IKeyword.SPECIES) ) {
 				commands.add(createDescription(e, superDesc));
-			} else if ( cur.hasParent(IKeyword.DISPLAY) ) { // "species" declared in "display"
-															// section
+			} else if ( cur.hasParent(IKeyword.DISPLAY) || cur.hasParent(IKeyword.SPECIES) ) { // "species" declared in "display" or "species" section
 				commands.add(createDescription(e, superDesc));
 			}
 		}
