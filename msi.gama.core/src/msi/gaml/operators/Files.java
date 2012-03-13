@@ -122,6 +122,13 @@ public class Files {
 		return null;
 	}
 
+	@operator(value = "get")
+    public static Object opGet(final IScope scope, final IShape g, final String s) {
+        if ( g == null ) { return null; }
+        if ( g instanceof GamaGisGeometry ) { return ((GamaGisGeometry) g).getAttribute(s); }
+        return null;
+    }
+	
 	@operator(value = { "new_folder" })
 	public static IGamaFile newFolder(final IScope scope, final String folder)
 		throws GamaRuntimeException {
