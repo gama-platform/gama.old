@@ -21,6 +21,7 @@ package msi.gama.util.graph;
 import java.util.Map;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.util.*;
@@ -36,7 +37,8 @@ import org.jgrapht.*;
  */
 @vars({ @var(name = "spanning_tree", type = IType.LIST_STR),
 	@var(name = "circuit", type = IType.PATH_STR), @var(name = "connected", type = IType.BOOL_STR),
-	@var(name = "edges", type = IType.LIST_STR), @var(name = "vertices", type = IType.LIST_STR) })
+	@var(name = "edges", type = IType.LIST_STR), @var(name = "vertices", type = IType.LIST_STR), 
+	@var(name = "verbose", type = IType.BOOL_STR) })
 public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
 	UndirectedGraph {
 
@@ -72,5 +74,11 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public abstract Object addEdge(Object p);
 
 	public abstract void setOptimizerType(String optiType);
+	
+	@getter(var = "verbose")
+	public abstract Boolean isVerbose();
+
+	@setter("verbose")
+	public abstract void setVerbose(final Boolean isVerbose);
 
 }

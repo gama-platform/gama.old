@@ -49,7 +49,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	private int optimizerType = 1;
 	private FloydWarshallShortestPaths optimizer;
-
+	protected boolean verbose;
+	
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
@@ -792,5 +793,17 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		int i = GAMA.getRandom().between(0, array.length - 1);
 		return array[i];
 	}
+
+	@Override
+	public Boolean isVerbose() {
+		return verbose;
+	}
+
+	@Override
+	public void setVerbose(Boolean verbose) {
+		this.verbose = verbose;
+	}
+	
+	
 
 }

@@ -30,6 +30,8 @@ import msi.gama.runtime.GAMA;
  */
 public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<ILocation, IShape> {
 
+	
+	public boolean verbose;
 	/**
 	 * Instantiates a new agent path optimizer.
 	 * 
@@ -37,8 +39,9 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 	 *            the name which will be reported in the logs, etc.
 	 * @param intersections
 	 */
-	public FloydWarshallStaticOptimizer(final GamaGraph graph) {
+	public FloydWarshallStaticOptimizer(final GamaGraph graph, final boolean verbose) {
 		super(graph);
+		this.verbose = verbose;
 		run();
 	}
 
@@ -53,7 +56,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 	@Override
 	public void run() {
 		initializeMatrices();
-		floydWarshall(true);
+		floydWarshall(verbose);
 	}
 
 	/**

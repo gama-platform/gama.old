@@ -63,6 +63,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}
+		verbose = false;
 		
 	}
 
@@ -88,7 +89,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	public IPath computeShortestPathBetween(final Object source, final Object target) {
 		if ( pathFinder == null ) {
-			pathFinder = new FloydWarshallStaticOptimizer(this);
+			pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
 		}
 		return pathFromEdges(source, target,
 			pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
@@ -182,6 +183,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	public IPath getCircuit() {
 		return (IPath) super.getCircuit();
+	}
+	
+	public void reInitPathFinder() {
+		pathFinder = null;
 	}
 
 }

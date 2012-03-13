@@ -270,6 +270,8 @@ public class Graphs {
 		// Example : graph_from_edges (list ant as_map each::one_of (list ant)) with_weights (list
 		// ant as_map each::each.food)
 		graph.setWeights(weights);
+		if (graph instanceof GamaSpatialGraph) 
+			((GamaSpatialGraph) graph).reInitPathFinder();
 		return graph;
 	}
 
@@ -283,6 +285,8 @@ public class Graphs {
 		for ( int i = 0; i < n; i++ ) {
 			graph.setEdgeWeight(edges.get(i), Cast.asFloat(scope, weights.get(i)));
 		}
+		if (graph instanceof GamaSpatialGraph) 
+			((GamaSpatialGraph) graph).reInitPathFinder();
 		return graph;
 	}
 
