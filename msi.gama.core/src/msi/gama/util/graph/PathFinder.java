@@ -52,7 +52,7 @@ public interface PathFinder<V, E> extends Runnable {
 	 * instead of floats in the matrices
 	 */
 
-	public static final int multiplier = 100000;
+	public static final int multiplier = 1000;//100000;
 
 	/**
 	 * This method returns the best route between the two intersections in

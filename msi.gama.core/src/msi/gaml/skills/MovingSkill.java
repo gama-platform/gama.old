@@ -368,10 +368,12 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 		}
+		
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-
+			double weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
+			
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -380,6 +382,7 @@ public class MovingSkill extends GeometricSkill {
 					pt = new GamaPoint(coords[j]);
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
+				dist = weight * dist;
 				if ( distance < dist ) {
 					double ratio = distance / dist;
 					double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -491,8 +494,9 @@ public class MovingSkill extends GeometricSkill {
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			// The weight computed here is absolutely useless.. since getWeight() returns the
-			// perimeter.
-			// double weight = path.getWeight(line) / line.getGeometry().getPerimeter();
+			// perimeter. // ANSWER : it is necessary because the weight can be different than the perimeter (see model traffic_tutorial)
+			double weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
+			
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
@@ -503,7 +507,7 @@ public class MovingSkill extends GeometricSkill {
 					pt = new GamaPoint(coords[j]);
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
-				// dist = weight * dist;
+				dist = weight * dist;
 				if ( distance < dist ) {
 					GamaPoint pto = currentLocation.copy();
 					double ratio = distance / dist;
