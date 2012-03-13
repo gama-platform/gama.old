@@ -1,0 +1,4 @@
+
+null
+cycle: 1.0; nbPreys: 0; minEnergyPreys: 1.7976931348623157E308; maxSizePreys: 4.9E-324; nbPredators: 0; minEnergyPredators: 1.7976931348623157E308; maxSizePredators: 4.9E-324
+cycle: 2.0; nbPreys: 0; minEnergyPreys: 1.7976931348623157E308; maxSizePreys: 4.9E-324; nbPredators: 0; minEnergyPredators: 1.7976931348623157E308; maxSizePredators: 4.9E-324

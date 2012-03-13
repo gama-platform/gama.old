@@ -1,40 +1,46 @@
+
 model prey_predator
 //Model 4 of the predator/prey tutorial
 
 global {
-	var nb_preys_init type: int init: 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
-	var prey_max_energy type: float init: 1 parameter: 'Prey max energy: ' category: 'Prey' ;
-	var prey_max_transfert type: float init: 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
-	var prey_energy_consum type: float init: 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
-	var nb_preys type: int value: length (prey as list) init: nb_preys_init ;
+	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
+	float prey_max_energy <- 1 parameter: 'Prey max energy: ' category: 'Prey' ;
+	float prey_max_transfert <- 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
+	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
+	int nb_preys function: {length (prey as list)};
+	
 	init {
 		create species: prey number: nb_preys_init ;
 	}
 }
 entities {
 	species prey {
-		const size type: float init: 2 ;
-		const color type: rgb init: 'blue' ;
+		const size type: float <- 2 ;
+		const color type: rgb <- 'blue' ;
 		const max_energy type: float init: prey_max_energy ;
 		const max_transfert type: float init: prey_max_transfert ;
 		const energy_consum type: float init: prey_energy_consum ;
-		var myCell type: vegetation_cell init: one_of (vegetation_cell as list) ;
-		var energy type: float init: (rnd(1000) / 1000) * max_energy  value: energy - energy_consum max: max_energy ;
+		
+		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
+		float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
+		
 		init {
-			set location value: myCell.location;
+			set location <- myCell.location;
 		}
+		
 		reflex basic_move {
-			set myCell value: one_of (myCell.neighbours) ;
-			set location value: myCell.location ;
+			set myCell <- one_of (myCell.neighbours) ;
+			set location <- myCell.location ;
 		}
 		reflex eat when: myCell.food > 0 {
-			let energy_transfert type: float value: min([max_transfert, myCell.food]) ;
-			set myCell.food value: myCell.food - energy_transfert ;
-			set energy value: energy + energy_transfert ;
+			let energy_transfert type: float <- min([max_transfert, myCell.food]) ;
+			set myCell.food <- myCell.food - energy_transfert ;
+			set energy <- energy + energy_transfert ;
 		}
 		reflex die when: energy <= 0 {
-			do action: die ;
+			do die ;
 		}
+
 		aspect base {
 			draw shape: circle size: size color: color ;
 		}
@@ -42,11 +48,11 @@ entities {
 }
 environment width: 100 height: 100 {
 	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
-		const maxFood type: float init: 1.0 ;
-		const foodProd type: float init: (rnd(1000) / 1000) * 0.01 ;
-		var food type: float init: (rnd(1000) / 1000) value: min ([maxFood, food + foodProd]) ;
-		var color type: rgb value: [255 * (1 - food), 255, 255 * (1 - food)] init: [255 * (1 - food), 255, 255 * (1 - food)] ;
-		var neighbours type: list of: vegetation_cell init: (self neighbours_at 2) of_species vegetation_cell;
+		float maxFood <- 1.0 ;
+		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
+		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
+		rgb color <- [255 * (1 - food), 255, 255 * (1 - food)] update: [255 * (1 - food), 255, 255 * (1 - food)] ;
+		list neighbours of: vegetation_cell <- (self neighbours_at 2) of_species vegetation_cell;
 	}
 }
 output {
@@ -56,3 +62,4 @@ output {
 	}
 	monitor number_of_preys value: nb_preys refresh_every: 1 ;
 }
+ 
