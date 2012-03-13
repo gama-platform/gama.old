@@ -31,11 +31,11 @@ global {
 	int heavy_infection <- 3 * cloud_min_member depends_on: [cloud_min_member];
 	int hopper_burn <- 4 * cloud_min_member depends_on: [cloud_min_member];
 	
-	rgb no_infection_color <- rgb('blue');
-	rgb light_infection_color <- rgb('yellow');
-	rgb medium_infection_color <- rgb('pink');
-	rgb heavy_infection_color <- rgb('red');
-	rgb hopper_burn_color <- rgb('black');
+	rgb no_infection_color <- rgb('blue') const: true;
+	rgb light_infection_color <- rgb('yellow') const: true;
+	rgb medium_infection_color <- rgb('pink') const: true;
+	rgb heavy_infection_color <- rgb('red') const: true;
+	rgb hopper_burn_color <- rgb('black') const: true;
 
 	rgb province_color <- rgb('green') const: true;
 	rgb district_color <- rgb('blue') const: true;
@@ -45,7 +45,6 @@ global {
 	int bph_cloud_number <- 1000;
 	rgb bph_cloud_color <- rgb('cyan') const: true;
 	int bph_in_field_min_time <- 30 const: true;
-	
 	
 	list possible_wind_directions <- [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360] of: int; 
 	int wind_direction <- one_of(possible_wind_directions) depends_on: possible_wind_directions; // 45¡
@@ -64,7 +63,7 @@ environment bounds: environment_bounds;
 
 entities {
 	species climate {
-		reflex shuffle_wind_direction when: ((time mod 24) = 0 ){
+		reflex shuffle_wind_direction when: ((time mod 24) = 0 ) {
 			set wind_direction value: one_of(possible_wind_directions);
 		}
 	}
@@ -157,14 +156,6 @@ entities {
 					action is_hopper_burn type: bool {
 						return (active_bph >= hopper_burn);
 					}
-					
-					/*
-					reflex {
-						do write {
-							arg message value: name + ' with active_bph: ' + (string(active_bph));
-						}
-					}
-					 */
 					 
 					reflex bphs_take_off when: (is_hopper_burn) {
 						if (rnd(10) > 8) {
@@ -236,7 +227,7 @@ entities {
 		}
 	}
 	
-	species PDecisionMaker {
+	species PDecisionMaker schedules: (every(30) ? (list(PDecisionMaker)) : [] ) {
 		province managed_province;
 		
 		init {
@@ -249,7 +240,7 @@ entities {
 			}
 		}
 		
-		species DDecisionMaker {
+		species DDecisionMaker schedules: ( every(7) ? (list(DDecisionMaker)) : [] ) {
 			district managed_district;
 			
 			init {
