@@ -1,8 +1,8 @@
-model province_district_commune_landuse
+model delta_pdcl
 
 global {
 	// GIS data
-	string environment_bounds <- 'gis/bounds_DT_province.shp';
+	string environment_bounds <- 'gis/bounds_mekong.shp';
 	file mekong_f <- shapefile('gis/MekongDelta_provinces.shp');
 	file dongthap_districts_f <- shapefile('gis/dongthap_districts.shp');
 	file dongthap_communes_f <- shapefile('gis/dongthap_communes.shp');
@@ -36,20 +36,17 @@ global {
 	float wind_speed <- 0.001 parameter: 'Wind speed' min: 0.0001;
 	
 	// workaround for visibility
-	int no_infection_no <- 0;
-	int light_infection_no <- 0;
-	int medium_infection_no <- 0;
-	int heavy_infection_no <- 0;
-	int hopper_burn_no <- 0;
+	int no_infection_no <- 0 value: sum(list(province) collect (each.no_infection_lu_d_p));
+	int light_infection_no <- 0 value: sum(list(province) collect (each.light_infection_lu_d_p));
+	int medium_infection_no <- 0 value: sum(list(province) collect (each.medium_infection_lu_d_p));
+	int heavy_infection_no <- 0 value: sum(list(province) collect (each.heavy_infection_lu_d_p));
+	int hopper_burn_no <- 0 value: sum(list(province) collect (each.hopper_burn_lu_d_p));
 	
 	init {
 		create climate;
 
 		loop p over: (mekong_f.contents) {
-			let province_code type: string value: geometry(p) get ('P_CODE');
-			if (province_code = 'DT') {
-				create province with: [ shape :: p ];
-			}
+			create province with: [ shape :: p ];
 		}
 
 		create bph_cloud number: bph_cloud_number with: [ bph_in_cloud :: cloud_min_member ];
@@ -73,19 +70,16 @@ entities {
 		int hopper_burn_lu_d_p <- 0 value: sum(list(district) collect (each.hopper_burn_lu_d));
 		
 		init {
+			let province_code type: int value: shape get ('P_NUM');
+			
 			loop d over: (dongthap_districts_f.contents) {
-				create district with: [ shape :: d ];
+				let province_district_code type: int value: geometry(d) get ('P_NUM');
+				if (province_code = province_district_code) {
+					create district with: [ shape :: d ];
+				}
 			}
 			
 			create PDecisionMaker with: [ managed_province :: self ];
-		}
-		
-		reflex update_infection_status {
- 			set no_infection_no value: no_infection_lu_d_p;
- 			set light_infection_no value: light_infection_lu_d_p;
- 			set medium_infection_no value: medium_infection_lu_d_p;
- 			set heavy_infection_lu_d_p value: heavy_infection_no;
- 			set hopper_burn_no value: hopper_burn_lu_d_p;
 		}
 		
 		action bph_cloud_landing {
@@ -253,14 +247,6 @@ entities {
 		int altitude min: 0;
 		
 		int bph_in_cloud;
-		
-		init {
-			// put the cloud more probably upon DongThap province
-			let dongthap type: province value: list(province) at 0;
-			if (rnd(10) > 2) {
-				set location value: any_location_in(dongthap.shape);
-			}
-		}
 		
 		reflex travel {
 			do wander {
