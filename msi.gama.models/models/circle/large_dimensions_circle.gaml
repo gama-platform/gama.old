@@ -3,13 +3,14 @@ model circle
 
 import "circle.gaml"
 global {
-	var number_of_agents type: int init: 800 parameter: 'number_of_agents' min: 1 ;
-	var radius_of_circle type: int init: 25000 parameter: 'radius_of_circle' min: 10 ;
-	var repulsion_strength type: int init: 50 parameter: 'repulsion_strength' min: 1 ;
-	var width_and_height_of_environment type: int init: (60000) parameter: 'width_and_height_of_environment' min: 10 ;
-	var speed_of_agents type: float init: 100 parameter: 'speed_of_agents' min: 0.1 ;
-	var size_of_agents type: int init: 100;
-	var range_of_agents type: int parameter: 'Range of Agents' init: 250 min: 1;
+	int number_of_agents parameter: 'Number of Agents' <- 800 min: 1;
+	int radius_of_circle parameter: 'Radius of Circle' <- 25000 min: 10;
+	int repulsion_strength parameter: 'Strength of Repulsion' <- 50 min: 1;
+	int width_and_height_of_environment parameter: 'Dimensions' <- 60000 min: 10; 
+	int range_of_agents parameter: 'Range of Agents' <- 250 min: 1;
+	float speed_of_agents parameter: 'Speed of Agents' <- 100 min: 0.1; 
+	int size_of_agents <- 100;
+	
 }
 output {
 	// we have to copy the output otherwise nothing is displayed

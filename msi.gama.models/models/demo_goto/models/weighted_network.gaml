@@ -6,7 +6,7 @@ global {
 	
 	graph the_graph;
 	
-	init {
+	init { 
 		let cpt type: int <- 1;
 		create species: road from: shape_file_roads {
 			

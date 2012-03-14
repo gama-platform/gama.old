@@ -1,18 +1,18 @@
 model circle
 
 global {
-	var number_of_agents type: int parameter: 'Number of Agents' init: 100 min: 1;
-	var radius_of_circle type: int parameter: 'Radius of Circle' init: 690 min: 10;
-	var repulsion_strength type: int parameter: 'Strength of Repulsion' init: 5 min: 1;
-	var width_and_height_of_environment type: int parameter: 'Dimensions' init: 1600 min: 10; 
-	var range_of_agents type: int parameter: 'Range of Agents' init: 25 min: 1;
-	var speed_of_agents type: float parameter: 'Speed of Agents' init: 2 min: 0.1; 
-	var size_of_agents type: int init: 10;
-	const center type: point init: {width_and_height_of_environment/2,width_and_height_of_environment/2};
+	int number_of_agents parameter: 'Number of Agents' <- 100 min: 1;
+	int radius_of_circle parameter: 'Radius of Circle' <- 690 min: 10;
+	int repulsion_strength parameter: 'Strength of Repulsion' <- 5 min: 1;
+	int width_and_height_of_environment parameter: 'Dimensions' <- 1600 min: 10; 
+	int range_of_agents parameter: 'Range of Agents' <- 25 min: 1;
+	float speed_of_agents parameter: 'Speed of Agents' <- 2 min: 0.1; 
+	int size_of_agents <- 10;
+	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
 	init {
 		create species: cells number: number_of_agents { 
-			set location value: {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
+			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
 		}
 	}  
 } 
@@ -21,23 +21,23 @@ environment width: width_and_height_of_environment height: width_and_height_of_e
 
 entities {
 	species cells skills: [moving] {  
-		const color type: rgb init: [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
-		const size type: float init: size_of_agents;
-		const range type: float init: range_of_agents; 
-		const speed type: float init: speed_of_agents;  
-		var heading type: int init: rnd(359);
-		var shape type: geometry init: circle (12) value: circle (size);
+		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
+		const size type: float <- size_of_agents;
+		const range type: float <- range_of_agents; 
+		const speed type: float <- speed_of_agents;  
+		int heading <- rnd(359);
+		geometry shape <- circle (12) update: circle (size);
 		
 		reflex go_to_center {
-			set heading value: (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
+			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
 			do move speed: speed; 
 		}
 		
 		reflex flee_others {
-			let close type: cells value: one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
+			let close type: cells <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
 			if close != nil {
-				set heading value: (self towards close) - 180;
-				let dist value: self distance_to close;
+				set heading <- (self towards close) - 180;
+				let dist <- self distance_to close;
 				do move speed: dist / repulsion_strength heading: heading;
 			}
 		}
