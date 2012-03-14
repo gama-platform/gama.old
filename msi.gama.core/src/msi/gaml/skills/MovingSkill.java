@@ -495,8 +495,10 @@ public class MovingSkill extends GeometricSkill {
 			IShape line = edges.get(i);
 			// The weight computed here is absolutely useless.. since getWeight() returns the
 			// perimeter. // ANSWER : it is necessary because the weight can be different than the perimeter (see model traffic_tutorial)
-			double weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
-			
+			double weight = 1;
+			if (path.getGraph() != null && path.getGraph().containsEdge(line))	{
+				weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
+			}
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
