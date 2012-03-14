@@ -22,10 +22,10 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create species: prey number: nb_preys_init ;
-		create species: predator number: nb_predator_init ;
+		create prey number: nb_preys_init ;
+		create predator number: nb_predator_init ;
 		let init_data type: matrix <- map_init as_matrix {50,50};
-		ask target: (vegetation_cell as list) {
+		ask (vegetation_cell as list) {
 			set color <- rgb (init_data at {grid_x,grid_y}) ;
 			set food <- 1 - (((color as list) at 0) / 255) ;
 			set foodProd <- food / 100 ;
@@ -70,7 +70,7 @@ entities {
 		} 
 		reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
 			let nb_offsprings type: int <- 1 + rnd(nb_max_offsprings -1);
-			create species: species(self) number: nb_offsprings {
+			create species(self) number: nb_offsprings {
 				set myCell <- myself.myCell ;
 				set location <- myCell.location ;
 				set energy <- myself.energy / nb_offsprings ;
@@ -120,7 +120,7 @@ entities {
 		const my_icon type: string <- '../includes/data/wolf.png' ;
 		
 		reflex eat when: !(empty (agents_inside(myCell) of_species prey)) {
-			ask target: one_of (agents_inside(myCell) of_species prey) {
+			ask one_of (agents_inside(myCell) of_species prey) {
 				do die ;
 			}
 			set energy <- energy + energy_transfert ;

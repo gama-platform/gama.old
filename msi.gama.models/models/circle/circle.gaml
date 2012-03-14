@@ -1,17 +1,17 @@
 model circle
 
 global {
-	int number_of_agents parameter: 'Number of Agents' <- 100 min: 1;
-	int radius_of_circle parameter: 'Radius of Circle' <- 690 min: 10;
-	int repulsion_strength parameter: 'Strength of Repulsion' <- 5 min: 1;
-	int width_and_height_of_environment parameter: 'Dimensions' <- 1600 min: 10; 
-	int range_of_agents parameter: 'Range of Agents' <- 25 min: 1;
-	float speed_of_agents parameter: 'Speed of Agents' <- 2 min: 0.1; 
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
+	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 690 ;
+	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
+	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
+	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2 ; 
 	int size_of_agents <- 10;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
 	init {
-		create species: cells number: number_of_agents { 
+		create cells number: number_of_agents { 
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
 		}
 	}  

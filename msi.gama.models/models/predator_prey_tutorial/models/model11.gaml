@@ -21,8 +21,8 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create species: prey number: nb_preys_init ;
-		create species: predator number: nb_predator_init ;
+		create prey number: nb_preys_init ;
+		create predator number: nb_predator_init ;
 	}
 	
 	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
@@ -63,7 +63,7 @@ entities {
 		} 
 		reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
 			let nb_offsprings type: int <- 1 + rnd(nb_max_offsprings -1);
-			create species: species(self) number: nb_offsprings {
+			create species(self) number: nb_offsprings {
 				set myCell <- myself.myCell ;
 				set location <- myCell.location ;
 				set energy <- myself.energy / nb_offsprings ;
@@ -113,7 +113,7 @@ entities {
 		const my_icon type: string <- '../includes/data/wolf.png' ;
 		
 		reflex eat when: !(empty (agents_inside(myCell) of_species prey)) {
-			ask target: one_of (agents_inside(myCell) of_species prey) {
+			ask one_of (agents_inside(myCell) of_species prey) {
 				do die ;
 			}
 			set energy <- energy + energy_transfert ;

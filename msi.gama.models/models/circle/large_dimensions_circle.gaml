@@ -3,12 +3,12 @@ model circle
 
 import "circle.gaml"
 global {
-	int number_of_agents parameter: 'Number of Agents' <- 800 min: 1;
-	int radius_of_circle parameter: 'Radius of Circle' <- 25000 min: 10;
-	int repulsion_strength parameter: 'Strength of Repulsion' <- 50 min: 1;
-	int width_and_height_of_environment parameter: 'Dimensions' <- 60000 min: 10; 
-	int range_of_agents parameter: 'Range of Agents' <- 250 min: 1;
-	float speed_of_agents parameter: 'Speed of Agents' <- 100 min: 0.1; 
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 800;
+	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 25000;
+	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 50;
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 60000 ; 
+	int range_of_agents parameter: 'Range of Agents' min: 1 <- 250;
+	float speed_of_agents parameter: 'Speed of Agents' min: 0.1 <- 100; 
 	int size_of_agents <- 100;
 	
 }

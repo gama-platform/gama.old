@@ -4,7 +4,7 @@ model prey_predator
 global {
 	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
 	init {
-		create species: prey number: nb_preys_init ;
+		create prey number: nb_preys_init ;
 	}
 }
 entities {

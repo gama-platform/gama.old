@@ -9,7 +9,7 @@ global {
 	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
 	
 	init {
-		create species: prey number: nb_preys_init ;
+		create prey number: nb_preys_init ;
 	}
 }
 entities {

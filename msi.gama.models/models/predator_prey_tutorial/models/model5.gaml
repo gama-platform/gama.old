@@ -15,8 +15,8 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create species: prey number: nb_preys_init ;
-		create species: predator number: nb_predator_init ;
+		create prey number: nb_preys_init ;
+		create predator number: nb_predator_init ;
 	}
 }
 entities {
@@ -69,7 +69,7 @@ entities {
 		const energy_transfert type: float <- predator_energy_transfert ;
 		const energy_consum type: float <- predator_energy_consum ;
 		reflex eat when: !(empty (agents_inside(myCell) of_species prey)) {
-			ask target: one_of (agents_inside(myCell) of_species prey) {
+			ask one_of (agents_inside(myCell) of_species prey) {
 				do die ;
 			}
 			set energy <- energy + energy_transfert ;

@@ -22,8 +22,8 @@ global {
 	const less_red type: rgb <- rgb('#FF5F5F');
 	
 	init {
-		create species: animal number: numberOfAgents;
-		ask target: list(sugar_cell) {
+		create animal number: numberOfAgents;
+		ask list(sugar_cell) {
 			set maxSugar <- (types at {grid_x,grid_y});
 			set sugar <- maxSugar;
 			set color <- [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
@@ -46,9 +46,9 @@ entities {
 		const vision type: int min: 1 <- rnd(maxRange);
 		const maxAge type: int min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
 		const size type: float <- 0.5;
-		int sugar type: int min: 0 init: (rnd (maxInitialSugar - minInitialSugar)) + minInitialSugar update: sugar - metabolism;
-		int age type: int max: maxAge init: 0 update: age + step;
-		sugar_cell place type: sugar_cell init: location as sugar_cell; 
+		int sugar min: 0 <- (rnd (maxInitialSugar - minInitialSugar)) + minInitialSugar update: sugar - metabolism;
+		int age max: maxAge <- 0 update: age + step;
+		sugar_cell place <- location as sugar_cell; 
 		
 		reflex basic_move { 
 			set sugar <- sugar + place.sugar;
@@ -60,7 +60,7 @@ entities {
 		}
 		reflex end_of_life when: (sugar = 0) or (age = maxAge) {
 			if replace {
-				create species: animal number: 1;
+				create animal number: 1;
 			}
 			do die;
 		}

@@ -10,7 +10,7 @@ global {
 	int nb_preys function: {length (prey as list)};
 	
 	init {
-		create species: prey number: nb_preys_init ;
+		create prey number: nb_preys_init ;
 	}
 }
 entities {

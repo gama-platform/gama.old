@@ -26,12 +26,12 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create species: vegetation from: map_init with: [food::read ('FOOD'), foodProd::read ('FOOD_PROD')] ;
-		create species: prey number: nb_preys_init {
+		create vegetation from: map_init with: [food::read ('FOOD'), foodProd::read ('FOOD_PROD')] ;
+		create prey number: nb_preys_init {
 			set myPatch <- one_of(vegetation as list);
 			set location <- any_location_in(myPatch);
 		}
-		create species: predator number: nb_predator_init {
+		create predator number: nb_predator_init {
 			set myPatch <- one_of(vegetation as list);
 			set location <- any_location_in(myPatch);
 		}
@@ -75,7 +75,7 @@ entities {
 		} 
 		reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
 			let nb_offsprings type: int <- 1 + rnd(nb_max_offsprings -1);
-			create species: species(self) number: nb_offsprings {
+			create species(self) number: nb_offsprings {
 				set myPatch <- myself.myPatch ;
 				set location <- myself.location + {0.5 - rnd(1000)/1000, 0.5 - rnd(1000)/1000} ;
 				set energy <- myself.energy / nb_offsprings ;
@@ -103,7 +103,7 @@ entities {
 		const nb_max_offsprings type: int <- prey_nb_max_offsprings ;
 		const energy_reproduce type: float <- prey_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/sheep.png' ;
-		var speed type: float value: prey_speed;
+		const speed type: float value: prey_speed;
 		
 		reflex eat when: myPatch.food > 0 {
 			let energy_transfert type: float <- min ([max_transfert, myPatch.food]) ;
@@ -120,10 +120,10 @@ entities {
 		const nb_max_offsprings type: int <- predator_nb_max_offsprings ;
 		const energy_reproduce type: float <- predator_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/wolf.png' ;
-		var speed type: float value: predator_speed;
+		const speed type: float value: predator_speed;
 		
 		reflex eat when: !(empty ((self neighbours_at predator_range) of_species prey)) {
-			ask target: one_of ((self neighbours_at predator_range) of_species prey) {
+			ask one_of ((self neighbours_at predator_range) of_species prey) {
 				do die ;
 			}
 			set energy <- energy + energy_transfert ;

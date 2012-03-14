@@ -14,24 +14,24 @@ global {
 		let the_object type: object <- first(object);
 		let triangles type: list of: geometry <- triangulate(the_object);
 		loop trig over: triangles {
-			create species: triangle {
+			create triangle {
 				set shape <- trig;
 			}
 		}
 		let skeletons type: list of: geometry <- skeletonize(the_object);
 		let skeletons_split type: list of: geometry <- split_lines(skeletons);
 		loop sk over: skeletons_split {
-			create species: skeleton {
+			create skeleton {
 				set shape <- sk;
 			}
 		}
 		set the_graph <- as_edge_graph(list(skeleton));
-		create species: but number: 1 {
+		create goal number: 1 {
 			set location <- any_location_in (one_of(skeleton as list));
 		}
-		create species: people number: 100 {
-			set goal <- one_of (but as list) ;
-			set location value:any_location_in (one_of(skeleton as list));
+		create people number: 100 {
+			set target <- one_of (goal as list) ;
+			set location <- any_location_in (one_of(skeleton as list));
 		} 
 	}
 }
@@ -53,20 +53,20 @@ entities {
 			draw shape: geometry color: 'black' ;
 		}
 	}
-	species but {
+	species goal {
 		aspect default {
 			draw shape: circle color: 'red' size: 3 ;
 		}
 	}
 	species people skills: [moving] {
-		but goal;
+		goal target;
 		path my_path; 
 	
+		reflex {
+			do goto on:the_graph target:target speed:1;
+		}
 		aspect default {
 			draw shape: circle color: 'green' size: 3 ;
-		}
-		reflex {
-			do goto on:the_graph target:goal.location speed:1;
 		}
 	}
 }
@@ -76,6 +76,6 @@ output {
 		species triangle aspect: default ;
 		species skeleton aspect: default ;
 		species people aspect: default ;
-		species but aspect: default ;
+		species goal aspect: default ;
 	}
 }

@@ -8,14 +8,14 @@ global {
 	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
 	
 	init {
-		create species: building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::read ('NATURE')] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}
 		}
-		create species: road from: shape_file_roads ;
+		create road from: shape_file_roads ;
 		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
-		create species: people number: nb_people {
+		create people number: nb_people {
 			set location <- any_location_in (one_of (residential_buildings));
 		}
 	}

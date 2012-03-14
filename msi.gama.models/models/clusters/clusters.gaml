@@ -9,10 +9,10 @@ global {
 	bool torus type: bool parameter: 'true' <- true ;
 	bool multiple_agents_per_place type: bool parameter: 'true' <- false ;
 	init {
-		create species: cells number: number_of_agents ;
+		create cells number: number_of_agents ;
 	}
 	reflex when: every(rnd(30)) {
-		ask target: (cells as list) where (each.leader = each) {  
+		ask (cells as list) where (each.leader = each) {  
 			set heading <- heading + (rnd(45)) - (rnd(45)) ;
 		} 
 	}
@@ -42,7 +42,7 @@ entities {
 		reflex aggregate when: leader = self {
 			let candidates type: list of: cells <- ((self neighbours_at range) of_species cells) where ((each).leader != self) ;
 			if ! (empty(candidates)) {
-				ask target:  candidates {
+				ask candidates {
 					if grow_leader {
 						set range of leader <- (range of leader) - 0.1 ;
 						set my range  <- (my range) + 0.1 ;

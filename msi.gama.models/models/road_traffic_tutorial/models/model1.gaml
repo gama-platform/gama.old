@@ -5,12 +5,12 @@ global {
 	file shape_file_roads <- '../includes/road.shp' parameter: 'Shapefile for the roads:' category: 'GIS' ;
 	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ;
 	init {
-		create species: building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::read ('NATURE')] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}
 		}
-		create species: road from: shape_file_roads ;
+		create road from: shape_file_roads ;
 	}
 }
 entities {

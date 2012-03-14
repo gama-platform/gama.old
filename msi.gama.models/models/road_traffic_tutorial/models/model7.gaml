@@ -18,18 +18,18 @@ global {
 	graph the_graph;
 	
 	init {
-		create species: building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::read ('NATURE')] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}
 		}
-		create species: road from: shape_file_roads ;
+		create road from: shape_file_roads ;
 		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
 		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
 		
 		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
 		let industrial_buildings type: list of: building <- (building as list) where (each.type='Industrial') ;
-		create species: people number: nb_people {
+		create people number: nb_people {
 			set speed <- min_speed + rnd (max_speed - min_speed) ;
 			set start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
 			set end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
@@ -41,7 +41,7 @@ global {
 	
 	reflex repair_road when: (time mod repair_time) = 0 {
 		let the_road_to_repair type: road value: (road as list) with_max_of (each.destruction_coeff) ;
-		ask target: the_road_to_repair {
+		ask the_road_to_repair {
 			set destruction_coeff value: 1 ;
 		}
 	}
@@ -72,15 +72,15 @@ entities {
 		building working_place <- nil ;
 		int start_work ;
 		int end_work  ;
-		string objectif ; 
+		string objective ; 
 		point the_target <- nil ;
 		
 		reflex time_to_work when: day_time = start_work {
-			set objectif <- 'working' ;
+			set objective <- 'working' ;
 			set the_target <- any_location_in (working_place);
 		}
 		reflex time_to_go_home when: day_time = end_work {
-			set objectif <- 'go home' ;
+			set objective <- 'go home' ;
 			set the_target <- any_location_in (living_place); 
 		}  
 		reflex move when: the_target != nil {
@@ -89,7 +89,7 @@ entities {
 			loop line over: segments {
 				let dist type: float <- line.perimeter;
 				let ag type: road <- path_followed agent_from_geometry line; 
-				ask target: road(ag) {
+				ask road(ag) {
 					set destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
 				}
 			}
@@ -115,8 +115,8 @@ output {
 			data name:'Max road destruction' value: (road as list) max_of (each.destruction_coeff) style: line color: rgb('red') ;
 		}
 		chart name: 'People Objectif' type: pie background: rgb('lightGray') style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
-			data name:'Working' value: length ((people as list) where (each.objectif='working')) color: rgb('green') ;
-			data name:'Staying home' value: length ((people as list) where (each.objectif='go home')) color: rgb('blue') ;
+			data name:'Working' value: length ((people as list) where (each.objective='working')) color: rgb('green') ;
+			data name:'Staying home' value: length ((people as list) where (each.objective='go home')) color: rgb('blue') ;
 		}
 	}
 }

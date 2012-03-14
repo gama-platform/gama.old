@@ -15,17 +15,17 @@ global {
 	graph the_graph;
 	
 	init {
-		create species: building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::read ('NATURE')] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}
 		}
-		create species: road from: shape_file_roads ;
+		create road from: shape_file_roads ;
 		set the_graph <- as_edge_graph(list(road));
 		
 		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
 		let industrial_buildings type: list of: building <- (building as list) where (each.type='Industrial') ;
-		create species: people number: nb_people {
+		create people number: nb_people {
 			set speed <- min_speed + rnd (max_speed - min_speed) ;
 			set start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
 			set end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
