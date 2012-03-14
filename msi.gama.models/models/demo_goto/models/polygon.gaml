@@ -10,7 +10,7 @@ global {
 	graph the_graph;
 	
 	init {    
-		create species: object from: shape_file_in ;
+		create object from: shape_file_in ;
 		let the_object type: object <- first(object);
 		let triangles type: list of: geometry <- triangulate(the_object);
 		loop trig over: triangles {
