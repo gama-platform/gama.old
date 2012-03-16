@@ -17,10 +17,10 @@ global {
 	var dimensions type: int init: 80 max: 400 min: 10 parameter: 'Width and height of the environment:' category: 'Environment' ;
 	var neighbours_distance type: int init: 1 max: 10 min: 1 parameter: 'Distance of perception:' category: 'Population' ;
 	var number_of_people type: int init: 0 ;
-	var sum_happy_people type: int init: 0 value: all_people count (each.is_happy) ;
+	var sum_happy_people type: int init: 0 value: all_people count (each.is_happy) ; 
 	var sum_similar_neighbours type: int init: 0 value: sum (all_people collect each.similar_nearby) ;
 	var sum_total_neighbours type: int init: 1 value: sum (all_people collect each.total_nearby) min: 1 ;
-	var all_places type: list init: []  of: default;
+	var all_places type: list init: []  of: default; 
 	var all_people type: list init: [] of: base ;
 	action description {
 		do action: write {
@@ -29,7 +29,7 @@ global {
 	}
 	init {
 		do action: description ;
-		do action: initialize_places ;
+		do action: initialize_places ; 
 		set number_of_people value: length(all_places) * density_of_people ;
 		do action: initialize_people ;
 	}

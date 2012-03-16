@@ -13,7 +13,7 @@ global {
     init { 
         create species: bug number: numberBugs;
 		loop i from: 3 to: ((init_data.rows)) - 1 {
-			let ind_i type: int value: init_data at {0,i};
+			let ind_i type: int value: init_data at {0,i}; 
 			let ind_j type: int value: init_data at {1,i};
 			ask stupid_grid grid_at {ind_i,ind_j} {
 				set foodProd value: init_data at {2,i};

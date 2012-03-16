@@ -118,11 +118,13 @@ entities {
 			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
 				set velocity value: {(rnd(4)) -2, (rnd(4)) - 2};
 			}
-			let old_location value: location;
+			let oldLocation <- location;
 			do goto target: location + velocity;
+			set velocity <- (location - oldLocation);
 			}
-			set velocity value: location - old_location;
-		}
+			
+
+		
 		reflex movement {
 			do  bounding;
 			do  do_move;
@@ -133,6 +135,9 @@ entities {
 		aspect default {
 			draw shape: triangle size: 7 rotate: heading color: 'yellow';
 		}
+		
+		
+		
 	}
 	species obstacle skills: [moving] {
 		var speed type: float init: 0.1;
@@ -155,5 +160,5 @@ output {
 		species boids;
 		species boids_goal;
 		species obstacle;
-}
-}
+}}}
+

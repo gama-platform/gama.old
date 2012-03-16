@@ -16,7 +16,7 @@ global {
 		set free_places value: all_places;
 	}
 }
-environment width: dimensions height: dimensions {
+environment width: dimensions height: dimensions { 
 	grid space width: dimensions height: dimensions neighbours: 8 torus: false {
 		const multiagent type: bool value: false;
 		const color type: rgb value: black;

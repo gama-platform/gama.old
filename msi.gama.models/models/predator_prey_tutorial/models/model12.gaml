@@ -15,7 +15,7 @@ global {
 	float predator_max_energy <- 1 parameter: 'Predator max energy: ' category: 'Predator' ;
 	float predator_energy_transfert <- 0.5 parameter: 'Predator energy transfert: ' category: 'Predator' ;
 	float predator_energy_consum <- 0.02 parameter: 'Predator energy consumption: ' category: 'Predator' ;
-	float predator_proba_reproduce <- 0.01 parameter: 'Predator probability reproduce: ' category: 'Predator' ;
+	float predator_proba_reproduce <- 0.01 parameter: 'Predator probability reproduce: ' category: 'Predator' ; 
 	int predator_nb_max_offsprings <- 3 parameter: 'Predator nb max offsprings: ' category: 'Predator' ;
 	float predator_energy_reproduce <- 0.5 parameter: 'Predator energy reproduce: ' category: 'Predator' ;
 	int nb_preys function: {length (prey as list)};

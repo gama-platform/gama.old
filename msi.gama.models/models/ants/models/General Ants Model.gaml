@@ -1,7 +1,7 @@
 model ants
 global {
 //float step init: 10 # seconds;
-	 
+ 	  
 	var evaporation_rate type: float init: 0.10 min: 0 max: 1 parameter:'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	var diffusion_rate type: float init: 0.5 min: 0 max: 1 parameter:'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	var gridsize type: int init: 120 min: 30 parameter:'Width and Height of the grid:' category: 'Environment and Population';
@@ -11,27 +11,28 @@ global {
 	var grid_transparency type: float init: 0.4;  
 	const ant_shape_empty type: string init: '../icons/ant.png'; 
 	const ant_shape_full type: string init: '../icons/full_ant.png';
-	const center type: point init: { round ( gridsize / 2 ), round( gridsize / 2)} ;  
-	var food_gathered type: int init: 0; 
-	var food_placed type: int init: 0;  
-	const background type: rgb init: rgb ( #999999 );
-	const food_color type: rgb init: rgb ( #312200 );
+	const center type: point init: { round ( gridsize / 2 ), round( gridsize / 2)} ;    
+	var food_gathered type: int init: 0;  
+	var food_placed type: int init: 0  ;    
+	const background type: rgb init: rgb ( #999999 ); 
+	const food_color type: rgb init: rgb ( #312200 );     
 	const nest_color type: rgb init: rgb ( #000000 );
-	init {
-		loop times: number_of_food_places {
-			let loc value: { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };
-			let food_places value: (ant_grid as list where ( ( each distance_to loc ) < 5)); 
+	init {   
+		loop times: number_of_food_places {  
+			let loc value: { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };  
+			let food_places value: (ant_grid as list where ( ( each distance_to loc ) < 5));  
 			ask target: food_places { 
-				if food = 0 {
+				if food = 0 {  
 					set food value: 5 ;
 					set food_placed value: food_placed + 5 ;
-					set color value: food_color ;
+					set color value: food_color ;   
 				}  
-			}
-		}
+			}  
+		}    
 		create ant number: ants_number {
+			    
 			set location value: center ; 
-		}
+		} 
 	}
 } 
 environment width: gridsize height: gridsize { }
@@ -59,9 +60,9 @@ entities {
 			set food_gathered <- food_gathered + 1 ;
 			set has_food <- false ;
 			set heading <- heading - 180 ;
-		}
+		} 
 		action choose_best_place type: point {
-			let list_places type: container value: ( ant_grid ( location ) ).neighbours;
+			let list_places type: container value: ( ant_grid ( location ) ).neighbours; 
 			if ( list_places count ( each . food > 0 ) ) > 0 { 
 				return point ( list_places first_with ( each . food > 0 ) ) ;
 			}
@@ -73,42 +74,42 @@ entities {
 		reflex when: has_food and ( ant_grid ( location ) ) . is_nest { 
 			do drop ;
 		}
-		reflex pick when: ! has_food and ( ant_grid ( location ) ) . food > 0 {
+		reflex pick when: ! has_food and ( ant_grid ( location ) ) . food > 0 { 
 			do pick ;
 		}
 		state wandering initial: true { 
-			do wander amplitude: 90;
-			let pr value: ( ant_grid ( location ) ) . road; 
-			transition to: carryingFood when: has_food;
+			do wander amplitude: 90; 
+			let pr value: ( ant_grid ( location ) ) . road;  
+			transition to: carryingFood when: has_food; 
  			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );   
 		}
-		state carryingFood {
+		state carryingFood  {  
 			do goto target: center  ;
-			transition to: wandering when: ! has_food;
+			transition to: wandering when: ! has_food; 
 		}
-		state followingRoad {
+		state followingRoad { 
 			let next_place value: self choose_best_place []; 
 			let pr value: ( ant_grid ( location ) ) . road;
-			set location value: next_place ;
+			set location value: next_place ; 
 			transition to: carryingFood when: has_food;
 			transition to: wandering when: ( pr < 0.05 ) or ( next_place = nil );
 		} 
-		aspect info {
+		aspect info { 
 			draw shape: circle at: location size: 1 rotate: my heading empty: ! has_food;
 			draw shape: line at: location to: destination + ( ( destination - location ) 
 			) color: rgb ( 'white' );  
-			draw shape: circle at: location size: 4 empty: true color: 'white'; 
+			draw shape: circle at: location size: 4 empty: true color: 'white' ; 
 			draw text: self as int color: rgb ( 'white' ) size: 1;  
-			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 }; 
-		}
-		aspect icon {
-			draw image: ant_shape_empty at: my location size: 5 rotate: my heading; 
+			draw text: state color: rgb ( 'white' ) size: 1 at: my location + { 1 , 1 };      
+		} 
+		aspect icon { 
+			draw image: ant_shape_empty at: my location size: 5 rotate: my heading + 1; 
 		}
 		aspect default {
 			draw shape: square at: my location empty: ! has_food color: 'white' size: 1 rotate: my heading;
 		}
-	}
-}
+	} 
+} 
 experiment Complete type: gui { 
 	parameter name: 'Number:' var: ants_number init: 400 unit: 'ants' category: 'Environment and Population'; 
 	parameter name: 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
@@ -124,6 +125,7 @@ experiment Complete type: gui {
 		}
 	}
 }
+
 experiment Batch type: batch repeat: 2 keep_seed: true until: ( food_gathered =food_placed ) or ( time > 400 ) {
 	parameter name:'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
 	parameter name: 'Number:' var: ants_number init: 200 unit: 'ants';
@@ -132,6 +134,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: ( food_gathered =f
 	method exhaustive maximize: food_gathered;
 	save time to: 'ant_exhaustive'  rewrite: false ;
 }
+
 experiment Genetic type: batch repeat: 2 keep_seed: true until: ( food_gathered= food_placed ) or ( time > 400 ) {  
 	parameter name:'Size of the grid:' var:gridsize  init: 75 unit: '(width and height)';
 	parameter name: 'Number:' var: ants_number init: 200 unit: 'ants';
@@ -140,6 +143,7 @@ experiment Genetic type: batch repeat: 2 keep_seed: true until: ( food_gathered=
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
 	save time rewrite: false to: 'ant_genetic' ;
 }
+
 experiment name: 'Show Quadtree' type: gui {
 	output {
 		monitor name: 'Food gathered' value: food_gathered;

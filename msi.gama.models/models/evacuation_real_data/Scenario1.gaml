@@ -1,32 +1,31 @@
-model Scenario1
+ model Scenario1
  
 global {
 	var simulated_population_rate type: float init: 0.3 const: true;
-	 
+	  
 	// GIS data 
 	var shape_file_road type: string init: '/gis/roadlines.shp';  
-	var shape_file_rivers type: string init: '/gis/rivers.shp';  
-	var shape_file_beach type: string init: '/gis/Beacha.shp';
-	string shape_file_roadwidth init: '/gis/roads.shp'; 
+	var shape_file_rivers type: string init: '/gis/rivers.shp';    
+	var shape_file_beach type: string init: '/gis/Beacha.shp'; 
+	string shape_file_roadwidth init: '/gis/roads.shp';  
 	string shape_file_building init: '/gis/buildr.shp'; 
 	var shape_file_bounds type: string init: '/gis/bounds.shp'; 
-	var shape_file_ward type: string init: '/gis/wards.shp'; 
-	var shape_file_zone type: string init: '/gis/zone.shp'; 
+	var shape_file_ward type: string init: '/gis/wards.shp';  
+	var shape_file_zone type: string init: '/gis/zone.shp';  
 	   
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
-	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s? 
-	var pedestrian_size type: float init: 1 const: true; 
-	var pedestrian_color type: rgb init: rgb('green');
+	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?  
+	var pedestrian_size type: float init: 1 const: true ; 
+ 	var pedestrian_color type: rgb init: rgb('green');
 	 
-	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient"; 
+	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";   
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
 
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
-	//CECI est un 
 	var agents_reach_target type: int init: 0; 
-	var average_reaching_target_time type: float init: 0.0; 
+	var average_reaching_target_time type: float init: 0.0;  
 	 
 	var zone1_building_color type: rgb init: rgb('orange');
 	var zone2_building_color type: rgb init: rgb('gray'); 
@@ -36,7 +35,7 @@ global {
 	 
 	var road_graph type: graph;
 
-	
+	 
 	init {
 		create road from: shape_file_road ;
 		create beach from: shape_file_beach;
@@ -47,7 +46,7 @@ global {
 		 
 		create zone from: shape_file_zone with: [id :: read('ID')];
 		create building from: shape_file_building with: [ floor :: read('STAGE'), x :: read('X'), y :: read('Y')];
-		create roadwidth from: shape_file_roadwidth;
+ 		create roadwidth from: shape_file_roadwidth;
 		create river from: shape_file_rivers;
 		
 		loop b over: ( (list(building)) where (each.floor > 3) ) {
@@ -181,27 +180,27 @@ entities {
 	  	var id type: int;
 	  	var population type: int min: 0;
 	  	var wardname type: string;
-	  	var color type: rgb init: one_of(ward_colors);
+	  	var color type: rgb init: one_of(ward_colors); 
 	  	var roads type: list of: road;
-	  	
+	  	  
 	  	action init_overlapping_roads {
 	  		set roads value: road overlapping shape;
 	  	}
-	  	
-	  	aspect base {
+	  	 
+	  	aspect base { 
 	  		draw shape: geometry color: color;
 	  	}
 	}
 		
 	species roadwidth {
-	   	aspect base {
+	   	aspect base { 
 	   		draw shape: geometry color: rgb('yellow');
 	   	}
 	}
 	   
 	species building {
 	   	var floor type: int;
-	   	var x type: float;
+	   	var x type: float; 
 	   	var y type: float;
 	   	var color type: rgb init: zone3_building_color;
 	   	
@@ -300,7 +299,7 @@ entities {
 			}
 			let lines2 type: list of: geometry value: (inside_road_geom split_at location);
 			
-			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
+ 			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
 			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
 			set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
 			
@@ -310,17 +309,17 @@ entities {
 			}
 			
 		}
-	}
+	} 
 }
 
-experiment default_expr type: gui { 
+experiment toto type: gui { 
 	output { 
-		display full_detail {
+		display full_detail { 
 		 	species road aspect: base transparency: 0.1;
 		 	species roadwidth aspect: base transparency: 0.1;
 		 	species building aspect: base transparency: 0.1;
 		 	species destination aspect: base transparency: 0.1;
-		 	species beach aspect: base transparency: 0.9;
+		 	species beach aspect: base transparency: 0.9; 
 		 	species zone aspect: base transparency: 0.9;
 		 	species river aspect: base transparency: 0.5;
 		 	species ward aspect: base transparency: 0.9;

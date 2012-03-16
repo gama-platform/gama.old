@@ -29,7 +29,7 @@ entities {
 		int heading <- rnd(359) update: leader.heading;
 		reflex move { 
 			do move ;
-		}
+		} 
 		reflex when: (leader != self) and (self distance_to leader > (leader.range - (leader.range / 10.0))) {
 			if grow_leader {
 				set range of my leader <- (range of my leader) - 0.05 ;

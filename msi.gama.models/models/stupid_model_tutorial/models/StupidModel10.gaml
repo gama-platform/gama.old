@@ -29,7 +29,7 @@ entities {
         var myPlace type: stupid_grid value: location as stupid_grid;
         
         reflex basic_move {
-            let destination type: stupid_grid value: one_of ((myPlace neighbours_at 4) where empty(each.agents));
+            let destination type: stupid_grid value: one_of ((myPlace neighbours_at 4) where empty(each.agents)); 
             if condition: destination != nil {
                 set location value: destination.location;
                 set myPlace value: (location as stupid_grid);                                                

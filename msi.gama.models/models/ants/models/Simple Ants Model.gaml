@@ -17,40 +17,38 @@ global {
 		create species: ant number: ants_number with: [ location :: center ];
 	} 
 
-}
+} 
 environment width: gridsize height: gridsize {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 		var neighbours init: ( self neighbours_at 1 ) of_species ant_grid type: list
 		of: ant_grid;
 		const type type: int init: types at { grid_x , grid_y };
 		const isNestLocation type: bool init: ( self distance_to center ) < 4;
-		const isFoodLocation type: bool init: type = 2;
+		const isFoodLocation type: bool init: type = 2; 
 		var color type: rgb value: [ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,
 		road * 30 , road > 15 ? 255 : food * 50 ];
-		var food type: int init: isFoodLocation ? 5 : 0;
+		var food type: int init: isFoodLocation ? 5 : 0; 
 		const nest type: int init: 300 - ( self distance_to center );
 	}
-}
+}  
 entities {
 	species ant skills: [ moving ] {
 		var color type: rgb init: 'red';
 		var place type: ant_grid value: ant_grid ( location );
 		var hasFood type: bool init: false;
-		var road type: signal value: hasFood ? 240 : 0 decay: evaporation_rate
-		proportion: diffusion_rate environment: ant_grid;
+		var road type: signal value: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 
 		var hasRoad type: bool init: false value: place . road > 0.05;
-		reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0
-		) {
+		reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0) {
 			do action: wander {
 				arg amplitude type: int value: 120;
 				arg speed type: float value: 1.0;
 			}
 		}
-		reflex looking when: ( ! hasFood ) and ( hasRoad ) and ( place . food = 0 ) {
+		reflex looking when: ( ! hasFood ) and ( hasRoad ) and ( place . food = 0 ) { 
 			let list_places value: place . neighbours;
 			let goal value: list_places first_with ( each . food > 0 );
 			if condition: goal != nil {
-				set location value: goal ;
+				set location value: goal ; 
 
 			} else {
 					let min_nest value: ( list_places min_of ( each . nest ) );
@@ -77,20 +75,19 @@ entities {
 	}
 }
 experiment name: 'Simple' type: gui {
-	output {
-		display Ants refresh_every: 2 {
+	output { 
+		display Ants refresh_every: 2 { 
 			grid ant_grid;
 			species ant aspect: default;
 			text tt value: string ( food_remaining ) size: 24 position: { 20 , 20 } color: rgb ( 'white' );
-		}
+		}  
 	}
 }
 
 // This experiment explores two parameters with an exhaustive strategy, 
 // repeating each simulation two times, in order to find the best combination 
 // of parameters to minimize the time taken by ants to gather all the food
-experiment name: 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true
-until: ( food_remaining = 0 ) or ( time > 400 ) {
+experiment name: 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true until: ( food_remaining = 0 ) or ( time > 400 ) {
 	parameter name: 'Evaporation rate' var: evaporation_rate among: [ 0.1 , 0.2 ,
 	0.5 , 0.8 , 1.0 ];
 	parameter name: 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:
@@ -103,10 +100,8 @@ until: ( food_remaining = 0 ) or ( time > 400 ) {
 // repeating each simulation two times, and saves the time taken by ants to gather all the food in a file
 experiment Repeated type: batch repeat: 2 keep_seed: true until: (
 food_remaining = 0 ) or ( time > 400 ) {
-	parameter name: 'Evaporation rate' var: evaporation_rate among: [ 0.1 , 0.2 ,
-	0.5 , 0.8 , 1.0 ];
-	parameter name: 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:
-	0.3;
+	parameter name: 'Evaporation rate' var: evaporation_rate among: [ 0.1 , 0.2 ,0.5 , 0.8 , 1.0 ];
+	parameter name: 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
 	save nil to: 'ant_exhaustive' data: time rewrite: false;
 }
 

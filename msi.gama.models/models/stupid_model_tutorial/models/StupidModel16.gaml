@@ -35,7 +35,7 @@ environment  {
         var food type: float init: 0.0 value: food + foodProd;
     }
 }
-
+ 
 entities {
     species bug schedules: (list (bug)) sort_by each.size skills: 1 {
         var size type: float init: gauss({initialBugSizeMean,initialBugSizeSD});

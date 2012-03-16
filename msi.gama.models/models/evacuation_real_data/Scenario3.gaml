@@ -8,7 +8,7 @@ this scenario is not necessary infact
  Scenario1 is enough!
  */
  
-global {
+global { 
 	var guiders_per_road type: int parameter: 'Number of guider per road' init: 1 min: 0 max: 10;
 	var simulated_population_rate type: float init: 0.1 const: true;
 	
@@ -41,7 +41,7 @@ global {
 	var agents_reach_target type: int init: 0;
 	var average_reaching_target_time type: float init: 0.0;
 	
-	var zone1_building_color type: rgb init: rgb('orange');
+	var zone1_building_color type: rgb init: rgb('orange'); 
 	var zone2_building_color type: rgb init: rgb('gray');
 	var zone3_building_color type: rgb init: rgb('yellow');
 	

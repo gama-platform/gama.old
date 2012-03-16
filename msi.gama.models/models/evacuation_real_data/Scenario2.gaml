@@ -11,7 +11,7 @@ global {
 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
-	var pedestrian_speed type: float init: 1;
+	var pedestrian_speed type: float init: 1; 
 	var pedestrian_color type: rgb init: rgb('green') const: true;
 	
 	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
@@ -25,7 +25,7 @@ global {
 	var terminal_panel_ids type: list of: int init: [8];
 
 	var road_graph type: graph;
-
+ 
 	init {
 		create species: road from: shape_file_road;
 		create species: ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
@@ -38,7 +38,7 @@ global {
 
 		create species: road_initializer;
 		let ri type: road_initializer value: first (road_initializer as list);
-		loop rd over: (road as list) {
+		loop rd over: (road as list) { 
 			ask target: (ri) {
 				do action: initialize {
 					arg the_road value: rd;

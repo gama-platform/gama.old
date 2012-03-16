@@ -11,7 +11,7 @@ global {
 	var available_places type: list of: space ;
 	var bitmap_file_name type: string init: '../images/hanoi.png' parameter: 'Name of image file to load:' category: 'Environment' ;
 	var map_colors type: matrix ;
-	action initialize_places {
+	action initialize_places { 
 		set map_colors value: file(bitmap_file_name) as_matrix {dimensions,dimensions} ;
 		ask target: space as list {
 			set color value: map_colors at {grid_x,grid_y} ;
@@ -20,14 +20,14 @@ global {
 		set available_places value: all_places ;
 	}
 	action initialize_people {
-		create species: people number: number_of_people ;
+		create species: people number: number_of_people ;  
 		set all_people value: people as list ;
 	}
 }
 environment width: dimensions height: dimensions {
 	grid space width: dimensions height: dimensions neighbours: 8 torus: true ;
 }
-entities {
+entities { 
 	species people parent: base skills: situated { 
 		var location type: point init: all_places first_with empty(each.agents) ;
 		const color type: rgb init: colors at (rnd (number_of_groups - 1)) ;

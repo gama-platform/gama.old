@@ -1,6 +1,6 @@
 model sugarscape
 
-
+  
 global {
 	int sugarGrowthRate <- 1 parameter: 'Growth rate of sugar:' category: 'Environment';
 	int minDeathAge <- 60 parameter: 'Minimum age of death:' category: 'Agents';
@@ -31,7 +31,7 @@ global {
 	}
 }
 environment width: 50 height: 50 {
-	grid sugar_cell width: 50 height: 50 neighbours: 4 {
+	grid sugar_cell width: 50 height: 50 neighbours: 4 { 
 		const multiagent type: bool <- false;
 		int maxSugar;
 		int sugar update: min ([maxSugar, sugar + sugarGrowthRate]);

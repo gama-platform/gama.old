@@ -23,10 +23,10 @@ global {
 }
 entities {
 	species people parent: base skills: [situated, visible] {
-		const size type: float init: 2;
+		const size type: float init: 2; 
 		const color type: rgb init: colors at (rnd (number_of_groups - 1));
 		const red type: int init: color as list at 0;
-		const green type: int init: color as list at 1;
+		const green type: int init: color as list at 1; 
 		const blue type: int init: color as list at 2;
 		var current_building type: space init: nil;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people;

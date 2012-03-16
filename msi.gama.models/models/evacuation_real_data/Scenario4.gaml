@@ -15,11 +15,11 @@ global {
 	var pedestrian_speed type: float init: 1; // this is 1m/s?
 	var pedestrian_color type: rgb init: rgb('green') const: true;
 	var pedestrian_perception_range type: float init: 50; // 50 meters
-	
+	 
 	var guider_speed type: float init: 1;
 	var guider_color type: rgb init: rgb('blue');
 	
-	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
+	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient"; 
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
 
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
@@ -39,7 +39,7 @@ global {
 		create species: panel from: shape_file_panel with: [next_panel_id :: read('TARGET'), id :: read('ID')];
 		set road_graph value: as_edge_graph (list(road) collect (each.shape));
 
-		create species: road_initializer;
+		create species: road_initializer; 
 		let ri type: road_initializer value: first (road_initializer as list);
 		loop rd over: (road as list) {
 			ask target: (ri) {
@@ -371,7 +371,7 @@ experiment default_expr type: gui {
 
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+				data simulation_step_duration_in_mili_second value: float(duration) color: (rgb ('green'));
 			}
 		}
 

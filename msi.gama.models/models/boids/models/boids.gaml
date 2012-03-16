@@ -1,42 +1,42 @@
-model boids
-
+model boids 
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	float maximal_speed parameter: 'Maximal speed' <- 15 min: 0.1 max: 15;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
 	int alignment_factor parameter: 'Alignment Factor' <- 100;
-	float minimal_distance parameter: 'Minimal Distance' <- 10.0;
+	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
 	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
 	int width_and_height_of_environment parameter: 'Width/Height of the Environment' <- 800;  
 	bool torus_environment parameter: 'Toroidal Environment ?' <- false; 
-	bool apply_cohesion <- true parameter: 'Apply Cohesion ?'; 
-	bool apply_alignment <- true parameter: 'Apply Alignment ?'; 
-	bool apply_separation <- true parameter: 'Apply Separation ?';  
-	bool apply_goal <- true parameter: 'Follow Goal ?';
-	bool apply_avoid <- true parameter: 'Apply Avoidance ?'; 
-	bool apply_wind <- true parameter: 'Apply Wind ?';  
-	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';
-	int bounds <- (width_and_height_of_environment / 20);
-	point wind_vector <- {0,0} parameter: 'Direction of the wind';
+	bool apply_cohesion <- true parameter: 'Apply Cohesion ?';
+	bool apply_alignment <- true parameter: 'Apply Alignment ?';   
+	bool apply_separation <- true parameter: 'Apply Separation ?';   
+	bool apply_goal <- true parameter: 'Follow Goal ?'; 
+	bool apply_avoid <- true parameter: 'Apply Avoidance ?';  
+	bool apply_wind <- true parameter: 'Apply Wind ?';   
+	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';   
+	int bounds <- (width_and_height_of_environment / 20); 
+	point wind_vector <- {0,0} parameter: 'Direction of the wind'; 
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
-	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png'];
-	int xmin <- bounds; 
-	int ymin <- bounds;
-	int xmax <- (width_and_height_of_environment - bounds);  
+	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
+	int xmin <- bounds;   
+	int ymin <- bounds;  
+	int xmax <- (width_and_height_of_environment - bounds);    
 	int ymax <- (width_and_height_of_environment - bounds);   
 
-	// flock's parameter
-	const two_boids_distance type: int init: 30;
+
+	// flock's parameter 
+	const two_boids_distance type: int init: 30; 
 	const merging_distance type: int init: 30;
 	var create_flock type: bool init: false;  
 	
 	init {
-		create boids number: number_of_agents {
+		create boids number: number_of_agents { 
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		}
-		
+		 
 		create obstacle number: number_of_obstacles {
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
@@ -86,9 +86,9 @@ global {
 		 				capture micro_agents as: boids_delegation;
 		 			}
 		 		}
-		 	}
+		 	} 
 		}
-	} 
+	}  
 }
 
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
@@ -262,8 +262,8 @@ entities {
 		reflex wind when: apply_wind {
 			set velocity <- velocity + wind_vector;
 		}
-		 
-		action do_move {
+		  
+		action do_move {  
 			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
 				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
@@ -278,11 +278,11 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black';
+			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black'; 
 		}
 		
 		aspect default {
-			draw shape: triangle size: 15 rotate: 90 + heading color: 'yellow';
+			draw shape: triangle  size: 15 rotate: 90 + heading color: 'yellow';
 		}
 	}
 	
@@ -290,7 +290,7 @@ entities {
 		float speed <- 0.1;
 		
 		reflex when: moving_obstacles {
-			if flip(0.5) { do goto target: one_of(boids) as list;} else do wander amplitude: 360;
+			if flip(0.5) { do goto target: one_of(boids) as list;} else do wander amplitude: 360; 
 		}
 		
 		aspect default {

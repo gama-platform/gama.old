@@ -1,22 +1,20 @@
 model ABM_Hybrid_comparison
 
 global {
-	var insideRoadCoeff type: float init: 0.05 min: 0.05 max: 0.4 parameter: "Size of the external parts of the roads:";
+	var insideRoadCoeff type: float init: 0.05 min: 0.05 max: 0.4 parameter: 'Size of the external parts of the roads:';
 	var the_graph type: graph;
 	
-	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
+	var capture_pedestrian type: bool init: true parameter: 'Capture pedestrian?';
 
-	var people_speed type: float init: 2 min: 1 max: 100 parameter: "People speed";
+	var people_speed type: float init: 2 min: 1 max: 100 parameter: 'People speed';
 	var people_number type: int min: 1 init: 100 parameter: "People number";
 	
 	var environment_size type: int init: 500;
 	
-	var road_data type: list of: geometry init: [
-		polyline ( [ {5, 5}, {20, 20}, {50, 5}, {75, 80} ] ), polyline ( [ {75, 80}, {120, 130}, {200, 170}, {490, 250} ] ),
+	var road_data type: list of: geometry init:[polyline ( [ {5, 5}, {20, 20}, {50, 5}, {75, 80} ] ), polyline ( [ {75, 80}, {120, 130}, {200, 170}, {490, 250} ] ),
 		polyline ( [ {75, 80}, {100, 60}, {200, 20}, {250, 5} ] ), polyline ( [ {250, 5}, {300, 40}, {400, 100} ] ), polyline ( [ {400, 100}, {450, 20}, {480, 5} ] ),
-		polyline ( [ {75, 80}, {50, 160}, {30, 200}, {5, 300} ] ), polyline ( [ {5, 300}, {50, 200}, {120, 300} ] ), polyline ( [ {120, 300}, {10, 400} ] ),
-																													polyline ( [ {120, 300}, {200, 250}, {300, 350} ]),
-																													polyline ( [ {10, 400}, {450, 400} ] )
+		polyline ( [ {75, 80}, {50, 160}, {30, 200}, {5, 300} ] ), polyline ( [ {5, 300}, {50, 200}, {120, 300} ] ), polyline ( [ {120, 300}, {10, 400} ] ),polyline ( [ {120, 300}, {200, 250}, {300, 350} ]),
+polyline ( [ {10, 400}, {450, 400} ] )
 	];
 	
 	var road_number type: int min: 1 max: 10 init: 10;
@@ -39,7 +37,7 @@ global {
 				do action: InitializeRoad {
 					arg the_road value: rd;
 				}
-			}
+			} 
 		}
 		
 		create species: people number: people_number {
@@ -101,11 +99,12 @@ entities {
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
 						
-						else { // agent moves towards extremity2 
+
+					}
+					else { // agent moves towards extremity2 
 							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
 							set cp.released_location value: first (macro_patch.points);
 						}
-					}
 
 /*
 					do action: write {
@@ -154,35 +153,37 @@ entities {
 			draw shape: geometry color: 'green' ;
 		}
 		
-		action choose_next_road returns: road {
+		action choose_next_road type: road {
 			arg road_vertex type: point;
 			
 			if condition: ( (the_graph source_of current_road) = road_vertex ) {
-				return value: one_of (current_road.source_in_out_edges);
+				return one_of (current_road.source_in_out_edges);
 								
-				else {
-					return value: one_of (current_road.target_in_out_edges);
-				}
+
 			}
+		else {
+					return one_of (current_road.target_in_out_edges);
+				}
 		}
 		
 		reflex move when: (goal != nil) {
-			let followedPath type: path value: self.goto [on::the_graph, target::goal, speed::people_speed];
+			let followedPath type: path value: self goto [on::the_graph, target::goal, speed::people_speed];
 			set previous_location value: followedPath.source;
 			
 			if condition: (goal = location) {
 				set last_macro value: nil;
 				set previous_location value: nil;
 
-				set current_road value: self.choose_next_road [ road_vertex :: goal ];
+				set current_road value: self choose_next_road [ road_vertex :: goal ];
 				
 				if condition: (location = (the_graph source_of current_road) ) {
 					set goal value: the_graph target_of current_road;
 					
-					else {
+
+				}
+				else {
 						set goal value: the_graph source_of current_road;
 					}
-				}
 			}
 		}
 	}
@@ -225,16 +226,7 @@ entities {
 			set the_road.target value: last ((the_road.shape).points);
 			set the_road.source_in_out_edges value: (the_graph in_edges_of the_road.source) + (the_graph out_edges_of the_road.source);
 			set the_road.target_in_out_edges value: (the_graph in_edges_of the_road.target) + (the_graph out_edges_of the_road.target);
-			
-			/*
-			do action: write {
-				arg name: message value: 'road ' + (string (the_road)) 
-					+ ' with source_in_out_edges: ' + (string (the_road.source_in_out_edges)) 
-					+ '; target_in_out_edges: ' + (string (the_road.target_in_out_edges))
-					+ '; source: ' + (string (the_road.source))
-					+ '; target: ' + (string (the_road.target));
-			}
-			*/
+
 
 			create species: insideRoad {
 				set shape value: inside_road_geom;
@@ -259,11 +251,11 @@ experiment 10_roads_100_people type: gui {
 		
 		monitor people_number value: length (people);
 		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
-		monitor step_length_monitor value: step_length;
+		monitor step_length_monitor value: duration;
 		
 		display Execution_Time refresh_every: 5 {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: float( duration) color: (rgb ('green'));
 			}
 		}
 	}
@@ -286,11 +278,11 @@ experiment 10_roads_1000_people_expr type: gui {
 		
 		monitor people_number value: length (people);
 		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
-		monitor step_length_monitor value: step_length;
+		monitor step_length_monitor value: duration;
 		
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: float( duration) color: (rgb ('green'));
 			}
 		}
 	}
@@ -313,11 +305,11 @@ experiment 10_roads_10000_people type: gui {
 		
 		monitor people_number value: length (people);
 		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
-		monitor step_length_monitor value: step_length;
+		monitor step_length_monitor value: duration;
 		
 		display Execution_Time {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: float( duration) color: (rgb ('green'));
 			}
 		}
 	}
@@ -341,11 +333,11 @@ experiment 10_roads_100000_people type: gui {
 		
 		monitor people_number value: length (people);
 		monitor captured_people_number value: sum (list(road) collect (length (each.members)));
-		monitor step_length_monitor value: step_length;
+		monitor step_length_monitor value: duration;
 		
 		display Execution_Time  {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: step_length color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: float( duration) color: (rgb ('green'));
 			}
 		}
 	}

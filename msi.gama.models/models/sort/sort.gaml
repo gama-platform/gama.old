@@ -1,4 +1,4 @@
-model sort
+  model sort
 
 global {
 
@@ -13,7 +13,7 @@ global {
 	action description {
 		do write message: "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A set of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	
 	} 
-	init {
+	init { 
 		do description ;
 		create ant number: ants ;
 	}
@@ -26,7 +26,7 @@ environment width: 100 height: 100 {
 	} 
 }
  
-species name: ant skills: [ moving ] control: fsm {
+species name: ant skills: [ moving ] control: fsm { 
 	rgb color <- rgb("white") ;
 	ant_grid place -> {ant_grid (location)} ;
 	reflex wandering { do wander amplitude: 120; }
