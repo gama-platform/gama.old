@@ -46,20 +46,25 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT)
-@facets(value = { @facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
+@facets(value = {
+	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true),
+	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayerDisplayOutput.JAVA2D,
+		LayerDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
 @inside(symbols = IKeyword.OUTPUT)
 public class LayerDisplayOutput extends AbstractDisplayOutput {
 
+	public static final String JAVA2D = "java2D";
+	public static final String OPENGL = "opengl";
+
 	private List<AbstractDisplayLayer> layers;
 	private Color backgroundColor;
 	protected IDisplaySurface surface;
 	String snapshotFileName;
-	private final boolean openGL = false;
+	String displayType = JAVA2D;
 	private boolean autosave = false;
 
 	// private GLContext glcontext;
@@ -69,6 +74,10 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		super(desc);
 		verifyFacetType(IKeyword.BACKGROUND);
 		verifyFacetType(IKeyword.AUTOSAVE);
+		verifyFacetType(IKeyword.TYPE);
+		if ( hasFacet(IKeyword.TYPE) ) {
+			displayType = getLiteral(IKeyword.TYPE);
+		}
 		layers = new GamaList<AbstractDisplayLayer>();
 	}
 
@@ -92,7 +101,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		for ( final ISymbol layer : getLayers() ) {
 			try {
 				((IDisplayLayer) layer).prepare(this, getOwnScope());
-			} catch (GamlException e) {
+			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
 		}
@@ -138,9 +147,6 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	protected void createSurface(final ISimulation sim) {
-		if ( openGL ) { return; }
-		// TEST SUR OPENGL -> return;
-		// ITopology env = sim.getWorldEnvironment();
 		IEnvironment env = sim.getModel().getModelEnvironment();
 		double w = env.getWidth();
 		double h = env.getHeight();
@@ -148,7 +154,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 			surface.outputChanged(w, h, this);
 			return;
 		}
-		surface = outputManager.getDisplaySurfaceFor(this, w, h);
+		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
 		surface.setAutoSave(autosave);
 	}
@@ -159,27 +165,8 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		// The dependency to msi.gama.gui.opengl is put on hold for the moment.
-		return /* openGL ? OpenglLayeredDisplayView.ID : */GuiUtils.LAYER_VIEW_ID;
+		return GuiUtils.LAYER_VIEW_ID;
 	}
-
-	// public void setContext(final GLContext cont) {
-	// glcontext = cont;
-	// GL gl = glcontext.getGL();
-	// gl.glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
-	// }
-
-	// public void setCanvas(final GLCanvas can) {
-	// glcanvas = can;
-	// }
-
-	// public GLContext getContext() {
-	// return glcontext;
-	// }
-
-	// public GLCanvas getCanvas() {
-	// return glcanvas;
-	// }
 
 	@Override
 	public IDisplaySurface getSurface() {

@@ -33,7 +33,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@facet(name = IKeyword.KEYWORD, type = IType.ID, optional = true)
+// @facet(name = IKeyword.KEYWORD, type = IType.ID, optional = true)
 public class SymbolMetaDescription {
 
 	public static class FacetMetaDescription {
@@ -44,12 +44,34 @@ public class SymbolMetaDescription {
 		public boolean isLabel;
 		public String[] values;
 
+		private FacetMetaDescription() {}
+
 		FacetMetaDescription(final facet f) {
 			name = f.name();
 			types = f.type();
 			optional = f.optional();
 			isLabel = ids.contains(types[0]);
 			values = f.values();
+		}
+
+		static FacetMetaDescription DEPENDS_ON() {
+			FacetMetaDescription f = new FacetMetaDescription();
+			f.name = IKeyword.DEPENDS_ON;
+			f.types = new String[] { IType.NONE_STR };
+			f.optional = true;
+			f.isLabel = true;
+			f.values = new String[0];
+			return f;
+		}
+
+		static FacetMetaDescription KEYWORD() {
+			FacetMetaDescription f = new FacetMetaDescription();
+			f.name = IKeyword.KEYWORD;
+			f.types = new String[] { IType.ID };
+			f.optional = true;
+			f.isLabel = true;
+			f.values = new String[0];
+			return f;
 		}
 	}
 
@@ -70,14 +92,11 @@ public class SymbolMetaDescription {
 	private static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
-	// private final facet keywordFacet;
-
 	public SymbolMetaDescription(final Class instantiationClass, final Class baseClass,
 		final String keyword, final boolean hasSequence, final boolean hasArgs,
 		final boolean isTopLevel, final boolean doesNotHaveScope, final List<facet> possibleFacets,
 		final String omissible, final List<combination> possibleCombinations,
 		final List<String> contexts, final boolean isRemoteContext) {
-		facet k = getClass().getAnnotation(facet.class);
 		setInstantiationClass(instantiationClass);
 		setBaseClass(baseClass);
 		setRemoteContext(isRemoteContext);
@@ -86,7 +105,8 @@ public class SymbolMetaDescription {
 		this.omissibleFacet = omissible;
 		this.isTopLevel = isTopLevel;
 		this.hasScope = !doesNotHaveScope;
-		getPossibleFacets().put(k.name(), new FacetMetaDescription(k));
+		getPossibleFacets().put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD());
+		getPossibleFacets().put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON());
 		for ( facet f : possibleFacets ) {
 			getPossibleFacets().put(f.name(), new FacetMetaDescription(f));
 		}
@@ -176,25 +196,26 @@ public class SymbolMetaDescription {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final ISyntacticElement e, final Set<String> facets)
-		throws GamlException {
+	public void verifyMandatoryFacets(final ISyntacticElement e, final Set<String> facets,
+		final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.contains(s) ) {
-				;
-				throw new GamlException("Missing facet " + s, e);
+				new GamlCompilationError("Missing facet " + s, e);
 			}
 		}
 	}
 
-	public void verifyFacetsValidity(final ISyntacticElement e, final Set<String> facets)
-		throws GamlException {
+	public void verifyFacetsValidity(final ISyntacticElement e, final Set<String> facets,
+		final IDescription context) {
 		for ( String s : facets ) {
-			if ( !possibleFacets.containsKey(s) ) { throw new GamlException("Unknown facet " + s, e); }
+			if ( !possibleFacets.containsKey(s) ) {
+				new GamlCompilationError("Unknown facet " + s, e);
+			}
 		}
 	}
 
-	public void verifyFacetsCombinations(final ISyntacticElement e, final Set<String> facets)
-		throws GamlException {
+	public void verifyFacetsCombinations(final ISyntacticElement e, final Set<String> facets,
+		final IDescription context) {
 		if ( getPossibleCombinations().isEmpty() ) { return; }
 		for ( String[] c : getPossibleCombinations() ) {
 			boolean allPresent = true;
@@ -203,17 +224,20 @@ public class SymbolMetaDescription {
 			}
 			if ( allPresent ) { return; }
 		}
-		throw new GamlException("Wrong combination of facets " + facets, e);
+		new GamlCompilationError("Wrong combination of facets " + facets, e);
 	}
 
 	public boolean verifyContext(final String context) {
 		return possibleContexts.contains(context);
 	}
 
-	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets)
-		throws GamlException {
+	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
+		final IDescription context) {
 		for ( String s : facets.keySet() ) {
 			FacetMetaDescription f = possibleFacets.get(s);
+			if ( f == null ) {
+				continue;
+			}
 			if ( f.types[0].equals(IType.LABEL) ) {
 				facets.compileAsLabel(f.name);
 				boolean found = false;
@@ -223,8 +247,10 @@ public class SymbolMetaDescription {
 							found = true;
 						}
 					}
-					if ( !found ) { throw new GamlException("The value of facet " + s +
-						"must be one of " + String.valueOf(f.values), e); }
+					if ( !found ) {
+						new GamlCompilationError("The value of facet " + s + "must be one of " +
+							String.valueOf(f.values), e);
+					}
 				}
 
 			} else if ( IType.ID.equals(f.types[0]) || IType.NEW_TEMP_ID.equals(f.types[0]) ||
@@ -232,27 +258,31 @@ public class SymbolMetaDescription {
 				facets.compileAsLabel(f.name);
 				String id = facets.getString(s).trim();
 
-				if ( IExpressionParser.RESERVED.contains(id) ) { throw new GamlException(id +
-					" is a reserved keyword. It cannot be used as an identifiant", e); }
-				if ( !id.isEmpty() && !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw new GamlException(
-					"Character " + id.charAt(0) + " not allowed at the beginning of identifiant" +
-						id, e); }
-				for ( char ch : id.toCharArray() ) {
-					if ( !Character.isJavaIdentifierPart(ch) ) { throw new GamlException(
-						"Character " + ch + " not allowed in identifiant " + id, e); }
+				if ( IExpressionParser.RESERVED.contains(id) ) {
+					new GamlCompilationError(id +
+						" is a reserved keyword. It cannot be used as an identifiant", e);
 				}
+				// if ( !id.isEmpty() && !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw
+				// new GamlException(
+				// "Character " + id.charAt(0) + " not allowed at the beginning of identifiant" +
+				// id, e); }
+				// for ( char ch : id.toCharArray() ) {
+				// if ( !Character.isJavaIdentifierPart(ch) ) { throw new GamlException(
+				// "Character " + ch + " not allowed in identifiant " + id, e); }
+				// }
 
 			}
 
 		}
 	}
 
-	public void verifyFacets(final ISyntacticElement e, final Facets facets) throws GamlException {
+	public void verifyFacets(final ISyntacticElement e, final Facets facets,
+		final IDescription context) {
 		Set<String> tags = facets.keySet();
-		verifyMandatoryFacets(e, tags);
-		verifyFacetsValidity(e, tags);
-		verifyFacetsCombinations(e, tags);
-		verifyFacetsIds(e, facets);
+		verifyMandatoryFacets(e, tags, context);
+		verifyFacetsValidity(e, tags, context);
+		verifyFacetsCombinations(e, tags, context);
+		verifyFacetsIds(e, facets, context);
 	}
 
 	public boolean isTopLevel() {

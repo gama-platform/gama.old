@@ -393,7 +393,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		for ( ISymbol s : commands ) {
 			addChild(s);
 		}
@@ -418,13 +418,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private void createControl() {
 		IArchitecture control = getArchitecture();
 		List<ICommand> behaviors = getBehaviors();
-		try {
-			control.setChildren(behaviors);
-			control.verifyBehaviors(this);
-		} catch (GamlException e) {
-			e.printStackTrace();
-			control = null;
-		}
+		control.setChildren(behaviors);
+		control.verifyBehaviors(this);
 	}
 
 	@Override

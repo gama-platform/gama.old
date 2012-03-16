@@ -78,4 +78,58 @@ public interface IDisplaySurface {
 
 	void snapshot();
 
+	/**
+	 * @param swtNavigationPanel
+	 *            FIXME Create an interface for the navigqtion panel
+	 */
+	void setNavigator(Object swtNavigationPanel);
+
+	/**
+	 * @return the width of the panel
+	 */
+	int getWidth();
+
+	/**
+	 * @return the height of the panel
+	 */
+	int getHeight();
+
+	/**
+	 * @return the width of the image (bitmap)
+	 */
+	int getImageWidth();
+
+	/**
+	 * @return the height of the image (bitmap)
+	 */
+	int getImageHeight();
+
+	/**
+	 * Sets the origin (top left corner) of the image in the panel
+	 * @param i
+	 * @param j
+	 */
+	void setOrigin(int i, int j);
+
+	/**
+	 * Returns the x coordinate of the origin (top left corner of the image in the panel)
+	 * @return
+	 */
+	int getOriginX();
+
+	/**
+	 * Returns the y coordinate of the origin (top left corner of the image in the panel)
+	 * @return
+	 */
+
+	int getOriginY();
+
+	/**
+	 * Post-constructor that initializes the surface
+	 * @param w
+	 * @param h
+	 * @param layerDisplayOutput
+	 */
+	void initialize(double w, double h, IDisplayOutput layerDisplayOutput);
+
 }

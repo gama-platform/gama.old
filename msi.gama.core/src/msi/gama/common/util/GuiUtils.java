@@ -21,7 +21,7 @@ package msi.gama.common.util;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -167,7 +167,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void runtimeError(final GamlException g) {
+	public static void runtimeError(final GamaRuntimeException g) {
 		if ( gui != null ) {
 			gui.runtimeError(g);
 		}
@@ -288,9 +288,9 @@ public class GuiUtils {
 	 * @param h
 	 * @return
 	 */
-	public static IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
-		return gui != null ? gui.getDisplaySurfaceFor(layerDisplayOutput, w, h) : null;
+	public static IDisplaySurface getDisplaySurfaceFor(final String keyword,
+		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h) : null;
 	}
 
 	/**

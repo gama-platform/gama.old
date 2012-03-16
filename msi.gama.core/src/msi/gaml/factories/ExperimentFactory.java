@@ -22,7 +22,6 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 
@@ -38,7 +37,7 @@ public class ExperimentFactory extends SymbolFactory {
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
 		if ( !cur.getName().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
-		String type = cur.getAttribute(IKeyword.TYPE);
+		String type = cur.getLabel(IKeyword.TYPE);
 		if ( type == null ) { return super.getKeyword(cur); }
 		return type;
 	}
@@ -48,8 +47,8 @@ public class ExperimentFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
+		final List<IDescription> commands, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		return new ExperimentDescription(keyword, superDesc, facets, commands, source, md);
+		return new ExperimentDescription(keyword, superDesc, commands, source, md);
 	}
 }

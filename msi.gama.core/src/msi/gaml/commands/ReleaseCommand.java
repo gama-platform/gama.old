@@ -62,7 +62,7 @@ public class ReleaseCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> com) {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

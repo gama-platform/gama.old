@@ -19,7 +19,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
@@ -31,6 +31,8 @@ import msi.gaml.types.IType;
  */
 public interface IExpressionFactory {
 
+	public void registerParser(IExpressionParser parser);
+
 	public abstract IExpression createConst(final Object val) throws GamaRuntimeException;
 
 	public abstract IExpression createConst(final Object val, final IType type)
@@ -39,10 +41,9 @@ public interface IExpressionFactory {
 	public abstract IExpression createConst(final Object val, final IType type,
 		final IType contentType) throws GamaRuntimeException;
 
-	public abstract IExpression createExpr(final ExpressionDescription s) throws GamlException;
+	public abstract IExpression createExpr(final ExpressionDescription s);
 
-	public abstract IExpression createExpr(final ExpressionDescription s, final IDescription context)
-		throws GamlException;
+	public abstract IExpression createExpr(final ExpressionDescription s, final IDescription context);
 
 	public abstract IVarExpression createVar(final String name, final IType type,
 		final IType contentType, final boolean isConst, final int scope);
@@ -56,6 +57,6 @@ public interface IExpressionFactory {
 	public abstract IOperator copyPrimitiveOperatorForSpecies(IOperator op, IDescription species);
 
 	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
-		IDescription context) throws GamlException;
+		IDescription context);
 
 }

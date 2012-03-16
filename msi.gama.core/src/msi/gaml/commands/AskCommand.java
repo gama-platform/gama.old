@@ -50,13 +50,15 @@ public class AskCommand extends AbstractCommandSequence {
 
 	public AskCommand(final IDescription desc) {
 		super(desc);
-		setName("ask " + getFacet(IKeyword.TARGET).toGaml());
-		target = getFacet(IKeyword.TARGET);
 		verifyFacetType(IKeyword.TARGET);
+		target = getFacet(IKeyword.TARGET);
+		if ( target != null ) {
+			setName("ask " + target.toGaml());
+		}
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> com) {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

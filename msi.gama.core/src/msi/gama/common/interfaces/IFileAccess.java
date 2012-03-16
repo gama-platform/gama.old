@@ -5,7 +5,7 @@
 package msi.gama.common.interfaces;
 
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.GamaStartupException;
 import org.osgi.framework.Bundle;
 
 /**
@@ -18,6 +18,6 @@ import org.osgi.framework.Bundle;
 public interface IFileAccess {
 
 	GamlProperties getGamaProperties(final Bundle plugin, final String pathToAdditions,
-		final String fileName) throws GamlException;
+		final String fileName) throws GamaStartupException;
 
 }

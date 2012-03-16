@@ -63,8 +63,9 @@ public class SpeciesFactory extends SymbolFactory {
 
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
-		final String keyword, final List<IDescription> children, final Facets facets,
-		final IDescription superDesc, final SymbolMetaDescription md) {
+		final String keyword, final List<IDescription> children, final IDescription superDesc,
+		final SymbolMetaDescription md) {
+		Facets facets = source.getAttributes();
 		String name = facets.getString(IKeyword.NAME);
 		varFactory.addSpeciesNameAsType(name);
 		// registeredFactories.get(varFactory).add(name);
@@ -83,8 +84,8 @@ public class SpeciesFactory extends SymbolFactory {
 			try {
 				base = GamaClassLoader.getInstance().loadClass(facets.getString(IKeyword.BASE));
 			} catch (ClassNotFoundException e) {
-				superDesc.flagError(new GamlException("Impossible to instantiate '" + keyword +
-					"' because: " + e.getMessage(), source));
+				superDesc.flagError("Impossible to instantiate '" + keyword + "' because: " +
+					e.getMessage());
 			}
 		}
 		if ( facets.containsKey(IKeyword.SKILLS) ) {
@@ -122,12 +123,7 @@ public class SpeciesFactory extends SymbolFactory {
 				lce.add(compileDescription(s, factory));
 			}
 		}
-		try {
-			cs.setChildren(lce);
-		} catch (GamlException e) {
-			sd.flagError(e);
-		}
-
+		cs.setChildren(lce);
 	}
 
 }

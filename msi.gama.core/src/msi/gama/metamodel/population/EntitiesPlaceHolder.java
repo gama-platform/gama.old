@@ -32,6 +32,6 @@ public class EntitiesPlaceHolder extends Symbol {
 	 * @see msi.gaml.compilation.Symbol#setChildren(java.util.List)
 	 */
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> commands) {}
 
 }

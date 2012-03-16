@@ -22,7 +22,8 @@ import static msi.gama.precompiler.ITypeProvider.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.IOperatorExecuter;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
 
@@ -55,12 +56,12 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	@Override
 	public BinaryOperator init(final String operator, final IExpression left,
-		final IExpression right) throws GamlException {
+		final IExpression right, final IDescription context) {
 		setName(operator);
 		this.left = left;
 		this.right = right;
-		computeType();
-		computeContentType();
+		computeType(context);
+		computeContentType(context);
 		return this;
 	}
 
@@ -83,7 +84,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		}
 	}
 
-	public void computeType() throws GamlException {
+	public void computeType(final IDescription context) {
 		short t = typeProvider;
 		if ( t == BOTH ) {
 			IType l = left.type();
@@ -114,9 +115,9 @@ public class BinaryOperator extends AbstractBinaryOperator {
 					type = r;
 					return;
 				}
-				throw new GamlException("Content types of left and right operands do not match (" +
+				context.flagError("Content types of left and right operands do not match (" +
 					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression", (Throwable) null);
+					"). Impossible to infer the content type of the expression");
 			}
 			return;
 		}
@@ -126,7 +127,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 					? Types.get(t) : type;
 	}
 
-	public void computeContentType() throws GamlException {
+	public void computeContentType(final IDescription context) {
 		short t = contentTypeProvider;
 		if ( t == BOTH ) {
 			IType l = left.getContentType();
@@ -157,9 +158,9 @@ public class BinaryOperator extends AbstractBinaryOperator {
 					contentType = r;
 					return;
 				}
-				throw new GamlException("Content types of left and right operands do not match (" +
+				context.flagError("Content types of left and right operands do not match (" +
 					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression", (Throwable) null);
+					"). Impossible to infer the content type of the expression");
 			}
 			return;
 		}

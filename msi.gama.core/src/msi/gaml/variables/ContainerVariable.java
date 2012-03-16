@@ -29,7 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -47,7 +47,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SIZE, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.DEPENDS_ON, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true) }, omissible = IKeyword.NAME)
@@ -59,7 +58,7 @@ public class ContainerVariable extends Variable {
 
 	private GamaPoint size;
 
-	public ContainerVariable(final IDescription sd) throws GamlException, GamaRuntimeException {
+	public ContainerVariable(final IDescription sd) {
 		super(sd);
 	}
 

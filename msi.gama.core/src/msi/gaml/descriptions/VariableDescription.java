@@ -20,9 +20,8 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.util.GamaList;
+import msi.gama.precompiler.IUnits;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
@@ -35,9 +34,7 @@ import msi.gaml.types.*;
 public class VariableDescription extends SymbolDescription {
 
 	private Set<VariableDescription> dependencies;
-	private List<String> builtInDependencies;
 	private boolean isBuiltIn;
-	private final boolean isUserDefined;
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
 	private IType contentType = null;
@@ -46,22 +43,13 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
-		super(keyword, superDesc, facets, children, source, md);
-		isBuiltIn = source == null;
-		isUserDefined = source != null;
-		facets.putIfAbsent(IKeyword.TYPE, keyword);
-		ExpressionDescription s = facets.getTokens(IKeyword.DEPENDS_ON);
-		if ( s == null ) {
-			builtInDependencies = new GamaList();
-		} else {
-			builtInDependencies = s;
+		super(keyword, superDesc, children, source, md);
+		isBuiltIn = source.isSynthetic();
+		if ( !isBuiltIn ) {
+			verifyVarName(getName());
 		}
-
+		facets.putIfAbsent(IKeyword.TYPE, keyword);
 	}
-
-	// public String typeAsString() {
-	// return facets.getString(ISymbol.TYPE);
-	// }
 
 	@Override
 	public void setSuperDescription(final IDescription s) {
@@ -69,38 +57,17 @@ public class VariableDescription extends SymbolDescription {
 		super.setSuperDescription(s);
 	}
 
-	/**
-	 * @param builtIn
-	 */
 	public void copyFrom(final VariableDescription v2) {
 		isBuiltIn = v2.isBuiltIn;
-		// isGlobal = v2.isGlobal;
-		if ( isBuiltIn ) {
-			builtInDependencies = v2.builtInDependencies;
-		}
 		facets.addAll(v2.facets);
 	}
 
 	@Override
-	public String getKeyword() {
-		String keyword = facets.getString(IKeyword.TYPE, super.getKeyword());
-		if ( this.getModelDescription().getSpeciesDescription(keyword) != null &&
-			!keyword.equals(IKeyword.SIGNAL) ) { return IType.AGENT_STR; }
-		// FIXME Still necessary now that the species are added dynamically to the list of symbols
-		// accepted by VariableFactory ?
-		return keyword;
-	}
-
-	@Override
 	public VariableDescription shallowCopy(final IDescription superDesc) {
-		VariableDescription copy =
+		VariableDescription v2 =
 			new VariableDescription(getKeyword(), superDesc, facets, children, getSource(), meta);
-		copy.isBuiltIn = this.isBuiltIn;
-		return copy;
-	}
-
-	public boolean isUserDefined() {
-		return isUserDefined;
+		v2.isBuiltIn = isBuiltIn;
+		return v2;
 	}
 
 	public boolean isBuiltIn() {
@@ -109,64 +76,36 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-		ModelDescription md = this.getModelDescription();
-		if ( md != null ) { return md.getTypeOf(facets.getString(IKeyword.TYPE)); }
-		return Types.get(facets.getString(IKeyword.TYPE));
+		return getTypeOf(facets.getString(IKeyword.TYPE));
 	}
 
 	public void setType(final IType type) {
 		facets.putAsLabel(IKeyword.TYPE, type.toString());
 	}
 
-	public Set<VariableDescription> usedVariables(final ExecutionContextDescription context) {
-		if ( dependencies != null ) { return dependencies; }
-		dependencies = new HashSet();
-		final Set<String> names = new HashSet();
-		names.addAll(builtInDependencies);
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.INIT)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.VALUE)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.UPDATE)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.FUNCTION)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.MIN)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.MAX)));
-		names.addAll(variablesUsedIn(context, facets.getTokens(IKeyword.SIZE)));
-
-		for ( final String s : names ) {
-			VariableDescription v =
-				((ExecutionContextDescription) getSuperDescription()).getVariable(s);
-			if ( v != null ) {
-				dependencies.add(v);
+	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
+		if ( dependencies == null ) {
+			dependencies = new HashSet();
+			final Set<String> names = new HashSet();
+			ExpressionDescription depends = facets.getTokens(IKeyword.DEPENDS_ON);
+			if ( depends != null ) {
+				// GuiUtils
+				// .debug(" Dependencies found for " + getName() + " " + new GamaList(depends));
+				names.addAll(depends);
+				for ( final String s : names ) {
+					VariableDescription v = vars.get(s);
+					if ( v != null ) {
+						dependencies.add(v);
+					}
+				}
+				dependencies.remove(this);
 			}
 		}
-		dependencies.remove(this);
+		// GuiUtils.debug("Dependencies of " + this.getName() + " : " + dependencies);
 		return dependencies;
 	}
 
-	private Set<String> variablesUsedIn(final ExecutionContextDescription context,
-		final ExpressionDescription facet) {
-		final Set<String> vars = new HashSet();
-		if ( facet == null ) { return vars; }
-		final Set<String> all = new HashSet();
-		for ( String s : facet ) {
-			if ( GamlExpressionParser.isDottedExpr(s) ) {
-				final String[] ss = s.split("\\.");
-				for ( String name : ss ) {
-					all.add(name);
-				}
-			} else {
-				all.add(s);
-			}
-		}
-		for ( final String s : all ) {
-			if ( context.hasVar(s) ) {
-				vars.add(s);
-			}
-		}
-
-		return vars;
-	}
-
-	public void expandDependencies(final List<VariableDescription> without) throws GamlException {
+	public void expandDependencies(final List<VariableDescription> without) {
 		final Set<VariableDescription> accumulator = new HashSet();
 		for ( final VariableDescription dep : dependencies ) {
 			if ( !without.contains(dep) ) {
@@ -234,11 +173,6 @@ public class VariableDescription extends SymbolDescription {
 		// sent by the variable once its value and init are compiled
 		if ( contentType != null && contentType != Types.NO_TYPE ) { return; }
 		contentType = type;
-		// if ( varExpr != null ) {
-		// OutputManager.debug("Variable description " + getName() + " content type changed to " +
-		// contentType.toString());
-		// varExpr.setContentType(type);
-		// }
 	}
 
 	public void setDefinitionOrder(final int i) {
@@ -252,6 +186,28 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public String toString() {
 		return getName() + " (description)";
+	}
+
+	public void verifyVarName(final String name) {
+		if ( name == null ) {
+			flagError("The attribute 'name' is missing. Variables must be named.");
+		} else if ( IExpressionParser.RESERVED.contains(name) ) {
+			flagError(name +
+				" is a reserved keyword. It cannot be used as a variable name. Reserved keywords are: " +
+				IExpressionParser.RESERVED);
+		}/*
+		 * else if ( IExpressionParser.BINARIES.containsKey(name) ) {
+		 * flagError(name + " is a binary operator name. It cannot be used as a variable name");
+		 * } else if ( IExpressionParser.UNARIES.containsKey(name) ) {
+		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
+		 * } else if ( getTypeOf(name) != Types.NO_TYPE ) {
+		 * flagError(name + " is a type name. It cannot be used as a variable name. ");
+		 * }
+		 */else if ( IUnits.UNITS.containsKey(name) ) {
+			flagError(name +
+				" is a unit name. It cannot be used as a variable name. Units in this model are :" +
+				String.valueOf(IUnits.UNITS.keySet()));
+		}
 	}
 
 }

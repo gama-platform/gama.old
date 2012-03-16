@@ -123,8 +123,11 @@ public class Containers {
 
 	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static IList asSet(final IContainer l) {
+		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
+		// utilisé à la place à vérifier
+
 		if ( l == null ) { return null; }
-		final HashSet list = new HashSet(l.length());
+		final LinkedHashSet list = new LinkedHashSet(l.length());
 		for ( Object o : l ) {
 			list.add(o);
 		}

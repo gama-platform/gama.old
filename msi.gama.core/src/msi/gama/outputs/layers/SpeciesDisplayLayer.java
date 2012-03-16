@@ -68,7 +68,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		// TODO search for hostSpecies; may have several hostSpecies incase of micro-species are
 		// inherited
 

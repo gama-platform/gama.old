@@ -4,31 +4,44 @@
  */
 package msi.gaml.factories;
 
+import java.io.*;
+import java.net.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ErrorCollector;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.compilation.GamlCompilationError;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.ecore.resource.Resource;
 
-public class ModelStructure {
+public class ModelStructure implements IKeyword {
 
+	static final List<String> GLOBAL_NODES = Arrays.asList(GLOBAL);
+	static final List<String> NON_RECURSIVE = Arrays.asList(OUTPUT, BATCH, GLOBAL, SPECIES, GRID);
+	static final List<String> NODES_TO_REMOVE = Arrays.asList(INCLUDE, GLOBAL, SPECIES, GRID);
+	static final List<String> NODES_TO_EXPAND = Arrays.asList(ENTITIES);
 	private String name = "";
 	private String path = "";
 	private final List<SpeciesStructure> species = new ArrayList();
-	private List<ISyntacticElement> globalNodes;
-	private List<ISyntacticElement> modelNodes;
+	private final List<ISyntacticElement> globalNodes = new ArrayList();
+	private List<ISyntacticElement> modelNodes = new ArrayList();
+	private ISyntacticElement source;
 
-	public ModelStructure(final String fileName, final Map<String, ISyntacticElement> nodes,
-		final ErrorCollector collect) {
-		path = fileName;
-		init(new ModelElements(nodes).getNodesFrom(fileName, collect), collect);
+	public ModelStructure(final Resource r, final Map<Resource, ISyntacticElement> documents,
+		final ErrorCollector collect) throws MalformedURLException, IOException {
+		URL url = FileLocator.resolve(new URL(r.getURI().toString()));
+		String filePath = new File(url.getFile()).getAbsolutePath();
+		path = filePath;
+		init(buildNodes(documents), collect);
 	}
 
-	private void init(final Map<String, List<ISyntacticElement>> nodes, final ErrorCollector collect) {
-		setName(nodes.get(IKeyword.NAME).get(0).getAttribute(IKeyword.NAME));
-		setGlobalNodes(nodes.get(IKeyword.GLOBAL));
-		setModelNodes(nodes.get(IKeyword.MODEL));
-		for ( ISyntacticElement speciesNode : nodes.get(IKeyword.SPECIES) ) {
+	public ISyntacticElement getSource() {
+		return source;
+	}
+
+	private void init(final List<ISyntacticElement> speciesNodes, final ErrorCollector collect) {
+
+		for ( ISyntacticElement speciesNode : speciesNodes ) {
 			addSpecies(buildSpeciesStructure(speciesNode, collect));
 		}
 	}
@@ -40,7 +53,7 @@ public class ModelStructure {
 	private SpeciesStructure buildSpeciesStructure(final ISyntacticElement speciesNode,
 		final ErrorCollector collect) {
 		if ( speciesNode == null ) {
-			collect.add(new GamlException("Species element is null!", (Throwable) null));
+			collect.add(new GamlCompilationError("Species element is null!", speciesNode));
 			return null;
 		}
 
@@ -48,8 +61,8 @@ public class ModelStructure {
 
 		// recursively accumulate micro-species
 		List<ISyntacticElement> microSpecies = new GamaList<ISyntacticElement>();
-		microSpecies.addAll(speciesNode.getChildren(IKeyword.SPECIES));
-		microSpecies.addAll(speciesNode.getChildren(IKeyword.GRID));
+		microSpecies.addAll(speciesNode.getChildren(SPECIES));
+		microSpecies.addAll(speciesNode.getChildren(GRID));
 		for ( ISyntacticElement microSpeciesNode : microSpecies ) {
 			species.addMicroSpecies(buildSpeciesStructure(microSpeciesNode, collect));
 		}
@@ -76,16 +89,8 @@ public class ModelStructure {
 		return species;
 	}
 
-	public void setGlobalNodes(final List<ISyntacticElement> globalNodes) {
-		this.globalNodes = globalNodes;
-	}
-
 	public List<ISyntacticElement> getGlobalNodes() {
 		return globalNodes;
-	}
-
-	public void setModelNodes(final List<ISyntacticElement> modelNodes) {
-		this.modelNodes = modelNodes;
 	}
 
 	public List<ISyntacticElement> getModelNodes() {
@@ -96,4 +101,68 @@ public class ModelStructure {
 	public String toString() {
 		return "model " + name;
 	}
+
+	List<ISyntacticElement> buildNodes(final Map<Resource, ISyntacticElement> documents) {
+		List<ISyntacticElement> speciesNodes = new ArrayList();
+		List<ISyntacticElement> list = new ArrayList(documents.values());
+		Collections.reverse(list);
+		for ( ISyntacticElement e : list ) {
+			if ( source == null ) {
+				source = e;
+				if ( source.getAttribute(NAME) == null ) {
+					source.setAttribute(NAME, source.getName(), null);
+				}
+				setName(source.getLabel(NAME));
+			}
+			modelNodes.addAll(e.getChildren());
+		}
+
+		// EXPAND
+		List<ISyntacticElement> expanded = new ArrayList();
+		for ( int i = 0, n = modelNodes.size(); i < n; i++ ) {
+			ISyntacticElement e = modelNodes.get(i);
+			if ( NODES_TO_EXPAND.contains(e.getName()) ) {
+				List<ISyntacticElement> children = e.getChildren();
+				expanded.addAll(children);
+			} else {
+				expanded.add(e);
+			}
+		}
+		modelNodes = expanded;
+		//
+		speciesNodes.addAll(accumulateNodes(modelNodes, ModelFactory.SPECIES_NODES));
+		globalNodes.addAll(accumulateNodes(modelNodes, GLOBAL_NODES));
+		removeUselessNodes(modelNodes, NODES_TO_REMOVE);
+		return speciesNodes;
+	}
+
+	private List<ISyntacticElement> accumulateNodes(final List<ISyntacticElement> nodes,
+		final List<String> names) {
+		final List result = new ArrayList();
+		for ( final ISyntacticElement e : nodes ) {
+			final String name = e.getName();
+			if ( names.contains(name) ) {
+				result.add(e);
+			}
+			if ( !NON_RECURSIVE.contains(name) ) {
+				result.addAll(accumulateNodes(e.getChildren(), names));
+			}
+		}
+		return result;
+	}
+
+	private void removeUselessNodes(final List<ISyntacticElement> nodes, final List<String> names) {
+		Iterator<ISyntacticElement> i = nodes.iterator();
+		while (i.hasNext()) {
+			ISyntacticElement e = i.next();
+			final String name = e.getName();
+			if ( names.contains(name) ) {
+				i.remove();
+			}
+			if ( !NON_RECURSIVE.contains(name) ) {
+				removeUselessNodes(e.getChildren(), names);
+			}
+		}
+	}
+
 }

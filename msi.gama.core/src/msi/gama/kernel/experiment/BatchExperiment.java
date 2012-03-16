@@ -239,7 +239,7 @@ public class BatchExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void reloadExperiment() throws GamaRuntimeException, GamlException, InterruptedException {
+	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		stopExperiment();
 		initializeExperiment();
@@ -249,7 +249,7 @@ public class BatchExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> children) {
 		super.setChildren(children);
 		for ( ISymbol s : children ) {
 			if ( s instanceof BatchOutput ) {
@@ -268,10 +268,14 @@ public class BatchExperiment extends AbstractExperiment {
 				}
 			}
 		}
-		exploAlgo.initializeFor(this);
+		try {
+			exploAlgo.initializeFor(this);
+		} catch (GamaRuntimeException e) {
+			description.flagError(e.getMessage());
+		}
 	}
 
-	private void createOutput(final BatchOutput output) throws GamlException, GamaRuntimeException {
+	private void createOutput(final BatchOutput output) throws GamaRuntimeException {
 		// TODO revoir tout ceci. Devrait plutôt être une commande
 		if ( output == null ) { return; }
 		IExpression data = output.getFacet(IKeyword.DATA);
@@ -411,9 +415,6 @@ public class BatchExperiment extends AbstractExperiment {
 				createOutput(fileOutputDescription);
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
-			} catch (GamlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}

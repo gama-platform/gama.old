@@ -23,8 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.Facet;
+import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
 /**
@@ -45,9 +44,6 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 			result = privateExecuteIn(stack);
 		} catch (GamaRuntimeException e) {
 			e.addContext(this);
-			if ( description != null ) {
-				e.addSource(description.getSourceInformation());
-			}
 			if ( e.isWarning() ) {
 				GAMA.reportError(e);
 				return null;
@@ -60,7 +56,7 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 	protected abstract Object privateExecuteIn(IScope stack) throws GamaRuntimeException;
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> commands) {}
 
 	@Override
 	public IType getReturnType() {
@@ -87,7 +83,7 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 		String k = getLiteral(IKeyword.KEYWORD);
 		StringBuilder sb = new StringBuilder();
 		sb.append(k).append(' ');
-		for ( Map.Entry<String, Facet> e : description.getFacets().entrySet() ) {
+		for ( Map.Entry<String, ExpressionDescription> e : description.getFacets().entrySet() ) {
 			if ( !e.getKey().equals(IKeyword.KEYWORD) ) {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml())
 					.append(" ");

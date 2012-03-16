@@ -30,7 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -70,13 +70,9 @@ public class SaveCommand extends AbstractCommandSequence {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		try {
-			path =
-				scope.getSimulationScope().getModel()
-					.getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
-		} catch (GamlException e) {
-			e.printStackTrace();
-		}
+		path =
+			scope.getSimulationScope().getModel()
+				.getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
 		if ( path.equals("") ) {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;

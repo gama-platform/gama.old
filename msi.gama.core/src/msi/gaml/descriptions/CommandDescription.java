@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
@@ -45,16 +44,10 @@ public class CommandDescription extends SymbolDescription {
 	private static int index = 0;
 
 	public CommandDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final boolean hasScope,
-		final boolean hasArgs, final ISyntacticElement source, final SymbolMetaDescription md) {
-		super(keyword, superDesc, facets, children, source, md);
+		final List<IDescription> children, final boolean hasScope, final boolean hasArgs,
+		final ISyntacticElement source, final SymbolMetaDescription md) {
+		super(keyword, superDesc, children, source, md);
 		this.verifyMandatoryArgs = !keyword.equals(IKeyword.PRIMITIVE);
-
-		/*
-		 * if ("create".equals(this.getKeyword()) && "species1".equals(superDesc.getName())) {
-		 * System.out.println();
-		 * }
-		 */
 
 		if ( hasScope ) {
 			temps = new HashMap();
@@ -63,11 +56,7 @@ public class CommandDescription extends SymbolDescription {
 		}
 		if ( hasArgs ) {
 			args = new HashMap();
-			try {
-				collectArgs();
-			} catch (GamlException e) {
-				superDesc.flagError(e);
-			}
+			collectArgs();
 		} else {
 			args = null;
 		}
@@ -84,9 +73,9 @@ public class CommandDescription extends SymbolDescription {
 		}
 	}
 
-	private void collectArgs() throws GamlException {
+	private void collectArgs() {
 		if ( facets.containsKey(IKeyword.WITH) ) {
-			List<IDescription> argList = explodeArgs(facets.getString(IKeyword.WITH));
+			List<IDescription> argList = explodeArgs(facets.get(IKeyword.WITH));
 			children.addAll(argList);
 			facets.remove(IKeyword.WITH);
 		}
@@ -98,10 +87,10 @@ public class CommandDescription extends SymbolDescription {
 		children.removeAll(args.values());
 	}
 
-	private List<IDescription> explodeArgs(final String args) throws GamlException {
+	private List<IDescription> explodeArgs(final ExpressionDescription args) {
 		List<IDescription> argList = new GamaList();
-		ExpressionDescription words = new ExpressionDescription(args, true);
-		words = new ExpressionDescription(words.subList(1, words.size() - 1));
+		ExpressionDescription words; // = new ExpressionDescription(args, true);
+		words = new ExpressionDescription(args.subList(1, args.size() - 1));
 		int begin = 0;
 		int end = 0;
 		int listLevel = 0;
@@ -124,15 +113,17 @@ public class CommandDescription extends SymbolDescription {
 			}
 			String arg = words.get(begin + parenthesis);
 			String sep = words.get(begin + parenthesis + 1);
-			if ( !sep.equals("::") ) { throw new GamlException(
-				"Arguments must be provided as pairs arg::value; " +
-					words.subConcatenation(begin, end) + " is not a pair",
-				this.getSourceInformation()); }
-			String expr = words.subConcatenation(begin + parenthesis + 2, end - parenthesis);
+			if ( !sep.equals("::") ) {
+				flagError("Arguments must be provided as pairs arg::value; " +
+					words.subList(begin, end) + " is not a pair");
+			}
+			ExpressionDescription expr =
+				new ExpressionDescription(words.subList(begin + parenthesis + 2, end - parenthesis));
 			// String[] facetArray = new String[] { IKeyword.NAME, arg, IKeyword.VALUE, expr };
 			// GuiUtils.debug("Found a new argument:" + Arrays.toString(facetArray));
-			argList.add(DescriptionFactory.createDescription(IKeyword.ARG, this, IKeyword.NAME,
-				arg, IKeyword.VALUE, expr));
+			Facets f = new Facets(IKeyword.NAME, arg);
+			f.put(IKeyword.VALUE, expr);
+			argList.add(DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
 			begin = end + 1;
 			end = begin;
 		}
@@ -141,13 +132,14 @@ public class CommandDescription extends SymbolDescription {
 
 	public IVarExpression addNewTempIfNecessary(final String facetName,
 		final SymbolMetaDescription md, final String type, final String contentType,
-		final IExpressionFactory f) throws GamlException {
+		final IExpressionFactory f) {
 
 		if ( md.isFacetDeclaringANewTemp(facetName) ) {
 			String varName = facets.getString(facetName);
 			if ( getSuperDescription() == null ||
-				!(getSuperDescription() instanceof CommandDescription) ) { throw new GamlException(
-				"Impossible to return " + varName, getSourceInformation()); }
+				!(getSuperDescription() instanceof CommandDescription) ) {
+				flagError("Impossible to return " + varName);
+			}
 			// TODO ExpressionParser.getInstance().verifyVarName(varName, getModel());
 			return (IVarExpression) ((CommandDescription) getSuperDescription()).addTemp(varName,
 				type == null ? Types.NO_TYPE : getTypeOf(type), contentType == null ? Types.NO_TYPE
@@ -176,8 +168,8 @@ public class CommandDescription extends SymbolDescription {
 		if ( args != null ) {
 			children.addAll(args.values());
 		}
-		return new CommandDescription(getKeyword(), null, facets, children, temps != null,
-			args != null, getSource(), meta);
+		return new CommandDescription(getKeyword(), null, children, temps != null, args != null,
+			getSource(), meta);
 	}
 
 	@Override
@@ -205,7 +197,7 @@ public class CommandDescription extends SymbolDescription {
 		return null;
 	}
 
-	public void verifyArgs(final Set<String> names) throws GamlException {
+	public void verifyArgs(final Set<String> names) {
 		if ( args == null ) { return; }
 		List<String> mandatoryArgs = new ArrayList();
 		Set<String> allArgs = args.keySet();
@@ -217,13 +209,15 @@ public class CommandDescription extends SymbolDescription {
 		}
 		if ( verifyMandatoryArgs ) {
 			for ( String arg : mandatoryArgs ) {
-				if ( !names.contains(arg) ) { throw new GamlException("Missing argument " + arg +
-					" in call to " + getName(), getSourceInformation()); }
+				if ( !names.contains(arg) ) {
+					flagError("Missing argument " + arg + " in call to " + getName());
+				}
 			}
 		}
 		for ( String arg : names ) {
-			if ( !allArgs.contains(arg) ) { throw new GamlException("Unknown argument" + arg +
-				" in call to " + getName(), getSourceInformation()); }
+			if ( !allArgs.contains(arg) ) {
+				flagError("Unknown argument" + arg + " in call to " + getName());
+			}
 		}
 	}
 

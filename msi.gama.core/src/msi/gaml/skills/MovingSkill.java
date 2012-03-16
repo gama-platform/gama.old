@@ -18,14 +18,12 @@
  */
 package msi.gaml.skills;
 
-import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -36,12 +34,10 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Points;
 import msi.gaml.types.*;
-import org.jgrapht.Graph;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
@@ -270,7 +266,8 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) || !( path.getStartVertex().equals(source))) {
+		if ( path == null || !path.getTopology().equals(topo) ||
+			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(source, goal);
 		}
 
@@ -279,18 +276,18 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
-		if (returnPath != null && returnPath) {
+		if ( returnPath != null && returnPath ) {
 			IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist);
 			if ( pathFollowed == null ) {
-				 scope.setStatus(ExecutionStatus.failure);
-				 return null;
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
 			}
 			scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
 		moveToNextLocAlongPathSimplified(agent, path, maxDist);
 		scope.setStatus(ExecutionStatus.success);
-		return null ;
+		return null;
 	}
 
 	/**
@@ -368,12 +365,14 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 		}
-		
+
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-			double weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
-			
+			IGraph graph = path.getGraph();
+			double weight =
+				graph == null ? 1 : graph.getEdgeWeight(line) / line.getGeometry().getPerimeter();
+
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -421,7 +420,7 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
 		path.setSource(currentLocation.copy());
-		
+
 		return null;
 	}
 
@@ -494,11 +493,13 @@ public class MovingSkill extends GeometricSkill {
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			// The weight computed here is absolutely useless.. since getWeight() returns the
-			// perimeter. // ANSWER : it is necessary because the weight can be different than the perimeter (see model traffic_tutorial)
+			// perimeter. // ANSWER : it is necessary because the weight can be different than the
+			// perimeter (see model traffic_tutorial)
 			double weight = 1;
 			if (path.getGraph() != null && path.getGraph().containsEdge(line))	{
 				weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
 			}
+
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {

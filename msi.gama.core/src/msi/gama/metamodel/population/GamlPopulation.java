@@ -42,7 +42,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public class GamlPopulation extends AbstractPopulation implements IGamlPopulation {
+public class GamlPopulation extends SinglePopulation implements IGamlPopulation {
 
 	IExpression scheduleFrequency = new JavaConstExpression(1);
 
@@ -150,15 +150,15 @@ public class GamlPopulation extends AbstractPopulation implements IGamlPopulatio
 			if ( size() == 0 ) {
 				WorldAgent world = new WorldAgent(scope.getSimulationScope(), this);
 				world.setIndex(0);
-				add(world);
-				createVariablesFor(scope, this, initialValues);
+				agents.add(world);
+				createVariablesFor(scope, agents, initialValues);
 				// initialize the model environment
 				IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
 				modelEnv.initializeFor(scope);
 				world.initializeLocationAndGeomtry(scope);
 				topology = new ContinuousTopology(scope, world.getGeometry());
 			}
-			return this;
+			return agents;
 		}
 
 		@Override

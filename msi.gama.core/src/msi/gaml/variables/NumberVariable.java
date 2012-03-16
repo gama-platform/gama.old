@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -47,7 +47,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.MIN, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.MAX, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.DEPENDS_ON, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
@@ -61,7 +60,7 @@ public class NumberVariable extends Variable {
 	private final Number minVal, maxVal, stepVal;
 
 	public NumberVariable(/* final ISymbol enclosingScope, */final IDescription sd)
-		throws GamlException, GamaRuntimeException {
+		throws GamaRuntimeException {
 		super(/* enclosingScope, */sd);
 		IScope scope = GAMA.getDefaultScope();
 		min = getFacet(IKeyword.MIN);

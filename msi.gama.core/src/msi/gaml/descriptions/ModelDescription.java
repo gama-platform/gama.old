@@ -20,11 +20,9 @@ package msi.gaml.descriptions;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.FileUtils;
-import msi.gama.precompiler.IUnits;
-import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
@@ -47,9 +45,9 @@ public class ModelDescription extends SymbolDescription {
 	private String baseDirectory;
 	private SpeciesDescription worldSpecies;
 
-	public ModelDescription(final String fileName) {
-		super(IKeyword.MODEL, null, new Facets(), new ArrayList(), null, DescriptionFactory
-			.getModelFactory().getMetaDescriptionFor(null, IKeyword.MODEL));
+	public ModelDescription(final String fileName, final ISyntacticElement source) {
+		super(IKeyword.MODEL, null, new ArrayList(), source, DescriptionFactory.getModelFactory()
+			.getMetaDescriptionFor(null, IKeyword.MODEL));
 		id = id_provider++;
 		types = new TypesManager();
 		setModelFileName(fileName);
@@ -58,8 +56,8 @@ public class ModelDescription extends SymbolDescription {
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
 		try {
 			return FileUtils.constructAbsoluteFilePath(filePath, fileName, mustExist);
-		} catch (GamlException e) {
-			flagError(e);
+		} catch (GamaRuntimeException e) {
+			flagError(e.getMessage());
 			return filePath;
 		}
 	}
@@ -95,12 +93,8 @@ public class ModelDescription extends SymbolDescription {
 		return baseDirectory;
 	}
 
-	public void addType(final SpeciesDescription species) throws GamlException {
-		try {
-			types.addType(species.getName(), species.getJavaBase());
-		} catch (GamlException ge) {
-			throw new GamlException(ge.getMessage(), species.getSourceInformation());
-		}
+	public void addType(final SpeciesDescription species) {
+		types.addType(species);
 	}
 
 	@Override
@@ -109,11 +103,7 @@ public class ModelDescription extends SymbolDescription {
 		String keyword = child.getKeyword();
 		if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
-			try {
-				addType(worldSpecies);
-			} catch (GamlException e) {
-				this.flagError(e);
-			}
+			addType(worldSpecies);
 		} else if ( keyword.equals(IKeyword.OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
@@ -206,27 +196,6 @@ public class ModelDescription extends SymbolDescription {
 
 	public TypesManager getTypesManager() {
 		return types;
-	}
-
-	public void verifyVarName(final String name, final short modelId) throws GamlException {
-		if ( name == null ) { throw new GamlException(
-			"The attribute 'name' is missing. Variables must be named.", getSourceInformation()); }
-		if ( IExpressionParser.RESERVED.contains(name) ) { throw new GamlException(
-			name +
-				" is a reserved keyword. It cannot be used as a variable name. Reserved keywords are: " +
-				IExpressionParser.RESERVED, getSourceInformation()); }
-		if ( IExpressionParser.BINARIES.containsKey(name) ) { throw new GamlException(name +
-			" is a binary operator name. It cannot be used as a variable name",
-			getSourceInformation()); }
-		if ( IExpressionParser.UNARIES.containsKey(name) ) { throw new GamlException(name +
-			" is a unary operator name. It cannot be used as a variable name",
-			getSourceInformation()); }
-		if ( types.getTypeNames().contains(name) ) { throw new GamlException(name +
-			" is a type name. It cannot be used as a variable name. Types in this model are :" +
-			types.getTypeNames(), getSourceInformation()); }
-		if ( IUnits.UNITS.containsKey(name) ) { throw new GamlException(name +
-			" is a unit name. It cannot be used as a variable name. Units in this model are :" +
-			String.valueOf(IUnits.UNITS.keySet()), getSourceInformation()); }
 	}
 
 	@Override

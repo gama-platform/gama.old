@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -97,7 +97,6 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.VARIATION, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.RANGE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.DEPENDS_ON, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
@@ -121,7 +120,7 @@ public class SignalVariable extends NumberVariable {
 	 * @param v the v
 	 */
 	public SignalVariable(/* final ISymbol enclosingScope, */final IDescription sd)
-		throws GamlException, GamaRuntimeException {
+		throws GamaRuntimeException {
 		super(/* enclosingScope, */sd);
 		type = Types.get(IType.FLOAT);
 		contentType = Types.get(IType.FLOAT);
@@ -130,9 +129,9 @@ public class SignalVariable extends NumberVariable {
 		variationExpr = getFacet(IKeyword.VARIATION);
 		rangeExpr = getFacet(IKeyword.RANGE);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
-		if ( envName == null || sd.getModelDescription().getSpeciesDescription(envName) == null ) { throw new GamlException(
-			"Environment of signal " + this.getName() + " cannot be determined.",
-			description.getSourceInformation()); }
+		if ( envName == null || sd.getModelDescription().getSpeciesDescription(envName) == null ) {
+			error("Environment of signal " + this.getName() + " cannot be determined.");
+		}
 		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;

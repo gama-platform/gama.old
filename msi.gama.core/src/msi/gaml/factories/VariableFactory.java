@@ -22,7 +22,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.ISymbolKind;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
@@ -41,7 +41,7 @@ public class VariableFactory extends SymbolFactory {
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
 		if ( cur.getName().equals(IKeyword.PARAMETER) ) { return super.getKeyword(cur); }
-		String keyword = cur.getAttribute(IKeyword.TYPE);
+		String keyword = cur.getLabel(IKeyword.TYPE);
 		if ( keyword == null ) {
 			keyword = cur.getName();
 		}
@@ -53,18 +53,18 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final List<IDescription> children, final Facets facets, final IDescription superDesc,
+		final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-
+		Facets facets = source.getAttributes();
 		if ( keyword.equals(IKeyword.SIGNAL) && facets.containsKey(IKeyword.ENVIRONMENT) ) {
 			String env = facets.getString(IKeyword.ENVIRONMENT);
 			String decay = facets.getString(IKeyword.DECAY, "0.1");
 			String name = facets.getString(IKeyword.NAME);
 			final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 			VariableDescription vd =
-				(VariableDescription) createDescription(source, superDesc, null, IType.FLOAT_STR,
-					IKeyword.NAME, name, IKeyword.TYPE, IType.FLOAT_STR, IKeyword.UPDATE, value,
-					IKeyword.MIN, "0");
+				(VariableDescription) createDescription(new BasicSyntacticElement(IType.FLOAT_STR,
+					new Facets(IKeyword.NAME, name, IKeyword.TYPE, IType.FLOAT_STR,
+						IKeyword.UPDATE, value, IKeyword.MIN, "0")), superDesc, null);
 
 			SpeciesDescription environment =
 				(SpeciesDescription) superDesc.getModelDescription().getSpeciesDescription(env);

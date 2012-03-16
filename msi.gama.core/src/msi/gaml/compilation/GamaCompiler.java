@@ -27,12 +27,11 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
 import org.codehaus.commons.compiler.*;
@@ -209,7 +208,6 @@ public class GamaCompiler {
 	public final static String ISKILL = ISkill.class.getCanonicalName();
 	public final static String ISYMBOL = ISymbol.class.getCanonicalName();
 	public final static String IDESCRIPTION = IDescription.class.getCanonicalName();
-	public final static String GAMLEXCEPTION = GamlException.class.getCanonicalName();
 	public final static String ISCOPE = IScope.class.getCanonicalName();
 	public final static String OBJECT = Object.class.getCanonicalName();
 	public final static String IVALUE = IValue.class.getCanonicalName();
@@ -348,9 +346,7 @@ public class GamaCompiler {
 		Map<TypePair, IOperator> existing = BINARIES.get(string);
 		if ( !existing.containsKey(FunctionSignature) ) {
 			IExpressionParser.FUNCTIONS.add(string);
-			IOperator newFunct =
-				DescriptionFactory.getModelFactory().getDefaultExpressionFactory()
-					.createPrimitiveOperator(string);
+			IOperator newFunct = GAMA.getExpressionFactory().createPrimitiveOperator(string);
 			existing.put(FunctionSignature, newFunct);
 		}
 	}
@@ -360,11 +356,8 @@ public class GamaCompiler {
 	public static void registerFunction(final String string, final IDescription species) {
 		registerNewFunction(string);
 		IOperator newFunct =
-			DescriptionFactory
-				.getModelFactory()
-				.getDefaultExpressionFactory()
-				.copyPrimitiveOperatorForSpecies(BINARIES.get(string).get(FunctionSignature),
-					species);
+			GAMA.getExpressionFactory().copyPrimitiveOperatorForSpecies(
+				BINARIES.get(string).get(FunctionSignature), species);
 
 		BINARIES.get(string).put(new TypePair(species.getType(), Types.get(IType.MAP)), newFunct);
 	}
@@ -415,12 +408,9 @@ public class GamaCompiler {
 		TypePair signature = new TypePair(leftType, rightType);
 		if ( !map.containsKey(signature) ) {
 			IOperator exp =
-				DescriptionFactory
-					.getModelFactory()
-					.getDefaultExpressionFactory()
-					.createOperator(keyword, true,
-						keyword.equals(IKeyword.OF) || keyword.equals(IKeyword._DOT), returnType,
-						helper, canBeConst, type, contentType, lazy);
+				GAMA.getExpressionFactory().createOperator(keyword, true,
+					keyword.equals(IKeyword.OF) || keyword.equals(IKeyword._DOT), returnType,
+					helper, canBeConst, type, contentType, lazy);
 			// simulation will be set after
 			exp.setName(keyword);
 			map.put(signature, exp);
@@ -457,11 +447,8 @@ public class GamaCompiler {
 			// GUI.debug("Registering " + keyword + " implemented by " + methodName + " on " +
 			// declClass.getSimpleName() + " for arguments of type " + childType);
 			result =
-				DescriptionFactory
-					.getModelFactory()
-					.getDefaultExpressionFactory()
-					.createOperator(keyword, false, false, returnType, helper, canBeConst, type,
-						contentType, false);
+				GAMA.getExpressionFactory().createOperator(keyword, false, false, returnType,
+					helper, canBeConst, type, contentType, false);
 			// simulation will be set after
 			result.setName(keyword);
 			if ( !UNARIES.containsKey(keyword) ) {

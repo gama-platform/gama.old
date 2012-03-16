@@ -22,6 +22,7 @@ import static msi.gama.precompiler.ITypeProvider.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IOperatorExecuter;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 
 /**
@@ -102,7 +103,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public UnaryOperator init(final String name, final IExpression child, final IExpression none) {
+	public UnaryOperator init(final String name, final IExpression child, final IExpression none,
+		final IDescription context) {
 		setName(name);
 		setChild(child);
 		computeType();

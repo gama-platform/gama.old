@@ -22,7 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.descriptions.IDescription;
 
 /**
  * Written by drogoul Modified on 1 aožt 2010
@@ -64,7 +64,7 @@ public class GamaFloatType extends GamaType<Double> {
 	}
 
 	@Override
-	public IType coerce(final IType type) throws GamlException {
+	public IType coerce(final IType type, final IDescription context) {
 		if ( type == this ) { return null; }
 		// GUI.debug("Float type coercing =" + expr);
 		return this;

@@ -5,7 +5,7 @@
 package msi.gama.common.util;
 
 import java.util.*;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.compilation.GamlCompilationError;
 
 /**
  * The class ErrorCollector.
@@ -16,17 +16,32 @@ import msi.gaml.compilation.GamlException;
  */
 public class ErrorCollector {
 
-	Set<GamlException> errors;
+	Set<GamlCompilationError> errors;
+	Set<GamlCompilationError> warnings;
 
 	public ErrorCollector() {
 		errors = new HashSet();
+		warnings = new HashSet();
 	}
 
-	public Set<GamlException> getErrors() {
+	public Set<GamlCompilationError> getErrors() {
 		return errors;
 	}
 
-	public boolean add(final GamlException error) {
+	public Set<GamlCompilationError> getWarnings() {
+		return warnings;
+	}
+
+	public boolean hasErrors() {
+		return !errors.isEmpty();
+	}
+
+	public boolean hasWarnings() {
+		return !warnings.isEmpty();
+	}
+
+	public boolean add(final GamlCompilationError error) {
+		if ( error.isWarning() ) { return warnings.add(error); }
 		return errors.add(error);
 	}
 

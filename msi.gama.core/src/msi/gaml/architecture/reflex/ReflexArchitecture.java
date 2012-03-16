@@ -21,12 +21,12 @@ package msi.gaml.architecture.reflex;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IGamlAgent;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.commands.ICommand;
-import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.Skill;
@@ -47,10 +47,8 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	private int _behaviorsNumber = 0;
 	private int _inits_number = 0;
 
-	// protected boolean hasBehavior;
-
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		for ( ISymbol c : commands ) {
 			addBehavior((ICommand) c);
 		}
@@ -90,7 +88,7 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	}
 
 	@Override
-	public void verifyBehaviors(final ISpecies context) throws GamlException {
+	public void verifyBehaviors(final ISpecies context) {
 		// hasBehavior = _behaviorsNumber > 0;
 	}
 
@@ -184,4 +182,19 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	 */
 	@Override
 	public void setName(final String newName) {}
+
+	/**
+	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String)
+	 */
+	@Override
+	public void error(final String s) {}
+
+	@Override
+	public void warning(final String s, final String facet) {}
+
+	/**
+	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void error(final String s, final String facet) {}
 }

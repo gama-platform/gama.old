@@ -22,10 +22,9 @@ import java.text.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IPriority;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
-import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
@@ -33,8 +32,7 @@ import msi.gaml.types.*;
 /**
  * The Class ExpressionParser.
  */
-@handles({ ISymbolKind.GAML_PARSING })
-public class GamlExpressionParser implements IExpressionParser {
+public class GamlExpressionParser implements IExpressionParser<ExpressionDescription> {
 
 	public static IExpression NIL_EXPR;
 	public static IExpression TRUE_EXPR;
@@ -48,7 +46,7 @@ public class GamlExpressionParser implements IExpressionParser {
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is given, the global context
-	 * of the current simulation is returned (via simulation.getModel().getDescription()) if it is
+	 * of the current simulation is returned (via GAMA.getModelContex()) if it is
 	 * available. Otherwise, only simple expressions (that contain mostly constants) can be parsed.
 	 */
 	private IDescription context;
@@ -83,8 +81,7 @@ public class GamlExpressionParser implements IExpressionParser {
 	}
 
 	@Override
-	public IExpression parse(final ExpressionDescription s, final IDescription parsingContext)
-		throws GamlException {
+	public IExpression parse(final ExpressionDescription s, final IDescription parsingContext) {
 		IDescription previous = null;
 		if ( parsingContext != null ) {
 			previous = getContext();
@@ -97,7 +94,7 @@ public class GamlExpressionParser implements IExpressionParser {
 		return result;
 	}
 
-	private IExpression compileExpr(final List<String> words) throws GamlException {
+	private IExpression compileExpr(final List<String> words) {
 		if ( words.isEmpty() ) { return null; }
 		if ( words.size() == 1 ) { return compileTerminalExpr(words.get(0)); }
 
@@ -130,9 +127,6 @@ public class GamlExpressionParser implements IExpressionParser {
 			}
 			i++;
 		}
-		assertBalancing(par, IKeyword.OPEN_EXP, IKeyword.CLOSE_EXP);
-		assertBalancing(list, IKeyword.OPEN_LIST, IKeyword.CLOSE_LIST);
-		assertBalancing(pt, IKeyword.OPEN_POINT, IKeyword.CLOSE_POINT);
 
 		if ( opIndex != 0 ) {
 			final String operator = words.get(opIndex);
@@ -143,8 +137,9 @@ public class GamlExpressionParser implements IExpressionParser {
 			final IExpression expr1 = compileExpr(words.subList(0, opIndex));
 			IExpression expr2 = null;
 			if ( IKeyword._DOT.equals(operator) ) {
-				if ( words.size() < opIndex + 2 ) { throw new GamlException(
-					"The '.' cannot end an expression", context.getSourceInformation()); }
+				if ( words.size() < opIndex + 2 ) {
+					context.flagError("The '.' cannot end an expression");
+				}
 				return compileFieldExpr(expr1, words.get(opIndex + 1));
 			} else if ( IKeyword.AS.equals(operator) ) {
 				String castingString = words.get(opIndex + 1);
@@ -158,12 +153,16 @@ public class GamlExpressionParser implements IExpressionParser {
 				ExecutionContextDescription sd =
 					(ExecutionContextDescription) getContext().getModelDescription()
 						.getSpeciesDescription(expr1.getContentType().getSpeciesName());
-				if ( sd == null ) { throw new GamlException("the left side of " + operator +
-					" is not an agent", context.getSourceInformation()); }
+				if ( sd == null ) {
+					context.flagError("the left side of " + operator + " is not an agent");
+					return null;
+				}
 				CommandDescription cd = sd.getAction(operator);
-				if ( cd == null ) { throw new GamlException(operator +
-					" is not available for agents of species " + sd.getName(),
-					context.getSourceInformation()); }
+				if ( cd == null ) {
+					context.flagError(operator + " is not available for agents of species " +
+						sd.getName());
+						return null;
+				}
 				expr2 = compileArguments(cd, words.subList(opIndex + 2, words.size() - 1));
 			} else {
 				// In case the operator is an iterator, we assign the content type of
@@ -205,22 +204,28 @@ public class GamlExpressionParser implements IExpressionParser {
 			return factory.createBinaryExpr(IKeyword.AS, expr1, expr2, context);
 		}
 
-		throw new GamlException("malformed expression : " + words, context.getSourceInformation());
+		context.flagError("malformed expression : " + words);
+		return null;
 	}
 
-	private static void assertBalancing(final int par, final String openExp, final String closeExp)
-		throws GamlException {
-		if ( par == 0 ) { return; }
-		if ( par > 0 ) { throw new GamlException("Missing '" + closeExp + "'", (Throwable) null); }
-		if ( par < 0 ) { throw new GamlException("Missing '" + openExp + "'", (Throwable) null); }
-	}
+	// private void assertBalancing(final int par, final String openExp, final String closeExp) {
+	// if ( par == 0 ) { return; }
+	// if ( par > 0 ) {
+	// context.flagError("Missing '" + closeExp + "'");
+	// }
+	// if ( par < 0 ) {
+	// context.flagError("Missing '" + openExp + "'");
+	// }
+	// }
 
-	private IExpression compileTerminalExpr(final String s) throws GamlException {
+	private IExpression compileTerminalExpr(final String s) {
 		// If the string is a Gama string we return a constant string expression
 		if ( StringUtils.isGamaString(s) ) { return factory.createConst(
 			StringUtils.unescapeJava(s.substring(1, s.length() - 1)), Types.get(IType.STRING)); }
-		if ( s.charAt(0) == '\'' ) { throw new GamlException("Malformed string: " + s,
-			context.getSourceInformation()); }
+		if ( s.charAt(0) == '\'' ) {
+			context.flagError("Malformed string: " + s);
+			return null;
+		}
 		// If the string is a number, we built it apart
 		if ( Strings.isGamaNumber(s) ) { return compileNumberExpr(s); }
 		// If the string is a literal constant we return the expression
@@ -232,6 +237,11 @@ public class GamlExpressionParser implements IExpressionParser {
 		if ( isSpeciesName(s) ) { return factory.createConst(s, Types.get(IType.SPECIES),
 			getSpeciesContext(s).getType()); }
 		if ( s.equalsIgnoreCase(IKeyword.SELF) ) {
+			IDescription species = getContext().getSpeciesContext();
+			if ( species == null ) {
+				context.flagError("Unable to determine the species of self");
+				return null;
+			}
 			IType tt = getContext().getSpeciesContext().getType();
 			return factory.createVar(IKeyword.SELF, tt, tt, true, IVarExpression.SELF);
 		}
@@ -243,7 +253,7 @@ public class GamlExpressionParser implements IExpressionParser {
 		return compileVarExpr(s);
 	}
 
-	private IExpression compileVarExpr(final String s) throws GamlException {
+	private IExpression compileVarExpr(final String s) {
 		IDescription desc = getContext().getDescriptionDeclaringVar(s);
 		if ( desc == null ) {
 			if ( getContext() instanceof CommandDescription ) {
@@ -254,7 +264,8 @@ public class GamlExpressionParser implements IExpressionParser {
 			IVarExpression var = (IVarExpression) desc.getVarExpr(s, factory);
 			return var;
 		}
-		throw new GamlException("malformed variable :" + s, context.getSourceInformation());
+		context.flagError("malformed variable :" + s);
+		return null;
 	}
 
 	private ExecutionContextDescription getSpeciesContext(final String e) {
@@ -275,8 +286,7 @@ public class GamlExpressionParser implements IExpressionParser {
 			!StringUtils.isGamaString(s);
 	}
 
-	private IExpression compileFieldExpr(final IExpression target, final String var)
-		throws GamlException {
+	private IExpression compileFieldExpr(final IExpression target, final String var) {
 		IType type = target.type();
 		if ( GamlExpressionParser.isDottedExpr(var) ) {
 
@@ -290,20 +300,24 @@ public class GamlExpressionParser implements IExpressionParser {
 
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
-			if ( expr == null ) { throw new GamlException("Field " + var +
-				" unknown for expression " + target.toGaml() + " of type " + type,
-				context.getSourceInformation()); }
+			if ( expr == null ) {
+				context.flagError("Field " + var + " unknown for expression " + target.toGaml() +
+					" of type " + type);
+				return null;
+			}
 			expr = expr.copyWith(target);
 			return expr;
 		}
 		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var, factory);
-		if ( expr == null ) { throw new GamlException("Unknown variable :" + var + " in " +
-			contextDesc.getName(), context.getSourceInformation()); }
+		if ( expr == null ) {
+			context.flagError("Unknown variable :" + var + " in " + contextDesc.getName());
+			return null;
+		}
 		return factory.createBinaryExpr(IKeyword._DOT, target, expr, context);
 
 	}
 
-	private IExpression compileNumberExpr(final String s) throws GamlException {
+	private IExpression compileNumberExpr(final String s) {
 		final NumberFormat nf = NumberFormat.getInstance(Locale.US);
 		Number val = null;
 		try {
@@ -313,20 +327,21 @@ public class GamlExpressionParser implements IExpressionParser {
 				try {
 					val = Integer.decode(s);
 				} catch (final NumberFormatException e2) {
-					throw new GamlException("Malformed number: " + s,
-						context.getSourceInformation());
+					context.flagError("Malformed number: " + s);
 				}
 			}
 		}
-		if ( val == null ) { throw new GamlException("\"" + s + "\" not recognized as a number",
-			context.getSourceInformation()); }
+		if ( val == null ) {
+			context.flagError("\"" + s + "\" not recognized as a number");
+			return null;
+		}
 		if ( (val instanceof Long || val instanceof Integer) && !s.contains(IKeyword._DOT) ) { return factory
 			.createConst(val.intValue(), Types.get(IType.INT)); }
 		return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
 
 	}
 
-	private IExpression compileListExpr(final List<String> words) throws GamlException {
+	private IExpression compileListExpr(final List<String> words) {
 		final GamaList list = new GamaList();
 		int begin = 0;
 		int end = 0;
@@ -355,8 +370,7 @@ public class GamlExpressionParser implements IExpressionParser {
 		return factory.createList(list);
 	}
 
-	private IExpression compileArguments(final CommandDescription action, final List<String> words)
-		throws GamlException {
+	private IExpression compileArguments(final CommandDescription action, final List<String> words) {
 		final GamaList list = new GamaList();
 		int begin = 0;
 		int end = 0;
@@ -375,14 +389,18 @@ public class GamlExpressionParser implements IExpressionParser {
 				end++;
 			}
 			String arg = words.get(begin);
-			if ( !action.containsArg(arg) ) { throw new GamlException("Argument " + arg +
-				"not defined for action " + action.getName(), context.getSourceInformation()); }
+			if ( !action.containsArg(arg) ) {
+				context.flagError("Argument " + arg + "not defined for action " + action.getName());
+				return null;
+			}
 			words.set(begin, StringUtils.toGamlString(arg));
 			List<String> pair = words.subList(begin, end);
 			final IExpression item = compileExpr(pair);
-			if ( item.type().id() != IType.PAIR ) { throw new GamlException(
-				"Arguments must be provided as pairs arg::value; " + item.toGaml() +
-					" is not a pair", context.getSourceInformation()); }
+			if ( item.type().id() != IType.PAIR ) {
+				context.flagError("Arguments must be provided as pairs arg::value; " +
+					item.toGaml() + " is not a pair");
+					return null;
+			}
 			list.add(item);
 			begin = end + 1;
 			end = begin;
@@ -390,7 +408,7 @@ public class GamlExpressionParser implements IExpressionParser {
 		return factory.createMap(list);
 	}
 
-	private IExpression compilePointExpr(final List<String> words) throws GamlException {
+	private IExpression compilePointExpr(final List<String> words) {
 		IExpression exprX = null, exprY = null;
 		int begin = 0;
 		int end = 0;
@@ -432,7 +450,7 @@ public class GamlExpressionParser implements IExpressionParser {
 	}
 
 	private IDescription getContext() {
-		if ( context == null ) { return factory.getDefaultParsingContext(); }
+		if ( context == null ) { return GAMA.getModelContext(); }
 		return context;
 	}
 

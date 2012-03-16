@@ -18,30 +18,23 @@
  */
 package msi.gaml.compilation;
 
-import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.ErrorCollector;
 
 /**
  * The Class GamlException.
  */
-@SuppressWarnings("serial")
-public class GamlException extends Exception {
+public class GamlCompilationError {
 
-	protected final List<String> context = new ArrayList();
 	protected boolean isWarning = false;
+	protected final String message;
 	/**
 	 * This element normally contains a reference to the initial statement in GAML
 	 */
 	private ISyntacticElement source = null;
 
-	/**
-	 * Instantiates a new gaml exception.
-	 * 
-	 * @param message the message
-	 */
-	protected GamlException(final String message) {
-		super(message);
+	public GamlCompilationError(final String s) {
+		message = s;
 	}
 
 	public Object getStatement() {
@@ -49,41 +42,25 @@ public class GamlException extends Exception {
 		return source.getUnderlyingElement(facet);
 	}
 
-	/**
-	 * @param string
-	 * @param sourceInformation
-	 */
-	public GamlException(final String string, final ISyntacticElement sourceInformation) {
+	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation) {
 		this(string);
 		addSource(sourceInformation);
 	}
 
-	public GamlException(final String string, final ISyntacticElement sourceInformation,
+	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation,
 		final boolean warning) {
 		this(string);
-		addSource(sourceInformation);
 		isWarning = warning;
+		addSource(sourceInformation);
 	}
 
-	public GamlException(final String string, final Throwable ex) {
-		this(string);
-		if ( ex != null ) {
-			addContext(ex.toString());
-		}
-	}
-
-	/**
-	 * Adds a context.
-	 * 
-	 * @param c the c
-	 */
-	public void addContext(final String c) {
-		context.add(c);
+	public GamlCompilationError(final String string, final Throwable ex) {
+		this(string + "\n" + ex == null ? "" : "Caused by: " + ex.getMessage());
 	}
 
 	@Override
 	public String toString() {
-		return getMessage();
+		return message;
 	}
 
 	public void addSource(final ISyntacticElement cur) {
@@ -97,38 +74,16 @@ public class GamlException extends Exception {
 		}
 	}
 
-	/**
-	 * @return always false
-	 */
 	public boolean isWarning() {
 		return isWarning;
 	}
 
-	/**
-	 * @return
-	 */
-	public long getCycle() {
-		return 0;
-	}
-
-	public String getContextAsLine() {
-		StringBuilder sb = new StringBuilder();
-		for ( String s : context ) {
-			sb.append(s).append(" / ");
-		}
-		return sb.toString();
-	}
-
-	public List<String> getContextAsList() {
-		return context;
-	}
-
-	private String facet;
+	private Object facet;
 
 	/**
 	 * @param key
 	 */
-	public void setFacetOfInterest(final String key) {
+	public void setObjectOfInterest(final Object key) {
 		facet = key;
 	}
 
@@ -136,7 +91,7 @@ public class GamlException extends Exception {
 	 * @param b
 	 */
 	public void setWarning(final boolean b) {
-		isWarning = true;
+		isWarning = b;
 	}
 
 }

@@ -219,9 +219,12 @@ public class Scheduler implements IScheduler {
 	}
 
 	public void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
+		// scope.execute(agent.getSpecies().getArchitecture().init(scope), agent)
 		scope.push(agent);
 		try {
 			agent.init(scope);
+		} catch (Exception e) {
+			GAMA.reportError(new GamaRuntimeException(e));
 		} finally {
 			scope.pop(agent);
 		}

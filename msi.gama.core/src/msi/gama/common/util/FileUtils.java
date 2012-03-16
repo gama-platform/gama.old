@@ -7,7 +7,7 @@ package msi.gama.common.util;
 import java.io.*;
 import msi.gama.common.interfaces.IFileAccess;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -26,8 +26,8 @@ public class FileUtils {
 	}
 
 	public static GamlProperties getGamaProperties(final Bundle pluginName,
-		final String pathToAdditions, final String fileName) throws GamlException {
-		if ( fileAccess == null ) { throw new GamlException("Properties " + fileName +
+		final String pathToAdditions, final String fileName) throws GamaStartupException {
+		if ( fileAccess == null ) { throw new GamaStartupException("Properties " + fileName +
 			" not accessible", (Throwable) null); }
 		return fileAccess.getGamaProperties(pluginName, pathToAdditions, fileName);
 	}
@@ -76,11 +76,11 @@ public class FileUtils {
 	 * @throws GamlException the gaml exception
 	 */
 	static public String constructAbsoluteFilePath(final String filePath,
-		final String referenceFile, final boolean mustExist) throws GamlException {
+		final String referenceFile, final boolean mustExist) throws GamaRuntimeException {
 		String baseDirectory = new File(referenceFile).getParent();
-		final GamlException ex =
-			new GamlException("File denoted by " + filePath +
-				" not found! Tried the following paths : ", (Throwable) null);
+		final GamaRuntimeException ex =
+			new GamaRuntimeException("File denoted by " + filePath +
+				" not found! Tried the following paths : ");
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
 			file = new File(filePath);

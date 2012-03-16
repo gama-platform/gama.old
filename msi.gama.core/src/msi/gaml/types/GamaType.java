@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -143,7 +143,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public IType coerce(final IType expr) throws GamlException {
+	public IType coerce(final IType expr, final IDescription context) {
 		// Nothing to do in the general case : we rely on Java polymorphism.
 		return null;
 	}

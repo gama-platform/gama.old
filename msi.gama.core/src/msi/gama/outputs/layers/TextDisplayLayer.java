@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -91,7 +91,7 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
 		super.prepare(out, scope);
 		if ( text.isConst() && constantText == null ) {
 			constantText = Cast.asString(scope, text.value(scope));

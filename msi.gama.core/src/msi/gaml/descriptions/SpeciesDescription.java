@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.factories.ModelFactory;
 
 public class SpeciesDescription extends ExecutionContextDescription {
@@ -46,11 +45,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		final ISyntacticElement source, final SymbolMetaDescription md) {
 		super(keyword, superDesc, facets, children, source, md);
 		setSkills(facets.getTokens(IKeyword.SKILLS));
-		try {
-			setJavaBase(base);
-		} catch (GamlException e) {
-			superDesc.flagError(e);
-		}
+		setJavaBase(base);
 	}
 
 	/**
@@ -150,12 +145,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		// this micro-species is inherited from the parent species, so we don't need to re-add it to
 		// the type manager.
 		if ( !microSpec.isCopy ) {
-			try {
-				this.getModelDescription().addType(microSpec);
-			} catch (GamlException e) {
-				flagError(e);
-				return;
-			}
+			getModelDescription().addType(microSpec);
 		}
 		microSpecies.put(microSpec.getName(), microSpec);
 	}
@@ -230,34 +220,41 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @throws GamlException if the species with the specified name can not be a parent of this
 	 *             species.
 	 */
-	private SpeciesDescription verifyParent(final String parentName) throws GamlException {
+	private SpeciesDescription verifyParent(final String parentName) {
 		// TODO catch this method to avoid being run 2 times (use a boolean for example)
 		// TODO how to make these validations available at the IDE level?
 
 		SpeciesDescription parentSpec = this.getVisibleSpecies(parentName);
-		if ( parentSpec == null ) { throw new GamlException(getName() +
-			" species can't be a sub-species of " + parentName + " species because " + parentName +
-			" is not defined or is not visible to " + getName() + " species.",
-			this.getSourceInformation()); }
+		if ( parentSpec == null ) {
+			flagError(getName() + " species can't be a sub-species of " + parentName +
+				" species because " + parentName + " is not defined or is not visible to " +
+				getName() + " species.");
+			return parentSpec;
+		}
 
-		if ( parentSpec.equals(this) ) { throw new GamlException(getName() +
-			" species can't be a sub-species of itself", this.getSourceInformation()); }
+		if ( parentSpec.equals(this) ) {
+			flagError(getName() + " species can't be a sub-species of itself");
+			return parentSpec;
+		}
 
 		List<SpeciesDescription> parentsOfParent = parentSpec.getSelfWithParents();
-		if ( parentsOfParent.contains(this) ) { throw new GamlException(
-			this.getName() + " species and " + parentSpec.getName() +
-				" species can't be sub-species of each other.", this.getSourceInformation()); }
+		if ( parentsOfParent.contains(this) ) {
+			flagError(this.getName() + " species and " + parentSpec.getName() +
+				" species can't be sub-species of each other.");
+		}
 
-		if ( this.getAllMacroSpecies().contains(parentSpec) ) { throw new GamlException(
-			this.getName() + " species can't be a sub-species of " + parentSpec.getName() +
-				" species because a species can't be sub-species of its direct or indirect macro-species.",
-			this.getSourceInformation()); }
+		if ( this.getAllMacroSpecies().contains(parentSpec) ) {
+			flagError(this.getName() + " species can't be a sub-species of " +
+				parentSpec.getName() +
+				" species because a species can't be sub-species of its direct or indirect macro-species.");
+		}
 
 		// TODO test this with copied-micro-species!!!
-		if ( this.getAllMicroSpecies().contains(parentSpec) ) { throw new GamlException(
-			this.getName() + " species can't be a sub-species of " + parentSpec.getName() +
-				" species because a species can't be sub-species of its direct or indirect micro-species.",
-			this.getSourceInformation()); }
+		if ( this.getAllMicroSpecies().contains(parentSpec) ) {
+			flagError(this.getName() + " species can't be a sub-species of " +
+				parentSpec.getName() +
+				" species because a species can't be sub-species of its direct or indirect micro-species.");
+		}
 
 		List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
 		List<SpeciesDescription> parentsOfMacro;
@@ -306,28 +303,28 @@ public class SpeciesDescription extends ExecutionContextDescription {
 								parentOfMacro.getName() + " as parent-species because ");
 					}
 
-					throw new GamlException(message + "\n\t1. " + this.getName() + " and " +
-						macro.getName() + " have micro-macro species relationship;" +
+					flagError(message + "\n\t1. " + this.getName() + " and " + macro.getName() +
+						" have micro-macro species relationship;" +
 						"\n\t2. They will both inherit the micro-species " + microSpecsStr +
 						" which will ambiguate the reference to " + microSpecsStr +
-						" species in the context of " + this.getName() + " species.",
-						parentSpec.getSourceInformation());
+						" species in the context of " + this.getName() + " species.");
 				}
 			}
 		}
 
 		List<SpeciesDescription> parentTrace = new GamaList<SpeciesDescription>();
 		parentSpec.fillParentTrace(parentTrace);
-		if ( parentTrace.contains(this) ) { throw new GamlException(
-			this.getName() + " species can't be a sub-species of " + parentSpec.getName() +
-				" species because this forms a circular inheritance between species of different branches.",
-			this.getSourceInformation()); }
+		if ( parentTrace.contains(this) ) {
+			flagError(this.getName() + " species can't be a sub-species of " +
+				parentSpec.getName() +
+				" species because this forms a circular inheritance between species of different branches.");
+		}
 
 		return parentSpec;
 	}
 
 	@Override
-	protected void copyItemsFromParent() throws GamlException {
+	protected void copyItemsFromParent() {
 		SpeciesDescription parent = getParentSpecies();
 
 		if ( parent != null ) {
@@ -336,10 +333,10 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					javaBase = parent.javaBase;
 					agentConstructor = parent.agentConstructor;
 				} else {
-					throw new GamlException("Species " + getName() + " Java base class (" +
+					flagError("Species " + getName() + " Java base class (" +
 						javaBase.getSimpleName() + ") is not a subclass of its parent species " +
-						parent.getName() + " Java base class (" +
-						parent.getJavaBase().getSimpleName() + ")", getSourceInformation());
+						parent.getName() + " base class (" + parent.getJavaBase().getSimpleName() +
+						")");
 				}
 			}
 			skillsClasses.addAll(parent.skillsClasses);
@@ -371,9 +368,9 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 			// We only copy the variables that are not redefined in this species
 			for ( final VariableDescription v : parent.variables.values() ) {
-				if ( v.isBuiltIn() && v.isUserDefined() ) {
+				if ( v.isBuiltIn() ) {
 					final VariableDescription var = getVariable(v.getName());
-					if ( var == null || !var.isUserDefined() ) {
+					if ( var == null ) { // || ! isUserDefined ???
 						addChild(v);
 					}
 				} else if ( !hasVar(v.getName()) ) {
@@ -398,7 +395,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return facets.getString(IKeyword.PARENT);
 	}
 
-	public void verifyAndSetParent() throws GamlException {
+	public void verifyAndSetParent() {
 		String parentName = getParentName();
 		if ( parentName == null ) { return; }
 		parentSpecies = verifyParent(parentName);;
@@ -551,7 +548,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @throws GamlException
 	 */
 	@Override
-	public void finalizeDescription() throws GamlException {
+	public void finalizeDescription() {
 		super.finalizeDescription();
 
 		// recursively finalize the sorted micro-species
@@ -613,11 +610,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		Collection<SpeciesDescription> allMicroSpecies = microSpecies.values();
 		// validate and set the parent parent of each micro-species
 		for ( SpeciesDescription microSpec : allMicroSpecies ) {
-			try {
-				microSpec.verifyAndSetParent();
-			} catch (GamlException e) {
-				microSpec.flagError(e);
-			}
+			microSpec.verifyAndSetParent();
 		}
 
 		List<SpeciesDescription> sortedMicroSpecs = new GamaList<SpeciesDescription>();

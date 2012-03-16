@@ -120,7 +120,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 		}
 	}
 
-	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamlException {
+	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamaRuntimeException {
 		final XYPlot plot = (XYPlot) chart.getPlot();
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
 		if ( isTimeSeries && timeSeriesXData == null ) {
@@ -164,7 +164,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 
 	}
 
-	private void createData(final IScope scope) throws GamlException {
+	private void createData(final IScope scope) throws GamaRuntimeException {
 		for ( Data e : datas ) {
 			e.prepare(scope);
 		}
@@ -318,7 +318,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
 		super.prepare(out, scope);
 		history = new StringBuilder();
 		IExpression string1 = getFacet(IKeyword.TYPE);

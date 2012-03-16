@@ -43,7 +43,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public abstract class AbstractPopulation extends GamaList<IAgent> implements IPopulation {
+public abstract class AbstractPopulation /* extends GamaList<IAgent> */implements IPopulation {
 
 	/** The agent hosting this population which is considered as the direct macro-agent. */
 	protected IAgent host;
@@ -104,11 +104,6 @@ public abstract class AbstractPopulation extends GamaList<IAgent> implements IPo
 
 	@Override
 	public void dispose() {
-		IAgent[] ags = toArray(new IAgent[0]);
-		for ( int i = 0, n = ags.length; i < n; i++ ) {
-			ags[i].dispose();
-		}
-		clear();
 		if ( topology != null ) {
 			topology.dispose();
 			topology = null;
@@ -140,7 +135,7 @@ public abstract class AbstractPopulation extends GamaList<IAgent> implements IPo
 			}
 			list.add(a);
 		}
-		addAll(list);
+		addAll(list, null);
 
 		createVariablesFor(sim, list, initialValues);
 
@@ -227,18 +222,12 @@ public abstract class AbstractPopulation extends GamaList<IAgent> implements IPo
 	}
 
 	@Override
-	public GamaList<IAgent> getAgentsList() {
-		return new GamaList(this);
-	}
-
-	@Override
 	public IAgent getAgent(final ILocation coord) {
 		return topology.getAgentClosestTo(coord, In.population(this));
 	}
 
 	@Override
 	public boolean removeFirst(final IAgent a) {
-		remove(a);
 		topology.removeAgent(a);
 		return true;
 	}

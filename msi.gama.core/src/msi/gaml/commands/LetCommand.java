@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = true),
+	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false),
 	@facet(name = IKeyword.OF, type = { IType.TYPE_ID }, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) },
 
@@ -49,7 +49,7 @@ combinations = { @combination({ IKeyword.VAR, IKeyword.VALUE }),
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 public class LetCommand extends SetCommand {
 
-	public LetCommand(final IDescription desc) throws GamlException {
+	public LetCommand(final IDescription desc) {
 		super(desc);
 		setName(IKeyword.LET + " " + varExpr.literalValue());
 		if ( value == null ) { return; }

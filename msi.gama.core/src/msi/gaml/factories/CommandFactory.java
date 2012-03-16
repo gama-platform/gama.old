@@ -40,21 +40,17 @@ public class CommandFactory extends SymbolFactory {
 
 	@Override
 	protected CommandDescription buildDescription(final ISyntacticElement source, final String kw,
-		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
+		final List<IDescription> commands, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		return new CommandDescription(kw, superDesc, facets, commands, md.hasScope(), md.hasArgs(),
-			source, md);
+		return new CommandDescription(kw, superDesc, commands, md.hasScope(), md.hasArgs(), source,
+			md);
 	}
 
 	@Override
 	protected void privateCompileChildren(final IDescription desc, final ISymbol cs,
 		final IExpressionFactory factory) {
 		if ( ((CommandDescription) desc).hasArgs() ) {
-			try {
-				compileArgs(desc, cs, factory);
-			} catch (GamlException e) {
-				desc.flagError(e);
-			}
+			compileArgs(desc, cs, factory);
 		}
 		String actualSpecies = computeSpecies(cs);
 
@@ -68,7 +64,7 @@ public class CommandFactory extends SymbolFactory {
 	}
 
 	private void compileArgs(final IDescription cd, final ISymbol ce,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) {
 		Arguments ca = new Arguments();
 		boolean isCreate =
 			cd.getKeyword().equals(IKeyword.CREATE) || cd.getKeyword().equals(IKeyword.DO);
@@ -79,9 +75,16 @@ public class CommandFactory extends SymbolFactory {
 			// TOUJOURS VRAI AU-DESSUS ????
 			// Ajour de getSuperDescription() pour éviter que les arguments soient compilés dans le
 			// contexte de la commande... A vérifier.
-			IExpression e =
-				cFacets.compile(IKeyword.VALUE, cd.getSuperDescription(),
-					cFacets.compile(IKeyword.DEFAULT, cd.getSuperDescription(), factory), factory);
+			IExpression e;
+			try {
+				e =
+					cFacets.compile(IKeyword.VALUE, cd.getSuperDescription(),
+						cFacets.compile(IKeyword.DEFAULT, cd.getSuperDescription(), factory),
+						factory);
+			} catch (GamaRuntimeException e1) {
+				e1.printStackTrace();
+				return;
+			}
 			ca.put(name, e);
 			IType type = sd.getTypeOf(cFacets.getString(IKeyword.TYPE));
 			if ( type == Types.NO_TYPE && e != null ) {
@@ -99,8 +102,7 @@ public class CommandFactory extends SymbolFactory {
 
 	@Override
 	protected IExpression compileFacet(final String tag, final IDescription sd,
-		final SymbolMetaDescription md, final IExpressionFactory factory) throws GamlException,
-		GamaRuntimeException {
+		final SymbolMetaDescription md, final IExpressionFactory factory) {
 		// String name = sd.getFacet(ISymbol.NAME);
 		String type = sd.getFacets().getString(IKeyword.TYPE);
 		String contentType = sd.getFacets().getString(IKeyword.AS);

@@ -203,4 +203,10 @@ public interface ISpecies extends IValue, ISymbol {
 	public abstract boolean hasVar(final String name);
 
 	public abstract void setMacroSpecies(final ISpecies macroSpecies);
+
+	/**
+	 * @param string
+	 */
+	@Override
+	public abstract void error(String string);
 }

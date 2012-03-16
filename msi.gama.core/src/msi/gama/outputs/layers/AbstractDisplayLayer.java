@@ -62,7 +62,7 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		output = out;
 	}
 

@@ -61,7 +61,7 @@ public class IfCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		for ( ISymbol c : commands ) {
 			if ( c instanceof ElseCommand ) {
 				alt = (ICommand) c;

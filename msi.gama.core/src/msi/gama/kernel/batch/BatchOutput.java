@@ -45,6 +45,6 @@ public class BatchOutput extends Symbol {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> commands) {}
 
 }

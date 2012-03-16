@@ -29,7 +29,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
 import msi.gaml.species.ISpecies;
 
 // TODO RAJOUTER :
@@ -50,7 +49,6 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 	protected ISimulation currentSimulation;
 	protected OutputManager output;
 	protected RandomUtils random;
-	IExpressionFactory expressionFactory;
 	private ItemList parametersEditors;
 	private final Map<String, IParameter> targetedVars;
 	private final ExperimentScope stack;
@@ -65,14 +63,6 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 		stack = new ExperimentScope(this);
 		commands = new ArrayBlockingQueue(10);
 		systemParameters = new ArrayList();
-	}
-
-	@Override
-	public IExpressionFactory getExpressionFactory() {
-		if ( expressionFactory == null ) {
-			expressionFactory = new GamlExpressionFactory(getDescription().getModelDescription());
-		}
-		return expressionFactory;
 	}
 
 	@Override
@@ -123,7 +113,7 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> children) {
 		for ( ISymbol s : children ) {
 			if ( s instanceof OutputManager ) {
 				if ( output != null ) {
@@ -287,8 +277,7 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 
 	public abstract void stepExperiment();
 
-	public abstract void reloadExperiment() throws GamaRuntimeException, GamlException,
-		InterruptedException;
+	public abstract void reloadExperiment() throws GamaRuntimeException, InterruptedException;
 
 	public void closeExperiment() {
 		closeCurrentSimulation(true);
@@ -387,7 +376,7 @@ public abstract class AbstractExperiment extends Symbol implements IExperiment, 
 	}
 
 	@Override
-	public void reportError(final GamlException g) {
+	public void reportError(final GamaRuntimeException g) {
 		GuiUtils.runtimeError(g);
 	}
 

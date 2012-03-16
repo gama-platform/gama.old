@@ -52,7 +52,7 @@ public class GamlModel extends AbstractModel {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> children) {
 		GamaList forExperiment = new GamaList();
 		GamaList<IExperiment> experiments = new GamaList();
 

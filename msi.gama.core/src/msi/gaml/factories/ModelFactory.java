@@ -25,6 +25,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.Skill;
@@ -35,8 +36,7 @@ import msi.gaml.skills.Skill;
  * @todo Description
  */
 @handles({ ISymbolKind.MODEL })
-@uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT,
-	ISymbolKind.GAML_LANGUAGE })
+@uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelFactory extends SymbolFactory {
 
@@ -57,8 +57,7 @@ public class ModelFactory extends SymbolFactory {
 		final SpeciesStructure microSpecies) {
 
 		SpeciesDescription microSpeciesDesc =
-			(SpeciesDescription) createDescription(microSpecies.getNode(), macroSpecies, null,
-				convertTags(microSpecies.getNode()));
+			(SpeciesDescription) createDescription(microSpecies.getNode(), macroSpecies, null);
 		macroSpecies.addChild(microSpeciesDesc);
 
 		for ( SpeciesStructure microSpecStructure : microSpecies.getMicroSpecies() ) {
@@ -77,7 +76,7 @@ public class ModelFactory extends SymbolFactory {
 		final SpeciesStructure microSpeciesStructure) {
 		ISyntacticElement microSpeciesNode = microSpeciesStructure.getNode();
 		SpeciesDescription speciesDesc =
-			macroSpecies.getMicroSpecies(microSpeciesNode.getAttribute(IKeyword.NAME));
+			macroSpecies.getMicroSpecies(microSpeciesNode.getLabel(IKeyword.NAME));
 		String keyword = getKeyword(microSpeciesNode);
 		String context = speciesDesc.getKeyword();
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
@@ -110,7 +109,7 @@ public class ModelFactory extends SymbolFactory {
 	@SuppressWarnings("null")
 	private synchronized ModelDescription parse(final ModelStructure structure,
 		final ErrorCollector collect) {
-		ModelDescription model = new ModelDescription(structure.getPath());
+		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
 		// Collecting built-in species & species
@@ -127,9 +126,7 @@ public class ModelFactory extends SymbolFactory {
 		}
 
 		if ( worldSpeciesDesc == null ) {
-			model.flagError(new GamlException(
-				"Unable to load the built-in 'world' species. Halting compilation", model
-					.getSourceInformation()));
+			model.flagError("Unable to load the built-in 'world' species. Halting compilation");
 			return model;
 		}
 
@@ -172,11 +169,7 @@ public class ModelFactory extends SymbolFactory {
 
 		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species &
 		// sub-species
-		try {
-			worldSpeciesDesc.finalizeDescription();
-		} catch (GamlException e1) {
-			worldSpeciesDesc.flagError(e1);
-		}
+		worldSpeciesDesc.finalizeDescription();
 
 		// Inheritance of micro-species between parent-species & sub-species
 		worldSpeciesDesc.inheritMicroSpecies();
@@ -269,6 +262,7 @@ public class ModelFactory extends SymbolFactory {
 		IModel m = null;
 		// long startTime = System.nanoTime();
 		ModelDescription md = parse(structure, collect);
+		if ( collect.hasErrors() ) { return null; }
 		GuiUtils.stopIfCancelled();
 		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
 			IDescription sim;
@@ -280,9 +274,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		GuiUtils.stopIfCancelled();
-		m =
-			(IModel) compileDescription(md, DescriptionFactory.getModelFactory()
-				.getDefaultExpressionFactory());
+		m = (IModel) compileDescription(md, GAMA.getExpressionFactory());
 		GuiUtils.stopIfCancelled();
 		// long endTime = System.nanoTime();
 		// GUI.debug("#### Parsing + compile time : " + (endTime - startTime) / 1000000000d);

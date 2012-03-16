@@ -5,10 +5,10 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
-import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gaml.compilation.ISymbol;
 
 /**
  * The class ProbabilisticTasksArchitecture. Contrary to its parent, this class uses the weights
@@ -44,7 +44,7 @@ public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		super.setChildren(commands);
 		weights = new double[tasks.size()];
 		Arrays.fill(weights, 0d);

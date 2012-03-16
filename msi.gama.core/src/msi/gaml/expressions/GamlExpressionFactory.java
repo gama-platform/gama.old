@@ -20,10 +20,9 @@ package msi.gaml.expressions;
 
 import static msi.gaml.expressions.IExpressionParser.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.common.interfaces.IValue;
+import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
 import msi.gaml.factories.SymbolFactory;
@@ -34,32 +33,38 @@ import msi.gaml.types.*;
  * 
  * @author drogoul
  */
-@handles({ ISymbolKind.GAML_LANGUAGE })
-@symbol(name = IKeyword.GAML, kind = ISymbolKind.GAML_LANGUAGE)
-public class GamlExpressionFactory extends SymbolFactory implements IExpressionFactory, ISymbol {
+
+public class GamlExpressionFactory extends SymbolFactory implements IExpressionFactory {
+
+	// FIXME HACK to test the new parser
+
+	// private IExpressionParser NEW_PARSER;
+	//
+	// public void REGISTER_NEW_PARSER(final IExpressionParser p) {
+	// NEW_PARSER = p;
+	// p.setFactory(this);
+	// }
+	//
+	// public IExpression PARSE_STRING(final String s) {
+	// if ( NEW_PARSER == null ) { return null; }
+	// return NEW_PARSER.parse(new ExpressionDescription(s, false), null);
+	// }
+	//
+	// FIXME HACK
 
 	IExpressionParser parser;
-	final IDescription defaultParsingContext;
 
-	public GamlExpressionFactory(final IDescription context) {
-		registerParser(new GamlExpressionParser());
-		defaultParsingContext = context;
-	}
+	// final IDescription defaultParsingContext;
 
 	public GamlExpressionFactory() {
 		registerParser(new GamlExpressionParser()); // default
-		defaultParsingContext = null;
 	}
 
+	@Override
 	public void registerParser(final IExpressionParser f) {
-		// f is normally the default expression parser to use.
 		parser = f;
 		parser.setFactory(this);
 
-	}
-
-	public IDescription getDefaultParsingContext() {
-		return defaultParsingContext;
 	}
 
 	@Override
@@ -82,21 +87,19 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	}
 
 	@Override
-	public IExpression createExpr(final ExpressionDescription s) throws GamlException {
-		return createExpr(s, defaultParsingContext);
+	public IExpression createExpr(final ExpressionDescription s) {
+		return createExpr(s, GAMA.getModelContext());
 	}
 
 	@Override
-	public IExpression createExpr(final ExpressionDescription s, final IDescription context)
-		throws GamlException {
-		if ( s == null || s.length() == 0 ) { return null; }
-		IExpression p = null;
-		try {
-			p = parser.parse(s, context);
-		} catch (final GamlException e) {
-			e.addContext("in expression : " + s);
-			throw e;
-		}
+	public IExpression createExpr(final ExpressionDescription s, final IDescription context) {
+		// FIXME HACK TO TEST THE NEW PARSER
+		// if ( NEW_PARSER != null ) { return NEW_PARSER.parse(s, context); }
+		if ( s == null || s.size() == 0 ) { return null; }
+		// FIXME HACK TO TEST THE NEW PARSER
+		// if ( s.getAst() != null && NEW_PARSER != null ) { return NEW_PARSER.parse(s, context); }
+		// HACK
+		IExpression p = parser.parse(s, context);
 		return p;
 	}
 
@@ -142,11 +145,13 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 
 	@Override
 	public IExpression createUnaryExpr(final String op, final IExpression c,
-		final IDescription context) throws GamlException {
+		final IDescription context) {
 		IExpression child = c;
 
-		if ( child == null ) { throw new GamlException("Operand of '" + op + "' is malformed",
-			context.getSourceInformation()); }
+		if ( child == null ) {
+			context.flagError("Operand of '" + op + "' is malformed");
+			return null;
+		}
 		if ( UNARIES.containsKey(op) ) {
 			Map<IType, IOperator> ops = UNARIES.get(op);
 			IType childType = child.type();
@@ -159,10 +164,12 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 						types.add(entry.getKey());
 					}
 				}
-				if ( types.size() == 0 ) { throw new GamlException(
-					"No operator found for applying '" + op + "' to " + childType +
-						" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
-						")", context.getSourceInformation()); }
+				if ( types.size() == 0 ) {
+					context.flagError("No operator found for applying '" + op + "' to " +
+						childType + " (operators available for " +
+						Arrays.toString(ops.keySet().toArray()) + ")");
+					return null;
+				}
 				childType = types.get(0);
 				int dist = childType.distanceTo(originalChildType);
 				for ( int i = 1, n = types.size(); i < n; i++ ) {
@@ -172,7 +179,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 						dist = d;
 					}
 				}
-				IType coercingType = childType.coerce(child.type());
+				IType coercingType = childType.coerce(child.type(), context);
 				if ( coercingType != null ) {
 					child = createUnaryExpr(coercingType.toString(), child, context);
 				}
@@ -182,22 +189,25 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// if ( originalChildType != childType ) {
 			// ops.put(originalChildType, helper);
 			// }
-			return helper.copy().init(op, child, null);
+			return helper.copy().init(op, child, null, context);
 		}
-		throw new GamlException("Unary operator " + op + " does not exist",
-			context.getSourceInformation());
+		context.flagError("Unary operator " + op + " does not exist");
+		return null;
 
 	}
 
 	public IExpression createBinaryExpr(final String op, final IExpression l, final IExpression r,
-		final IDescription context /* useful as a workaround for primitive operators */)
-		throws GamlException {
+		final IDescription context /* useful as a workaround for primitive operators */) {
 		IExpression left = l;
 		IExpression right = r;
-		if ( left == null ) { throw new GamlException("Left member of '" + op + "' is malformed",
-			context.getSourceInformation()); }
-		if ( right == null ) { throw new GamlException("Right member of '" + op + "' is malformed",
-			context.getSourceInformation()); }
+		if ( left == null ) {
+			context.flagError("Left member of '" + op + "' is malformed");
+			return null;
+		}
+		if ( right == null ) {
+			context.flagError("Right member of '" + op + "' is malformed");
+			return null;
+		}
 
 		if ( BINARIES.containsKey(op) ) {
 			// We get the possible pairs of types registered
@@ -213,10 +223,10 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			}
 			if ( list.size() == 0 ) {
 				// No pair is matching the operand types, we throw an exception
-				throw new GamlException("No binary operator found for applying '" + op +
+				context.flagError("No binary operator found for applying '" + op +
 					"' to left operand " + leftType.toString() + " and " + rightType.toString() +
-					" (operators available for " + map.keySet() + ")",
-					context.getSourceInformation());
+					" (operators available for " + map.keySet() + ")");
+				return null;
 			}
 			// We gather the first one
 			TypePair pair = list.get(0);
@@ -238,11 +248,11 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// We make a copy of the operator object.
 			operator = operator.copy();
 			// We coerce the two expressions to closely match the pair of types declared
-			IType coercingType = pair.left().coerce(left.type());
+			IType coercingType = pair.left().coerce(left.type(), context);
 			if ( coercingType != null ) {
 				left = createUnaryExpr(coercingType.toString(), left, context);
 			}
-			coercingType = pair.right().coerce(right.type());
+			coercingType = pair.right().coerce(right.type(), context);
 			if ( coercingType != null ) {
 				right = createUnaryExpr(coercingType.toString(), right, context);
 			}
@@ -251,40 +261,9 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				((PrimitiveOperator) operator).setTargetSpecies(context.getSpeciesContext());
 			}
 			// And we return it.
-			return operator.init(op, left, right);
+			return operator.init(op, left, right, context);
 		}
-		throw new GamlException("Operator: " + op + " does not exist",
-			context.getSourceInformation());
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return "GAML Expression Factory";
-	}
-
-	@Override
-	public void setName(final String newName) {
-
-	}
-
-	@Override
-	public IExpression getFacet(final String key) {
-		return null;
-	}
-
-	@Override
-	public boolean hasFacet(final String key) {
-		return false;
-	}
-
-	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
-
-	}
-
-	@Override
-	public IDescription getDescription() {
+		context.flagError("Operator: " + op + " does not exist");
 		return null;
 	}
 
@@ -319,6 +298,4 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		return copy;
 	}
 
-	@Override
-	public void dispose() {}
 }

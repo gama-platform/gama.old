@@ -34,8 +34,7 @@ import msi.gaml.expressions.IExpressionFactory;
 public interface ISymbolFactory {
 
 	public abstract IDescription createDescription(ISyntacticElement cur,
-		final IDescription superDescription, final List<IDescription> children,
-		final String ... facets);
+		final IDescription superDescription, final List<IDescription> children);
 
 	public abstract IDescription createDescription(ISyntacticElement cur, IDescription superDesc);
 
@@ -45,8 +44,6 @@ public interface ISymbolFactory {
 	public abstract ISymbolFactory chooseFactoryFor(String keyword);
 
 	public abstract Set<String> getKeywords();
-
-	public abstract IExpressionFactory getDefaultExpressionFactory();
 
 	public abstract String getOmissibleFacetForSymbol(ISyntacticElement elmt, String symbol);
 

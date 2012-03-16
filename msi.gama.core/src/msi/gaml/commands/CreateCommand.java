@@ -115,7 +115,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> com) {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of create ");
 		sequence.setChildren(com);
@@ -189,10 +189,9 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			if ( targetSpecies == null ) {
 				String availableSpecies = accumulateAvailableSpecs(executor);
 
-				throw new GamaRuntimeException(new GamlException("Species: " +
-					speciesExpr.value(scope) + " is unknown or is not visible in the context of " +
-					executor.getSpecies() + " species. Visible species are [" + availableSpecies +
-					"] ", this.getDescription().getSourceInformation()));
+				throw new GamaRuntimeException("Species: " + speciesExpr.value(scope) +
+					" is unknown or is not visible in the context of " + executor.getSpecies() +
+					" species. Visible species are [" + availableSpecies + "] ");
 			}
 
 			thePopulation = executor.getPopulationFor(targetSpecies);
@@ -426,7 +425,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	}
 
 	@Override
-	public void setFormalArgs(final Arguments args) throws GamlException {
+	public void setFormalArgs(final Arguments args) {
 		init = args;
 	}
 

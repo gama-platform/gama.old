@@ -59,13 +59,15 @@ public class SwitchCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		List<MatchCommand> cases = new ArrayList();
 		for ( ISymbol c : commands ) {
 			if ( c instanceof MatchCommand ) {
 				if ( ((MatchCommand) c).getLiteral(IKeyword.KEYWORD).equals(IKeyword.DEFAULT) ) {
-					if ( defaultMatch != null ) { throw new GamlException(
-						"A default match is already declared", description.getSourceInformation()); }
+					if ( defaultMatch != null ) {
+						c.error("A default match is already declared");
+						defaultMatch.error("A default match is already declared");
+					}
 					defaultMatch = (MatchCommand) c;
 				} else {
 					cases.add((MatchCommand) c);

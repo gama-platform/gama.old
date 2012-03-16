@@ -59,7 +59,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isEditable, allowsTooltip, isLabel;
 	boolean canBeNull;
 
-	public ExperimentParameter(final IDescription sd) throws GamlException, GamaRuntimeException {
+	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		VariableDescription desc = (VariableDescription) sd;
 		setName(desc.getFacets().getString(IKeyword.VAR));
@@ -70,12 +70,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		ModelDescription md = desc.getModelDescription();
 		SpeciesDescription wd = md.getWorldSpecies();
 		VariableDescription vd = wd.getVariable(varName);
-		if ( vd == null ) { throw new GamlException(p + "cannot refer to the non-global variable " +
-			varName, sd.getSourceInformation()); }
+		if ( vd == null ) {
+			error(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
+			return;
+		}
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = vd.getType();
-		} else if ( type.id() != vd.getType().id() ) { throw new GamlException(p +
-			"type must be the same as that of " + varName, sd.getSourceInformation()); }
+		} else if ( type.id() != vd.getType().id() ) {
+			error(p + "type must be the same as that of " + varName, IKeyword.TYPE);
+		}
 		setCategory(desc.getFacets().getString(IKeyword.CATEGORY));
 		IExpression init = assertFacet(desc, IKeyword.INIT, type);
 		IExpression min = assertFacet(desc, IKeyword.MIN, type);
@@ -83,12 +86,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		IExpression step = assertFacet(desc, IKeyword.STEP, type);
 		IExpression among = assertFacet(desc, IKeyword.AMONG, Types.get(IType.LIST));
 		boolean isNotModifiable = desc.isNotModifiable();
-		if ( isNotModifiable ) { throw new GamlException(p + "cannot be declared as constant",
-			sd.getSourceInformation()); }
+		if ( isNotModifiable ) {
+			error(p + "cannot be declared as constant");
+		}
 		order = desc.getDefinitionOrder();
-		if ( among != null && type.id() != among.getContentType().id() ) { throw new GamlException(
-			p + " of type " + type.toString() + " cannot be chosen among " + among.toGaml(),
-			sd.getSourceInformation()); }
+		if ( among != null && type.id() != among.getContentType().id() ) {
+			error(p + " of type " + type.toString() + " cannot be chosen among " + among.toGaml(),
+				IKeyword.AMONG);
+		}
 		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
 		stepValue = step == null ? null : (Number) step.value(GAMA.getDefaultScope());
@@ -126,15 +131,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		allowsTooltip = p.allowsTooltip();
 	}
 
-	public IExpression assertFacet(final IDescription d, final String name, final IType type)
-		throws GamlException {
+	public IExpression assertFacet(final IDescription d, final String name, final IType type) {
 		IExpression expr = d.getFacets().getExpr(name);
 		if ( expr == null ) { return null; }
-		if ( !expr.isConst() ) { throw new GamlException("Parameter " + getTitle() + " " + name +
-			" facet must be constant", d.getSourceInformation()); }
-		if ( type != null && !expr.type().equals(type) ) { throw new GamlException("Parameter " +
-			getTitle() + " " + name + " facet must be of type " + type.toString(),
-			d.getSourceInformation()); }
+		if ( !expr.isConst() ) {
+			error("Parameter " + getTitle() + " " + name + " facet must be constant", name);
+		}
+		if ( type != null && !expr.type().equals(type) ) {
+			error(
+				"Parameter " + getTitle() + " " + name + " facet must be of type " +
+					type.toString(), name);
+		}
 		return expr;
 	}
 
@@ -372,7 +379,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> commands) {}
 
 	@Override
 	public String toString() {

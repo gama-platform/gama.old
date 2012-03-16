@@ -51,11 +51,6 @@ public class SymbolFactory implements ISymbolFactory {
 
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
 
-	@Override
-	public IExpressionFactory getDefaultExpressionFactory() {
-		return (IExpressionFactory) chooseFactoryFor(IKeyword.GAML);
-	}
-
 	protected final Set<ISymbolFactory> registeredFactories = new HashSet();
 
 	public SymbolFactory() {
@@ -174,8 +169,7 @@ public class SymbolFactory implements ISymbolFactory {
 			ISymbolFactory f = chooseFactoryFor(keyword, getKeyword(desc));
 			if ( f == null ) {
 				if ( desc != null ) {
-					desc.flagError(new GamlException("Unknown symbol " + keyword, desc
-						.getSourceInformation()));
+					desc.flagError("Unknown symbol " + keyword);
 				}
 				return null;
 			}
@@ -223,8 +217,7 @@ public class SymbolFactory implements ISymbolFactory {
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
 		if ( f == null ) {
 			if ( superDesc != null ) {
-				superDesc
-					.flagError(new GamlException("Impossible to parse keyword " + keyword, cur));
+				superDesc.flagError("Impossible to parse keyword " + keyword);
 			}
 			return null;
 		}
@@ -233,22 +226,12 @@ public class SymbolFactory implements ISymbolFactory {
 		ISyntacticElement source = cur;
 
 		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
-		Facets facets = new Facets();
-		Map<String, String> attributes = cur.getAttributes();
-		for ( Map.Entry<String, String> a : attributes.entrySet() ) {
-			facets.put(a.getKey(), a.getValue());
-		}
+		Facets facets = cur.getAttributes();
+
 		if ( md != null ) {
-			try {
-				md.verifyFacets(source, facets);
-			} catch (GamlException e1) {
-				if ( superDesc != null ) {
-					superDesc.flagError(e1);
-				}
-				return null;
-			}
+			md.verifyFacets(source, facets, superDesc);
 		}
-		List<IDescription> commands = new ArrayList();
+		List<IDescription> children = new ArrayList();
 
 		for ( ISyntacticElement e : cur.getChildren() ) {
 			// Instead of having to consider this specific case, find a better solution.
@@ -258,13 +241,13 @@ public class SymbolFactory implements ISymbolFactory {
 			}
 
 			if ( !cur.getName().equals(IKeyword.SPECIES) ) {
-				commands.add(createDescription(e, superDesc));
+				children.add(createDescription(e, superDesc));
 			} else if ( cur.hasParent(IKeyword.DISPLAY) || cur.hasParent(IKeyword.SPECIES) ) { // "species" declared in "display" or "species" section
-				commands.add(createDescription(e, superDesc));
+				children.add(createDescription(e, superDesc));
 			}
 		}
 
-		return buildDescription(source, keyword, commands, facets, superDesc, md);
+		return buildDescription(source, keyword, children, superDesc, md);
 	}
 
 	@Override
@@ -309,34 +292,27 @@ public class SymbolFactory implements ISymbolFactory {
 
 	@Override
 	public IDescription createDescription(final ISyntacticElement cur,
-		final IDescription superDesc, final List<IDescription> children, final String ... strings) {
-		String keyword = strings[0];
+		final IDescription superDesc, final List<IDescription> children) {
+		Facets facets = cur.getAttributes();
+		String keyword = getKeyword(cur);
 		ISymbolFactory f = chooseFactoryFor(keyword, null);
 		if ( f == null ) {
-			superDesc.flagError(new GamlException("Impossible to parse keyword " + keyword,
-				superDesc.getSourceInformation()));
+			superDesc.flagError("Impossible to parse keyword " + keyword);
 			return null;
 		}
-		if ( f != this ) { return f.createDescription(cur, superDesc, children, strings); }
+		if ( f != this ) { return f.createDescription(cur, superDesc, children); }
 		List<IDescription> commandList;
 		commandList = children == null ? new ArrayList() : children;
-		Facets facets = new Facets();
 		SymbolMetaDescription md;
-		try {
-			md = getMetaDescriptionFor(superDesc, keyword);
-			facets.addAll(strings);
-			md.verifyFacets(null, facets);
-		} catch (GamlException e) {
-			superDesc.flagError(e);
-			return null;
-		}
-		return buildDescription(cur, keyword, commandList, facets, superDesc, md);
+		md = getMetaDescriptionFor(superDesc, keyword);
+		md.verifyFacets(null, facets, superDesc);
+		return buildDescription(cur, keyword, commandList, superDesc, md);
 	}
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final List<IDescription> commands, final Facets facets, final IDescription superDesc,
+		final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		return new SymbolDescription(keyword, superDesc, facets, commands, source, md);
+		return new SymbolDescription(keyword, superDesc, children, source, md);
 	}
 
 	@Override
@@ -345,8 +321,7 @@ public class SymbolFactory implements ISymbolFactory {
 		ISymbolFactory f =
 			chooseFactoryFor(desc.getKeyword(), superDesc == null ? null : superDesc.getKeyword());
 		if ( f == null ) {
-			desc.flagError(new GamlException("Impossible to compile keyword " + desc.getKeyword(),
-				desc.getSourceInformation()));
+			desc.flagError("Impossible to compile keyword " + desc.getKeyword());
 			return null;
 		}
 		if ( f != this ) { return f.compileDescription(desc, factory); }
@@ -361,36 +336,29 @@ public class SymbolFactory implements ISymbolFactory {
 		rawFacets.putAsLabel(IKeyword.KEYWORD, sd.getKeyword());
 
 		for ( String s : new ArrayList<String>(rawFacets.keySet()) ) {
-			IExpression e;
-			try {
-				e = compileFacet(s, sd, md, factory);
-				rawFacets.put(s, e);
-			} catch (GamlException e1) {
-				sd.flagError(e1);
-			}
-
+			IExpression e = compileFacet(s, sd, md, factory);
+			rawFacets.put(s, e);
 		}
 		return rawFacets;
 	}
 
 	protected IExpression compileFacet(final String tag, final IDescription sd,
-		final SymbolMetaDescription md, final IExpressionFactory factory) throws GamlException,
-		GamaRuntimeException {
+		final SymbolMetaDescription md, final IExpressionFactory factory) {
 		if ( md.isLabel(tag) ) { return sd.getFacets().compileAsLabel(tag); }
-		return sd.getFacets().compile(tag, sd, factory);
+		try {
+			return sd.getFacets().compile(tag, sd, factory);
+		} catch (GamaRuntimeException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	protected ISymbol privateCompile(final IDescription desc, final SymbolMetaDescription md,
 		final IExpressionFactory factory) {
 		if ( md == null ) { return null; }
 		compileFacets(desc, md, factory);
-		ISymbol cs;
-		try {
-			cs = compileSymbol(desc, md.getConstructor());
-		} catch (GamlException e) {
-			desc.flagError(e);
-			return null;
-		}
+		ISymbol cs = compileSymbol(desc, md.getConstructor());
+		if ( cs == null ) { return null; }
 		if ( md.hasSequence() ) {
 			if ( md.isRemoteContext() ) {
 				desc.copyTempsAbove();
@@ -401,8 +369,7 @@ public class SymbolFactory implements ISymbolFactory {
 
 	}
 
-	protected ISymbol compileSymbol(final IDescription desc, final ISymbolConstructor c)
-		throws GamlException, GamaRuntimeException {
+	protected ISymbol compileSymbol(final IDescription desc, final ISymbolConstructor c) {
 		ISymbol cs = c.create(desc);
 		return cs;
 	}
@@ -416,24 +383,8 @@ public class SymbolFactory implements ISymbolFactory {
 				lce.add(s);
 			}
 		}
-		try {
-			cs.setChildren(lce);
-		} catch (GamlException e) {
-			desc.flagError(e);
-		}
-	}
+		cs.setChildren(lce);
 
-	protected String[] convertTags(final ISyntacticElement e) {
-		Map<String, String> attributes = e.getAttributes();
-		String[] result = new String[(attributes.size() << 1) + 1];
-		result[0] = getKeyword(e);
-		int i = 1;
-		for ( Map.Entry<String, String> a : attributes.entrySet() ) {
-			result[i] = a.getKey();
-			result[i + 1] = a.getValue();
-			i += 2;
-		}
-		return result;
 	}
 
 	@Override

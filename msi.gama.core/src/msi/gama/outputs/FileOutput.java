@@ -30,7 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -100,11 +100,7 @@ public class FileOutput extends AbstractOutput {
 		data = getFacet(IKeyword.DATA);
 		expressionText = data.toGaml();
 		if ( expressionText == null ) { return; }
-		try {
-			refreshExpression();
-		} catch (GamlException e) {
-			e.printStackTrace();
-		}
+		refreshExpression();
 	}
 
 	private void createHeader() throws GamaRuntimeException {
@@ -199,7 +195,7 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	public FileOutput(final String name, final String expr, final List<String> columns,
-		final IExperiment exp) throws GamlException {
+		final IExperiment exp) throws GamaRuntimeException {
 		super(DescriptionFactory.createDescription(IKeyword.FILE, IKeyword.DATA, expr,
 			IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME, name == null ? expr : name));
 		prepare(exp);
@@ -248,7 +244,7 @@ public class FileOutput extends AbstractOutput {
 		}
 	}
 
-	public void refreshExpression() throws GamlException {
+	public void refreshExpression() throws GamaRuntimeException {
 		// in case the file writer persists over different simulations (like in the batch)
 		data = GAMA.getExpressionFactory().createExpr(new ExpressionDescription(expressionText));
 	}

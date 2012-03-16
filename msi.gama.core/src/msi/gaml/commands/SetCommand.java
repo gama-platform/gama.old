@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.types.IType;
@@ -49,16 +49,14 @@ public class SetCommand extends AbstractCommand {
 	protected final IVarExpression varExpr;
 	protected final IExpression value;
 
-	public SetCommand(final IDescription desc) throws GamlException {
+	public SetCommand(final IDescription desc) {
 		super(desc);
 		IExpression expr = getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
-		if ( expr == null ) { throw new GamlException("No references to a variables can be found",
-			getDescription().getSourceInformation()); }
-		if ( !(expr instanceof IVarExpression) ) { throw new GamlException("The expression " +
-			expr.toGaml() + " is not a reference to a variable ", getDescription()
-			.getSourceInformation()); }
-		value = getFacet(IKeyword.VALUE, getFacet(IKeyword.WITH));
+		if ( !(expr instanceof IVarExpression) ) {
+			error("This expression is not a reference to a variable ", IKeyword.NAME);
+		}
 		varExpr = (IVarExpression) expr;
+		value = getFacet(IKeyword.VALUE);
 		setName("set " + varExpr.toGaml());
 	}
 

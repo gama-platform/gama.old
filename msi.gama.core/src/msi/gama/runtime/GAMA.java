@@ -18,14 +18,14 @@
  */
 package msi.gama.runtime;
 
+import msi.gama.common.interfaces.IGamlBuilder;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
-import msi.gaml.descriptions.ExpressionDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
 /**
@@ -39,12 +39,11 @@ public class GAMA {
 	public final static String RUNNING = "RUNNING";
 	public final static String NOTREADY = "NOTREADY";
 	public final static String NONE = "NONE";
-
-	public static boolean USE_QUALITY_RENDERING = false;
-	public static final String _UQR = "USE_QUALITY_RENDERING";
 	public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
 	private static volatile IExperiment currentExperiment = null;
+	private static IExpressionFactory expressionFactory = null;
+	private static IGamlBuilder builder = null;
 	public static ISimulationStateProvider state = null;
 
 	public static void interruptLoading() {
@@ -118,12 +117,6 @@ public class GAMA {
 		}
 	}
 
-	public static void reloadExperiment() {
-		if ( currentExperiment != null ) {
-			currentExperiment.reload();
-		}
-	}
-
 	private static boolean verifyClose() {
 		if ( currentExperiment == null ) { return true; }
 		currentExperiment.pause();
@@ -160,14 +153,16 @@ public class GAMA {
 	}
 
 	public static IExpressionFactory getExpressionFactory() {
-		if ( currentExperiment != null ) { return currentExperiment.getExpressionFactory(); }
-		return null;
+		if ( expressionFactory == null ) {
+			expressionFactory = new GamlExpressionFactory();
+		}
+		return expressionFactory;
 	}
 
 	/**
 	 * @param g
 	 */
-	public static void reportError(final GamlException g) {
+	public static void reportError(final GamaRuntimeException g) {
 		if ( currentExperiment == null ) { return; }
 		currentExperiment.reportError(g);
 		if ( SimulationClock.TREAT_ERRORS_AS_FATAL ) {
@@ -177,21 +172,8 @@ public class GAMA {
 		}
 	}
 
-	public static Object evaluateExpression(final String expression) throws GamlException,
-		GamaRuntimeException {
-		if ( currentExperiment == null ) { throw new GamaRuntimeException("No experiment running"); }
-		try {
-			IExpression expr = compileExpression(expression);
-			if ( expr == null ) { return null; }
-			return expr.value(getDefaultScope());
-		} catch (final GamaRuntimeException e) {
-			e.addContext("in evaluating :" + expression);
-			throw e;
-		}
-	}
-
 	public static Object evaluateExpression(final String expression, final IAgent a)
-		throws GamlException, GamaRuntimeException {
+		throws GamaRuntimeException {
 		try {
 			final IExpression expr =
 				getExpressionFactory().createExpr(new ExpressionDescription(expression),
@@ -200,29 +182,16 @@ public class GAMA {
 			return getDefaultScope().evaluate(expr, a);
 		} catch (final GamaRuntimeException e) {
 			e.addContext("in evaluating :" + expression);
-			throw e;
-		} catch (final GamlException e) {
-			e.addContext("in compiling :" + expression);
-			throw e;
-		}
-	}
-
-	public static IExpression compileExpression(final String expression) throws GamlException {
-		try {
-			return GAMA.getExpressionFactory().createExpr(new ExpressionDescription(expression),
-				currentExperiment.getModel().getDescription());
-		} catch (final GamlException e) {
-			e.addContext("in compiling :" + expression);
-			throw e;
+			return e;
 		}
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent)
-		throws GamlException {
+		throws GamaRuntimeException {
 		try {
 			return GAMA.getExpressionFactory().createExpr(new ExpressionDescription(expression),
 				agent.getSpecies().getDescription());
-		} catch (final GamlException e) {
+		} catch (final GamaRuntimeException e) {
 			e.addContext("in compiling :" + expression);
 			throw e;
 		}
@@ -274,5 +243,21 @@ public class GAMA {
 
 	public final static String SIMULATION_RUNNING_STATE =
 		"msi.gama.application.commands.SimulationRunningState";
+
+	/**
+	 * @return
+	 */
+	public static IDescription getModelContext() {
+		if ( currentExperiment == null ) { return null; }
+		return currentExperiment.getModel().getDescription();
+	}
+
+	public static void setGamlBuilder(final IGamlBuilder b) {
+		builder = b;
+	}
+
+	public static IGamlBuilder getGamlBuilder() {
+		return builder;
+	}
 
 }

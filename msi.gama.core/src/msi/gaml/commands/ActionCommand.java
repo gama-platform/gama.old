@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -85,15 +85,16 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 
 	// TODO Defaults are not taken into account...
 
-	protected void verifyArgs(final Arguments args) throws GamlException {
+	protected void verifyArgs(final Arguments args) {
 		for ( String arg : formalArgs.keySet() ) {
-			if ( formalArgs.getExpr(arg) == null && !args.containsKey(arg) ) { throw new GamlException(
-				"Missing argument " + arg + " in call to " + getName(), getDescription()
-					.getSourceInformation()); }
+			if ( formalArgs.getExpr(arg) == null && !args.containsKey(arg) ) {
+				error("Missing argument " + arg + " in call to " + getName());
+			}
 		}
 		for ( String arg : args.keySet() ) {
-			if ( !formalArgs.containsKey(arg) ) { throw new GamlException("Unknown argument" + arg +
-				" in call to " + getName(), getDescription().getSourceInformation()); }
+			if ( !formalArgs.containsKey(arg) ) {
+				error("Unknown argument" + arg + " in call to " + getName());
+			}
 		}
 	}
 

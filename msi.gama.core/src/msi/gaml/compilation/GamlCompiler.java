@@ -116,8 +116,14 @@ public class GamlCompiler {
 				List<String> ffacets =
 					new GamaList(Arrays.asList(IKeyword.TYPE, s.type(), IKeyword.NAME, s.name(),
 						IKeyword.CONST, s.constant() ? IKeyword.TRUE : IKeyword.FALSE));
-				String depends = concat(s.depends_on());
-				if ( !"".equals(depends) ) {
+				String depends = "";
+				String[] dependencies = s.depends_on();
+				if ( dependencies.length > 0 ) {
+					for ( String string : dependencies ) {
+						depends += string;
+						depends += " ";
+					}
+					depends = depends.trim();
 					ffacets.add(IKeyword.DEPENDS_ON);
 					ffacets.add(depends);
 				}
@@ -487,8 +493,8 @@ public class GamlCompiler {
 	}
 
 	private static ISymbolConstructor buildSymbolConstructor(final Class javaBase) {
-		code("public ", ISYMBOL, " create(", IDESCRIPTION, " desc) ", EXCEPTION, ",",
-			GAMLEXCEPTION, " { \n return new ", javaBase.getCanonicalName(), "(desc);}");
+		code("public ", ISYMBOL, " create(", IDESCRIPTION, " desc) ", EXCEPTION,
+			" { \n return new ", javaBase.getCanonicalName(), "(desc);}");
 		return (ISymbolConstructor) compiler.build(name(javaBase.getSimpleName()), null,
 			ISymbolConstructor.class, null);
 	}

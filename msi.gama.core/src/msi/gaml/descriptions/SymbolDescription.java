@@ -21,8 +21,9 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ErrorCollector;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
@@ -43,10 +44,10 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	// protected ModelDescription model;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
 		initFields();
-		this.facets = facets;
+		this.facets = source.getAttributes();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		setSource(source);
 		meta = md;
@@ -59,19 +60,43 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return meta;
 	}
 
-	@Override
-	public void flagError(final GamlException e) {
-		if ( getSource() == null ) { return; }
-		ErrorCollector collect = getSource().getErrorCollector();
-		if ( collect != null ) {
-			collect.add(e);
+	private void flagError(final String s, final boolean warning, final Object facet)
+		throws GamaRuntimeException {
+		ISyntacticElement e = getSource();
+		if ( e == null ) {
+			IDescription desc = getSuperDescription();
+			if ( desc != null ) {
+				e = desc.getSourceInformation();
+			}
 		}
+		// throws a runtime exception if there is no way to signal the error in the source
+		// (i.e. we are probably in a runtime scenario)
+		if ( e == null || e.getErrorCollector() == null ) { throw new GamaRuntimeException(s,
+			warning); }
+		ErrorCollector collect = e.getErrorCollector();
+		GamlCompilationError ge = new GamlCompilationError(s, e, warning);
+		ge.setObjectOfInterest(facet);
+		collect.add(ge);
 	}
 
 	@Override
-	public void flagWarning(final GamlException e) {
-		e.setWarning(true);
-		flagError(e);
+	public void flagError(final String s) {
+		flagError(s, null);
+	}
+
+	@Override
+	public void flagError(final String s, final Object facet) {
+		flagError(s, false, facet);
+	}
+
+	@Override
+	public void flagWarning(final String s) {
+		flagError(s, true, null);
+	}
+
+	@Override
+	public void flagWarning(final String s, final Object facet) {
+		flagError(s, true, facet);
 	}
 
 	@Override

@@ -174,7 +174,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> commands) {}
 
 	@Override
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {

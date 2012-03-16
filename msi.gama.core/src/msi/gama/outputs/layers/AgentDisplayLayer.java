@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -98,7 +98,7 @@ public class AgentDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		super.prepare(out, sim);
 		computeAspectName(sim);
 		// compute(sim, 0);

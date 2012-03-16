@@ -31,7 +31,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.ICommand;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -52,7 +51,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 	private FsmStateCommand finalState;
 
 	@Override
-	public void verifyBehaviors(final ISpecies context) throws GamlException {
+	public void verifyBehaviors(final ISpecies context) {
 		super.verifyBehaviors(context);
 		// hasBehavior = hasBehavior || states.size() > 0;
 		for ( final FsmStateCommand s : states.values() ) {
@@ -60,21 +59,22 @@ public class FsmArchitecture extends ReflexArchitecture {
 				if ( initialState == null ) {
 					initialState = s;
 				} else {
-					throw new GamlException("Only one initial state allowed", context
-						.getDescription().getSourceInformation());
+					initialState.error("Only one initial state allowed", FsmStateCommand.INITIAL);
+					s.error("Only one initial state allowed", FsmStateCommand.INITIAL);
 				}
 			}
 			if ( s.isFinal() ) {
 				if ( finalState == null ) {
 					finalState = s;
 				} else {
-					throw new GamlException("Only one final state allowed", context
-						.getDescription().getSourceInformation());
+					finalState.error("Only one final state allowed", FsmStateCommand.FINAL);
+					s.error("Only one final state allowed", FsmStateCommand.FINAL);
 				}
 			}
 		}
-		if ( initialState == null ) { throw new GamlException("No initial state defined", context
-			.getDescription().getSourceInformation()); }
+		if ( initialState == null ) {
+			context.error("No initial state defined");
+		}
 		context.getVar(IKeyword.STATE).setValue(initialState.getName());
 		stateNames = new GamaList(states.keySet());
 	}

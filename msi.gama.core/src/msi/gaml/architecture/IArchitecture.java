@@ -21,7 +21,6 @@ package msi.gaml.architecture;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.ICommand;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 
@@ -35,5 +34,5 @@ public interface IArchitecture extends ISkill, ICommand {
 
 	public abstract void init(IScope scope) throws GamaRuntimeException;
 
-	public abstract void verifyBehaviors(ISpecies context) throws GamlException;
+	public abstract void verifyBehaviors(ISpecies context);
 }

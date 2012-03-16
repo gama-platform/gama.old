@@ -63,6 +63,14 @@ public class Stats {
 		return d.getMedian();
 	}
 
+	//
+	// public static Object opRCompute(final IScope scope, final String operator, final Map
+	// arguments) {
+	// String s = generateRProgram(operator, arguments);
+	// Object o = executeRFunction(s);
+	// return o;
+	// }
+
 	@operator(value = "standard_deviation")
 	public static Double opStDev(final IScope scope, final GamaList values) {
 		DataSet d = from(values);

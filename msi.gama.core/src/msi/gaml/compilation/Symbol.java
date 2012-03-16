@@ -66,9 +66,8 @@ public abstract class Symbol implements ISymbol {
 				compatible = compatible || tm.get(type).isAssignableFrom(actualType);
 			}
 			if ( !compatible ) {
-				description.flagWarning(new GamlException("Facet '" + facet + "' is expecting " +
-					Arrays.toString(fmd.types) + " instead of " + actualType, description
-					.getSourceInformation()));
+				warning("Facet '" + facet + "' is expecting " + Arrays.toString(fmd.types) +
+					" instead of " + actualType, facet);
 			}
 		} else {
 			String s = expr.literalValue();
@@ -78,9 +77,9 @@ public abstract class Symbol implements ISymbol {
 				compatible = compatible || value.equals(s);
 			}
 			if ( !compatible ) {
-				description.flagWarning(new GamlException("Facet '" + facet +
-					"' is expecting a value among " + Arrays.toString(fmd.values) + " instead of " +
-					s, description.getSourceInformation()));
+				error(
+					"Facet '" + facet + "' is expecting a value among " +
+						Arrays.toString(fmd.values) + " instead of " + s, facet);
 			}
 
 		}
@@ -93,8 +92,7 @@ public abstract class Symbol implements ISymbol {
 		if ( !description.getFacets().containsKey(key) ) { return null; }
 		IExpression result = description.getFacets().getExpr(key);
 		if ( result == null ) {
-			description.flagError(new GamlException("Facet " + key + " could not be compiled.",
-				description.getSourceInformation()));
+			error("Facet " + key + " could not be compiled.");
 		}
 		return result;
 	}
@@ -133,7 +131,7 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public abstract void setChildren(final List<? extends ISymbol> commands) throws GamlException;
+	public abstract void setChildren(final List<? extends ISymbol> commands);
 
 	@Override
 	public void setName(final String n) {
@@ -147,5 +145,30 @@ public abstract class Symbol implements ISymbol {
 
 	@Override
 	public void dispose() {}
+
+	@Override
+	public void error(final String s) /* throws GamlException */{
+		error(s, null);
+	}
+
+	@Override
+	public void error(final String s, final String facet) /* throws GamlException */{
+		if ( description != null || description.getSourceInformation() != null ) {
+			description.flagError(s, facet);
+		} else {
+			throw new GamaRuntimeException(s);
+			// throw e;
+		}
+	}
+
+	@Override
+	public void warning(final String s, final String facet) /* throws GamlException */{
+		if ( description != null || description.getSourceInformation() != null ) {
+			description.flagWarning(s, facet);
+		} else {
+			// throw e;
+			throw new GamaRuntimeException(s);
+		}
+	}
 
 }

@@ -46,7 +46,6 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.SEED, type = IType.FLOAT_STR),
 	@var(name = IKeyword.RNG, type = IType.STRING_STR, init = "'" + IKeyword.MERSENNE + "'"),
 	@var(name = IKeyword.STEP, type = IType.INT_STR, constant = true),
-	@var(name = GAMA._UQR, type = IType.BOOL_STR, init = "true"),
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
@@ -56,21 +55,21 @@ import msi.gaml.types.IType;
 public class WorldSkill extends GeometricSkill {
 
 	public static final String DURATION = "duration";
-	
+
 	public static final String TOTAL_DURATION = "total_duration";
-	
+
 	public static final String AVERAGE_DURATION = "average_duration";
 
 	@getter(var = DURATION)
 	public String getDuration(final IAgent agent) {
 		return Long.toString(SimulationClock.getDuration());
 	}
-	
+
 	@getter(var = TOTAL_DURATION)
 	public String getTotalDuration(final IAgent agent) {
 		return Long.toString(SimulationClock.getTotalDuration());
 	}
-	
+
 	@getter(var = AVERAGE_DURATION)
 	public String getAverageDuration(final IAgent agent) {
 		return Double.toString(SimulationClock.getAverageDuration());
@@ -84,16 +83,6 @@ public class WorldSkill extends GeometricSkill {
 	@setter(IKeyword.TIME)
 	public void setTime(final IAgent agent, final double t) throws GamaRuntimeException {
 		SimulationClock.setTime(t);
-	}
-
-	@getter(var = GAMA._UQR, initializer = true)
-	public Boolean getQualityRendering(final IAgent agent) {
-		return GAMA.USE_QUALITY_RENDERING;
-	}
-
-	@setter(GAMA._UQR)
-	public void setQualityRendering(final IAgent agent, final boolean t) {
-		GAMA.USE_QUALITY_RENDERING = t;
 	}
 
 	@getter(var = GAMA._FATAL, initializer = true)

@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -60,7 +60,7 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 	}
 
 	@Override
-	public void setFormalArgs(final Arguments args) throws GamlException {
+	public void setFormalArgs(final Arguments args) {
 		verifyArgs(args);
 		this.args = args;
 	}
@@ -75,15 +75,17 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 		return result;
 	}
 
-	public void verifyArgs(final Map<String, ?> args) throws GamlException {
+	public void verifyArgs(final Map<String, ?> args) {
 		ExecutionContextDescription declPlace =
 			(ExecutionContextDescription) description.getDescriptionDeclaringAction(name);
 		CommandDescription executer = null;
 		if ( declPlace != null ) {
 			executer = declPlace.getAction(name);
 		}
-		if ( executer == null ) { throw new GamlException("Unknown action " + getName(),
-			getDescription().getSourceInformation()); }
+		if ( executer == null ) {
+			error("Unknown action " + getName(), IKeyword.ACTION);
+			return;
+		}
 		executer.verifyArgs(args.keySet());
 	}
 

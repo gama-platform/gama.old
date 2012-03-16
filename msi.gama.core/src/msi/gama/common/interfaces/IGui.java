@@ -20,7 +20,7 @@ package msi.gama.common.interfaces;
 
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The class IGui.
@@ -34,6 +34,7 @@ public interface IGui {
 	public static final int ERROR = 0;
 	public static final int WAIT = 1;
 	public static final int INFORM = 2;
+	public static final String PLUGIN_ID = "msi.gama.application";
 
 	void setStatus(String error, int code);
 
@@ -63,7 +64,7 @@ public interface IGui {
 
 	void warn(String string);
 
-	void runtimeError(GamlException g);
+	void runtimeError(GamaRuntimeException g);
 
 	IEditorFactory getEditorFactory();
 
@@ -95,9 +96,16 @@ public interface IGui {
 
 	IGraphics newGraphics(int width, int height);
 
-	public abstract IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
-		final double w, final double h);
-
 	void clearErrors();
+
+	/**
+	 * @param keyword
+	 * @param layerDisplayOutput
+	 * @param w
+	 * @param h
+	 * @return
+	 */
+	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput,
+		double w, double h);
 
 }

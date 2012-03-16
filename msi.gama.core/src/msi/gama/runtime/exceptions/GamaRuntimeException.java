@@ -18,9 +18,9 @@
  */
 package msi.gama.runtime.exceptions;
 
+import java.util.*;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gaml.compilation.GamlException;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -29,12 +29,14 @@ import msi.gaml.compilation.GamlException;
  * 
  */
 
-public class GamaRuntimeException extends GamlException {
+public class GamaRuntimeException extends RuntimeException {
 
 	private static final String ERROR = "Error: \n";
 	private static final String WARNING = "Warning: \n";
 	private final long cycle;
 	private String agent;
+	private boolean isWarning;
+	protected final List<String> context = new ArrayList();
 
 	public GamaRuntimeException(final Throwable ex) {
 		super(ERROR + ex.toString(), ex);
@@ -53,6 +55,10 @@ public class GamaRuntimeException extends GamlException {
 		cycle = computeCycle();
 	}
 
+	public void addContext(final String c) {
+		context.add(c);
+	}
+
 	public void addContext(final IGamlable setCommand) {
 		addContext("in " + setCommand.toGaml());
 	}
@@ -62,7 +68,6 @@ public class GamaRuntimeException extends GamlException {
 		addContext("in agent " + agent);
 	}
 
-	@Override
 	public long getCycle() {
 		return cycle;
 	}
@@ -71,13 +76,16 @@ public class GamaRuntimeException extends GamlException {
 		return agent;
 	}
 
-	@Override
 	public boolean isWarning() {
 		return isWarning && !SimulationClock.TREAT_WARNINGS_AS_ERRORS;
 	}
 
 	public static long computeCycle() {
 		return SimulationClock.getCycle();
+	}
+
+	public List<String> getContextAsList() {
+		return context;
 	}
 
 }

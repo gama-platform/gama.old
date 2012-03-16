@@ -21,7 +21,7 @@ package msi.gaml.types;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -125,7 +125,7 @@ public interface IType<Inner> extends Comparable<IType> {
 	 * @param factory
 	 * @return
 	 */
-	IType coerce(IType expr) throws GamlException;
+	IType coerce(IType expr, IDescription context);
 
 	/**
 	 * returns the distance between two types : 0 if they are equal, 1 if they are directly related,

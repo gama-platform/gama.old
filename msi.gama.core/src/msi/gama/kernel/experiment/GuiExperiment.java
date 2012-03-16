@@ -98,7 +98,7 @@ public class GuiExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void reloadExperiment() throws GamaRuntimeException, GamlException, InterruptedException {
+	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		closeCurrentSimulation(false);
 		initializeExperiment();
@@ -113,7 +113,7 @@ public class GuiExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> children) {
 		super.setChildren(children);
 		for ( ISymbol s : children ) {
 			if ( s instanceof IParameter ) {

@@ -83,7 +83,7 @@ public class StringUtils {
 		while (m.find()) {
 			String tmp = "";
 			tmp = expression.substring(m.start(), m.end());
-			if ( tmp != null && IUnits.UNITS.containsKey(tmp) ) {
+			if ( tmp != null && IUnits.UNITS.containsKey(tmp) && tokens.size() > 0 ) {
 				if ( !IExpressionParser.BINARIES.containsKey(tokens.get(tokens.size() - 1)) ) {
 					tokens.add("*");
 				}

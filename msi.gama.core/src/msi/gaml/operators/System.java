@@ -29,7 +29,6 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.GamaMap;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import org.codehaus.janino.ScriptEvaluator;
@@ -77,7 +76,7 @@ public class System {
 			IExpression e =
 				GAMA.getExpressionFactory().createExpr(new ExpressionDescription(gaml), d);
 			return scope.evaluate(e, agent);
-		} catch (GamlException e) {
+		} catch (GamaRuntimeException e) {
 			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " +
 				scope.getAgentScope() + java.lang.System.getProperty("line.separator") +
 				"Reason: " + e.getMessage());

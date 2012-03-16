@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -93,7 +93,7 @@ public class ImageDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamlException {
+	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
 		super.prepare(out, scope);
 		if ( getFacet(IKeyword.GIS) != null ) {
 			buildGisLayer(scope);
@@ -248,7 +248,7 @@ public class ImageDisplayLayer extends AbstractDisplayLayer {
 	 * @throws GamaRuntimeException
 	 * @param newValue
 	 */
-	public void setGisLayerName(final String newValue) throws GamaRuntimeException, GamlException {
+	public void setGisLayerName(final String newValue) throws GamaRuntimeException {
 		setName(newValue);
 		IScope scope = GAMA.obtainNewScope();
 		if ( scope == null ) { throw new GamaRuntimeException("No simulation running"); }

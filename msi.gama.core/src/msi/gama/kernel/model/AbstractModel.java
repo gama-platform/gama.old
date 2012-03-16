@@ -86,7 +86,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) throws GamlException {}
+	public void setChildren(final List<? extends ISymbol> children) {}
 
 	protected void setModelEnvironment(final ModelEnvironment modelEnvironment) {
 		this.modelEnvironment = modelEnvironment;

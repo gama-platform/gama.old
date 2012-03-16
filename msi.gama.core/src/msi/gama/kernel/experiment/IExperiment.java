@@ -26,8 +26,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.compilation.*;
-import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.compilation.ISymbol;
 
 /**
  * Written by drogoul Modified on 31 mai 2011
@@ -50,8 +49,6 @@ public interface IExperiment extends ISymbol {
 	static final int _CLOSE = 5;
 	static final int _RELOAD = 6;
 	static final int _NEXT = 7;
-
-	public abstract IExpressionFactory getExpressionFactory();
 
 	public abstract IModel getModel();
 
@@ -96,7 +93,7 @@ public interface IExperiment extends ISymbol {
 
 	public abstract IList<? extends IParameter> getParametersToDisplay();
 
-	public abstract void reportError(GamlException g);
+	public abstract void reportError(GamaRuntimeException g);
 
 	public abstract void setParameterValue(String name, Object v) throws GamaRuntimeException;
 

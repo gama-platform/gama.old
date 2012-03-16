@@ -21,7 +21,6 @@ package msi.gaml.descriptions;
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.*;
 import msi.gaml.types.IType;
 
@@ -33,9 +32,13 @@ import msi.gaml.types.IType;
  */
 public interface IDescription {
 
-	public void flagError(final GamlException e);
+	public void flagError(final String s);
 
-	public void flagWarning(final GamlException e);
+	public void flagError(final String s, Object facet);
+
+	public void flagWarning(final String s);
+
+	public void flagWarning(final String s, Object facet);
 
 	public abstract String getKeyword();
 

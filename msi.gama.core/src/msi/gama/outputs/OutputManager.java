@@ -129,8 +129,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 							e.addContext("output " + output.getName() + " has not been opened");
 							GAMA.reportError(e);
 							continue;
-						} catch (GamlException e) {
-							e.printStackTrace();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -261,7 +259,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		for ( ISymbol s : commands ) {
 			if ( s instanceof IOutput ) {
 				addOutput((IOutput) s);
@@ -305,9 +303,10 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(layerDisplayOutput, w, h); }
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
+		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,
+			w, h); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}

@@ -20,7 +20,7 @@ package msi.gaml.types;
 
 import static msi.gaml.types.IType.*;
 import java.util.*;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.descriptions.SpeciesDescription;
 
 public class TypesManager {
 
@@ -55,7 +55,7 @@ public class TypesManager {
 	 * @param base
 	 * @return
 	 */
-	public IType addType(final String name, final Class base) throws GamlException {
+	public IType addType(final SpeciesDescription species) {
 		/*
 		 * why do we need this code?
 		 * if ( stringToIType.containsKey(name) ) {
@@ -63,8 +63,11 @@ public class TypesManager {
 		 * return theType;
 		 * }
 		 */
-		if ( stringToIType.containsKey(name) ) { throw new GamlException("Species " + name +
-			" already declared. Species name must be unique!", (Throwable) null); }
+		String name = species.getName();
+		Class base = species.getJavaBase();
+		if ( stringToIType.containsKey(name) ) {
+			species.flagError("Species " + name + " already declared. Species name must be unique");
+		}
 
 		short newId = ++CURRENT_INDEX;
 		IType newType = new GamaAgentType(name, newId, base);

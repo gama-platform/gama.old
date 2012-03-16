@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.INamed;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 
 /**
  * The class IDisplayLayer.
@@ -43,7 +42,8 @@ public interface IDisplayLayer extends INamed {
 	public final static short CHART = 7;
 	public final static short QUADTREE = 8;
 
-	public abstract void prepare(final IDisplayOutput out, final IScope sim) throws GamlException;
+	public abstract void prepare(final IDisplayOutput out, final IScope sim)
+		throws GamaRuntimeException;
 
 	public abstract short getType();
 

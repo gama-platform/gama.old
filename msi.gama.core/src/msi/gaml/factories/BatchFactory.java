@@ -42,7 +42,7 @@ public class BatchFactory extends SymbolFactory {
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getName().equals(IKeyword.METHOD) ) { return cur.getAttribute(IKeyword.NAME); }
+		if ( cur.getName().equals(IKeyword.METHOD) ) { return cur.getLabel(IKeyword.NAME); }
 		return super.getKeyword(cur);
 	}
 

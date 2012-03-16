@@ -7,7 +7,7 @@ package msi.gaml.factories;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ErrorCollector;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.compilation.GamlCompilationError;
 
 public class SpeciesStructure {
 
@@ -20,7 +20,7 @@ public class SpeciesStructure {
 	public SpeciesStructure(final ISyntacticElement node, final ErrorCollector collect) {
 		microSpecies = new ArrayList<SpeciesStructure>();
 		if ( node == null ) {
-			collect.add(new GamlException("Species element is null!", node));
+			collect.add(new GamlCompilationError("Species element is null!", node));
 			this.node = null;
 			return;
 		}
@@ -45,7 +45,7 @@ public class SpeciesStructure {
 	}
 
 	public String getName() {
-		return node.getAttribute(IKeyword.NAME);
+		return node.getLabel(IKeyword.NAME);
 	}
 
 	@Override

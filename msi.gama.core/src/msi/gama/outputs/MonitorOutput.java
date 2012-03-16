@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -54,7 +54,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	public MonitorOutput(final String name, final String expr, final ISimulation sim,
-		final boolean openRightNow) throws GamlException {
+		final boolean openRightNow) {
 		super(DescriptionFactory.createDescription(IKeyword.MONITOR, IKeyword.VALUE, expr,
 			IKeyword.NAME, name == null ? expr : name));
 		setUserCreated(true);
@@ -117,8 +117,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return true;
 	}
 
-	public boolean setNewExpressionText(final String string, final ISimulation sim)
-		throws GamlException {
+	public boolean setNewExpressionText(final String string, final ISimulation sim) {
 		expressionText = string;
 		value =
 			GAMA.getExpressionFactory().createExpr(new ExpressionDescription(string),

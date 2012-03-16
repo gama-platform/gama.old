@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -47,7 +47,7 @@ public class MatchCommand extends AbstractCommandSequence {
 	Object constantValue;
 	final MatchExecuter executer;
 
-	public MatchCommand(final IDescription desc) throws GamlException {
+	public MatchCommand(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		String keyword = desc.getKeyword();
@@ -68,7 +68,7 @@ public class MatchCommand extends AbstractCommandSequence {
 
 		abstract boolean matches(IScope scope, Object switchValue) throws GamaRuntimeException;
 
-		void acceptValue() throws GamlException {
+		void acceptValue() {
 			if ( value.isConst() ) {
 				constantValue = value.value(GAMA.getDefaultScope());
 			}
@@ -87,7 +87,7 @@ public class MatchCommand extends AbstractCommandSequence {
 		}
 
 		@Override
-		void acceptValue() throws GamlException {
+		void acceptValue() {
 
 		}
 
@@ -120,7 +120,7 @@ public class MatchCommand extends AbstractCommandSequence {
 		}
 
 		@Override
-		public void acceptValue() throws GamlException {
+		public void acceptValue() {
 			super.acceptValue();
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof IContainer) ) {
@@ -153,7 +153,7 @@ public class MatchCommand extends AbstractCommandSequence {
 		 * @see msi.gaml.commands.MatchCommand.MatchExecuter#acceptValue()
 		 */
 		@Override
-		public void acceptValue() throws GamlException {
+		public void acceptValue() {
 			super.acceptValue();
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof ILocation) ) {

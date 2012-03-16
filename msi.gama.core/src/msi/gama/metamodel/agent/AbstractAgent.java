@@ -180,6 +180,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public void schedule() throws GamaRuntimeException {
 		if ( index != -1 ) {
+			// GuiUtils.debug("Agent " + getName() + " scheduled");
 			simulation.getScheduler().insertAgentToInit(this);
 		}
 	}

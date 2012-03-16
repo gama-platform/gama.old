@@ -24,7 +24,6 @@ import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
 
 public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionListener
 /* ,IPartListener */{
@@ -53,8 +52,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				try {
 					new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT)
 						.launch();
-				} catch (GamlException e) {
-					GamaRuntimeException g = new GamaRuntimeException(e);
+				} catch (GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
 					GAMA.reportError(g);
 				}

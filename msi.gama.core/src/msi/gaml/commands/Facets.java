@@ -21,7 +21,6 @@ package msi.gaml.commands;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
@@ -32,25 +31,27 @@ import msi.gaml.expressions.*;
  * retrieved.
  * 
  */
-public class Facets extends HashMap<String, Facet> {
+public class Facets extends HashMap<String, ExpressionDescription> {
 
 	// public final HashMap<String, Facet> facets = new HashMap();
+
+	public Facets(final String ... strings) {
+		addAll(strings);
+	}
 
 	public String getString(final String key) {
 		return getString(key, null);
 	}
 
 	public String getString(final String key, final String ifAbsent) {
-		Facet f = get(key);
+		ExpressionDescription f = get(key);
 		if ( f == null ) { return ifAbsent; }
 		return f.literalValue();
 		// TODO Penser ˆ la facette nulle ?
 	}
 
 	public ExpressionDescription getTokens(final String key) {
-		Facet f = get(key);
-		if ( f == null ) { return null; }
-		return f.getFacetDescription();
+		return get(key);
 		// TODO Penser ˆ la facette nulle ?
 	}
 
@@ -60,24 +61,31 @@ public class Facets extends HashMap<String, Facet> {
 	}
 
 	public IExpression getExpr(final String key, final IExpression ifAbsent) {
-		Facet f = get(key);
+		ExpressionDescription f = get(key);
 		if ( f == null ) { return ifAbsent; }
 		return f.getExpression();
 	}
 
 	public void put(final String key, final String desc) {
-		put(key, new Facet(desc));
+		put(key, new ExpressionDescription(desc));
+	}
+
+	@Override
+	public ExpressionDescription put(final String key, final ExpressionDescription desc) {
+		super.put(key, desc);
+		return desc;
+
 	}
 
 	public void putAsLabel(final String key, final String desc) {
-		put(key, new Facet(desc, false).setLabel());
+		put(key, new ExpressionDescription(desc, false).setLabel());
 	}
 
 	public void put(final String key, final IExpression expr) {
 		if ( containsKey(key) ) {
 			get(key).setExpression(expr);
 		} else {
-			put(key, new Facet(expr));
+			put(key, new ExpressionDescription(expr));
 		}
 	}
 
@@ -89,7 +97,7 @@ public class Facets extends HashMap<String, Facet> {
 
 	public void putIfAbsent(final String key, final IExpression expr) {
 		if ( containsKey(key) ) { return; }
-		put(key, new Facet(expr));
+		put(key, new ExpressionDescription(expr));
 	}
 
 	public void addAll(final String ... strings) {
@@ -104,7 +112,7 @@ public class Facets extends HashMap<String, Facet> {
 
 	public void addAll(final Facets ff) {
 		// Without replacing
-		for ( Map.Entry<String, Facet> entry : ff.entrySet() ) {
+		for ( Map.Entry<String, ExpressionDescription> entry : ff.entrySet() ) {
 			if ( !containsKey(entry.getKey()) ) {
 				put(entry.getKey(), entry.getValue());
 			}
@@ -112,7 +120,7 @@ public class Facets extends HashMap<String, Facet> {
 	}
 
 	public boolean equals(final String key, final Object o) {
-		Facet f = get(key);
+		ExpressionDescription f = get(key);
 		return f == null ? o == null : f.equals(o);
 	}
 
@@ -122,13 +130,13 @@ public class Facets extends HashMap<String, Facet> {
 
 	public Object value(final String key, final IScope scope, final Object ifAbsent)
 		throws GamaRuntimeException {
-		Facet f = get(key);
+		ExpressionDescription f = get(key);
 		if ( f != null ) { return f.value(scope); }
 		return ifAbsent;
 	}
 
 	public void dispose() {
-		for ( Map.Entry<String, Facet> entry : entrySet() ) {
+		for ( Map.Entry<String, ExpressionDescription> entry : entrySet() ) {
 			entry.getValue().dispose();
 		}
 		clear();
@@ -136,8 +144,8 @@ public class Facets extends HashMap<String, Facet> {
 
 	public Collection<ExpressionDescription> getTokens() {
 		final Set<ExpressionDescription> set = new HashSet();
-		for ( Map.Entry<String, Facet> entry : entrySet() ) {
-			ExpressionDescription ed = entry.getValue().getFacetDescription();
+		for ( Map.Entry<String, ExpressionDescription> entry : entrySet() ) {
+			ExpressionDescription ed = entry.getValue();
 			if ( ed != null ) {
 				set.add(ed);
 			}
@@ -146,12 +154,12 @@ public class Facets extends HashMap<String, Facet> {
 	}
 
 	public IExpression compile(final String key, final IDescription context,
-		final IExpressionFactory factory) throws GamlException, GamaRuntimeException {
+		final IExpressionFactory factory) throws GamaRuntimeException {
 		return compile(key, context, null, factory);
 	}
 
 	public IExpression compileAsLabel(final String key) {
-		Facet f = get(key);
+		ExpressionDescription f = get(key);
 		if ( f == null ) { return null; }
 		return f.setLabel().getExpression();
 	}
@@ -167,17 +175,8 @@ public class Facets extends HashMap<String, Facet> {
 	 * @throws GamlException
 	 */
 	public IExpression compile(final String key, final IDescription context,
-		final IExpression ifAbsent, final IExpressionFactory factory) throws GamlException,
-		GamaRuntimeException {
-		if ( containsKey(key) ) {
-			try {
-				return get(key).compile(context, factory);
-			} catch (GamlException e) {
-				e.setFacetOfInterest(key);
-				throw e;
-			}
-
-		}
+		final IExpression ifAbsent, final IExpressionFactory factory) throws GamaRuntimeException {
+		if ( containsKey(key) ) { return get(key).compile(context, factory); }
 		return ifAbsent;
 	}
 

@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.exceptions.GamaStartupException;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.types.*;
@@ -39,7 +40,7 @@ public class GamaBundleLoader {
 	public static volatile boolean contributionsLoaded = false;
 	public final static Map<Bundle, String> gamlAdditionsBundleAndFiles = new HashMap();
 
-	public static void preBuildContributions() throws GamlException {
+	public static void preBuildContributions() throws GamaStartupException {
 		Map<String, String> additions = new HashMap();
 		IConfigurationElement[] config =
 			Platform.getExtensionRegistry().getConfigurationElementsFor("gaml.grammar.addition");
@@ -51,7 +52,7 @@ public class GamaBundleLoader {
 		}
 		String core = "msi.gama.core";
 		String corePath = additions.get(core);
-		if ( corePath == null ) { throw new GamlException(
+		if ( corePath == null ) { throw new GamaStartupException(
 			"Core implementation of GAML not found. Please check that msi.gama.core is in the application bundles",
 			(Throwable) null); }
 		preBuildBundle(core, corePath);
@@ -65,20 +66,20 @@ public class GamaBundleLoader {
 	}
 
 	public final static void preBuildBundle(final String pluginName, final String pathName)
-		throws GamlException {
+		throws GamaStartupException {
 		Bundle bundle = Platform.getBundle(pluginName);
 		try {
 			bundle.start();
 			GamaBundleLoader.addGamlExtension(bundle, pathName);
 			preBuild(bundle, pathName);
 		} catch (BundleException e1) {
-			throw new GamlException("GAML additions in " + pluginName +
+			throw new GamaStartupException("GAML additions in " + pluginName +
 				" cannot be installed due to an error in loading the plug-in.", e1);
 		}
 	}
 
 	public static void preBuild(final Bundle plugin, final String pathToAdditions)
-		throws GamlException {
+		throws GamaStartupException {
 
 		// Generating built-in species
 
@@ -109,7 +110,7 @@ public class GamaBundleLoader {
 					}
 				}
 			}
-		} catch (GamlException e1) {
+		} catch (GamaStartupException e1) {
 			e1.printStackTrace();
 		}
 
@@ -140,7 +141,7 @@ public class GamaBundleLoader {
 					e.printStackTrace();
 				}
 			}
-		} catch (GamlException e1) {
+		} catch (GamaStartupException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 

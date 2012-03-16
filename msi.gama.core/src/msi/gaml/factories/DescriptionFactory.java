@@ -20,7 +20,8 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.util.GamaList;
+import msi.gaml.commands.Facets;
+import msi.gaml.compilation.BasicSyntacticElement;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -33,16 +34,22 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription createDescription(final ISymbolFactory factory,
 		final String keyword, final IDescription superDesc, final List<IDescription> children,
-		final String ... facets) {
-		List<String> ff = new GamaList(facets);
-		ff.add(0, keyword);
-		return factory.createDescription(null, superDesc, children,
-			ff.toArray(new String[ff.size()]));
+		final Facets facets) {
+		// Facets facets = new Facets(strings);
+		facets.put(IKeyword.KEYWORD, keyword);
+		BasicSyntacticElement element = new BasicSyntacticElement(keyword, facets);
+		return factory.createDescription(element, superDesc, children);
+	}
+
+	public synchronized static IDescription createDescription(final String keyword,
+		final IDescription superDesc, final List<IDescription> children, final Facets facets) {
+		return createDescription(getModelFactory(), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription createDescription(final String keyword,
 		final IDescription superDesc, final List<IDescription> children, final String ... facets) {
-		return createDescription(getModelFactory(), keyword, superDesc, children, facets);
+		return createDescription(getModelFactory(), keyword, superDesc, children,
+			new Facets(facets));
 	}
 
 	public synchronized static IDescription createDescription(final String keyword,
@@ -57,7 +64,8 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription createOutputDescription(final String keyword,
 		final String ... facets) {
-		return createDescription(getOutputFactory(), keyword, null, Collections.EMPTY_LIST, facets);
+		return createDescription(getOutputFactory(), keyword, null, Collections.EMPTY_LIST,
+			new Facets(facets));
 	}
 
 	private static Class<ISymbolFactory> FACTORY_CLASS;

@@ -57,7 +57,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	public ExecutionContextDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
-		super(keyword, superDesc, facets, children, source, md);
+		super(keyword, superDesc, children, source, md);
 		skillInstancesByClass = new HashMap();
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();
@@ -83,7 +83,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 
 	protected void setSkills(final ExpressionDescription s) {
 		if ( s != null ) {
-			final String[] skillNames = s.getString().split(",");
+			final String[] skillNames = s.toString().split(",");
 			for ( final String skill : skillNames ) {
 				final Class c = Skill.getSkillClassFor(skill.trim());
 				if ( c != null ) {
@@ -103,13 +103,13 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	 * 
 	 * @throws GamlException
 	 */
-	public void finalizeDescription() throws GamlException {
+	public void finalizeDescription() {
 		copyItemsFromParent();
 		createControl();
 		buildSharedSkills();
 	}
 
-	protected abstract void copyItemsFromParent() throws GamlException;
+	protected abstract void copyItemsFromParent();
 
 	/**
 	 * Returns the level of this species.
@@ -187,33 +187,29 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		IDescription desc = super.addChild(child);
-		try {
-			if ( desc.getKeyword().equals(IKeyword.REFLEX) ) {
-				addBehavior((CommandDescription) desc);
-			} else if ( desc.getKeyword().equals(IKeyword.ACTION) ) {
-				addAction((CommandDescription) desc);
-			} else if ( desc.getKeyword().equals(IKeyword.ASPECT) ) {
-				addAspect((CommandDescription) desc);
-			} else if ( desc.getKeyword().equals(IKeyword.PRIMITIVE) ) {
-				addAction((CommandDescription) desc);
-			} else if ( desc instanceof CommandDescription &&
-				!IKeyword.INIT.equals(desc.getKeyword()) ) {
-				addBehavior((CommandDescription) desc);
-			} else if ( desc instanceof VariableDescription ) {
-				addVariable((VariableDescription) desc);
-			}
-		} catch (GamlException e) {
-			flagError(e);
-			return desc;
+
+		if ( desc.getKeyword().equals(IKeyword.REFLEX) ) {
+			addBehavior((CommandDescription) desc);
+		} else if ( desc.getKeyword().equals(IKeyword.ACTION) ) {
+			addAction((CommandDescription) desc);
+		} else if ( desc.getKeyword().equals(IKeyword.ASPECT) ) {
+			addAspect((CommandDescription) desc);
+		} else if ( desc.getKeyword().equals(IKeyword.PRIMITIVE) ) {
+			addAction((CommandDescription) desc);
+		} else if ( desc instanceof CommandDescription && !IKeyword.INIT.equals(desc.getKeyword()) ) {
+			addBehavior((CommandDescription) desc);
+		} else if ( desc instanceof VariableDescription ) {
+			addVariable((VariableDescription) desc);
 		}
 
 		return desc;
 	}
 
-	private void addBehavior(final CommandDescription r) throws GamlException {
+	private void addBehavior(final CommandDescription r) {
 		String behaviorName = r.getName();
-		if ( hasBehavior(behaviorName) ) { throw new GamlException(r.getKeyword() +
-			" name already declared : " + behaviorName, r.getSource()); }
+		if ( hasBehavior(behaviorName) ) {
+			r.flagError(r.getKeyword() + " name already declared : " + behaviorName);
+		}
 		behaviors.put(behaviorName, r);
 	}
 
@@ -221,7 +217,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		return behaviors.containsKey(a);
 	}
 
-	private void addAction(final CommandDescription ce) throws GamlException {
+	private void addAction(final CommandDescription ce) {
 		String actionName = ce.getName();
 		if ( hasAction(actionName) ) {
 			CommandDescription existing = getAction(actionName);
@@ -229,21 +225,23 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 				ce.getKeyword().equals(IKeyword.PRIMITIVE) ) {
 				return;
 			} else if ( existing.getKeyword().equals(IKeyword.PRIMITIVE) &&
-				ce.getKeyword().equals(IKeyword.ACTION) ) { throw new GamlException(
-				"action name already declared as a primitive : " + actionName, ce.getSource()); }
+				ce.getKeyword().equals(IKeyword.ACTION) ) {
+				ce.flagError("action name already declared as a primitive : " + actionName);
+			}
 		}
 		actions.put(actionName, ce);
 		GamaCompiler.registerFunction(actionName, this);
 	}
 
-	private void addAspect(final CommandDescription ce) throws GamlException {
+	private void addAspect(final CommandDescription ce) {
 		String aspectName = ce.getName();
 		if ( aspectName == null ) {
 			aspectName = IKeyword.DEFAULT;
 			ce.getFacets().putAsLabel(IKeyword.NAME, aspectName);
 		}
-		if ( !aspectName.equals(IKeyword.DEFAULT) && hasAspect(aspectName) ) { throw new GamlException(
-			"aspect name already declared : " + aspectName, ce.getSource()); }
+		if ( !aspectName.equals(IKeyword.DEFAULT) && hasAspect(aspectName) ) {
+			ce.flagError("aspect name already declared : " + aspectName);
+		}
 		aspects.put(aspectName, ce);
 	}
 
@@ -273,7 +271,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		return actions.keySet();
 	}
 
-	protected void addVariable(final VariableDescription v) throws GamlException {
+	protected void addVariable(final VariableDescription v) {
 		String vName = v.getName();
 		if ( hasVar(vName) ) {
 			IDescription builtIn = removeChild(variables.get(vName));
@@ -282,8 +280,8 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 			if ( bType != vType ) {
 				String builtInType = bType.toString();
 				String varType = vType.toString();
-				throw new GamlException("variable " + vName + " is of type " + builtInType +
-					" and cannot be redefined as a " + varType, v.getSource());
+				v.flagError("variable " + vName + " is of type " + builtInType +
+					" and cannot be redefined as a " + varType);
 			}
 			v.copyFrom((VariableDescription) builtIn);
 		}
@@ -328,12 +326,12 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		return updatableVariableNames;
 	}
 
-	protected void sortVars() throws GamlException {
-		// OutputManager.debug("***** Sorting variables of " + getNameFacetValue());
+	protected void sortVars() {
+		// GuiUtils.debug("***** Sorting variables of " + getNameFacetValue());
 		final List<VariableDescription> result = new GamaList();
 		final Collection<VariableDescription> vars = variables.values();
 		for ( final VariableDescription var : vars ) {
-			var.usedVariables(this);
+			var.usedVariablesIn(variables);
 		}
 		for ( final VariableDescription var : vars ) {
 			var.expandDependencies(new GamaList());
@@ -365,9 +363,8 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 			}
 		}
 
-		// GUI.debug("Sorted variable names of " + facets.get(ISymbol.NAME).literalValue() + " are "
-		// +
-		// sortedVariableNames);
+		// GuiUtils.debug("Sorted variable names of " + facets.get(IKeyword.NAME).literalValue() +
+		// " are " + sortedVariableNames);
 	}
 
 	public Set<String> getBehaviorsNames() {
@@ -383,7 +380,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		return "Description of " + getName();
 	}
 
-	public void setJavaBase(final Class c) throws GamlException {
+	public void setJavaBase(final Class c) {
 		if ( javaBase != null ) { return; }
 		javaBase = c;
 		final List<Class> classes =
@@ -405,8 +402,10 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		cleanDeclarationClasses();
 		agentConstructor = GamlCompiler.getAgentConstructor(javaBase);
 
-		if ( agentConstructor == null ) { throw new GamlException("The base class " +
-			getJavaBase().getName() + " cannot be used as an agent class", getSourceInformation()); }
+		if ( agentConstructor == null ) {
+			flagError("The base class " + getJavaBase().getName() +
+				" cannot be used as an agent class");
+		}
 	}
 
 	public IAgentConstructor getAgentConstructor() {

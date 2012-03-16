@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.AbstractCommandSequence;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -47,16 +47,17 @@ public class FsmTransitionCommand extends AbstractCommandSequence {
 
 	protected static final String TO = "to";
 
-	public FsmTransitionCommand(final IDescription desc) throws GamlException {
+	public FsmTransitionCommand(final IDescription desc) {
 		super(desc);
 		verifyFacetType(IKeyword.WHEN);
 		String stateName = getLiteral(TO);
 
 		ExecutionContextDescription context =
 			(ExecutionContextDescription) desc.getSpeciesContext();
-		if ( !context.hasBehavior(stateName) ) { throw new GamlException(
-			"Transition is not correct. State " + stateName + " does not exist. ",
-			desc.getSourceInformation()); }
+		if ( context != null && !context.hasBehavior(stateName) ) {
+			error("Transition is not correct. State " + stateName + " does not exist. ",
+				IKeyword.TO);
+		}
 		setName(stateName);
 		when = getFacet(IKeyword.WHEN);
 	}

@@ -23,7 +23,7 @@ import java.util.List;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 
@@ -37,7 +37,7 @@ public class AbstractCommandSequence extends AbstractCommand {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> commands) {
 		this.commands = commands.toArray(new ICommand[0]);
 	}
 

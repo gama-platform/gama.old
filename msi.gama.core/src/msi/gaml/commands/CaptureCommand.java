@@ -49,7 +49,7 @@ public class CaptureCommand extends AbstractCommandSequence {
 
 	private AbstractCommandSequence sequence = null;
 
-	public CaptureCommand(final IDescription desc) throws GamlException {
+	public CaptureCommand(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
 		verifyFacetType(IKeyword.TARGET);
@@ -61,14 +61,15 @@ public class CaptureCommand extends AbstractCommandSequence {
 		}
 	}
 
-	private void verifyMicroSpecies() throws GamlException {
+	private void verifyMicroSpecies() {
 		SpeciesDescription macroSpecies =
 			(SpeciesDescription) this.getDescription().getSpeciesContext();
 
 		SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
-		if ( microSpecies == null ) { throw new GamlException(macroSpecies.getName() +
-			" species doesn't contain " + microSpeciesName + " as micro-species", this
-			.getDescription().getSourceInformation()); }
+		if ( microSpecies == null ) {
+			error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
+				" as micro-species");
+		}
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class CaptureCommand extends AbstractCommandSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) throws GamlException {
+	public void setChildren(final List<? extends ISymbol> com) {
 		sequence = new AbstractCommandSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
