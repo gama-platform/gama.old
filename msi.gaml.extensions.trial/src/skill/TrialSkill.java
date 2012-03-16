@@ -16,4 +16,5 @@ public class TrialSkill extends Skill {
 		System.out.println("Hello World");
 		return null;
 	}
+
 }
