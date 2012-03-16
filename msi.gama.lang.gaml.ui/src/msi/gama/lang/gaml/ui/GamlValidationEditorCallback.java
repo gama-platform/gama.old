@@ -52,6 +52,11 @@ public class GamlValidationEditorCallback extends ValidatingEditorCallback {
 	}
 
 	@Override
+	public void afterSetInput(final XtextEditor editor) {
+		super.afterSetInput(editor);
+	}
+
+	@Override
 	public boolean onValidateEditorInputState(final XtextEditor editor) {
 
 		System.out.println("Starting validation on validate input state");

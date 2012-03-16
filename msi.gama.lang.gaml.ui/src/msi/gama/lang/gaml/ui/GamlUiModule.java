@@ -20,12 +20,15 @@ package msi.gama.lang.gaml.ui;
 
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.resource.containers.IAllContainersState;
+import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
-import com.google.inject.Binder;
+import com.google.inject.*;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -34,6 +37,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
+		setValidationTrigger(activeWorkbenchWindow(), plugin);
 	}
 
 	@Override
@@ -59,11 +63,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlHighlightingConfiguration.class;
 	}
 
-	// @Override
-	// public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback>
-	// bindIXtextEditorCallback() {
-	// return GamlValidationEditorCallback.class;
-	// }
+	@Override
+	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
+		return null; // GamlValidationEditorCallback.class;
+	}
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
 		return GamlHoverProvider.class;
@@ -73,4 +76,22 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlDocumentationProvider.class;
 	}
 
+	@Override
+	public Provider<IAllContainersState> provideIAllContainersState() {
+		return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();
+	}
+
+	public Class<? extends XtextEditor> bindXtextEditor() {
+		return GamlEditor.class;
+	}
+
+	public static IWorkbenchWindow activeWorkbenchWindow() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		return workbench == null ? null : workbench.getActiveWorkbenchWindow();
+	}
+
+	private void setValidationTrigger(final IWorkbenchWindow w, final AbstractUIPlugin plugin) {
+		if ( w == null || !(plugin instanceof msi.gama.lang.gaml.ui.internal.GamlActivator) ) { return; }
+		w.getPartService().addPartListener(new ValidateFileOnActivation());
+	}
 }

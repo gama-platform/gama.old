@@ -324,7 +324,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void completeGamlFacetRef_Ref(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		super.completeGamlFacetRef_Ref(model, assignment, context, acceptor);
+		try {
+			super.completeGamlFacetRef_Ref(model, assignment, context, acceptor);
+		} catch (ClassCastException e) {
+			// e.printStackTrace();
+		}
 	}
 
 	@Override
