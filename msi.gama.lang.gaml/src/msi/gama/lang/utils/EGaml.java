@@ -8,11 +8,11 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.descriptions.SymbolMetaDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.xtext.EcoreUtil2;
 
 /**
  * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
@@ -44,6 +44,41 @@ public class EGaml {
 	public static boolean isUnary(final Expression e) {
 		return e instanceof FunctionRef || e instanceof VariableRef &&
 			((VariableRef) e).getRef() instanceof DefUnary;
+	}
+
+	public static StringBuilder dependencies = new StringBuilder();
+
+	public static Set<VariableRef> varDependenciesOf(final Statement s) {
+		Set<VariableRef> result = new HashSet();
+		EList<FacetExpr> facets = s.getFacets();
+		for ( FacetExpr facet : facets ) {
+			Expression expr = facet.getExpr();
+			if ( expr == null ) {
+				continue;
+			}
+			List<VariableRef> elements = EcoreUtil2.eAllOfType(expr, VariableRef.class);
+			for ( VariableRef var : elements ) {
+				if ( !isUnary(var) ) {
+					result.add(var);
+				}
+			}
+
+		}
+		return result;
+	}
+
+	public static ExpressionDescription getDependenciesOf(final Statement s) {
+		ExpressionDescription result = new ExpressionDescription(s.getExpr());
+		Set<VariableRef> vars = varDependenciesOf(s);
+		if ( vars.isEmpty() ) { return result; }
+		for ( VariableRef var : vars ) {
+			String name = getKeyOf(var);
+			if ( name != null && !result.contains(name) ) {
+				result.add(name);
+			}
+		}
+
+		return result;
 	}
 
 	public static Set<String> getAllowedChildrenForModel() {
@@ -92,11 +127,7 @@ public class EGaml {
 	public static String getLabelFromFacet(final Statement container, final String facet) {
 		Map<String, Expression> facets = getFacetsOf(container);
 		Expression expr = facets.get(facet);
-		if ( expr == null ) { return null; }
-		if ( expr instanceof VariableRef ) {
-			VariableRef ref = (VariableRef) expr;
-			return getKeyOf(ref);
-		}
+		if ( expr instanceof VariableRef ) { return getKeyOf(expr); }
 		return null;
 	}
 
@@ -104,9 +135,9 @@ public class EGaml {
 		return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance();
 	}
 
-	public static TerminalExpression createTerminal(final String id) {
+	public static StringLiteral createTerminal(final String id) {
 		if ( id != null ) {
-			TerminalExpression expr = getFactory().createTerminalExpression();
+			StringLiteral expr = getFactory().createStringLiteral();
 			expr.setValue(id);
 			return expr;
 		}
@@ -116,7 +147,7 @@ public class EGaml {
 	public static Expression getValueOfOmittedFacet(final Statement s) {
 		if ( s instanceof Definition ) {
 			String var = ((Definition) s).getName();
-			TerminalExpression t = createTerminal(var);
+			StringLiteral t = createTerminal(var);
 			if ( t != null ) { return t; }
 		}
 		return s.getExpr();
@@ -127,11 +158,6 @@ public class EGaml {
 	}
 
 	public static Map<String, Expression> getFacetsOf(final Statement f) {
-		// if ( f instanceof SetEval ) {
-		// Map<String, Expression> result = new HashMap();
-		// result.put(IKeyword.VALUE, ((SetEval) f).getValue());
-		// return result;
-		// }
 		return translateFacets(getKeyOf(f), f.getFacets());
 	}
 
@@ -156,63 +182,6 @@ public class EGaml {
 			}
 		}
 		return result;
-	}
-
-	// A fake expression to replace IDs when they are encountered by the parser
-	public static class LiteralExpression extends MinimalEObjectImpl implements Expression {
-
-		String literal;
-
-		public LiteralExpression(final String s) {
-			literal = s;
-		}
-
-		public String getLiteral() {
-			return literal;
-		}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#getLeft()
-		 */
-		@Override
-		public Expression getLeft() {
-			return null;
-		}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#setLeft(msi.gama.lang.gaml.gaml.Expression)
-		 */
-		@Override
-		public void setLeft(final Expression value) {}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#getOp()
-		 */
-		@Override
-		public String getOp() {
-			return null;
-		}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#setOp(java.lang.String)
-		 */
-		@Override
-		public void setOp(final String value) {}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#getRight()
-		 */
-		@Override
-		public Expression getRight() {
-			return null;
-		}
-
-		/**
-		 * @see msi.gama.lang.gaml.gaml.Expression#setRight(msi.gama.lang.gaml.gaml.Expression)
-		 */
-		@Override
-		public void setRight(final Expression value) {}
-
 	}
 
 }

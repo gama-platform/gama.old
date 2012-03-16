@@ -18,6 +18,9 @@
  */
 package msi.gama.lang.gaml;
 
+import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension
  * registry.
@@ -28,4 +31,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
+
+	@Override
+	public Class<? extends IContainer.Manager> bindIContainer$Manager() {
+		return StateBasedContainerManager.class;
+	}
+
 }

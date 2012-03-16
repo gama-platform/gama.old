@@ -2,10 +2,10 @@
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import msi.gaml.compilation.GamaBundleLoader;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -48,11 +48,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		Resource resource =
 			resourceFactory.createResource(URI.createURI("platform:/plugin/" +
 				bundle.getSymbolicName() + "/" + path.toString()));
-
-		// InputStream inputStream;
+		InputStream inputStream;
 		try {
-			// inputStream = FileLocator.openStream(bundle, path, false);
-			resource.load(Collections.EMPTY_MAP);
+			inputStream = FileLocator.openStream(bundle, path, false);
+			resource.load(inputStream, Collections.EMPTY_MAP);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

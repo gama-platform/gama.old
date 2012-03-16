@@ -18,144 +18,143 @@
  */
 package msi.gama.lang.gaml.validation;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
-import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ErrorCollector;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.descript.GamlXtextException;
-import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.utils.GamlToSyntacticElements;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.Check;
 
-public class GamlJavaValidator extends AbstractGamlJavaValidator {
+public class GamlJavaValidator extends AbstractGamlJavaValidator implements IGamlBuilder {
 
-	// TODO Move the codes of errors to GamlXtextException in order to make the link with
-	// QuickFixes
+	// private IModel lastModel;
+	// private Resource lastResource;
+	private volatile boolean isRunning;
+	private final Set<IBuilderListener> listeners;
 
-	public static final String QF_NOTFACETOFKEY = "NOTFACETOFKEY";
-	public static final String QF_UNKNOWNFACET = "UNKNOWNFACET";
-	public static final String QF_KEYHASNOFACET = "KEYHASNOFACET";
-	public static final String QF_NOTKEYOFCONTEXT = "NOTKEYOFCONTEXT";
-	public static final String QF_NOTKEYOFMODEL = "NOTKEYOFMODEL";
-	public static final String QF_INVALIDSETVAR = "INVALIDSETVAR";
-	public static final String QF_BADEXPRESSION = "QF_BADEXPRESSION";
-	private static Map<Resource, IModel> MODELS = new HashMap();
+	public GamlJavaValidator() {
+		GAMA.setGamlBuilder(this);
+		listeners = new HashSet();
+	}
 
-	private static volatile boolean canRun;
-	private static volatile boolean isRunning;
+	@Override
+	public boolean addListener(final IBuilderListener l) {
+		return listeners.add(l);
+	}
+
+	@Override
+	public boolean removeListener(final IBuilderListener l) {
+		return listeners.remove(l);
+	}
+
+	private void fireBuildStarted(final Resource r) {
+		for ( IBuilderListener l : listeners ) {
+			l.beforeBuilding(r);
+		}
+	}
+
+	private void fireBuildEnded(final Model m, final IModel result) {
+		// System.out.println("Informing of the end of the build");
+		for ( IBuilderListener l : new ArrayList<IBuilderListener>(listeners) ) {
+			l.afterBuilding(m.eResource(), result);
+		}
+	}
+
+	private void waitForContributions() {
+		while (!GamaBundleLoader.contributionsLoaded) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void waitForPrevious() {
+		while (isRunning) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Check
 	public void checkModel(final Model m) {
+		if ( !GamaBundleLoader.contributionsLoaded || isRunning ) { return; }
+		// waitForContributions();
+		// waitForPrevious();
 		if ( m == null ) { return; }
+		isRunning = true;
 		ErrorCollector collect = new ErrorCollector();
-		System.out.println("Validator checking " + m.getName());
-		IModel compiledModel = null;
 		Resource r = m.eResource();
-		MODELS.remove(r);
-		if ( canRun && !isRunning ) {
-			isRunning = true;
-			try {
-				URL url = FileLocator.resolve(new URL(r.getURI().toString()));
-				String filePath = new File(url.getFile()).getAbsolutePath();
-				Map<String, ISyntacticElement> elements = buildSyntacticTree(r, collect);
-				if ( collect.getErrors().isEmpty() ) {
-					ModelStructure ms = new ModelStructure(filePath, elements, collect);
-					compiledModel =
-						(IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
-				}
-			} catch (Exception e1) {
-				System.out.println("An exception has occured in the validation process:");
-				e1.printStackTrace();
-			} finally {
-				isRunning = false;
-			}
-		}
-		if ( collect.getErrors().isEmpty() ) {
-			MODELS.put(r, compiledModel);
-		} else {
-			for ( GamlException e : collect.getErrors() ) {
-				if ( e.isWarning() ) {
-					warning(e.getMessage(), (EObject) e.getStatement(), null, 0);
-				} else {
-					error(e.getMessage(), (EObject) e.getStatement(), null, 0);
-				}
-			}
-		}
-	}
-
-	public static void validate(final Resource resource) {
-		EObject myModel = resource.getContents().get(0);
-		Diagnostician.INSTANCE.validate(myModel);
-	}
-
-	public static boolean isBuilding() {
-		return isRunning;
-	}
-
-	public static void canRun(final boolean b) {
-		canRun = b;
-	}
-
-	public static IModel getCompiledModel(final Resource resource) {
-		return MODELS.get(resource);
-	}
-
-	public static Map<String, ISyntacticElement> buildSyntacticTree(final Resource r,
-		final ErrorCollector collect) {
-		Map<String, ISyntacticElement> docs = new HashMap();
-		buildRecursiveSyntacticTree(docs, r, collect);
-		return docs;
-	}
-
-	private static void buildRecursiveSyntacticTree(final Map<String, ISyntacticElement> docs,
-		final Resource r, final ErrorCollector collect) {
-		Model m = (Model) r.getContents().get(0);
-		URL url;
+		fireBuildStarted(r);
+		IModel lastModel = null;
 		try {
-			url = FileLocator.resolve(new URL(r.getURI().toString()));
-		} catch (MalformedURLException e) {
-			collect.add(new GamlXtextException(e));
-			return;
-		} catch (IOException e) {
-			collect.add(new GamlXtextException(e));
-			return;
-		}
-		String path = new File(url.getFile()).getAbsolutePath();
-		docs.put(path, GamlToSyntacticElements.doConvert(m, collect));
-		for ( Import imp : m.getImports() ) {
-			String importUri = imp.getImportURI();
-			if ( !importUri.startsWith("platform:") ) {
-				URI iu = URI.createURI(importUri).resolve(r.getURI());
-				if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
-					Resource ir = r.getResourceSet().getResource(iu, true);
-					if ( ir != r ) {
-						try {
-							url = FileLocator.resolve(new URL(ir.getURI().toString()));
-						} catch (MalformedURLException e) {
-							collect.add(new GamlXtextException(e));
-							continue;
-						} catch (IOException e) {
-							collect.add(new GamlXtextException(e));
-							continue;
-						}
-						path = new File(url.getFile()).getAbsolutePath();
-						if ( !docs.containsKey(path) ) {
-							buildRecursiveSyntacticTree(docs, ir, collect);
-						}
-					}
+			Map<Resource, ISyntacticElement> elements =
+				GamlToSyntacticElements.buildSyntacticTree(r, collect);
+			if ( !collect.hasErrors() ) {
+				System.out.println("No errors in syntactic tree");
+				ModelStructure ms = new ModelStructure(r, elements, collect);
+				lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
+				if ( collect.hasErrors() ) {
+					lastModel = null;
+					// System.out.println("End compilation of " + m.getName());
 				}
 			}
+		} catch (GamaRuntimeException e1) {
+			System.out.println("Exception during compilation:" + e1.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println("Compilation was aborted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			collectErrors(collect);
+			fireBuildEnded(m, lastModel);
+			isRunning = false;
 		}
 	}
+
+	private void collectErrors(final ErrorCollector collect) {
+		for ( GamlCompilationError e : collect.getWarnings() ) {
+			warning(e.toString(), (EObject) e.getStatement(), null, 0);
+		}
+		for ( GamlCompilationError e : collect.getErrors() ) {
+			error(e.toString(), (EObject) e.getStatement(), null, 0);
+		}
+		// if ( collect.hasErrors() ) {
+		// lastModel = null;
+		// }
+	}
+
+	// @Override
+	// public IModel build(final Resource r) {
+	// // System.out.println("Programmatic call to validation of " +
+	// // ((Model) r.getContents().get(0)).getName());
+	// EObject myModel = r.getContents().get(0);
+	// Diagnostician.INSTANCE.validate(myModel);
+	// IModel m = lastModel;
+	// // lastResource =
+	// // lastModel = null;
+	// return m;
+	// }
+	//
+	// /**
+	// * @see
+	// msi.gama.common.interfaces.IGamlBuilder#getLastBuild(org.eclipse.emf.ecore.resource.Resource)
+	// */
+	// @Override
+	// public IModel getLastBuild(final Resource r) {
+	// if ( lastResource == r ) { return lastModel; }
+	// return null;
+	// }
 
 }
