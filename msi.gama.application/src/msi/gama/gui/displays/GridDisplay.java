@@ -28,7 +28,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 import org.eclipse.swt.widgets.Composite;
 
 public class GridDisplay extends ImageDisplay {
@@ -57,8 +56,7 @@ public class GridDisplay extends ImageDisplay {
 		EditorFactory.create(compo, "Draw grid:", turnGridOn, new EditorListener<Boolean>() {
 
 			@Override
-			public void valueModified(final Boolean newValue) throws GamaRuntimeException,
-				GamlException {
+			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
 				turnGridOn = newValue;
 				container.updateDisplay();
 			}

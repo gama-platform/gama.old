@@ -19,6 +19,7 @@
 package msi.gama.gui.displays;
 
 import java.awt.image.BufferedImage;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.swt.SwtGui;
 import org.eclipse.swt.SWT;
@@ -34,13 +35,12 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 	int imgWidth, imgHeight;
 	Image image;
 
-	private final AWTDisplaySurface surface;
+	private final IDisplaySurface surface;
 
-	public SWTNavigationPanel(final Composite parent, final int style,
-		final AWTDisplaySurface surface) {
+	public SWTNavigationPanel(final Composite parent, final int style, final IDisplaySurface surface) {
 		super(parent, style);
 		this.surface = surface;
-		surface.navigator = this;
+		surface.setNavigator(this);
 		addPaintListener(this);
 		addMouseListener(this);
 		addMouseTrackListener(this);
@@ -53,13 +53,13 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 	 */
 	@Override
 	public void paintControl(final PaintEvent e) {
-		if ( surface.buffImage == null ) { return; }
+		if ( surface.getImage() == null ) { return; }
 		int[] dim = surface.computeBoundsFrom(this.getSize().x, this.getSize().y);
 		imgWidth = dim[0];
 		imgHeight = dim[1];
 		BufferedImage awtImage = ImageUtils.createCompatibleImage(imgWidth, imgHeight);
 		java.awt.Graphics2D gc = (java.awt.Graphics2D) awtImage.getGraphics();
-		gc.drawImage(surface.buffImage, 0, 0, imgWidth, imgHeight, null);
+		gc.drawImage(surface.getImage(), 0, 0, imgWidth, imgHeight, null);
 		gc.dispose();
 		if ( image != null ) {
 			image.dispose();
@@ -71,9 +71,16 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 		drawSquare(e.gc);
 	}
 
+	boolean isFullImageInPanel() {
+		int ox = surface.getOriginX();
+		int oy = surface.getOriginY();
+		return ox >= 0 && ox + surface.getImageWidth() < surface.getWidth() && oy >= 0 &&
+			oy + surface.getImageHeight() < surface.getHeight();
+	}
+
 	void drawSquare(final GC g) {
 		g.drawImage(image, 0, 0);
-		if ( surface.isFullImageInPanel() ) { return; }
+		if ( isFullImageInPanel() ) { return; }
 		g.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		g.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		g.setAlpha(175);
@@ -140,10 +147,9 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 	}
 
 	private void moveShape(final int mouseX, final int mouseY) {
-		int x = (int) (mouseX * (double) surface.bWidth / getSize().x);
-		int y = (int) (mouseY * (double) surface.bHeight / getSize().y);
-		surface.setOrigin(new java.awt.Point(-(x - surface.getWidth() / 2), -(y - surface
-			.getHeight() / 2)));
+		int x = (int) (mouseX * (double) surface.getImageWidth() / getSize().x);
+		int y = (int) (mouseY * (double) surface.getImageHeight() / getSize().y);
+		surface.setOrigin(-(x - surface.getWidth() / 2), -(y - surface.getHeight() / 2));
 		surface.updateDisplay();
 	}
 
@@ -153,10 +159,10 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 	}
 
 	public void updateSquare() {
-		double wRatio = (double) imgWidth / surface.bWidth;
-		double hRatio = (double) imgHeight / surface.bHeight;
-		squareX = /* Math.max(0, */(int) (-surface.origin.x * wRatio)/* ) */;
-		squareY = /* Math.max(0, */(int) (-surface.origin.y * hRatio)/* ) */;
+		double wRatio = (double) imgWidth / surface.getImageWidth();
+		double hRatio = (double) imgHeight / surface.getImageHeight();
+		squareX = /* Math.max(0, */(int) (-surface.getOriginX() * wRatio)/* ) */;
+		squareY = /* Math.max(0, */(int) (-surface.getOriginY() * hRatio)/* ) */;
 		squareW = Math.min((int) (surface.getWidth() * wRatio), imgWidth - squareX);
 		squareH = Math.min((int) (surface.getHeight() * hRatio), imgHeight - squareY);
 	}

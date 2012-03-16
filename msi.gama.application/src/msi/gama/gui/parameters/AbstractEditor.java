@@ -26,7 +26,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -68,7 +67,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	@Override
-	public void valueModified(final Object newValue) throws GamaRuntimeException, GamlException {
+	public void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
 			a = GAMA.getDefaultScope().getWorldScope();
@@ -215,7 +214,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			public void run() {
 				try {
 					listener.valueModified(val);
-				} catch (GamlException e) {
+				} catch (GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
 					GAMA.reportError(new GamaRuntimeException(e));

@@ -27,7 +27,6 @@ import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
 import org.eclipse.swt.widgets.Composite;
@@ -60,7 +59,7 @@ public class AgentDisplay extends AbstractDisplay {
 
 					@Override
 					public void valueModified(final IExpression newValue)
-						throws GamaRuntimeException, GamlException {
+						throws GamaRuntimeException {
 						((AgentDisplayLayer) model).setAgentsExpr(newValue);
 						container.updateDisplay();
 					}

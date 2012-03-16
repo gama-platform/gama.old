@@ -22,7 +22,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamlException;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -55,11 +55,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		if ( editor.internalModification ) { return; }
-		try {
-			modifyValue();
-		} catch (GamlException e) {
-			// e.printStackTrace();
-		}
+		modifyValue();
 		popup.display();
 	}
 
@@ -71,19 +67,19 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			}
 			modifyValue();
 			Popup.hide();
-		} catch (GamlException e) {
 
 		} catch (Exception e) {}
 	}
 
-	private Object computeValue() throws GamlException {
+	private Object computeValue() {
 		return editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
 			editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
 
 	}
 
-	private Object modifyValue() throws GamlException {
+	private Object modifyValue() {
 		Object newValue = computeValue();
+		if ( newValue instanceof GamaRuntimeException ) { return editor.currentValue; }
 		editor.modifyValue(newValue);
 		return newValue;
 	}
@@ -91,6 +87,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	String getPopupBody() {
 		try {
 			Object value = computeValue();
+			if ( value instanceof Exception ) { throw (Exception) value; }
 			String string = "Result: " + StringUtils.toGaml(value);
 			IType expectedType = editor.getExpectedType();
 			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {

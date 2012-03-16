@@ -27,7 +27,6 @@ import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
@@ -100,8 +99,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 				new EditorListener<String>() {
 
 					@Override
-					public void valueModified(final String newValue) throws GamaRuntimeException,
-						GamlException {
+					public void valueModified(final String newValue) throws GamaRuntimeException {
 						output.setName(newValue);
 						update(output);
 					}
@@ -117,7 +115,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 					@Override
 					public void valueModified(final IExpression newValue)
-						throws GamaRuntimeException, GamlException {
+						throws GamaRuntimeException {
 						output.setNewExpression(newValue);
 						update(output);
 						// getViewer().collapseItemWithData(output);
@@ -189,11 +187,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 	public static void createNewMonitor() {
 		ISimulation simulation = GAMA.getFrontmostSimulation();
-		try {
-			new MonitorOutput("monitor" + count++, null, simulation, true);
-		} catch (GamlException e) {
-			e.printStackTrace();
-		}
+		new MonitorOutput("monitor" + count++, null, simulation, true);
 	}
 
 	@Override

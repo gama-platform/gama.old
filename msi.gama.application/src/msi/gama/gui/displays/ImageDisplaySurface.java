@@ -40,8 +40,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	protected Color bgColor = Color.black;
 	IDisplayManager manager;
 
-	public ImageDisplaySurface(final double env_width, final double env_height) {
-		outputChanged(env_width, env_height, null);
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double,
+	 *      msi.gama.outputs.IDisplayOutput)
+	 */
+	@Override
+	public void initialize(final double w, final double h, final IDisplayOutput output) {
+		outputChanged(w, h, output);
 	}
 
 	@Override
@@ -265,5 +270,65 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
+	 */
+	@Override
+	public void setNavigator(final Object swtNavigationPanel) {}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getWidth()
+	 */
+	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getHeight()
+	 */
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageWidth()
+	 */
+	@Override
+	public int getImageWidth() {
+		return width;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getImageHeight()
+	 */
+	@Override
+	public int getImageHeight() {
+		return height;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setOrigin(int, int)
+	 */
+	@Override
+	public void setOrigin(final int i, final int j) {}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
+	 */
+	@Override
+	public int getOriginX() {
+		return 0;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
+	 */
+	@Override
+	public int getOriginY() {
+		return 0;
+	}
 
 }

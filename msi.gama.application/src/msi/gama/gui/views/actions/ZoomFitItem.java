@@ -42,15 +42,15 @@ public class ZoomFitItem extends GamaViewItem {
 
 						@Override
 						public void run() {
-							IDisplaySurface imageCanvas = view.getDisplaySurface();
-							while (!imageCanvas.canBeUpdated()) {
+							IDisplaySurface surface = view.getDisplaySurface();
+							while (!surface.canBeUpdated()) {
 								try {
 									Thread.sleep(10);
 								} catch (InterruptedException e) {
 
 								}
 							}
-							imageCanvas.zoomFit();
+							surface.zoomFit();
 
 						}
 					}).start();

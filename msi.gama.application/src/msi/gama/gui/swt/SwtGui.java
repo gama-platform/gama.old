@@ -19,10 +19,11 @@
 package msi.gama.gui.swt;
 
 import java.io.*;
+import java.util.*;
 import java.util.concurrent.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.*;
+import msi.gama.gui.displays.AWTDisplayGraphics;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
@@ -31,8 +32,9 @@ import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
+import msi.gaml.compilation.GamaClassLoader;
 import org.apache.log4j.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -50,8 +52,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  */
 public class SwtGui implements IGui {
-
-	public static final String PLUGIN_ID = "msi.gama.application";
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative path
@@ -83,8 +83,8 @@ public class SwtGui implements IGui {
 		.createImage();
 	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
 	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
-	public static Image experimentMenuImage = getImageDescriptor("/icons/menu_run.png")
-		.createImage();
+	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
+		"/icons/menu_run.png").createImage();
 	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png")
 		.createImage();
 	public static Image expand = getImageDescriptor("/icons/small_button_plus.png").createImage();
@@ -326,7 +326,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void runtimeError(final GamlException g) {
+	public void runtimeError(final GamaRuntimeException g) {
 		g.printStackTrace();
 		final ErrorView v = (ErrorView) GuiUtils.showView(ErrorView.ID, null);
 		if ( v != null ) {
@@ -726,6 +726,7 @@ public class SwtGui implements IGui {
 				@Override
 				public void run() {
 					activePage.setPerspective(descriptor);
+					// debug("Perspective " + perspectiveId + " open ");
 				}
 			});
 			return true;
@@ -783,10 +784,46 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
-		// TODO Hook OpenGL here
-		return new AWTDisplaySurface(w, h, layerDisplayOutput);
-	}
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
+		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
+		Map<String, Class> displayClasses = new HashMap();
+
+		IConfigurationElement[] config =
+			Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
+		for ( IConfigurationElement e : config ) {
+			final String pluginKeyword = e.getAttribute("keyword");
+			final String pluginClass = e.getAttribute("class");
+			// final Class<IDisplaySurface> displayClass = .
+			final String pluginName = e.getContributor().getName();
+			System.out.println("Display found in " + pluginName + " with keyword " + pluginKeyword +
+				" and class " + pluginClass);
+			ClassLoader cl =
+				GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+			try {
+				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		Class<IDisplaySurface> clazz = displayClasses.get(keyword);
+		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
+			" is not defined anywhere."); }
+		try {
+			IDisplaySurface surface = clazz.newInstance();
+			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
+				" display");
+			surface.initialize(w, h, layerDisplayOutput);
+			return surface;
+		} catch (InstantiationException e1) {
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		}
+
+		// FIXME HACK
+		return null;
+	}
 }

@@ -23,7 +23,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -92,7 +91,7 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 	}
 
 	@Override
-	public void valueModified(final Object newValue) throws GamaRuntimeException, GamlException {
+	public void valueModified(final Object newValue) throws GamaRuntimeException {
 		super.valueModified(newValue);
 	}
 

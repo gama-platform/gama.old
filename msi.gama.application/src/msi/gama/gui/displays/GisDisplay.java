@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 import org.eclipse.swt.widgets.Composite;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -53,8 +52,7 @@ public class GisDisplay extends AbstractDisplay {
 			((ImageDisplayLayer) model).getImageFileName(), new EditorListener<String>() {
 
 				@Override
-				public void valueModified(final String newValue) throws GamaRuntimeException,
-					GamlException {
+				public void valueModified(final String newValue) throws GamaRuntimeException {
 					((ImageDisplayLayer) model).setGisLayerName(newValue);
 				}
 

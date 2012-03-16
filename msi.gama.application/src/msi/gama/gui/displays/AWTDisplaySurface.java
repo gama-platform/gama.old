@@ -179,8 +179,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 				if ( mousePosition == null ) {
 					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 				}
-				setOrigin(new Point(origin.x + p.x - mousePosition.x, origin.y + p.y -
-					mousePosition.y));
+				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
 				mousePosition = p;
 				repaint();
 			}
@@ -250,11 +249,11 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			Menu macroMenu = new Menu(macro.getName());
 			parentMenu.add(macroMenu);
 
-			MenuItem inspectItem = new AWTDisplaySurface.AgentMenuItem("Inspect", macro, display);
+			MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
 			inspectItem.addActionListener(menuListener);
 			macroMenu.add(inspectItem);
 
-			MenuItem focusItem = new AWTDisplaySurface.AgentMenuItem("Focus", macro, display);
+			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 
@@ -275,7 +274,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 	}
 
-	public AWTDisplaySurface(final double env_width, final double env_height,
+	@Override
+	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
 
 		outputChanged(env_width, env_height, layerDisplayOutput);
@@ -335,7 +335,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				AWTDisplaySurface.AgentMenuItem source = (AgentMenuItem) e.getSource();
+				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
 					fireSelectionChanged(a);
@@ -348,7 +348,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				AWTDisplaySurface.AgentMenuItem source = (AgentMenuItem) e.getSource();
+				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
 					focusOn(a.getGeometry(), source.getDisplay());
@@ -519,12 +519,13 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public BufferedImage getImage() {
-		Rectangle clip = displayGraphics.getClipping();
+		// Rectangle clip = displayGraphics.getClipping();
 		// updateDisplay();
 		// paused = false;
-		drawDisplaysWithoutRepainting();
+		// FIXME: Draw the displays in case the image is called from outside..
+		// drawDisplaysWithoutRepainting();
 		// paused = true;
-		displayGraphics.setClipping(clip);
+		// displayGraphics.setClipping(clip);
 		return buffImage;
 	}
 
@@ -585,22 +586,22 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			int imagePY =
 				c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
 			zoomFactor = factor;
-			setOrigin(new Point(c.x - (int) Math.round(imagePX * zoomFactor), c.y -
-				(int) Math.round(imagePY * zoomFactor)));
+			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor),
+				c.y - (int) Math.round(imagePY * zoomFactor));
 			// paintingNeeded.release();
 			updateDisplay();
 		}
 	}
 
 	void scaleOrigin() {
-		setOrigin(new Point(origin.x * getWidth() / previousPanelSize.width, origin.y *
-			getHeight() / previousPanelSize.height));
+		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() /
+			previousPanelSize.height);
 		paintingNeeded.release();
 		// repaint();
 	}
 
 	void centerImage() {
-		setOrigin(new Point((getWidth() - bWidth) / 2, (getHeight() - bHeight) / 2));
+		setOrigin((getWidth() - bWidth) / 2, (getHeight() - bHeight) / 2);
 	}
 
 	@Override
@@ -652,8 +653,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		// getNavigator().toggle(enabled);
 	}
 
-	protected void setOrigin(final Point origin) {
-		this.origin = origin;
+	@Override
+	public void setOrigin(final int x, final int y) {
+		this.origin = new Point(x, y);
 		translation.setToTranslation(origin.x, origin.y);
 		displayGraphics.setClipping(getImageClipBounds());
 		redrawNavigator();
@@ -695,5 +697,41 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void snapshot() {
 		save(GAMA.getDefaultScope(), buffImage);
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
+	 */
+	@Override
+	public void setNavigator(final Object nav) {
+		if ( nav instanceof SWTNavigationPanel ) {
+			navigator = (SWTNavigationPanel) nav;
+		}
+	}
+
+	@Override
+	public int getImageWidth() {
+		return bWidth;
+	}
+
+	@Override
+	public int getImageHeight() {
+		return bHeight;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
+	 */
+	@Override
+	public int getOriginX() {
+		return origin.x;
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
+	 */
+	@Override
+	public int getOriginY() {
+		return origin.y;
 	}
 }

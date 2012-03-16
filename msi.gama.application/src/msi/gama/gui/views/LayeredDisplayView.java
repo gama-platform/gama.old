@@ -88,8 +88,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 		//
 		// });
 
-		Control aux =
-			new SWTNavigationPanel(general, SWT.None, (AWTDisplaySurface) getOutput().getSurface());
+		Control aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
 		GridData data = new GridData(SWT.CENTER, SWT.FILL, true, true);
 		data.minimumHeight = 200;
 		data.heightHint = 200;
@@ -166,7 +165,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 
 				@Override
 				protected JComponent createSwingComponent() {
-					JComponent frameAwt = (AWTDisplaySurface) getOutput().getSurface();
+					JComponent frameAwt = (JComponent) getOutput().getSurface();
 					getFrame().addMouseListener(mlAwt);
 					getFrame().addMouseMotionListener(mlAwt2);
 					return frameAwt;

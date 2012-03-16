@@ -25,16 +25,15 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamlException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class ErrorView extends ExpandableItemsView<GamlException> {
+public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
 
-	ArrayList<GamlException> exceptions = new ArrayList();
+	ArrayList<GamaRuntimeException> exceptions = new ArrayList();
 	int numberOfDisplayedErrors = 10;
 	boolean mostRecentFirst = true;
 	boolean showErrors = true;
@@ -47,12 +46,12 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	}
 
 	@Override
-	public boolean addItem(final GamlException e) {
+	public boolean addItem(final GamaRuntimeException e) {
 		createItem(e, false);
 		return true;
 	}
 
-	public void addNewError(final GamlException e) {
+	public void addNewError(final GamaRuntimeException e) {
 		exceptions.add(e);
 		if ( showErrors ) {
 			reset();
@@ -163,7 +162,7 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	}
 
 	@Override
-	protected Composite createItemContentsFor(final GamlException e) {
+	protected Composite createItemContentsFor(final GamaRuntimeException e) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
 		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -187,21 +186,21 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	}
 
 	@Override
-	public void removeItem(final GamlException obj) {
+	public void removeItem(final GamaRuntimeException obj) {
 		exceptions.remove(obj);
 	}
 
 	@Override
-	public void pauseItem(final GamlException obj) {}
+	public void pauseItem(final GamaRuntimeException obj) {}
 
 	@Override
-	public void resumeItem(final GamlException obj) {}
+	public void resumeItem(final GamaRuntimeException obj) {}
 
 	@Override
-	public String getItemDisplayName(final GamlException obj, final String previousName) {
+	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
 		StringBuilder sb = new StringBuilder();
 		if ( obj instanceof GamaRuntimeException ) {
-			String a = ((GamaRuntimeException) obj).getAgent();
+			String a = obj.getAgent();
 			if ( a != null ) {
 				sb.append(a).append(" at ");
 			}
@@ -213,11 +212,11 @@ public class ErrorView extends ExpandableItemsView<GamlException> {
 	}
 
 	@Override
-	public void focusItem(final GamlException data) {}
+	public void focusItem(final GamaRuntimeException data) {}
 
 	@Override
-	public List<GamlException> getItems() {
-		List<GamlException> errors = new ArrayList();
+	public List<GamaRuntimeException> getItems() {
+		List<GamaRuntimeException> errors = new ArrayList();
 		int size = exceptions.size();
 		if ( size == 0 ) { return errors; }
 		int end = size;
