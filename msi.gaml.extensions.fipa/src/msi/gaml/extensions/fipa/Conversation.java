@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.types.IType;
 
 /**
@@ -105,7 +104,7 @@ public class Conversation extends GamlAgent {
 	 *                given class
 	 */
 	protected Conversation(final ISimulation sim, final Integer p, final Message message)
-		throws GamlException, GamaRuntimeException {
+		throws GamaRuntimeException {
 		// Create the new instance, and set the ownership
 		this(sim, null);
 		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;

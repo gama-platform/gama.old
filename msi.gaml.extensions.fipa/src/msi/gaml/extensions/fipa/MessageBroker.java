@@ -21,7 +21,6 @@ import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
 
 /**
  * The Class MessageBroker.
@@ -50,7 +49,7 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public void deliverMessages() throws GamlException, GamaRuntimeException {
+	public void deliverMessages() throws GamaRuntimeException {
 		for ( final Message m : messagesToDeliver ) {
 			deliverMessage(m);
 		}
@@ -64,7 +63,7 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public void deliverMessage(final Message m) throws GamlException, GamaRuntimeException {
+	public void deliverMessage(final Message m) throws GamaRuntimeException {
 		final Conversation conv = (Conversation) m.getConversation();
 		try {
 			conv.addMessage(m);
@@ -96,8 +95,7 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	protected void deliverFailureInReplyTo(final Message m) throws GamlException,
-		GamaRuntimeException {
+	protected void deliverFailureInReplyTo(final Message m) throws GamaRuntimeException {
 		if ( m.getPerformative() == FIPAConstants.Performatives.FAILURE ) { return; }
 
 		final Message f =
@@ -134,12 +132,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final Message m, final Integer protocol) {
 		Conversation conv;
-		try {
-			conv = new Conversation(m.getSimulation(), protocol, m);
-		} catch (GamlException e) {
-			e.printStackTrace();
-			return;
-		}
+		conv = new Conversation(m.getSimulation(), protocol, m);
 		m.setConversation(conv);
 		scheduleForDelivery(m);
 	}
