@@ -32,7 +32,6 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlException;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
@@ -138,7 +137,7 @@ public class MAELIASkill extends Skill {
 //		BufferedReader buffer;
 //		buffer = new BufferedReader(new FileReader("meteo2009.csv"));
 //
-//		//On saute la premiÂ?re ligne
+//		//On saute la premiï¿½?re ligne
 //		buffer.readLine();
 //		//On traite les autres
 //		String line = null;
