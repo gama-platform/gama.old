@@ -24,6 +24,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -306,6 +307,7 @@ public class MovingSkill extends GeometricSkill {
 		int index = 0;
 		int indexSegment = 1;
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
 		double distance = d;
@@ -369,10 +371,11 @@ public class MovingSkill extends GeometricSkill {
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-			IGraph graph = path.getGraph();
+			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
+			
 			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(line) / line.getGeometry().getPerimeter();
-
+				graph == null ? 1 : graph.getEdgeWeight(path.getAgent(line)) / line.getGeometry().getPerimeter();
+			
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -381,6 +384,7 @@ public class MovingSkill extends GeometricSkill {
 					pt = new GamaPoint(coords[j]);
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
+				
 				dist = weight * dist;
 				if ( distance < dist ) {
 					double ratio = distance / dist;

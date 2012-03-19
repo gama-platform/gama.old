@@ -60,7 +60,7 @@ public interface IPath extends IShape {
 	public abstract IList<IShape> getEdgeList();
 
 	@getter(var = IKeyword.AGENTS)
-	public abstract List<IAgent> getAgentList();
+	public abstract List<IShape> getAgentList();
 
 	@getter(var = IKeyword.GRAPH)
 	public IGraph getGraph();
@@ -93,7 +93,7 @@ public interface IPath extends IShape {
 
 	public abstract void setAgents(final Map agents);
 
-	public abstract IAgent getAgent(final Object obj);
+	public abstract IShape getAgent(final Object obj);
 	
 	public void setSource(IShape source);
 

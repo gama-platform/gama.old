@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.*;
 public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	GamaList<IShape> segments;
-	Map<IShape, IAgent> agents;
+	Map<IShape, IShape> agents;
 	IShape source, target;
 	final ITopology topology;
 
@@ -72,6 +72,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			} else {
 				pt = start.euclidianDistanceTo(pt0) < target.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
+			GamaSpatialGraph graph = getGraph();
 			for ( IShape edge : edges ) {
 				IAgent ag = edge.getAgent();
 				Geometry geom = edge.getInnerGeometry();
@@ -86,8 +87,10 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 					edge2 = edge;
 					pt = c1;
 				}
-				if ( ag != null ) {
+				if ( ag != null && graph != null && graph.isAgentEdge()) {
 					agents.put(edge2, ag);
+				} else {
+					agents.put(edge2, edge);
 				}
 				segments.add(edge2);
 				// segmentsInGraph.put(agents, agents);
@@ -156,9 +159,9 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public IList<IAgent> getAgentList() {
-		GamaList<IAgent> ags = new GamaList<IAgent>();
-		ags.addAll(new HashSet<IAgent>(agents.values()));
+	public IList<IShape> getAgentList() {
+		GamaList<IShape> ags = new GamaList<IShape>();
+		ags.addAll(new HashSet<IShape>(agents.values()));
 		return ags;
 	}
 
@@ -396,7 +399,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public IAgent getAgent(final Object obj) {
+	public IShape getAgent(final Object obj) {
 		return agents.get(obj);
 	}
 
