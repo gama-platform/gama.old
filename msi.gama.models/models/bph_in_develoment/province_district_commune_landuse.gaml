@@ -7,6 +7,16 @@ global {
 	file dongthap_districts_f <- shapefile('gis/dongthap_districts.shp');
 	file dongthap_communes_f <- shapefile('gis/dongthap_communes.shp');
 	file dongthap_landuse_f <- shapefile('gis/landuse_DT_12_03_012.shp');
+	matrix TPHCM_weather <- matrix(file('data/weather/daily_TPHCM_2008_no_title.txt')) const: true;
+
+	const dirTranslation type: int init: 270 ;	
+	var directionList type: list init: ['North','NNE','NE','ENE','East','ESE','SE','SSE','South','SSW','SW','WSW','West','WNW','NW','NNW'] ;
+	var degreeList type: list of: float init: [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5] ;
+	var weatherTPHCM type: weather init: nil ;
+	var scaleDegreeList type: list init: [];
+	
+	int col_num <- 15;
+	int row_num <- length(TPHCM_weather)/col_num;
 
 	int cloud_min_member <- 10;
 
@@ -43,6 +53,49 @@ global {
 	int hopper_burn_no <- 0;
 	
 	init {
+		let wTPHCM type: weather value: nil;
+		create species: weather {
+			set stationName value: 'TPHCM';
+			set wTPHCM value: self;			
+		}
+		 
+		ask target: wTPHCM {
+			loop irow from: 1 to: row_num var: irow {
+				set dailyDate value: dailyDate + [TPHCM_weather at {0,irow}] ;
+				set dailyAvgTemp value: dailyAvgTemp + [TPHCM_weather at {1,irow}] ;
+				set dailyAvgHumid value: dailyAvgHumid + [TPHCM_weather at {2,irow}] ;
+				set dailyMostWindDir value: dailyMostWindDir + [TPHCM_weather at {3,irow}] ;
+				set dailyAvgWindSpeed value: dailyAvgWindSpeed + [TPHCM_weather at {4,irow}] ;
+				set daily6hTemp value: daily6hTemp + [TPHCM_weather at {5,irow}] ;
+				set daily6hgHumid value: daily6hgHumid + [TPHCM_weather at {6,irow}] ;
+				set daily6hWindDir value: daily6hWindDir + [TPHCM_weather at {7,irow}] ;
+				set daily6hWindSpeed value: daily6hWindSpeed + [TPHCM_weather at {8,irow}] ;
+				set daily14hTemp value: daily14hTemp + [TPHCM_weather at {9,irow}] ;
+				set daily14hgHumid value: daily14hgHumid + [TPHCM_weather at {10,irow}] ;
+				set daily14hWindDir value: daily14hWindDir + [TPHCM_weather at {11,irow}] ;
+				set daily14hWindSpeed value: daily14hWindSpeed + [TPHCM_weather at {12,irow}] ;
+			}
+		}
+		
+		set weatherTPHCM value: wTPHCM;
+
+		let sdList var: sdList type: list value: [] ;
+		let tempDegree var: tempDegree type: float value: 0 ;
+		loop td over: degreeList var: td {
+			set tempDegree value: (td + dirTranslation) ;
+			if condition: (tempDegree > 360) {
+				set sdList value: sdList+[(td-90)]; }
+				else {
+					if condition: tempDegree = 360 {
+						set sdList value: sdList+[0]; }
+						else {
+							set sdList value: sdList+[tempDegree];
+						}
+				}
+		}
+
+		set scaleDegreeList value: sdList ;
+
 		create climate;
 
 		loop p over: (mekong_f.contents) {
@@ -59,6 +112,23 @@ global {
 environment bounds: environment_bounds;
 
 entities {
+	species weather skills: visible {
+		var stationName type: string init: nil;
+		var dailyDate type: list of: string init: [] ;
+		var dailyAvgTemp type: list of: float init: [] ;
+		var dailyAvgHumid type: list of: float init: [] ;
+		var dailyMostWindDir type: list of: string init: [] ;
+		var dailyAvgWindSpeed type: list of: float init: [] ;
+		var daily6hTemp type: list of: float init: [] ;
+		var daily6hgHumid type: list of: float init: [] ;
+		var daily6hWindDir type: list of: string init: [] ;
+		var daily6hWindSpeed type: list of: float init: [] ;
+		var daily14hTemp type: list of: float init: [] ;
+		var daily14hgHumid type: list of: float init: [] ;
+		var daily14hWindDir type: list of: string init: [] ;
+		var daily14hWindSpeed type: list of: float init: [] ;
+	}	
+	
 	species climate {
 		reflex shuffle_wind_direction when: ((time mod 10) = 0 ) {
 			set wind_direction value: one_of(possible_wind_directions);
@@ -180,6 +250,7 @@ entities {
 					 * 3: heavy infection
 					 * 4: hopper burn
 					 */
+					 
 					action my_infection_status type: int {
 						switch active_bph {
 							match_one [no_infection] {
@@ -238,12 +309,64 @@ entities {
 		landunit last_landunit;
 		landunit current_landunit;
 		int landing_time <- time;
-		
 		int bph_in_group;
 		
+		var bphEggsNum type: float init: 0 ;
+		var bphNymphsNum type: float init: 0 ;
+		var bphAdultsNum type: float init: 0 ;
+		var bphFSNum type: float init: 0 ;
+		var bphMSNum type: float init: 0 ;
+		var bphFLNum type: float init: 0 ;
+		var bphMLNum type: float init: 0 ;
+		var color type: rgb ;
+		var bphMigrateList type: list of: movingBph init: [] ;
+
+		var isPropagating type: bool init: false ;
+
+
+		action propagate {
+			let immigratedLandunits type: list of: landunit value: [] ;
+			let currentLandunit type: landunit value: current_landunit;
+
+			let idx type: int value: (directionList index_of (weatherTPHCM.dailyMostWindDir at time));
+	
+			if condition: (idx != (-1)) {
+				let windDegree type: float value: (scaleDegreeList at idx);
+
+				let tempSpeed type: float value: (weatherTPHCM.dailyAvgWindSpeed at (time as int));
+				let windSpeed type: float value: ((tempSpeed*1000)/3600);
+				
+				let tempMovingBph1 type: movingBph value: nil;
+				let tempMovingBph type: movingBph value: nil;
 		
+
+				create species: movingBph {
+					set tempMovingBph1 value: self;
+				}
+				
+				set tempMovingBph1.location value: location;
+			}	
+				}
+					
 		// behavior???
 	}
+	
+	species movingBph skills: moving {
+		var color type: rgb value: 'black' ;
+		var movingTime type: int init: 0 ;
+		var originBph type: bph_group init: nil;
+		var destinationBph type: bph_group init: nil;
+		var movingBphFLNum type: float init: 0.0 ;
+		var movingBphMLNum type: float init: 0.0 ;
+		var realMovingBphFLNum type: float init: 0.0 ;
+		var realMovingBphMLNum type: float init: 0.0 ;
+		
+		aspect base {
+			draw shape: geometry at: location color: 'black' size: 600 ;
+		}
+	}	
+	
+	
 	
 	species bph_cloud skills: moving {
 		int heading <- wind_direction value: wind_direction;
