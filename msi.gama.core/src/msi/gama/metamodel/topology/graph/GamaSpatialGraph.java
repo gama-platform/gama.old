@@ -63,7 +63,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}
-		verbose = true;
+		verbose = false;
 		
 	}
 
