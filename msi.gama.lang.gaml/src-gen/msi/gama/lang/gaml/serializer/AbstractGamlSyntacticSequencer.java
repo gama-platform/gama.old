@@ -14,7 +14,7 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
 @SuppressWarnings("restriction")
-public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
+public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer { /* */
 
 	protected GamlGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_PrimaryExpression_LeftParenthesisKeyword_1_0_a;
