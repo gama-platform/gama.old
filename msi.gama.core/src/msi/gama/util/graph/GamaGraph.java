@@ -386,9 +386,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public void setOptimizerType(final String s) {
-		if ( "dynamic".equals(s) ) {
+		if ( "Djikstra".equals(s) ) {
 			optimizerType = 3;
-		} else if ( "progressive".equals(s) ) {
+		} else if ( "Bellmann".equals(s) ) {
 			optimizerType = 2;
 		} else {
 			optimizerType = 1;
@@ -429,7 +429,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		GraphPath p = optimizer.getShortestPath(source, target);
 		return pathFromEdges(source, target, new GamaList(p.getEdgeList()));
-	}
+	} 
 
 	/*
 	 * In "regular" (non spatial) graphs, we return a list. And a path in spatial graphs. IValue is
@@ -803,7 +803,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public void setVerbose(Boolean verbose) {
 		this.verbose = verbose;
 	}
-	
-	
+
 
 }

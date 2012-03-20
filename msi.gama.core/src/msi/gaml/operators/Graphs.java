@@ -289,6 +289,18 @@ public class Graphs {
 			((GamaSpatialGraph) graph).reInitPathFinder();
 		return graph;
 	}
+	
+	@operator(value = "set_verbose")
+	public static IGraph setVerbose(final IScope scope, final IGraph graph, final Boolean verbose) {
+		graph.setVerbose(verbose);
+		return graph;
+	}
+	
+	@operator(value = "with_optimizer_type")
+	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
+		graph.setOptimizerType(optimizerType);
+		return graph;
+	}
 
 	// TODO "complete" (pour créer un graphe complet)
 
