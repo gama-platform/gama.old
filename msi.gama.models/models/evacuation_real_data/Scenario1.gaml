@@ -1,7 +1,7 @@
  model Scenario1
  
 global {
-	var simulated_population_rate type: float init: 0.3 const: true;
+	var simulated_population_rate type: float init: 0.1 const: true;
 	  
 	// GIS data 
 	var shape_file_road type: string init: '/gis/roadlines.shp';  
@@ -30,12 +30,9 @@ global {
 	var zone1_building_color type: rgb init: rgb('orange');
 	var zone2_building_color type: rgb init: rgb('gray'); 
 	var zone3_building_color type: rgb init: rgb('yellow') ; 
-  
-
 	 
 	var road_graph type: graph;
 
-	 
 	init {
 		create road from: shape_file_road ;
 		create beach from: shape_file_beach;
@@ -156,11 +153,21 @@ entities {
 			}
 		}
 		
+		reflex when: (time = 1) and (macro_patch != nil) {
+			create macro_patch_viewer with: [shape :: macro_patch];
+		}
+
 		aspect base {
 	 		draw shape: geometry color: rgb('yellow');
 	 	}
 	}
 	 
+	species macro_patch_viewer {
+		aspect base {
+			draw shape: geometry color: rgb('red');
+		}
+	}	
+
 	species destination {
 	 	aspect base {
 	 		draw shape: geometry color: rgb('magenta');
@@ -212,13 +219,11 @@ entities {
 	   			
 	   			if condition: (zone_id = 1) {
 	   				set color value: zone1_building_color;
-	   				
-
-	   			}	   				else {
-	   					if condition: (zone_id = 2) {
-	   						set color value: zone2_building_color;
-	   					}
-	   				}
+	   			} else {
+   					if condition: (zone_id = 2) {
+   						set color value: zone2_building_color;
+   					}
+   				}
 	   		}
 	   	}
 	   	
@@ -245,7 +250,7 @@ entities {
 		}
 	}
 
-	species pedestrian skills: moving schedules: list(pedestrian) select !each.reach_shelter {
+	species pedestrian skills: moving schedules: (list(pedestrian) select !each.reach_shelter) {
 		var previous_location type: point;
 		var last_road type: road;
 		var safe_building type: destination;
@@ -332,6 +337,10 @@ experiment toto type: gui {
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
 		
+		display macro_patch_display {
+			species macro_patch_viewer aspect: base;
+		}		
+
 //		display Execution_Time {
 //			chart name: 'Simulation step length' type: series background: rgb('black') {
 //				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
