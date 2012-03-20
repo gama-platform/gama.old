@@ -41,7 +41,7 @@ import com.vividsolutions.jts.geom.*;
 public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	GamaList<IShape> segments;
-	Map<IShape, IShape> agents;
+	Map<IShape, IShape> realObjects;
 	IShape source, target;
 	final ITopology topology;
 
@@ -54,7 +54,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		topology = t;
 		segments = new GamaList<IShape>();
 		// segmentsInGraph = new HashMap();
-		agents = new HashMap();
+		realObjects = new HashMap();
 
 		Geometry firstLine =
 			edges == null || edges.isEmpty() ? null : edges.get(0).getInnerGeometry();
@@ -88,9 +88,9 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 					pt = c1;
 				}
 				if ( ag != null && graph != null && graph.isAgentEdge()) {
-					agents.put(edge2, ag);
+					realObjects.put(edge2, ag);
 				} else {
-					agents.put(edge2, edge);
+					realObjects.put(edge2, edge);
 				}
 				segments.add(edge2);
 				// segmentsInGraph.put(agents, agents);
@@ -108,7 +108,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		}
 		segments = new GamaList();
 		// segmentsInGraph = new GamaMap();
-		agents = new GamaMap();
+		realObjects = new GamaMap();
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
 			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
@@ -116,13 +116,13 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
 				// MODIF: put?
-				agents.put(nodes.get(i).getGeometry(), ag);
+				realObjects.put(nodes.get(i).getGeometry(), ag);
 			}
 		}
 		IAgent ag = nodes.get(nodes.size() - 1).getAgent();
 		if ( ag != null ) {
 			// MODIF: put?
-			agents.put(nodes.get(nodes.size() - 1).getGeometry(), ag);
+			realObjects.put(nodes.get(nodes.size() - 1).getGeometry(), ag);
 		}
 		topology = t;
 
@@ -161,7 +161,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	@Override
 	public IList<IShape> getAgentList() {
 		GamaList<IShape> ags = new GamaList<IShape>();
-		ags.addAll(new HashSet<IShape>(agents.values()));
+		ags.addAll(new HashSet<IShape>(realObjects.values()));
 		return ags;
 	}
 
@@ -394,13 +394,13 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public void setAgents(final Map agents) {
-		this.agents = agents;
+	public void setRealObjects(final Map realObjects) {
+		this.realObjects = realObjects;
 	}
 
 	@Override
-	public IShape getAgent(final Object obj) {
-		return agents.get(obj);
+	public IShape getRealObject(final Object obj) {
+		return realObjects.get(obj);
 	}
 
 	public void setSource(IShape source) {

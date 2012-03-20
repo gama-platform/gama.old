@@ -91,9 +91,9 @@ public interface IPath extends IShape {
 
 	public abstract ITopology getTopology();
 
-	public abstract void setAgents(final Map agents);
+	public abstract void setRealObjects(final Map realObjects);
 
-	public abstract IShape getAgent(final Object obj);
+	public abstract IShape getRealObject(final Object obj);
 	
 	public void setSource(IShape source);
 

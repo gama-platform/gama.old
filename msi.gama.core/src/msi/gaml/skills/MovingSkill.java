@@ -374,8 +374,7 @@ public class MovingSkill extends GeometricSkill {
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 			
 			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(path.getAgent(line)) / line.getGeometry().getPerimeter();
-			
+				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -499,11 +498,10 @@ public class MovingSkill extends GeometricSkill {
 			// The weight computed here is absolutely useless.. since getWeight() returns the
 			// perimeter. // ANSWER : it is necessary because the weight can be different than the
 			// perimeter (see model traffic_tutorial)
-			double weight = 1;
-			if (path.getGraph() != null && path.getGraph().containsEdge(line))	{
-				weight = path.getGraph().getEdgeWeight(line) / line.getGeometry().getPerimeter();
-			}
-
+			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
+			
+			double weight =
+				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
@@ -574,7 +572,7 @@ public class MovingSkill extends GeometricSkill {
 		if ( segments.isEmpty() ) { return null; }
 		IPath followedPath =
 			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);
-		followedPath.setAgents(agents);
+		followedPath.setRealObjects(agents);
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}

@@ -279,7 +279,11 @@ public class GraphTopology extends AbstractTopology {
 		// }
 
 		GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(nodeS, nodeT);
-		IList edges = new GamaList(path.getEdgeList());
+		
+		IList edges = new GamaList();
+		for (Object obj: path.getEdgeList()) {
+			edges.add(path.getRealObject(obj));
+		}
 		if ( edges.isEmpty() ) { return null; }
 		HashSet edgesSetInit =
 			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));

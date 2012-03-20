@@ -114,7 +114,7 @@ public class Graphs {
 	@operator(value = "agent_from_geometry")
 	public static IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if ( path == null ) { return null; }
-		return (IAgent) path.getAgent(geom);
+		return (IAgent) path.getRealObject(geom);
 	}
 
 	/*
