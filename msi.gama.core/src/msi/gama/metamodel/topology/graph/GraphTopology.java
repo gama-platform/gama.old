@@ -200,12 +200,7 @@ public class GraphTopology extends AbstractTopology {
 				.euclidianDistanceTo(source.getLocation()) ) {
 			nodeS = s2;
 		}
-		// } catch (GamaRuntimeException e) {
-		// return null;
-		// }
-
-		GamaPath path = (GamaPath) getPlaces().computeShortestPathBetween(nodeS, nodeT);
-		IList edges = new GamaList(path.getEdgeList());
+		IList edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 		if ( edges.isEmpty() ) { return null; }
 		HashSet edgesSetInit =
 			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));

@@ -30,7 +30,9 @@ public interface ISpatialGraph extends IGraph<IShape, IShape> {
 
 	@Override
 	public abstract IPath computeShortestPathBetween(final Object source, final Object target);
-
+	
+	public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);	
+	
 	@Override
 	public abstract IPath getCircuit();
 }

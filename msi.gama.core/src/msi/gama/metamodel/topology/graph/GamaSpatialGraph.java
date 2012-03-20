@@ -95,6 +95,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
 		// return (IPath) super.computeShortestPathBetween(topology, source, target);
 	}
+	
+	public IList<IShape> computeBestRouteBetween(final Object source, final Object target) {
+		if ( pathFinder == null ) {
+			pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
+		}
+		return pathFinder.bestRouteBetween((ILocation) source, (ILocation) target);
+	}
 
 	@Override
 	protected IPath pathFromEdges(final Object source, final Object target, final IList edges) {
