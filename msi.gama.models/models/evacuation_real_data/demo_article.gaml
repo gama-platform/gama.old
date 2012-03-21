@@ -1,21 +1,18 @@
 model demo_article
 
 global {
-	float simulated_population_rate <- 0 const: true;
+	float simulated_population_rate <- 0.1 const: true;
 	
 	// GIS data
 //	file shape_file_road <- shapefile('demo_gis/MainRoads.shp');
-	file shape_file_road <- shapefile('demo_gis/roadlines.shp');
-//	file shape_file_road <- shapefile('demo_gis/roads.shp');
+	file shape_file_road <- shapefile('demo_gis/roads.shp');
 	string shape_file_bounds <- 'demo_gis/bounds.shp';
 	string shape_file_shelters <- 'demo_gis/edu_gov.shp';
 	string shape_file_ward <- 'demo_gis/wards.shp';
 
 	float insideRoadCoeff <- 0.1 min: 0.01 max: 0.4 parameter: 'Size of the external parts of the roads:';
 	
-//	float pedestrian_speed <- 1; // TODO remove this after working with Ngoc Anh on monday
 	rgb pedestrian_color <- rgb('green') const: true;
-	float pedestrian_perception_range <- 50; // 50 meters
 	
 	float pedestrian_max_speed <- 5.4 min: 0.1 parameter: 'Max speed (m per s)' category: 'Pedestrian';
 	float local_density_window_length <- 2 min: 1 max: 5 parameter: 'Density window length' category: 'Pedestrian';
@@ -34,10 +31,37 @@ global {
 	rgb shelter_color <- rgb('blue') const: true;
 	rgb road_color <- rgb('black') const: true;
 	
+	float pedestrians_average_speed -> { self compute_average_speed [] };
+	int pedestrians_reach_target -> { self compute_pedestrians_reach_target [] };
+	string simulation_output -> { self build_simulation_output [] } ;
+	int pedestrians_reach_shelter -> { length(list(pedestrian) where each.reach_shelter) };
+	
+	action build_simulation_output type: string {
+		let retVal type: string value: 'At time: ' + (string(time)) + ' : ';
+		set retVal value: retVal + '\n\t pedestrians_reach_shelter: ' + (string(pedestrians_reach_shelter)) + '; pedestrians_average_speed: ' + (string(pedestrians_average_speed)) + '; average_duration: ' + (string(average_duration));
+		
+		if (is_hybrid_simulation) {
+			set retVal value: retVal + '; captured_pedestrians: ' + string(sum(list(road) collect length(each.members))) ;
+		}
+		
+		return retVal;
+	}
+	
+	action compute_average_speed type: float {
+		let not_reach_target_pedestrians type: list of: pedestrian value: list(pedestrian) where !(each.reach_shelter);
+		
+		if (empty(not_reach_target_pedestrians)) { return 0; }
+		
+		return ( sum(not_reach_target_pedestrians collect each.speed) / length(not_reach_target_pedestrians) );
+	}
+	
+	action compute_pedestrians_reach_target type: int {
+		return length( list(pedestrian) where each.reach_shelter );
+	}
+	
 	init {
 		loop road_geom over: (shape_file_road.contents) {
-//			create road with: [ shape :: geometry(road_geom), width :: geometry(road_geom) get ('WIDTH') ];
-			create road with: [ shape :: geometry(road_geom), width :: 15 ];
+			create road with: [ shape :: geometry(road_geom), width :: (geometry(road_geom) get ('WIDTH')) ];
 		}
 
 		create shelter from: shape_file_shelters;
@@ -49,7 +73,7 @@ global {
 		set nearest_roads_to_shelters value: (remove_duplicates(nearest_roads_to_shelters));
 		
 		create ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
-			do action: init_overlapping_roads;
+			do init_overlapping_roads;
 		}
 		
 		set road_graph_topology value: topology(as_edge_graph (list(road)));
@@ -59,7 +83,7 @@ global {
 			let ri type: road_initializer value: first (road_initializer as list);
 			loop rd over: (road as list) {
 				ask target: (ri) {
-					do action:  initialize {
+					do initialize {
 						arg the_road value: rd;
 					}
 				}
@@ -77,6 +101,10 @@ global {
 		create density_window_builder returns: builders;
 		set window_builder value: builders at 0;
 	}	 
+	
+	reflex when: (time = 20) {
+		do halt;
+	}
 }
 
 environment bounds: shape_file_bounds;
@@ -99,7 +127,6 @@ entities {
 	}
 	
 	species shelter {
-		
 		aspect base {
 			draw shape: geometry color: shelter_color;
 		}
@@ -134,7 +161,7 @@ entities {
 					and (each.location != ((each.goal).location)));
 			}
 			
-			if condition: !(empty (to_be_captured_pedestrian)) {
+			if !(empty (to_be_captured_pedestrian)) {
 				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
 				
 				loop cp over: c_pedestrian {
@@ -143,15 +170,13 @@ entities {
 					
 					let skip_distance type: float value: 0;
 					
-					if condition: (road_source_to_previous_location.perimeter < road_source_to_current_location.perimeter) { // agent moves towards extremity2
+					if (road_source_to_previous_location.perimeter < road_source_to_current_location.perimeter) { // agent moves towards extremity2
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
-						
-
 					} else { // agent moves towards extremity1
-							set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
-							set cp.released_location value: first (macro_patch.points);
-						}
+						set skip_distance  value: geometry( (macro_patch split_at cp.location) first_with (geometry(each).points contains cp.location) ).perimeter;
+						set cp.released_location value: first (macro_patch.points);
+					}
 
 					// TODO recalculate the released_time
 					set cp.released_time value: time + (skip_distance / cp.speed);
@@ -172,10 +197,6 @@ entities {
 			}
 		}
 		
-		reflex when: (time = 1) and (macro_patch != nil) {
-			create macro_patch_viewer with: [shape :: macro_patch];
-		}
-
 	 	aspect base {
 	 		draw shape: geometry color: road_color;
 	 	}
@@ -243,6 +264,7 @@ entities {
 			
 			if (location = goal.location) {
 				set reach_shelter value: true;
+				set speed value: 0;
 			}
 		}
 		
@@ -284,15 +306,10 @@ entities {
 				set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
 				set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
 				
-//				if (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_max_speed) ) {
-					
-//					do write {
-//						arg message value: name + ' with inside_road_geom.perimeter: ' + (string(inside_road_geom.perimeter));
-//					}
-					
+				if (inside_road_geom.perimeter > (macro_patch_length_coeff * pedestrian_max_speed) ) {
 					set the_road.macro_patch value: inside_road_geom;
 					set the_road.macro_patch_buffer value: inside_road_geom + 0.01;
-//				}
+				}
 			}
 		}
 	}	
@@ -399,10 +416,25 @@ experiment pure_ABM_experiment type: gui {
 		
 		monitor pedestrians_reach_shelter value: length(list(pedestrian) where each.reach_shelter);
 		monitor total_pedestrian value: length(list(pedestrian)); 
-		monitor average_speed value: (sum (list(pedestrian) collect (each.speed))) / (length(pedestrian));
+		monitor average_speed value: pedestrians_average_speed;
+		monitor pedestrians_reach_target value: pedestrians_reach_target;
 		monitor stuck_people value: length( list(pedestrian) where ( (each.speed = 0)  and !(each.reach_shelter) ) );
 		monitor average_local_density value: (sum (list(pedestrian) collect (each.local_density))) / (length(pedestrian));
 		monitor average_step_duration value: average_duration;
+
+		display pedestrians_average_speed {
+			chart pa_speed_diagram type: series {
+				data pedestrians_average_speed value: pedestrians_average_speed color: rgb('green');
+			}
+		}
+		
+		display pedestrians_reach_target {
+			chart pr_target_diagram type: series {
+				data pedestrians_reach_target value: pedestrians_reach_target color: rgb('blue');
+			}
+		}
+
+		file ABM_experiment_output data: simulation_output refresh_every: 2;
 	}
 }
 
@@ -415,35 +447,35 @@ experiment Hybrid_experiment type: gui {
 			species road aspect: base transparency: 0.5;
  			species pedestrian aspect: base transparency: 0.1;
  			species shelter aspect: base transparency: 0.1;
-			species macro_patch_viewer aspect: base;
 		}
 		
-		display road_network {
-			species road aspect: base;
-		}
-		
-		monitor pedestrians_reach_shelter value: length(list(pedestrian) where each.reach_shelter);
 		monitor captured_pedestrians value: sum(list(road) collect ( length((each.members))) ); // WHY always empty???
 		monitor not_captured_pedestrians value: length(list(pedestrian));
-		monitor average_speed value: (sum (list(pedestrian) collect (each.speed))) / (length(pedestrian));
+		
+		monitor average_speed value: pedestrians_average_speed;
+		monitor pedestrians_reach_target value: pedestrians_reach_target;
 		monitor stuck_people value: length( list(pedestrian) where ( (each.speed = 0)  and !(each.reach_shelter) ) );
+		
 		monitor average_local_density value: (sum (list(pedestrian) collect (each.local_density))) / (length(pedestrian));
 		monitor average_step_duration value: average_duration;
 		
 		monitor roads_WITH_macro_patch value: length( (list(road) where (each.macro_patch != nil)) );
 		monitor roads_WITHOUT_macro_patch value: length( (list(road) where (each.macro_patch = nil)) );
 		monitor nearest_roads value: length(nearest_roads_to_shelters);
-
-		display road_length_histogram {
-			chart road_length_histogram type: histogram {
-				data less_than_25_meters value: length(list(road) where (each.perimeter < 25));
-				data more_than_25_meters value: length(list(road) where (each.perimeter >= 25));
+		
+		display pedestrians_average_speed {
+			chart pa_speed_diagram type: series {
+				data pedestrians_average_speed value: pedestrians_average_speed color: rgb('green');
 			}
 		}
 		
-		display macro_patch_display {
-			species macro_patch_viewer aspect: base;
-		}		
+		display pedestrians_reach_target {
+			chart pr_target_diagram type: series {
+				data pedestrians_reach_target value: pedestrians_reach_target color: rgb('blue');
+			}
+		}
+
+		
+		file HYBRID_experiment_output data: simulation_output refresh_every: 2;
 	}
-	
 }
