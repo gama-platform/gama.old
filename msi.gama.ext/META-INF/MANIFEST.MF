@@ -38,9 +38,9 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  miglayout-3.7.3-swt.jar,
  svnkit.jar,
  joda-time-2.0.jar,
- sources/gs-algo-1.1-sources.jar,
- sources/gs-core-1.1.1-sources.jar,
- sources/gs-ui-1.1.1-sources.jar
+ gs-algo-1.1.jar,
+ gs-core-1.1.1.jar,
+ gs-ui-1.1.1.jar
 Bundle-Vendor: MSI
 Export-Package: com.keypoint,
  com.sun.media.jai.iterator,

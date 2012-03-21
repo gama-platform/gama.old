@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="sources/gs-algo-1.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="sources/gs-core-1.1.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="sources/gs-ui-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="joda-time-2.0.jar" sourcepath="sources/joda-time-2.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
@@ -36,8 +33,8 @@
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry kind="lib" path="xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="lib" path="commons-pool-1.5.4.jar"/>
-	<classpathentry kind="lib" path="gs-algo-1.1.jar" sourcepath="sources/gs-algo-1.1-sources.jar"/>
-	<classpathentry kind="lib" path="gs-core-1.1.1.jar" sourcepath="sources/gs-core-1.1.1-sources.jar"/>
-	<classpathentry kind="lib" path="gs-ui-1.1.1.jar" sourcepath="sources/gs-ui-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="gs-algo-1.1.jar" sourcepath="sources/gs-algo-1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="gs-core-1.1.1.jar" sourcepath="sources/gs-core-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="gs-ui-1.1.1.jar" sourcepath="sources/gs-ui-1.1.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
