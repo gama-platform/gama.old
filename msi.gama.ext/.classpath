@@ -33,5 +33,8 @@
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry kind="lib" path="xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="lib" path="commons-pool-1.5.4.jar"/>
+	<classpathentry kind="lib" path="gs-algo-1.1.jar" sourcepath="sources/gs-algo-1.1-sources.jar"/>
+	<classpathentry kind="lib" path="gs-core-1.1.1.jar" sourcepath="sources/gs-core-1.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="gs-ui-1.1.1.jar" sourcepath="sources/gs-ui-1.1.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
