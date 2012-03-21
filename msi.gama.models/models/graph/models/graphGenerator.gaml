@@ -1,6 +1,6 @@
 /**
  *  testGraph
- *  Author: patricktaillandier
+ *  Author: 
  *  Description: 
  */
 
@@ -11,7 +11,7 @@ global {
 		init { 
 			create graph_manager returns: graph_util;
 			ask graph_util {
-				do load_graph_from edge_species: species(self) vertex_species: species(self) file: nil;
+				do generate_barabasi_graph  nb_links: 3 nb_nodes: 100;
 			}
 		}
 	/** Insert the global definitions, parameters and actions here */
