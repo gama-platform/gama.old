@@ -46,8 +46,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public static int FloydWarshall = 1;
 	public static int BellmannFord = 2;
 	public static int Djikstra = 3;
+	public static int ASTar = 4;
 
-	private int optimizerType = 1;
+	protected int optimizerType = 1;
 	private FloydWarshallShortestPaths optimizer;
 	protected boolean verbose;
 	
@@ -390,6 +391,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			optimizerType = 3;
 		} else if ( "Bellmann".equals(s) ) {
 			optimizerType = 2;
+		} else if ( "AStar".equals(s) ){
+			optimizerType = 4;
 		} else {
 			optimizerType = 1;
 		}
@@ -404,11 +407,13 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 				return BFShortestPath(source, target);
 			case 3:
 				return DShortestPath(source, target);
+			case 4:
+				return AShortestPath(source, target);
 		}
 		return null;
 	}
 
-	private Graph getProxyGraph() {
+	protected Graph getProxyGraph() {
 		return directed ? this : new AsUndirectedGraph(this);
 	}
 
@@ -430,6 +435,11 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		GraphPath p = optimizer.getShortestPath(source, target);
 		return pathFromEdges(source, target, new GamaList(p.getEdgeList()));
 	} 
+	
+	private IValue AShortestPath(final Object source, final Object target) {
+		AStarShortestPath p = new AStarShortestPath(this, (IShape)source, (IShape)target);
+		return pathFromEdges(source, target, new GamaList(p.getPathEdgeList()));
+	}
 
 	/*
 	 * In "regular" (non spatial) graphs, we return a list. And a path in spatial graphs. IValue is

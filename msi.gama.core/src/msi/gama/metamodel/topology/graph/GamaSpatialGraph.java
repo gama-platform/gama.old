@@ -26,7 +26,10 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.DijkstraShortestPath;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph {
 
@@ -88,19 +91,28 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	public IPath computeShortestPathBetween(final Object source, final Object target) {
-		if ( pathFinder == null ) {
-			pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
-		}
-		return pathFromEdges(source, target,
-			pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
-		// return (IPath) super.computeShortestPathBetween(topology, source, target);
+		return pathFromEdges(source, target,computeBestRouteBetween(source,target));
 	}
 	
 	public IList<IShape> computeBestRouteBetween(final Object source, final Object target) {
-		if ( pathFinder == null ) {
-			pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
+		switch (optimizerType) {
+		case 1:
+			if ( pathFinder == null ) {
+				pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
+			}
+			return new GamaList<IShape>(pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
+		case 2:
+			BellmanFordShortestPath p1 = new BellmanFordShortestPath(getProxyGraph(), source);
+			return new GamaList<IShape>(p1.getPathEdgeList(target));
+		case 3:
+			DijkstraShortestPath<GamaShape, GamaShape> p2 = new DijkstraShortestPath(getProxyGraph(), source, target);
+			return  new GamaList<IShape>(p2.getPathEdgeList());
+		case 4:
+			AStarShortestPath p3 = new AStarShortestPath(this, (IShape)source, (IShape)target);
+			return new GamaList<IShape>(p3.getPathEdgeList());
 		}
-		return pathFinder.bestRouteBetween((ILocation) source, (ILocation) target);
+		return new GamaList<IShape>();
+		
 	}
 
 	@Override
