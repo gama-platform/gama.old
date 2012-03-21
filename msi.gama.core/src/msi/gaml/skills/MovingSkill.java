@@ -54,7 +54,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd 359"),
 	@var(name = IKeyword.DESTINATION, type = IType.POINT_STR, depends_on = { IKeyword.SPEED,
 		IKeyword.DESTINATION, IKeyword.LOCATION }) })
-@skill({ IKeyword.SKILL_NAME })
+@skill({ IKeyword.MOVING_SKILL })
 public class MovingSkill extends GeometricSkill {
 
 	/**
