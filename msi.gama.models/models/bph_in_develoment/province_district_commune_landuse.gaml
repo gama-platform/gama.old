@@ -444,6 +444,7 @@ entities {
 					}
 
 					aspect base {
+						//test color
 						draw shape: geometry color: color;
 					}
 				}
@@ -497,6 +498,24 @@ entities {
 			set bphFLNum value: bphFLNum*(1-diedBphRate) ;
 			set bphMLNum value: bphMLNum*(1-diedBphRate) ;
 
+			if (linket as list) !=[] {
+				loop ll over: (linket as list) {
+					set color value: 'red' ;
+					ask target: ll {
+						do action: die ;
+					}
+				}
+			} //if-linket
+			
+			if (agentCopy as list) !=[] {
+				loop lm over: (agentCopy as list) var: lm {
+					set color value: 'red' ;
+					ask target: lm {
+						do action: die ;
+					}
+				}
+			}
+			
 			if condition: isPropagating {
 				do action: propagate ;
 			}
@@ -541,7 +560,7 @@ entities {
 					set isPropagating value: false ;
 				}
 				
-//			do action: coloringBphDensity ;
+//			do action: coloringBphDensity;
 		}	
 		
 		action propagate {
@@ -665,29 +684,30 @@ entities {
 			let ddy type: float value: ((currMovingBph.location).y - (currBph.location).y) ;
 			ask target: agentCopyMoving translated_by {ddx,ddy};
 			
-			let agentCopyMovingCoordinateList var: agentCopyMovingCoordinateList type: list of: point value: [] ;
-			let currRicefieldCoordinateList var: currRicefieldCoordinateList type: list of: point value: [] ;
+			let agentCopyMovingCoordinateList type: list of: point value: [] ;
+			let currLandunitCoordinateList type: list of: point value: [] ;
 			
 				
-			set currRicefieldCoordinateList value: (currlandunit.shape).points ;
+			set currLandunitCoordinateList value: (currlandunit.shape).points ;
 			set agentCopyMovingCoordinateList value: (agentCopyMoving.shape).points ;
 				
 				
-			let ii var: ii type: int value: 0 ;
-			let fromCoord var: fromCoord type: point value: nil ;
-			let toCoord var: toCoord type: point value: nil ;
-			let tpl type: linkeet value: nil ;
-			let ovl var: ovl type: list value: nil ;
-			loop rcl over: currRicefieldCoordinateList var: rcl {
-				set fromCoord value: (currRicefieldCoordinateList at ii) ;
+			let ii type: int value: 0 ;
+			let fromCoord type: point value: nil;
+			let toCoord type: point value: nil;
+			let ovl type: list of: landunit value: nil;
+			
+			loop rcl over: currLandunitCoordinateList var: rcl {
+				set fromCoord value: (currLandunitCoordinateList at ii) ;
 				set toCoord value: (agentCopyMovingCoordinateList at ii) ;
-				create species: linkeet with: [originFrom::fromCoord, destinationTo::toCoord, shape :: polyline( [fromCoord, toCoord] )] returns: tpl; 
+				create species: linket with: [originFrom::fromCoord, destinationTo::toCoord, 
+					shape :: polyline( [fromCoord, toCoord])] returns: tpl; 
 
 				set ovl value: landunit overlapping tpl;
 				if condition: (ovl != []) {
 					set ovl value: ovl-currlandunit;
-					loop ov over: ovl var: ov {
-						if condition: !(ov in overlappingLandunits) {
+					loop ov over: ovl {
+						if (ov in overlappingLandunits) {
 							set overlappingLandunits value: overlappingLandunits + [ov] ;
 						}
 					}
@@ -707,25 +727,13 @@ entities {
 			do action: write {
 				arg message value: 'ooooooooooooooooo' ;
 			}
-			ask target: agentCopyMoving {
-				set color value: rgb('yellow') ;
-			}
-			ask target: currlandunit {
-				set color value: rgb('red') ;
-			}			
+
 			return overlappingLandunits;
 		}
 }
 	
 	species linket skills: [situated, visible] {
 		rgb color init: rgb('blue') ;
-		var originFrom type: point init: nil;
-		var destinationTo type: point init: nil;
-		var shape type: geometry;
-	}
-
-	species linkeet skills: [situated, visible] {
-		rgb color init: rgb('blue');
 		var originFrom type: point init: nil;
 		var destinationTo type: point init: nil;
 		var shape type: geometry;
