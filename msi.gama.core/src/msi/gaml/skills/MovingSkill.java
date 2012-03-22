@@ -112,14 +112,14 @@ public class MovingSkill extends GeometricSkill {
 	 * @return the path followed
 	 */
 
-	private int computeHeadingFromAmplitude(final IScope scope, final IAgent agent)
+	protected int computeHeadingFromAmplitude(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
 		int ampl = scope.hasArg("amplitude") ? scope.getIntArg("amplitude") : 359;
 		agent.setHeading(agent.getHeading() + GAMA.getRandom().between(-ampl / 2, ampl / 2));
 		return agent.getHeading();
 	}
 
-	private int computeHeading(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	protected int computeHeading(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		Integer heading = scope.hasArg(IKeyword.HEADING) ? scope.getIntArg(IKeyword.HEADING) : null;
 		if ( heading != null ) {
 			agent.setHeading(heading);
@@ -127,7 +127,7 @@ public class MovingSkill extends GeometricSkill {
 		return agent.getHeading();
 	}
 
-	private double computeDistance(final IScope scope, final IAgent agent)
+	protected double computeDistance(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
 		// We do not change the speed of the agent anymore. Only the current primitive is affected
 		Double s =
@@ -137,7 +137,7 @@ public class MovingSkill extends GeometricSkill {
 		return s * SimulationClock.getStep()/* getTimeStep(scope) */;
 	}
 
-	private ILocation computeTarget(final IScope scope, final IAgent agent)
+	protected ILocation computeTarget(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
 		final Object target = scope.getArg("target", IType.NONE);
 		ILocation result = null;
@@ -150,7 +150,7 @@ public class MovingSkill extends GeometricSkill {
 		return result;
 	}
 
-	private ITopology computeTopology(final IScope scope, final IAgent agent)
+	protected ITopology computeTopology(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
 		final Object on = scope.getArg("on", IType.NONE);
 		ITopology topo = Cast.asTopology(scope, on);
