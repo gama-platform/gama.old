@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -50,7 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayerDisplayOutput.JAVA2D,
-		LayerDisplayOutput.OPENGL }, optional = true),
+		LayerDisplayOutput.OPENGL,  LayerDisplayOutput.GRAPHSTREAM}, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
@@ -59,6 +59,9 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
+	public static final String GRAPHSTREAM = "graphstream";
+		
+	
 
 	private List<AbstractDisplayLayer> layers;
 	private Color backgroundColor;
@@ -67,6 +70,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 	String displayType = JAVA2D;
 	private boolean autosave = false;
 
+	
 	// private GLContext glcontext;
 	// private GLCanvas glcanvas;
 
@@ -165,7 +169,11 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		return GuiUtils.LAYER_VIEW_ID;
+		
+		if (displayType == GRAPHSTREAM)
+			return GuiUtils.GRAPHSTREAM_VIEW_ID;
+		else 
+			return GuiUtils.LAYER_VIEW_ID;
 	}
 
 	@Override

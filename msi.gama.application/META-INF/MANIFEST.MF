@@ -22,4 +22,5 @@ Bundle-SymbolicName: msi.gama.application;singleton:=true
 Import-Package: msi.gama.precompiler,
  org.apache.log4j
 Bundle-ClassPath: .
+Export-Package: msi.gama.gui.displays
 

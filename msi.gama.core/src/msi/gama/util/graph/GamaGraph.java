@@ -19,6 +19,7 @@
 package msi.gama.util.graph;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.*;
@@ -26,6 +27,7 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
@@ -51,6 +53,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	protected int optimizerType = 1;
 	private FloydWarshallShortestPaths optimizer;
 	protected boolean verbose;
+	
+	private LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 	
 	public GamaGraph(final boolean directed) {
 		this.directed = directed;
@@ -171,6 +175,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		if ( edge == null ) { return false; }
 		edgeMap.put((K) e, edge);
+		dispatchEvent(new GraphEvent(this, -1, edge, null, GraphEventType.EDGE_ADDED ));
 		return true;
 
 	}
@@ -198,6 +203,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		if ( vertex == null ) { return false; }
 		vertexMap.put((V) v, vertex);
+		dispatchEvent(new GraphEvent(this, -1, null, vertex, GraphEventType.VERTEX_ADDED));
 		return true;
 
 	}
@@ -222,6 +228,14 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return edgeMap.keySet();
 	}
 
+	public Collection _internalEdgeSet() {
+		return edgeMap.values();
+	}
+	
+	public Collection _internalNodesSet() {
+		return edgeMap.values();
+	}
+	
 	@Override
 	public Set edgesOf(final Object vertex) {
 		_Vertex<V> v = getVertex(vertex);
@@ -354,7 +368,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 		if ( edge == null ) { return false; }
 		edge.removeFromVerticesAs(e);
-		edgeMap.remove(e);
+		_Edge removed = edgeMap.remove(e);
+		dispatchEvent(new GraphEvent(this, -1, removed, null, GraphEventType.EDGE_REMOVED));
 		return true;
 	}
 
@@ -373,7 +388,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		for ( Object e : edges ) {
 			removeEdge(e);
 		}
-		vertexMap.remove(v);
+		
+		_Vertex removed = vertexMap.remove(v);
+		dispatchEvent(new GraphEvent(this, -1, null, removed,  GraphEventType.VERTEX_REMOVED));
 		return true;
 	}
 
@@ -821,6 +838,31 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	@Override
 	public void setVerbose(Boolean verbose) {
 		this.verbose = verbose;
+	}
+
+	@Override
+	public void addListener(IGraphEventListener listener) {
+		synchronized (listeners) {
+			if (!listeners.contains(listener))
+				listeners.add(listener);	
+		}
+			
+	}
+
+	@Override
+	public void removeListener(IGraphEventListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);	
+		}
+	}
+
+	@Override
+	public void dispatchEvent(GraphEvent event) {
+		synchronized (listeners) {
+			if (listeners.isEmpty()) return;
+			for (IGraphEventListener l : listeners)
+				l.receiveEvent(event);	
+		}
 	}
 
 

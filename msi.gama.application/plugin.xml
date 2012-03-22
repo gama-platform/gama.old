@@ -17,6 +17,34 @@
             restorable="true">
       </view>
       
+      
+      
+      
+      
+     
+       <view 
+            allowMultiple="true"
+           category="msi.gama.gui.category.gama"
+            class="msi.gama.networks.ui.GraphstreamView"
+            icon="icons/view_console.png"
+            id="msi.gama.networks.ui.GraphstreamView"
+            name="Graphstream"
+            restorable="true">
+  		</view>
+  		
+  		 <view 
+            allowMultiple="true"
+           category="msi.gama.gui.category.gama"
+            class="msi.gama.networks.ui.GLView"
+            icon="icons/view_console.png"
+            id="msi.gama.networks.ui.GLView"
+            name="GL"
+            restorable="true">
+  		</view>
+  		
+  		
+  		
+      
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"

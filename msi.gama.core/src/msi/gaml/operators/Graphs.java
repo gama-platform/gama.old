@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -302,32 +302,38 @@ public class Graphs {
 		return graph;
 	}
 
-	// TODO "complete" (pour crer un graphe complet)
+	@operator(value = "remove_node_from")
+	public static IGraph removeEdgeFrom(final IShape node, final IGraph g) {
+		g.removeVertex(node);
+		return g;
+	}
+	
+	// TODO "complete" (pour crï¿½er un graphe complet)
 
 	// vertices_to_graph [vertices] with_weights (vertices collect: each.val) -> renvoie un graphe
-	// construit ˆ partir des vertex (edges gnrs soit sous la forme d'une paire vertex::vertex,
-	// soit sous la forme d'un lien gomtrique)
-	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> mme chose
+	// construit ï¿½ partir des vertex (edges gï¿½nï¿½rï¿½s soit sous la forme d'une paire vertex::vertex,
+	// soit sous la forme d'un lien gï¿½omï¿½trique)
+	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> mï¿½me chose
 	// edges_to_graph [edges] with_weights (edges collect: each.length) -> renvoie un graphe
-	// construit ˆ partir des edges (vertex gnrs soit sous la forme d'une paire edge::edge, soit
-	// sous la forme d'un point pour les gomtries)
-	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> mme chose
+	// construit ï¿½ partir des edges (vertex gï¿½nï¿½rï¿½s soit sous la forme d'une paire edge::edge, soit
+	// sous la forme d'un point pour les gï¿½omï¿½tries)
+	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> mï¿½me chose
 	// add item: v1 to:g weight: 1 -> ajout d'un vertex
-	// add item: v1::v2 to:g weight:1 -> ajout d'un edge gnr (et des vertex correspondants si
-	// ncessaire)
+	// add item: v1::v2 to:g weight:1 -> ajout d'un edge gï¿½nï¿½rï¿½ (et des vertex correspondants si
+	// nï¿½cessaire)
 	// add item: (v1::v2)::e to: g weight: 1 -> edge (ajout d'un edge explicite et des vertex
-	// correspondants si ncessaire)
+	// correspondants si nï¿½cessaire)
 	// remove item: v1::v2 from: g -> remove edge
 	// remove item: o from: g -> remove edge / vertex
-	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la mme chose pour
+	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la mï¿½me chose pour
 	// remplacer un vertex)
 
-	// TODO Transformer peu ˆ peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
-	// en oprateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En crant les
+	// TODO Transformer peu ï¿½ peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
+	// en opï¿½rateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En crï¿½ant les
 	// liens dynamiques correspondants --, as_weighted_graph ...).
 
-	// TODO Ajouter les oprateurs d'union, d'intersection, d'galit, de diffrence
+	// TODO Ajouter les opï¿½rateurs d'union, d'intersection, d'ï¿½galitï¿½, de diffï¿½rence
 
-	// TODO Ajouter des gnrateurs spcifiques a partir de GraphGenerator (pb: quelles classes pour
+	// TODO Ajouter des gï¿½nï¿½rateurs spï¿½cifiques a partir de GraphGenerator (pb: quelles classes pour
 	// les vertices/edges ??
 }

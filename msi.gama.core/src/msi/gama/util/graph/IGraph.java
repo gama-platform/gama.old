@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,6 +18,7 @@
  */
 package msi.gama.util.graph;
 
+import java.util.Collection;
 import java.util.Map;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -40,7 +41,7 @@ import org.jgrapht.*;
 	@var(name = "edges", type = IType.LIST_STR), @var(name = "vertices", type = IType.LIST_STR), 
 	@var(name = "verbose", type = IType.BOOL_STR) })
 public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
-	UndirectedGraph {
+	UndirectedGraph, IGraphEventProvider {
 
 	public abstract double getVertexWeight(final Object v);
 
@@ -52,6 +53,9 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 
 	void setWeights(Map<?, Double> weights);
 
+	public Collection _internalEdgeSet();
+	public Collection _internalNodesSet();
+	
 	@getter(var = "edges")
 	public abstract IList getEdges();
 

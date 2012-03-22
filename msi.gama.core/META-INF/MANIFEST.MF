@@ -150,6 +150,7 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.metamodel.shape,
    msi.gama.metamodel.topology.filter,
    msi.gama.metamodel.agent",
+ msi.gama.networks.ui,
  msi.gama.outputs;
   uses:="msi.gaml.expressions,
    msi.gama.kernel.experiment,

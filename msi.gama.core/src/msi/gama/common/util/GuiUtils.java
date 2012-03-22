@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * represented by an instance of IGui, which must be initialize when the UI plugin launches.
  * 
  * @author drogoul
- * @since 18 dŽc. 2011
+ * @since 18 dï¿½c. 2011
  * 
  */
 public class GuiUtils {
@@ -43,6 +43,9 @@ public class GuiUtils {
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
+
+	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
+	public static final String GL_VIEW_ID = "msi.gama.networks.ui.GLView";
 
 	/**
 	 * Method called by the UI plugin to initialize the SWT environment to talk with.
