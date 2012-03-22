@@ -88,7 +88,7 @@ public class Strings {
 		return target.lastIndexOf(pattern);
 	}
 
-	@operator(value = { "copy_between", "copy" }, can_be_const = true)
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true)
 	public static String opCopy(final String target, final GamaPoint p) {
 		final int beginIndex = p.x < 0 ? 0 : (int) p.x;
 		final int endIndex = p.y > target.length() ? target.length() : (int) p.y;

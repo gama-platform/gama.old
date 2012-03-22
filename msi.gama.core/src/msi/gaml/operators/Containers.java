@@ -155,7 +155,7 @@ public class Containers {
 		return false;
 	}
 
-	@operator(value = { "copy_between", "copy" }, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	public static IList opCopy(final IList l1, final GamaPoint p) {
 		if ( p == null ) { return new GamaList(l1); }
 		final int beginIndex = p.x < 0 ? 0 : (int) p.x;
