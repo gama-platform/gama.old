@@ -1,6 +1,7 @@
 package msi.gaml.skills;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -133,8 +135,9 @@ public class GraphSkill extends Skill {
 		
 	}
 	
+	
 	/**
-	 * Checks GAMA parameters from the scope.
+	 * Loads a graph from a filepath (reading GAMA parameters from scope).
 	 * 
 	 * @param scope
 	 * @return
@@ -142,10 +145,19 @@ public class GraphSkill extends Skill {
 	protected IGraph loadGraphWithGraphstreamFromFileSourceBase(final IScope scope, FileSource fileSourceBase) {
 
 		// check parameters
-		String filename = (String)scope.getArg("file", IType.STRING);
-
-		// TODO manage the case of type File
 		
+		File file = null;
+		// first attempt to parse parameter as file
+		try {
+			file = (File)scope.getArg("file", IType.FILE);
+		} catch (GamaRuntimeException e) {
+			// unable to load it as a file
+			// attempting to parse a string and open the corresponding file
+			String filename = (String)scope.getArg("file", IType.STRING);
+			file = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, false));	
+		}
+		
+		// TODO manage the case of type File
 		
 		ISpecies nodeSpecies = (ISpecies)scope.getArg("vertex_species", IType.SPECIES);
 		ISpecies edgeSpecies = (ISpecies)scope.getArg("edge_species", IType.SPECIES);
@@ -166,15 +178,15 @@ public class GraphSkill extends Skill {
 		// attempt to open the file
 		InputStream is;
 		try {
-			is = new FileInputStream(filename);
+			is = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			throw new GamaRuntimeException("Unable to load file from "+filename+" ("+e.getLocalizedMessage()+")");
+			throw new GamaRuntimeException("Unable to load file from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
 		try {
 			fileSourceBase.begin(is);
 		} catch (IOException e) {
-			throw new GamaRuntimeException("Error while loading graph from "+filename+" ("+e.getLocalizedMessage()+")");
+			throw new GamaRuntimeException("Error while loading graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
 		try {
@@ -182,13 +194,13 @@ public class GraphSkill extends Skill {
 				// nothing to do
 			}
 		} catch (IOException e) {
-			throw new GamaRuntimeException("Error while parsing graph from "+filename+" ("+e.getLocalizedMessage()+")");
+			throw new GamaRuntimeException("Error while parsing graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
 		try {
 			fileSourceBase.end();
 		} catch (IOException e) {
-			throw new GamaRuntimeException("Error while finishing to parse the graph from "+filename+" ("+e.getLocalizedMessage()+")");
+			throw new GamaRuntimeException("Error while finishing to parse the graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
 		
@@ -200,7 +212,7 @@ public class GraphSkill extends Skill {
 	@action("load_graph_from_dgs_old")
 	@args({ "edge_species", "vertex_species", "file" })
 	public IGraph primLoadGraphFromFileFromDGSOld(final IScope scope) throws GamaRuntimeException {		
-		
+	
 		return loadGraphWithGraphstreamFromFileSourceBase(scope, new OldFileSourceDGS());
 			
 	}
