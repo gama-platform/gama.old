@@ -22,7 +22,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.factories.SpeciesFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -33,7 +32,6 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.stream.file.FileSourceBase;
 import org.graphstream.stream.file.FileSourceDGS1And2;
 import org.graphstream.stream.file.FileSourceDOT;
 import org.graphstream.stream.file.FileSourceEdge;
@@ -45,11 +43,15 @@ import org.graphstream.stream.file.FileSourcePajek;
 import org.graphstream.stream.file.FileSourceTLP;
 import org.graphstream.stream.file.dgs.OldFileSourceDGS;
 
-
-
 @skill({ IKeyword.GRAPH_SKILL })
+/**
+ * TODO tests unitaires
+ * 
+ * 
+ * @author Samuel Thiriot
+ *
+ */
 public class GraphSkill extends Skill {
-
 	
 	
 	/**
@@ -85,31 +87,47 @@ public class GraphSkill extends Skill {
 		public void edgeAdded(String sourceId, long timeId, String edgeId,
 				String fromNodeId, String toNodeId, boolean directed) {
 			
-			gamaGraph.addEdge(fromNodeId, toNodeId);
-			
-			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false);
-			IAgent createdAgent = createdAgents.get(0);
-			GamaDynamicLink dl = new GamaDynamicLink(
-					nodeId2agent.get(fromNodeId),
-					nodeId2agent.get(toNodeId)	
-					);
-			createdAgent.setGeometry(dl);
-			
+			// check parameter
 			if (directed != gamaGraph.isDirected())
 				throw new GamaRuntimeException("Attempted to read an "+(directed?"":"un")+"directed edge for a "+(gamaGraph.isDirected()?"":"un")+"directed graph");
 			
+			// retrieve the agents for this edge
+			IAgent agentFrom = nodeId2agent.get(fromNodeId);
+			if (agentFrom == null)
+				throw new GamaRuntimeException("Error while parsing graph: the node "+fromNodeId+" was not declared");
+			IAgent agentTo = nodeId2agent.get(toNodeId);
+			if (agentTo == null)
+				throw new GamaRuntimeException("Error while parsing graph: the node "+toNodeId+" was not declared");
+			// TODO : add support for nodes that were not declared ? (may be supported in some file formats)
+			
+			// create the agent of the target specy
+			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false);
+			IAgent createdAgent = createdAgents.get(0);
+			
+			// create the shape for this agent
+			GamaDynamicLink dl = new GamaDynamicLink(
+					agentFrom,
+					agentTo	
+					);
+			createdAgent.setGeometry(dl);
+		
+			// actually add the edge
+			gamaGraph.addEdge(agentFrom, agentTo);
+				
 		}
 
 		@Override
 		public void nodeAdded(String sourceId, long timeId, String nodeId) {
-			
-			gamaGraph.addVertex(nodeId);
-			//gamaGraph.get(sourceId);
+		
+			// create an agent of the target specy
 			IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, initialValues, false);
 			IAgent createdAgent = createdAgents.get(0);
 			
+			// update internal mapping
 			nodeId2agent.put(nodeId, createdAgent);
 			
+			// actually add the agent to the graph
+			gamaGraph.addVertex(createdAgent);
 			
 		}
 		
@@ -179,12 +197,19 @@ public class GraphSkill extends Skill {
 
 	}
 	
+	@action("load_graph_from_dgs_old")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromDGSOld(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new OldFileSourceDGS());
+			
+	}
+	
 	@action("load_graph_from_dgs")
 	@args({ "edge_species", "vertex_species", "file" })
 	public IGraph primLoadGraphFromFileFromDGS(final IScope scope) throws GamaRuntimeException {		
 		
 		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceDGS1And2());		
-		
 			
 	}
 	
