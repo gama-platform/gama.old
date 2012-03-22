@@ -3,7 +3,7 @@ model pedestrian_corridor
 
 
 global {
-	var capture_pedestrians type: bool init: false parameter: 'Capture pedestrians?';
+	var capture_pedestrians <- false type: bool parameter: 'Capture pedestrians?';
 	
 	const environment_size type: int init: 2000;
 	const environment_bounds type: point init: {environment_size, environment_size} depends_on: [environment_size];
@@ -72,8 +72,9 @@ global {
 environment bounds: environment_bounds;
 
 entities {
-	species pedestrian skills: [situated, moving] topology: shape - (corridor_wall_0_shape + corridor_wall_1_shape) frequency: 1 schedules: shuffle (list (pedestrian)) {
-		var shape type: geometry init: copy (pedestrian_shape);
+	species pedestrian skills: [situated, moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) frequency: 1 schedules: shuffle (list (pedestrian)) {
+//		var shape <-  (copy(pedestrian_shape)) type: geometry;
+		var shape <-  circle (pedestrian_size) type: geometry;
 		var initial_location type: point;
 		var target_location type: point;
 		var heading type: int;

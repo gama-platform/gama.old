@@ -1,23 +1,24 @@
-model balls_groups
+model balls_groups_clouds
 
-global {
+global { 
 	const environment_bounds type: point init: {500, 500}; 
-	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) ;
-	const inner_bounds_y type: int init: ((environment_bounds.y) / 20)  ;
+	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) depends_on: environment_bounds ;
+	const inner_bounds_y type: int init: ((environment_bounds.y) / 20) depends_on: environment_bounds ;
 	var xmin type: int init: inner_bounds_x ;
 	var ymin type: int init: inner_bounds_y ; 
 	var xmax type: int init: (environment_bounds.x) - inner_bounds_x ;
 	var ymax type: int init: (environment_bounds.y) - inner_bounds_y ;
-	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y ;
+	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y depends_on: environment_bounds ;
 	var ball_color type: rgb init: rgb('green'); 
 	var chaos_ball_color type: rgb init: rgb('red');
 	var ball_size type: float init: 3;  
 	var ball_speed type: float init: 1;
-	var chaos_ball_speed type: float init: 8 * ball_speed;   
-	var ball_number type: int init: 500 min: 2 max: 1000;  
+	var chaos_ball_speed type: float init: 8 * ball_speed;  
+	var ball_number type: int init: 200 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
-	var ball_separation type: float init: 6 * ball_size;  
+	var ball_separation type: float init: 6 * ball_size; 
 	var create_group type: bool init: true; 
+	var create_cloud type: bool init: true; 
 	var group_creation_distance type: int init: ball_separation + 1;
 	var min_group_member type: int init: 3;
 	var group_base_speed type: int init: (ball_speed * 1.5);
@@ -27,13 +28,8 @@ global {
 	var merge_frequency type: int init: 3;
 	var merge_possibility type: float init: 0.3;
 	
-	init { 
+	init {
 		create species: ball number: ball_number ;
-		do write message: "Environment bounds : " + (environment_bounds.x) + " " + (environment_bounds.y);
-		do write message: "Environment : " + xmin + " " + ymin + " " + xmax + " " + ymax; 
-//		create species: text_viewer number: 1 {
-//			set shape value: myself.shape ;
-//		}
 	}
 	
 	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
@@ -42,13 +38,39 @@ global {
 		if condition: (length (free_balls)) > 1 {
 			let satisfying_ball_groups type: list of: list value: (free_balls simple_clustering_by_envelope_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
-			loop one_group over: satisfying_ball_groups { 
+			loop one_group over: satisfying_ball_groups {
 				create species: group number: 1 returns: new_groups;
 				
 				ask target: (new_groups at 0) as: group {
 					capture target: one_group as: ball_delegation;
 				}
 			}
+		}
+	}
+	
+	reflex create_clouds when: (create_cloud and ((time mod creation_frequency) = 0) ) {
+		let candidate_groups type: list value: list(group) where (length(each.members) > (0.05 * ball_number) );
+		
+		if (length(candidate_groups) > 2) {
+			
+			do write {
+				arg message value: 'create cloud with members: ' + (string(candidate_groups));
+			}
+			
+			create cloud returns: rets;
+			let newCloud type: cloud value: rets at 0;
+			ask newCloud as: cloud {
+				capture candidate_groups as: group_delegation returns: rets;
+				/*
+				 {
+					set color value: ( group_delegation(one_of(members))).color;
+					set shape value: polygon(members collect (((group_delegation(each)).shape).location));			
+				}
+				*/
+			}
+			
+			set newCloud.color value: (ball_delegation(one_of(newCloud.members))).color;
+			set newCloud.shape value: polygon(members collect ((ball_delegation(each)).location));
 		}
 	}
 }
@@ -92,10 +114,8 @@ entities {
 		
 		action in_bounds type: bool {
 			arg a_point type: point ;
-			let b1 <- a_point >= {xmin, ymin};
-			let b2 <- a_point <= {xmax, ymax};
-			let b <-  b1 and b2 ; 
-			return b;
+			
+			return value: ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
 		 
 		state follow_nearest_ball initial: true {
@@ -110,9 +130,8 @@ entities {
 				let step_distance type: float value: speed * step ;
 				let step_x type: float value: step_distance * (cos (heading)) ;
 				let step_y type: float value: step_distance * (sin (heading)) ;
-				let tmp_location type: point value: location + {step_x, step_y} ;
-				//do write message: string(self) + " is in bounds with " + string(tmp_location) + ": " + (string (self in_bounds [ a_point :: tmp_location ]));
-				if (self in_bounds [ a_point :: tmp_location ] ) {
+				let tmp_location var: tmp_location type: point value: location + {step_x, step_y} ;
+				if condition: (self in_bounds [ a_point :: tmp_location ] ) {
 					set location value: tmp_location ;
 					do action: separation {
 						arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
@@ -122,25 +141,24 @@ entities {
 		}
 		
 		state chaos {
-			enter { 
+			enter {
 				set beginning_chaos_time value: time ;
 				set time_in_chaos_state value: 10 + (rnd(10)) ;
-				set color value: chaos_ball_color ; 
+				set color value: chaos_ball_color ;
 				set speed value: chaos_ball_speed ;
 				set heading value: rnd(359) ;
 			}
 			
-			let step_distance  type: float <- speed * step ;
-			let step_x  type: float <- step_distance * (cos (heading)) ;
-			let step_y  type: float <- step_distance * (sin (heading)) ;
-			let tmp_location type: point <- location + {(step_x), (step_y)} ;
-			
+			let step_distance var: step_distance type: float value: speed * step ;
+			let step_x var: step_x type: float value: step_distance * (cos (heading)) ;
+			let step_y var: step_y type: float value: step_distance * (sin (heading)) ;
+			let tmp_location type: point value: location + {step_x, step_y} ;
 			if condition: (self in_bounds [ a_point :: tmp_location]) {
 				set location value: tmp_location ;
-				do separation {
+				do action: separation {
 					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 				}
-			} 
+			}
 			
 			transition to: follow_nearest_ball when: time > (beginning_chaos_time + time_in_chaos_state) ;
 		}
@@ -197,7 +215,7 @@ entities {
 			 
 			state follow_nearest_ball initial: true { }
 			
-			state chaos { } 
+			state chaos { }
 			
 			aspect default {
 				draw shape: circle color: ((host as group).color).darker size: my_age ;
@@ -262,9 +280,7 @@ entities {
 			if condition: ( (dx + topleft_point.x) < 0 ) {
 				let tmp_dx value: dx + topleft_point.x ;
 				set dx value: dx - tmp_dx ;
-				
-
-			}				else {
+			} else {
 					if condition: (dx + bottomright_point.x) > (environment_bounds.x) {
 						let tmp_dx value: (dx + bottomright_point.x) - environment_bounds.x ;
 						set dx value: dx - tmp_dx ;
@@ -274,9 +290,7 @@ entities {
 			if  (dy + topleft_point.y) < 0 {
 				let tmp_dy value: dy + topleft_point.y ;
 				set dy value: dy - tmp_dy ;
-				
-				
-			}else {
+			} else {
 					if condition: (dy + topleft_point.y) > (environment_bounds.y) {
 						let tmp_dy value: (dy + bottomright_point.y) - (environment_bounds.y) ;
 						set dy value: dy - tmp_dy ;
@@ -301,6 +315,45 @@ entities {
 		}
 	}
 	
+	species cloud parent: base {
+//		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
+		rgb color;
+				
+		species group_delegation parent: group {
+			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
+			}
+			
+			reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
+			}
+			
+			reflex chase_target when: (target != nil) {
+			}
+			
+			reflex self_disaggregate {
+			}
+			
+			species ball_delegation {
+				
+			}
+			
+		}
+		
+		reflex wander_around {
+			let amplitude type: float value: rnd(360);
+			let dx type: float value: cos(amplitude);
+			let dy type: float value: sin(amplitude);
+			
+			loop m over: members {
+//				set ((m).location) value: {(m.location).x + dx, (m.location).y + dy};
+			}
+		}
+		
+		aspect default {
+			draw shape: geometry color: color;
+			draw text: name + ' with composing groups: ' + (string(members)) size: 10;
+		}
+	}
+	
 	species text_viewer skills: situated {
 		aspect default {
 			draw text: 'Number of groups : ' + (string (length (group as list))) at: {location.x - 100, location.y} color: rgb('blue') size: 20 ;
@@ -318,6 +371,12 @@ experiment default_expr type: gui {
 				species ball_delegation;
 			}
 			species text_viewer aspect: default transparency: 0.5 ;
+			
+			species cloud {
+				species group_delegation {
+					species ball_delegation;
+				}
+			}
 		}
 		
 		monitor groups value: list (group);
