@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
 public class DrivingSkill extends MovingSkill{
 	@action("gotoTraffic")
 	@args({ "target", IKeyword.SPEED, "on", "return_path" })
-	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
+	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy();
 		final double maxDist = computeDistance(scope, agent);
@@ -60,7 +60,7 @@ public class DrivingSkill extends MovingSkill{
 		}
 		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
 		if ( returnPath != null && returnPath ) {
-			IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist);
+			IPath pathFollowed = moveToNextLocAlongPath2(agent, path, maxDist);
 			if ( pathFollowed == null ) {
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
@@ -68,7 +68,7 @@ public class DrivingSkill extends MovingSkill{
 			scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
-		moveToNextLocAlongPathSimplified(agent, path, maxDist);
+		moveToNextLocAlongPathSimplified2(agent, path, maxDist);
 		scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
@@ -84,7 +84,7 @@ public class DrivingSkill extends MovingSkill{
 	 * @return the next location
 	 */
 
-	private void moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
+	private void moveToNextLocAlongPathSimplified2(final IAgent agent, final IPath path,
 		final double _distance) {
 		int index = 0;
 		int indexSegment = 1;
@@ -190,15 +190,17 @@ public class DrivingSkill extends MovingSkill{
 				//2. Selects the agents before the agent on the segment 
 				Coordinate[] segment = {currentLocation, pt};
 				double minDist = distance;
-				Geometry frontRectangle = GeometryUtils.getFactory().createLinearRing(segment).buffer(0.1, 4, /**TODO To be modified, to find the right constant name**/2);
+				Geometry basicLine = GeometryUtils.getFactory().createLineString(segment);
+				basicLine = basicLine.difference(agent.getInnerGeometry().buffer(1, 4));
+				Geometry frontRectangle = basicLine.buffer(0.1, 4, /**TODO To be modified, to find the right constant name**/2);
 				for(IAgent ia : neighbours){
 					if(ia.getSpecies().equals(line.getAgent().getSpecies())){
 						continue;
 					}
 					if(frontRectangle.intersects(ia.getInnerGeometry())){
 						double currentDistance = agent.getTopology().distanceBetween(agent, ia);
-						if(currentDistance < distance){
-							minDist = currentDistance;
+						if(currentDistance < minDist){
+							minDist = currentDistance - 2;
 						}
 					}
 						
@@ -249,7 +251,7 @@ public class DrivingSkill extends MovingSkill{
 
 	}
 
-	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
+	private IPath moveToNextLocAlongPath2(final IAgent agent, final IPath path, final double d) {
 		int index = 0;
 		int indexSegment = 1;
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
