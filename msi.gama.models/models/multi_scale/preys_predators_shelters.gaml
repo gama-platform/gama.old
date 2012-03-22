@@ -135,7 +135,7 @@ entities {
 		}
 		aspect default {
 			draw shape: geometry color: shelter_color;
-			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 12 at: {(location).x - 42, (location).y};
+			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 8 at: {(location).x - 20, (location).y};
 		}
 	}
 
