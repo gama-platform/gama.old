@@ -118,7 +118,7 @@ public class GraphTopology extends AbstractTopology {
 		c.start();
 		IList edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 		c.stop();
-		System.out.println("Temps calcule: " + c.getMilliSec());
+		//System.out.println("Temps calcule: " + c.getMilliSec());
 		if ( edges.isEmpty() ) { return null; }
 		HashSet edgesSetInit =
 			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));
