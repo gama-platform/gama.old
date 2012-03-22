@@ -137,8 +137,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		// recursively add user-defined species to world species and down on to the species
-		// hierarchy
+		// recursively add user-defined species to world species and down on to the species hierarchy
 		for ( SpeciesStructure speciesStructure : structure.getSpecies() ) {
 			addMicroSpecies(worldSpeciesDesc, speciesStructure);
 		}
@@ -167,12 +166,8 @@ public class ModelFactory extends SymbolFactory {
 			complementSpecies(worldSpeciesDesc, specStructure);
 		}
 
-		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species &
-		// sub-species
+		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species & sub-species
 		worldSpeciesDesc.finalizeDescription();
-
-		// Inheritance of micro-species between parent-species & sub-species
-		worldSpeciesDesc.inheritMicroSpecies();
 
 		// Parse the other definitions (output, environment, batch...)
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {

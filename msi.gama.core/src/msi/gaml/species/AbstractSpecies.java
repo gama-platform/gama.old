@@ -45,13 +45,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected Map<String, ISpecies> microSpecies;
 
-	private boolean isCopy = false;
-
-	protected ISpecies parentSpecies;
-
+	// TODO remove -> not necessary: this.getMacroSpecies().getMicroSpecies().remove(this);
 	private IList<ISpecies> peerSpecies;
-
-	private Map<String, ISpecies> visibleSpecies;
 
 	private IScope ownStack;
 
@@ -70,7 +65,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		setName(description.getName());
 		setOwnScope(GAMA.obtainNewScope());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
-		isCopy = ((SpeciesDescription) description).isCopy();
 	}
 
 	@Override
@@ -115,11 +109,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return isGrid;
 	}
 
-	@Override
-	public boolean isCopy() {
-		return isCopy;
-	}
-
 	// @Override
 	// public String toJava() {
 	// return "SimulationManager.getFrontmostSimulation().getSpecies(" + name + ")";
@@ -146,23 +135,37 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 	}
 
-	/**
-	 * @return allPureMicroSpecies + delegations.
-	 */
+	// TODO modify
+	// inherent micro-species
+	// micro-species of parent
 	@Override
 	public IList<ISpecies> getMicroSpecies() {
 		IList<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.addAll(microSpecies.values());
+		
+		ISpecies parentSpecies = this.getParentSpecies();
+		if (parentSpecies != null) { retVal.addAll(parentSpecies.getMicroSpecies()); }
+		
 		return retVal;
 	}
 
+	// TODO modify
+	// inherent micro-species
+	// micro-species of parent
 	@Override
 	public IList<String> getMicroSpeciesNames() {
 		IList<String> retVal = new GamaList<String>();
 		retVal.addAll(microSpecies.keySet());
+		
+		ISpecies parentSpecies = this.getParentSpecies();
+		if (parentSpecies != null) { retVal.addAll(parentSpecies.getMicroSpeciesNames()); }
+		
 		return retVal;
 	}
 
+	// TODO modify
+	// inherent micro-species
+	// micro-species of parent
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
 	 * 
@@ -171,9 +174,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	 */
 	@Override
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
-		for ( ISpecies microSpec : microSpecies.values() ) {
-			if ( microSpec.getName().equals(microSpeciesName) ) { return microSpec; }
-		}
+		ISpecies retVal = microSpecies.get(microSpeciesName);
+		if (retVal != null) { return retVal; }
+		
+		ISpecies parentSpecies = this.getParentSpecies();
+		if (parentSpecies != null) { return parentSpecies.getMicroSpecies(microSpeciesName); }
 
 		return null;
 	}
@@ -183,12 +188,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	 */
 	@Override
 	public boolean containMicroSpecies(final ISpecies species) {
-		return microSpecies.values().contains(species);
+		ISpecies parentSpecies = this.getParentSpecies();
+		return microSpecies.values().contains(species) || ((parentSpecies != null) ? parentSpecies.containMicroSpecies(species) : false);
 	}
 
 	@Override
 	public boolean hasMicroSpecies() {
-		return !microSpecies.isEmpty();
+		ISpecies parentSpecies = this.getParentSpecies();
+		return !microSpecies.isEmpty() || ( (parentSpecies != null) ? parentSpecies.hasMicroSpecies() : false );
 	}
 
 	@Override
@@ -201,56 +208,29 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		if ( macroSpecies == null ) { return GamaList.EMPTY_LIST; }
 
 		if ( peerSpecies == null ) {
-			peerSpecies = new GamaList<ISpecies>();
-			for ( ISpecies microSpec : macroSpecies.getMicroSpecies() ) {
-				if ( !microSpec.equals(this) ) {
-					peerSpecies.add(microSpec);
-				}
-			}
+			peerSpecies = new GamaList<ISpecies>(macroSpecies.getMicroSpecies());
+			peerSpecies.remove(this);
 		}
 
 		return peerSpecies;
 	}
 
-	/**
-	 * Finds the corresponding ISpecies of a SpeciesDescription.
-	 * 
-	 * This method is invoked only by the "getParent()" method to find the parent species of this
-	 * species.
-	 * A species can be a sub species of
-	 * either its peer species
-	 * or one species situated higher in the species tree.
-	 * 
-	 * @param speciesDesc
-	 * @return
-	 */
-	private ISpecies findParentSpecies(final SpeciesDescription speciesDesc) {
-		getPeersSpecies();
-
-		// Verify the peer species.
-		for ( ISpecies p : peerSpecies ) {
-			if ( p.getDescription().equals(speciesDesc) ) { return p; }
-		}
-
-		ISpecies macroSpecLevel = macroSpecies;
-		while (macroSpecLevel != null) {
-			// Verify the macro-species
-			if ( macroSpecLevel.getDescription().equals(speciesDesc) ) { return macroSpecLevel; }
-
-			// Verify the peers of macro-species
-			List<ISpecies> macroLevelPeers = macroSpecLevel.getPeersSpecies();
-			for ( ISpecies p : macroLevelPeers ) {
-				if ( p.getDescription().equals(speciesDesc) ) { return p; }
-			}
-
-			macroSpecLevel = macroSpecLevel.getMacroSpecies();
-		}
-
-		return null;
-	}
-
 	@Override
 	public ISpecies getParentSpecies() {
+		SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
+		if ( parentSpecDesc == null ) { return null; }
+		
+		ISpecies currentMacroSpec = this.getMacroSpecies();
+		ISpecies potentialParent;
+		while (currentMacroSpec != null) {
+			potentialParent = currentMacroSpec.getMicroSpecies(parentSpecDesc.getName());
+			if (potentialParent != null) { return potentialParent; }
+			currentMacroSpec = currentMacroSpec.getMacroSpecies();
+		}
+		
+		return null;
+		
+		/*
 		if ( parentSpecies != null ) { return parentSpecies; }
 
 		SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
@@ -258,6 +238,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 		parentSpecies = findParentSpecies(parentSpecDesc);
 		return parentSpecies;
+		*/
 	}
 
 	@Override
@@ -270,33 +251,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<ISpecies> getVisibleSpecies() {
-		if ( visibleSpecies == null ) {
-			visibleSpecies = new HashMap<String, ISpecies>();
-
-			ISpecies currentSpecies = this;
-			while (!currentSpecies.getName().equals(IKeyword.WORLD_SPECIES_NAME)) {
-				for ( ISpecies microSpec : currentSpecies.getMicroSpecies() ) {
-					visibleSpecies.put(microSpec.getName(), microSpec);
-				}
-
-				currentSpecies = currentSpecies.getMacroSpecies();
-			}
-
-			visibleSpecies.put(currentSpecies.getName(), currentSpecies);
-		}
-
-		return visibleSpecies.values();
-	}
-
-	@Override
-	public ISpecies getVisibleSpecies(final String speciesName) {
-		;
-		getVisibleSpecies();
-		return visibleSpecies.get(speciesName);
-	}
-
-	@Override
 	public int getLevel() {
 		return this.getDescription().getLevel();
 	}
@@ -306,8 +260,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		/**
 		 * species name is unique
 		 */
-		if ( other instanceof ISpecies ) { return this.getName().equals(
-			((ISpecies) other).getName()); }
+		if ( other instanceof ISpecies ) { 
+			return this.getName().equals(((ISpecies) other).getName()); 
+		}
 
 		return false;
 	}
@@ -474,6 +429,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return ((ExecutionContextDescription) description).getAgentConstructor();
 	}
 
+	// TODO review this
+	// this is the "original" macro-species???
 	@Override
 	public ISpecies getMacroSpecies() {
 		return macroSpecies;

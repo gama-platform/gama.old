@@ -55,8 +55,8 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
 
-	public AbstractPopulation(final IAgent directMacroAgent, final ISpecies species) {
-		this.host = directMacroAgent;
+	public AbstractPopulation(final IAgent host, final ISpecies species) {
+		this.host = host;
 		this.species = species;
 		ExecutionContextDescription ecd = (ExecutionContextDescription) species.getDescription();
 		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
@@ -137,16 +137,16 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 		}
 		addAll(list, null);
 
+		for ( IAgent a : list ) {
+			a.initializeMicroPopulations(sim);
+		}
+
 		createVariablesFor(sim, list, initialValues);
 
 		for ( IAgent a : list ) {
-			a.initializeMicroPopulations(sim);
 
-			// if agent is restored (on the capture or release); then don't need to run the "init"
-			// reflex
-			if ( !isRestored ) {
-				a.schedule();
-			}
+			// if agent is restored (on the capture or release); then don't need to run the "init" reflex
+			if ( !isRestored ) { a.schedule(); }
 		}
 
 		return list;

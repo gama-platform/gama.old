@@ -86,6 +86,30 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	}
 
 	@Override
+	public ISpecies getSpecies(String speciesName) {
+		if (speciesName == null) { return null; }
+		
+		Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
+		speciesStack.push(worldSpecies);
+		ISpecies currentSpecies;
+		while (!speciesStack.isEmpty()) {
+			currentSpecies = speciesStack.pop();
+			if (currentSpecies.getName().equals(speciesName)) {
+				return currentSpecies;
+			}
+			
+			List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
+			for (ISpecies microSpec : microSpecies) {
+				if (microSpec.getMacroSpecies().equals(currentSpecies)) {
+					speciesStack.push(microSpec);
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
 	public void setChildren(final List<? extends ISymbol> children) {}
 
 	protected void setModelEnvironment(final ModelEnvironment modelEnvironment) {

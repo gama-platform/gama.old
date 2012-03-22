@@ -15,8 +15,8 @@ public class SinglePopulation extends AbstractPopulation {
 
 	IList<IAgent> agents = new GamaList();
 
-	public SinglePopulation(final IAgent directMacroAgent, final ISpecies species) {
-		super(directMacroAgent, species);
+	public SinglePopulation(final IAgent host, final ISpecies species) {
+		super(host, species);
 	}
 
 	@Override

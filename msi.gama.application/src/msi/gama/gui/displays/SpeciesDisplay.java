@@ -77,9 +77,6 @@ public class SpeciesDisplay extends AgentDisplay {
 
 	@Override
 	public void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
-		// performance issue
-		// List<IAgent> agentsToDisplay = new GamaList<IAgent>(getAgentsToDisplay());
-		// if ( agentsToDisplay.isEmpty() ) { return; }
 
 		shapes.clear();
 		IScope scope = GAMA.obtainNewScope();
@@ -102,59 +99,6 @@ public class SpeciesDisplay extends AgentDisplay {
 			GAMA.releaseScope(scope);
 		}
 	}
-
-	/*
-	 * // TODO remove
-	 * private void drawMicroAgents(IScope scope, IAgent macroAgent, IGraphics g) throws
-	 * GamaRuntimeException {
-	 * SpeciesDisplayLayer layer = (SpeciesDisplayLayer) model;
-	 * List<SpeciesDisplayLayer> microLayers = layer.getMicroSpeciesLayers();
-	 * IAspect aspect;
-	 * IPopulation microPopulation;
-	 * 
-	 * // TODO support draw ISpatialIndex/GamaQuadTree of macro-agent's inner environment
-	 * 
-	 * for (SpeciesDisplayLayer ml : microLayers) {
-	 * microPopulation = macroAgent.getMicroPopulation(ml.getName());
-	 * 
-	 * if (microPopulation != null) {
-	 * if (microPopulation.isGrid()) { // TODO remove?
-	 * GridTopology gridAgentStorage = (GridTopology) microPopulation.getAgentStorage();
-	 * gridAgentStorage.refreshDisplayData();
-	 * 
-	 * // MUST cache this image as GridDisplayLayer does to increase performance
-	 * BufferedImage supportImage = ImageCache.createCompatibleImage(gridAgentStorage.numCols,
-	 * gridAgentStorage.numRows);
-	 * supportImage.setRGB(0, 0, gridAgentStorage.numCols, gridAgentStorage.numRows,
-	 * gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
-	 * 
-	 * GamaPoint macroLocation = macroAgent.getLocation();
-	 * GamaGeometry macroShape = macroAgent.getGeometry();
-	 * double width = macroShape.getWidth();
-	 * double height = macroShape.getHeight();
-	 * g.setDrawingCoordinates((macroLocation.x - (width / 2)) * g.getXScale(), (macroLocation.y -
-	 * (height / 2)) * g.getYScale());
-	 * g.setDrawingDimensions((int) (macroShape.getWidth() * g.getXScale()), (int)
-	 * (macroShape.getHeight() * g.getYScale()));
-	 * g.setOpacity(ml.getTransparency());
-	 * g.drawImage(supportImage, null);
-	 * } else {
-	 * if (microPopulation != null && microPopulation.size() > 0) {
-	 * aspect = microPopulation.getAspect(ml.getAspectName());
-	 * if (aspect == null) { aspect = IAspect.DEFAULT_ASPECT; }
-	 * g.setOpacity(ml.getTransparency());
-	 * 
-	 * List<IAgent> microAgents = microPopulation.getAgentsList();
-	 * for (IAgent micro : microAgents) {
-	 * aspect.draw(scope, micro);
-	 * }
-	 * 
-	 * }
-	 * }
-	 * }
-	 * }
-	 * }
-	 */
 
 	private void drawPopulation(final IAgent host, final SpeciesDisplayLayer layer,
 		final IPopulation population, final IScope scope, final IGraphics g)

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,6 +19,7 @@
 package msi.gama.metamodel.agent;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.simulation.*;
@@ -63,6 +64,7 @@ public abstract class AbstractAgent implements IAgent {
 		attributes = new HashMap<String, Object>();
 	}
 
+	
 	@Override
 	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
 		List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
@@ -73,9 +75,7 @@ public abstract class AbstractAgent implements IAgent {
 			for ( ISpecies microSpec : allMicroSpecies ) {
 
 				// TODO what to do with built-in species?
-				if ( ModelFactory.isBuiltIn(microSpec.getName()) ) {
-					continue;
-				}
+				if ( ModelFactory.isBuiltIn(microSpec.getName()) ) { continue; }
 
 				microPop = new GamlPopulation(this, microSpec);
 				microPopulations.put(microSpec, microPop);
@@ -265,13 +265,10 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape newGeometry) {
-		
-		
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null ) { return; }
 		Envelope previousEnv = null;
 		ILocation previousLoc = null;
 		boolean previousIsPoint = false;
-		
 		if ( geometry != null && geometry.getInnerGeometry() != null ) {
 			previousEnv = geometry.getEnvelope();
 			previousLoc = geometry.getLocation();
@@ -283,19 +280,14 @@ public abstract class AbstractAgent implements IAgent {
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
 		GamaShape newLocalGeom =
-			(GamaShape) (other == null ? newGeometry : newGeometry.copy());
+				(GamaShape) (other == null ? newGeometry : newGeometry.copy());
 		topology.normalizeLocation(newGeomLocation, false);
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
 			newLocalGeom.setLocation(newGeomLocation);
 		}
 
-		if ( geometry == null ) {
-			newLocalGeom.setAgent(this);
-			geometry = newLocalGeom;
-		} else {
-			//geometry.setGeometry(newLocalGeom);
-			geometry = newLocalGeom;
-		}
+		newLocalGeom.setAgent(this);
+		geometry = newLocalGeom;
 
 		topology.updateAgent(this, previousIsPoint, previousLoc, previousEnv);
 
@@ -303,7 +295,6 @@ public abstract class AbstractAgent implements IAgent {
 		for ( IPopulation p : microPopulations.values() ) {
 			p.hostChangesShape();
 		}
-		
 	}
 
 	@Override
@@ -537,42 +528,30 @@ public abstract class AbstractAgent implements IAgent {
 	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
 		IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
-
-		ISpecies currentSpecies;
-		IAgent currentAgent = this;
-		while (currentAgent != null) {
-			currentSpecies = currentAgent.getSpecies();
-			if ( currentSpecies.getName().equals(speciesName) ) { return currentAgent
-				.getPopulation(); }
-
-			if ( currentSpecies.getPeerSpecies(speciesName) != null ) { return currentAgent
-				.getHost().getMicroPopulation(speciesName); }
-
-			currentAgent = currentAgent.getHost();
-		}
-
+		
+		IAgent host = this.getHost();
+		if (host != null) { return host.getPopulationFor(speciesName); }
 		return null;
 	}
-
-	@Override
-	public ISpecies getVisibleSpecies(final String speciesName) {
-		ISpecies s = getSpecies().getMicroSpecies(speciesName);
-		if ( s == null ) {
-			if ( getHost().getSpecies().getName().equals(speciesName) ) {
-				s = getHost().getSpecies();
-			} else {
-				s = getHost().getVisibleSpecies(speciesName);
-			}
+	
+	public List<IAgent> getMacroAgents() {
+		List<IAgent> retVal = new GamaList<IAgent>();
+		IAgent currentMacro = this.getHost();
+		while (currentMacro != null) {
+			retVal.add(currentMacro);
+			currentMacro = currentMacro.getHost();
 		}
-		return s;
+		
+		return retVal;
 	}
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
 	 * 
-	 * @return true if newSpecies is one micro-species of this agent's species
-	 *         and newSpecies is a sub-species of this agent's species
-	 *         false otherwise
+	 * @return true if the following conditions are correct: 
+	 * 			1. newSpecies is one micro-species of this agent's species;
+	 *          2. newSpecies is a sub-species of this agent's species false otherwise;
+	 *          3. the "other" agent is not macro-agent of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
@@ -581,6 +560,8 @@ public abstract class AbstractAgent implements IAgent {
 
 		ISpecies otherSpecies = other.getSpecies();
 		if ( !otherSpecies.equals(newSpecies.getParentSpecies()) ) { return false; }
+		
+		if (this.getMacroAgents().contains(other)) { return false; }
 
 		return true;
 	}

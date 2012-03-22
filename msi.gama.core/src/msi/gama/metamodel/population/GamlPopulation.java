@@ -46,8 +46,8 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 
 	IExpression scheduleFrequency = new JavaConstExpression(1);
 
-	public GamlPopulation(final IAgent macroAgent, final ISpecies species) {
-		super(macroAgent, species);
+	public GamlPopulation(final IAgent host, final ISpecies species) {
+		super(host, species);
 		IExpression exp = species.getFrequency();
 		if ( exp != null ) {
 			scheduleFrequency = exp;
@@ -125,16 +125,18 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 			public IPopulation getPopulationFor(final String speciesName)
 				throws GamaRuntimeException {
 				IPopulation pop = super.getPopulationFor(speciesName);
+				
 				if ( pop != null ) { return pop; }
+				
 				if ( ModelFactory.isBuiltIn(speciesName) ) {
-					ISpecies microSpec = this.getVisibleSpecies(speciesName);
+					ISpecies microSpec = this.getSpecies().getMicroSpecies(speciesName);
 					pop = new GamlPopulation(this, microSpec);
 					microPopulations.put(microSpec, pop);
 					pop.initializeFor(this.getSimulation().getExecutionScope());
 					return pop;
 				}
-				throw new GamaRuntimeException("The population of " + speciesName +
-					" is not accessible from " + this);
+				
+				return null;
 			}
 
 		}

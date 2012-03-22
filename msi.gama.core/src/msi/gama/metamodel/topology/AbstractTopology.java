@@ -101,6 +101,13 @@ public abstract class AbstractTopology implements ITopology {
 
 	private void setEnvironmentBounds() {
 		Envelope environmentEnvelope = environment.getEnvelope();
+		
+		// shape host has not yet been initialized
+		if (environmentEnvelope == null) {
+			steps = new double[] {};
+			return;
+		}
+		
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
 		environmentMinX = environmentEnvelope.getMinX();

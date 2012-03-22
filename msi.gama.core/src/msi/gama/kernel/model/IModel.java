@@ -37,6 +37,14 @@ public interface IModel extends ISymbol {
 	public abstract void dispose();
 
 	public abstract ISpecies getWorldSpecies();
+	
+	/**
+	 * 
+	 * 
+	 * @param speciesName
+	 * @return
+	 */
+	public abstract ISpecies getSpecies(String speciesName);
 
 	public abstract IExperiment getExperiment(final String s);
 

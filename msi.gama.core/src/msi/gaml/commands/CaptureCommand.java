@@ -62,8 +62,7 @@ public class CaptureCommand extends AbstractCommandSequence {
 	}
 
 	private void verifyMicroSpecies() {
-		SpeciesDescription macroSpecies =
-			(SpeciesDescription) this.getDescription().getSpeciesContext();
+		SpeciesDescription macroSpecies = (SpeciesDescription) this.getDescription().getSpeciesContext();
 
 		SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 		if ( microSpecies == null ) {

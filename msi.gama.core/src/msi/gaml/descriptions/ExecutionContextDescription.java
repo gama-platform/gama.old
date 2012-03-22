@@ -99,7 +99,6 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	 * Finalizes the description:
 	 * + Copy the behaviors, attributes from parent;
 	 * + Creates the control if necessary;
-	 * + Verifies the spatial level value.
 	 * 
 	 * @throws GamlException
 	 */

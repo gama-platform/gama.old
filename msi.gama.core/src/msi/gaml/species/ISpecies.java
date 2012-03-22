@@ -38,8 +38,6 @@ import msi.gaml.variables.IVariable;
  */
 public interface ISpecies extends IValue, ISymbol {
 
-	// public static final String SPATIAL_LEVEL = "spatial_level";
-
 	public abstract IExpression getFrequency();
 
 	public abstract IExpression getSchedule();
@@ -51,14 +49,10 @@ public interface ISpecies extends IValue, ISymbol {
 	public abstract boolean isGlobal();
 
 	/**
-	 * Indicates that this species is copied from the parent species or not.
-	 * 
-	 * @return
-	 */
-	public abstract boolean isCopy();
-
-	/**
-	 * Returns all the direct micro-species.
+	 * Returns all the micro-species.
+	 * Micro-species includes:
+	 * 		1. the "direct" micro-species;
+	 * 		2. the micro-species of the parent-species.
 	 * 
 	 * @return
 	 */
@@ -119,33 +113,13 @@ public interface ISpecies extends IValue, ISymbol {
 	public abstract ISpecies getPeerSpecies(String peerName);
 
 	/**
-	 * Returns a list of visible species from this species.
-	 * 
-	 * A species can see the following species:
-	 * 1. Its direct micro-species.
-	 * 2. Its peer species.
-	 * 3. Its direct&in-direct macro-species and their peers.
-	 * 
-	 * @return
-	 */
-	public abstract Collection<ISpecies> getVisibleSpecies();
-
-	/**
-	 * Returns a visible species from the view point of this species.
-	 * If the visible species list contains a species with the specified name.
-	 * 
-	 * @param speciesName
-	 */
-	public abstract ISpecies getVisibleSpecies(String speciesName);
-
-	/**
 	 * Returns the level of this species.
 	 * "world" species is the top level species having 0 as level.
 	 * level of a species is equal to level of its direct macro-species plus 1.
 	 * 
 	 * @return
 	 */
-	public abstract int getLevel();
+	public abstract int getLevel(); // TODO remove?
 
 	// TODO THESE METHODS ARE INTENDED TO BE PORTED ON IPopulation instead
 	/**

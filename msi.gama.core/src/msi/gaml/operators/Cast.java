@@ -49,7 +49,7 @@ public class Cast {
 		// TODO Verify this method. And see if the treatment of species and types cannot be unifiedé
 		IType type = asType(scope, b);
 		if ( type.isSpeciesType() ) {
-			ISpecies s = scope.getAgentScope().getVisibleSpecies(type.getSpeciesName());
+			ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
 			Object v = a.value(scope);
 			if ( v instanceof IAgent ) { return ((IAgent) v).isInstanceOf(s, false); }
 			return false;

@@ -18,6 +18,8 @@
  */
 package msi.gama.metamodel.agent;
 
+import java.util.List;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -103,8 +105,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Finds the corresponding population of a species from the "viewpoint" of this
-	 *             agent.
+	 *             Finds the corresponding population of a species from the "viewpoint" of this agent.
 	 * 
 	 *             An agent can "see" the following populations:
 	 *             1. populations of its species' direct micro-species;
@@ -114,25 +115,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @param speciesName the name of the species
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final String speciesName)
-		throws GamaRuntimeException;
-
-	/**
-	 * Finds a species which is visible from the "viewpoint" of this agent.
-	 * 
-	 * The species of this agent contains a list of visible species.
-	 * This method will search on that on that list.
-	 * It will return the species if found or null otherwise.
-	 * 
-	 * An agent can "see" the following species:
-	 * 1. its direct micro-species;
-	 * 2. its species; peers of its species;
-	 * 3. its direct&in-direct macro-species and their peers.
-	 * 
-	 * @param speciesName
-	 * @return
-	 */
-	public abstract ISpecies getVisibleSpecies(final String speciesName);
+	public abstract IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException;
 
 	/**
 	 * Initialize Populations to manage micro-agents.
@@ -208,6 +191,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract IAgent getHost();
 
 	public abstract void setHost(final IAgent hostAgent);
+	
+	public abstract List<IAgent> getMacroAgents();
 
 	/**
 	 * Acquires the object's intrinsic lock.

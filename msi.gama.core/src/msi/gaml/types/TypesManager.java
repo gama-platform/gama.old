@@ -56,13 +56,6 @@ public class TypesManager {
 	 * @return
 	 */
 	public IType addType(final SpeciesDescription species) {
-		/*
-		 * why do we need this code?
-		 * if ( stringToIType.containsKey(name) ) {
-		 * IType theType = stringToIType.get(name);
-		 * return theType;
-		 * }
-		 */
 		String name = species.getName();
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {

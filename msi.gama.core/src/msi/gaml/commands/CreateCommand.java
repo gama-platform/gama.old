@@ -185,13 +185,15 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		if ( speciesExpr == null ) {
 			thePopulation = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
+			
+			// TODO modify this to search for the correct species!!!
 			ISpecies targetSpecies = (ISpecies) speciesExpr.value(scope);
 			if ( targetSpecies == null ) {
 				String availableSpecies = accumulateAvailableSpecs(executor);
-
-				throw new GamaRuntimeException("Species: " + speciesExpr.value(scope) +
-					" is unknown or is not visible in the context of " + executor.getSpecies() +
-					" species. Visible species are [" + availableSpecies + "] ");
+				
+				throw new GamaRuntimeException("Population of " + speciesExpr.literalValue() +
+					" species is not accessible from the context of " + executor.getName() +
+					" agent. Available populations are [" + availableSpecies + "] ");
 			}
 
 			thePopulation = executor.getPopulationFor(targetSpecies);

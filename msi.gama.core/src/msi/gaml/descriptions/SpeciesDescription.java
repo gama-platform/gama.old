@@ -29,7 +29,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	/** Micro-species of a species. */
 	private Map<String, SpeciesDescription> microSpecies;
-
+	
 	private List<CommandDescription> inits;
 
 	private boolean isSuper = false;
@@ -46,43 +46,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		super(keyword, superDesc, facets, children, source, md);
 		setSkills(facets.getTokens(IKeyword.SKILLS));
 		setJavaBase(base);
-	}
-
-	/**
-	 * This constructor is used to copy a species and make it be the micro-species of another
-	 * species.
-	 * 
-	 * @param originalSpecies The species to copy.
-	 * @param childrenWithoutMicroSpecies The children of the copied species are children of the
-	 *            original species excluding the micro-species cause they will be recursively added
-	 *            later on.
-	 * @param newMacroSpecies The macro-species of the copied species.
-	 * @throws GamlException
-	 */
-	public SpeciesDescription(final SpeciesDescription originalSpecies,
-		final List<IDescription> childrenWithoutMicroSpecies,
-		final SpeciesDescription newMacroSpecies, final SymbolMetaDescription md) {
-
-		super(originalSpecies.getKeyword(), newMacroSpecies, originalSpecies.getFacets(),
-			childrenWithoutMicroSpecies, originalSpecies.getSourceInformation(), md);
-		isCopy = true;
-		skillsClasses.addAll(originalSpecies.skillsClasses);
-		skillsMethods.putAll(originalSpecies.skillsMethods);
-		javaBase = originalSpecies.javaBase;
-		agentConstructor = originalSpecies.agentConstructor;
-		control = originalSpecies.control;
-
-		skillInstancesByClass.putAll(originalSpecies.skillInstancesByClass);
-		skillInstancesByMethod.putAll(originalSpecies.skillInstancesByMethod);
-		sortedVariableNames.addAll(originalSpecies.sortedVariableNames);
-		updatableVariableNames.addAll(originalSpecies.updatableVariableNames);
-		setUserRedefinedAndNewVars(originalSpecies.userRedefinedOrNewVars);
-
-		// recursively copy micro-species
-		for ( SpeciesDescription microSpec : originalSpecies.sortedMicroSpecies() ) {
-			this.addMicroSpecies(new SpeciesDescription(microSpec,
-				getChildrenWithoutMicroSpec(microSpec), this, md));
-		}
 	}
 
 	@Override
@@ -144,9 +107,11 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 		// this micro-species is inherited from the parent species, so we don't need to re-add it to
 		// the type manager.
+		// FIXME remove this condition because SpeciesDescription is not copied anymore 
 		if ( !microSpec.isCopy ) {
 			getModelDescription().addType(microSpec);
 		}
+		
 		microSpecies.put(microSpec.getName(), microSpec);
 	}
 
@@ -209,7 +174,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * 1. A parent species is visible to the sub-species.
 	 * 2. A species can' be a sub-species of itself.
 	 * 3. 2 species can't be parent of each other.
-	 * 4. A species can't be a sub-species of its direct/in-direct macro-species.
 	 * 5. A species can't be a sub-species of its direct/in-direct micro-species.
 	 * 6. A species and its direct/indirect micro/macro-species can't share one/some direct/indirect
 	 * parent-species having micro-species.
@@ -223,104 +187,107 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	private SpeciesDescription verifyParent(final String parentName) {
 		// TODO catch this method to avoid being run 2 times (use a boolean for example)
 		// TODO how to make these validations available at the IDE level?
+		
+		return this.getVisibleSpecies(parentName);
 
-		SpeciesDescription parentSpec = this.getVisibleSpecies(parentName);
-		if ( parentSpec == null ) {
-			flagError(getName() + " species can't be a sub-species of " + parentName +
-				" species because " + parentName + " is not defined or is not visible to " +
-				getName() + " species.");
-			return parentSpec;
-		}
-
-		if ( parentSpec.equals(this) ) {
-			flagError(getName() + " species can't be a sub-species of itself");
-			return parentSpec;
-		}
-
-		List<SpeciesDescription> parentsOfParent = parentSpec.getSelfWithParents();
-		if ( parentsOfParent.contains(this) ) {
-			flagError(this.getName() + " species and " + parentSpec.getName() +
-				" species can't be sub-species of each other.");
-		}
-
-		if ( this.getAllMacroSpecies().contains(parentSpec) ) {
-			flagError(this.getName() + " species can't be a sub-species of " +
-				parentSpec.getName() +
-				" species because a species can't be sub-species of its direct or indirect macro-species.");
-		}
-
-		// TODO test this with copied-micro-species!!!
-		if ( this.getAllMicroSpecies().contains(parentSpec) ) {
-			flagError(this.getName() + " species can't be a sub-species of " +
-				parentSpec.getName() +
-				" species because a species can't be sub-species of its direct or indirect micro-species.");
-		}
-
-		List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
-		List<SpeciesDescription> parentsOfMacro;
-		for ( SpeciesDescription macro : allMacroSpecies ) {
-			parentsOfMacro = macro.getSelfWithParents();
-			parentsOfMacro.remove(macro);
-
-			parentsOfMacro.retainAll(parentsOfParent);
-
-			List<SpeciesDescription> sharedParents = new GamaList<SpeciesDescription>();
-			sharedParents.addAll(parentsOfMacro);
-			sharedParents.retainAll(parentsOfParent);
-
-			if ( !sharedParents.isEmpty() ) {
-				SpeciesDescription parentOfMacro = macro.getParentSpecies();
-
-				List<String> microSpecsNames = new GamaList<String>();
-
-				for ( SpeciesDescription sParent : sharedParents ) {
-					for ( SpeciesDescription inheritedMicro : sParent.getMicroSpecies() ) {
-						microSpecsNames.add(inheritedMicro.getName());
-						microSpecsNames.add(", ");
-					}
-				}
-
-				if ( !microSpecsNames.isEmpty() ) {
-					microSpecsNames.remove(microSpecsNames.size() - 1);
-
-					StringBuffer microSpecsStr = new StringBuffer();
-					microSpecsStr.append("[");
-					for ( String msN : microSpecsNames ) {
-						microSpecsStr.append(msN);
-					}
-					microSpecsStr.append("]");
-
-					String message;
-					if ( parentSpec.equals(parentOfMacro) ) {
-						message =
-							new String(this.getName() + " and " + macro.getName() +
-								" species can't share " + parentSpec.getName() +
-								" as parent-species because ");
-					} else {
-						message =
-							new String(this.getName() + " and " + macro.getName() +
-								" species can't have " + parentSpec.getName() + " and " +
-								parentOfMacro.getName() + " as parent-species because ");
-					}
-
-					flagError(message + "\n\t1. " + this.getName() + " and " + macro.getName() +
-						" have micro-macro species relationship;" +
-						"\n\t2. They will both inherit the micro-species " + microSpecsStr +
-						" which will ambiguate the reference to " + microSpecsStr +
-						" species in the context of " + this.getName() + " species.");
-				}
-			}
-		}
-
-		List<SpeciesDescription> parentTrace = new GamaList<SpeciesDescription>();
-		parentSpec.fillParentTrace(parentTrace);
-		if ( parentTrace.contains(this) ) {
-			flagError(this.getName() + " species can't be a sub-species of " +
-				parentSpec.getName() +
-				" species because this forms a circular inheritance between species of different branches.");
-		}
-
-		return parentSpec;
+//		
+//		SpeciesDescription parentSpec = this.getVisibleSpecies(parentName);
+//		if ( parentSpec == null ) {
+//			flagError(getName() + " species can't be a sub-species of " + parentName +
+//				" species because " + parentName + " is not defined or is not visible to " +
+//				getName() + " species.");
+//			return parentSpec;
+//		}
+//
+//		if ( parentSpec.equals(this) ) {
+//			flagError(getName() + " species can't be a sub-species of itself");
+//			return parentSpec;
+//		}
+//
+//		List<SpeciesDescription> parentsOfParent = parentSpec.getSelfWithParents();
+//		if ( parentsOfParent.contains(this) ) {
+//			flagError(this.getName() + " species and " + parentSpec.getName() +
+//				" species can't be sub-species of each other.");
+//		}
+//
+//		if ( this.getAllMacroSpecies().contains(parentSpec) ) {
+//			flagError(this.getName() + " species can't be a sub-species of " +
+//				parentSpec.getName() +
+//				" species because a species can't be sub-species of its direct or indirect macro-species.");
+//		}
+//
+//		// TODO test this with copied-micro-species!!!
+//		if ( this.getAllMicroSpecies().contains(parentSpec) ) {
+//			flagError(this.getName() + " species can't be a sub-species of " +
+//				parentSpec.getName() +
+//				" species because a species can't be sub-species of its direct or indirect micro-species.");
+//		}
+//
+//		List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
+//		List<SpeciesDescription> parentsOfMacro;
+//		for ( SpeciesDescription macro : allMacroSpecies ) {
+//			parentsOfMacro = macro.getSelfWithParents();
+//			parentsOfMacro.remove(macro);
+//
+//			parentsOfMacro.retainAll(parentsOfParent);
+//
+//			List<SpeciesDescription> sharedParents = new GamaList<SpeciesDescription>();
+//			sharedParents.addAll(parentsOfMacro);
+//			sharedParents.retainAll(parentsOfParent);
+//
+//			if ( !sharedParents.isEmpty() ) {
+//				SpeciesDescription parentOfMacro = macro.getParentSpecies();
+//
+//				List<String> microSpecsNames = new GamaList<String>();
+//
+//				for ( SpeciesDescription sParent : sharedParents ) {
+//					for ( SpeciesDescription inheritedMicro : sParent.getMicroSpecies() ) {
+//						microSpecsNames.add(inheritedMicro.getName());
+//						microSpecsNames.add(", ");
+//					}
+//				}
+//
+//				if ( !microSpecsNames.isEmpty() ) {
+//					microSpecsNames.remove(microSpecsNames.size() - 1);
+//
+//					StringBuffer microSpecsStr = new StringBuffer();
+//					microSpecsStr.append("[");
+//					for ( String msN : microSpecsNames ) {
+//						microSpecsStr.append(msN);
+//					}
+//					microSpecsStr.append("]");
+//
+//					String message;
+//					if ( parentSpec.equals(parentOfMacro) ) {
+//						message =
+//							new String(this.getName() + " and " + macro.getName() +
+//								" species can't share " + parentSpec.getName() +
+//								" as parent-species because ");
+//					} else {
+//						message =
+//							new String(this.getName() + " and " + macro.getName() +
+//								" species can't have " + parentSpec.getName() + " and " +
+//								parentOfMacro.getName() + " as parent-species because ");
+//					}
+//
+//					flagError(message + "\n\t1. " + this.getName() + " and " + macro.getName() +
+//						" have micro-macro species relationship;" +
+//						"\n\t2. They will both inherit the micro-species " + microSpecsStr +
+//						" which will ambiguate the reference to " + microSpecsStr +
+//						" species in the context of " + this.getName() + " species.");
+//				}
+//			}
+//		}
+//
+//		List<SpeciesDescription> parentTrace = new GamaList<SpeciesDescription>();
+//		parentSpec.fillParentTrace(parentTrace);
+//		if ( parentTrace.contains(this) ) {
+//			flagError(this.getName() + " species can't be a sub-species of " +
+//				parentSpec.getName() +
+//				" species because this forms a circular inheritance between species of different branches.");
+//		}
+//
+//		return parentSpec;
 	}
 
 	@Override
@@ -348,6 +315,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					addChild(b);
 				}
 			}
+			
 			for ( final CommandDescription init : parent.inits ) {
 				addChild(init);
 			}
@@ -483,7 +451,11 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	}
 
 	public SpeciesDescription getMicroSpecies(final String name) {
-		return microSpecies.get(name);
+		SpeciesDescription retVal = microSpecies.get(name);
+		if (retVal != null) { return retVal; }
+		
+		if (this.parentSpecies != null) { return parentSpecies.getMicroSpecies(name); }
+		return null;
 	}
 
 	/**
@@ -625,50 +597,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		}
 
 		return sortedMicroSpecs;
-	}
-
-	/**
-	 * Inheritance of micro-species from the parent-species.
-	 */
-	public void inheritMicroSpecies() {
-		if ( parentSpecies != null ) {
-
-			// copy the micro-species from the parent species.
-			SpeciesDescription copiedSpec;
-			List<SpeciesDescription> copiedMicroSpecs = parentSpecies.copyMicroSpecies(this);
-			for ( SpeciesDescription copied : copiedMicroSpecs ) {
-				copiedSpec = (SpeciesDescription) super.addChild(copied);
-				this.addMicroSpecies(copiedSpec);
-			}
-
-		}
-
-		for ( SpeciesDescription microSpec : microSpecies.values() ) {
-			microSpec.inheritMicroSpecies();
-		}
-	}
-
-	/**
-	 * Copies all the micro-species of this species to the new macro-species.
-	 * 
-	 * @param newMacroSpecies
-	 * @return
-	 */
-	public List<SpeciesDescription> copyMicroSpecies(final SpeciesDescription newMacroSpecies) {
-
-		List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
-		SpeciesDescription copiedMicroSpec;
-
-		// recursively copy the sorted micro-species
-		for ( SpeciesDescription microSpec : this.sortedMicroSpecies() ) {
-			copiedMicroSpec =
-				new SpeciesDescription(microSpec, getChildrenWithoutMicroSpec(microSpec),
-					newMacroSpecies, meta);
-
-			retVal.add(copiedMicroSpec);
-		}
-
-		return retVal;
 	}
 
 	private List<IDescription> getChildrenWithoutMicroSpec(final SpeciesDescription specDesc) {
