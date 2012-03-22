@@ -77,13 +77,11 @@ public class GraphSkill extends Skill {
 			
 			IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, initialValues, false);
 			IAgent createdAgent = createdAgents.get(0);
-			createdAgent.setGeometry(new GamaDynamicLink(
-					nodeId2agent.get(fromNodeId).getGeometry(),
-					nodeId2agent.get(toNodeId).getGeometry()	
-					));
-			
-			System.out.println(fromNodeId+" "+toNodeId);
-			System.out.println(nodeId2agent.get(fromNodeId).getGeometry());
+			GamaDynamicLink dl = new GamaDynamicLink(
+					nodeId2agent.get(fromNodeId),
+					nodeId2agent.get(toNodeId)	
+					);
+			createdAgent.setGeometry(dl);
 			
 			if (directed != gamaGraph.isDirected())
 				throw new GamaRuntimeException("Attempted to read an "+(directed?"":"un")+"directed edge for a "+(gamaGraph.isDirected()?"":"un")+"directed graph");
@@ -100,7 +98,6 @@ public class GraphSkill extends Skill {
 			
 			nodeId2agent.put(nodeId, createdAgent);
 			
-			System.out.println(nodeId);
 			
 		}
 		
@@ -163,8 +160,6 @@ public class GraphSkill extends Skill {
 			throw new GamaRuntimeException("Error while finishing to parse the graph from "+filename+" ("+e.getLocalizedMessage()+")");
 		}
 		
-		System.out.println("total vertices: "+createdGraph.getVertices().size());
-		System.out.println("total edges: "+createdGraph.getEdges().size());
 		
 		return createdGraph;
 		
