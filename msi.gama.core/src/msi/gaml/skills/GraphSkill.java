@@ -32,6 +32,17 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceBase;
+import org.graphstream.stream.file.FileSourceDGS1And2;
+import org.graphstream.stream.file.FileSourceDOT;
+import org.graphstream.stream.file.FileSourceEdge;
+import org.graphstream.stream.file.FileSourceGEXF;
+import org.graphstream.stream.file.FileSourceGraphML;
+import org.graphstream.stream.file.FileSourceLGL;
+import org.graphstream.stream.file.FileSourceNCol;
+import org.graphstream.stream.file.FileSourcePajek;
+import org.graphstream.stream.file.FileSourceTLP;
 import org.graphstream.stream.file.dgs.OldFileSourceDGS;
 
 
@@ -39,6 +50,7 @@ import org.graphstream.stream.file.dgs.OldFileSourceDGS;
 @skill({ IKeyword.GRAPH_SKILL })
 public class GraphSkill extends Skill {
 
+	
 	
 	/**
 	 * Receives events from a graphstream loader 
@@ -49,7 +61,7 @@ public class GraphSkill extends Skill {
 	 * @author Samuel Thiriot
 	 *
 	 */
-	class GamaGraphSink extends SinkAdapter {
+	class GraphStreamGamaGraphSink extends SinkAdapter {
 		
 		private IGraph gamaGraph;
 		private IPopulation populationNodes;
@@ -60,7 +72,7 @@ public class GraphSkill extends Skill {
 		
 		private Map<String,IAgent> nodeId2agent = new HashMap<String, IAgent>();
 		
-		public GamaGraphSink(IGraph gamaGraph, IScope scope, IPopulation populationNodes, IPopulation populationEdges) {
+		public GraphStreamGamaGraphSink(IGraph gamaGraph, IScope scope, IPopulation populationNodes, IPopulation populationEdges) {
 			this.gamaGraph = gamaGraph;
 			this.scope = scope;
 			this.populationNodes = populationNodes;
@@ -103,18 +115,22 @@ public class GraphSkill extends Skill {
 		
 	}
 	
-	@action("load_graph_from_pajek")
-	@args({ "edge_species", "vertex_species", "file" })
-	public IGraph primLoadGraphFromFileFromPajek(final IScope scope) throws GamaRuntimeException {		
-		
+	/**
+	 * Checks GAMA parameters from the scope.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	protected IGraph loadGraphWithGraphstreamFromFileSourceBase(final IScope scope, FileSource fileSourceBase) {
+
 		// check parameters
 		String filename = (String)scope.getArg("file", IType.STRING);
+
+		// TODO manage the case of type File
+		
 		
 		ISpecies nodeSpecies = (ISpecies)scope.getArg("vertex_species", IType.SPECIES);
 		ISpecies edgeSpecies = (ISpecies)scope.getArg("edge_species", IType.SPECIES);
-		
-
-		// TODO manage the case of type File
 
 		// init population of edges
 		final IAgent executor = scope.getAgentScope();
@@ -122,13 +138,10 @@ public class GraphSkill extends Skill {
 		
 		IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
-
-		// TODO types
+		// creates the graph to be filled 
 		IGraph createdGraph = new GamaGraph(false);
-		
-		OldFileSourceDGS fileSourceBase = new OldFileSourceDGS();
-		
-		Sink ourSink = new GamaGraphSink(createdGraph, scope, populationNodes, populationEdges);
+
+		Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges);
 		
 		fileSourceBase.addSink(ourSink);
 		
@@ -162,6 +175,81 @@ public class GraphSkill extends Skill {
 		
 		
 		return createdGraph;
+	
+
+	}
+	
+	@action("load_graph_from_dgs")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromDGS(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceDGS1And2());		
+		
+			
+	}
+	
+	@action("load_graph_from_lgl")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromLGL(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceLGL());		
+		
+	}
+	
+
+	@action("load_graph_from_dot")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromDot(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceDOT());		
+		
+	}
+	
+	@action("load_graph_from_edge")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromEdge(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceEdge());		
+		
+	}
+
+	@action("load_graph_from_gexf")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromGEXF(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceGEXF());		
+		
+	}
+	
+	@action("load_graph_from_graphml")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromGraphML(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceGraphML());		
+		
+	}
+
+	@action("load_graph_from_tlp")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromTLP(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceTLP());		
+		
+	}
+
+	@action("load_graph_from_ncol")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromNCol(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourceNCol());		
+		
+	}	
+	
+	@action("load_graph_from_pajek")
+	@args({ "edge_species", "vertex_species", "file" })
+	public IGraph primLoadGraphFromFileFromPajek(final IScope scope) throws GamaRuntimeException {		
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(scope, new FileSourcePajek());		
 		
 	}
 	
