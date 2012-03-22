@@ -3,6 +3,8 @@ model province_district_commune_landuse
 global {
 	// GIS data
 	string environment_bounds <- 'gis/bounds_DT_province.shp';
+	file environment_f <- shapefile('gis/bounds_DT_province.shp');
+	
 	file mekong_f <- shapefile('gis/MekongDelta_provinces.shp');
 	file dongthap_districts_f <- shapefile('gis/dongthap_districts.shp');
 	file dongthap_communes_f <- shapefile('gis/dongthap_communes.shp');
@@ -10,7 +12,9 @@ global {
 	matrix TPHCM_weather <- matrix(file('data/weather/daily_TPHCM_2008_no_title.txt')) const: true;
 	var xBoundDT type: float init: 0;
 	var yBoundDT type: float init: 0;	
-
+	rgb clNormal init: rgb('white'); rgb clLight init: rgb('green'); rgb clMedium init: rgb('yellow');
+	rgb clHeavy init: rgb([251,153,234]); rgb clStrongHeavy init: rgb('red');
+	
 	const dirTranslation type: int init: 270 ;	
 	var directionList type: list init: ['North','NNE','NE','ENE','East','ESE','SE','SSE','South','SSW','SW','WSW','West','WNW','NW','NNW'] ;
 	var degreeList type: list of: float init: [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5] ;
@@ -91,10 +95,10 @@ global {
 		let tempDegree var: tempDegree type: float value: 0 ;
 		loop td over: degreeList {
 			set tempDegree value: (td + dirTranslation) ;
-			if condition: (tempDegree > 360) {
+			if  (tempDegree > 360) {
 				set sdList value: sdList+[(td-90)]; }
 				else {
-					if condition: tempDegree = 360 {
+					if  tempDegree = 360 {
 						set sdList value: sdList+[0]; }
 						else {
 							set sdList value: sdList+[tempDegree];
@@ -104,6 +108,18 @@ global {
 
 		set scaleDegreeList value: sdList ;
 
+		let eb type: environment_bound value: nil;
+		create species: environment_bound with: [shape:: environment_f] {
+			set eb value: self;
+		}		
+		
+		let coordinateList type: list of: point value: (eb.shape).points;
+
+		ask target: shareKnow {
+			set xBoundDT value: self findMaxAxisCoordinateFromList[coordinateList:: coordinateList, xya:: 'x'];			
+			set yBoundDT value: self findMaxAxisCoordinateFromList[coordinateList:: coordinateList, xya:: 'y'];
+		}
+		
 		create climate;
 
 		loop p over: (mekong_f.contents) {
@@ -124,7 +140,10 @@ entities {
 	species agentCopy skills: [moving] {
 		var agentCopyName type: string init: '';
 		var color type: rgb value: rgb('yellow') ;
-	}	
+	}
+	
+	species environment_bound skills: [situated] {		
+	}
 
 	species shareKnowledge skills: situated {
 		string name1 <- 'province_level';
@@ -135,7 +154,7 @@ entities {
 			arg coordinateList type: list;
 			arg xya type: string;
 		
-			if condition: (xya = 'x') {
+			if  (xya = 'x') {
 				return value: coordinateList max_of (point(each).x);
 			}
 			else 
@@ -178,88 +197,88 @@ entities {
 			let xTemp var: xTemp type: float value: 0 ;
 			let yTemp var: yTemp type: float value: 0 ;
 
-			if condition: movingDir=0 {
+			if movingDir=0 {
 				set newLoc value: {xBound,yOldLoc} ;
 			} //movingDir =0
 			
-			if condition: ( (movingDir > 0) and (movingDir < 90) ) {
+			if ( (movingDir > 0) and (movingDir < 90) ) {
 				set crossAngle value: atan(((yBound-yOldLoc)/(xBound-xOldLoc))) ;
-				if condition: movingDir < crossAngle {
+				if  movingDir < crossAngle {
 					set yTemp value: yOldLoc+((xBound-xOldLoc)*(tan(movingDir))) ;
 					set newLoc value: {xBound,yTemp} ;
 				}
 				
-				if condition: movingDir = crossAngle {
+				if movingDir = crossAngle {
 					set newLoc value: {xBound,yBound} ;
 				}
 				
-				if condition: movingDir > crossAngle {
+				if movingDir > crossAngle {
 					set xTemp value: xOldLoc+((yBound-yOldLoc)/(tan(movingDir))) ;
 					set newLoc value: {xTemp,yBound} ;
 				}
 			}
 			
-			if condition: movingDir=90 {
+			if movingDir=90 {
 				set newLoc value: {xOldLoc,yBound} ;
 			}
 			
-			if condition: ( (movingDir > 90) and (movingDir < 180) ) {
+			if ( (movingDir > 90) and (movingDir < 180) ) {
 				set tempMovingDir value: (movingDir-90) ;
 				set crossAngle value: atan(((xOldLoc)/(yBound-yOldLoc))) ;
-				if condition: tempMovingDir < crossAngle {
+				if tempMovingDir < crossAngle {
 					set xTemp value: (xOldLoc-((yBound-yOldLoc)*(tan(tempMovingDir)))) ;
 					set newLoc value: {xTemp,yBound} ;
 				}
-				if condition: tempMovingDir = crossAngle {
+				if tempMovingDir = crossAngle {
 					set newLoc value: {0,yBound} ;
 				}
-				if condition: tempMovingDir > crossAngle {
+				if tempMovingDir > crossAngle {
 					set yTemp value: yOldLoc+((xOldLoc)/(tan(tempMovingDir))) ;
 					set newLoc value: {0,yTemp} ;
 				}
 			}
 			
-			if condition: movingDir=180 {
+			if movingDir=180 {
 				set newLoc value: {0,yOldLoc} ;
 			}
 			
-			if condition: ( (movingDir > 180) and (movingDir < 270) ) {
+			if ( (movingDir > 180) and (movingDir < 270) ) {
 				set tempMovingDir value: (movingDir-180) ;
 				set crossAngle value: atan(yOldLoc/xOldLoc) ;
-				if condition: tempMovingDir < crossAngle {
+				if  tempMovingDir < crossAngle {
 					set yTemp value: (yOldLoc-(xOldLoc*(tan(tempMovingDir)))) ;
 					set newLoc value: {0,yTemp} ;
 				}
-				if condition: tempMovingDir = crossAngle {
+				if  tempMovingDir = crossAngle {
 					set newLoc value: {0,0} ;
 				}
-				if condition: tempMovingDir > crossAngle {
+				if  tempMovingDir > crossAngle {
 					set xTemp value: xOldLoc-((yOldLoc)/(tan(tempMovingDir))) ;
 					set newLoc value: {xTemp,0} ;
 				}
 			}
 			
-			if condition: movingDir=270 {
+			if  movingDir=270 {
 				set newLoc value: {xOldLoc,0} ;
 			}
 			
-			if condition: ( (movingDir > 270) and (movingDir < 360) ) {
+			if  ( (movingDir > 270) and (movingDir < 360) ) {
 				set tempMovingDir value: (movingDir-270) ;
 				set crossAngle value: atan((xBound-xOldLoc)/yOldLoc) ;
-				if condition: tempMovingDir < crossAngle {
+				if  tempMovingDir < crossAngle {
 					set xTemp value: (xOldLoc+(yOldLoc*(tan(tempMovingDir)))) ;
 					set newLoc value: {xTemp,0} ;
 				}
-				if condition: tempMovingDir = crossAngle {
+				if  tempMovingDir = crossAngle {
 					set newLoc value: {xBound,0} ;
 				}
-				if condition: tempMovingDir > crossAngle {
+				if  tempMovingDir > crossAngle {
 					set yTemp value: yOldLoc-((xBound-xOldLoc)/(tan(tempMovingDir))) ;
 					set newLoc value: {xBound,yTemp} ;
 				}
 			}
 			
-			if condition: movingDir=360 {
+			if  movingDir=360 {
 				set newLoc value: {xBound,yOldLoc} ;
 			}
 			
@@ -396,7 +415,7 @@ entities {
 					bph_group my_bph_group;
 					
 					init {
-						create bph_group returns: bph_gs;
+						create bph_group with: [my_landunit:: self] returns: bph_gs;
 						set my_bph_group value: (bph_gs at 0);
 					}
 					
@@ -429,6 +448,7 @@ entities {
 						}
 					}
 
+			
 					action bphs_land_on_lu {
 						arg a_bph_cloud type: bph_cloud;
 						
@@ -465,8 +485,7 @@ entities {
 	}
 
 	species bph_group skills: moving {
-		landunit last_landunit;
-		landunit current_landunit;
+		landunit my_landunit;
 		int landing_time <- time;
 		int bph_in_group;
 		
@@ -484,7 +503,7 @@ entities {
 		var isPropagating type: bool init: false ;
 
 		reflex {
-			let lu type: landunit value: current_landunit;
+			let lu type: landunit value: my_landunit;
 			ask target: lu {
 				if (lu.riceStage < 120) {
 					set lu.riceStage value: lu.riceStage + 1; }
@@ -516,7 +535,7 @@ entities {
 				}
 			}
 			
-			if condition: isPropagating {
+			if  isPropagating {
 				do action: propagate ;
 			}
 		}
@@ -528,7 +547,7 @@ entities {
 			set bphNymphsNum value: bphEggsNum*0.3 ;
 			set bphEggsNum value: (bphFSNum*(100+rnd(50)))+(bphFLNum*50);
 			
-			if (current_landunit.riceStage) < 65 {
+			if (my_landunit.riceStage) < 65 {
 				set bphFNNum value: bphAdultsNum*0.8 ;
 				set bphMNNum value: bphAdultsNum*0.2 ;
 				set bphFSNum value: bphFNNum*0.8 ;
@@ -553,19 +572,19 @@ entities {
 				}
 			}
 			
-			if ( ( ( (bphAdultsNum+bphNymphsNum) > 10000) or (((current_landunit.riceStage) > 85) and 
-						((current_landunit.riceStage) < 120))) and ((bphFLNum*bphMLNum) > 0) ) 
+			if ( ( ( (bphAdultsNum+bphNymphsNum) > 10000) or (((my_landunit.riceStage) > 85) and 
+						((my_landunit.riceStage) < 120))) and ((bphFLNum*bphMLNum) > 0) ) 
 				{set isPropagating value: true;}
 				else {
 					set isPropagating value: false ;
 				}
 				
-//			do action: coloringBphDensity;
+			do action: luColorByBphDensity;
 		}	
 		
 		action propagate {
 			let immigratedLus type: list of: landunit value: [] ;
-			let currentLandunit type: landunit value: current_landunit;
+			let currentLandunit type: landunit value: my_landunit;
 
 			let idx type: int value: (directionList index_of (weatherTPHCM.dailyMostWindDir at time));						
 	
@@ -596,8 +615,8 @@ entities {
 					do action: die ;
 				}
 				
-				let migrateBphFLNum value: bphFLNum/7 ;
-				let migrateBphMLNum value: bphMLNum/7 ;
+				let migrateBphFLNum value: (bphFLNum/7);
+				let migrateBphMLNum value: (bphMLNum/7);
 				set bphFLNum value: bphFLNum-migrateBphFLNum ;
 				set bphMLNum value: bphMLNum-migrateBphMLNum ;
 				
@@ -617,10 +636,10 @@ entities {
 
 						ask target: lu {
 							let immigratedRate value: 0.0;
-							if condition: lu.riceStage < 65 {
+							if  lu.riceStage < 65 {
 								set immigratedRate value: 1.0; }
 								else {
-									if condition: lu.riceStage < 120 {
+									if  lu.riceStage < 120 {
 										set immigratedRate value: 0.5 ;
 									}
 								}
@@ -641,7 +660,35 @@ entities {
 					}
 				}
 			}				
-		}	
+		}
+		
+		action luColorByBphDensity {
+	
+			let bphDensity value: (bphAdultsNum+bphNymphsNum);
+			let temp_color value: clNormal;
+			if bphDensity < 750 {
+				let temp_color value: clNormal;}
+				else {
+					if bphDensity < 1500 {
+						set temp_color value: clLight ;}
+						else {
+							if bphDensity < 3000 {
+								set temp_color value: clMedium;}
+								else {
+									if bphDensity < 10000 {
+										set temp_color value: clHeavy; }
+										else {
+											set temp_color value: clStrongHeavy ;
+										}
+									}
+								}
+							}				
+			let lunit type: landunit value: my_landunit;
+			
+			ask target: lunit {
+				set lunit.color value: temp_color ;
+			}
+		}
 		
 		action  findImmgratedlandunits type: list {
 			arg currlandunit type: landunit;
@@ -704,7 +751,7 @@ entities {
 					shape :: polyline( [fromCoord, toCoord])] returns: tpl; 
 
 				set ovl value: landunit overlapping tpl;
-				if condition: (ovl != []) {
+				if  (ovl != []) {
 					set ovl value: ovl-currlandunit;
 					loop ov over: ovl {
 						if (ov in overlappingLandunits) {
