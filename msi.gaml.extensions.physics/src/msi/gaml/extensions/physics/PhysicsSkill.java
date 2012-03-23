@@ -15,24 +15,33 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.MovingSkill;
+import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
 
-/**@vars({@var(name = "living_space", type = IType.FLOAT_STR, init = "1.0"),
-	@var(name = "lanes_attribute", type = IType.STRING_STR),
-	@var(name = "tolerance", type = IType.FLOAT_STR, init = "0.1"),
-	@var(name = "obstacle_species", type = IType.LIST_STR, init = "[]"),
-	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0")
-	})**/
+@vars({@var(name = "physical_world", type = IType.AGENT_STR),
+	@var(name = "density", type = IType.FLOAT_STR, init="1.0"),
+	@var(name = "velocity", type = IType.POINT_STR, init="{1.0, 1.0}")
+	})
 @skill("physical")
-public class PhysicsSkill extends MovingSkill{
+public class PhysicsSkill extends Skill{
+	@setter("physical_world")
+	public void setWorldAgent(final IAgent _agent, final IAgent _world){
+		if(_world == null)
+			return;
+			
+		PhysicalWorldAgent pwa = (PhysicalWorldAgent)_world;
+		pwa.registerAgent(_agent);
+	}
 
+/**
 	@action("update_physic")
 	@args({ "physics_world" })
 	public Object primGoToPhysics(final IScope scope) throws GamaRuntimeException {
@@ -43,14 +52,13 @@ public class PhysicsSkill extends MovingSkill{
 		System.out.println("body agent : " + body);
 		
 		System.out.println("body Position : " + body.getPosition().x + " : "  + body.getPosition().y);
-	    
-		
-	      GamaPoint position = new GamaPoint(body.getPosition().x, body.getPosition().y);
-	      System.out.println("Position : " + position.getX() + " : "  + position.getY());
+		GamaPoint position = new GamaPoint(new Double(body.getPosition().x), new Double(body.getPosition().y));
 	      agent.setLocation(position);
+	      System.out.println("Position : " + agent.getLocation().getX() + " : "  + agent.getLocation().getY());
+	      
 		return null;
 	}
-	
+**/	
 	/**
 	@action("gotoTraffic")
 	@args({ "target", IKeyword.SPEED, "on", "return_path", LIVING_SPACE, TOLERANCE, LANES_ATTRIBUTE })
