@@ -21,6 +21,9 @@ public class GraphEventQueue implements IGraphEventListener {
 	 */
 	public final Deque<GraphEvent> queue = new ArrayDeque<GraphEvent>(1000);
 	
+	/**
+	 * If the queue grows beyong this size, an error will be thrown
+	 */
 	public static final int MAX_EVENTS_MEMORY = 1000000;
 	
 	@Override
@@ -28,7 +31,6 @@ public class GraphEventQueue implements IGraphEventListener {
 		if (queue.size() >= MAX_EVENTS_MEMORY)
 			throw new GamaRuntimeException("Too much graph events in memory ("+MAX_EVENTS_MEMORY+")");
 		synchronized (queue) {
-			System.err.println(event);
 			queue.addLast(event);	
 		}
 	}
@@ -46,6 +48,12 @@ public class GraphEventQueue implements IGraphEventListener {
 	public boolean isEmpty() {
 		synchronized (queue) {
 			return queue.isEmpty();
+		}
+	}
+	
+	public int size() {
+		synchronized (queue) {
+			return queue.size();
 		}
 	}
 }

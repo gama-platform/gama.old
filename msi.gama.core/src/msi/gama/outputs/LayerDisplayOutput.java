@@ -50,7 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayerDisplayOutput.JAVA2D,
-		LayerDisplayOutput.OPENGL,  LayerDisplayOutput.GRAPHSTREAM}, optional = true),
+		LayerDisplayOutput.OPENGL}, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
@@ -59,17 +59,13 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
-	public static final String GRAPHSTREAM = "graphstream";
-		
-	
 
 	private List<AbstractDisplayLayer> layers;
 	private Color backgroundColor;
 	protected IDisplaySurface surface;
 	String snapshotFileName;
-	String displayType = JAVA2D;
 	private boolean autosave = false;
-
+	private String displayType = JAVA2D;
 	
 	// private GLContext glcontext;
 	// private GLCanvas glcanvas;
@@ -79,6 +75,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		verifyFacetType(IKeyword.BACKGROUND);
 		verifyFacetType(IKeyword.AUTOSAVE);
 		verifyFacetType(IKeyword.TYPE);
+		
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
@@ -169,11 +166,8 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		
-		if (displayType == GRAPHSTREAM)
-			return GuiUtils.GRAPHSTREAM_VIEW_ID;
-		else 
-			return GuiUtils.LAYER_VIEW_ID;
+
+		return GuiUtils.LAYER_VIEW_ID;
 	}
 
 	@Override

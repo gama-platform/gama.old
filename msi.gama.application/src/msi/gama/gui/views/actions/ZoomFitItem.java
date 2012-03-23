@@ -22,7 +22,7 @@ public class ZoomFitItem extends GamaViewItem {
 	 */
 	ZoomFitItem(final GamaViewPart view) {
 		super(view);
-		if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
+		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
 	}
 
 	/**
@@ -36,24 +36,10 @@ public class ZoomFitItem extends GamaViewItem {
 
 				@Override
 				public void run() {
-					final LayeredDisplayView view = (LayeredDisplayView) getView();
-					if ( view == null ) { return; }
-					new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							IDisplaySurface surface = view.getDisplaySurface();
-							while (!surface.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (InterruptedException e) {
-
-								}
-							}
-							surface.zoomFit();
-
-						}
-					}).start();
+					IViewWithZoom view = (IViewWithZoom)getView();
+					if (view == null)
+						return;
+					view.zoomToFit();
 				}
 			};
 		return new ActionContributionItem(action);

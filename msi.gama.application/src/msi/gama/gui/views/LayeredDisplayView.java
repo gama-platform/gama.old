@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -34,7 +34,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
+public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements IViewWithZoom {
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
@@ -253,5 +253,78 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> {
 
 	@Override
 	public void updateItemValues() {}
+
+	@Override
+	public void zoomToFit() {
+		
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				IDisplaySurface surface = getDisplaySurface();
+				while (!surface.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				surface.zoomFit();
+
+			}
+		}).start();
+	}
+
+	@Override
+	public void zoomIn() {
+		
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				IDisplaySurface imageCanvas = getDisplaySurface();
+				while (!imageCanvas.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				imageCanvas.zoomIn();
+
+			}
+		}).start();
+	}
+
+	@Override
+	public void zoomOut() {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				IDisplaySurface imageCanvas = getDisplaySurface();
+				while (!imageCanvas.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				imageCanvas.zoomOut();
+
+			}
+		}).start();
+	}
+
+	@Override
+	public void snapshot() {
+		getDisplaySurface().snapshot();
+	}
+
+	@Override
+	public void setSynchronized(boolean synchro) {
+		getDisplaySurface().setSynchronized(synchro);
+	}
 
 }

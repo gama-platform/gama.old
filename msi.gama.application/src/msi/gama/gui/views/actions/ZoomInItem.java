@@ -22,7 +22,7 @@ public class ZoomInItem extends GamaViewItem {
 	 */
 	ZoomInItem(final GamaViewPart view) {
 		super(view);
-		if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
+		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
 	}
 
 	/**
@@ -36,24 +36,12 @@ public class ZoomInItem extends GamaViewItem {
 
 				@Override
 				public void run() {
-					final LayeredDisplayView view = (LayeredDisplayView) getView();
-					if ( view == null ) { return; }
-					new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							IDisplaySurface imageCanvas = view.getDisplaySurface();
-							while (!imageCanvas.canBeUpdated()) {
-								try {
-									Thread.sleep(10);
-								} catch (InterruptedException e) {
-
-								}
-							}
-							imageCanvas.zoomIn();
-
-						}
-					}).start();
+		
+					IViewWithZoom view = (IViewWithZoom)getView();
+					if (view == null)
+						return;
+					view.zoomIn();
+					
 				}
 			};
 		return new ActionContributionItem(action);

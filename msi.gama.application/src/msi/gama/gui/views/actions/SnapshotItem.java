@@ -21,7 +21,8 @@ public class SnapshotItem extends GamaViewItem {
 	 */
 	SnapshotItem(final GamaViewPart view) {
 		super(view);
-		if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
+		
+		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
 	}
 
 	/**
@@ -33,7 +34,7 @@ public class SnapshotItem extends GamaViewItem {
 
 			@Override
 			public void run() {
-				((LayeredDisplayView) getView()).getDisplaySurface().snapshot();
+				((IViewWithZoom) getView()).snapshot();
 			}
 		};
 		action.setImageDescriptor(getImageDescriptor("icons/button_snapshot.png"));

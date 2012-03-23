@@ -12,8 +12,8 @@ public final class GraphEvent {
 	 */
 	public final long timestep;
 	
-	public final _Edge edge;
-	public final _Vertex vertex;
+	public final Object edge;
+	public final Object vertex;
 	
 	public final GraphEventType eventType;
 	
@@ -67,7 +67,7 @@ public final class GraphEvent {
 	}
 	
 
-	public GraphEvent(IGraph graph, long timestep, _Edge edge, _Vertex vertex,
+	public GraphEvent(IGraph graph, long timestep, Object edge, Object vertex,
 			GraphEventType eventType) {
 		super();
 		this.graph = graph;

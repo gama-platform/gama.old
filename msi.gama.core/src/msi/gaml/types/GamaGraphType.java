@@ -42,7 +42,7 @@ public class GamaGraphType extends GamaType<IGraph> {
 
 	public static IGraph staticCast(final IScope scope, final Object obj, final Object param) {
 		// param = true : spatial.
-		System.err.println("graph: "+obj+", ");
+
 		if ( obj == null ) { return null; }
 		if ( obj instanceof IGraph ) { return (IGraph) obj; }
 		boolean spatial = param != null && Cast.asBool(scope, param);

@@ -21,6 +21,9 @@ public class SynchronizeItem extends GamaViewItem {
 	 */
 	SynchronizeItem(final GamaViewPart view) {
 		super(view);
+		
+		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
+
 	}
 
 	/**
@@ -34,8 +37,7 @@ public class SynchronizeItem extends GamaViewItem {
 
 				@Override
 				public void run() {
-					LayeredDisplayView v = (LayeredDisplayView) view;
-					v.getDisplaySurface().setSynchronized(isChecked());
+					((IViewWithZoom)view).setSynchronized(isChecked());
 				}
 
 			};
