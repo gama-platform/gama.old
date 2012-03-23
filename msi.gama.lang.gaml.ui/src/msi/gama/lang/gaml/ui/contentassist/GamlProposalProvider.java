@@ -20,11 +20,21 @@ package msi.gama.lang.gaml.ui.contentassist;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Map;
 import java.util.Set;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.util.ErrorCollector;
+import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
+import msi.gama.lang.utils.GamlToSyntacticElements;
 import msi.gama.precompiler.GamlProperties;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.ModelStructure;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.ecore.EObject;
@@ -34,6 +44,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.ui.editor.contentassist.*;
+import org.eclipse.emf.ecore.resource.Resource;;
 
 /**
  * see
@@ -50,6 +61,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		"/icons/_facet.png").createImage();
 	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
 		"/icons/_type.png").createImage();
+	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
+			"/icons/_var.png").createImage();
 
 	private static String getPath(final String strURI) {
 		try {
@@ -58,7 +71,32 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		} catch (Exception e) {}
 		return null;
 	}
-
+	private IModel getModel(final Resource r) {
+		
+		if ( !GamaBundleLoader.contributionsLoaded) { return null; }
+		// waitForContributions();
+		// waitForPrevious();
+		if ( r == null ) { return null; }		
+		//Resource r = m.eResource();		
+		IModel lastModel = null;
+		ErrorCollector collect = new ErrorCollector();
+		try {
+			Map<Resource, ISyntacticElement> elements =
+				GamlToSyntacticElements.buildSyntacticTree(r, collect);
+			if ( !collect.hasErrors() ) {
+				
+				ModelStructure ms = new ModelStructure(r, elements, collect);
+				lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
+				
+			}
+		} catch (GamaRuntimeException e1) {
+			System.out.println("Exception during compilation:" + e1.getMessage());
+		} catch (InterruptedException e) {
+			System.out.println("Compilation was aborted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {return lastModel;}
+	}
 	// @Override
 	// protected ConfigurableCompletionProposal doCreateProposal(final String proposal,
 	// final StyledString displayString, final Image image, final int priority,
@@ -163,7 +201,31 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// acceptor.accept(createCompletionProposal(st, " " + st + " ", facetImage, context));
 	// }
 	// }
-
+	public void completeMemberRef_Op(final MemberRef m, final Assignment assignment,
+			final ContentAssistContext context, final ICompletionProposalAcceptor acceptor){
+		
+		IModel model = getModel(context.getRootModel().eResource());		
+	
+		if (m == null) return;
+		EObject lexp = m.getLeft();
+		final String kname = EGaml.getKeyOf(lexp);		
+			
+		SpeciesDescription ws =  (SpeciesDescription) model.getDescription().getWorldSpecies();
+		SpeciesDescription currDesc = (SpeciesDescription) ws.getDescriptionDeclaringVar(kname);		
+		for (SpeciesDescription sd : ws.getAllMicroSpecies()){			
+			if (currDesc != null) break;
+			currDesc = (SpeciesDescription) sd.getDescriptionDeclaringVar(kname);
+		}
+		if (currDesc == null) return;
+		final String typeofVar = currDesc.getVariable(kname).getType().getSpeciesName(); 
+		if (typeofVar != null){			
+			for (String st: ((SpeciesDescription) ws.getSpeciesDescription(typeofVar)).getVarNames()){
+				//System.out.println(st);
+				acceptor.accept(createCompletionProposal(st, " " + st + " ", varImage, context));
+			}
+		}		
+			
+	}
 	private static Set<String> getTypelist() {
 		if ( typeList == null ) {
 			typeList = GamlProperties.loadFrom(GamlProperties.TYPES).values();
