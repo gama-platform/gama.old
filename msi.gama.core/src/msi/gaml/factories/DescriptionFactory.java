@@ -87,6 +87,10 @@ public class DescriptionFactory {
 		return modelFactory;
 	}
 
+	public static void disposeModelFactory(){
+		modelFactory = null;
+	}
+
 	public static void setFactoryClass(final Class<ISymbolFactory> fACTORY_CLASS) {
 		FACTORY_CLASS = fACTORY_CLASS;
 	}

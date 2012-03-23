@@ -290,4 +290,5 @@ public interface IKeyword {
 	public static final String MATCH = "match";
 	public static final String MATCH_ONE = "match_one";
 	public static final String MATCH_BETWEEN = "match_between";
+	public static final String HEADLESS_UI = "headless";
 }

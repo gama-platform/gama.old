@@ -261,9 +261,21 @@ public class ModelFactory extends SymbolFactory {
 		GuiUtils.stopIfCancelled();
 		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
 			IDescription sim;
-			sim =
+			if(GuiUtils.isInHeadLessMode())
+			{
+				System.out.println("head Less");
+				sim =DescriptionFactory.createDescription( IKeyword.EXPERIMENT, IKeyword.NAME,
+						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE,IKeyword.HEADLESS_UI);
+		//		DescriptionFactory.createDescription(keyword, facets)
+			}
+			else
+			{
+				System.out.println("GUI");
+				sim =
 				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
 					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
+				
+			}
 			if ( sim != null ) {
 				md.addChild(sim);
 			}

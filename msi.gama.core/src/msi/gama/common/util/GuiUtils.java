@@ -46,6 +46,28 @@ public class GuiUtils {
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String GL_VIEW_ID = "msi.gama.networks.ui.GLView";
+	private static boolean headlessMode = false;
+	
+	
+	
+	public static boolean isInHeadLessMode()
+	{
+		return headlessMode;
+	}
+	
+	/**
+	 * Method called by headless builder to change the GUI Mode 
+	 * @see ModelFactory
+	 */
+	public static void setHeadLessMode()
+	{
+		headlessMode = true;
+	}
+	public static void setGUIMode()
+	{
+		headlessMode = false;
+	}
+
 
 	/**
 	 * Method called by the UI plugin to initialize the SWT environment to talk with.
