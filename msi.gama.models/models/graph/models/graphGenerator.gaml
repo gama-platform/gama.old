@@ -31,18 +31,21 @@ entities {
 	/** Insert here the definition of the species of agents */
 	species nodeSpecy  skills: ["moving"]{
 		rgb color <- rgb('black') ;
-		aspect base {
+		aspect base { 
 			draw shape: circle size:3 color: color ;
 		} 
 		
 		reflex {
 			do wander;
-		} 
-		reflex when: flip(0.01) {
-			
-			set mongraphe <- remove_node_from(self,  mongraphe); 
-			do die;
 		}
+		
+		/*reflex when: flip(0.1) {
+			
+			create nodeSpecy number: 1 {
+			}
+			
+			do die;
+		}*/
 		
 	}
 	species edgeSpecy  {
@@ -51,6 +54,16 @@ entities {
 		aspect base {
 			draw color: color ;
 		}
+		
+		/* Uncomment to test how the node evolves when an edge agent dies 
+		*/
+		reflex when: flip(0.1) {
+			
+			do die;
+		}
+		/* 
+		*/
+		
 	}
 }
 
@@ -59,7 +72,7 @@ output {
 		species nodeSpecy aspect: base ; 
 		species edgeSpecy aspect: base ;
 	}
-	graphdisplay monNom2 graph: mongraphe {
+	graphdisplay monNom2 graph: mongraphe lowquality:true {
 		 
 	}
 	

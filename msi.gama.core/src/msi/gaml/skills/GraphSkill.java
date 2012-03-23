@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.IPopulationListener;
 import msi.gama.metamodel.shape.GamaDynamicLink;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -22,7 +24,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph.GraphAndPopulationsSynchronizer;
+import msi.gama.util.graph.GraphEvent;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.IGraphEventListener;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -47,6 +52,8 @@ import org.graphstream.stream.file.dgs.OldFileSourceDGS;
 
 @skill({ IKeyword.GRAPH_SKILL })
 /**
+ * Till now, loading graphs is made using a skill because of syntax restrictions.
+ * 
  * TODO tests unitaires
  * 
  * 
@@ -114,7 +121,7 @@ public class GraphSkill extends Skill {
 			createdAgent.setGeometry(dl);
 		
 			// actually add the edge
-			gamaGraph.addEdge(agentFrom, agentTo);
+			gamaGraph.addEdge(agentFrom, agentTo, createdAgent);
 				
 		}
 
@@ -165,7 +172,6 @@ public class GraphSkill extends Skill {
 		// init population of edges
 		final IAgent executor = scope.getAgentScope();
 		IPopulation populationNodes = executor.getPopulationFor(nodeSpecies);
-		
 		IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
 		// creates the graph to be filled 
@@ -183,12 +189,13 @@ public class GraphSkill extends Skill {
 			throw new GamaRuntimeException("Unable to load file from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
+		// load the graph
+		
 		try {
 			fileSourceBase.begin(is);
 		} catch (IOException e) {
 			throw new GamaRuntimeException("Error while loading graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
-		
 		try {
 			while (fileSourceBase.nextEvents()) {
 				// nothing to do
@@ -196,13 +203,14 @@ public class GraphSkill extends Skill {
 		} catch (IOException e) {
 			throw new GamaRuntimeException("Error while parsing graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
-		
 		try {
 			fileSourceBase.end();
 		} catch (IOException e) {
 			throw new GamaRuntimeException("Error while finishing to parse the graph from "+file.getAbsolutePath()+" ("+e.getLocalizedMessage()+")");
 		}
 		
+		// synchronize agents and graph
+		GraphAndPopulationsSynchronizer.synchronize(populationNodes, populationEdges, createdGraph);
 		
 		return createdGraph;
 	

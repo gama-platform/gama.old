@@ -10,7 +10,7 @@ public final class GraphEvent {
 	/**
 	 * the timestep at which the event was sent
 	 */
-	public final long timestep;
+	public final Object sender;
 	
 	public final Object edge;
 	public final Object vertex;
@@ -67,11 +67,11 @@ public final class GraphEvent {
 	}
 	
 
-	public GraphEvent(IGraph graph, long timestep, Object edge, Object vertex,
+	public GraphEvent(IGraph graph, Object sender, Object edge, Object vertex,
 			GraphEventType eventType) {
 		super();
 		this.graph = graph;
-		this.timestep = timestep;
+		this.sender = sender;
 		this.edge = edge;
 		this.vertex = vertex;
 		this.eventType = eventType;
@@ -81,7 +81,7 @@ public final class GraphEvent {
 		return (new StringBuffer()).append("graph event ").append(eventType)
 				.append(", edge=").append(edge)
 				.append(", vertex=").append(vertex)
-				.append(", timestep=").append(timestep)
+				.append(", sender=").append(sender)
 				.toString();
 	}
 	

@@ -3,7 +3,7 @@ model Network
 
 global {
 	file shape_file_in <- file('../includes/gis/roads.shp') ;
-	graph the_graph;
+	graph the_graph; 
 	init {    
 		create road from: shape_file_in ;
 		set the_graph <- as_edge_graph(list(road));
@@ -19,7 +19,7 @@ global {
 		} 
 	}
 }
-environment bounds: shape_file_in ; 
+environment bounds:  shape_file_in ; 
 entities {
 	species road  {
 		float speed_coef ;
@@ -42,6 +42,7 @@ entities {
 		reflex {
 			do goto on:the_graph target:target speed:1;
 		}
+		reflex when: flip(0.2) {do die;}
 	}
 }
 output {
@@ -49,5 +50,9 @@ output {
 		species road aspect: default ;
 		species people aspect: default ;
 		species goal aspect: default ;
+	}
+	
+	graphdisplay test graph:the_graph {
+		
 	}
 }

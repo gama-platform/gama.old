@@ -175,7 +175,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		if ( edge == null ) { return false; }
 		edgeMap.put((K) e, edge);
-		dispatchEvent(new GraphEvent(this, -1, e, null, GraphEventType.EDGE_ADDED ));
+		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_ADDED ));
 		return true;
 
 	}
@@ -203,7 +203,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		if ( vertex == null ) { return false; }
 		vertexMap.put((V) v, vertex);
-		dispatchEvent(new GraphEvent(this, -1, null, v, GraphEventType.VERTEX_ADDED));
+		dispatchEvent(new GraphEvent(this, this, null, v, GraphEventType.VERTEX_ADDED));
 		return true;
 
 	}
@@ -369,7 +369,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		if ( edge == null ) { return false; }
 		edge.removeFromVerticesAs(e);
 		edgeMap.remove(e);
-		dispatchEvent(new GraphEvent(this, -1, e, null, GraphEventType.EDGE_REMOVED));
+		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_REMOVED));
 		return true;
 	}
 
@@ -390,7 +390,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		
 		vertexMap.remove(v);
-		dispatchEvent(new GraphEvent(this, -1, null, v,  GraphEventType.VERTEX_REMOVED));
+		dispatchEvent(new GraphEvent(this, this, null, v,  GraphEventType.VERTEX_REMOVED));
 		return true;
 	}
 

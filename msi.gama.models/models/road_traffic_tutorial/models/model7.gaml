@@ -62,6 +62,9 @@ entities {
 		float destruction_coeff <- 1 ;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
 		rgb color <- [min([255, colorValue]),max ([0, 255 - colorValue]),0]  update: [min([255, colorValue]),max ([0, 255 - colorValue]),0] ;
+		reflex {
+			if (flip(0.1)) {do die;}
+		}
 		aspect base {
 			draw shape: geometry color: color ;
 		}
@@ -118,6 +121,9 @@ output {
 			data name:'Working' value: length ((people as list) where (each.objective='working')) color: rgb('green') ;
 			data name:'Staying home' value: length ((people as list) where (each.objective='go home')) color: rgb('blue') ;
 		}
+	}
+	graphdisplay monNom2 graph: the_graph{
+		 
 	}
 }
 

@@ -1,6 +1,7 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -14,7 +15,7 @@ import msi.gaml.types.IType;
 public class SinglePopulation extends AbstractPopulation {
 
 	IList<IAgent> agents = new GamaList();
-
+	
 	public SinglePopulation(final IAgent host, final ISpecies species) {
 		super(host, species);
 	}
@@ -174,6 +175,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
+		super.addAll(value, param);
 		agents.addAll(value, param);
 	}
 
@@ -184,6 +186,7 @@ public class SinglePopulation extends AbstractPopulation {
 	@Override
 	public void addAll(final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
+		super.addAll(index, value, param);
 		agents.addAll(index, value, param);
 	}
 
@@ -192,6 +195,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
+		super.add(value, param);
 		agents.add(value, param);
 	}
 
@@ -201,6 +205,7 @@ public class SinglePopulation extends AbstractPopulation {
 	@Override
 	public void add(final Integer index, final IAgent value, final Object param)
 		throws GamaRuntimeException {
+		super.add(index, value, param);
 		agents.add(index, value, param);
 	}
 
@@ -209,6 +214,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
+		super.removeAll(value);
 		return agents.removeAll(value);
 	}
 
@@ -217,6 +223,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public Object removeAt(final Integer index) throws GamaRuntimeException {
+		super.removeAt(index);
 		return agents.removeAt(index);
 	}
 
@@ -242,6 +249,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public void clear() throws GamaRuntimeException {
+		super.clear();
 		agents.clear();
 	}
 

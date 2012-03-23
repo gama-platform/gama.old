@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,6 +19,9 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
+
+import org.apache.commons.lang.NotImplementedException;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -54,6 +57,12 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	protected final String[] orderedVarNames;
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
+	
+	/**
+	 * Listeners, created in a lazy way
+	 */
+	private LinkedList<IPopulationListener> listeners = null; 
+	
 
 	public AbstractPopulation(final IAgent host, final ISpecies species) {
 		this.host = host;
@@ -108,7 +117,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 			topology.dispose();
 			topology = null;
 		}
-
+		firePopulationCleared();
 	}
 
 	@Override
@@ -229,6 +238,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	@Override
 	public boolean removeFirst(final IAgent a) {
 		topology.removeAgent(a);
+		fireAgentRemoved(a);
 		return true;
 	}
 
@@ -277,6 +287,140 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	@Override
 	public String toString() {
 		return "Population of " + species.getName();
+	}
+	
+	
+	
+	
+	@Override
+	public void addAll(IContainer value, Object param)
+			throws GamaRuntimeException {
+		fireAgentsAdded(value);
+	}
+
+	@Override
+	public void addAll(Integer index, IContainer value, Object param)
+			throws GamaRuntimeException {
+		fireAgentsAdded(value);	
+	}
+
+	@Override
+	public void add(IAgent value, Object param) throws GamaRuntimeException {
+		fireAgentAdded(value);
+	}
+
+	@Override
+	public void add(Integer index, IAgent value, Object param)
+			throws GamaRuntimeException {
+		fireAgentAdded(value);
+	}
+
+	@Override
+	public boolean removeAll(IContainer<?, IAgent> value)
+			throws GamaRuntimeException {
+		fireAgentsRemoved(value);
+		return false;
+	}
+
+	@Override
+	public Object removeAt(Integer index) throws GamaRuntimeException {
+		fireAgentRemoved(get(index));
+		return null;
+	}
+
+	@Override
+	public void clear() throws GamaRuntimeException {
+		firePopulationCleared();
+	}
+	
+
+	private boolean hasListeners() {
+		return ((listeners != null) && (!listeners.isEmpty()));
+	}
+	
+	@Override
+	public void addListener(IPopulationListener listener) {
+		if (listeners==null)
+			listeners = new LinkedList<IPopulationListener>();
+		if (!listeners.contains(listener))
+			listeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(IPopulationListener listener) {
+		if (listeners==null)
+			return;
+		listeners.remove(listener);
+	}
+
+	protected void fireAgentAdded(IAgent agent) {
+		if (!hasListeners())
+			return;
+		try {
+			for (IPopulationListener l : listeners) {
+				l.notifyAgentAdded(this, agent);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	protected void fireAgentsAdded(IContainer container) {
+		if (!hasListeners())
+			return;
+		// create list
+		Collection agents = new LinkedList();
+		Iterator it = container.iterator();
+		while (it.hasNext())
+			agents.add(it.next());
+		// send event
+		try {
+			for (IPopulationListener l : listeners) {
+				l.notifyAgentsAdded(this, agents);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	protected void fireAgentRemoved(IAgent agent) {
+		if (!hasListeners())
+			return;
+		System.out.println("agent removed "+agent);
+		try {
+			for (IPopulationListener l : listeners) {
+				l.notifyAgentRemoved(this, agent);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	protected void fireAgentsRemoved(IContainer container) {
+		if (!hasListeners())
+			return;
+		// create list
+		Collection agents = new LinkedList();
+		Iterator it = container.iterator();
+		while (it.hasNext())
+			agents.add(it.next());
+		// send event
+		try {
+			for (IPopulationListener l : listeners) {
+				l.notifyAgentsRemoved(this, agents);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	protected void firePopulationCleared() {
+		if (!hasListeners())
+			return;
+		// send event
+		try {
+			for (IPopulationListener l : listeners) {
+				l.notifyPopulationCleared(this);
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

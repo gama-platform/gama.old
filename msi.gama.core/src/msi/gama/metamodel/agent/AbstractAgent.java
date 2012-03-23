@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -51,6 +51,13 @@ public abstract class AbstractAgent implements IAgent {
 	protected IShape geometry;
 
 	protected ISimulation simulation;
+	
+	/**
+	 * If true, this means that the agent will soon be died 
+	 * In this case, dead() will return true.
+	 * 
+	 */
+	protected boolean dying = false;
 
 	/**
 	 * All the populations that manage the micro-agents. Each population manages agents of a
@@ -139,14 +146,17 @@ public abstract class AbstractAgent implements IAgent {
 		// }
 
 		// dispose components
-		for ( IPopulation pop : microPopulations.values() ) {
-			pop.dispose();
+		if (microPopulations != null) {
+			for ( IPopulation pop : microPopulations.values() ) {
+				pop.dispose();
+			}
+			microPopulations.clear();
 		}
-		microPopulations.clear();
 		microPopulations = null;
 
 		try {
 			population.removeFirst(this);
+	
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e);
 			e.printStackTrace();
@@ -230,15 +240,23 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void die() throws GamaRuntimeException {
-		for ( IPopulation microPop : microPopulations.values() ) {
-			microPop.killMembers();
+		
+		if (dead()) 
+			return ; 
+		
+		dying = true;
+		
+		if (microPopulations != null) {
+			for ( IPopulation microPop : microPopulations.values() ) {
+				microPop.killMembers();
+			}
 		}
 		dispose();
 	}
 
 	@Override
 	public synchronized boolean dead() {
-		return index == -1;
+		return (index == -1) || dying;
 	}
 
 	protected static void error(final String error) {
