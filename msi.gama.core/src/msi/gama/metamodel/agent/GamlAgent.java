@@ -246,10 +246,10 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return releasedAgents;
 	}
 
-	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS);
+	/** Variables which are not saved during the capture and release process. */
+	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST, IKeyword.TOPOLOGY);
 
 	/**
-	 * 
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
 	 */
 	private class SavedAgent {

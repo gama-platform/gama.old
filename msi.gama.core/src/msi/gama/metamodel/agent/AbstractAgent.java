@@ -556,12 +556,18 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
 		if ( other == null || other.dead() || newSpecies == null ||
-			!this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
+			!this.getSpecies().containMicroSpecies(newSpecies) ) {
+			return false; 
+		}
 
 		ISpecies otherSpecies = other.getSpecies();
-		if ( !otherSpecies.equals(newSpecies.getParentSpecies()) ) { return false; }
+		if ( !otherSpecies.equals(newSpecies.getParentSpecies()) ) { 
+			return false; 
+		}
 		
-		if (this.getMacroAgents().contains(other)) { return false; }
+		if (this.getMacroAgents().contains(other)) { 
+			return false; 
+		}
 
 		return true;
 	}

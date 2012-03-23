@@ -186,7 +186,6 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			thePopulation = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
 			
-			// TODO modify this to search for the correct species!!!
 			ISpecies targetSpecies = (ISpecies) speciesExpr.value(scope);
 			if ( targetSpecies == null ) {
 				String availableSpecies = accumulateAvailableSpecs(executor);

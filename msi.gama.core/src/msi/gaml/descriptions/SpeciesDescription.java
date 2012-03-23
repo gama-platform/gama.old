@@ -185,43 +185,54 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 *             species.
 	 */
 	private SpeciesDescription verifyParent(final String parentName) {
-		// TODO catch this method to avoid being run 2 times (use a boolean for example)
-		// TODO how to make these validations available at the IDE level?
-		
-		return this.getVisibleSpecies(parentName);
 
-//		
-//		SpeciesDescription parentSpec = this.getVisibleSpecies(parentName);
-//		if ( parentSpec == null ) {
-//			flagError(getName() + " species can't be a sub-species of " + parentName +
-//				" species because " + parentName + " is not defined or is not visible to " +
-//				getName() + " species.");
-//			return parentSpec;
-//		}
-//
-//		if ( parentSpec.equals(this) ) {
-//			flagError(getName() + " species can't be a sub-species of itself");
-//			return parentSpec;
-//		}
-//
-//		List<SpeciesDescription> parentsOfParent = parentSpec.getSelfWithParents();
-//		if ( parentsOfParent.contains(this) ) {
-//			flagError(this.getName() + " species and " + parentSpec.getName() +
-//				" species can't be sub-species of each other.");
-//		}
-//
+		if ( this.getName().equals(parentName) ) {
+			flagError(getName() + " species can't be a sub-species of itself");
+			return null;
+		}
+		
+		SpeciesDescription potentialParent = findPotentialParent(parentName);
+		if ( potentialParent == null ) {
+
+			List<SpeciesDescription> potentialParents = this.getPotentialParentSpecies();
+			
+			List<String> availableSpecies = new GamaList<String>();
+			
+			for (SpeciesDescription p : potentialParents) {
+				availableSpecies.add(p.getName());
+				availableSpecies.add(", ");
+			}
+			availableSpecies.remove(availableSpecies.size() - 1);
+			StringBuffer availableSpecsStr = new StringBuffer();
+			availableSpecsStr.append("[");
+			for (String s : availableSpecies) { availableSpecsStr.append(s); }
+			availableSpecsStr.append("]");
+			flagError(parentName + " can't be a parent-species of " + this.getName() + " species. Available parent species are: " + availableSpecsStr.toString());
+		
+			return null;
+		}
+
+		
+		List<SpeciesDescription> parentsOfParent = potentialParent.getSelfWithParents();
+		if ( parentsOfParent.contains(this) ) {
+			flagError(this.getName() + " species and " + potentialParent.getName() + " species can't be sub-species of each other.");
+			return null;
+		}
+
+		//
 //		if ( this.getAllMacroSpecies().contains(parentSpec) ) {
 //			flagError(this.getName() + " species can't be a sub-species of " +
 //				parentSpec.getName() +
 //				" species because a species can't be sub-species of its direct or indirect macro-species.");
 //		}
-//
-//		// TODO test this with copied-micro-species!!!
-//		if ( this.getAllMicroSpecies().contains(parentSpec) ) {
-//			flagError(this.getName() + " species can't be a sub-species of " +
-//				parentSpec.getName() +
-//				" species because a species can't be sub-species of its direct or indirect micro-species.");
-//		}
+
+		
+		if ( this.getAllMicroSpecies().contains(parentsOfParent) ) {
+			flagError(this.getName() + " species can't be a sub-species of " +
+					potentialParent.getName() + 
+					" species because a species can't be sub-species of its direct or indirect micro-species.");
+			return null;
+		}
 //
 //		List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
 //		List<SpeciesDescription> parentsOfMacro;
@@ -287,7 +298,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 //				" species because this forms a circular inheritance between species of different branches.");
 //		}
 //
-//		return parentSpec;
+		return potentialParent;
 	}
 
 	@Override
@@ -568,6 +579,29 @@ public class SpeciesDescription extends ExecutionContextDescription {
 			if ( visibleSpec.getName().equals(speciesName) ) { return visibleSpec; }
 		}
 
+		return null;
+	}
+
+	/**
+	 * Returns a list of SpeciesDescription that can be the parent of this species.
+	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the same direct macro-species).
+	 * 
+	 * @return
+	 */
+	public List<SpeciesDescription> getPotentialParentSpecies() {
+		List<SpeciesDescription> retVal = getVisibleSpecies();
+		retVal.removeAll(this.getMicroSpecies());
+		retVal.remove(this);
+		
+		return retVal;
+	}
+	
+	private SpeciesDescription findPotentialParent(String parentName) {
+		List<SpeciesDescription> candidates = this.getPotentialParentSpecies();
+		for (SpeciesDescription c : candidates) {
+			if (c.getName().equals(parentName)) { return c; }
+		}
+		
 		return null;
 	}
 

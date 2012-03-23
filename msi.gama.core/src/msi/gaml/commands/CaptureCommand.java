@@ -21,6 +21,7 @@ package msi.gaml.commands;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -112,6 +113,17 @@ public class CaptureCommand extends AbstractCommandSequence {
 
 		if ( !microAgents.isEmpty() ) {
 			ISpecies microSpecies = macroAgent.getSpecies().getMicroSpecies(microSpeciesName);
+			
+			if (microSpecies == null) {
+				throw new GamaRuntimeException(this.name + " can't capture other agents as members of " 
+							+ microSpeciesName + " population because the " + microSpeciesName + " population is not visible or doesn't exist.");
+			}
+			
+			IPopulation microPopulation = macroAgent.getPopulationFor(microSpecies);
+			if (microPopulation == null) {
+				throw new GamaRuntimeException(this.name + " can't capture other agents as members of " 
+						+ microSpeciesName + " population because the " + microSpeciesName + " population is not visible or doesn't exist.");
+			}
 
 			if ( microSpecies != null ) {
 				for ( IAgent c : microAgents ) {
@@ -122,7 +134,6 @@ public class CaptureCommand extends AbstractCommandSequence {
 
 				if ( !removedComponents.isEmpty() ) {
 					microAgents.removeAll(removedComponents);
-					removedComponents.clear();
 				}
 			}
 
@@ -143,6 +154,20 @@ public class CaptureCommand extends AbstractCommandSequence {
 
 		if ( returnString != null ) {
 			stack.setVarValue(returnString, capturedAgents);
+		}
+		
+		if (!removedComponents.isEmpty()) {
+			List<String> raStr = new GamaList<String>();
+			for (IAgent ra : removedComponents) {
+				raStr.add(ra.getName());
+				raStr.add(", ");
+			}
+			raStr.remove(raStr.size() - 1);
+			
+			StringBuffer raB = new StringBuffer();
+			for (String s : raStr) { raB.append(s); }
+			throw new GamaRuntimeException(macroAgent.getName() 
+					+ " can't capture " + raStr.toString() + " as " + microSpeciesName + " agent");
 		}
 
 		return null;
