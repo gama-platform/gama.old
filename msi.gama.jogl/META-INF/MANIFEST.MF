@@ -17,4 +17,18 @@ Import-Package: com.vividsolutions.jts,
  com.vividsolutions.jts.geom,
  com.vividsolutions.jts.index.quadtree,
  msi.gama.lang.gaml.ui.highlight,
+ org.geotools.data.shapefile,
+ org.graphstream.algorithm.generator,
+ org.graphstream.graph,
+ org.graphstream.graph.implementations,
+ org.graphstream.stream,
+ org.graphstream.stream.file,
+ org.graphstream.stream.file.dgs,
  org.jfree.chart
+Export-Package: 
+ msi.gama.jogl,
+ msi.gama.jogl.gis_3D,
+ msi.gama.jogl.utils
+Bundle-ClassPath: lib/gluegen-rt.jar,
+ lib/jogl.jar,
+ .

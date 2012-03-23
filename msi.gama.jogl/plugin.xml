@@ -4,8 +4,23 @@
     <extension
             point="gama.display">
          <implementation
-               class="msi.gama.jogl.JOGLDisplaySurface"
+               class="msi.gama.jogl.JOGLAWTDisplaySurface"
                keyword="opengl">
          </implementation>
-      </extension>
+         
+    </extension>
+    <extension
+          point="org.eclipse.ui.views">
+           <view 
+            allowMultiple="true"
+           category="msi.gama.gui.category.gama"
+            class="msi.gama.jogl.GLView"
+            icon="icons/view_console.png"
+            id="msi.gama.jogl.GLView"
+            name="GL"
+            restorable="true">
+  		</view>
+    </extension>
+    
+
 </plugin>
