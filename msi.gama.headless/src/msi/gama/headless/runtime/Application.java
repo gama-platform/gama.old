@@ -1,4 +1,4 @@
-package msi.gama.headless.runtime_old;
+package msi.gama.headless.runtime;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +11,10 @@ import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.ErrorCollector;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtIO;
+import msi.gama.headless.core.HeadLessExperiment;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.core.IHeadLessExperiment;
+import msi.gama.headless.io.HeadlessIO;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
@@ -31,72 +34,41 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
 public class Application implements IApplication {
+	
+	public static boolean headLessSimulation = false;
+
 	private  Set<IBuilderListener> listeners;
+	
+	private static boolean isHeadlessSimulation()
+	{
+		return headLessSimulation;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		// TODO Auto-generated method stub
-		listeners = new HashSet();
-		System.out.println("Configuring file access through SWT");
-		FileUtils.setFileAccess(new SwtIO());
-		GuiUtils.setSwtGui(new HeadlessListener());
-		System.out.println("coucou start dfzff");
-		try {
-			GamaBundleLoader.preBuildContributions();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		IHeadLessExperiment exp=HeadlessSimulationLoader.newHeadlessSimulation("/tmp/src/model1.gaml");
 		
-		IModel lastModel = null;
-		System.setProperty("java.awt.headless","true");	
+		
 
-		ErrorCollector collect = new ErrorCollector();
-		GamlStandaloneSetup.doSetup();		
-		ResourceSet rs = new ResourceSetImpl();
-		Resource r = rs.getResource(URI.createURI("file:/tmp/src/model1.gaml"), true);
-		fireBuildStarted(r);
-		try {
-			Map<Resource, ISyntacticElement> elements =
-				GamlToSyntacticElements.buildSyntacticTree(r, collect);
-			if ( !collect.hasErrors() ) {
-				System.out.println("No errors in syntactic tree");
-				ModelStructure ms = new ModelStructure(r, elements, collect);
-				lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
-				if ( collect.hasErrors() ) {
-					lastModel = null;
-					// System.out.println("End compilation of " + m.getName());
-				}
-			}
-		} catch (GamaRuntimeException e1) {
-			System.out.println("Exception during compilation:" + e1.getMessage());
-		} catch (InterruptedException e) {
-			System.out.println("Compilation was aborted");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			//collectErrors(collect);
-			//fireBuildEnded(m, lastModel);
-		}
 		
 		
-		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
-		System.out.println("Experiment created " + Thread.currentThread().getId());
 		
-		Thread.sleep(1000);
+		
+				
+		/*Thread.sleep(1000);
 		System.out.println("Initialize experiment");
 		GAMA.getExperiment().initialize(new ParametersSet(), 0.0);
 		Thread.sleep(1000);
-		
+		*/
 		System.out.println("Starting experiment");
 	/*	Runnable rnb = new Runnable(){ public void run() {GAMA.startOrPauseExperiment();}};
 		Thread exec = new Thread(rnb);
 		exec.start();
 		*/
-		GAMA.startOrPauseExperiment();
+		//GAMA.startOrPauseExperiment();
 	//	GAMA.startOrPauseExperiment();
 		//GAMA.getExperiment().startCurrentSimulation();
 //		System.out.println("ccoucoe 3");
@@ -104,14 +76,17 @@ public class Application implements IApplication {
 //		
 //		
 //		
-		Thread.sleep(5000);
-		System.out.println("Stopping experiment");
-
-		GAMA.getExperiment().stop();
 		Thread.sleep(2000);
-		System.out.println("Step experiment");
 
-	GAMA.getExperiment().step();
+		
+		//GAMA.startOrPauseExperiment();
+		//
+		GAMA.getExperiment().step();	
+		System.out.println("Step experimentfdsqf*****************************************************************");
+		GAMA.getExperiment().step();		
+		System.out.println("Step experimentfdsqf*****************************************************************");
+		GAMA.getExperiment().step();
+		System.out.println("Step experimentfdsqf");
 //		System.out.println("ccoucoe 4");
 //
 //		GAMA.getExperiment().step();

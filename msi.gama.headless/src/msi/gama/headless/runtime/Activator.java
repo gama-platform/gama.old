@@ -1,4 +1,4 @@
-package msi.gama.headless.runtime_old;
+package msi.gama.headless.runtime;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

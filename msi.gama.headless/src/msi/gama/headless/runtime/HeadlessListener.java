@@ -1,10 +1,11 @@
-package msi.gama.headless.runtime_old;
+package msi.gama.headless.runtime;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IEditorFactory;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -14,8 +15,8 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void setStatus(String error, int code) {
 		// TODO Auto-generated method stub
-
-	}
+	//	IKeyword.GUI_ 
+	}   
 
 	@Override
 	public void run(Runnable block) {
