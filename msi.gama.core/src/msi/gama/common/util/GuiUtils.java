@@ -45,7 +45,7 @@ public class GuiUtils {
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
-	public static final String GL_VIEW_ID = "msi.gama.networks.ui.GLView";
+	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
 	private static boolean headlessMode = false;
 	
 	
