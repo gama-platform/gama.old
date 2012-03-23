@@ -66,8 +66,7 @@ public class CaptureCommand extends AbstractCommandSequence {
 
 		SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 		if ( microSpecies == null ) {
-			error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
-				" as micro-species");
+			error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName + " as micro-species");
 		}
 	}
 

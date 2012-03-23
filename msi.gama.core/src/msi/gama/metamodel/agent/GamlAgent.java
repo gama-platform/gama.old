@@ -318,8 +318,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		IAgent restoreTo(final IPopulation targetPopulation) throws GamaRuntimeException {
 			List<Map<String, Object>> agentAttrs = new GamaList<Map<String, Object>>();
 			agentAttrs.add(variables);
-			List<? extends IAgent> restoredAgents =
-				targetPopulation.createAgents(simulation.getExecutionScope(), 1, agentAttrs, true);
+			List<? extends IAgent> restoredAgents = targetPopulation.createAgents(simulation.getExecutionScope(), 1, agentAttrs, true);
 			restoreMicroAgents(restoredAgents.get(0));
 
 			return restoredAgents.get(0);

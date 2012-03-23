@@ -275,7 +275,7 @@ public abstract class AbstractAgent implements IAgent {
 			previousIsPoint = geometry.isPoint();
 		}
 		ITopology topology = population.getTopology();
-		ILocation newGeomLocation = newGeometry.getLocation();
+		ILocation newGeomLocation = newGeometry.getLocation().copy();
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
