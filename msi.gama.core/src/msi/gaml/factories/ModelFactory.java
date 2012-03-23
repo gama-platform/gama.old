@@ -270,7 +270,6 @@ public class ModelFactory extends SymbolFactory {
 			}
 			else
 			{
-				System.out.println("GUI");
 				sim =
 				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
 					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
