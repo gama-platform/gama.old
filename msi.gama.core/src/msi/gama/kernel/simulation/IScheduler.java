@@ -31,7 +31,7 @@ import msi.gaml.compilation.IScheduledAction;
  * @since 14 déc. 2011
  * 
  */
-public interface IScheduler extends IStepable, Runnable {
+public interface IScheduler extends IStepable {
 
 	public final static Semaphore SCHEDULER_AUTHORIZATION = new Semaphore(1);
 
