@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -17,6 +17,7 @@
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
 package msi.gaml.skills;
+
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
@@ -301,16 +302,15 @@ public class MovingSkill extends GeometricSkill {
 	 * @param distance max displacement distance
 	 * @return the next location
 	 */
-
-	private IPath moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
-		final double d) {
-		int index = 0;
-		int indexSegment = 1;
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+	
+	protected GamaList initMoveAlongPath (final IAgent agent, final IPath path, GamaPoint currentLocation){
+		GamaList initVals = new GamaList();
+		Integer index = 0;
+		Integer indexSegment = 1;
+		Integer endIndexSegment = 0;
 		
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
-		double distance = d;
 		if ( path.isVisitor(agent) ) {
 			index = path.indexOf(agent);
 			indexSegment = path.indexSegmentOf(agent);
@@ -349,7 +349,7 @@ public class MovingSkill extends GeometricSkill {
 		}
 		IShape lineEnd = edges.get(nb - 1);
 		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
-		int endIndexSegment = 1;
+		endIndexSegment = 1;
 		Point pointGeom = (Point) falseTarget.getInnerGeometry();
 		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
 			double distanceT = Double.MAX_VALUE;
@@ -367,14 +367,34 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 		}
+		initVals.add(index);
+		initVals.add(indexSegment);
+		initVals.add(endIndexSegment);
+		initVals.add(currentLocation);
+		initVals.add(falseTarget);
+		return initVals;
+	}
 
+	private IPath moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
+		final double d) {
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		int index = (Integer) indexVals.get(0);
+		int indexSegment = (Integer) indexVals.get(1);
+		int endIndexSegment = (Integer) indexVals.get(2);
+		currentLocation = (GamaPoint) indexVals.get(3);
+		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
+		IList<IShape> edges = path.getEdgeList();
+		int nb = edges.size();
+		double distance = d;
+		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
+		
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 			
-			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+			double weight = computeWeigth(graph,path,line);
+			
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -426,72 +446,24 @@ public class MovingSkill extends GeometricSkill {
 
 		return null;
 	}
+	
+	protected double computeWeigth(IGraph graph, IPath path, IShape line) {
+		return graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+	}
 
 	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
-		int index = 0;
-		int indexSegment = 1;
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
-		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
+		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		int index = (Integer) indexVals.get(0);
+		int indexSegment = (Integer) indexVals.get(1);
+		int endIndexSegment = (Integer) indexVals.get(2);
+		currentLocation = (GamaPoint) indexVals.get(3);
+		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
 		IList<IShape> edges = path.getEdgeList();
-		Coordinate[] temp = new Coordinate[2];
 		int nb = edges.size();
-		// instead of getGeometries() ?? Faster, more reliable. But is it the same ?
 		double distance = d;
 		GamaList<IShape> segments = new GamaList();
-		if ( path.isVisitor(agent) ) {
-			index = path.indexOf(agent);
-			indexSegment = path.indexSegmentOf(agent);
-		} else {
-			path.acceptVisitor(agent);
-			double distanceS = Double.MAX_VALUE;
-			IShape line = null;
-			for ( int i = 0; i < nb; i++ ) {
-				line = edges.get(i);
-				double distS = line.euclidianDistanceTo(currentLocation);
-				if ( distS < distanceS ) {
-					distanceS = distS;
-					index = i;
-				}
-			}
-			line = edges.get(index);
-
-			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
-			Point pointGeom = (Point) currentLocation.getInnerGeometry();
-			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
-				distanceS = Double.MAX_VALUE;
-				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-				int nbSp = coords.length;
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					temp[0] = coords[i];
-					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.getFactory().createLineString(temp);
-					double distS = segment.distance(pointGeom);
-					if ( distS < distanceS ) {
-						distanceS = distS;
-						indexSegment = i + 1;
-					}
-				}
-			}
-		}
-		IShape lineEnd = edges.get(nb - 1);
-		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
-		int endIndexSegment = 1;
-		Point pointGeom = (Point) falseTarget.getInnerGeometry();
-		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
-			double distanceT = Double.MAX_VALUE;
-			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
-			int nbSp = coords.length;
-			for ( int i = 0; i < nbSp - 1; i++ ) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				LineString segment = GeometryUtils.getFactory().createLineString(temp);
-				double distT = segment.distance(pointGeom);
-				if ( distT < distanceT ) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
-				}
-			}
-		}
+		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
@@ -500,8 +472,7 @@ public class MovingSkill extends GeometricSkill {
 			// perimeter (see model traffic_tutorial)
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 			
-			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+			double weight =computeWeigth(graph,path,line);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
@@ -610,7 +581,4 @@ public class MovingSkill extends GeometricSkill {
 		if ( computedPt != null ) { return computedPt; }
 		return getCurrentAgent(scope).getLocation();
 	}
-	
-	
-	
 }

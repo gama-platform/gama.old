@@ -2,8 +2,6 @@ package msi.gaml.extensions.traffic;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
@@ -16,7 +14,11 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.ExecutionStatus;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,19 +27,102 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPath;
 import msi.gama.util.IList;
 import msi.gama.util.IPath;
-import msi.gaml.operators.Spatial.Points;
 import msi.gaml.skills.MovingSkill;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
+
+@vars({@var(name = "living_space", type = IType.FLOAT_STR, init = "1.0"),
+	@var(name = "lanes_attribute", type = IType.STRING_STR),
+	@var(name = "tolerance", type = IType.FLOAT_STR, init = "0.1"),
+	@var(name = "obstacle_species", type = IType.LIST_STR, init = "[]"),
+	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0")
+	})
 @skill("driving")
 public class DrivingSkill extends MovingSkill{
+	
+	public final static String LIVING_SPACE = "living_space";
+	public final static String TOLERANCE = "tolerance";
+	public final static String LANES_ATTRIBUTE="lanes_attribute";
+	public final static String OBSTACLE_SPECIES="obstacle_species";
+	
+	@getter(var = LIVING_SPACE)
+	public double getLivingSpace(final IAgent agent) {
+		return (Double) agent.getAttribute(LIVING_SPACE);
+	}
+
+	@setter(LANES_ATTRIBUTE)
+	public void setLanesAttribute(final IAgent agent, final String latt) {
+		agent.setAttribute(LANES_ATTRIBUTE, latt);
+		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
+	}
+
+	@getter(var = LANES_ATTRIBUTE)
+	public String getLanesAttribute(final IAgent agent) {
+		return (String) agent.getAttribute(LANES_ATTRIBUTE);
+	}
+
+	@setter(LIVING_SPACE)
+	public void setLivingSpace(final IAgent agent, final double ls) {
+		agent.setAttribute(LIVING_SPACE, ls);
+		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
+	}
+
+	@getter(var = TOLERANCE)
+	public double getTolerance(final IAgent agent) {
+		return (Double) agent.getAttribute(TOLERANCE);
+	}
+
+	@setter(TOLERANCE)
+	public void setTolerance(final IAgent agent, final double t) {
+		agent.setAttribute(TOLERANCE, t);
+		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
+	}
+	
+	@getter(var = OBSTACLE_SPECIES)
+	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
+		return (GamaList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
+	}
+
+	@setter(OBSTACLE_SPECIES)
+	public void setObstacleSpecies(final IAgent agent, final GamaList<ISpecies> os) {
+		agent.setAttribute(OBSTACLE_SPECIES, os);
+	}
+	
+	protected String computeLanesNumber(final IScope scope, final IAgent agent)
+			throws GamaRuntimeException {
+		return scope.hasArg(LANES_ATTRIBUTE) ? scope.getStringArg(LANES_ATTRIBUTE) : getLanesAttribute(agent);	
+	}
+	
+	protected GamaList<ISpecies> computeObstacleSpecies(final IScope scope, final IAgent agent)
+			throws GamaRuntimeException {
+		return (GamaList<ISpecies>) (scope.hasArg(OBSTACLE_SPECIES) ? scope.getListArg(OBSTACLE_SPECIES) : getObstacleSpecies(agent));	
+	}
+	
+	protected double computeTolerance(final IScope scope, final IAgent agent)
+			throws GamaRuntimeException {
+		return scope.hasArg(TOLERANCE) ? scope.getFloatArg(TOLERANCE) : getTolerance(agent);
+	}
+	
+	protected double computeLivingSpace(final IScope scope, final IAgent agent)
+			throws GamaRuntimeException {
+		return scope.hasArg(LIVING_SPACE) ? scope.getFloatArg(LIVING_SPACE) : getLivingSpace(agent);
+	}
+	
 	@action("gotoTraffic")
-	@args({ "target", IKeyword.SPEED, "on", "return_path" })
+	@args({ "target", IKeyword.SPEED, "on", "return_path", LIVING_SPACE, TOLERANCE, LANES_ATTRIBUTE })
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy();
 		final double maxDist = computeDistance(scope, agent);
+		final double tolerance = computeTolerance(scope, agent);
+		final double livingSpace = computeLivingSpace(scope, agent);
+		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope,agent);
+		String laneAttributes = computeLanesNumber(scope, agent) ;
+		if (laneAttributes == null || "".equals(laneAttributes))
+			laneAttributes = "lanes_number";
+		
 		final ILocation goal = computeTarget(scope, agent);
 		if ( goal == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -60,7 +145,7 @@ public class DrivingSkill extends MovingSkill{
 		}
 		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
 		if ( returnPath != null && returnPath ) {
-			IPath pathFollowed = moveToNextLocAlongPath2(agent, path, maxDist);
+			IPath pathFollowed = moveToNextLocAlongPathTraffic(agent, path, maxDist,livingSpace, tolerance, laneAttributes, obsSpecies);
 			if ( pathFollowed == null ) {
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
@@ -68,7 +153,7 @@ public class DrivingSkill extends MovingSkill{
 			scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
-		moveToNextLocAlongPathSimplified2(agent, path, maxDist);
+		moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist,livingSpace, tolerance, laneAttributes, obsSpecies);
 		scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
@@ -83,86 +168,71 @@ public class DrivingSkill extends MovingSkill{
 	 * @param distance max displacement distance
 	 * @return the next location
 	 */
-
-	private void moveToNextLocAlongPathSimplified2(final IAgent agent, final IPath path,
-		final double _distance) {
-		int index = 0;
-		int indexSegment = 1;
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+	
+	private double avoidCollision(final IAgent agent, final double distance, final double livingSpace, final double tolerance, GamaPoint currentLocation, GamaPoint target, int nbLanes, GamaList<ISpecies> obsSpecies) {
+		//Collision avoiding
+		//1. Determines the agents located on a dist radius circle from the current location
+		IList<IAgent> neighbours = agent.getTopology().getNeighboursOf(currentLocation, distance + livingSpace, Different.with());
+		//2. Selects the agents before the agent on the segment 
+		double newX = currentLocation.x + 0.01 * (target.x - currentLocation.x);
+		double newY = currentLocation.y + 0.01 * (target.y - currentLocation.y);
+		Coordinate[] segment2 = {new GamaPoint(newX,newY), target};
+		double minDist = distance;
+		Geometry basicLine = GeometryUtils.getFactory().createLineString(segment2);
+		//Geometry frontRectangle = basicLine.buffer(tolerance, 3, /**TODO To be modified, to find the right constant name**/2);
+		//PreparedPolygon fr2 = new PreparedPolygon((Polygonal) frontRectangle);
+		for(IAgent ia : neighbours){
+			if(! obsSpecies.contains(ia.getSpecies())){
+				continue;
+			}
+			//if(fr2.intersects(ia.getLocation().getInnerGeometry())){
+			double distL = basicLine.distance(ia.getInnerGeometry());
+			double currentDistance = currentLocation.euclidianDistanceTo(ia);
+			if(distL < tolerance && distL < currentDistance){
+				currentDistance -=  livingSpace;
+			   // currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
+				IList<IAgent> ns = agent.getTopology().getNeighboursOf(ia, livingSpace/2.0, Different.with());
+				int nbAg = 1;
+				for (IAgent ag: ns) {
+					if (ag != agent && obsSpecies.contains(ag.getSpecies()))
+						nbAg ++;
+				}
+				
+				if(nbAg >= nbLanes && currentDistance < minDist){
+					minDist = Math.max(0, currentDistance);
+				}
+				
+			}
+				
+		}
 		
+		//3. Determines the distance to the nearest agent in front of him
+		return minDist;
+	}
+
+	private int computeNbLanes(IShape lineAg, String laneAttributes) {
+		return ( lineAg == null || !(lineAg instanceof IAgent))?1:(Integer) ((IAgent) lineAg).getAttribute(laneAttributes);
+		
+	}
+	
+	private void moveToNextLocAlongPathSimplifiedTraffic(final IAgent agent, final IPath path,
+		final double _distance, final double livingSpace, final double tolerance, String laneAttributes, GamaList<ISpecies> obsSpecies) {
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		int index = (Integer) indexVals.get(0);
+		int indexSegment = (Integer) indexVals.get(1);
+		int endIndexSegment = (Integer) indexVals.get(2);
+		currentLocation = (GamaPoint) indexVals.get(3);
+		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
 		double distance = _distance;
-		//This block is used to find the current location of the agent on the
-		//graph and the target location
-		if ( path.isVisitor(agent) ) {
-			index = path.indexOf(agent);
-			indexSegment = path.indexSegmentOf(agent);
-		} else {
-			path.acceptVisitor(agent);
-			double distanceS = Double.MAX_VALUE;
-			IShape line = null;
-			//Retrieving the nerarest edge
-			for ( int i = 0; i < nb; i++ ) {
-				line = edges.get(i);
-				double distS = line.euclidianDistanceTo(currentLocation);
-				if ( distS < distanceS ) {
-					distanceS = distS;
-					index = i;
-				}
-			}
-			line = edges.get(index);
-
-			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
-			Point pointGeom = (Point) currentLocation.getInnerGeometry();
-			//Retrieving the nearest segment of the nearest edge (line var)
-			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
-				distanceS = Double.MAX_VALUE;
-				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-				int nbSp = coords.length;
-				Coordinate[] temp = new Coordinate[2];
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					temp[0] = coords[i];
-					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.getFactory().createLineString(temp);
-					double distS = segment.distance(pointGeom);
-					if ( distS < distanceS ) {
-						distanceS = distS;
-						indexSegment = i + 1;
-					}
-				}
-			}
-		}
-		
-		IShape lineEnd = edges.get(nb - 1);
-		//The target should be on an element placed outside the graph, 
-		// the nearest point to the target is chosen on the graph
-		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
-		int endIndexSegment = 1;
-		Point pointGeom = (Point) falseTarget.getInnerGeometry();
-		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
-			double distanceT = Double.MAX_VALUE;
-			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
-			int nbSp = coords.length;
-			Coordinate[] temp = new Coordinate[2];
-			//Retrieving the last segment index
-			for ( int i = 0; i < nbSp - 1; i++ ) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				LineString segment = GeometryUtils.getFactory().createLineString(temp);
-				double distT = segment.distance(pointGeom);
-				if ( distT < distanceT ) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
-				}
-			}
-		}
-
-		//Given the current location and the target location
-		//the agent moves
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
+		
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
+			IShape lineAg = path.getRealObject(line);
+			int nbLanes = computeNbLanes(lineAg, laneAttributes);
 			//current edge
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 			//weight is 1 by default, otherwise is the distributed edge's weight by length unity
@@ -181,34 +251,14 @@ public class DrivingSkill extends MovingSkill{
 					pt = new GamaPoint(coords[j]);
 				}
 				//distance from current location to next target
-				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
+				double dist = pt.euclidianDistanceTo(currentLocation);
 				//For the while, for a high weight, the vehicle moves slowly
 				dist = weight * dist;
-				//Collision avoiding
-				//1. Determines the agents located on a dist radius circle from the current location
-				IList<IAgent> neighbours = agent.getTopology().getNeighboursOf(agent, Math.min(dist, distance), Different.with());
-				//2. Selects the agents before the agent on the segment 
-				Coordinate[] segment = {currentLocation, pt};
-				double minDist = distance;
-				Geometry basicLine = GeometryUtils.getFactory().createLineString(segment);
-				basicLine = basicLine.difference(agent.getInnerGeometry().buffer(1, 4));
-				Geometry frontRectangle = basicLine.buffer(0.1, 4, /**TODO To be modified, to find the right constant name**/2);
-				for(IAgent ia : neighbours){
-					if(ia.getSpecies().equals(line.getAgent().getSpecies())){
-						continue;
-					}
-					if(frontRectangle.intersects(ia.getInnerGeometry())){
-						double currentDistance = agent.getTopology().distanceBetween(agent, ia);
-						if(currentDistance < minDist){
-							minDist = currentDistance - 2;
-						}
-					}
-						
-				}
-				//3. Determines the distance to the nearest agent in front of him
-				distance = minDist;
+				distance = avoidCollision(agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes, obsSpecies);
 				// that's the real distance to move
 				//Agent moves
+				if (distance == 0)
+					break;
 				if ( distance < dist ) {
 					double ratio = distance / dist;
 					double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -248,84 +298,33 @@ public class DrivingSkill extends MovingSkill{
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
 		path.setSource(currentLocation.copy());
-
+		
+		
 	}
+	
 
-	private IPath moveToNextLocAlongPath2(final IAgent agent, final IPath path, final double d) {
-		int index = 0;
-		int indexSegment = 1;
+	private IPath moveToNextLocAlongPathTraffic(final IAgent agent, final IPath path,
+			final double _distance, final double livingSpace, final double tolerance, String laneAttributes, GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
-		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
+		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		int index = (Integer) indexVals.get(0);
+		int indexSegment = (Integer) indexVals.get(1);
+		int endIndexSegment = (Integer) indexVals.get(2);
+		currentLocation = (GamaPoint) indexVals.get(3);
+		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
 		IList<IShape> edges = path.getEdgeList();
-		Coordinate[] temp = new Coordinate[2];
 		int nb = edges.size();
-		// instead of getGeometries() ?? Faster, more reliable. But is it the same ?
-		double distance = d;
+		double distance = _distance;
 		GamaList<IShape> segments = new GamaList();
-		if ( path.isVisitor(agent) ) {
-			index = path.indexOf(agent);
-			indexSegment = path.indexSegmentOf(agent);
-		} else {
-			path.acceptVisitor(agent);
-			double distanceS = Double.MAX_VALUE;
-			IShape line = null;
-			for ( int i = 0; i < nb; i++ ) {
-				line = edges.get(i);
-				double distS = line.euclidianDistanceTo(currentLocation);
-				if ( distS < distanceS ) {
-					distanceS = distS;
-					index = i;
-				}
-			}
-			line = edges.get(index);
-
-			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
-			Point pointGeom = (Point) currentLocation.getInnerGeometry();
-			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
-				distanceS = Double.MAX_VALUE;
-				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-				int nbSp = coords.length;
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					temp[0] = coords[i];
-					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.getFactory().createLineString(temp);
-					double distS = segment.distance(pointGeom);
-					if ( distS < distanceS ) {
-						distanceS = distS;
-						indexSegment = i + 1;
-					}
-				}
-			}
-		}
-		IShape lineEnd = edges.get(nb - 1);
-		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
-		int endIndexSegment = 1;
-		Point pointGeom = (Point) falseTarget.getInnerGeometry();
-		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
-			double distanceT = Double.MAX_VALUE;
-			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
-			int nbSp = coords.length;
-			for ( int i = 0; i < nbSp - 1; i++ ) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				LineString segment = GeometryUtils.getFactory().createLineString(temp);
-				double distT = segment.distance(pointGeom);
-				if ( distT < distanceT ) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
-				}
-			}
-		}
+		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
-			// The weight computed here is absolutely useless.. since getWeight() returns the
-			// perimeter. // ANSWER : it is necessary because the weight can be different than the
-			// perimeter (see model traffic_tutorial)
+			IShape lineAg = path.getRealObject(line);
+			int nbLanes = computeNbLanes(lineAg, laneAttributes);
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 			
-			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+			double weight =computeWeigth(graph,path,line);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
@@ -337,6 +336,8 @@ public class DrivingSkill extends MovingSkill{
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
 				dist = weight * dist;
+				distance = avoidCollision(agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes, obsSpecies);
+				
 				if ( distance < dist ) {
 					GamaPoint pto = currentLocation.copy();
 					double ratio = distance / dist;
@@ -400,5 +401,4 @@ public class DrivingSkill extends MovingSkill{
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}
-	
 }
