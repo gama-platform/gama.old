@@ -1,0 +1,1 @@
+Date,dailyAvgTemp,dailyAvgHumid,dailyMostWindDir,dailyAvgWindSpeed,daily6hTemp,daily6hgHumid,daily6hWindDir,daily6hWindSpeed,daily14hTemp,daily14hgHumid,daily14hWindDir,daily14hWindSpeed,notes
