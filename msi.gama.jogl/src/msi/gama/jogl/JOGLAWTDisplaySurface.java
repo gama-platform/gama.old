@@ -18,8 +18,30 @@
  */
 package msi.gama.jogl;
 
+import static javax.media.opengl.GL.GL_AMBIENT;
+import static javax.media.opengl.GL.GL_AMBIENT_AND_DIFFUSE;
+import static javax.media.opengl.GL.GL_BLEND;
+import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_COLOR_MATERIAL;
+import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_DIFFUSE;
+import static javax.media.opengl.GL.GL_FRONT;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LIGHT1;
+import static javax.media.opengl.GL.GL_LIGHTING;
+import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NICEST;
+import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POLYGON;
+import static javax.media.opengl.GL.GL_POSITION;
+import static javax.media.opengl.GL.GL_PROJECTION;
+import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_TRIANGLES;
+import msi.gama.jogl.gis_3D.Camera;
 import msi.gama.jogl.gis_3D.NeheJOGL02Basics;
 import msi.gama.jogl.gis_3D.World_3D;
+import msi.gama.jogl.utils.GLUtil;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,7 +54,6 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -48,12 +69,19 @@ import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
+import com.sun.opengl.util.FPSAnimator;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.gui.displays.*;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.glu.GLU;
+
 public final class JOGLAWTDisplaySurface extends JPanel implements
-		IDisplaySurface {
+		IDisplaySurface, GLEventListener {
 
 	private boolean autosave = false;
 	private String snapshotFileName;
@@ -85,13 +113,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		public void run() {
 			while (true) {
 				try {
-					// GUI.debug("Painting permits remaining before acquiring: "
-					// +
-					// paintingNeeded.availablePermits());
 					paintingNeeded.acquire();
-					// GUI.debug("Painting permits remaining after acquiring: "
-					// +
-					// paintingNeeded.availablePermits());
 
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -101,6 +123,26 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			}
 		}
 	});
+
+	// OpenGL member
+	private static final int REFRESH_FPS = 60; // Display refresh frames per
+												// second
+	private GLU glu;
+	private GL gl;
+	FPSAnimator animator;
+	public boolean opengl = true;
+
+	private int width, height;
+	// Camera
+	private Camera camera;
+	private float zoom = 10.0f;
+	private float cameraXPosition = 0.0f;
+	private float cameraYPosition = 0.0f;
+	public float cameraZPosition = 10.0f;
+
+	private float cameraLXPosition = cameraXPosition;
+	private float cameraLYPosition = cameraYPosition;
+	public float cameraLZPosition = cameraZPosition - zoom;
 
 	public void save(final IScope scope, final RenderedImage image) {
 		try {
@@ -154,13 +196,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public boolean isPaused() {
 		return paused;
 	}
-
-	// public SWTAuxiliaryDisplaySurface getNavigator() {
-	// if ( navigator == null ) {
-	// navigator = new SWTAuxiliaryDisplaySurface(this);
-	// }
-	// return navigator;
-	// }
 
 	protected Cursor createCursor() {
 		Image im = new BufferedImage((int) SELECTION_SIZE + 4,
@@ -295,45 +330,89 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void initialize(final double env_width, final double env_height,
 			final IDisplayOutput layerDisplayOutput) {
+		System.out.println("JOGLAWTDisplaySurface initialization");
 
+		// Initialize the user camera
+		camera = new Camera();
+		camera.InitParam();
+
+		GLCanvas canvas = new GLCanvas();
+		canvas.addGLEventListener(this);
+		if (opengl) {
+
+			this.setLayout(new BorderLayout());
+			this.add(canvas, BorderLayout.CENTER);
+
+		}
+		int REFRESH_FPS = 60;
+		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
+
+		///////
 		outputChanged(env_width, env_height, layerDisplayOutput);
 		setOpaque(true);
 		setDoubleBuffered(false);
 		setCursor(createCursor());
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
-		DisplayMouseListener d = new DisplayMouseListener();
-		addMouseListener(d);
-		addMouseMotionListener(d);
-		addMouseWheelListener(d);
 
-		addComponentListener(new ComponentAdapter() {
+		// OpenGL//
+		if (opengl) {
+			SwingUtilities.invokeLater(new Runnable() {
 
-			@Override
-			public void componentResized(final ComponentEvent e) {
-				if (buffImage == null) {
-					zoomFit();
-				} else {
-					if (isFullImageInPanel()) {
-						centerImage();
-					} else if (isImageEdgeInPanel()) {
-						scaleOrigin();
-					} else {
-						displayGraphics.setClipping(getImageClipBounds());
-					}
+				@Override
+				public void run() {
+					animator.start();
 				}
-				updateDisplay();
-				previousPanelSize = getSize();
-			}
-		});
-		animationThread.start();
+			});
+			addComponentListener(new ComponentAdapter() {
 
-		 try {
-		 CreateOpenGLWindows();
-		 } catch (IOException e1) {
-		 // TODO Auto-generated catch block
-		 e1.printStackTrace();
-		 }
+				@Override
+				public void componentResized(final ComponentEvent e) {
+					if (buffImage == null) {
+						zoomFit();
+					} else {
+						if (isFullImageInPanel()) {
+							centerImage();
+						} else if (isImageEdgeInPanel()) {
+							scaleOrigin();
+						} else {
+							displayGraphics.setClipping(getImageClipBounds());
+						}
+					}
+					updateDisplay();
+					previousPanelSize = getSize();
+				}
+			});
+
+		}
+
+		else {
+			DisplayMouseListener d = new DisplayMouseListener();
+			addMouseListener(d);
+			addMouseMotionListener(d);
+			addMouseWheelListener(d);
+
+			addComponentListener(new ComponentAdapter() {
+
+				@Override
+				public void componentResized(final ComponentEvent e) {
+					if (buffImage == null) {
+						zoomFit();
+					} else {
+						if (isFullImageInPanel()) {
+							centerImage();
+						} else if (isImageEdgeInPanel()) {
+							scaleOrigin();
+						} else {
+							displayGraphics.setClipping(getImageClipBounds());
+						}
+					}
+					updateDisplay();
+					previousPanelSize = getSize();
+				}
+			});
+			animationThread.start();
+		}
 
 	}
 
@@ -446,6 +525,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void updateDisplay() {
+
 		if (synchronous && !EventQueue.isDispatchThread()) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
@@ -489,13 +569,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		displayGraphics.fill(bgColor, 1);
 		// try {
 		manager.drawDisplaysOn(displayGraphics);
-		// } catch (GamaRuntimeException e) {
-		// ex[0] = e;
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// ex[0] = new GamaRuntimeException(e);
-		// ex[0].addContext("in drawing the layers");
-		// }
+
 	}
 
 	protected final Rectangle getImageClipBounds() {
@@ -536,14 +610,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 					return;
 				}
 				navigator.redraw();
-				// navigator.update();
 			}
 		});
 	}
 
 	@Override
 	public void dispose() {
-		// GUI.debug("Releasing all the components of AWTDisplaySurface");
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -554,20 +626,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		if (manager != null) {
 			manager.dispose();
-			// manager = null;
 		}
 
 	}
 
 	@Override
 	public BufferedImage getImage() {
-		// Rectangle clip = displayGraphics.getClipping();
-		// updateDisplay();
-		// paused = false;
-		// FIXME: Draw the displays in case the image is called from outside..
-		// drawDisplaysWithoutRepainting();
-		// paused = true;
-		// displayGraphics.setClipping(clip);
 		return buffImage;
 	}
 
@@ -589,7 +653,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			}
 			buffImage = newImage;
 			if (displayGraphics == null) {
-				displayGraphics = new JOGLAWTDisplayGraphics(buffImage);
+				displayGraphics = new JOGLAWTDisplayGraphics(buffImage, gl);
 			} else {
 				displayGraphics.setDisplayDimensions(bWidth, bHeight);
 				displayGraphics
@@ -612,16 +676,38 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void zoomIn() {
-		mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);
-		setZoom(1.0 + zoomIncrement, mousePosition);
+		
+		if (opengl) {
+			this.cameraZPosition += 0.1;
+			this.cameraLZPosition += 0.1;
+
+			camera.moveForward(0.1);
+			camera.look(10);
+		} else {
+			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
+					/ 2);
+			setZoom(1.0 + zoomIncrement, mousePosition);
+		}
 
 	}
 
 	@Override
 	public void zoomOut() {
-		mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);
-		;
-		setZoom(1.0 - zoomIncrement, mousePosition);
+		
+		if (opengl) {
+
+			this.cameraZPosition -= 0.1;
+			this.cameraLZPosition -= 0.1;
+
+			camera.moveForward(-0.1);
+			camera.look(10);
+
+		} else {
+			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
+					/ 2);
+			;
+			setZoom(1.0 - zoomIncrement, mousePosition);
+		}
 
 	}
 
@@ -635,7 +721,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			zoomFactor = factor;
 			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y
 					- (int) Math.round(imagePY * zoomFactor));
-			// paintingNeeded.release();
 			updateDisplay();
 		}
 	}
@@ -644,7 +729,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y
 				* getHeight() / previousPanelSize.height);
 		paintingNeeded.release();
-		// repaint();
 	}
 
 	void centerImage() {
@@ -656,7 +740,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		if (resizeImage(getWidth(), getHeight())) {
 			centerImage();
-			// paintingNeeded.release();
 			updateDisplay();
 		}
 	}
@@ -704,7 +787,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	public void setNavigationImageEnabled(final boolean enabled) {
 		navigationImageEnabled = enabled;
-		// getNavigator().toggle(enabled);
 	}
 
 	@Override
@@ -715,9 +797,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		redrawNavigator();
 	}
 
-	/**
-	 * @param checked
-	 */
 	@Override
 	public void setSynchronized(final boolean checked) {
 		synchronous = checked;
@@ -734,9 +813,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		}
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
-	 */
 	@Override
 	public void setAutoSave(final boolean autosave) {
 		this.autosave = autosave;
@@ -747,17 +823,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		snapshotFileName = file;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
-	 */
 	@Override
 	public void snapshot() {
 		save(GAMA.getDefaultScope(), buffImage);
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
-	 */
 	@Override
 	public void setNavigator(final Object nav) {
 		if (nav instanceof SWTNavigationPanel) {
@@ -775,62 +845,154 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		return bHeight;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
-	 */
 	@Override
 	public int getOriginX() {
 		return origin.x;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
-	 */
 	@Override
 	public int getOriginY() {
 		return origin.y;
 	}
 
-	public void CreateOpenGLWindows() throws IOException {
-		final int WINDOW_WIDTH = 640;
-		final int WINDOW_HEIGHT = 480;
-		final String WINDOW_TITLE = "Gama OpenGL 3D GIS";
+	@Override
+	public void display(GLAutoDrawable drawable) {
+		System.out.println("opengl display");
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				final int WINDOW_WIDTH = 640;
-				final int WINDOW_HEIGHT = 480;
-				final String WINDOW_TITLE = "Gama OpenGL 3D GIS";
+		// Get the OpenGL graphics context
+		gl = drawable.getGL();
 
-				// Create A 3D World environment.
-				final NeheJOGL02Basics world = new NeheJOGL02Basics();
-				
-				JFrame frame = new JFrame();
-				frame.setContentPane(world);
+		width = drawable.getWidth();
+		height = drawable.getHeight();
 
-				frame.addWindowListener(new WindowAdapter() {
-					@Override
-					public void windowClosing(WindowEvent e) {
-						// Use a dedicate thread to run the stop() to ensure that the
-						// animator stops before program exits.
-						new Thread() {
-							@Override
-							public void run() {
-								world.animator.stop(); // stop the animator loop
-								System.exit(0);
-							}
-						}.start();
-					}
-				});
+		// Clear the screen and the depth buffer
+		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-				frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-				frame.setTitle(WINDOW_TITLE);
-				frame.setVisible(true);
-				world.animator.start(); // start the animation loop
+		gl.glViewport(0, 0, width, height); // Reset The Current Viewport
 
-			}
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		// Reset the view (x, y, z axes back to normal)
+		gl.glLoadIdentity();
 
-		});
+		gl.glEnable(GL_BLEND); // Turn Blending On
+		gl.glDisable(GL_DEPTH_TEST); // Turn Depth Testing Off
+
+		// handle lighting
+		gl.glEnable(GL_LIGHTING);
+
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+
+		if (height == 0) {
+			height = 1; // prevent divide by zero
+		}
+		float aspect = (float) width / height;
+		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
+				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
+				1.0, 0.0);
+
+		gl.glMatrixMode(GL.GL_MODELVIEW); // Select The Modelview Matrix
+		gl.glLoadIdentity(); // Reset The Modelview Matrix
+
+		// enable color tracking
+		gl.glEnable(GL_COLOR_MATERIAL);
+		// set material properties which will be assigned by glColor
+		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+		camera.PrintParam();
+
+		((JOGLAWTDisplayGraphics) displayGraphics)
+				.DrawOpenGLHelloWorldShape(gl);
 
 	}
+
+	@Override
+	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void init(GLAutoDrawable drawable) {
+		System.out.println("opengl init)");
+
+		width = drawable.getWidth();
+		height = drawable.getHeight();
+		// Get the OpenGL graphics context
+		gl = drawable.getGL();
+		// GL Utilities
+		glu = new GLU();
+
+		// Enable smooth shading, which blends colors nicely across a polygon,
+		// and smoothes out lighting.
+		GLUtil.enableSmooth(gl);
+		// Set background color (in RGBA). Alpha of 0 for total transparency
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		// the depth buffer & enable the depth testing
+		gl.glClearDepth(1.0f);
+		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
+		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
+		// We want the best perspective correction to be done
+		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		// Enable smooth shading, which blends colors nicely, and smoothes out
+		// lighting.
+		gl.glShadeModel(GL_SMOOTH);
+		if (height == 0) {
+			height = 1; // prevent divide by zero
+		}
+		float aspect = (float) width / height;
+		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
+				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
+				1.0, 0.0);
+
+		// Set up the lighting for Light-1
+		// Ambient light does not come from a particular direction. Need some
+		// ambient light to light up the scene. Ambient's value in RGBA
+		float[] lightAmbientValue = { 0.5f, 0.5f, 0.5f, 1.0f };
+		// Diffuse light comes from a particular location. Diffuse's value in
+		// RGBA
+		float[] lightDiffuseValue = { 1.0f, 1.0f, 1.0f, 1.0f };
+		// Diffuse light location xyz (in front of the screen).
+		float lightDiffusePosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
+
+		gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
+		gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
+		gl.glEnable(GL_LIGHT1); // Enable Light-1
+		gl.glDisable(GL_LIGHTING); // But disable lighting
+
+	}
+
+	@Override
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
+			int height) {
+		// Get the OpenGL graphics context
+		gl = drawable.getGL();
+
+		if (height == 0) {
+			height = 1; // prevent divide by zero
+		}
+		float aspect = (float) width / height;
+
+		// Set the viewport (display area) to cover the entire window
+		gl.glViewport(0, 0, width, height);
+
+		// Enable the model view - any new transformations will affect the
+		// model-view
+		// matrix
+		gl.glMatrixMode(GL_MODELVIEW);
+		gl.glLoadIdentity(); // reset
+
+		// perspective view
+		gl.glViewport(10, 10, width - 20, height - 20);
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glLoadIdentity();
+		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
+				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
+				1.0, 0.0);
+
+	}
+
 }

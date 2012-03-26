@@ -202,9 +202,7 @@ public class Camera {
 //		this.pitchDown(0);
 //		this.moveForward(0);
 //		this.look(10);
-		
 
-		
 		this.yaw = -1.5;
 		this.pitch=0.0f;
 		this.xPos=-0.1f;

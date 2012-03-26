@@ -25,6 +25,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+
+import javax.media.opengl.GL;
 import javax.swing.JFrame;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gaml.operators.Maths;
@@ -35,9 +37,10 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
  * 
- * Simplifies the drawing of circles, rectangles, and so forth. Rectangles are generally faster to
- * draw than circles. The Displays should take care of layouts while objects that wish to be drawn
- * as a shape need only call the appropriate method.
+ * Simplifies the drawing of circles, rectangles, and so forth. Rectangles are
+ * generally faster to draw than circles. The Displays should take care of
+ * layouts while objects that wish to be drawn as a shape need only call the
+ * appropriate method.
  * <p>
  * 
  * @author Nick Collier, Alexis Drogoul, Patrick Taillandier
@@ -53,11 +56,14 @@ public class JOGLDisplayGraphics implements IGraphics {
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
 	private double currentAlpha = 1;
-	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5, curHeight = 5,
-		offsetX = 0, offsetY = 0;
+	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5,
+			curHeight = 5, offsetX = 0, offsetY = 0;
 	private double currentXScale = 1, currentYScale = 1;
 	// private static RenderingHints rendering;
-	private static final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
+	private static final Font defaultFont = new Font("Helvetica", Font.PLAIN,
+			12);
+	
+
 
 	static {
 
@@ -68,20 +74,24 @@ public class JOGLDisplayGraphics implements IGraphics {
 		// System.setProperty("apple.awt.graphics.UseQuartz", "true");
 		QUALITY_RENDERING.put(KEY_RENDERING, VALUE_RENDER_QUALITY);
 		QUALITY_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_QUALITY);
-		QUALITY_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY);
+		QUALITY_RENDERING.put(KEY_ALPHA_INTERPOLATION,
+				VALUE_ALPHA_INTERPOLATION_QUALITY);
 		QUALITY_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BICUBIC);
 		QUALITY_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
 
 		MEDIUM_RENDERING.put(KEY_RENDERING, VALUE_RENDER_QUALITY);
 		MEDIUM_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_SPEED);
-		MEDIUM_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY);
+		MEDIUM_RENDERING.put(KEY_ALPHA_INTERPOLATION,
+				VALUE_ALPHA_INTERPOLATION_QUALITY);
 		MEDIUM_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
 		MEDIUM_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
 
 		SPEED_RENDERING.put(KEY_RENDERING, VALUE_RENDER_SPEED);
 		SPEED_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_SPEED);
-		SPEED_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_SPEED);
-		SPEED_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		SPEED_RENDERING.put(KEY_ALPHA_INTERPOLATION,
+				VALUE_ALPHA_INTERPOLATION_SPEED);
+		SPEED_RENDERING.put(KEY_INTERPOLATION,
+				VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 		SPEED_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_OFF);
 
 	}
@@ -97,28 +107,38 @@ public class JOGLDisplayGraphics implements IGraphics {
 	};
 	private final ShapeWriter sw = new ShapeWriter(pt);
 
-	    JOGLDisplayGraphics(final BufferedImage image) {
+	JOGLDisplayGraphics(final BufferedImage image) {
 		this(image.getWidth(), image.getHeight());
 		setGraphics((Graphics2D) image.getGraphics());
 	}
+	
+	
 
 	/**
 	 * Constructor for DisplayGraphics.
-	 * @param width int
-	 * @param height int
+	 * 
+	 * @param width
+	 *            int
+	 * @param height
+	 *            int
 	 */
 	public JOGLDisplayGraphics(final int width, final int height) {
 		System.out.println("JOGLDisplayGraphics constructor");
 		setDisplayDimensions(width, height);
-		
+
 	}
+
+
 
 	/**
 	 * Method setGraphics.
-	 * @param g Graphics2D
+	 * 
+	 * @param g
+	 *            Graphics2D
 	 */
 	@Override
 	public void setGraphics(final Graphics2D g) {
+		System.out.println("JOGLDisplayGraphics::setGraphics");
 		ready = true;
 		g2 = g;
 		setQualityRendering(false);
@@ -127,7 +147,7 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		if ( g2 != null ) {
+		if (g2 != null) {
 			g2.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
 		}
 	}
@@ -139,18 +159,24 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setComposite.
-	 * @param alpha AlphaComposite
+	 * 
+	 * @param alpha
+	 *            AlphaComposite
 	 */
 	@Override
 	public void setOpacity(final double alpha) {
 		// 1 means opaque ; 0 means transparent
-		if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
+		if (IntervalSize.isZeroWidth(alpha, currentAlpha)) {
+			return;
+		}
 		currentAlpha = alpha;
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+				(float) alpha));
 	}
 
 	/**
 	 * Method getDisplayWidth.
+	 * 
 	 * @return int
 	 */
 	@Override
@@ -160,6 +186,7 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method getDisplayHeight.
+	 * 
 	 * @return int
 	 */
 	@Override
@@ -169,8 +196,11 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setDisplayDimensions.
-	 * @param width int
-	 * @param height int
+	 * 
+	 * @param width
+	 *            int
+	 * @param height
+	 *            int
 	 */
 	@Override
 	public void setDisplayDimensions(final int width, final int height) {
@@ -180,7 +210,9 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setFont.
-	 * @param font Font
+	 * 
+	 * @param font
+	 *            Font
 	 */
 	@Override
 	public void setFont(final Font font) {
@@ -189,6 +221,7 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method getXScale.
+	 * 
 	 * @return double
 	 */
 	@Override
@@ -198,7 +231,9 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setXScale.
-	 * @param scale double
+	 * 
+	 * @param scale
+	 *            double
 	 */
 	@Override
 	public void setXScale(final double scale) {
@@ -207,6 +242,7 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method getYScale.
+	 * 
 	 * @return double
 	 */
 	@Override
@@ -216,7 +252,9 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setYScale.
-	 * @param scale double
+	 * 
+	 * @param scale
+	 *            double
 	 */
 	@Override
 	public void setYScale(final double scale) {
@@ -225,8 +263,11 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setDrawingCoordinates.
-	 * @param x double
-	 * @param y double
+	 * 
+	 * @param x
+	 *            double
+	 * @param y
+	 *            double
 	 */
 	@Override
 	public void setDrawingCoordinates(final double x, final double y) {
@@ -236,8 +277,11 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setDrawingOffset.
-	 * @param x int
-	 * @param y int
+	 * 
+	 * @param x
+	 *            int
+	 * @param y
+	 *            int
 	 */
 	@Override
 	public void setDrawingOffset(final int x, final int y) {
@@ -247,8 +291,11 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setDrawingDimensions.
-	 * @param width int
-	 * @param height int
+	 * 
+	 * @param width
+	 *            int
+	 * @param height
+	 *            int
 	 */
 	@Override
 	public void setDrawingDimensions(final int width, final int height) {
@@ -258,10 +305,12 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method setDrawingColor.
-	 * @param c Color
+	 * 
+	 * @param c
+	 *            Color
 	 */
 	private void setDrawingColor(final Color c) {
-		if ( g2 != null && g2.getColor() != c ) {
+		if (g2 != null && g2.getColor() != c) {
 			g2.setColor(c);
 		}
 	}
@@ -270,16 +319,21 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawImage.
-	 * @param img Image
-	 * @param angle Integer
+	 * 
+	 * @param img
+	 *            Image
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final boolean smooth) {
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
+			final boolean smooth) {
 		System.out.println("JOGLDisplayGraphics::drawImage");
 		AffineTransform saved = g2.getTransform();
 		// RenderingHints hints = g2.getRenderingHints();
-		if ( angle != null ) {
-			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
+		if (angle != null) {
+			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY
+					+ curHeight / 2);
 		}
 		// if ( !smooth ) {
 		// g2.setRenderingHints(SPEED_RENDERING);
@@ -298,7 +352,9 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawChart.
-	 * @param chart JFreeChart
+	 * 
+	 * @param chart
+	 *            JFreeChart
 	 */
 	@Override
 	public Rectangle2D drawChart(final JFreeChart chart) {
@@ -312,18 +368,24 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawCircle.
-	 * @param c Color
-	 * @param fill boolean
-	 * @param angle Integer
+	 * 
+	 * @param c
+	 *            Color
+	 * @param fill
+	 *            boolean
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawCircle(final Color c, final boolean fill,
+			final Integer angle) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, angle);
 	}
 
 	@Override
-	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawTriangle(final Color c, final boolean fill,
+			final Integer angle) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -336,41 +398,58 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawLine.
-	 * @param c Color
-	 * @param toX double
-	 * @param toY double
+	 * 
+	 * @param c
+	 *            Color
+	 * @param toX
+	 *            double
+	 * @param toY
+	 *            double
 	 */
 	@Override
-	public Rectangle2D drawLine(final Color c, final double toX, final double toY) {
+	public Rectangle2D drawLine(final Color c, final double toX,
+			final double toY) {
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return drawShape(c, line, false, null);
 	}
 
 	/**
 	 * Method drawRectangle.
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
+	 * 
+	 * @param color
+	 *            Color
+	 * @param fill
+	 *            boolean
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Integer angle) {
+	public Rectangle2D drawRectangle(final Color color, final boolean fill,
+			final Integer angle) {
+		System.out.println("JOGLDisplayGraphics::drawRectangle");
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return drawShape(color, rect, fill, angle);
 	}
 
 	/**
 	 * Method drawString.
-	 * @param string String
-	 * @param stringColor Color
-	 * @param angle Integer
+	 * 
+	 * @param string
+	 *            String
+	 * @param stringColor
+	 *            Color
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle) {
+	public Rectangle2D drawString(final String string, final Color stringColor,
+			final Integer angle) {
 		setDrawingColor(stringColor);
 		AffineTransform saved = g2.getTransform();
-		if ( angle != null ) {
+		if (angle != null) {
 			Rectangle2D r = g2.getFontMetrics().getStringBounds(string, g2);
-			g2.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
+			g2.rotate(Maths.toRad * angle, curX + r.getWidth() / 2,
+					curY + r.getHeight() / 2);
 		}
 		g2.drawString(string, curX, curY);
 		g2.setTransform(saved);
@@ -379,51 +458,55 @@ public class JOGLDisplayGraphics implements IGraphics {
 
 	/**
 	 * Method drawGeometry.
-	 * @param geometry Geometry
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
+	 * 
+	 * @param geometry
+	 *            Geometry
+	 * @param color
+	 *            Color
+	 * @param fill
+	 *            boolean
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
-		final Integer angle) {
-		
-		boolean f =
-			geometry instanceof LineString || geometry instanceof MultiLineString ? false : fill;
+	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
+			final boolean fill, final Integer angle) {
+		System.out.println("JOGLDisplayGraphics::drawGeometry");
+		boolean f = geometry instanceof LineString
+				|| geometry instanceof MultiLineString ? false : fill;
 
 		return drawShape(color, sw.toShape(geometry), f, angle);
 	}
 
 	/**
 	 * Method drawShape.
-	 * @param c Color
-	 * @param s Shape
-	 * @param fill boolean
-	 * @param angle Integer
+	 * 
+	 * @param c
+	 *            Color
+	 * @param s
+	 *            Shape
+	 * @param fill
+	 *            boolean
+	 * @param angle
+	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
-		final Integer angle) {
+	public Rectangle2D drawShape(final Color c, final Shape s,
+			final boolean fill, final Integer angle) {
 		System.out.println("JOGLDisplayGraphics::drawShape");
 		try {
 			Rectangle2D r = s.getBounds2D();
-
-			// if ( clipping != null && !r.intersects(clipping) ) { return; }
-			// Graphics2D g3 = (Graphics2D) g2.create();
 			AffineTransform saved = g2.getTransform();
-			if ( angle != null ) {
+			if (angle != null) {
 				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2,
-					r.getY() + r.getHeight() / 2);
+						r.getY() + r.getHeight() / 2);
 			}
-			// g3.setColor(c);
 			setDrawingColor(c);
-			if ( fill ) {
+			if (fill) {
 				g2.fill(s);
-				// g3.setColor(Color.black);
 				setDrawingColor(Color.black);
 			}
 			g2.draw(s);
-			// g3.dispose();
 			g2.setTransform(saved);
 			return r;
 		} catch (Exception e) {
@@ -432,28 +515,13 @@ public class JOGLDisplayGraphics implements IGraphics {
 		}
 	}
 
-	// @Override
-	// public void setGraphics(final GC gc, final Display displat) {
-	// Nothing to do
-	//
-	// }
-
 	@Override
 	public void fill(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
 		g2.setColor(bgColor);
-		// if ( clipping != null ) {
-		// g2.fillRect(clipping.x, clipping.y, clipping.width, clipping.height);
-		// } else {
 		g2.fillRect(0, 0, displayWidth, displayHeight);
-		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.gui.graphics.IGraphics#setClipping(java.awt.Rectangle)
-	 */
 	@Override
 	public void setClipping(final Rectangle imageClipBounds) {
 		clipping = imageClipBounds;
