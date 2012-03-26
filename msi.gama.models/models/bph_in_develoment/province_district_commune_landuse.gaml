@@ -1,25 +1,28 @@
 model province_district_commune_landuse
+//multi-scale model_Vinh
 
 global {
-	// GIS data
+
 	string environment_bounds <- 'gis/bounds_DT_province.shp';
-	file environment_f <- shapefile('gis/bounds_DT_province.shp');
 	
 	file mekong_f <- shapefile('gis/MekongDelta_provinces.shp');
 	file dongthap_districts_f <- shapefile('gis/dongthap_districts.shp');
 	file dongthap_communes_f <- shapefile('gis/dongthap_communes.shp');
 	file dongthap_landuse_f <- shapefile('gis/landuse_DT_12_03_012.shp');
 	matrix TPHCM_weather <- matrix(file('data/weather/daily_TPHCM_2008_no_title.txt')) const: true;
-	var xBoundDT type: float init: 0;
-	var yBoundDT type: float init: 0;	
-	rgb clNormal init: rgb('white'); rgb clLight init: rgb('green'); rgb clMedium init: rgb('yellow');
-	rgb clHeavy init: rgb([251,153,234]); rgb clStrongHeavy init: rgb('red');
+	float xBoundDT init: 0;
+	float yBoundDT init: 0;	
+	rgb clNormal init: rgb('white') parameter: 'Color with normal BPH density:' category: 'INPUT WINDOW'; 
+	rgb clLight init: rgb('green') parameter: 'Color with light BPH density:' category: 'INPUT WINDOW' ; 
+	rgb clMedium init: rgb('yellow') parameter: 'Color with medium BPH density:' category: 'INPUT WINDOW';
+	rgb clHeavy init: rgb([251,153,234]) parameter: 'Color with heavy BPH density:' category: 'INPUT WINDOW'; 
+	rgb clStrongHeavy init: rgb('red') parameter: 'Color with strong heavy BPH density:' category: 'INPUT WINDOW';
 	
 	const dirTranslation type: int init: 270 ;	
-	var directionList type: list init: ['North','NNE','NE','ENE','East','ESE','SE','SSE','South','SSW','SW','WSW','West','WNW','NW','NNW'] ;
-	var degreeList type: list of: float init: [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5] ;
-	var weatherTPHCM type: weather init: nil ;
-	var scaleDegreeList type: list init: [];
+	list directionList init: ['North','NNE','NE','ENE','East','ESE','SE','SSE','South','SSW','SW','WSW','West','WNW','NW','NNW'] ;
+	list degreeList of: float init: [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5] ;
+	weather weatherTPHCM init: nil ;
+	list scaleDegreeList init: [];
 	
 	int col_num <- 15;
 	int row_num <- length(TPHCM_weather)/col_num;
@@ -32,6 +35,7 @@ global {
 	int heavy_infection <- 3 * cloud_min_member depends_on: [cloud_min_member];
 	int hopper_burn <- 4 * cloud_min_member depends_on: [cloud_min_member];
 	float diedBphRate <- 0.035;
+	list setOfLandunit of: landunit init: [];
 	
 	rgb no_infection_color <- rgb('blue') const: true;
 	rgb light_infection_color <- rgb('yellow') const: true;
@@ -39,10 +43,14 @@ global {
 	rgb heavy_infection_color <- rgb('red') const: true;
 	rgb hopper_burn_color <- rgb('black') const: true;
 
-	rgb province_color <- rgb('green') const: true;
-	rgb district_color <- rgb('blue') const: true;
-	rgb commune_color <- rgb('cyan') const: true;
-	rgb landuse_color <- rgb('red') const: true;
+//	rgb province_color <- rgb('green') const: true;
+//	rgb district_color <- rgb('blue') const: true;
+//	rgb commune_color <- rgb('cyan') const: true;
+//	rgb landuse_color <- rgb('red') const: true;
+	rgb landuse_color <- rgb('green') const: true;
+	rgb province_color <- rgb('white') const: true;
+	rgb district_color <- rgb('white') const: true;
+	rgb commune_color <- rgb('white') const: true;
 	
 	int bph_cloud_number <- 5000;
 	rgb bph_cloud_color <- rgb('cyan') const: true;
@@ -51,7 +59,8 @@ global {
 	list possible_wind_directions <- [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360] of: int; 
 	int wind_direction <- one_of(possible_wind_directions) depends_on: possible_wind_directions; // 45¡
 	float wind_speed <- 0.001 parameter: 'Wind speed' min: 0.0001;
-	
+	int stepNo init:0;
+
 	// workaround for visibility
 	int no_infection_no <- 0;
 	int light_infection_no <- 0;
@@ -59,7 +68,11 @@ global {
 	int heavy_infection_no <- 0;
 	int hopper_burn_no <- 0;
 
-	var shareKnow type: shareKnowledge init: shareKnow ;
+	shareKnowledge shareKnow init: shareKnow;
+	list coordinateList of: point init:[];
+	
+	topology world_topo <- topology(shape) depends_on: shape;
+	
 
 	init {
 		create species: shareKnowledge;
@@ -72,7 +85,7 @@ global {
 		}
 		 
 		ask target: wTPHCM {
-			loop irow from: 1 to: row_num var: irow {
+			loop irow from: 1 to: row_num {
 				set dailyDate value: dailyDate + [TPHCM_weather at {0,irow}] ;
 				set dailyAvgTemp value: dailyAvgTemp + [TPHCM_weather at {1,irow}] ;
 				set dailyAvgHumid value: dailyAvgHumid + [TPHCM_weather at {2,irow}] ;
@@ -91,8 +104,8 @@ global {
 		
 		set weatherTPHCM value: wTPHCM;
 
-		let sdList var: sdList type: list value: [] ;
-		let tempDegree var: tempDegree type: float value: 0 ;
+		let sdList type: list value: [] ;
+		let tempDegree type: float value: 0 ;
 		loop td over: degreeList {
 			set tempDegree value: (td + dirTranslation) ;
 			if  (tempDegree > 360) {
@@ -108,18 +121,16 @@ global {
 
 		set scaleDegreeList value: sdList ;
 
-		let eb type: environment_bound value: nil;
-		create species: environment_bound with: [shape:: environment_f] {
-			set eb value: self;
-		}		
+		set coordinateList value: (world.shape).points;
 		
-		let coordinateList type: list of: point value: (eb.shape).points;
-
 		ask target: shareKnow {
 			set xBoundDT value: self findMaxAxisCoordinateFromList[coordinateList:: coordinateList, xya:: 'x'];			
 			set yBoundDT value: self findMaxAxisCoordinateFromList[coordinateList:: coordinateList, xya:: 'y'];
+			set xbou value: xBoundDT;
+			set ybou value: yBoundDT;
+			set coordinateList1 value: coordinateList;
 		}
-		
+
 		create climate;
 
 		loop p over: (mekong_f.contents) {
@@ -128,186 +139,58 @@ global {
 				create province with: [ shape :: p ];
 			}
 		}
-
 		create bph_cloud number: bph_cloud_number with: [ bph_in_cloud :: cloud_min_member ];
+		
 	}
+	
+	reflex {
+		set stepNo value: stepNo+1;
+	}	
+	set setOfLandunit value: (( (one_of(list(province))).agents) where ( (string(each) ) contains ('landunit') ));
 }
 
 environment bounds: environment_bounds;
 
 entities {
 
-	species agentCopy skills: [moving] {
-		var agentCopyName type: string init: '';
-		var color type: rgb value: rgb('yellow') ;
-	}
-	
-	species environment_bound skills: [situated] {		
-	}
-
 	species shareKnowledge skills: situated {
 		string name1 <- 'province_level';
-		var x type: int;
-		var newLoc type: point;
+		int x; point newLoc; float xbou;
+		float ybou; list coordinateList1 of: point;
 
-		action findMaxAxisCoordinateFromList {
+		action findMaxAxisCoordinateFromList type:float {
 			arg coordinateList type: list;
 			arg xya type: string;
 		
 			if  (xya = 'x') {
-				return value: coordinateList max_of (point(each).x);
+				return (coordinateList max_of (point(each).x));
 			}
 			else 
 				{
-					return value: coordinateList max_of (point(each).y);
+					return (coordinateList max_of (point(each).y));
 			}
 		}
-	
-		action returnCoordinatesFromGeometry type: list {
-			arg fromGeometry type: list;
-			
-			let coordiList type: list of: point value: (fromGeometry as list);
-			return coordiList ;
-		}
-
-		action createAgentCopy type: agentCopy {
-			arg originAgent type: landunit;
-			
-			create agentCopy returns: rets {
-				set agentCopyName value: (string(originAgent) + 'copy');
-				set location value: originAgent.location;
-				set shape value: originAgent.shape;
-			}
-			
-			return agentCopy(rets at 0);
-		}
-
-
-		action findIntersectionDisAndBound type: point {
-			arg agentLocation type: point ;
-			arg movingDir type: float ;
-			arg xBound type: float ;
-			arg yBound type: float ;
-
-			let xOldLoc type: float value: (agentLocation).x;
-			let yOldLoc type: float value: (agentLocation).y;
-			let newLoc var: newLoc type: point value: nil;
-			let tempMovingDir var: tempMovingDir type: float value: 0 ;
-			let crossAngle var: crossAngle type: float value: 0 ;
-			let xTemp var: xTemp type: float value: 0 ;
-			let yTemp var: yTemp type: float value: 0 ;
-
-			if movingDir=0 {
-				set newLoc value: {xBound,yOldLoc} ;
-			} //movingDir =0
-			
-			if ( (movingDir > 0) and (movingDir < 90) ) {
-				set crossAngle value: atan(((yBound-yOldLoc)/(xBound-xOldLoc))) ;
-				if  movingDir < crossAngle {
-					set yTemp value: yOldLoc+((xBound-xOldLoc)*(tan(movingDir))) ;
-					set newLoc value: {xBound,yTemp} ;
-				}
-				
-				if movingDir = crossAngle {
-					set newLoc value: {xBound,yBound} ;
-				}
-				
-				if movingDir > crossAngle {
-					set xTemp value: xOldLoc+((yBound-yOldLoc)/(tan(movingDir))) ;
-					set newLoc value: {xTemp,yBound} ;
-				}
-			}
-			
-			if movingDir=90 {
-				set newLoc value: {xOldLoc,yBound} ;
-			}
-			
-			if ( (movingDir > 90) and (movingDir < 180) ) {
-				set tempMovingDir value: (movingDir-90) ;
-				set crossAngle value: atan(((xOldLoc)/(yBound-yOldLoc))) ;
-				if tempMovingDir < crossAngle {
-					set xTemp value: (xOldLoc-((yBound-yOldLoc)*(tan(tempMovingDir)))) ;
-					set newLoc value: {xTemp,yBound} ;
-				}
-				if tempMovingDir = crossAngle {
-					set newLoc value: {0,yBound} ;
-				}
-				if tempMovingDir > crossAngle {
-					set yTemp value: yOldLoc+((xOldLoc)/(tan(tempMovingDir))) ;
-					set newLoc value: {0,yTemp} ;
-				}
-			}
-			
-			if movingDir=180 {
-				set newLoc value: {0,yOldLoc} ;
-			}
-			
-			if ( (movingDir > 180) and (movingDir < 270) ) {
-				set tempMovingDir value: (movingDir-180) ;
-				set crossAngle value: atan(yOldLoc/xOldLoc) ;
-				if  tempMovingDir < crossAngle {
-					set yTemp value: (yOldLoc-(xOldLoc*(tan(tempMovingDir)))) ;
-					set newLoc value: {0,yTemp} ;
-				}
-				if  tempMovingDir = crossAngle {
-					set newLoc value: {0,0} ;
-				}
-				if  tempMovingDir > crossAngle {
-					set xTemp value: xOldLoc-((yOldLoc)/(tan(tempMovingDir))) ;
-					set newLoc value: {xTemp,0} ;
-				}
-			}
-			
-			if  movingDir=270 {
-				set newLoc value: {xOldLoc,0} ;
-			}
-			
-			if  ( (movingDir > 270) and (movingDir < 360) ) {
-				set tempMovingDir value: (movingDir-270) ;
-				set crossAngle value: atan((xBound-xOldLoc)/yOldLoc) ;
-				if  tempMovingDir < crossAngle {
-					set xTemp value: (xOldLoc+(yOldLoc*(tan(tempMovingDir)))) ;
-					set newLoc value: {xTemp,0} ;
-				}
-				if  tempMovingDir = crossAngle {
-					set newLoc value: {xBound,0} ;
-				}
-				if  tempMovingDir > crossAngle {
-					set yTemp value: yOldLoc-((xBound-xOldLoc)/(tan(tempMovingDir))) ;
-					set newLoc value: {xBound,yTemp} ;
-				}
-			}
-			
-			if  movingDir=360 {
-				set newLoc value: {xBound,yOldLoc} ;
-			}
-			
-			return value: newLoc ;
-		}
-
 	}
 	
 	species weather skills: visible {
-		var stationName type: string init: nil;
-		var dailyDate type: list of: string init: [] ;
-		var dailyAvgTemp type: list of: float init: [] ;
-		var dailyAvgHumid type: list of: float init: [] ;
-		var dailyMostWindDir type: list of: string init: [] ;
-		var dailyAvgWindSpeed type: list of: float init: [] ;
-		var daily6hTemp type: list of: float init: [] ;
-		var daily6hgHumid type: list of: float init: [] ;
-		var daily6hWindDir type: list of: string init: [] ;
-		var daily6hWindSpeed type: list of: float init: [] ;
-		var daily14hTemp type: list of: float init: [] ;
-		var daily14hgHumid type: list of: float init: [] ;
-		var daily14hWindDir type: list of: string init: [] ;
-		var daily14hWindSpeed type: list of: float init: [] ;
+		string stationName init: nil;
+		list dailyDate of: string init: [] ;
+		list dailyAvgTemp of: float init: [] ;
+		list dailyAvgHumid of: float init: [] ;
+		list dailyMostWindDir of: string init: [] ;
+		list dailyAvgWindSpeed of: float init: [] ;
+		list daily6hTemp of: float init: [] ;
+		list daily6hgHumid of: float init: [] ;
+		list daily6hWindDir of: string init: [] ;
+		list daily6hWindSpeed of: float init: [] ;
+		list daily14hTemp of: float init: [] ;
+		list daily14hgHumid of: float init: [] ;
+		list daily14hWindDir of: string init: [] ;
+		list daily14hWindSpeed of: float init: [] ;
 	}	
 	
 	species climate {
-		reflex shuffle_wind_direction when: ((time mod 10) = 0 ) {
-			set wind_direction value: one_of(possible_wind_directions);
-		}
+
 	}
 
 	species province {
@@ -337,13 +220,14 @@ entities {
 			arg a_bph_cloud type: bph_cloud;
 			
 			let target_district type: district value: one_of(list(district));
-			ask target_district {
+			ask target: target_district {
 				do bphs_land_on_d {
 					arg a_bph_cloud value: a_bph_cloud;
 				}
-			}			 
+			}									 
 		}
 
+		
 		species district {
 			int no_infection_lu_d <- 0 value: sum(list(commune) collect (each.no_infection_lu));
 			int light_infection_lu_d <- 0 value: sum(list(commune) collect (each.light_infection_lu));
@@ -366,7 +250,7 @@ entities {
 				arg a_bph_cloud type: bph_cloud;
 				
 				let target_commune type: commune value: one_of(list(commune));
-				ask target_commune {
+				ask target: target_commune {
 					do bphs_land_on_c {
 						arg a_bph_cloud value: a_bph_cloud;
 					}
@@ -396,7 +280,7 @@ entities {
 					
 					let target_lu type: landunit value: one_of(list(landunit));
 					if (target_lu != nil) {
-						ask target_lu {
+						ask target: target_lu {
 							do bphs_land_on_lu {
 								arg a_bph_cloud value: a_bph_cloud;
 							}
@@ -406,28 +290,31 @@ entities {
 				
 				species landunit {
 					int active_bph <- 0 value: my_bph_group.bph_in_group;
-					rgb color <- landuse_color value: (active_bph >= hopper_burn) ? hopper_burn_color : ( (active_bph >= heavy_infection) ? heavy_infection_color : ( (active_bph >= light_infection) ? light_infection_color : no_infection_color ) );
+					rgb color <- landuse_color;
 					bool is_hopper_burn function: { active_bph >= hopper_burn };
 					int infection_status <- 0 value: ( self my_infection_status [] );
-
-					int riceStage <- 0;
-					
+					int riceStage <- 0;					
 					bph_group my_bph_group;
 					
 					init {
-						create bph_group with: [my_landunit:: self] returns: bph_gs;
-						set my_bph_group value: (bph_gs at 0);
+							create bph_group returns: bph_gs {
+								if condition: ((rnd(10)) > 9.0) {
+									set bphEggsNum value: 100 ;
+									set bphNymphsNum value: 10000 ;
+									set bphAdultsNum value: 500 ;
+								}
+								else {
+									set bphEggsNum value: rnd(100) ;
+									set bphNymphsNum value: rnd(200) ;
+									set bphAdultsNum value: rnd(200) ;
+								}							
+											
+							}
+							set my_bph_group value: (bph_gs at 0);
+							set my_bph_group.my_landunit value: self;
+							set my_bph_group.location value: location;
 					}
 					
-					/*
-					 * Returns the infection status of the landunit
-					 * 0: no infection
-					 * 1: light infection
-					 * 2: medium infection
-					 * 3: heavy infection
-					 * 4: hopper burn
-					 */
-					 
 					action my_infection_status type: int {
 						switch active_bph {
 							match_one [no_infection] {
@@ -453,19 +340,19 @@ entities {
 						arg a_bph_cloud type: bph_cloud;
 						
 						set my_bph_group.bph_in_group value: (my_bph_group.bph_in_group) + (a_bph_cloud.bph_in_cloud);
-						ask a_bph_cloud { do die; }
+						ask target: a_bph_cloud { do die; }
 					}
 
-					reflex bphs_take_off when: (is_hopper_burn) {
-						if (rnd(10) > 5) {
-							create bph_cloud with: [ location :: self.location, bph_in_cloud :: my_bph_group.bph_in_group ];
-							set my_bph_group.bph_in_group value: 0;
-						}
-					}
+//					reflex bphs_take_off when: (is_hopper_burn) {
+//						if (rnd(10) > 5) {
+//							create bph_cloud with: [ location :: self.location, bph_in_cloud :: my_bph_group.bph_in_group ];
+//							set my_bph_group.bph_in_group value: 0;
+//						}
+//					}
 
 					aspect base {
-						//test color
 						draw shape: geometry color: color;
+
 					}
 				}
 				
@@ -486,66 +373,53 @@ entities {
 
 	species bph_group skills: moving {
 		landunit my_landunit;
-		int landing_time <- time;
 		int bph_in_group;
 		
-		var bphEggsNum type: float init: 0 ;
-		var bphNymphsNum type: float init: 0 ;
-		var bphAdultsNum type: float init: 0 ;
-		var bphFSNum type: float init: 0 ;
-		var bphMSNum type: float init: 0 ;
-		var bphFLNum type: float init: 0 ;
-		var bphMLNum type: float init: 0 ;
-		var color type: rgb ;
-
-		var bphMigrateList type: list of: movingBph init: [];
-
-		var isPropagating type: bool init: false ;
+		float bphEggsNum init: 0;
+		float bphNymphsNum init: 0;
+		float bphAdultsNum init: 0;
+		float bphFSNum init: 0 ;
+		float bphMSNum init: 0 ;
+		float bphFLNum init: 0 ;
+		float bphMLNum init: 0 ;
+		
+		bool isPropagating init: false ;
 
 		reflex {
-			let lu type: landunit value: my_landunit;
-			ask target: lu {
-				if (lu.riceStage < 120) {
-					set lu.riceStage value: lu.riceStage + 1; }
+
+			ask target: my_landunit {
+				if (riceStage < 120) {
+					set riceStage value: (riceStage + 1); }
 					else {
-						set lu.riceStage value: 0 ;
+						set riceStage value: 0 ;
 					}
 				}
 
-			set bphFSNum value: bphFSNum*(1-diedBphRate) ;
-			set bphMSNum value: bphMSNum*(1-diedBphRate) ;
-			set bphFLNum value: bphFLNum*(1-diedBphRate) ;
-			set bphMLNum value: bphMLNum*(1-diedBphRate) ;
-
-			if (linket as list) !=[] {
+			set bphFSNum value: bphFSNum*(1-diedBphRate);
+			set bphMSNum value: bphMSNum*(1-diedBphRate);
+			set bphFLNum value: bphFLNum*(1-diedBphRate);
+			set bphMLNum value: bphMLNum*(1-diedBphRate);
+			
+			if !empty(linket as list) {
 				loop ll over: (linket as list) {
-					set color value: 'red' ;
 					ask target: ll {
 						do action: die ;
 					}
 				}
-			} //if-linket
-			
-			if (agentCopy as list) !=[] {
-				loop lm over: (agentCopy as list) var: lm {
-					set color value: 'red' ;
-					ask target: lm {
-						do action: die ;
-					}
-				}
 			}
-			
-			if  isPropagating {
-				do action: propagate ;
+				
+			if  (isPropagating) {
+				do action: propagate;
 			}
 		}
 		
-		reflex when: (time mod 7)=0 {
-			let bphMNNum value: 0 ;
-			let bphFNNum value: 0 ;
+		reflex growth_invasion when: ((time mod 7)=0) {
 			set bphAdultsNum value: bphNymphsNum*0.4 ;
 			set bphNymphsNum value: bphEggsNum*0.3 ;
 			set bphEggsNum value: (bphFSNum*(100+rnd(50)))+(bphFLNum*50);
+
+			let bphMNNum value: 0 ;
+			let bphFNNum value: 0 ;
 			
 			if (my_landunit.riceStage) < 65 {
 				set bphFNNum value: bphAdultsNum*0.8 ;
@@ -561,85 +435,61 @@ entities {
 				}
 
 			set bphFLNum value: bphFNNum-bphFSNum ;
-			set bphMLNum value: bphMNNum-bphMSNum ;
-			
-			if bphMigrateList !=[] {
-				loop bp over: bphMigrateList var: bp {
-					set color value: 'red' ;
-					ask target: bp {
-						do action: die ;
-					}
-				}
-			}
-			
-			if ( ( ( (bphAdultsNum+bphNymphsNum) > 10000) or (((my_landunit.riceStage) > 85) and 
-						((my_landunit.riceStage) < 120))) and ((bphFLNum*bphMLNum) > 0) ) 
-				{set isPropagating value: true;}
+			set bphMLNum value: bphMNNum-bphMSNum ;		
+				
+			if  ( ((bphAdultsNum+bphNymphsNum) > 10000) or
+				((((my_landunit.riceStage) > 85) and ((my_landunit.riceStage) < 120)) and ((bphFLNum*bphMLNum) > 0)) ) 
+				{ set isPropagating value: true; }
 				else {
 					set isPropagating value: false ;
 				}
-				
+
 			do action: luColorByBphDensity;
 		}	
+
 		
 		action propagate {
 			let immigratedLus type: list of: landunit value: [] ;
-			let currentLandunit type: landunit value: my_landunit;
-
-			let idx type: int value: (directionList index_of (weatherTPHCM.dailyMostWindDir at time));						
-	
+			
+			let idx type: int value: (directionList index_of (weatherTPHCM.dailyMostWindDir at stepNo));
+			
 			if (idx != (-1)) {
-				let windDegree type: float value: (scaleDegreeList at idx);
-
-				do action: write {
-					arg message value: windDegree;
-				}
-				
-				let tempSpeed type: float value: (weatherTPHCM.dailyAvgWindSpeed at (time as int));
+				let windDegree type: float value: (degreeList at idx);
+			
+				let tempSpeed type: float value: (weatherTPHCM.dailyAvgWindSpeed at (stepNo));
 				let windSpeed type: float value: ((tempSpeed*1000)/3600);
 				
-				let tempMovingBph1 type: movingBph value: nil;
-				let tempMovingBph type: movingBph value: nil;
-		
+				let tempMovingBph1 type: movingBph value: nil;		
 
-				create species: movingBph {
-					set tempMovingBph1 value: self;
-				}
+				create species: movingBph returns: rets;
+				set tempMovingBph1 value: (rets at 0);
 				
-				set tempMovingBph1.location value: location;
-
-				set immigratedLus value: self findImmgratedlandunits[currlandunit:: currentLandunit, currBph:: self, currMovingBph:: tempMovingBph1,
-					windDir:: windDegree, windSpeed:: windSpeed];
-
+				set tempMovingBph1.location value: {location.x, location.y};
+			
+				set immigratedLus value: (self findImmgratedlandunits[currlandunit:: my_landunit, currBph:: self, currMovingBph:: tempMovingBph1, windDir:: windDegree, windSpeed:: windSpeed]);
+							
 				ask target: tempMovingBph1 {
-					do action: die ;
+					do action: die;
 				}
 				
 				let migrateBphFLNum value: (bphFLNum/7);
 				let migrateBphMLNum value: (bphMLNum/7);
-				set bphFLNum value: bphFLNum-migrateBphFLNum ;
-				set bphMLNum value: bphMLNum-migrateBphMLNum ;
 				
-				if (immigratedLus !=[]) {
-					let immigrateBphFLNum value: (migrateBphFLNum/length (immigratedLus)) ;
-					let immigrateBphMLNum value: (migrateBphMLNum/length (immigratedLus)) ;
+				set bphFLNum value: bphFLNum-migrateBphFLNum;
+				set bphMLNum value: bphMLNum-migrateBphMLNum;
+			
+				if !empty(immigratedLus) {
 
-					loop lu over: immigratedLus var: lu {
-						create species: movingBph with: [movingTime::time, originBph:: self,destinationBph:: lu.my_bph_group, 
-							movingBphFLNum:: immigrateBphFLNum, movingBphMLNum::immigrateBphMLNum]
-						{
-							set location value: originBph.location;
-							set tempMovingBph value: self;
-						}
+					let immigrateBphFLNum value: (migrateBphFLNum/length(immigratedLus));
+					let immigrateBphMLNum value: (migrateBphMLNum/length(immigratedLus));
 
-						set bphMigrateList value: bphMigrateList+[tempMovingBph] ;
-
+					loop lu over: list(immigratedLus) {
 						ask target: lu {
 							let immigratedRate value: 0.0;
-							if  lu.riceStage < 65 {
+							if  riceStage < 65 {
 								set immigratedRate value: 1.0; }
 								else {
-									if  lu.riceStage < 120 {
+									if  riceStage < 120 {
 										set immigratedRate value: 0.5 ;
 									}
 								}
@@ -647,10 +497,7 @@ entities {
 							ask target: my_bph_group {
 								let cBphFLNum value: bphFLNum ;
 								let cBphMLNum value: bphMLNum ;
-								ask target: tempMovingBph {
-									set realMovingBphFLNum value: (immigrateBphFLNum*immigratedRate);
-									set realMovingBphMLNum value: (immigrateBphMLNum*immigratedRate);
-								}
+
 								set bphFLNum value: bphFLNum+(immigrateBphFLNum*immigratedRate);
 								set bphMLNum value: bphMLNum+(immigrateBphMLNum*immigratedRate);
 							}
@@ -662,12 +509,61 @@ entities {
 			}				
 		}
 		
+		action  findImmgratedlandunits type: list {
+			arg currlandunit type: landunit;
+			arg currBph type: bph_group;
+			arg currMovingBph type: movingBph;
+			arg windDir type: float;
+			arg windSpeed type: float;
+
+			let tempLink type: linket value: nil ;
+			let overlappingLandunits type: list of: landunit value: [];
+
+			ask target: currMovingBph {
+				do action: move {
+					arg speed value: windSpeed;
+					arg heading value: windDir;
+				}
+			}
+					
+		if !(currBph.location = currMovingBph.location) {			
+			
+			create species: linket {
+				set originFrom value: currBph.location;
+				set destinationTo value:currMovingBph.location;
+				set shape value: line([currBph.location,currMovingBph.location]);				
+				set tempLink value: self;				
+				}
+
+			set overlappingLandunits value: (setOfLandunit overlapping (tempLink));
+			set overlappingLandunits value: (overlappingLandunits- currlandunit);
+
+			let ddx type: float value: ( (currMovingBph.location).x - (currBph.location).x );
+			let ddy type: float value: ((currMovingBph.location).y - (currBph.location).y) ;
+
+			let geomCurrlandunit type: geometry value: (currlandunit.shape);
+						
+			let translatedGeom type: geometry value: (geomCurrlandunit translated_by {ddx,ddy});
+
+			let transPointList type: list of: point value: (translatedGeom).points;
+			let currLuCorList type: list of: point value: (currlandunit.shape).points;
+
+ 			let polygeo type: geometry value: polygon(transPointList+currLuCorList);
+			set overlappingLandunits value: ( (setOfLandunit as list) overlapping (polygeo));	
+			set overlappingLandunits value: remove_duplicates(overlappingLandunits);	 
+ 
+ 			set overlappingLandunits value: (overlappingLandunits-currlandunit);
+ 
+		}
+			return overlappingLandunits;
+	}
+		
 		action luColorByBphDensity {
 	
 			let bphDensity value: (bphAdultsNum+bphNymphsNum);
 			let temp_color value: clNormal;
 			if bphDensity < 750 {
-				let temp_color value: clNormal;}
+				set temp_color value: clNormal;}
 				else {
 					if bphDensity < 1500 {
 						set temp_color value: clLight ;}
@@ -678,7 +574,7 @@ entities {
 									if bphDensity < 10000 {
 										set temp_color value: clHeavy; }
 										else {
-											set temp_color value: clStrongHeavy ;
+											set temp_color value: clStrongHeavy;
 										}
 									}
 								}
@@ -686,115 +582,26 @@ entities {
 			let lunit type: landunit value: my_landunit;
 			
 			ask target: lunit {
-				set lunit.color value: temp_color ;
+				set lunit.color value: temp_color;
 			}
-		}
-		
-		action  findImmgratedlandunits type: list {
-			arg currlandunit type: landunit;
-			arg currBph type: bph_group;
-			arg currMovingBph type: movingBph;
-			arg windDir type: float;
-			arg windSpeed type: float;
-
-			let tempLink type: linket value: nil ;
-			let overlappingLandunits type: list of: landunit value: [] ;
-
-			ask target: currMovingBph {
-				do action: move {
-					arg heading value: windDir ;
-					arg speed value: windSpeed ;
-				}
-			}
-			
-			if (currBph.location = currMovingBph.location) {
-				ask target: one_of (shareKnowledge as list) {
-					let tempLoc type: point value: self findIntersectionDisAndBound[agentLocation:: currMovingBph.location,
-						movingDir::windDir, xBound:: xBoundDT, yBound:: yBoundDT];
-					set currMovingBph.location value: tempLoc ;
-				}
-			}
-
-			create linket with: [originFrom:: currBph.location, destinationTo:: currMovingBph.location] returns: tempLink {
-				set shape value: polyline([originFrom, destinationTo]);				
-			}
-			
-			set overlappingLandunits value: landunit overlapping (tempLink);
-			set overlappingLandunits value: (overlappingLandunits- currlandunit);
-			
-			let agentCopyMoving type: agentCopy value: nil ;
-			ask target: one_of (shareKnowledge as list) {
-				set agentCopyMoving value: self createAgentCopy[originAgent::currlandunit];
-			}
-			
-			let ddx type: float value: ( (currMovingBph.location).x - (currBph.location).x );
-			let ddy type: float value: ((currMovingBph.location).y - (currBph.location).y) ;
-			ask target: agentCopyMoving translated_by {ddx,ddy};
-			
-			let agentCopyMovingCoordinateList type: list of: point value: [] ;
-			let currLandunitCoordinateList type: list of: point value: [] ;
-			
-				
-			set currLandunitCoordinateList value: (currlandunit.shape).points ;
-			set agentCopyMovingCoordinateList value: (agentCopyMoving.shape).points ;
-				
-				
-			let ii type: int value: 0 ;
-			let fromCoord type: point value: nil;
-			let toCoord type: point value: nil;
-			let ovl type: list of: landunit value: nil;
-			
-			loop rcl over: currLandunitCoordinateList var: rcl {
-				set fromCoord value: (currLandunitCoordinateList at ii) ;
-				set toCoord value: (agentCopyMovingCoordinateList at ii) ;
-				create species: linket with: [originFrom::fromCoord, destinationTo::toCoord, 
-					shape :: polyline( [fromCoord, toCoord])] returns: tpl; 
-
-				set ovl value: landunit overlapping tpl;
-				if  (ovl != []) {
-					set ovl value: ovl-currlandunit;
-					loop ov over: ovl {
-						if (ov in overlappingLandunits) {
-							set overlappingLandunits value: overlappingLandunits + [ov] ;
-						}
-					}
-				}
-				set ii value: ii+1 ;
-			}
-			
-			do action: write {
-				arg message value: 'From: '+currlandunit.name+'  To:' ;
-			}
-			
-			loop rf over: overlappingLandunits {
-				do action: write {
-					arg message value: (rf).name+', ' ;
-				}
-			}
-			do action: write {
-				arg message value: 'ooooooooooooooooo' ;
-			}
-
-			return overlappingLandunits;
 		}
 }
 	
 	species linket skills: [situated, visible] {
-		rgb color init: rgb('blue') ;
-		var originFrom type: point init: nil;
-		var destinationTo type: point init: nil;
-		var shape type: geometry;
+		point originFrom init: nil;
+		point destinationTo init: nil;
+		geometry shape;
 	}
 			
 	species movingBph skills: moving {
-		var color type: rgb value: 'black' ;
-		var movingTime type: int init: 0 ;
-		var originBph type: bph_group init: nil;
-		var destinationBph type: bph_group init: nil;
-		var movingBphFLNum type: float init: 0.0 ;
-		var movingBphMLNum type: float init: 0.0 ;
-		var realMovingBphFLNum type: float init: 0.0 ;
-		var realMovingBphMLNum type: float init: 0.0 ;
+		rgb color value: 'black' ;
+		int movingTime init: 0 ;
+		bph_group originBph init: nil;
+		bph_group destinationBph init: nil;
+		float movingBphFLNum init: 0.0 ;
+		float movingBphMLNum init: 0.0 ;
+		float realMovingBphFLNum init: 0.0 ;
+		float realMovingBphMLNum init: 0.0 ;
 		
 		aspect base {
 			draw shape: geometry at: location color: 'black' size: 600 ;
@@ -829,7 +636,7 @@ entities {
 		reflex landing {
 			let potential_province type: province value: one_of (province overlapping self);
 			if (potential_province != nil) {
-				ask potential_province {
+				ask target: potential_province {
 					do bph_cloud_landing {
 						arg a_bph_cloud value: myself;
 					}
@@ -872,13 +679,11 @@ entities {
 			species CDecisionMaker {
 				commune managed_commune;
 				
-				init {
-					/*
-					do write {
-						arg message value: name + ' with managed_commune: ' + (string(managed_commune)) + ' and lanunits: ' + (string(managed_commune.members));
-					}
-					*/
-				}
+//				init {
+//					do write {
+//						arg message value: name + ' with managed_commune: ' + (string(managed_commune)) + ' and lanunits: ' + (string(managed_commune.members));
+//					}
+//				}
 			}
 		}
 	}
