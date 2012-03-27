@@ -55,12 +55,17 @@ public class GLView extends GamaViewPart {
 					final String WINDOW_TITLE = "Gama OpenGL 3D GIS";
 
 					// Create A 3D World environment.
-					NeheJOGL02Basics world = null;
-					world = new NeheJOGL02Basics();
+					World_3D world = null;
+					try {
+						world = new World_3D();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					frame.add(world);
 
 					// frame.setContentPane(world);
-					final NeheJOGL02Basics world2 = world;
+					final World_3D world2 = world;
 					
 					frame.addWindowListener(new WindowAdapter() {
 

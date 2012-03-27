@@ -500,8 +500,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s,
 			final boolean fill, final Integer angle) {
-		System.out.println("JOGLAWTDisplaySurface::drawShape");	
-		//DrawOpenGLHelloWorldShape(myGl);	
+			System.out.println("DisplayGraphics::drawShape");
+		DrawOpenGLHelloWorldShape(myGl);	
 		try {
 			Rectangle2D r = s.getBounds2D();
 			AffineTransform saved = g2.getTransform();
@@ -549,7 +549,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 	public void DrawOpenGLHelloWorldShape(GL gl)
 	{
-		System.out.println("Draw hello world shape");
 		float red= (float) (Math.random())*1;
 		float green= (float) (Math.random())*1;
 		float blue = (float) (Math.random())*1;
