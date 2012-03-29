@@ -26,18 +26,25 @@ import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import java.awt.*;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.jogl.gis_3D.MyGeometry;
+import msi.gama.jogl.utils.MyGraphics;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
@@ -70,6 +77,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// OpenGL memeber
 	private GL myGl;
+	private GLU myGlu;
+
+	// Each geomtry drawn is stored in a tab.
+	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
+	public float environmentCentroid_X;
+	public float environmentCentroid_Y;
+
+	// Handle openg gl primitive.
+	public MyGraphics graphicsGLUtils;
 
 	static {
 
@@ -118,6 +134,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		System.out.println("JOGLAWTDisplayGraphics(image) constructor");
 		setDisplayDimensions(image.getWidth(), image.getHeight());
 		setGraphics((Graphics2D) image.getGraphics());
+
 	}
 
 	/**
@@ -130,12 +147,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param GL
 	 *            gl
 	 */
-	public JOGLAWTDisplayGraphics(final BufferedImage image, GL gl) {
-		System.out
-				.println("JOGLDisplayGraphics constructor (final BufferedImage image, GL gl)");
+	public JOGLAWTDisplayGraphics(final BufferedImage image, GL gl, GLU glu) {
 		setDisplayDimensions(image.getWidth(), image.getHeight());
 		setGraphics((Graphics2D) image.getGraphics());
 		myGl = gl;
+		myGlu = glu;
+		graphicsGLUtils = new MyGraphics();
 	}
 
 	/**
@@ -335,18 +352,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 			final boolean smooth) {
-		System.out.println("JOGLDisplayGraphics::drawImage");
 		AffineTransform saved = g2.getTransform();
-		// RenderingHints hints = g2.getRenderingHints();
 		if (angle != null) {
 			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY
 					+ curHeight / 2);
 		}
-		// if ( !smooth ) {
-		// g2.setRenderingHints(SPEED_RENDERING);
-		// }
 		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
-		// g2.setRenderingHints(hints);
 		g2.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
@@ -366,7 +377,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawChart(final JFreeChart chart) {
 		rect.setRect(curX, curY, curWidth, curHeight);
-		// drawImage(chart.createBufferedImage(curWidth, curHeight), null);
 		Graphics2D g3 = (Graphics2D) g2.create();
 		chart.draw(g3, rect);
 		g3.dispose();
@@ -478,10 +488,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
-
+		System.out.println("DisplayGraphics::drawGeometry");
 		boolean f = geometry instanceof LineString
 				|| geometry instanceof MultiLineString ? false : fill;
 
+		drawGeometryGL(geometry, color);
 		return drawShape(color, sw.toShape(geometry), f, angle);
 	}
 
@@ -500,8 +511,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s,
 			final boolean fill, final Integer angle) {
-			System.out.println("DisplayGraphics::drawShape");
-		DrawOpenGLHelloWorldShape(myGl);	
 		try {
 			Rectangle2D r = s.getBounds2D();
 			AffineTransform saved = g2.getTransform();
@@ -531,11 +540,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		g2.fillRect(0, 0, displayWidth, displayHeight);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.gui.graphics.IGraphics#setClipping(java.awt.Rectangle)
-	 */
 	@Override
 	public void setClipping(final Rectangle imageClipBounds) {
 		clipping = imageClipBounds;
@@ -546,35 +550,122 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle getClipping() {
 		return clipping;
 	}
-	
-	public void DrawOpenGLHelloWorldShape(GL gl)
-	{
-		float red= (float) (Math.random())*1;
-		float green= (float) (Math.random())*1;
-		float blue = (float) (Math.random())*1;
-		
-		gl.glColor3f(red, green,blue);
+
+	/**
+	 * Draw a given JTS Geometry inside an openGl context
+	 * 
+	 * @param geometry
+	 *            The geometry to draw
+	 * @param color
+	 *            color of the géometry.
+	 */
+	public void drawGeometryGL(final Geometry geometry, final Color color) {
+		System.out.println("drawGeometryGL: " + geometry.getGeometryType()
+				+ " geometry.getNumGeometries()" + geometry.getNumGeometries());
+
+		// A geometry can contain several geometry
+		for (int i = 0; i < geometry.getNumGeometries(); i++) {
+
+			if (geometry.getGeometryType() == "MultiPolygon") {
+				MultiPolygon polygons = (MultiPolygon) geometry;
+				AddPolygonInGeometries(polygons, color);
+			}
+
+			if (geometry.getGeometryType() == "Polygon") {
+				Polygon polygon = (Polygon) geometry;
+				// FIXME: need to check if this polygon represent the
+				// enviroment.
+				environmentCentroid_X = (float) polygon.getCentroid()
+						.getCoordinate().x;
+				environmentCentroid_Y = (float) polygon.getCentroid()
+						.getCoordinate().y;
+				System.out
+						.println("(float) polygon.getCentroid().getCoordinate().x"
+								+ (float) polygon.getCentroid().getCoordinate().x
+								+ "(float) polygon.getCentroid().getCoordinate().y"
+								+ (float) polygon.getCentroid().getCoordinate().y);
+
+			}
+
+		}
+	}
+
+	private void AddPolygonInGeometries(MultiPolygon polygons, Color color) {
+
+		int N = polygons.getNumGeometries();
+		float scale_rate = 0.01f;
+		float translation = -150.0f;
+		float z = -10.0f;
+		System.out.println("environmentCentroid_X" + environmentCentroid_X
+				+ "environmentCentroid_Y" + environmentCentroid_Y);
+
+		// for each polygon of a multipolygon, get each point coordinates.
+		for (int i = 0; i < N; i++) {
+
+			Polygon p = (Polygon) polygons.getGeometryN(i);
+			int numExtPoints = p.getExteriorRing().getNumPoints();
+			MyGeometry curGeometry = new MyGeometry(numExtPoints);
+
+			// Get exterior ring (Be sure not to exceed the
+			// number of point of the exterior ring)
+
+			for (int j = 0; j < numExtPoints; j++) {
+				curGeometry.vertices[j].x = (float) ((p.getExteriorRing()
+						.getPointN(j).getX()) * scale_rate);
+				// WARNING: Opengl Y axes is inversed!!!
+				curGeometry.vertices[j].y = -(float) ((p.getExteriorRing()
+						.getPointN(j).getY()) * scale_rate);
+				curGeometry.vertices[j].z = z;
+				curGeometry.vertices[j].u = 6.0f + (float) j;
+				curGeometry.vertices[j].v = 0.0f + (float) j;
+			}
+			curGeometry.color = color;
+
+			this.myGeometries.add(curGeometry);
+		}
+	}
+
+	public void DrawMyGeometries() {
+
+		Iterator it = this.myGeometries.iterator();
+
+		while (it.hasNext()) {
+			MyGeometry curGeometry = (MyGeometry) it.next();
+			myGl.glColor3f(curGeometry.color.getRed(),
+					curGeometry.color.getGreen(), curGeometry.color.getBlue());
+			graphicsGLUtils.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
+		}
+	}
+
+	public void DrawOpenGLHelloWorldShape() {
+
+		float red = (float) (Math.random()) * 1;
+		float green = (float) (Math.random()) * 1;
+		float blue = (float) (Math.random()) * 1;
+
+		myGl.glColor3f(red, green, blue);
 		// ----- Render a triangle -----
-		gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the
+		myGl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the
 												// screen
 
-		gl.glBegin(GL_TRIANGLES); // draw using triangles
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 0.0f);
-		gl.glEnd();
+		myGl.glBegin(GL_TRIANGLES); // draw using triangles
+		myGl.glVertex3f(0.0f, 1.0f, 0.0f);
+		myGl.glVertex3f(-1.0f, -1.0f, 0.0f);
+		myGl.glVertex3f(1.0f, -1.0f, 0.0f);
+		myGl.glEnd();
 
 		// ----- Render a quad -----
 
 		// translate right, relative to the previous translation
-		gl.glTranslatef(3.0f, 0.0f, 0.0f);
+		myGl.glTranslatef(3.0f, 0.0f, 0.0f);
 
-		gl.glBegin(GL_POLYGON); // draw using quads
-		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glEnd();
+		myGl.glBegin(GL_POLYGON); // draw using quads
+		myGl.glVertex3f(-1.0f, 1.0f, 0.0f);
+		myGl.glVertex3f(1.0f, 1.0f, 0.0f);
+		myGl.glVertex3f(0.0f, 0.0f, 0.0f);
+		myGl.glVertex3f(-1.0f, -1.0f, 0.0f);
+		myGl.glEnd();
+
 	}
 
 }
