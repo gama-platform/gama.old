@@ -1,4 +1,5 @@
 /**
+ * 
  *  testSIG
  *  Author: arnaudgrignard
  *  Description: 
@@ -6,7 +7,7 @@
 
 model testSIG
 global {
-	file shape_file_in <- file('../includes/Bounds.shp') ;
+	file shape_file_in <- file('../includes/city/building.shp') ;
 	graph the_graph;
 	
 	init {    
@@ -23,7 +24,10 @@ environment bounds: shape_file_in ;
 entities {
 	species object  {
 		aspect default {
-			draw shape: geometry color: 'gray' ;
+			draw shape: geometry color: 'red' ;
+		}
+		reflex when:flip(0.1) {
+			do die;
 		}
 	}
 	species object_simple  {
@@ -38,7 +42,5 @@ output {
 		species object aspect: default ;
 		species object_simple aspect: default ;
 	}
-	graphdisplaygl{
-		
-	}
+
 }
