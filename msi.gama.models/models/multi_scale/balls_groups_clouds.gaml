@@ -28,8 +28,12 @@ global {
 	var merge_frequency type: int init: 3;
 	var merge_possibility type: float init: 0.3;
 	
+	int cloud_creation_distance <- 30 const: true;
+	int min_cloud_member <- 3 const: true;
+	int cloud_speed <- 3 const: true;
+	
 	init {
-		create species: ball number: ball_number ;
+		create ball number: ball_number ;
 	}
 	
 	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
@@ -39,10 +43,10 @@ global {
 			let satisfying_ball_groups type: list of: list value: (free_balls simple_clustering_by_envelope_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			loop one_group over: satisfying_ball_groups {
-				create species: group number: 1 returns: new_groups;
+				create group number: 1 returns: new_groups;
 				
 				ask target: (new_groups at 0) as: group {
-					capture target: one_group as: ball_delegation;
+					capture target: one_group as: ball_in_group;
 				}
 			}
 		}
@@ -50,27 +54,21 @@ global {
 	
 	reflex create_clouds when: (create_cloud and ((time mod creation_frequency) = 0) ) {
 		let candidate_groups type: list value: list(group) where (length(each.members) > (0.05 * ball_number) );
-		
-		if (length(candidate_groups) > 2) {
-			
-			do write {
-				arg message value: 'create cloud with members: ' + (string(candidate_groups));
-			}
-			
-			create cloud returns: rets;
+		let satisfying_groups type: list of: list value: (candidate_groups simple_clustering_by_envelope_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
+		loop one_cloud over: satisfying_groups {
+			create cloud returns: rets;			
 			let newCloud type: cloud value: rets at 0;
 			ask newCloud as: cloud {
-				capture candidate_groups as: group_delegation returns: rets;
-				/*
-				 {
-					set color value: ( group_delegation(one_of(members))).color;
-					set shape value: polygon(members collect (((group_delegation(each)).shape).location));			
+				capture one_cloud as: group_delegation;
+			}
+
+			loop gd over: (newCloud.members) {
+				ask gd as: group_delegation {
+					migrate ball_in_group target: ball_in_cloud;
 				}
-				*/
 			}
 			
-			set newCloud.color value: (ball_delegation(one_of(newCloud.members))).color;
-			set newCloud.shape value: polygon(members collect ((ball_delegation(each)).location));
+			set newCloud.color value: ((group_delegation(one_of(newCloud.members))).color).darker;
 		}
 	}
 }
@@ -171,7 +169,7 @@ entities {
 	species group parent: base {
 		var color type: rgb init: rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
-		var shape type: geometry init: (polygon ( (list (ball_delegation)) )) buffer  10 ;
+		var shape type: geometry init: (polygon ( (list (ball_in_group)) )) buffer  10 ;
 		
 		var speed type: float value: group_base_speed ;
 		var perception_range type: float value: base_perception_range + (rnd(5)) ;
@@ -194,22 +192,22 @@ entities {
 		}
 		
 		action separate_components {
-			loop com over: (list (ball_delegation)) {
-				let nearby_balls type: list of: ball_delegation value:  ((ball_delegation overlapping (com.shape + ball_separation)) - com) where (each in members) ;
+			loop com over: (list (ball_in_group)) {
+				let nearby_balls type: list of: ball_in_group value:  ((ball_in_group overlapping (com.shape + ball_separation)) - com) where (each in members) ;
 				let repulsive_dx type: float value: 0 ;
 				let repulsive_dy type: float value: 0 ;
 				loop nb over: nearby_balls { 
-					let repulsive_distance type: float value: ball_separation - ( (ball_delegation (com)).location distance_to nb.location ) ;
-					let repulsive_direction type: int value: (nb.location) direction_to ((ball_delegation (com)).location) ;
+					let repulsive_distance type: float value: ball_separation - ( (ball_in_group (com)).location distance_to nb.location ) ;
+					let repulsive_direction type: int value: (nb.location) direction_to ((ball_in_group (com)).location) ;
 					set repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
 					set repulsive_dy value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 				}
 				
-				set (ball_delegation (com)).location value: (ball_delegation (com)).location + {repulsive_dx, repulsive_dy} ;
+				set (ball_in_group (com)).location value: (ball_in_group (com)).location + {repulsive_dx, repulsive_dy} ;
 			}
 		}
 		
-		species ball_delegation parent: ball topology: topology((world).shape)  {
+		species ball_in_group parent: ball topology: topology((world).shape)  {
 			
 			float my_age init: 1 value: my_age + 0.01;
 			 
@@ -225,13 +223,13 @@ entities {
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			let nearby_free_balls type: list value: (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if condition: !(empty (nearby_free_balls)) {
-				capture target: nearby_free_balls as: ball_delegation;
+				capture target: nearby_free_balls as: ball_in_group;
 			}
 		}
 		
 		action disaggregate {
-			let released_coms type: list of: ball_delegation value: (list (ball_delegation)) ;
-			release target: released_coms {
+			let released_coms type: list of: ball_in_group value: (list (ball_in_group)) ;
+			release  released_coms as: ball in: world {
 				set state value: 'chaos' ;
 			}
 			
@@ -244,14 +242,14 @@ entities {
 				
 				if target in nearby_groups {
 					if (rnd(10)) < (merge_possibility * 10) {
-						let target_coms var: target_coms type: list of: ball_delegation value: target.members ;
+						let target_coms var: target_coms type: list of: ball_in_group value: target.members ;
 						let released_balls type: list of: ball value: [];
 						ask target {
-							release target_coms returns: released_coms;
+							release target_coms as: ball in: world returns: released_coms;
 							set released_balls value: released_coms;
 							do die ;
 						}
-						capture target: released_balls as: ball_delegation; 
+						capture released_balls as: ball_in_group; 
 					}
 				else { ask target as group {do disaggregate ;} }
 				}
@@ -297,11 +295,11 @@ entities {
 					}
 				}
 			
-			loop com over: (list (ball_delegation)) {
-				set (ball_delegation (com)).location value: (ball_delegation (com)).location + {dx, dy} ;
+			loop com over: (list (ball_in_group)) {
+				set (ball_in_group (com)).location value: (ball_in_group (com)).location + {dx, dy} ;
 			}
 			
-			set shape value:  convex_hull((polygon ((list (ball_delegation)) collect (ball_delegation (each)).location)) + 2.0) ;
+			set shape value:  convex_hull((polygon ((list (ball_in_group)) collect (ball_in_group (each)).location)) + 2.0) ;
 		}
 		
 		reflex self_disaggregate {
@@ -316,10 +314,12 @@ entities {
 	}
 	
 	species cloud parent: base {
-//		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
+		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
 		rgb color;
 				
 		species group_delegation parent: group {
+			var shape type: geometry value: (polygon ( (list (ball_in_cloud)) collect (each.location) )) buffer  10 ;
+
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			}
 			
@@ -332,25 +332,38 @@ entities {
 			reflex self_disaggregate {
 			}
 			
-			species ball_delegation {
+			action move {
+				arg dx type: float;
+				arg dy type: float;
 				
+				loop bc over: members {
+					set (ball_in_cloud(bc)).location value: {((ball_in_cloud(bc)).location).x + dx, ((ball_in_cloud(bc)).location).y + dy};
+				}
 			}
 			
+//			species ball_in_cloud parent: ball_in_group topology: (world.shape) { // bug: control type not inherited
+			species ball_in_cloud parent: ball_in_group topology: (world.shape) control: fsm {
+				
+				aspect default {}				
+			}
 		}
 		
 		reflex wander_around {
-			let amplitude type: float value: rnd(360);
-			let dx type: float value: cos(amplitude);
-			let dy type: float value: sin(amplitude);
+			let amplitude type: float value: rnd(359);
+			let _dx type: float value: cos(amplitude) * cloud_speed;
+			let _dy type: float value: sin(amplitude) * cloud_speed;
 			
 			loop m over: members {
-//				set ((m).location) value: {(m.location).x + dx, (m.location).y + dy};
+				ask m as: group_delegation {
+					do move with: [ dx :: _dx, dy :: _dy ];
+				}				
 			}
 		}
 		
 		aspect default {
 			draw shape: geometry color: color;
-			draw text: name + ' with composing groups: ' + (string(members)) size: 10;
+//			draw shape: geometry color: rgb('blue');
+			draw text: name + ' with composing groups: ' + (string(members)) size: 15 at: {location.x - 20, location.y};
 		}
 	}
 	
@@ -368,18 +381,20 @@ experiment default_expr type: gui {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
 			species group aspect: default transparency: 0.5 {
-				species ball_delegation;
+				species ball_in_group;
 			}
 			species text_viewer aspect: default transparency: 0.5 ;
 			
-			species cloud {
-				species group_delegation {
-					species ball_delegation;
+			species cloud aspect: default {
+				species group_delegation transparency: 0.8 {
+					species ball_in_cloud;
+					species ball_in_group;
 				}
 			}
 		}
 		
 		monitor groups value: list (group);
 		monitor length_groups value: length (list (group));
+		monitor length_clouds value: length(list(cloud));
 	}
 }
