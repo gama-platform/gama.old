@@ -94,7 +94,6 @@ public class ModelFactory extends SymbolFactory {
 				if ( desc instanceof VariableDescription ) {
 					userRedefinedOrNewVars.add(desc.getName());
 				}
-
 			}
 		}
 		speciesDesc.addChildren(subDescs);

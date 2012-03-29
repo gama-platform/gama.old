@@ -51,9 +51,6 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	protected SpeciesDescription macroSpecies;
 	protected SpeciesDescription parentSpecies;
 
-	/** Indicate that this micro-species is copied from the parent species or not. */
-	protected boolean isCopy = false;
-
 	public ExecutionContextDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {

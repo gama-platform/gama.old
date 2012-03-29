@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -568,8 +568,9 @@ public abstract class AbstractAgent implements IAgent {
 	 * 
 	 * @return true if the following conditions are correct: 
 	 * 			1. newSpecies is one micro-species of this agent's species;
-	 *          2. newSpecies is a sub-species of this agent's species false otherwise;
-	 *          3. the "other" agent is not macro-agent of this agent.
+	 *          2. newSpecies is a sub-species of this agent's species or other species is a sub-species of this agent's species;
+	 *          3. the "other" agent is not macro-agent of this agent;
+	 *          4. the "other" agent is not a micro-agent of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
@@ -578,14 +579,18 @@ public abstract class AbstractAgent implements IAgent {
 			return false; 
 		}
 
+		/*
 		ISpecies otherSpecies = other.getSpecies();
-		if ( !otherSpecies.equals(newSpecies.getParentSpecies()) ) { 
+		List<ISpecies> otherParents = otherSpecies.getSelfWithParents();
+		List<ISpecies> myParents = this.getSpecies().getSelfWithParents();
+		if ( !otherParents.contains(this.getSpecies()) && !myParents.contains(otherSpecies) ) { 
 			return false; 
 		}
+		*/
 		
-		if (this.getMacroAgents().contains(other)) { 
-			return false; 
-		}
+		if (this.getMacroAgents().contains(other)) {  return false; }
+		
+		if (other.getHost().equals(this)) { return false; }
 
 		return true;
 	}

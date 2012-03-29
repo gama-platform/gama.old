@@ -19,6 +19,7 @@
 package msi.gaml.species;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -135,9 +136,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 	}
 
-	// TODO modify
-	// inherent micro-species
-	// micro-species of parent
 	@Override
 	public IList<ISpecies> getMicroSpecies() {
 		IList<ISpecies> retVal = new GamaList<ISpecies>();
@@ -149,9 +147,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return retVal;
 	}
 
-	// TODO modify
-	// inherent micro-species
-	// micro-species of parent
 	@Override
 	public IList<String> getMicroSpeciesNames() {
 		IList<String> retVal = new GamaList<String>();
@@ -163,9 +158,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return retVal;
 	}
 
-	// TODO modify
-	// inherent micro-species
-	// micro-species of parent
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
 	 * 
@@ -213,6 +205,25 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		}
 
 		return peerSpecies;
+	}
+
+	@Override
+	public boolean isPeer(ISpecies other) {
+		return (other != null) && (other.getMacroSpecies().equals(this.getMacroSpecies()));
+	}
+
+	@Override
+	public List<ISpecies> getSelfWithParents() {
+		List<ISpecies> retVal = new GamaList<ISpecies>();
+		retVal.add(this);
+		
+		ISpecies currentParent = this.getParentSpecies();
+		while (currentParent != null) {
+			retVal.add(currentParent);
+			currentParent = currentParent.getParentSpecies();
+		}
+		
+		return retVal;
 	}
 
 	@Override

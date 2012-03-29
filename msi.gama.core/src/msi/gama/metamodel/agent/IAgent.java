@@ -246,6 +246,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 */
 	public abstract IList<IAgent> captureMicroAgents(final ISpecies microSpecies,
 		final IList<IAgent> microAgents) throws GamaRuntimeException;
+	
+	public abstract IAgent captureMicroAgent(final ISpecies microSpecies, final IAgent microAgent) throws GamaRuntimeException;
 
 	/**
 	 * Releases some micro-agents of this agent.
@@ -256,6 +258,24 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 */
 	public abstract IList<IAgent> releaseMicroAgents(final IList<IAgent> microAgents)
 		throws GamaRuntimeException;
+
+	/**
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * 
+	 * @param microAgent
+	 * @param newMicroSpecies
+	 * @return
+	 */
+	public abstract IList<IAgent> migrateMicroAgents(final IList<IAgent> microAgents, final ISpecies newMicroSpecies);
+	
+	/**
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * 
+	 * @param microAgent
+	 * @param newMicroSpecies
+	 * @return
+	 */
+	public abstract IList<IAgent> migrateMicroAgents(final ISpecies oldMicroSpecies, final ISpecies newMicroSpecies);
 
 	/**
 	 * Tells this agent that the host has changed its shape.

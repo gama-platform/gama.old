@@ -230,6 +230,18 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	}
 
 	@Override
+	public IAgent captureMicroAgent(final ISpecies microSpecies, final IAgent microAgent) throws GamaRuntimeException {
+		if (this.canCapture(microAgent, microSpecies)) {
+			IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
+			SavedAgent savedMicro = new SavedAgent(microAgent);
+			microAgent.die();
+			return savedMicro.restoreTo(microSpeciesPopulation);
+		}
+		
+		return null;
+	}
+	
+	@Override
 	public IList<IAgent> releaseMicroAgents(final IList<IAgent> microAgents)
 		throws GamaRuntimeException {
 		IPopulation originalSpeciesPopulation;
@@ -244,6 +256,58 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		}
 
 		return releasedAgents;
+	}
+
+	/**
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * 
+	 * @param microAgent
+	 * @param newMicroSpecies
+	 * @return
+	 */
+	@Override
+	public IList<IAgent> migrateMicroAgents(final IList<IAgent> microAgents, final ISpecies newMicroSpecies) {
+		IList<IAgent> immigrantCandidates = new GamaList<IAgent>();
+		
+		for (IAgent m : microAgents) {
+			if (m.getSpecies().isPeer(newMicroSpecies)) {
+				immigrantCandidates.add(m);
+			}
+		}
+		
+		IList<IAgent> immigrants = new GamaList<IAgent>();
+		if (!immigrantCandidates.isEmpty()) {
+			IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
+			for ( IAgent micro : immigrantCandidates ) {
+				SavedAgent savedMicro = new SavedAgent(micro);
+				micro.die();
+				immigrants.add(savedMicro.restoreTo(microSpeciesPopulation));
+			}
+		}
+		
+		return immigrants;
+	}
+	
+	/**
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * 
+	 * @param microAgent
+	 * @param newMicroSpecies
+	 * @return
+	 */
+	@Override
+	public IList<IAgent> migrateMicroAgents(final ISpecies oldMicroSpecies, final ISpecies newMicroSpecies) {
+		IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
+		IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
+		IList<IAgent> immigrants = new GamaList<IAgent>();
+		
+		for (IAgent m : oldMicroPop.getAgentsList()) {
+			SavedAgent savedMicro = new SavedAgent(m);
+			m.die();
+			immigrants.add(savedMicro.restoreTo(newMicroPop));
+		}
+		
+		return immigrants;
 	}
 
 	/** Variables which are not saved during the capture and release process. */

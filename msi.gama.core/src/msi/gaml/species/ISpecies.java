@@ -111,6 +111,16 @@ public interface ISpecies extends IValue, ISymbol {
 	 * @return a peer species with the specified name or null.
 	 */
 	public abstract ISpecies getPeerSpecies(String peerName);
+	
+	/**
+	 * Verifies that if this species is the peer species of other species.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public abstract boolean isPeer(ISpecies other);
+	
+	public abstract List<ISpecies> getSelfWithParents();
 
 	/**
 	 * Returns the level of this species.
@@ -119,7 +129,7 @@ public interface ISpecies extends IValue, ISymbol {
 	 * 
 	 * @return
 	 */
-	public abstract int getLevel(); // TODO remove?
+	public abstract int getLevel();
 
 	// TODO THESE METHODS ARE INTENDED TO BE PORTED ON IPopulation instead
 	/**

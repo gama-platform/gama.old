@@ -27,7 +27,12 @@ import msi.gaml.factories.ModelFactory;
 
 public class SpeciesDescription extends ExecutionContextDescription {
 
-	/** Micro-species of a species. */
+	/** 
+	 * Micro-species of a species includes species explicitly declared inside it
+	 * and micro-species of its parent.
+	 * 
+	 * The following map contains micro-species explicitly declared inside this species.
+	 */
 	private Map<String, SpeciesDescription> microSpecies;
 	
 	private List<CommandDescription> inits;
@@ -70,7 +75,8 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		if ( desc.getKeyword().equals(IKeyword.INIT) ) {
 			addInit((CommandDescription) desc);
 		} else if ( ModelFactory.SPECIES_NODES.contains(desc.getKeyword()) ) {
-			addMicroSpecies((SpeciesDescription) desc);
+			this.getModelDescription().addType((SpeciesDescription) desc);
+			microSpecies.put(desc.getName(), (SpeciesDescription) desc);
 		}
 
 		return desc;
@@ -88,31 +94,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	private void addInit(final CommandDescription init) {
 		inits.add(0, init); // Added at the beginning
-	}
-
-	/**
-	 * Adds a micro-species.
-	 * 
-	 * A micro-species may be declared in this species or may be inherited from the parent species.
-	 * If the micro-species is declared in this species, then we need to add it to the type manager.
-	 * Otherwise, if the micro-species is inherited from the parent species, then it has already
-	 * added
-	 * to the type manager by the species in which it is declared. Thus we don't need to re-add it
-	 * to the type manager.
-	 * 
-	 * @param microSpec
-	 * @throws GamlException
-	 */
-	private void addMicroSpecies(final SpeciesDescription microSpec) {
-
-		// this micro-species is inherited from the parent species, so we don't need to re-add it to
-		// the type manager.
-		// FIXME remove this condition because SpeciesDescription is not copied anymore 
-		if ( !microSpec.isCopy ) {
-			getModelDescription().addType(microSpec);
-		}
-		
-		microSpecies.put(microSpec.getName(), microSpec);
 	}
 
 	/**
@@ -428,15 +409,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return isSuper;
 	}
 
-	/**
-	 * Indicates that this species is copied from the parent species or not.
-	 * 
-	 * @return
-	 */
-	public boolean isCopy() {
-		return isCopy;
-	}
-
 	public void setIsSuperSpecies() {
 		isSuper = true;
 	}
@@ -458,7 +430,16 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @return
 	 */
 	public List<SpeciesDescription> getMicroSpecies() {
-		return new GamaList<SpeciesDescription>(microSpecies.values());
+//		return new GamaList<SpeciesDescription>(microSpecies.values());
+		
+		GamaList<SpeciesDescription> retVal = new GamaList<SpeciesDescription>(microSpecies.values());
+		if (parentSpecies != null) { 
+			retVal.addAll(parentSpecies.getMicroSpecies());
+		}
+		
+		return retVal;
+		
+		
 	}
 
 	public SpeciesDescription getMicroSpecies(final String name) {
@@ -544,9 +525,9 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * Returns a list of visible species from this species.
 	 * 
 	 * A species can see the following species:
-	 * 1. Its direct micro-species.
-	 * 2. Its peer species.
-	 * 3. Its direct&in-direct macro-species and their peers.
+	 * 	1. Its direct micro-species.
+	 * 	2. Its peer species.
+	 * 	3. Its direct&in-direct macro-species and their peers.
 	 * 
 	 * @return
 	 */

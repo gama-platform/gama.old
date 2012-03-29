@@ -124,5 +124,4 @@ public class GamlSpecies extends AbstractSpecies {
 	public IExpression getSchedule() {
 		return this.getFacet(IKeyword.SCHEDULES);
 	}
-
 }

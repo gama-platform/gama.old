@@ -161,6 +161,7 @@ public interface IKeyword {
 	public static final String METHOD = "method";
 	public static final String MICRO = "micro";
 	public static final String MICRO_LAYER = "micro_layer";
+	public static final String MIGRATE = "migrate";
 	public static final String MIN = "min";
 	public static final String MINIMIZE = "minimize";
 	public final static String MINUS = "-";
