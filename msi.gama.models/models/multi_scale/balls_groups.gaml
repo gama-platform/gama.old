@@ -45,7 +45,7 @@ global {
 			loop one_group over: satisfying_ball_groups { 
 				create species: group number: 1 returns: new_groups;
 				
-				ask target: (new_groups at 0) as: group {
+				ask (new_groups at 0) as: group {
 					capture target: one_group as: ball_delegation;
 				}
 			}
@@ -207,13 +207,13 @@ entities {
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			let nearby_free_balls type: list value: (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if condition: !(empty (nearby_free_balls)) {
-				capture target: nearby_free_balls as: ball_delegation;
+				capture nearby_free_balls as: ball_delegation;
 			}
 		}
 		
 		action disaggregate {
 			let released_coms type: list of: ball_delegation value: (list (ball_delegation)) ;
-			release target: released_coms {
+			release released_coms  as: ball in: world {
 				set state value: 'chaos' ;
 			}
 			
@@ -225,17 +225,19 @@ entities {
 				let nearby_groups type: list of: group value: (group overlapping (shape + perception_range)) - self ;
 				
 				if target in nearby_groups {
-					if (rnd(10)) < (merge_possibility * 10) {
+					if ( (rnd(10)) < (merge_possibility * 10) ) {
 						let target_coms var: target_coms type: list of: ball_delegation value: target.members ;
 						let released_balls type: list of: ball value: [];
 						ask target {
-							release target_coms returns: released_coms;
+							// Note: can use "capture" in this case instead
+							release target_coms as: ball in: world returns: released_coms;
+							
 							set released_balls value: released_coms;
 							do die ;
 						}
-						capture target: released_balls as: ball_delegation; 
+						capture released_balls as: ball_delegation; 
 					}
-				else { ask target as group {do disaggregate ;} }
+					else { ask target as group {do disaggregate ;} }
 				}
 			}
 		}

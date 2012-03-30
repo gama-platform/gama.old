@@ -1,7 +1,5 @@
 model preys_predators_shelters
 
-
-
 global { 
 	var prey_color type: rgb init: rgb ('green') const: true;
 	var prey_perception type: float init: 3;
@@ -116,8 +114,8 @@ entities {
 		
 		reflex release_member_preys {
 			let to_be_released type: list of: prey_in_shelter value: (list (prey_in_shelter)) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
-			
-			release to_be_released { 
+			 
+			release to_be_released as: prey { 
 				set state value: 'invisible';
 				set shape value:  at_location (circle (prey_size), self.location);   
 			}

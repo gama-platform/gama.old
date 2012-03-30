@@ -153,7 +153,7 @@ entities {
 		reflex disaggregate  {
 			let tobe_released_pedestrians type: list value: (list (members)) where (time >= (captured_pedestrian (each)).released_time);
 			if condition: !(empty (tobe_released_pedestrians)) {
-				release target: tobe_released_pedestrians {
+				release target: tobe_released_pedestrians as: pedestrian in: world {
 					set location value: {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
 				}
 			}
