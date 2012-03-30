@@ -158,13 +158,14 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if ( spec == null ) { return null; }
+		if (( spec == null ) || ( worldSpecies == null ) ) { return null; }
 
 		return findSpecies(worldSpecies, spec);
 	}
 
 	/**
 	 * Search for a species with the specified name.
+	 * 
 	 * The eligible species for the search may be the topSpecies itself or one of the micro-species
 	 * of the topSpecies.
 	 * 
@@ -174,13 +175,26 @@ public class ModelDescription extends SymbolDescription {
 	 */
 	private SpeciesDescription findSpecies(final SpeciesDescription topSpecies,
 		final String specToFind) {
+		
 		if ( topSpecies == null || specToFind == null ) { return null; }
 
 		if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }
 
-		SpeciesDescription retVal;
-
 		List<SpeciesDescription> microSpecs = topSpecies.getMicroSpecies();
+		
+		for ( SpeciesDescription micro : microSpecs ) {
+			if (micro.getName().equals(specToFind)) { return micro; }
+		}
+
+		/*
+		 * Avoid infinite recursion.
+		 * 
+		 * When a species is a sub-species of its direct macro-species,
+		 * it is a micro-species of itself thus this leads to infinite recursion.
+		 */
+		if (microSpecs.contains(topSpecies)) { microSpecs.remove(topSpecies); }
+		
+		SpeciesDescription retVal;
 		for ( SpeciesDescription micro : microSpecs ) {
 			retVal = findSpecies(micro, specToFind);
 			if ( retVal != null ) { return retVal; }

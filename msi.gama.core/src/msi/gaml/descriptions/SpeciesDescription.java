@@ -430,16 +430,12 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @return
 	 */
 	public List<SpeciesDescription> getMicroSpecies() {
-//		return new GamaList<SpeciesDescription>(microSpecies.values());
-		
 		GamaList<SpeciesDescription> retVal = new GamaList<SpeciesDescription>(microSpecies.values());
 		if (parentSpecies != null) { 
 			retVal.addAll(parentSpecies.getMicroSpecies());
 		}
 		
 		return retVal;
-		
-		
 	}
 
 	public SpeciesDescription getMicroSpecies(final String name) {
@@ -562,7 +558,14 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 		return null;
 	}
-
+	
+	/*
+	@Override
+	public IDescription getSpeciesDescription(final String actualSpecies) {
+		
+	}
+*/
+	
 	/**
 	 * Returns a list of SpeciesDescription that can be the parent of this species.
 	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the same direct macro-species).
