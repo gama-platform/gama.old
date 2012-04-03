@@ -22,7 +22,7 @@ global {
 	var group_creation_distance type: int init: ball_separation + 1;
 	var min_group_member type: int init: 3;
 	var group_base_speed type: int init: (ball_speed * 1.5);
-	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1;  
+	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1 depends_on: environment_bounds;  
 	var creation_frequency type: int init: 3;
 	var update_frequency type: int init: 3;
 	var merge_frequency type: int init: 3;
@@ -31,6 +31,7 @@ global {
 	int cloud_creation_distance <- 30 const: true;
 	int min_cloud_member <- 3 const: true;
 	int cloud_speed <- 3 const: true;
+	int cloud_perception_range <- base_perception_range const: true depends_on: base_perception_range;
 	
 	init {
 		create ball number: ball_number ;
@@ -279,21 +280,21 @@ entities {
 				let tmp_dx value: dx + topleft_point.x ;
 				set dx value: dx - tmp_dx ;
 			} else {
-					if condition: (dx + bottomright_point.x) > (environment_bounds.x) {
-						let tmp_dx value: (dx + bottomright_point.x) - environment_bounds.x ;
-						set dx value: dx - tmp_dx ;
-					}
+				if condition: (dx + bottomright_point.x) > (environment_bounds.x) {
+					let tmp_dx value: (dx + bottomright_point.x) - environment_bounds.x ;
+					set dx value: dx - tmp_dx ;
 				}
+			}
 			
 			if  (dy + topleft_point.y) < 0 {
 				let tmp_dy value: dy + topleft_point.y ;
 				set dy value: dy - tmp_dy ;
 			} else {
-					if condition: (dy + topleft_point.y) > (environment_bounds.y) {
-						let tmp_dy value: (dy + bottomright_point.y) - (environment_bounds.y) ;
-						set dy value: dy - tmp_dy ;
-					}
+				if condition: (dy + topleft_point.y) > (environment_bounds.y) {
+					let tmp_dy value: (dy + bottomright_point.y) - (environment_bounds.y) ;
+					set dy value: dy - tmp_dy ;
 				}
+			}
 			
 			loop com over: (list (ball_in_group)) {
 				set (ball_in_group (com)).location value: (ball_in_group (com)).location + {dx, dy} ;
@@ -316,8 +317,9 @@ entities {
 	species cloud parent: base {
 		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
 		rgb color;
+		int creation_time init: time const: true;
 				
-		species group_delegation parent: group {
+		species group_delegation parent: group topology: (world.shape) {
 			var shape type: geometry value: (polygon ( (list (ball_in_cloud)) collect (each.location) )) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
@@ -333,36 +335,91 @@ entities {
 			}
 			
 			action move {
-				arg dx type: float;
-				arg dy type: float;
+				arg with_heading type: float;
+				arg with_speed type: float;
 				
-				loop bc over: members {
-					set (ball_in_cloud(bc)).location value: {((ball_in_cloud(bc)).location).x + dx, ((ball_in_cloud(bc)).location).y + dy};
+				loop m over: members {
+					ask m as: ball_in_cloud {
+						do move with: [ with_heading :: with_heading, with_speed :: with_speed ];
+					}
 				}
 			}
-			
-//			species ball_in_cloud parent: ball_in_group topology: (world.shape) { // bug: control type not inherited
+			 
 			species ball_in_cloud parent: ball_in_group topology: (world.shape) control: fsm {
+				
+				action move {
+					arg with_heading type: float;
+					arg with_speed type: float;
+
+					let dx type: float value: cos(with_heading) * with_speed;
+					let dy type: float value: sin(with_heading) * with_speed;
+					set location value: { ( (location.x) + dx ), ( (location.y) + dy )};
+				}
 				
 				aspect default {}				
 			}
 		}
 		
-		reflex wander_around {
-			let amplitude type: float value: rnd(359);
-			let _dx type: float value: cos(amplitude) * cloud_speed;
-			let _dy type: float value: sin(amplitude) * cloud_speed;
+		group target_group;
+
+		reflex chase_group {
+			if ( (target_group = nil) or (dead(target_group)) ) {
+				set target_group value: one_of(group);
+			}
 			
-			loop m over: members {
-				ask m as: group_delegation {
-					do move with: [ dx :: _dx, dy :: _dy ];
-				}				
+			if (target_group != nil) {
+				let direction_target type: float value: self towards(target_group);
+				
+				loop m over: members {
+					ask m as: group_delegation {
+						do move with: [ with_heading :: direction_target, with_speed :: cloud_speed ];
+					}				
+				}
 			}
 		}
 		
+		action can_capture type: bool {
+			arg a_group type: group;
+			
+			if (shape overlaps a_group.shape) { return true; }
+			
+			loop gd over: members {
+				if ( (a_group.shape) overlaps ( ( group_delegation(gd)).shape ) ) { return true; }
+			}
+			
+			return false;
+		}
+		
+		reflex capture_group {
+			if ( (target_group != nil) and !(dead(target_group)) ) {
+				if (self can_capture [ a_group :: target_group]) {
+
+					capture target_group as: group_delegation returns: gds;
+	
+					ask (gds at 0) as: group_delegation {
+						migrate ball_in_group target: ball_in_cloud;
+					}
+					
+				}
+			}
+		}
+		
+		reflex disaggregate when: (empty(list(group))) {
+			loop m over: members {
+				ask (m) as: group_delegation {
+					migrate ball_in_cloud target: ball_in_group;
+				}
+			}
+			
+			release members as: group in: world returns: r_groups;
+			
+			loop rg over: r_groups {
+				ask rg as: group { do disaggregate; }
+			}
+		}
+	 	 
 		aspect default {
 			draw shape: geometry color: color;
-//			draw shape: geometry color: rgb('blue');
 			draw text: name + ' with composing groups: ' + (string(members)) size: 15 at: {location.x - 20, location.y};
 		}
 	}
