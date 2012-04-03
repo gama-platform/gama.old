@@ -32,7 +32,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.jogl.gis_3D.MyGeometry;
+import msi.gama.jogl.utils.MyGeometry;
 import msi.gama.jogl.utils.MyGraphics;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;

@@ -18,8 +18,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import msi.gama.jogl.gis_3D.MyGeometry;
-import msi.gama.jogl.gis_3D.Vertex;
 
 import javax.vecmath.Vector3f;
 
@@ -76,6 +74,39 @@ public class MyGraphics {
 		glu.gluTessEndPolygon(tobj);
 
 	}
+	
+	public void DrawNormalizeCircle(GL gl, GLU glu, float x, float y, float z,
+			int numPoints, float radius,float scale) {
+
+		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
+
+		GLUtessellator tobj = glu.gluNewTess();
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+
+		glu.gluTessBeginPolygon(tobj, null);
+		glu.gluTessBeginContour(tobj);
+
+		float angle;
+		double tempPolygon[][] = new double[100][3];
+		for (int k = 0; k < numPoints; k++) {
+			angle = (float) (k * 2 * Math.PI / numPoints);
+
+			tempPolygon[k][0] = (float) (x + (Math.cos(angle)) * radius)*scale;
+			tempPolygon[k][1] = (float) (y + (Math.sin(angle)) * radius)*scale;
+			tempPolygon[k][2] = z;
+		}
+
+		for (int k = 0; k < numPoints; k++) {
+			glu.gluTessVertex(tobj, tempPolygon[k], 0, tempPolygon[k]);
+		}
+
+		glu.gluTessEndContour(tobj);
+		glu.gluTessEndPolygon(tobj);
+
+	}
 
 	public void DrawGeometry(GL gl, GLU glu, MyGeometry geometry, float z_offset) {
 
@@ -99,6 +130,41 @@ public class MyGraphics {
 			tempPolygon[j][0] = (float) (geometry.vertices[j].x);
 			tempPolygon[j][1] = (float) (geometry.vertices[j].y);
 			tempPolygon[j][2] = (float) (geometry.vertices[j].z + z_offset);
+		}
+
+		for (int j = 0; j < curPolyGonNumPoints; j++) {
+			glu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
+		}
+		// gl.glNormal3f(0.0f, 1.0f, 0.0f);
+
+		glu.gluTessEndContour(tobj);
+		glu.gluTessEndPolygon(tobj);
+
+	}
+	
+	
+	public void DrawNormalizeGeometry(GL gl, GLU glu, MyGeometry geometry, float z_offset,float scale) {
+
+		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
+
+		GLUtessellator tobj = glu.gluNewTess();
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+
+		glu.gluTessBeginPolygon(tobj, null);
+		glu.gluTessBeginContour(tobj);
+
+		int curPolyGonNumPoints = geometry.vertices.length;
+		double tempPolygon[][] = new double[curPolyGonNumPoints][3];
+
+		// Convert vertices as a list of double for
+		// gluTessVertex
+		for (int j = 0; j < curPolyGonNumPoints; j++) {
+			tempPolygon[j][0] = (float) (geometry.vertices[j].x*scale);
+			tempPolygon[j][1] = (float) (geometry.vertices[j].y*scale);
+			tempPolygon[j][2] = (float) ((geometry.vertices[j].z + z_offset)*scale);
 		}
 
 		for (int j = 0; j < curPolyGonNumPoints; j++) {

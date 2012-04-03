@@ -26,7 +26,7 @@ import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import java.awt.*;
-import java.awt.Point;
+//import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.*;
@@ -38,13 +38,14 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.jogl.gis_3D.MyGeometry;
+import msi.gama.jogl.utils.MyGeometry;
 import msi.gama.jogl.utils.MyGraphics;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
@@ -79,10 +80,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private GL myGl;
 	private GLU myGlu;
 
-	// Each geomtry drawn is stored in a tab.
+	// Each geometry drawn is stored in a tab.
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
-	public float environmentCentroid_X;
-	public float environmentCentroid_Y;
+	// Use to compute the bound enveloppe but it should be available for the
+	// environment.
+	public float environmentMaxBound_X = 0.0f;
+	public float environmentMaxBound_Y = 0.0f;
+	// Scale rate will be computed gien the bound dimension.
+	public float scale_rate = 0.0f;
+	// By default all the geometry are drawn in this z plan (-10.0f).
+	public float z = -10.0f;
+	// Rectangle representing the bound
+	public Rectangle clipBounds;
 
 	// Handle openg gl primitive.
 	public MyGraphics graphicsGLUtils;
@@ -138,18 +147,33 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	/**
-	 * Constructor for OpenGL DisplayGraphics.
+	 * Constructor for OpenGL DisplayGraphics. Based on the constructor used for Java2D
 	 * 
-	 * @param width
-	 *            int
-	 * @param height
-	 *            int
+	 * @param BufferedImage
+	 *            image
 	 * @param GL
 	 *            gl
+	 * @param GLU
+	 * 			  glu
 	 */
 	public JOGLAWTDisplayGraphics(final BufferedImage image, GL gl, GLU glu) {
 		setDisplayDimensions(image.getWidth(), image.getHeight());
 		setGraphics((Graphics2D) image.getGraphics());
+		myGl = gl;
+		myGlu = glu;
+		graphicsGLUtils = new MyGraphics();
+	}
+	
+	
+	/**
+	 * Constructor for OpenGL DisplayGraphics. Simplify for opengl display (We don't need the image as a parameter).
+
+	 * @param GL
+	 *            gl
+	 * @param GLU
+	 * 			  glu
+	 */
+	public JOGLAWTDisplayGraphics(GL gl, GLU glu) {
 		myGl = gl;
 		myGlu = glu;
 		graphicsGLUtils = new MyGraphics();
@@ -557,47 +581,55 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param geometry
 	 *            The geometry to draw
 	 * @param color
-	 *            color of the géometry.
+	 *            color of the geometry.
 	 */
 	public void drawGeometryGL(final Geometry geometry, final Color color) {
 		System.out.println("drawGeometryGL: " + geometry.getGeometryType()
 				+ " geometry.getNumGeometries()" + geometry.getNumGeometries());
+
+		// update bound property.
+		if (environmentMaxBound_X < geometry.getCentroid().getCoordinate().x) {
+			environmentMaxBound_X = (float) geometry.getCentroid()
+					.getCoordinate().x;
+		}
+		if (environmentMaxBound_Y < geometry.getCentroid().getCoordinate().y) {
+			environmentMaxBound_Y = (float) geometry.getCentroid()
+					.getCoordinate().y;
+		}
+
+		if (environmentMaxBound_X > environmentMaxBound_Y) {
+			scale_rate = 10 / environmentMaxBound_X;
+		} else {
+			scale_rate = 10 / environmentMaxBound_Y;
+		}
 
 		// A geometry can contain several geometry
 		for (int i = 0; i < geometry.getNumGeometries(); i++) {
 
 			if (geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry;
-				AddPolygonInGeometries(polygons, color);
+				AddMultiPolygonInGeometries(polygons, color);
 			}
 
 			if (geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry;
-				// FIXME: need to check if this polygon represent the
-				// enviroment.
-				environmentCentroid_X = (float) polygon.getCentroid()
-						.getCoordinate().x;
-				environmentCentroid_Y = (float) polygon.getCentroid()
-						.getCoordinate().y;
-				System.out
-						.println("(float) polygon.getCentroid().getCoordinate().x"
-								+ (float) polygon.getCentroid().getCoordinate().x
-								+ "(float) polygon.getCentroid().getCoordinate().y"
-								+ (float) polygon.getCentroid().getCoordinate().y);
+
+				// AddPolygonInGeometries(polygon, color);
+
+			}
+
+			if (geometry.getGeometryType() == "Point") {
+				Point point = (Point) geometry;
+				AddPointInGeometries(point, color);
 
 			}
 
 		}
 	}
 
-	private void AddPolygonInGeometries(MultiPolygon polygons, Color color) {
+	private void AddMultiPolygonInGeometries(MultiPolygon polygons, Color color) {
 
 		int N = polygons.getNumGeometries();
-		float scale_rate = 0.01f;
-		float translation = -150.0f;
-		float z = -10.0f;
-		System.out.println("environmentCentroid_X" + environmentCentroid_X
-				+ "environmentCentroid_Y" + environmentCentroid_Y);
 
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (int i = 0; i < N; i++) {
@@ -611,18 +643,53 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 			for (int j = 0; j < numExtPoints; j++) {
 				curGeometry.vertices[j].x = (float) ((p.getExteriorRing()
-						.getPointN(j).getX()) * scale_rate);
+						.getPointN(j).getX()));
 				// WARNING: Opengl Y axes is inversed!!!
 				curGeometry.vertices[j].y = -(float) ((p.getExteriorRing()
-						.getPointN(j).getY()) * scale_rate);
+						.getPointN(j).getY()));
 				curGeometry.vertices[j].z = z;
 				curGeometry.vertices[j].u = 6.0f + (float) j;
 				curGeometry.vertices[j].v = 0.0f + (float) j;
 			}
 			curGeometry.color = color;
+			curGeometry.type = "MultiPolygon";
 
 			this.myGeometries.add(curGeometry);
 		}
+	}
+
+	private void AddPolygonInGeometries(Polygon polygon, Color color) {
+
+		int numExtPoints = polygon.getExteriorRing().getNumPoints();
+		MyGeometry curGeometry = new MyGeometry(numExtPoints);
+		for (int j = 0; j < numExtPoints; j++) {
+			curGeometry.vertices[j].x = (float) ((polygon.getExteriorRing()
+					.getPointN(j).getX()));
+			// WARNING: Opengl Y axes is inversed!!!
+			curGeometry.vertices[j].y = -(float) ((polygon.getExteriorRing()
+					.getPointN(j).getY()));
+			curGeometry.vertices[j].z = z;
+			curGeometry.vertices[j].u = 6.0f + (float) j;
+			curGeometry.vertices[j].v = 0.0f + (float) j;
+		}
+		curGeometry.color = color;
+		curGeometry.type = "Polygon";
+		this.myGeometries.add(curGeometry);
+	}
+
+	private void AddPointInGeometries(Point point, Color color) {
+		MyGeometry curGeometry = new MyGeometry(1);
+		curGeometry.vertices[0].x = (float) point.getCoordinate().x;
+		// WARNING: Opengl Y axes is inversed!!!
+		curGeometry.vertices[0].y = -(float) point.getCoordinate().y;
+		curGeometry.vertices[0].z = z;
+		curGeometry.vertices[0].u = 6.0f;
+		curGeometry.vertices[0].v = 0.0f;
+		curGeometry.color = color;
+		curGeometry.type = "Point";
+
+		this.myGeometries.add(curGeometry);
+
 	}
 
 	public void DrawMyGeometries() {
@@ -633,8 +700,66 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			MyGeometry curGeometry = (MyGeometry) it.next();
 			myGl.glColor3f(curGeometry.color.getRed(),
 					curGeometry.color.getGreen(), curGeometry.color.getBlue());
-			graphicsGLUtils.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
+			if (curGeometry.type == "MultiPolygon"
+					|| curGeometry.type == "Polygon") {
+				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,
+						0.0f, scale_rate);
+			} else if (curGeometry.type == "Point") {
+				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
+						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
+						curGeometry.vertices[0].z, 10, 5, scale_rate);
+			}
+
 		}
+	}
+
+	public Rectangle DrawBounds() {
+
+		clipBounds = new Rectangle();
+		clipBounds.x = 0;
+		clipBounds.y = 0;
+		clipBounds.width = (int) environmentMaxBound_X;
+		clipBounds.height = (int) environmentMaxBound_Y;
+		//System.out.println("clipBounds.getCenterX()" + clipBounds.getCenterX()
+			//	+ "clipBounds.getCenterY()" + clipBounds.getCenterY());
+
+		float alpha = 0.9f;
+		myGl.glColor4f(1.0f, 1.0f, 1.0f, alpha);
+
+		MyGeometry backgroundGeometry = new MyGeometry(4);
+
+		backgroundGeometry.vertices[0].x = (float) (clipBounds.x);
+		// WARNING: Opengl Y axes is inversed!!!
+		backgroundGeometry.vertices[0].y = -(float) (clipBounds.y);
+		backgroundGeometry.vertices[0].z = z;
+		backgroundGeometry.vertices[0].u = 6.0f;
+		backgroundGeometry.vertices[0].v = 0.0f;
+
+		backgroundGeometry.vertices[1].x = (float) ((clipBounds.x + clipBounds.width));
+		// WARNING: Opengl Y axes is inversed!!!
+		backgroundGeometry.vertices[1].y = -(float) (clipBounds.y);
+		backgroundGeometry.vertices[1].z = z;
+		backgroundGeometry.vertices[1].u = 6.0f;
+		backgroundGeometry.vertices[1].v = 0.0f;
+
+		backgroundGeometry.vertices[2].x = (float) ((clipBounds.x + clipBounds.width));
+		// WARNING: Opengl Y axes is inversed!!!
+		backgroundGeometry.vertices[2].y = -(float) ((clipBounds.y + clipBounds.height));
+		backgroundGeometry.vertices[2].z = z;
+		backgroundGeometry.vertices[2].u = 6.0f;
+		backgroundGeometry.vertices[2].v = 0.0f;
+
+		backgroundGeometry.vertices[3].x = (float) (clipBounds.x);
+		// WARNING: Opengl Y axes is inversed!!!
+		backgroundGeometry.vertices[3].y = -(float) ((clipBounds.y + clipBounds.height));
+		backgroundGeometry.vertices[3].z = z;
+		backgroundGeometry.vertices[3].u = 6.0f;
+		backgroundGeometry.vertices[3].v = 0.0f;
+
+		graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, backgroundGeometry,
+				0.0f, scale_rate);
+		return clipBounds;
+
 	}
 
 	public void DrawOpenGLHelloWorldShape() {

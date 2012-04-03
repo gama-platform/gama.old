@@ -17,9 +17,6 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_Z;
 
-import msi.gama.jogl.gis_3D.Camera;
-import msi.gama.jogl.gis_3D.World_3D;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -39,15 +36,13 @@ public class MyListener implements KeyListener, MouseListener,
 	 */
 	private static final long serialVersionUID = 1L;
 	public Camera myCamera;
-	public World_3D myWorld;
+
 
 	//To handle mouse event
 	private int lastx, lasty;
 
-	public MyListener(World_3D world,Camera camera) {
+	public MyListener(Camera camera) {
 		myCamera = camera;
-		myWorld = world;
-
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -61,15 +56,15 @@ public class MyListener implements KeyListener, MouseListener,
 			myCamera.look(10);
 			break;
 		case VK_UP:
-			myWorld.cameraZPosition += 0.1;
-			myWorld.cameraLZPosition += 0.1;
+			//myCamera.cameraZPosition += 0.1;
+			//myCamera.cameraLZPosition += 0.1;
 
 			myCamera.moveForward(0.1);
 			myCamera.look(10);
 			break;
 		case VK_DOWN:
-			myWorld.cameraZPosition -= 0.1;
-			myWorld.cameraLZPosition -= 0.1;
+			//myWorld.cameraZPosition -= 0.1;
+			//myWorld.cameraLZPosition -= 0.1;
 
 			myCamera.moveForward(-0.1);
 			myCamera.look(10);
@@ -91,44 +86,6 @@ public class MyListener implements KeyListener, MouseListener,
 		case KeyEvent.VK_END:
 			myCamera.yawRight(0.01);
 			myCamera.look(10);
-			break;
-
-		case VK_B: // toggle blending mode
-			myWorld.blendingEnabled = !myWorld.blendingEnabled;
-			break;
-		case VK_A:
-			try {
-				myWorld.AddNewLayer();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			break;
-		case VK_D:
-			try {
-				myWorld.DeleteLayer();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			break;
-		case VK_Z:
-			myWorld.z_Enabled = !myWorld.z_Enabled;
-			break;
-		case VK_S: // draw agent on/off
-			myWorld.drawAgent = !myWorld.drawAgent;
-			break;
-		case VK_F: // draw agent on/off
-			myWorld.isFilledOn = !myWorld.isFilledOn;
-			break;
-		case VK_V: // draw agent on/off
-			myWorld.drawPointValue = !myWorld.drawPointValue;
-			break;
-		case VK_M: // draw multi layer on/off
-			myWorld.drawMultiLayer = !myWorld.drawMultiLayer;
-			break;
-		case VK_P:
-			myWorld.drawAsPolygon = !myWorld.drawAsPolygon;
 			break;
 		case VK_I:
 			myCamera.InitParam();
@@ -206,26 +163,26 @@ public class MyListener implements KeyListener, MouseListener,
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		// System.out.println("x:"+arg0.getX()+ " y:" +arg0.getY());
+
+		//System.out.println("x:"+arg0.getX()+ " y:" +arg0.getY());
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		// TODO Auto-generated method stub
-		if (arg0.getWheelRotation() < 0) {// Move Up
-			myWorld.cameraZPosition += 0.1;
-			myWorld.cameraLZPosition += 0.1;
-
-			myCamera.moveForward(0.1);
-			// camera.look(10);
-		} else {// Move down
-			myWorld.cameraZPosition -= 0.1;
-			myWorld.cameraLZPosition -= 0.1;
-
-			myCamera.moveForward(-0.1);
-			// camera.look(10);
-		}
+	
+//		if (arg0.getWheelRotation() < 0) {// Move Up
+//			myWorld.cameraZPosition += 0.1;
+//			myWorld.cameraLZPosition += 0.1;
+//
+//			myCamera.moveForward(0.1);
+//			// camera.look(10);
+//		} else {// Move down
+//			myWorld.cameraZPosition -= 0.1;
+//			myWorld.cameraLZPosition -= 0.1;
+//
+//			myCamera.moveForward(-0.1);
+//
+//		}
 
 	}
 

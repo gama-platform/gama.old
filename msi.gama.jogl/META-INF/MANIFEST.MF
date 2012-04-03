@@ -27,7 +27,6 @@ Import-Package: com.vividsolutions.jts,
  org.jfree.chart
 Export-Package: 
  msi.gama.jogl,
- msi.gama.jogl.gis_3D,
  msi.gama.jogl.utils
 Bundle-ClassPath: lib/gluegen-rt.jar,
  lib/jogl.jar,

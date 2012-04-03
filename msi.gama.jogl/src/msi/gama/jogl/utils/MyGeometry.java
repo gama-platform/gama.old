@@ -1,12 +1,15 @@
-package msi.gama.jogl.gis_3D;
+package msi.gama.jogl.utils;
 
 import java.awt.Color;
+
 
 public class MyGeometry {
 	
 	public Vertex[] vertices;
 	
 	public Color color;
+	
+	public String type;
 
 	public MyGeometry(int numPoints) {
 		vertices = new Vertex[numPoints];

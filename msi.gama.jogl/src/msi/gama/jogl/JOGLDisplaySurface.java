@@ -52,7 +52,7 @@ import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.DisplayManager;
 import msi.gama.jogl.JOGLAWTDisplaySurface.AgentMenuItem;
 import msi.gama.jogl.JOGLAWTDisplaySurface.SelectedAgent;
-import msi.gama.jogl.gis_3D.Camera;
+import msi.gama.jogl.utils.Camera;
 import msi.gama.jogl.utils.GLUtil;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;

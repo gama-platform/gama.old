@@ -14,7 +14,7 @@ import msi.gama.common.util.GuiUtils;
 
 
 import msi.gama.gui.views.GamaViewPart;
-import msi.gama.jogl.gis_3D.World_3D;
+
 
 public class GLView extends GamaViewPart {
 
@@ -55,17 +55,12 @@ public class GLView extends GamaViewPart {
 					final String WINDOW_TITLE = "Gama OpenGL 3D GIS";
 
 					// Create A 3D World environment.
-					World_3D world = null;
-					try {
-						world = new World_3D();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					NeheJOGL02Basics world = null;
+					world = new NeheJOGL02Basics();
 					frame.add(world);
 
 					// frame.setContentPane(world);
-					final World_3D world2 = world;
+					final NeheJOGL02Basics world2 = world;
 					
 					frame.addWindowListener(new WindowAdapter() {
 

@@ -1,4 +1,4 @@
-package msi.gama.jogl.gis_3D;
+package msi.gama.jogl.utils;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -16,24 +16,24 @@ public class Camera {
 	private double yaw;
 
 	public Camera() {
-		xPos = 0;
-		yPos = 0;
-		zPos = 0;
+		setxPos(0);
+		setyPos(0);
+		setzPos(0);
 
 		xLPos = 0;
 		yLPos = 0;
-		zLPos = 10;
+		setzLPos(10);
 	}
 
 	public Camera(double xPos, double yPos, double zPos, double xLPos,
 			double yLPos, double zLPos) {
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.zPos = zPos;
+		this.setxPos(xPos);
+		this.setyPos(yPos);
+		this.setzPos(zPos);
 
 		this.xLPos = xLPos;
 		this.yLPos = yLPos;
-		this.zLPos = zLPos;
+		this.setzLPos(zLPos);
 	}
 
 	public void setPitch(double pitch) {
@@ -45,15 +45,15 @@ public class Camera {
 	}
 
 	public void updatePosition(double xPos, double yPos, double zPos) {
-		this.xPos = xPos;
-		this.yPos = yPos;
-		this.zPos = zPos;
+		this.setxPos(xPos);
+		this.setyPos(yPos);
+		this.setzPos(zPos);
 	}
 
 	public void lookPosition(double xLPos, double yLPos, double zLPos) {
 		this.xLPos = xLPos;
 		this.yLPos = yLPos;
-		this.zLPos = zLPos;
+		this.setzLPos(zLPos);
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
@@ -94,9 +94,9 @@ public class Camera {
 	// magnitude.
 
 	public void moveForward(double magnitude) {
-		double xCurrent = this.xPos;
-		double yCurrent = this.yPos;
-		double zCurrent = this.zPos;
+		double xCurrent = this.getxPos();
+		double yCurrent = this.getyPos();
+		double zCurrent = this.getzPos();
 
 		// Spherical coordinates maths
 		double xMovement = magnitude * Math.cos(pitch) * Math.cos(yaw);
@@ -139,9 +139,9 @@ public class Camera {
 
 		moveForward(10);
 
-		double xLook = xPos;
-		double yLook = yPos;
-		double zLook = zPos;
+		double xLook = getxPos();
+		double yLook = getyPos();
+		double zLook = getzPos();
 
 		moveForward(-10);
 
@@ -151,15 +151,15 @@ public class Camera {
 	/* -------Get commands--------- */
 
 	public double getXPos() {
-		return xPos;
+		return getxPos();
 	}
 
 	public double getYPos() {
-		return yPos;
+		return getyPos();
 	}
 
 	public double getZPos() {
-		return zPos;
+		return getzPos();
 	}
 
 	public double getXLPos() {
@@ -171,7 +171,7 @@ public class Camera {
 	}
 
 	public double getZLPos() {
-		return zLPos;
+		return getzLPos();
 	}
 
 	public double getPitch() {
@@ -182,6 +182,52 @@ public class Camera {
 		return yaw;
 	}
 	
+	public double getzPos() {
+		return zPos;
+	}
+
+	public void setzPos(double zPos) {
+		this.zPos = zPos;
+	}
+
+	public double getxPos() {
+		return xPos;
+	}
+
+	public void setxPos(double xPos) {
+		this.xPos = xPos;
+	}
+
+	public double getyPos() {
+		return yPos;
+	}
+
+	public void setyPos(double yPos) {
+		this.yPos = yPos;
+	}
+
+	public double getxLPos() {
+		return xLPos;
+	}
+
+	public void setxLPos(double xLPos) {
+		this.xLPos = xLPos;
+	}
+	public double getyLPos() {
+		return yLPos;
+	}
+
+	public void setyLPos(double yLPos) {
+		this.yLPos = yLPos;
+	}
+	public double getzLPos() {
+		return zLPos;
+	}
+
+	public void setzLPos(double zLPos) {
+		this.zLPos = zLPos;
+	}
+
 	public void UpdateCamera(GL gl,int width, int height){
 		
 		GLU glu = new GLU();
@@ -205,30 +251,32 @@ public class Camera {
 
 		this.yaw = -1.5;
 		this.pitch=0.0f;
-		this.xPos=-0.1f;
+		this.setxPos(-0.1f);
 		this.xLPos=0.6f;
-		this.yPos=0.0f;
+		this.setyPos(0.0f);
 		this.yLPos=0.0f;
-		this.zPos=1.0f;
-		this.zLPos=-10.0f;
+		//FIXME: need to set the Z value according to the bounds.
+		//this.setzPos(10.0f);
+		this.setzPos(20.0f);
+		this.setzLPos(-10.0f);
 	}
 
 	public void Init3DView() {
 
 		this.yaw = -1.5;
 		this.pitch=0.5f;
-		this.xPos=0.0f;
+		this.setxPos(0.0f);
 		this.xLPos=0.5f;
-		this.yPos=-5.0f;
+		this.setyPos(-5.0f);
 		this.yLPos=0.0f;
-		this.zPos=1.0f;
-		this.zLPos=-5.0f;
+		this.setzPos(1.0f);
+		this.setzLPos(-5.0f);
 	}
 
 	public void PrintParam() {
-		System.out.println("xPos:" + xPos + " yPos:" + yPos + " zPos:" + zPos);
+		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos() + " zPos:" + getzPos());
 		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:"
-				+ zLPos);
+				+ getzLPos());
 		System.out.println("yaw:" + yaw + " picth:" + pitch);
 	}
 

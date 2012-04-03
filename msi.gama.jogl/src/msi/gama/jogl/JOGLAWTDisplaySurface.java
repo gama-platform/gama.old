@@ -38,10 +38,9 @@ import static javax.media.opengl.GL.GL_POSITION;
 import static javax.media.opengl.GL.GL_PROJECTION;
 import static javax.media.opengl.GL.GL_SMOOTH;
 import static javax.media.opengl.GL.GL_TRIANGLES;
-import msi.gama.jogl.gis_3D.Camera;
-import msi.gama.jogl.gis_3D.NeheJOGL02Basics;
-import msi.gama.jogl.gis_3D.World_3D;
+import msi.gama.jogl.utils.Camera;
 import msi.gama.jogl.utils.GLUtil;
+import msi.gama.jogl.utils.MyListener;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -139,6 +138,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	FPSAnimator animator;
 	public boolean opengl = true;
 
+	// Listener (KeyListener, MouseListener, MouseMotionListener,
+	// MouseWheelListener)
+	public MyListener myListener;
+
 	private int width, height;
 	// Camera
 	private Camera camera;
@@ -161,6 +164,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
+		myListener = new MyListener(camera);
+		canvas.addKeyListener(myListener);
+		canvas.addMouseListener(myListener);
+		canvas.addMouseMotionListener(myListener);
+		canvas.addMouseWheelListener(myListener);
+		canvas.setFocusable(true); // To receive key event
+		canvas.requestFocus();
 		if (opengl) {
 
 			this.setLayout(new BorderLayout());
@@ -186,7 +196,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 				@Override
 				public void componentResized(final ComponentEvent e) {
 					if (buffImage == null) {
-						zoomFit();
+						// zoomFit();
+						if (resizeImage(getWidth(), getHeight())) {
+							centerImage();
+						}
 					} else {
 						if (isFullImageInPanel()) {
 							centerImage();
@@ -530,6 +543,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		if (opengl) {
 			// FIXME: Why this busy indicator enable to show the open display???
 			BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
+
 			// if (synchronous && !EventQueue.isDispatchThread()) {
 			// try {
 			// EventQueue.invokeAndWait(openGLDisplayBlock);
@@ -698,12 +712,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 				buffImage.flush();
 			}
 			buffImage = newImage;
-			if (openGLGraphics == null) {
-				openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
-			} else {
-				openGLGraphics.setDisplayDimensions(bWidth, bHeight);
-				openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
-			}
+
+			// For java2D the constructor was call here
+			// openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
+			openGLGraphics.setDisplayDimensions(bWidth, bHeight);
+			openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
+
 			openGLGraphics.setClipping(getImageClipBounds());
 			redrawNavigator();
 			canBeUpdated(true);
@@ -723,11 +737,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public void zoomIn() {
 
 		if (opengl) {
-			this.cameraZPosition += 0.1;
-			this.cameraLZPosition += 0.1;
+			// For 3D camera
+			// this.cameraZPosition += 0.1;
+			// this.cameraLZPosition += 0.1;
+			// camera.moveForward(0.1);
+			// camera.look(10);
 
-			camera.moveForward(0.1);
-			camera.look(10);
+			camera.setzPos(camera.getzPos() - 0.5);
+			camera.setzLPos(camera.getzLPos() - 0.5);
+
 		} else {
 			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
 					/ 2);
@@ -741,11 +759,14 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		if (opengl) {
 
-			this.cameraZPosition -= 0.1;
-			this.cameraLZPosition -= 0.1;
+			// For 3D camera
+			// this.cameraZPosition -= 0.1;
+			// this.cameraLZPosition -= 0.1;
+			// camera.moveForward(-0.1);
+			// camera.look(10);
 
-			camera.moveForward(-0.1);
-			camera.look(10);
+			camera.setzPos(camera.getzPos() + 0.5);
+			camera.setzLPos(camera.getzLPos() + 0.5);
 
 		} else {
 			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
@@ -782,12 +803,21 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void zoomFit() {
+
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		if (resizeImage(getWidth(), getHeight())) {
 			centerImage();
 			if (opengl) {// We don't need to call update display when calling
 							// zoomfit.
-
+				float scale_rate = ((JOGLAWTDisplayGraphics) openGLGraphics).scale_rate;
+				camera.setxPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
+						.getCenterX() * scale_rate);
+				camera.setxLPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
+						.getCenterX() * scale_rate);
+				camera.setyPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
+						.getCenterY() * scale_rate);
+				camera.setyLPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
+						.getCenterY() * scale_rate);
 			} else {
 				updateDisplay();
 			}
@@ -906,11 +936,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		return origin.y;
 	}
 
-
+	// GLEventListener method.
 	@Override
 	public void display(GLAutoDrawable drawable) {
 
-		//System.out.println("openGL display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 
@@ -951,13 +980,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		System.out.println("x:"+this.getOriginX()+"y:"+this.getOriginY());
+		// FIXME: DrawBounds also set the bound characteristic, should be
+		// changed.
+		Rectangle bounds = ((JOGLAWTDisplayGraphics) openGLGraphics)
+				.DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
-		
-		//this.DrawOpenGLHelloWorldShape();
-		
-		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawOpenGLHelloWorldShape();
-		
+		// camera.PrintParam();
+
 	}
 
 	@Override
@@ -975,6 +1004,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// GL Utilities
 		glu = new GLU();
 
+		// Initialize the IGraphics (FIXME: Should we initialize it here??)
+		openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu);
+
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
@@ -989,6 +1021,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
 		gl.glShadeModel(GL_SMOOTH);
+
+		gl.glEnable(GL_BLEND);
+		// gl.glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		if (height == 0) {
 			height = 1; // prevent divide by zero
 		}
@@ -1074,6 +1110,27 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
 		gl.glVertex3f(1.0f, 1.0f, 0.0f);
 		gl.glVertex3f(0.0f, 0.0f, 0.0f);
+		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+		gl.glEnd();
+	}
+
+	public void DrawImageClipBounds(Rectangle clipBounds) {
+		float red = (float) (Math.random()) * 1;
+		float green = (float) (Math.random()) * 1;
+		float blue = (float) (Math.random()) * 1;
+
+		gl.glColor3f(red, green, blue);
+		// ----- Render a triangle -----
+
+		// ----- Render a quad -----
+
+		// translate right, relative to the previous translation
+		gl.glTranslatef(3.0f, 0.0f, 0.0f);
+
+		gl.glBegin(GL_POLYGON); // draw using quads
+		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+		gl.glVertex3f(1.0f, 1.0f, 0.0f);
+		gl.glVertex3f(1.0f, -1.0f, 0.0f);
 		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
 		gl.glEnd();
 	}

@@ -1,4 +1,4 @@
-package msi.gama.jogl.gis_3D;
+package msi.gama.jogl.utils;
 
 //A vertex has xyz (location) and uv (for texture)
 public class Vertex {
