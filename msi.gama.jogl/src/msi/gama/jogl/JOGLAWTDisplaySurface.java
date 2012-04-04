@@ -171,11 +171,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		canvas.addMouseWheelListener(myListener);
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocus();
-		if (opengl) {
 
-			this.setLayout(new BorderLayout());
-			this.add(canvas, BorderLayout.CENTER);
-		}
+		this.setLayout(new BorderLayout());
+		this.add(canvas, BorderLayout.CENTER);
+
 		int REFRESH_FPS = 60;
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 
@@ -187,62 +186,30 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 
-		// OpenGL//
-		if (opengl) {
-			animator.start();
+		animator.start();
 
-			addComponentListener(new ComponentAdapter() {
+		addComponentListener(new ComponentAdapter() {
 
-				@Override
-				public void componentResized(final ComponentEvent e) {
-					if (buffImage == null) {
-						// zoomFit();
-						if (resizeImage(getWidth(), getHeight())) {
-							centerImage();
-						}
-					} else {
-						if (isFullImageInPanel()) {
-							centerImage();
-						} else if (isImageEdgeInPanel()) {
-							scaleOrigin();
-						} else {
-							openGLGraphics.setClipping(getImageClipBounds());
-						}
+			@Override
+			public void componentResized(final ComponentEvent e) {
+				if (buffImage == null) {
+					// zoomFit();
+					if (resizeImage(getWidth(), getHeight())) {
+						centerImage();
 					}
-					updateDisplay();
-					previousPanelSize = getSize();
-				}
-			});
-
-		}
-
-		else {
-			DisplayMouseListener d = new DisplayMouseListener();
-			addMouseListener(d);
-			addMouseMotionListener(d);
-			addMouseWheelListener(d);
-
-			addComponentListener(new ComponentAdapter() {
-
-				@Override
-				public void componentResized(final ComponentEvent e) {
-					if (buffImage == null) {
-						zoomFit();
+				} else {
+					if (isFullImageInPanel()) {
+						centerImage();
+					} else if (isImageEdgeInPanel()) {
+						scaleOrigin();
 					} else {
-						if (isFullImageInPanel()) {
-							centerImage();
-						} else if (isImageEdgeInPanel()) {
-							scaleOrigin();
-						} else {
-							openGLGraphics.setClipping(getImageClipBounds());
-						}
+						openGLGraphics.setClipping(getImageClipBounds());
 					}
-					updateDisplay();
-					previousPanelSize = getSize();
 				}
-			});
-			animationThread.start();
-		}
+				updateDisplay();
+				previousPanelSize = getSize();
+			}
+		});
 
 	}
 
@@ -317,62 +284,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		return c;
 	}
 
-	private class DisplayMouseListener extends MouseAdapter {
 
-		boolean dragging;
 
-		@Override
-		public void mouseDragged(final MouseEvent e) {
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				dragging = true;
-				canBeUpdated(false);
-				Point p = e.getPoint();
-				if (mousePosition == null) {
-					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-				}
-				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y
-						- mousePosition.y);
-				mousePosition = p;
-				repaint();
-			}
-		}
+//		FIXME: Move in MyListener
+//		public void mouseClicked(final MouseEvent evt) {
+//			if (evt.getClickCount() == 2) {
+//				zoomFit();
+//			} else if (evt.isControlDown() || evt.isMetaDown()
+//					|| evt.isPopupTrigger()) {
+//				selectAgents(evt.getX(), evt.getY());
+//			}
+//		}
 
-		@Override
-		public void mouseMoved(final MouseEvent e) {
-			// we need the mouse position so that after zooming
-			// that position of the image is maintained
-			mousePosition = e.getPoint();
-		}
 
-		@Override
-		public void mouseWheelMoved(final MouseWheelEvent e) {
-			boolean zoomIn = e.getWheelRotation() < 0;
-			mousePosition = e.getPoint();
-			setZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement,
-					mousePosition);
-			updateDisplay();
-		}
-
-		@Override
-		public void mouseClicked(final MouseEvent evt) {
-			if (evt.getClickCount() == 2) {
-				zoomFit();
-			} else if (evt.isControlDown() || evt.isMetaDown()
-					|| evt.isPopupTrigger()) {
-				selectAgents(evt.getX(), evt.getY());
-			}
-		}
-
-		@Override
-		public void mouseReleased(final MouseEvent e) {
-			if (dragging) {
-				updateDisplay();
-				dragging = false;
-			}
-			canBeUpdated(true);
-		}
-
-	}
 
 	static class AgentMenuItem extends MenuItem {
 
@@ -540,63 +464,29 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void updateDisplay() {
 
-		if (opengl) {
-			// FIXME: Why this busy indicator enable to show the open display???
-			BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
+		// FIXME: Why this busy indicator enable to show the open display???
+		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
 
-			// if (synchronous && !EventQueue.isDispatchThread()) {
-			// try {
-			// EventQueue.invokeAndWait(openGLDisplayBlock);
-			// } catch (InterruptedException e) {
-			// e.printStackTrace();
-			// // TODO Problme si un modle est relancŽ. Blocage.
-			// } catch (InvocationTargetException e) {
-			// e.printStackTrace();
-			// }
-			// } else {
-			// EventQueue.invokeLater(openGLDisplayBlock);
-			// }
-			if (ex[0] != null) {
-				GAMA.reportError(ex[0]);
-				ex[0] = null;
+		if (synchronous && !EventQueue.isDispatchThread()) {
+			try {
+				EventQueue.invokeAndWait(openGLDisplayBlock);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				// TODO Problme si un modle est relancŽ. Blocage.
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 			}
 		} else {
-			if (synchronous && !EventQueue.isDispatchThread()) {
-				try {
-					EventQueue.invokeAndWait(displayBlock);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					// TODO Problme si un modle est relancŽ. Blocage.
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-			} else {
-				EventQueue.invokeLater(displayBlock);
-			}
-			if (ex[0] != null) {
-				GAMA.reportError(ex[0]);
-				ex[0] = null;
-			}
-
+			EventQueue.invokeLater(openGLDisplayBlock);
 		}
+		if (ex[0] != null) {
+			GAMA.reportError(ex[0]);
+			ex[0] = null;
+		}
+
 	}
 
 	private final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
-	private final Runnable displayBlock = new Runnable() {
-
-		@Override
-		public void run() {
-			if (!canBeUpdated()) {
-				return;
-			}
-			canBeUpdated(false);
-			drawDisplaysWithoutRepainting();
-			paintingNeeded.release();
-			canBeUpdated(true);
-			Toolkit.getDefaultToolkit().sync();
-		}
-
-	};
 
 	private final Runnable openGLDisplayBlock = new Runnable() {
 		@Override
@@ -612,22 +502,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		}
 	};
 
-	public void drawDisplaysWithoutRepainting() {
-		if (openGLGraphics == null) {
-			return;
-		}
-		ex[0] = null;
-		openGLGraphics.fill(bgColor, 1);
-		manager.drawDisplaysOn(openGLGraphics);
-
-	}
-
 	public void drawDisplaysWithoutRepaintingGL() {
 		if (openGLGraphics == null) {
 			return;
 		}
 		ex[0] = null;
-		((JOGLAWTDisplayGraphics) openGLGraphics).DrawOpenGLHelloWorldShape();
+		// For java2D
+		// openGLGraphics.fill(bgColor, 1);
 		manager.drawDisplaysOn(openGLGraphics);
 
 	}
@@ -982,10 +863,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		// FIXME: DrawBounds also set the bound characteristic, should be
 		// changed.
-		Rectangle bounds = ((JOGLAWTDisplayGraphics) openGLGraphics)
-				.DrawBounds();
+		// ((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
-		// camera.PrintParam();
 
 	}
 
@@ -1082,57 +961,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
 				1.0, 0.0);
 
-	}
-
-	public void DrawOpenGLHelloWorldShape() {
-
-		float red = (float) (Math.random()) * 1;
-		float green = (float) (Math.random()) * 1;
-		float blue = (float) (Math.random()) * 1;
-
-		gl.glColor3f(red, green, blue);
-		// ----- Render a triangle -----
-		gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the
-												// screen
-
-		gl.glBegin(GL_TRIANGLES); // draw using triangles
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 0.0f);
-		gl.glEnd();
-
-		// ----- Render a quad -----
-
-		// translate right, relative to the previous translation
-		gl.glTranslatef(3.0f, 0.0f, 0.0f);
-
-		gl.glBegin(GL_POLYGON); // draw using quads
-		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(0.0f, 0.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glEnd();
-	}
-
-	public void DrawImageClipBounds(Rectangle clipBounds) {
-		float red = (float) (Math.random()) * 1;
-		float green = (float) (Math.random()) * 1;
-		float blue = (float) (Math.random()) * 1;
-
-		gl.glColor3f(red, green, blue);
-		// ----- Render a triangle -----
-
-		// ----- Render a quad -----
-
-		// translate right, relative to the previous translation
-		gl.glTranslatef(3.0f, 0.0f, 0.0f);
-
-		gl.glBegin(GL_POLYGON); // draw using quads
-		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(1.0f, 1.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glEnd();
 	}
 
 }

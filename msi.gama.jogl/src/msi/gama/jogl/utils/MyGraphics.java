@@ -1,7 +1,9 @@
 package msi.gama.jogl.utils;
 
 
+import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -37,6 +39,21 @@ public class MyGraphics {
 			gl.glVertex3f((float) ((geometry.vertices[j + 1].x)),
 					(float) ((geometry.vertices[j + 1].y)),
 					(float) ((geometry.vertices[j + 1].z)));
+		}
+		gl.glEnd();
+
+	}
+	
+	public void DrawNormalizeLine(GL gl, GLU glu, MyGeometry geometry,float scale_rate) {
+		// FIXME: Should test that vertices is initialized before to draw
+		gl.glBegin(GL.GL_LINES);
+		for (int j = 0; j < geometry.vertices.length - 1; j++) {
+			gl.glVertex3f((float) ((geometry.vertices[j].x)*scale_rate),
+					(float) ((geometry.vertices[j].y)*scale_rate),
+					(float) ((geometry.vertices[j].z)*scale_rate));
+			gl.glVertex3f((float) ((geometry.vertices[j + 1].x)*scale_rate),
+					(float) ((geometry.vertices[j + 1].y)*scale_rate),
+					(float) ((geometry.vertices[j + 1].z)*scale_rate));
 		}
 		gl.glEnd();
 
@@ -240,6 +257,40 @@ public class MyGraphics {
 			 			 
 			gl.glEnd();
 		}
+		
+		
+	}
+
+
+	public void DrawOpenGLHelloWorldShape(GL gl) {
+
+		float red = (float) (Math.random()) * 1;
+		float green = (float) (Math.random()) * 1;
+		float blue = (float) (Math.random()) * 1;
+
+		gl.glColor3f(red, green, blue);
+		// ----- Render a triangle -----
+		gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the
+												// screen
+
+		gl.glBegin(GL_TRIANGLES); // draw using triangles
+		gl.glVertex3f(0.0f, 1.0f, 0.0f);
+		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+		gl.glVertex3f(1.0f, -1.0f, 0.0f);
+		gl.glEnd();
+
+		// ----- Render a quad -----
+
+		// translate right, relative to the previous translation
+		gl.glTranslatef(3.0f, 0.0f, 0.0f);
+
+		gl.glBegin(GL_POLYGON); // draw using quads
+		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+		gl.glVertex3f(1.0f, 1.0f, 0.0f);
+		gl.glVertex3f(0.0f, 0.0f, 0.0f);
+		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+		gl.glEnd();
+
 	}
 
 }
