@@ -18,13 +18,28 @@
  */
 package msi.gaml.operators;
 
+import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
+import org.graphstream.stream.file.FileSourceDGS1And2;
+import org.graphstream.stream.file.FileSourceDOT;
+import org.graphstream.stream.file.FileSourceEdge;
+import org.graphstream.stream.file.FileSourceGEXF;
+import org.graphstream.stream.file.FileSourceGraphML;
+import org.graphstream.stream.file.FileSourceLGL;
+import org.graphstream.stream.file.FileSourceNCol;
+import org.graphstream.stream.file.FileSourcePajek;
+import org.graphstream.stream.file.FileSourceTLP;
+import org.graphstream.stream.file.dgs.OldFileSourceDGS;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.types.*;
@@ -307,6 +322,26 @@ public class Graphs {
 		g.removeVertex(node);
 		return g;
 	}
+	
+
+
+	/*
+	@operator(value = "rewire")
+	public static IGraph rewireGraph(final IGraph g, final Double probability) {
+		GraphAlgorithmsHandmade.rewireGraph(g, probability);
+		return g;
+	}
+	
+
+	*/
+	
+	/*
+	public static IGraph addRandomEdges(final IGraph g, final Double probability) {
+		GraphAlgorithmsHandmade.rewireGraph(g, probability);
+		return g;
+	}
+	*/
+	
 	
 	// TODO "complete" (pour cr�er un graphe complet)
 

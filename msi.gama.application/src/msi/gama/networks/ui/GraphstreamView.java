@@ -361,6 +361,9 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	
 	protected void updateFromExistingNetwork() {
 		
+		if (gamaGraph == null)
+			return;
+		
 		if (logger.isDebugEnabled()) logger.debug("updating from gama network");
 		
 		for (Object v: gamaGraph.getVertices()) {
