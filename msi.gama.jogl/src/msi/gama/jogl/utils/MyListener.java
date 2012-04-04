@@ -45,65 +45,7 @@ public class MyListener implements KeyListener, MouseListener,
 		myCamera = camera;
 	}
 
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case VK_LEFT: // player turns left (scene rotates right)
-			myCamera.strafeLeft(0.1);
-			myCamera.look(10);
-			break;
-		case VK_RIGHT: // player turns right (scene rotates left)
-			myCamera.strafeRight(0.1);
-			myCamera.look(10);
-			break;
-		case VK_UP:
-			//myCamera.cameraZPosition += 0.1;
-			//myCamera.cameraLZPosition += 0.1;
 
-			myCamera.moveForward(0.1);
-			myCamera.look(10);
-			break;
-		case VK_DOWN:
-			//myWorld.cameraZPosition -= 0.1;
-			//myWorld.cameraLZPosition -= 0.1;
-
-			myCamera.moveForward(-0.1);
-			myCamera.look(10);
-			break;
-		case KeyEvent.VK_PAGE_UP:
-			myCamera.pitchDown(0.05);
-			myCamera.look(10);
-			break;
-		case KeyEvent.VK_PAGE_DOWN:
-			myCamera.pitchUp(0.05);
-			myCamera.look(10);
-			break;
-
-		case KeyEvent.VK_HOME:
-			myCamera.yawLeft(0.01);
-			myCamera.look(10);
-			break;
-
-		case KeyEvent.VK_END:
-			myCamera.yawRight(0.01);
-			myCamera.look(10);
-			break;
-		case VK_I:
-			myCamera.InitParam();
-			break;
-		case VK_H:
-			myCamera.Init3DView();
-			break;
-		}
-	}
-
-	public void keyReleased(KeyEvent e) {
-	}
-
-	public void keyTyped(KeyEvent e) {
-		switch (e.getKeyChar()) {
-
-		}
-	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -169,21 +111,79 @@ public class MyListener implements KeyListener, MouseListener,
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
-	
-//		if (arg0.getWheelRotation() < 0) {// Move Up
-//			myWorld.cameraZPosition += 0.1;
-//			myWorld.cameraLZPosition += 0.1;
-//
-//			myCamera.moveForward(0.1);
-//			// camera.look(10);
-//		} else {// Move down
-//			myWorld.cameraZPosition -= 0.1;
-//			myWorld.cameraLZPosition -= 0.1;
-//
-//			myCamera.moveForward(-0.1);
-//
-//		}
+		if (arg0.getWheelRotation() < 0) {// Move Up
+			myCamera.zPos -= 0.5;
+			myCamera.zLPos -= 0.5;
+			//myCamera.moveForward(0.1);
+			// camera.look(10);
+		} else {// Move down
+			myCamera.zPos += 0.5;
+			myCamera.zLPos += 0.5;
+			//myCamera.moveForward(-0.1);
+		}
 
+	}
+
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		System.out.println("keyPressed");
+		switch (e.getKeyCode()) {
+		case VK_LEFT: // player turns left (scene rotates right)
+			myCamera.strafeLeft(0.1);
+			myCamera.look(10);
+			break;
+		case VK_RIGHT: // player turns right (scene rotates left)
+			myCamera.strafeRight(0.1);
+			myCamera.look(10);
+			break;
+		case VK_UP:
+			//myCamera.cameraZPosition += 0.1;
+			//myCamera.cameraLZPosition += 0.1;
+			myCamera.moveForward(0.1);
+			myCamera.look(10);
+			break;
+		case VK_DOWN:
+			//myWorld.cameraZPosition -= 0.1;
+			//myWorld.cameraLZPosition -= 0.1;
+			myCamera.moveForward(-0.1);
+			myCamera.look(10);
+			break;
+		case KeyEvent.VK_PAGE_UP:
+			myCamera.pitchDown(0.05);
+			myCamera.look(10);
+			break;
+		case KeyEvent.VK_PAGE_DOWN:
+			myCamera.pitchUp(0.05);
+			myCamera.look(10);
+			break;
+		case KeyEvent.VK_HOME:
+			myCamera.yawLeft(0.01);
+			myCamera.look(10);
+			break;
+		case KeyEvent.VK_END:
+			myCamera.yawRight(0.01);
+			myCamera.look(10);
+			break;
+		case VK_I:
+			myCamera.InitParam();
+			break;
+		case VK_H:
+			myCamera.Init3DView();
+			break;
+		}		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

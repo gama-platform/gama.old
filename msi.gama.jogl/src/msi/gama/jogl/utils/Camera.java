@@ -4,13 +4,13 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
 public class Camera {
-	private double xPos;
-	private double yPos;
-	private double zPos;
+	public double xPos;
+	public double yPos;
+	public double zPos;
 
-	private double xLPos;
-	private double yLPos;
-	private double zLPos;
+	public double xLPos;
+	public double yLPos;
+	public double zLPos;
 
 	private double pitch;
 	private double yaw;

@@ -193,7 +193,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			@Override
 			public void componentResized(final ComponentEvent e) {
 				if (buffImage == null) {
-					// zoomFit();
+					//zoomFit();
 					if (resizeImage(getWidth(), getHeight())) {
 						centerImage();
 					}
@@ -598,7 +598,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			// openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
 			openGLGraphics.setDisplayDimensions(bWidth, bHeight);
 			openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
-
 			openGLGraphics.setClipping(getImageClipBounds());
 			redrawNavigator();
 			canBeUpdated(true);

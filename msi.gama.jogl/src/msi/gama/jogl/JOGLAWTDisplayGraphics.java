@@ -520,8 +520,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		System.out.println("DisplayGraphics::drawGeometry: "
-				+ geometry.getGeometryType());
+		//System.out.println("DisplayGraphics::drawGeometry: "+ geometry.getGeometryType());
 
 		// Update the value of the bounds. For each new geometry the bound is
 		// recompute.
