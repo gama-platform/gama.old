@@ -45,8 +45,10 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class GamaProcessor extends AbstractProcessor {
 
+	// private boolean isCore;
+
 	// here util.MathUtils is a copy of msi.gama.util.MathUtils
-	// private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();
+	private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();
 	// private final static List<String> BUILT_IN_KEYWORDS = Arrays.asList("entities");
 	// see msi.gama.lang.gaml/src/msi/gama/lang/gaml/Gaml.xtext where these keywords are defined
 	// public final static List<String> FORBIDDEN_KEYWORDS = Arrays.asList("model", "if", "else",
@@ -72,6 +74,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private GamlProperties initProperties(final String name) {
 		GamlProperties prop = new GamlProperties();
 		Filer filer = processingEnv.getFiler();
+
 		try {
 			prop.load(filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name).openReader(true));
 		} catch (IOException e) {}
@@ -366,9 +369,9 @@ public class GamaProcessor extends AbstractProcessor {
 		// }
 		// }
 
-		// for ( String s : BUILT_IN_UNIT ) {
-		// grammarWriter.append("\t_unit &").append(s).println("&;");
-		// }
+		for ( String s : BUILT_IN_UNIT ) {
+			grammarWriter.append("\t_reserved &").append(s).println("&;");
+		}
 
 		printProps(grammarWriter, "Binary keywords", "_binary", store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
