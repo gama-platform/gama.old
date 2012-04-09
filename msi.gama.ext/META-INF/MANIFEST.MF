@@ -40,7 +40,8 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  joda-time-2.0.jar,
  gs-algo-1.1.jar,
  gs-core-1.1.1.jar,
- gs-ui-1.1.1.jar
+ gs-ui-1.1.1.jar,
+ gt-swing-2.7.3.jar
 Bundle-Vendor: MSI
 Export-Package: com.keypoint,
  com.sun.media.jai.iterator,
@@ -255,6 +256,8 @@ Export-Package: com.keypoint,
  org.geotools.resources.i18n,
  org.geotools.styling,
  org.geotools.styling.visitor,
+ org.geotools.swing,
+ org.geotools.swing.data,
  org.geotools.util,
  org.geotools.util.logging,
  org.geotools.xml.transform,

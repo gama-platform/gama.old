@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="joda-time-2.0.jar" sourcepath="sources/joda-time-2.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler-jdk.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler.jar"/>
 	<classpathentry exported="true" kind="lib" path="janino.jar" sourcepath="sources/janino-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="jdom.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
 	<classpathentry exported="true" kind="lib" path="weka.jar"/>
+	<classpathentry exported="true" kind="lib" path="xerces_2.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-api-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-data-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-epsg-extension-2.7.3.jar"/>
@@ -21,20 +22,22 @@
 	<classpathentry exported="true" kind="lib" path="gt-shapefile-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="hsqldb-1.8.0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="jai_core-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="jcommon-1.0.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="jdom-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="jsr-275-1.0-beta-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts-1.12.jar" sourcepath="sources/jts1.12.zip"/>
 	<classpathentry exported="true" kind="lib" path="miglayout-3.7-swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="vecmath-1.3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="xercesImpl-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jcommon-1.0.16.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-experimental.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-swt.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13.jar" sourcepath="sources/jfreechart.zip"/>
 	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
-	<classpathentry kind="lib" path="xercesImpl-2.7.1.jar"/>
-	<classpathentry kind="lib" path="commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="joda-time-2.0.jar" sourcepath="sources/joda-time-2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-algo-1.1.jar" sourcepath="sources/gs-algo-1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-core-1.1.1.jar" sourcepath="sources/gs-core-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-ui-1.1.1.jar" sourcepath="sources/gs-ui-1.1.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-swing-2.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
