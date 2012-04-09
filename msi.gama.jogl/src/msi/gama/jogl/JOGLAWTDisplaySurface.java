@@ -78,7 +78,6 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
-
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
@@ -168,7 +167,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocusInWindow();
 
-
 		this.setLayout(new BorderLayout());
 		this.add(canvas, BorderLayout.CENTER);
 
@@ -190,7 +188,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			@Override
 			public void componentResized(final ComponentEvent e) {
 				if (buffImage == null) {
-					//zoomFit();
+					// zoomFit();
 					if (resizeImage(getWidth(), getHeight())) {
 						centerImage();
 					}
@@ -281,19 +279,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		return c;
 	}
 
-
-
-//		FIXME: Move in MyListener
-//		public void mouseClicked(final MouseEvent evt) {
-//			if (evt.getClickCount() == 2) {
-//				zoomFit();
-//			} else if (evt.isControlDown() || evt.isMetaDown()
-//					|| evt.isPopupTrigger()) {
-//				selectAgents(evt.getX(), evt.getY());
-//			}
-//		}
-
-
+	// FIXME: Move in MyListener
+	// public void mouseClicked(final MouseEvent evt) {
+	// if (evt.getClickCount() == 2) {
+	// zoomFit();
+	// } else if (evt.isControlDown() || evt.isMetaDown()
+	// || evt.isPopupTrigger()) {
+	// selectAgents(evt.getX(), evt.getY());
+	// }
+	// }
 
 	static class AgentMenuItem extends MenuItem {
 
@@ -461,7 +455,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void updateDisplay() {
 
-		//Remove all the already existing entity in openGLGraphics and redraw the existing ones.
+		// Remove all the already existing entity in openGLGraphics and redraw
+		// the existing ones.
 		((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 		// FIXME: Why this busy indicator enable to show the open display???
 		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
@@ -594,13 +589,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			buffImage = newImage;
 
 			// For java2D the constructor was call here
-			// openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
+			if (openGLGraphics == null) {
+				openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu);
+			}
 			openGLGraphics.setDisplayDimensions(bWidth, bHeight);
 			openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
 			openGLGraphics.setClipping(getImageClipBounds());
 			redrawNavigator();
 			canBeUpdated(true);
 			return true;
+
 		}
 		canBeUpdated(true);
 		return false;
@@ -819,7 +817,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void display(GLAutoDrawable drawable) {
 
-		//System.out.println("opengl display");
+		// System.out.println("opengl display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 
@@ -885,7 +883,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
-		GLUtil.enableSmooth(gl);
+		gl.glShadeModel(GL.GL_SMOOTH);
 		// Set background color (in RGBA). Alpha of 0 for total transparency
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		// the depth buffer & enable the depth testing

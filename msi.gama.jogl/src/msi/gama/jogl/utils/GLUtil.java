@@ -20,6 +20,13 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+
+/**
+ * This class maybe use to simplify the opengl initialisation by providing simplier primitive.
+ * This is not already used in Gama.
+ * @author arno
+ *
+ */
 public class GLUtil {
 
     public static final int fogMode[] = {GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR};
