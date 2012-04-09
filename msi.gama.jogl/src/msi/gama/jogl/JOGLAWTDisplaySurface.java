@@ -66,7 +66,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
 
 import com.sun.opengl.util.FPSAnimator;
 import com.vividsolutions.jts.geom.Envelope;
@@ -79,10 +78,7 @@ import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
@@ -170,7 +166,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		canvas.addMouseMotionListener(myListener);
 		canvas.addMouseWheelListener(myListener);
 		canvas.setFocusable(true); // To receive key event
-		canvas.requestFocus();
+		canvas.requestFocusInWindow();
+
 
 		this.setLayout(new BorderLayout());
 		this.add(canvas, BorderLayout.CENTER);
@@ -464,6 +461,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void updateDisplay() {
 
+		//Remove all the already existing entity in openGLGraphics and redraw the existing ones.
+		((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 		// FIXME: Why this busy indicator enable to show the open display???
 		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
 
@@ -820,6 +819,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void display(GLAutoDrawable drawable) {
 
+		//System.out.println("opengl display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 
@@ -860,8 +860,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		// FIXME: DrawBounds also set the bound characteristic, should be
-		// changed.
 		// ((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
 

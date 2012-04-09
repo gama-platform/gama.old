@@ -520,7 +520,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		//System.out.println("DisplayGraphics::drawGeometry: "+ geometry.getGeometryType());
+		System.out.println("DisplayGraphics::drawGeometry: "+ geometry.getGeometryType());
 
 		// Update the value of the bounds. For each new geometry the bound is
 		// recompute.
@@ -544,6 +544,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				MultiLineString lines = (MultiLineString) geometry;
 				AddMultiLineInGeometries(lines, color);
 			}
+			
+			else if (geometry.getGeometryType() == "LineString") {
+				LineString lines = (LineString) geometry;
+				AddLineInGeometries(lines, color);
+			}	
 
 			else if (geometry.getGeometryType() == "Point") {
 				Point point = (Point) geometry;
@@ -707,6 +712,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 	}
+	
+	private void AddLineInGeometries(LineString line, Color color) {
+
+			int numPoints = line.getNumPoints();
+			MyGeometry curGeometry = new MyGeometry(numPoints);
+			for (int j = 0; j < numPoints; j++) {
+				curGeometry.vertices[j].x = (float) ((line.getPointN(j).getX()));
+				curGeometry.vertices[j].y = -(float) ((line.getPointN(j).getY()));
+				curGeometry.vertices[j].z = z;
+				curGeometry.vertices[j].u = 0.0f;
+				curGeometry.vertices[j].v = 0.0f;
+			}
+			curGeometry.color = color;
+			curGeometry.type = "LineString";
+			this.myGeometries.add(curGeometry);
+		
+
+	}
 
 	private void AddPointInGeometries(Point point, Color color) {
 		MyGeometry curGeometry = new MyGeometry(1);
@@ -733,7 +756,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					|| curGeometry.type == "Polygon") {
 				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,
 						0.0f, scale_rate);
-			} else if (curGeometry.type == "MultiLineString") {
+			} else if (curGeometry.type == "MultiLineString" || curGeometry.type == "LineString" ) {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,scale_rate);
 			} else if (curGeometry.type == "Point") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
@@ -742,6 +765,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			}
 
 		}
+	}
+	
+	public void CleanGeometries(){
+		this.myGeometries.clear();
 	}
 
 	public void DrawBounds() {
