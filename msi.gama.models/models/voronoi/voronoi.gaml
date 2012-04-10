@@ -18,19 +18,16 @@ environment width: environment_width height: environment_height {}
 	grid cell width: environment_width height: environment_height neighbours: 8  {
 		rgb color <- rgb('white') update: (center closest_to (self)).color;
 	}
-}
 	
-entities {  
 	species center skills: [moving] {
 		rgb color <- [rnd (255),rnd (255),rnd (255)];
-		reflex {
+		reflex wander {
 			do wander amplitude: 90;
 		}
 		aspect default {
 			draw shape: circle size: 3 color: color;
 		}
 	}
-}
 output {
 	display Voronoi {
 		grid cell;
