@@ -17,8 +17,8 @@ global {
 			set color value: map_colors at {grid_x,grid_y} ;
 		}
 		set all_places value: shuffle ((space as list) select (each.color in google_buildings)) ;
-		set available_places value: all_places ;
-	}
+		set available_places value: all_places ; 
+	} 
 	action initialize_people {
 		create species: people number: number_of_people ;  
 		set all_people value: people as list ;
@@ -33,16 +33,17 @@ entities {
 		const color type: rgb init: colors at (rnd (number_of_groups - 1)) ;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people ;
 		init {
-			set location value: last(available_places) ;
+			set location value: point(last(available_places)) ;
 			remove item: location as space from: available_places ;
 		}
 		reflex migrate when: !is_happy {
 			let old_loc value: location ;
-			set location value: any(available_places) ;
+			set location value: point(any(available_places)) ; 
 			remove item: location as space from: available_places ;
 			add item: old_loc as space  to: available_places ;
 		}
-		aspect geom {
+		
+	aspect geom {
 			draw shape: square color: color size: 1 ;
 		}
 		aspect default {
