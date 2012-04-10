@@ -18,30 +18,7 @@
  */
 package msi.gama.jogl;
 
-import static javax.media.opengl.GL.GL_AMBIENT;
-import static javax.media.opengl.GL.GL_AMBIENT_AND_DIFFUSE;
-import static javax.media.opengl.GL.GL_BLEND;
-import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static javax.media.opengl.GL.GL_COLOR_MATERIAL;
-import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
-import static javax.media.opengl.GL.GL_DEPTH_TEST;
-import static javax.media.opengl.GL.GL_DIFFUSE;
-import static javax.media.opengl.GL.GL_FRONT;
-import static javax.media.opengl.GL.GL_LEQUAL;
-import static javax.media.opengl.GL.GL_LIGHT1;
-import static javax.media.opengl.GL.GL_LIGHTING;
-import static javax.media.opengl.GL.GL_MODELVIEW;
-import static javax.media.opengl.GL.GL_NICEST;
-import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
-import static javax.media.opengl.GL.GL_POLYGON;
-import static javax.media.opengl.GL.GL_POSITION;
-import static javax.media.opengl.GL.GL_PROJECTION;
-import static javax.media.opengl.GL.GL_SMOOTH;
-import static javax.media.opengl.GL.GL_TRIANGLES;
-import msi.gama.jogl.utils.Camera;
-import msi.gama.jogl.utils.GLUtil;
-import msi.gama.jogl.utils.MyListener;
-
+import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -52,10 +29,13 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
-import javax.swing.*;
-
+import javax.media.opengl.*;
+import javax.media.opengl.glu.GLU;
+import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.gui.displays.*;
+import msi.gama.jogl.utils.*;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -66,23 +46,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
-
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import com.sun.opengl.util.FPSAnimator;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.gui.displays.*;
-
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.glu.GLU;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-
-public final class JOGLAWTDisplaySurface extends JPanel implements
-		IDisplaySurface, GLEventListener {
+public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurface, GLEventListener {
 
 	private boolean autosave = false;
 	private String snapshotFileName;
@@ -140,18 +109,18 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	private int width, height;
 	// Camera
 	private Camera camera;
-	private float zoom = 10.0f;
-	private float cameraXPosition = 0.0f;
-	private float cameraYPosition = 0.0f;
+	private final float zoom = 10.0f;
+	private final float cameraXPosition = 0.0f;
+	private final float cameraYPosition = 0.0f;
 	public float cameraZPosition = 10.0f;
 
-	private float cameraLXPosition = cameraXPosition;
-	private float cameraLYPosition = cameraYPosition;
+	private final float cameraLXPosition = cameraXPosition;
+	private final float cameraLYPosition = cameraYPosition;
 	public float cameraLZPosition = cameraZPosition - zoom;
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
-			final IDisplayOutput layerDisplayOutput) {
+		final IDisplayOutput layerDisplayOutput) {
 
 		// Initialize the user camera
 		camera = new Camera();
@@ -182,20 +151,20 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		add(agentsMenu);
 
 		animator.start();
-		
+
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				if (buffImage == null) {
+				if ( buffImage == null ) {
 					// zoomFit();
-					if (resizeImage(getWidth(), getHeight())) {
+					if ( resizeImage(getWidth(), getHeight()) ) {
 						centerImage();
 					}
 				} else {
-					if (isFullImageInPanel()) {
+					if ( isFullImageInPanel() ) {
 						centerImage();
-					} else if (isImageEdgeInPanel()) {
+					} else if ( isImageEdgeInPanel() ) {
 						scaleOrigin();
 					} else {
 						openGLGraphics.setClipping(getImageClipBounds());
@@ -217,11 +186,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			e1.printStackTrace();
 			return;
 		}
-		String snapshotFile = scope
-				.getSimulationScope()
-				.getModel()
-				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName,
-						false);
+		String snapshotFile =
+			scope.getSimulationScope().getModel()
+				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
 
 		String file = snapshotFile + SimulationClock.getCycle() + ".png";
 		DataOutputStream os = null;
@@ -234,7 +201,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			GAMA.reportError(e);
 		} finally {
 			try {
-				if (os != null) {
+				if ( os != null ) {
 					os.close();
 				}
 			} catch (Exception ex) {
@@ -262,20 +229,18 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	}
 
 	protected Cursor createCursor() {
-		Image im = new BufferedImage((int) SELECTION_SIZE + 4,
-				(int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
+		Image im =
+			new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4,
+				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) im.getGraphics();
 		g.setColor(Color.black);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setStroke(new BasicStroke(3.0f));
 		g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
 		g.dispose();
-		Cursor c = getToolkit()
-				.createCustomCursor(
-						im,
-						new Point((int) (SELECTION_SIZE / 2),
-								(int) SELECTION_SIZE / 2), "CIRCLE");
+		Cursor c =
+			getToolkit().createCustomCursor(im,
+				new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2), "CIRCLE");
 		return c;
 	}
 
@@ -294,8 +259,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		private final IAgent agent;
 		private final IDisplay display;
 
-		AgentMenuItem(final String name, final IAgent agent,
-				final IDisplay display) {
+		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
 			super(name);
 			this.agent = agent;
 			this.display = display;
@@ -327,16 +291,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 
-			if (micros != null && !micros.isEmpty()) {
+			if ( micros != null && !micros.isEmpty() ) {
 				Menu microsMenu = new Menu("Micro agents");
 				macroMenu.add(microsMenu);
 
 				Menu microSpecMenu;
-				for (ISpecies microSpec : micros.keySet()) {
+				for ( ISpecies microSpec : micros.keySet() ) {
 					microSpecMenu = new Menu("Species " + microSpec.getName());
 					microsMenu.add(microSpecMenu);
 
-					for (SelectedAgent micro : micros.get(microSpec)) {
+					for ( SelectedAgent micro : micros.get(microSpec) ) {
 						micro.buildMenuItems(microSpecMenu, display);
 					}
 				}
@@ -346,23 +310,21 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	// Used when the image is resized.
 	boolean isImageEdgeInPanel() {
-		if (previousPanelSize == null) {
-			return false;
-		}
+		if ( previousPanelSize == null ) { return false; }
 
-		return origin.x > 0 && origin.x < previousPanelSize.width
-				|| origin.y > 0 && origin.y < previousPanelSize.height;
+		return origin.x > 0 && origin.x < previousPanelSize.width || origin.y > 0 &&
+			origin.y < previousPanelSize.height;
 	}
 
 	// Tests whether the image is displayed in its entirety in the panel.
 	boolean isFullImageInPanel() {
-		return origin.x >= 0 && origin.x + bWidth < getWidth() && origin.y >= 0
-				&& origin.y + bHeight < getHeight();
+		return origin.x >= 0 && origin.x + bWidth < getWidth() && origin.y >= 0 &&
+			origin.y + bHeight < getHeight();
 	}
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height,
-			final IDisplayOutput output) {
+		final IDisplayOutput output) {
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
@@ -372,7 +334,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			public void actionPerformed(final ActionEvent e) {
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
-				if (a != null) {
+				if ( a != null ) {
 					fireSelectionChanged(a);
 				}
 			}
@@ -385,21 +347,20 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			public void actionPerformed(final ActionEvent e) {
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
-				if (a != null) {
+				if ( a != null ) {
 					focusOn(a.getGeometry(), source.getDisplay());
 				}
 			}
 
 		};
 
-		if (manager == null) {
+		if ( manager == null ) {
 			manager = new DisplayManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
-			for (final ISymbol layer : layers) {
+			for ( final ISymbol layer : layers ) {
 				// IDisplay d =
-				manager.addDisplay(DisplayManager.createDisplay(
-						(IDisplayLayer) layer, env_width, env_height,
-						openGLGraphics));
+				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
+					env_height, openGLGraphics));
 				// d.initMenuItems(this);
 			}
 
@@ -418,10 +379,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		// we take the smallest dimension as a guide
 		int[] dim = new int[2];
-		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint)
-				: vwidth;
-		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint)
-				: vheight;
+		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
+		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
 		return dim;
 	}
 
@@ -431,13 +390,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		int xc = x - origin.x;
 		int yc = y - origin.y;
 		final List<IDisplay> displays = manager.getDisplays(xc, yc);
-		for (IDisplay display : displays) {
+		for ( IDisplay display : displays ) {
 			java.awt.Menu m = new java.awt.Menu(display.getName());
 			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
-			if (!agents.isEmpty()) {
+			if ( !agents.isEmpty() ) {
 				m.addSeparator();
 
-				for (IAgent agent : agents) {
+				for ( IAgent agent : agents ) {
 					SelectedAgent sa = new SelectedAgent();
 					sa.macro = agent;
 					sa.buildMenuItems(m, display);
@@ -448,20 +407,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		agentsMenu.show(this, x, y);
 	}
 
-	public void updateDisplayGL(GL gl) {
+	public void updateDisplayGL(final GL gl) {
 
 	}
 
 	@Override
 	public void updateDisplay() {
 
-		// Remove all the already existing entity in openGLGraphics and redraw
-		// the existing ones.
+		// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
 		((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 		// FIXME: Why this busy indicator enable to show the open display???
 		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
 
-		if (synchronous && !EventQueue.isDispatchThread()) {
+		if ( synchronous && !EventQueue.isDispatchThread() ) {
 			try {
 				EventQueue.invokeAndWait(openGLDisplayBlock);
 			} catch (InterruptedException e) {
@@ -473,7 +431,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		} else {
 			EventQueue.invokeLater(openGLDisplayBlock);
 		}
-		if (ex[0] != null) {
+		if ( ex[0] != null ) {
 			GAMA.reportError(ex[0]);
 			ex[0] = null;
 		}
@@ -483,11 +441,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	private final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 
 	private final Runnable openGLDisplayBlock = new Runnable() {
+
 		@Override
 		public void run() {
-			if (!canBeUpdated()) {
-				return;
-			}
+			if ( !canBeUpdated() ) { return; }
 			canBeUpdated(false);
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
@@ -497,9 +454,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	};
 
 	public void drawDisplaysWithoutRepaintingGL() {
-		if (openGLGraphics == null) {
-			return;
-		}
+		if ( openGLGraphics == null ) { return; }
 		ex[0] = null;
 		// For java2D
 		// openGLGraphics.fill(bgColor, 1);
@@ -512,10 +467,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		int panelY1 = -origin.y;
 		int panelX2 = getWidth() - 1 + panelX1;
 		int panelY2 = getHeight() - 1 + panelY1;
-		if (panelX1 >= bWidth || panelX2 < 0 || panelY1 >= bHeight
-				|| panelY2 < 0) {
-			return null;
-		}
+		if ( panelX1 >= bWidth || panelX2 < 0 || panelY1 >= bHeight || panelY2 < 0 ) { return null; }
 		int x1 = panelX1 < 0 ? 0 : panelX1;
 		int y1 = panelY1 < 0 ? 0 : panelY1;
 		int x2 = panelX2 >= bWidth ? bWidth - 1 : panelX2;
@@ -527,23 +479,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
-		if (autosave) {
+		if ( autosave ) {
 			snapshot();
 		}
 		redrawNavigator();
 	}
 
 	void redrawNavigator() {
-		if (!navigationImageEnabled) {
-			return;
-		}
+		if ( !navigationImageEnabled ) { return; }
 		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
-				if (navigator == null || navigator.isDisposed()) {
-					return;
-				}
+				if ( navigator == null || navigator.isDisposed() ) { return; }
 				navigator.redraw();
 			}
 		});
@@ -559,7 +507,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			}
 		});
 
-		if (manager != null) {
+		if ( manager != null ) {
 			manager.dispose();
 		}
 
@@ -576,29 +524,24 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = point[0];
 		int imageHeight = point[1];
-		if (imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE) {
-			BufferedImage newImage = ImageUtils.createCompatibleImage(
-					imageWidth, imageHeight);
+		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
+			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
 			bWidth = newImage.getWidth();
 			bHeight = newImage.getHeight();
-			if (buffImage != null) {
-				newImage.getGraphics().drawImage(buffImage, 0, 0, bWidth,
-						bHeight, null);
+			if ( buffImage != null ) {
+				newImage.getGraphics().drawImage(buffImage, 0, 0, bWidth, bHeight, null);
 				buffImage.flush();
 			}
 			buffImage = newImage;
 
 			// For java2D the constructor was call here
-			if (openGLGraphics == null) {
-				openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu);
-			}
+			// openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
 			openGLGraphics.setDisplayDimensions(bWidth, bHeight);
 			openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
 			openGLGraphics.setClipping(getImageClipBounds());
 			redrawNavigator();
 			canBeUpdated(true);
 			return true;
-
 		}
 		canBeUpdated(true);
 		return false;
@@ -613,7 +556,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void zoomIn() {
 
-		if (opengl) {
+		if ( opengl ) {
 			// For 3D camera
 			// this.cameraZPosition += 0.1;
 			// this.cameraLZPosition += 0.1;
@@ -624,8 +567,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			camera.setzLPos(camera.getzLPos() - 0.5);
 
 		} else {
-			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
-					/ 2);
+			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);
 			setZoom(1.0 + zoomIncrement, mousePosition);
 		}
 
@@ -634,7 +576,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void zoomOut() {
 
-		if (opengl) {
+		if ( opengl ) {
 
 			// For 3D camera
 			// this.cameraZPosition -= 0.1;
@@ -646,31 +588,28 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			camera.setzLPos(camera.getzLPos() + 0.5);
 
 		} else {
-			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
-					/ 2);
-			;
+			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);;
 			setZoom(1.0 - zoomIncrement, mousePosition);
 		}
 
 	}
 
 	public void setZoom(final double factor, final Point c) {
-		if (resizeImage((int) Math.round(bWidth * factor),
-				(int) Math.round(bHeight * factor))) {
-			int imagePX = c.x < origin.x ? 0
-					: c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
-			int imagePY = c.y < origin.y ? 0
-					: c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
+		if ( resizeImage((int) Math.round(bWidth * factor), (int) Math.round(bHeight * factor)) ) {
+			int imagePX =
+				c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
+			int imagePY =
+				c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
 			zoomFactor = factor;
-			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y
-					- (int) Math.round(imagePY * zoomFactor));
+			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor),
+				c.y - (int) Math.round(imagePY * zoomFactor));
 			updateDisplay();
 		}
 	}
 
 	void scaleOrigin() {
-		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y
-				* getHeight() / previousPanelSize.height);
+		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() /
+			previousPanelSize.height);
 		paintingNeeded.release();
 	}
 
@@ -682,20 +621,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public void zoomFit() {
 
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
-		if (resizeImage(getWidth(), getHeight())) {
+		if ( resizeImage(getWidth(), getHeight()) ) {
 			centerImage();
-			if (opengl) {// We don't need to call update display when calling
+			if ( opengl ) {// We don't need to call update display when calling
 							// zoomfit.
 				float scale_rate = ((JOGLAWTDisplayGraphics) openGLGraphics).scale_rate;
-
-				camera.setxPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
-						.getCenterX() * scale_rate);
-				camera.setxLPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
-						.getCenterX() * scale_rate);
-				camera.setyPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
-						.getCenterY() * scale_rate);
-				camera.setyLPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
-						.getCenterY() * scale_rate);
+				camera.setxPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds.getCenterX() *
+					scale_rate);
+				camera.setxLPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds.getCenterX() *
+					scale_rate);
+				camera.setyPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds.getCenterY() *
+					scale_rate);
+				camera.setyLPos(-((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds.getCenterY() *
+					scale_rate);
 			} else {
 				updateDisplay();
 			}
@@ -711,26 +649,20 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		double maxX = env.getMaxX();
 		double maxY = env.getMaxY();
 
-		int leftX = display.getPosition().x
-				+ (int) (display.getXScale() * minX + 0.5);
-		int leftY = display.getPosition().y
-				+ (int) (display.getYScale() * minY + 0.5);
-		int rightX = display.getPosition().x
-				+ (int) (display.getXScale() * maxX + 0.5);
-		int rightY = display.getPosition().y
-				+ (int) (display.getYScale() * maxY + 0.5);
-		Rectangle envelop = new Rectangle(leftX + origin.x, leftY + origin.y,
-				rightX - leftX, rightY - leftY);
+		int leftX = display.getPosition().x + (int) (display.getXScale() * minX + 0.5);
+		int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
+		int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
+		int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
+		Rectangle envelop =
+			new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
 		// / PFfff... Quel bordel !
 		double xScale = (double) getWidth() / (rightX - leftX);
 		double yScale = (double) getHeight() / (rightY - leftY);
 		double zoomFactor = Math.min(xScale, yScale);
-		if (bWidth * zoomFactor > MAX_SIZE) {
+		if ( bWidth * zoomFactor > MAX_SIZE ) {
 			zoomFactor = (double) MAX_SIZE / bWidth;
 		}
-		setZoom(zoomFactor,
-				new Point((int) envelop.getCenterX(), (int) envelop
-						.getCenterY()));
+		setZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
 	}
 
 	@Override
@@ -740,8 +672,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public boolean canBeUpdated() {
-		return canBeUpdated && openGLGraphics != null
-				&& openGLGraphics.isReady();
+		return canBeUpdated && openGLGraphics != null && openGLGraphics.isReady();
 	}
 
 	public void setNavigationImageEnabled(final boolean enabled) {
@@ -763,11 +694,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		if (openGLGraphics == null) {
-			return;
-		}
+		if ( openGLGraphics == null ) { return; }
 		openGLGraphics.setQualityRendering(quality);
-		if (isPaused()) {
+		if ( isPaused() ) {
 			updateDisplay();
 		}
 	}
@@ -789,7 +718,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void setNavigator(final Object nav) {
-		if (nav instanceof SWTNavigationPanel) {
+		if ( nav instanceof SWTNavigationPanel ) {
 			navigator = (SWTNavigationPanel) nav;
 		}
 	}
@@ -816,7 +745,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	// GLEventListener method.
 	@Override
-	public void display(GLAutoDrawable drawable) {
+	public void display(final GLAutoDrawable drawable) {
 
 		// System.out.println("opengl display");
 		// Get the OpenGL graphics context
@@ -842,14 +771,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 
-		if (height == 0) {
+		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
 		}
 		float aspect = (float) width / height;
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
+			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
 
 		gl.glMatrixMode(GL.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity(); // Reset The Modelview Matrix
@@ -859,19 +787,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
+		// ((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
 
 	}
 
 	@Override
-	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
+	public void displayChanged(final GLAutoDrawable arg0, final boolean arg1, final boolean arg2) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		// Get the OpenGL graphics context
@@ -884,7 +812,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
-		gl.glShadeModel(GL.GL_SMOOTH);
+		GLUtil.enableSmooth(gl);
 		// Set background color (in RGBA). Alpha of 0 for total transparency
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		// the depth buffer & enable the depth testing
@@ -900,15 +828,14 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		gl.glEnable(GL_BLEND);
 		// gl.glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if (height == 0) {
+		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
 		}
 		float aspect = (float) width / height;
 
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
+			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
 
 		// Set up the lighting for Light-1
 		// Ambient light does not come from a particular direction. Need some
@@ -930,12 +857,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
-			int height) {
+	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width,
+		int height) {
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 
-		if (height == 0) {
+		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
 		}
 		float aspect = (float) width / height;
@@ -953,10 +880,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
+			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
 
 	}
-	
+
 }
