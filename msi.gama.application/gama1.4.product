@@ -49,6 +49,7 @@ Visit http://code.google.com/p/gama-platform/
       </win>
    </launcher>
 
+
    <vm>
    </vm>
 
@@ -60,10 +61,17 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
+      <plugin id="com.jogamp.jogl"/>
+      <plugin id="com.jogamp.jogl-linux-amd64" fragment="true"/>
+      <plugin id="com.jogamp.jogl-linux-i586" fragment="true"/>
+      <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
+      <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
+      <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
       <plugin id="javax.inject"/>
       <plugin id="msi.gama.application"/>
       <plugin id="msi.gama.core"/>
       <plugin id="msi.gama.ext"/>
+      <plugin id="msi.gama.jogl"/>
       <plugin id="msi.gama.lang.gaml"/>
       <plugin id="msi.gama.lang.gaml.ui"/>
       <plugin id="msi.gama.models"/>
