@@ -9,7 +9,7 @@ global {
 	var shape_file_beach type: string init: '/gis/Beacha.shp'; 
 	string shape_file_roadwidth init: '/gis/roads.shp';  
 	string shape_file_building init: '/gis/buildr.shp'; 
-	var shape_file_bounds type: string init: '/gis/bounds.shp'; 
+	var shape_file_bounds type: string init: '/gis/bounds.shp';  
 	var shape_file_ward type: string init: '/gis/wards.shp';  
 	var shape_file_zone type: string init: '/gis/zone.shp';  
 	   
@@ -30,8 +30,9 @@ global {
 	var zone1_building_color type: rgb init: rgb('orange');
 	var zone2_building_color type: rgb init: rgb('gray'); 
 	var zone3_building_color type: rgb init: rgb('yellow') ; 
-	 
-	var road_graph type: graph;
+	
+ 	var road_graph type: graph;
+
 
 	init {
 		create road from: shape_file_road ;
@@ -153,9 +154,9 @@ entities {
 			}
 		}
 		
-		reflex when: (time = 1) and (macro_patch != nil) {
+		reflex initialize when: (time = 1) and (macro_patch != nil) {
 			create macro_patch_viewer with: [shape :: macro_patch];
-		}
+		} 
 
 		aspect base {
 	 		draw shape: geometry color: rgb('yellow');
@@ -163,12 +164,15 @@ entities {
 	}
 	 
 	species macro_patch_viewer {
-		aspect base {
+		
+		
+		aspect base {  
 			draw shape: geometry color: rgb('red');
 		}
 	}	
 
 	species destination {
+		
 	 	aspect base {
 	 		draw shape: geometry color: rgb('magenta');
 	 	}
@@ -186,14 +190,14 @@ entities {
 	species ward {
 	  	var id type: int;
 	  	var population type: int min: 0;
-	  	var wardname type: string;
+	  	var wardname type: string; 
 	  	var color type: rgb init: one_of(ward_colors); 
 	  	var roads type: list of: road;
 	  	  
 	  	action init_overlapping_roads {
 	  		set roads value: road overlapping shape;
 	  	}
-	  	 
+	  	  
 	  	aspect base { 
 	  		draw shape: geometry color: color;
 	  	}
@@ -203,6 +207,7 @@ entities {
 	   	aspect base { 
 	   		draw shape: geometry color: rgb('yellow');
 	   	}
+	
 	}
 	   
 	species building {
@@ -237,7 +242,7 @@ entities {
 	   		draw shape: geometry color: rgb('green');
 	   	}
 	}
-		
+		  
 	species river {
 		aspect base {
 			draw shape: geometry color: rgb('blue');
@@ -249,7 +254,7 @@ entities {
 			draw shape: geometry color: rgb('gray');
 		}
 	}
-
+ 
 	species pedestrian skills: moving schedules: (list(pedestrian) select !each.reach_shelter) {
 		var previous_location type: point;
 		var last_road type: road;
@@ -294,15 +299,15 @@ entities {
 				arg on value: road_graph; 
 			}
 
-			let lines1 type: list of: geometry value: (inside_road_geom split_at location);
+			let lines1 type: container of: geometry value: (inside_road_geom split_at location);
 			set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
 			set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
-			set location value: point2;
+			set location value: point2;   
 			do action: goto {
 				arg target value: point1;
 				arg on value: road_graph; 
 			}
-			let lines2 type: list of: geometry value: (inside_road_geom split_at location);
+			let lines2 type: container of: geometry value: (inside_road_geom split_at location);
 			
  			set the_road.extremity2 value:  lines2 first_with (geometry(each).points contains point2);
 			set inside_road_geom value: lines2 first_with (!(geometry(each).points contains point2));
@@ -314,12 +319,12 @@ entities {
 			}
 			
 		}
-	} 
+	}  
 }
 
 experiment toto type: gui { 
 	output { 
-		display full_detail { 
+		display full_detail {  
 		 	species road aspect: base transparency: 0.1;
 		 	species roadwidth aspect: base transparency: 0.1;
 		 	species building aspect: base transparency: 0.1;
@@ -332,7 +337,7 @@ experiment toto type: gui {
 		}
 		
 		display pedestrian_road_network {
-		 	species road aspect: base transparency: 0.1;
+		 	species road aspect: base transparency: 0.1;  
 		 	species destination aspect: base transparency: 0.1;
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
@@ -340,6 +345,7 @@ experiment toto type: gui {
 		display macro_patch_display {
 			species macro_patch_viewer aspect: base;
 		}		
+
 
 //		display Execution_Time {
 //			chart name: 'Simulation step length' type: series background: rgb('black') {
