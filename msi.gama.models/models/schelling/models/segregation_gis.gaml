@@ -55,7 +55,7 @@ entities {
 		var color type: rgb init: [255, 255, 255] as rgb;
 		var surface type: float;
 		var capacity type: int init: 1 + surface / square_meters_per_people;
-		reflex {do wander;}
+		reflex wander {do wander;}
 		action accept {
 			arg one_people;
 			add item: one_people to: insiders of self;
@@ -78,7 +78,7 @@ entities {
 		} 
 	}
 }
-environment bounds: shape_file_name;
+environment bounds: shape_file_name; 
 output {
 	display Town_display refresh_every: 1 {
 		species space size: {0.8,0.8} position: {0.1,0.1} aspect: gis;
