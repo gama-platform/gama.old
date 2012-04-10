@@ -86,7 +86,7 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 			error("Unknown action " + getName(), IKeyword.ACTION);
 			return;
 		}
-		executer.verifyArgs(args.keySet());
+		executer.verifyArgs(getDescription(), args.keySet());
 	}
 
 	@Override

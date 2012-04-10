@@ -85,17 +85,4 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 
 	// TODO Defaults are not taken into account...
 
-	protected void verifyArgs(final Arguments args) {
-		for ( String arg : formalArgs.keySet() ) {
-			if ( formalArgs.getExpr(arg) == null && !args.containsKey(arg) ) {
-				error("Missing argument " + arg + " in call to " + getName());
-			}
-		}
-		for ( String arg : args.keySet() ) {
-			if ( !formalArgs.containsKey(arg) ) {
-				error("Unknown argument" + arg + " in call to " + getName());
-			}
-		}
-	}
-
 }

@@ -177,7 +177,7 @@ public class CommandDescription extends SymbolDescription {
 		return null;
 	}
 
-	public void verifyArgs(final Set<String> names) {
+	public void verifyArgs(final IDescription caller, final Set<String> names) {
 		if ( args == null ) { return; }
 		List<String> mandatoryArgs = new ArrayList();
 		Set<String> allArgs = args.keySet();
@@ -190,13 +190,13 @@ public class CommandDescription extends SymbolDescription {
 		if ( verifyMandatoryArgs ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.contains(arg) ) {
-					flagError("Missing argument " + arg + " in call to " + getName());
+					caller.flagError("Missing argument " + arg + " in call to " + getName());
 				}
 			}
 		}
 		for ( String arg : names ) {
 			if ( !allArgs.contains(arg) ) {
-				flagError("Unknown argument" + arg + " in call to " + getName());
+				caller.flagError("Unknown argument" + arg + " in call to " + getName());
 			}
 		}
 	}
