@@ -2,7 +2,7 @@
  *  testTriangulation
  *  Author: patricktaillandier
  *  Description: 
- */
+ */ 
 
 model testTriangulation
 global {
@@ -12,7 +12,7 @@ global {
 	init {    
 		create object from: shape_file_in ;
 		let the_object type: object <- first(object);
-		let triangles type: list of: geometry <- triangulate(the_object);
+		let triangles type: container of: geometry <- triangulate(the_object);
 		loop trig over: triangles {
 			create triangle {
 				set shape <- trig;
@@ -30,7 +30,7 @@ global {
 			set location <- any_location_in (one_of(skeleton as list));
 		}
 		create people number: 100 {
-			set target <- one_of (goal as list) ;
+			set target <- one_of (goal as list) ; 
 			set location <- any_location_in (one_of(skeleton as list));
 		} 
 	}
@@ -62,7 +62,7 @@ entities {
 		goal target;
 		path my_path; 
 	
-		reflex {
+		reflex goto {
 			do goto on:the_graph target:target speed:1;
 		}
 		aspect default {
