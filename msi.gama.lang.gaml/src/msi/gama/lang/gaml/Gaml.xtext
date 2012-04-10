@@ -11,7 +11,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
  */ 
 	GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
 	DefBinaryOp: '_binary &' name=ID'&;';
-	DefReserved: '_reserved &' name=ID'&;';
+	DefReserved: '_reserved &' name=ID'&;' | '_unit &' name=ID '&;';
 	DefUnary: '_unary &'name=ID '&;';
 
 /**

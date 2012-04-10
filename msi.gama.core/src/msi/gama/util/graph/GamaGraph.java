@@ -19,7 +19,6 @@
 package msi.gama.util.graph;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.*;
@@ -53,18 +52,18 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	protected int optimizerType = 1;
 	private FloydWarshallShortestPaths optimizer;
 	protected boolean verbose;
-	
-	private LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
-	
+
+	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
+
 	public GamaGraph(final boolean directed) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
-		edgeBased = false; // TODO  ? (Sam)
+		edgeBased = false; // TODO ? (Sam)
 		vertexRelation = null;
-		
+
 	}
-	
+
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
@@ -77,8 +76,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			buildByVertices(vertices);
 		}
 	}
-	
-	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed, final VertexRelationship rel) {
+
+	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed,
+		final VertexRelationship rel) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
@@ -175,7 +175,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		if ( edge == null ) { return false; }
 		edgeMap.put((K) e, edge);
-		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_ADDED ));
+		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;
 
 	}
@@ -228,14 +228,16 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return edgeMap.keySet();
 	}
 
+	@Override
 	public Collection _internalEdgeSet() {
 		return edgeMap.values();
 	}
-	
+
+	@Override
 	public Collection _internalNodesSet() {
 		return edgeMap.values();
 	}
-	
+
 	@Override
 	public Set edgesOf(final Object vertex) {
 		_Vertex<V> v = getVertex(vertex);
@@ -388,9 +390,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		for ( Object e : edges ) {
 			removeEdge(e);
 		}
-		
+
 		vertexMap.remove(v);
-		dispatchEvent(new GraphEvent(this, this, null, v,  GraphEventType.VERTEX_REMOVED));
+		dispatchEvent(new GraphEvent(this, this, null, v, GraphEventType.VERTEX_REMOVED));
 		return true;
 	}
 
@@ -417,7 +419,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			optimizerType = 3;
 		} else if ( "Bellmann".equals(s) ) {
 			optimizerType = 2;
-		} else if ( "AStar".equals(s) ){
+		} else if ( "AStar".equals(s) ) {
 			optimizerType = 4;
 		} else {
 			optimizerType = 1;
@@ -460,10 +462,10 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		GraphPath p = optimizer.getShortestPath(source, target);
 		return pathFromEdges(source, target, new GamaList(p.getEdgeList()));
-	} 
-	
+	}
+
 	private IValue AShortestPath(final Object source, final Object target) {
-		AStarShortestPath p = new AStarShortestPath(this, (IShape)source, (IShape)target);
+		AStarShortestPath p = new AStarShortestPath(this, (IShape) source, (IShape) target);
 		return pathFromEdges(source, target, new GamaList(p.getPathEdgeList()));
 	}
 
@@ -836,34 +838,35 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public void setVerbose(Boolean verbose) {
+	public void setVerbose(final Boolean verbose) {
 		this.verbose = verbose;
 	}
 
 	@Override
-	public void addListener(IGraphEventListener listener) {
+	public void addListener(final IGraphEventListener listener) {
 		synchronized (listeners) {
-			if (!listeners.contains(listener))
-				listeners.add(listener);	
+			if ( !listeners.contains(listener) ) {
+				listeners.add(listener);
+			}
 		}
-			
+
 	}
 
 	@Override
-	public void removeListener(IGraphEventListener listener) {
+	public void removeListener(final IGraphEventListener listener) {
 		synchronized (listeners) {
-			listeners.remove(listener);	
+			listeners.remove(listener);
 		}
 	}
 
 	@Override
-	public void dispatchEvent(GraphEvent event) {
+	public void dispatchEvent(final GraphEvent event) {
 		synchronized (listeners) {
-			if (listeners.isEmpty()) return;
-			for (IGraphEventListener l : listeners)
-				l.receiveEvent(event);	
+			if ( listeners.isEmpty() ) { return; }
+			for ( IGraphEventListener l : listeners ) {
+				l.receiveEvent(event);
+			}
 		}
 	}
-
 
 }

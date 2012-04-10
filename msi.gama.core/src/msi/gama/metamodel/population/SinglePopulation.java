@@ -1,7 +1,6 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -14,7 +13,7 @@ import msi.gaml.types.IType;
 
 public class SinglePopulation extends AbstractPopulation {
 
-	IList<IAgent> agents = new GamaList();
+	protected IList<IAgent> agents = new GamaList();
 	
 	public SinglePopulation(final IAgent host, final ISpecies species) {
 		super(host, species);

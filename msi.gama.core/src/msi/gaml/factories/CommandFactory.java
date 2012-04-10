@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -36,7 +35,7 @@ import msi.gaml.types.*;
  */
 @handles({ ISymbolKind.SEQUENCE_COMMAND, ISymbolKind.SINGLE_COMMAND, ISymbolKind.BEHAVIOR,
 	ISymbolKind.ACTION })
-public class CommandFactory extends SymbolFactory {
+public class CommandFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected CommandDescription buildDescription(final ISyntacticElement source, final String kw,
@@ -56,7 +55,7 @@ public class CommandFactory extends SymbolFactory {
 
 		if ( actualSpecies != null ) {
 			IType t = desc.getSpeciesContext().getType();
-			desc.addTemp(IKeyword.MYSELF, t, t, factory);
+			desc.addTemp(MYSELF, t, t, factory);
 			desc.setSuperDescription(desc.getModelDescription()
 				.getSpeciesDescription(actualSpecies));
 		}
@@ -66,37 +65,41 @@ public class CommandFactory extends SymbolFactory {
 	private void compileArgs(final IDescription cd, final ISymbol ce,
 		final IExpressionFactory factory) {
 		Arguments ca = new Arguments();
-		boolean isCreate =
-			cd.getKeyword().equals(IKeyword.CREATE) || cd.getKeyword().equals(IKeyword.DO);
-		Facets cFacets;
+		boolean isCreate = cd.getKeyword().equals(CREATE) || cd.getKeyword().equals(DO);
+		Facets argFacets;
 		for ( IDescription sd : ((CommandDescription) cd).getArgs() ) {
-			cFacets = sd.getFacets();
+			argFacets = sd.getFacets();
 			String name = sd.getName();
-			// TOUJOURS VRAI AU-DESSUS ????
-			// Ajour de getSuperDescription() pour éviter que les arguments soient compilés dans le
-			// contexte de la commande... A vérifier.
-			IExpression e;
+			IExpression e = null;
+			IDescription superDesc = cd.getSuperDescription();
 			try {
-				e =
-					cFacets.compile(IKeyword.VALUE, cd.getSuperDescription(),
-						cFacets.compile(IKeyword.DEFAULT, cd.getSuperDescription(), factory),
-						factory);
-			} catch (GamaRuntimeException e1) {
+				if ( argFacets.containsKey(VALUE) ) {
+					e = argFacets.compile(VALUE, superDesc, factory);
+				} else if ( argFacets.containsKey(DEFAULT) ) {
+					e = argFacets.compile(VALUE, superDesc, factory);
+				}
+			} catch (RuntimeException e1) {
+				cd.flagError("Error in compiling argument " + name + ": " + e1.getMessage(), name);
 				e1.printStackTrace();
 				return;
 			}
 			ca.put(name, e);
-			IType type = sd.getTypeOf(cFacets.getString(IKeyword.TYPE));
+			IType type = sd.getTypeOf(argFacets.getLabel(TYPE));
 			if ( type == Types.NO_TYPE && e != null ) {
 				type = e.type();
 			}
 			if ( !isCreate ) {
+				// Special case for create and do, as the "arguments" passed should not be part of
+				// the context
 				((CommandDescription) cd).addTemp(name, type,
 					e == null ? Types.NO_TYPE : e.getContentType(), factory);
 			}
-			// Special case for create and do, as the "arguments" passed should not be part of the
-			// context
+
 		}
+		// if ( cd.getKeyword().equals(DO) ) {
+		// GuiUtils.debug("Argument map found in do " + cd.getFacets().getLabel(ACTION) + " : " +
+		// ca.toString());
+		// }
 		((ICommand.WithArgs) ce).setFormalArgs(ca);
 	}
 
@@ -104,10 +107,10 @@ public class CommandFactory extends SymbolFactory {
 	protected IExpression compileFacet(final String tag, final IDescription sd,
 		final SymbolMetaDescription md, final IExpressionFactory factory) {
 		// String name = sd.getFacet(ISymbol.NAME);
-		String type = sd.getFacets().getString(IKeyword.TYPE);
-		String contentType = sd.getFacets().getString(IKeyword.AS);
+		String type = sd.getFacets().getLabel(TYPE);
+		String contentType = sd.getFacets().getLabel(AS);
 		if ( contentType == null ) {
-			contentType = sd.getFacets().getString(IKeyword.SPECIES);
+			contentType = sd.getFacets().getLabel(SPECIES);
 		}
 		if ( type == null && contentType != null ) {
 			type = IType.LIST_STR;
@@ -123,7 +126,7 @@ public class CommandFactory extends SymbolFactory {
 
 	private String computeSpecies(final ISymbol ce) {
 		IType type = null;
-		IExpression speciesFacet = ce.getFacet(IKeyword.SPECIES);
+		IExpression speciesFacet = ce.getFacet(SPECIES);
 		if ( speciesFacet != null ) {
 			IType t = speciesFacet.getContentType();
 			if ( t.isSpeciesType() ) {
@@ -131,7 +134,7 @@ public class CommandFactory extends SymbolFactory {
 			}
 		}
 		if ( type == null ) {
-			speciesFacet = ce.getFacet(IKeyword.AS);
+			speciesFacet = ce.getFacet(AS);
 			if ( speciesFacet != null ) {
 				IType t = speciesFacet.getContentType();
 				if ( t.isSpeciesType() ) {
@@ -140,7 +143,7 @@ public class CommandFactory extends SymbolFactory {
 			}
 		}
 		if ( type == null ) {
-			speciesFacet = ce.getFacet(IKeyword.TARGET);
+			speciesFacet = ce.getFacet(TARGET);
 			if ( speciesFacet != null ) {
 				IType t = speciesFacet.getContentType();
 				if ( t.isSpeciesType() ) {

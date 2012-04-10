@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
 import msi.gaml.expressions.*;
@@ -75,57 +76,34 @@ public class CommandDescription extends SymbolDescription {
 
 	private void collectArgs() {
 		if ( facets.containsKey(IKeyword.WITH) ) {
+			// if ( getKeyword().equals(IKeyword.DO) ) {
+			// GuiUtils.debug("WITH facet detected in do " + facets.getLabel(IKeyword.ACTION));
+			// }
 			List<IDescription> argList = explodeArgs(facets.get(IKeyword.WITH));
 			children.addAll(argList);
 			facets.remove(IKeyword.WITH);
 		}
+		// Now puts all the args in the "args" list, removing them from children
+		// Made here in case other args than the previous ones were declared this way.
 		for ( IDescription c : children ) {
 			if ( c.getKeyword().equals(IKeyword.ARG) ) {
 				args.put(c.getName(), c);
 			}
 		}
+		// if ( getKeyword().equals(IKeyword.DO) && !args.isEmpty() ) {
+		// GuiUtils.debug("arguments derived from WITH :" + args);
+		// }
 		children.removeAll(args.values());
 	}
 
-	private List<IDescription> explodeArgs(final ExpressionDescription args) {
+	private List<IDescription> explodeArgs(final IExpressionDescription args) {
 		List<IDescription> argList = new GamaList();
-		ExpressionDescription words; // = new ExpressionDescription(args, true);
-		words = new ExpressionDescription(args.subList(1, args.size() - 1));
-		int begin = 0;
-		int end = 0;
-		int listLevel = 0;
-		while (begin < words.size()) {
-			while (end < words.size()) {
-				String endString = words.get(end);
-				if ( endString.equals(IKeyword.OPEN_LIST) || endString.equals(IKeyword.OPEN_POINT) ) {
-					listLevel++;
-				} else if ( endString.equals(IKeyword.CLOSE_LIST) ||
-					endString.equals(IKeyword.CLOSE_POINT) ) {
-					listLevel--;
-				} else if ( IKeyword.COMMA.equals(endString) && listLevel == 0 ) {
-					break;
-				}
-				end++;
-			}
-			int parenthesis = 0;
-			if ( words.get(begin).equals(IKeyword.OPEN_EXP) ) {
-				parenthesis = 1;
-			}
-			String arg = words.get(begin + parenthesis);
-			String sep = words.get(begin + parenthesis + 1);
-			if ( !sep.equals("::") ) {
-				flagError("Arguments must be provided as pairs arg::value; " +
-					words.subList(begin, end) + " is not a pair");
-			}
-			ExpressionDescription expr =
-				new ExpressionDescription(words.subList(begin + parenthesis + 2, end - parenthesis));
-			// String[] facetArray = new String[] { IKeyword.NAME, arg, IKeyword.VALUE, expr };
-			// GuiUtils.debug("Found a new argument:" + Arrays.toString(facetArray));
-			Facets f = new Facets(IKeyword.NAME, arg);
-			f.put(IKeyword.VALUE, expr);
+		Map<String, IExpressionDescription> map =
+			GAMA.getExpressionFactory().createArgumentMap(args, this);
+		for ( Map.Entry<String, IExpressionDescription> arg : map.entrySet() ) {
+			Facets f = new Facets(IKeyword.NAME, arg.getKey());
+			f.put(IKeyword.VALUE, arg.getValue());
 			argList.add(DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
-			begin = end + 1;
-			end = begin;
 		}
 		return argList;
 	}
@@ -135,7 +113,7 @@ public class CommandDescription extends SymbolDescription {
 		final IExpressionFactory f) {
 
 		if ( md.isFacetDeclaringANewTemp(facetName) ) {
-			String varName = facets.getString(facetName);
+			String varName = facets.getLabel(facetName);
 			if ( getSuperDescription() == null ||
 				!(getSuperDescription() instanceof CommandDescription) ) {
 				flagError("Impossible to return " + varName);
@@ -149,12 +127,11 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	public SpeciesDescription extractExtraSpeciesContext() {
-		if ( facets.getString(IKeyword.KEYWORD).equals(IKeyword.CREATE) ) {
+		if ( facets.getLabel(IKeyword.KEYWORD).equals(IKeyword.CREATE) ) {
 			SpeciesDescription species =
-				getModelDescription().getSpeciesDescription(facets.getString(IKeyword.SPECIES));
+				getModelDescription().getSpeciesDescription(facets.getLabel(IKeyword.SPECIES));
 			if ( species == null ) {
-				species =
-					getModelDescription().getSpeciesDescription(facets.getString(IKeyword.AS));
+				species = getModelDescription().getSpeciesDescription(facets.getLabel(IKeyword.AS));
 			}
 			return species;
 		}
@@ -164,6 +141,9 @@ public class CommandDescription extends SymbolDescription {
 	@Override
 	public CommandDescription shallowCopy(final IDescription superDescription) {
 		List<IDescription> children = new ArrayList();
+		// GuiUtils.debug("" + this + " is being copied");
+		// TODO Is it necessary to copy all the statements ? Only actions and primitive should be
+		// copied, maybe arg ? Try to see why it is necessary...
 		children.addAll(getChildren());
 		if ( args != null ) {
 			children.addAll(args.values());
@@ -251,6 +231,9 @@ public class CommandDescription extends SymbolDescription {
 			if ( getKeyword().equals(IKeyword.ASPECT) ) {
 				s = IKeyword.DEFAULT;
 			} else {
+				if ( getKeyword().equals(IKeyword.REFLEX) ) {
+					flagWarning("Reflexes should be named", null);
+				}
 				s = getKeyword() + String.valueOf(index++);
 			}
 			facets.putAsLabel(IKeyword.NAME, s);
@@ -259,11 +242,11 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	public IType getReturnType() {
-		return getTypeOf(facets.getString(IKeyword.TYPE));
+		return getTypeOf(facets.getLabel(IKeyword.TYPE));
 	}
 
 	public IType getReturnContentType() {
-		return getTypeOf(facets.getString(IKeyword.OF));
+		return getTypeOf(facets.getLabel(IKeyword.OF));
 	}
 
 	@Override

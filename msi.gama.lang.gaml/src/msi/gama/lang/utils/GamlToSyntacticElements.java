@@ -18,141 +18,99 @@
  */
 package msi.gama.lang.utils;
 
-import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.IErrorCollector;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.BasicSyntacticElement;
-import msi.gaml.descriptions.ExpressionDescription;
-import msi.gaml.expressions.GamlExpressionFactory;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.EcoreUtil2;
 
 public class GamlToSyntacticElements {
 
-	private static boolean noParenthesisAroundPairs = false;
-	public static Statement currentStatement;
-
-	public static Map<Resource, ISyntacticElement> buildSyntacticTree(final Resource r,
-		final ErrorCollector collect) {
-		Map<Resource, ISyntacticElement> docs = new LinkedHashMap();
-		buildRecursiveSyntacticTree(docs, r, collect);
-		return docs;
-	}
-
-	private static void buildRecursiveSyntacticTree(final Map<Resource, ISyntacticElement> docs,
-		final Resource r, final ErrorCollector collect) {
-		Model m = (Model) r.getContents().get(0);
-		docs.put(r, doConvert(m, collect));
-		for ( Import imp : m.getImports() ) {
-			String importUri = imp.getImportURI();
-			URI iu = URI.createURI(importUri).resolve(r.getURI());
-			if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
-				Resource ir = r.getResourceSet().getResource(iu, true);
-				try {
-					ir.load(Collections.EMPTY_MAP);
-				} catch (IOException e) {
-					collect.add(new GamlParsingError(e));
-					continue;
-				}
-				if ( ir != r ) {
-					if ( !docs.containsKey(ir) ) {
-						buildRecursiveSyntacticTree(docs, ir, collect);
-					}
-				}
-			}
+	public static ISyntacticElement doConvert(final Model m, final IErrorCollector collect) {
+		IExpressionFactory fact = GAMA.getExpressionFactory();
+		if ( fact.getParser() == null ) {
+			fact.registerParser(new NewGamlExpressionCompiler());
 		}
-	}
 
-	public static ISyntacticElement doConvert(final Model m, final ErrorCollector collect) {
-		GamlExpressionFactory fact = (GamlExpressionFactory) GAMA.getExpressionFactory();
-		// fact.REGISTER_NEW_PARSER(new NewGamlExpressionParser());
-
-		BasicSyntacticElement elt = convModel(m, collect);
+		AbstractStatementDescription elt = convModel(m, collect);
 		// elt.dump();
 		return elt;
 	}
 
-	private static BasicSyntacticElement convModel(final Model m, final ErrorCollector collect) {
-		final BasicSyntacticElement model = new BasicSyntacticElement(IKeyword.MODEL, m, collect);
-		model.setAttribute(IKeyword.NAME, m.getName(), m);
+	private static AbstractStatementDescription convModel(final Model m,
+		final IErrorCollector collect) {
+		final AbstractStatementDescription model =
+			new ECoreBasedStatementDescription(IKeyword.MODEL, m, collect);
+		model.setFacet(IKeyword.NAME, new LabelExpressionDescription(m.getName()));
 		for ( final Import i : m.getImports() ) {
 			final String uri = i.getImportURI();
 			if ( !uri.startsWith("platform:") ) {
-				final BasicSyntacticElement include =
-					new BasicSyntacticElement(IKeyword.INCLUDE, i, collect);
-				include.setAttribute(IKeyword.FILE, uri, i);
-				model.addContent(include);
+				final AbstractStatementDescription include =
+					new ECoreBasedStatementDescription(IKeyword.INCLUDE, i, collect);
+				include.setFacet(IKeyword.FILE, new LabelExpressionDescription(uri));
+				model.addChild(include);
 			}
 		}
 		convStatements(model, m.getStatements(), collect);
 		return model;
 	}
 
-	private static void convStatements(final BasicSyntacticElement elt, final EList<Statement> ss,
-		final ErrorCollector collect) {
+	private static void convStatements(final AbstractStatementDescription elt,
+		final EList<Statement> ss, final IErrorCollector collect) {
 		for ( final Statement stm : ss ) {
 			ISyntacticElement conv = convStatement(stm, collect);
 			if ( conv != null ) {
-				ExpressionDescription s = EGaml.getDependenciesOf(stm);
-				if ( s != null && !s.isEmpty() ) {
-					conv.setAttribute(IKeyword.DEPENDS_ON, s, stm);
+				Array s = EGaml.varDependenciesOf(stm);
+				if ( s != null ) {
+					conv.setFacet(IKeyword.DEPENDS_ON, new EcoreBasedExpressionDescription(s));
 				}
-				elt.addContent(conv);
+				elt.addChild(conv);
 			}
 		}
 	}
 
-	private static BasicSyntacticElement convStatement(final Statement stm,
-		final ErrorCollector collect) {
+	private static AbstractStatementDescription convStatement(final Statement stm,
+		final IErrorCollector collect) {
 		if ( stm == null ) { return null; }
-		currentStatement = stm;
 		String name = stm.getKey();
 		if ( name == null ) { return null; }
-		final BasicSyntacticElement elt = new BasicSyntacticElement(name, stm, collect);
+		final AbstractStatementDescription elt =
+			new ECoreBasedStatementDescription(name, stm, collect);
 		Map<String, Expression> facets = EGaml.getFacetsOf(stm);
 		// Modified by the "do" command
 		if ( name.equals(IKeyword.DO) ) {
-			convDo(stm, facets, elt, collect);
+			convDo(stm, facets, collect);
 		}
 		for ( Map.Entry<String, Expression> entry : facets.entrySet() ) {
 			String fname = entry.getKey();
-
-			ExpressionDescription fexpr = conv(entry.getValue(), collect);
+			IExpressionDescription fexpr = conv(entry.getValue());
 			if ( fexpr == null ) {
+				GamlCompilationError error =
+					new GamlCompilationError("an expression is expected for facet " + fname,
+						new ECoreBasedStatementDescription(name, stm, collect));
+				error.setObjectOfInterest(entry.getValue());
 				continue;
 			}
-
-			if ( fname.equals(IKeyword.SKILLS) && fexpr.get(0).equals("[") ) {
-				fexpr.remove(0);
-				fexpr.remove(fexpr.size() - 1);
-				// fexpr = fexpr.substring(1, fexpr.length() - 1);
-			}
-			elt.setAttribute(entry.getKey(), fexpr, entry.getValue());
+			elt.setFacet(fname, fexpr);
 		}
 		if ( name.equals(IKeyword.CONST) ) {
-			elt.setName(IKeyword.VAR);
-			elt.setAttribute(IKeyword.CONST, IKeyword.TRUE, stm);
+			elt.setKeyword(IKeyword.VAR);
+			elt.setFacet(IKeyword.CONST,
+				new EcoreBasedExpressionDescription(EGaml.createTerminal(true)));
 		}
-		// if ( name.equals(IKeyword.VAR) ) {
-		// Expression e = facets.get(IKeyword.TYPE);
-		// String type = EGaml.getKeyOf(e);
-		// if ( type != null ) {
-		// elt.setName(EGaml.isVariable(e) ? IType.AGENT_STR : type);
-		// }
-		// }
 		String def =
-			DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(elt, elt.getName());
+			DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(elt, elt.getKeyword());
 
-		if ( def != null && elt.getAttribute(def) == null ) { // TODO verify this
+		if ( def != null && elt.getFacet(def) == null ) { // TODO verify this
 			Expression expr = EGaml.getValueOfOmittedFacet(stm);
 			if ( expr != null ) {
-				elt.setAttribute(def, conv(expr, collect), expr);
+				elt.setFacet(def, conv(expr));
 			}
 		}
 		if ( name.equals(IKeyword.IF) ) {
@@ -166,196 +124,47 @@ public class GamlToSyntacticElements {
 	}
 
 	private static void convElse(final Statement stm, final ISyntacticElement elt,
-		final ErrorCollector collect) {
+		final IErrorCollector collect) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
-			BasicSyntacticElement elseElt =
-				new BasicSyntacticElement(IKeyword.ELSE, elseBlock, elt.getErrorCollector());
+			AbstractStatementDescription elseElt =
+				new ECoreBasedStatementDescription(IKeyword.ELSE, elseBlock, collect);
 			if ( elseBlock instanceof Statement ) {
-				elseElt.addContent(convStatement((Statement) elseBlock, collect));
+				elseElt.addChild(convStatement((Statement) elseBlock, collect));
 			} else {
 				convStatements(elseElt, ((Block) elseBlock).getStatements(), collect);
 			}
-			elt.addContent(elseElt);
+			elt.addChild(elseElt);
 		}
 	}
 
 	static Set<String> builtin = EGaml.getAllowedFacetsFor(IKeyword.DO);
 
 	private static void convDo(final Statement stm, final Map<String, Expression> facets,
-		final ISyntacticElement elt, final ErrorCollector collect) {
+		final IErrorCollector collect) {
 		Set<String> toRemove = new HashSet();
-		ExpressionDescription sb = new ExpressionDescription(stm);
-		sb.add("[");
-
+		Array args = EGaml.getFactory().createArray();
 		for ( String facet : facets.keySet() ) {
 			if ( !builtin.contains(facet) ) {
-				sb.add(facet);
-				sb.add("::");
-				conv(sb, facets.get(facet), collect);
-				sb.add(",");
+				// GuiUtils.debug("Direct argument " + facet + " found ");
+				args.getExprs().add(
+					EGaml.createPairExpr(EGaml.createTerminal(facet), facets.get(facet)));
 				toRemove.add(facet);
 			}
 		}
 		for ( String s : toRemove ) {
 			facets.remove(s);
 		}
-		if ( sb.size() > 1 ) {
-			sb.remove(sb.size() - 1);
-			sb.add("]");
-			elt.setAttribute(IKeyword.WITH, sb, facets.isEmpty() ? stm : stm.getFacets().get(0));
+		if ( args.getExprs().size() > 0 ) {
+			// GuiUtils.debug("Arguments added to WITH facet : " + args.getExprs());
+			facets.put(IKeyword.WITH, args);
 		}
+		// TODO error if WITH is already present
 
 	}
 
-	private static ExpressionDescription conv(final Expression expr, final ErrorCollector collect) {
-		if ( expr == null ) {
-			collect.add(new GamlParsingError("an expression is expected", currentStatement));
-			return null;
-		}
-		ExpressionDescription ed = new ExpressionDescription(expr);
-		conv(ed, expr, collect);
-		if ( ed.isEmpty() ) { return null; }
-		// System.out.println(Arrays.toString(ed.toArray()));
-		return ed;
-	}
-
-	private static void conv(final ExpressionDescription ed, final Expression expr,
-		final ErrorCollector collect) {
-		if ( expr == null ) {
-			collect.add(new GamlParsingError("an expression is expected", currentStatement));
-			return;
-		} else if ( expr instanceof TernExp ) {
-			left(ed, expr, collect);
-			op(ed, expr);
-			right(ed, expr, collect);
-			ed.add(":");
-			conv(ed, ((TernExp) expr).getIfFalse(), collect);
-		} else if ( expr instanceof StringLiteral ) {
-			ed.add(StringUtils.toGamlString(((StringLiteral) expr).getValue()));
-		} else if ( expr instanceof TerminalExpression ) {
-			ed.add(((TerminalExpression) expr).getValue());
-		} else if ( expr instanceof Point ) {
-			ed.add("{");
-			left(ed, expr, collect);
-			op(ed, expr);
-			right(ed, expr, collect);
-			ed.add("}");
-		} else if ( expr instanceof Array ) {
-			convArray(ed, (Array) expr, collect);
-		} /*
-		 * else if ( expr instanceof MemberRef ) {
-		 * left(ed, expr, collect);
-		 * op(ed, expr);
-		 * right(ed, expr, collect);
-		 * }
-		 */else if ( expr instanceof VariableRef ) {
-			ed.add(EGaml.getKeyOf(expr));
-		} else if ( expr instanceof GamlUnaryExpr ) {
-			op(ed, expr);
-			right(ed, expr, collect);
-		} else if ( expr instanceof FunctionRef ) {
-			function(ed, (FunctionRef) expr, collect);
-		} else {
-			left(ed, expr, collect);
-			op(ed, expr);
-			right(ed, expr, collect);
-		}
-	}
-
-	private static void op(final ExpressionDescription ed, final Expression expr) {
-		String op = expr.getOp();
-		if ( op != null ) {
-			ed.add(op);
-		}
-	}
-
-	private static void function(final ExpressionDescription ed, final FunctionRef expr,
-		final ErrorCollector collect) {
-		EList<Expression> args = expr.getArgs();
-		String opName = EGaml.getKeyOf(expr.getLeft());
-		if ( args.size() == 0 ) {
-			collect.add(new GamlParsingError("The " + opName + "function has no arguments", expr));
-		} else if ( args.size() == 1 ) {
-			ed.add(opName);
-			argument(ed, args.get(0), collect);
-		} else if ( args.size() == 2 ) {
-			argument(ed, args.get(0), collect);
-			ed.add(opName);
-			argument(ed, args.get(1), collect);
-		} else {
-			argument(ed, args.get(0), collect);
-			ed.add(opName);
-			arguments(ed, args, collect);
-		}
-	}
-
-	private static void arguments(final ExpressionDescription ed, final EList<Expression> args,
-		final ErrorCollector collect) {
-		// parses the list of arguments to transform it into a map of args (starting at 1)
-		// Experimental right now
-		ed.add("[");
-		int size = args.size();
-		noParenthesisAroundPairs = true;
-		for ( int i = 0; i < size; i++ ) {
-			Expression e = args.get(i);
-			ed.add("arg" + i + "::");
-			conv(ed, e, collect);
-			if ( i < size - 1 ) {
-				ed.add(",");
-			}
-		}
-		ed.add("]");
-		noParenthesisAroundPairs = false;
-
-	}
-
-	private static void left(final ExpressionDescription ed, final Expression expr,
-		final ErrorCollector collect) {
-		Expression e = expr.getLeft();
-		if ( e != null ) {
-			argument(ed, e, collect);
-		}
-	}
-
-	private static void right(final ExpressionDescription ed, final Expression expr,
-		final ErrorCollector collect) {
-		Expression e = expr.getRight();
-		if ( e != null ) {
-			argument(ed, e, collect);
-		}
-	}
-
-	private static void argument(final ExpressionDescription ed, final Expression e,
-		final ErrorCollector collect) {
-		final boolean noParenthesis =
-			e instanceof TerminalExpression || e instanceof VariableRef || e instanceof Array;
-		if ( !noParenthesis ) {
-			ed.add("(");
-		}
-		conv(ed, e, collect);
-		if ( !noParenthesis ) {
-			ed.add(")");
-		}
-
-	}
-
-	private static void convArray(final ExpressionDescription ed, final Array r,
-		final ErrorCollector collect) {
-		ed.add("[");
-		EList<Expression> exprs = r.getExprs();
-		int size = exprs.size();
-		noParenthesisAroundPairs = true;
-		for ( int i = 0; i < size; i++ ) {
-			Expression e = exprs.get(i);
-			conv(ed, e, collect);
-			if ( i < size - 1 ) {
-				ed.add(",");
-			}
-		}
-		ed.add("]");
-		noParenthesisAroundPairs = false;
-
+	private static IExpressionDescription conv(final Expression expr) {
+		return expr == null ? null : new EcoreBasedExpressionDescription(expr);
 	}
 
 }

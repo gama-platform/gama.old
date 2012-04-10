@@ -8,7 +8,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.swt.SWT;
@@ -20,7 +19,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-import com.google.inject.Inject;
 
 /**
  * The class GamlEditor.
@@ -31,8 +29,6 @@ import com.google.inject.Inject;
  */
 public class GamlEditor extends XtextEditor implements IBuilderListener {
 
-	@Inject
-	private GamlJavaValidator builder;
 	// Copied from SwtGui. See how to factorize this.
 	public static Image run = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
 		"/icons/menu_play.png").createImage();
@@ -41,11 +37,13 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
 	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
 	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+	private static final int INITIAL_BUTTONS = 10;
 	private static Font labelFont;
-	Composite upper;
-	Composite parent;
-	ToolBar toolbar;
+	Composite toolbar, top, parent;
+	Button[] buttons = new Button[INITIAL_BUTTONS];
 	Label status;
+	volatile boolean isUpdatingToolbar = false;
+	volatile IModel currentModel;
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -59,8 +57,8 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		GAMA.getGamlBuilder().removeListener(this);
+		super.dispose();
 	}
 
 	@Override
@@ -73,140 +71,133 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 		layout.marginHeight = 0;
 		parent.setLayout(layout);
 
-		Composite top = new Composite(parent, SWT.None);
+		top = new Composite(parent, SWT.None);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		// data.heightHint = 30;
 		top.setLayoutData(data);
 		layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginWidth = 10;
+		layout.marginHeight = 5;
 		top.setLayout(layout);
 
 		status = new Label(top, SWT.CENTER);
-		data = new GridData(SWT.FILL, SWT.FILL, false, true);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = 120;
-		data.verticalAlignment = SWT.CENTER;
+		data.minimumHeight = SWT.DEFAULT;
 		status.setLayoutData(data);
+		status.setForeground(COLOR_TEXT);
 
-		upper = new Composite(top, SWT.None);
+		toolbar = new Composite(top, SWT.None);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		// data.heightHint = 30;
-		upper.setLayoutData(data);
+		toolbar.setLayoutData(data);
+		// toolbar.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		layout = new GridLayout(INITIAL_BUTTONS, false);
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		toolbar.setLayout(layout);
+		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
+			buttons[i] = new Button(toolbar, SWT.PUSH);
+			data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			// data.exclude = true;
+			buttons[i].setLayoutData(data);
+			buttons[i].setText("Experiment " + i);
+			buttons[i].addSelectionListener(listener);
+			buttons[i].setVisible(false);
+		}
 
+		// Asking the editor to fill the rest
 		Composite parent2 = new Composite(parent, SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		parent2.setLayoutData(data);
 		parent2.setLayout(new FillLayout());
 		super.createPartControl(parent2);
-		//
-		// this.getDocument().addDocumentListener(new IDocumentListener() {
-		//
-		// @Override
-		// public void documentAboutToBeChanged(final DocumentEvent event) {}
-		//
-		// @Override
-		// public void documentChanged(final DocumentEvent event) {
-		// updateToolbar();
-		// }
-		//
-		// });
-		// this.getDocument().addDocumentListener(new IDocumentListener() {
-		//
-		// @Override
-		// public void documentAboutToBeChanged(final DocumentEvent event) {}
-		//
-		// @Override
-		// public void documentChanged(final DocumentEvent event) {
-		// updateToolbar();
-		// }
-		//
-		// });
 	}
 
 	private final SelectionListener listener = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
-			String name = (String) evt.widget.getData("EXP");
-			IModel model = (IModel) evt.widget.getData("MOD");
+			String name = ((Button) evt.widget).getText();
+			// IModel model = (IModel) evt.widget.getData("MOD");
+			if ( currentModel == null ) { return; }
 			GuiUtils.openSimulationPerspective();
-			GAMA.newExperiment(name, model);
+			GAMA.newExperiment(name, currentModel);
 		}
 
 	};
 
-	// public IModel build() {
-	// XtextDocument doc = (XtextDocument) getDocument();
-	// final IModel model = doc.readOnly(new IUnitOfWork<IModel, XtextResource>() {
-	//
-	// @Override
-	// public IModel exec(final XtextResource r) throws Exception {
-	// return GAMA.getGamlBuilder().getLastBuild(r);
-	// }
-	// });
-	// return model;
-	// }
+	private void enableButton(final int index, final String text/* , final Image image */) {
+		// ((GridData) buttons[index].getLayoutData()).exclude = false;
+		buttons[index].setVisible(true);
+		buttons[index].setText(text);
+		// buttons[index].setImage(image);
+		buttons[index].pack();
+	}
+
+	private void hideButton(final Button b) {
+		// ((GridData) b.getLayoutData()).exclude = true;
+		b.setVisible(false);
+	}
+
+	private void setStatus(final Color c, final String text) {
+		top.setBackground(c);
+		status.setBackground(c);
+		toolbar.setBackground(c);
+		status.setText(text);
+	}
 
 	public void updateToolbar(final IModel model) {
-
-		Display.getDefault().syncExec(new Runnable() {
+		currentModel = model;
+		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				if ( toolbar != null ) {
-					toolbar.dispose();
+				isUpdatingToolbar = true;
+
+				// GuiUtils.debug("Beginning updating toolbar of " +
+				// getResource().getLocationURI());
+
+				if ( toolbar == null || toolbar.isDisposed() ) {
+					isUpdatingToolbar = false;
+					return;
 				}
-				if ( upper == null || upper.isDisposed() ) { return; }
-				toolbar = new ToolBar(upper, SWT.FLAT);
-				toolbar.setBackground(Display.getDefault()
-					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-				if ( model == null ) {
-					Label l = status;
-					l.setBackground(COLOR_ERROR);
-					l.setForeground(COLOR_TEXT);
-					l.setText("Compilation error:  ");
-					new ToolItem(toolbar, SWT.SEPARATOR);
-					final ToolItem exp = new ToolItem(toolbar, SWT.CHECK | SWT.SMOOTH);
-					exp.setText("No experiment available");
-				} else {
-					IExperiment current = GAMA.getExperiment();
-					Label l = status;
-					l.setBackground(COLOR_OK);
-					l.setForeground(COLOR_TEXT);
-					l.setText("Experiments:  ");
-					for ( IExperiment e : model.getExperiments() ) {
-						new ToolItem(toolbar, SWT.SEPARATOR);
-						final ToolItem exp = new ToolItem(toolbar, SWT.CHECK | SWT.SMOOTH);
-						if ( current != null && current.getName().equals(e.getName()) &&
-							current.getModel().getFileName().equals(e.getModel().getFileName()) ) {
-							exp.setImage(reload);
-						} else {
-							exp.setImage(run);
-						}
 
-						ToolItem t = new ToolItem(toolbar, SWT.NONE);
-						t.setText(e.getName());
-						t.setData("EXP", e.getName());
-						t.setData("MOD", model);
-						// .setFont(labelFont);
-						// exp.setText(e.getName());
-						exp.setData("EXP", e.getName());
-						exp.setData("MOD", model);
-						exp.addSelectionListener(listener);
-						t.addSelectionListener(listener);
-
+				for ( Button b : buttons ) {
+					if ( b != null ) {
+						hideButton(b);
 					}
-					new ToolItem(toolbar, SWT.SEPARATOR);
-
 				}
-				status.pack();
-				toolbar.pack();
-				upper.layout(true);
-				parent.layout(true);
+
+				if ( model == null ) {
+					int errors = getXtextResource().getErrors().size();
+					setStatus(COLOR_ERROR, "" + errors + " error(s) found");
+
+				} else {
+					setStatus(COLOR_OK, "Run experiments:");
+					int i = 0;
+					for ( IExperiment e : model.getExperiments() ) {
+						enableButton(i, e.getName());
+						// buttons[i].setData("MOD", model);
+						i++;
+					}
+				}
+
+				// status.pack();
+				toolbar.layout(true);
+				// toolbar.pack();
+				toolbar.update();
+				// parent.layout(true);
+				parent.update();
+				// GuiUtils.debug("Finished updating toolbar of " + getResource().getLocationURI());
+				isUpdatingToolbar = false;
 			}
 		});
+
 	}
 
 	/**
@@ -219,17 +210,33 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	 * @see msi.gama.lang.gaml.validation.IBuilderListener#afterBuilding(msi.gama.lang.gaml.gaml.Model,
 	 *      msi.gama.kernel.model.IModel)
 	 */
+
+	private XtextResource resource;
+
+	public XtextResource getXtextResource() {
+		if ( getDocument() == null ) { return null; }
+		if ( resource == null ) {
+			resource = getDocument().readOnly(new IUnitOfWork<XtextResource, XtextResource>() {
+
+				@Override
+				public XtextResource exec(final XtextResource state) throws Exception {
+					return state;
+				}
+
+			});
+		}
+		return resource;
+	}
+
 	@Override
 	public void afterBuilding(final Resource ast, final IModel model) {
-		boolean equals = getDocument().readOnly(new IUnitOfWork<Boolean, XtextResource>() {
-
-			@Override
-			public Boolean exec(final XtextResource resource) throws Exception {
-				return ast.equals(resource);
-			}
-		});
-		if ( equals ) {
+		if ( !isUpdatingToolbar && getXtextResource() == ast ) {
 			updateToolbar(model);
 		}
 	}
+
+	public void forgetModel() {
+		currentModel = null;
+	}
+
 }

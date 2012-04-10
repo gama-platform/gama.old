@@ -62,7 +62,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		VariableDescription desc = (VariableDescription) sd;
-		setName(desc.getFacets().getString(IKeyword.VAR));
+		setName(desc.getFacets().getLabel(IKeyword.VAR));
 		type = desc.getType();
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
@@ -79,7 +79,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if ( type.id() != vd.getType().id() ) {
 			error(p + "type must be the same as that of " + varName, IKeyword.TYPE);
 		}
-		setCategory(desc.getFacets().getString(IKeyword.CATEGORY));
+		setCategory(desc.getFacets().getLabel(IKeyword.CATEGORY));
 		IExpression init = assertFacet(desc, IKeyword.INIT, type);
 		IExpression min = assertFacet(desc, IKeyword.MIN, type);
 		IExpression max = assertFacet(desc, IKeyword.MAX, type);

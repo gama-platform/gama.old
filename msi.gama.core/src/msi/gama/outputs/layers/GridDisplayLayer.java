@@ -65,6 +65,7 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 	@Override
 	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		super.prepare(out, sim);
+
 		verifyFacetType(IKeyword.LINES);
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {

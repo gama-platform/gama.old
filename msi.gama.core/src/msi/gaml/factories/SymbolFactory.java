@@ -21,7 +21,7 @@ package msi.gaml.factories;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -108,6 +108,7 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	public void register(final Class c) {
+
 		Class baseClass = null;
 		String omissible = null;
 		// GUI.debug(c.getSimpleName() + " registered in " + getClass().getSimpleName());
@@ -163,17 +164,19 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public SymbolMetaDescription getMetaDescriptionFor(final IDescription desc, final String keyword) {
+	public SymbolMetaDescription getMetaDescriptionFor(final IDescription context,
+		final String keyword) {
 		SymbolMetaDescription md = registeredSymbols.get(keyword);
+		String upper = context == null ? null : context.getKeyword();
 		if ( md == null ) {
-			ISymbolFactory f = chooseFactoryFor(keyword, getKeyword(desc));
+			ISymbolFactory f = chooseFactoryFor(keyword, upper);
 			if ( f == null ) {
-				if ( desc != null ) {
-					desc.flagError("Unknown symbol " + keyword);
+				if ( context != null ) {
+					context.flagError("Unknown symbol " + keyword);
 				}
 				return null;
 			}
-			return f.getMetaDescriptionFor(desc, keyword);
+			return f.getMetaDescriptionFor(context, keyword);
 		}
 		return md;
 	}
@@ -186,64 +189,75 @@ public class SymbolFactory implements ISymbolFactory {
 
 	}
 
-	protected String getKeyword(final IDescription desc) {
-		if ( desc == null ) { return null; }
-		return desc.getKeyword();
-	}
-
 	protected String getKeyword(final ISyntacticElement cur) {
-		return cur.getName();
+		return cur.getKeyword();
 	}
 
-	public IDescription createSymbolDescription(final ISyntacticElement cur,
-		final IDescription superDesc, final String ... additionalFacets) {
-		int n = additionalFacets.length;
-		for ( int i = 0; i < n; i += 2 ) {
-			cur.setAttribute(additionalFacets[i], additionalFacets[i + 1], null);
-		}
-		return createDescription(cur, superDesc);
-	}
-
+	/**
+	 * Creates a semantic description based on a source element, a super-description, and a --
+	 * possibly null -- list of children. In this method, the children of the source element are not
+	 * considered, so if "children" is null or empty, the description is created without children.
+	 * @see msi.gaml.factories.ISymbolFactory#createDescription(msi.gama.common.interfaces.ISyntacticElement,
+	 *      msi.gaml.descriptions.IDescription, java.util.List)
+	 */
 	@Override
-	public IDescription createDescription(final ISyntacticElement cur, final IDescription superDesc) {
-		if ( cur == null ) { return null; }
-		String keyword = getKeyword(cur);
+	public IDescription createDescription(final ISyntacticElement source,
+		final IDescription superDesc, final List<IDescription> children) {
+		Facets facets = source.getFacets();
+		String keyword = getKeyword(source);
+		ISymbolFactory f = chooseFactoryFor(keyword, null);
+		if ( f == null ) {
+			superDesc.flagError("Impossible to parse keyword " + keyword, source);
+			return null;
+		}
+		if ( f != this ) { return f.createDescription(source, superDesc, children); }
+		List<IDescription> commandList = children == null ? new ArrayList() : children;
+		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
+		md.verifyFacets(source, facets, superDesc);
+		return buildDescription(source, keyword, commandList, superDesc, md);
+	}
+
+	/**
+	 * Creates a semantic description based on a source element and a super-description. The
+	 * children of the source element are used as a basis for building, recursively, the semantic
+	 * tree.
+	 * @see msi.gaml.factories.ISymbolFactory#createDescriptionRecursively(msi.gama.common.interfaces.ISyntacticElement,
+	 *      msi.gaml.descriptions.IDescription)
+	 */
+	@Override
+	public IDescription createDescriptionRecursively(final ISyntacticElement source,
+		final IDescription superDesc) {
+		if ( source == null ) { return null; }
+		String keyword = getKeyword(source);
 
 		String context = null;
 		if ( superDesc != null ) {
 			context = superDesc.getKeyword();
 		}
-
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
 		if ( f == null ) {
 			if ( superDesc != null ) {
-				superDesc.flagError("Impossible to parse keyword " + keyword);
+				superDesc.flagError("Impossible to parse keyword " + keyword, source);
 			}
 			return null;
 		}
-		if ( f != this ) { return f.createDescription(cur, superDesc); }
-
-		ISyntacticElement source = cur;
+		if ( f != this ) { return f.createDescriptionRecursively(source, superDesc); }
 
 		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
-		Facets facets = cur.getAttributes();
+		Facets facets = source.getFacets();
 
 		if ( md != null ) {
 			md.verifyFacets(source, facets, superDesc);
 		}
 		List<IDescription> children = new ArrayList();
 
-		for ( ISyntacticElement e : cur.getChildren() ) {
+		for ( ISyntacticElement e : source.getChildren() ) {
 			// Instead of having to consider this specific case, find a better solution.
-			
-			if (IKeyword.SPECIES.equals(e.getName())) {
-				System.out.println();
-			}
-
-			if ( !cur.getName().equals(IKeyword.SPECIES) ) {
-				children.add(createDescription(e, superDesc));
-			} else if ( cur.hasParent(IKeyword.DISPLAY) || cur.hasParent(IKeyword.SPECIES) ) { // "species" declared in "display" or "species" section
-				children.add(createDescription(e, superDesc));
+			if ( !source.getKeyword().equals(IKeyword.SPECIES) ) {
+				children.add(createDescriptionRecursively(e, superDesc));
+			} else if ( source.hasParent(IKeyword.DISPLAY) || source.hasParent(IKeyword.SPECIES) ) {
+				// "species" declared in "display" or "species" section
+				children.add(createDescriptionRecursively(e, superDesc));
 			}
 		}
 
@@ -268,45 +282,12 @@ public class SymbolFactory implements ISymbolFactory {
 		return null;
 	}
 
-	//
-	// @Override
-	// public ISymbolFactory chooseFactoryFor(final String keyword) {
-	// if ( registeredSymbols.containsKey(keyword) ) { return this; }
-	// for ( ISymbolFactory f : registeredFactories.keySet() ) {
-	// if ( registeredFactories.get(f).contains(keyword) ) { return f; }
-	// }
-	// for ( ISymbolFactory f : registeredFactories.keySet() ) {
-	// ISymbolFactory f2 = f.chooseFactoryFor(keyword);
-	// if ( f2 != null ) { return f2; }
-	// }
-	// return null;
-	// }
-
 	protected ISymbolFactory chooseFactoryFor(final String keyword, final String context) {
 		ISymbolFactory contextFactory = context != null ? chooseFactoryFor(context) : this;
 		if ( contextFactory == null ) {
 			contextFactory = this;
 		}
 		return contextFactory.chooseFactoryFor(keyword);
-	}
-
-	@Override
-	public IDescription createDescription(final ISyntacticElement cur,
-		final IDescription superDesc, final List<IDescription> children) {
-		Facets facets = cur.getAttributes();
-		String keyword = getKeyword(cur);
-		ISymbolFactory f = chooseFactoryFor(keyword, null);
-		if ( f == null ) {
-			superDesc.flagError("Impossible to parse keyword " + keyword);
-			return null;
-		}
-		if ( f != this ) { return f.createDescription(cur, superDesc, children); }
-		List<IDescription> commandList;
-		commandList = children == null ? new ArrayList() : children;
-		SymbolMetaDescription md;
-		md = getMetaDescriptionFor(superDesc, keyword);
-		md.verifyFacets(null, facets, superDesc);
-		return buildDescription(cur, keyword, commandList, superDesc, md);
 	}
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
@@ -388,7 +369,7 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public ISymbol compile(final ModelStructure struct, final ErrorCollector collect)
+	public ISymbol compile(final ModelStructure struct, final IErrorCollector collect)
 		throws InterruptedException {
 		return null;
 	}

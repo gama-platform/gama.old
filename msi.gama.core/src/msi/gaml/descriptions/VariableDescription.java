@@ -21,6 +21,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.IUnits;
+import msi.gama.runtime.GAMA;
 import msi.gaml.commands.Facets;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -48,7 +49,9 @@ public class VariableDescription extends SymbolDescription {
 		if ( !isBuiltIn ) {
 			verifyVarName(getName());
 		}
-		facets.putIfAbsent(IKeyword.TYPE, keyword);
+		if ( !facets.containsKey(IKeyword.TYPE) ) {
+			facets.putAsLabel(IKeyword.TYPE, keyword);
+		}
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-		return getTypeOf(facets.getString(IKeyword.TYPE));
+		return getTypeOf(facets.getLabel(IKeyword.TYPE));
 	}
 
 	public void setType(final IType type) {
@@ -87,11 +90,13 @@ public class VariableDescription extends SymbolDescription {
 		if ( dependencies == null ) {
 			dependencies = new HashSet();
 			final Set<String> names = new HashSet();
-			ExpressionDescription depends = facets.getTokens(IKeyword.DEPENDS_ON);
+			IExpressionDescription depends = facets.getTokens(IKeyword.DEPENDS_ON);
 			if ( depends != null ) {
+				List<String> dependsList =
+					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());
 				// GuiUtils
 				// .debug(" Dependencies found for " + getName() + " " + new GamaList(depends));
-				names.addAll(depends);
+				names.addAll(dependsList);
 				for ( final String s : names ) {
 					VariableDescription v = vars.get(s);
 					if ( v != null ) {
@@ -141,7 +146,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public IType getContentType() {
 		if ( contentType != null ) { return contentType; }
-		String of = facets.getString(IKeyword.OF);
+		String of = facets.getLabel(IKeyword.OF);
 		if ( of != null ) {
 			if ( "self".equals(of) ) {
 				contentType = getTypeOf(getSuperDescription().getName());

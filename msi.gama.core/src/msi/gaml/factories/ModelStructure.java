@@ -8,9 +8,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.LabelExpressionDescription;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.ecore.resource.Resource;
 
@@ -28,7 +29,7 @@ public class ModelStructure implements IKeyword {
 	private ISyntacticElement source;
 
 	public ModelStructure(final Resource r, final Map<Resource, ISyntacticElement> documents,
-		final ErrorCollector collect) throws MalformedURLException, IOException {
+		final IErrorCollector collect) throws MalformedURLException, IOException {
 		URL url = FileLocator.resolve(new URL(r.getURI().toString()));
 		String filePath = new File(url.getFile()).getAbsolutePath();
 		path = filePath;
@@ -39,7 +40,7 @@ public class ModelStructure implements IKeyword {
 		return source;
 	}
 
-	private void init(final List<ISyntacticElement> speciesNodes, final ErrorCollector collect) {
+	private void init(final List<ISyntacticElement> speciesNodes, final IErrorCollector collect) {
 
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
 			addSpecies(buildSpeciesStructure(speciesNode, collect));
@@ -51,7 +52,7 @@ public class ModelStructure implements IKeyword {
 	}
 
 	private SpeciesStructure buildSpeciesStructure(final ISyntacticElement speciesNode,
-		final ErrorCollector collect) {
+		final IErrorCollector collect) {
 		if ( speciesNode == null ) {
 			collect.add(new GamlCompilationError("Species element is null!", speciesNode));
 			return null;
@@ -109,8 +110,8 @@ public class ModelStructure implements IKeyword {
 		for ( ISyntacticElement e : list ) {
 			if ( source == null ) {
 				source = e;
-				if ( source.getAttribute(NAME) == null ) {
-					source.setAttribute(NAME, source.getName(), null);
+				if ( source.getFacet(NAME) == null ) {
+					source.setFacet(NAME, new LabelExpressionDescription(source.getKeyword()));
 				}
 				setName(source.getLabel(NAME));
 			}
@@ -121,7 +122,7 @@ public class ModelStructure implements IKeyword {
 		List<ISyntacticElement> expanded = new ArrayList();
 		for ( int i = 0, n = modelNodes.size(); i < n; i++ ) {
 			ISyntacticElement e = modelNodes.get(i);
-			if ( NODES_TO_EXPAND.contains(e.getName()) ) {
+			if ( NODES_TO_EXPAND.contains(e.getKeyword()) ) {
 				List<ISyntacticElement> children = e.getChildren();
 				expanded.addAll(children);
 			} else {
@@ -140,7 +141,7 @@ public class ModelStructure implements IKeyword {
 		final List<String> names) {
 		final List result = new ArrayList();
 		for ( final ISyntacticElement e : nodes ) {
-			final String name = e.getName();
+			final String name = e.getKeyword();
 			if ( names.contains(name) ) {
 				result.add(e);
 			}
@@ -155,7 +156,7 @@ public class ModelStructure implements IKeyword {
 		Iterator<ISyntacticElement> i = nodes.iterator();
 		while (i.hasNext()) {
 			ISyntacticElement e = i.next();
-			final String name = e.getName();
+			final String name = e.getKeyword();
 			if ( names.contains(name) ) {
 				i.remove();
 			}

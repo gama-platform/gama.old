@@ -36,7 +36,6 @@ import msi.gaml.operators.Cast;
 public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	ICommand.WithArgs command;
-	IDescription sd;
 
 	public PrimitiveOperator(final String op) {
 		setName(op);
@@ -44,7 +43,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	PrimitiveOperator(final String op, final IDescription species) {
 		setName(op);
-		sd = species;
+		// sd = species;
 	}
 
 	@Override
@@ -55,16 +54,13 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		Facets facets = new Facets();
 		facets.putAsLabel(IKeyword.ACTION, name); // TODO A vérifier
 		IDescription cd =
-			DescriptionFactory.createDescription(IKeyword.DO, sd, IKeyword.ACTION, name);
+			DescriptionFactory.createDescription(IKeyword.DO, /* sd */context.getSpeciesContext(),
+				IKeyword.ACTION, name);
 		command = new DoCommand(cd);
 		type = command.getReturnType();
 		contentType = command.getReturnContentType();
 		command.setFormalArgs(createArgs());
 		return this;
-	}
-
-	public void setTargetSpecies(final IDescription species) {
-		sd = species;
 	}
 
 	@Override
@@ -89,7 +85,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	@Override
 	public PrimitiveOperator copy() {
-		return new PrimitiveOperator(name, sd);
+		return new PrimitiveOperator(name/* , sd */);
 	}
 
 	@Override

@@ -6,9 +6,9 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 import msi.gaml.commands.Facets;
-import msi.gaml.descriptions.ExpressionDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 
 /**
  * The class BasicSyntacticElement.
@@ -17,14 +17,13 @@ import msi.gaml.descriptions.ExpressionDescription;
  * @since 5 févr. 2012
  * 
  */
-public class BasicSyntacticElement implements ISyntacticElement {
+public abstract class AbstractStatementDescription implements ISyntacticElement {
 
-	ErrorCollector collect; // for the moment, each exception points to it. Needs to be changed
-	Object statement;
+	protected IErrorCollector collect; // for the moment, each exception points to it. Needs to be
+										// changed
 	ISyntacticElement parent;
 	String keyword;
-	Map<String, Object> expressions = new HashMap();
-	Facets facets = new Facets();
+	protected Facets facets = new Facets();
 	List<ISyntacticElement> children;
 
 	public void dump() {
@@ -49,7 +48,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 			sb.append('[');
 		}
 		for ( ISyntacticElement elt : getChildren() ) {
-			((BasicSyntacticElement) elt).dump(sb);
+			((AbstractStatementDescription) elt).dump(sb);
 		}
 		if ( !getChildren().isEmpty() ) {
 			sb.append(']');
@@ -57,25 +56,14 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	}
 
 	/**
-	 * Instantiates a new Element
-	 */
-	public BasicSyntacticElement(final String keyword, final Object statement,
-		final ErrorCollector collect) {
+ * 
+ */
+	public AbstractStatementDescription(final String keyword) {
 		this.keyword = keyword;
-		this.statement = statement;
-		this.collect = collect;
-	}
-
-	public BasicSyntacticElement(final String keyword, final Facets facets) {
-		this.keyword = keyword;
-		this.facets = facets;
-		// collect ?
-		// statement ?
-
 	}
 
 	@Override
-	public void setName(final String name) {
+	public void setKeyword(final String name) {
 		keyword = name;
 	}
 
@@ -83,7 +71,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getName()
 	 */
 	@Override
-	public String getName() {
+	public String getKeyword() {
 		return keyword;
 	}
 
@@ -91,7 +79,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getAttribute(java.lang.String)
 	 */
 	@Override
-	public ExpressionDescription getAttribute(final String name) {
+	public IExpressionDescription getFacet(final String name) {
 		return facets.get(name);
 	}
 
@@ -99,7 +87,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getAttributes()
 	 */
 	@Override
-	public Facets getAttributes() {
+	public Facets getFacets() {
 		return facets;
 	}
 
@@ -108,16 +96,8 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 *      java.lang.String)
 	 */
 	@Override
-	public void setAttribute(final String string, final ExpressionDescription string2,
-		final Object obj) {
+	public void setFacet(final String string, final IExpressionDescription string2) {
 		facets.put(string, string2);
-		expressions.put(string, obj);
-	}
-
-	@Override
-	public void setAttribute(final String string, final String string2, final Object obj) {
-		facets.put(string, new ExpressionDescription(string2));
-		expressions.put(string, obj);
 	}
 
 	/**
@@ -135,7 +115,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	public List<ISyntacticElement> getChildren(final String name) {
 		List<ISyntacticElement> result = new ArrayList();
 		for ( ISyntacticElement e : getChildren() ) {
-			if ( e.getName().equals(name) ) {
+			if ( e.getKeyword().equals(name) ) {
 				result.add(e);
 			}
 		}
@@ -148,7 +128,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	@Override
 	public ISyntacticElement getChild(final String name) {
 		for ( ISyntacticElement e : getChildren() ) {
-			if ( e.getName().equals(name) ) { return e; }
+			if ( e.getKeyword().equals(name) ) { return e; }
 		}
 		return null;
 	}
@@ -158,7 +138,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public boolean hasParent(final String name) {
-		return parent != null && parent.getName().equals(name);
+		return parent != null && parent.getKeyword().equals(name);
 	}
 
 	/**
@@ -166,14 +146,19 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public Object getUnderlyingElement(final Object facet) {
-		if ( facet == null ) { return statement; }
-		if ( facet instanceof String ) { return expressions.containsKey(facet) ? expressions
-			.get(facet) : statement; }
-		return facet;
+		// if ( facet == null ) { return parent != null ? parent.getUnderlyingElement(facet) : null;
+		// }
+		IExpressionDescription f = facets.get(facet);
+		if ( f == null ) {
+			if ( facet instanceof IExpressionDescription ) {
+				f = (IExpressionDescription) facet;
+			}
+		}
+		return f.getAst();
 	}
 
 	@Override
-	public void addContent(final ISyntacticElement e) {
+	public void addChild(final ISyntacticElement e) {
 		if ( e == null ) { return; }
 		e.setParent(this);
 		if ( children == null ) {
@@ -191,7 +176,7 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getErrorCollector()
 	 */
 	@Override
-	public ErrorCollector getErrorCollector() {
+	public IErrorCollector getErrorCollector() {
 		if ( collect == null ) {
 			if ( parent != null ) { return parent.getErrorCollector(); }
 			return null;
@@ -203,16 +188,14 @@ public class BasicSyntacticElement implements ISyntacticElement {
 	 * @see msi.gama.common.interfaces.ISyntacticElement#isSynthetic()
 	 */
 	@Override
-	public boolean isSynthetic() {
-		return statement == null;
-	}
+	public abstract boolean isSynthetic();
 
 	/**
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getLabel(java.lang.String)
 	 */
 	@Override
 	public String getLabel(final String name) {
-		ExpressionDescription s = getAttribute(name);
+		IExpressionDescription s = getFacet(name);
 		if ( s == null ) { return null; }
 		return s.toString();
 	}

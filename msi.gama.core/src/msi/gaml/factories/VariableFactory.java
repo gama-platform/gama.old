@@ -40,10 +40,10 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getName().equals(IKeyword.PARAMETER) ) { return super.getKeyword(cur); }
+		if ( cur.getKeyword().equals(IKeyword.PARAMETER) ) { return super.getKeyword(cur); }
 		String keyword = cur.getLabel(IKeyword.TYPE);
 		if ( keyword == null ) {
-			keyword = cur.getName();
+			keyword = cur.getKeyword();
 		}
 		// if ( /* Types.get(keyword) == Types.NO_TYPE && */!keyword.equals(IKeyword.SIGNAL) ) {
 		// return IType.AGENT_STR; }
@@ -55,16 +55,17 @@ public class VariableFactory extends SymbolFactory {
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		Facets facets = source.getAttributes();
+		Facets facets = source.getFacets();
 		if ( keyword.equals(IKeyword.SIGNAL) && facets.containsKey(IKeyword.ENVIRONMENT) ) {
-			String env = facets.getString(IKeyword.ENVIRONMENT);
-			String decay = facets.getString(IKeyword.DECAY, "0.1");
-			String name = facets.getString(IKeyword.NAME);
+			String env = facets.getLabel(IKeyword.ENVIRONMENT);
+			String decay = facets.getLabel(IKeyword.DECAY, "0.1");
+			String name = facets.getLabel(IKeyword.NAME);
 			final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 			VariableDescription vd =
-				(VariableDescription) createDescription(new BasicSyntacticElement(IType.FLOAT_STR,
-					new Facets(IKeyword.NAME, name, IKeyword.TYPE, IType.FLOAT_STR,
-						IKeyword.UPDATE, value, IKeyword.MIN, "0")), superDesc, null);
+				(VariableDescription) createDescription(new StringBasedStatementDescription(
+					IType.FLOAT_STR, new Facets(IKeyword.NAME, name, IKeyword.TYPE,
+						IType.FLOAT_STR, IKeyword.UPDATE, value, IKeyword.MIN, "0")), superDesc,
+					null);
 
 			SpeciesDescription environment =
 				(SpeciesDescription) superDesc.getModelDescription().getSpeciesDescription(env);

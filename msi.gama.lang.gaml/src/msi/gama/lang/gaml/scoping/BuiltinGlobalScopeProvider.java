@@ -4,17 +4,18 @@ package msi.gama.lang.gaml.scoping;
 
 import java.io.*;
 import java.util.*;
+import msi.gama.lang.gaml.gaml.GamlVarRef;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.scoping.*;
 import org.eclipse.xtext.scoping.impl.*;
 import org.osgi.framework.Bundle;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 import com.google.inject.Inject;
 
 /**
@@ -41,7 +42,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
 
-	Iterable<IEObjectDescription> objectDescriptions = null;
+	static Iterable<IEObjectDescription> objectDescriptions = null;
 
 	private Resource getResource(final Bundle bundle, final String filename) {
 		Path path = new Path(filename);
@@ -80,7 +81,16 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 					Iterables.addAll(temp, desc);
 				}
 			}
-			objectDescriptions = Scopes.filterDuplicates(temp);
+
+			LinkedHashMap map = Maps.newLinkedHashMap();
+			for ( IEObjectDescription e : temp ) {
+				EObject o = e.getEObjectOrProxy();
+				if ( o instanceof GamlVarRef ) {
+					map.put(((GamlVarRef) o).getName(), e);
+				}
+			}
+			objectDescriptions = new ArrayList(map.values());
+			// objectDescriptions = Scopes.filterDuplicates(temp);
 		}
 		return objectDescriptions == null ? Collections.EMPTY_LIST : objectDescriptions;
 	}

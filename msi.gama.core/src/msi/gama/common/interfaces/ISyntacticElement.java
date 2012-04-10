@@ -19,9 +19,9 @@
 package msi.gama.common.interfaces;
 
 import java.util.List;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 import msi.gaml.commands.Facets;
-import msi.gaml.descriptions.ExpressionDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 
 /**
  * Written by drogoul
@@ -32,17 +32,15 @@ import msi.gaml.descriptions.ExpressionDescription;
  */
 public interface ISyntacticElement {
 
-	String getName();
+	String getKeyword();
 
-	ExpressionDescription getAttribute(String name);
+	IExpressionDescription getFacet(String name);
 
 	String getLabel(String name);
 
-	Facets getAttributes();
+	Facets getFacets();
 
-	void setAttribute(String facet, ExpressionDescription expr, Object underlyingExpression);
-
-	void setAttribute(String facet, String expr, Object underlyingExpression);
+	void setFacet(String facet, IExpressionDescription expr);
 
 	List<ISyntacticElement> getChildren();
 
@@ -60,12 +58,12 @@ public interface ISyntacticElement {
 	/**
 	 * @param string
 	 */
-	void setName(String string);
+	void setKeyword(String string);
 
 	/**
 	 * @param elseElt
 	 */
-	void addContent(ISyntacticElement elseElt);
+	void addChild(ISyntacticElement elseElt);
 
 	/**
 	 * @param basicSyntacticElement
@@ -75,9 +73,14 @@ public interface ISyntacticElement {
 	/**
 	 * @return
 	 */
-	ErrorCollector getErrorCollector();
+	IErrorCollector getErrorCollector();
 
 	boolean isSynthetic();
+
+	/**
+	 * @param name
+	 * @param name2
+	 */
 
 	// int getLineNumber();
 

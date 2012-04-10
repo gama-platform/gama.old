@@ -18,8 +18,10 @@
  */
 package msi.gama.lang.gaml;
 
+import msi.gama.lang.gaml.linking.GamlLinker;
 import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
+import org.eclipse.xtext.service.SingletonBinding;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension
@@ -35,6 +37,12 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public Class<? extends IContainer.Manager> bindIContainer$Manager() {
 		return StateBasedContainerManager.class;
+	}
+
+	@Override
+	@SingletonBinding(eager = true)
+	public Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() {
+		return GamlLinker.class;
 	}
 
 }

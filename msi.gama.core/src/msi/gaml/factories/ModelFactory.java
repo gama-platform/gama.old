@@ -86,14 +86,15 @@ public class ModelFactory extends SymbolFactory {
 		List<IDescription> subDescs = new ArrayList<IDescription>();
 		for ( ISyntacticElement child : children ) {
 			// if micro-species were already added, no need to re-add them
-			if ( !ModelFactory.SPECIES_NODES.contains(child.getName()) ) {
+			if ( !ModelFactory.SPECIES_NODES.contains(child.getKeyword()) ) {
 				IDescription desc;
-				desc = f.createDescription(child, speciesDesc);
+				desc = f.createDescriptionRecursively(child, speciesDesc);
 				subDescs.add(desc);
 
 				if ( desc instanceof VariableDescription ) {
 					userRedefinedOrNewVars.add(desc.getName());
 				}
+
 			}
 		}
 		speciesDesc.addChildren(subDescs);
@@ -105,9 +106,34 @@ public class ModelFactory extends SymbolFactory {
 		}
 	}
 
+	private void complementExperimentSpecies(final SpeciesDescription sd) {
+		ISyntacticElement e = sd.getSourceInformation();
+		String keyword = getKeyword(e);
+		String context = sd.getKeyword();
+		ISymbolFactory f = chooseFactoryFor(keyword, context);
+
+		Set<String> userRedefinedOrNewVars = new HashSet<String>();
+		// List<IDescription> subDescs = new ArrayList<IDescription>();
+		for ( ISyntacticElement child : e.getChildren() ) {
+
+			IDescription desc;
+			desc = f.createDescriptionRecursively(child, sd);
+			// subDescs.add(desc);
+
+			if ( desc instanceof VariableDescription ) {
+				userRedefinedOrNewVars.add(desc.getName());
+			}
+
+		}
+		// sd.addChildren(subDescs);
+		sd.setUserRedefinedAndNewVars(userRedefinedOrNewVars);
+		sd.finalizeDescription();
+
+	}
+
 	@SuppressWarnings("null")
 	private synchronized ModelDescription parse(final ModelStructure structure,
-		final ErrorCollector collect) {
+		final IErrorCollector collect) {
 		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
@@ -136,7 +162,8 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		// recursively add user-defined species to world species and down on to the species hierarchy
+		// recursively add user-defined species to world species and down on to the species
+		// hierarchy
 		for ( SpeciesStructure speciesStructure : structure.getSpecies() ) {
 			addMicroSpecies(worldSpeciesDesc, speciesStructure);
 		}
@@ -148,7 +175,7 @@ public class ModelFactory extends SymbolFactory {
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
 				IDescription desc;
-				desc = f.createDescription(child, worldSpeciesDesc);
+				desc = f.createDescriptionRecursively(child, worldSpeciesDesc);
 				subDescs.add(desc);
 
 				if ( desc instanceof VariableDescription ) {
@@ -165,12 +192,16 @@ public class ModelFactory extends SymbolFactory {
 			complementSpecies(worldSpeciesDesc, specStructure);
 		}
 
-		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species & sub-species
+		// Inheritance (of attributes, actions, primitives, control, ... ) between parent-species &
+		// sub-species
 		worldSpeciesDesc.finalizeDescription();
 
 		// Parse the other definitions (output, environment, batch...)
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {
-			IDescription dd = createDescription(e, model);
+			IDescription dd = createDescriptionRecursively(e, model);
+			if ( dd instanceof ExperimentDescription ) {
+				complementExperimentSpecies((ExperimentDescription) dd);
+			}
 			if ( dd != null ) {
 				model.addChild(dd);
 			}
@@ -196,7 +227,9 @@ public class ModelFactory extends SymbolFactory {
 					IKeyword.WORLD_SPECIES_NAME,
 					IKeyword.BASE,
 					GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
-						.getCanonicalName(), IKeyword.SKILLS, skillName };
+						.getCanonicalName(), IKeyword.SKILLS, "[" + skillName + "]" }; // TODO
+			// Parser.createLiteral
+			// ?
 		}
 		SpeciesDescription worldSpeciesDescription;
 		worldSpeciesDescription =
@@ -251,31 +284,27 @@ public class ModelFactory extends SymbolFactory {
 	// }
 
 	@Override
-	public synchronized ISymbol compile(final ModelStructure structure, final ErrorCollector collect)
-		throws InterruptedException {
+	public synchronized ISymbol compile(final ModelStructure structure,
+		final IErrorCollector collect) throws InterruptedException {
 		IModel m = null;
 		// long startTime = System.nanoTime();
 		ModelDescription md = parse(structure, collect);
-		if ( collect.hasErrors() ) { return null; }
 		GuiUtils.stopIfCancelled();
 		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
-			IDescription sim;
-			if(GuiUtils.isInHeadLessMode())
-			{
+			IDescription def;
+			if ( GuiUtils.isInHeadLessMode() ) {
 				System.out.println("head Less");
-				sim =DescriptionFactory.createDescription( IKeyword.EXPERIMENT, IKeyword.NAME,
-						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE,IKeyword.HEADLESS_UI);
-		//		DescriptionFactory.createDescription(keyword, facets)
+				def =
+					DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
+						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.HEADLESS_UI);
+			} else {
+				def =
+					DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
+						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
 			}
-			else
-			{
-				sim =
-				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
-					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
-				
-			}
-			if ( sim != null ) {
-				md.addChild(sim);
+			if ( def != null ) {
+				complementExperimentSpecies((ExperimentDescription) def);
+				md.addChild(def);
 			}
 		}
 		GuiUtils.stopIfCancelled();

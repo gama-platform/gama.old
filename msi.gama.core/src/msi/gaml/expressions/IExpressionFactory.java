@@ -18,6 +18,7 @@
  */
 package msi.gaml.expressions;
 
+import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
@@ -41,9 +42,10 @@ public interface IExpressionFactory {
 	public abstract IExpression createConst(final Object val, final IType type,
 		final IType contentType) throws GamaRuntimeException;
 
-	public abstract IExpression createExpr(final ExpressionDescription s);
+	public abstract IExpression createExpr(final IExpressionDescription s);
 
-	public abstract IExpression createExpr(final ExpressionDescription s, final IDescription context);
+	public abstract IExpression createExpr(final IExpressionDescription s,
+		final IDescription context);
 
 	public abstract IVarExpression createVar(final String name, final IType type,
 		final IType contentType, final boolean isConst, final int scope);
@@ -52,11 +54,26 @@ public interface IExpressionFactory {
 		final boolean var, final IType returnType, final IOperatorExecuter helper,
 		final boolean canBeConst, final short type, final short contentType, final boolean lazy);
 
-	public abstract IOperator createPrimitiveOperator(final String name);
-
-	public abstract IOperator copyPrimitiveOperatorForSpecies(IOperator op, IDescription species);
-
 	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
 		IDescription context);
+
+	/**
+	 * @param args
+	 * @param context
+	 * @return
+	 */
+	Map<String, IExpressionDescription> createArgumentMap(IExpressionDescription args,
+		IDescription context);
+
+	/**
+	 * @param s
+	 * @return
+	 */
+	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context);
+
+	/**
+	 * @return
+	 */
+	public IExpressionParser getParser();
 
 }

@@ -89,11 +89,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		if ( t == BOTH ) {
 			IType l = left.type();
 			IType r = right.type();
-			if ( left == GamlExpressionParser.NIL_EXPR ) {
+			if ( left == GamlExpressionFactory.NIL_EXPR ) {
 				type = r;
 				return;
 			}
-			if ( right == GamlExpressionParser.NIL_EXPR ) {
+			if ( right == GamlExpressionFactory.NIL_EXPR ) {
 				type = l;
 				return;
 			}
@@ -132,11 +132,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		if ( t == BOTH ) {
 			IType l = left.getContentType();
 			IType r = right.getContentType();
-			if ( left == GamlExpressionParser.NIL_EXPR ) {
+			if ( left == GamlExpressionFactory.NIL_EXPR ) {
 				contentType = r;
 				return;
 			}
-			if ( right == GamlExpressionParser.NIL_EXPR ) {
+			if ( right == GamlExpressionFactory.NIL_EXPR ) {
 				contentType = l;
 				return;
 			}

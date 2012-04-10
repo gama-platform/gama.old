@@ -51,8 +51,12 @@ public class LetCommand extends SetCommand {
 
 	public LetCommand(final IDescription desc) {
 		super(desc);
-		setName(IKeyword.LET + " " + varExpr.literalValue());
-		if ( value == null ) { return; }
+		if ( varExpr == null ) {
+			setName(IKeyword.LET + " unknown variable ");
+		} else {
+			setName(IKeyword.LET + " " + varExpr.literalValue());
+		}
+		if ( value == null || varExpr == null ) { return; }
 		varExpr.setType(hasFacet(IKeyword.TYPE) ? desc.getTypeOf(getLiteral(IKeyword.TYPE)) : value
 			.type());
 		varExpr.setContentType(hasFacet(IKeyword.OF) ? desc.getTypeOf(getLiteral(IKeyword.OF))

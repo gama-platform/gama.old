@@ -31,12 +31,13 @@ import msi.gaml.descriptions.*;
  * @author drogoul
  */
 @handles({ ISymbolKind.EXPERIMENT })
-@uses({ ISymbolKind.OUTPUT, ISymbolKind.VARIABLE, ISymbolKind.BATCH_METHOD })
-public class ExperimentFactory extends SymbolFactory {
+@uses({ ISymbolKind.OUTPUT, ISymbolKind.VARIABLE, ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION,
+	ISymbolKind.BEHAVIOR })
+public class ExperimentFactory extends SpeciesFactory {
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
-		if ( !cur.getName().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
+		if ( !cur.getKeyword().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
 		String type = cur.getLabel(IKeyword.TYPE);
 		if ( type == null ) { return super.getKeyword(cur); }
 		return type;
@@ -46,8 +47,8 @@ public class ExperimentFactory extends SymbolFactory {
 	// random specifications)
 
 	@Override
-	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final List<IDescription> commands, final IDescription superDesc,
+	protected ExperimentDescription buildDescription(final ISyntacticElement source,
+		final String keyword, final List<IDescription> commands, final IDescription superDesc,
 		final SymbolMetaDescription md) {
 		return new ExperimentDescription(keyword, superDesc, commands, source, md);
 	}

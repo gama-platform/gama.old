@@ -20,7 +20,7 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
@@ -36,7 +36,8 @@ public interface ISymbolFactory {
 	public abstract IDescription createDescription(ISyntacticElement cur,
 		final IDescription superDescription, final List<IDescription> children);
 
-	public abstract IDescription createDescription(ISyntacticElement cur, IDescription superDesc);
+	public abstract IDescription createDescriptionRecursively(ISyntacticElement cur,
+		IDescription superDesc);
 
 	public abstract ISymbol compileDescription(final IDescription desc,
 		final IExpressionFactory factory);
@@ -54,7 +55,7 @@ public interface ISymbolFactory {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	ISymbol compile(ModelStructure structure, ErrorCollector collect) throws InterruptedException;
+	ISymbol compile(ModelStructure structure, IErrorCollector collect) throws InterruptedException;
 
 	/**
 	 * @param desc
@@ -62,7 +63,7 @@ public interface ISymbolFactory {
 	 * @return
 	 * @throws GamlException
 	 */
-	SymbolMetaDescription getMetaDescriptionFor(IDescription desc, String keyword);
+	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
 
 	/**
 	 * @param keyword

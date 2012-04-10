@@ -21,7 +21,8 @@ package msi.gaml.commands;
 import java.util.Map;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.ExpressionDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.expressions.IExpression;
 
 /**
  * @author drogoul
@@ -29,9 +30,12 @@ import msi.gaml.descriptions.ExpressionDescription;
 public class Arguments extends Facets {
 
 	public void stack(final IScope scope) throws GamaRuntimeException {
-		for ( Map.Entry<String, ExpressionDescription> entry : entrySet() ) {
-			Object o = entry.getValue().value(scope);
-			scope.addVarWithValue(entry.getKey(), o);
+		for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
+			IExpressionDescription o = entry.getValue();
+			IExpression e = o.getExpression();
+			if ( e != null ) {
+				scope.addVarWithValue(entry.getKey(), e.value(scope));
+			}
 		}
 	}
 }

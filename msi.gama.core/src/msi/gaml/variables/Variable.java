@@ -62,7 +62,7 @@ import msi.gaml.types.*;
  */
 @symbol(name = { IKeyword.VAR, IKeyword.CONST, IType.AGENT_STR, IType.NONE_STR, IType.BOOL_STR,
 	IType.STRING_STR, IType.GEOM_STR, IType.TOPOLOGY_STR, IType.PATH_STR }, kind = ISymbolKind.VARIABLE)
-@inside(kinds = { ISymbolKind.SPECIES })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 //
 //
 //

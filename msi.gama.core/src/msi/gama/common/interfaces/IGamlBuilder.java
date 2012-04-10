@@ -4,6 +4,7 @@
  */
 package msi.gama.common.interfaces;
 
+
 /**
  * The class IGamlBuilder.
  * 
@@ -20,9 +21,5 @@ public interface IGamlBuilder {
 	boolean addListener(IBuilderListener gamlEditor);
 
 	boolean removeListener(IBuilderListener gamlEditor);
-
-	// IModel build(Resource r);
-
-	// IModel getLastBuild(Resource r);
 
 }

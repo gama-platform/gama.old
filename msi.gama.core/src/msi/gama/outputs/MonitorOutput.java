@@ -120,7 +120,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public boolean setNewExpressionText(final String string, final ISimulation sim) {
 		expressionText = string;
 		value =
-			GAMA.getExpressionFactory().createExpr(new ExpressionDescription(string),
+			GAMA.getExpressionFactory().createExpr(new StringBasedExpressionDescription(string),
 				sim.getWorldPopulation().getSpecies().getDescription());
 		return true;
 	}

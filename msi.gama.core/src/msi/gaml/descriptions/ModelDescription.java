@@ -101,7 +101,9 @@ public class ModelDescription extends SymbolDescription {
 	public IDescription addChild(final IDescription child) {
 		child.setSuperDescription(this);
 		String keyword = child.getKeyword();
-		if ( child instanceof SpeciesDescription ) { // world_species
+		if ( child instanceof ExperimentDescription ) {
+			experiments.put(child.getName(), (ExperimentDescription) child);
+		} else if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
 			addType(worldSpecies);
 		} else if ( keyword.equals(IKeyword.OUTPUT) ) {
@@ -111,8 +113,6 @@ public class ModelDescription extends SymbolDescription {
 				output.addChildren(child.getChildren());
 				return child;
 			}
-		} else if ( keyword.equals(IKeyword.EXPERIMENT) ) {
-			experiments.put(child.getName(), (ExperimentDescription) child);
 		} else if ( keyword.equals(IKeyword.ENVIRONMENT) ) {
 			if ( environment == null ) {
 				environment = child;
@@ -175,7 +175,6 @@ public class ModelDescription extends SymbolDescription {
 	 */
 	private SpeciesDescription findSpecies(final SpeciesDescription topSpecies,
 		final String specToFind) {
-		
 		if ( topSpecies == null || specToFind == null ) { return null; }
 
 		if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }

@@ -38,61 +38,34 @@ public class SpeciesFactory extends SymbolFactory {
 
 	private VariableFactory varFactory;
 
-	// public static AbstractSpecies createSpecies(final String id, final Class base,
-	// final boolean grid, final IModel model) throws GamaRuntimeException {
-	// try {
-	// IDescription desc =
-	// DescriptionFactory.createDescription(IKeyword.SPECIES, model.getDescription(),
-	// IKeyword.NAME, id, ISpecies.BASE, base.getCanonicalName(), IKeyword.GRID, grid
-	// ? "true" : "false");
-	// return new JavaSpecies(desc);
-	// } catch (GamlException e) {
-	// throw new GamaRuntimeException(e);
-	// }
-	// }
-	//
-	// public static AbstractSpecies createSpecies(final Class base, final boolean grid,
-	// final IModel model) throws GamaRuntimeException {
-	// return createSpecies(base.getSimpleName(), base, grid, model);
-	// }
-	//
-	// public static AbstractSpecies createSpecies(final Class base, final IModel model)
-	// throws GamaRuntimeException {
-	// return createSpecies(base.getSimpleName(), base, false, model);
-	// }
-
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
 		final String keyword, final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		Facets facets = source.getAttributes();
-		String name = facets.getString(IKeyword.NAME);
+		Facets facets = source.getFacets();
+		String name = facets.getLabel(IKeyword.NAME);
 		varFactory.addSpeciesNameAsType(name);
 		// registeredFactories.get(varFactory).add(name);
 		Class base = md.getBaseClass();
-		String secondBase = facets.getString(IKeyword.BASE);
+		String secondBase = facets.getLabel(IKeyword.BASE);
 
 		String firstBase =
 			superDesc.getModelDescription().getSpeciesDescription(name) != null ? superDesc
 				.getModelDescription().getSpeciesDescription(name).getFacets()
-				.getString(IKeyword.BASE) : null;
+				.getLabel(IKeyword.BASE) : null;
 
 		if ( secondBase == null && firstBase != null ) {
 			facets.putAsLabel(IKeyword.BASE, firstBase);
 		}
 		if ( facets.containsKey(IKeyword.BASE) ) {
 			try {
-				base = GamaClassLoader.getInstance().loadClass(facets.getString(IKeyword.BASE));
+				base = GamaClassLoader.getInstance().loadClass(facets.getLabel(IKeyword.BASE));
 			} catch (ClassNotFoundException e) {
 				superDesc.flagError("Impossible to instantiate '" + keyword + "' because: " +
 					e.getMessage());
 			}
 		}
-		if ( facets.containsKey(IKeyword.SKILLS) ) {
-			facets.putAsLabel(IKeyword.SKILLS, facets.getString(IKeyword.SKILLS) + "," + keyword);
-		} else {
-			facets.putAsLabel(IKeyword.SKILLS, keyword);
-		}
+
 		SpeciesDescription sd =
 			new SpeciesDescription(keyword, superDesc, facets, children, base, source, md);
 

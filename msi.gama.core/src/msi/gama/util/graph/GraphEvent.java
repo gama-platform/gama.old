@@ -6,69 +6,65 @@ public final class GraphEvent {
 	 * The corresponding graph
 	 */
 	public final IGraph graph;
-	
+
 	/**
 	 * the timestep at which the event was sent
 	 */
 	public final Object sender;
-	
+
 	public final Object edge;
 	public final Object vertex;
-	
+
 	public final GraphEventType eventType;
-	
-	
 
 	public enum GraphEventType {
-		
+
 		/**
 		 * The graph was flushed
 		 */
 		GRAPH_CLEARED,
-		
+
 		/**
 		 * The properties of a graph changed (for instance, attributes).
-		 * Will not be thrown for a edge or node changed, as another 
-		 * event will already be thrown. 
+		 * Will not be thrown for a edge or node changed, as another
+		 * event will already be thrown.
 		 */
 		GRAPH_CHANGED,
-		
+
 		/**
 		 * a novel vertex was created
 		 */
 		VERTEX_ADDED,
-		
+
 		/**
 		 * A vertex was removed
 		 */
 		VERTEX_REMOVED,
-		
+
 		/**
 		 * A vertex changed (may be its attributes, for instance)
 		 */
 		VERTEX_CHANGED,
-		
+
 		/**
 		 * An edge was added
 		 */
 		EDGE_ADDED,
-		
+
 		/**
 		 * An edge was removed
 		 */
 		EDGE_REMOVED,
-		
+
 		/**
 		 * An edge changed (may be its attributes ?)
 		 */
-		EDGE_CHANGED
-		;
-		
-	}
-	
+		EDGE_CHANGED;
 
-	public GraphEvent(IGraph graph, Object sender, Object edge, Object vertex,
-			GraphEventType eventType) {
+	}
+
+	public GraphEvent(final IGraph graph, final Object sender, final Object edge,
+		final Object vertex, final GraphEventType eventType) {
 		super();
 		this.graph = graph;
 		this.sender = sender;
@@ -77,12 +73,11 @@ public final class GraphEvent {
 		this.eventType = eventType;
 	}
 
+	@Override
 	public String toString() {
-		return (new StringBuffer()).append("graph event ").append(eventType)
-				.append(", edge=").append(edge)
-				.append(", vertex=").append(vertex)
-				.append(", sender=").append(sender)
-				.toString();
+		return new StringBuffer().append("graph event ").append(eventType).append(", edge=")
+			.append(edge).append(", vertex=").append(vertex).append(", sender=").append(sender)
+			.toString();
 	}
-	
+
 }

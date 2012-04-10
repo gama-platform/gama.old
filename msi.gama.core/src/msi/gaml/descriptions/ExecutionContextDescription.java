@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
@@ -78,17 +79,23 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		skillsMethods = new HashMap();
 	}
 
-	protected void setSkills(final ExpressionDescription s) {
+	protected void setSkills(final IExpressionDescription s) {
 		if ( s != null ) {
-			final String[] skillNames = s.toString().split(",");
-			for ( final String skill : skillNames ) {
+			List<String> skills = GAMA.getExpressionFactory().parseLiteralArray(s, this);
+			for ( String skill : skills ) {
 				final Class c = Skill.getSkillClassFor(skill.trim());
 				if ( c != null ) {
 					addSkill(c);
-				}
+				} // else {
+					// flagError("Unknown skill: " + skill);
+				// }
 			}
 		}
-		addSkill(Skill.getSkillClassFor(facets.getString(IKeyword.CONTROL)));
+		Class c = Skill.getSkillClassFor(getKeyword());
+		if ( c != null ) {
+			addSkill(c);
+		}
+		addSkill(Skill.getSkillClassFor(facets.getLabel(IKeyword.CONTROL)));
 		// ADDED HERE, BUT SHOULD BE MOVED ELSEWHERE
 	}
 
@@ -122,7 +129,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	}
 
 	public String getControlName() {
-		String controlName = facets.getString(IKeyword.CONTROL);
+		String controlName = facets.getLabel(IKeyword.CONTROL);
 
 		// if the "control" is not explicitly declared then inherit it from the parent species.
 		if ( controlName == null && parentSpecies != null ) {
@@ -226,7 +233,8 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 			}
 		}
 		actions.put(actionName, ce);
-		GamaCompiler.registerFunction(actionName, this);
+		GamaCompiler
+			.registerFunction(actionName, getSpeciesContext().getSpeciesContext().getType());
 	}
 
 	private void addAspect(final CommandDescription ce) {
@@ -269,10 +277,11 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 
 	protected void addVariable(final VariableDescription v) {
 		String vName = v.getName();
+		// GuiUtils.debug("Adding var " + v.getName() + " to " + getName());
 		if ( hasVar(vName) ) {
 			IDescription builtIn = removeChild(variables.get(vName));
-			IType bType = builtIn.getTypeOf(builtIn.getFacets().getString(IKeyword.TYPE));
-			IType vType = v.getTypeOf(v.getFacets().getString(IKeyword.TYPE));
+			IType bType = builtIn.getTypeOf(builtIn.getFacets().getLabel(IKeyword.TYPE));
+			IType vType = v.getTypeOf(v.getFacets().getLabel(IKeyword.TYPE));
 			if ( bType != vType ) {
 				String builtInType = bType.toString();
 				String varType = vType.toString();

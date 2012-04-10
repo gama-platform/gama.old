@@ -83,7 +83,7 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 		String k = getLiteral(IKeyword.KEYWORD);
 		StringBuilder sb = new StringBuilder();
 		sb.append(k).append(' ');
-		for ( Map.Entry<String, ExpressionDescription> e : description.getFacets().entrySet() ) {
+		for ( Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
 			if ( !e.getKey().equals(IKeyword.KEYWORD) ) {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml())
 					.append(" ");

@@ -74,7 +74,8 @@ public class System {
 		IDescription d = agent.getSpecies().getDescription();
 		try {
 			IExpression e =
-				GAMA.getExpressionFactory().createExpr(new ExpressionDescription(gaml), d);
+				GAMA.getExpressionFactory().createExpr(new StringBasedExpressionDescription(gaml),
+					d);
 			return scope.evaluate(e, agent);
 		} catch (GamaRuntimeException e) {
 			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " +

@@ -176,7 +176,7 @@ public class GAMA {
 		throws GamaRuntimeException {
 		try {
 			final IExpression expr =
-				getExpressionFactory().createExpr(new ExpressionDescription(expression),
+				getExpressionFactory().createExpr(new StringBasedExpressionDescription(expression),
 					a.getSpecies().getDescription());
 			if ( expr == null ) { return null; }
 			return getDefaultScope().evaluate(expr, a);
@@ -189,7 +189,8 @@ public class GAMA {
 	public static IExpression compileExpression(final String expression, final IAgent agent)
 		throws GamaRuntimeException {
 		try {
-			return GAMA.getExpressionFactory().createExpr(new ExpressionDescription(expression),
+			return GAMA.getExpressionFactory().createExpr(
+				new StringBasedExpressionDescription(expression),
 				agent.getSpecies().getDescription());
 		} catch (final GamaRuntimeException e) {
 			e.addContext("in compiling :" + expression);

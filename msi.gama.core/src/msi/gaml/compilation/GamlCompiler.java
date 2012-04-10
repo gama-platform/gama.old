@@ -637,31 +637,6 @@ public class GamlCompiler {
 		return args.length > 1 && IExpression.class.isAssignableFrom(args[args.length - 1]);
 	}
 
-	// public static Set<Annotation> getAllAnnotationsForMethod(final Method m, final Class c) {
-	// // Retrieves direct and inherited annotations (from interfaces)
-	// // Class c = m.getDeclaringClass();
-	// Set<Class> interfaces = allInterfacesOf(c);
-	// Set<Annotation> annots = new HashSet(Arrays.asList(m.getAnnotations()));
-	// for ( Class i : interfaces ) {
-	// for ( Method im : i.getMethods() ) {
-	// if ( equals(m, im) ) {
-	// List<Annotation> ima = Arrays.asList(im.getAnnotations());
-	// annots.addAll(ima);
-	// }
-	// }
-	// }
-	// return annots;
-	// }
-	//
-	// public static Set<Method> getAllMethodsForClass(final Class c) {
-	// Set<Class> classes = allSuperclassesOf(c);
-	// Set<Method> methods = new HashSet(Arrays.asList(c.getMethods()));
-	// for ( Class sc : classes ) {
-	// methods.addAll(Arrays.asList(sc.getMethods()));
-	// }
-	// return methods;
-	// }
-
 	public static boolean equals(final Method classMethod, final Method interfaceMethod) {
 
 		if ( !classMethod.getName().equals(interfaceMethod.getName()) ) { return false; }
@@ -680,7 +655,7 @@ public class GamlCompiler {
 			IType type = v.getType();
 			IType cType = v.getContentType();
 			IFieldGetter g =
-				getFieldGetter(theType.toClass(), v.getFacets().getString(IKeyword.GETTER),
+				getFieldGetter(theType.toClass(), v.getFacets().getLabel(IKeyword.GETTER),
 					type.toClass());
 			theType.addFieldGetter(n, new TypeFieldExpression(n, type, cType, g));
 		}

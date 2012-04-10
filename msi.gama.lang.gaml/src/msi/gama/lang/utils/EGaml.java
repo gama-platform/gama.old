@@ -6,9 +6,10 @@ package msi.gama.lang.utils;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolMetaDescription;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -46,9 +47,7 @@ public class EGaml {
 			((VariableRef) e).getRef() instanceof DefUnary;
 	}
 
-	public static StringBuilder dependencies = new StringBuilder();
-
-	public static Set<VariableRef> varDependenciesOf(final Statement s) {
+	public static Array varDependenciesOf(final Statement s) {
 		Set<VariableRef> result = new HashSet();
 		EList<FacetExpr> facets = s.getFacets();
 		for ( FacetExpr facet : facets ) {
@@ -59,26 +58,18 @@ public class EGaml {
 			List<VariableRef> elements = EcoreUtil2.eAllOfType(expr, VariableRef.class);
 			for ( VariableRef var : elements ) {
 				if ( !isUnary(var) ) {
-					result.add(var);
+					result.add(EcoreUtil2.clone(var)); // Necessary to clone otherwise the EObjects
+														// will be removed from the facet !
 				}
 			}
 
 		}
-		return result;
-	}
-
-	public static ExpressionDescription getDependenciesOf(final Statement s) {
-		ExpressionDescription result = new ExpressionDescription(s.getExpr());
-		Set<VariableRef> vars = varDependenciesOf(s);
-		if ( vars.isEmpty() ) { return result; }
-		for ( VariableRef var : vars ) {
-			String name = getKeyOf(var);
-			if ( name != null && !result.contains(name) ) {
-				result.add(name);
-			}
+		Array a = null;
+		if ( !result.isEmpty() ) {
+			a = getFactory().createArray();
+			a.getExprs().addAll(result);
 		}
-
-		return result;
+		return a;
 	}
 
 	public static Set<String> getAllowedChildrenForModel() {
@@ -101,6 +92,7 @@ public class EGaml {
 	}
 
 	public static String getKeyOf(final EObject f) {
+		if ( f instanceof StringLiteral ) { return ((StringLiteral) f).getValue(); }
 		if ( f instanceof FacetExpr ) {
 			FacetRef ref = ((FacetExpr) f).getKey();
 			if ( ref != null ) { return ref.getRef(); }
@@ -113,15 +105,13 @@ public class EGaml {
 			VariableRef ref = (VariableRef) f;
 			return ref.getRef() == null ? "" : ref.getRef().getName();
 		}
+		if ( f instanceof FunctionRef ) {
+			FunctionRef ref = (FunctionRef) f;
+			return getKeyOf(ref.getLeft());
+		}
+		if ( f instanceof Expression ) { return ((Expression) f).getOp(); }
 		if ( f instanceof Model ) { return IKeyword.MODEL; }
 		return null;
-	}
-
-	public static String getParentKeyOf(final EObject f) {
-		if ( f == null ) { return null; }
-		EObject parent = f.eContainer();
-		if ( parent instanceof Block ) { return getParentKeyOf(parent); }
-		return getKeyOf(parent);
 	}
 
 	public static String getLabelFromFacet(final Statement container, final String facet) {
@@ -142,6 +132,12 @@ public class EGaml {
 			return expr;
 		}
 		return null;
+	}
+
+	public static BooleanLiteral createTerminal(final boolean b) {
+		BooleanLiteral expr = getFactory().createBooleanLiteral();
+		expr.setValue(b ? IKeyword.TRUE : IKeyword.FALSE);
+		return expr;
 	}
 
 	public static Expression getValueOfOmittedFacet(final Statement s) {
@@ -167,6 +163,7 @@ public class EGaml {
 		for ( FacetExpr f : facets ) {
 			String key = getKeyOf(f);
 			if ( f instanceof DefinitionFacetExpr ) {
+				// Special case for "method": the name should not be translated to a string
 				result.put(key, createTerminal(((DefinitionFacetExpr) f).getName()));
 			} else {
 				if ( key != null ) {
@@ -182,6 +179,110 @@ public class EGaml {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Creates a new Pair from two expressions. The expressions are cloned to avoid any side-effect
+	 * on the syntactic tree
+	 * 
+	 * @param key the key of the PairExpr to create
+	 * @param expression the value of the PairExpr to create
+	 * @return
+	 */
+	public static Expression createPairExpr(final Expression key, final Expression value) {
+		PairExpr pair = getFactory().createPairExpr();
+		pair.setLeft(EcoreUtil2.clone(key));
+		pair.setRight(EcoreUtil2.clone(value));
+		pair.setOp("::");
+		return pair;
+	}
+
+	final static StringBuilder serializer = new StringBuilder();
+
+	public static String toString(final Expression expr) {
+		if ( expr == null ) { return null; }
+		serializer.setLength(0);
+		serialize(expr);
+		return serializer.toString();
+	}
+
+	private static void serialize(final Expression expr) {
+		if ( expr == null ) {
+			// collect.add(new GamlParsingError("an expression is expected", currentStatement));
+			return;
+		} else if ( expr instanceof TernExp ) {
+			serializer.append("(");
+			serialize(expr.getLeft());
+			serializer.append(")").append(expr.getOp()).append("(");
+			serialize(expr.getRight());
+			serializer.append(")").append(":");
+			serialize(((TernExp) expr).getIfFalse());
+		} else if ( expr instanceof StringLiteral ) {
+			serializer.append(StringUtils.toGamlString(((StringLiteral) expr).getValue()));
+		} else if ( expr instanceof TerminalExpression ) {
+			serializer.append(((TerminalExpression) expr).getValue());
+		} else if ( expr instanceof Point ) {
+			serializer.append("{").append("(");
+			serialize(expr.getLeft());
+			serializer.append(")").append(expr.getOp()).append("(");
+			serialize(expr.getRight());
+			serializer.append(")").append("}");
+		} else if ( expr instanceof Array ) {
+			array(((Array) expr).getExprs(), false);
+		} else if ( expr instanceof VariableRef ) {
+			serializer.append(getKeyOf(expr));
+		} else if ( expr instanceof GamlUnaryExpr ) {
+			serializer.append(expr.getOp()).append("(");
+			serialize(expr.getRight());
+			serializer.append(")");
+		} else if ( expr instanceof FunctionRef ) {
+			function((FunctionRef) expr);
+		} else {
+			serializer.append("(");
+			serialize(expr.getLeft());
+			serializer.append(")").append(expr.getOp()).append("(");
+			serialize(expr.getRight());
+			serializer.append(")");
+		}
+	}
+
+	private static void function(final FunctionRef expr) {
+		EList<Expression> args = expr.getArgs();
+		String opName = EGaml.getKeyOf(expr.getLeft());
+		if ( args.size() == 1 ) {
+			serializer.append(opName).append("(");
+			serialize(args.get(0));
+			serializer.append(")");
+		} else if ( args.size() == 2 ) {
+			serializer.append("(");
+			serialize(args.get(0));
+			serializer.append(")").append(opName).append("(");
+			serialize(args.get(1));
+			serializer.append(")");
+		} else {
+			serializer.append("(");
+			serialize(args.get(0));
+			serializer.append(")").append(opName);
+			array(args, true);
+		}
+	}
+
+	private static void array(final EList<Expression> args, final boolean arguments) {
+		// if arguments is true, parses the list to transform it into a map of args
+		// (starting at 1); Experimental right now
+		serializer.append("[");
+		int size = args.size();
+		for ( int i = 0; i < size; i++ ) {
+			Expression e = args.get(i);
+			if ( arguments ) {
+				serializer.append("arg").append(i).append("::");
+			}
+			serialize(e);
+			if ( i < size - 1 ) {
+				serializer.append(",");
+			}
+		}
+		serializer.append("]");
 	}
 
 }

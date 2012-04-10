@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.expressions;
+package msi.gama.lang.utils;
 
 import java.text.*;
 import java.util.*;
@@ -25,20 +25,16 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.IPriority;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
+import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.*;
 
 /**
  * The Class ExpressionParser.
  */
-public class GamlExpressionParser implements IExpressionParser<ExpressionDescription> {
-
-	public static IExpression NIL_EXPR;
-	public static IExpression TRUE_EXPR;
-	public static IExpression FALSE_EXPR;
-	public static IVarExpression EACH_EXPR;
-	public static IExpression WORLD_EXPR = null;
+public class StringBasedExpressionCompiler implements IExpressionParser<IExpressionDescription> {
 
 	static {
 		UNARIES.put(IKeyword.MY, new GamaMap());
@@ -53,24 +49,27 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 
 	private GamlExpressionFactory factory;
 
-	public GamlExpressionParser() {
+	public StringBasedExpressionCompiler() {
 
 	}
 
 	@Override
 	public void setFactory(final IExpressionFactory f) {
+
+		// TODO Move all that to ExpressionFactory
+
 		factory = (GamlExpressionFactory) f;
-		if ( NIL_EXPR == null ) {
-			NIL_EXPR = factory.createConst(null);
+		if ( GamlExpressionFactory.NIL_EXPR == null ) {
+			GamlExpressionFactory.NIL_EXPR = factory.createConst(null);
 		}
-		if ( TRUE_EXPR == null ) {
-			TRUE_EXPR = factory.createConst(true);
+		if ( GamlExpressionFactory.TRUE_EXPR == null ) {
+			GamlExpressionFactory.TRUE_EXPR = factory.createConst(true);
 		}
-		if ( FALSE_EXPR == null ) {
-			FALSE_EXPR = factory.createConst(false);
+		if ( GamlExpressionFactory.FALSE_EXPR == null ) {
+			GamlExpressionFactory.FALSE_EXPR = factory.createConst(false);
 		}
-		if ( EACH_EXPR == null ) {
-			EACH_EXPR =
+		if ( GamlExpressionFactory.EACH_EXPR == null ) {
+			GamlExpressionFactory.EACH_EXPR =
 				factory.createVar(IKeyword.EACH, Types.NO_TYPE, Types.NO_TYPE, true,
 					IVarExpression.EACH);
 		}
@@ -81,7 +80,7 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 	}
 
 	@Override
-	public IExpression parse(final ExpressionDescription s, final IDescription parsingContext) {
+	public IExpression parse(final IExpressionDescription s, final IDescription parsingContext) {
 		IDescription previous = null;
 		if ( parsingContext != null ) {
 			previous = getContext();
@@ -94,7 +93,15 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 		return result;
 	}
 
+	private IExpression compileExpr(final IExpressionDescription descr) {
+		IExpression e = descr.getExpression();
+		if ( e != null ) { return e; }
+		List<String> words = StringUtils.tokenize(descr.toString());
+		return compileExpr(words);
+	}
+
 	private IExpression compileExpr(final List<String> words) {
+		// List<String> words = StringUtils.tokenize(descr.toString());
 		if ( words.isEmpty() ) { return null; }
 		if ( words.size() == 1 ) { return compileTerminalExpr(words.get(0)); }
 
@@ -144,8 +151,8 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 			} else if ( IKeyword.AS.equals(operator) ) {
 				String castingString = words.get(opIndex + 1);
 				return isSpeciesName(castingString) ? factory.createBinaryExpr(operator, expr1,
-					compileExpr(new ExpressionDescription(castingString)), context) : factory
-					.createUnaryExpr(castingString, expr1, context);
+					factory.createExpr(new StringBasedExpressionDescription(castingString)),
+					context) : factory.createUnaryExpr(castingString, expr1, context);
 			} else if ( IKeyword.IS.equals(operator) && isTypeName(words.get(opIndex + 1)) ) {
 				return factory.createBinaryExpr(operator, expr1,
 					factory.createConst(words.get(opIndex + 1)), context);
@@ -161,7 +168,7 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 				if ( cd == null ) {
 					context.flagError(operator + " is not available for agents of species " +
 						sd.getName());
-						return null;
+					return null;
 				}
 				expr2 = compileArguments(cd, words.subList(opIndex + 2, words.size() - 1));
 			} else {
@@ -169,8 +176,8 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 				// the first expression to "each"
 				if ( IExpressionParser.ITERATORS.contains(operator) ) {
 					IType t = expr1.getContentType();
-					EACH_EXPR.setType(t);
-					EACH_EXPR.setContentType(t);
+					GamlExpressionFactory.EACH_EXPR.setType(t);
+					GamlExpressionFactory.EACH_EXPR.setContentType(t);
 				}
 				expr2 = compileExpr(words.subList(opIndex + 1, words.size()));
 			}
@@ -200,7 +207,8 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 
 		if ( isSpeciesName(firstWord) ) {
 			final IExpression expr1 = compileExpr(words.subList(opIndex + 1, words.size()));
-			final IExpression expr2 = compileExpr(new ExpressionDescription(firstWord));
+			final IExpression expr2 =
+				factory.createExpr(new StringBasedExpressionDescription(firstWord), context);
 			return factory.createBinaryExpr(IKeyword.AS, expr1, expr2, context);
 		}
 
@@ -229,10 +237,10 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 		// If the string is a number, we built it apart
 		if ( Strings.isGamaNumber(s) ) { return compileNumberExpr(s); }
 		// If the string is a literal constant we return the expression
-		if ( s.equalsIgnoreCase(IKeyword.TRUE) ) { return TRUE_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.FALSE) ) { return FALSE_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.EACH) ) { return EACH_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return NIL_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.TRUE) ) { return GamlExpressionFactory.TRUE_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.FALSE) ) { return GamlExpressionFactory.FALSE_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.EACH) ) { return GamlExpressionFactory.EACH_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return GamlExpressionFactory.NIL_EXPR; }
 		// assertContext(s);
 		if ( isSpeciesName(s) ) { return factory.createConst(s, Types.get(IType.SPECIES),
 			getSpeciesContext(s).getType()); }
@@ -288,7 +296,7 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 
 	private IExpression compileFieldExpr(final IExpression target, final String var) {
 		IType type = target.type();
-		if ( GamlExpressionParser.isDottedExpr(var) ) {
+		if ( StringBasedExpressionCompiler.isDottedExpr(var) ) {
 
 			final String[] ss = var.split("\\.");
 			return compileFieldExpr(compileFieldExpr(target, ss[0]), ss[1]);
@@ -342,6 +350,7 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 	}
 
 	private IExpression compileListExpr(final List<String> words) {
+		System.out.println("Compiling " + words);
 		final GamaList list = new GamaList();
 		int begin = 0;
 		int end = 0;
@@ -399,7 +408,7 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 			if ( item.type().id() != IType.PAIR ) {
 				context.flagError("Arguments must be provided as pairs arg::value; " +
 					item.toGaml() + " is not a pair");
-					return null;
+				return null;
 			}
 			list.add(item);
 			begin = end + 1;
@@ -431,12 +440,12 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 	}
 
 	private IExpression getWorldExpr() {
-		if ( WORLD_EXPR == null ) {
+		if ( GamlExpressionFactory.WORLD_EXPR == null ) {
 			IType tt = getContext().getModelDescription().getWorldSpecies().getType();
-			WORLD_EXPR =
+			GamlExpressionFactory.WORLD_EXPR =
 				factory.createVar(IKeyword.WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD);
 		}
-		return WORLD_EXPR;
+		return GamlExpressionFactory.WORLD_EXPR;
 	}
 
 	private void setContext(final IDescription commandDescription) {
@@ -452,6 +461,69 @@ public class GamlExpressionParser implements IExpressionParser<ExpressionDescrip
 	private IDescription getContext() {
 		if ( context == null ) { return GAMA.getModelContext(); }
 		return context;
+	}
+
+	/**
+	 * @see msi.gaml.expressions.IExpressionParser#parseArguments(msi.gaml.descriptions.ExpressionDescription)
+	 */
+	@Override
+	public Map<String, IExpressionDescription> parseArguments(final IExpressionDescription args,
+		final IDescription context) {
+
+		Map<String, IExpressionDescription> argList = new HashMap();
+		List<String> words; // = new ExpressionDescription(args, true);
+		List<String> tokens = StringUtils.tokenize(args.toString());
+		words = tokens.subList(1, tokens.size() - 1);
+		int begin = 0;
+		int end = 0;
+		int listLevel = 0;
+		while (begin < words.size()) {
+			while (end < words.size()) {
+				String endString = words.get(end);
+				if ( endString.equals(IKeyword.OPEN_LIST) || endString.equals(IKeyword.OPEN_POINT) ) {
+					listLevel++;
+				} else if ( endString.equals(IKeyword.CLOSE_LIST) ||
+					endString.equals(IKeyword.CLOSE_POINT) ) {
+					listLevel--;
+				} else if ( IKeyword.COMMA.equals(endString) && listLevel == 0 ) {
+					break;
+				}
+				end++;
+			}
+			int parenthesis = 0;
+			if ( words.get(begin).equals(IKeyword.OPEN_EXP) ) {
+				parenthesis = 1;
+			}
+			String arg = words.get(begin + parenthesis);
+			String sep = words.get(begin + parenthesis + 1);
+			if ( !sep.equals("::") ) {
+				context.flagError("Arguments must be provided as pairs arg::value; " +
+					words.subList(begin, end) + " is not a pair");
+			}
+			StringBuilder sb = new StringBuilder();
+			for ( String token : words.subList(begin + parenthesis + 2, end - parenthesis) ) {
+				sb.append(token);
+			}
+			IExpressionDescription expr = new StringBasedExpressionDescription(sb.toString());
+			// String[] facetArray = new String[] { IKeyword.NAME, arg, IKeyword.VALUE, expr };
+			// GuiUtils.debug("Found a new argument:" + Arrays.toString(facetArray));
+			Facets f = new Facets(IKeyword.NAME, arg);
+			f.put(IKeyword.VALUE, expr);
+			argList.put(arg, expr);
+			begin = end + 1;
+			end = begin;
+		}
+		return argList;
+
+	}
+
+	/**
+	 * @see msi.gaml.expressions.IExpressionParser#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription,
+	 *      msi.gaml.descriptions.IDescription)
+	 */
+	@Override
+	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+		return StringUtils.tokenize(s.toString());
 	}
 
 }

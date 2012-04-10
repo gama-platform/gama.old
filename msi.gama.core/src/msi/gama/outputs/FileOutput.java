@@ -246,7 +246,9 @@ public class FileOutput extends AbstractOutput {
 
 	public void refreshExpression() throws GamaRuntimeException {
 		// in case the file writer persists over different simulations (like in the batch)
-		data = GAMA.getExpressionFactory().createExpr(new ExpressionDescription(expressionText));
+		data =
+			GAMA.getExpressionFactory().createExpr(
+				new StringBasedExpressionDescription(expressionText));
 	}
 
 	public Object getLastValue() {

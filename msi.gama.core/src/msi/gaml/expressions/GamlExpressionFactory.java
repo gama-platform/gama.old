@@ -39,26 +39,24 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	// FIXME HACK to test the new parser
 
 	// private IExpressionParser NEW_PARSER;
-	//
+	public static IExpression NIL_EXPR;
+	public static IExpression TRUE_EXPR;
+	public static IExpression FALSE_EXPR;
+	public static IVarExpression EACH_EXPR;
+	public static IExpression WORLD_EXPR = null;
+
 	// public void REGISTER_NEW_PARSER(final IExpressionParser p) {
 	// NEW_PARSER = p;
 	// p.setFactory(this);
 	// }
-	//
-	// public IExpression PARSE_STRING(final String s) {
-	// if ( NEW_PARSER == null ) { return null; }
-	// return NEW_PARSER.parse(new ExpressionDescription(s, false), null);
-	// }
-	//
-	// FIXME HACK
 
 	IExpressionParser parser;
 
 	// final IDescription defaultParsingContext;
 
-	public GamlExpressionFactory() {
-		registerParser(new GamlExpressionParser()); // default
-	}
+	// public GamlExpressionFactory() {
+	// registerParser(new GamlExpressionParser()); // default
+	// }
 
 	@Override
 	public void registerParser(final IExpressionParser f) {
@@ -87,20 +85,27 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	}
 
 	@Override
-	public IExpression createExpr(final ExpressionDescription s) {
+	public IExpression createExpr(final IExpressionDescription s) {
 		return createExpr(s, GAMA.getModelContext());
 	}
 
 	@Override
-	public IExpression createExpr(final ExpressionDescription s, final IDescription context) {
-		// FIXME HACK TO TEST THE NEW PARSER
-		// if ( NEW_PARSER != null ) { return NEW_PARSER.parse(s, context); }
-		if ( s == null || s.size() == 0 ) { return null; }
-		// FIXME HACK TO TEST THE NEW PARSER
-		// if ( s.getAst() != null && NEW_PARSER != null ) { return NEW_PARSER.parse(s, context); }
-		// HACK
-		IExpression p = parser.parse(s, context);
+	public IExpression createExpr(final IExpressionDescription s, final IDescription context) {
+		if ( s == null ) { return null; }
+		IExpression p = s.getExpression();
+		if ( p == null ) {
+			p = parser.parse(s, context);
+		}
 		return p;
+	}
+
+	/**
+	 * @see msi.gaml.expressions.IExpressionFactory#createArgumentMap(msi.gaml.descriptions.ExpressionDescription)
+	 */
+	@Override
+	public Map<String, IExpressionDescription> createArgumentMap(final IExpressionDescription args,
+		final IDescription context) {
+		return parser.parseArguments(args, context);
 	}
 
 	@Override
@@ -123,9 +128,15 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		boolean allTheSame = true;
 		int n = elements.size();
 		if ( n != 0 ) {
-			contentType = elements.get(0).type();
+			IExpression e = elements.get(0);
+			if ( e != null ) {
+				contentType = e.type();
+			}
 			for ( int i = 1; i < n; i++ ) {
-				allTheSame = elements.get(i).type() == contentType;
+				e = elements.get(i);
+				if ( e != null ) {
+					allTheSame = e.type() == contentType;
+				}
 				if ( !allTheSame ) {
 					break;
 				}
@@ -257,9 +268,9 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				right = createUnaryExpr(coercingType.toString(), right, context);
 			}
 			// We add the species context in case this operator is a primitive
-			if ( operator instanceof PrimitiveOperator ) {
-				((PrimitiveOperator) operator).setTargetSpecies(context.getSpeciesContext());
-			}
+			// if ( operator instanceof PrimitiveOperator ) {
+			// ((PrimitiveOperator) operator).setTargetSpecies(context.getSpeciesContext());
+			// }
 			// And we return it.
 			return operator.init(op, left, right, context);
 		}
@@ -286,16 +297,34 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		return op;
 	}
 
+	// @Override
+	// public IOperator createPrimitiveOperator(final String name) {
+	// return new PrimitiveOperator(name);
+	// }
+	//
+	// @Override
+	// public IOperator copyPrimitiveOperatorForSpecies(final IOperator op, final IDescription
+	// species) {
+	// IOperator copy = op.copy();
+	// // ((PrimitiveOperator) copy).setTargetSpecies(species);
+	// return copy;
+	// }
+
+	/**
+	 * @see msi.gaml.expressions.IExpressionFactory#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
+	 */
 	@Override
-	public IOperator createPrimitiveOperator(final String name) {
-		return new PrimitiveOperator(name);
+	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+		// if ( s.getAst() != null ) { return NEW_PARSER.parseLiteralArray(s, context); }
+		return parser.parseLiteralArray(s, context);
 	}
 
+	/**
+	 * @see msi.gaml.expressions.IExpressionFactory#getParser()
+	 */
 	@Override
-	public IOperator copyPrimitiveOperatorForSpecies(final IOperator op, final IDescription species) {
-		IOperator copy = op.copy();
-		((PrimitiveOperator) copy).setTargetSpecies(species);
-		return copy;
+	public IExpressionParser getParser() {
+		return parser;
 	}
 
 }

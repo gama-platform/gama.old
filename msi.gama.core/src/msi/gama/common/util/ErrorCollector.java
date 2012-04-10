@@ -14,7 +14,7 @@ import msi.gaml.compilation.GamlCompilationError;
  * @since 17 févr. 2012
  * 
  */
-public class ErrorCollector {
+public class ErrorCollector implements IErrorCollector {
 
 	Set<GamlCompilationError> errors;
 	Set<GamlCompilationError> warnings;
@@ -40,9 +40,13 @@ public class ErrorCollector {
 		return !warnings.isEmpty();
 	}
 
-	public boolean add(final GamlCompilationError error) {
-		if ( error.isWarning() ) { return warnings.add(error); }
-		return errors.add(error);
+	@Override
+	public void add(final GamlCompilationError error) {
+		if ( error.isWarning() ) {
+			warnings.add(error);
+		} else {
+			errors.add(error);
+		}
 	}
 
 }

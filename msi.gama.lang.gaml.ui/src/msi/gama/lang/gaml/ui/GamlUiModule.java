@@ -20,6 +20,7 @@ package msi.gama.lang.gaml.ui;
 
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
@@ -28,6 +29,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
+import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
 import com.google.inject.*;
 
 /**
@@ -48,7 +50,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.annotatedWith(
 				com.google.inject.name.Names
 					.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
-			.toInstance(".: ,");
+			.toInstance(".:,");
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
-		return null; // GamlValidationEditorCallback.class;
+		return ValidatingEditorCallback.class;
 	}
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
@@ -90,7 +92,13 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return workbench == null ? null : workbench.getActiveWorkbenchWindow();
 	}
 
+	@Override
+	public Class<? extends IHyperlinkDetector> bindIHyperlinkDetector() {
+		return GamlHyperlinkDetector.class;
+	}
+
 	private void setValidationTrigger(final IWorkbenchWindow w, final AbstractUIPlugin plugin) {
+		// TODO reenable this for having the generation made everytime an editor is selected.
 		if ( w == null || !(plugin instanceof msi.gama.lang.gaml.ui.internal.GamlActivator) ) { return; }
 		w.getPartService().addPartListener(new ValidateFileOnActivation());
 	}

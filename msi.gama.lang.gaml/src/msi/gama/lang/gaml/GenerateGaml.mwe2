@@ -104,7 +104,7 @@ Workflow {
             fragment = parser.antlr.XtextAntlrUiGeneratorFragment {}
 
             // generates junit test support classes into Generator#pathTestProject
-            fragment = junit.Junit4Fragment {}
+            //fragment = junit.Junit4Fragment {}
 
             // project wizard (optional)
             // fragment = projectWizard.SimpleProjectWizardFragment {

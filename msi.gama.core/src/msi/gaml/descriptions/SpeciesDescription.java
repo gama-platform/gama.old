@@ -34,7 +34,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * The following map contains micro-species explicitly declared inside this species.
 	 */
 	private Map<String, SpeciesDescription> microSpecies;
-	
+
 	private List<CommandDescription> inits;
 
 	private boolean isSuper = false;
@@ -62,13 +62,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	}
 
 	@Override
-	public SpeciesDescription shallowCopy(final IDescription superDesc) {
-		return this; // SpeciesDescription sd =
-		// new SpeciesDescription(getKeyword(), superDesc, facets, children, javaBase, source);
-		// return sd;
-	}
-
-	@Override
 	public IDescription addChild(final IDescription child) {
 		IDescription desc = super.addChild(child);
 
@@ -81,16 +74,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 		return desc;
 	}
-
-	//
-	// @Override
-	// protected void copyChildren(final List<IDescription> originalChildren) throws GamlException {
-	// // if ( type == null ) {
-	// // type = getTypeOf(getName());
-	// // Necessary to fix the type before adding children...
-	// // }
-	// super.copyChildren(originalChildren);
-	// }
 
 	private void addInit(final CommandDescription init) {
 		inits.add(0, init); // Added at the beginning
@@ -171,114 +154,116 @@ public class SpeciesDescription extends ExecutionContextDescription {
 			flagError(getName() + " species can't be a sub-species of itself");
 			return null;
 		}
-		
+
 		SpeciesDescription potentialParent = findPotentialParent(parentName);
 		if ( potentialParent == null ) {
 
 			List<SpeciesDescription> potentialParents = this.getPotentialParentSpecies();
-			
+
 			List<String> availableSpecies = new GamaList<String>();
-			
-			for (SpeciesDescription p : potentialParents) {
+
+			for ( SpeciesDescription p : potentialParents ) {
 				availableSpecies.add(p.getName());
 				availableSpecies.add(", ");
 			}
 			availableSpecies.remove(availableSpecies.size() - 1);
 			StringBuffer availableSpecsStr = new StringBuffer();
 			availableSpecsStr.append("[");
-			for (String s : availableSpecies) { availableSpecsStr.append(s); }
+			for ( String s : availableSpecies ) {
+				availableSpecsStr.append(s);
+			}
 			availableSpecsStr.append("]");
-			flagError(parentName + " can't be a parent-species of " + this.getName() + " species. Available parent species are: " + availableSpecsStr.toString());
-		
+			flagError(parentName + " can't be a parent-species of " + this.getName() +
+				" species. Available parent species are: " + availableSpecsStr.toString());
+
 			return null;
 		}
 
-		
 		List<SpeciesDescription> parentsOfParent = potentialParent.getSelfWithParents();
 		if ( parentsOfParent.contains(this) ) {
-			flagError(this.getName() + " species and " + potentialParent.getName() + " species can't be sub-species of each other.");
+			flagError(this.getName() + " species and " + potentialParent.getName() +
+				" species can't be sub-species of each other.");
 			return null;
 		}
 
 		//
-//		if ( this.getAllMacroSpecies().contains(parentSpec) ) {
-//			flagError(this.getName() + " species can't be a sub-species of " +
-//				parentSpec.getName() +
-//				" species because a species can't be sub-species of its direct or indirect macro-species.");
-//		}
+		// if ( this.getAllMacroSpecies().contains(parentSpec) ) {
+		// flagError(this.getName() + " species can't be a sub-species of " +
+		// parentSpec.getName() +
+		// " species because a species can't be sub-species of its direct or indirect macro-species.");
+		// }
 
-		
 		if ( this.getAllMicroSpecies().contains(parentsOfParent) ) {
 			flagError(this.getName() + " species can't be a sub-species of " +
-					potentialParent.getName() + 
-					" species because a species can't be sub-species of its direct or indirect micro-species.");
+				potentialParent.getName() +
+				" species because a species can't be sub-species of its direct or indirect micro-species.");
 			return null;
 		}
-//
-//		List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
-//		List<SpeciesDescription> parentsOfMacro;
-//		for ( SpeciesDescription macro : allMacroSpecies ) {
-//			parentsOfMacro = macro.getSelfWithParents();
-//			parentsOfMacro.remove(macro);
-//
-//			parentsOfMacro.retainAll(parentsOfParent);
-//
-//			List<SpeciesDescription> sharedParents = new GamaList<SpeciesDescription>();
-//			sharedParents.addAll(parentsOfMacro);
-//			sharedParents.retainAll(parentsOfParent);
-//
-//			if ( !sharedParents.isEmpty() ) {
-//				SpeciesDescription parentOfMacro = macro.getParentSpecies();
-//
-//				List<String> microSpecsNames = new GamaList<String>();
-//
-//				for ( SpeciesDescription sParent : sharedParents ) {
-//					for ( SpeciesDescription inheritedMicro : sParent.getMicroSpecies() ) {
-//						microSpecsNames.add(inheritedMicro.getName());
-//						microSpecsNames.add(", ");
-//					}
-//				}
-//
-//				if ( !microSpecsNames.isEmpty() ) {
-//					microSpecsNames.remove(microSpecsNames.size() - 1);
-//
-//					StringBuffer microSpecsStr = new StringBuffer();
-//					microSpecsStr.append("[");
-//					for ( String msN : microSpecsNames ) {
-//						microSpecsStr.append(msN);
-//					}
-//					microSpecsStr.append("]");
-//
-//					String message;
-//					if ( parentSpec.equals(parentOfMacro) ) {
-//						message =
-//							new String(this.getName() + " and " + macro.getName() +
-//								" species can't share " + parentSpec.getName() +
-//								" as parent-species because ");
-//					} else {
-//						message =
-//							new String(this.getName() + " and " + macro.getName() +
-//								" species can't have " + parentSpec.getName() + " and " +
-//								parentOfMacro.getName() + " as parent-species because ");
-//					}
-//
-//					flagError(message + "\n\t1. " + this.getName() + " and " + macro.getName() +
-//						" have micro-macro species relationship;" +
-//						"\n\t2. They will both inherit the micro-species " + microSpecsStr +
-//						" which will ambiguate the reference to " + microSpecsStr +
-//						" species in the context of " + this.getName() + " species.");
-//				}
-//			}
-//		}
-//
-//		List<SpeciesDescription> parentTrace = new GamaList<SpeciesDescription>();
-//		parentSpec.fillParentTrace(parentTrace);
-//		if ( parentTrace.contains(this) ) {
-//			flagError(this.getName() + " species can't be a sub-species of " +
-//				parentSpec.getName() +
-//				" species because this forms a circular inheritance between species of different branches.");
-//		}
-//
+		//
+		// List<SpeciesDescription> allMacroSpecies = this.getAllMacroSpecies();
+		// List<SpeciesDescription> parentsOfMacro;
+		// for ( SpeciesDescription macro : allMacroSpecies ) {
+		// parentsOfMacro = macro.getSelfWithParents();
+		// parentsOfMacro.remove(macro);
+		//
+		// parentsOfMacro.retainAll(parentsOfParent);
+		//
+		// List<SpeciesDescription> sharedParents = new GamaList<SpeciesDescription>();
+		// sharedParents.addAll(parentsOfMacro);
+		// sharedParents.retainAll(parentsOfParent);
+		//
+		// if ( !sharedParents.isEmpty() ) {
+		// SpeciesDescription parentOfMacro = macro.getParentSpecies();
+		//
+		// List<String> microSpecsNames = new GamaList<String>();
+		//
+		// for ( SpeciesDescription sParent : sharedParents ) {
+		// for ( SpeciesDescription inheritedMicro : sParent.getMicroSpecies() ) {
+		// microSpecsNames.add(inheritedMicro.getName());
+		// microSpecsNames.add(", ");
+		// }
+		// }
+		//
+		// if ( !microSpecsNames.isEmpty() ) {
+		// microSpecsNames.remove(microSpecsNames.size() - 1);
+		//
+		// StringBuffer microSpecsStr = new StringBuffer();
+		// microSpecsStr.append("[");
+		// for ( String msN : microSpecsNames ) {
+		// microSpecsStr.append(msN);
+		// }
+		// microSpecsStr.append("]");
+		//
+		// String message;
+		// if ( parentSpec.equals(parentOfMacro) ) {
+		// message =
+		// new String(this.getName() + " and " + macro.getName() +
+		// " species can't share " + parentSpec.getName() +
+		// " as parent-species because ");
+		// } else {
+		// message =
+		// new String(this.getName() + " and " + macro.getName() +
+		// " species can't have " + parentSpec.getName() + " and " +
+		// parentOfMacro.getName() + " as parent-species because ");
+		// }
+		//
+		// flagError(message + "\n\t1. " + this.getName() + " and " + macro.getName() +
+		// " have micro-macro species relationship;" +
+		// "\n\t2. They will both inherit the micro-species " + microSpecsStr +
+		// " which will ambiguate the reference to " + microSpecsStr +
+		// " species in the context of " + this.getName() + " species.");
+		// }
+		// }
+		// }
+		//
+		// List<SpeciesDescription> parentTrace = new GamaList<SpeciesDescription>();
+		// parentSpec.fillParentTrace(parentTrace);
+		// if ( parentTrace.contains(this) ) {
+		// flagError(this.getName() + " species can't be a sub-species of " +
+		// parentSpec.getName() +
+		// " species because this forms a circular inheritance between species of different branches.");
+		// }
+		//
 		return potentialParent;
 	}
 
@@ -307,7 +292,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					addChild(b);
 				}
 			}
-			
+
 			for ( final CommandDescription init : parent.inits ) {
 				addChild(init);
 			}
@@ -352,7 +337,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 */
 	@Override
 	public String getParentName() {
-		return facets.getString(IKeyword.PARENT);
+		return facets.getLabel(IKeyword.PARENT);
 	}
 
 	public void verifyAndSetParent() {
@@ -440,9 +425,9 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	public SpeciesDescription getMicroSpecies(final String name) {
 		SpeciesDescription retVal = microSpecies.get(name);
-		if (retVal != null) { return retVal; }
-		
-		if (this.parentSpecies != null) { return parentSpecies.getMicroSpecies(name); }
+		if ( retVal != null ) { return retVal; }
+
+		if ( this.parentSpecies != null ) { return parentSpecies.getMicroSpecies(name); }
 		return null;
 	}
 
@@ -521,9 +506,9 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * Returns a list of visible species from this species.
 	 * 
 	 * A species can see the following species:
-	 * 	1. Its direct micro-species.
-	 * 	2. Its peer species.
-	 * 	3. Its direct&in-direct macro-species and their peers.
+	 * 1. Its direct micro-species.
+	 * 2. Its peer species.
+	 * 3. Its direct&in-direct macro-species and their peers.
 	 * 
 	 * @return
 	 */
@@ -558,7 +543,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 		return null;
 	}
-	
+
 	/*
 	@Override
 	public IDescription getSpeciesDescription(final String actualSpecies) {
@@ -568,7 +553,8 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	
 	/**
 	 * Returns a list of SpeciesDescription that can be the parent of this species.
-	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the same direct macro-species).
+	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the
+	 * same direct macro-species).
 	 * 
 	 * @return
 	 */
@@ -576,16 +562,16 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		List<SpeciesDescription> retVal = getVisibleSpecies();
 		retVal.removeAll(this.getMicroSpecies());
 		retVal.remove(this);
-		
+
 		return retVal;
 	}
-	
-	private SpeciesDescription findPotentialParent(String parentName) {
+
+	private SpeciesDescription findPotentialParent(final String parentName) {
 		List<SpeciesDescription> candidates = this.getPotentialParentSpecies();
-		for (SpeciesDescription c : candidates) {
-			if (c.getName().equals(parentName)) { return c; }
+		for ( SpeciesDescription c : candidates ) {
+			if ( c.getName().equals(parentName) ) { return c; }
 		}
-		
+
 		return null;
 	}
 

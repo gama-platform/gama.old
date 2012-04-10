@@ -19,7 +19,6 @@
 package msi.gaml.species;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -140,10 +139,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public IList<ISpecies> getMicroSpecies() {
 		IList<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.addAll(microSpecies.values());
-		
+
 		ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) { retVal.addAll(parentSpecies.getMicroSpecies()); }
-		
+		if ( parentSpecies != null ) {
+			retVal.addAll(parentSpecies.getMicroSpecies());
+		}
+
 		return retVal;
 	}
 
@@ -151,10 +152,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public IList<String> getMicroSpeciesNames() {
 		IList<String> retVal = new GamaList<String>();
 		retVal.addAll(microSpecies.keySet());
-		
+
 		ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) { retVal.addAll(parentSpecies.getMicroSpeciesNames()); }
-		
+		if ( parentSpecies != null ) {
+			retVal.addAll(parentSpecies.getMicroSpeciesNames());
+		}
+
 		return retVal;
 	}
 
@@ -167,10 +170,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
 		ISpecies retVal = microSpecies.get(microSpeciesName);
-		if (retVal != null) { return retVal; }
-		
+		if ( retVal != null ) { return retVal; }
+
 		ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) { return parentSpecies.getMicroSpecies(microSpeciesName); }
+		if ( parentSpecies != null ) { return parentSpecies.getMicroSpecies(microSpeciesName); }
 
 		return null;
 	}
@@ -181,13 +184,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean containMicroSpecies(final ISpecies species) {
 		ISpecies parentSpecies = this.getParentSpecies();
-		return microSpecies.values().contains(species) || ((parentSpecies != null) ? parentSpecies.containMicroSpecies(species) : false);
+		return microSpecies.values().contains(species) ||
+			(parentSpecies != null ? parentSpecies.containMicroSpecies(species) : false);
 	}
 
 	@Override
 	public boolean hasMicroSpecies() {
 		ISpecies parentSpecies = this.getParentSpecies();
-		return !microSpecies.isEmpty() || ( (parentSpecies != null) ? parentSpecies.hasMicroSpecies() : false );
+		return !microSpecies.isEmpty() ||
+			(parentSpecies != null ? parentSpecies.hasMicroSpecies() : false);
 	}
 
 	@Override
@@ -208,21 +213,21 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public boolean isPeer(ISpecies other) {
-		return (other != null) && (other.getMacroSpecies().equals(this.getMacroSpecies()));
+	public boolean isPeer(final ISpecies other) {
+		return other != null && other.getMacroSpecies().equals(this.getMacroSpecies());
 	}
 
 	@Override
 	public List<ISpecies> getSelfWithParents() {
 		List<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.add(this);
-		
+
 		ISpecies currentParent = this.getParentSpecies();
 		while (currentParent != null) {
 			retVal.add(currentParent);
 			currentParent = currentParent.getParentSpecies();
 		}
-		
+
 		return retVal;
 	}
 
@@ -230,26 +235,26 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public ISpecies getParentSpecies() {
 		SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
 		if ( parentSpecDesc == null ) { return null; }
-		
+
 		ISpecies currentMacroSpec = this.getMacroSpecies();
 		ISpecies potentialParent;
 		while (currentMacroSpec != null) {
 			potentialParent = currentMacroSpec.getMicroSpecies(parentSpecDesc.getName());
-			if (potentialParent != null) { return potentialParent; }
+			if ( potentialParent != null ) { return potentialParent; }
 			currentMacroSpec = currentMacroSpec.getMacroSpecies();
 		}
-		
+
 		return null;
-		
+
 		/*
-		if ( parentSpecies != null ) { return parentSpecies; }
-
-		SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
-		if ( parentSpecDesc == null ) { return null; }
-
-		parentSpecies = findParentSpecies(parentSpecDesc);
-		return parentSpecies;
-		*/
+		 * if ( parentSpecies != null ) { return parentSpecies; }
+		 * 
+		 * SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
+		 * if ( parentSpecDesc == null ) { return null; }
+		 * 
+		 * parentSpecies = findParentSpecies(parentSpecDesc);
+		 * return parentSpecies;
+		 */
 	}
 
 	@Override
@@ -271,9 +276,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		/**
 		 * species name is unique
 		 */
-		if ( other instanceof ISpecies ) { 
-			return this.getName().equals(((ISpecies) other).getName()); 
-		}
+		if ( other instanceof ISpecies ) { return this.getName().equals(
+			((ISpecies) other).getName()); }
 
 		return false;
 	}
@@ -384,6 +388,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private void createControl() {
 		IArchitecture control = getArchitecture();
 		List<ICommand> behaviors = getBehaviors();
+		if ( control == null ) {
+			this.error("The control of this species cannot be computed", IKeyword.CONTROL);
+			return;
+		}
 		control.setChildren(behaviors);
 		control.verifyBehaviors(this);
 	}

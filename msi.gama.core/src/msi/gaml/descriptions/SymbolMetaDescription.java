@@ -209,7 +209,8 @@ public class SymbolMetaDescription {
 		final IDescription context) {
 		for ( String s : facets ) {
 			if ( !possibleFacets.containsKey(s) ) {
-				new GamlCompilationError("Unknown facet " + s, e);
+				GamlCompilationError error = new GamlCompilationError("Unknown facet " + s, e);
+				error.setObjectOfInterest(s);
 			}
 		}
 	}
@@ -248,19 +249,23 @@ public class SymbolMetaDescription {
 						}
 					}
 					if ( !found ) {
-						new GamlCompilationError("The value of facet " + s + "must be one of " +
-							String.valueOf(f.values), e);
+						GamlCompilationError error =
+							new GamlCompilationError("The value of facet " + s +
+								" must be one of " + Arrays.toString(f.values), e);
+						error.setObjectOfInterest(s);
 					}
 				}
 
 			} else if ( IType.ID.equals(f.types[0]) || IType.NEW_TEMP_ID.equals(f.types[0]) ||
 				IType.NEW_VAR_ID.equals(f.types[0]) || IType.TYPE_ID.equals(f.types[0]) ) {
 				facets.compileAsLabel(f.name);
-				String id = facets.getString(s).trim();
+				String id = facets.getLabel(s).trim();
 
 				if ( IExpressionParser.RESERVED.contains(id) ) {
-					new GamlCompilationError(id +
-						" is a reserved keyword. It cannot be used as an identifiant", e);
+					GamlCompilationError error =
+						new GamlCompilationError(id +
+							" is a reserved keyword. It cannot be used as an identifiant", e);
+					error.setObjectOfInterest(id);
 				}
 				// if ( !id.isEmpty() && !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw
 				// new GamlException(

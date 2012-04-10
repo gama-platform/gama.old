@@ -19,7 +19,7 @@
 package msi.gaml.compilation;
 
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.ErrorCollector;
+import msi.gama.common.util.IErrorCollector;
 
 /**
  * The Class GamlException.
@@ -54,10 +54,6 @@ public class GamlCompilationError {
 		addSource(sourceInformation);
 	}
 
-	public GamlCompilationError(final String string, final Throwable ex) {
-		this(string + "\n" + ex == null ? "" : "Caused by: " + ex.getMessage());
-	}
-
 	@Override
 	public String toString() {
 		return message;
@@ -67,7 +63,7 @@ public class GamlCompilationError {
 		if ( source == null ) {
 			source = cur;
 			if ( cur == null ) { return; }
-			ErrorCollector collect = cur.getErrorCollector();
+			IErrorCollector collect = cur.getErrorCollector();
 			if ( collect != null ) {
 				collect.add(this);
 			}

@@ -23,7 +23,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 // TODO change to SimulationScheduler or SimulationControler or GlobalScheduler
-public class Scheduler extends AbstractScheduler implements IScheduler, Runnable {
+public class Scheduler extends AbstractScheduler implements  Runnable {
 	public final Thread executionThread;
 
 	private static int threadCount = 0;
@@ -114,4 +114,5 @@ public class Scheduler extends AbstractScheduler implements IScheduler, Runnable
 		stepped = false;
 	}
 
+	
 }

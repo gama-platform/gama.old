@@ -19,6 +19,7 @@
 package msi.gaml.factories;
 
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gaml.compilation.ISymbolKind;
@@ -30,6 +31,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
+
 @handles({ ISymbolKind.BATCH_METHOD })
 public class BatchFactory extends SymbolFactory {
 
@@ -42,15 +44,15 @@ public class BatchFactory extends SymbolFactory {
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getName().equals(IKeyword.METHOD) ) { return cur.getLabel(IKeyword.NAME); }
+		if ( cur.getKeyword().equals(IKeyword.METHOD) ) { return StringUtils.toJavaString(cur
+			.getLabel(IKeyword.NAME)); }
 		return super.getKeyword(cur);
 	}
 
 	@Override
-	protected String getKeyword(final IDescription desc) {
-		if ( desc == null ) { return null; }
-		if ( desc.getKeyword().equals(IKeyword.METHOD) ) { return desc.getName(); }
-		return super.getKeyword(desc);
+	public IDescription createDescriptionRecursively(final ISyntacticElement source,
+		final IDescription superDesc) {
+		return super.createDescriptionRecursively(source, superDesc);
 	}
 
 }

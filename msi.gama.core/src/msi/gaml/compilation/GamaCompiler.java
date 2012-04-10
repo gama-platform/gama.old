@@ -23,14 +23,9 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.security.ProtectionDomain;
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
@@ -202,20 +197,28 @@ public class GamaCompiler {
 	public final static String SETTER = "Setter";
 	public final static String FIELD = "FieldGetter";
 	public final static String PRIMITIVE = "Primitive";
-	public final static String IAGENT = IAgent.class.getCanonicalName();
-	public final static String IAGENTMANAGER = IPopulation.class.getCanonicalName();
-	public final static String ISIMULATION = ISimulation.class.getCanonicalName();
-	public final static String ISKILL = ISkill.class.getCanonicalName();
-	public final static String ISYMBOL = ISymbol.class.getCanonicalName();
-	public final static String IDESCRIPTION = IDescription.class.getCanonicalName();
-	public final static String ISCOPE = IScope.class.getCanonicalName();
+	public final static String IAGENT =
+	/* IAgent.class.getCanonicalName(); */"msi.gama.metamodel.agent.IAgent";
+	public final static String IAGENTMANAGER =
+		/* IPopulation.class.getCanonicalName(); */"msi.gama.metamodel.population.IPopulation";
+	public final static String ISIMULATION =
+		/* ISimulation.class.getCanonicalName(); */"msi.gama.kernel.simulation.ISimulation";
+	public final static String ISKILL =
+		/* ISkill.class.getCanonicalName(); */"msi.gaml.skills.ISkill";
+	public final static String ISYMBOL =
+		/* ISymbol.class.getCanonicalName(); */"msi.gaml.compilation.ISymbol";
+	public final static String IDESCRIPTION =
+		/* IDescription.class.getCanonicalName(); */"msi.gaml.descriptions.IDescription";
+	public final static String ISCOPE =
+		/* IScope.class.getCanonicalName(); */"msi.gama.runtime.IScope";
 	public final static String OBJECT = Object.class.getCanonicalName();
-	public final static String IVALUE = IValue.class.getCanonicalName();
-	public final static String EXCEPTION = "throws " +
-		GamaRuntimeException.class.getCanonicalName();
+	public final static String IVALUE =
+		/* IValue.class.getCanonicalName(); */"msi.gama.common.interfaces.IValue";
+	public final static String EXCEPTION =
+		/* "throws + " GamaRuntimeException.class.getCanonicalName(); */"throws msi.gama.runtime.exceptions.GamaRuntimeException";
 
 	private static void addAllInterfaces(final Class clazz, final Set allInterfaces) {
-		if ( clazz == null /* || !clazz.getCanonicalName().startsWith("msi") */) { return; }
+		if ( clazz == null ) { return; }
 		final Class[] interfaces = clazz.getInterfaces();
 		allInterfaces.addAll(Arrays.asList(interfaces));
 		addAllInterfaces(interfaces, allInterfaces);
@@ -346,20 +349,17 @@ public class GamaCompiler {
 		Map<TypePair, IOperator> existing = BINARIES.get(string);
 		if ( !existing.containsKey(FunctionSignature) ) {
 			IExpressionParser.FUNCTIONS.add(string);
-			IOperator newFunct = GAMA.getExpressionFactory().createPrimitiveOperator(string);
+			IOperator newFunct = new PrimitiveOperator(string);
 			existing.put(FunctionSignature, newFunct);
 		}
 	}
 
 	static TypePair FunctionSignature = new TypePair(Types.get(IType.AGENT), Types.get(IType.MAP));
 
-	public static void registerFunction(final String string, final IDescription species) {
+	public static void registerFunction(final String string, final IType species) {
 		registerNewFunction(string);
-		IOperator newFunct =
-			GAMA.getExpressionFactory().copyPrimitiveOperatorForSpecies(
-				BINARIES.get(string).get(FunctionSignature), species);
-
-		BINARIES.get(string).put(new TypePair(species.getType(), Types.get(IType.MAP)), newFunct);
+		IOperator newFunct = BINARIES.get(string).get(FunctionSignature).copy();
+		BINARIES.get(string).put(new TypePair(species, Types.get(IType.MAP)), newFunct);
 	}
 
 	public static void registerNewOperator(final String key, final String m, final Class declClass,

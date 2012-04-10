@@ -20,7 +20,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ErrorCollector;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlCompilationError;
@@ -47,7 +46,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
 		initFields();
-		this.facets = source.getAttributes();
+		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		setSource(source);
 		meta = md;
@@ -62,21 +61,25 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	private void flagError(final String s, final boolean warning, final Object facet)
 		throws GamaRuntimeException {
-		ISyntacticElement e = getSource();
-		if ( e == null ) {
-			IDescription desc = getSuperDescription();
+		// GuiUtils.debug((warning ? "Warning" : "Error") + " flagged in " + this + " : " + s +
+		// " for facet " + facet);
+		ISyntacticElement e =
+			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSource();
+		IDescription desc = this;
+		while (e == null && desc != null) {
+			desc = desc.getSuperDescription();
 			if ( desc != null ) {
 				e = desc.getSourceInformation();
 			}
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
-		if ( e == null || e.getErrorCollector() == null ) { throw new GamaRuntimeException(s,
+		if ( e == null /* || e.getErrorCollector() == null */) { throw new GamaRuntimeException(s,
 			warning); }
-		ErrorCollector collect = e.getErrorCollector();
+		// ErrorCollector collect = e.getErrorCollector();
 		GamlCompilationError ge = new GamlCompilationError(s, e, warning);
 		ge.setObjectOfInterest(facet);
-		collect.add(ge);
+		// collect.add(ge);
 	}
 
 	@Override
@@ -101,12 +104,12 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public String getKeyword() {
-		return facets.getString(IKeyword.KEYWORD);
+		return facets.getLabel(IKeyword.KEYWORD);
 	}
 
 	@Override
 	public String getName() {
-		return facets.getString(IKeyword.NAME);
+		return facets.getLabel(IKeyword.NAME);
 	}
 
 	protected void initFields() {};
@@ -144,6 +147,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
+		// GuiUtils.debug("Adding child " + child + " to " + this);
 		IDescription cc = child.shallowCopy(this);
 		cc.setSuperDescription(this);
 		children.add(cc);

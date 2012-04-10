@@ -87,11 +87,12 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 
 	public static class WorldPopulation extends GamlPopulation {
 
-		static class WorldAgent extends GamlAgent {
+		public static class WorldAgent extends GamlAgent {
 
 			private GamaPoint location;
 
-			WorldAgent(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
+			public WorldAgent(final ISimulation sim, final IPopulation s)
+				throws GamaRuntimeException {
 				super(sim, s);
 				index = 0;
 			}

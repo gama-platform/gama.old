@@ -49,8 +49,23 @@ public interface IExpressionParser<T> {
 	public static final Set<String> ITERATORS = new HashSet();
 	public static final Map<String, Short> BINARY_PRIORITIES = new HashMap();
 
-	public abstract IExpression parse(final ExpressionDescription s,
+	public abstract IExpression parse(final IExpressionDescription s,
 		final IDescription parsingContext);
 
 	public abstract void setFactory(IExpressionFactory factory);
+
+	/**
+	 * @param args
+	 * @param context
+	 * @return
+	 */
+	Map<String, IExpressionDescription> parseArguments(IExpressionDescription args,
+		IDescription context);
+
+	/**
+	 * @param s
+	 * @return
+	 */
+	public abstract List<String> parseLiteralArray(final IExpressionDescription s,
+		final IDescription context);
 }
