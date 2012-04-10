@@ -31,7 +31,7 @@ entities {
 		}
 		reflex migrate when: !is_happy {
 			add item: location as space to: free_places;
-			set location value: any(free_places);
+			set location value: point(any(free_places));
 			remove item: location as space from: free_places;
 		}
 		
