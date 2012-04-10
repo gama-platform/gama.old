@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jogl-linux-i586
+Bundle-SymbolicName: com.jogamp.jogl-linux-i586
+Bundle-Version: 2.0.0
+Bundle-Vendor: Jogamp
+Fragment-Host: com.jogamp.jogl;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-PlatformFilter: (& (osgi.os=linux) (osgi.arch=x86))
