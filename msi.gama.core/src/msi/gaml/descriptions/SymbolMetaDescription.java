@@ -36,6 +36,8 @@ import msi.gaml.types.IType;
 // @facet(name = IKeyword.KEYWORD, type = IType.ID, optional = true)
 public class SymbolMetaDescription {
 
+	public static Set<String> nonVariableStatements = new HashSet();
+
 	public static class FacetMetaDescription {
 
 		public String name;
@@ -93,17 +95,17 @@ public class SymbolMetaDescription {
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
 	public SymbolMetaDescription(final Class instantiationClass, final Class baseClass,
-		final String keyword, final boolean hasSequence, final boolean hasArgs,
-		final boolean isTopLevel, final boolean doesNotHaveScope, final List<facet> possibleFacets,
-		final String omissible, final List<combination> possibleCombinations,
-		final List<String> contexts, final boolean isRemoteContext) {
+		final String keyword, final boolean hasSequence, final boolean hasArgs, final int kind,
+		final boolean doesNotHaveScope, final List<facet> possibleFacets, final String omissible,
+		final List<combination> possibleCombinations, final List<String> contexts,
+		final boolean isRemoteContext) {
 		setInstantiationClass(instantiationClass);
 		setBaseClass(baseClass);
 		setRemoteContext(isRemoteContext);
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);
 		this.omissibleFacet = omissible;
-		this.isTopLevel = isTopLevel;
+		this.isTopLevel = kind == ISymbolKind.BEHAVIOR;
 		this.hasScope = !doesNotHaveScope;
 		getPossibleFacets().put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD());
 		getPossibleFacets().put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON());

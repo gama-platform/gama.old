@@ -111,9 +111,9 @@ public class SymbolFactory implements ISymbolFactory {
 
 		Class baseClass = null;
 		String omissible = null;
-		// GUI.debug(c.getSimpleName() + " registered in " + getClass().getSimpleName());
-		boolean isTopLevel =
-			((symbol) c.getAnnotation(symbol.class)).kind() == ISymbolKind.BEHAVIOR;
+		symbol sym = (symbol) c.getAnnotation(symbol.class);
+		int sKind = sym.kind();
+		// boolean isVariable = sym.kind() == ISymbolKind.VARIABLE;
 		boolean canHaveArgs = c.getAnnotation(with_args.class) != null;
 		boolean canHaveSequence = c.getAnnotation(with_sequence.class) != null;
 		boolean doesNotHaveScope = c.getAnnotation(no_scope.class) != null;
@@ -121,7 +121,7 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( c.getAnnotation(base.class) != null ) {
 			baseClass = ((base) c.getAnnotation(base.class)).value();
 		}
-		List<String> keywords = Arrays.asList(((symbol) c.getAnnotation(symbol.class)).name());
+		List<String> keywords = Arrays.asList(sym.name());
 		List<facet> facets = new ArrayList();
 		List<combination> combinations = new ArrayList();
 		List<String> contexts = new ArrayList();
@@ -153,9 +153,12 @@ public class SymbolFactory implements ISymbolFactory {
 
 		for ( String k : keywords ) {
 			// try {
+			if ( sKind != ISymbolKind.VARIABLE ) {
+				SymbolMetaDescription.nonVariableStatements.add(k);
+			}
 			registeredSymbols.put(k, new SymbolMetaDescription(c, baseClass, k, canHaveSequence,
-				canHaveArgs, isTopLevel, doesNotHaveScope, facets, omissible, combinations,
-				contexts, isRemoteContext));
+				canHaveArgs, sKind, doesNotHaveScope, facets, omissible, combinations, contexts,
+				isRemoteContext));
 			// } catch (GamlException e) {
 			// e.addContext("In compiling the meta description of: " + k);
 			// e.printStackTrace();

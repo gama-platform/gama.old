@@ -214,6 +214,7 @@ public interface IKeyword {
 	public static final String RNG = "rng";
 	public static final String ROTATE = "rotate";
 	public static final String SAVE = "save";
+	public static final String SAVE_BATCH = "save_batch";
 	public static final String SCALE = "scale";
 	public static final String SCHEDULE = "schedule";
 	public static final String SCHEDULES = "schedules";

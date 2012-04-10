@@ -45,7 +45,6 @@ public class SpeciesFactory extends SymbolFactory {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
 		varFactory.addSpeciesNameAsType(name);
-		// registeredFactories.get(varFactory).add(name);
 		Class base = md.getBaseClass();
 		String secondBase = facets.getLabel(IKeyword.BASE);
 
