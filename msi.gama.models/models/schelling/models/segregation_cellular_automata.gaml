@@ -19,7 +19,7 @@ global {
 			set pp.color value: colors at (rnd (number_of_groups - 1)) ;
 		}
 	}
-	reflex {
+	reflex migrate {
 		ask target: all_people as: space {
 			do action: migrate;
 		}
