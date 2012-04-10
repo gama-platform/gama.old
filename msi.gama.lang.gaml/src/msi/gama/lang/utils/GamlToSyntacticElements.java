@@ -66,9 +66,19 @@ public class GamlToSyntacticElements {
 		for ( final Statement stm : ss ) {
 			ISyntacticElement conv = convStatement(stm, collect);
 			if ( conv != null ) {
-				Array s = EGaml.varDependenciesOf(stm);
-				if ( s != null ) {
-					conv.setFacet(IKeyword.DEPENDS_ON, new EcoreBasedExpressionDescription(s));
+				// FIXME temprorary fix to compile dependencies only for variables.
+				if ( !SymbolMetaDescription.nonVariableStatements.contains(conv.getKeyword()) ) {
+					// GuiUtils.debug("Dependencies of : " + conv.getKeyword());
+					Array s = EGaml.varDependenciesOf(stm);
+					if ( s != null ) {
+						conv.setFacet(IKeyword.DEPENDS_ON, new EcoreBasedExpressionDescription(s));
+					}
+				}
+				// FIXME temporary fix for the collision between the "save" methods in commands
+				// and experiments
+				if ( elt.getKeyword().equals(IKeyword.EXPERIMENT) &&
+					conv.getKeyword().equals(IKeyword.SAVE) ) {
+					conv.setKeyword(IKeyword.SAVE_BATCH);
 				}
 				elt.addChild(conv);
 			}

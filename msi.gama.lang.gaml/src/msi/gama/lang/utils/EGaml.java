@@ -14,6 +14,7 @@ import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 /**
  * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
@@ -42,32 +43,40 @@ public class EGaml {
 		return result == null ? Collections.EMPTY_SET : result;
 	}
 
-	public static boolean isUnary(final Expression e) {
-		return e instanceof FunctionRef || e instanceof VariableRef &&
-			((VariableRef) e).getRef() instanceof DefUnary;
-	}
-
+	// public static boolean isUnary(final Expression e) {
+	// return e instanceof FunctionRef || e instanceof VariableRef &&
+	// ((VariableRef) e).getRef() instanceof DefUnary;
+	// }
+	//
 	public static Array varDependenciesOf(final Statement s) {
-		Set<VariableRef> result = new HashSet();
-		EList<FacetExpr> facets = s.getFacets();
-		for ( FacetExpr facet : facets ) {
+		// Set<VariableRef> result = new HashSet();
+		Set<String> result = new HashSet();
+		for ( FacetExpr facet : s.getFacets() ) {
 			Expression expr = facet.getExpr();
 			if ( expr == null ) {
 				continue;
 			}
+			// Modified in order to avoir calling the linking services before linking has been done
 			List<VariableRef> elements = EcoreUtil2.eAllOfType(expr, VariableRef.class);
 			for ( VariableRef var : elements ) {
-				if ( !isUnary(var) ) {
-					result.add(EcoreUtil2.clone(var)); // Necessary to clone otherwise the EObjects
-														// will be removed from the facet !
-				}
+				String name = NodeModelUtils.getTokenText(NodeModelUtils.getNode(var));
+				// if ( !isUnary(var) ) {
+				result.add(name);
+				// result.add(EGaml.createTerminal(getKeyOf(var)));
+				// result.add(EcoreUtil2.clone(var)); // Necessary to clone otherwise the
+				// EObjects
+				// will be removed from the facet !
+				// }
 			}
 
 		}
 		Array a = null;
 		if ( !result.isEmpty() ) {
+			// GuiUtils.debug("Dep found : " + result);
 			a = getFactory().createArray();
-			a.getExprs().addAll(result);
+			for ( String name : result ) {
+				a.getExprs().add(EGaml.createTerminal(name));
+			}
 		}
 		return a;
 	}
@@ -103,6 +112,7 @@ public class EGaml {
 		if ( f instanceof Statement ) { return ((Statement) f).getKey(); }
 		if ( f instanceof VariableRef ) {
 			VariableRef ref = (VariableRef) f;
+			// return NodeModelUtils.findActualNodeFor(ref).getText();
 			return ref.getRef() == null ? "" : ref.getRef().getName();
 		}
 		if ( f instanceof FunctionRef ) {
