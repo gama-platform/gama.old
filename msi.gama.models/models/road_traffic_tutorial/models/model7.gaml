@@ -62,7 +62,7 @@ entities {
 		float destruction_coeff <- 1 ;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
 		rgb color <- [min([255, colorValue]),max ([0, 255 - colorValue]),0]  update: [min([255, colorValue]),max ([0, 255 - colorValue]),0] ;
-		reflex {
+		reflex doDie {
 			if (flip(0.1)) {do die;}
 		}
 		aspect base {
