@@ -45,7 +45,7 @@ entities {
 		var total_nearby type: int value: length(my_neighbours) ;
 		var is_happy type: bool value: similar_nearby >= (percent_similar_wanted * total_nearby ) ;
 		reflex migrate when: !is_happy {
-			set location value: all_places first_with (empty(each.agents)) ;
+			set location value: point(all_places first_with (empty(each.agents))) ;
 		} 
 	}
 }
