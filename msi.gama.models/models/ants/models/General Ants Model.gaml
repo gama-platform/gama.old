@@ -16,10 +16,10 @@ global {
 	var food_placed type: int init: 0  ;    
 	const background type: rgb init: rgb ( #999999 ); 
 	const food_color type: rgb init: rgb ( #312200 );     
-	const nest_color type: rgb init: rgb ( #000000 );
+	const nest_color type: rgb init: rgb ( #000000 ); 
 	init {   
 		loop times: number_of_food_places {  
-			let loc value: { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };  
+			let loc value: { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };    
 			let food_places value: (ant_grid as list where ( ( each distance_to loc ) < 5));  
 			ask target: food_places { 
 				if food = 0 {  
@@ -30,7 +30,6 @@ global {
 			}  
 		}    
 		create ant number: ants_number {
-			    
 			set location value: center ; 
 		} 
 	}
@@ -71,14 +70,14 @@ entities {
 				return  point ( last ( list_places ) ) ;
 			}
 		}
-		reflex when: has_food and ( ant_grid ( location ) ) . is_nest { 
-			do drop ;
+		reflex drop when: has_food and ( ant_grid ( location ) ) . is_nest { 
+			do drop ;  
 		}
 		reflex pick when: ! has_food and ( ant_grid ( location ) ) . food > 0 { 
 			do pick ;
 		}
 		state wandering initial: true { 
-			do wander amplitude: 90; 
+			do wander amplitude: 90;  
 			let pr value: ( ant_grid ( location ) ) . road;  
 			transition to: carryingFood when: has_food; 
  			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );   
@@ -90,7 +89,7 @@ entities {
 		state followingRoad { 
 			let next_place value: self choose_best_place []; 
 			let pr value: ( ant_grid ( location ) ) . road;
-			set location value: next_place ; 
+			set location value: next_place ;  
 			transition to: carryingFood when: has_food;
 			transition to: wandering when: ( pr < 0.05 ) or ( next_place = nil );
 		} 
@@ -108,6 +107,7 @@ entities {
 		aspect default {
 			draw shape: square at: my location empty: ! has_food color: 'white' size: 1 rotate: my heading;
 		}
+
 	} 
 } 
 experiment Complete type: gui { 
@@ -132,7 +132,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: ( food_gathered =f
 	parameter name: 'Evaporation:' var: evaporation_rate among: [ 0.1 , 0.2 , 0.5, 0.8 , 1.0 ] unit: 'rate every cycle (1.0 means 100%)';
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit:'rate every cycle (1.0 means 100%)' step: 0.3;
 	method exhaustive maximize: food_gathered;
-	save time to: 'ant_exhaustive'  rewrite: false ;
+	//save time to: 'ant_exhaustive'  rewrite: false ;
 }
 
 experiment Genetic type: batch repeat: 2 keep_seed: true until: ( food_gathered= food_placed ) or ( time > 400 ) {  
@@ -141,13 +141,13 @@ experiment Genetic type: batch repeat: 2 keep_seed: true until: ( food_gathered=
 	parameter name: 'Evaporation:' var: evaporation_rate among: [ 0.1 , 0.2 , 0.5, 0.8 , 1.0 ] unit: 'rate every cycle (1.0 means 100%)';
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.3;
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
-	save time rewrite: false to: 'ant_genetic' ;
+	//save time rewrite: false to: 'ant_genetic' ;
 }
 
 experiment name: 'Show Quadtree' type: gui {
 	output {
 		monitor name: 'Food gathered' value: food_gathered;
-		display QuadTree {
+		display QuadTree { 
 			quadtree qt;
 		}
 		display Ants background: rgb ( 'white' ) refresh_every: 1 {
