@@ -8,10 +8,10 @@ global {
 	bool grow_leader type: bool parameter: 'true' <- true ;
 	bool torus type: bool parameter: 'true' <- true ;
 	bool multiple_agents_per_place type: bool parameter: 'true' <- false ;
-	init {
+	init { 
 		create cells number: number_of_agents ;
 	}
-	reflex when: every(rnd(30)) {
+	reflex change_heading when: every(rnd(30)) {
 		ask (cells as list) where (each.leader = each) {  
 			set heading <- heading + (rnd(45)) - (rnd(45)) ;
 		} 
@@ -30,13 +30,13 @@ entities {
 		reflex move { 
 			do move ;
 		} 
-		reflex when: (leader != self) and (self distance_to leader > (leader.range - (leader.range / 10.0))) {
+		reflex change_leader when: (leader != self) and (self distance_to leader > (leader.range - (leader.range / 10.0))) {
 			if grow_leader {
 				set range of my leader <- (range of my leader) - 0.05 ;
-			}
+			} 
 			set leader <- self ;
 			set color <- [100 + rnd(155),100 + rnd(155), 100 + rnd(155)] as rgb;
-			set range <- range_of_agents ;
+			set range <- range_of_agents ;  
 			set heading <- rnd(360) ;
 		}
 		reflex aggregate when: leader = self {
