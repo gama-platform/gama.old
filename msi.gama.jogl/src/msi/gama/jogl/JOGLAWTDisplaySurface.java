@@ -182,7 +182,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		add(agentsMenu);
 
 		animator.start();
-
+		
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
@@ -687,6 +687,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			if (opengl) {// We don't need to call update display when calling
 							// zoomfit.
 				float scale_rate = ((JOGLAWTDisplayGraphics) openGLGraphics).scale_rate;
+
 				camera.setxPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
 						.getCenterX() * scale_rate);
 				camera.setxLPos(((JOGLAWTDisplayGraphics) openGLGraphics).clipBounds
@@ -858,7 +859,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		// ((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
+		((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
 
 	}
@@ -957,5 +958,5 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 				1.0, 0.0);
 
 	}
-
+	
 }

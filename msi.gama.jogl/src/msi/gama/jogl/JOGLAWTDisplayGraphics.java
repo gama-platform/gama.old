@@ -427,7 +427,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		oval.setFrame(curX, curY, curWidth, curWidth);
+		AddCircleInGeometries(curX, curY, c);
 		return drawShape(c, oval, fill, angle);
 	}
 
@@ -526,6 +526,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// recompute.
 		// FIXME: Find a way to get environment value directly.
 		UpdateBounds(geometry);
+		
+		
 
 		// For each geometry get the type
 		for (int i = 0; i < geometry.getNumGeometries(); i++) {
@@ -740,9 +742,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curGeometry.vertices[0].v = 0.0f;
 		curGeometry.color = color;
 		curGeometry.type = "Point";
-
 		this.myGeometries.add(curGeometry);
 
+	}
+	
+	private void AddCircleInGeometries(int x, int y, Color color){
+		MyGeometry curGeometry = new MyGeometry(1);
+		curGeometry.vertices[0].x = (float) x;
+		curGeometry.vertices[0].y = -(float)y;
+		curGeometry.vertices[0].z = z;
+		curGeometry.vertices[0].u = 6.0f;
+		curGeometry.vertices[0].v = 0.0f;
+		curGeometry.color = color;
+		curGeometry.type = "Circle";
+		this.myGeometries.add(curGeometry);
+		
 	}
 
 	public void DrawMyGeometries() {
@@ -758,7 +772,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 						0.0f, scale_rate);
 			} else if (curGeometry.type == "MultiLineString" || curGeometry.type == "LineString" ) {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,scale_rate);
-			} else if (curGeometry.type == "Point") {
+			} else if (curGeometry.type == "Point" || curGeometry.type == "Circle"  ) {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
 						curGeometry.vertices[0].z, 10, 5, scale_rate);

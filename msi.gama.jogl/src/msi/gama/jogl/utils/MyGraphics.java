@@ -50,10 +50,10 @@ public class MyGraphics {
 		for (int j = 0; j < geometry.vertices.length - 1; j++) {
 			gl.glVertex3f((float) ((geometry.vertices[j].x)*scale_rate),
 					(float) ((geometry.vertices[j].y)*scale_rate),
-					(float) ((geometry.vertices[j].z)*scale_rate));
+					(float) ((geometry.vertices[j].z)));
 			gl.glVertex3f((float) ((geometry.vertices[j + 1].x)*scale_rate),
 					(float) ((geometry.vertices[j + 1].y)*scale_rate),
-					(float) ((geometry.vertices[j + 1].z)*scale_rate));
+					(float) ((geometry.vertices[j + 1].z)));
 		}
 		gl.glEnd();
 
@@ -181,7 +181,7 @@ public class MyGraphics {
 		for (int j = 0; j < curPolyGonNumPoints; j++) {
 			tempPolygon[j][0] = (float) (geometry.vertices[j].x*scale);
 			tempPolygon[j][1] = (float) (geometry.vertices[j].y*scale);
-			tempPolygon[j][2] = (float) ((geometry.vertices[j].z + z_offset)*scale);
+			tempPolygon[j][2] = (float) ((geometry.vertices[j].z + z_offset));
 		}
 
 		for (int j = 0; j < curPolyGonNumPoints; j++) {
