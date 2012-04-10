@@ -4,7 +4,7 @@ global {
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	float maximal_speed parameter: 'Maximal speed' <- 15 min: 0.1 max: 15;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
-	int alignment_factor parameter: 'Alignment Factor' <- 100;
+	int alignment_factor parameter: 'Alignment Factor' <- 100; 
 	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
 	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
 	int width_and_height_of_environment parameter: 'Width/Height of the Environment' <- 800;  
@@ -13,11 +13,11 @@ global {
 	bool apply_alignment <- true parameter: 'Apply Alignment ?';   
 	bool apply_separation <- true parameter: 'Apply Separation ?';   
 	bool apply_goal <- true parameter: 'Follow Goal ?'; 
-	bool apply_avoid <- true parameter: 'Apply Avoidance ?';  
-	bool apply_wind <- true parameter: 'Apply Wind ?';   
-	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';   
+	bool apply_avoid <- true parameter: 'Apply Avoidance ?';   
+	bool apply_wind <- true parameter: 'Apply Wind ?';     
+	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';    
 	int bounds <- (width_and_height_of_environment / 20); 
-	point wind_vector <- {0,0} parameter: 'Direction of the wind'; 
+	point wind_vector <- {0,0} parameter: 'Direction of the wind';  
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
@@ -98,7 +98,7 @@ entities {
 		const range type: float init: 20;
 		const size type: float init: 10;
 		
-		reflex { 
+		reflex wander { 
 			do  wander amplitude: 45 speed: 20;  
 			set goal value: location;
 		}
@@ -289,7 +289,7 @@ entities {
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
 		
-		reflex when: moving_obstacles {
+		reflex moving when: moving_obstacles {
 			if flip(0.5) { do goto target: one_of(boids) as list;} else do wander amplitude: 360; 
 		}
 		
