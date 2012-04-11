@@ -63,7 +63,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// private static RenderingHints rendering;
 	private static final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
 
-	// OpenGL memeber
+	// OpenGL member
 	private GL myGl;
 	private GLU myGlu;
 
@@ -85,27 +85,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public Envelope currentEnvelope = new Envelope();
 
-	static {
-
-		QUALITY_RENDERING.put(KEY_RENDERING, VALUE_RENDER_QUALITY);
-		QUALITY_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_QUALITY);
-		QUALITY_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY);
-		QUALITY_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BICUBIC);
-		QUALITY_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
-
-		MEDIUM_RENDERING.put(KEY_RENDERING, VALUE_RENDER_QUALITY);
-		MEDIUM_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_SPEED);
-		MEDIUM_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY);
-		MEDIUM_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
-		MEDIUM_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
-
-		SPEED_RENDERING.put(KEY_RENDERING, VALUE_RENDER_SPEED);
-		SPEED_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_SPEED);
-		SPEED_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_SPEED);
-		SPEED_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		SPEED_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_OFF);
-
-	}
 
 	private final PointTransformation pt = new PointTransformation() {
 
@@ -352,8 +331,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 	}
 
-	// private final AffineTransform at = new AffineTransform();
-
+	
 	/**
 	 * Method drawImage.
 	 * 
@@ -405,8 +383,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
-		oval.setFrame(curX, curY, curWidth, curWidth);
+
+	public Rectangle2D drawCircle(final Color c, final boolean fill,
+			final Integer angle) {
+		System.out.println("DrawCircle");
+		AddCircleInGeometries(curX+offsetX, curY+offsetY, c);
 		return drawShape(c, oval, fill, angle);
 	}
 
@@ -713,6 +694,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		this.myGeometries.add(curGeometry);
 
 	}
+	
+	private void AddCircleInGeometries(int x, int y, Color color){
+		MyGeometry curGeometry = new MyGeometry(1);
+		curGeometry.vertices[0].x = (float) x;
+		curGeometry.vertices[0].y = -(float)y;
+		curGeometry.vertices[0].z = z;
+		curGeometry.vertices[0].u = 6.0f;
+		curGeometry.vertices[0].v = 0.0f;
+		curGeometry.color = color;
+		curGeometry.type = "Circle";
+		this.myGeometries.add(curGeometry);
+		
+	}
 
 	public void DrawMyGeometries() {
 
@@ -743,6 +737,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glColor4f(1.0f, 1.0f, 1.0f, alpha);
 
 		MyGeometry backgroundGeometry = new MyGeometry(4);
+		
 
 		backgroundGeometry.vertices[0].x = clipBounds.x;
 		// WARNING: Opengl Y axes is inversed!!!

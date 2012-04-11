@@ -94,6 +94,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		}
 	});
 
+	private float envWidth;
+	private float envHeight;
+	private float maxEnvDimension;
 	// OpenGL member
 	private static final int REFRESH_FPS = 60; // Display refresh frames per
 												// second
@@ -109,22 +112,31 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	private int width, height;
 	// Camera
 	private Camera camera;
-	private final float zoom = 10.0f;
-	private final float cameraXPosition = 0.0f;
-	private final float cameraYPosition = 0.0f;
-	public float cameraZPosition = 10.0f;
 
-	private final float cameraLXPosition = cameraXPosition;
-	private final float cameraLYPosition = cameraYPosition;
-	public float cameraLZPosition = cameraZPosition - zoom;
+
+
+	float size = 50.0f;
+
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
 
+		envWidth = (float) env_width;
+		envHeight = (float) env_height;
+
+		if (envWidth > envHeight) {
+			maxEnvDimension = envWidth;
+
+		} else {
+			maxEnvDimension = envHeight;
+		}
+
 		// Initialize the user camera
 		camera = new Camera();
 		camera.InitParam();
+		System.out
+				.println("env_width:" + env_width + "env_height" + env_height);
 
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
@@ -415,6 +427,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void updateDisplay() {
 
 		// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
+		System.out.println("update display");
 		((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 		// FIXME: Why this busy indicator enable to show the open display???
 		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
@@ -787,8 +800,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
+
 		// ((JOGLAWTDisplayGraphics) openGLGraphics).DrawBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
+		// System.out.println("x scale: " +openGLGraphics.getXScale());
+		// System.out.println("y scale: " +openGLGraphics.getYScale());
+		//this.DrawOpenGLHelloWorldShape(gl);
+
 
 	}
 
@@ -884,5 +902,26 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
 
 	}
+
+
+	public void DrawOpenGLHelloWorldShape(GL gl) {
+
+		float red = (float) (Math.random()) * 1;
+		float green = (float) (Math.random()) * 1;
+		float blue = (float) (Math.random()) * 1;
+
+		// gl.glColor3f(red, green, blue);
+		gl.glColor3f(0.0f, 1.0f, 1.0f);
+		// ----- Render a quad -----
+
+		gl.glBegin(GL_POLYGON); // draw using quads
+		gl.glVertex3f(-envWidth/2, envHeight/2, -maxEnvDimension/10);
+		gl.glVertex3f(envWidth/2, envHeight/2, -maxEnvDimension/10);
+		gl.glVertex3f(envWidth/2, -envHeight/2, -maxEnvDimension/10);
+		gl.glVertex3f(-envWidth/2, -envHeight/2, -maxEnvDimension/10);
+		gl.glEnd();
+
+	}
+
 
 }

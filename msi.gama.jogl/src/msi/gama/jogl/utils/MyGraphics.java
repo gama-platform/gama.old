@@ -269,20 +269,7 @@ public class MyGraphics {
 		float blue = (float) (Math.random()) * 1;
 
 		gl.glColor3f(red, green, blue);
-		// ----- Render a triangle -----
-		gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the
-												// screen
-
-		gl.glBegin(GL_TRIANGLES); // draw using triangles
-		gl.glVertex3f(0.0f, 1.0f, 0.0f);
-		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		gl.glVertex3f(1.0f, -1.0f, 0.0f);
-		gl.glEnd();
-
 		// ----- Render a quad -----
-
-		// translate right, relative to the previous translation
-		gl.glTranslatef(3.0f, 0.0f, 0.0f);
 
 		gl.glBegin(GL_POLYGON); // draw using quads
 		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
