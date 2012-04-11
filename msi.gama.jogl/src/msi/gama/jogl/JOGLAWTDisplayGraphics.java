@@ -354,8 +354,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		System.out.println("DrawCircle");
-		AddCircleInGeometries(curX + offsetX, curY + offsetY, c);
+		//System.out.println("DrawCircle");
+		AddCircleInGeometries(curX, curY, c);
 		return drawShape(c, oval, fill, angle);
 	}
 
@@ -448,8 +448,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		System.out.println("DisplayGraphics::drawGeometry: "
-				+ geometry.getGeometryType());
+		//System.out.println("DisplayGraphics::drawGeometry: "+ geometry.getGeometryType());
 
 
 		// For each geometry get the type
@@ -647,8 +646,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	private void AddCircleInGeometries(int x, int y, Color color) {
 		MyGeometry curGeometry = new MyGeometry(1);
-		curGeometry.vertices[0].x = (float) x;
-		curGeometry.vertices[0].y = -(float) y;
+		//FIXME: why we need to use currentScale?
+		curGeometry.vertices[0].x = (float) ((float) x/currentXScale-0.5f);
+		curGeometry.vertices[0].y = (float) (-(float) y/currentYScale-0.5f);
 		curGeometry.vertices[0].z = z;
 		curGeometry.vertices[0].u = 6.0f;
 		curGeometry.vertices[0].v = 0.0f;
@@ -660,11 +660,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void DrawMyGeometries() {
 
-		Iterator it = this.myGeometries.iterator();
+		Iterator<MyGeometry> it = this.myGeometries.iterator();
 		while (it.hasNext()) {
 			MyGeometry curGeometry = (MyGeometry) it.next();
-			myGl.glColor3f(curGeometry.color.getRed(),
-					curGeometry.color.getGreen(), curGeometry.color.getBlue());
+			//Color are define in RGB value (from 0 to 255) openGl use value from 0 to 1.
+			myGl.glColor3f(curGeometry.color.getRed()/255,
+					curGeometry.color.getGreen()/255, curGeometry.color.getBlue()/255);
 			if (curGeometry.type == "MultiPolygon"
 					|| curGeometry.type == "Polygon") {
 				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,
@@ -673,7 +674,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					|| curGeometry.type == "LineString") {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,
 						myScaleRate);
-			} else if (curGeometry.type == "Point") {
+			} else if (curGeometry.type == "Point" || curGeometry.type == "Circle") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
 						curGeometry.vertices[0].z, 10, 5, myScaleRate);

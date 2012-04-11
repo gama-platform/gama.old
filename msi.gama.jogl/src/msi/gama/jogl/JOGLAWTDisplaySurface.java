@@ -802,7 +802,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
+		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
 		// System.out.println("x scale: " +openGLGraphics.getXScale());
 		// System.out.println("y scale: " +openGLGraphics.getYScale());
@@ -834,7 +834,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		// and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 		// Set background color (in RGBA). Alpha of 0 for total transparency
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
