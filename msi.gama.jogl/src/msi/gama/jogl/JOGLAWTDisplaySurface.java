@@ -19,6 +19,7 @@
 package msi.gama.jogl;
 
 import static javax.media.opengl.GL.*;
+import javax.media.opengl.Threading;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -409,23 +410,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		agentsMenu.show(this, x, y);
 	}
 
-	public void updateDisplayGL(final GL gl) {
-
-	}
 
 	@Override
 	public void updateDisplay() {
 
-		// Remove all the already existing entity in openGLGraphics and redraw
-		// the existing ones.
-		System.out.println("update display");
-		((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
-		// FIXME: Why this busy indicator enable to show the open display???
-		BusyIndicator.showWhile(Display.getCurrent(), openGLDisplayBlock);
-
 		if (synchronous && !EventQueue.isDispatchThread()) {
 			try {
-				EventQueue.invokeAndWait(openGLDisplayBlock);
+				EventQueue.invokeAndWait(openGLUpdateDisplayBlock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				// TODO Problème si un modèle est relancé. Blocage.
@@ -433,7 +424,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 				e.printStackTrace();
 			}
 		} else {
-			EventQueue.invokeLater(openGLDisplayBlock);
+			EventQueue.invokeLater(openGLUpdateDisplayBlock);
 		}
 		if (ex[0] != null) {
 			GAMA.reportError(ex[0]);
@@ -444,28 +435,29 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	private final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 
-	private final Runnable openGLDisplayBlock = new Runnable() {
+	private final Runnable openGLUpdateDisplayBlock = new Runnable() {
 
+		// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
 		@Override
 		public void run() {
 			if (!canBeUpdated()) {
 				return;
 			}
 			canBeUpdated(false);
+			((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
 			Toolkit.getDefaultToolkit().sync();
 		}
 	};
-
+	
+	
 	public void drawDisplaysWithoutRepaintingGL() {
 		if (openGLGraphics == null) {
 			return;
 		}
 		ex[0] = null;
-		// For java2D
-		// openGLGraphics.fill(bgColor, 1);
 		manager.drawDisplaysOn(openGLGraphics);
 
 	}
@@ -804,8 +796,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
 		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
-		// System.out.println("x scale: " +openGLGraphics.getXScale());
-		// System.out.println("y scale: " +openGLGraphics.getYScale());
+
 		// this.DrawOpenGLHelloWorldShape(gl);
 
 	}
