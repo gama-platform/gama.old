@@ -58,7 +58,10 @@ public class VariableFactory extends SymbolFactory {
 		Facets facets = source.getFacets();
 		if ( keyword.equals(IKeyword.SIGNAL) && facets.containsKey(IKeyword.ENVIRONMENT) ) {
 			String env = facets.getLabel(IKeyword.ENVIRONMENT);
-			String decay = facets.getLabel(IKeyword.DECAY, "0.1");
+			String decay = facets.getLabel(IKeyword.DECAY);
+			if ( decay == null ) {
+				decay = "0.1";
+			}
 			String name = facets.getLabel(IKeyword.NAME);
 			final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 			VariableDescription vd =

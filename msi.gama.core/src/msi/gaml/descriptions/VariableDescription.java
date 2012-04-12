@@ -62,7 +62,12 @@ public class VariableDescription extends SymbolDescription {
 
 	public void copyFrom(final VariableDescription v2) {
 		isBuiltIn = v2.isBuiltIn;
-		facets.addAll(v2.facets);
+		// Without replacing
+		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
+			if ( !facets.containsKey(entry.getKey()) ) {
+				facets.put(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 
 	@Override
@@ -90,7 +95,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( dependencies == null ) {
 			dependencies = new HashSet();
 			final Set<String> names = new HashSet();
-			IExpressionDescription depends = facets.getTokens(IKeyword.DEPENDS_ON);
+			IExpressionDescription depends = facets.get(IKeyword.DEPENDS_ON);
 			if ( depends != null ) {
 				List<String> dependsList =
 					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());

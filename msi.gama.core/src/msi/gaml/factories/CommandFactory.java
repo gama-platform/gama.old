@@ -74,9 +74,9 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			IDescription superDesc = cd.getSuperDescription();
 			try {
 				if ( argFacets.containsKey(VALUE) ) {
-					e = argFacets.compile(VALUE, superDesc, factory);
+					e = argFacets.get(VALUE).compile(superDesc, factory);
 				} else if ( argFacets.containsKey(DEFAULT) ) {
-					e = argFacets.compile(VALUE, superDesc, factory);
+					e = argFacets.get(DEFAULT).compile(superDesc, factory);
 				}
 			} catch (RuntimeException e1) {
 				cd.flagError("Error in compiling argument " + name + ": " + e1.getMessage(), name);
@@ -104,8 +104,8 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected IExpression compileFacet(final String tag, final IDescription sd,
-		final SymbolMetaDescription md, final IExpressionFactory factory) {
+	protected IExpression compileFacet(final String tag, final IExpressionDescription ed,
+		final IDescription sd, final SymbolMetaDescription md, final IExpressionFactory factory) {
 		// String name = sd.getFacet(ISymbol.NAME);
 		String type = sd.getFacets().getLabel(TYPE);
 		String contentType = sd.getFacets().getLabel(AS);
@@ -119,7 +119,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			((CommandDescription) sd).addNewTempIfNecessary(tag, md, type, contentType, factory);
 
 		if ( exp == null ) {
-			exp = super.compileFacet(tag, sd, md, factory);
+			exp = super.compileFacet(tag, ed, sd, md, factory);
 		}
 		return exp;
 	}

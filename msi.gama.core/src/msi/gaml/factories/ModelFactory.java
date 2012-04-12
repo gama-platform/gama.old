@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.skills.Skill;
 
 /**
@@ -287,6 +288,7 @@ public class ModelFactory extends SymbolFactory {
 	public synchronized ISymbol compile(final ModelStructure structure,
 		final IErrorCollector collect) throws InterruptedException {
 		IModel m = null;
+		long time = System.currentTimeMillis();
 		// long startTime = System.nanoTime();
 		ModelDescription md = parse(structure, collect);
 		GuiUtils.stopIfCancelled();
@@ -307,11 +309,26 @@ public class ModelFactory extends SymbolFactory {
 				md.addChild(def);
 			}
 		}
-		GuiUtils.stopIfCancelled();
+		long now = System.currentTimeMillis();
+		GuiUtils.debug("Parsing to descriptions " + structure.getPath() + " took: " + (now - time) +
+			"ms");
+		// time = now;
+
+		// GuiUtils.stopIfCancelled();
 		m = (IModel) compileDescription(md, GAMA.getExpressionFactory());
-		GuiUtils.stopIfCancelled();
+
 		// long endTime = System.nanoTime();
 		// GUI.debug("#### Parsing + compile time : " + (endTime - startTime) / 1000000000d);
+		return m;
+	}
+
+	@Override
+	public ISymbol compileDescription(final IDescription desc, final IExpressionFactory factory) {
+		long time = System.currentTimeMillis();
+		ISymbol m = super.compileDescription(desc, factory);
+		long now = System.currentTimeMillis();
+		GuiUtils.debug("Compiling " + desc.getKeyword() + " " + desc.getName() +
+			" to symbol  took: " + (now - time) + "ms");
 		return m;
 	}
 

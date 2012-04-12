@@ -51,7 +51,8 @@ public class SymbolFactory implements ISymbolFactory {
 
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
 
-	protected final Set<ISymbolFactory> registeredFactories = new HashSet();
+	protected final Set<ISymbolFactory> availableFactories = new HashSet();
+	protected final Map<String, ISymbolFactory> registeredFactories = new HashMap();
 
 	public SymbolFactory() {
 		registerAnnotatedFactories();
@@ -100,7 +101,11 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	public void registerFactory(final ISymbolFactory f) {
-		registeredFactories.add(f);
+		availableFactories.add(f);
+		// Does a pre-registration of the keywords
+		for ( String s : f.getKeywords() ) {
+			registeredFactories.put(s, f);
+		}
 
 		// OutputManager.debug(this.getClass().getSimpleName() + " registers factory " +
 		// f.getClass().getSimpleName() + " for keywords " + f.getKeywords());
@@ -185,9 +190,8 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public String getOmissibleFacetForSymbol(final ISyntacticElement e, final String keyword) {
-		SymbolMetaDescription md;
-		md = getMetaDescriptionFor(null, keyword);
+	public String getOmissibleFacetForSymbol(final String keyword) {
+		SymbolMetaDescription md = getMetaDescriptionFor(null, keyword);
 		return md == null ? IKeyword.NAME /* by default */: md.getOmissible();
 
 	}
@@ -275,12 +279,20 @@ public class SymbolFactory implements ISymbolFactory {
 	@Override
 	public ISymbolFactory chooseFactoryFor(final String keyword) {
 		if ( handlesKeyword(keyword) ) { return this; }
-		for ( ISymbolFactory f : registeredFactories ) {
-			if ( f.handlesKeyword(keyword) ) { return f; }
+		ISymbolFactory fact = registeredFactories.get(keyword);
+		if ( fact != null ) { return fact; }
+		for ( ISymbolFactory f : availableFactories ) {
+			if ( f.handlesKeyword(keyword) ) {
+				registeredFactories.put(keyword, f);
+				return f;
+			}
 		}
-		for ( ISymbolFactory f : registeredFactories ) {
+		for ( ISymbolFactory f : availableFactories ) {
 			ISymbolFactory f2 = f.chooseFactoryFor(keyword);
-			if ( f2 != null ) { return f2; }
+			if ( f2 != null ) {
+				registeredFactories.put(keyword, f2);
+				return f2;
+			}
 		}
 		return null;
 	}
@@ -313,24 +325,13 @@ public class SymbolFactory implements ISymbolFactory {
 		return privateCompile(desc, md, factory);
 	}
 
-	protected Facets compileFacets(final IDescription sd, final SymbolMetaDescription md,
-		final IExpressionFactory factory) {
-		Facets rawFacets = sd.getFacets();
-		// Addition of a facet to keep track of the keyword
-		rawFacets.putAsLabel(IKeyword.KEYWORD, sd.getKeyword());
-
-		for ( String s : new ArrayList<String>(rawFacets.keySet()) ) {
-			IExpression e = compileFacet(s, sd, md, factory);
-			rawFacets.put(s, e);
-		}
-		return rawFacets;
-	}
-
-	protected IExpression compileFacet(final String tag, final IDescription sd,
-		final SymbolMetaDescription md, final IExpressionFactory factory) {
-		if ( md.isLabel(tag) ) { return sd.getFacets().compileAsLabel(tag); }
+	protected IExpression compileFacet(final String tag, final IExpressionDescription ed,
+		final IDescription sd, final SymbolMetaDescription md, final IExpressionFactory factory) {
+		// if ( md.isLabel(tag) ) { return sd.getFacets().compileAsLabel(tag); }
 		try {
-			return sd.getFacets().compile(tag, sd, factory);
+			if ( ed == null ) { return null; }
+			return ed.compile(sd, factory);
+			// return sd.getFacets().compile(tag, sd, factory);
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 			return null;
@@ -340,8 +341,20 @@ public class SymbolFactory implements ISymbolFactory {
 	protected ISymbol privateCompile(final IDescription desc, final SymbolMetaDescription md,
 		final IExpressionFactory factory) {
 		if ( md == null ) { return null; }
-		compileFacets(desc, md, factory);
-		ISymbol cs = compileSymbol(desc, md.getConstructor());
+		Facets rawFacets = desc.getFacets();
+		// Addition of a facet to keep track of the keyword
+		rawFacets.putAsLabel(IKeyword.KEYWORD, desc.getKeyword());
+		for ( Map.Entry<String, IExpressionDescription> entry : rawFacets.entrySet() ) {
+			String s = entry.getKey();
+			IExpressionDescription ed = entry.getValue();
+			IExpression e = compileFacet(s, ed, desc, md, factory);
+			ed.setExpression(e);
+		}
+		// for ( String s : new ArrayList<String>(rawFacets.keySet()) ) {
+		// IExpression e = compileFacet(s, desc, md, factory);
+		// rawFacets.put(s, e);
+		// }
+		ISymbol cs = md.getConstructor().create(desc);;
 		if ( cs == null ) { return null; }
 		if ( md.hasSequence() ) {
 			if ( md.isRemoteContext() ) {
@@ -351,11 +364,6 @@ public class SymbolFactory implements ISymbolFactory {
 		}
 		return cs;
 
-	}
-
-	protected ISymbol compileSymbol(final IDescription desc, final ISymbolConstructor c) {
-		ISymbol cs = c.create(desc);
-		return cs;
 	}
 
 	protected void privateCompileChildren(final IDescription desc, final ISymbol cs,

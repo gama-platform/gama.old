@@ -18,10 +18,10 @@
  */
 package msi.gaml.descriptions;
 
+import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -75,14 +75,12 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	private void collectArgs() {
-		if ( facets.containsKey(IKeyword.WITH) ) {
-			// if ( getKeyword().equals(IKeyword.DO) ) {
-			// GuiUtils.debug("WITH facet detected in do " + facets.getLabel(IKeyword.ACTION));
-			// }
-			List<IDescription> argList = explodeArgs(facets.get(IKeyword.WITH));
-			children.addAll(argList);
-			facets.remove(IKeyword.WITH);
-		}
+		List<IDescription> argList = new ArrayList();
+		explodeArgs(argList);
+		exploreArgs(argList);
+		children.addAll(argList);
+		facets.remove(IKeyword.WITH);
+
 		// Now puts all the args in the "args" list, removing them from children
 		// Made here in case other args than the previous ones were declared this way.
 		for ( IDescription c : children ) {
@@ -96,16 +94,34 @@ public class CommandDescription extends SymbolDescription {
 		children.removeAll(args.values());
 	}
 
-	private List<IDescription> explodeArgs(final IExpressionDescription args) {
-		List<IDescription> argList = new GamaList();
-		Map<String, IExpressionDescription> map =
-			GAMA.getExpressionFactory().createArgumentMap(args, this);
-		for ( Map.Entry<String, IExpressionDescription> arg : map.entrySet() ) {
+	static final Set<String> builtin = SymbolMetaDescription.getAllowedFacetsFor(DO);
+	static final Map<String, IExpressionDescription> retained = new HashMap();
+
+	private void exploreArgs(final List<IDescription> argList) {
+		if ( !getKeyword().equals(IKeyword.DO) ) { return; }
+		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
+			String facet = entry.getKey();
+			if ( !builtin.contains(facet) ) {
+				retained.put(facet, entry.getValue());
+			}
+		}
+		addArgs(retained, argList);
+		retained.clear();
+	}
+
+	private void explodeArgs(final List<IDescription> argList) {
+		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(IKeyword.WITH), this),
+			argList);
+	}
+
+	private void addArgs(final Map<String, IExpressionDescription> args,
+		final List<IDescription> argList) {
+		if ( args == null ) { return; }
+		for ( Map.Entry<String, IExpressionDescription> arg : args.entrySet() ) {
 			Facets f = new Facets(IKeyword.NAME, arg.getKey());
 			f.put(IKeyword.VALUE, arg.getValue());
 			argList.add(DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
 		}
-		return argList;
 	}
 
 	public IVarExpression addNewTempIfNecessary(final String facetName,
@@ -190,7 +206,8 @@ public class CommandDescription extends SymbolDescription {
 		if ( verifyMandatoryArgs ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.contains(arg) ) {
-					caller.flagError("Missing argument " + arg + " in call to " + getName());
+					caller.flagError("Missing argument " + arg + " in call to " + getName() +
+						". Arguments passed are : " + names);
 				}
 			}
 		}

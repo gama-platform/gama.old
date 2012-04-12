@@ -46,7 +46,7 @@ public interface ISymbolFactory {
 
 	public abstract Set<String> getKeywords();
 
-	public abstract String getOmissibleFacetForSymbol(ISyntacticElement elmt, String symbol);
+	public abstract String getOmissibleFacetForSymbol(String symbol);
 
 	/**
 	 * @param structure

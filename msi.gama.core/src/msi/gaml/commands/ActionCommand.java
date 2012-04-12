@@ -19,6 +19,7 @@
 package msi.gaml.commands;
 
 import static msi.gama.runtime.ExecutionStatus.*;
+import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbolKind;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
 /**
@@ -73,8 +74,10 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
 		actualArgs.clear();
-		for ( String arg : formalArgs.keySet() ) {
-			actualArgs.put(arg, args.getExpr(arg, formalArgs.getExpr(arg)));
+		for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
+			String arg = entry.getKey();
+			IExpressionDescription expr = entry.getValue();
+			actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
 		}
 	}
 

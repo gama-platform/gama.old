@@ -18,6 +18,7 @@
  */
 package msi.gaml.descriptions;
 
+import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
@@ -25,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpressionParser;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
 
 /**
@@ -37,6 +39,14 @@ import msi.gaml.types.IType;
 public class SymbolMetaDescription {
 
 	public static Set<String> nonVariableStatements = new HashSet();
+
+	public static Set<String> getAllowedFacetsFor(final String key) {
+		if ( key == null ) { return Collections.EMPTY_SET; }
+		SymbolMetaDescription md = null;
+		md = DescriptionFactory.getModelFactory().getMetaDescriptionFor(null, key);
+		Set<String> result = md == null ? null : md.getPossibleFacets().keySet();
+		return result == null ? Collections.EMPTY_SET : result;
+	}
 
 	public static class FacetMetaDescription {
 
@@ -209,6 +219,8 @@ public class SymbolMetaDescription {
 
 	public void verifyFacetsValidity(final ISyntacticElement e, final Set<String> facets,
 		final IDescription context) {
+		// Special case for "do", which can accept (at parsing time) any facet
+		if ( e.getKeyword().equals(DO) ) { return; }
 		for ( String s : facets ) {
 			if ( !possibleFacets.containsKey(s) ) {
 				GamlCompilationError error = new GamlCompilationError("Unknown facet " + s, e);
@@ -242,7 +254,8 @@ public class SymbolMetaDescription {
 				continue;
 			}
 			if ( f.types[0].equals(IType.LABEL) ) {
-				facets.compileAsLabel(f.name);
+				facets.put(f.name, facets.get(f.name).compileAsLabel());
+				// facets.compileAsLabel(f.name);
 				boolean found = false;
 				if ( f.values != null && f.values.length != 0 ) {
 					for ( String v : f.values ) {
@@ -260,7 +273,7 @@ public class SymbolMetaDescription {
 
 			} else if ( IType.ID.equals(f.types[0]) || IType.NEW_TEMP_ID.equals(f.types[0]) ||
 				IType.NEW_VAR_ID.equals(f.types[0]) || IType.TYPE_ID.equals(f.types[0]) ) {
-				facets.compileAsLabel(f.name);
+				facets.put(f.name, facets.get(f.name).compileAsLabel());
 				String id = facets.getLabel(s).trim();
 
 				if ( IExpressionParser.RESERVED.contains(id) ) {

@@ -64,6 +64,8 @@ public class GamlCompilationError {
 			source = cur;
 			if ( cur == null ) { return; }
 			IErrorCollector collect = cur.getErrorCollector();
+
+			// FIXME May be added two times
 			if ( collect != null ) {
 				collect.add(this);
 			}

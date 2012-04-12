@@ -4,6 +4,7 @@
  */
 package msi.gama.common.interfaces;
 
+import org.eclipse.emf.ecore.resource.Resource;
 
 /**
  * The class IGamlBuilder.
@@ -21,5 +22,7 @@ public interface IGamlBuilder {
 	boolean addListener(IBuilderListener gamlEditor);
 
 	boolean removeListener(IBuilderListener gamlEditor);
+
+	void invalidate(Resource r);
 
 }

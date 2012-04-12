@@ -105,6 +105,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	@Override
 	public Map<String, IExpressionDescription> createArgumentMap(final IExpressionDescription args,
 		final IDescription context) {
+		if ( args == null ) { return Collections.EMPTY_MAP; }
 		return parser.parseArguments(args, context);
 	}
 

@@ -20,10 +20,8 @@ package msi.gaml.commands;
 
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 27 aožt 2010
@@ -34,68 +32,9 @@ import msi.gaml.expressions.*;
  */
 public class Facets extends HashMap<String, IExpressionDescription> {
 
-	// public final HashMap<String, Facet> facets = new HashMap();
+	public Facets() {}
 
 	public Facets(final String ... strings) {
-		addAll(strings);
-	}
-
-	public String getLabel(final String key) {
-		return getLabel(key, null);
-	}
-
-	public String getLabel(final String key, final String ifAbsent) {
-		IExpressionDescription f = get(key);
-		if ( f == null ) { return ifAbsent; }
-		return StringUtils.toJavaString(f.toString());
-		// TODO Penser ˆ la facette nulle ?
-	}
-
-	public IExpressionDescription getTokens(final String key) {
-		return get(key);
-		// TODO Penser ˆ la facette nulle ?
-	}
-
-	public IExpression getExpr(final String key) {
-		return getExpr(key, null);
-		// TODO Penser ˆ la facette nulle ?
-	}
-
-	public IExpression getExpr(final String key, final IExpression ifAbsent) {
-		IExpressionDescription f = get(key);
-		if ( f == null ) { return ifAbsent; }
-		return f.getExpression();
-	}
-
-	public void put(final String key, final String desc) {
-		put(key, new StringBasedExpressionDescription(desc));
-	}
-
-	@Override
-	public IExpressionDescription put(final String key, final IExpressionDescription desc) {
-		super.put(key, desc);
-		return desc;
-
-	}
-
-	public IExpressionDescription putAsLabel(final String key, final String desc) {
-		IExpressionDescription ed = new LabelExpressionDescription(desc);
-		put(key, ed);
-		return ed;
-	}
-
-	public IExpressionDescription put(final String key, final IExpression expr) {
-		IExpressionDescription result = get(key);
-		if ( result != null ) {
-			result.setExpression(expr);
-			return result;
-		}
-		result = new BasicExpressionDescription(expr);
-		put(key, result);
-		return result;
-	}
-
-	public void addAll(final String ... strings) {
 		int index = 0;
 		if ( !(strings.length % 2 == 0) ) {
 			index = 1;
@@ -105,13 +44,37 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 		}
 	}
 
-	public void addAll(final Facets ff) {
-		// Without replacing
-		for ( Map.Entry<String, IExpressionDescription> entry : ff.entrySet() ) {
-			if ( !containsKey(entry.getKey()) ) {
-				put(entry.getKey(), entry.getValue());
-			}
+	public String getLabel(final String key) {
+		IExpressionDescription f = get(key);
+		if ( f == null ) { return null; }
+		return StringUtils.toJavaString(f.toString());
+	}
+
+	public IExpression getExpr(final String key) {
+		return getExpr(key, null);
+	}
+
+	public IExpression getExpr(final String key, final IExpression ifAbsent) {
+		IExpressionDescription f = get(key);
+		if ( f == null ) { return ifAbsent; }
+		return f.getExpression();
+	}
+
+	public IExpressionDescription put(final String key, final String desc) {
+		return put(key, new StringBasedExpressionDescription(desc));
+	}
+
+	public IExpressionDescription putAsLabel(final String key, final String desc) {
+		return put(key, new LabelExpressionDescription(desc));
+	}
+
+	public IExpressionDescription put(final String key, final IExpression expr) {
+		IExpressionDescription result = get(key);
+		if ( result != null ) {
+			result.setExpression(expr);
+			return result;
 		}
+		return put(key, new BasicExpressionDescription(expr));
 	}
 
 	public boolean equals(final String key, final String o) {
@@ -119,65 +82,11 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 		return f == null ? o == null : f.equalsString(o);
 	}
 
-	public Object value(final String key, final IScope scope) throws GamaRuntimeException {
-		return value(key, scope, null);
-	}
-
-	public Object value(final String key, final IScope scope, final Object ifAbsent)
-		throws GamaRuntimeException {
-		IExpressionDescription f = get(key);
-		if ( f != null ) {
-			IExpression e = f.getExpression();
-			if ( e != null ) { return e.value(scope); }
-		}
-		return ifAbsent;
-	}
-
 	public void dispose() {
 		for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
 			entry.getValue().dispose();
 		}
 		clear();
-	}
-
-	// public Collection<IExpressionDescription> getTokens() {
-	// final Set<IExpressionDescription> set = new HashSet();
-	// for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
-	// IExpressionDescription ed = entry.getValue();
-	// if ( ed != null ) {
-	// set.add(ed);
-	// }
-	// }
-	// return set;
-	// }
-
-	public IExpression compile(final String key, final IDescription context,
-		final IExpressionFactory factory) throws GamaRuntimeException {
-		return compile(key, context, null, factory);
-	}
-
-	public IExpression compileAsLabel(final String key) {
-		IExpressionDescription f = get(key);
-		if ( f == null ) { return null; }
-		IExpressionDescription label = f.compileAsLabel();
-		put(key, label);
-		return label.getExpression();
-	}
-
-	/**
-	 * @throws GamaRuntimeException
-	 * 
-	 * @param key
-	 * @param context
-	 * @param ifAbsent
-	 * @param factory
-	 * @return
-	 * @throws GamlException
-	 */
-	public IExpression compile(final String key, final IDescription context,
-		final IExpression ifAbsent, final IExpressionFactory factory) throws GamaRuntimeException {
-		if ( containsKey(key) ) { return get(key).compile(context, factory); }
-		return ifAbsent;
 	}
 
 }

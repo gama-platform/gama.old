@@ -27,7 +27,7 @@ import msi.gaml.factories.ModelFactory;
 
 public class SpeciesDescription extends ExecutionContextDescription {
 
-	/** 
+	/**
 	 * Micro-species of a species includes species explicitly declared inside it
 	 * and micro-species of its parent.
 	 * 
@@ -39,9 +39,9 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	private boolean isSuper = false;
 
-	/** peer species are species sharing the same direct macro-species */
-	private List<SpeciesDescription> peerSpecies;
-
+	// /** peer species are species sharing the same direct macro-species */
+	// private List<SpeciesDescription> peerSpecies;
+	//
 	/** A list of user redefined or new variables compare to the parent species. */
 	private Set<String> userRedefinedOrNewVars;
 
@@ -49,7 +49,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		final Facets facets, final List<IDescription> children, final Class base,
 		final ISyntacticElement source, final SymbolMetaDescription md) {
 		super(keyword, superDesc, facets, children, source, md);
-		setSkills(facets.getTokens(IKeyword.SKILLS));
+		setSkills(facets.get(IKeyword.SKILLS));
 		setJavaBase(base);
 	}
 
@@ -79,21 +79,22 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		inits.add(0, init); // Added at the beginning
 	}
 
-	/**
-	 * Returns all the direct&in-direct macro-species of this species.
-	 * 
-	 * @return
-	 */
-	public List<SpeciesDescription> getAllMacroSpecies() {
-		List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
-		SpeciesDescription macro = this.macroSpecies;
-		while (macro != null) {
-			retVal.add(macro);
-			macro = macro.macroSpecies;
-		}
-
-		return retVal;
-	}
+	//
+	// /**
+	// * Returns all the direct&in-direct macro-species of this species.
+	// *
+	// * @return
+	// */
+	// public List<SpeciesDescription> getAllMacroSpecies() {
+	// List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
+	// SpeciesDescription macro = this.macroSpecies;
+	// while (macro != null) {
+	// retVal.add(macro);
+	// macro = macro.macroSpecies;
+	// }
+	//
+	// return retVal;
+	// }
 
 	/**
 	 * Returns all the direct&in-direct micro-species of this species.
@@ -111,25 +112,25 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return retVal;
 	}
 
-	/**
-	 * 
-	 * 
-	 * @return
-	 */
-	private void fillParentTrace(final List<SpeciesDescription> parentTrace) {
-		if ( !parentTrace.contains(this) ) {
-			parentTrace.add(this);
-
-			SpeciesDescription parentSpec = this.getParentSpecies();
-			if ( parentSpec != null ) {
-				parentSpec.fillParentTrace(parentTrace);
-			}
-
-			for ( SpeciesDescription micro : microSpecies.values() ) {
-				micro.fillParentTrace(parentTrace);
-			}
-		}
-	}
+	// /**
+	// *
+	// *
+	// * @return
+	// */
+	// private void fillParentTrace(final List<SpeciesDescription> parentTrace) {
+	// if ( !parentTrace.contains(this) ) {
+	// parentTrace.add(this);
+	//
+	// SpeciesDescription parentSpec = this.getParentSpecies();
+	// if ( parentSpec != null ) {
+	// parentSpec.fillParentTrace(parentTrace);
+	// }
+	//
+	// for ( SpeciesDescription micro : microSpecies.values() ) {
+	// micro.fillParentTrace(parentTrace);
+	// }
+	// }
+	// }
 
 	/**
 	 * Verifies if the specified species can be a parent of this species.
@@ -401,7 +402,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	@Override
 	protected boolean hasAspect(final String a) {
 		return aspects.containsKey(a);
-		// return a.equals(ISymbol.DEFAULT) || aspects.containsKey(a);
 	}
 
 	@Override
@@ -415,11 +415,12 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	 * @return
 	 */
 	public List<SpeciesDescription> getMicroSpecies() {
-		GamaList<SpeciesDescription> retVal = new GamaList<SpeciesDescription>(microSpecies.values());
-		if (parentSpecies != null) { 
+		GamaList<SpeciesDescription> retVal =
+			new GamaList<SpeciesDescription>(microSpecies.values());
+		if ( parentSpecies != null ) {
 			retVal.addAll(parentSpecies.getMicroSpecies());
 		}
-		
+
 		return retVal;
 	}
 
@@ -431,59 +432,61 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return null;
 	}
 
-	/**
-	 * Returns all the species sharing the same direct macro-species with this species.
-	 * 
-	 * @return
-	 */
-	public List<SpeciesDescription> getPeerSpecies() {
-		if ( macroSpecies == null ) { return GamaList.EMPTY_LIST; }
+	// /**
+	// * Returns all the species sharing the same direct macro-species with this species.
+	// *
+	// * @return
+	// */
+	// public List<SpeciesDescription> getPeerSpecies() {
+	// if ( macroSpecies == null ) { return GamaList.EMPTY_LIST; }
+	//
+	// if ( peerSpecies == null ) {
+	// peerSpecies = new GamaList<SpeciesDescription>();
+	// peerSpecies.addAll(macroSpecies.getMicroSpecies());
+	// peerSpecies.remove(this);
+	// }
+	//
+	// return peerSpecies;
+	// }
 
-		if ( peerSpecies == null ) {
-			peerSpecies = new GamaList<SpeciesDescription>();
-			peerSpecies.addAll(macroSpecies.getMicroSpecies());
-			peerSpecies.remove(this);
-		}
+	//
+	// /**
+	// * Returns the peer species with the specified name.
+	// *
+	// * @param peerName
+	// * @return
+	// */
+	// public SpeciesDescription getPeerSpecies(final String peerName) {
+	// if ( macroSpecies == null ) { return null; }
+	//
+	// if ( peerSpecies == null ) {
+	// getPeerSpecies();
+	// }
+	//
+	// for ( SpeciesDescription sd : peerSpecies ) {
+	// if ( sd.getName().equals(peerName) ) { return sd; }
+	// }
+	//
+	// return null;
+	// }
 
-		return peerSpecies;
-	}
-
-	/**
-	 * Returns the peer species with the specified name.
-	 * 
-	 * @param peerName
-	 * @return
-	 */
-	public SpeciesDescription getPeerSpecies(final String peerName) {
-		if ( macroSpecies == null ) { return null; }
-
-		if ( peerSpecies == null ) {
-			getPeerSpecies();
-		}
-
-		for ( SpeciesDescription sd : peerSpecies ) {
-			if ( sd.getName().equals(peerName) ) { return sd; }
-		}
-
-		return null;
-	}
-
-	/**
-	 * Finds and returns a species situated higher in the species hierarchy.
-	 * 
-	 * @param macroSpeciesName
-	 * @return
-	 */
-	public SpeciesDescription getMacroSpeciesContext(final String macroSpeciesName) {
-		if ( macroSpecies == null ) { return null; }
-
-		if ( macroSpecies.getName().equals(macroSpeciesName) ) { return macroSpecies; }
-
-		SpeciesDescription peerOfMacro = macroSpecies.getPeerSpecies(macroSpeciesName);
-		if ( peerOfMacro != null ) { return peerOfMacro; }
-
-		return macroSpecies.getMacroSpeciesContext(macroSpeciesName);
-	}
+	//
+	// /**
+	// * Finds and returns a species situated higher in the species hierarchy.
+	// *
+	// * @param macroSpeciesName
+	// * @return
+	// */
+	// public SpeciesDescription getMacroSpeciesContext(final String macroSpeciesName) {
+	// if ( macroSpecies == null ) { return null; }
+	//
+	// if ( macroSpecies.getName().equals(macroSpeciesName) ) { return macroSpecies; }
+	//
+	// SpeciesDescription peerOfMacro = macroSpecies.getPeerSpecies(macroSpeciesName);
+	// if ( peerOfMacro != null ) { return peerOfMacro; }
+	//
+	// return macroSpecies.getMacroSpeciesContext(macroSpeciesName);
+	// }
 
 	/**
 	 * Finalizes the species description
@@ -545,12 +548,12 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	}
 
 	/*
-	@Override
-	public IDescription getSpeciesDescription(final String actualSpecies) {
-		
-	}
-*/
-	
+	 * @Override
+	 * public IDescription getSpeciesDescription(final String actualSpecies) {
+	 * 
+	 * }
+	 */
+
 	/**
 	 * Returns a list of SpeciesDescription that can be the parent of this species.
 	 * A species can be a sub-species of its "peer" species ("peer" species are species sharing the
@@ -603,16 +606,17 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return sortedMicroSpecs;
 	}
 
-	private List<IDescription> getChildrenWithoutMicroSpec(final SpeciesDescription specDesc) {
-		List<IDescription> retVal = new GamaList<IDescription>();
-		retVal.addAll(specDesc.getChildren());
-
-		for ( SpeciesDescription microSpec : specDesc.getMicroSpecies() ) {
-			retVal.remove(microSpec);
-		}
-
-		return retVal;
-	}
+	//
+	// private List<IDescription> getChildrenWithoutMicroSpec(final SpeciesDescription specDesc) {
+	// List<IDescription> retVal = new GamaList<IDescription>();
+	// retVal.addAll(specDesc.getChildren());
+	//
+	// for ( SpeciesDescription microSpec : specDesc.getMicroSpecies() ) {
+	// retVal.remove(microSpec);
+	// }
+	//
+	// return retVal;
+	// }
 
 	public void setUserRedefinedAndNewVars(final Set<String> userRedefinedOrNewVars) {
 		this.userRedefinedOrNewVars = userRedefinedOrNewVars;
