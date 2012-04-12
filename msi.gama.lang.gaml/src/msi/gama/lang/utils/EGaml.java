@@ -125,9 +125,12 @@ public class EGaml {
 	}
 
 	public static String getLabelFromFacet(final Statement container, final String facet) {
-		Map<String, Expression> facets = getFacetsOf(container);
-		Expression expr = facets.get(facet);
-		if ( expr instanceof VariableRef ) { return getKeyOf(expr); }
+		for ( FacetExpr f : container.getFacets() ) {
+			if ( getKeyOf(f).equals(facet) ) {
+				Expression expr = f.getExpr();
+				if ( expr instanceof VariableRef ) { return getKeyOf(expr); }
+			}
+		}
 		return null;
 	}
 
@@ -153,42 +156,13 @@ public class EGaml {
 	public static Expression getValueOfOmittedFacet(final Statement s) {
 		if ( s instanceof Definition ) {
 			String var = ((Definition) s).getName();
-			StringLiteral t = createTerminal(var);
-			if ( t != null ) { return t; }
+			return createTerminal(var);
 		}
 		return s.getExpr();
 	}
 
 	public static Block getBlockOf(final Statement f) {
 		return f.getBlock();
-	}
-
-	public static Map<String, Expression> getFacetsOf(final Statement f) {
-		return translateFacets(getKeyOf(f), f.getFacets());
-	}
-
-	private static Map<String, Expression> translateFacets(final String statement,
-		final EList<? extends FacetExpr> facets) {
-		Map<String, Expression> result = new HashMap();
-		for ( FacetExpr f : facets ) {
-			String key = getKeyOf(f);
-			if ( f instanceof DefinitionFacetExpr ) {
-				// Special case for "method": the name should not be translated to a string
-				result.put(key, createTerminal(((DefinitionFacetExpr) f).getName()));
-			} else {
-				if ( key != null ) {
-					if ( key.equals("<-") ) {
-						key =
-							statement.equals(IKeyword.LET) || statement.equals(IKeyword.SET)
-								? IKeyword.VALUE : IKeyword.INIT;
-					} else if ( key.equals("->") ) {
-						key = IKeyword.FUNCTION;
-					}
-					result.put(key, f.getExpr());
-				}
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -201,10 +175,20 @@ public class EGaml {
 	 */
 	public static Expression createPairExpr(final Expression key, final Expression value) {
 		PairExpr pair = getFactory().createPairExpr();
-		pair.setLeft(EcoreUtil2.clone(key));
-		pair.setRight(EcoreUtil2.clone(value));
+		pair.setLeft(key);
+		pair.setRight(/* EcoreUtil2.cloneWithProxies( */value)/* ) */;
 		pair.setOp("::");
 		return pair;
+	}
+
+	public static void createFacetExpr(final Statement container, final String key,
+		final Expression value) {
+		FacetExpr pair = getFactory().createFacetExpr();
+		container.getFacets().add(pair);
+		FacetRef ref = getFactory().createFacetRef();
+		ref.setRef(key);
+		pair.setKey(ref);
+		pair.setExpr(value);
 	}
 
 	final static StringBuilder serializer = new StringBuilder();

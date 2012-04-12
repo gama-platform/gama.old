@@ -8,18 +8,14 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.IErrorCollector;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.GamlToSyntacticElements;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
-import msi.gaml.factories.*;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
 import org.eclipse.xtext.linking.lazy.LazyLinker;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.XtextResource;
 
 /**
  * The class GamlLinker.
@@ -30,69 +26,84 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
  */
 public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollector {
 
+	// private final GamlModelConverter converter = new GamlModelConverter();
+
 	public GamlLinker() {
 		GAMA.setGamlBuilder(this);
 	}
 
+	// Map<Resource, ISyntacticElement> trees = new HashMap();
+
+	// @Override
+	// protected void beforeModelLinked(final EObject model,
+	// final IDiagnosticConsumer diagnosticsConsumer) {
+	// Important to call the super method in order to remove all dangling references
+	// super.beforeModelLinked(model, diagnosticsConsumer);
+	// if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
+	// Here, we do all the transformations necessary for making the eCore model on par with the
+	// expected syntactic model of GAML. Involves moving EObjects around, etc.
+	// converter.convert(model);
+
+	// }
+
 	private final Set<IBuilderListener> listeners = new HashSet();
+	private final Map<Resource, GamlBuilder> builders = new HashMap();
 
 	@Override
-	protected void afterModelLinked(final EObject model,
-		final IDiagnosticConsumer diagnosticsConsumer) {
+	protected void afterModelLinked(final EObject model, final IDiagnosticConsumer d) {
 		if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
-		Model m = (Model) model;
 		IModel currentModel = null;
-		Resource mainFile = m.eResource();
+		Resource r = model.eResource();
 		try {
-			// if ( mainFile.getErrors().isEmpty() ) {
-			Map<Resource, ISyntacticElement> elements = buildCompleteSyntacticTree(mainFile);
-			if ( !hasErrors(mainFile) ) {
-				ModelStructure ms = new ModelStructure(mainFile, elements, this);
-				currentModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, this);
-				if ( hasErrors(mainFile) ) {
-					currentModel = null;
-				}
-			}
-			// }
+			currentModel = getBuilder(r).build();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		} finally {
-			fireBuildEnded(m, currentModel);
+			fireBuildEnded(r, currentModel);
 		}
 
 	}
 
-	public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
-		Map<Resource, ISyntacticElement> docs = new LinkedHashMap();
-		buildRecursiveSyntacticTree(docs, r);
-		return docs;
-	}
-
-	private void buildRecursiveSyntacticTree(final Map<Resource, ISyntacticElement> docs,
-		final Resource r) {
-		Model m = (Model) r.getContents().get(0);
-		docs.put(r, getOwnSyntacticTree(r));
-		for ( Import imp : m.getImports() ) {
-			String importUri = imp.getImportURI();
-			URI iu = URI.createURI(importUri).resolve(r.getURI());
-			if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
-				Resource ir = r.getResourceSet().getResource(iu, true);
-				if ( ir != r && !docs.containsKey(ir) ) {
-					if ( !ir.getErrors().isEmpty() ) {
-						this.error("Imported file " + importUri + " has errors.", imp);
-						continue;
-					}
-					buildRecursiveSyntacticTree(docs, ir);
-				}
-			}
+	private GamlBuilder getBuilder(final Resource r) {
+		GamlBuilder result = builders.get(r);
+		if ( result == null ) {
+			result = new GamlBuilder((XtextResource) r, this);
+			builders.put(r, result);
 		}
+		return result;
 	}
 
-	private ISyntacticElement getOwnSyntacticTree(final Resource r) {
-		Model m = (Model) r.getContents().get(0);
-		ISyntacticElement e = GamlToSyntacticElements.doConvert(m, this);
-		return e;
-	}
+	// public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
+	// Map<Resource, ISyntacticElement> docs = new LinkedHashMap();
+	// buildRecursiveSyntacticTree(docs, r);
+	// return docs;
+	// }
+	//
+	// private void buildRecursiveSyntacticTree(final Map<Resource, ISyntacticElement> docs,
+	// final Resource r) {
+	// Model m = (Model) r.getContents().get(0);
+	// docs.put(r, getOwnSyntacticTree(r));
+	// for ( Import imp : m.getImports() ) {
+	// String importUri = imp.getImportURI();
+	// URI iu = URI.createURI(importUri).resolve(r.getURI());
+	// if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
+	// Resource ir = r.getResourceSet().getResource(iu, true);
+	// if ( ir != r && !docs.containsKey(ir) ) {
+	// if ( !ir.getErrors().isEmpty() ) {
+	// this.error("Imported file " + importUri + " has errors.", imp);
+	// continue;
+	// }
+	// buildRecursiveSyntacticTree(docs, ir);
+	// }
+	// }
+	// }
+	// }
+	//
+	// private ISyntacticElement getOwnSyntacticTree(final Resource r) {
+	// Model m = (Model) r.getContents().get(0);
+	// ISyntacticElement e = GamlToSyntacticElements.doConvert(m, this);
+	// return e;
+	// }
 
 	private void error(final String message, final EObject object) {
 		if ( object == null ) { return; }
@@ -118,10 +129,6 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		}
 	}
 
-	/**
-	 * @see msi.gama.common.util.IErrorCollector#hasErrors()
-	 */
-
 	public boolean hasErrors(final Resource resource) {
 		return !resource.getErrors().isEmpty();
 	}
@@ -137,10 +144,26 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		return listeners.remove(l);
 	}
 
-	private void fireBuildEnded(final Model m, final IModel result) {
+	private void fireBuildEnded(final Resource m, final IModel result) {
 		for ( IBuilderListener l : listeners ) {
-			l.afterBuilding(m.eResource(), result);
+			l.afterBuilding(m, result);
 		}
+	}
+
+	/**
+	 * @param r
+	 * @return
+	 */
+	public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
+		return getBuilder(r).buildRecursiveSyntacticTree(r);
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGamlBuilder#invalidate(org.eclipse.emf.ecore.resource.Resource)
+	 */
+	@Override
+	public void invalidate(final Resource r) {
+		// trees.remove(r);
 	}
 
 }

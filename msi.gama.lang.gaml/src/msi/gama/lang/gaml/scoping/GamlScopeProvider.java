@@ -18,9 +18,7 @@
  */
 package msi.gama.lang.gaml.scoping;
 
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
-import com.google.inject.Inject;
 
 /**
  * This class contains custom scoping description.
@@ -30,8 +28,5 @@ import com.google.inject.Inject;
  * 
  */
 public class GamlScopeProvider extends AbstractDeclarativeScopeProvider {
-
-	@Inject
-	GamlJavaValidator v;
 
 }
