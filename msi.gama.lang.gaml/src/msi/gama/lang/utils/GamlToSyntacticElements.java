@@ -21,7 +21,7 @@ package msi.gama.lang.utils;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.Set;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.IErrorCollector;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.AbstractStatementDescription;
@@ -34,15 +34,15 @@ import org.eclipse.emf.ecore.EObject;
 public class GamlToSyntacticElements {
 
 	public static ISyntacticElement doConvert(final Model m, final IErrorCollector collect) {
-		long time = System.currentTimeMillis();
+		// long time = System.currentTimeMillis();
 		IExpressionFactory fact = GAMA.getExpressionFactory();
 		if ( fact.getParser() == null ) {
 			fact.registerParser(new NewGamlExpressionCompiler());
 		}
 
 		AbstractStatementDescription elt = convModel(m, collect);
-		long now = System.currentTimeMillis();
-		GuiUtils.debug("doConvert " + m.eResource().getURI() + " took: " + (now - time) + "ms");
+		// long now = System.currentTimeMillis();
+		// GuiUtils.debug("doConvert " + m.eResource().getURI() + " took: " + (now - time) + "ms");
 		// elt.dump();
 		return elt;
 	}

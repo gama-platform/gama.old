@@ -55,24 +55,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 
 	@Override
 	public void setFactory(final IExpressionFactory f) {
-
-		// TODO Move all that to ExpressionFactory
-
 		factory = (GamlExpressionFactory) f;
-		if ( GamlExpressionFactory.NIL_EXPR == null ) {
-			GamlExpressionFactory.NIL_EXPR = factory.createConst(null);
-		}
-		if ( GamlExpressionFactory.TRUE_EXPR == null ) {
-			GamlExpressionFactory.TRUE_EXPR = factory.createConst(true);
-		}
-		if ( GamlExpressionFactory.FALSE_EXPR == null ) {
-			GamlExpressionFactory.FALSE_EXPR = factory.createConst(false);
-		}
-		if ( GamlExpressionFactory.EACH_EXPR == null ) {
-			GamlExpressionFactory.EACH_EXPR =
-				factory.createVar(IKeyword.EACH, Types.NO_TYPE, Types.NO_TYPE, true,
-					IVarExpression.EACH);
-		}
 	}
 
 	public void dispose() {
@@ -151,11 +134,12 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 			} else if ( IKeyword.AS.equals(operator) ) {
 				String castingString = words.get(opIndex + 1);
 				return isSpeciesName(castingString) ? factory.createBinaryExpr(operator, expr1,
-					factory.createExpr(new StringBasedExpressionDescription(castingString)),
+					factory
+						.createExpr(new StringBasedExpressionDescription(castingString), context),
 					context) : factory.createUnaryExpr(castingString, expr1, context);
 			} else if ( IKeyword.IS.equals(operator) && isTypeName(words.get(opIndex + 1)) ) {
 				return factory.createBinaryExpr(operator, expr1,
-					factory.createConst(words.get(opIndex + 1)), context);
+					factory.createConst(words.get(opIndex + 1), Types.get(IType.STRING)), context);
 			} else if ( IExpressionParser.FUNCTIONS.contains(operator) ) {
 				SpeciesDescription sd =
 					getContext().getSpeciesDescription(expr1.getContentType().getSpeciesName());

@@ -145,8 +145,12 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 	}
 
 	private void fireBuildEnded(final Resource m, final IModel result) {
+		boolean accepted = false;
 		for ( IBuilderListener l : listeners ) {
-			l.afterBuilding(m, result);
+			accepted = accepted || l.afterBuilding(m, result);
+		}
+		if ( !accepted && result != null ) {
+			result.dispose();
 		}
 	}
 

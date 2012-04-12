@@ -225,13 +225,14 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			fallBackParser.setFactory(f);
 		}
 		if ( NIL_EXPR == null ) {
-			NIL_EXPR = factory.createConst(null);
+			NIL_EXPR = factory.createConst(null, Types.NO_TYPE, Types.NO_TYPE);
 		}
+		IType bool = Types.get(IType.BOOL);
 		if ( TRUE_EXPR == null ) {
-			TRUE_EXPR = factory.createConst(true);
+			TRUE_EXPR = factory.createConst(true, bool, bool);
 		}
 		if ( FALSE_EXPR == null ) {
-			FALSE_EXPR = factory.createConst(false);
+			FALSE_EXPR = factory.createConst(false, bool, bool);
 		}
 		if ( EACH_EXPR == null ) {
 			EACH_EXPR =
@@ -338,7 +339,8 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		if ( IS.equals(op) ) {
 			String type = literal(e2);
 			if ( isTypeName(type) ) { return factory.createBinaryExpr(op, left,
-				factory.createConst(type), context); }
+				factory.createConst(type, Types.get(IType.STRING), Types.get(IType.STRING)),
+				context); }
 			getContext().flagError(
 				"'is' must be followed by a type name. " + type + " is not a type name.", e2);
 			return null;

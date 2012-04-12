@@ -27,11 +27,9 @@ import org.eclipse.xtext.resource.XtextResource;
  */
 public class GamlBuilder {
 
-	XtextResource resource;
-	IErrorCollector collect;
-	final Map<Resource, ISyntacticElement> trees = new HashMap(2);
-
-	// Map<Resource, ISyntacticElement> trees = new HashMap();
+	private final XtextResource resource;
+	private final IErrorCollector collect;
+	private final Map<Resource, ISyntacticElement> trees = new HashMap(2);
 
 	public GamlBuilder(final XtextResource r, final IErrorCollector c) {
 		resource = r;
@@ -71,17 +69,7 @@ public class GamlBuilder {
 		return trees;
 	}
 
-	// private boolean isBuilt(final Resource r) {
-	// if ( true ) { return false; }
-	// if ( !trees.containsKey(r) ) { return false; }
-	// if ( r.isModified() ) { return false; }
-	// EObject newModel = r.getContents().get(0);
-	// EObject oldModel = (EObject) trees.get(r).getUnderlyingElement(null);
-	// return newModel.equals(oldModel);
-	// }
-
 	private void computeSyntacticTree(final Resource r) {
-		// if ( isBuilt(r) ) { return; }
 		if ( trees.containsKey(r) ) { return; }
 		Model m = (Model) r.getContents().get(0);
 		ISyntacticElement e = GamlToSyntacticElements.doConvert(m, collect);
