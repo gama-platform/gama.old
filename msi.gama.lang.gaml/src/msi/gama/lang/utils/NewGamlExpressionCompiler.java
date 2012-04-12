@@ -345,9 +345,8 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		}
 		// if the operator is an action call, we must verify and compile the arguments apart
 		if ( IExpressionParser.FUNCTIONS.contains(op) ) {
-			ExecutionContextDescription sd =
-				(ExecutionContextDescription) getContext().getModelDescription()
-					.getSpeciesDescription(left.getContentType().getSpeciesName());
+			SpeciesDescription sd =
+				getContext().getSpeciesDescription(left.getContentType().getSpeciesName());
 			if ( sd == null ) {
 				context.flagError("the left side of " + op + " is not an agent", e1);
 				return null;
@@ -377,14 +376,12 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		return factory.createBinaryExpr(op, left, right, context);
 	}
 
-	private ExecutionContextDescription getSpeciesContext(final String e) {
-		return (ExecutionContextDescription) getContext().getModelDescription()
-			.getSpeciesDescription(e);
+	private SpeciesDescription getSpeciesContext(final String e) {
+		return getContext().getSpeciesDescription(e);
 	}
 
 	private boolean isSpeciesName(final String s) {
-		// TODO Improve the lookup as species names should normally be known
-		return getContext().getModelDescription().getSpeciesDescription(s) != null;
+		return getContext().getSpeciesDescription(s) != null;
 	}
 
 	private boolean isTypeName(final String s) {
@@ -395,7 +392,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	private IExpression compileFieldExpr(final Expression e1, final String var) {
 		IExpression target = compile(e1);
 		IType type = target.type();
-		ExecutionContextDescription contextDesc = getSpeciesContext(type.getSpeciesName());
+		SpeciesDescription contextDesc = getSpeciesContext(type.getSpeciesName());
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) {

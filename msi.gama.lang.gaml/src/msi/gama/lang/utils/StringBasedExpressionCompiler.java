@@ -157,9 +157,8 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 				return factory.createBinaryExpr(operator, expr1,
 					factory.createConst(words.get(opIndex + 1)), context);
 			} else if ( IExpressionParser.FUNCTIONS.contains(operator) ) {
-				ExecutionContextDescription sd =
-					(ExecutionContextDescription) getContext().getModelDescription()
-						.getSpeciesDescription(expr1.getContentType().getSpeciesName());
+				SpeciesDescription sd =
+					getContext().getSpeciesDescription(expr1.getContentType().getSpeciesName());
 				if ( sd == null ) {
 					context.flagError("the left side of " + operator + " is not an agent");
 					return null;
@@ -276,13 +275,12 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 		return null;
 	}
 
-	private ExecutionContextDescription getSpeciesContext(final String e) {
-		return (ExecutionContextDescription) getContext().getModelDescription()
-			.getSpeciesDescription(e);
+	private SpeciesDescription getSpeciesContext(final String e) {
+		return getContext().getSpeciesDescription(e);
 	}
 
 	private boolean isSpeciesName(final String s) {
-		return getContext().getModelDescription().getSpeciesDescription(s) != null;
+		return getContext().getSpeciesDescription(s) != null;
 	}
 
 	private boolean isTypeName(final String s) {
@@ -302,9 +300,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 			return compileFieldExpr(compileFieldExpr(target, ss[0]), ss[1]);
 
 		}
-		ExecutionContextDescription contextDesc =
-			(ExecutionContextDescription) getContext().getModelDescription().getSpeciesDescription(
-				type.getSpeciesName());
+		SpeciesDescription contextDesc = getContext().getSpeciesDescription(type.getSpeciesName());
 
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
