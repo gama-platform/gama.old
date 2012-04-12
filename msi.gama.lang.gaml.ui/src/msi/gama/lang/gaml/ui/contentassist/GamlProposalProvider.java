@@ -194,7 +194,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		EObject lexp = m.getLeft();
 		final String kname = EGaml.getKeyOf(lexp);
 
-		SpeciesDescription ws = (SpeciesDescription) model.getDescription().getWorldSpecies();
+		SpeciesDescription ws = model.getDescription().getWorldSpecies();
 		SpeciesDescription currDesc = (SpeciesDescription) ws.getDescriptionDeclaringVar(kname);
 		for ( SpeciesDescription sd : ws.getAllMicroSpecies() ) {
 			if ( currDesc != null ) {
@@ -205,8 +205,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		if ( currDesc == null ) { return; }
 		final String typeofVar = currDesc.getVariable(kname).getType().getSpeciesName();
 		if ( typeofVar != null ) {
-			for ( String st : ((SpeciesDescription) ws.getSpeciesDescription(typeofVar))
-				.getVarNames() ) {
+			for ( String st : ws.getSpeciesDescription(typeofVar).getVarNames() ) {
 				// System.out.println(st);
 				acceptor.accept(createCompletionProposal(st, " " + st + " ", varImage, context));
 			}
