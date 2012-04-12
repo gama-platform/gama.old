@@ -70,8 +70,7 @@ public class VariableFactory extends SymbolFactory {
 						IType.FLOAT_STR, IKeyword.UPDATE, value, IKeyword.MIN, "0")), superDesc,
 					null);
 
-			SpeciesDescription environment =
-				(SpeciesDescription) superDesc.getModelDescription().getSpeciesDescription(env);
+			SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 			environment.addChild(vd);
 		}
 

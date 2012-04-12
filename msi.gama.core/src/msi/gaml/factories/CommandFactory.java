@@ -56,8 +56,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 		if ( actualSpecies != null ) {
 			IType t = desc.getSpeciesContext().getType();
 			desc.addTemp(MYSELF, t, t, factory);
-			desc.setSuperDescription(desc.getModelDescription()
-				.getSpeciesDescription(actualSpecies));
+			desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
 		}
 		super.privateCompileChildren(desc, cs, factory);
 	}

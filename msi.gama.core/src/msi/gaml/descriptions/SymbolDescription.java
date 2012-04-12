@@ -127,7 +127,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	@Override
 	public ModelDescription getModelDescription() {
 		if ( enclosing == null ) { return null; }
-		return (ModelDescription) enclosing.getModelDescription();
+		return enclosing.getModelDescription();
 	}
 
 	protected void copyChildren(final List<IDescription> originalChildren) {
@@ -248,7 +248,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	}
 
 	@Override
-	public IDescription getSpeciesContext() {
+	public SpeciesDescription getSpeciesContext() {
 		if ( enclosing == null ) { return null; }
 		return enclosing.getSpeciesContext();
 	}
@@ -257,7 +257,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getSpeciesDescription(java.lang.String)
 	 */
 	@Override
-	public IDescription getSpeciesDescription(final String actualSpecies) {
+	public SpeciesDescription getSpeciesDescription(final String actualSpecies) {
 		IDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getSpeciesDescription(actualSpecies);
@@ -267,7 +267,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getAction(java.lang.String)
 	 */
 	@Override
-	public IDescription getAction(final String name) {
+	public CommandDescription getAction(final String name) {
 		return null;
 	}
 
@@ -275,7 +275,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getWorldSpecies()
 	 */
 	@Override
-	public IDescription getWorldSpecies() {
+	public SpeciesDescription getWorldSpecies() {
 		IDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getWorldSpecies();

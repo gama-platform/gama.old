@@ -79,23 +79,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		inits.add(0, init); // Added at the beginning
 	}
 
-	//
-	// /**
-	// * Returns all the direct&in-direct macro-species of this species.
-	// *
-	// * @return
-	// */
-	// public List<SpeciesDescription> getAllMacroSpecies() {
-	// List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
-	// SpeciesDescription macro = this.macroSpecies;
-	// while (macro != null) {
-	// retVal.add(macro);
-	// macro = macro.macroSpecies;
-	// }
-	//
-	// return retVal;
-	// }
-
 	/**
 	 * Returns all the direct&in-direct micro-species of this species.
 	 * 

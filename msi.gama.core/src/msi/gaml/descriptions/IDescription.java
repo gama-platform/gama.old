@@ -48,7 +48,7 @@ public interface IDescription {
 
 	public abstract IType getContentType();
 
-	public abstract IDescription getModelDescription();
+	public abstract ModelDescription getModelDescription();
 
 	public abstract void setSuperDescription(final IDescription desc);
 
@@ -60,18 +60,15 @@ public interface IDescription {
 
 	public abstract IDescription getSuperDescription();
 
-	public abstract IDescription getDescriptionDeclaringVar(final String name); // TODO MOVE TO
-																				// ExecutionContextDescription
+	public abstract IDescription getDescriptionDeclaringVar(final String name);
 
-	public abstract IDescription getDescriptionDeclaringAction(final String name); // TODO MOVE TO
-																					// ExecutionContextDescription
+	public abstract IDescription getDescriptionDeclaringAction(final String name);
 
-	public abstract IDescription getDescriptionDeclaringAspect(final String name); // TODO MOVE TO
-																					// ExecutionContextDescription
+	public abstract IDescription getDescriptionDeclaringAspect(final String name);
 
 	public abstract IExpression getVarExpr(final String name, IExpressionFactory factory);
 
-	public abstract IDescription getSpeciesContext();
+	public abstract SpeciesDescription getSpeciesContext();
 
 	public abstract IExpression addTemp(final String name, final IType type,
 		final IType contentType, IExpressionFactory f);
@@ -90,9 +87,9 @@ public interface IDescription {
 
 	public abstract void copyTempsAbove();
 
-	public abstract IDescription getSpeciesDescription(String actualSpecies);
+	public abstract SpeciesDescription getSpeciesDescription(String actualSpecies);
 
-	public abstract IDescription getAction(String name);
+	public abstract CommandDescription getAction(String name);
 
-	public abstract IDescription getWorldSpecies();
+	public abstract SpeciesDescription getWorldSpecies();
 }

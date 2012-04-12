@@ -44,6 +44,8 @@ public class ModelDescription extends SymbolDescription {
 	private String fileName;
 	private String baseDirectory;
 	private SpeciesDescription worldSpecies;
+	// Only used to accelerate the parsing
+	private final Map<String, SpeciesDescription> allSpeciesDescription = new HashMap();
 
 	public ModelDescription(final String fileName, final ISyntacticElement source) {
 		super(IKeyword.MODEL, null, new ArrayList(), source, DescriptionFactory.getModelFactory()
@@ -94,6 +96,7 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	public void addType(final SpeciesDescription species) {
+		allSpeciesDescription.put(species.getName(), species);
 		types.addType(species);
 	}
 
@@ -158,9 +161,9 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (( spec == null ) || ( worldSpecies == null ) ) { return null; }
-
-		return findSpecies(worldSpecies, spec);
+		if ( spec == null || worldSpecies == null ) { return null; }
+		SpeciesDescription result = allSpeciesDescription.get(spec);
+		return result == null ? findSpecies(worldSpecies, spec) : result;
 	}
 
 	/**
@@ -180,9 +183,9 @@ public class ModelDescription extends SymbolDescription {
 		if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }
 
 		List<SpeciesDescription> microSpecs = topSpecies.getMicroSpecies();
-		
+
 		for ( SpeciesDescription micro : microSpecs ) {
-			if (micro.getName().equals(specToFind)) { return micro; }
+			if ( micro.getName().equals(specToFind) ) { return micro; }
 		}
 
 		/*
@@ -191,8 +194,10 @@ public class ModelDescription extends SymbolDescription {
 		 * When a species is a sub-species of its direct macro-species,
 		 * it is a micro-species of itself thus this leads to infinite recursion.
 		 */
-		if (microSpecs.contains(topSpecies)) { microSpecs.remove(topSpecies); }
-		
+		if ( microSpecs.contains(topSpecies) ) {
+			microSpecs.remove(topSpecies);
+		}
+
 		SpeciesDescription retVal;
 		for ( SpeciesDescription micro : microSpecs ) {
 			retVal = findSpecies(micro, specToFind);

@@ -49,9 +49,8 @@ public class SpeciesFactory extends SymbolFactory {
 		String secondBase = facets.getLabel(IKeyword.BASE);
 
 		String firstBase =
-			superDesc.getModelDescription().getSpeciesDescription(name) != null ? superDesc
-				.getModelDescription().getSpeciesDescription(name).getFacets()
-				.getLabel(IKeyword.BASE) : null;
+			superDesc.getSpeciesDescription(name) != null ? superDesc.getSpeciesDescription(name)
+				.getFacets().getLabel(IKeyword.BASE) : null;
 
 		if ( secondBase == null && firstBase != null ) {
 			facets.putAsLabel(IKeyword.BASE, firstBase);

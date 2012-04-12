@@ -129,7 +129,7 @@ public class SignalVariable extends NumberVariable {
 		variationExpr = getFacet(IKeyword.VARIATION);
 		rangeExpr = getFacet(IKeyword.RANGE);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
-		if ( envName == null || sd.getModelDescription().getSpeciesDescription(envName) == null ) {
+		if ( envName == null || sd.getSpeciesDescription(envName) == null ) {
 			error("Environment of signal " + this.getName() + " cannot be determined.");
 		}
 		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
