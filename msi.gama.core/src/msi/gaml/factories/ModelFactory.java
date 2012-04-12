@@ -288,8 +288,7 @@ public class ModelFactory extends SymbolFactory {
 	public synchronized ISymbol compile(final ModelStructure structure,
 		final IErrorCollector collect) throws InterruptedException {
 		IModel m = null;
-		long time = System.currentTimeMillis();
-		// long startTime = System.nanoTime();
+		// long time = System.currentTimeMillis();
 		ModelDescription md = parse(structure, collect);
 		GuiUtils.stopIfCancelled();
 		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
@@ -309,9 +308,10 @@ public class ModelFactory extends SymbolFactory {
 				md.addChild(def);
 			}
 		}
-		long now = System.currentTimeMillis();
-		GuiUtils.debug("Parsing to descriptions " + structure.getPath() + " took: " + (now - time) +
-			"ms");
+		// long now = System.currentTimeMillis();
+		// GuiUtils.debug("Parsing to descriptions " + structure.getPath() + " took: " + (now -
+		// time) +
+		// "ms");
 		// time = now;
 
 		// GuiUtils.stopIfCancelled();
@@ -324,11 +324,11 @@ public class ModelFactory extends SymbolFactory {
 
 	@Override
 	public ISymbol compileDescription(final IDescription desc, final IExpressionFactory factory) {
-		long time = System.currentTimeMillis();
+		// long time = System.currentTimeMillis();
 		ISymbol m = super.compileDescription(desc, factory);
-		long now = System.currentTimeMillis();
-		GuiUtils.debug("Compiling " + desc.getKeyword() + " " + desc.getName() +
-			" to symbol  took: " + (now - time) + "ms");
+		// long now = System.currentTimeMillis();
+		// GuiUtils.debug("Compiling " + desc.getKeyword() + " " + desc.getName() +
+		// " to symbol  took: " + (now - time) + "ms");
 		return m;
 	}
 

@@ -148,7 +148,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		// GuiUtils.debug("Adding child " + child + " to " + this);
-		IDescription cc = child.shallowCopy(this);
+		IDescription cc = ((SymbolDescription) child).shallowCopy(this);
 		cc.setSuperDescription(this);
 		children.add(cc);
 		return cc;
@@ -164,7 +164,6 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return getSource();
 	}
 
-	@Override
 	public IDescription shallowCopy(final IDescription superDesc) {
 		return this;
 	}
@@ -208,11 +207,11 @@ public class SymbolDescription /* extends Base */implements IDescription {
 			.getDescriptionDeclaringAction(name);
 	}
 
-	@Override
-	public IDescription getDescriptionDeclaringAspect(final String name) {
-		return hasAspect(name) ? this : enclosing == null ? null : enclosing
-			.getDescriptionDeclaringAspect(name);
-	}
+	// @Override
+	// public IDescription getDescriptionDeclaringAspect(final String name) {
+	// return hasAspect(name) ? this : enclosing == null ? null : enclosing
+	// .getDescriptionDeclaringAspect(name);
+	// }
 
 	@Override
 	public IExpression getVarExpr(final String name, final IExpressionFactory factory) {

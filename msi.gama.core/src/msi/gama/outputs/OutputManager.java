@@ -163,7 +163,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 			scheduledOutputs.clear();
 			for ( final IOutput output : outputs.values() ) {
 				if ( includingBatch || !output.isPermanent() ) {
-					GuiUtils.debug("Disposing of output " + output.getName());
+					// GuiUtils.debug("Disposing of output " + output.getName());
 					output.dispose();
 				}
 			}

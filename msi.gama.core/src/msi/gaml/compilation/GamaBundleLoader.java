@@ -42,7 +42,7 @@ public class GamaBundleLoader {
 
 	/**
 	 * 
-	 *                               FIX ME 
+	 * FIX ME
 	 * start
 	 */
 	public static void preBuildContributions() throws GamaStartupException {
@@ -72,11 +72,12 @@ public class GamaBundleLoader {
 	}
 
 	private static void postBuildContributions() {
-				
+
 	}
+
 	/**
 	 * 
-	 *                               FIX ME 
+	 * FIX ME
 	 * start
 	 */
 	public final static void preBuildBundle(final String pluginName, final String pathName)
@@ -91,11 +92,12 @@ public class GamaBundleLoader {
 				" cannot be installed due to an error in loading the plug-in.", e1);
 		}
 	}
-/**
- * 
- *                               FIX ME 
- * start
- */
+
+	/**
+	 * 
+	 * FIX ME
+	 * start
+	 */
 	public static void preBuild(final Bundle plugin, final String pathToAdditions)
 		throws GamaStartupException {
 
@@ -120,8 +122,8 @@ public class GamaBundleLoader {
 			for ( String className : mp.keySet() ) {
 				for ( String keyword : mp.get(className) ) {
 					try {
-						GuiUtils.debug("Registering skill " + keyword + " implemented by " +
-							className);
+						// GuiUtils.debug("Registering skill " + keyword + " implemented by " +
+						// className);
 						skillClasses.put(keyword, plugin.loadClass(className));
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
@@ -139,19 +141,14 @@ public class GamaBundleLoader {
 				FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.KINDS);
 			for ( String ks : mp.keySet() ) {
 				Integer i = Integer.decode(ks);
-				if (i == 13) {
-					System.out.println("Experiment kind found");
+
+				if ( !CLASSES_BY_KIND.containsKey(i) ) {
+					CLASSES_BY_KIND.put(i, new ArrayList());
 				}
-				// TODO Commit !
-				if (!CLASSES_BY_KIND.containsKey(i))
-				CLASSES_BY_KIND.put(i, new ArrayList());
-				
+
 				for ( String className : mp.get(ks) ) {
 					try {
 						CLASSES_BY_KIND.get(i).add(plugin.loadClass(className));
-						if (i == 13){
-							System.out.println("Adding class " + className);
-						}
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -177,13 +174,14 @@ public class GamaBundleLoader {
 		GuiUtils.debug("===> Generating support structures for GAML.");
 		final long startTime = System.nanoTime();
 		GamlProperties mp =
-			FileUtils.getGamaProperties(Platform.getBundle("msi.gama.core"), pathToAdditions, GamlProperties.FACTORIES);
+			FileUtils.getGamaProperties(Platform.getBundle("msi.gama.core"), pathToAdditions,
+				GamlProperties.FACTORIES);
 		try {
 			String className = mp.getFirst(String.valueOf(ISymbolKind.MODEL));
 			if ( className != null ) {
 				DescriptionFactory.disposeModelFactory();
-				DescriptionFactory.setFactoryClass((Class<ISymbolFactory>) Platform.getBundle("msi.gama.core")
-					.loadClass(className));
+				DescriptionFactory.setFactoryClass((Class<ISymbolFactory>) Platform.getBundle(
+					"msi.gama.core").loadClass(className));
 			}
 		} catch (ClassNotFoundException e1) {
 

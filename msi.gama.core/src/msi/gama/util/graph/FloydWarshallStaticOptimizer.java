@@ -30,8 +30,8 @@ import msi.gama.runtime.GAMA;
  */
 public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<ILocation, IShape> {
 
-	
 	public boolean verbose;
+
 	/**
 	 * Instantiates a new agent path optimizer.
 	 * 
@@ -179,8 +179,8 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 		final float one_percent = one_step;
 		if ( verbose ) {
 			density = (1 - (float) blank / (float) number2) * 100;
-			GuiUtils.debug("--- Initial density of the matrix :" + density + "%");
-			GuiUtils.debug("3) Computing optimal paths between all the intersections...");
+			// GuiUtils.debug("--- Initial density of the matrix :" + density + "%");
+			// GuiUtils.debug("3) Computing optimal paths between all the intersections...");
 		}
 		int distik, i, k;
 		final long debut = System.currentTimeMillis();
@@ -200,7 +200,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 			}
 
 			if ( verbose && k % one_step == 0 ) {
-				GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
+				// GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
 			}
 		}
 		if ( verbose ) {
@@ -208,8 +208,8 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 			density = 0f;
 			blank = computeBlankNodes();
 			density = (1 - (float) blank / (float) number2) * 100;
-			GuiUtils.debug("--- Final density of the matrix :" + density + "%");
-			GuiUtils.debug("--- Computed in " + (float) totalTime / 1000 + "seconds");
+			// GuiUtils.debug("--- Final density of the matrix :" + density + "%");
+			// GuiUtils.debug("--- Computed in " + (float) totalTime / 1000 + "seconds");
 		}
 	}
 

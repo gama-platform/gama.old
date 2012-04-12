@@ -99,8 +99,6 @@ public class VariableDescription extends SymbolDescription {
 			if ( depends != null ) {
 				List<String> dependsList =
 					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());
-				// GuiUtils
-				// .debug(" Dependencies found for " + getName() + " " + new GamaList(depends));
 				names.addAll(dependsList);
 				for ( final String s : names ) {
 					VariableDescription v = vars.get(s);
@@ -166,7 +164,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getTypeOf(final String s) {
-		ExecutionContextDescription ecd = (ExecutionContextDescription) this.getSpeciesContext();
+		ExecutionContextDescription ecd = this.getSpeciesContext();
 		if ( ecd != null ) { return ecd.getTypeOf(s); }
 		return Types.get(s);
 	}

@@ -21,7 +21,6 @@ package msi.gaml.operators;
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
@@ -292,7 +291,7 @@ public class Strings {
 		if ( i != pattern.length() ) {
 			dateList.add(pattern.substring(i));
 		}
-		GuiUtils.debug("Output find: " + dateList);
+		// GuiUtils.debug("Output find: " + dateList);
 
 		// String[] strings = p.split(pattern);
 		// GuiUtils.debug("Output split: " + Arrays.toString(strings));

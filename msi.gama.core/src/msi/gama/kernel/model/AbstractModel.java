@@ -20,6 +20,7 @@ package msi.gama.kernel.model;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.topology.*;
 import msi.gaml.compilation.*;
@@ -32,9 +33,11 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	protected final Map<String, IExperiment> experiments = new HashMap<String, IExperiment>();
 	private ModelEnvironment modelEnvironment;
 	protected ISpecies worldSpecies;
+	private static int instanceCount;
 
 	protected AbstractModel(final IDescription description) {
 		super(description);
+		instanceCount++;
 	}
 
 	@Override
@@ -78,6 +81,8 @@ public abstract class AbstractModel extends Symbol implements IModel {
 		}
 		modelEnvironment = null;
 		experiments.clear();
+		instanceCount--;
+		GuiUtils.debug("Open (non disposed) instances of IModel left : " + instanceCount);
 	}
 
 	@Override
@@ -86,26 +91,24 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	}
 
 	@Override
-	public ISpecies getSpecies(String speciesName) {
-		if (speciesName == null) { return null; }
-		
+	public ISpecies getSpecies(final String speciesName) {
+		if ( speciesName == null ) { return null; }
+
 		Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
 		speciesStack.push(worldSpecies);
 		ISpecies currentSpecies;
 		while (!speciesStack.isEmpty()) {
 			currentSpecies = speciesStack.pop();
-			if (currentSpecies.getName().equals(speciesName)) {
-				return currentSpecies;
-			}
-			
+			if ( currentSpecies.getName().equals(speciesName) ) { return currentSpecies; }
+
 			List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
-			for (ISpecies microSpec : microSpecies) {
-				if (microSpec.getMacroSpecies().equals(currentSpecies)) {
+			for ( ISpecies microSpec : microSpecies ) {
+				if ( microSpec.getMacroSpecies().equals(currentSpecies) ) {
 					speciesStack.push(microSpec);
 				}
 			}
 		}
-		
+
 		return null;
 	}
 

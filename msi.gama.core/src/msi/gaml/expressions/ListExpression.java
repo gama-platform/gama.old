@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,8 +19,6 @@
 package msi.gaml.expressions;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
-
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -39,9 +37,28 @@ public class ListExpression extends AbstractExpression {
 
 	ListExpression(final List<? extends IExpression> elements) {
 		this.elements = elements.toArray(new IExpression[0]);
-		values = new Object[this.elements.length];
+		int n = this.elements.length;
+		values = new Object[n];
 		setName(elements.toString());
 		type = Types.get(IType.LIST);
+		boolean allTheSame = true;
+		if ( n != 0 ) {
+			IExpression e = elements.get(0);
+			if ( e != null ) {
+				contentType = e.type();
+			}
+			for ( int i = 1; i < n; i++ ) {
+				e = elements.get(i);
+				if ( e != null ) {
+					allTheSame = e.type() == contentType;
+				}
+				if ( !allTheSame ) {
+					break;
+				}
+			}
+		}
+		// TODO Try to find a common super type if possible
+		contentType = allTheSame ? contentType : Types.NO_TYPE;
 		isConst();
 	}
 
@@ -68,10 +85,6 @@ public class ListExpression extends AbstractExpression {
 		}
 		isConst = true;
 		return true;
-	}
-
-	public void setContentType(final IType ct) {
-		contentType = ct;
 	}
 
 	@Override

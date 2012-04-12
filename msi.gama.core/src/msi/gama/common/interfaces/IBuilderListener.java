@@ -18,6 +18,9 @@ public interface IBuilderListener {
 
 	void beforeBuilding(Resource resource);
 
-	void afterBuilding(Resource resource, IModel model);
+	/*
+	 * Returns whether or not the model has been 'consumed' by the listener
+	 */
+	boolean afterBuilding(Resource resource, IModel model);
 
 }

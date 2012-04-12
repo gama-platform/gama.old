@@ -64,16 +64,12 @@ public interface IDescription {
 
 	public abstract IDescription getDescriptionDeclaringAction(final String name);
 
-	public abstract IDescription getDescriptionDeclaringAspect(final String name);
-
 	public abstract IExpression getVarExpr(final String name, IExpressionFactory factory);
 
 	public abstract SpeciesDescription getSpeciesContext();
 
 	public abstract IExpression addTemp(final String name, final IType type,
 		final IType contentType, IExpressionFactory f);
-
-	public abstract IDescription shallowCopy(final IDescription superDescription);
 
 	public abstract void dispose();
 

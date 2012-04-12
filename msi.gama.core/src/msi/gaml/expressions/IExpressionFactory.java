@@ -34,15 +34,11 @@ public interface IExpressionFactory {
 
 	public void registerParser(IExpressionParser parser);
 
-	public abstract IExpression createConst(final Object val) throws GamaRuntimeException;
-
 	public abstract IExpression createConst(final Object val, final IType type)
 		throws GamaRuntimeException;
 
 	public abstract IExpression createConst(final Object val, final IType type,
 		final IType contentType) throws GamaRuntimeException;
-
-	public abstract IExpression createExpr(final IExpressionDescription s);
 
 	public abstract IExpression createExpr(final IExpressionDescription s,
 		final IDescription context);
@@ -57,23 +53,11 @@ public interface IExpressionFactory {
 	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
 		IDescription context);
 
-	/**
-	 * @param args
-	 * @param context
-	 * @return
-	 */
 	Map<String, IExpressionDescription> createArgumentMap(IExpressionDescription args,
 		IDescription context);
 
-	/**
-	 * @param s
-	 * @return
-	 */
 	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context);
 
-	/**
-	 * @return
-	 */
 	public IExpressionParser getParser();
 
 }

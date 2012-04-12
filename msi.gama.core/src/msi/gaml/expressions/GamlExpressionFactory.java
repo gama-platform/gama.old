@@ -20,8 +20,6 @@ package msi.gaml.expressions;
 
 import static msi.gaml.expressions.IExpressionParser.*;
 import java.util.*;
-import msi.gama.common.interfaces.IValue;
-import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
@@ -36,40 +34,21 @@ import msi.gaml.types.*;
 
 public class GamlExpressionFactory extends SymbolFactory implements IExpressionFactory {
 
-	// FIXME HACK to test the new parser
-
-	// private IExpressionParser NEW_PARSER;
 	public static IExpression NIL_EXPR;
 	public static IExpression TRUE_EXPR;
 	public static IExpression FALSE_EXPR;
 	public static IVarExpression EACH_EXPR;
 	public static IExpression WORLD_EXPR = null;
 
-	// public void REGISTER_NEW_PARSER(final IExpressionParser p) {
-	// NEW_PARSER = p;
-	// p.setFactory(this);
-	// }
+	// public static int cacheSize = 100;
+	// public final static Map<Object, IExpression> cache = new HashMap(cacheSize);
 
 	IExpressionParser parser;
-
-	// final IDescription defaultParsingContext;
-
-	// public GamlExpressionFactory() {
-	// registerParser(new GamlExpressionParser()); // default
-	// }
 
 	@Override
 	public void registerParser(final IExpressionParser f) {
 		parser = f;
 		parser.setFactory(this);
-
-	}
-
-	@Override
-	public IExpression createConst(final Object val) {
-		if ( val == null ) { return createConst((Object) null, Types.NO_TYPE); }
-		IType type = val instanceof IValue ? ((IValue) val).type() : Types.get(val.getClass());
-		return createConst(val, type);
 	}
 
 	@Override
@@ -79,29 +58,24 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 
 	@Override
 	public IExpression createConst(final Object val, final IType type, final IType contentType) {
-		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(val, type,
-			contentType); }
+		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(
+			(String) val, type, contentType); }
+		// IExpression expr = cache.get(val);
+		// if ( expr == null ) {
+		// expr = new ConstantExpression(val, type, contentType);
+		// cache.put(val, expr);
+		// }
+		// return expr;
 		return new ConstantExpression(val, type, contentType);
-	}
-
-	@Override
-	public IExpression createExpr(final IExpressionDescription s) {
-		return createExpr(s, GAMA.getModelContext());
 	}
 
 	@Override
 	public IExpression createExpr(final IExpressionDescription s, final IDescription context) {
 		if ( s == null ) { return null; }
 		IExpression p = s.getExpression();
-		if ( p == null ) {
-			p = parser.parse(s, context);
-		}
-		return p;
+		return p == null ? parser.parse(s, context) : p;
 	}
 
-	/**
-	 * @see msi.gaml.expressions.IExpressionFactory#createArgumentMap(msi.gaml.descriptions.ExpressionDescription)
-	 */
 	@Override
 	public Map<String, IExpressionDescription> createArgumentMap(final IExpressionDescription args,
 		final IDescription context) {
@@ -112,48 +86,33 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	@Override
 	public IVarExpression createVar(final String name, final IType type, final IType contentType,
 		final boolean isConst, final int scope) {
-		if ( scope == IVarExpression.GLOBAL ) { return new GlobalVariableExpression(name, type,
-			contentType, isConst); }
-		if ( scope == IVarExpression.AGENT ) { return new AgentVariableExpression(name, type,
-			contentType, isConst); }
-		if ( scope == IVarExpression.TEMP ) { return new TempVariableExpression(name, type,
-			contentType); }
-		if ( scope == IVarExpression.EACH ) { return new EachExpression(name, type, contentType); }
-		if ( scope == IVarExpression.WORLD ) { return new WorldExpression(name, type, contentType); }
-		if ( scope == IVarExpression.SELF ) { return new SelfExpression(name, type, contentType); }
-		return null;
+		switch (scope) {
+			case IVarExpression.GLOBAL:
+				return new GlobalVariableExpression(name, type, contentType, isConst);
+			case IVarExpression.AGENT:
+				return new AgentVariableExpression(name, type, contentType, isConst);
+			case IVarExpression.TEMP:
+				return new TempVariableExpression(name, type, contentType);
+			case IVarExpression.EACH:
+				return new EachExpression(name, type, contentType);
+			case IVarExpression.WORLD:
+				return new WorldExpression(name, type, contentType);
+			case IVarExpression.SELF:
+				return new SelfExpression(name, type, contentType);
+			default:
+				return null;
+		}
 	}
 
 	public ListExpression createList(final List<? extends IExpression> elements) {
-		IType contentType = Types.NO_TYPE;
-		boolean allTheSame = true;
-		int n = elements.size();
-		if ( n != 0 ) {
-			IExpression e = elements.get(0);
-			if ( e != null ) {
-				contentType = e.type();
-			}
-			for ( int i = 1; i < n; i++ ) {
-				e = elements.get(i);
-				if ( e != null ) {
-					allTheSame = e.type() == contentType;
-				}
-				if ( !allTheSame ) {
-					break;
-				}
-			}
-		}
-		ListExpression list = new ListExpression(elements);
-		if ( allTheSame ) {
-			list.setContentType(contentType);
-		}
-		return list;
+		return new ListExpression(elements);
 	}
 
 	public MapExpression createMap(final List<? extends IExpression> elements) {
-		MapExpression map = new MapExpression(elements);
-		return map;
+		return new MapExpression(elements);
 	}
+
+	private final List<IType> temp_types = new ArrayList(10);
 
 	@Override
 	public IExpression createUnaryExpr(final String op, final IExpression c,
@@ -170,24 +129,24 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			IType originalChildType = childType;
 
 			if ( !ops.containsKey(childType) ) {
-				List<IType> types = new ArrayList();
+				temp_types.clear();
 				for ( Map.Entry<IType, IOperator> entry : ops.entrySet() ) {
 					if ( entry.getKey().isAssignableFrom(childType) ) {
-						types.add(entry.getKey());
+						temp_types.add(entry.getKey());
 					}
 				}
-				if ( types.size() == 0 ) {
+				if ( temp_types.size() == 0 ) {
 					context.flagError("No operator found for applying '" + op + "' to " +
 						childType + " (operators available for " +
 						Arrays.toString(ops.keySet().toArray()) + ")");
 					return null;
 				}
-				childType = types.get(0);
+				childType = temp_types.get(0);
 				int dist = childType.distanceTo(originalChildType);
-				for ( int i = 1, n = types.size(); i < n; i++ ) {
-					int d = types.get(i).distanceTo(originalChildType);
+				for ( int i = 1, n = temp_types.size(); i < n; i++ ) {
+					int d = temp_types.get(i).distanceTo(originalChildType);
 					if ( d < dist ) {
-						childType = types.get(i);
+						childType = temp_types.get(i);
 						dist = d;
 					}
 				}
@@ -198,15 +157,14 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			}
 
 			final IOperator helper = ops.get(childType);
-			// if ( originalChildType != childType ) {
-			// ops.put(originalChildType, helper);
-			// }
 			return helper.copy().init(op, child, null, context);
 		}
 		context.flagError("Unary operator " + op + " does not exist");
 		return null;
 
 	}
+
+	private final List<TypePair> temp_pairs = new ArrayList(10);
 
 	public IExpression createBinaryExpr(final String op, final IExpression l, final IExpression r,
 		final IDescription context /* useful as a workaround for primitive operators */) {
@@ -226,14 +184,14 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			Map<TypePair, IOperator> map = BINARIES.get(op);
 			IType leftType = left.type();
 			IType rightType = right.type();
-			List<TypePair> list = new ArrayList();
+			temp_pairs.clear();
 			// We filter the one(s) compatible with the operand types
 			for ( TypePair p : map.keySet() ) {
 				if ( p.isCompatibleWith(leftType, rightType) ) {
-					list.add(p);
+					temp_pairs.add(p);
 				}
 			}
-			if ( list.size() == 0 ) {
+			if ( temp_pairs.size() == 0 ) {
 				// No pair is matching the operand types, we throw an exception
 				context.flagError("No binary operator found for applying '" + op +
 					"' to left operand " + leftType.toString() + " and " + rightType.toString() +
@@ -241,14 +199,14 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				return null;
 			}
 			// We gather the first one
-			TypePair pair = list.get(0);
+			TypePair pair = temp_pairs.get(0);
 			IOperator operator = map.get(pair);
-			if ( list.size() > 1 ) {
+			if ( temp_pairs.size() > 1 ) {
 				// If multiple candidates are present, we choose the one with the smallest distance
 				// to the operand types.
 				int min = pair.distanceTo(leftType, rightType);
-				for ( int i = 1, n = list.size(); i < n; i++ ) {
-					TypePair p = list.get(i);
+				for ( int i = 1, n = temp_pairs.size(); i < n; i++ ) {
+					TypePair p = temp_pairs.get(i);
 					int dist = p.distanceTo(leftType, rightType);
 					if ( dist < min ) {
 						min = dist;
@@ -268,10 +226,6 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			if ( coercingType != null ) {
 				right = createUnaryExpr(coercingType.toString(), right, context);
 			}
-			// We add the species context in case this operator is a primitive
-			// if ( operator instanceof PrimitiveOperator ) {
-			// ((PrimitiveOperator) operator).setTargetSpecies(context.getSpeciesContext());
-			// }
 			// And we return it.
 			return operator.init(op, left, right, context);
 		}
@@ -284,7 +238,6 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		final IType returnType, final IOperatorExecuter helper, final boolean canBeConst,
 		final short type, final short contentType, final boolean lazy) {
 		IOperator op;
-
 		if ( binary ) {
 			if ( var ) {
 				op = new BinaryVarOperator(returnType, helper, canBeConst, type, contentType, lazy);
@@ -298,31 +251,11 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		return op;
 	}
 
-	// @Override
-	// public IOperator createPrimitiveOperator(final String name) {
-	// return new PrimitiveOperator(name);
-	// }
-	//
-	// @Override
-	// public IOperator copyPrimitiveOperatorForSpecies(final IOperator op, final IDescription
-	// species) {
-	// IOperator copy = op.copy();
-	// // ((PrimitiveOperator) copy).setTargetSpecies(species);
-	// return copy;
-	// }
-
-	/**
-	 * @see msi.gaml.expressions.IExpressionFactory#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
-	 */
 	@Override
 	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
-		// if ( s.getAst() != null ) { return NEW_PARSER.parseLiteralArray(s, context); }
 		return parser.parseLiteralArray(s, context);
 	}
 
-	/**
-	 * @see msi.gaml.expressions.IExpressionFactory#getParser()
-	 */
 	@Override
 	public IExpressionParser getParser() {
 		return parser;
