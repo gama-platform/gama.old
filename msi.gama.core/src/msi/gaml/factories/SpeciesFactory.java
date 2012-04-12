@@ -86,9 +86,15 @@ public class SpeciesFactory extends SymbolFactory {
 		List<ISymbol> lce = new ArrayList();
 		SpeciesDescription desc = (SpeciesDescription) sd.getSpeciesContext();
 		// we first compile the variables in the right order
+		// long time = System.currentTimeMillis();
 		for ( String s : desc.getVarNames() ) {
 			lce.add(compileDescription(desc.getVariable(s), factory));
 		}
+
+		// long now = System.currentTimeMillis();
+		// GuiUtils.debug("Compiling the variables of " + desc.getName() + " took: " + (now - time)
+		// +
+		// "ms");
 		// then the rest
 		for ( IDescription s : sd.getChildren() ) {
 			if ( !(s instanceof VariableDescription) ) {
