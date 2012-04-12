@@ -350,10 +350,6 @@ public class SymbolFactory implements ISymbolFactory {
 			IExpression e = compileFacet(s, ed, desc, md, factory);
 			ed.setExpression(e);
 		}
-		// for ( String s : new ArrayList<String>(rawFacets.keySet()) ) {
-		// IExpression e = compileFacet(s, desc, md, factory);
-		// rawFacets.put(s, e);
-		// }
 		ISymbol cs = md.getConstructor().create(desc);;
 		if ( cs == null ) { return null; }
 		if ( md.hasSequence() ) {
