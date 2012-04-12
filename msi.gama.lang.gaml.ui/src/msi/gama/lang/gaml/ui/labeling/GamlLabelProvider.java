@@ -18,7 +18,6 @@
  */
 package msi.gama.lang.gaml.ui.labeling;
 
-import java.util.Map;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -101,9 +100,9 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	String image(final/* Sub */Statement ele) {
 		String kw = EGaml.getKeyOf(ele);
 		if ( kw.equals("var") || kw.equals("const") ) {
-			for ( Map.Entry<String, Expression> f : EGaml.getFacetsOf(ele).entrySet() ) {
-				if ( f.getKey().equals("type") && f.getValue() instanceof VariableRef ) {
-					VariableRef type = (VariableRef) f.getValue();
+			for ( FacetExpr f : ele.getFacets() ) {
+				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
+					VariableRef type = (VariableRef) f.getExpr();
 					return "_" + (type.getRef() == null ? "" : type.getRef().getName()) + ".png";
 				}
 			}

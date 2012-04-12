@@ -10,6 +10,7 @@ import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -200,6 +201,17 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 
 	}
 
+	IDocumentListener docListener = new IDocumentListener() {
+
+		@Override
+		public void documentAboutToBeChanged(final DocumentEvent event) {}
+
+		@Override
+		public void documentChanged(final DocumentEvent event) {
+			GAMA.getGamlBuilder().invalidate(resource);
+		}
+	};
+
 	/**
 	 * @see msi.gama.lang.gaml.validation.IBuilderListener#beforeBuilding(org.eclipse.emf.ecore.resource.Resource)
 	 */
@@ -230,8 +242,11 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 
 	@Override
 	public void afterBuilding(final Resource ast, final IModel model) {
-		if ( !isUpdatingToolbar && getXtextResource() == ast ) {
-			updateToolbar(model);
+		if ( ast == getXtextResource() ) {
+			getDocument().addDocumentListener(docListener);
+			if ( !isUpdatingToolbar ) {
+				updateToolbar(model);
+			}
 		}
 	}
 

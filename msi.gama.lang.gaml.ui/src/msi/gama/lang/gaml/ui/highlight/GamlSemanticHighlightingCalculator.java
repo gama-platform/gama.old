@@ -90,6 +90,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
+			if ( n == null ) { return; }
 			if ( position > -1 ) {
 				int i = 0;
 				for ( ILeafNode node : n.getLeafNodes() ) {
@@ -114,6 +115,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		if ( text == null ) { return; }
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
+			if ( n == null ) { return; }
 			for ( ILeafNode node : n.getLeafNodes() ) {
 				if ( !node.isHidden() ) {
 					if ( NodeModelUtils.getTokenText(node).startsWith(text) ) {
