@@ -83,9 +83,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	private ActionListener focusListener;
 	
 
-	private float envWidth;
-	private float envHeight;
-	private float scale_rate;
+	//Environment properties useful to set the camera position.
+	private float envWidth, envHeight,scale_rate,maxDim;
+
 
 	/////OpenGL member///////
 	private GLU glu;
@@ -108,15 +108,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		if (envWidth > envHeight) {
 			scale_rate = 10 / envWidth;
+			maxDim=envWidth;
 		} else {
 			scale_rate = 10 / envHeight;
+			maxDim=envHeight;
 		}
 
 		// Initialize the user camera
 		camera = new Camera();
 		camera.InitParam();
-		System.out
-				.println("env_width:" + env_width + "env_height" + env_height);
+		System.out.println("env_width:" + env_width + "env_height" + env_height);
 
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(this);
@@ -545,9 +546,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 			// For java2D the constructor was call here
 			// openGLGraphics = new JOGLAWTDisplayGraphics(buffImage, gl, glu);
+			if(openGLGraphics != null)
+			{
 			openGLGraphics.setDisplayDimensions(bWidth, bHeight);
 			openGLGraphics.setGraphics((Graphics2D) newImage.getGraphics());
 			openGLGraphics.setClipping(getImageClipBounds());
+			}
 			redrawNavigator();
 			canBeUpdated(true);
 			return true;
@@ -636,6 +640,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		camera.setxLPos(envWidth / 2 * scale_rate);
 		camera.setyPos(-envHeight / 2 * scale_rate);
 		camera.setyLPos(-envHeight / 2 * scale_rate);
+		camera.PrintParam();
+		//FIXME: This need to be normalize
+		camera.setzPos(maxDim/50+5.0f);
+		camera.setzLPos(0.0f);
 	}
 
 	@Override
@@ -687,7 +695,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	public void setOrigin(final int x, final int y) {
 		this.origin = new Point(x, y);
 		translation.setToTranslation(origin.x, origin.y);
-		openGLGraphics.setClipping(getImageClipBounds());
+		if(openGLGraphics!=null){
+			openGLGraphics.setClipping(getImageClipBounds());
+		}
+		
 		redrawNavigator();
 	}
 

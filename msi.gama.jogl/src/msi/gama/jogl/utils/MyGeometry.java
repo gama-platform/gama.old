@@ -10,6 +10,8 @@ public class MyGeometry {
 	public Color color;
 	
 	public String type;
+	
+	public float size;
 
 	public MyGeometry(int numPoints) {
 		vertices = new Vertex[numPoints];

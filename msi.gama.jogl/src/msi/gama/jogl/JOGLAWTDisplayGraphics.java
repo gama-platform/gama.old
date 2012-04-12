@@ -34,6 +34,7 @@ import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
+import com.vividsolutions.jts.awt.ShapeReader;
 
 /**
  * 
@@ -65,16 +66,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// OpenGL member
 	private GL myGl;
 	private GLU myGlu;
-	
+
 	// Handle opengl primitive.
-    public MyGraphics graphicsGLUtils;
+	public MyGraphics graphicsGLUtils;
 
 	// Each geometry drawn is stored in a tab.
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
-	// Define the environment properties. 
-	public float myWidth, myHeight,myScaleRate;
-		
+	// Define the environment properties.
+	public float myWidth, myHeight, myScaleRate, myMaxDim;;
+
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
 
@@ -90,19 +91,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private final ShapeWriter sw = new ShapeWriter(pt);
 
 	/**
-	 * Constructor for OpenGL DisplayGraphics constructor. Simplify for opengl display.
-	 * The environment property are given from the display surface.
+	 * Constructor for OpenGL DisplayGraphics constructor. Simplify for opengl
+	 * display. The environment property are given from the display surface.
 	 * 
 	 * @param GL
 	 *            gl
 	 * @param GLU
 	 *            glu
-	 * @param float
-	 * 			env_width
-	 * @param float
-	 * 			env_height
-	 * @param float
-	 * 			scale_rate                       
+	 * @param float env_width
+	 * @param float env_height
+	 * @param float scale_rate
 	 */
 	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu, float env_width,
 			float env_height, float scale_rate) {
@@ -110,8 +108,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGlu = glu;
 		myWidth = env_width;
 		myHeight = env_height;
-		myScaleRate=scale_rate;
-		z=(float) (0.1/myScaleRate);
+		myScaleRate = scale_rate;
+
+		if (myWidth > myHeight) {
+			myMaxDim = myWidth;
+		} else {
+			myMaxDim = myHeight;
+		}
+
+		z = (float) (0.1 / myScaleRate);
 		graphicsGLUtils = new MyGraphics();
 	}
 
@@ -354,9 +359,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		//System.out.println("DrawCircle");
-		AddCircleInGeometries(curX, curY, c);
-		return drawShape(c, oval, fill, angle);
+		System.out.println("DrawCircle");
+		// FIXME: We must define the size of the circle.Not sure if you must use
+		// curWidth
+		AddCircleInGeometries(curX, curY, c, curWidth);
+		oval.setFrame(curX, curY, curWidth, curWidth);
+		return oval.getBounds2D();
+		// return drawShape(c, oval, fill, angle);
 	}
 
 	@Override
@@ -386,7 +395,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawLine(final Color c, final double toX,
 			final double toY) {
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
-		return drawShape(c, line, false, null);
+		return line.getBounds2D();
+		// return drawShape(c, line, false, null);
 	}
 
 	/**
@@ -404,7 +414,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final Integer angle) {
 		System.out.println("JOGLDisplayGraphics::drawRectangle");
 		rect.setFrame(curX, curY, curWidth, curHeight);
-		return drawShape(color, rect, fill, angle);
+		return rect.getBounds2D();
+		// return drawShape(color, rect, fill, angle);
 	}
 
 	/**
@@ -448,42 +459,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		//System.out.println("DisplayGraphics::drawGeometry: "+ geometry.getGeometryType());
-
-
-		// For each geometry get the type
-		for (int i = 0; i < geometry.getNumGeometries(); i++) {
-			Envelope e = geometry.getEnvelopeInternal();
-			if (geometry.getGeometryType() == "MultiPolygon") {
-				MultiPolygon polygons = (MultiPolygon) geometry;
-				AddMultiPolygonInGeometries(polygons, color);
-			}
-
-			else if (geometry.getGeometryType() == "Polygon") {
-				Polygon polygon = (Polygon) geometry;
-				// AddPolygonInGeometries(polygon, color);
-			}
-
-			else if (geometry.getGeometryType() == "MultiLineString") {
-				MultiLineString lines = (MultiLineString) geometry;
-				AddMultiLineInGeometries(lines, color);
-			}
-
-			else if (geometry.getGeometryType() == "LineString") {
-				LineString lines = (LineString) geometry;
-				AddLineInGeometries(lines, color);
-			}
-
-			else if (geometry.getGeometryType() == "Point") {
-				Point point = (Point) geometry;
-				AddPointInGeometries(point, color);
-			}
-		}
-
+		System.out.println("DisplayGraphics::drawGeometry: "
+				+ geometry.getGeometryType());
+		AddGeometryInGeometries(geometry, color);
 		// Use to respect IDisplaySurface interface
 		boolean f = geometry instanceof LineString
 				|| geometry instanceof MultiLineString ? false : fill;
-		return drawShape(color, sw.toShape(geometry), f, angle);
+
+		return sw.toShape(geometry).getBounds2D();
+		// return drawShape(color, sw.toShape(geometry), f, angle);
 	}
 
 	/**
@@ -501,12 +485,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s,
 			final boolean fill, final Integer angle) {
+		System.out.println("drawShape");
+
 		try {
 			Rectangle2D r = s.getBounds2D();
 			AffineTransform saved = g2.getTransform();
+			// FIXME: Why not doing that for every shape.
+			// GeometryFactory geometryFactory = new GeometryFactory();
+			// ShapeReader shapeReader = new ShapeReader(geometryFactory);
+			// Geometry curGeometry =
+			// shapeReader.read(s.getPathIterator(saved));
+			// AddGeometryInGeometries(curGeometry,c);
+
 			if (angle != null) {
 				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2,
 						r.getY() + r.getHeight() / 2);
+				// drawGeometry(curGeometry, c,fill,angle);
+			} else {
+				// drawGeometry(curGeometry, c,fill,0);
 			}
 
 			setDrawingColor(c);
@@ -541,6 +537,39 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return clipping;
 	}
 
+	private void AddGeometryInGeometries(Geometry geometry, Color color) {
+		// For each geometry get the type
+		System.out.println("AddGeometryInGeometries: "
+				+ geometry.getGeometryType());
+		for (int i = 0; i < geometry.getNumGeometries(); i++) {
+			Envelope e = geometry.getEnvelopeInternal();
+			if (geometry.getGeometryType() == "MultiPolygon") {
+				MultiPolygon polygons = (MultiPolygon) geometry;
+				AddMultiPolygonInGeometries(polygons, color);
+			}
+
+			else if (geometry.getGeometryType() == "Polygon") {
+				Polygon polygon = (Polygon) geometry;
+				AddPolygonInGeometries(polygon, color);
+			}
+
+			else if (geometry.getGeometryType() == "MultiLineString") {
+				MultiLineString lines = (MultiLineString) geometry;
+				AddMultiLineInGeometries(lines, color);
+			}
+
+			else if (geometry.getGeometryType() == "LineString") {
+				LineString lines = (LineString) geometry;
+				AddLineInGeometries(lines, color);
+			}
+
+			else if (geometry.getGeometryType() == "Point") {
+				Point point = (Point) geometry;
+				AddPointInGeometries(point, color);
+			}
+		}
+	}
+
 	private void AddMultiPolygonInGeometries(final MultiPolygon polygons,
 			final Color color) {
 
@@ -557,8 +586,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			// number of point of the exterior ring)
 
 			for (int j = 0; j < numExtPoints; j++) {
-				curGeometry.vertices[j].x = (float) (p.getExteriorRing().getPointN(j).getX());
-				curGeometry.vertices[j].y = -(float) (p.getExteriorRing().getPointN(j).getY());
+				curGeometry.vertices[j].x = (float) (p.getExteriorRing()
+						.getPointN(j).getX());
+				curGeometry.vertices[j].y = -(float) (p.getExteriorRing()
+						.getPointN(j).getY());
 				curGeometry.vertices[j].z = z;
 				curGeometry.vertices[j].u = 6.0f + j;
 				curGeometry.vertices[j].v = 0.0f + j;
@@ -575,8 +606,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		int numExtPoints = polygon.getExteriorRing().getNumPoints();
 		MyGeometry curGeometry = new MyGeometry(numExtPoints);
 		for (int j = 0; j < numExtPoints; j++) {
-			curGeometry.vertices[j].x = (float) (polygon.getExteriorRing().getPointN(j).getX());
-			curGeometry.vertices[j].y = -(float) (polygon.getExteriorRing().getPointN(j).getY());
+			curGeometry.vertices[j].x = (float) (polygon.getExteriorRing()
+					.getPointN(j).getX());
+			curGeometry.vertices[j].y = -(float) (polygon.getExteriorRing()
+					.getPointN(j).getY());
 			curGeometry.vertices[j].z = z;
 			curGeometry.vertices[j].u = 6.0f + j;
 			curGeometry.vertices[j].v = 0.0f + j;
@@ -637,6 +670,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curGeometry.vertices[0].z = z;
 		curGeometry.vertices[0].u = 6.0f;
 		curGeometry.vertices[0].v = 0.0f;
+		//A point size is equal to 1% of the max size of the environment.
+		curGeometry.size = 0.01f * this.myMaxDim;
 		curGeometry.color = color;
 		curGeometry.type = "Point";
 
@@ -644,11 +679,26 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	}
 
-	private void AddCircleInGeometries(int x, int y, Color color) {
+	private void AddCircleInGeometries(int x, int y, Color color, int size) {
 		MyGeometry curGeometry = new MyGeometry(1);
-		//FIXME: why we need to use currentScale?
-		curGeometry.vertices[0].x = (float) ((float) x/currentXScale-0.5f);
-		curGeometry.vertices[0].y = (float) (-(float) y/currentYScale-0.5f);
+		// FIXME: why we need to use currentScale?
+		curGeometry.vertices[0].x = (float) ((float) x / currentXScale - 0.5f);
+		curGeometry.vertices[0].y = (float) (-(float) y / currentYScale - 0.5f);
+		curGeometry.vertices[0].z = z;
+		curGeometry.vertices[0].u = 6.0f;
+		curGeometry.vertices[0].v = 0.0f;
+		curGeometry.color = color;
+		curGeometry.size = (float) (size);
+		curGeometry.type = "Circle";
+		this.myGeometries.add(curGeometry);
+
+	}
+
+	private void AddShapeInGeometries(int x, int y, Color color) {
+		MyGeometry curGeometry = new MyGeometry(1);
+		// FIXME: why we need to use currentScale?
+		curGeometry.vertices[0].x = (float) ((float) x / currentXScale - 0.5f);
+		curGeometry.vertices[0].y = (float) (-(float) y / currentYScale - 0.5f);
 		curGeometry.vertices[0].z = z;
 		curGeometry.vertices[0].u = 6.0f;
 		curGeometry.vertices[0].v = 0.0f;
@@ -663,9 +713,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Iterator<MyGeometry> it = this.myGeometries.iterator();
 		while (it.hasNext()) {
 			MyGeometry curGeometry = (MyGeometry) it.next();
-			//Color are define in RGB value (from 0 to 255) openGl use value from 0 to 1.
-			myGl.glColor3f(curGeometry.color.getRed()/255,
-					curGeometry.color.getGreen()/255, curGeometry.color.getBlue()/255);
+			// Color are define in RGB value (from 0 to 255) openGl use value
+			// from 0 to 1.
+			myGl.glColor3f((float) curGeometry.color.getRed() / 255,
+					(float) curGeometry.color.getGreen() / 255,
+					(float) curGeometry.color.getBlue() / 255);
+			// System.out.println("R:"+(float)curGeometry.color.getRed()/255+"G:"+(float)curGeometry.color.getGreen()/255+"B:"+(float)curGeometry.color.getBlue()/255);
 			if (curGeometry.type == "MultiPolygon"
 					|| curGeometry.type == "Polygon") {
 				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,
@@ -674,10 +727,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					|| curGeometry.type == "LineString") {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,
 						myScaleRate);
-			} else if (curGeometry.type == "Point" || curGeometry.type == "Circle") {
+			} else if (curGeometry.type == "Point"
+					|| curGeometry.type == "Circle") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
-						curGeometry.vertices[0].z, 10, 5, myScaleRate);
+						curGeometry.vertices[0].z, 20, curGeometry.size / 2,
+						myScaleRate);
 			}
 
 		}
@@ -690,7 +745,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void DrawEnvironmentBounds() {
 
 		float alpha = 0.9f;
-		myGl.glColor4f(1.0f, 1.0f, 1.0f, alpha);
+		myGl.glColor4f(0.0f, 0.0f, 1.0f, alpha);
 
 		MyGeometry backgroundGeometry = new MyGeometry(4);
 
@@ -710,14 +765,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		backgroundGeometry.vertices[2].x = myWidth;
 		// WARNING: Opengl Y axes is inversed!!!
-		backgroundGeometry.vertices[2].y = -(float)(myHeight);
+		backgroundGeometry.vertices[2].y = -(float) (myHeight);
 		backgroundGeometry.vertices[2].z = z;
 		backgroundGeometry.vertices[2].u = 6.0f;
 		backgroundGeometry.vertices[2].v = 0.0f;
 
 		backgroundGeometry.vertices[3].x = 0.0f;
 		// WARNING: Opengl Y axes is inversed!!!
-		backgroundGeometry.vertices[3].y = -(float)(myHeight);
+		backgroundGeometry.vertices[3].y = -(float) (myHeight);
 		backgroundGeometry.vertices[3].z = z;
 		backgroundGeometry.vertices[3].u = 6.0f;
 		backgroundGeometry.vertices[3].v = 0.0f;
