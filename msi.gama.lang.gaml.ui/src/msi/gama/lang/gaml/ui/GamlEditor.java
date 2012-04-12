@@ -45,6 +45,7 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	Label status;
 	volatile boolean isUpdatingToolbar = false;
 	volatile IModel currentModel;
+	volatile int modelCount = 0;
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -152,16 +153,28 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 		status.setText(text);
 	}
 
-	public void updateToolbar(final IModel model) {
+	private void setModel(final IModel model) {
+		GuiUtils.debug(this.getTitle() + " changing its current model to " + model);
+		if ( currentModel != null && currentModel != GAMA.getModel() ) {
+			GuiUtils.debug("     ==> Old model #" + modelCount + " being disposed in " +
+				this.getTitle());
+			currentModel.dispose();
+		}
+		if ( model != null ) {
+			modelCount++;
+			GuiUtils.debug("     ==> New model #" + modelCount +
+				" being received and memorized by " + this.getTitle());
+		}
 		currentModel = model;
+	}
+
+	public void updateToolbar(final IModel model) {
+
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				isUpdatingToolbar = true;
-
-				// GuiUtils.debug("Beginning updating toolbar of " +
-				// getResource().getLocationURI());
 
 				if ( toolbar == null || toolbar.isDisposed() ) {
 					isUpdatingToolbar = false;
@@ -241,17 +254,20 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	}
 
 	@Override
-	public void afterBuilding(final Resource ast, final IModel model) {
+	public boolean afterBuilding(final Resource ast, final IModel model) {
 		if ( ast == getXtextResource() ) {
-			getDocument().addDocumentListener(docListener);
 			if ( !isUpdatingToolbar ) {
+				setModel(model);
 				updateToolbar(model);
+				return true;
 			}
+			return false;
 		}
+		return false;
 	}
 
 	public void forgetModel() {
-		currentModel = null;
+		setModel(null);
 	}
 
 }

@@ -187,10 +187,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	public void completeMemberRef_Op(final MemberRef m, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		if ( m == null ) { return; }
 		IModel model = getModel(context.getRootModel().eResource());
 
-		if ( m == null ) { return; }
 		EObject lexp = m.getLeft();
 		final String kname = EGaml.getKeyOf(lexp);
 
@@ -202,7 +201,10 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			}
 			currDesc = (SpeciesDescription) sd.getDescriptionDeclaringVar(kname);
 		}
-		if ( currDesc == null ) { return; }
+		if ( currDesc == null ) {
+			model.dispose();
+			return;
+		}
 		final String typeofVar = currDesc.getVariable(kname).getType().getSpeciesName();
 		if ( typeofVar != null ) {
 			for ( String st : ws.getSpeciesDescription(typeofVar).getVarNames() ) {
@@ -210,6 +212,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 				acceptor.accept(createCompletionProposal(st, " " + st + " ", varImage, context));
 			}
 		}
+		model.dispose();
 
 	}
 

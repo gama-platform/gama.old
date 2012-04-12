@@ -9,11 +9,10 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import org.apache.log4j.*;
+import msi.gama.common.util.GuiUtils;
 import org.eclipse.core.resources.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.*;
-import org.eclipse.xtext.linking.impl.AbstractCleaningLinker;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.eclipse.xtext.ui.editor.model.*;
@@ -27,15 +26,7 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 
 	@Override
 	public void partOpened(final IWorkbenchPartReference ref) {
-		GamlEditor activeEditor = activeEditor(ref);
-		// GAMA.getGamlBuilder().addListener(activeEditor);
-		validate(ref);
-	}
-
-	@Override
-	public void partClosed(final IWorkbenchPartReference ref) {
-		GamlEditor activeEditor = activeEditor(ref);
-		// GAMA.getGamlBuilder().removeListener(activeEditor);
+		// validate(ref);
 	}
 
 	/**
@@ -45,7 +36,8 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 	 */
 	@Override
 	public void partActivated(final IWorkbenchPartReference ref) {
-		Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
+		// Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
+		GuiUtils.debug("Editor " + ref.getTitle() + " has been activated");
 		validate(ref);
 	}
 
@@ -53,13 +45,12 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 	public void partDeactivated(final IWorkbenchPartReference ref) {
 		GamlEditor editor = activeEditor(ref);
 		if ( editor == null ) { return; }
+		GuiUtils.debug("Editor " + ref.getTitle() + " has been deactivated");
 		editor.forgetModel();
 	}
 
 	private GamlEditor activeEditor(final IWorkbenchPartReference ref) {
-		IWorkbenchPage page = ref.getPage();
-		if ( page == null ) { return null; }
-		IEditorPart part = page.getActiveEditor();
+		IWorkbenchPart part = ref.getPart(false);
 		if ( !(part instanceof GamlEditor) ) { return null; }
 		return (GamlEditor) part;
 	}
