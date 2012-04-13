@@ -731,7 +731,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					|| curGeometry.type == "Circle") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
-						curGeometry.vertices[0].z, 20, curGeometry.size / 2,
+						curGeometry.vertices[0].z, 20, curGeometry.size/2,
 						myScaleRate);
 				
 			}

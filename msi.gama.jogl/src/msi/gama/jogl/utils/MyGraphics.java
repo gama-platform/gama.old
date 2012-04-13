@@ -1,6 +1,5 @@
 package msi.gama.jogl.utils;
 
-
 import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_QUADS;
 import static javax.media.opengl.GL.GL_TRIANGLES;
@@ -19,7 +18,6 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
 
 import javax.vecmath.Vector3f;
 
@@ -43,17 +41,18 @@ public class MyGraphics {
 		gl.glEnd();
 
 	}
-	
-	public void DrawNormalizeLine(GL gl, GLU glu, MyGeometry geometry,float scale_rate, float size) {
+
+	public void DrawNormalizeLine(GL gl, GLU glu, MyGeometry geometry,
+			float scale_rate, float size) {
 		// FIXME: Should test that vertices is initialized before to draw
 		gl.glLineWidth(size);
 		gl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < geometry.vertices.length - 1; j++) {
-			gl.glVertex3f((float) ((geometry.vertices[j].x)*scale_rate),
-					(float) ((geometry.vertices[j].y)*scale_rate),
+			gl.glVertex3f((float) ((geometry.vertices[j].x) * scale_rate),
+					(float) ((geometry.vertices[j].y) * scale_rate),
 					(float) ((geometry.vertices[j].z)));
-			gl.glVertex3f((float) ((geometry.vertices[j + 1].x)*scale_rate),
-					(float) ((geometry.vertices[j + 1].y)*scale_rate),
+			gl.glVertex3f((float) ((geometry.vertices[j + 1].x) * scale_rate),
+					(float) ((geometry.vertices[j + 1].y) * scale_rate),
 					(float) ((geometry.vertices[j + 1].z)));
 		}
 		gl.glEnd();
@@ -92,9 +91,9 @@ public class MyGraphics {
 		glu.gluTessEndPolygon(tobj);
 
 	}
-	
+
 	public void DrawNormalizeCircle(GL gl, GLU glu, float x, float y, float z,
-			int numPoints, float radius,float scale) {
+			int numPoints, float radius, float scale) {
 
 		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
 
@@ -112,8 +111,10 @@ public class MyGraphics {
 		for (int k = 0; k < numPoints; k++) {
 			angle = (float) (k * 2 * Math.PI / numPoints);
 
-			tempPolygon[k][0] = (float) (x + (Math.cos(angle)) * radius)*scale;
-			tempPolygon[k][1] = (float) (y + (Math.sin(angle)) * radius)*scale;
+			tempPolygon[k][0] = (float) (x + (Math.cos(angle)) * radius)
+					* scale;
+			tempPolygon[k][1] = (float) (y + (Math.sin(angle)) * radius)
+					* scale;
 			tempPolygon[k][2] = z;
 		}
 
@@ -124,6 +125,23 @@ public class MyGraphics {
 		glu.gluTessEndContour(tobj);
 		glu.gluTessEndPolygon(tobj);
 
+		// Add a line around the circle
+		//FIXME/ Check the cost of this line
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glLineWidth(1.1f);
+		gl.glBegin(GL.GL_LINES);
+		float xBegin, xEnd, yBegin, yEnd;
+		for (int k = 0; k < numPoints; k++) {
+			angle = (float) (k * 2 * Math.PI / numPoints);
+			xBegin = (float) (x + (Math.cos(angle)) * radius) * scale;
+			yBegin = (float) (y + (Math.sin(angle)) * radius) * scale;
+			angle = (float) ((k + 1) * 2 * Math.PI / numPoints);
+			xEnd = (float) (x + (Math.cos(angle)) * radius) * scale;
+			yEnd = (float) (y + (Math.sin(angle)) * radius) * scale;
+			gl.glVertex3f(xBegin, yBegin, z);
+			gl.glVertex3f(xEnd, yEnd, z);
+		}
+		gl.glEnd();
 	}
 
 	public void DrawGeometry(GL gl, GLU glu, MyGeometry geometry, float z_offset) {
@@ -159,9 +177,9 @@ public class MyGraphics {
 		glu.gluTessEndPolygon(tobj);
 
 	}
-	
-	
-	public void DrawNormalizeGeometry(GL gl, GLU glu, MyGeometry geometry, float z_offset,float scale) {
+
+	public void DrawNormalizeGeometry(GL gl, GLU glu, MyGeometry geometry,
+			float z_offset, float scale) {
 
 		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
 
@@ -180,8 +198,8 @@ public class MyGraphics {
 		// Convert vertices as a list of double for
 		// gluTessVertex
 		for (int j = 0; j < curPolyGonNumPoints; j++) {
-			tempPolygon[j][0] = (float) (geometry.vertices[j].x*scale);
-			tempPolygon[j][1] = (float) (geometry.vertices[j].y*scale);
+			tempPolygon[j][0] = (float) (geometry.vertices[j].x * scale);
+			tempPolygon[j][1] = (float) (geometry.vertices[j].y * scale);
 			tempPolygon[j][2] = (float) ((geometry.vertices[j].z + z_offset));
 		}
 
@@ -192,11 +210,11 @@ public class MyGraphics {
 
 		glu.gluTessEndContour(tobj);
 		glu.gluTessEndPolygon(tobj);
-		//FIXME: This add a black line around the polygon. 
-		//This is just for a better visual quality but we should check the cost of it.
-		gl.glColor3f(0.0f,0.0f,0.0f);
-		this.DrawNormalizeLine(gl, glu,geometry,scale,1.0f);
-		
+		// FIXME: This add a black line around the polygon.
+		// This is just for a better visual quality but we should check the cost
+		// of it.
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		this.DrawNormalizeLine(gl, glu, geometry, scale, 1.0f);
 
 	}
 
@@ -226,47 +244,43 @@ public class MyGraphics {
 			vertices[0].x = geometry.vertices[j].x;
 			vertices[0].y = geometry.vertices[j].y;
 			vertices[0].z = geometry.vertices[j].z + z_offset;
-					
+
 			vertices[1].x = geometry.vertices[k].x;
 			vertices[1].y = geometry.vertices[k].y;
 			vertices[1].z = geometry.vertices[k].z + z_offset;
-					
+
 			vertices[2].x = geometry.vertices[k].x;
 			vertices[2].y = geometry.vertices[k].y;
 			vertices[2].z = geometry.vertices[k].z;
-				
+
 			vertices[3].x = geometry.vertices[j].x;
 			vertices[3].y = geometry.vertices[j].y;
 			vertices[3].z = geometry.vertices[j].z;
-			
-			//Compute the normal of the quad
-			 Vector3f normal = new Vector3f(0.0f,0.0f,0.0f);
-			
-			
-			 for (int i=0; i<4; i++)
-			 {
-			 int i1 = (i+1)%4;
-			 normal.x += (vertices[i].y - vertices[i1].y)
-			 *(vertices[i].z + vertices[i1].z);
-			 normal.y += (vertices[i].z - vertices[i1].z)
-			 *(vertices[i].x + vertices[i1].x);
-			 normal.z += (vertices[i].x - vertices[i1].x)
-			 *(vertices[i].y + vertices[i1].y);
-			 }
-			 normal.normalize(normal);
-			 //FIXME: The normal is not wel computed.
+
+			// Compute the normal of the quad
+			Vector3f normal = new Vector3f(0.0f, 0.0f, 0.0f);
+
+			for (int i = 0; i < 4; i++) {
+				int i1 = (i + 1) % 4;
+				normal.x += (vertices[i].y - vertices[i1].y)
+						* (vertices[i].z + vertices[i1].z);
+				normal.y += (vertices[i].z - vertices[i1].z)
+						* (vertices[i].x + vertices[i1].x);
+				normal.z += (vertices[i].x - vertices[i1].x)
+						* (vertices[i].y + vertices[i1].y);
+			}
+			normal.normalize(normal);
+			// FIXME: The normal is not wel computed.
 			// gl.glNormal3f((float)normal.x, (float)normal.y, (float)normal.z);
-			 gl.glVertex3f(vertices[0].x, vertices[0].y,vertices[0].z);
-			 gl.glVertex3f(vertices[1].x, vertices[1].y,vertices[1].z);
-			 gl.glVertex3f(vertices[2].x, vertices[2].y,vertices[2].z);
-			 gl.glVertex3f(vertices[3].x, vertices[3].y,vertices[3].z);
-			 			 
+			gl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+			gl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+			gl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+			gl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+
 			gl.glEnd();
 		}
-		
-		
-	}
 
+	}
 
 	public void DrawOpenGLHelloWorldShape(GL gl) {
 
