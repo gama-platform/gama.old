@@ -26,35 +26,22 @@ import org.eclipse.xtext.resource.XtextResource;
  */
 public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollector {
 
-	// private final GamlModelConverter converter = new GamlModelConverter();
-
 	public GamlLinker() {
 		GAMA.setGamlBuilder(this);
 	}
 
-	// Map<Resource, ISyntacticElement> trees = new HashMap();
-
-	// @Override
-	// protected void beforeModelLinked(final EObject model,
-	// final IDiagnosticConsumer diagnosticsConsumer) {
-	// Important to call the super method in order to remove all dangling references
-	// super.beforeModelLinked(model, diagnosticsConsumer);
-	// if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
-	// Here, we do all the transformations necessary for making the eCore model on par with the
-	// expected syntactic model of GAML. Involves moving EObjects around, etc.
-	// converter.convert(model);
-
-	// }
-
 	private final Set<IBuilderListener> listeners = new HashSet();
 	private final Map<Resource, GamlBuilder> builders = new HashMap();
+	private boolean hasErrors;
 
 	@Override
 	protected void afterModelLinked(final EObject model, final IDiagnosticConsumer d) {
+		hasErrors = false;
 		if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
 		IModel currentModel = null;
 		Resource r = model.eResource();
 		try {
+			fireBuildBegun(r);
 			currentModel = getBuilder(r).build();
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -73,39 +60,8 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		return result;
 	}
 
-	// public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
-	// Map<Resource, ISyntacticElement> docs = new LinkedHashMap();
-	// buildRecursiveSyntacticTree(docs, r);
-	// return docs;
-	// }
-	//
-	// private void buildRecursiveSyntacticTree(final Map<Resource, ISyntacticElement> docs,
-	// final Resource r) {
-	// Model m = (Model) r.getContents().get(0);
-	// docs.put(r, getOwnSyntacticTree(r));
-	// for ( Import imp : m.getImports() ) {
-	// String importUri = imp.getImportURI();
-	// URI iu = URI.createURI(importUri).resolve(r.getURI());
-	// if ( iu != null && !iu.isEmpty() && EcoreUtil2.isValidUri(r, iu) ) {
-	// Resource ir = r.getResourceSet().getResource(iu, true);
-	// if ( ir != r && !docs.containsKey(ir) ) {
-	// if ( !ir.getErrors().isEmpty() ) {
-	// this.error("Imported file " + importUri + " has errors.", imp);
-	// continue;
-	// }
-	// buildRecursiveSyntacticTree(docs, ir);
-	// }
-	// }
-	// }
-	// }
-	//
-	// private ISyntacticElement getOwnSyntacticTree(final Resource r) {
-	// Model m = (Model) r.getContents().get(0);
-	// ISyntacticElement e = GamlToSyntacticElements.doConvert(m, this);
-	// return e;
-	// }
-
 	private void error(final String message, final EObject object) {
+		hasErrors = true;
 		if ( object == null ) { return; }
 		object.eResource().getErrors()
 			.add(new GamlDiagnostic("", new String[0], message, NodeModelUtils.getNode(object)));
@@ -129,8 +85,9 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		}
 	}
 
-	public boolean hasErrors(final Resource resource) {
-		return !resource.getErrors().isEmpty();
+	@Override
+	public boolean hasErrors() {
+		return hasErrors;
 	}
 
 	@Override
@@ -144,12 +101,20 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		return listeners.remove(l);
 	}
 
+	private void fireBuildBegun(final Resource m) {
+		for ( IBuilderListener l : listeners ) {
+			l.beforeBuilding(m);
+		}
+
+	}
+
 	private void fireBuildEnded(final Resource m, final IModel result) {
 		boolean accepted = false;
 		for ( IBuilderListener l : listeners ) {
 			accepted = accepted || l.afterBuilding(m, result);
+			if ( accepted ) { return; }
 		}
-		if ( !accepted && result != null ) {
+		if ( result != null ) {
 			result.dispose();
 		}
 	}

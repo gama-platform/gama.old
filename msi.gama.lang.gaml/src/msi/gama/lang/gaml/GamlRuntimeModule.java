@@ -30,6 +30,7 @@ import org.eclipse.xtext.service.SingletonBinding;
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
 	@Override
+	@SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}

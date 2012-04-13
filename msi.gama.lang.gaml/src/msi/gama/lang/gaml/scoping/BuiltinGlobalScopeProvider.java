@@ -4,6 +4,7 @@ package msi.gama.lang.gaml.scoping;
 
 import java.io.*;
 import java.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.GamlVarRef;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.*;
@@ -42,7 +43,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
 
-	static Iterable<IEObjectDescription> objectDescriptions = null;
+	Iterable<IEObjectDescription> objectDescriptions = null;
+	public volatile static boolean scopeBuilt;
 
 	private Resource getResource(final Bundle bundle, final String filename) {
 		Path path = new Path(filename);
@@ -51,6 +53,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				bundle.getSymbolicName() + "/" + path.toString()));
 		InputStream inputStream;
 		try {
+			GuiUtils.debug("===> Loading " + resource.getURI() + " to populate the global scope.");
 			inputStream = FileLocator.openStream(bundle, path, false);
 			resource.load(inputStream, Collections.EMPTY_MAP);
 		} catch (IOException e) {
@@ -91,8 +94,39 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			}
 			objectDescriptions = new ArrayList(map.values());
 			// objectDescriptions = Scopes.filterDuplicates(temp);
+			scopeBuilt = true;
 		}
 		return objectDescriptions == null ? Collections.EMPTY_LIST : objectDescriptions;
+	}
+
+	public static final Runnable postConstributions = new Runnable() {
+
+		@Override
+		public void run() {
+			while (!scopeBuilt) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			int i = 0;
+			for ( Runnable run : toRunAfterLoad ) {
+				GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
+				run.run();
+			}
+			toRunAfterLoad.clear();
+
+		}
+	};
+
+	private final static List<Runnable> toRunAfterLoad = new ArrayList();
+
+	/**
+	 * @param run
+	 */
+	public static void registerRunnableAfterLoad(final Runnable run) {
+		toRunAfterLoad.add(run);
 	}
 
 	/**
@@ -101,6 +135,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Override
 	public IScope getScope(final Resource context, final EReference reference,
 		final Predicate<IEObjectDescription> filter) {
+		// if ( context.getURI().isPlatform() ) { return IScope.NULLSCOPE; }
 		return MapBasedScope.createScope(uriScopeProvider.getScope(context, reference, filter),
 			getEObjectDescriptions());
 	}

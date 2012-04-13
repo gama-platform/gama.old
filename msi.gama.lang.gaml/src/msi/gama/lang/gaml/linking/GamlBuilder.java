@@ -29,7 +29,7 @@ public class GamlBuilder {
 
 	private final XtextResource resource;
 	private final IErrorCollector collect;
-	private final Map<Resource, ISyntacticElement> trees = new HashMap(2);
+	private final Map<Resource, ISyntacticElement> trees = new LinkedHashMap(2);
 
 	public GamlBuilder(final XtextResource r, final IErrorCollector c) {
 		resource = r;
@@ -40,12 +40,22 @@ public class GamlBuilder {
 		IModel result = null;
 		trees.clear();
 		buildRecursiveSyntacticTree(resource);
-		if ( resource.getErrors().isEmpty() ) {
+		if ( isOK() ) {
 			ModelStructure ms = new ModelStructure(resource, trees, collect);
-			result = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
-			if ( resource.getErrors().isEmpty() ) { return result; }
+			if ( isOK() ) {
+				result = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
+				if ( isOK() ) { return result; }
+			}
+
+		}
+		if ( result != null ) {
+			result.dispose();
 		}
 		return null;
+	}
+
+	private boolean isOK() {
+		return resource.getErrors().isEmpty() && !collect.hasErrors();
 	}
 
 	public Map<Resource, ISyntacticElement> buildRecursiveSyntacticTree(final Resource r) {
