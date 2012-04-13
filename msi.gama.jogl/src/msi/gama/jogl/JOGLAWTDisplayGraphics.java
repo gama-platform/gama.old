@@ -721,18 +721,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			// System.out.println("R:"+(float)curGeometry.color.getRed()/255+"G:"+(float)curGeometry.color.getGreen()/255+"B:"+(float)curGeometry.color.getBlue()/255);
 			if (curGeometry.type == "MultiPolygon"
 					|| curGeometry.type == "Polygon") {
-				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,
-						0.0f, myScaleRate);
+				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,0.0f, myScaleRate);
+				
 			} else if (curGeometry.type == "MultiLineString"
 					|| curGeometry.type == "LineString") {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,
-						myScaleRate);
+						myScaleRate,1.2f);
 			} else if (curGeometry.type == "Point"
 					|| curGeometry.type == "Circle") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
 						curGeometry.vertices[0].z, 20, curGeometry.size / 2,
 						myScaleRate);
+				
 			}
 
 		}

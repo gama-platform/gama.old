@@ -44,8 +44,9 @@ public class MyGraphics {
 
 	}
 	
-	public void DrawNormalizeLine(GL gl, GLU glu, MyGeometry geometry,float scale_rate) {
+	public void DrawNormalizeLine(GL gl, GLU glu, MyGeometry geometry,float scale_rate, float size) {
 		// FIXME: Should test that vertices is initialized before to draw
+		gl.glLineWidth(size);
 		gl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < geometry.vertices.length - 1; j++) {
 			gl.glVertex3f((float) ((geometry.vertices[j].x)*scale_rate),
@@ -191,6 +192,11 @@ public class MyGraphics {
 
 		glu.gluTessEndContour(tobj);
 		glu.gluTessEndPolygon(tobj);
+		//FIXME: This add a black line around the polygon. 
+		//This is just for a better visual quality but we should check the cost of it.
+		gl.glColor3f(0.0f,0.0f,0.0f);
+		this.DrawNormalizeLine(gl, glu,geometry,scale,1.0f);
+		
 
 	}
 
