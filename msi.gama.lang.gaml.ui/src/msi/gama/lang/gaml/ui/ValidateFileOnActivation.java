@@ -10,22 +10,31 @@
 package msi.gama.lang.gaml.ui;
 
 import msi.gama.common.util.GuiUtils;
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
+import org.apache.log4j.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.*;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.linking.impl.AbstractCleaningLinker;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.eclipse.xtext.ui.editor.model.*;
+import org.eclipse.xtext.ui.util.ResourceUtil;
 
 /**
  * Validates a .gaml file when it is opened or activated.
  * 
- * @author alruiz@google.com (Alex Ruiz)
+ * @author alruiz@google.com (Alex Ruiz), adapted by Alexis Drogoul for GAML
  */
 public class ValidateFileOnActivation extends AbstractPartListener {
 
+	private IWorkbenchPartReference previousPart;
+
 	@Override
 	public void partOpened(final IWorkbenchPartReference ref) {
+		GuiUtils.debug("Editor " + ref.getTitle() + " has been opened");
 		// validate(ref);
 	}
 
@@ -36,22 +45,29 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 	 */
 	@Override
 	public void partActivated(final IWorkbenchPartReference ref) {
-		// Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
+		Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
 		GuiUtils.debug("Editor " + ref.getTitle() + " has been activated");
 		validate(ref);
 	}
 
 	@Override
+	public void partBroughtToTop(final IWorkbenchPartReference ref) {
+		GuiUtils.debug("Editor " + ref.getTitle() + " has been brought to top");
+		validate(ref);
+	}
+
+	@Override
 	public void partDeactivated(final IWorkbenchPartReference ref) {
-		GamlEditor editor = activeEditor(ref);
-		if ( editor == null ) { return; }
+		IWorkbenchPart editor = ref.getPart(false);
+		if ( !(editor instanceof GamlEditor) ) { return; }
 		GuiUtils.debug("Editor " + ref.getTitle() + " has been deactivated");
-		editor.forgetModel();
+		((GamlEditor) editor).forgetModel();
 	}
 
 	private GamlEditor activeEditor(final IWorkbenchPartReference ref) {
 		IWorkbenchPart part = ref.getPart(false);
 		if ( !(part instanceof GamlEditor) ) { return null; }
+		if ( part.getSite().getPage().getActiveEditor() != part ) { return null; }
 		return (GamlEditor) part;
 	}
 
@@ -66,41 +82,56 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 		return adapter == null ? null : (IResource) adapter;
 	}
 
-	public void validate(final IWorkbenchPartReference ref) {
+	public synchronized void validate(final IWorkbenchPartReference ref) {
 		GamlEditor editor = activeEditor(ref);
-		if ( editor == null ) { return; }
+		if ( editor == null || ref == previousPart ) { return; }
+		previousPart = ref;
 		IProject project = projectOwningFileDisplayedIn(editor);
 		if ( project == null ) { return; }
-		final IXtextDocument document = editor.getDocument();
-		XtextResource resource = editor.getXtextResource();
-		EObject root = rootOf(resource);
-		if ( root == null ) { return; }
 
-		resource.getLinker().linkModel(root, new ListBasedDiagnosticConsumer());
-		((XtextDocument) document).checkAndUpdateAnnotations();
-		// Job job = ((XtextDocument) document).getValidationJob();
-		// if ( job != null && job.getState() != Job.RUNNING ) {
-		// job.schedule();
-		// ((XtextDocument) document).checkAndUpdateAnnotations();
+		Runnable run = createRunnableFor(editor);
+		if ( BuiltinGlobalScopeProvider.scopeBuilt ) {
+			run.run();
+			// new Thread(run, "Validation of " + ref.getTitle()).start();
+		} else {
+			BuiltinGlobalScopeProvider.registerRunnableAfterLoad(run);
+		}
+	}
 
-		/*
-		 * document.readOnly(new IUnitOfWork.Void<XtextResource>() {
-		 * 
-		 * @Override
-		 * public void process(final XtextResource resource) {
-		 * // Diagnostician.INSTANCE.validate(resource.getParseResult().getRootASTElement());
-		 * EObject root = rootOf(resource);
-		 * if ( root == null ) { return; }
-		 * resource.getLinker().linkModel(root, new ListBasedDiagnosticConsumer());
-		 * Job job = ((XtextDocument) document).getValidationJob();
-		 * if ( job != null && job.getState() != Job.RUNNING ) {
-		 * job.schedule();
-		 * // ((XtextDocument) document).checkAndUpdateAnnotations();
-		 * }
-		 * }
-		 * });
-		 */
+	/**
+	 * @param editor
+	 * @return
+	 */
+	private Runnable createRunnableFor(final GamlEditor editor) {
+		return new Runnable() {
 
+			@Override
+			public void run() {
+				// while (!GamaBundleLoader.contributionsLoaded) {
+				// try {
+				// Thread.sleep(10);
+				// } catch (InterruptedException e) {
+				// e.printStackTrace();
+				// }
+				// }
+				final IXtextDocument document = editor.getDocument();
+				XtextResource resource = editor.getXtextResource();
+				EObject root = rootOf(resource);
+				if ( root == null ) { return; }
+				IFile file = ResourceUtil.getUnderlyingFile(resource);
+				try {
+					file.deleteMarkers(null, true, IResource.DEPTH_INFINITE);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				ListBasedDiagnosticConsumer consumer = new ListBasedDiagnosticConsumer();
+				resource.getLinker().linkModel(root, consumer);
+				resource.getErrors().addAll(consumer.getResult(Severity.ERROR));
+				resource.getWarnings().addAll(consumer.getResult(Severity.WARNING));
+				((XtextDocument) document).checkAndUpdateAnnotations();
+			}
+
+		};
 	}
 
 	private EObject rootOf(final XtextResource resource) {

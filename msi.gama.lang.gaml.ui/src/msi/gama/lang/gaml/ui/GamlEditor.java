@@ -37,6 +37,7 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 		"/icons/menu_reload.png").createImage();
 	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
 	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
+	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
 	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
 	private static final int INITIAL_BUTTONS = 10;
 	private static Font labelFont;
@@ -60,6 +61,28 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	@Override
 	public void dispose() {
 		GAMA.getGamlBuilder().removeListener(this);
+		if ( buttons != null ) {
+			for ( Button b : buttons ) {
+				if ( b != null && !b.isDisposed() ) {
+					b.dispose();
+				}
+			}
+			buttons = null;
+		}
+
+		if ( top != null && !top.isDisposed() ) {
+			top.dispose();
+			top = null;
+		}
+		if ( toolbar != null && !toolbar.isDisposed() ) {
+			toolbar.dispose();
+			toolbar = null;
+		}
+		if ( status != null && !status.isDisposed() ) {
+			status.dispose();
+			status = null;
+		}
+		setModel(null);
 		super.dispose();
 	}
 
@@ -169,12 +192,21 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	}
 
 	public void updateToolbar(final IModel model) {
+		isUpdatingToolbar = true;
+		// setStatus(COLOR_WARNING, "Building...");
 
+		Display.getDefault().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				setStatus(COLOR_WARNING, "Building...");
+			}
+
+		});
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				isUpdatingToolbar = true;
 
 				if ( toolbar == null || toolbar.isDisposed() ) {
 					isUpdatingToolbar = false;
@@ -206,7 +238,7 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 				// toolbar.pack();
 				toolbar.update();
 				// parent.layout(true);
-				parent.update();
+				// parent.update();
 				// GuiUtils.debug("Finished updating toolbar of " + getResource().getLocationURI());
 				isUpdatingToolbar = false;
 			}
@@ -221,7 +253,7 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 
 		@Override
 		public void documentChanged(final DocumentEvent event) {
-			GAMA.getGamlBuilder().invalidate(resource);
+			// GAMA.getGamlBuilder().invalidate(resource);
 		}
 	};
 
@@ -229,7 +261,18 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 	 * @see msi.gama.lang.gaml.validation.IBuilderListener#beforeBuilding(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
-	public void beforeBuilding(final Resource resource) {}
+	public void beforeBuilding(final Resource resource) {
+		if ( resource == getXtextResource() ) {
+			Display.getDefault().syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					setStatus(COLOR_WARNING, "Building...");
+				}
+
+			});
+		}
+	}
 
 	/**
 	 * @see msi.gama.lang.gaml.validation.IBuilderListener#afterBuilding(msi.gama.lang.gaml.gaml.Model,
@@ -268,6 +311,7 @@ public class GamlEditor extends XtextEditor implements IBuilderListener {
 
 	public void forgetModel() {
 		setModel(null);
+
 	}
 
 }
