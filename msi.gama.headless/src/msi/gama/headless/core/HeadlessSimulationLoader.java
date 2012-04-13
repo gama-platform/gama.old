@@ -67,7 +67,7 @@ public class HeadlessSimulationLoader {
 		Resource r = rs.getResource(URI.createURI("file:" + fileName), true);
 		try {
 			Map<Resource, ISyntacticElement> elements = linker.buildCompleteSyntacticTree(r);
-			if ( !linker.hasErrors(r) ) {
+			if ( !linker.hasErrors() ) {
 				System.out.println("No errors in syntactic tree");
 				ModelStructure ms = new ModelStructure(r, elements, collect);
 				lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
