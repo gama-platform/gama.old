@@ -17,4 +17,9 @@ public interface IErrorCollector {
 
 	public abstract void add(final GamlCompilationError error);
 
+	/**
+	 * @return
+	 */
+	public abstract boolean hasErrors();
+
 }

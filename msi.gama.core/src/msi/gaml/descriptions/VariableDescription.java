@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.IUnits;
 import msi.gama.runtime.GAMA;
 import msi.gaml.commands.Facets;
@@ -67,6 +68,9 @@ public class VariableDescription extends SymbolDescription {
 			if ( !facets.containsKey(entry.getKey()) ) {
 				facets.put(entry.getKey(), entry.getValue());
 			}
+		}
+		if ( getName().equals("all_places") ) {
+			GuiUtils.debug("");
 		}
 	}
 
@@ -156,6 +160,10 @@ public class VariableDescription extends SymbolDescription {
 			} else if ( "instance".equals(of) ) {
 				contentType = Types.NO_TYPE;
 			} else {
+				IType temp = getTypeOf(of);
+				if ( temp.toString().equals("default") && getName().equals("all_places") && true ) {
+					GuiUtils.debug("Content type of all_places is " + temp);
+				}
 				contentType = getTypeOf(of);
 			}
 		}

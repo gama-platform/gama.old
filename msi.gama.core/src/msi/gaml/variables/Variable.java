@@ -105,8 +105,7 @@ public class Variable extends Symbol implements IVariable {
 		}
 
 		if ( desc.isBuiltIn() ) {
-			ExecutionContextDescription context =
-				(ExecutionContextDescription) desc.getSpeciesContext();
+			ExecutionContextDescription context = desc.getSpeciesContext();
 
 			if ( context == null ) {
 				desc.getSpeciesContext();

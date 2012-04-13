@@ -34,10 +34,14 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	private ModelEnvironment modelEnvironment;
 	protected ISpecies worldSpecies;
 	private static int instanceCount;
+	private static int totalCount;
+	private final int count;
 
 	protected AbstractModel(final IDescription description) {
 		super(description);
+		count = ++totalCount;
 		instanceCount++;
+		GuiUtils.debug("Model (" + count + ") " + description.getName() + " created ");
 	}
 
 	@Override
@@ -78,11 +82,14 @@ public abstract class AbstractModel extends Symbol implements IModel {
 		worldSpecies.dispose();
 		if ( modelEnvironment != null ) {
 			modelEnvironment.dispose();
+			modelEnvironment = null;
 		}
-		modelEnvironment = null;
+		for ( IExperiment exp : experiments.values() ) {
+			exp.dispose();
+		}
 		experiments.clear();
 		instanceCount--;
-		GuiUtils.debug("Open (non disposed) instances of IModel left : " + instanceCount);
+		GuiUtils.debug("Model (" + count + ")" + " disposed. IModels left : " + instanceCount);
 	}
 
 	@Override

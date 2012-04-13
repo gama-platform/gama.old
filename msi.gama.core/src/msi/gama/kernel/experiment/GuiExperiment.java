@@ -102,6 +102,12 @@ public class GuiExperiment extends AbstractExperiment {
 	}
 
 	@Override
+	public void dispose() {
+		regularParameters.clear();
+		super.dispose();
+	}
+
+	@Override
 	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		closeCurrentSimulation(false);

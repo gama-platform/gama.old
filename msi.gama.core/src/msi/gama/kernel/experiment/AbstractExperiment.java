@@ -146,6 +146,25 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		systemParameters = new ArrayList();
 	}
 
+	@Override
+	public void dispose() {
+		if ( currentSimulation != null ) {
+			currentSimulation.dispose();
+			currentSimulation = null;
+		}
+		if ( output != null ) {
+			output.dispose(true);
+			output = null;
+		}
+		targetedVars.clear();
+		systemParameters.clear();
+		if ( agent != null ) {
+			agent.dispose();
+			agent = null;
+		}
+		super.dispose();
+	}
+
 	protected void createAgent() {
 		IPopulation pop = new ExperimentatorPopulation(this);
 		pop.initializeFor(getExperimentScope());

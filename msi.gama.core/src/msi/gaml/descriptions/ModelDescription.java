@@ -21,7 +21,7 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -96,6 +96,9 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	public void addType(final SpeciesDescription species) {
+		if ( allSpeciesDescription.containsKey(species.getName()) ) {
+			GuiUtils.debug(species.getName() + " already there. ");
+		}
 		allSpeciesDescription.put(species.getName(), species);
 		types.addType(species);
 	}

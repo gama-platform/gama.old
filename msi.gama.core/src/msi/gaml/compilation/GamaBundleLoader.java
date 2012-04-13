@@ -67,12 +67,8 @@ public class GamaBundleLoader {
 			preBuildBundle(pluginName, pathName);
 
 		}
-		postBuildContributions();
+		// postBuildContributions();
 		contributionsLoaded = true;
-	}
-
-	private static void postBuildContributions() {
-
 	}
 
 	/**
