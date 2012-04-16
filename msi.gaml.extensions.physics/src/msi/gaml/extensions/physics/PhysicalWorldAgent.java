@@ -78,7 +78,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 		_registerAgent(_agent);
 	}
 
-	private PolygonShape[] GamaPolyToPolyPhysic1(IShape geom) {
+	private PolygonShape[] GamaPolyToPolyPhysic1(IAgent geom) {
 
 		System.out.println("Ici");
 		IList<IShape> triangles = GeometryUtils.triangulation(geom
@@ -86,10 +86,12 @@ public class PhysicalWorldAgent extends GamlAgent {
 		PolygonShape trianglesShapes[] = new PolygonShape[triangles.size()];
 		int i = 0;
 		for (IShape tr : triangles) {
-			if(i==0 )
+	//		if(i==0 )
 				System.out.println("***********");
-			trianglesShapes[i] = GamaTriangleToPolyPhysic(tr);
-			if(i==0){
+			trianglesShapes[i] = GamaTriangleToPolyPhysic(tr,(float) geom.getLocation().getX(), (float) geom
+					.getLocation().getY());
+	//		if(i==0)
+			{
 				for(Vec2 v : trianglesShapes[i].getVertices()){
 					System.out.println(v.x + ";" +v.y);
 				}
@@ -101,14 +103,14 @@ public class PhysicalWorldAgent extends GamlAgent {
 
 	}
 
-	public PolygonShape GamaTriangleToPolyPhysic(IShape geom) {
+	public PolygonShape GamaTriangleToPolyPhysic(IShape geom,float locx,float locy) {
 		PolygonShape poly = new PolygonShape();
 		Coordinate[] coords = geom.getInnerGeometry().getCoordinates();
 //		Vec2[] vecs = new Vec2[coords.length];
 		Vec2[] vecs = new Vec2[3];
 		for (int i = 0; i < /**coords.length**/3; i++) {
 			Coordinate coord = coords[i];
-			Vec2 v = new Vec2((float) coord.x, (float) coord.y);
+			Vec2 v = new Vec2((float) coord.x-locx, (float) coord.y-locy);
 			vecs[i] = v;
 		}
 		System.out.println("Vertex number : " + vecs.length);
@@ -116,7 +118,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 
 		return poly;
 	}
-
+/*
 	public PolygonShape GamaPolyToPolyPhysic(IShape geom) {
 
 		PolygonShape poly = new PolygonShape();
@@ -136,7 +138,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 		return poly;
 
 	}
-
+*/
 	private void cleanRegisteredAgents() {
 		if (registeredAgents != null) {
 			while (registeredAgents.size() > 0) {
@@ -170,15 +172,17 @@ public class PhysicalWorldAgent extends GamlAgent {
 
 		float density = ((Double) ia.getAttribute("density")).floatValue();
 		GamaPoint velocity = ((GamaPoint) ia.getAttribute("velocity"));
+
 		BodyDef bd = new BodyDef();
-		bd.type = BodyType.DYNAMIC;
 		bd.position.set((float) ia.getLocation().getX(), (float) ia
 				.getLocation().getY());
+		bd.type = BodyType.DYNAMIC;
 
 		Body body = _world.createBody(bd);
+
 		PolygonShape[] triangles = GamaPolyToPolyPhysic1(ia);
 		for (PolygonShape shape : triangles)
-			body.createFixture(shape, density);
+		body.createFixture(shape, density);
 
 		body.setLinearVelocity(new Vec2((float) velocity.getX(),
 				(float) velocity.getY()));
