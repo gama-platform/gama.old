@@ -415,7 +415,7 @@ public final class GamlAnnotations {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	@Inherited
+	// @Inherited
 	public static @interface with_args {
 		/**
 		 * @return Indicates wether or not the symbol denoted by this class has arguments

@@ -48,7 +48,7 @@ public class GamaProcessor extends AbstractProcessor {
 	// private boolean isCore;
 
 	// here util.MathUtils is a copy of msi.gama.util.MathUtils
-	private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();
+	// private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();
 	// private final static List<String> BUILT_IN_KEYWORDS = Arrays.asList("entities");
 	// see msi.gama.lang.gaml/src/msi/gama/lang/gaml/Gaml.xtext where these keywords are defined
 	// public final static List<String> FORBIDDEN_KEYWORDS = Arrays.asList("model", "if", "else",
@@ -369,11 +369,12 @@ public class GamaProcessor extends AbstractProcessor {
 		// }
 		// }
 
-		for ( String s : BUILT_IN_UNIT ) {
-			grammarWriter.append("\t_reserved &").append(s).println("&;");
-		}
+		// for ( String s : BUILT_IN_UNIT ) {
+		// grammarWriter.append("\t_reserved &").append(s).println("&;");
+		// }
 
-		printProps(grammarWriter, "Binary keywords", "_binary", store.get(GamlProperties.BINARIES));
+		// printProps(grammarWriter, "Binary keywords", "_binary",
+		// store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
 
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_unary",
@@ -407,15 +408,16 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
-	private void printProps(final PrintWriter writer, final String t, final String prop,
-		final GamlProperties map) {
-		writer.append("\n//").println(t);
-		for ( String s : map.values() ) {
-			if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
-				writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-			}
-		}
-	}
+	//
+	// private void printProps(final PrintWriter writer, final String t, final String prop,
+	// final GamlProperties map) {
+	// writer.append("\n//").println(t);
+	// for ( String s : map.values() ) {
+	// if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
+	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
+	// }
+	// }
+	// }
 
 	// Ajouter reserved actions (+ facettes??)
 	// Ajouter variables globales pr�d�finies
