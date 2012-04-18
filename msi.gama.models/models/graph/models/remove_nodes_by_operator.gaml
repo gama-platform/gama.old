@@ -57,7 +57,6 @@ entities {
 		 		
 		reflex when : flip(0.1) {
 			set mongraphe <- remove_node_from(self, mongraphe);
-			//let mongraphe <- rewire(mongraphe, 0.1);
 		}
 		
 	}

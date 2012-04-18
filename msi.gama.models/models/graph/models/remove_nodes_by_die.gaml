@@ -1,19 +1,16 @@
 /**
  *  loadgraphfromfile
  *  Author: Samuel Thiriot
- *  Description: Shows how to generate a scale-free graph using a Barabasi-Albert scale-free generator. 
- * Nothing "moves" into this first model.
+ * Description: In this demo model, a graph is loaded and associated with species; 
+ * then edges are randomly removed (die). This shows how the graph changes as the corresponding
+ * agents die, and how it's display changes in the graph display.
  */
 
 model loadgraphfromfile
-  
+
 global {
 	
-	int net_size <- 250 parameter: 'Number of vertices' category: 'network' ;
-	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'network' ;
-	float net_prewire <- 0.08 parameter: 'Rewire probability' category: 'network' ;
-	
-	/*
+	/* 
 	 * The variable that will store the graph
 	 */  
 	var mongraphe type:graph;
@@ -21,20 +18,16 @@ global {
 	init {
 		
 		 /*
-		  * The actual generation of the network. 
+		  * The actual loading of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		set mongraphe <- generate_watts_strogatz( [
+		 set mongraphe <- load_graph_from_dgs_old( [
+				"filename"::"../includes/BarabasiGenerated.dgs", 
 				"edges_specy"::edgeSpecy,
-				"vertices_specy"::nodeSpecy,
-				"size"::net_size,
-				"p"::net_prewire,
-				"k"::net_neighboors
+				"vertices_specy"::nodeSpecy
 			] );
 			  
 	 }
-	 
-	
 	  
 }
 
@@ -49,21 +42,17 @@ entities {
 	 * Note that these agents will be implicitely
 	 * initialized with default x,y random locations.
 	 */
-	species nodeSpecy  {
-		rgb color <- rgb('black') ;  
+	species nodeSpecy {
+		rgb color <- rgb('black') ;   
 		aspect base { 
 			draw shape: circle size:3 color: color ;
 		} 
-		 		
-		reflex when : flip(0.1) {
-			set mongraphe <- remove_node_from(self, mongraphe);
-			//let mongraphe <- rewire(mongraphe, 0.1);
-		}
 		
 	}
 	
 	/*
 	 * The specy which will describe edges. 
+	 * Note that these edges are automatically plugged in nodes so they are represented as lines.
 	 */
 	species edgeSpecy  { 
 		rgb color <- rgb('blue') ; 
@@ -71,6 +60,14 @@ entities {
 		aspect base {
 			draw color: color ;
 			
+		}
+		
+		 		
+		/*
+		 * This reflex kills 5% of edge agents per time step.
+		 */
+		reflex when: flip(0.05) {
+			do die;
 		}
 		
 	}
@@ -91,7 +88,8 @@ output {
 	
 	/*
 	 * This display provides another look on the network,
-	 * without spatiality.
+	 * without spatiality. Thus we do not see the nodes moving 
+	 * in the space as in the first display.
 	 */
 	graphdisplay monNom2 graph: mongraphe lowquality:true {
 		 

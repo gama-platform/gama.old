@@ -322,18 +322,19 @@ public class Graphs {
 		g.removeVertex(node);
 		return g;
 	}
-	
 
-
-	/*
-	@operator(value = "rewire")
+	@operator(value = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Double probability) {
-		GraphAlgorithmsHandmade.rewireGraph(g, probability);
+		GraphAlgorithmsHandmade.rewireGraphProbability(g, probability);
 		return g;
 	}
 	
-
-	*/
+	@operator(value = "rewire_n")
+	public static IGraph rewireGraph(final IGraph g, final Integer count) {
+		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
+		return g;
+	}
+	
 	
 	/*
 	public static IGraph addRandomEdges(final IGraph g, final Double probability) {

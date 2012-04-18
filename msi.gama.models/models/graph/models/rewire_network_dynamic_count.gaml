@@ -1,17 +1,17 @@
 /**
  *  loadgraphfromfile
  *  Author: Samuel Thiriot
- *  Description: Shows how to generate a scale-free graph using a Barabasi-Albert scale-free generator. 
- * Nothing "moves" into this first model.
+ *  Description: Shows how to rewire a graph during the simulation. 
  */
 
 model loadgraphfromfile
   
 global {
 	
-	int net_size <- 250 parameter: 'Number of vertices' category: 'network' ;
-	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'network' ;
-	float net_prewire <- 0.08 parameter: 'Rewire probability' category: 'network' ;
+	int net_size <- 250 parameter: 'Number of vertices' category: 'initial network' ;
+	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'initial network' ;
+	float net_prewire <- 0.0 parameter: 'Rewire probability' category: 'initial network' ;
+	int net_rewire_count <- 1 parameter: 'Count of edges to rewire per step' category: 'network evolution' ;
 	
 	/*
 	 * The variable that will store the graph
@@ -35,7 +35,10 @@ global {
 	 }
 	 
 	
-	  
+	reflex {
+			set mongraphe <- rewire_n(mongraphe, net_rewire_count);
+			
+	}
 }
 
 environment {
@@ -55,10 +58,7 @@ entities {
 			draw shape: circle size:3 color: color ;
 		} 
 		 		
-		reflex when : flip(0.1) {
-			set mongraphe <- remove_node_from(self, mongraphe);
-			//let mongraphe <- rewire(mongraphe, 0.1);
-		}
+		
 		
 	}
 	

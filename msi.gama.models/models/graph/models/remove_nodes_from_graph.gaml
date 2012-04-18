@@ -9,9 +9,10 @@ model loadgraphfromfile
   
 global {
 	
-	int net_size <- 250 parameter: 'Number of vertices' category: 'network' ;
-	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'network' ;
-	float net_prewire <- 0.08 parameter: 'Rewire probability' category: 'network' ;
+	int net_size <- 250 parameter: 'Number of vertices' category: 'initial network' ;
+	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'initial network' ;
+	float net_prewire <- 0.0 parameter: 'Rewire probability' category: 'initial network' ;
+	float net_prewire_dynamic <- 0.01 parameter: 'Rewire probability dynamic' category: 'network evolution' ;
 	
 	/*
 	 * The variable that will store the graph
@@ -35,7 +36,9 @@ global {
 	 }
 	 
 	
-	  
+	  reflex {
+			set mongraphe <- rewire(mongraphe, net_prewire_dynamic);
+	}
 }
 
 environment {
@@ -55,10 +58,7 @@ entities {
 			draw shape: circle size:3 color: color ;
 		} 
 		 		
-		reflex when : flip(0.1) {
-			set mongraphe <- remove_node_from(self, mongraphe);
-			//let mongraphe <- rewire(mongraphe, 0.1);
-		}
+		
 		
 	}
 	

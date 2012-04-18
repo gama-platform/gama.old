@@ -49,7 +49,7 @@ public class GraphAlgorithmsHandmade {
 	 * @param probability
 	 * @return
 	 */
-	public static IGraph rewireGraph(IGraph graph, Double probability) {
+	public static IGraph rewireGraphProbability(IGraph graph, Double probability) {
 		
 		IList edges = graph.getEdges();
 		for (int i=0; i<edges.size(); i++) {
@@ -74,6 +74,50 @@ public class GraphAlgorithmsHandmade {
 						);
 				
 			}
+				
+		}
+		
+		return graph;
+		
+	}
+	
+	/**
+	 * Rewires the given count of edges. If there are too many edges, 
+	 * all the edges will be rewired.
+	 * @param graph
+	 * @param count
+	 * @return
+	 */
+	public static IGraph rewireGraphCount(IGraph graph, Integer count) {
+		
+		
+		IList edges = graph.getEdges();
+		for (int i=0; i<count; i++) {
+			
+			Object currentEdge = edges.get(
+					GAMA.getRandom().between(
+							0, 
+							graph.getEdges().length()-1
+							)
+			);
+			
+			
+			// rewire this edge
+			Object from = graph.getEdgeSource(currentEdge);
+			
+			System.err.println("removing "+from);
+			
+			Object toNode = getAnotherRandomNode(graph, from);
+			System.err.println("rewiring "+graph.getEdgeTarget(currentEdge)+" to "+toNode);
+
+			graph.removeEdge(currentEdge);
+				
+			graph.addEdge(
+					from, 
+					toNode, 
+					currentEdge
+					);
+				
 				
 		}
 		
