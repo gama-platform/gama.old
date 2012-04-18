@@ -78,8 +78,6 @@ public class HeadlessSimulationLoader {
 			}
 		} catch (GamaRuntimeException e1) {
 			System.out.println("Exception during compilation:" + e1.getMessage());
-		} catch (InterruptedException e) {
-			System.out.println("Compilation was aborted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
