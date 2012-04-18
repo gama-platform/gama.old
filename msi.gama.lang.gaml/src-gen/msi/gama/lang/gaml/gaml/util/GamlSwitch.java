@@ -100,7 +100,6 @@ public class GamlSwitch<T> extends Switch<T>
       {
         DefBinaryOp defBinaryOp = (DefBinaryOp)theEObject;
         T result = caseDefBinaryOp(defBinaryOp);
-        if (result == null) result = caseGamlVarRef(defBinaryOp);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -309,6 +308,22 @@ public class GamlSwitch<T> extends Switch<T>
         FunctionRef functionRef = (FunctionRef)theEObject;
         T result = caseFunctionRef(functionRef);
         if (result == null) result = caseExpression(functionRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.ARBITRARY_NAME:
+      {
+        ArbitraryName arbitraryName = (ArbitraryName)theEObject;
+        T result = caseArbitraryName(arbitraryName);
+        if (result == null) result = caseExpression(arbitraryName);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.UNIT_NAME:
+      {
+        UnitName unitName = (UnitName)theEObject;
+        T result = caseUnitName(unitName);
+        if (result == null) result = caseExpression(unitName);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -837,6 +852,38 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseFunctionRef(FunctionRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Arbitrary Name</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Arbitrary Name</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseArbitraryName(ArbitraryName object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Unit Name</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Unit Name</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUnitName(UnitName object)
   {
     return null;
   }

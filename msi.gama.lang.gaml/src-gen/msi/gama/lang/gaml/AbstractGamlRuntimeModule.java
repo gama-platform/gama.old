@@ -56,7 +56,6 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 	}
 
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment
-	@org.eclipse.xtext.service.SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.parser.IParser> bindIParser() {
 		return msi.gama.lang.gaml.parser.antlr.GamlParser.class;
 	}

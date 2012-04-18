@@ -228,6 +228,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createFunctionRefAdapter();
       }
       @Override
+      public Adapter caseArbitraryName(ArbitraryName object)
+      {
+        return createArbitraryNameAdapter();
+      }
+      @Override
+      public Adapter caseUnitName(UnitName object)
+      {
+        return createUnitNameAdapter();
+      }
+      @Override
       public Adapter caseIntLiteral(IntLiteral object)
       {
         return createIntLiteralAdapter();
@@ -720,6 +730,36 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ArbitraryName <em>Arbitrary Name</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ArbitraryName
+   * @generated
+   */
+  public Adapter createArbitraryNameAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.UnitName <em>Unit Name</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.UnitName
+   * @generated
+   */
+  public Adapter createUnitNameAdapter()
   {
     return null;
   }

@@ -18,6 +18,7 @@
  */
 package msi.gama.lang.utils;
 
+import static msi.gaml.expressions.GamlExpressionFactory.*;
 import java.text.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
@@ -220,10 +221,10 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 		// If the string is a number, we built it apart
 		if ( Strings.isGamaNumber(s) ) { return compileNumberExpr(s); }
 		// If the string is a literal constant we return the expression
-		if ( s.equalsIgnoreCase(IKeyword.TRUE) ) { return GamlExpressionFactory.TRUE_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.FALSE) ) { return GamlExpressionFactory.FALSE_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.EACH) ) { return GamlExpressionFactory.EACH_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return GamlExpressionFactory.NIL_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.TRUE) ) { return TRUE_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.FALSE) ) { return FALSE_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.EACH) ) { return EACH_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return NIL_EXPR; }
 		// assertContext(s);
 		if ( isSpeciesName(s) ) { return factory.createConst(s, Types.get(IType.SPECIES),
 			getSpeciesContext(s).getType()); }

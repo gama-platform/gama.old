@@ -1261,19 +1261,19 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
 		private final Keyword cOpNumberSignKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
 		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRightGamlUnaryExprParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
+		private final RuleCall cRightUnitNameParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
 		
 		//GamlUnitExpr returns Expression:
-		//	GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=GamlUnaryExpr)?;
+		//	GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=UnitName)?;
 		public ParserRule getRule() { return rule; }
 
-		//GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=GamlUnaryExpr)?
+		//GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=UnitName)?
 		public Group getGroup() { return cGroup; }
 
 		//GamlUnaryExpr
 		public RuleCall getGamlUnaryExprParserRuleCall_0() { return cGamlUnaryExprParserRuleCall_0; }
 
-		//(({GamlUnitExpr.left=current} op="#") right=GamlUnaryExpr)?
+		//(({GamlUnitExpr.left=current} op="#") right=UnitName)?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{GamlUnitExpr.left=current} op="#"
@@ -1288,11 +1288,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"#"
 		public Keyword getOpNumberSignKeyword_1_0_1_0() { return cOpNumberSignKeyword_1_0_1_0; }
 
-		//right=GamlUnaryExpr
+		//right=UnitName
 		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
 
-		//GamlUnaryExpr
-		public RuleCall getRightGamlUnaryExprParserRuleCall_1_1_0() { return cRightGamlUnaryExprParserRuleCall_1_1_0; }
+		//UnitName
+		public RuleCall getRightUnitNameParserRuleCall_1_1_0() { return cRightUnitNameParserRuleCall_1_1_0; }
 	}
 
 	public class GamlUnaryExprElements extends AbstractParserRuleElementFinder {
@@ -1603,6 +1603,56 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightParenthesisKeyword_1_4() { return cRightParenthesisKeyword_1_4; }
 	}
 
+	public class ArbitraryNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ArbitraryName");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cArbitraryNameAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		
+		/// **
+		// * Cross-references to variables/operators/units
+		// * / ArbitraryName returns Expression:
+		//	{ArbitraryName} name=ID;
+		public ParserRule getRule() { return rule; }
+
+		//{ArbitraryName} name=ID
+		public Group getGroup() { return cGroup; }
+
+		//{ArbitraryName}
+		public Action getArbitraryNameAction_0() { return cArbitraryNameAction_0; }
+
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+	}
+
+	public class UnitNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "UnitName");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cUnitNameAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		
+		//UnitName returns Expression:
+		//	{UnitName} name=ID;
+		public ParserRule getRule() { return rule; }
+
+		//{UnitName} name=ID
+		public Group getGroup() { return cGroup; }
+
+		//{UnitName}
+		public Action getUnitNameAction_0() { return cUnitNameAction_0; }
+
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+	}
+
 	public class VariableRefElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "VariableRef");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1611,9 +1661,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cRefGamlVarRefCrossReference_1_0 = (CrossReference)cRefAssignment_1.eContents().get(0);
 		private final RuleCall cRefGamlVarRefIDTerminalRuleCall_1_0_1 = (RuleCall)cRefGamlVarRefCrossReference_1_0.eContents().get(1);
 		
-		/// **
-		// * Cross-references to variables/operators
-		// * / VariableRef:
+		//VariableRef:
 		//	{VariableRef} ref=[GamlVarRef];
 		public ParserRule getRule() { return rule; }
 
@@ -1640,13 +1688,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDefinitionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cDefReservedParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cDefUnaryParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
-		private final RuleCall cDefBinaryOpParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
 		
-		//GamlVarRef:
-		//	DefinitionFacetExpr | Definition | DefReserved | DefUnary | DefBinaryOp;
+		/// *| DefBinaryOp * / GamlVarRef:
+		//	DefinitionFacetExpr | Definition | DefReserved | DefUnary;
 		public ParserRule getRule() { return rule; }
 
-		//DefinitionFacetExpr | Definition | DefReserved | DefUnary | DefBinaryOp
+		//DefinitionFacetExpr | Definition | DefReserved | DefUnary
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//DefinitionFacetExpr
@@ -1660,9 +1707,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//DefUnary
 		public RuleCall getDefUnaryParserRuleCall_3() { return cDefUnaryParserRuleCall_3; }
-
-		//DefBinaryOp
-		public RuleCall getDefBinaryOpParserRuleCall_4() { return cDefBinaryOpParserRuleCall_4; }
 	}
 
 	public class TerminalExpressionElements extends AbstractParserRuleElementFinder {
@@ -1689,6 +1733,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
 		private final RuleCall cValueBOOLEANTerminalRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
 		
+		////SUPPRIMER DES CROSS_REFERENCES (units / unaries ? / reserved)
 		/// **
 		// * Terminals
 		// * / TerminalExpression:
@@ -1797,6 +1842,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private MemberRefElements pMemberRef;
 	private PrimaryExpressionElements pPrimaryExpression;
 	private AbstractRefElements pAbstractRef;
+	private ArbitraryNameElements pArbitraryName;
+	private UnitNameElements pUnitName;
 	private VariableRefElements pVariableRef;
 	private GamlVarRefElements pGamlVarRef;
 	private TerminalExpressionElements pTerminalExpression;
@@ -2131,7 +2178,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//GamlUnitExpr returns Expression:
-	//	GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=GamlUnaryExpr)?;
+	//	GamlUnaryExpr (({GamlUnitExpr.left=current} op="#") right=UnitName)?;
 	public GamlUnitExprElements getGamlUnitExprAccess() {
 		return (pGamlUnitExpr != null) ? pGamlUnitExpr : (pGamlUnitExpr = new GamlUnitExprElements());
 	}
@@ -2193,8 +2240,28 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// **
-	// * Cross-references to variables/operators
-	// * / VariableRef:
+	// * Cross-references to variables/operators/units
+	// * / ArbitraryName returns Expression:
+	//	{ArbitraryName} name=ID;
+	public ArbitraryNameElements getArbitraryNameAccess() {
+		return (pArbitraryName != null) ? pArbitraryName : (pArbitraryName = new ArbitraryNameElements());
+	}
+	
+	public ParserRule getArbitraryNameRule() {
+		return getArbitraryNameAccess().getRule();
+	}
+
+	//UnitName returns Expression:
+	//	{UnitName} name=ID;
+	public UnitNameElements getUnitNameAccess() {
+		return (pUnitName != null) ? pUnitName : (pUnitName = new UnitNameElements());
+	}
+	
+	public ParserRule getUnitNameRule() {
+		return getUnitNameAccess().getRule();
+	}
+
+	//VariableRef:
 	//	{VariableRef} ref=[GamlVarRef];
 	public VariableRefElements getVariableRefAccess() {
 		return (pVariableRef != null) ? pVariableRef : (pVariableRef = new VariableRefElements());
@@ -2204,8 +2271,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getVariableRefAccess().getRule();
 	}
 
-	//GamlVarRef:
-	//	DefinitionFacetExpr | Definition | DefReserved | DefUnary | DefBinaryOp;
+	/// *| DefBinaryOp * / GamlVarRef:
+	//	DefinitionFacetExpr | Definition | DefReserved | DefUnary;
 	public GamlVarRefElements getGamlVarRefAccess() {
 		return (pGamlVarRef != null) ? pGamlVarRef : (pGamlVarRef = new GamlVarRefElements());
 	}
@@ -2214,6 +2281,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getGamlVarRefAccess().getRule();
 	}
 
+	////SUPPRIMER DES CROSS_REFERENCES (units / unaries ? / reserved)
 	/// **
 	// * Terminals
 	// * / TerminalExpression:

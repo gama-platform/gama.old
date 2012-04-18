@@ -22,7 +22,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlLangDef/r"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlLangDef/unaries"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//DefBinaryOp"/>
+    <genClasses ecoreClass="Gaml.ecore#//DefBinaryOp">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//DefBinaryOp/name"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//DefReserved"/>
     <genClasses ecoreClass="Gaml.ecore#//DefUnary"/>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
@@ -78,6 +80,12 @@
     <genClasses ecoreClass="Gaml.ecore#//Point"/>
     <genClasses ecoreClass="Gaml.ecore#//FunctionRef">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//FunctionRef/args"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//ArbitraryName">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//ArbitraryName/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//UnitName">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//UnitName/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//IntLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//DoubleLiteral"/>

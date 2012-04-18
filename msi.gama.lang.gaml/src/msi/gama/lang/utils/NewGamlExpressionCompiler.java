@@ -19,6 +19,7 @@
 package msi.gama.lang.utils;
 
 import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gaml.expressions.GamlExpressionFactory.*;
 import java.text.NumberFormat;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
@@ -37,11 +38,17 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class NewGamlExpressionCompiler implements IExpressionParser<Expression> {
 
-	public static IExpression NIL_EXPR;
-	public static IExpression TRUE_EXPR;
-	public static IExpression FALSE_EXPR;
-	public static IVarExpression EACH_EXPR;
-	public static IExpression WORLD_EXPR = null;
+	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
+	private IExpression world = null;
+
+	/*
+	 * The context (IDescription) in which the parser operates. If none is given, the global context
+	 * of the current simulation is returned (via simulation.getModel().getDescription()) if it is
+	 * available. Otherwise, only simple expressions (that contain constants) can be parsed.
+	 */
+	private IDescription context;
+
+	private GamlExpressionFactory factory;
 
 	/**
 	 * Represents the string-based parser to be used when the
@@ -63,17 +70,33 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression caseVariableRef(final VariableRef object) {
-			// we delegate to the referenced GamlVarRef
-			return caseGamlVarRef(object.getRef());
+			String s = EGaml.getKeyOf(object);
+			if ( s == null ) {
+				// we delegate to the referenced GamlVarRef
+				return caseGamlVarRef(object.getRef());
+			}
+			return caseVar(s, object);
 		}
 
 		@Override
-		public IExpression caseGamlVarRef(final GamlVarRef object) {
-			String s = object.getName();
+		public IExpression caseUnitName(final UnitName object) {
+			return caseVar(object.getName(), object);
+		}
+
+		@Override
+		public IExpression caseArbitraryName(final ArbitraryName object) {
+			return caseVar(object.getName(), object);
+		}
+
+		public IExpression caseVar(final String s, final EObject object) {
 			if ( s == null ) {
 				getContext().flagError("Unknown variable", object);
 				return null;
 			}
+			// If it is a unit, we return its float value
+			if ( IUnits.UNITS.containsKey(s) ) { return factory.createConst(IUnits.UNITS.get(s),
+				Types.get(IType.FLOAT)); }
+
 			if ( s.equals(EACH) ) { return EACH_EXPR; }
 			if ( s.equals(NULL) ) { return NIL_EXPR; }
 			// We try to find a species name from the name
@@ -91,9 +114,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 				return factory.createVar(SELF, tt, tt, true, IVarExpression.SELF);
 			}
 			if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
-			// If it is a unit, we return its float value
-			if ( IUnits.UNITS.containsKey(s) ) { return factory.createConst(IUnits.UNITS.get(s),
-				Types.get(IType.FLOAT)); }
+
 			// By default, we try to find a variable
 			temp_sd = getContext().getDescriptionDeclaringVar(s);
 			if ( temp_sd == null ) {
@@ -107,6 +128,11 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			context.flagError("Unknown variable: " + s, object);
 			return null;
 
+		}
+
+		@Override
+		public IExpression caseGamlVarRef(final GamlVarRef object) {
+			return caseVar(object.getName(), object);
 		}
 
 		@Override
@@ -208,15 +234,6 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	};
 
-	/*
-	 * The context (IDescription) in which the parser operates. If none is given, the global context
-	 * of the current simulation is returned (via simulation.getModel().getDescription()) if it is
-	 * available. Otherwise, only simple expressions (that contain constants) can be parsed.
-	 */
-	private IDescription context;
-
-	private GamlExpressionFactory factory;
-
 	@Override
 	public void setFactory(final IExpressionFactory f) {
 		factory = (GamlExpressionFactory) f;
@@ -224,20 +241,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			fallBackParser = new StringBasedExpressionCompiler();
 			fallBackParser.setFactory(f);
 		}
-		if ( NIL_EXPR == null ) {
-			NIL_EXPR = factory.createConst(null, Types.NO_TYPE, Types.NO_TYPE);
-		}
-		IType bool = Types.get(IType.BOOL);
-		if ( TRUE_EXPR == null ) {
-			TRUE_EXPR = factory.createConst(true, bool, bool);
-		}
-		if ( FALSE_EXPR == null ) {
-			FALSE_EXPR = factory.createConst(false, bool, bool);
-		}
-		if ( EACH_EXPR == null ) {
-			EACH_EXPR =
-				factory.createVar(EACH, Types.NO_TYPE, Types.NO_TYPE, true, IVarExpression.EACH);
-		}
+
 	}
 
 	public void dispose() {
@@ -315,8 +319,8 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	// KEEP
 	private String literal(final EObject e) {
-		if ( e instanceof VariableRef ) { return literal(((VariableRef) e).getRef()); }
-		if ( e instanceof GamlVarRef ) { return ((GamlVarRef) e).getName(); }
+		if ( e instanceof VariableRef ) { return EGaml.getKeyOf(e); }
+		// if ( e instanceof GamlVarRef ) { return ((GamlVarRef) e).getName(); }
 		if ( e instanceof StringLiteral ) { return ((StringLiteral) e).getValue(); }
 		return null;
 	}
@@ -413,8 +417,6 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	}
 
-	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
-
 	// KEEP
 	private IExpression compileNumberExpr(final String s) {
 		Number val = null;
@@ -469,11 +471,11 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	// KEEP
 	private IExpression getWorldExpr() {
-		if ( WORLD_EXPR == null ) {
+		if ( world == null ) {
 			IType tt = getContext().getModelDescription().getWorldSpecies().getType();
-			WORLD_EXPR = factory.createVar(WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD);
+			world = factory.createVar(WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD);
 		}
-		return WORLD_EXPR;
+		return world;
 	}
 
 	private void setContext(final IDescription commandDescription) {

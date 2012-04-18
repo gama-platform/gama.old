@@ -5,6 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.ArbitraryName;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
@@ -41,6 +42,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TerminalExpression;
 import msi.gama.lang.gaml.gaml.TernExp;
+import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VariableRef;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -273,6 +275,20 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass arbitraryNameEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass unitNameEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass intLiteralEClass = null;
 
   /**
@@ -484,6 +500,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getDefBinaryOp()
   {
     return defBinaryOpEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDefBinaryOp_Name()
+  {
+    return (EAttribute)defBinaryOpEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -941,6 +967,46 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getArbitraryName()
+  {
+    return arbitraryNameEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getArbitraryName_Name()
+  {
+    return (EAttribute)arbitraryNameEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getUnitName()
+  {
+    return unitNameEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getUnitName_Name()
+  {
+    return (EAttribute)unitNameEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getIntLiteral()
   {
     return intLiteralEClass;
@@ -1031,6 +1097,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEReference(gamlLangDefEClass, GAML_LANG_DEF__UNARIES);
 
     defBinaryOpEClass = createEClass(DEF_BINARY_OP);
+    createEAttribute(defBinaryOpEClass, DEF_BINARY_OP__NAME);
 
     defReservedEClass = createEClass(DEF_RESERVED);
 
@@ -1103,6 +1170,12 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     functionRefEClass = createEClass(FUNCTION_REF);
     createEReference(functionRefEClass, FUNCTION_REF__ARGS);
 
+    arbitraryNameEClass = createEClass(ARBITRARY_NAME);
+    createEAttribute(arbitraryNameEClass, ARBITRARY_NAME__NAME);
+
+    unitNameEClass = createEClass(UNIT_NAME);
+    createEAttribute(unitNameEClass, UNIT_NAME__NAME);
+
     intLiteralEClass = createEClass(INT_LITERAL);
 
     doubleLiteralEClass = createEClass(DOUBLE_LITERAL);
@@ -1143,7 +1216,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    defBinaryOpEClass.getESuperTypes().add(this.getGamlVarRef());
     defReservedEClass.getESuperTypes().add(this.getGamlVarRef());
     defUnaryEClass.getESuperTypes().add(this.getGamlVarRef());
     definitionEClass.getESuperTypes().add(this.getStatement());
@@ -1166,6 +1238,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     arrayEClass.getESuperTypes().add(this.getExpression());
     pointEClass.getESuperTypes().add(this.getExpression());
     functionRefEClass.getESuperTypes().add(this.getExpression());
+    arbitraryNameEClass.getESuperTypes().add(this.getExpression());
+    unitNameEClass.getESuperTypes().add(this.getExpression());
     intLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
     doubleLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
     colorLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
@@ -1188,6 +1262,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getGamlLangDef_Unaries(), this.getDefUnary(), null, "unaries", null, 0, -1, GamlLangDef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(defBinaryOpEClass, DefBinaryOp.class, "DefBinaryOp", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDefBinaryOp_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefBinaryOp.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(defReservedEClass, DefReserved.class, "DefReserved", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1259,6 +1334,12 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(functionRefEClass, FunctionRef.class, "FunctionRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getFunctionRef_Args(), this.getExpression(), null, "args", null, 0, -1, FunctionRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(arbitraryNameEClass, ArbitraryName.class, "ArbitraryName", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getArbitraryName_Name(), ecorePackage.getEString(), "name", null, 0, 1, ArbitraryName.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(unitNameEClass, UnitName.class, "UnitName", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUnitName_Name(), ecorePackage.getEString(), "name", null, 0, 1, UnitName.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(intLiteralEClass, IntLiteral.class, "IntLiteral", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

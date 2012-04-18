@@ -19,7 +19,7 @@
 package msi.gama.lang.utils;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import java.util.Set;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.IErrorCollector;
 import msi.gama.lang.gaml.gaml.*;
@@ -30,6 +30,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.EcoreUtil2;
 
 public class GamlToSyntacticElements {
 
@@ -69,8 +70,6 @@ public class GamlToSyntacticElements {
 			elt.addChild(convStatement(elt.getKeyword(), stm, collect));
 		}
 	}
-
-	static Set<String> builtin = EGaml.getAllowedFacetsFor(DO);
 
 	private static AbstractStatementDescription convStatement(final String upper,
 		final Statement stm, final IErrorCollector collect) {
@@ -119,8 +118,7 @@ public class GamlToSyntacticElements {
 
 		// We add the dependencies (only for variable declarations)
 		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
-			// GuiUtils.debug("Dependencies of : " + conv.getKeyword());
-			Array a = EGaml.varDependenciesOf(stm);
+			Array a = varDependenciesOf(stm);
 			if ( a != null ) {
 				elt.setFacet(DEPENDS_ON, conv(a));
 			}
@@ -129,19 +127,44 @@ public class GamlToSyntacticElements {
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(keyword);
 		if ( def != null && elt.getFacet(def) == null ) { // TODO verify this
-			Expression expr = EGaml.getValueOfOmittedFacet(stm);
+			Expression expr =
+				stm instanceof Definition ? EGaml.createTerminal(((Definition) stm).getName())
+					: stm.getExpr();
 			if ( expr != null ) {
-				// GuiUtils.debug("Found facet " + def + " as omissible facet of " + keyword);
 				elt.setFacet(def, conv(expr));
 			}
 		}
 
 		// We convert the block of the statement, if any
-		Block block = EGaml.getBlockOf(stm);
+		Block block = stm.getBlock();
 		if ( block != null ) {
 			convStatements(elt, block.getStatements(), collect);
 		}
 		return elt;
+	}
+
+	static final Set<String> result = new HashSet();
+
+	public static Array varDependenciesOf(final Statement s) {
+		result.clear();
+		for ( FacetExpr facet : s.getFacets() ) {
+			Expression expr = facet.getExpr();
+			if ( expr != null ) {
+				// Modified in order to avoir calling linking before it has been done
+				for ( VariableRef var : EcoreUtil2.eAllOfType(expr, VariableRef.class) ) {
+					// refs.add(var);
+					result.add(EGaml.getKeyOf(s));
+				}
+			}
+		}
+		Array a = null;
+		if ( !result.isEmpty() ) {
+			a = EGaml.getFactory().createArray();
+			for ( String name : result ) {
+				a.getExprs().add(EGaml.createTerminal(name));
+			}
+		}
+		return a;
 	}
 
 	private static void convElse(final Statement stm, final ISyntacticElement elt,
@@ -160,7 +183,8 @@ public class GamlToSyntacticElements {
 	}
 
 	private static IExpressionDescription conv(final Expression expr) {
-		return expr == null ? null : new EcoreBasedExpressionDescription(expr);
+		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
+		return null;
 	}
 
 }

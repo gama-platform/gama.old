@@ -43,8 +43,34 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
 
-	Iterable<IEObjectDescription> objectDescriptions = null;
+	static Iterable<IEObjectDescription> objectDescriptions = null;
 	public volatile static boolean scopeBuilt;
+
+	public final Runnable postConstributions = new Runnable() {
+
+		@Override
+		public void run() {
+			while (!GamaBundleLoader.contributionsLoaded) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			getEObjectDescriptions();
+			int i = 0;
+			for ( Runnable run : toRunAfterLoad ) {
+				GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
+				run.run();
+			}
+			toRunAfterLoad.clear();
+
+		}
+	};
+
+	{
+		new Thread(postConstributions).start();
+	}
 
 	private Resource getResource(final Bundle bundle, final String filename) {
 		Path path = new Path(filename);
@@ -73,7 +99,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	/**
 	 * Get the object descriptions for the built-in scope.
 	 */
-	private Iterable<IEObjectDescription> getEObjectDescriptions() {
+	public Iterable<IEObjectDescription> getEObjectDescriptions() {
 		if ( objectDescriptions == null && GamaBundleLoader.contributionsLoaded ) {
 			List<IEObjectDescription> temp = new ArrayList();
 			for ( Map.Entry<Bundle, String> entry : GamaBundleLoader.gamlAdditionsBundleAndFiles
@@ -98,27 +124,6 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		}
 		return objectDescriptions == null ? Collections.EMPTY_LIST : objectDescriptions;
 	}
-
-	public static final Runnable postConstributions = new Runnable() {
-
-		@Override
-		public void run() {
-			while (!scopeBuilt) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			int i = 0;
-			for ( Runnable run : toRunAfterLoad ) {
-				GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
-				run.run();
-			}
-			toRunAfterLoad.clear();
-
-		}
-	};
 
 	private final static List<Runnable> toRunAfterLoad = new ArrayList();
 

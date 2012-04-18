@@ -5,30 +5,29 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.DefBinaryOp;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.UnitName;
 
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Def Binary Op</b></em>'.
+ * An implementation of the model object '<em><b>Unit Name</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.DefBinaryOpImpl#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.UnitNameImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements DefBinaryOp
+public class UnitNameImpl extends ExpressionImpl implements UnitName
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -55,7 +54,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
    * <!-- end-user-doc -->
    * @generated
    */
-  protected DefBinaryOpImpl()
+  protected UnitNameImpl()
   {
     super();
   }
@@ -68,7 +67,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.DEF_BINARY_OP;
+    return GamlPackage.Literals.UNIT_NAME;
   }
 
   /**
@@ -91,7 +90,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.DEF_BINARY_OP__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.UNIT_NAME__NAME, oldName, name));
   }
 
   /**
@@ -104,7 +103,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_BINARY_OP__NAME:
+      case GamlPackage.UNIT_NAME__NAME:
         return getName();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -120,7 +119,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_BINARY_OP__NAME:
+      case GamlPackage.UNIT_NAME__NAME:
         setName((String)newValue);
         return;
     }
@@ -137,7 +136,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_BINARY_OP__NAME:
+      case GamlPackage.UNIT_NAME__NAME:
         setName(NAME_EDEFAULT);
         return;
     }
@@ -154,7 +153,7 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_BINARY_OP__NAME:
+      case GamlPackage.UNIT_NAME__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
@@ -177,4 +176,4 @@ public class DefBinaryOpImpl extends MinimalEObjectImpl.Container implements Def
     return result.toString();
   }
 
-} //DefBinaryOpImpl
+} //UnitNameImpl

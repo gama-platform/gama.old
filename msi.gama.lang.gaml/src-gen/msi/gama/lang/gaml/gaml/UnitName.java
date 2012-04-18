@@ -5,25 +5,24 @@
  */
 package msi.gama.lang.gaml.gaml;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Def Binary Op</b></em>'.
+ * A representation of the model object '<em><b>Unit Name</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.DefBinaryOp#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.UnitName#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
- * @see msi.gama.lang.gaml.gaml.GamlPackage#getDefBinaryOp()
+ * @see msi.gama.lang.gaml.gaml.GamlPackage#getUnitName()
  * @model
  * @generated
  */
-public interface DefBinaryOp extends EObject
+public interface UnitName extends Expression
 {
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -35,14 +34,14 @@ public interface DefBinaryOp extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Name</em>' attribute.
    * @see #setName(String)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getDefBinaryOp_Name()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getUnitName_Name()
    * @model
    * @generated
    */
   String getName();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.DefBinaryOp#getName <em>Name</em>}' attribute.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.UnitName#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Name</em>' attribute.
@@ -51,4 +50,4 @@ public interface DefBinaryOp extends EObject
    */
   void setName(String value);
 
-} // DefBinaryOp
+} // UnitName

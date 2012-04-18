@@ -2201,9 +2201,9 @@ ruleGamlUnitExpr returns [EObject current=null]
 ))(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getGamlUnitExprAccess().getRightGamlUnaryExprParserRuleCall_1_1_0()); 
+	        newCompositeNode(grammarAccess.getGamlUnitExprAccess().getRightUnitNameParserRuleCall_1_1_0()); 
 	    }
-		lv_right_3_0=ruleGamlUnaryExpr		{
+		lv_right_3_0=ruleUnitName		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getGamlUnitExprRule());
 	        }
@@ -2211,7 +2211,7 @@ ruleGamlUnitExpr returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"GamlUnaryExpr");
+        		"UnitName");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -2706,6 +2706,53 @@ ruleAbstractRef returns [EObject current=null]
     	newLeafNode(otherlv_6, grammarAccess.getAbstractRefAccess().getRightParenthesisKeyword_1_4());
     }
 )?)
+;
+
+
+
+
+
+
+
+// Entry rule entryRuleUnitName
+entryRuleUnitName returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getUnitNameRule()); }
+	 iv_ruleUnitName=ruleUnitName 
+	 { $current=$iv_ruleUnitName.current; } 
+	 EOF 
+;
+
+// Rule UnitName
+ruleUnitName returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+    {
+        $current = forceCreateModelElement(
+            grammarAccess.getUnitNameAccess().getUnitNameAction_0(),
+            $current);
+    }
+)(
+(
+		lv_name_1_0=RULE_ID
+		{
+			newLeafNode(lv_name_1_0, grammarAccess.getUnitNameAccess().getNameIDTerminalRuleCall_1_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getUnitNameRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_1_0, 
+        		"ID");
+	    }
+
+)
+))
 ;
 
 

@@ -11,7 +11,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
  */ 
 	GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
 	DefBinaryOp: '_binary &' name=ID'&;';
-	DefReserved: '_reserved &' name=ID'&;' | '_unit &' name=ID '&;';
+	DefReserved: '_reserved &' name=ID'&;';
 	DefUnary: '_unary &'name=ID '&;';
 
 /**
@@ -52,11 +52,11 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	OrExp returns Expression: AndExp ({Expression.left=current} op='or' right=AndExp)*;
 	AndExp returns Expression: Relational ({Expression.left = current} op='and' right=Relational)*;
 	Relational returns Expression: PairExpr (({Expression.left=current}op=('!='|'='|'>='|'<='|'<'|'>')) right=PairExpr)?;
-	PairExpr returns Expression: Addition (({PairExpr.left= current}op='::') right=Addition)?;
+	PairExpr returns Expression:   Addition (({PairExpr.left= current}op='::') right=Addition)?;
 	Addition returns Expression: Multiplication (({Expression.left=current}op='+'|{Expression.left=current}op='-') right=Multiplication)*;
 	Multiplication returns Expression: GamlBinaryExpr (({Expression.left=current}op='*'|{Expression.left=current}op='/'|{Expression.left=current}op='^') right=GamlBinaryExpr)*;
 	GamlBinaryExpr returns Expression: GamlUnitExpr (({GamlBinaryExpr.left=current} op=ID) right=GamlUnitExpr)*;
-	GamlUnitExpr returns Expression: GamlUnaryExpr (({GamlUnitExpr.left=current}op='#') right=GamlUnaryExpr)?;
+	GamlUnitExpr returns Expression: GamlUnaryExpr (({GamlUnitExpr.left=current}op='#') right=UnitName)?;
 	GamlUnaryExpr returns Expression: PrePrimaryExpr | {GamlUnaryExpr} ({GamlUnaryExpr.left=current}op=('-'|'!'|'my'|'the'|'not') right=GamlUnaryExpr);
 	PrePrimaryExpr returns Expression: TerminalExpression | MemberRef; 
 	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)?;
@@ -64,10 +64,15 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 
 /**
- * Cross-references to variables/operators
+ * Cross-references to variables/operators/units
  */
+ 	ArbitraryName returns Expression: {ArbitraryName} name = ID;
+ 	UnitName returns Expression: {UnitName} name= ID;
 	VariableRef : {VariableRef} ref=[GamlVarRef];
-	GamlVarRef: DefinitionFacetExpr | Definition | DefReserved | DefUnary | DefBinaryOp;
+	GamlVarRef: DefinitionFacetExpr | Definition | DefReserved | DefUnary /*| DefBinaryOp */;
+	
+	
+	//SUPPRIMER DES CROSS_REFERENCES (units / unaries ? / reserved)
 
 /**
  * Terminals

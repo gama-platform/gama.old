@@ -23,7 +23,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="unaries" upperBound="-1"
         eType="#//DefUnary" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DefBinaryOp" eSuperTypes="#//GamlVarRef"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DefBinaryOp">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DefReserved" eSuperTypes="#//GamlVarRef"/>
   <eClassifiers xsi:type="ecore:EClass" name="DefUnary" eSuperTypes="#//GamlVarRef"/>
   <eClassifiers xsi:type="ecore:EClass" name="Statement">
@@ -92,6 +94,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="FunctionRef" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//Expression"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ArbitraryName" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UnitName" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="DoubleLiteral" eSuperTypes="#//TerminalExpression"/>

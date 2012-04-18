@@ -296,6 +296,24 @@ public interface GamlFactory extends EFactory
   FunctionRef createFunctionRef();
 
   /**
+   * Returns a new object of class '<em>Arbitrary Name</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Arbitrary Name</em>'.
+   * @generated
+   */
+  ArbitraryName createArbitraryName();
+
+  /**
+   * Returns a new object of class '<em>Unit Name</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Name</em>'.
+   * @generated
+   */
+  UnitName createUnitName();
+
+  /**
    * Returns a new object of class '<em>Int Literal</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

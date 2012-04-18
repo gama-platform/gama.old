@@ -4,6 +4,7 @@
  */
 package msi.gama.lang.gaml.linking;
 
+import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -13,7 +14,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.factories.*;
+import msi.gaml.factories.ModelStructure;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.XtextResource;
@@ -29,27 +30,39 @@ public class GamlBuilder {
 
 	private final XtextResource resource;
 	private final IErrorCollector collect;
-	private final Map<Resource, ISyntacticElement> trees = new LinkedHashMap(2);
 
 	public GamlBuilder(final XtextResource r, final IErrorCollector c) {
 		resource = r;
 		collect = c;
 	}
 
-	public IModel build() throws MalformedURLException, IOException, InterruptedException {
-		IModel result = null;
-		trees.clear();
-		buildRecursiveSyntacticTree(resource);
+	public boolean validate() throws MalformedURLException, IOException {
+		ModelStructure ms = parse();
+		if ( ms != null ) {
+			getModelFactory().validate(ms, collect);
+		}
+		return isOK();
+	}
+
+	public IModel build() throws MalformedURLException, IOException {
+		ModelStructure ms = parse();
+		if ( ms != null ) {
+			IModel result = getModelFactory().compile(ms, collect);
+			if ( isOK() ) {
+				return result;
+			} else if ( result != null ) {
+				result.dispose();
+			}
+		}
+		return null;
+	}
+
+	private ModelStructure parse() throws MalformedURLException, IOException {
+		final Map<Resource, ISyntacticElement> trees = new LinkedHashMap();
+		buildRecursiveSyntacticTree(trees, resource);
 		if ( isOK() ) {
 			ModelStructure ms = new ModelStructure(resource, trees, collect);
-			if ( isOK() ) {
-				result = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
-				if ( isOK() ) { return result; }
-			}
-
-		}
-		if ( result != null ) {
-			result.dispose();
+			if ( isOK() ) { return ms; }
 		}
 		return null;
 	}
@@ -58,8 +71,9 @@ public class GamlBuilder {
 		return resource.getErrors().isEmpty() && !collect.hasErrors();
 	}
 
-	public Map<Resource, ISyntacticElement> buildRecursiveSyntacticTree(final Resource r) {
-		computeSyntacticTree(r);
+	public void buildRecursiveSyntacticTree(final Map<Resource, ISyntacticElement> trees,
+		final Resource r) {
+		computeSyntacticTree(trees, r);
 		for ( Import imp : ((Model) r.getContents().get(0)).getImports() ) {
 			String importUri = imp.getImportURI();
 			URI iu = URI.createURI(importUri).resolve(r.getURI());
@@ -72,17 +86,16 @@ public class GamlBuilder {
 							collect)));
 						continue;
 					}
-					buildRecursiveSyntacticTree(ir);
+					buildRecursiveSyntacticTree(trees, ir);
 				}
 			}
 		}
-		return trees;
 	}
 
-	private void computeSyntacticTree(final Resource r) {
+	private void computeSyntacticTree(final Map<Resource, ISyntacticElement> trees, final Resource r) {
 		if ( trees.containsKey(r) ) { return; }
-		Model m = (Model) r.getContents().get(0);
-		ISyntacticElement e = GamlToSyntacticElements.doConvert(m, collect);
+		ISyntacticElement e =
+			GamlToSyntacticElements.doConvert((Model) r.getContents().get(0), collect);
 		trees.put(r, e);
 	}
 

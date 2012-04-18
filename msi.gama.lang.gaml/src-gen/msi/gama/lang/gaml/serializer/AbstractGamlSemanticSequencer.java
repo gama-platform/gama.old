@@ -2,6 +2,7 @@ package msi.gama.lang.gaml.serializer;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import msi.gama.lang.gaml.gaml.ArbitraryName;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
@@ -33,6 +34,7 @@ import msi.gama.lang.gaml.gaml.ReturnsFacetExpr;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TernExp;
+import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
@@ -75,6 +77,12 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == GamlPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case GamlPackage.ARBITRARY_NAME:
+				if(context == grammarAccess.getArbitraryNameRule()) {
+					sequence_ArbitraryName(context, (ArbitraryName) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.ARRAY:
 				if(context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0_0() ||
@@ -180,8 +188,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.DEF_BINARY_OP:
-				if(context == grammarAccess.getDefBinaryOpRule() ||
-				   context == grammarAccess.getGamlVarRefRule()) {
+				if(context == grammarAccess.getDefBinaryOpRule()) {
 					sequence_DefBinaryOp(context, (DefBinaryOp) semanticObject); 
 					return; 
 				}
@@ -689,6 +696,12 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
+			case GamlPackage.UNIT_NAME:
+				if(context == grammarAccess.getUnitNameRule()) {
+					sequence_UnitName(context, (UnitName) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.VARIABLE_REF:
 				if(context == grammarAccess.getAbstractRefRule() ||
 				   context == grammarAccess.getAbstractRefAccess().getFunctionRefLeftAction_1_0() ||
@@ -770,6 +783,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_ArbitraryName(EObject context, ArbitraryName semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (statements+=Statement*)
 	 */
 	protected void sequence_Block(EObject context, Block semanticObject) {
@@ -792,8 +814,8 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 */
 	protected void sequence_DefBinaryOp(EObject context, DefBinaryOp semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.GAML_VAR_REF__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.GAML_VAR_REF__NAME));
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.DEF_BINARY_OP__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.DEF_BINARY_OP__NAME));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -950,7 +972,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (left=GamlUnitExpr_GamlUnitExpr_1_0_0 op='#' right=GamlUnaryExpr)
+	 *     (left=GamlUnitExpr_GamlUnitExpr_1_0_0 op='#' right=UnitName)
 	 */
 	protected void sequence_GamlUnitExpr(EObject context, GamlUnitExpr semanticObject) {
 		if(errorAcceptor != null) {
@@ -965,7 +987,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getGamlUnitExprAccess().getOpNumberSignKeyword_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getGamlUnitExprAccess().getRightGamlUnaryExprParserRuleCall_1_1_0(), semanticObject.getRight());
+		feeder.accept(grammarAccess.getGamlUnitExprAccess().getRightUnitNameParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
 	}
 	
@@ -1207,6 +1229,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 		feeder.accept(grammarAccess.getTernExpAccess().getRightOrExpParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.accept(grammarAccess.getTernExpAccess().getIfFalseOrExpParserRuleCall_1_4_0(), semanticObject.getIfFalse());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     name=ID
+	 */
+	protected void sequence_UnitName(EObject context, UnitName semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

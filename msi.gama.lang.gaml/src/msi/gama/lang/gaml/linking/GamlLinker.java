@@ -26,37 +26,29 @@ import org.eclipse.xtext.resource.XtextResource;
  */
 public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollector {
 
+	private final Map<Resource, IGamlBuilder.Listener> listeners = new HashMap();
+
 	public GamlLinker() {
 		GAMA.setGamlBuilder(this);
 	}
 
-	private final Set<IBuilderListener> listeners = new HashSet();
-	private final Map<Resource, GamlBuilder> builders = new HashMap();
+	// private final Map<Resource, GamlBuilder> builders = new HashMap();
 	private boolean hasErrors;
 
 	@Override
 	protected void afterModelLinked(final EObject model, final IDiagnosticConsumer d) {
 		hasErrors = false;
-		if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
-		IModel currentModel = null;
+		if ( !GamaBundleLoader.contributionsLoaded ) { return; }
 		Resource r = model.eResource();
-		try {
-			fireBuildBegun(r);
-			currentModel = getBuilder(r).build();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		} finally {
-			fireBuildEnded(r, currentModel);
-		}
-
+		validate(r);
 	}
 
 	private GamlBuilder getBuilder(final Resource r) {
-		GamlBuilder result = builders.get(r);
-		if ( result == null ) {
-			result = new GamlBuilder((XtextResource) r, this);
-			builders.put(r, result);
-		}
+		// GamlBuilder result = builders.get(r);
+		// if ( result == null ) {
+		GamlBuilder result = new GamlBuilder((XtextResource) r, this);
+		// builders.put(r, result);
+		// }
 		return result;
 	}
 
@@ -90,49 +82,68 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		return hasErrors;
 	}
 
-	@Override
-	public boolean addListener(final IBuilderListener l) {
-		if ( l == null ) { return false; }
-		return listeners.add(l);
-	}
-
-	@Override
-	public boolean removeListener(final IBuilderListener l) {
-		return listeners.remove(l);
-	}
-
-	private void fireBuildBegun(final Resource m) {
-		for ( IBuilderListener l : listeners ) {
-			l.beforeBuilding(m);
-		}
-
-	}
-
-	private void fireBuildEnded(final Resource m, final IModel result) {
-		boolean accepted = false;
-		for ( IBuilderListener l : listeners ) {
-			accepted = accepted || l.afterBuilding(m, result);
-			if ( accepted ) { return; }
-		}
-		if ( result != null ) {
-			result.dispose();
-		}
-	}
-
 	/**
 	 * @param r
 	 * @return
 	 */
 	public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
-		return getBuilder(r).buildRecursiveSyntacticTree(r);
+		Map<Resource, ISyntacticElement> trees = new LinkedHashMap();
+		getBuilder(r).buildRecursiveSyntacticTree(trees, r);
+		return trees;
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGamlBuilder#invalidate(org.eclipse.emf.ecore.resource.Resource)
+	 * @see msi.gama.common.interfaces.IGamlBuilder#build(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
-	public void invalidate(final Resource r) {
-		// trees.remove(r);
+	public IModel build(final Resource xtextResource) {
+		try {
+			return getBuilder(xtextResource).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void validate(final Resource xtextResource) {
+		boolean isOK = false;
+		try {
+			isOK = getBuilder(xtextResource).validate();
+		} catch (Exception e) {
+			isOK = false;
+			e.printStackTrace();
+		}
+		IGamlBuilder.Listener listener = listeners.get(xtextResource);
+		if ( listener != null ) {
+			listener.validationEnded(xtextResource);
+		}
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGamlBuilder#addListener(org.eclipse.emf.ecore.resource.Resource,
+	 *      msi.gama.common.interfaces.IGamlBuilder.Listener)
+	 */
+	@Override
+	public void addListener(final Resource xtextResource, final Listener listener) {
+		listeners.put(xtextResource, listener);
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGamlBuilder#removeListener(msi.gama.common.interfaces.IGamlBuilder.Listener)
+	 */
+	@Override
+	public void removeListener(final Listener listener) {
+		Resource toRemove = null;
+		for ( Map.Entry<Resource, IGamlBuilder.Listener> entry : listeners.entrySet() ) {
+			if ( entry.getValue().equals(listener) ) {
+				toRemove = entry.getKey();
+				break;
+			}
+		}
+		if ( toRemove != null ) {
+			listeners.remove(toRemove);
+		}
 	}
 
 }

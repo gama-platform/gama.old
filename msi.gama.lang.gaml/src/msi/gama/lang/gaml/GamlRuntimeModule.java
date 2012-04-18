@@ -46,4 +46,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlLinker.class;
 	}
 
+	@Override
+	@org.eclipse.xtext.service.SingletonBinding(eager = true)
+	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+		return null;
+	}
+
 }
