@@ -18,13 +18,15 @@
  */
 package msi.gaml.factories;
 
+import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.IType;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 26 nov. 2008
@@ -34,54 +36,168 @@ import msi.gaml.types.IType;
 @handles({ ISymbolKind.VARIABLE })
 public class VariableFactory extends SymbolFactory {
 
-	public VariableFactory() {
-		// registeredSymbols.put(IVariable.VAR, null);
-	}
-
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getKeyword().equals(IKeyword.PARAMETER) ) { return super.getKeyword(cur); }
-		String keyword = cur.getLabel(IKeyword.TYPE);
+		if ( cur.getKeyword().equals(PARAMETER) ) { return super.getKeyword(cur); }
+		String keyword = cur.getLabel(TYPE);
 		if ( keyword == null ) {
 			keyword = cur.getKeyword();
 		}
-		// if ( /* Types.get(keyword) == Types.NO_TYPE && */!keyword.equals(IKeyword.SIGNAL) ) {
-		// return IType.AGENT_STR; }
 		return keyword;
-		// WARNING : no further test made here; can be totally false.
 	}
 
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		Facets facets = source.getFacets();
-		if ( keyword.equals(IKeyword.SIGNAL) && facets.containsKey(IKeyword.ENVIRONMENT) ) {
-			String env = facets.getLabel(IKeyword.ENVIRONMENT);
-			String decay = facets.getLabel(IKeyword.DECAY);
-			if ( decay == null ) {
-				decay = "0.1";
-			}
-			String name = facets.getLabel(IKeyword.NAME);
-			final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
-			VariableDescription vd =
-				(VariableDescription) createDescription(new StringBasedStatementDescription(
-					IType.FLOAT_STR, new Facets(IKeyword.NAME, name, IKeyword.TYPE,
-						IType.FLOAT_STR, IKeyword.UPDATE, value, IKeyword.MIN, "0")), superDesc,
-					null);
-
-			SpeciesDescription environment = superDesc.getSpeciesDescription(env);
-			environment.addChild(vd);
+		if ( keyword.equals(SIGNAL) ) {
+			buildSignalDescription(source, keyword, superDesc, md);
 		}
-
-		return new VariableDescription(keyword, superDesc, facets, children, source, md);
+		return new VariableDescription(keyword, superDesc, source.getFacets(), children, source, md);
 	}
 
-	/**
-	 * @param name
-	 */
+	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
+		final IDescription superDesc, final SymbolMetaDescription md) {
+		Facets facets = source.getFacets();
+		String name = facets.getLabel(NAME);
+		String env = facets.getLabel(ENVIRONMENT);
+		if ( env == null ) {
+			superDesc.flagError("No environment defined for signal " + name);
+			return;
+		}
+		String decay = facets.getLabel(DECAY);
+		if ( decay == null ) {
+			decay = "0.1";
+		}
+
+		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
+		VariableDescription vd =
+			(VariableDescription) createDescription(new StringBasedStatementDescription(
+				IType.FLOAT_STR, new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN,
+					"0")), superDesc, null);
+
+		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
+		if ( superDesc.getSpeciesDescription(env) == null || !environment.isGrid() ) {
+			superDesc.flagError("Environment " + env + " of signal " + name +
+				" cannot be determined.");
+		}
+		environment.addChild(vd);
+	}
+
 	public void addSpeciesNameAsType(final String name) {
-		registeredSymbols.put(name, registeredSymbols.get(IKeyword.AGENT));
+		registeredSymbols.put(name, registeredSymbols.get(AGENT));
+	}
+
+	@Override
+	protected void compileFacet(final String tag, final IDescription sd) {
+		super.compileFacet(tag, sd);
+		if ( valueFacets.contains(tag) ) {
+			IExpression expr = sd.getFacets().getExpr(tag);
+			IType t = sd.getContentType();
+			if ( (t == null || t == Types.NO_TYPE) && expr != null ) {
+				((VariableDescription) sd).setContentType(expr.getContentType());
+			}
+		}
+	}
+
+	@Override
+	protected void privateValidate(final IDescription desc) {
+		super.privateValidate(desc);
+		VariableDescription vd = (VariableDescription) desc;
+		assertCanBeFunction(vd);
+
+		if ( !vd.getFacets().equals(KEYWORD, PARAMETER) ) {
+			assertCanBeAmong(vd, vd.getType(), vd.getFacets());
+			assertValueFacetsAreTheSameType(vd, vd.getFacets());
+		} else if ( vd.isParameter() ) {
+			assertCanBeParameter(vd);
+		}
+		// assertCanBeExperimentParameter(vd);
+	}
+
+	private void assertCanBeAmong(final VariableDescription vd, final IType type,
+		final Facets facets) {
+		IExpression amongExpression = facets.getExpr(AMONG);
+		if ( amongExpression != null && type.id() != amongExpression.getContentType().id() ) {
+			vd.flagError("Variable " + vd.getName() + " of type " + type.toString() +
+				" cannot be chosen among " + amongExpression.toGaml(), AMONG);
+		}
+	}
+
+	private void assertValueFacetsAreTheSameType(final VariableDescription vd, final Facets facets) {
+		IType type = null;
+		String firstValueFacet = null;
+		for ( String s : valueFacets ) {
+			IExpression expr = facets.getExpr(s);
+			if ( expr != null ) {
+				if ( type == null ) {
+					type = expr.type();
+					firstValueFacet = s;
+				} else {
+					if ( type != expr.type() ) {
+						vd.flagWarning("The types of the facets " + s + " and " + firstValueFacet +
+							" are not compatible", s);
+					}
+				}
+			}
+		}
+	}
+
+	private void assertCanBeFunction(final VariableDescription vd) {
+		Facets ff = vd.getFacets();
+		if ( ff.containsKey(FUNCTION) &&
+			(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
+			vd.flagError("A function cannot have an 'init' or 'update' facet", FUNCTION);
+		}
+	}
+
+	private void assertCanBeParameter(final VariableDescription vd) {
+		String p = "Parameter '" + vd.getParameterName() + "' ";
+		Facets facets = new Facets();
+		Facets paramFacets = vd.getFacets();
+		if ( paramFacets.equals(KEYWORD, PARAMETER) ) {
+			// We are validating an experiment parameter so we fusion the facets of the targeted var
+			// and those of the parameter
+			String varName = paramFacets.getLabel(VAR);
+			VariableDescription targetedVar = vd.getWorldSpecies().getVariable(varName);
+			if ( targetedVar == null ) {
+				vd.flagError(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
+				return;
+			}
+			if ( !vd.getType().equals(Types.NO_TYPE) &&
+				vd.getType().id() != targetedVar.getType().id() ) {
+				vd.flagError(p + "type must be the same as that of " + varName, IKeyword.TYPE);
+			}
+			facets.putAll(targetedVar.getFacets());
+			facets.putAll(paramFacets);
+			assertCanBeAmong(vd, targetedVar.getType(), facets);
+			assertValueFacetsAreTheSameType(vd, facets);
+		} else {
+			facets = paramFacets;
+		}
+
+		IExpression min = facets.getExpr(MIN);
+		IExpression max = facets.getExpr(MAX);
+		if ( facets.getExpr(FUNCTION) != null ) {
+			vd.flagError("Functions cannot be used as parameters", FUNCTION);
+		}
+		if ( min != null && !min.isConst() ) {
+			vd.flagError(p + " min value must be constant", MIN);
+		}
+		if ( max != null && !max.isConst() ) {
+			vd.flagError(p + " max value must be constant", MAX);
+		}
+		if ( facets.getExpr(INIT) == null ) {
+			vd.flagError(p + " must have an initial value");
+		} else if ( !facets.getExpr(INIT).isConst() ) {
+			vd.flagError(p + "initial value must be constant");
+		}
+		IExpression updateExpression = facets.getExpr(UPDATE, facets.getExpr(VALUE));
+		if ( updateExpression != null ) {
+			vd.flagError(p + "cannot have an 'update' or 'value' facet");
+		} else if ( vd.isNotModifiable() ) {
+			vd.flagError(p + " cannot be declared as constant ");
+		}
 	}
 
 }

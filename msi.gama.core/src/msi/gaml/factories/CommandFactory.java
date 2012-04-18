@@ -46,41 +46,66 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected void privateCompileChildren(final IDescription desc, final ISymbol cs,
-		final IExpressionFactory factory) {
-		if ( ((CommandDescription) desc).hasArgs() ) {
-			compileArgs(desc, cs, factory);
+	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
+		if ( desc.getMeta().isRemoteContext() ) {
+			String actualSpecies = computeSpecies(desc);
+			if ( actualSpecies != null ) {
+				IType t = desc.getSpeciesContext().getType();
+				desc.addTemp(MYSELF, t, t, getExpressionFactory());
+				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+			}
 		}
-		String actualSpecies = computeSpecies(cs);
-
-		if ( actualSpecies != null ) {
-			IType t = desc.getSpeciesContext().getType();
-			desc.addTemp(MYSELF, t, t, factory);
-			desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
-		}
-		super.privateCompileChildren(desc, cs, factory);
+		return super.privateCompileChildren(desc);
 	}
 
-	private void compileArgs(final IDescription cd, final ISymbol ce,
-		final IExpressionFactory factory) {
+	@Override
+	protected void privateValidateChildren(final IDescription desc) {
+		if ( ((CommandDescription) desc).hasArgs() ) {
+			validateArgs(desc);
+		}
+		IDescription previousEnclosingDescription = null;
+		String actualSpecies = computeSpecies(desc);
+		if ( actualSpecies != null ) {
+			IType t = desc.getSpeciesContext().getType();
+			desc.addTemp(MYSELF, t, t, getExpressionFactory());
+			previousEnclosingDescription = desc.getSuperDescription();
+			desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+		}
+		super.privateValidateChildren(desc);
+		if ( previousEnclosingDescription != null ) {
+			desc.setSuperDescription(previousEnclosingDescription);
+		}
+	}
+
+	/**
+	 * @param desc
+	 */
+	private void validateArgs(final IDescription desc) {
+		privateCompileArgs((CommandDescription) desc);
+	}
+
+	@Override
+	protected Arguments privateCompileArgs(final CommandDescription cd) {
 		Arguments ca = new Arguments();
-		boolean isCreate = cd.getKeyword().equals(CREATE) || cd.getKeyword().equals(DO);
+		String keyword = cd.getKeyword();
+		boolean isCreate =
+			keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
 		Facets argFacets;
-		for ( IDescription sd : ((CommandDescription) cd).getArgs() ) {
+		for ( IDescription sd : cd.getArgs() ) {
 			argFacets = sd.getFacets();
 			String name = sd.getName();
 			IExpression e = null;
 			IDescription superDesc = cd.getSuperDescription();
 			try {
 				if ( argFacets.containsKey(VALUE) ) {
-					e = argFacets.get(VALUE).compile(superDesc, factory);
+					e = argFacets.get(VALUE).compile(superDesc, getExpressionFactory());
 				} else if ( argFacets.containsKey(DEFAULT) ) {
-					e = argFacets.get(DEFAULT).compile(superDesc, factory);
+					e = argFacets.get(DEFAULT).compile(superDesc, getExpressionFactory());
 				}
 			} catch (RuntimeException e1) {
 				cd.flagError("Error in compiling argument " + name + ": " + e1.getMessage(), name);
 				e1.printStackTrace();
-				return;
+				return ca;
 			}
 			ca.put(name, e);
 			IType type = sd.getTypeOf(argFacets.getLabel(TYPE));
@@ -90,64 +115,69 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			if ( !isCreate ) {
 				// Special case for create and do, as the "arguments" passed should not be part of
 				// the context
-				((CommandDescription) cd).addTemp(name, type,
-					e == null ? Types.NO_TYPE : e.getContentType(), factory);
+				cd.addTemp(name, type, e == null ? Types.NO_TYPE : e.getContentType(),
+					getExpressionFactory());
 			}
 
 		}
-		// if ( cd.getKeyword().equals(DO) ) {
-		// GuiUtils.debug("Argument map found in do " + cd.getFacets().getLabel(ACTION) + " : " +
-		// ca.toString());
-		// }
-		((ICommand.WithArgs) ce).setFormalArgs(ca);
+		if ( cd.getKeyword().equals(IKeyword.DO) ) {
+			cd.verifyArgs(cd.getFacets().getLabel(IKeyword.ACTION), ca);
+		}
+		return ca;
 	}
 
 	@Override
-	protected IExpression compileFacet(final String tag, final IExpressionDescription ed,
-		final IDescription sd, final SymbolMetaDescription md, final IExpressionFactory factory) {
-		// String name = sd.getFacet(ISymbol.NAME);
-		String type = sd.getFacets().getLabel(TYPE);
-		String contentType = sd.getFacets().getLabel(AS);
-		if ( contentType == null ) {
-			contentType = sd.getFacets().getLabel(SPECIES);
-		}
-		if ( type == null && contentType != null ) {
-			type = IType.LIST_STR;
-		}
-		IExpression exp =
-			((CommandDescription) sd).addNewTempIfNecessary(tag, md, type, contentType, factory);
+	protected void compileFacet(final String tag, final IDescription sd) {
+		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
+			Facets ff = sd.getFacets();
+			String type = ff.getLabel(TYPE);
+			String contentType = ff.getLabel(AS);
+			if ( contentType == null ) {
+				contentType = ff.getLabel(SPECIES);
+				if ( contentType == null ) {
+					contentType = ff.getLabel(OF);
+				}
+			}
 
-		if ( exp == null ) {
-			exp = super.compileFacet(tag, ed, sd, md, factory);
+			if ( type == null ) {
+				if ( ff.containsKey(VALUE) ) {
+					compileFacet(VALUE, sd);
+					type = ff.getExpr(VALUE).type().toString();
+				} else if ( ff.containsKey(OVER) ) {
+					compileFacet(OVER, sd);
+					type = ff.getExpr(OVER).getContentType().toString();
+				} else if ( ff.containsKey(FROM) && ff.containsKey(TO) ) {
+					compileFacet(FROM, sd);
+					type = ff.getExpr(FROM).type().toString();
+				}
+			}
+			if ( contentType == null ) {
+				if ( ff.containsKey(VALUE) ) {
+					compileFacet(VALUE, sd);
+					contentType = ff.getExpr(VALUE).getContentType().toString();
+				}
+			}
+
+			if ( type == null && contentType != null ) {
+				type = IType.LIST_STR;
+			}
+			IVarExpression exp =
+				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType,
+					getExpressionFactory());
+			ff.get(tag).setExpression(exp);
+		} else {
+			super.compileFacet(tag, sd);
 		}
-		return exp;
 	}
 
-	private String computeSpecies(final ISymbol ce) {
+	private String computeSpecies(final IDescription ce) {
 		IType type = null;
-		IExpression speciesFacet = ce.getFacet(SPECIES);
+		Facets ff = ce.getFacets();
+		IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
 		if ( speciesFacet != null ) {
 			IType t = speciesFacet.getContentType();
 			if ( t.isSpeciesType() ) {
 				type = t;
-			}
-		}
-		if ( type == null ) {
-			speciesFacet = ce.getFacet(AS);
-			if ( speciesFacet != null ) {
-				IType t = speciesFacet.getContentType();
-				if ( t.isSpeciesType() ) {
-					type = t;
-				}
-			}
-		}
-		if ( type == null ) {
-			speciesFacet = ce.getFacet(TARGET);
-			if ( speciesFacet != null ) {
-				IType t = speciesFacet.getContentType();
-				if ( t.isSpeciesType() ) {
-					type = t;
-				}
 			}
 		}
 		return type == null ? null : type.getSpeciesName();

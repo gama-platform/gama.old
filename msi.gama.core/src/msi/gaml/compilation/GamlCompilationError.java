@@ -48,9 +48,10 @@ public class GamlCompilationError {
 	}
 
 	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation,
-		final boolean warning) {
+		final boolean warning, final Object facet) {
 		this(string);
 		isWarning = warning;
+		this.facet = facet;
 		addSource(sourceInformation);
 	}
 

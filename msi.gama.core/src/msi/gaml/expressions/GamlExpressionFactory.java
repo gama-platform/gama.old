@@ -18,6 +18,7 @@
  */
 package msi.gaml.expressions;
 
+import static msi.gama.common.interfaces.IKeyword.EACH;
 import static msi.gaml.expressions.IExpressionParser.*;
 import java.util.*;
 import msi.gaml.compilation.IOperatorExecuter;
@@ -39,6 +40,15 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	public static IExpression FALSE_EXPR;
 	public static IVarExpression EACH_EXPR;
 	public static IExpression WORLD_EXPR = null;
+
+	static {
+		IType bool = Types.get(IType.BOOL);
+		IType none = Types.NO_TYPE;
+		NIL_EXPR = new ConstantExpression(null, none, none);
+		TRUE_EXPR = new ConstantExpression(true, bool, bool);
+		FALSE_EXPR = new ConstantExpression(false, bool, bool);
+		EACH_EXPR = new EachExpression(EACH, none, none);
+	}
 
 	// public static int cacheSize = 100;
 	// public final static Map<Object, IExpression> cache = new HashMap(cacheSize);
@@ -64,6 +74,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		// if ( expr == null ) {
 		// expr = new ConstantExpression(val, type, contentType);
 		// cache.put(val, expr);
+		// GuiUtils.debug("Constants cache size: " + cache.size());
 		// }
 		// return expr;
 		return new ConstantExpression(val, type, contentType);

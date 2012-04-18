@@ -22,7 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.commands.Facets;
+import msi.gaml.commands.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
@@ -37,9 +37,7 @@ import msi.gaml.types.*;
 public class CommandDescription extends SymbolDescription {
 
 	private final Map<String, IVarExpression> temps;
-
 	private final Map<String, IDescription> args;
-
 	private final boolean verifyMandatoryArgs;
 
 	private static int index = 0;
@@ -88,20 +86,17 @@ public class CommandDescription extends SymbolDescription {
 				args.put(c.getName(), c);
 			}
 		}
-		// if ( getKeyword().equals(IKeyword.DO) && !args.isEmpty() ) {
-		// GuiUtils.debug("arguments derived from WITH :" + args);
-		// }
 		children.removeAll(args.values());
 	}
 
-	static final Set<String> builtin = SymbolMetaDescription.getAllowedFacetsFor(DO);
+	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 	static final Map<String, IExpressionDescription> retained = new HashMap();
 
 	private void exploreArgs(final List<IDescription> argList) {
 		if ( !getKeyword().equals(IKeyword.DO) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
 			String facet = entry.getKey();
-			if ( !builtin.contains(facet) ) {
+			if ( !doFacets.contains(facet) ) {
 				retained.put(facet, entry.getValue());
 			}
 		}
@@ -124,22 +119,17 @@ public class CommandDescription extends SymbolDescription {
 		}
 	}
 
-	public IVarExpression addNewTempIfNecessary(final String facetName,
-		final SymbolMetaDescription md, final String type, final String contentType,
-		final IExpressionFactory f) {
-
-		if ( md.isFacetDeclaringANewTemp(facetName) ) {
-			String varName = facets.getLabel(facetName);
-			if ( getSuperDescription() == null ||
-				!(getSuperDescription() instanceof CommandDescription) ) {
-				flagError("Impossible to return " + varName);
-			}
-			// TODO ExpressionParser.getInstance().verifyVarName(varName, getModel());
-			return (IVarExpression) ((CommandDescription) getSuperDescription()).addTemp(varName,
-				type == null ? Types.NO_TYPE : getTypeOf(type), contentType == null ? Types.NO_TYPE
-					: getTypeOf(contentType), f);
+	public IVarExpression addNewTempIfNecessary(final String facetName, final String type,
+		final String contentType, final IExpressionFactory f) {
+		IDescription sup = getSuperDescription();
+		if ( !(sup instanceof CommandDescription) ) {
+			flagError("Impossible to return " + facets.getLabel(facetName));
+			return null;
 		}
-		return null;
+		String varName = facets.getLabel(facetName);
+		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type == null
+			? Types.NO_TYPE : getTypeOf(type), contentType == null ? Types.NO_TYPE
+			: getTypeOf(contentType), f);
 	}
 
 	public SpeciesDescription extractExtraSpeciesContext() {
@@ -182,7 +172,6 @@ public class CommandDescription extends SymbolDescription {
 			return ((CommandDescription) getSuperDescription()).addTemp(name, type, contentType, f);
 		}
 		IVarExpression result = f.createVar(name, type, contentType, false, IVarExpression.TEMP);
-
 		temps.put(name, result);
 		return result;
 	}
@@ -216,6 +205,20 @@ public class CommandDescription extends SymbolDescription {
 				caller.flagError("Unknown argument" + arg + " in call to " + getName());
 			}
 		}
+	}
+
+	public void verifyArgs(final String actionName, final Arguments args) {
+		ExecutionContextDescription declPlace =
+			(ExecutionContextDescription) getDescriptionDeclaringAction(actionName);
+		CommandDescription executer = null;
+		if ( declPlace != null ) {
+			executer = declPlace.getAction(actionName);
+		}
+		if ( executer == null ) {
+			flagError("Unknown action " + getName(), IKeyword.ACTION);
+			return;
+		}
+		executer.verifyArgs(this, args.keySet());
 	}
 
 	public List<IDescription> getArgs() {

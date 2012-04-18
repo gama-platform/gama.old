@@ -18,7 +18,7 @@
  */
 package msi.gaml.variables;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -89,8 +89,8 @@ public class Variable extends Symbol implements IVariable {
 		VariableDescription desc = (VariableDescription) sd;
 		doUpdate = true;
 		setName(getFacet(IKeyword.NAME).literalValue());
-		computeParameterName();
-		computeCategoryName();
+		pName = desc.getParameterName();
+		cName = getLiteral(IKeyword.CATEGORY, null);
 		updateExpression = getFacet(IKeyword.VALUE, getFacet(IKeyword.UPDATE));
 		functionExpression = getFacet(IKeyword.FUNCTION);
 		initExpression = getFacet(IKeyword.INIT);
@@ -100,66 +100,12 @@ public class Variable extends Symbol implements IVariable {
 		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
 
-		if ( functionExpression != null && (initExpression != null || updateExpression != null) ) {
-			error("A function cannot have an 'init' or 'update' facet");
-		}
-
 		if ( desc.isBuiltIn() ) {
 			ExecutionContextDescription context = desc.getSpeciesContext();
-
-			if ( context == null ) {
-				desc.getSpeciesContext();
-			}
-
-			// try {
 			buildHelpers(context);
-			// } catch (final GamlException e) {
-			// e.addContext("in building variable " + name + " java helpers");
-			// throw e;
-			// }
-
 		}
 		javaInternal = getter != null && setter != null;
 
-		if ( contentType.id() == IType.NONE ) {
-			IType cType =
-				updateExpression != null ? updateExpression.getContentType()
-					: initExpression != null ? initExpression.getContentType()
-						: functionExpression != null ? functionExpression.getContentType()
-							: Types.NO_TYPE;
-			contentType = cType == null ? Types.NO_TYPE : cType;
-			desc.setContentType(contentType);
-		}
-
-		if ( amongExpression != null && type.id() != amongExpression.getContentType().id() ) {
-			error("Var " + getName() + " of type " + type.toString() + " cannot be chosen among " +
-				amongExpression.toGaml());
-		}
-
-		assertCanBeParameter();
-
-	}
-
-	private void assertCanBeParameter() {
-		if ( !isParameter() ) { return; }
-		String p = "Parameter " + getTitle() + " ";
-		IExpression min = getFacet(IKeyword.MIN);
-		IExpression max = getFacet(IKeyword.MAX);
-		if ( functionExpression != null ) {
-			error("Functions cannot be used as parameters");
-		} else if ( min != null && !min.isConst() ) {
-			error(p + " min value must be constant");
-		} else if ( max != null && !max.isConst() ) {
-			error(p + " max value must be constant");
-		} else if ( initExpression == null ) {
-			error("parameters must have an initial value");
-		} else if ( !initExpression.isConst() ) {
-			error(p + "initial value must be constant");
-		} else if ( updateExpression != null ) {
-			error(p + "cannot have an 'update' or 'value' facet");
-		} else if ( isNotModifiable ) {
-			error(p + " cannot be declared as constant ");
-		}
 	}
 
 	private void buildHelpers(final ExecutionContextDescription context) {
@@ -238,17 +184,17 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public boolean isParameter() {
-		return getFacet(IKeyword.PARAMETER) != null;
+		return getDescription().isParameter();
+	}
+
+	@Override
+	public VariableDescription getDescription() {
+		return (VariableDescription) description;
 	}
 
 	@Override
 	public boolean isUpdatable() {
 		return updateExpression != null && !isNotModifiable;
-	}
-
-	@Override
-	public IType getContentType() {
-		return contentType;
 	}
 
 	@Override
@@ -277,18 +223,6 @@ public class Variable extends Symbol implements IVariable {
 		}
 	}
 
-	public void computeParameterName() {
-		final IExpression result = getFacet(IKeyword.PARAMETER);
-		if ( result == null ) {
-			pName = getName();
-			return;
-		}
-		pName = result.literalValue();
-		if ( pName.equals("true") ) {
-			pName = getName();
-		}
-	}
-
 	@Override
 	public String getTitle() {
 		return pName;
@@ -297,10 +231,6 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public String getCategory() {
 		return cName;
-	}
-
-	public void computeCategoryName() {
-		cName = getLiteral(IKeyword.CATEGORY, null);
 	}
 
 	@Override
@@ -378,14 +308,6 @@ public class Variable extends Symbol implements IVariable {
 
 	}
 
-	public boolean hasChildren() {
-		return false;
-	}
-
-	public List<? extends ISymbol> getChildren() {
-		return Collections.EMPTY_LIST;
-	}
-
 	@Override
 	public Number getMinValue() {
 		return null;
@@ -399,11 +321,6 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public Number getStepValue() {
 		return null;
-	}
-
-	@Override
-	public boolean isBuiltIn() {
-		return ((VariableDescription) description).isBuiltIn();
 	}
 
 	@Override

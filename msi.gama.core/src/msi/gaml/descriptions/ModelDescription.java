@@ -21,7 +21,7 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -37,10 +37,10 @@ public class ModelDescription extends SymbolDescription {
 
 	private static short id_provider;
 	short id;
-	private Map<String, ExperimentDescription> experiments;
+	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
 	private IDescription environment;
-	TypesManager types;
+	final TypesManager types;
 	private String fileName;
 	private String baseDirectory;
 	private SpeciesDescription worldSpecies;
@@ -62,11 +62,6 @@ public class ModelDescription extends SymbolDescription {
 			flagError(e.getMessage());
 			return filePath;
 		}
-	}
-
-	@Override
-	protected void initFields() {
-		experiments = new HashMap<String, ExperimentDescription>();
 	}
 
 	public short getId() {
@@ -96,9 +91,6 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	public void addType(final SpeciesDescription species) {
-		if ( allSpeciesDescription.containsKey(species.getName()) ) {
-			GuiUtils.debug(species.getName() + " already there. ");
-		}
 		allSpeciesDescription.put(species.getName(), species);
 		types.addType(species);
 	}
@@ -164,7 +156,7 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if ( spec == null || worldSpecies == null ) { return null; }
+		// if ( spec == null || worldSpecies == null ) { return null; }
 		SpeciesDescription result = allSpeciesDescription.get(spec);
 		return result == null ? findSpecies(worldSpecies, spec) : result;
 	}

@@ -21,10 +21,10 @@ package msi.gaml.commands;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -85,8 +85,8 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	private final IExpression number;
 	private final IExpression speciesExpr;
 	private final String returnString;
-	private double sizeSquare = -1;
-	private String typeDiscretisation = "";
+	private final double sizeSquare = -1;
+	private final String typeDiscretisation = "";
 
 	private AbstractCommandSequence sequence;
 
@@ -101,9 +101,6 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		number = getFacet(IKeyword.NUMBER);
 		speciesExpr = getFacet(IKeyword.SPECIES);
 		setName("create");
-		// asExpr = getFacet(ISymbol.AS);
-		// setName("create " + speciesExpr == null ? description.getSpeciesContext().getName()
-		// : speciesExpr.toGaml());
 	}
 
 	public CreateCommand() {
@@ -185,11 +182,11 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		if ( speciesExpr == null ) {
 			thePopulation = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
-			
+
 			ISpecies targetSpecies = (ISpecies) speciesExpr.value(scope);
 			if ( targetSpecies == null ) {
 				String availableSpecies = accumulateAvailableSpecs(executor);
-				
+
 				throw new GamaRuntimeException("Population of " + speciesExpr.literalValue() +
 					" species is not accessible from the context of " + executor.getName() +
 					" agent. Available populations are [" + availableSpecies + "] ");
@@ -198,49 +195,11 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			thePopulation = executor.getPopulationFor(targetSpecies);
 		}
 
-		// "myself" is added to the temporary variables
 		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
 
 		if ( from != null ) {
 			IType type = from.type();
-			/*IExpression size = getFacet(IKeyword.SIZE);
-			if ( size != null ) {
-				double ss = Cast.asFloat(scope, size.value(scope));
-				if ( ss > 0 ) {
-					sizeSquare = ss;
-				}
-
-			}
-			IExpression typeDisc = getFacet(IKeyword.TYPE);
-			if ( typeDisc != null ) {
-				typeDiscretisation = Cast.asString(scope, typeDisc.value(scope));
-				if ( typeDiscretisation == null ) {
-					typeDiscretisation = "";
-				}
-			}
-			if ( type.isSpeciesType() ) {
-				IAgent ff = (IAgent) from.value(scope);
-				if ( ff != null ) {
-
-					final List<Map<String, Object>> initialValues = new GamaList();
-					computeInits(scope, initialValues, numberOfAgents);
-					createAgentsFromAgent(scope, ff, agents, thePopulation, initialValues);
-				}
-			} else if ( type.id() == IType.LIST ) {
-				IList ags = Cast.asList(scope, from.value(scope));
-				if ( ags != null && from.getContentType().isSpeciesType() ) {
-					for ( Object entity : ags ) {
-						if ( entity instanceof IAgent ) {
-
-							final List<Map<String, Object>> initialValues = new GamaList();
-							computeInits(scope, initialValues, numberOfAgents);
-							createAgentsFromAgent(scope, (IAgent) entity, agents, thePopulation,
-								initialValues);
-						}
-					}
-				}
-			} else */
-			if ( type.id() == IType.STRING  || type.id() == IType.FILE ) {
+			if ( type.id() == IType.STRING || type.id() == IType.FILE ) {
 				FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
 				final List<Map<String, Object>> initialValues = new GamaList();
 				if ( it3 != null ) {
@@ -297,45 +256,6 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		return agents;
 	}
 
-	/*private void createAgentsFromAgent(final IScope scope, final IAgent agent,
-		final GamaList<IAgent> agents, final IPopulation realSpecies,
-		final List<Map<String, Object>> initialValues) throws GamaRuntimeException {
-		IShape geom = agent.getGeometry();
-		if ( geom == null ) { return; }
-		List<Geometry> geoms = null;
-		if ( sizeSquare > 0 && !typeDiscretisation.equals("Triangles") ) {
-			typeDiscretisation = "Squares";
-		} else {
-			typeDiscretisation = "Triangles";
-		}
-
-		if ( typeDiscretisation.equals("Squares") ) {
-			geoms = GeometryUtils.discretisation(geom.getInnerGeometry(), sizeSquare, false);
-		} else {
-			if ( sizeSquare > 0 ) {
-				geoms = new GamaList<Geometry>();
-				List<Geometry> parts =
-					GeometryUtils.discretisation(geom.getInnerGeometry(), sizeSquare, true);
-				for ( Geometry gg : parts ) {
-					geoms.addAll(GeometryUtils.triangulation(gg));
-				}
-			} else {
-				geoms =
-					new GamaList<Geometry>(GeometryUtils.triangulation(geom.getInnerGeometry()));
-			}
-		}
-		List<Geometry> finalGeoms = new GamaList(geoms.size());
-		for ( Geometry g : geoms ) {
-			if ( g != null && !g.isEmpty() ) {
-				finalGeoms.add(g);
-			}
-		}
-		createAgents(scope, agents, realSpecies, initialValues, finalGeoms.size());
-		for ( int i = 0, n = agents.size(); i < n; i++ ) {
-			((GamaShape) agents.get(i).getGeometry()).setInnerGeometry(finalGeoms.get(i));
-		}
-	}*/
-
 	/**
 	 * @throws GamaRuntimeException
 	 * @param population
@@ -384,9 +304,11 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		String shapeFile = "";
 		try {
 			Object shfile = from.value(scope);
-			shapeFile = shfile instanceof String ? scope.getSimulationScope().getModel()
-					.getRelativeFilePath(Cast.asString(scope, shfile), true) : ((GamaFile) shfile).getPath();
-				
+			shapeFile =
+				shfile instanceof String ? scope.getSimulationScope().getModel()
+					.getRelativeFilePath(Cast.asString(scope, shfile), true) : ((GamaFile) shfile)
+					.getPath();
+
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}

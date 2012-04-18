@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -68,17 +68,17 @@ public class DescriptionFactory {
 			new Facets(facets));
 	}
 
-	private static Class<ISymbolFactory> FACTORY_CLASS;
-	private volatile static ISymbolFactory modelFactory;
+	private static Class FACTORY_CLASS;
+	private volatile static ModelFactory modelFactory;
 
 	public static ISymbolFactory getOutputFactory() {
 		return getModelFactory().chooseFactoryFor(IKeyword.OUTPUT);
 	}
 
-	public static ISymbolFactory getModelFactory() {
+	public static ModelFactory getModelFactory() {
 		if ( modelFactory == null ) {
 			try {
-				modelFactory = getFactoryClass().newInstance();
+				modelFactory = (ModelFactory) getFactoryClass().newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -87,7 +87,15 @@ public class DescriptionFactory {
 		return modelFactory;
 	}
 
-	public static void disposeModelFactory(){
+	public static Set<String> getAllowedFacetsFor(final String key) {
+		if ( key == null ) { return Collections.EMPTY_SET; }
+		SymbolMetaDescription md = null;
+		md = getModelFactory().getMetaDescriptionFor(null, key);
+		Set<String> result = md == null ? null : md.getPossibleFacets().keySet();
+		return result == null ? Collections.EMPTY_SET : result;
+	}
+
+	public static void disposeModelFactory() {
 		modelFactory = null;
 	}
 

@@ -33,8 +33,6 @@ public interface IVariable extends ISymbol, IParameter {
 
 	public abstract boolean isParameter();
 
-	public abstract boolean isBuiltIn();
-
 	public abstract boolean isConst();
 
 	public abstract void initializeWith(IScope scope, IAgent gamaObject, Object object)

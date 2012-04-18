@@ -56,11 +56,12 @@ public class LetCommand extends SetCommand {
 		} else {
 			setName(IKeyword.LET + " " + varExpr.literalValue());
 		}
-		if ( value == null || varExpr == null ) { return; }
-		varExpr.setType(hasFacet(IKeyword.TYPE) ? desc.getTypeOf(getLiteral(IKeyword.TYPE)) : value
-			.type());
-		varExpr.setContentType(hasFacet(IKeyword.OF) ? desc.getTypeOf(getLiteral(IKeyword.OF))
-			: value.getContentType());
+		// if ( value == null || varExpr == null ) { return; }
+		// varExpr.setType(hasFacet(IKeyword.TYPE) ? desc.getTypeOf(getLiteral(IKeyword.TYPE)) :
+		// value
+		// .type());
+		// varExpr.setContentType(hasFacet(IKeyword.OF) ? desc.getTypeOf(getLiteral(IKeyword.OF))
+		// : value.getContentType());
 	}
 
 	@Override

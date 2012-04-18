@@ -25,7 +25,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.Skill;
@@ -131,8 +130,7 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	@SuppressWarnings("null")
-	private synchronized ModelDescription parse(final ModelStructure structure,
+	public synchronized ModelDescription parse(final ModelStructure structure,
 		final IErrorCollector collect) {
 		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
@@ -276,50 +274,54 @@ public class ModelFactory extends SymbolFactory {
 		return builtInSpecies;
 	}
 
-	// @Override
-	// protected ISymbol compileSymbol(final IDescription desc, final ISymbolConstructor c)
-	// throws GamlException, GamaRuntimeException {
-	// ISymbol cs = super.compileSymbol(desc, c);
-	// return cs;
-	// }
+	private IDescription createDefaultExperiment() {
 
-	@Override
-	public synchronized ISymbol compile(final ModelStructure structure,
-		final IErrorCollector collect) {
-		IModel m = null;
-		// long time = System.currentTimeMillis();
-		ModelDescription md = parse(structure, collect);
-		// GuiUtils.stopIfCancelled();
-		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
-			IDescription def;
-			if ( GuiUtils.isInHeadLessMode() ) {
-				System.out.println("head Less");
-				def =
-					DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
-						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.HEADLESS_UI);
-			} else {
-				def =
-					DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
-						IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
-			}
-			if ( def != null ) {
-				complementExperimentSpecies((ExperimentDescription) def);
-				md.addChild(def);
-			}
+		IDescription def;
+		if ( GuiUtils.isInHeadLessMode() ) {
+			System.out.println("head Less");
+			def =
+				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
+					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.HEADLESS_UI);
+		} else {
+			def =
+				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
+					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
 		}
-		// long now = System.currentTimeMillis();
-		// GuiUtils.debug("Parsing to descriptions " + structure.getPath() + " took: " + (now -
-		// time) +
-		// "ms");
-		// time = now;
+		complementExperimentSpecies((ExperimentDescription) def);
+		return def;
 
-		// GuiUtils.stopIfCancelled();
+	}
+
+	public synchronized IModel compile(final ModelStructure structure, final IErrorCollector collect) {
+		IModel m = null;
+		ModelDescription md = parse(structure, collect);
+		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
+			md.addChild(createDefaultExperiment());
+		}
 		if ( collect.hasErrors() ) { return null; }
-		m = (IModel) compileDescription(md, GAMA.getExpressionFactory());
-
-		// long endTime = System.nanoTime();
-		// GUI.debug("#### Parsing + compile time : " + (endTime - startTime) / 1000000000d);
+		m = (IModel) compileDescription(md);
 		return m;
+	}
+
+	/**
+	 * @param ms
+	 * @param collect
+	 */
+	public synchronized void validate(final ModelStructure structure, final IErrorCollector collect) {
+		long time = System.currentTimeMillis();
+		ModelDescription md = parse(structure, collect);
+		long now = System.currentTimeMillis();
+		GuiUtils.debug(structure.getPath() + ": parsing to descriptions took: " + (now - time) +
+			"ms");
+		time = now;
+
+		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
+			md.addChild(createDefaultExperiment());
+		}
+		validateDescription(md);
+		GuiUtils.debug(structure.getPath() + ": validation took: " +
+			(System.currentTimeMillis() - time) + "ms");
+		md.dispose();
 	}
 
 }

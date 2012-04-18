@@ -131,10 +131,10 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 		return type;
 	}
 
-	@Override
-	public IType getContentType() {
-		return type.defaultContentType();
-	}
+	// @Override
+	// public IType getContentType() {
+	// return type.defaultContentType();
+	// }
 
 	@Override
 	public String toGaml() {

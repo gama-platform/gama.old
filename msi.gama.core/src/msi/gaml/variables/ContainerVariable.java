@@ -97,7 +97,7 @@ public class ContainerVariable extends Variable {
 				if ( !(v instanceof IMatrix) ) {
 					v = null;
 				}
-				switch (this.getContentType().id()) {
+				switch (contentType.id()) {
 
 					case IType.FLOAT:
 						result =

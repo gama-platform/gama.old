@@ -4,6 +4,7 @@
  */
 package msi.gama.common.interfaces;
 
+import msi.gama.kernel.model.IModel;
 import org.eclipse.emf.ecore.resource.Resource;
 
 /**
@@ -15,14 +16,17 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public interface IGamlBuilder {
 
-	/**
-	 * @return
-	 * @param gamlEditor
-	 */
-	boolean addListener(IBuilderListener gamlEditor);
+	public static interface Listener {
 
-	boolean removeListener(IBuilderListener gamlEditor);
+		void validationEnded(Resource xtextResource);
+	}
 
-	void invalidate(Resource r);
+	IModel build(Resource xtextResource);
+
+	void validate(Resource xtextResource);
+
+	void addListener(Resource xtextResource, Listener listener);
+
+	void removeListener(Listener listener);
 
 }

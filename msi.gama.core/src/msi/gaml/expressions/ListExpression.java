@@ -81,7 +81,7 @@ public class ListExpression extends AbstractExpression {
 	@Override
 	public boolean isConst() {
 		for ( final IExpression e : elements ) {
-			if ( !e.isConst() ) { return false; }
+			if ( e != null && !e.isConst() ) { return false; }
 		}
 		isConst = true;
 		return true;

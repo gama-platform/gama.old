@@ -18,7 +18,6 @@
  */
 package msi.gaml.commands;
 
-import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -45,7 +44,6 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true) }, omissible = IKeyword.ACTION)
 @with_args
 @no_scope
-// TODO Verify that it is not being confused with a definition by the grammar...
 public class DoCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments args;
@@ -61,32 +59,16 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
-		verifyArgs(args);
 		this.args = args;
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		ISpecies context = stack.getAgentScope().getSpecies(); // TODO change to
-																// getAgentScope.getExecutionContext???
+		ISpecies context = stack.getAgentScope().getSpecies();
 		ICommand.WithArgs executer = context.getAction(name);
 		executer.setRuntimeArgs(args);
 		Object result = executer.executeOn(stack);
 		return result;
-	}
-
-	public void verifyArgs(final Map<String, ?> args) {
-		ExecutionContextDescription declPlace =
-			(ExecutionContextDescription) description.getDescriptionDeclaringAction(name);
-		CommandDescription executer = null;
-		if ( declPlace != null ) {
-			executer = declPlace.getAction(name);
-		}
-		if ( executer == null ) {
-			error("Unknown action " + getName(), IKeyword.ACTION);
-			return;
-		}
-		executer.verifyArgs(getDescription(), args.keySet());
 	}
 
 	@Override
@@ -94,15 +76,13 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 
 	@Override
 	public IType getReturnType() {
-		CommandDescription executer =
-			(CommandDescription) description.getSpeciesContext().getAction(name);
+		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnType();
 	}
 
 	@Override
 	public IType getReturnContentType() {
-		CommandDescription executer =
-			(CommandDescription) description.getSpeciesContext().getAction(name);
+		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
 	}
 }

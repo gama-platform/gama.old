@@ -614,4 +614,8 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	public Set<String> userRedefinedOrNewVars() {
 		return userRedefinedOrNewVars;
 	}
+
+	public boolean isGrid() {
+		return getKeyword().equals(IKeyword.GRID);
+	}
 }

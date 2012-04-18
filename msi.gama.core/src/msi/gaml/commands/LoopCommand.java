@@ -30,9 +30,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 // A group of commands that can be executed repeatedly.
 
@@ -60,13 +60,13 @@ public class LoopCommand extends AbstractCommandSequence {
 	public LoopCommand(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		IExpression var = getFacet(IKeyword.VAR);
-		if ( var != null ) {
-			if ( hasFacet(IKeyword.OVER) ) {
-				((IVarExpression) var).setType(getFacet(IKeyword.OVER).getContentType());
-			} else if ( hasFacet(IKeyword.FROM) ) {
-				((IVarExpression) var).setType(Types.get(IType.INT));
-			}
-		}
+		// if ( var != null ) {
+		// if ( hasFacet(IKeyword.OVER) ) {
+		// ((IVarExpression) var).setType(getFacet(IKeyword.OVER).getContentType());
+		// } else if ( hasFacet(IKeyword.FROM) ) {
+		// ((IVarExpression) var).setType(Types.get(IType.INT));
+		// }
+		// }
 		boolean isWhile = getFacet(IKeyword.WHILE) != null;
 		boolean isList = getFacet(IKeyword.OVER) != null;
 		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;

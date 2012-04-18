@@ -20,7 +20,6 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.IErrorCollector;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
@@ -39,8 +38,9 @@ public interface ISymbolFactory {
 	public abstract IDescription createDescriptionRecursively(ISyntacticElement cur,
 		IDescription superDesc);
 
-	public abstract ISymbol compileDescription(final IDescription desc,
-		final IExpressionFactory factory);
+	public abstract ISymbol compileDescription(final IDescription desc);
+
+	public abstract void validateDescription(final IDescription desc);
 
 	public abstract ISymbolFactory chooseFactoryFor(String keyword);
 
@@ -48,27 +48,10 @@ public interface ISymbolFactory {
 
 	public abstract String getOmissibleFacetForSymbol(String symbol);
 
-	/**
-	 * @param structure
-	 * @return
-	 * @throws GamlException
-	 * @throws GamaRuntimeException
-	 * @throws InterruptedException
-	 */
-	ISymbol compile(ModelStructure structure, IErrorCollector collect) throws InterruptedException;
+	public IExpressionFactory getExpressionFactory();
 
-	/**
-	 * @param desc
-	 * @param keyword
-	 * @return
-	 * @throws GamlException
-	 */
 	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
 
-	/**
-	 * @param keyword
-	 * @return
-	 */
 	public abstract boolean handlesKeyword(String keyword);
 
 }

@@ -4,7 +4,7 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gaml.expressions.JavaConstExpression;
+import msi.gaml.expressions.*;
 
 /**
  * The class LabelExpressionDescription.
@@ -25,6 +25,11 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public Object getAst() {
 		return null;
+	}
+
+	@Override
+	public void setExpression(final IExpression expr) {
+		super.setExpression(expr);
 	}
 
 	/**

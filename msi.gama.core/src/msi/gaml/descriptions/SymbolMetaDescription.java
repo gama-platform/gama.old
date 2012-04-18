@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpressionParser;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
 
 /**
@@ -39,14 +38,6 @@ import msi.gaml.types.IType;
 public class SymbolMetaDescription {
 
 	public static Set<String> nonVariableStatements = new HashSet();
-
-	public static Set<String> getAllowedFacetsFor(final String key) {
-		if ( key == null ) { return Collections.EMPTY_SET; }
-		SymbolMetaDescription md = null;
-		md = DescriptionFactory.getModelFactory().getMetaDescriptionFor(null, key);
-		Set<String> result = md == null ? null : md.getPossibleFacets().keySet();
-		return result == null ? Collections.EMPTY_SET : result;
-	}
 
 	public static class FacetMetaDescription {
 
@@ -139,7 +130,6 @@ public class SymbolMetaDescription {
 	}
 
 	public boolean isFacetDeclaringANewTemp(final String s) {
-		// optimiser boucle
 		FacetMetaDescription f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
 		return f.types[0].equals(IType.NEW_TEMP_ID);

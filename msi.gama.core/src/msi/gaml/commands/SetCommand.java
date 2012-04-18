@@ -57,6 +57,8 @@ public class SetCommand extends AbstractCommand {
 			error("This expression is not a reference to a variable ", IKeyword.NAME);
 			varExpr = null;
 		} else {
+			// TODO MOVE ALL THIS TO THE DESCRIPTION FOR VALIDATION
+
 			varExpr = (IVarExpression) expr;
 			if ( value != null && value.type() != Types.NO_TYPE &&
 				!varExpr.type().isAssignableFrom(value.type()) ) {

@@ -105,23 +105,13 @@ import msi.gaml.types.*;
 @inside(kinds = { ISymbolKind.SPECIES })
 public class SignalVariable extends NumberVariable {
 
-	// private GridAgentManager environment;
 	private final Short signalType;
 	private final Double prop, range, variation;
 	private final String envName;
 	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr;
 
-	// private IVariable var;
-
-	/**
-	 * @throws GamaRuntimeException Instantiates a new signal variable.
-	 * 
-	 * @param sim the sim
-	 * @param v the v
-	 */
-	public SignalVariable(/* final ISymbol enclosingScope, */final IDescription sd)
-		throws GamaRuntimeException {
-		super(/* enclosingScope, */sd);
+	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
+		super(sd);
 		type = Types.get(IType.FLOAT);
 		contentType = Types.get(IType.FLOAT);
 		typeExpr = getFacet(IKeyword.PROPAGATION);
@@ -129,9 +119,6 @@ public class SignalVariable extends NumberVariable {
 		variationExpr = getFacet(IKeyword.VARIATION);
 		rangeExpr = getFacet(IKeyword.RANGE);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
-		if ( envName == null || sd.getSpeciesDescription(envName) == null ) {
-			error("Environment of signal " + this.getName() + " cannot be determined.");
-		}
 		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;

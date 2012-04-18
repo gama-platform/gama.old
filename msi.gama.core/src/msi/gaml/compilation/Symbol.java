@@ -51,6 +51,7 @@ public abstract class Symbol implements ISymbol {
 	protected void initFields() {}
 
 	protected void verifyFacetType(final String facet) {
+		if ( true ) { return; }
 		final IExpression expr = getFacet(facet);
 		if ( expr == null ) { return; }
 		SymbolMetaDescription smd = description.getMeta();
@@ -60,7 +61,7 @@ public abstract class Symbol implements ISymbol {
 		if ( fmd.values.length == 0 ) {
 			boolean compatible = false;
 			IType actualType = expr.type();
-			ModelDescription md = (ModelDescription) description.getModelDescription();
+			ModelDescription md = description.getModelDescription();
 			TypesManager tm = md.getTypesManager();
 			for ( String type : fmd.types ) {
 				compatible = compatible || tm.get(type).isAssignableFrom(actualType);

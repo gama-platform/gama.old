@@ -39,8 +39,8 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	protected IDescription enclosing = null;
 	protected List<IDescription> children;
 	protected SymbolMetaDescription meta;
-
-	// protected ModelDescription model;
+	protected String name;
+	protected String keyword;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final ISyntacticElement source,
@@ -61,8 +61,6 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	private void flagError(final String s, final boolean warning, final Object facet)
 		throws GamaRuntimeException {
-		// GuiUtils.debug((warning ? "Warning" : "Error") + " flagged in " + this + " : " + s +
-		// " for facet " + facet);
 		ISyntacticElement e =
 			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSource();
 		IDescription desc = this;
@@ -74,12 +72,8 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
-		if ( e == null /* || e.getErrorCollector() == null */) { throw new GamaRuntimeException(s,
-			warning); }
-		// ErrorCollector collect = e.getErrorCollector();
-		GamlCompilationError ge = new GamlCompilationError(s, e, warning);
-		ge.setObjectOfInterest(facet);
-		// collect.add(ge);
+		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
+		new GamlCompilationError(s, e, warning, facet);
 	}
 
 	@Override
@@ -104,24 +98,29 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public String getKeyword() {
-		return facets.getLabel(IKeyword.KEYWORD);
+		if ( keyword == null ) {
+			keyword = facets.getLabel(IKeyword.KEYWORD);
+		}
+		return keyword;
 	}
 
 	@Override
 	public String getName() {
-		return facets.getLabel(IKeyword.NAME);
+		if ( name == null ) {
+			name = facets.getLabel(IKeyword.NAME);
+		}
+		return name;
 	}
 
 	protected void initFields() {};
 
 	@Override
 	public void dispose() {
-		facets.dispose();
+		// facets.dispose();
 		for ( IDescription c : children ) {
 			c.dispose();
 		}
 		children.clear();
-		// model = null;
 	}
 
 	@Override
@@ -147,7 +146,6 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		// GuiUtils.debug("Adding child " + child + " to " + this);
 		IDescription cc = ((SymbolDescription) child).shallowCopy(this);
 		cc.setSuperDescription(this);
 		children.add(cc);
@@ -206,12 +204,6 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return hasAction(name) ? this : enclosing == null ? null : enclosing
 			.getDescriptionDeclaringAction(name);
 	}
-
-	// @Override
-	// public IDescription getDescriptionDeclaringAspect(final String name) {
-	// return hasAspect(name) ? this : enclosing == null ? null : enclosing
-	// .getDescriptionDeclaringAspect(name);
-	// }
 
 	@Override
 	public IExpression getVarExpr(final String name, final IExpressionFactory factory) {

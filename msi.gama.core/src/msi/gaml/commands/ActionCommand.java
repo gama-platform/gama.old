@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
+import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbolKind;
@@ -42,6 +43,7 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
+@with_sequence
 @with_args
 public class ActionCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
@@ -85,7 +87,4 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 	public void setFormalArgs(final Arguments args) {
 		formalArgs = args;
 	}
-
-	// TODO Defaults are not taken into account...
-
 }

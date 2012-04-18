@@ -129,7 +129,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 			timeSeriesXData =
 				(Data) DescriptionFactory.getModelFactory().compileDescription(
 					DescriptionFactory.createDescription(IKeyword.DATA, description, IKeyword.NAME,
-						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME), GAMA.getExpressionFactory());
+						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
 			timeSeriesXData.prepare(scope);
 			datas.add(0, timeSeriesXData);
 

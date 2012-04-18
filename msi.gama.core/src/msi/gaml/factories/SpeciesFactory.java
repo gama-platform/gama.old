@@ -25,7 +25,6 @@ import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpressionFactory;
 
 /**
  * SpeciesFactory.
@@ -80,14 +79,13 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected void privateCompileChildren(final IDescription sd, final ISymbol cs,
-		final IExpressionFactory factory) {
+	protected List<ISymbol> privateCompileChildren(final IDescription sd) {
 		List<ISymbol> lce = new ArrayList();
-		SpeciesDescription desc = (SpeciesDescription) sd.getSpeciesContext();
+		SpeciesDescription desc = sd.getSpeciesContext();
 		// we first compile the variables in the right order
 		// long time = System.currentTimeMillis();
 		for ( String s : desc.getVarNames() ) {
-			lce.add(compileDescription(desc.getVariable(s), factory));
+			lce.add(compileDescription(desc.getVariable(s)));
 		}
 
 		// long now = System.currentTimeMillis();
@@ -97,10 +95,10 @@ public class SpeciesFactory extends SymbolFactory {
 		// then the rest
 		for ( IDescription s : sd.getChildren() ) {
 			if ( !(s instanceof VariableDescription) ) {
-				lce.add(compileDescription(s, factory));
+				lce.add(compileDescription(s));
 			}
 		}
-		cs.setChildren(lce);
+		return lce;
 	}
 
 }

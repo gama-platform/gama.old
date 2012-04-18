@@ -25,7 +25,6 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -43,8 +42,9 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
-@with_sequence
+// @with_sequence
 @with_args
+// TODO Verify this
 public class PrimitiveCommand extends ActionCommand {
 
 	private ISkill skill = null;
@@ -60,8 +60,7 @@ public class PrimitiveCommand extends ActionCommand {
 		super(desc);
 		String methodName = getLiteral(IKeyword.JAVA);
 
-		ExecutionContextDescription context =
-			(ExecutionContextDescription) desc.getSpeciesContext();
+		ExecutionContextDescription context = desc.getSpeciesContext();
 		Class methodClass = context.getSkillClassFor(methodName);
 		skill = context.getSharedSkill(methodClass);
 		executer = GamlCompiler.getPrimitive(methodClass, methodName);

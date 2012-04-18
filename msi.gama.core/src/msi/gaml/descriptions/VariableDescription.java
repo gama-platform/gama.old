@@ -69,9 +69,6 @@ public class VariableDescription extends SymbolDescription {
 				facets.put(entry.getKey(), entry.getValue());
 			}
 		}
-		if ( getName().equals("all_places") ) {
-			GuiUtils.debug("");
-		}
 	}
 
 	@Override
@@ -89,10 +86,6 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public IType getType() {
 		return getTypeOf(facets.getLabel(IKeyword.TYPE));
-	}
-
-	public void setType(final IType type) {
-		facets.putAsLabel(IKeyword.TYPE, type.toString());
 	}
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
@@ -147,12 +140,16 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public boolean isParameter() {
-		return facets.containsKey(IKeyword.PARAMETER);
+		return facets.containsKey(IKeyword.PARAMETER) ||
+			facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER);
 	}
 
 	@Override
 	public IType getContentType() {
-		if ( contentType != null ) { return contentType; }
+		if ( getName().equals("insiders") ) {
+			GuiUtils.debug("insiders inside");
+		}
+		if ( contentType != null && contentType != Types.NO_TYPE ) { return contentType; }
 		String of = facets.getLabel(IKeyword.OF);
 		if ( of != null ) {
 			if ( "self".equals(of) ) {
@@ -160,10 +157,6 @@ public class VariableDescription extends SymbolDescription {
 			} else if ( "instance".equals(of) ) {
 				contentType = Types.NO_TYPE;
 			} else {
-				IType temp = getTypeOf(of);
-				if ( temp.toString().equals("default") && getName().equals("all_places") && true ) {
-					GuiUtils.debug("Content type of all_places is " + temp);
-				}
 				contentType = getTypeOf(of);
 			}
 		}
@@ -172,9 +165,9 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getTypeOf(final String s) {
-		ExecutionContextDescription ecd = this.getSpeciesContext();
-		if ( ecd != null ) { return ecd.getTypeOf(s); }
-		return Types.get(s);
+		ModelDescription m = getModelDescription();
+		if ( m == null ) { return Types.get(s); }
+		return m.getTypeOf(s);
 	}
 
 	public IVarExpression getVarExpr(final IExpressionFactory f) {
@@ -202,6 +195,12 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public String toString() {
 		return getName() + " (description)";
+	}
+
+	public String getParameterName() {
+		final String pName = facets.getLabel(IKeyword.PARAMETER);
+		if ( pName == null || pName.equals(IKeyword.TRUE) ) { return getName(); }
+		return pName;
 	}
 
 	public void verifyVarName(final String name) {
