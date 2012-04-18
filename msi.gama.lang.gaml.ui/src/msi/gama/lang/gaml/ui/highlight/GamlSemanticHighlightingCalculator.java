@@ -55,8 +55,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				if ( obj instanceof Statement ) {
 
 					if ( obj instanceof Definition ) {
-						setStyle(obj, GamlHighlightingConfiguration.VARDEF_ID,
-							((Definition) obj).getName());
+						setStyle(obj, VARDEF_ID, ((Definition) obj).getName());
 					} else {
 						GamlFacetRef ref = ((Statement) obj).getRef();
 						if ( ref != null ) {
@@ -72,11 +71,11 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					obj instanceof BooleanLiteral || obj instanceof IntLiteral ) {
 					setStyle(obj, NUMBER_ID, 0);
 				} else if ( obj instanceof FunctionRef ) {
-					setStyle(((FunctionRef) obj).getLeft(), BINARY_ID, 0);
+					setStyle(obj, BINARY_ID, NodeModelUtils.getNode(obj));
 				} else if ( obj instanceof DefUnary ) {
 					setStyle(obj, BINARY_ID, ((DefUnary) obj).getName());
-				} else if ( obj instanceof VariableRef && ((VariableRef) obj).getRef() != null ) {
-					setStyle(obj, VARIABLE_ID, ((VariableRef) obj).getRef().getName());
+				} else if ( obj instanceof VariableRef /* && ((VariableRef) obj).getRef() != null */) {
+					setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
 				}
 
 				// Ajouter la notion de scope pour pouvoir highlighter les variables globales
@@ -108,6 +107,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				acceptor.addPosition(n.getOffset(), n.getLength(), s);
 			}
 		}
+	}
+
+	private void setStyle(final EObject obj, final String s, final INode node) {
+		acceptor.addPosition(node.getOffset(), node.getLength(), s);
 	}
 
 	private void setStyle(final EObject obj, final String s, final String text) {

@@ -103,7 +103,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 			for ( FacetExpr f : ele.getFacets() ) {
 				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
 					VariableRef type = (VariableRef) f.getExpr();
-					return "_" + (type.getRef() == null ? "" : type.getRef().getName()) + ".png";
+					return "_" + EGaml.getKeyOf(type) + ".png";
 				}
 			}
 		}

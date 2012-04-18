@@ -23,13 +23,12 @@ import java.net.URL;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
-import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.factories.*;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.FileLocator;
@@ -68,26 +67,19 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		return null;
 	}
 
-	private IModel getModel(final Resource r) {
+	private ModelDescription getModel(final Resource r) {
 
-		if ( !GamaBundleLoader.contributionsLoaded ) { return null; }
-		if ( r == null ) { return null; }
-		IModel lastModel = null;
+		if ( !GamaBundleLoader.contributionsLoaded || r == null ) { return null; }
+		ModelDescription lastModel = null;
 		IErrorCollector collect = new ErrorCollector();
 		try {
 			Map<Resource, ISyntacticElement> elements = new HashMap();
 			elements.put(r,
 				GamlToSyntacticElements.doConvert((Model) r.getContents().get(0), collect));
-			// if ( !collect.hasErrors() ) {
-
 			ModelStructure ms = new ModelStructure(r, elements, collect);
-			lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
-
-			// }
+			lastModel = DescriptionFactory.getModelFactory().parse(ms, collect);
 		} catch (GamaRuntimeException e1) {
 			System.out.println("Exception during compilation:" + e1.getMessage());
-		} catch (InterruptedException e) {
-			System.out.println("Compilation was aborted");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -178,7 +170,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		// !!!! FIXME CANNOT WORK LIKE THIS.
 		if ( EGaml.getKeyOf(d) != null ) {
-			Set<String> facets = EGaml.getAllowedFacetsFor(d);
+			Set<String> facets = DescriptionFactory.getAllowedFacetsFor(EGaml.getKeyOf(d));
 			for ( String st : facets ) {
 				acceptor.accept(createCompletionProposal(st, " " + st + " ", facetImage, context));
 			}
@@ -188,12 +180,12 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void completeMemberRef_Op(final MemberRef m, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		if ( m == null ) { return; }
-		IModel model = getModel(context.getRootModel().eResource());
+		ModelDescription model = getModel(context.getRootModel().eResource());
 
 		EObject lexp = m.getLeft();
 		final String kname = EGaml.getKeyOf(lexp);
 
-		SpeciesDescription ws = model.getDescription().getWorldSpecies();
+		SpeciesDescription ws = model.getWorldSpecies();
 		SpeciesDescription currDesc = (SpeciesDescription) ws.getDescriptionDeclaringVar(kname);
 		for ( SpeciesDescription sd : ws.getAllMicroSpecies() ) {
 			if ( currDesc != null ) {
@@ -254,12 +246,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void completeGamlLangDef_B(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		super.completeGamlLangDef_B(model, assignment, context, acceptor);
-	}
-
-	@Override
 	public void completeGamlLangDef_R(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		super.completeGamlLangDef_R(model, assignment, context, acceptor);
@@ -269,12 +255,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void completeGamlLangDef_Unaries(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		super.completeGamlLangDef_Unaries(model, assignment, context, acceptor);
-	}
-
-	@Override
-	public void completeDefBinaryOp_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		super.completeDefBinaryOp_Name(model, assignment, context, acceptor);
 	}
 
 	@Override
@@ -627,12 +607,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void complete_GamlLangDef(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		super.complete_GamlLangDef(model, ruleCall, context, acceptor);
-	}
-
-	@Override
-	public void complete_DefBinaryOp(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		super.complete_DefBinaryOp(model, ruleCall, context, acceptor);
 	}
 
 	@Override

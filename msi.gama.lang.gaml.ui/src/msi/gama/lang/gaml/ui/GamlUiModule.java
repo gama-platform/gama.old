@@ -29,7 +29,6 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
-import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
 import com.google.inject.*;
 
 /**
@@ -50,7 +49,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.annotatedWith(
 				com.google.inject.name.Names
 					.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
-			.toInstance(".:,");
+			.toInstance(".:");
 	}
 
 	/**
@@ -67,7 +66,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
-		return ValidatingEditorCallback.class;
+		return GamlValidatingEditorCallback.class;
 	}
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
@@ -98,7 +97,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	private void setValidationTrigger(final IWorkbenchWindow w, final AbstractUIPlugin plugin) {
-		// TODO reenable this for having the generation made everytime an editor is selected.
 		if ( w == null || !(plugin instanceof msi.gama.lang.gaml.ui.internal.GamlActivator) ) { return; }
 		w.getPartService().addPartListener(new ValidateFileOnActivation());
 	}

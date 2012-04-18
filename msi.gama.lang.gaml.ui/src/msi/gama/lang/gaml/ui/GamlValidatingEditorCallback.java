@@ -1,0 +1,26 @@
+/**
+ * Created by drogoul, 5 févr. 2012
+ * 
+ */
+
+package msi.gama.lang.gaml.ui;
+
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
+
+/**
+ * The class GamlEditorCallback.
+ * 
+ * @author drogoul
+ * @since 5 févr. 2012
+ * 
+ */
+public class GamlValidatingEditorCallback extends ValidatingEditorCallback {
+
+	@Override
+	public void afterCreatePartControl(final XtextEditor editor) {
+		super.afterCreatePartControl(editor);
+		// ((GamlEditor) editor).installDocumentListener();
+	}
+
+}

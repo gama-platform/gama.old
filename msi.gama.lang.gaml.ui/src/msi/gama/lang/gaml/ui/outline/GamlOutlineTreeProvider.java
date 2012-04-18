@@ -19,7 +19,6 @@
 package msi.gama.lang.gaml.ui.outline;
 
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.EGaml;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 
@@ -30,7 +29,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void _createChildren(final IOutlineNode parentNode, final Statement stm) {
-		Block block = EGaml.getBlockOf(stm);
+		Block block = stm.getBlock();
 		if ( block != null ) {
 			for ( Statement substm : block.getStatements() ) {
 				createNode(parentNode, substm);
@@ -39,6 +38,6 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	protected boolean _isLeaf(final Statement s) {
-		return EGaml.getBlockOf(s) == null;
+		return s.getBlock() == null;
 	}
 }
