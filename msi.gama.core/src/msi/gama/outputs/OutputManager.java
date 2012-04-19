@@ -328,4 +328,11 @@ public class OutputManager extends Symbol implements IOutputManager {
 	public GuiOutputManager getDisplayOutputManager() {
 		return displays;
 	}
+
+	/**
+	 * 
+	 */
+	public void desynchronizeOutputs() {
+		displays.desynchronizeOutputs();
+	}
 }

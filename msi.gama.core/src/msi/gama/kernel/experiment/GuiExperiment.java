@@ -111,10 +111,18 @@ public class GuiExperiment extends AbstractExperiment {
 	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		closeCurrentSimulation(false);
+		desynchronizeOutputs();
 		initializeExperiment();
 		if ( wasRunning ) {
 			startExperiment();
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void desynchronizeOutputs() {
+		output.desynchronizeOutputs();
 	}
 
 	@Override

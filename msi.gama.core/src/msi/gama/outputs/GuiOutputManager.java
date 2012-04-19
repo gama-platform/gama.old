@@ -19,6 +19,7 @@
 package msi.gama.outputs;
 
 import java.util.*;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.runtime.*;
@@ -211,4 +212,15 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 		}
 	}
 
+	/**
+	 * 
+	 */
+	public void desynchronizeOutputs() {
+		for ( IDisplayOutput o : displayOutputs.values() ) {
+			IDisplaySurface s = o.getSurface();
+			if ( s != null ) {
+				s.setSynchronized(false);
+			}
+		}
+	}
 }
