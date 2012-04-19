@@ -87,7 +87,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 					e.printStackTrace();
 				}
 				repaint();
-				Toolkit.getDefaultToolkit().sync();
+				// Toolkit.getDefaultToolkit().sync();
 			}
 		}
 	});
