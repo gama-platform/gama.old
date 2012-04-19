@@ -190,7 +190,6 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		IDescription desc = super.addChild(child);
-
 		if ( desc.getKeyword().equals(IKeyword.REFLEX) ) {
 			addBehavior((CommandDescription) desc);
 		} else if ( desc.getKeyword().equals(IKeyword.ACTION) ) {
@@ -204,14 +203,18 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
 		}
-
 		return desc;
 	}
 
 	private void addBehavior(final CommandDescription r) {
 		String behaviorName = r.getName();
-		if ( hasBehavior(behaviorName) ) {
-			r.flagError(r.getKeyword() + " name already declared : " + behaviorName);
+		CommandDescription existing = behaviors.get(behaviorName);
+		if ( existing != null ) {
+			if ( !existing.getKeyword().equals(r.getKeyword()) ) {
+				r.flagWarning(r.getKeyword() + " " + behaviorName + " replaces the " +
+					existing.getKeyword() + " declared in the parent species.");
+			}
+			children.remove(existing);
 		}
 		behaviors.put(behaviorName, r);
 	}
@@ -222,14 +225,21 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 
 	private void addAction(final CommandDescription ce) {
 		String actionName = ce.getName();
-		if ( hasAction(actionName) ) {
-			CommandDescription existing = getAction(actionName);
+		CommandDescription existing = getAction(actionName);
+		if ( existing != null ) {
 			if ( existing.getKeyword().equals(IKeyword.PRIMITIVE) &&
 				ce.getKeyword().equals(IKeyword.PRIMITIVE) ) {
 				return;
 			} else if ( existing.getKeyword().equals(IKeyword.PRIMITIVE) &&
 				ce.getKeyword().equals(IKeyword.ACTION) ) {
 				ce.flagError("action name already declared as a primitive : " + actionName);
+			} else if ( !ce.getArgNames().containsAll(existing.getArgNames()) ) {
+				String error =
+					"The list of arguments differ in the two implementations of " + actionName;
+				ce.flagError(error);
+				existing.flagWarning(error);
+			} else {
+				children.remove(existing);
 			}
 		}
 		actions.put(actionName, ce);
@@ -368,8 +378,8 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 			}
 		}
 
-		// GuiUtils.debug("Sorted variable names of " + facets.get(IKeyword.NAME).literalValue() +
-		// " are " + sortedVariableNames);
+		// GuiUtils.debug("Sorted variable names of " + facets.getLabel(IKeyword.NAME) + " are " +
+		// sortedVariableNames);
 	}
 
 	public Set<String> getBehaviorsNames() {

@@ -21,7 +21,6 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.precompiler.IUnits;
 import msi.gama.runtime.GAMA;
 import msi.gaml.commands.Facets;
 import msi.gaml.expressions.*;
@@ -47,9 +46,6 @@ public class VariableDescription extends SymbolDescription {
 		final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
 		isBuiltIn = source.isSynthetic();
-		if ( !isBuiltIn ) {
-			verifyVarName(getName());
-		}
 		if ( !facets.containsKey(IKeyword.TYPE) ) {
 			facets.putAsLabel(IKeyword.TYPE, keyword);
 		}
@@ -106,7 +102,9 @@ public class VariableDescription extends SymbolDescription {
 				dependencies.remove(this);
 			}
 		}
+		// if ( this.getName().equals(IKeyword.SHAPE) ) {
 		// GuiUtils.debug("Dependencies of " + this.getName() + " : " + dependencies);
+		// }
 		return dependencies;
 	}
 
@@ -201,28 +199,6 @@ public class VariableDescription extends SymbolDescription {
 		final String pName = facets.getLabel(IKeyword.PARAMETER);
 		if ( pName == null || pName.equals(IKeyword.TRUE) ) { return getName(); }
 		return pName;
-	}
-
-	public void verifyVarName(final String name) {
-		if ( name == null ) {
-			flagError("The attribute 'name' is missing. Variables must be named.");
-		} else if ( IExpressionParser.RESERVED.contains(name) ) {
-			flagError(name +
-				" is a reserved keyword. It cannot be used as a variable name. Reserved keywords are: " +
-				IExpressionParser.RESERVED);
-		}/*
-		 * else if ( IExpressionParser.BINARIES.containsKey(name) ) {
-		 * flagError(name + " is a binary operator name. It cannot be used as a variable name");
-		 * } else if ( IExpressionParser.UNARIES.containsKey(name) ) {
-		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
-		 * } else if ( getTypeOf(name) != Types.NO_TYPE ) {
-		 * flagError(name + " is a type name. It cannot be used as a variable name. ");
-		 * }
-		 */else if ( IUnits.UNITS.containsKey(name) ) {
-			flagError(name +
-				" is a unit name. It cannot be used as a variable name. Units in this model are :" +
-				String.valueOf(IUnits.UNITS.keySet()));
-		}
 	}
 
 }

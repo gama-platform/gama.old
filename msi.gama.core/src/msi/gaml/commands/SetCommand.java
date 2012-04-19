@@ -29,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
@@ -52,22 +52,8 @@ public class SetCommand extends AbstractCommand {
 	public SetCommand(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		IExpression expr = getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
-		if ( !(expr instanceof IVarExpression) ) {
-			error("This expression is not a reference to a variable ", IKeyword.NAME);
-			varExpr = null;
-		} else {
-			// TODO MOVE ALL THIS TO THE DESCRIPTION FOR VALIDATION
-
-			varExpr = (IVarExpression) expr;
-			if ( value != null && value.type() != Types.NO_TYPE &&
-				!varExpr.type().isAssignableFrom(value.type()) ) {
-				warning("Variable " + varExpr.toGaml() + " of type " + varExpr.type() +
-					" is assigned a value of type " + value.type().toString() +
-					", which will be automatically casted.", IKeyword.VALUE);
-			}
-			setName("set " + varExpr == null ? "" : varExpr.toGaml());
-		}
+		varExpr = (IVarExpression) getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
+		setName("set " + varExpr == null ? "" : varExpr.toGaml());
 	}
 
 	@Override

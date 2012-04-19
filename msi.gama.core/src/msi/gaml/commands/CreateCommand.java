@@ -95,7 +95,6 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 
 	public CreateCommand(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.NUMBER);
 		returnString = getLiteral(IKeyword.RETURNS);
 		from = getFacet(IKeyword.FROM);
 		number = getFacet(IKeyword.NUMBER);

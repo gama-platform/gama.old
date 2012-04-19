@@ -18,7 +18,7 @@
  */
 package msi.gama.gui.swt;
 
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.exceptions.GamaStartupException;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.Platform;
@@ -72,8 +72,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	@Override
 	public void postWindowCreate() {
 		try {
-			System.out.println("Configuring file access through SWT");
-			FileUtils.setFileAccess(new SwtIO());
 			GamaBundleLoader.preBuildContributions();
 			// GamlJavaValidator.canRun(true);
 		} catch (GamaStartupException e1) {
@@ -86,7 +84,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	@Override
 	public boolean preWindowShellClose() {
-		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID);
+		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID);
 		boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT, false);
 
 		if ( !promptOnExit ) {
@@ -97,10 +95,10 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 			if ( dlg.getReturnCode() != IDialogConstants.OK_ID ) { return false; }
 
-			InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT,
+			InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT,
 				dlg.getToggleState());
 			try {
-				InstanceScope.INSTANCE.getNode(SwtGui.PLUGIN_ID).flush();
+				InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).flush();
 			} catch (BackingStoreException e) {
 				System.out.println("Preferences can not be saved");
 				e.printStackTrace();

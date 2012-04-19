@@ -2,6 +2,7 @@ package msi.gama.lang.gaml.serializer;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import msi.gama.lang.gaml.gaml.ActionFacetExpr;
 import msi.gama.lang.gaml.gaml.ArbitraryName;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
@@ -77,6 +78,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == GamlPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case GamlPackage.ACTION_FACET_EXPR:
+				if(context == grammarAccess.getActionFacetExprRule() ||
+				   context == grammarAccess.getDefinitionFacetExprRule() ||
+				   context == grammarAccess.getFacetExprRule() ||
+				   context == grammarAccess.getGamlVarRefRule()) {
+					sequence_ActionFacetExpr(context, (ActionFacetExpr) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.ARBITRARY_NAME:
 				if(context == grammarAccess.getArbitraryNameRule()) {
 					sequence_ArbitraryName(context, (ArbitraryName) semanticObject); 
@@ -752,6 +762,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (name=ID | name=STRING | name=BuiltIn)
+	 */
+	protected void sequence_ActionFacetExpr(EObject context, ActionFacetExpr semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (
 	 *         (left=Addition_Expression_1_0_0_0 op='+' right=Multiplication) | 
 	 *         (left=Addition_Expression_1_0_1_0 op='-' right=Multiplication) | 
@@ -858,7 +877,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key=ID (name=ID | name=STRING)? facets+=FacetExpr* block=Block?)
+	 *     (key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* block=Block?)
 	 */
 	protected void sequence_Definition(EObject context, Definition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1081,7 +1100,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (name=ID | name=STRING)
+	 *     (name=ID | name=STRING | name=BuiltIn)
 	 */
 	protected void sequence_NameFacetExpr(EObject context, NameFacetExpr semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

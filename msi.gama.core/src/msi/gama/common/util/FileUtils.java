@@ -5,9 +5,9 @@
 package msi.gama.common.util;
 
 import java.io.*;
-import msi.gama.common.interfaces.IFileAccess;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.*;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -19,17 +19,18 @@ import org.osgi.framework.Bundle;
  */
 public class FileUtils {
 
-	static IFileAccess fileAccess;
-
-	public static void setFileAccess(final IFileAccess fa) {
-		fileAccess = fa;
-	}
-
-	public static GamlProperties getGamaProperties(final Bundle pluginName,
+	public static GamlProperties getGamaProperties(final Bundle plugin,
 		final String pathToAdditions, final String fileName) throws GamaStartupException {
-		if ( fileAccess == null ) { throw new GamaStartupException("Properties " + fileName +
-			" not accessible", (Throwable) null); }
-		return fileAccess.getGamaProperties(pluginName, pathToAdditions, fileName);
+		try {
+			InputStream inputStream =
+				FileLocator.openStream(plugin, new Path(pathToAdditions + "/" + fileName), false);
+			GamlProperties mp =
+				GamlProperties.loadFrom(inputStream, plugin.getSymbolicName(), fileName);
+			return mp;
+		} catch (IOException e) {
+			throw new GamaStartupException("Impossible to locate the support file " + fileName +
+				" for GAML", e);
+		}
 	}
 
 	/**

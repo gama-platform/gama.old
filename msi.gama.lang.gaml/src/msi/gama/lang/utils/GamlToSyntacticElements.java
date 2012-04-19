@@ -121,6 +121,7 @@ public class GamlToSyntacticElements {
 			Array a = varDependenciesOf(stm);
 			if ( a != null ) {
 				elt.setFacet(DEPENDS_ON, conv(a));
+				// GuiUtils.debug("Dependencies found: " + EGaml.toString(a));
 			}
 		}
 
@@ -153,7 +154,7 @@ public class GamlToSyntacticElements {
 				// Modified in order to avoir calling linking before it has been done
 				for ( VariableRef var : EcoreUtil2.eAllOfType(expr, VariableRef.class) ) {
 					// refs.add(var);
-					result.add(EGaml.getKeyOf(s));
+					result.add(EGaml.getKeyOf(var));
 				}
 			}
 		}

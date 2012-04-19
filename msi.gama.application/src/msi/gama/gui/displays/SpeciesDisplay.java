@@ -89,10 +89,12 @@ public class SpeciesDisplay extends AgentDisplay {
 			ISpecies species = ((SpeciesDisplayLayer) model).getSpecies();
 			if ( species.getLevel() == 1 ) {
 				IAgent world = scope.getWorldScope();
-				IPopulation microPop = world.getMicroPopulation(species);
-				if ( microPop != null ) {
-					scope.setContext(g);
-					drawPopulation(world, (SpeciesDisplayLayer) model, microPop, scope, g);
+				if ( !world.dead() ) {
+					IPopulation microPop = world.getMicroPopulation(species);
+					if ( microPop != null ) {
+						scope.setContext(g);
+						drawPopulation(world, (SpeciesDisplayLayer) model, microPop, scope, g);
+					}
 				}
 			}
 

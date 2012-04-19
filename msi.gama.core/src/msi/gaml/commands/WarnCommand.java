@@ -16,47 +16,55 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.architecture.finite_state_machine;
+package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
-@symbol(name = FsmTransitionCommand.TRANSITION, kind = ISymbolKind.SEQUENCE_COMMAND)
-@inside(symbols = { FsmStateCommand.STATE })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
-	@facet(name = FsmTransitionCommand.TO, type = IType.ID, optional = false) }, omissible = IKeyword.WHEN)
-public class FsmTransitionCommand extends AbstractCommandSequence {
+/**
+ * Written by drogoul Modified on 6 févr. 2010
+ * 
+ * @todo Description
+ * 
+ */
 
-	// TODO En faire une sous classe de if ?
+@symbol(name = IKeyword.WARNING, kind = ISymbolKind.SINGLE_COMMAND)
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING_STR, optional = false) }, omissible = IKeyword.MESSAGE)
+public class WarnCommand extends AbstractCommand {
 
-	final IExpression when;
+	final IExpression message;
 
-	/** Constant field TRANSITION. */
-	public static final String TRANSITION = "transition";
-
-	protected static final String TO = "to";
-
-	public FsmTransitionCommand(final IDescription desc) {
+	public WarnCommand(final IDescription desc) {
 		super(desc);
-		String stateName = getLiteral(TO);
-		setName(stateName);
-		when = getFacet(IKeyword.WHEN);
+		message = getFacet(IKeyword.MESSAGE);
 	}
 
-	public boolean evaluatesTrueOn(final IScope scope) throws GamaRuntimeException {
-		return Cast.asBool(scope, when.value(scope));
-		// Normally, the agent is still in the "currentState" scope.
+	@Override
+	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
+		IAgent agent = stack.getAgentScope();
+		String mes = null;
+		if ( agent != null && !agent.dead() ) {
+			mes = Cast.asString(stack, message.value(stack));
+			GAMA.reportError(new GamaRuntimeException(mes, true));
+		}
+		return mes;
+	}
+
+	@Override
+	public IType getReturnType() {
+		return Types.get(IType.STRING);
 	}
 
 }

@@ -196,13 +196,6 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 			"Random number generator", cat, RandomUtils.GENERATOR_NAMES, false));
 		addSystemParameter(new ExperimentParameter(world.getVar(IKeyword.SEED), "Random seed", cat,
 			null, true));
-		// addSystemParameter(new ExperimentParameter(world.getVar(ISymbol.STRATEGY),
-		// "Scheduling strategy", cat, Scheduler.STRATEGY_NAMES, false));
-		// addSystemParameter(new ExperimentParameter(world.getVar(GAMA._FATAL),
-		// "Pause in case of errors", cat, null, false));
-		// addSystemParameter(new ExperimentParameter(world.getVar(GAMA._WARNINGS),
-		// "Treat warnings as errors", cat, null, false));
-
 	}
 
 	protected String getSystemParametersCategory() {
@@ -439,6 +432,8 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		// GUI.debug("Initializing the random agent");
 		getParameter(IKeyword.SEED).setValue(seed);
 		random = new RandomUtils(seed);
+		GuiUtils.clearErrors();
+		GuiUtils.showConsoleView();
 		// GUI.debug("Instanciating a new simulation");
 		currentSimulation = new GamlSimulation(this);
 		// GUI.debug("Building the outputs of the new simulation");

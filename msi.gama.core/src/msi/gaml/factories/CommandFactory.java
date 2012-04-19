@@ -18,9 +18,12 @@
  */
 package msi.gaml.factories;
 
+import static msi.gaml.factories.DescriptionValidator.*;
+import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gaml.architecture.finite_state_machine.*;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -57,6 +60,45 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 		}
 		return super.privateCompileChildren(desc);
 	}
+
+	@Override
+	protected void privateValidate(final IDescription desc) {
+		super.privateValidate(desc);
+		String kw = desc.getKeyword();
+		CommandDescription cd = (CommandDescription) desc;
+		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
+			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
+			assertNameIsNotTypeOrSpecies(cd);
+		}
+		if ( kw.equals(STATE) ) {
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateCommand.INITIAL,
+				GamlExpressionFactory.TRUE_EXPR);
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateCommand.FINAL,
+				GamlExpressionFactory.TRUE_EXPR);
+			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateCommand.INITIAL,
+				GamlExpressionFactory.TRUE_EXPR);
+		}
+		if ( kw.equals(FsmTransitionCommand.TRANSITION) ) {
+			assertBehaviorIsExisting(cd, TO);
+		}
+		if ( kw.equals(SET) || kw.equals(LET) ) {
+			assertAssignmentIsOk(cd);
+		} else if ( kw.equals(REFLEX) || kw.equals(STATE) || kw.equals(ASPECT) || kw.equals(ARG) ||
+			kw.equals(ACTION) ) {
+			assertNameIsUniqueInSuperDescription(cd);
+		} else if ( kw.equals(DEFAULT) || kw.equals(RETURN) || kw.equals(FsmStateCommand.ENTER) |
+			kw.equals(FsmStateCommand.EXIT) ) {
+			assertKeywordIsUniqueInSuperDescription(cd);
+		} else if ( kw.equals(CAPTURE) ) {
+			assertMicroSpeciesIsVisible(cd, AS);
+		} else if ( kw.equals(MIGRATE) ) {
+			assertMicroSpeciesIsVisible(cd, TARGET);
+		}
+	}
+
+	/**
+	 * @param cd
+	 */
 
 	@Override
 	protected void privateValidateChildren(final IDescription desc) {
@@ -142,19 +184,31 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			if ( type == null ) {
 				if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd);
-					type = ff.getExpr(VALUE).type().toString();
+					IExpression expr = ff.getExpr(VALUE);
+					if ( expr != null ) {
+						type = expr.type().toString();
+					}
 				} else if ( ff.containsKey(OVER) ) {
 					compileFacet(OVER, sd);
-					type = ff.getExpr(OVER).getContentType().toString();
+					IExpression expr = ff.getExpr(OVER);
+					if ( expr != null ) {
+						type = expr.getContentType().toString();
+					}
 				} else if ( ff.containsKey(FROM) && ff.containsKey(TO) ) {
 					compileFacet(FROM, sd);
-					type = ff.getExpr(FROM).type().toString();
+					IExpression expr = ff.getExpr(FROM);
+					if ( expr != null ) {
+						type = expr.type().toString();
+					}
 				}
 			}
 			if ( contentType == null ) {
 				if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd);
-					contentType = ff.getExpr(VALUE).getContentType().toString();
+					IExpression expr = ff.getExpr(VALUE);
+					if ( expr != null ) {
+						contentType = expr.getContentType().toString();
+					}
 				}
 			}
 

@@ -52,7 +52,6 @@ public class IfCommand extends AbstractCommandSequence {
 	 */
 	public IfCommand(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.CONDITION);
 		cond = getFacet(IKeyword.CONDITION);
 		if ( cond != null ) {
 			setName("if " + cond.toGaml());

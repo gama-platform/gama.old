@@ -48,7 +48,6 @@ public class RemoveCommand extends AbstractContainerCommand {
 
 	public RemoveCommand(final IDescription desc) {
 		super(desc);
-		this.verifyFacetType(IKeyword.FROM);
 		setName("remove from " + list.toGaml());
 	}
 

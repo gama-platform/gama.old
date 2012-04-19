@@ -27,8 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -54,16 +53,9 @@ public class ReleaseCommand extends AbstractCommandSequence {
 
 	public ReleaseCommand(final IDescription desc) {
 		super(desc);
-		
-		verifyFacetType(IKeyword.TARGET);
 		target = getFacet(IKeyword.TARGET);
-		
-		verifyFacetType(IKeyword.AS);
 		asExpr = getFacet(IKeyword.AS);
-		
-		verifyFacetType(IKeyword.IN);
 		inExpr = getFacet(IKeyword.IN);
-		
 		returnString = getLiteral(IKeyword.RETURNS);
 	}
 
@@ -99,83 +91,88 @@ public class ReleaseCommand extends AbstractCommandSequence {
 		} else {
 			microAgents.add((IAgent) t);
 		}
-		
+
 		IAgent macroAgent = stack.getAgentScope();
 		List<IAgent> removedAgents = new GamaList<IAgent>();
-		
-		for (IAgent m : microAgents) {
-			if (!m.getHost().equals(macroAgent)) {
+
+		for ( IAgent m : microAgents ) {
+			if ( !m.getHost().equals(macroAgent) ) {
 				removedAgents.add(m);
 			}
 		}
 		microAgents.removeAll(removedAgents);
-		
+
 		IAgent targetAgent;
 		ISpecies microSpecies = null;
-		
+
 		List<IAgent> releasedMicroAgents = GamaList.EMPTY_LIST;
-		if ( (asExpr != null) && (inExpr != null) ) {
+		if ( asExpr != null && inExpr != null ) {
 			targetAgent = (IAgent) inExpr.value(stack);
-			
-			if ( (targetAgent != null) && !(targetAgent.equals(macroAgent)) ) {
+
+			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
 				microSpecies = (ISpecies) stack.evaluate(asExpr, targetAgent);
-				
+
 				releasedMicroAgents = targetAgent.captureMicroAgents(microSpecies, microAgents);
 			}
-		} else if ( (asExpr != null) && (inExpr == null) ) {
+		} else if ( asExpr != null && inExpr == null ) {
 			String microSpeciesName = asExpr.literalValue();
 			IAgent macroOfMacro = macroAgent.getHost();
 			while (macroOfMacro != null) {
 				microSpecies = macroOfMacro.getSpecies().getMicroSpecies(microSpeciesName);
-				if (microSpecies != null) { break; }
-				
+				if ( microSpecies != null ) {
+					break;
+				}
+
 				macroOfMacro = macroOfMacro.getHost();
 			}
-			
-			if (microSpecies != null) {
+
+			if ( microSpecies != null ) {
 				releasedMicroAgents = macroOfMacro.captureMicroAgents(microSpecies, microAgents);
 			}
-			
-		} else if ( (asExpr == null) && (inExpr != null) ) {
+
+		} else if ( asExpr == null && inExpr != null ) {
 			targetAgent = (IAgent) inExpr.value(stack);
-			if ( (targetAgent != null) && !(targetAgent.equals(macroAgent)) ) {
+			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
 				releasedMicroAgents = new GamaList<IAgent>();
-				for (IAgent m : microAgents) {
+				for ( IAgent m : microAgents ) {
 					microSpecies = targetAgent.getSpecies().getMicroSpecies(m.getSpeciesName());
-					if (microSpecies != null) {
+					if ( microSpecies != null ) {
 						releasedMicroAgents.add(targetAgent.captureMicroAgent(microSpecies, m));
 					}
 				}
 			}
-		} else if ( (asExpr == null) && (inExpr == null) ) {
+		} else if ( asExpr == null && inExpr == null ) {
 			ISpecies microAgentSpec;
 			IAgent macroOfMacro;
 			releasedMicroAgents = new GamaList<IAgent>();
-			
-			for (IAgent m : microAgents) {
+
+			for ( IAgent m : microAgents ) {
 				microAgentSpec = m.getSpecies();
 				macroOfMacro = macroAgent.getHost();
 				while (macroOfMacro != null) {
-					microSpecies = macroOfMacro.getSpecies().getMicroSpecies(microAgentSpec.getName());
-					if (microSpecies != null) { break; }
-					
+					microSpecies =
+						macroOfMacro.getSpecies().getMicroSpecies(microAgentSpec.getName());
+					if ( microSpecies != null ) {
+						break;
+					}
+
 					macroOfMacro = macroOfMacro.getHost();
 				}
-				
-				if (microSpecies != null) {
+
+				if ( microSpecies != null ) {
 					releasedMicroAgents.add(macroOfMacro.captureMicroAgent(microSpecies, m));
 				} else {
-					// TODO throw exception when target population not found to release the agent instead of silently failed lie this!!!
+					// TODO throw exception when target population not found to release the agent
+					// instead of silently failed lie this!!!
 				}
-				
+
 			}
 		}
-		
 
 		// TODO change the following code
 		if ( !microAgents.isEmpty() ) {
-//			IAgent host = stack.getAgentScope();
-//			releasedMicroAgents = host.releaseMicroAgents(microAgents);
+			// IAgent host = stack.getAgentScope();
+			// releasedMicroAgents = host.releaseMicroAgents(microAgents);
 			microAgents.clear();
 
 			if ( !releasedMicroAgents.isEmpty() ) {

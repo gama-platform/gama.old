@@ -5,6 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.ActionFacetExpr;
 import msi.gama.lang.gaml.gaml.ArbitraryName;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
@@ -164,6 +165,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass returnsFacetExprEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass actionFacetExprEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -717,6 +725,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getActionFacetExpr()
+  {
+    return actionFacetExprEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getFunctionFacetExpr()
   {
     return functionFacetExprEClass;
@@ -1130,6 +1148,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     returnsFacetExprEClass = createEClass(RETURNS_FACET_EXPR);
 
+    actionFacetExprEClass = createEClass(ACTION_FACET_EXPR);
+
     functionFacetExprEClass = createEClass(FUNCTION_FACET_EXPR);
 
     blockEClass = createEClass(BLOCK);
@@ -1226,6 +1246,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     definitionFacetExprEClass.getESuperTypes().add(this.getGamlVarRef());
     nameFacetExprEClass.getESuperTypes().add(this.getDefinitionFacetExpr());
     returnsFacetExprEClass.getESuperTypes().add(this.getDefinitionFacetExpr());
+    actionFacetExprEClass.getESuperTypes().add(this.getDefinitionFacetExpr());
     functionFacetExprEClass.getESuperTypes().add(this.getFacetExpr());
     variableRefEClass.getESuperTypes().add(this.getExpression());
     terminalExpressionEClass.getESuperTypes().add(this.getExpression());
@@ -1294,6 +1315,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(nameFacetExprEClass, NameFacetExpr.class, "NameFacetExpr", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(returnsFacetExprEClass, ReturnsFacetExpr.class, "ReturnsFacetExpr", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(actionFacetExprEClass, ActionFacetExpr.class, "ActionFacetExpr", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(functionFacetExprEClass, FunctionFacetExpr.class, "FunctionFacetExpr", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

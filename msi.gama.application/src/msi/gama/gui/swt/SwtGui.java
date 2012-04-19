@@ -328,7 +328,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
 		g.printStackTrace();
-		final ErrorView v = (ErrorView) GuiUtils.showView(ErrorView.ID, null);
+		final ErrorView v = (ErrorView) showView(ErrorView.ID, null);
 		if ( v != null ) {
 			GuiUtils.asyncRun(new Runnable() {
 

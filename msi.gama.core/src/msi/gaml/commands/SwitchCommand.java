@@ -64,10 +64,6 @@ public class SwitchCommand extends AbstractCommandSequence {
 		for ( ISymbol c : commands ) {
 			if ( c instanceof MatchCommand ) {
 				if ( ((MatchCommand) c).getLiteral(IKeyword.KEYWORD).equals(IKeyword.DEFAULT) ) {
-					if ( defaultMatch != null ) {
-						c.error("A default match is already declared");
-						defaultMatch.error("A default match is already declared");
-					}
 					defaultMatch = (MatchCommand) c;
 				} else {
 					cases.add((MatchCommand) c);

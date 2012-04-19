@@ -270,7 +270,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 			skillsClasses.addAll(parent.skillsClasses);
 			skillsMethods.putAll(parent.skillsMethods);
 
-			// We only copy the reflexes that are not redefined in this species
+			// We only copy the behaviors that are not redefined in this species
 			for ( final CommandDescription b : parent.behaviors.values() ) {
 				if ( !hasBehavior(b.getName()) ) {
 					addChild(b);
@@ -355,20 +355,60 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		return result;
 	}
 
-	public void complementWith(final SpeciesDescription sd) {
-		addChildren(sd.getChildren());
-		skillsClasses.addAll(sd.skillsClasses);
-		skillsMethods.putAll(sd.skillsMethods);
-		if ( agentConstructor == null ) {
-			agentConstructor = sd.agentConstructor;
-		}
-		if ( javaBase == null ) {
-			javaBase = sd.javaBase;
-		}
-		if ( getSource() == null ) {
-			setSource(sd.getSource());
-		}
-	}
+	// public void complementWith(final SpeciesDescription sd) {
+	// // addChildren(sd.getChildren());
+	// skillsClasses.addAll(sd.skillsClasses);
+	// skillsMethods.putAll(sd.skillsMethods);
+	// if ( agentConstructor == null ) {
+	// agentConstructor = sd.agentConstructor;
+	// }
+	// if ( javaBase == null ) {
+	// javaBase = sd.javaBase;
+	// }
+	// if ( getSource() == null ) {
+	// setSource(sd.getSource());
+	// }
+	//
+	// // We only copy the behaviors that are not redefined in this species
+	// for ( final CommandDescription b : sd.behaviors.values() ) {
+	// if ( !hasBehavior(b.getName()) ) {
+	// addChild(b);
+	// }
+	// }
+	//
+	// for ( final CommandDescription init : sd.inits ) {
+	// addChild(init);
+	// }
+	//
+	// // We only copy the actions that are not redefined in this species
+	// for ( final String aName : sd.actions.keySet() ) {
+	// if ( !hasAction(aName) ) {
+	// addChild(sd.actions.get(aName));
+	// }
+	// }
+	//
+	// for ( final String aName : sd.aspects.keySet() ) {
+	// // if ( aName.equals(ISymbol.DEFAULT) || !hasAspect(aName) ) {
+	// if ( !hasAspect(aName) ) {
+	// addChild(sd.aspects.get(aName));
+	// }
+	// }
+	//
+	// // We only copy the variables that are not redefined in this species
+	// for ( final VariableDescription v : sd.variables.values() ) {
+	// if ( v.isBuiltIn() ) {
+	// final VariableDescription var = getVariable(v.getName());
+	// if ( var == null ) { // || ! isUserDefined ???
+	// addChild(v);
+	// }
+	// } else if ( !hasVar(v.getName()) ) {
+	// addChild(v);
+	// }
+	// }
+	//
+	// sortVars();
+	//
+	// }
 
 	public Map<String, Class> getSkillsMethods() {
 		return skillsMethods;

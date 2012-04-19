@@ -82,6 +82,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.DEFINITION_FACET_EXPR: return createDefinitionFacetExpr();
       case GamlPackage.NAME_FACET_EXPR: return createNameFacetExpr();
       case GamlPackage.RETURNS_FACET_EXPR: return createReturnsFacetExpr();
+      case GamlPackage.ACTION_FACET_EXPR: return createActionFacetExpr();
       case GamlPackage.FUNCTION_FACET_EXPR: return createFunctionFacetExpr();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.EXPRESSION: return createExpression();
@@ -272,6 +273,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ReturnsFacetExprImpl returnsFacetExpr = new ReturnsFacetExprImpl();
     return returnsFacetExpr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionFacetExpr createActionFacetExpr()
+  {
+    ActionFacetExprImpl actionFacetExpr = new ActionFacetExprImpl();
+    return actionFacetExpr;
   }
 
   /**

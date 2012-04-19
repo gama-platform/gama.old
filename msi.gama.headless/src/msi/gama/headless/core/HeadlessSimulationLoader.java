@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.headless.io.HeadlessIO;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
@@ -45,7 +44,6 @@ public class HeadlessSimulationLoader {
 
 	private static void preloadGAMA() {
 		System.out.println("GAMA configuring and loading...");
-		FileUtils.setFileAccess(new HeadlessIO());
 		GuiUtils.setSwtGui(new HeadlessListener());
 		try {
 			GamaBundleLoader.preBuildContributions();
@@ -70,7 +68,7 @@ public class HeadlessSimulationLoader {
 			if ( !linker.hasErrors() ) {
 				System.out.println("No errors in syntactic tree");
 				ModelStructure ms = new ModelStructure(r, elements, collect);
-				lastModel = (IModel) DescriptionFactory.getModelFactory().compile(ms, collect);
+				lastModel = DescriptionFactory.getModelFactory().compile(ms, collect);
 				if ( collect.hasErrors() ) {
 					lastModel = null;
 					// System.out.println("End compilation of " + m.getName());

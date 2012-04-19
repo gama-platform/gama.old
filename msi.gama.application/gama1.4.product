@@ -21,9 +21,7 @@ Visit http://code.google.com/p/gama-platform/
 
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean -consoleLog</programArgs>
-      <vmArgs>-Xms256m -Xmx1536m -XX:+UseConcMarkSweepGC
--XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled
--XX:MaxPermSize=256m</vmArgs>
+      <vmArgs>-Xms256m -Xmx1536m</vmArgs>
       <vmArgsMac>-d32 -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -48,7 +46,6 @@ Visit http://code.google.com/p/gama-platform/
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>

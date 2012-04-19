@@ -70,16 +70,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		ModelDescription md = desc.getModelDescription();
 		SpeciesDescription wd = md.getWorldSpecies();
 		VariableDescription vd = wd.getVariable(varName);
-		// if ( vd == null ) {
-		// error(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
-		// return;
-		// }
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = vd.getType();
 		}
-		// else if ( type.id() != vd.getType().id() ) {
-		// error(p + "type must be the same as that of " + varName, IKeyword.TYPE);
-		// }
 		setCategory(desc.getFacets().getLabel(IKeyword.CATEGORY));
 		IExpression init = getFacet(IKeyword.INIT);
 		IExpression min = getFacet(IKeyword.MIN);
@@ -87,20 +80,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		IExpression step = getFacet(IKeyword.STEP);
 		IExpression among = getFacet(IKeyword.AMONG);
 
-		// IExpression init = assertFacet(desc, IKeyword.INIT, type);
-		// IExpression min = assertFacet(desc, IKeyword.MIN, type);
-		// IExpression max = assertFacet(desc, IKeyword.MAX, type);
-		// IExpression step = assertFacet(desc, IKeyword.STEP, type);
-		// IExpression among = assertFacet(desc, IKeyword.AMONG, Types.get(IType.LIST));
-		// boolean isNotModifiable = desc.isNotModifiable();
-		// if ( isNotModifiable ) {
-		// error(p + "cannot be declared as constant");
-		// }
 		order = desc.getDefinitionOrder();
-		// if ( among != null && type.id() != among.getContentType().id() ) {
-		// error(p + " of type " + type.toString() + " cannot be chosen among " + among.toGaml(),
-		// IKeyword.AMONG);
-		// }
 		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
 		stepValue = step == null ? null : (Number) step.value(GAMA.getDefaultScope());
@@ -137,21 +117,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		isLabel = p.isLabel();
 		allowsTooltip = p.allowsTooltip();
 	}
-
-	//
-	// public IExpression assertFacet(final IDescription d, final String name, final IType type) {
-	// IExpression expr = d.getFacets().getExpr(name);
-	// if ( expr == null ) { return null; }
-	// if ( !expr.isConst() ) {
-	// error("Parameter " + getTitle() + " " + name + " facet must be constant", name);
-	// }
-	// if ( type != null && !expr.type().equals(type) ) {
-	// error(
-	// "Parameter " + getTitle() + " " + name + " facet must be of type " +
-	// type.toString(), name);
-	// }
-	// return expr;
-	// }
 
 	@Override
 	public void setName(final String name2) {
@@ -375,11 +340,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public IType type() {
 		return type;
 	}
-
-	// @Override
-	// public IType getContentType() {
-	// return type().defaultContentType();
-	// }
 
 	@Override
 	public String toGaml() {

@@ -194,6 +194,16 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.ACTION_FACET_EXPR:
+      {
+        ActionFacetExpr actionFacetExpr = (ActionFacetExpr)theEObject;
+        T result = caseActionFacetExpr(actionFacetExpr);
+        if (result == null) result = caseDefinitionFacetExpr(actionFacetExpr);
+        if (result == null) result = caseFacetExpr(actionFacetExpr);
+        if (result == null) result = caseGamlVarRef(actionFacetExpr);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.FUNCTION_FACET_EXPR:
       {
         FunctionFacetExpr functionFacetExpr = (FunctionFacetExpr)theEObject;
@@ -612,6 +622,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseReturnsFacetExpr(ReturnsFacetExpr object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Action Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Action Facet Expr</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseActionFacetExpr(ActionFacetExpr object)
   {
     return null;
   }

@@ -30,7 +30,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -53,23 +53,10 @@ public class CaptureCommand extends AbstractCommandSequence {
 	public CaptureCommand(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
-		verifyFacetType(IKeyword.TARGET);
 		microSpeciesName = getLiteral(IKeyword.AS);
 		returnString = getLiteral(IKeyword.RETURNS);
-		verifyMicroSpecies();
 		if ( hasFacet(IKeyword.TARGET) ) {
 			setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).toGaml());
-		}
-	}
-
-	private void verifyMicroSpecies() {
-		if (microSpeciesName != null) {
-			SpeciesDescription macroSpecies = (SpeciesDescription) this.getDescription().getSpeciesContext();
-
-			SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
-			if ( microSpecies == null ) {
-				error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName + " as micro-species");
-			}
 		}
 	}
 
@@ -110,24 +97,24 @@ public class CaptureCommand extends AbstractCommandSequence {
 				microAgents.add((IGamlAgent) t);
 			}
 		}
-		
+
 		List<IAgent> removedComponents = new GamaList<IAgent>();
 		List<IAgent> capturedAgents = GamaList.EMPTY_LIST;
 
 		if ( !microAgents.isEmpty() ) {
-			if (microSpeciesName != null) { // micro-species name is specified in the "as" facet.
+			if ( microSpeciesName != null ) { // micro-species name is specified in the "as" facet.
 				ISpecies microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
-				
-				if (microSpecies == null) {
-					throw new GamaRuntimeException(this.name + " can't capture other agents as members of " 
-								+ microSpeciesName + " population because the " + microSpeciesName + " population is not visible or doesn't exist.");
-				}
-				
+
+				if ( microSpecies == null ) { throw new GamaRuntimeException(this.name +
+					" can't capture other agents as members of " + microSpeciesName +
+					" population because the " + microSpeciesName +
+					" population is not visible or doesn't exist."); }
+
 				IPopulation microPopulation = macroAgent.getPopulationFor(microSpecies);
-				if (microPopulation == null) {
-					throw new GamaRuntimeException(this.name + " can't capture other agents as members of " 
-							+ microSpeciesName + " population because the " + microSpeciesName + " population is not visible or doesn't exist.");
-				}
+				if ( microPopulation == null ) { throw new GamaRuntimeException(this.name +
+					" can't capture other agents as members of " + microSpeciesName +
+					" population because the " + microSpeciesName +
+					" population is not visible or doesn't exist."); }
 
 				if ( microSpecies != null ) {
 					for ( IAgent c : microAgents ) {
@@ -157,15 +144,17 @@ public class CaptureCommand extends AbstractCommandSequence {
 			} else { // micro-species name is not specified in the "as" facet.
 				ISpecies microSpecies;
 				IAgent capturedAgent;
-				
-				for (IAgent c : microAgents) {
+
+				for ( IAgent c : microAgents ) {
 					microSpecies = macroSpecies.getMicroSpecies(c.getSpeciesName());
-					
-					if (microSpecies != null) {
+
+					if ( microSpecies != null ) {
 						capturedAgent = macroAgent.captureMicroAgent(microSpecies, c);
 						stack.addVarWithValue(IKeyword.MYSELF, macroAgent);
-						if ( !sequence.isEmpty() ) { stack.execute(sequence, capturedAgent); }
-						
+						if ( !sequence.isEmpty() ) {
+							stack.execute(sequence, capturedAgent);
+						}
+
 						capturedAgents.add(capturedAgent);
 					} else {
 						removedComponents.add(c);
@@ -177,25 +166,28 @@ public class CaptureCommand extends AbstractCommandSequence {
 		if ( returnString != null ) {
 			stack.setVarValue(returnString, capturedAgents);
 		}
-		
+
 		// throw GamaRuntimeException if necessary
-		if (!removedComponents.isEmpty()) {
+		if ( !removedComponents.isEmpty() ) {
 			List<String> raStr = new GamaList<String>();
-			for (IAgent ra : removedComponents) {
+			for ( IAgent ra : removedComponents ) {
 				raStr.add(ra.getName());
 				raStr.add(", ");
 			}
 			raStr.remove(raStr.size() - 1);
-			
+
 			StringBuffer raB = new StringBuffer();
-			for (String s : raStr) { raB.append(s); }
-			
-			if (microSpeciesName != null) {
-				throw new GamaRuntimeException(macroAgent.getName() 
-						+ " can't capture " + raStr.toString() + " as " + microSpeciesName + " agent");
+			for ( String s : raStr ) {
+				raB.append(s);
+			}
+
+			if ( microSpeciesName != null ) {
+				throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
+					raStr.toString() + " as " + microSpeciesName + " agent");
 			} else {
-				throw new GamaRuntimeException(macroAgent.getName()
-						+ " can't capture " + raStr.toString() + " as micro-agents because no appripriate micro-population is found to welcome these agents.");
+				throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
+					raStr.toString() +
+					" as micro-agents because no appripriate micro-population is found to welcome these agents.");
 			}
 		}
 

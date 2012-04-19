@@ -17,7 +17,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 /**
  * Built-in keywords (corresponding to special statements)
  */ 
-	BuiltIn:  ('match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
+	BuiltIn:  ('write'|'warn'|'error'|'match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
 
 /**
  * Statements (i.e. commands in the GAML descriptions).
@@ -25,7 +25,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	Statement: (IfEval | ClassicStatement | Definition);
 	ClassicStatement returns Statement: key=BuiltIn ref=GamlFacetRef? expr=Expression (facets+=FacetExpr)* (block=Block | ';');
 	IfEval returns Statement: key='if' ref=GamlFacetRef? expr=Expression block=Block (=>'else' else=(Statement | Block))?;
-	Definition: key=ID (name=ID|name=STRING)? (facets+=FacetExpr)* (block=Block | ';');
+	Definition: key=ID (name=ID|name=STRING|name=BuiltIn)? (facets+=FacetExpr)* (block=Block | ';');
 
 /**
  * Facets
@@ -34,9 +34,10 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	GamlFacetRef:  ref = ID ':' | ref = '<-';
 	FunctionGamlFacetRef:  (ref='function' ':'| ref = '->');
 	FacetExpr:    FunctionFacetExpr | DefinitionFacetExpr | (key=GamlFacetRef expr=Expression);
-	DefinitionFacetExpr: ReturnsFacetExpr | NameFacetExpr;
-	NameFacetExpr: 'name:' (name=ID|name=STRING);
+	DefinitionFacetExpr: ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr;
+	NameFacetExpr: ('name:') (name=ID|name=STRING|name=BuiltIn);
 	ReturnsFacetExpr : 'returns:' name=ID;
+	ActionFacetExpr: 'action:' (name=ID|name=STRING|name=BuiltIn);
 	FunctionFacetExpr: key= FunctionGamlFacetRef '{' expr=Expression '}'; // Introduce "closures" ? 
 
 /**
@@ -59,7 +60,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	GamlUnitExpr returns Expression: GamlUnaryExpr (({GamlUnitExpr.left=current}op='#') right=UnitName)?;
 	GamlUnaryExpr returns Expression: PrePrimaryExpr | {GamlUnaryExpr} ({GamlUnaryExpr.left=current}op=('-'|'!'|'my'|'the'|'not') right=GamlUnaryExpr);
 	PrePrimaryExpr returns Expression: TerminalExpression | MemberRef; 
-	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)?;
+	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)*;
 	PrimaryExpression returns Expression: AbstractRef | '('Expression')' | '[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' | '{' {Point} (left=Expression op=',' right=Expression ) '}';
 	AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 

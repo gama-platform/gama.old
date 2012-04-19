@@ -59,23 +59,9 @@ public class LoopCommand extends AbstractCommandSequence {
 
 	public LoopCommand(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		IExpression var = getFacet(IKeyword.VAR);
-		// if ( var != null ) {
-		// if ( hasFacet(IKeyword.OVER) ) {
-		// ((IVarExpression) var).setType(getFacet(IKeyword.OVER).getContentType());
-		// } else if ( hasFacet(IKeyword.FROM) ) {
-		// ((IVarExpression) var).setType(Types.get(IType.INT));
-		// }
-		// }
 		boolean isWhile = getFacet(IKeyword.WHILE) != null;
 		boolean isList = getFacet(IKeyword.OVER) != null;
 		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
-		verifyFacetType(IKeyword.FROM);
-		verifyFacetType(IKeyword.TO);
-		verifyFacetType(IKeyword.STEP);
-		verifyFacetType(IKeyword.TIMES);
-		verifyFacetType(IKeyword.WHILE);
-		verifyFacetType(IKeyword.OVER);
 		executer =
 			isWhile ? new LoopWhileExecuter(this) : isList
 				? getFacet(IKeyword.OVER).type().id() == IType.POINT ? new LoopIntervalExecuter(

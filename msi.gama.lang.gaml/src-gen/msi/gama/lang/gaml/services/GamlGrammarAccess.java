@@ -230,73 +230,85 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class BuiltInElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "BuiltIn");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cMatchKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cMatch_oneKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		private final Keyword cMatch_betweenKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cCaptureKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cReleaseKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
-		private final Keyword cAskKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
-		private final Keyword cSwitchKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
-		private final Keyword cCreateKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
-		private final Keyword cAddKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cRemoveKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cPutKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cSaveKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cSetKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cReturnKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cWriteKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cWarnKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cErrorKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
+		private final Keyword cMatchKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cMatch_oneKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cMatch_betweenKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
+		private final Keyword cCaptureKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
+		private final Keyword cReleaseKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cAskKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cSwitchKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cCreateKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cAddKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cRemoveKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cPutKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cSaveKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cSetKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cReturnKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
 		
 		/// **
 		// * Built-in keywords (corresponding to special statements)
 		// * / BuiltIn:
-		//	"match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" | "create" | "add" | "remove" |
-		//	"put" | "save" | "set" | "return";
+		//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
+		//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
 		public ParserRule getRule() { return rule; }
 
-		//"match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" | "create" | "add" | "remove" | "put"
-		//| "save" | "set" | "return"
+		//"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
+		//"create" | "add" | "remove" | "put" | "save" | "set" | "return"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
+		//"write"
+		public Keyword getWriteKeyword_0() { return cWriteKeyword_0; }
+
+		//"warn"
+		public Keyword getWarnKeyword_1() { return cWarnKeyword_1; }
+
+		//"error"
+		public Keyword getErrorKeyword_2() { return cErrorKeyword_2; }
+
 		//"match"
-		public Keyword getMatchKeyword_0() { return cMatchKeyword_0; }
+		public Keyword getMatchKeyword_3() { return cMatchKeyword_3; }
 
 		//"match_one"
-		public Keyword getMatch_oneKeyword_1() { return cMatch_oneKeyword_1; }
+		public Keyword getMatch_oneKeyword_4() { return cMatch_oneKeyword_4; }
 
 		//"match_between"
-		public Keyword getMatch_betweenKeyword_2() { return cMatch_betweenKeyword_2; }
+		public Keyword getMatch_betweenKeyword_5() { return cMatch_betweenKeyword_5; }
 
 		//"capture"
-		public Keyword getCaptureKeyword_3() { return cCaptureKeyword_3; }
+		public Keyword getCaptureKeyword_6() { return cCaptureKeyword_6; }
 
 		//"release"
-		public Keyword getReleaseKeyword_4() { return cReleaseKeyword_4; }
+		public Keyword getReleaseKeyword_7() { return cReleaseKeyword_7; }
 
 		//"ask"
-		public Keyword getAskKeyword_5() { return cAskKeyword_5; }
+		public Keyword getAskKeyword_8() { return cAskKeyword_8; }
 
 		//"switch"
-		public Keyword getSwitchKeyword_6() { return cSwitchKeyword_6; }
+		public Keyword getSwitchKeyword_9() { return cSwitchKeyword_9; }
 
 		//"create"
-		public Keyword getCreateKeyword_7() { return cCreateKeyword_7; }
+		public Keyword getCreateKeyword_10() { return cCreateKeyword_10; }
 
 		//"add"
-		public Keyword getAddKeyword_8() { return cAddKeyword_8; }
+		public Keyword getAddKeyword_11() { return cAddKeyword_11; }
 
 		//"remove"
-		public Keyword getRemoveKeyword_9() { return cRemoveKeyword_9; }
+		public Keyword getRemoveKeyword_12() { return cRemoveKeyword_12; }
 
 		//"put"
-		public Keyword getPutKeyword_10() { return cPutKeyword_10; }
+		public Keyword getPutKeyword_13() { return cPutKeyword_13; }
 
 		//"save"
-		public Keyword getSaveKeyword_11() { return cSaveKeyword_11; }
+		public Keyword getSaveKeyword_14() { return cSaveKeyword_14; }
 
 		//"set"
-		public Keyword getSetKeyword_12() { return cSetKeyword_12; }
+		public Keyword getSetKeyword_15() { return cSetKeyword_15; }
 
 		//"return"
-		public Keyword getReturnKeyword_13() { return cReturnKeyword_13; }
+		public Keyword getReturnKeyword_16() { return cReturnKeyword_16; }
 	}
 
 	public class StatementElements extends AbstractParserRuleElementFinder {
@@ -463,6 +475,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
 		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
 		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
 		private final Assignment cFacetsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cFacetsFacetExprParserRuleCall_2_0 = (RuleCall)cFacetsAssignment_2.eContents().get(0);
 		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
@@ -471,10 +485,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_3_1 = (Keyword)cAlternatives_3.eContents().get(1);
 		
 		//Definition:
-		//	key=ID (name=ID | name=STRING)? facets+=FacetExpr* (block=Block | ";");
+		//	key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";");
 		public ParserRule getRule() { return rule; }
 
-		//key=ID (name=ID | name=STRING)? facets+=FacetExpr* (block=Block | ";")
+		//key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";")
 		public Group getGroup() { return cGroup; }
 
 		//key=ID
@@ -483,7 +497,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getKeyIDTerminalRuleCall_0_0() { return cKeyIDTerminalRuleCall_0_0; }
 
-		//(name=ID | name=STRING)?
+		//(name=ID | name=STRING | name=BuiltIn)?
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
 		//name=ID
@@ -497,6 +511,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
+
+		//name=BuiltIn
+		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+
+		//BuiltIn
+		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
 
 		//facets+=FacetExpr*
 		public Assignment getFacetsAssignment_2() { return cFacetsAssignment_2; }
@@ -656,12 +676,13 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cReturnsFacetExprParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cNameFacetExprParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cActionFacetExprParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//DefinitionFacetExpr:
-		//	ReturnsFacetExpr | NameFacetExpr;
+		//	ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr;
 		public ParserRule getRule() { return rule; }
 
-		//ReturnsFacetExpr | NameFacetExpr
+		//ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//ReturnsFacetExpr
@@ -669,6 +690,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//NameFacetExpr
 		public RuleCall getNameFacetExprParserRuleCall_1() { return cNameFacetExprParserRuleCall_1; }
+
+		//ActionFacetExpr
+		public RuleCall getActionFacetExprParserRuleCall_2() { return cActionFacetExprParserRuleCall_2; }
 	}
 
 	public class NameFacetExprElements extends AbstractParserRuleElementFinder {
@@ -680,18 +704,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
 		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
 		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
 		
 		//NameFacetExpr:
-		//	"name:" (name=ID | name=STRING);
+		//	"name:" (name=ID | name=STRING | name=BuiltIn);
 		public ParserRule getRule() { return rule; }
 
-		//"name:" (name=ID | name=STRING)
+		//"name:" (name=ID | name=STRING | name=BuiltIn)
 		public Group getGroup() { return cGroup; }
 
 		//"name:"
 		public Keyword getNameKeyword_0() { return cNameKeyword_0; }
 
-		//name=ID | name=STRING
+		//name=ID | name=STRING | name=BuiltIn
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
 		//name=ID
@@ -705,6 +731,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
+
+		//name=BuiltIn
+		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+
+		//BuiltIn
+		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
 	}
 
 	public class ReturnsFacetExprElements extends AbstractParserRuleElementFinder {
@@ -729,6 +761,50 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+	}
+
+	public class ActionFacetExprElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ActionFacetExpr");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cActionKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Assignment cNameAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
+		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
+		
+		//ActionFacetExpr:
+		//	"action:" (name=ID | name=STRING | name=BuiltIn);
+		public ParserRule getRule() { return rule; }
+
+		//"action:" (name=ID | name=STRING | name=BuiltIn)
+		public Group getGroup() { return cGroup; }
+
+		//"action:"
+		public Keyword getActionKeyword_0() { return cActionKeyword_0; }
+
+		//name=ID | name=STRING | name=BuiltIn
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+
+		//name=ID
+		public Assignment getNameAssignment_1_0() { return cNameAssignment_1_0; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0_0() { return cNameIDTerminalRuleCall_1_0_0; }
+
+		//name=STRING
+		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
+
+		//STRING
+		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
+
+		//name=BuiltIn
+		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+
+		//BuiltIn
+		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
 	}
 
 	public class FunctionFacetExprElements extends AbstractParserRuleElementFinder {
@@ -1397,16 +1473,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRightVariableRefParserRuleCall_1_2_0 = (RuleCall)cRightAssignment_1_2.eContents().get(0);
 		
 		//MemberRef returns Expression:
-		//	PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)?;
+		//	PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)*;
 		public ParserRule getRule() { return rule; }
 
-		//PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)?
+		//PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)*
 		public Group getGroup() { return cGroup; }
 
 		//PrimaryExpression
 		public RuleCall getPrimaryExpressionParserRuleCall_0() { return cPrimaryExpressionParserRuleCall_0; }
 
-		//({MemberRef.left=current} op="." right=VariableRef)?
+		//({MemberRef.left=current} op="." right=VariableRef)*
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{MemberRef.left=current}
@@ -1825,6 +1901,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private DefinitionFacetExprElements pDefinitionFacetExpr;
 	private NameFacetExprElements pNameFacetExpr;
 	private ReturnsFacetExprElements pReturnsFacetExpr;
+	private ActionFacetExprElements pActionFacetExpr;
 	private FunctionFacetExprElements pFunctionFacetExpr;
 	private BlockElements pBlock;
 	private ExpressionElements pExpression;
@@ -1937,8 +2014,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	/// **
 	// * Built-in keywords (corresponding to special statements)
 	// * / BuiltIn:
-	//	"match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" | "create" | "add" | "remove" |
-	//	"put" | "save" | "set" | "return";
+	//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
+	//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
 	public BuiltInElements getBuiltInAccess() {
 		return (pBuiltIn != null) ? pBuiltIn : (pBuiltIn = new BuiltInElements());
 	}
@@ -1980,7 +2057,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Definition:
-	//	key=ID (name=ID | name=STRING)? facets+=FacetExpr* (block=Block | ";");
+	//	key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";");
 	public DefinitionElements getDefinitionAccess() {
 		return (pDefinition != null) ? pDefinition : (pDefinition = new DefinitionElements());
 	}
@@ -2032,7 +2109,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//DefinitionFacetExpr:
-	//	ReturnsFacetExpr | NameFacetExpr;
+	//	ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr;
 	public DefinitionFacetExprElements getDefinitionFacetExprAccess() {
 		return (pDefinitionFacetExpr != null) ? pDefinitionFacetExpr : (pDefinitionFacetExpr = new DefinitionFacetExprElements());
 	}
@@ -2042,7 +2119,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//NameFacetExpr:
-	//	"name:" (name=ID | name=STRING);
+	//	"name:" (name=ID | name=STRING | name=BuiltIn);
 	public NameFacetExprElements getNameFacetExprAccess() {
 		return (pNameFacetExpr != null) ? pNameFacetExpr : (pNameFacetExpr = new NameFacetExprElements());
 	}
@@ -2059,6 +2136,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getReturnsFacetExprRule() {
 		return getReturnsFacetExprAccess().getRule();
+	}
+
+	//ActionFacetExpr:
+	//	"action:" (name=ID | name=STRING | name=BuiltIn);
+	public ActionFacetExprElements getActionFacetExprAccess() {
+		return (pActionFacetExpr != null) ? pActionFacetExpr : (pActionFacetExpr = new ActionFacetExprElements());
+	}
+	
+	public ParserRule getActionFacetExprRule() {
+		return getActionFacetExprAccess().getRule();
 	}
 
 	//// Introduce "closures" ? 
@@ -2209,7 +2296,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//MemberRef returns Expression:
-	//	PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)?;
+	//	PrimaryExpression ({MemberRef.left=current} op="." right=VariableRef)*;
 	public MemberRefElements getMemberRefAccess() {
 		return (pMemberRef != null) ? pMemberRef : (pMemberRef = new MemberRefElements());
 	}

@@ -50,6 +50,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getFacetExprAccess().getAlternatives(), "rule__FacetExpr__Alternatives");
 					put(grammarAccess.getDefinitionFacetExprAccess().getAlternatives(), "rule__DefinitionFacetExpr__Alternatives");
 					put(grammarAccess.getNameFacetExprAccess().getAlternatives_1(), "rule__NameFacetExpr__Alternatives_1");
+					put(grammarAccess.getActionFacetExprAccess().getAlternatives_1(), "rule__ActionFacetExpr__Alternatives_1");
 					put(grammarAccess.getRelationalAccess().getOpAlternatives_1_0_1_0(), "rule__Relational__OpAlternatives_1_0_1_0");
 					put(grammarAccess.getAdditionAccess().getAlternatives_1_0(), "rule__Addition__Alternatives_1_0");
 					put(grammarAccess.getMultiplicationAccess().getAlternatives_1_0(), "rule__Multiplication__Alternatives_1_0");
@@ -75,6 +76,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getFacetExprAccess().getGroup_2(), "rule__FacetExpr__Group_2__0");
 					put(grammarAccess.getNameFacetExprAccess().getGroup(), "rule__NameFacetExpr__Group__0");
 					put(grammarAccess.getReturnsFacetExprAccess().getGroup(), "rule__ReturnsFacetExpr__Group__0");
+					put(grammarAccess.getActionFacetExprAccess().getGroup(), "rule__ActionFacetExpr__Group__0");
 					put(grammarAccess.getFunctionFacetExprAccess().getGroup(), "rule__FunctionFacetExpr__Group__0");
 					put(grammarAccess.getBlockAccess().getGroup(), "rule__Block__Group__0");
 					put(grammarAccess.getTernExpAccess().getGroup(), "rule__TernExp__Group__0");
@@ -149,6 +151,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getDefinitionAccess().getKeyAssignment_0(), "rule__Definition__KeyAssignment_0");
 					put(grammarAccess.getDefinitionAccess().getNameAssignment_1_0(), "rule__Definition__NameAssignment_1_0");
 					put(grammarAccess.getDefinitionAccess().getNameAssignment_1_1(), "rule__Definition__NameAssignment_1_1");
+					put(grammarAccess.getDefinitionAccess().getNameAssignment_1_2(), "rule__Definition__NameAssignment_1_2");
 					put(grammarAccess.getDefinitionAccess().getFacetsAssignment_2(), "rule__Definition__FacetsAssignment_2");
 					put(grammarAccess.getDefinitionAccess().getBlockAssignment_3_0(), "rule__Definition__BlockAssignment_3_0");
 					put(grammarAccess.getGamlFacetRefAccess().getRefAssignment_0_0(), "rule__GamlFacetRef__RefAssignment_0_0");
@@ -159,7 +162,11 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getFacetExprAccess().getExprAssignment_2_1(), "rule__FacetExpr__ExprAssignment_2_1");
 					put(grammarAccess.getNameFacetExprAccess().getNameAssignment_1_0(), "rule__NameFacetExpr__NameAssignment_1_0");
 					put(grammarAccess.getNameFacetExprAccess().getNameAssignment_1_1(), "rule__NameFacetExpr__NameAssignment_1_1");
+					put(grammarAccess.getNameFacetExprAccess().getNameAssignment_1_2(), "rule__NameFacetExpr__NameAssignment_1_2");
 					put(grammarAccess.getReturnsFacetExprAccess().getNameAssignment_1(), "rule__ReturnsFacetExpr__NameAssignment_1");
+					put(grammarAccess.getActionFacetExprAccess().getNameAssignment_1_0(), "rule__ActionFacetExpr__NameAssignment_1_0");
+					put(grammarAccess.getActionFacetExprAccess().getNameAssignment_1_1(), "rule__ActionFacetExpr__NameAssignment_1_1");
+					put(grammarAccess.getActionFacetExprAccess().getNameAssignment_1_2(), "rule__ActionFacetExpr__NameAssignment_1_2");
 					put(grammarAccess.getFunctionFacetExprAccess().getKeyAssignment_0(), "rule__FunctionFacetExpr__KeyAssignment_0");
 					put(grammarAccess.getFunctionFacetExprAccess().getExprAssignment_2(), "rule__FunctionFacetExpr__ExprAssignment_2");
 					put(grammarAccess.getBlockAccess().getStatementsAssignment_2(), "rule__Block__StatementsAssignment_2");

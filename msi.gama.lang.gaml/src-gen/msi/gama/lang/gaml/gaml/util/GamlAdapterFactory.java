@@ -153,6 +153,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createReturnsFacetExprAdapter();
       }
       @Override
+      public Adapter caseActionFacetExpr(ActionFacetExpr object)
+      {
+        return createActionFacetExprAdapter();
+      }
+      @Override
       public Adapter caseFunctionFacetExpr(FunctionFacetExpr object)
       {
         return createFunctionFacetExprAdapter();
@@ -505,6 +510,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createReturnsFacetExprAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionFacetExpr <em>Action Facet Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ActionFacetExpr
+   * @generated
+   */
+  public Adapter createActionFacetExprAdapter()
   {
     return null;
   }

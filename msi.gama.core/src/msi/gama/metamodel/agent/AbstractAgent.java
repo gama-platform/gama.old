@@ -19,7 +19,6 @@
 package msi.gama.metamodel.agent;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.simulation.*;
@@ -51,9 +50,9 @@ public abstract class AbstractAgent implements IAgent {
 	protected IShape geometry;
 
 	protected ISimulation simulation;
-	
+
 	/**
-	 * If true, this means that the agent will soon be died 
+	 * If true, this means that the agent will soon be died
 	 * In this case, dead() will return true.
 	 * 
 	 */
@@ -71,7 +70,6 @@ public abstract class AbstractAgent implements IAgent {
 		attributes = new HashMap<String, Object>();
 	}
 
-	
 	@Override
 	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
 		List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
@@ -82,7 +80,9 @@ public abstract class AbstractAgent implements IAgent {
 			for ( ISpecies microSpec : allMicroSpecies ) {
 
 				// TODO what to do with built-in species?
-				if ( ModelFactory.isBuiltIn(microSpec.getName()) ) { continue; }
+				if ( ModelFactory.isBuiltIn(microSpec.getName()) ) {
+					continue;
+				}
 
 				microPop = new GamlPopulation(this, microSpec);
 				microPopulations.put(microSpec, microPop);
@@ -146,7 +146,7 @@ public abstract class AbstractAgent implements IAgent {
 		// }
 
 		// dispose components
-		if (microPopulations != null) {
+		if ( microPopulations != null ) {
 			for ( IPopulation pop : microPopulations.values() ) {
 				pop.dispose();
 			}
@@ -156,7 +156,7 @@ public abstract class AbstractAgent implements IAgent {
 
 		try {
 			population.removeFirst(this);
-	
+
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e);
 			e.printStackTrace();
@@ -240,13 +240,12 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void die() throws GamaRuntimeException {
-		
-		if (dead()) 
-			return ; 
-		
+
+		if ( dead() ) { return; }
+
 		dying = true;
-		
-		if (microPopulations != null) {
+
+		if ( microPopulations != null ) {
 			for ( IPopulation microPop : microPopulations.values() ) {
 				microPop.killMembers();
 			}
@@ -256,18 +255,18 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public synchronized boolean dead() {
-		return (index == -1) || dying;
+		return index == -1 || dying;
 	}
 
-	protected static void error(final String error) {
+	public static void error(final String error) {
 		GuiUtils.error(error);
 	}
 
-	protected static void tell(final String s) {
+	public static void tell(final String s) {
 		GuiUtils.tell(s);
 	}
 
-	protected static void write(final String s) {
+	public static void write(final String s) {
 		GuiUtils.informConsole(s);
 	}
 
@@ -297,8 +296,7 @@ public abstract class AbstractAgent implements IAgent {
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
-		GamaShape newLocalGeom =
-				(GamaShape) (other == null ? newGeometry : newGeometry.copy());
+		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy());
 		topology.normalizeLocation(newGeomLocation, false);
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
 			newLocalGeom.setLocation(newGeomLocation);
@@ -546,12 +544,13 @@ public abstract class AbstractAgent implements IAgent {
 	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
 		IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
-		
+
 		IAgent host = this.getHost();
-		if (host != null) { return host.getPopulationFor(speciesName); }
+		if ( host != null ) { return host.getPopulationFor(speciesName); }
 		return null;
 	}
-	
+
+	@Override
 	public List<IAgent> getMacroAgents() {
 		List<IAgent> retVal = new GamaList<IAgent>();
 		IAgent currentMacro = this.getHost();
@@ -559,38 +558,37 @@ public abstract class AbstractAgent implements IAgent {
 			retVal.add(currentMacro);
 			currentMacro = currentMacro.getHost();
 		}
-		
+
 		return retVal;
 	}
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
 	 * 
-	 * @return true if the following conditions are correct: 
-	 * 			1. newSpecies is one micro-species of this agent's species;
-	 *          2. newSpecies is a sub-species of this agent's species or other species is a sub-species of this agent's species;
-	 *          3. the "other" agent is not macro-agent of this agent;
-	 *          4. the "other" agent is not a micro-agent of this agent.
+	 * @return true if the following conditions are correct:
+	 *         1. newSpecies is one micro-species of this agent's species;
+	 *         2. newSpecies is a sub-species of this agent's species or other species is a
+	 *         sub-species of this agent's species;
+	 *         3. the "other" agent is not macro-agent of this agent;
+	 *         4. the "other" agent is not a micro-agent of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
 		if ( other == null || other.dead() || newSpecies == null ||
-			!this.getSpecies().containMicroSpecies(newSpecies) ) {
-			return false; 
-		}
+			!this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
 
 		/*
-		ISpecies otherSpecies = other.getSpecies();
-		List<ISpecies> otherParents = otherSpecies.getSelfWithParents();
-		List<ISpecies> myParents = this.getSpecies().getSelfWithParents();
-		if ( !otherParents.contains(this.getSpecies()) && !myParents.contains(otherSpecies) ) { 
-			return false; 
-		}
-		*/
-		
-		if (this.getMacroAgents().contains(other)) {  return false; }
-		
-		if (other.getHost().equals(this)) { return false; }
+		 * ISpecies otherSpecies = other.getSpecies();
+		 * List<ISpecies> otherParents = otherSpecies.getSelfWithParents();
+		 * List<ISpecies> myParents = this.getSpecies().getSelfWithParents();
+		 * if ( !otherParents.contains(this.getSpecies()) && !myParents.contains(otherSpecies) ) {
+		 * return false;
+		 * }
+		 */
+
+		if ( this.getMacroAgents().contains(other) ) { return false; }
+
+		if ( other.getHost().equals(this) ) { return false; }
 
 		return true;
 	}

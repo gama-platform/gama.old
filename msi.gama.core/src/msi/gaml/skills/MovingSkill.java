@@ -18,7 +18,6 @@
  */
 package msi.gaml.skills;
 
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.kernel.simulation.SimulationClock;
@@ -54,7 +53,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0"),
 	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd 359"),
 	@var(name = IKeyword.DESTINATION, type = IType.POINT_STR, depends_on = { IKeyword.SPEED,
-		IKeyword.DESTINATION, IKeyword.LOCATION }) })
+		IKeyword.HEADING, IKeyword.LOCATION }) })
 @skill({ IKeyword.MOVING_SKILL })
 public class MovingSkill extends GeometricSkill {
 
@@ -120,7 +119,8 @@ public class MovingSkill extends GeometricSkill {
 		return agent.getHeading();
 	}
 
-	protected int computeHeading(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	protected int computeHeading(final IScope scope, final IAgent agent)
+		throws GamaRuntimeException {
 		Integer heading = scope.hasArg(IKeyword.HEADING) ? scope.getIntArg(IKeyword.HEADING) : null;
 		if ( heading != null ) {
 			agent.setHeading(heading);
@@ -302,13 +302,14 @@ public class MovingSkill extends GeometricSkill {
 	 * @param distance max displacement distance
 	 * @return the next location
 	 */
-	
-	protected GamaList initMoveAlongPath (final IAgent agent, final IPath path, GamaPoint currentLocation){
+
+	protected GamaList initMoveAlongPath(final IAgent agent, final IPath path,
+		GamaPoint currentLocation) {
 		GamaList initVals = new GamaList();
 		Integer index = 0;
 		Integer indexSegment = 1;
 		Integer endIndexSegment = 0;
-		
+
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
 		if ( path.isVisitor(agent) ) {
@@ -378,7 +379,7 @@ public class MovingSkill extends GeometricSkill {
 	private IPath moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
 		final double d) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
-		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		int endIndexSegment = (Integer) indexVals.get(2);
@@ -388,13 +389,13 @@ public class MovingSkill extends GeometricSkill {
 		int nb = edges.size();
 		double distance = d;
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
-		
+
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-			
-			double weight = computeWeigth(graph,path,line);
-			
+
+			double weight = computeWeigth(graph, path, line);
+
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -403,7 +404,7 @@ public class MovingSkill extends GeometricSkill {
 					pt = new GamaPoint(coords[j]);
 				}
 				double dist = agent.getTopology().distanceBetween(pt, currentLocation);
-				
+
 				dist = weight * dist;
 				if ( distance < dist ) {
 					double ratio = distance / dist;
@@ -446,14 +447,15 @@ public class MovingSkill extends GeometricSkill {
 
 		return null;
 	}
-	
-	protected double computeWeigth(IGraph graph, IPath path, IShape line) {
-		return graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+
+	protected double computeWeigth(final IGraph graph, final IPath path, final IShape line) {
+		return graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) /
+			line.getGeometry().getPerimeter();
 	}
 
 	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
-		GamaList indexVals = initMoveAlongPath (agent, path, currentLocation);
+		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		int endIndexSegment = (Integer) indexVals.get(2);
@@ -471,8 +473,8 @@ public class MovingSkill extends GeometricSkill {
 			// perimeter. // ANSWER : it is necessary because the weight can be different than the
 			// perimeter (see model traffic_tutorial)
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
-			
-			double weight =computeWeigth(graph,path,line);
+
+			double weight = computeWeigth(graph, path, line);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {

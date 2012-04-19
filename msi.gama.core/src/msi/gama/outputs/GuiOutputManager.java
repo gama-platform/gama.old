@@ -69,9 +69,8 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 
 			@Override
 			public void run() {
-				GuiUtils.clearErrors();
 				// GUI.debug("Displaying the console");
-				GuiUtils.showConsoleView();
+				// GuiUtils.showConsoleView();
 				// GuiUtils.showView("org.eclipse.swt.tools.views.SpyView", null);
 				// GUI.debug("Hiding the monitors (if any)");
 				GuiUtils.hideMonitorView();

@@ -48,6 +48,7 @@
     <genClasses ecoreClass="Gaml.ecore#//DefinitionFacetExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//NameFacetExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//ReturnsFacetExpr"/>
+    <genClasses ecoreClass="Gaml.ecore#//ActionFacetExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//FunctionFacetExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//Block">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>

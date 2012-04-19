@@ -51,11 +51,11 @@ public class FsmStateCommand extends AbstractCommandSequence {
 
 	public static final String STATE_MEMORY = "state_memory";
 
-	protected static final String INITIAL = "initial";
-	protected static final String FINAL = "final";
+	public static final String INITIAL = "initial";
+	public static final String FINAL = "final";
 	protected static final String STATE = "state";
-	static final String ENTER = "enter";
-	static final String EXIT = "exit";
+	public static final String ENTER = "enter";
+	public static final String EXIT = "exit";
 	private FsmEnterCommand enterActions = null;
 	private FsmExitCommand exitActions = null;
 	List<FsmTransitionCommand> transitions = new ArrayList();
@@ -65,8 +65,6 @@ public class FsmStateCommand extends AbstractCommandSequence {
 
 	public FsmStateCommand(final IDescription desc) {
 		super(desc);
-		verifyFacetType(INITIAL);
-		verifyFacetType(FINAL);
 		setName(getLiteral(IKeyword.NAME)); // A VOIR
 		isInitial = Cast.asBool(null, getLiteral(FsmStateCommand.INITIAL));
 		isFinal = Cast.asBool(null, getLiteral(FsmStateCommand.FINAL));

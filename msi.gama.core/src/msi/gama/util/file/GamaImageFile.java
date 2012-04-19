@@ -81,12 +81,6 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return (IMatrix) buffer;
 	}
 
-	@Override
-	protected String _stringValue() throws GamaRuntimeException {
-		fillBuffer();
-		return buffer.stringValue();
-	}
-
 	private IMatrix matrixValueFromImage(final ILocation preferredSize) throws GamaRuntimeException {
 		BufferedImage colorImage = null;
 		try {

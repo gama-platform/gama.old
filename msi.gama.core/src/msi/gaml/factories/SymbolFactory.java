@@ -19,6 +19,7 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
@@ -36,13 +37,10 @@ import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
-import msi.gaml.expressions.*;
-import msi.gaml.types.*;
+import msi.gaml.expressions.IExpressionFactory;
 
 /**
  * Written by Alexis Drogoul Modified on 11 mai 2010
@@ -52,8 +50,6 @@ import msi.gaml.types.*;
  */
 @handles({ ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
 public class SymbolFactory implements ISymbolFactory {
-
-	public static List<String> valueFacets = Arrays.asList(VALUE, INIT, FUNCTION, UPDATE, MIN, MAX);
 
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
 
@@ -271,9 +267,9 @@ public class SymbolFactory implements ISymbolFactory {
 
 		for ( ISyntacticElement e : source.getChildren() ) {
 			// Instead of having to consider this specific case, find a better solution.
-			if ( !source.getKeyword().equals(IKeyword.SPECIES) ) {
+			if ( !source.getKeyword().equals(SPECIES) ) {
 				children.add(createDescriptionRecursively(e, superDesc));
-			} else if ( source.hasParent(IKeyword.DISPLAY) || source.hasParent(IKeyword.SPECIES) ) {
+			} else if ( source.hasParent(DISPLAY) || source.hasParent(SPECIES) ) {
 				// "species" declared in "display" or "species" section
 				children.add(createDescriptionRecursively(e, superDesc));
 			}
@@ -356,12 +352,12 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( md == null ) { return; }
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
-		rawFacets.putAsLabel(IKeyword.KEYWORD, desc.getKeyword());
+		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 		for ( String s : rawFacets.keySet() ) {
 			compileFacet(s, desc);
 		}
 		verifyFacetsType(desc);
-		if ( md.hasSequence() && !desc.getKeyword().equals(IKeyword.PRIMITIVE) ) {
+		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( md.isRemoteContext() ) {
 				desc.copyTempsAbove();
 			}
@@ -390,7 +386,7 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();
 		// Addition of a facet to keep track of the keyword
-		rawFacets.putAsLabel(IKeyword.KEYWORD, desc.getKeyword());
+		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 		for ( String s : rawFacets.keySet() ) {
 			compileFacet(s, desc);
 		}
@@ -399,7 +395,7 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( md.hasArgs() ) {
 			((ICommand.WithArgs) cs).setFormalArgs(privateCompileArgs((CommandDescription) desc));
 		}
-		if ( md.hasSequence() && !desc.getKeyword().equals(IKeyword.PRIMITIVE) ) {
+		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( md.isRemoteContext() ) {
 				desc.copyTempsAbove();
 			}
@@ -426,94 +422,6 @@ public class SymbolFactory implements ISymbolFactory {
 			}
 		}
 		return lce;
-	}
-
-	/*
-	 * Verification done after the facets have been compiled
-	 */
-
-	protected void verifyFacetsType(final IDescription desc) {
-		SymbolMetaDescription smd = desc.getMeta();
-		ModelDescription md = desc.getModelDescription();
-		TypesManager tm = md.getTypesManager();
-		for ( Map.Entry<String, IExpressionDescription> entry : desc.getFacets().entrySet() ) {
-			String facetName = entry.getKey();
-			IExpression expr = entry.getValue().getExpression();
-			if ( expr != null ) {
-				verifyFacetType(desc, facetName, expr, smd, md, tm);
-			}
-		}
-	}
-
-	protected void verifyFacetType(final IDescription desc, final String facet,
-		final IExpression expr, final SymbolMetaDescription smd, final ModelDescription md,
-		final TypesManager tm) {
-		FacetMetaDescription fmd = smd.getPossibleFacets().get(facet);
-		if ( fmd == null ) { return; }
-
-		// We have a multi-valued facet
-		if ( fmd.values.length > 0 ) {
-			verifyFacetIsInValues(desc, facet, expr, fmd.values);
-			return;
-		}
-		// The facet is supposed to be a type (IType.TYPE_ID)
-		List<String> types = new GamaList(fmd.types);
-		if ( types.contains(IType.TYPE_ID) ) {
-			verifyFacetIsAType(desc, facet, expr, tm);
-			return;
-		}
-		if ( valueFacets.contains(facet) ) {
-			String type = desc.getFacets().getLabel(TYPE);
-			if ( type != null ) {
-				types.add(type);
-			}
-		}
-		if ( !fmd.isLabel ) {
-			verifyFacetTypeIsCompatible(desc, facet, expr, types, tm);
-		}
-	}
-
-	private void verifyFacetTypeIsCompatible(final IDescription desc, final String facet,
-		final IExpression expr, final List<String> types, final TypesManager tm) {
-		boolean compatible = false;
-		IType actualType = expr.type();
-		for ( String type : types ) {
-			compatible = compatible || tm.get(type).isAssignableFrom(actualType);
-			if ( compatible ) {
-				break;
-			}
-		}
-		if ( !compatible ) {
-			desc.flagWarning("Facet '" + facet + "' is expecting " + types + " instead of " +
-				actualType, facet);
-		}
-
-	}
-
-	private void verifyFacetIsAType(final IDescription desc, final String facet,
-		final IExpression expr, final TypesManager tm) {
-		String type = expr.literalValue();
-		if ( tm.get(type) == null ) {
-			desc.flagError("Facet '" + facet + "' is expecting a type name. " + type +
-				" is not a type name");
-		}
-	}
-
-	private void verifyFacetIsInValues(final IDescription desc, final String facet,
-		final IExpression expr, final String[] values) {
-		String s = expr.literalValue();
-		boolean compatible = false;
-		for ( String value : values ) {
-			compatible = compatible || value.equals(s);
-			if ( compatible ) {
-				break;
-			}
-		}
-		if ( !compatible ) {
-			desc.flagError(
-				"Facet '" + facet + "' is expecting a value among " + Arrays.toString(values) +
-					" instead of " + s, facet);
-		}
 	}
 
 }

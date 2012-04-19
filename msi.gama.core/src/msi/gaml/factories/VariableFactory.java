@@ -19,8 +19,10 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gaml.factories.DescriptionValidator.*;
+import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
@@ -91,7 +93,7 @@ public class VariableFactory extends SymbolFactory {
 	@Override
 	protected void compileFacet(final String tag, final IDescription sd) {
 		super.compileFacet(tag, sd);
-		if ( valueFacets.contains(tag) ) {
+		if ( valueFacetsList.contains(tag) ) {
 			IExpression expr = sd.getFacets().getExpr(tag);
 			IType t = sd.getContentType();
 			if ( (t == null || t == Types.NO_TYPE) && expr != null ) {
@@ -104,99 +106,15 @@ public class VariableFactory extends SymbolFactory {
 	protected void privateValidate(final IDescription desc) {
 		super.privateValidate(desc);
 		VariableDescription vd = (VariableDescription) desc;
+		assertNameIsNotTypeOrSpecies(vd);
+		assertNameIsNotReserved(vd);
 		assertCanBeFunction(vd);
-
 		if ( !vd.getFacets().equals(KEYWORD, PARAMETER) ) {
 			assertCanBeAmong(vd, vd.getType(), vd.getFacets());
 			assertValueFacetsAreTheSameType(vd, vd.getFacets());
+			assertFacetsAreOfType(vd, vd.getType(), valueFacetsArray);
 		} else if ( vd.isParameter() ) {
 			assertCanBeParameter(vd);
-		}
-		// assertCanBeExperimentParameter(vd);
-	}
-
-	private void assertCanBeAmong(final VariableDescription vd, final IType type,
-		final Facets facets) {
-		IExpression amongExpression = facets.getExpr(AMONG);
-		if ( amongExpression != null && type.id() != amongExpression.getContentType().id() ) {
-			vd.flagError("Variable " + vd.getName() + " of type " + type.toString() +
-				" cannot be chosen among " + amongExpression.toGaml(), AMONG);
-		}
-	}
-
-	private void assertValueFacetsAreTheSameType(final VariableDescription vd, final Facets facets) {
-		IType type = null;
-		String firstValueFacet = null;
-		for ( String s : valueFacets ) {
-			IExpression expr = facets.getExpr(s);
-			if ( expr != null ) {
-				if ( type == null ) {
-					type = expr.type();
-					firstValueFacet = s;
-				} else {
-					if ( type != expr.type() ) {
-						vd.flagWarning("The types of the facets " + s + " and " + firstValueFacet +
-							" are not compatible", s);
-					}
-				}
-			}
-		}
-	}
-
-	private void assertCanBeFunction(final VariableDescription vd) {
-		Facets ff = vd.getFacets();
-		if ( ff.containsKey(FUNCTION) &&
-			(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
-			vd.flagError("A function cannot have an 'init' or 'update' facet", FUNCTION);
-		}
-	}
-
-	private void assertCanBeParameter(final VariableDescription vd) {
-		String p = "Parameter '" + vd.getParameterName() + "' ";
-		Facets facets = new Facets();
-		Facets paramFacets = vd.getFacets();
-		if ( paramFacets.equals(KEYWORD, PARAMETER) ) {
-			// We are validating an experiment parameter so we fusion the facets of the targeted var
-			// and those of the parameter
-			String varName = paramFacets.getLabel(VAR);
-			VariableDescription targetedVar = vd.getWorldSpecies().getVariable(varName);
-			if ( targetedVar == null ) {
-				vd.flagError(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
-				return;
-			}
-			if ( !vd.getType().equals(Types.NO_TYPE) &&
-				vd.getType().id() != targetedVar.getType().id() ) {
-				vd.flagError(p + "type must be the same as that of " + varName, IKeyword.TYPE);
-			}
-			facets.putAll(targetedVar.getFacets());
-			facets.putAll(paramFacets);
-			assertCanBeAmong(vd, targetedVar.getType(), facets);
-			assertValueFacetsAreTheSameType(vd, facets);
-		} else {
-			facets = paramFacets;
-		}
-
-		IExpression min = facets.getExpr(MIN);
-		IExpression max = facets.getExpr(MAX);
-		if ( facets.getExpr(FUNCTION) != null ) {
-			vd.flagError("Functions cannot be used as parameters", FUNCTION);
-		}
-		if ( min != null && !min.isConst() ) {
-			vd.flagError(p + " min value must be constant", MIN);
-		}
-		if ( max != null && !max.isConst() ) {
-			vd.flagError(p + " max value must be constant", MAX);
-		}
-		if ( facets.getExpr(INIT) == null ) {
-			vd.flagError(p + " must have an initial value");
-		} else if ( !facets.getExpr(INIT).isConst() ) {
-			vd.flagError(p + "initial value must be constant");
-		}
-		IExpression updateExpression = facets.getExpr(UPDATE, facets.getExpr(VALUE));
-		if ( updateExpression != null ) {
-			vd.flagError(p + "cannot have an 'update' or 'value' facet");
-		} else if ( vd.isNotModifiable() ) {
-			vd.flagError(p + " cannot be declared as constant ");
 		}
 	}
 

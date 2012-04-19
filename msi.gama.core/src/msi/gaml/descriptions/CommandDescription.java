@@ -81,12 +81,12 @@ public class CommandDescription extends SymbolDescription {
 
 		// Now puts all the args in the "args" list, removing them from children
 		// Made here in case other args than the previous ones were declared this way.
-		for ( IDescription c : children ) {
+		for ( IDescription c : new ArrayList<IDescription>(children) ) {
 			if ( c.getKeyword().equals(IKeyword.ARG) ) {
 				args.put(c.getName(), c);
+				children.remove(c);
 			}
 		}
-		children.removeAll(args.values());
 	}
 
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
@@ -279,6 +279,17 @@ public class CommandDescription extends SymbolDescription {
 		if ( s == null ) { return Types.NO_TYPE; }
 		IDescription species = getSpeciesContext();
 		return species == null ? Types.NO_TYPE : species.getTypeOf(s);
+	}
+
+	/**
+	 * @return
+	 */
+	public List<String> getArgNames() {
+		List<String> result = new ArrayList();
+		for ( IDescription d : getArgs() ) {
+			result.add(d.getName());
+		}
+		return result;
 	}
 
 }

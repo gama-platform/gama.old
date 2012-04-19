@@ -161,6 +161,15 @@ public interface GamlFactory extends EFactory
   ReturnsFacetExpr createReturnsFacetExpr();
 
   /**
+   * Returns a new object of class '<em>Action Facet Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Facet Expr</em>'.
+   * @generated
+   */
+  ActionFacetExpr createActionFacetExpr();
+
+  /**
    * Returns a new object of class '<em>Function Facet Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

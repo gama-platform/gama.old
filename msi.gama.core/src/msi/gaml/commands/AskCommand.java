@@ -50,7 +50,6 @@ public class AskCommand extends AbstractCommandSequence {
 
 	public AskCommand(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.TARGET);
 		target = getFacet(IKeyword.TARGET);
 		if ( target != null ) {
 			setName("ask " + target.toGaml());

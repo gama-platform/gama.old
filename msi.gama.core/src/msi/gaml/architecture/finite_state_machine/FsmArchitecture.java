@@ -48,7 +48,8 @@ public class FsmArchitecture extends ReflexArchitecture {
 	protected Map<String, FsmStateCommand> states = new HashMap();
 	protected GamaList<String> stateNames;
 	private FsmStateCommand initialState;
-	private FsmStateCommand finalState;
+
+	// private FsmStateCommand finalState;
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {
@@ -56,24 +57,10 @@ public class FsmArchitecture extends ReflexArchitecture {
 		// hasBehavior = hasBehavior || states.size() > 0;
 		for ( final FsmStateCommand s : states.values() ) {
 			if ( s.isInitial() ) {
-				if ( initialState == null ) {
-					initialState = s;
-				} else {
-					initialState.error("Only one initial state allowed", FsmStateCommand.INITIAL);
-					s.error("Only one initial state allowed", FsmStateCommand.INITIAL);
-				}
+				initialState = s;
+			} else if ( s.isFinal() ) {
+				// finalState = s;
 			}
-			if ( s.isFinal() ) {
-				if ( finalState == null ) {
-					finalState = s;
-				} else {
-					finalState.error("Only one final state allowed", FsmStateCommand.FINAL);
-					s.error("Only one final state allowed", FsmStateCommand.FINAL);
-				}
-			}
-		}
-		if ( initialState == null ) {
-			context.error("No initial state defined");
 		}
 		context.getVar(IKeyword.STATE).setValue(initialState.getName());
 		stateNames = new GamaList(states.keySet());

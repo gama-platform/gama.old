@@ -27,6 +27,7 @@ public class EGaml {
 			if ( ref != null ) { return ref.getRef(); }
 			if ( f instanceof ReturnsFacetExpr ) { return IKeyword.RETURNS; }
 			if ( f instanceof NameFacetExpr ) { return IKeyword.NAME; }
+			if ( f instanceof ActionFacetExpr ) { return IKeyword.ACTION; }
 			return null;
 		}
 		if ( f instanceof Statement ) { return ((Statement) f).getKey(); }
