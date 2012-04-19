@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -109,10 +109,27 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		IResource resource = root.findMember(new Path(containerName));
 
 		if ( !resource.exists() || !(resource instanceof IContainer) ) {
-			throwCoreException("Container \"" + containerName + "\" does not exist.");
+			// MessageDialog.openError(getShell(), "Container \"" + containerName +
+			// "\" does not exist. Creating it automatically", "");
+			// IFolder folder = root.getFolder(new Path(containerName));
+			// folder.create(true, true, monitor);
+			// resource = folder;
 		}
 
 		IContainer container = resource.getProject();
+
+		/* Add the models folder */
+		final IFolder modelFolder = container.getFolder(new Path("models"));
+		if ( !modelFolder.exists() ) {
+			modelFolder.create(true, true, monitor);
+		}
+
+		/* Add the doc folder */
+		final IFolder libFolder = container.getFolder(new Path("doc"));
+		if ( !libFolder.exists() ) {
+			libFolder.create(true, true, monitor);
+		}
+
 		final IFile file = container.getFile(new Path("models/" + fileName));
 
 		fileHeader =
