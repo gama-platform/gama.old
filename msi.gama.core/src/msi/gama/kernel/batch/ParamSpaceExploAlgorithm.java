@@ -21,6 +21,7 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;

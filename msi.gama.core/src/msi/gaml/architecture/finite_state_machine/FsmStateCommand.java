@@ -21,6 +21,7 @@ package msi.gaml.architecture.finite_state_machine;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IGamlAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;

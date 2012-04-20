@@ -21,8 +21,8 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
@@ -35,6 +35,13 @@ import msi.gaml.species.ISpecies;
  */
 @handles({ ISymbolKind.LAYER })
 public class OutputLayerFactory extends SymbolFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public OutputLayerFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	public static IDisplayLayer createChartLayer() {
 		return null;

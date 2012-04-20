@@ -20,9 +20,9 @@ package msi.gaml.types;
 
 import java.io.File;
 import java.util.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IGamaFile;
@@ -34,7 +34,7 @@ import msi.gaml.operators.Files;
  * @todo Description
  * 
  */
-@type(value = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = IVariableKind.CONTAINER /* ? */)
+@type(value = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
 public class GamaFileType extends GamaType<IGamaFile> {
 
 	/** Constant field textSuffixes. */

@@ -25,9 +25,9 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -101,7 +101,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.VARIABLE)
+@symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL)
 @inside(kinds = { ISymbolKind.SPECIES })
 public class SignalVariable extends NumberVariable {
 

@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -31,7 +31,7 @@ import msi.gama.util.IContainer;
  * A generic type for containers. Tentative.
  * 
  */
-@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = IVariableKind.CONTAINER)
+@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaContainerType extends GamaType<IContainer> {
 
 	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)

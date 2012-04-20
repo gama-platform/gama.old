@@ -29,9 +29,8 @@ import msi.gaml.expressions.IExpression;
  * Written by drogoul Modified on 25 aožt 2010
  * 
  * The superclass of all types descriptions in GAMA. Provides convenience methods, as well as some
- * basic definitions. Types allow to manipulate any Java class as a class in GAML. To be recognized
- * by GAML, subclasses must be annotated with the @type and @wraps annotations (see
- * GamlAnnotations).
+ * basic definitions. Types allow to manipulate any Java class as a type in GAML. To be recognized
+ * by GAML, subclasses must be annotated with the @type annotation (see GamlAnnotations).
  * 
  * Types are primarily used for conversions between values. They are also intended to support the
  * operators specific to the objects they encompass (but this is not mandatory, as these operators
@@ -115,10 +114,6 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 			if ( supports[i].isAssignableFrom(remote) ) { return true; }
 		}
 		return false;
-	}
-
-	protected final boolean isSubTypeOf(final IType type) {
-		return ((GamaType) type).isSuperTypeOf(this);
 	}
 
 	@Override

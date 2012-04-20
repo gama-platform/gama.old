@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.topology.*;
 import msi.gama.outputs.OutputManager;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;

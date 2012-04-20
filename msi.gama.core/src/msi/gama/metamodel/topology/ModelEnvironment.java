@@ -24,6 +24,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;

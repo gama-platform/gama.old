@@ -20,15 +20,15 @@ package msi.gaml.types;
 
 import java.io.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 
 @type(value = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
-	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = IVariableKind.CONTAINER)
+	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaType<IMatrix> {
 
 	@Override

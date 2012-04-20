@@ -5,6 +5,7 @@
 package msi.gama.common.interfaces;
 
 import msi.gama.kernel.model.IModel;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 
 /**
@@ -25,8 +26,8 @@ public interface IGamlBuilder {
 
 	void validate(Resource xtextResource);
 
-	void addListener(Resource xtextResource, Listener listener);
-
 	void removeListener(Listener listener);
+
+	void addListener(URI resourceURI, Listener listener);
 
 }

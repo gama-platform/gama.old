@@ -21,6 +21,7 @@ package msi.gaml.variables;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -54,24 +55,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-/*
- * @symbol(name = { ISymbol.VAR, ISymbol.CONST, IType.SPECIES_STR, IType.COLOR_STR, IType.PAIR_STR,
- * IType.MAP_STR, IType.POINT_STR, IType.AGENT_STR, IType.NONE_STR, IType.FILE_STR, IType.BOOL_STR,
- * IType.STRING_STR, IType.GEOM_STR }, kind = ISymbolKind.VARIABLE) remove the IType.SPECIES_STR for
- * the Delegation be parsed and compiled successfully.
- */
-@symbol(name = { IKeyword.VAR, IKeyword.CONST, IType.AGENT_STR, IType.NONE_STR, IType.BOOL_STR,
-	IType.STRING_STR, IType.GEOM_STR, IType.TOPOLOGY_STR, IType.PATH_STR }, kind = ISymbolKind.VARIABLE)
+@symbol(kind = ISymbolKind.Variable.REGULAR)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
-//
-//
-//
-//
-// TODO
-// PENSER A ELIMINER LA LISTE PRECEDENTE EN RAJOUTANT L'INFORMATION DE LA CLASSE DE VARIABLES
-// AU TYPE
-// TODO
-//
 public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;

@@ -21,6 +21,7 @@ package msi.gaml.descriptions;
 import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gaml.commands.Facets;

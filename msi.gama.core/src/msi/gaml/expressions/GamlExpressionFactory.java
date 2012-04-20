@@ -24,7 +24,7 @@ import java.util.*;
 import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
-import msi.gaml.factories.SymbolFactory;
+import msi.gaml.factories.*;
 import msi.gaml.types.*;
 
 /**
@@ -34,6 +34,13 @@ import msi.gaml.types.*;
  */
 
 public class GamlExpressionFactory extends SymbolFactory implements IExpressionFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public GamlExpressionFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	public static IExpression NIL_EXPR;
 	public static IExpression TRUE_EXPR;

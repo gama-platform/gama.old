@@ -19,8 +19,8 @@
 package msi.gaml.types;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -32,7 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-@type(value = IType.AGENT_STR, id = IType.AGENT, wraps = { IAgent.class }, kind = IVariableKind.REGULAR)
+@type(value = IType.AGENT_STR, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaGenericAgentType extends GamaType<IAgent> {
 
 	@Override

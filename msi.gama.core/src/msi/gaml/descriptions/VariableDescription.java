@@ -20,7 +20,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.GAMA;
 import msi.gaml.commands.Facets;
 import msi.gaml.expressions.*;
@@ -144,9 +143,6 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getContentType() {
-		if ( getName().equals("insiders") ) {
-			GuiUtils.debug("insiders inside");
-		}
 		if ( contentType != null && contentType != Types.NO_TYPE ) { return contentType; }
 		String of = facets.getLabel(IKeyword.OF);
 		if ( of != null ) {

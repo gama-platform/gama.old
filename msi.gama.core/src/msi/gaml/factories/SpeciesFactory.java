@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -32,8 +33,16 @@ import msi.gaml.descriptions.*;
  * @author drogoul 25 oct. 07
  */
 @handles({ ISymbolKind.SPECIES })
-@uses({ ISymbolKind.BEHAVIOR, ISymbolKind.ACTION, ISymbolKind.VARIABLE })
+@uses({ ISymbolKind.BEHAVIOR, ISymbolKind.ACTION, ISymbolKind.Variable.NUMBER,
+	ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL })
 public class SpeciesFactory extends SymbolFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public SpeciesFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	private VariableFactory varFactory;
 
@@ -62,7 +71,6 @@ public class SpeciesFactory extends SymbolFactory {
 					e.getMessage());
 			}
 		}
-
 		SpeciesDescription sd =
 			new SpeciesDescription(keyword, superDesc, facets, children, base, source, md);
 
@@ -71,11 +79,14 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	@Override
-	public void registerFactory(final ISymbolFactory f) {
-		super.registerFactory(f);
-		if ( f instanceof VariableFactory ) {
-			varFactory = (VariableFactory) f;
+	public boolean registerFactory(final ISymbolFactory f) {
+		if ( super.registerFactory(f) ) {
+			if ( f instanceof VariableFactory ) {
+				varFactory = (VariableFactory) f;
+				return true;
+			}
 		}
+		return false;
 	}
 
 	@Override
@@ -87,11 +98,6 @@ public class SpeciesFactory extends SymbolFactory {
 		for ( String s : desc.getVarNames() ) {
 			lce.add(compileDescription(desc.getVariable(s)));
 		}
-
-		// long now = System.currentTimeMillis();
-		// GuiUtils.debug("Compiling the variables of " + desc.getName() + " took: " + (now - time)
-		// +
-		// "ms");
 		// then the rest
 		for ( IDescription s : sd.getChildren() ) {
 			if ( !(s instanceof VariableDescription) ) {

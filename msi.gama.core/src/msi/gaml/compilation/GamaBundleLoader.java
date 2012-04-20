@@ -46,7 +46,7 @@ public class GamaBundleLoader {
 	 * start
 	 */
 	public static void preBuildContributions() throws GamaStartupException {
-		Map<String, String> additions = new HashMap();
+		Map<String, String> additions = new LinkedHashMap();
 		IConfigurationElement[] config =
 			Platform.getExtensionRegistry().getConfigurationElementsFor("gaml.grammar.addition");
 		for ( IConfigurationElement e : config ) {
@@ -60,11 +60,17 @@ public class GamaBundleLoader {
 		if ( corePath == null ) { throw new GamaStartupException(
 			"Core implementation of GAML not found. Please check that msi.gama.core is in the application bundles",
 			(Throwable) null); }
-		preBuildBundle(core, corePath);
+
+		// Pre-loading (before any other things) the correspondance between the types and the
+		// variable classes, so that further contributions can have working factories
+		preBuildTypeVariables(additions);
+		// Building the core additions first (others will then be able to overload).
+		preBuild(core, corePath);
 		additions.remove(core);
+		// Building the other contributions
 		for ( String pluginName : additions.keySet() ) {
 			String pathName = additions.get(pluginName);
-			preBuildBundle(pluginName, pathName);
+			preBuild(pluginName, pathName);
 
 		}
 		// postBuildContributions();
@@ -72,20 +78,22 @@ public class GamaBundleLoader {
 	}
 
 	/**
-	 * 
-	 * FIX ME
-	 * start
+	 * @throws GamaStartupException
+	 * @param additions
 	 */
-	public final static void preBuildBundle(final String pluginName, final String pathName)
+	private static void preBuildTypeVariables(final Map<String, String> additions)
 		throws GamaStartupException {
-		Bundle bundle = Platform.getBundle(pluginName);
-		try {
-			bundle.start();
-			GamaBundleLoader.addGamlExtension(bundle, pathName);
-			preBuild(bundle, pathName);
-		} catch (BundleException e1) {
-			throw new GamaStartupException("GAML additions in " + pluginName +
-				" cannot be installed due to an error in loading the plug-in.", e1);
+		for ( String pluginName : additions.keySet() ) {
+			Bundle bundle = Platform.getBundle(pluginName);
+			try {
+				bundle.start();
+				String pathName = additions.get(pluginName);
+				GamaBundleLoader.addGamlExtension(bundle, pathName);
+				FileUtils.getGamaProperties(bundle, pathName, GamlProperties.TYPES_NAMES);
+			} catch (BundleException e1) {
+				throw new GamaStartupException("GAML additions in " + pluginName +
+					" cannot be installed due to an error in loading the plug-in.", e1);
+			}
 		}
 	}
 
@@ -94,9 +102,9 @@ public class GamaBundleLoader {
 	 * FIX ME
 	 * start
 	 */
-	public static void preBuild(final Bundle plugin, final String pathToAdditions)
+	public static void preBuild(final String pluginName, final String pathToAdditions)
 		throws GamaStartupException {
-
+		Bundle plugin = Platform.getBundle(pluginName);
 		// Generating built-in species
 
 		try {

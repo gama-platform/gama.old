@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gaml.compilation.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -35,8 +35,8 @@ import msi.gaml.descriptions.IDescription;
 @handles({ ISymbolKind.BATCH_METHOD })
 public class BatchFactory extends SymbolFactory {
 
-	public BatchFactory() {
-		super();
+	public BatchFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
 		for ( Class c : ParamSpaceExploAlgorithm.CLASSES ) {
 			this.register(c);
 		}

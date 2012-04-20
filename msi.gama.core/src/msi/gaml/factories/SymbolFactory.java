@@ -23,6 +23,7 @@ import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -35,6 +36,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
@@ -52,13 +54,21 @@ import msi.gaml.expressions.IExpressionFactory;
 public class SymbolFactory implements ISymbolFactory {
 
 	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
-
 	protected final Set<ISymbolFactory> availableFactories = new HashSet();
 	protected final Map<String, ISymbolFactory> registeredFactories = new HashMap();
+	protected String name;
 
-	public SymbolFactory() {
+	public SymbolFactory(final ISymbolFactory superFactory) {
+		name =
+			superFactory == null ? getClass().getSimpleName() : superFactory.getName() + ">" +
+				getClass().getSimpleName();
 		registerAnnotatedFactories();
 		registerAnnotatedSymbols();
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -71,23 +81,36 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( annot == null ) { return; }
 		for ( int kind : annot.value() ) {
 			Class c = GamlCompiler.getFactoriesByKind(kind);
-			Constructor cc = null;
-			try {
-				cc = c.getConstructor();
-			} catch (Exception e) {
-				e.printStackTrace();
-				continue;
+			if ( canRegisterFactory(c) ) {
+				Constructor cc = null;
+				try {
+					cc = c.getConstructor(ISymbolFactory.class);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+				if ( cc == null ) { return; }
+				SymbolFactory fact;
+				try {
+					fact = (SymbolFactory) cc.newInstance(this);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+				registerFactory(fact);
 			}
-			if ( cc == null ) { return; }
-			SymbolFactory fact;
-			try {
-				fact = (SymbolFactory) cc.newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
-				continue;
-			}
-			registerFactory(fact);
 		}
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	private boolean canRegisterFactory(final Class c) {
+		for ( ISymbolFactory sf : availableFactories ) {
+			if ( sf.getClass() == c ) { return false; }
+		}
+		return true;
 	}
 
 	protected void registerAnnotatedSymbols() {
@@ -107,20 +130,26 @@ public class SymbolFactory implements ISymbolFactory {
 		// Necessary to copy, since this list can be modified dynamically (esp. by SpeciesFactory)
 	}
 
-	public void registerFactory(final ISymbolFactory f) {
+	public boolean registerFactory(final ISymbolFactory f) {
+		for ( ISymbolFactory sf : availableFactories ) {
+			if ( sf.getClass() == f.getClass() ) { return false; }
+		}
 		availableFactories.add(f);
 		// Does a pre-registration of the keywords
 		for ( String s : f.getKeywords() ) {
 			registeredFactories.put(s, f);
 		}
+		return true;
 
 		// OutputManager.debug(this.getClass().getSimpleName() + " registers factory " +
 		// f.getClass().getSimpleName() + " for keywords " + f.getKeywords());
 
 	}
 
-	public void register(final Class c) {
+	static final Set<Integer> varKinds = new HashSet(Arrays.asList(ISymbolKind.Variable.CONTAINER,
+		ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL));
 
+	public void register(final Class c) {
 		Class baseClass = null;
 		String omissible = null;
 		symbol sym = (symbol) c.getAnnotation(symbol.class);
@@ -133,7 +162,7 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( c.getAnnotation(base.class) != null ) {
 			baseClass = ((base) c.getAnnotation(base.class)).value();
 		}
-		List<String> keywords = Arrays.asList(sym.name());
+		List<String> keywords = new ArrayList(Arrays.asList(sym.name()));
 		List<facet> facets = new ArrayList();
 		List<combination> combinations = new ArrayList();
 		List<String> contexts = new ArrayList();
@@ -162,10 +191,20 @@ public class SymbolFactory implements ISymbolFactory {
 			}
 		}
 		contexts = new ArrayList(new HashSet(contexts));
-
+		if ( varKinds.contains(sKind) ) {
+			GamlProperties gp = GamlProperties.loadFrom(GamlProperties.TYPES_NAMES);
+			Set<String> supplementary_keywords = gp.get(String.valueOf(sKind));
+			if ( supplementary_keywords != null ) {
+				keywords.addAll(supplementary_keywords);
+			}
+			// Special trick and workaround for compiling species rather than variables
+			keywords.remove(IKeyword.SPECIES);
+		}
+		GuiUtils.debug("Registering " + c.getSimpleName() + " in " + name + " for keywords " +
+			keywords);
 		for ( String k : keywords ) {
 			// try {
-			if ( sKind != ISymbolKind.VARIABLE ) {
+			if ( !varKinds.contains(sKind) ) {
 				SymbolMetaDescription.nonVariableStatements.add(k);
 			}
 			registeredSymbols.put(k, new SymbolMetaDescription(c, baseClass, k, canHaveSequence,

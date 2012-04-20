@@ -26,6 +26,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.layers.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;

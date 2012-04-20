@@ -25,7 +25,8 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gaml.compilation.*;
+import msi.gama.precompiler.*;
+import msi.gaml.compilation.GamlCompiler;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.Skill;
 
@@ -38,6 +39,17 @@ import msi.gaml.skills.Skill;
 @uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelFactory extends SymbolFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public ModelFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
+
+	public ModelFactory() {
+		super(null);
+	}
 
 	public static boolean isBuiltIn(final String name) {
 		return GamlCompiler.getBuiltInSpeciesClasses().containsKey(name);

@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -32,7 +32,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(value = IType.INT_STR, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = IVariableKind.NUMBER)
+@type(value = IType.INT_STR, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override

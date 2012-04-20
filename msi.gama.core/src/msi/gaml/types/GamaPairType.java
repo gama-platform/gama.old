@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -33,7 +33,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(value = IType.PAIR_STR, id = IType.PAIR, wraps = { GamaPair.class }, kind = IVariableKind.REGULAR)
+@type(value = IType.PAIR_STR, id = IType.PAIR, wraps = { GamaPair.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPairType extends GamaType<GamaPair> {
 
 	@Override

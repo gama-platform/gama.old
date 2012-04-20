@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;

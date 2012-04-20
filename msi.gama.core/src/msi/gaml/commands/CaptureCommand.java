@@ -22,6 +22,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;

@@ -23,9 +23,10 @@ import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.*;
 import msi.gaml.architecture.finite_state_machine.*;
 import msi.gaml.commands.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -39,6 +40,13 @@ import msi.gaml.types.*;
 @handles({ ISymbolKind.SEQUENCE_COMMAND, ISymbolKind.SINGLE_COMMAND, ISymbolKind.BEHAVIOR,
 	ISymbolKind.ACTION })
 public class CommandFactory extends SymbolFactory implements IKeyword {
+
+	/**
+	 * @param superFactory
+	 */
+	public CommandFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	@Override
 	protected CommandDescription buildDescription(final ISyntacticElement source, final String kw,
@@ -172,48 +180,51 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	protected void compileFacet(final String tag, final IDescription sd) {
 		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
 			Facets ff = sd.getFacets();
-			String type = ff.getLabel(TYPE);
-			String contentType = ff.getLabel(AS);
-			if ( contentType == null ) {
-				contentType = ff.getLabel(SPECIES);
-				if ( contentType == null ) {
-					contentType = ff.getLabel(OF);
+			IType type = sd.getTypeOf(ff.getLabel(TYPE));
+			IType contentType = sd.getTypeOf(ff.getLabel(AS));
+			if ( contentType == Types.NO_TYPE ) {
+				contentType = sd.getTypeOf(ff.getLabel(SPECIES));
+				if ( contentType == Types.NO_TYPE ) {
+					contentType = sd.getTypeOf(ff.getLabel(OF));
 				}
 			}
 
-			if ( type == null ) {
+			if ( type == Types.NO_TYPE ) {
 				if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd);
 					IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
-						type = expr.type().toString();
+						type = expr.type();
 					}
 				} else if ( ff.containsKey(OVER) ) {
 					compileFacet(OVER, sd);
 					IExpression expr = ff.getExpr(OVER);
 					if ( expr != null ) {
-						type = expr.getContentType().toString();
+						type = expr.getContentType();
 					}
 				} else if ( ff.containsKey(FROM) && ff.containsKey(TO) ) {
 					compileFacet(FROM, sd);
 					IExpression expr = ff.getExpr(FROM);
 					if ( expr != null ) {
-						type = expr.type().toString();
+						type = expr.type();
 					}
 				}
 			}
-			if ( contentType == null ) {
+			if ( contentType == Types.NO_TYPE ) {
 				if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd);
 					IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
-						contentType = expr.getContentType().toString();
+						contentType = expr.getContentType();
 					}
+				}
+				if ( contentType == Types.NO_TYPE ) {
+					contentType = type.defaultContentType();
 				}
 			}
 
-			if ( type == null && contentType != null ) {
-				type = IType.LIST_STR;
+			if ( type == Types.NO_TYPE && contentType != Types.NO_TYPE ) {
+				type = Types.get(IType.CONTAINER);
 			}
 			IVarExpression exp =
 				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType,
@@ -225,6 +236,8 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	}
 
 	private String computeSpecies(final IDescription ce) {
+		// TODO is there a way to extract the species from a constant expression (like
+		// species("ant")) ? cf. Issue 145
 		IType type = null;
 		Facets ff = ce.getFacets();
 		IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));

@@ -20,6 +20,7 @@ package msi.gaml.species;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.commands;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -32,7 +33,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gaml.architecture.reflex.ReflexCommand;
 import msi.gaml.commands.*;
-import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;

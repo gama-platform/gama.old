@@ -24,8 +24,9 @@ import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.StringBasedStatementDescription;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -35,8 +36,16 @@ import msi.gaml.types.*;
  * 
  * @todo Description
  */
-@handles({ ISymbolKind.VARIABLE })
+@handles({ ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER,
+	ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public VariableFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {

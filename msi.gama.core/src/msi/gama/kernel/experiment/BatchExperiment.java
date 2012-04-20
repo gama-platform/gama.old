@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.*;
 import msi.gama.outputs.FileOutput;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;

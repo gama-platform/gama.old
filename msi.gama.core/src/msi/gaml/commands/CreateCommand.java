@@ -25,6 +25,7 @@ import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;

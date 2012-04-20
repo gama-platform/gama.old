@@ -39,8 +39,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 
 	private boolean isSuper = false;
 
-	// /** peer species are species sharing the same direct macro-species */
-	// private List<SpeciesDescription> peerSpecies;
 	//
 	/** A list of user redefined or new variables compare to the parent species. */
 	private Set<String> userRedefinedOrNewVars;
@@ -284,6 +282,12 @@ public class SpeciesDescription extends ExecutionContextDescription {
 			// We only copy the actions that are not redefined in this species
 			for ( final String aName : parent.actions.keySet() ) {
 				if ( !hasAction(aName) ) {
+					CommandDescription action = parent.actions.get(aName);
+					if ( action.isAbstract() ) {
+						this.flagWarning("Abstract action '" + aName +
+							"', which is inherited from " + parent.getName() +
+							", should be redefined.");
+					}
 					addChild(parent.actions.get(aName));
 				}
 			}

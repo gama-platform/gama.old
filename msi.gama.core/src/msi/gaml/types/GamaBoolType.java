@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.io.File;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -32,7 +32,7 @@ import msi.gama.util.IContainer;
  * @todo Description
  * 
  */
-@type(value = IType.BOOL_STR, id = IType.BOOL, wraps = { Boolean.class, boolean.class }, kind = IVariableKind.REGULAR)
+@type(value = IType.BOOL_STR, id = IType.BOOL, wraps = { Boolean.class, boolean.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override

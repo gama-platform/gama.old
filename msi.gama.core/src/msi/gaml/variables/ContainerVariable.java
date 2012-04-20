@@ -21,6 +21,7 @@ package msi.gaml.variables;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -29,7 +30,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
-import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -50,9 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = { IType.LIST_STR, IType.MATRIX_STR, IType.FILE_STR, IType.STRING_STR,
-	IType.CONTAINER_STR, IType.COLOR_STR, IType.PAIR_STR, IType.MAP_STR, IType.POINT_STR,
-	IType.GRAPH_STR }, kind = ISymbolKind.VARIABLE)
+@symbol(kind = ISymbolKind.Variable.CONTAINER)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 public class ContainerVariable extends Variable {
 

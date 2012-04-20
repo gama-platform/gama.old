@@ -19,6 +19,7 @@
 package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gaml.compilation.*;

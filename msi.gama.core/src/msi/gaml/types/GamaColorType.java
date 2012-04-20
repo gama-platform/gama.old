@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import java.util.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -34,7 +34,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(value = IType.COLOR_STR, id = IType.COLOR, wraps = { GamaColor.class, Color.class }, kind = IVariableKind.REGULAR)
+@type(value = IType.COLOR_STR, id = IType.COLOR, wraps = { GamaColor.class, Color.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override

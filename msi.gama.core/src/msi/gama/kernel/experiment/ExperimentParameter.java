@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -44,7 +45,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.VARIABLE)
+@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 

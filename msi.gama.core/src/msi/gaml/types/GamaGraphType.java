@@ -19,11 +19,9 @@
 package msi.gaml.types;
 
 import java.util.Map;
-
-import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -31,7 +29,7 @@ import msi.gama.util.graph.*;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
-@type(value = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class }, kind = IVariableKind.CONTAINER)
+@type(value = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaGraphType extends GamaType<IGraph> {
 
 	@Override
@@ -46,20 +44,19 @@ public class GamaGraphType extends GamaType<IGraph> {
 		if ( obj == null ) { return null; }
 		if ( obj instanceof IGraph ) { return (IGraph) obj; }
 		boolean spatial = param != null && Cast.asBool(scope, param);
-		
+
 		if ( obj instanceof IList ) { return from((IList) obj, spatial); }
 		// List of agents, geometries...
-		
-		if ( obj instanceof VariableExpression) { // this may be a variable ?
+
+		if ( obj instanceof VariableExpression ) { // this may be a variable ?
 			// in this case, attempt to decode it !
-			return (IGraph)(((VariableExpression)obj).value(scope)); 
+			return (IGraph) ((VariableExpression) obj).value(scope);
 		}
-		
+
 		if ( obj instanceof Map ) { return from((Map) obj, spatial); }
 		// TODO Matrix, Pair ?
-		
-	
-		//throw new GamaRuntimeException("Unable to cast "+obj+" as a graph");
+
+		// throw new GamaRuntimeException("Unable to cast "+obj+" as a graph");
 		return null;
 	}
 

@@ -22,7 +22,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gaml.compilation.ISymbolKind;
+import msi.gama.precompiler.*;
 import msi.gaml.descriptions.*;
 
 /**
@@ -31,9 +31,16 @@ import msi.gaml.descriptions.*;
  * @author drogoul
  */
 @handles({ ISymbolKind.EXPERIMENT })
-@uses({ ISymbolKind.OUTPUT, ISymbolKind.VARIABLE, ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION,
+@uses({ ISymbolKind.OUTPUT, ISymbolKind.PARAMETER, ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION,
 	ISymbolKind.BEHAVIOR })
 public class ExperimentFactory extends SpeciesFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public ExperimentFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	@Override
 	protected String getKeyword(final ISyntacticElement cur) {

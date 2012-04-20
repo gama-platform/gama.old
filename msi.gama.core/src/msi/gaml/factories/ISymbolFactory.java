@@ -54,4 +54,9 @@ public interface ISymbolFactory {
 
 	public abstract boolean handlesKeyword(String keyword);
 
+	/**
+	 * @return
+	 */
+	public abstract String getName();
+
 }

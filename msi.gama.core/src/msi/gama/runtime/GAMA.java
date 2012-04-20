@@ -27,6 +27,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -154,7 +155,7 @@ public class GAMA {
 
 	public static IExpressionFactory getExpressionFactory() {
 		if ( expressionFactory == null ) {
-			expressionFactory = new GamlExpressionFactory();
+			expressionFactory = new GamlExpressionFactory(DescriptionFactory.getModelFactory());
 		}
 		return expressionFactory;
 	}

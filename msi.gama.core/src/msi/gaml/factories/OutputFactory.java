@@ -24,8 +24,8 @@ import msi.gama.outputs.LayerDisplayOutput;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.*;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -36,6 +36,13 @@ import msi.gaml.descriptions.IDescription;
 @handles({ ISymbolKind.OUTPUT })
 @uses({ ISymbolKind.LAYER })
 public class OutputFactory extends SymbolFactory {
+
+	/**
+	 * @param superFactory
+	 */
+	public OutputFactory(final ISymbolFactory superFactory) {
+		super(superFactory);
+	}
 
 	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
 

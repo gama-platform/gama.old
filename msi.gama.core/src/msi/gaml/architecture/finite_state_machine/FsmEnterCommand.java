@@ -20,6 +20,7 @@ package msi.gaml.architecture.finite_state_machine;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.commands.AbstractCommandSequence;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.no_scope;
 import msi.gama.precompiler.GamlAnnotations.symbol;

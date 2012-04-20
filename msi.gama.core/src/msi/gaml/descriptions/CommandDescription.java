@@ -119,17 +119,15 @@ public class CommandDescription extends SymbolDescription {
 		}
 	}
 
-	public IVarExpression addNewTempIfNecessary(final String facetName, final String type,
-		final String contentType, final IExpressionFactory f) {
+	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
+		final IType contentType, final IExpressionFactory f) {
 		IDescription sup = getSuperDescription();
 		if ( !(sup instanceof CommandDescription) ) {
 			flagError("Impossible to return " + facets.getLabel(facetName));
 			return null;
 		}
 		String varName = facets.getLabel(facetName);
-		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type == null
-			? Types.NO_TYPE : getTypeOf(type), contentType == null ? Types.NO_TYPE
-			: getTypeOf(contentType), f);
+		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type, contentType, f);
 	}
 
 	public SpeciesDescription extractExtraSpeciesContext() {
@@ -290,6 +288,14 @@ public class CommandDescription extends SymbolDescription {
 			result.add(d.getName());
 		}
 		return result;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isAbstract() {
+		return !getKeyword().equals(IKeyword.PRIMITIVE) &&
+			(getChildren().isEmpty() || args != null && getChildren().size() == args.size());
 	}
 
 }

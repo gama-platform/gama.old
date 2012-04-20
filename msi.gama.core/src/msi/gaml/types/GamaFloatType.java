@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -30,7 +30,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(value = IType.FLOAT_STR, id = IType.FLOAT, wraps = { Double.class, double.class }, kind = IVariableKind.NUMBER)
+@type(value = IType.FLOAT_STR, id = IType.FLOAT, wraps = { Double.class, double.class }, kind = ISymbolKind.Variable.NUMBER)
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override
