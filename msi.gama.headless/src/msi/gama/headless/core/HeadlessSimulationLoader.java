@@ -1,7 +1,7 @@
 package msi.gama.headless.core;
 
 import java.io.*;
-import java.util.Map;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.headless.runtime.HeadlessListener;
@@ -64,10 +64,12 @@ public class HeadlessSimulationLoader {
 		ResourceSet rs = new ResourceSetImpl();
 		Resource r = rs.getResource(URI.createURI("file:" + fileName), true);
 		try {
-			Map<Resource, ISyntacticElement> elements = linker.buildCompleteSyntacticTree(r);
+			Map<URI, ISyntacticElement> elements = linker.buildCompleteSyntacticTree(r);
 			if ( !linker.hasErrors() ) {
 				System.out.println("No errors in syntactic tree");
-				ModelStructure ms = new ModelStructure(r, elements, collect);
+				ModelStructure ms =
+					new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()),
+						collect);
 				lastModel = DescriptionFactory.getModelFactory().compile(ms, collect);
 				if ( collect.hasErrors() ) {
 					lastModel = null;
