@@ -40,10 +40,16 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
 			if ( obj instanceof String ) { return from((String) obj, null); }
 		}
-
+		
+		if((((GamaPoint)param).getX() <= 0) || (((GamaPoint)param).getY() < 0)) {
+			throw new GamaRuntimeException("Dimensions of a matrix should be positive.");
+		}
+		
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
 			(GamaPoint) param); }
 		if ( obj instanceof String ) { return from((String) obj, (GamaPoint) param); }
+		if ( obj instanceof Double ) { return with(((Double) obj).doubleValue(), (GamaPoint) param); }
+		if ( obj instanceof Integer ) { return with(((Integer) obj).intValue(), (GamaPoint) param); }		
 		return with(obj);
 	}
 
@@ -112,7 +118,13 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 
 	public static IMatrix with(final int val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaIntMatrix((int) p.x, (int) p.y);
-		matrix.set(0, 0, val);
+		((GamaIntMatrix)matrix).fillWith(val);
+		return matrix;
+	}
+	
+	public static IMatrix with(final double val, final GamaPoint p) throws GamaRuntimeException {
+		final IMatrix matrix = new GamaFloatMatrix((int) p.x, (int) p.y);
+		((GamaFloatMatrix)matrix)._putAll(val,null);		
 		return matrix;
 	}
 }
