@@ -24,6 +24,8 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -33,8 +35,11 @@ import msi.gaml.types.IType;
 
 public abstract class AbstractCommand extends Symbol implements ICommand {
 
+	protected IExpression pertinence;
+	
 	public AbstractCommand(final IDescription desc) {
 		super(desc);
+		pertinence = null;
 	}
 
 	@Override
@@ -91,4 +96,21 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 		}
 		return sb.toString();
 	}
+	
+	@Override
+	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
+		System.out.println(this.getClass() + " pertinence : " + pertinence);
+		if (pertinence != null) {
+			System.out.println("val : " + pertinence.value(scope));
+			return Cast.asFloat(scope, pertinence.value(scope));
+		}
+		return 1.0;
+	}
+
+	@Override
+	public IExpression getPertinence() {
+		return pertinence;
+	}
+	
+	
 }

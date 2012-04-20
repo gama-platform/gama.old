@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbolKind;
 import msi.gaml.descriptions.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -84,5 +85,15 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 	public IType getReturnContentType() {
 		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
+	}
+	
+	@Override
+	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
+		ISpecies context = scope.getAgentScope().getSpecies();
+		ICommand.WithArgs executer = context.getAction(name);
+		if (executer.getPertinence() != null) {
+			return Cast.asFloat(scope, executer.getPertinence().value(scope));
+		}
+		return 1.0;
 	}
 }

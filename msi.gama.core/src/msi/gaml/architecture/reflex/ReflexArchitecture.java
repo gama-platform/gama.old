@@ -197,4 +197,13 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	 */
 	@Override
 	public void error(final String s, final String facet) {}
+
+	@Override
+	public Double computePertinence(IScope scope) throws GamaRuntimeException {
+		return 1.0;
+	}
+	@Override
+	public IExpression getPertinence() {
+		return null;
+	}
 }

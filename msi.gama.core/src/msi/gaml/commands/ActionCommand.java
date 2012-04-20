@@ -20,6 +20,7 @@ package msi.gaml.commands;
 
 import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -42,13 +43,15 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true), 
+	@facet(name = IKeyword.PERTINENCE, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
 @with_sequence
 @with_args
 public class ActionCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments actualArgs = new Arguments();
 	Arguments formalArgs;
+
 
 	/**
 	 * The Constructor.
@@ -60,6 +63,9 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 		super(desc);
 		if ( hasFacet(IKeyword.NAME) ) {
 			name = getLiteral(IKeyword.NAME);
+		}
+		if ( hasFacet(IKeyword.PERTINENCE) ) {
+			pertinence = getFacet(IKeyword.PERTINENCE);
 		}
 	}
 

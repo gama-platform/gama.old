@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IGamlable;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
@@ -37,6 +38,10 @@ public interface ICommand extends ISymbol, IGamlable {
 	public abstract IType getReturnType();
 
 	public abstract IType getReturnContentType();
+	
+	public abstract Double computePertinence(final IScope scope) throws GamaRuntimeException;
+	
+	public abstract IExpression getPertinence();
 
 	public interface WithArgs extends ICommand {
 

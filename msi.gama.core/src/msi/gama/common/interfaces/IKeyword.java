@@ -55,7 +55,9 @@ public interface IKeyword {
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
 	public static final String CELLULAR = "cellular";
+	public static final String CHAIN = "chain";
 	public static final String CHART = "chart";
+	public static final String CHOOSE = "choose";
 	public static final String CLOSE_EXP = ")";
 	public static final String CLOSE_LIST = "]";
 	public static final String CLOSE_POINT = "}";
@@ -186,6 +188,7 @@ public interface IKeyword {
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
 	public static final String PEERS = "peers";
+	public static final String PERTINENCE = "pertinence";
 	public static final String PIE = "pie";
 	public static final String PLACES = "places";
 	public final static String PLUS = "+";
