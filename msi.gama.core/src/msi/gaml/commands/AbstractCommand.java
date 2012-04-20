@@ -99,9 +99,7 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 	
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		System.out.println(this.getClass() + " pertinence : " + pertinence);
 		if (pertinence != null) {
-			System.out.println("val : " + pertinence.value(scope));
 			return Cast.asFloat(scope, pertinence.value(scope));
 		}
 		return 1.0;
