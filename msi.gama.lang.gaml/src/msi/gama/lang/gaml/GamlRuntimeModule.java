@@ -19,9 +19,10 @@
 package msi.gama.lang.gaml;
 
 import msi.gama.lang.gaml.linking.GamlLinker;
-import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.service.SingletonBinding;
+import com.google.inject.Binder;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension
@@ -30,7 +31,16 @@ import org.eclipse.xtext.service.SingletonBinding;
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
 	@Override
-	@SingletonBinding(eager = true)
+	public void configure(final Binder binder) {
+		super.configure(binder);
+		binder.bind(IDefaultResourceDescriptionStrategy.class).to(
+			GamlResourceDescriptionStrategy.class);
+		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
+		binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
+	}
+
+	@Override
+	// @SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
@@ -44,12 +54,6 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() {
 		return GamlLinker.class;
-	}
-
-	@Override
-	@org.eclipse.xtext.service.SingletonBinding(eager = true)
-	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
-		return null;
 	}
 
 }

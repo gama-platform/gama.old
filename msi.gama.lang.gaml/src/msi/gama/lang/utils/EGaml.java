@@ -50,10 +50,8 @@ public class EGaml {
 
 	public static String getLabelFromFacet(final Statement container, final String facet) {
 		for ( FacetExpr f : container.getFacets() ) {
-			if ( getKeyOf(f).equals(facet) ) {
-				Expression expr = f.getExpr();
-				if ( expr instanceof VariableRef ) { return getKeyOf(expr); }
-			}
+			if ( getKeyOf(f).equals(facet) ) { return f instanceof DefinitionFacetExpr
+				? ((DefinitionFacetExpr) f).getName() : getKeyOf(f.getExpr()); }
 		}
 		return null;
 	}

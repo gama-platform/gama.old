@@ -10,12 +10,12 @@ import msi.gama.common.util.IErrorCollector;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
 import org.eclipse.xtext.linking.lazy.LazyLinker;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.XtextResource;
 
 /**
  * The class GamlLinker.
@@ -26,13 +26,12 @@ import org.eclipse.xtext.resource.XtextResource;
  */
 public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollector {
 
-	private final Map<Resource, IGamlBuilder.Listener> listeners = new HashMap();
+	private final Map<URI, GamlBuilder> builders = new HashMap();
 
 	public GamlLinker() {
 		GAMA.setGamlBuilder(this);
 	}
 
-	// private final Map<Resource, GamlBuilder> builders = new HashMap();
 	private boolean hasErrors;
 
 	@Override
@@ -43,12 +42,12 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 		validate(r);
 	}
 
-	private GamlBuilder getBuilder(final Resource r) {
-		// GamlBuilder result = builders.get(r);
-		// if ( result == null ) {
-		GamlBuilder result = new GamlBuilder((XtextResource) r, this);
-		// builders.put(r, result);
-		// }
+	private GamlBuilder getBuilder(final URI uri) {
+		GamlBuilder result = builders.get(uri);
+		if ( result == null ) {
+			result = new GamlBuilder(this);
+			builders.put(uri, result);
+		}
 		return result;
 	}
 
@@ -86,9 +85,9 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 	 * @param r
 	 * @return
 	 */
-	public Map<Resource, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
-		Map<Resource, ISyntacticElement> trees = new LinkedHashMap();
-		getBuilder(r).buildRecursiveSyntacticTree(trees, r);
+	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final Resource r) {
+		Map<URI, ISyntacticElement> trees = new LinkedHashMap();
+		getBuilder(r.getURI()).buildRecursiveSyntacticTree(trees, r);
 		return trees;
 	}
 
@@ -96,27 +95,22 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 	 * @see msi.gama.common.interfaces.IGamlBuilder#build(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
-	public IModel build(final Resource xtextResource) {
-		try {
-			return getBuilder(xtextResource).build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public IModel build(final Resource r) {
+		// try {
+		return getBuilder(r.getURI()).build(r);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// return null;
 	}
 
 	@Override
-	public void validate(final Resource xtextResource) {
+	public void validate(final Resource r) {
 		boolean isOK = false;
 		try {
-			isOK = getBuilder(xtextResource).validate();
+			getBuilder(r.getURI()).validate(r);
 		} catch (Exception e) {
-			isOK = false;
 			e.printStackTrace();
-		}
-		IGamlBuilder.Listener listener = listeners.get(xtextResource);
-		if ( listener != null ) {
-			listener.validationEnded(xtextResource);
 		}
 	}
 
@@ -125,8 +119,9 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 	 *      msi.gama.common.interfaces.IGamlBuilder.Listener)
 	 */
 	@Override
-	public void addListener(final Resource xtextResource, final Listener listener) {
-		listeners.put(xtextResource, listener);
+	public void addListener(final URI uri, final Listener listener) {
+		GamlBuilder b = getBuilder(uri);
+		b.setListener(listener);
 	}
 
 	/**
@@ -134,15 +129,13 @@ public class GamlLinker extends LazyLinker implements IGamlBuilder, IErrorCollec
 	 */
 	@Override
 	public void removeListener(final Listener listener) {
-		Resource toRemove = null;
-		for ( Map.Entry<Resource, IGamlBuilder.Listener> entry : listeners.entrySet() ) {
-			if ( entry.getValue().equals(listener) ) {
-				toRemove = entry.getKey();
+		for ( Map.Entry<URI, GamlBuilder> entry : builders.entrySet() ) {
+			GamlBuilder b = entry.getValue();
+			IGamlBuilder.Listener l = b.getListener();
+			if ( l != null && l.equals(listener) ) {
+				b.removeListener();
 				break;
 			}
-		}
-		if ( toRemove != null ) {
-			listeners.remove(toRemove);
 		}
 	}
 

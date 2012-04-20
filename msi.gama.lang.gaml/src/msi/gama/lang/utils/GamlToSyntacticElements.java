@@ -24,7 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.IErrorCollector;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.AbstractStatementDescription;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.DescriptionFactory;
@@ -86,13 +86,7 @@ public class GamlToSyntacticElements {
 		final AbstractStatementDescription elt =
 			new ECoreBasedStatementDescription(keyword, stm, collect);
 
-		// We modify the "const" declarations in order to only keep "var"
-		if ( keyword.equals(CONST) ) {
-			elt.setKeyword(VAR);
-			elt.setFacet(CONST, conv(EGaml.createTerminal(true)));
-		}
-
-		// We now apply some conversions to the facets expressed in the statement
+		// We apply some conversions to the facets expressed in the statement
 		for ( FacetExpr f : stm.getFacets() ) {
 			String fname = EGaml.getKeyOf(f);
 			// We change the "<-" and "->" symbols into full names
@@ -110,6 +104,19 @@ public class GamlToSyntacticElements {
 			}
 			elt.setFacet(fname, fexpr);
 		}
+		// We modify the "var" and "const" declarations in order to keep only the type
+		if ( keyword.equals(VAR) || keyword.equals(CONST) ) {
+			String type = elt.getLabel(TYPE);
+			if ( type == null ) {
+				collect.add(new GamlCompilationError("No type defined for this variable", elt));
+			} else {
+				elt.setKeyword(type);
+			}
+			if ( keyword.equals(CONST) ) {
+				elt.setFacet(CONST, conv(EGaml.createTerminal(true)));
+			}
+		}
+
 		// If the statement is "if", we convert its potential "else" part and put it inside the
 		// syntactic element (as the legacy GAML expects it)
 		if ( keyword.equals(IKeyword.IF) ) {

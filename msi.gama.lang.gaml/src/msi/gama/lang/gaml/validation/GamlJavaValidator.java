@@ -18,30 +18,23 @@
  */
 package msi.gama.lang.gaml.validation;
 
-import static msi.gama.lang.gaml.gaml.GamlPackage.eINSTANCE;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gaml.compilation.GamaBundleLoader;
-import org.eclipse.emf.common.util.*;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.validation.Check;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	@Check
-	public void checkImports(final Model model) {
-		if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
-		Resource r = model.eResource();
-		for ( Import imp : model.getImports() ) {
-			String importUri = imp.getImportURI();
-			URI iu = URI.createURI(importUri).resolve(r.getURI());
-			XtextResource ir = (XtextResource) r.getResourceSet().getResource(iu, true);
-			EList<Resource.Diagnostic> errors = ir.getErrors();
-			if ( !errors.isEmpty() ) {
-				error("Imported file " + importUri + " has " + errors.size() +
-					" error(s). Correct them first", imp, eINSTANCE.getImport_ImportURI(), -1);
-			}
-		}
-	}
+	// @Check
+	// public void checkImports(final Model model) {
+	// if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
+	// Resource r = model.eResource();
+	// for ( Import imp : model.getImports() ) {
+	// String importUri = imp.getImportURI();
+	// URI iu = URI.createURI(importUri).resolve(r.getURI());
+	// XtextResource ir = (XtextResource) r.getResourceSet().getResource(iu, true);
+	// EList<Resource.Diagnostic> errors = ir.getErrors();
+	// if ( !errors.isEmpty() ) {
+	// error("Imported file " + importUri + " has " + errors.size() +
+	// " error(s). Correct them first", imp, eINSTANCE.getImport_ImportURI(), -1);
+	// }
+	// }
+	// }
 
 }

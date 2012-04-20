@@ -69,7 +69,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	};
 
 	{
-		new Thread(postConstributions).start();
+		// new Thread(postConstributions).start();
 	}
 
 	private Resource getResource(final Bundle bundle, final String filename) {
