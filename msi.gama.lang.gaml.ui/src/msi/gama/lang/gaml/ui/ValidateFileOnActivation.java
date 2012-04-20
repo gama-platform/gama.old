@@ -29,7 +29,7 @@ public class ValidateFileOnActivation extends AbstractPartListener {
 		// Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
 		IWorkbenchPart editor = ref.getPart(false);
 		if ( !(editor instanceof GamlEditor) ) { return; }
-		((GamlEditor) editor).updateToolbar();
+		// ((GamlEditor) editor).updateToolbar();
 	}
 
 	// private GamlEditor activeEditor(final IWorkbenchPartReference ref) {

@@ -4,8 +4,6 @@
  */
 package msi.gama.lang.gaml.ui.hover;
 
-import msi.gama.lang.gaml.gaml.Statement;
-import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 
@@ -21,12 +19,12 @@ public class GamlDocumentationProvider implements IEObjectDocumentationProvider 
 		}
 		sb.append("<br>");
 
-		if ( o instanceof Statement ) {
-			sb.append("Facets allowed: " +
-				DescriptionFactory.getModelFactory()
-					.getMetaDescriptionFor(null, ((Statement) o).getKey()).getPossibleFacets()
-					.keySet());
-		}
+		// if ( o instanceof Statement ) {
+		// sb.append("Facets allowed: " +
+		// DescriptionFactory.getModelFactory()
+		// .getMetaDescriptionFor(null, ((Statement) o).getKey()).getPossibleFacets()
+		// .keySet());
+		// }
 		return sb.toString();
 	}
 }

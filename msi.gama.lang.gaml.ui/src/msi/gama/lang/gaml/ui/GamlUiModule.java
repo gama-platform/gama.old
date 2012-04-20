@@ -20,10 +20,12 @@ package msi.gama.lang.gaml.ui;
 
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
+import org.apache.log4j.*;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.linking.impl.AbstractCleaningLinker;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
@@ -38,6 +40,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
+		Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.DEBUG);
 		setValidationTrigger(activeWorkbenchWindow(), plugin);
 	}
 
@@ -98,6 +101,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	private void setValidationTrigger(final IWorkbenchWindow w, final AbstractUIPlugin plugin) {
 		if ( w == null || !(plugin instanceof msi.gama.lang.gaml.ui.internal.GamlActivator) ) { return; }
-		w.getPartService().addPartListener(new ValidateFileOnActivation());
+		// w.getPartService().addPartListener(new ValidateFileOnActivation());
 	}
 }

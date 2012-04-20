@@ -32,6 +32,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.factories.*;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -69,14 +70,17 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	private ModelDescription getModel(final Resource r) {
 
+		// TODO Change completely to use validation instead
+
 		if ( !GamaBundleLoader.contributionsLoaded || r == null ) { return null; }
 		ModelDescription lastModel = null;
 		IErrorCollector collect = new ErrorCollector();
 		try {
-			Map<Resource, ISyntacticElement> elements = new HashMap();
-			elements.put(r,
+			Map<URI, ISyntacticElement> elements = new LinkedHashMap();
+			elements.put(r.getURI(),
 				GamlToSyntacticElements.doConvert((Model) r.getContents().get(0), collect));
-			ModelStructure ms = new ModelStructure(r, elements, collect);
+			ModelStructure ms =
+				new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()), collect);
 			lastModel = DescriptionFactory.getModelFactory().parse(ms, collect);
 		} catch (GamaRuntimeException e1) {
 			System.out.println("Exception during compilation:" + e1.getMessage());

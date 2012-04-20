@@ -11,7 +11,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.GAMA;
-import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -134,8 +133,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 		parent2.setLayout(new FillLayout());
 		super.createPartControl(parent2);
 
-		GAMA.getGamlBuilder().addListener(getXtextResource(), this);
-		updateExperiments(getXtextResource());
+		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+
+			@Override
+			public void process(final XtextResource state) throws Exception {
+				GAMA.getGamlBuilder().addListener(state.getURI(), GamlEditor.this);
+				updateExperiments(state);
+			}
+		});
 
 	}
 
@@ -160,6 +165,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 	};
 
 	private void enableButton(final int index, final String text/* , final Image image */) {
+		if ( text == null ) { return; }
 		buttons[index].setVisible(true);
 		buttons[index].setText(text);
 		// buttons[index].setImage(image);
@@ -184,7 +190,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 			public void run() {
 				if ( toolbar == null || toolbar.isDisposed() ) { return; }
 				for ( Button b : buttons ) {
-					if ( b != null ) {
+					if ( b.isVisible() ) {
 						hideButton(b);
 					}
 				}
@@ -205,17 +211,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 	}
 
-	IDocumentListener docListener = new IDocumentListener() {
-
-		@Override
-		public void documentAboutToBeChanged(final DocumentEvent event) {}
-
-		@Override
-		public void documentChanged(final DocumentEvent event) {
-			updateExperiments(getXtextResource());
-		}
-	};
-
 	private void updateExperiments(final org.eclipse.emf.ecore.resource.Resource r) {
 		final LinkedHashSet<String> exp = new LinkedHashSet();
 		exp.add(IKeyword.DEFAULT_EXPERIMENT);
@@ -223,9 +218,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 		int status = r.getErrors().size();
 
 		for ( Statement object : ((Model) r.getContents().get(0)).getStatements() ) {
-			String name = EGaml.getKeyOf(object);
-			if ( IKeyword.EXPERIMENT.equals(name) ) {
-				exp.add(((Definition) object).getName());
+			if ( IKeyword.EXPERIMENT.equals(object.getKey()) ) {
+				if ( object instanceof Definition ) {
+					String name = ((Definition) object).getName();
+					if ( name == null ) {
+						name = EGaml.getLabelFromFacet(object, IKeyword.NAME);
+					}
+					exp.add(name);
+				}
 			}
 		}
 
@@ -236,48 +236,19 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 		updateToolbar(status == 0);
 	}
 
-	//
-	// public void installDocumentListener() {
-	// getDocument().addModelListener(new IXtextModelListener() {
-	//
-	// @Override
-	// public void modelChanged(final XtextResource resource) {
-	//
-	// }
-	// });
-	// getDocument().addDocumentListener(docListener);
-	// updateExperiments();
-	// }
-
-	private XtextResource resource;
-
-	public XtextResource getXtextResource() {
-		if ( resource == null ) {
-			resource = getDocument().readOnly(new IUnitOfWork<XtextResource, XtextResource>() {
-
-				@Override
-				public XtextResource exec(final XtextResource state) throws Exception {
-					return state;
-				}
-			});
-
-		}
-		return resource;
-	}
-
 	/**
 	 * 
 	 */
-	public void updateToolbar() {
+	// public void updateToolbar() {
 
-	}
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGamlBuilder.Listener#validationEnded(boolean)
 	 */
 	@Override
 	public void validationEnded(final org.eclipse.emf.ecore.resource.Resource xtextResource) {
-		updateExperiments(resource);
+		updateExperiments(xtextResource);
 	}
 
 }
