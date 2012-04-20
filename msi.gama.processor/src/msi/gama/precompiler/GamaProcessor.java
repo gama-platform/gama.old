@@ -67,7 +67,8 @@ public class GamaProcessor extends AbstractProcessor {
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
 		for ( String f : GamlProperties.FILES ) {
-			store.put(f, initProperties(f));
+			// store.put(f, new GamlProperties());
+			store.put(f, initProperties(f)); // TODO Necessary ??
 		}
 	}
 
@@ -198,6 +199,8 @@ public class GamaProcessor extends AbstractProcessor {
 				if ( type_annot != null ) {
 					String typeName = type_annot.value();
 					store.get(GamlProperties.TYPES).put(className, typeName);
+					String typeKind = String.valueOf(type_annot.kind());
+					store.get(GamlProperties.TYPES_NAMES).put(typeKind, typeName);
 				}
 			}
 		}
@@ -275,7 +278,16 @@ public class GamaProcessor extends AbstractProcessor {
 				// store.get(GamlProperties.FACETS).put(k, facet_names);
 				store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS).put(
 					className, k);
-				store.get(GamlProperties.KINDS).put(String.valueOf(mirror.kind()), className);
+			}
+			String kind = String.valueOf(mirror.kind());
+			store.get(GamlProperties.KINDS).put(kind, className);
+			Set<String> type_names = store.get(GamlProperties.TYPES_NAMES).get(kind);
+			if ( type_names != null ) {
+				for ( String k : type_names ) {
+					// store.get(GamlProperties.FACETS).put(k, facet_names);
+					store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS)
+						.put(className, k);
+				}
 			}
 			store.get(GamlProperties.VARS).put("facets_values", facet_values);
 		}

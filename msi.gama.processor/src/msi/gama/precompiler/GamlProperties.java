@@ -39,7 +39,8 @@ public class GamlProperties {
 	public final static String SKILLS = "skills.properties";
 	public final static String UNARIES = "unaries.properties";
 	public final static String BINARIES = "binaries.properties";
-	public final static String TYPES = "types.properties";
+	public final static String TYPES = "types.classes.properties";
+	public final static String TYPES_NAMES = "types.names.properties";
 	public final static String SYMBOLS = "symbols.properties";
 	public final static String DEFINITIONS = "definitions.properties";
 	public final static String CHILDREN = "children.properties";
@@ -48,8 +49,8 @@ public class GamlProperties {
 	public final static String FACTORIES = "factories.properties";
 	public final static String SPECIES = "species.properties";
 	public final static String VARS = "vars.properties";
-	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES, SYMBOLS,
-		DEFINITIONS, CHILDREN, /* FACETS, */KINDS, FACTORIES, SPECIES, VARS };
+	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES,
+		TYPES_NAMES, SYMBOLS, DEFINITIONS, CHILDREN, /* FACETS, */KINDS, FACTORIES, SPECIES, VARS };
 
 	static final String NULL = "";
 

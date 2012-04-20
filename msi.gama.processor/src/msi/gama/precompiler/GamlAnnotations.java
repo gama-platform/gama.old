@@ -119,10 +119,10 @@ public final class GamlAnnotations {
 		Class[] wraps();
 
 		/**
-		 * @return the kind of Variable used to store this type. see IVariableKind.
+		 * @return the kind of Variable used to store this type. see ISymbolKind.Variable.
 		 */
 
-		int kind() /* default IVariableKind.REGULAR */;
+		int kind() default ISymbolKind.Variable.REGULAR;
 
 	}
 
@@ -276,7 +276,7 @@ public final class GamlAnnotations {
 		 *         Elements annotated by this annotation should also indicate what kind of symbol
 		 *         they represent ( see ISymbolKind)
 		 */
-		String[] name();
+		String[] name() default {};
 
 		int kind();
 
