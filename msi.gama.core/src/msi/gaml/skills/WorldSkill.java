@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
-@skill({ IKeyword.GLOBAL, IKeyword.WORLD_SPECIES_NAME })
+@skill(value = { IKeyword.GLOBAL, IKeyword.WORLD_SPECIES_NAME }, attach_to = IKeyword.WORLD_SPECIES_NAME)
 @species(IKeyword.WORLD_SPECIES_NAME)
 @SuppressWarnings("static-method")
 public class WorldSkill extends GeometricSkill {
