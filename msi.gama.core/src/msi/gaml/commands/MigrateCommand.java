@@ -3,15 +3,16 @@ package msi.gaml.commands;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.remote_context;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -36,6 +37,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SOURCE, type = IType.ID, optional = false), // workaround
 	@facet(name = IKeyword.TARGET, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.SOURCE)
+@remote_context
 public class MigrateCommand extends AbstractCommandSequence {
 
 	// private IExpression source;
