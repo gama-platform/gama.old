@@ -188,18 +188,6 @@
 		 </view>
          <view
                closeable="true"
-               id="msi.gama.application.view.RepositoriesView"
-               minimized="true"
-               moveable="true"
-               ratio="0.55f"
-               relationship="bottom"
-               relative="msi.gama.gui.view.GamaNavigator"
-               showTitle="true"
-               standalone="false"
-               visible="false">
-         </view>
-         <view
-               closeable="true"
                id="org.eclipse.team.sync.views.SynchronizeView"
                minimized="true"
                moveable="true"
@@ -210,7 +198,7 @@
                visible="false">
          </view>
          <view
-               closeable="false"
+               closeable="true"
                id="org.eclipse.ui.views.ContentOutline"
                minimized="false"
                moveable="true"
@@ -272,16 +260,6 @@
                   name="GAMA.separator5"
                   visible="true">
             </separator>
-            <separator
-                  name="GAMA.separator2"
-                  visible="true">
-            </separator>
-            <!--<command
-                  commandId="msi.gama.gui.modelsLibrary.commands.OpenView"
-                  icon="icons/modelsLibrary_view.gif"
-                  label="Open Models Library View"
-                  style="push">
-            </command>-->
             <command
                   commandId="org.eclipse.ui.file.close"
                   label="Close"
@@ -495,15 +473,55 @@
          </menu>
          <menu
                id="viewMenu"
-               label="View">
+               label="Views">
+            <menu
+                  label="Show...">
+             
+               <command
+                     commandId="org.eclipse.ui.views.showView"
+                     label="Search view"
+                     style="push">
+                  <parameter
+                        name="org.eclipse.ui.views.showView.viewId"
+                        value="org.eclipse.search.ui.views.SearchView">
+                  </parameter>
+               </command>
+                <command
+                     commandId="org.eclipse.ui.views.showView"
+                     label="Outline view"
+                     style="push">
+                  <parameter
+                        name="org.eclipse.ui.views.showView.viewId"
+                        value="org.eclipse.ui.views.ContentOutline">
+                  </parameter>
+               </command>
+               <command
+                     commandId="org.eclipse.ui.views.showView"
+                     label="Model compilation problems view"
+                     style="push">
+                  <parameter
+                        name="org.eclipse.ui.views.showView.viewId"
+                        value="org.eclipse.ui.views.ProblemView">
+                  </parameter>
+               </command>
+               <command
+                     commandId="org.eclipse.ui.views.showView"
+                     label="Internal error log View"
+                     style="push">
+                  <parameter
+                        name="org.eclipse.ui.views.showView.viewId"
+                        value="org.eclipse.pde.runtime.LogView">
+                  </parameter>
+               </command>
+               <command
+                     commandId="msi.gama.application.commands.ShowHideRepositoriesView"
+                     label="SVN repositories view "
+                     style="push">
+               </command>
+            </menu>
             <command
-                  commandId="msi.gama.application.commands.ShowHideParametersView"
-                  icon="icons/menu_show_parameters.png"
-                  style="push">
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.ShowHideConsoleView"
-                  icon="icons/view_console.png"
+                  commandId="org.eclipse.ui.window.resetPerspective"
+                  label="Reset Perspective"
                   style="push">
             </command>
             <separator
@@ -511,30 +529,38 @@
                   visible="true">
             </separator>
             <command
+                  commandId="msi.gama.application.commands.ShowHideParametersView"
+                  icon="icons/menu_show_parameters.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.commands.ShowHideConsoleView"
+                  icon="icons/view_console.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="msi.gama.application.commands.AddMonitor"
                   icon="icons/menu_add_monitor.png"
                   label="Add Monitor"
                   style="push">
-            </command>
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="isSimulationReady">
-               </reference>
-            </visibleWhen>
-         </menu>
-         <menu
-               id="svnMenu"
-               label="Share">
-            <command
-                  commandId="msi.gama.application.commands.ShowHideRepositoriesView"
-                  label="Repositories"
-                  style="push">
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.ImportProjectFromSVN"
-                  label="Update Models Library"
-                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
             </command>
          </menu>
          <menu
