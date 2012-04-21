@@ -137,6 +137,14 @@ public final class GamlAnnotations {
 		 */
 		String[] value();
 
+		/**
+		 * Assign_to
+		 * 
+		 * @return An array of species names to which the skill will be automatically added
+		 *         (complements the "skills" parameter of @species)
+		 */
+		String[] attach_to() default {};
+
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -178,15 +186,18 @@ public final class GamlAnnotations {
 		/**
 		 * Value.
 		 * 
-		 * @return Classes (normally subclass of GamaObject) that denote the objects used by the
-		 *         annotated class and that can be manipulated in GAML. For instance,
-		 *         CommunicatingSkill indicates that it is using "Message.class" and
-		 *         "Conversation.class". This will automatically trigger the creation of the two
-		 *         corresponding species. These classes should indicate, in turn, which keyword to
-		 *         use in GAML for creating or manipulating, respectively, messsages and
-		 *         conversations. This is done with the "species" annotation.
+		 * @return The name of the species that will be created with this class as base.
 		 */
 		String value();
+
+		/**
+		 * Skills
+		 * 
+		 * @return An array of skill names that will be automatically attached to this species.
+		 *         Example: <code> @species(value="animal" skills={"moving"}) </code>
+		 */
+
+		String[] skills() default {};
 	}
 
 	/**
