@@ -21,13 +21,17 @@ package msi.gama.gui.swt;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.navigator.FileBean;
 import msi.gama.gui.swt.perspectives.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaStartupException;
+import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -46,31 +50,33 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	@Override
-	public void postStartup() {
-		super.postStartup();
-	}
-
-	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
 		super.initialize(configurer);
 		configurer.setSaveAndRestore(true);
+		/* Setting various preferences */
+		IPreferenceStore ps = PlatformUI.getPreferenceStore();
 		/* Show heap memory status in status bar */
-		PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR,
-			true);
-		// PlatformUI.getPreferenceStore().setValue(
-		// SVNTeamPreferences.DECORATION_USE_FONT_COLORS_DECOR_NAME, true);
-		PlatformUI.getPreferenceStore().setValue(
-			IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+		ps.setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+		/* Linking navigator and editors */
+		ps.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
+		/* Showing new style tabs */
+		ps.setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+		/* Setting the default perspective to modeling */
+		ps.setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, PERSPECTIVE_MODELING_ID);
+		/* Show progress on startup */
+		ps.setValue(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP, true);
+		/* Register specific contents in the navigator */
 		IDE.registerAdapters();
-
-		// Gaml editor validation callback (parse and compil)
-		// long start = System.nanoTime(); // debug
-		// GamlDescriptIO.getInstance().setCallback(new GamlCompilCallback());
-		// OutputManager.debug("setCallback = " + (System.nanoTime() - start) / 1000000.0 + "ms");
+		/* Linking the stock models with the workspace if they are not already */
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		// TODO dirty.. find another way to do that
 		if ( workspace.getRoot().getProjects().length == 0 ) {
 			linkSampleModelsToWorkspace(workspace);
+		}
+		/* Early build of the contributions made by plugins to GAMA */
+		try {
+			GamaBundleLoader.preBuildContributions();
+		} catch (GamaStartupException e1) {
+			e1.printStackTrace();
 		}
 
 	}
@@ -88,9 +94,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public boolean preShutdown() {
 
 		/* Save workspace before closing the application */
-		final MultiStatus status =
-			new MultiStatus(SwtGui.PLUGIN_ID, 0, "Saving Workspace....", null);
-
+		final MultiStatus status = new MultiStatus(IGui.PLUGIN_ID, 0, "Saving Workspace....", null);
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
 			@Override
@@ -114,18 +118,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			ErrorDialog.openError(Display.getDefault().getActiveShell(), "Error...",
 				"Error while saving workspace", status);
 		}
-
+		/* Close the current experiment */
 		try {
-			// GamlJavaValidator.canRun(false); // stop builder
 			GAMA.closeCurrentExperiment();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		/* We have to close all views made from simulation */
-		// TODO temporary really dirty .. a refaire plus proprement (trouver
-		// comment recupérer toutes les vues simulation ouvertes de toutes les
-		// perspectives et les disposer)
-		// a voir plus tard comment on utilisera le batch
+		/* Close all views created in simulation perspective */
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		String idCurrentPerspective = window.getActivePage().getPerspective().getId();
 		try {
@@ -221,7 +220,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		IProjectDescription desc = null;
 		try {
 			desc = proj.getDescription();
-			/* Associate GamaNature et xtext nature to the project */
+			/* Automatically associate GamaNature and Xtext nature to the project */
 			String[] ids = desc.getNatureIds();
 			String[] newIds = new String[ids.length + 2];
 			System.arraycopy(ids, 0, newIds, 0, ids.length);
