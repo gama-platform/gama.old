@@ -228,7 +228,12 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression defaultCase(final EObject object) {
-			getContext().flagError("Unrecognized expression " + object, object);
+			if ( object instanceof Expression ) {
+				getContext().flagError(
+					"Unrecognized expression " + EGaml.toString((Expression) object), object);
+			} else {
+				getContext().flagError("Not an expression: " + object, object);
+			}
 			return null;
 		}
 
