@@ -29,8 +29,10 @@ public class ModelingPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(final IPageLayout layout) {
 		layout.setEditorAreaVisible(true);
 
-		layout.addView("org.eclipse.ui.views.AllMarkersView", IPageLayout.BOTTOM, (float) 0.75,
+		layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, (float) 0.75,
 			layout.getEditorArea());
-	}
 
+
+		// IDEActionFactory.BUILD;
+	}
 }
