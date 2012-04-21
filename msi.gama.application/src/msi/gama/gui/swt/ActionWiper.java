@@ -24,8 +24,6 @@ import org.eclipse.ui.*;
 
 public class ActionWiper implements IStartup, IPerspectiveListener, IPartListener {
 
-	// IContextActivation simulationContext;
-
 	private static final String[] ACTIONS_2_WIPE = new String[] {
 		"org.eclipse.ui.edit.text.actionSet.presentation",
 		"org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences",
@@ -35,8 +33,6 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 
 	@Override
 	public void partActivated(final IWorkbenchPart part) {
-		// Possibility to track parts, here ?
-		// GuiUtils.debug("Part activated: " + part.getId()) ?
 		if ( !(part instanceof IEditorPart) ) { return; }
 		GuiUtils.openModelingPerspective();
 	}
@@ -48,7 +44,8 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 			IWorkbenchPage page = windows[i].getActivePage();
 			if ( page != null ) {
 				wipeActions(page);
-				page.addPartListener(new ActionWiper());
+				ActionWiper aw = new ActionWiper();
+				page.addPartListener(aw);
 			}
 			windows[i].addPerspectiveListener(this);
 		}
@@ -58,7 +55,6 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 		for ( int i = 0; i < ACTIONS_2_WIPE.length; i++ ) {
 			wipeAction(page, ACTIONS_2_WIPE[i]);
 		}
-
 	}
 
 	private void wipeAction(final IWorkbenchPage page, final String actionsetId) {
@@ -69,52 +65,31 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 				page.hideActionSet(actionsetId);
 			}
 		});
-
 	}
 
 	@Override
 	public void perspectiveActivated(final IWorkbenchPage page,
 		final IPerspectiveDescriptor perspective) {
 		wipeActions(page);
-		// if ( perspective.getId().equals(SimulationPerspective.ID) ) {
-		// simulationContext =
-		// ((IContextService) PlatformUI.getWorkbench().getService(IContextService.class))
-		// .activateContext("msi.gama.application.simulation.context");
-		// } else {
-		// if ( simulationContext != null ) {
-		// simulationContext.getContextService().deactivateContext(simulationContext);
-		// }
 		if ( GAMA.getFrontmostSimulation() == null ) {
 			GuiUtils.informStatus("No simulation");
 		}
-		// }
-
 	}
 
 	@Override
-	public void perspectiveChanged(final IWorkbenchPage page,
-		final IPerspectiveDescriptor perspective, final String changeId) {
-
-	}
+	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d,
+		final String c) {}
 
 	@Override
-	public void partBroughtToTop(final IWorkbenchPart part) {
-		// nothing to do
-	}
+	public void partBroughtToTop(final IWorkbenchPart part) {}
 
 	@Override
-	public void partClosed(final IWorkbenchPart part) {
-		// nothing to do
-	}
+	public void partClosed(final IWorkbenchPart part) {}
 
 	@Override
-	public void partDeactivated(final IWorkbenchPart part) {
-		// nothing to do
-	}
+	public void partDeactivated(final IWorkbenchPart part) {}
 
 	@Override
-	public void partOpened(final IWorkbenchPart part) {
-		// nothing to do
-	}
+	public void partOpened(final IWorkbenchPart part) {}
 
 }

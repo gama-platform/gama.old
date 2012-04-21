@@ -20,8 +20,7 @@ package msi.gama.gui.swt.commands;
 
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.core.commands.*;
-import org.eclipse.team.svn.ui.repository.*;
-import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer.IRefreshListener;
+import org.eclipse.team.svn.ui.repository.RepositoriesView;
 import org.eclipse.ui.*;
 
 public class ShowHideRepositoriesViewHandler extends AbstractHandler {
@@ -29,26 +28,26 @@ public class ShowHideRepositoriesViewHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-		final String REPOSITORIES_VIEW_ID = "msi.gama.application.view.RepositoriesView";
+		// final String REPOSITORIES_VIEW_ID = RepositoriesView.VIEW_ID;
 		IWorkbenchPage activePage =
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IWorkbenchPart part = activePage.findView(REPOSITORIES_VIEW_ID);
+		IWorkbenchPart part = activePage.findView(RepositoriesView.VIEW_ID);
 
 		try {
 			if ( !activePage.isPartVisible(part) ) {
 				if ( !GuiUtils.isModelingPerspective() ) {
 					GuiUtils.openModelingPerspective();
 				}
-				IViewPart pp = activePage.showView(REPOSITORIES_VIEW_ID);
+				IViewPart pp = activePage.showView(RepositoriesView.VIEW_ID);
 
-				((RepositoriesView) pp).getRepositoryTree().addRefreshListener(
-					new IRefreshListener() {
-
-						@Override
-						public void refreshed(final Object arg0) {
-							GuiUtils.debug("Refresh : " + arg0);
-						}
-					});
+				// ((RepositoriesView) pp).getRepositoryTree().addRefreshListener(
+				// new IRefreshListener() {
+				//
+				// @Override
+				// public void refreshed(final Object arg0) {
+				// GuiUtils.debug("Refresh : " + arg0);
+				// }
+				// });
 
 			} else {
 				if ( GuiUtils.isModelingPerspective() ) {
