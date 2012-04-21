@@ -57,19 +57,6 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
-		if ( desc.getMeta().isRemoteContext() ) {
-			String actualSpecies = computeSpecies(desc);
-			if ( actualSpecies != null ) {
-				IType t = desc.getSpeciesContext().getType();
-				desc.addTemp(MYSELF, t, t, getExpressionFactory());
-				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
-			}
-		}
-		return super.privateCompileChildren(desc);
-	}
-
-	@Override
 	protected void privateValidate(final IDescription desc) {
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
@@ -114,17 +101,32 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			validateArgs(desc);
 		}
 		IDescription previousEnclosingDescription = null;
-		String actualSpecies = computeSpecies(desc);
-		if ( actualSpecies != null ) {
-			IType t = desc.getSpeciesContext().getType();
-			desc.addTemp(MYSELF, t, t, getExpressionFactory());
-			previousEnclosingDescription = desc.getSuperDescription();
-			desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+		if ( desc.getMeta().isRemoteContext() ) {
+			String actualSpecies = computeSpecies(desc);
+			if ( actualSpecies != null ) {
+				IType t = desc.getSpeciesContext().getType();
+				desc.addTemp(MYSELF, t, t, getExpressionFactory());
+				previousEnclosingDescription = desc.getSuperDescription();
+				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+			}
 		}
 		super.privateValidateChildren(desc);
 		if ( previousEnclosingDescription != null ) {
 			desc.setSuperDescription(previousEnclosingDescription);
 		}
+	}
+
+	@Override
+	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
+		if ( desc.getMeta().isRemoteContext() ) {
+			String actualSpecies = computeSpecies(desc);
+			if ( actualSpecies != null ) {
+				IType t = desc.getSpeciesContext().getType();
+				desc.addTemp(MYSELF, t, t, getExpressionFactory());
+				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+			}
+		}
+		return super.privateCompileChildren(desc);
 	}
 
 	/**
