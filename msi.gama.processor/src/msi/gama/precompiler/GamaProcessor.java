@@ -385,8 +385,8 @@ public class GamaProcessor extends AbstractProcessor {
 		// grammarWriter.append("\t_reserved &").append(s).println("&;");
 		// }
 
-		// printProps(grammarWriter, "Binary keywords", "_binary",
-		// store.get(GamlProperties.BINARIES));
+		// "_unary" put on purpose here, to allow binary keywords to be used as operators
+		printProps(grammarWriter, "Binary keywords", "_unary", store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
 
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_unary",
@@ -420,16 +420,15 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
-	//
-	// private void printProps(final PrintWriter writer, final String t, final String prop,
-	// final GamlProperties map) {
-	// writer.append("\n//").println(t);
-	// for ( String s : map.values() ) {
-	// if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
-	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-	// }
-	// }
-	// }
+	private void printProps(final PrintWriter writer, final String t, final String prop,
+		final GamlProperties map) {
+		writer.append("\n//").println(t);
+		for ( String s : map.values() ) {
+			if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
+				writer.append("\t ").append(prop).append(" &").append(s).println("&;");
+			}
+		}
+	}
 
 	// Ajouter reserved actions (+ facettes??)
 	// Ajouter variables globales pr�d�finies
