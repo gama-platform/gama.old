@@ -19,15 +19,12 @@
 package msi.gama.gui.swt;
 
 import msi.gama.common.interfaces.IGui;
-import msi.gama.runtime.exceptions.GamaStartupException;
-import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
 import org.osgi.service.prefs.BackingStoreException;
@@ -41,12 +38,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		super(configurer);
 	}
 
-	//
-	// @Override
-	// public ActionBarAdvisor createActionBarAdvisor(final IActionBarConfigurer configurer) {
-	// return new ApplicationActionBarAdvisor(configurer);
-	// }
-
 	@Override
 	public void preWindowOpen() {
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
@@ -58,28 +49,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(false);
 		configurer.setTitle("GAMA 1.4");
-
-		// activate drag and drop (DnD) cf:
-		// org.eclipse.ui.internal.EditorSiteDragAndDropServiceImpl$1.dragLeave(EditorSiteDragAndDropServiceImpl.java:104)
-		// org.eclipse.swt.dnd.DNDListener.handleEvent(DNDListener.java:70)
 		configurer
 			.configureEditorAreaDropListener(new EditorAreaDropAdapter(configurer.getWindow()));
 
-		IPreferenceStore apiStore = PlatformUI.getPreferenceStore();
-		apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, "TOP_LEFT");
 	}
 
 	@Override
 	public void postWindowCreate() {
-		try {
-			GamaBundleLoader.preBuildContributions();
-			// GamlJavaValidator.canRun(true);
-		} catch (GamaStartupException e1) {
-			e1.printStackTrace();
-		}
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setMaximized(true);
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-			.hideActionSet("org.eclipse.ui.externaltools.ExternalToolsSet");
 	}
 
 	@Override
