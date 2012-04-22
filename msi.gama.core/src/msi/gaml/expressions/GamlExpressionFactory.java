@@ -138,7 +138,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		IExpression child = c;
 
 		if ( child == null ) {
-			context.flagError("Operand of '" + op + "' is malformed");
+			// context.flagError("Operand of '" + op + "' is malformed");
 			return null;
 		}
 		if ( UNARIES.containsKey(op) ) {
@@ -189,11 +189,11 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		IExpression left = l;
 		IExpression right = r;
 		if ( left == null ) {
-			context.flagError("Left member of '" + op + "' is malformed");
+			// context.flagError("Left member of '" + op + "' is malformed");
 			return null;
 		}
 		if ( right == null ) {
-			context.flagError("Right member of '" + op + "' is malformed");
+			// context.flagError("Right member of '" + op + "' is malformed");
 			return null;
 		}
 

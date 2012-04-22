@@ -35,7 +35,7 @@ public class BreakCommand extends AbstractCommand {
 	 */
 	@Override
 	protected Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		stack.setStatus(ExecutionStatus.interrupt_loop_and_switch);
+		stack.setStatus(ExecutionStatus._break);
 		return null; // How to return the last object ??
 	}
 

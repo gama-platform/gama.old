@@ -23,7 +23,6 @@ import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -200,8 +199,8 @@ public class SymbolFactory implements ISymbolFactory {
 			// Special trick and workaround for compiling species rather than variables
 			keywords.remove(IKeyword.SPECIES);
 		}
-		GuiUtils.debug("Registering " + c.getSimpleName() + " in " + name + " for keywords " +
-			keywords);
+		// GuiUtils.debug("Registering " + c.getSimpleName() + " in " + name + " for keywords " +
+		// keywords);
 		for ( String k : keywords ) {
 			// try {
 			if ( !varKinds.contains(sKind) ) {

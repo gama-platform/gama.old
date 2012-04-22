@@ -93,7 +93,7 @@ public class SwitchCommand extends AbstractCommandSequence {
 					if ( status == interrupt ) {
 						scope.setStatus(interrupt);
 						return lastResult;
-					} else if ( status == interrupt_loop_and_switch ) {
+					} else if ( status == _break ) {
 						scope.setStatus(success);
 						return lastResult;
 					}

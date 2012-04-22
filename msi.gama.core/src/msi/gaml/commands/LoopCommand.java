@@ -130,7 +130,7 @@ public class LoopCommand extends AbstractCommandSequence {
 				final ExecutionStatus status = scope.getStatus();
 				if ( status == ExecutionStatus.interrupt ) {
 					return result;
-				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+				} else if ( status == ExecutionStatus._break ) {
 					scope.setStatus(ExecutionStatus.success);
 					return result;
 				}
@@ -187,7 +187,7 @@ public class LoopCommand extends AbstractCommandSequence {
 				final ExecutionStatus status = scope.getStatus();
 				if ( status == ExecutionStatus.interrupt ) {
 					return result;
-				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+				} else if ( status == ExecutionStatus._break ) {
 					scope.setStatus(ExecutionStatus.success);
 					return result;
 				}
@@ -229,7 +229,7 @@ public class LoopCommand extends AbstractCommandSequence {
 				final ExecutionStatus status = scope.getStatus();
 				if ( status == ExecutionStatus.interrupt ) {
 					return result;
-				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+				} else if ( status == ExecutionStatus._break ) {
 					scope.setStatus(ExecutionStatus.success);
 					return result;
 				}
@@ -269,7 +269,7 @@ public class LoopCommand extends AbstractCommandSequence {
 				final ExecutionStatus status = scope.getStatus();
 				if ( status == ExecutionStatus.interrupt ) {
 					return result;
-				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+				} else if ( status == ExecutionStatus._break ) {
 					scope.setStatus(ExecutionStatus.success);
 					return result;
 				}
@@ -305,7 +305,7 @@ public class LoopCommand extends AbstractCommandSequence {
 				final ExecutionStatus status = scope.getStatus();
 				if ( status == ExecutionStatus.interrupt ) {
 					return result;
-				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+				} else if ( status == ExecutionStatus._break ) {
 					scope.setStatus(ExecutionStatus.success);
 					return result;
 				}

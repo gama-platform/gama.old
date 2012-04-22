@@ -74,7 +74,7 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 		actualArgs.stack(stack);
 		Object result = super.privateExecuteIn(stack);
 		if ( stack.getStatus() == interrupt ) {
-			stack.setStatus(end);
+			stack.setStatus(terminated);
 		}
 		return result;
 	}

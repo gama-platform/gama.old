@@ -20,7 +20,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
@@ -94,11 +93,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
-		if ( getName().equals(IKeyword.WORLD_SPECIES_NAME) ) {
-			GuiUtils.debug("Skills added to " + getName() + ": " + skillNames);
-		}
 		addBuiltInSkills(skillNames);
-
 		/* We then create the list of classes from this list of names */
 		Set<Class> skillClasses = new LinkedHashSet();
 		for ( String skillName : skillNames ) {
@@ -482,13 +477,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		}
 	}
 
-	public void addSkillMethod(final Class c, final String m) {
-		// if ( !ISkill.class.isAssignableFrom(c) ) {
-		// ;
-		// return;
-		// }
-		final Class clazz =
-		/* c.isInterface() || !Skill.class.isAssignableFrom(c) ? getJavaBase() : */c;
+	public void addSkillMethod(final Class clazz, final String m) {
 		addSkill(clazz);
 		Class old = skillsMethods.get(m);
 		if ( old == null || old.isAssignableFrom(clazz) ) {

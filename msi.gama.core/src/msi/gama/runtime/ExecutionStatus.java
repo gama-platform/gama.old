@@ -23,30 +23,48 @@ package msi.gama.runtime;
  */
 public enum ExecutionStatus {
 
-	/** The action has stopped, but failed during its execution. */
-	/* 0 */failure,
-
-	/** Indicates that it is still running. */
-	/* 1 */running,
-
-	/** Action has stopped, but been successfull in its execution. */
-	/* 2 */success,
+	/**
+	 * The command/action/primitive has stopped, but failed during its execution. The
+	 * semantics of "failure" is dependent on the designer.
+	 */
+	failure,
 
 	/**
-	 * Action has been executed. However, the execution wil not "count" if the agent has only one
-	 * action to do at a time. Declaring "skipped" allows it to let another action execute. To use
-	 * with caution since it can lead to endless loops during an agent execution
+	 * Indicates that the command/action/primitive is still running. Default status for most of the
+	 * primitives
 	 */
-	/* 3 */skipped,
+	running,
 
-	/** Signifies that the action has terminated normally;. */
-	/* 4 */end,
+	/**
+	 * The command/action/primitive has stopped, but been successfull in its execution. The
+	 * semantics of "success" is dependent on the designer.
+	 */
+	success,
 
-	/* 5 */condition_failed,
+	/**
+	 * The command/action/primitive has terminated, but its execution wil not "count" if the agent
+	 * has only one action to do at a time. Declaring "skipped" allows it to let another action
+	 * execute. To use with caution since it can lead to endless loops during an agent execution
+	 */
+	skipped,
 
-	/* 6 */interrupt,
+	/** Signifies that the action has terminated normally, but that its success status is undefined */
+	terminated,
 
-	/* 7 */interrupt_loop_and_switch;
+	@Deprecated
+	condition_failed,
+
+	/**
+	 * The command/action/primitive has signified that the outer block of commands (an action or a
+	 * behavior) in which it is situated should be discontinued
+	 */
+	interrupt,
+
+	/**
+	 * The last command/action/primitive has signified that the inner loop or switch it is in should
+	 * be halted and that the control flow should continue to the next command
+	 */
+	_break;
 
 	public static ExecutionStatus valueOf(final int i) {
 		return values()[i];
@@ -62,13 +80,13 @@ public enum ExecutionStatus {
 				return 2;
 			case skipped:
 				return 3;
-			case end:
+			case terminated:
 				return 4;
 			case condition_failed:
 				return 5;
 			case interrupt:
 				return 6;
-			case interrupt_loop_and_switch:
+			case _break:
 				return 7;
 			default:
 				return 2;
