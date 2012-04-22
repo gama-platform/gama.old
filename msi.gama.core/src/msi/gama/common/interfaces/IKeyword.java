@@ -74,7 +74,7 @@ public interface IKeyword {
 	public static final String DATA = "data";
 	public static final String DECAY = "decay";
 	public static final String DEFAULT = "default";
-	public static final String DEFAULT_EXPERIMENT = "default";
+	public static final String DEFAULT_EXP = "default";
 	public static final String DEPENDS_ON = "depends_on";
 	public static final String DESTINATION = "destination";
 	public static final String DIFFUSION = "diffusion";

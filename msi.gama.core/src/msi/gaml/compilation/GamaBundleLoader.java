@@ -193,6 +193,7 @@ public class GamaBundleLoader {
 		// Necessary to load this in advanvce for it to be accessible by the parser later
 		// (which does not have a clue about available plugins)
 		FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.CHILDREN);
+		FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.SPECIES_SKILLS);
 		// FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.FACETS);
 		//
 		GamlProperties types =

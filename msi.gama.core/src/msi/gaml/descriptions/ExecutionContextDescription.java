@@ -20,6 +20,8 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
@@ -70,7 +72,6 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	@Override
 	protected void initFields() {
 		super.initFields();
-
 		behaviors = new HashMap<String, CommandDescription>();
 		aspects = new HashMap<String, CommandDescription>();
 		actions = new HashMap<String, CommandDescription>();
@@ -79,24 +80,55 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		skillsMethods = new HashMap();
 	}
 
-	protected void setSkills(final IExpressionDescription s) {
-		if ( s != null ) {
-			List<String> skills = GAMA.getExpressionFactory().parseLiteralArray(s, this);
-			for ( String skill : skills ) {
-				final Class c = Skill.getSkillClassFor(skill.trim());
-				if ( c != null ) {
-					addSkill(c);
-				} // else {
-					// flagError("Unknown skill: " + skill);
-				// }
+	protected void setSkills(final IExpressionDescription userDefinedSkills) {
+		Set<String> skillNames = new LinkedHashSet();
+		/* We try to add the control architecture if any is defined */
+		if ( facets.get(IKeyword.CONTROL) != null ) {
+			skillNames.add(facets.getLabel(IKeyword.CONTROL));
+		}
+		/* We add the keyword as a possible skill (used for 'grid' species) */
+		skillNames.add(getKeyword());
+		/* We add the user defined skills (i.e. as in 'species a skills: [s1, s2...]') */
+		skillNames.addAll(GAMA.getExpressionFactory().parseLiteralArray(userDefinedSkills, this));
+		/*
+		 * We add the skills that are defined in Java, either using @species(value='a', skills=
+		 * {s1,s2}), or @skill(value="s1", attach_to="a")
+		 */
+		if ( getName().equals(IKeyword.WORLD_SPECIES_NAME) ) {
+			GuiUtils.debug("Skills added to " + getName() + ": " + skillNames);
+		}
+		addBuiltInSkills(skillNames);
+
+		/* We then create the list of classes from this list of names */
+		Set<Class> skillClasses = new LinkedHashSet();
+		for ( String skillName : skillNames ) {
+			final Class skillClass = Skill.getSkillClassFor(skillName.trim());
+			if ( skillClass != null ) {
+				skillClasses.add(skillClass);
 			}
 		}
-		Class c = Skill.getSkillClassFor(getKeyword());
-		if ( c != null ) {
-			addSkill(c);
+		/* And add them as skills to the species */
+		for ( Class skillClass : skillClasses ) {
+			addSkill(skillClass);
 		}
-		addSkill(Skill.getSkillClassFor(facets.getLabel(IKeyword.CONTROL)));
-		// ADDED HERE, BUT SHOULD BE MOVED ELSEWHERE
+
+	}
+
+	/**
+	 * Adds to the skills the "built-in" skills described in GamlProperties.SPECIES_SKILLS
+	 * properties
+	 * 
+	 * @param skills
+	 */
+	private void addBuiltInSkills(final Set<String> skills) {
+		Set<String> builtInSkills =
+			GamlProperties.loadFrom(GamlProperties.SPECIES_SKILLS).get(getName());
+		if ( builtInSkills == null ) { return; }
+		for ( String skillName : builtInSkills ) {
+			if ( !skills.contains(skillName) ) {
+				skills.add(skillName);
+			}
+		}
 	}
 
 	/**

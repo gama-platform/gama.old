@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
@@ -49,9 +48,7 @@ import msi.gaml.types.IType;
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
-@skill(value = { IKeyword.GLOBAL, IKeyword.WORLD_SPECIES_NAME }, attach_to = IKeyword.WORLD_SPECIES_NAME)
-@species(IKeyword.WORLD_SPECIES_NAME)
-@SuppressWarnings("static-method")
+@skill(value = { IKeyword.GLOBAL }, attach_to = IKeyword.WORLD_SPECIES_NAME)
 public class WorldSkill extends GeometricSkill {
 
 	public static final String DURATION = "duration";

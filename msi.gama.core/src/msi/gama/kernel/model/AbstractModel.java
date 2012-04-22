@@ -67,7 +67,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 
 	@Override
 	public IExperiment getExperiment(final String s) {
-		if ( s == null ) { return getExperiment(IKeyword.DEFAULT_EXPERIMENT); }
+		if ( s == null ) { return getExperiment(IKeyword.DEFAULT_EXP); }
 		return experiments.get(s);
 	}
 

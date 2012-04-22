@@ -35,7 +35,6 @@ public class DescriptionFactory {
 	public synchronized static IDescription createDescription(final ISymbolFactory factory,
 		final String keyword, final IDescription superDesc, final List<IDescription> children,
 		final Facets facets) {
-		// Facets facets = new Facets(strings);
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		AbstractStatementDescription element = new StringBasedStatementDescription(keyword, facets);
 		return factory.createDescription(element, superDesc, children);

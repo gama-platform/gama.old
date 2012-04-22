@@ -18,17 +18,16 @@
  */
 package msi.gaml.factories;
 
+import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.GamlCompiler;
 import msi.gaml.descriptions.*;
-import msi.gaml.skills.Skill;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
@@ -37,7 +36,6 @@ import msi.gaml.skills.Skill;
  */
 @handles({ ISymbolKind.MODEL })
 @uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelFactory extends SymbolFactory {
 
 	/**
@@ -226,78 +224,46 @@ public class ModelFactory extends SymbolFactory {
 		// Firstly, create "world_species" (defined in WorldSkill) SpeciesDescription with
 		// ModelDescription as SuperDescription
 		String facets[] = new String[0];
+
 		Class worldSkill = GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.WORLD_SPECIES_NAME);
-		skill s = (skill) worldSkill.getAnnotation(skill.class);
-		if ( s != null ) {
-			String[] names = s.value();
-			String skillName = names[0];
-			facets =
-				new String[] { /* ISymbol.SPECIES, */
-					IKeyword.NAME,
-					IKeyword.WORLD_SPECIES_NAME,
-					IKeyword.BASE,
-					GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
-						.getCanonicalName(), IKeyword.SKILLS, "[" + skillName + "]" }; // TODO
-			// Parser.createLiteral
-			// ?
-		}
+		facets =
+			new String[] { NAME, WORLD_SPECIES_NAME, BASE,
+				GamlCompiler.getBuiltInSpeciesClasses().get(DEFAULT).getCanonicalName() };
 		SpeciesDescription worldSpeciesDescription;
 		worldSpeciesDescription =
 			(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES, model,
 				facets);
-		if ( worldSpeciesDescription == null ) { return Collections.EMPTY_SET; // FIXME Exception ?
+		if ( worldSpeciesDescription == null ) {
+			model.flagError("Impossible to create the world species. Check your GAML setup.");
+			return Collections.EMPTY_SET;
 		}
 		builtInSpecies.add(worldSpeciesDescription);
 
 		// Secondly, create other built-in SpeciesDescriptions with worldSpeciesDescription as
 		// SuperDescription
 		for ( String speciesName : GamlCompiler.getBuiltInSpeciesClasses().keySet() ) {
-			if ( !IKeyword.WORLD_SPECIES_NAME.equals(speciesName) ) {
+			if ( !WORLD_SPECIES_NAME.equals(speciesName) ) {
 				Class c = GamlCompiler.getBuiltInSpeciesClasses().get(speciesName);
-				facets =
-					new String[] { /* ISymbol.SPECIES, */IKeyword.NAME, speciesName,
-						IKeyword.BASE, c.getCanonicalName() };
-				if ( Skill.class.isAssignableFrom(c) ) {
-					s = (skill) c.getAnnotation(skill.class);
-					if ( s != null ) {
-						String[] names = s.value();
-						String skillName = names[0];
-						facets =
-							new String[] { /* ISymbol.SPECIES, */
-								IKeyword.NAME,
-								speciesName,
-								IKeyword.BASE,
-								GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.DEFAULT)
-									.getCanonicalName(), IKeyword.SKILLS, skillName };
-					}
-				}
-				SpeciesDescription sd;
-				sd =
-					(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES,
+				facets = new String[] { NAME, speciesName, BASE, c.getCanonicalName() };
+				SpeciesDescription sd =
+					(SpeciesDescription) DescriptionFactory.createDescription(SPECIES,
 						worldSpeciesDescription, facets);
 				if ( sd != null ) {
 					builtInSpecies.add(sd);
 				}
-
-				// OutputManager.debug("Built-in species " + speciesName +
-				// " created with Java support in " + c.getSimpleName());
 			}
 		}
 		return builtInSpecies;
 	}
 
 	private IDescription createDefaultExperiment() {
-
 		IDescription def;
 		if ( GuiUtils.isInHeadLessMode() ) {
-			System.out.println("head Less");
 			def =
-				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
-					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.HEADLESS_UI);
+				DescriptionFactory.createDescription(EXPERIMENT, NAME, DEFAULT_EXP, TYPE,
+					HEADLESS_UI);
 		} else {
-			def =
-				DescriptionFactory.createDescription(IKeyword.EXPERIMENT, IKeyword.NAME,
-					IKeyword.DEFAULT_EXPERIMENT, IKeyword.TYPE, IKeyword.GUI_);
+			def = DescriptionFactory.createDescription(EXPERIMENT, NAME, DEFAULT_EXP, TYPE, GUI_);
 		}
 		complementExperimentSpecies((ExperimentDescription) def);
 		return def;
@@ -307,7 +273,7 @@ public class ModelFactory extends SymbolFactory {
 	public synchronized IModel compile(final ModelStructure structure, final IErrorCollector collect) {
 		IModel m = null;
 		ModelDescription md = parse(structure, collect);
-		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
+		if ( !md.hasExperiment(DEFAULT_EXP) ) {
 			md.addChild(createDefaultExperiment());
 		}
 		if ( collect.hasErrors() ) { return null; }
@@ -327,7 +293,7 @@ public class ModelFactory extends SymbolFactory {
 			"ms");
 		time = now;
 
-		if ( !md.hasExperiment(IKeyword.DEFAULT_EXPERIMENT) ) {
+		if ( !md.hasExperiment(DEFAULT_EXP) ) {
 			md.addChild(createDefaultExperiment());
 		}
 		validateDescription(md);

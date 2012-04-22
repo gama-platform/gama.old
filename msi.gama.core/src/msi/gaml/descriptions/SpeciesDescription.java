@@ -54,7 +54,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	@Override
 	protected void initFields() {
 		super.initFields();
-
 		inits = new ArrayList<CommandDescription>();
 		microSpecies = new HashMap<String, SpeciesDescription>();
 	}
@@ -62,7 +61,6 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		IDescription desc = super.addChild(child);
-
 		if ( desc.getKeyword().equals(IKeyword.INIT) ) {
 			addInit((CommandDescription) desc);
 		} else if ( ModelFactory.SPECIES_NODES.contains(desc.getKeyword()) ) {

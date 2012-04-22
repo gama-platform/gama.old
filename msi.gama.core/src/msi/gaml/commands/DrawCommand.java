@@ -27,12 +27,12 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -44,7 +44,10 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.DRAW, kind = ISymbolKind.SINGLE_COMMAND)
 @facets(value = {
-	@facet(name = IKeyword.SHAPE, type = IType.ID, optional = true),
+	// Allows to pass any arbitrary geometry to the drawing command
+	@facet(name = IType.GEOM_STR, type = IType.GEOM_STR, optional = true),
+	@facet(name = IKeyword.SHAPE, type = IType.ID, optional = true, values = { "geometry",
+		"square", "circle", "triangle", "rectangle", "disc", "line" }),
 	@facet(name = IKeyword.TEXT, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.IMAGE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.EMPTY, type = IType.BOOL_STR, optional = true),
@@ -58,6 +61,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
 combinations = {
+	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.COLOR }),
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.AT, IKeyword.EMPTY,
 		IKeyword.ROTATE }),
 	@combination({ IKeyword.TO, IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY }),
@@ -87,13 +91,11 @@ public class DrawCommand extends AbstractCommandSequence {
 
 	public DrawCommand(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		final boolean isShape = getFacet(IKeyword.SHAPE) != null;
-		final boolean isText = getFacet(IKeyword.TEXT) != null;
-		final boolean isImage = getFacet(IKeyword.IMAGE) != null;
 		executer =
-			isShape ? new ShapeExecuter(desc) : isText ? new TextExecuter(desc) : isImage
-				? new ImageExecuter(desc) : new ShapeExecuter(desc);
-
+			getFacet(IType.GEOM_STR) != null || getFacet(IKeyword.SHAPE) != null
+				? new ShapeExecuter(desc) : getFacet(IKeyword.TEXT) != null
+					? new TextExecuter(desc) : getFacet(IKeyword.IMAGE) != null
+						? new ImageExecuter(desc) : new ShapeExecuter(desc);
 	}
 
 	@Override
@@ -157,7 +159,7 @@ public class DrawCommand extends AbstractCommandSequence {
 
 		private ShapeExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
-			shape = getFacet(IKeyword.SHAPE);
+			shape = getFacet(IKeyword.SHAPE, getFacet(IType.GEOM_STR));
 			if ( shape == null ) {
 				constantShape = SHAPES.get("geometry");
 			} else if ( shape.isConst() ) {
@@ -196,12 +198,7 @@ public class DrawCommand extends AbstractCommandSequence {
 				return null;
 			}
 			final ILocation from = scale(loc, g);
-			Integer shapeIndex =
-				constantShape == null ? SHAPES.get(Cast.asString(scope, shape.value(scope)))
-					: constantShape;
-			if ( shapeIndex == null ) {
-				shapeIndex = 0;
-			}
+			Integer shapeIndex = constantShape == null ? -1 : constantShape;
 			Color c;
 			if ( constantColor == null ) {
 				if ( color != null ) {
@@ -247,8 +244,14 @@ public class DrawCommand extends AbstractCommandSequence {
 			g.setDrawingCoordinates(x, y);
 			g.setDrawingDimensions(displaySize, displaySize);
 			switch (shapeIndex) {
+				case -1: {
+					IShape geom = Cast.asGeometry(scope, shape.value(scope));
+					if ( geom == null ) {
+						geom = scope.getAgentScope().getGeometry();
+					}
+					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, getRotation(scope));
+				}
 				case 0: {
-					// TODO What if the agent is a point ?
 					return g.drawGeometry(scope.getAgentScope().getInnerGeometry(), c, !isEmpty,
 						getRotation(scope));
 				}

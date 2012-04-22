@@ -254,16 +254,18 @@ public class SymbolFactory implements ISymbolFactory {
 	 *      msi.gaml.descriptions.IDescription, java.util.List)
 	 */
 	@Override
-	public IDescription createDescription(final ISyntacticElement source,
+	public final IDescription createDescription(final ISyntacticElement source,
 		final IDescription superDesc, final List<IDescription> children) {
 		Facets facets = source.getFacets();
 		String keyword = getKeyword(source);
 		ISymbolFactory f = chooseFactoryFor(keyword, null);
-		if ( f == null ) {
-			superDesc.flagError("Impossible to parse keyword " + keyword, source);
-			return null;
+		if ( f != this ) {
+			if ( f == null ) {
+				superDesc.flagError("Impossible to parse keyword " + keyword, source);
+				return null;
+			}
+			return f.createDescription(source, superDesc, children);
 		}
-		if ( f != this ) { return f.createDescription(source, superDesc, children); }
 		List<IDescription> commandList = children == null ? new ArrayList() : children;
 		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
 		md.verifyFacets(source, facets, superDesc);
@@ -282,19 +284,20 @@ public class SymbolFactory implements ISymbolFactory {
 		final IDescription superDesc) {
 		if ( source == null ) { return null; }
 		String keyword = getKeyword(source);
-
 		String context = null;
 		if ( superDesc != null ) {
 			context = superDesc.getKeyword();
 		}
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
-		if ( f == null ) {
-			if ( superDesc != null ) {
-				superDesc.flagError("Impossible to parse keyword " + keyword, source);
+		if ( f != this ) {
+			if ( f == null ) {
+				if ( superDesc != null ) {
+					superDesc.flagError("Impossible to parse keyword " + keyword, source);
+				}
+				return null;
 			}
-			return null;
+			return f.createDescriptionRecursively(source, superDesc);
 		}
-		if ( f != this ) { return f.createDescriptionRecursively(source, superDesc); }
 
 		SymbolMetaDescription md = getMetaDescriptionFor(superDesc, keyword);
 		Facets facets = source.getFacets();

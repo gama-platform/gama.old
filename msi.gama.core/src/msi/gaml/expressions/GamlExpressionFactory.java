@@ -271,6 +271,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 
 	@Override
 	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+		if ( s == null ) { return new ArrayList(); }
 		return parser.parseLiteralArray(s, context);
 	}
 
