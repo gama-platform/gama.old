@@ -45,18 +45,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class GamaProcessor extends AbstractProcessor {
 
-	// private boolean isCore;
-
-	// here util.MathUtils is a copy of msi.gama.util.MathUtils
-	// private final static Set<String> BUILT_IN_UNIT = IUnits.UNITS.keySet();
-	// private final static List<String> BUILT_IN_KEYWORDS = Arrays.asList("entities");
-	// see msi.gama.lang.gaml/src/msi/gama/lang/gaml/Gaml.xtext where these keywords are defined
-	// public final static List<String> FORBIDDEN_KEYWORDS = Arrays.asList("model", "if", "else",
-	// "loop", "return", "set", "do", "item", "add", "remove", "put", "save", "create", "capture",
-	// "release", "ask", "gaml", "switch", "match", "match_one", "match_between", "default");
-	private final static List<String> FORBIDDEN_OPERATORS = Arrays.asList("<->", "@", "div", ">=",
-		"^", "**", "!", "or", "*", "+", ".", "/", "and", "-", "not", "//", "<>", "<=", "!=", ":",
-		"::", "|", "?", ">", "=", "<", "3d");
 	private final List<String> lreserved = new ArrayList<String>();
 
 	private final Map<String, GamlProperties> store = new HashMap<String, GamlProperties>();
@@ -67,7 +55,6 @@ public class GamaProcessor extends AbstractProcessor {
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
 		for ( String f : GamlProperties.FILES ) {
-			// store.put(f, new GamlProperties());
 			store.put(f, initProperties(f)); // TODO Necessary ??
 		}
 	}
@@ -245,11 +232,6 @@ public class GamaProcessor extends AbstractProcessor {
 		if ( args.size() == 1 && !isStatic && contextual ) { return GamlProperties.UNARIES; }
 		if ( args.size() == 1 && isStatic ) { return GamlProperties.UNARIES; }
 		if ( args.size() == 2 && isStatic && contextual ) { return GamlProperties.UNARIES; }
-
-		// Etendre cette m�thode en faisant un check plus approfondi et en
-		// �mettant une erreur si la m�thode est mal form�e.
-		// L'ensemble des annotations pourrait etre check� de cette facon.
-
 		return GamlProperties.BINARIES;
 	}
 
@@ -268,9 +250,6 @@ public class GamaProcessor extends AbstractProcessor {
 				facet[] all_facets = facets_decl.value();
 				for ( facet f : all_facets ) {
 					String name = f.name();
-					// if ( !name.isEmpty() ) {
-					// facet_names.add(name);
-					// }
 					if ( name.equals(omissibleFacet) ) {
 						String type = f.type()[0];
 						isDefinition = isDefinition(name, type);
@@ -283,7 +262,6 @@ public class GamaProcessor extends AbstractProcessor {
 
 			String[] k_names = mirror.name();
 			for ( String k : k_names ) {
-				// store.get(GamlProperties.FACETS).put(k, facet_names);
 				store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS).put(
 					className, k);
 			}
@@ -292,7 +270,6 @@ public class GamaProcessor extends AbstractProcessor {
 			Set<String> type_names = store.get(GamlProperties.TYPES_NAMES).get(kind);
 			if ( type_names != null ) {
 				for ( String k : type_names ) {
-					// store.get(GamlProperties.FACETS).put(k, facet_names);
 					store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS)
 						.put(className, k);
 				}
@@ -348,23 +325,23 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( String file : GamlProperties.FILES ) {
 			store.get(file).store(createWriter(file));
 		}
-		lreserved.addAll(FORBIDDEN_OPERATORS);
-		// lreserved.addAll(FORBIDDEN_KEYWORDS);
-
 		final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
 		grammarWriter.append("model std").append('\n').println("_gaml {");
 		// "_unary" put on purpose here, to allow binary keywords to be used as operators
-		printProps(grammarWriter, "Binary keywords", "_unary", store.get(GamlProperties.BINARIES));
+		// printProps(grammarWriter, "Binary keywords", "_unary",
+		// store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
 
-		printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_unary",
-			store.get(GamlProperties.UNARIES));
+		// printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_unary",
+		// store.get(GamlProperties.UNARIES));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
 			store.get(GamlProperties.SKILLS));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
 			store.get(GamlProperties.TYPES));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (vars)", "_reserved",
 			store.get(GamlProperties.VARS));
+		printPropsNoDoublons(grammarWriter, "Reserved keywords (species)", "_reserved",
+			store.get(GamlProperties.SPECIES));
 		grammarWriter.println("}");
 		grammarWriter.close();
 	}
@@ -381,15 +358,16 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
-	private void printProps(final PrintWriter writer, final String t, final String prop,
-		final GamlProperties map) {
-		writer.append("\n//").println(t);
-		for ( String s : map.values() ) {
-			if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
-				writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-			}
-		}
-	}
+	//
+	// private void printProps(final PrintWriter writer, final String t, final String prop,
+	// final GamlProperties map) {
+	// writer.append("\n//").println(t);
+	// for ( String s : map.values() ) {
+	// if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
+	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
+	// }
+	// }
+	// }
 
 	private Writer createWriter(final String name) {
 		FileObject file = null;
