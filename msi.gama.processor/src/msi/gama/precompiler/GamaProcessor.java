@@ -90,7 +90,6 @@ public class GamaProcessor extends AbstractProcessor {
 
 			processTypes(env.getElementsAnnotatedWith(type.class));
 			processOperators(env.getElementsAnnotatedWith(operator.class));
-			@SuppressWarnings("unchecked")
 			Set<Element> symbols = (Set<Element>) env.getElementsAnnotatedWith(symbol.class);
 			processSymbols(symbols);
 			processParents(symbols);
@@ -177,15 +176,24 @@ public class GamaProcessor extends AbstractProcessor {
 			skill skill_annot = e.getAnnotation(skill.class);
 			if ( skill_annot != null ) {
 				String[] skill_names = skill_annot.value();
+				String[] attach_to = skill_annot.attach_to();
 				for ( String skill_name : skill_names ) {
 					store.get(GamlProperties.SKILLS).put(className, skill_name);
+					for ( String species_name : attach_to ) {
+						store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
+					}
 				}
 			} /* else */
 
 			species species_annot = e.getAnnotation(species.class);
 			if ( species_annot != null ) {
-				store.get(GamlProperties.SKILLS).put(className, species_annot.value());
-				store.get(GamlProperties.SPECIES).put(className, species_annot.value());
+				String species_name = species_annot.value();
+				store.get(GamlProperties.SKILLS).put(className, species_name);
+				store.get(GamlProperties.SPECIES).put(className, species_name);
+				String[] skills = species_annot.skills();
+				for ( String skill_name : skills ) {
+					store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
+				}
 			}
 
 		}
@@ -345,46 +353,6 @@ public class GamaProcessor extends AbstractProcessor {
 
 		final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
 		grammarWriter.append("model std").append('\n').println("_gaml {");
-		// printPropsNoDoublons(grammarWriter, "Facet keywords", "_facet",
-		// store.get(GamlProperties.FACETS));
-		// printProps(grammarWriter, "Imperative keywords", "_keyword",
-		// store.get(GamlProperties.SYMBOLS), FORBIDDEN_KEYWORDS);
-		// for ( String s : BUILT_IN_KEYWORDS ) {
-		// grammarWriter.append("\t_keyword &").append(s).println("&;"/* {{" */);
-		// printGamlList(grammarWriter, "\t\t_children",
-		// store.get(GamlProperties.CHILDREN).get(s));
-		// grammarWriter.println("\t}}\n");
-		// }
-		// printProps(grammarWriter, "Declarative keywords", "_definition",
-		// store.get(GamlProperties.DEFINITIONS), FORBIDDEN_KEYWORDS);
-		// grammarWriter.println("// Symbol keywords playing a role of command");
-		// for ( String s : store.get(GamlProperties.SYMBOLS).values() ) {
-		// // if ( !FORBIDDEN_KEYWORDS.contains(s) ) {
-		// {
-		// grammarWriter.append("\t_keyword &").append(s).println("& {{");
-		// }
-		// printGamlList(grammarWriter, "\t\t_facets", store.get(GamlProperties.FACETS).get(s));
-		// printGamlList(grammarWriter, "\t\t_children", store.get(GamlProperties.CHILDREN).get(s));
-		// grammarWriter.println("\t}}\n");
-		// // }
-		// }
-		// grammarWriter.println("// Symbol keywords playing a role of definition");
-		// for ( String s : store.get(GamlProperties.DEFINITIONS).values() ) {
-		// if ( !FORBIDDEN_KEYWORDS.contains(s) ) {
-		// {
-		// grammarWriter.append("\t_definition &").append(s).println("& {{");
-		// }
-		// printGamlList(grammarWriter, "\t\t_facets", store.get(GamlProperties.FACETS).get(s));
-		// printGamlList(grammarWriter, "\t\t_children", store.get(GamlProperties.CHILDREN)
-		// .get(s));
-		// grammarWriter.println("\t}}\n");
-		// }
-		// }
-
-		// for ( String s : BUILT_IN_UNIT ) {
-		// grammarWriter.append("\t_reserved &").append(s).println("&;");
-		// }
-
 		// "_unary" put on purpose here, to allow binary keywords to be used as operators
 		printProps(grammarWriter, "Binary keywords", "_unary", store.get(GamlProperties.BINARIES));
 		// shouldnt have doublons here:
@@ -400,13 +368,6 @@ public class GamaProcessor extends AbstractProcessor {
 		grammarWriter.println("}");
 		grammarWriter.close();
 	}
-
-	//
-	// private void printGamlList(final PrintWriter writer, final String string, final Set<String>
-	// set) {
-	// if ( set == null || set.isEmpty() ) { return; }
-	// writer.append(string).append(" [").append(GamlProperties.toString(set)).println("]");
-	// }
 
 	private void printPropsNoDoublons(final PrintWriter writer, final String t, final String prop,
 		final GamlProperties map) {
@@ -429,9 +390,6 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 		}
 	}
-
-	// Ajouter reserved actions (+ facettes??)
-	// Ajouter variables globales pr�d�finies
 
 	private Writer createWriter(final String name) {
 		FileObject file = null;
