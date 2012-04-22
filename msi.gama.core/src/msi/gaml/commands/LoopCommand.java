@@ -20,12 +20,12 @@ package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -128,7 +128,12 @@ public class LoopCommand extends AbstractCommandSequence {
 				result = LoopCommand.super.privateExecuteIn(scope);
 				scope.pop(LoopCommand.this);
 				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) { return result; }
+				if ( status == ExecutionStatus.interrupt ) {
+					return result;
+				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+					scope.setStatus(ExecutionStatus.success);
+					return result;
+				}
 				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 			}
 			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
@@ -180,6 +185,12 @@ public class LoopCommand extends AbstractCommandSequence {
 				result = LoopCommand.super.privateExecuteIn(scope);
 				scope.pop(LoopCommand.this);
 				final ExecutionStatus status = scope.getStatus();
+				if ( status == ExecutionStatus.interrupt ) {
+					return result;
+				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+					scope.setStatus(ExecutionStatus.success);
+					return result;
+				}
 				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 			}
 			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
@@ -216,7 +227,12 @@ public class LoopCommand extends AbstractCommandSequence {
 				result = LoopCommand.super.privateExecuteIn(scope);
 				scope.pop(LoopCommand.this);
 				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) { return result; }
+				if ( status == ExecutionStatus.interrupt ) {
+					return result;
+				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+					scope.setStatus(ExecutionStatus.success);
+					return result;
+				}
 				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 			}
 			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
@@ -251,7 +267,12 @@ public class LoopCommand extends AbstractCommandSequence {
 				result = LoopCommand.super.privateExecuteIn(scope);
 				scope.pop(LoopCommand.this);
 				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) { return result; }
+				if ( status == ExecutionStatus.interrupt ) {
+					return result;
+				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+					scope.setStatus(ExecutionStatus.success);
+					return result;
+				}
 				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 			}
 			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
@@ -282,7 +303,12 @@ public class LoopCommand extends AbstractCommandSequence {
 				result = LoopCommand.super.privateExecuteIn(scope);
 				scope.pop(LoopCommand.this);
 				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) { return result; }
+				if ( status == ExecutionStatus.interrupt ) {
+					return result;
+				} else if ( status == ExecutionStatus.interrupt_loop_and_switch ) {
+					scope.setStatus(ExecutionStatus.success);
+					return result;
+				}
 				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 				c = Cast.asBool(scope, cond.value(scope));
 			}

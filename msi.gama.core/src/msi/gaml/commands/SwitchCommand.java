@@ -21,14 +21,14 @@ package msi.gaml.commands;
 import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -92,6 +92,9 @@ public class SwitchCommand extends AbstractCommandSequence {
 				if ( status != skipped ) {
 					if ( status == interrupt ) {
 						scope.setStatus(interrupt);
+						return lastResult;
+					} else if ( status == interrupt_loop_and_switch ) {
+						scope.setStatus(success);
 						return lastResult;
 					}
 					allSkipped = false;

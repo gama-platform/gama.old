@@ -52,6 +52,7 @@ public interface IKeyword {
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
 	public static final String BOUNDS = "bounds";
+	public static final String BREAK = "break";
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
 	public static final String CELLULAR = "cellular";
