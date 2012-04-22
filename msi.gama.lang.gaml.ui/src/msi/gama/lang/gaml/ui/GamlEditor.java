@@ -213,7 +213,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 	private void updateExperiments(final org.eclipse.emf.ecore.resource.Resource r) {
 		final LinkedHashSet<String> exp = new LinkedHashSet();
-		exp.add(IKeyword.DEFAULT_EXPERIMENT);
+		exp.add(IKeyword.DEFAULT_EXP);
 
 		int status = r.getErrors().size();
 
