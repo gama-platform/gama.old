@@ -20,9 +20,9 @@ import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.FacetExpr;
 import msi.gama.lang.gaml.gaml.FacetRef;
+import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.FunctionFacetExpr;
 import msi.gama.lang.gaml.gaml.FunctionGamlFacetRef;
-import msi.gama.lang.gaml.gaml.FunctionRef;
 import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
 import msi.gama.lang.gaml.gaml.GamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlFactory;
@@ -276,7 +276,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass functionRefEClass = null;
+  private EClass functionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -965,9 +965,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getFunctionRef()
+  public EClass getFunction()
   {
-    return functionRefEClass;
+    return functionEClass;
   }
 
   /**
@@ -975,9 +975,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunctionRef_Args()
+  public EReference getFunction_Args()
   {
-    return (EReference)functionRefEClass.getEStructuralFeatures().get(0);
+    return (EReference)functionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1187,8 +1187,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     pointEClass = createEClass(POINT);
 
-    functionRefEClass = createEClass(FUNCTION_REF);
-    createEReference(functionRefEClass, FUNCTION_REF__ARGS);
+    functionEClass = createEClass(FUNCTION);
+    createEReference(functionEClass, FUNCTION__ARGS);
 
     arbitraryNameEClass = createEClass(ARBITRARY_NAME);
     createEAttribute(arbitraryNameEClass, ARBITRARY_NAME__NAME);
@@ -1258,7 +1258,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     memberRefEClass.getESuperTypes().add(this.getExpression());
     arrayEClass.getESuperTypes().add(this.getExpression());
     pointEClass.getESuperTypes().add(this.getExpression());
-    functionRefEClass.getESuperTypes().add(this.getExpression());
+    functionEClass.getESuperTypes().add(this.getExpression());
     arbitraryNameEClass.getESuperTypes().add(this.getExpression());
     unitNameEClass.getESuperTypes().add(this.getExpression());
     intLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
@@ -1355,8 +1355,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(pointEClass, Point.class, "Point", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(functionRefEClass, FunctionRef.class, "FunctionRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getFunctionRef_Args(), this.getExpression(), null, "args", null, 0, -1, FunctionRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getFunction_Args(), this.getExpression(), null, "args", null, 0, -1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(arbitraryNameEClass, ArbitraryName.class, "ArbitraryName", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getArbitraryName_Name(), ecorePackage.getEString(), "name", null, 0, 1, ArbitraryName.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

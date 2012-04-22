@@ -1625,10 +1625,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class AbstractRefElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "AbstractRef");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cVariableRefParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cFunctionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		////AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
+		//AbstractRef returns Expression:
+		//	VariableRef | Function;
+		public ParserRule getRule() { return rule; }
+
+		//VariableRef | Function
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//VariableRef
+		public RuleCall getVariableRefParserRuleCall_0() { return cVariableRefParserRuleCall_0; }
+
+		//Function
+		public RuleCall getFunctionParserRuleCall_1() { return cFunctionParserRuleCall_1; }
+	}
+
+	public class FunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Function");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cVariableRefParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Action cFunctionAction_0 = (Action)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Action cFunctionRefLeftAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Assignment cOpAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final RuleCall cOpIDTerminalRuleCall_1_0_0 = (RuleCall)cOpAssignment_1_0.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final Assignment cArgsAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
 		private final RuleCall cArgsExpressionParserRuleCall_1_2_0 = (RuleCall)cArgsAssignment_1_2.eContents().get(0);
@@ -1638,21 +1660,24 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cArgsExpressionParserRuleCall_1_3_1_0 = (RuleCall)cArgsAssignment_1_3_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_1_4 = (Keyword)cGroup_1.eContents().get(4);
 		
-		//AbstractRef returns Expression:
-		//	VariableRef ({FunctionRef.left=current} "(" args+=Expression ("," args+=Expression)* ")")?;
+		//Function returns Expression:
+		//	{Function} (op=ID "(" args+=Expression ("," args+=Expression)* ")");
 		public ParserRule getRule() { return rule; }
 
-		//VariableRef ({FunctionRef.left=current} "(" args+=Expression ("," args+=Expression)* ")")?
+		//{Function} (op=ID "(" args+=Expression ("," args+=Expression)* ")")
 		public Group getGroup() { return cGroup; }
 
-		//VariableRef
-		public RuleCall getVariableRefParserRuleCall_0() { return cVariableRefParserRuleCall_0; }
+		//{Function}
+		public Action getFunctionAction_0() { return cFunctionAction_0; }
 
-		//({FunctionRef.left=current} "(" args+=Expression ("," args+=Expression)* ")")?
+		//op=ID "(" args+=Expression ("," args+=Expression)* ")"
 		public Group getGroup_1() { return cGroup_1; }
 
-		//{FunctionRef.left=current}
-		public Action getFunctionRefLeftAction_1_0() { return cFunctionRefLeftAction_1_0; }
+		//op=ID
+		public Assignment getOpAssignment_1_0() { return cOpAssignment_1_0; }
+
+		//ID
+		public RuleCall getOpIDTerminalRuleCall_1_0_0() { return cOpIDTerminalRuleCall_1_0_0; }
 
 		//"("
 		public Keyword getLeftParenthesisKeyword_1_1() { return cLeftParenthesisKeyword_1_1; }
@@ -1919,6 +1944,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private MemberRefElements pMemberRef;
 	private PrimaryExpressionElements pPrimaryExpression;
 	private AbstractRefElements pAbstractRef;
+	private FunctionElements pFunction;
 	private ArbitraryNameElements pArbitraryName;
 	private UnitNameElements pUnitName;
 	private VariableRefElements pVariableRef;
@@ -2316,14 +2342,25 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getPrimaryExpressionAccess().getRule();
 	}
 
+	////AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 	//AbstractRef returns Expression:
-	//	VariableRef ({FunctionRef.left=current} "(" args+=Expression ("," args+=Expression)* ")")?;
+	//	VariableRef | Function;
 	public AbstractRefElements getAbstractRefAccess() {
 		return (pAbstractRef != null) ? pAbstractRef : (pAbstractRef = new AbstractRefElements());
 	}
 	
 	public ParserRule getAbstractRefRule() {
 		return getAbstractRefAccess().getRule();
+	}
+
+	//Function returns Expression:
+	//	{Function} (op=ID "(" args+=Expression ("," args+=Expression)* ")");
+	public FunctionElements getFunctionAccess() {
+		return (pFunction != null) ? pFunction : (pFunction = new FunctionElements());
+	}
+	
+	public ParserRule getFunctionRule() {
+		return getFunctionAccess().getRule();
 	}
 
 	/// **

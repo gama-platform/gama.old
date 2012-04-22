@@ -15,9 +15,9 @@ import msi.gama.lang.gaml.gaml.Definition;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.FacetExpr;
+import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.FunctionFacetExpr;
 import msi.gama.lang.gaml.gaml.FunctionGamlFacetRef;
-import msi.gama.lang.gaml.gaml.FunctionRef;
 import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
 import msi.gama.lang.gaml.gaml.GamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlLangDef;
@@ -308,21 +308,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.FUNCTION_FACET_EXPR:
-				if(context == grammarAccess.getFacetExprRule() ||
-				   context == grammarAccess.getFunctionFacetExprRule()) {
-					sequence_FunctionFacetExpr(context, (FunctionFacetExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.FUNCTION_GAML_FACET_REF:
-				if(context == grammarAccess.getFacetRefRule() ||
-				   context == grammarAccess.getFunctionGamlFacetRefRule()) {
-					sequence_FunctionGamlFacetRef(context, (FunctionGamlFacetRef) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.FUNCTION_REF:
+			case GamlPackage.FUNCTION:
 				if(context == grammarAccess.getAbstractRefRule() ||
 				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0_0() ||
@@ -330,6 +316,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getFunctionRule() ||
 				   context == grammarAccess.getGamlBinaryExprRule() ||
 				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
 				   context == grammarAccess.getGamlUnaryExprRule() ||
@@ -351,7 +338,21 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getTernExpRule() ||
 				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_AbstractRef(context, (FunctionRef) semanticObject); 
+					sequence_Function(context, (Function) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.FUNCTION_FACET_EXPR:
+				if(context == grammarAccess.getFacetExprRule() ||
+				   context == grammarAccess.getFunctionFacetExprRule()) {
+					sequence_FunctionFacetExpr(context, (FunctionFacetExpr) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.FUNCTION_GAML_FACET_REF:
+				if(context == grammarAccess.getFacetRefRule() ||
+				   context == grammarAccess.getFunctionGamlFacetRefRule()) {
+					sequence_FunctionGamlFacetRef(context, (FunctionGamlFacetRef) semanticObject); 
 					return; 
 				}
 				else break;
@@ -714,7 +715,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				else break;
 			case GamlPackage.VARIABLE_REF:
 				if(context == grammarAccess.getAbstractRefRule() ||
-				   context == grammarAccess.getAbstractRefAccess().getFunctionRefLeftAction_1_0() ||
 				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0_0() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_1_0() ||
@@ -750,15 +750,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 			}
 		if (errorAcceptor != null) errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
 	}
-	
-	/**
-	 * Constraint:
-	 *     (left=AbstractRef_FunctionRef_1_0 args+=Expression args+=Expression*)
-	 */
-	protected void sequence_AbstractRef(EObject context, FunctionRef semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
 	
 	/**
 	 * Constraint:
@@ -927,6 +918,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *     (ref='function' | ref='->')
 	 */
 	protected void sequence_FunctionGamlFacetRef(EObject context, FunctionGamlFacetRef semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (op=ID args+=Expression args+=Expression*)
+	 */
+	protected void sequence_Function(EObject context, Function semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

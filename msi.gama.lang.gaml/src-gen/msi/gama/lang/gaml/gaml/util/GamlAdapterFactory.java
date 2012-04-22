@@ -228,9 +228,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createPointAdapter();
       }
       @Override
-      public Adapter caseFunctionRef(FunctionRef object)
+      public Adapter caseFunction(Function object)
       {
-        return createFunctionRefAdapter();
+        return createFunctionAdapter();
       }
       @Override
       public Adapter caseArbitraryName(ArbitraryName object)
@@ -740,16 +740,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FunctionRef <em>Function Ref</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.FunctionRef
+   * @see msi.gama.lang.gaml.gaml.Function
    * @generated
    */
-  public Adapter createFunctionRefAdapter()
+  public Adapter createFunctionAdapter()
   {
     return null;
   }

@@ -1368,14 +1368,14 @@ public interface GamlPackage extends EPackage
   int POINT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionRefImpl <em>Function Ref</em>}' class.
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.FunctionRefImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunctionRef()
+   * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION_REF = 30;
+  int FUNCTION = 30;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1384,7 +1384,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_REF__LEFT = EXPRESSION__LEFT;
+  int FUNCTION__LEFT = EXPRESSION__LEFT;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -1393,7 +1393,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_REF__OP = EXPRESSION__OP;
+  int FUNCTION__OP = EXPRESSION__OP;
 
   /**
    * The feature id for the '<em><b>Right</b></em>' containment reference.
@@ -1402,7 +1402,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_REF__RIGHT = EXPRESSION__RIGHT;
+  int FUNCTION__RIGHT = EXPRESSION__RIGHT;
 
   /**
    * The feature id for the '<em><b>Args</b></em>' containment reference list.
@@ -1411,16 +1411,16 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_REF__ARGS = EXPRESSION_FEATURE_COUNT + 0;
+  int FUNCTION__ARGS = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Function Ref</em>' class.
+   * The number of structural features of the '<em>Function</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FUNCTION_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int FUNCTION_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl <em>Arbitrary Name</em>}' class.
@@ -2406,25 +2406,25 @@ public interface GamlPackage extends EPackage
   EClass getPoint();
 
   /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.FunctionRef <em>Function Ref</em>}'.
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Function Ref</em>'.
-   * @see msi.gama.lang.gaml.gaml.FunctionRef
+   * @return the meta object for class '<em>Function</em>'.
+   * @see msi.gama.lang.gaml.gaml.Function
    * @generated
    */
-  EClass getFunctionRef();
+  EClass getFunction();
 
   /**
-   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.FunctionRef#getArgs <em>Args</em>}'.
+   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Args</em>'.
-   * @see msi.gama.lang.gaml.gaml.FunctionRef#getArgs()
-   * @see #getFunctionRef()
+   * @see msi.gama.lang.gaml.gaml.Function#getArgs()
+   * @see #getFunction()
    * @generated
    */
-  EReference getFunctionRef_Args();
+  EReference getFunction_Args();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.ArbitraryName <em>Arbitrary Name</em>}'.
@@ -3058,14 +3058,14 @@ public interface GamlPackage extends EPackage
     EClass POINT = eINSTANCE.getPoint();
 
     /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionRefImpl <em>Function Ref</em>}' class.
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.FunctionRefImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunctionRef()
+     * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
      * @generated
      */
-    EClass FUNCTION_REF = eINSTANCE.getFunctionRef();
+    EClass FUNCTION = eINSTANCE.getFunction();
 
     /**
      * The meta object literal for the '<em><b>Args</b></em>' containment reference list feature.
@@ -3073,7 +3073,7 @@ public interface GamlPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference FUNCTION_REF__ARGS = eINSTANCE.getFunctionRef_Args();
+    EReference FUNCTION__ARGS = eINSTANCE.getFunction_Args();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl <em>Arbitrary Name</em>}' class.

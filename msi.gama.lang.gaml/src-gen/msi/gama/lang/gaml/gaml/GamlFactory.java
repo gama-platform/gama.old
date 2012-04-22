@@ -296,13 +296,13 @@ public interface GamlFactory extends EFactory
   Point createPoint();
 
   /**
-   * Returns a new object of class '<em>Function Ref</em>'.
+   * Returns a new object of class '<em>Function</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function Ref</em>'.
+   * @return a new object of class '<em>Function</em>'.
    * @generated
    */
-  FunctionRef createFunctionRef();
+  Function createFunction();
 
   /**
    * Returns a new object of class '<em>Arbitrary Name</em>'.

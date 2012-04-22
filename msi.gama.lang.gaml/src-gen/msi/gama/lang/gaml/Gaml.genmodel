@@ -79,8 +79,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Array/exprs"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Point"/>
-    <genClasses ecoreClass="Gaml.ecore#//FunctionRef">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//FunctionRef/args"/>
+    <genClasses ecoreClass="Gaml.ecore#//Function">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//ArbitraryName">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//ArbitraryName/name"/>

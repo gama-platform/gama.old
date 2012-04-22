@@ -37,10 +37,11 @@ public class EGaml {
 		// VariableRef ref = (VariableRef) f;
 		// return ref.getRef() == null ? "" : ref.getRef().getName();
 		}
-		if ( f instanceof FunctionRef ) {
-			FunctionRef ref = (FunctionRef) f;
-			return getKeyOf(ref.getLeft());
-		}
+		if ( f instanceof Function ) { return ((Function) f).getOp(); }
+		// if ( f instanceof FunctionRef ) {
+		// FunctionRef ref = (FunctionRef) f;
+		// return getKeyOf(ref.getLeft());
+		// }
 		if ( f instanceof ArbitraryName ) { return ((ArbitraryName) f).getName(); }
 		if ( f instanceof UnitName ) { return ((UnitName) f).getName(); }
 		if ( f instanceof Expression ) { return ((Expression) f).getOp(); }
@@ -112,9 +113,13 @@ public class EGaml {
 			serializer.append(expr.getOp()).append("(");
 			serialize(expr.getRight());
 			serializer.append(")");
-		} else if ( expr instanceof FunctionRef ) {
-			function((FunctionRef) expr);
-		} else {
+		} else if ( expr instanceof Function ) {
+			function((Function) expr);
+		}
+		// else if ( expr instanceof FunctionRef ) {
+		// function((FunctionRef) expr);
+		// }
+		else {
 			serializer.append("(");
 			serialize(expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
@@ -123,9 +128,10 @@ public class EGaml {
 		}
 	}
 
-	private static void function(final FunctionRef expr) {
+	private static void function(final Function expr) {
 		EList<Expression> args = expr.getArgs();
-		String opName = EGaml.getKeyOf(expr.getLeft());
+		// String opName = EGaml.getKeyOf(expr.getLeft());
+		String opName = expr.getOp();
 		if ( args.size() == 1 ) {
 			serializer.append(opName).append("(");
 			serialize(args.get(0));

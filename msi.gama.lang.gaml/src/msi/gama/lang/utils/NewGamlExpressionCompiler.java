@@ -190,8 +190,18 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			return binary(IExpressionParser.INTERNAL_POINT, object.getLeft(), object.getRight());
 		}
 
+		// @Override
+		// public IExpression caseFunctionRef(final FunctionRef object) {
+		// String op = EGaml.getKeyOf(object);
+		// List<Expression> args = object.getArgs();
+		// int size = args.size();
+		// if ( size == 1 ) { return unary(op, args.get(0)); }
+		// if ( size == 2 ) { return binary(op, args.get(0), args.get(1)); }
+		// return binary(op, args.get(0), createArgArray(args));
+		// }
+
 		@Override
-		public IExpression caseFunctionRef(final FunctionRef object) {
+		public IExpression caseFunction(final Function object) {
 			String op = EGaml.getKeyOf(object);
 			List<Expression> args = object.getArgs();
 			int size = args.size();
@@ -279,7 +289,9 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	public IExpression compile(final EObject s) {
 		if ( s == null ) {
-			context.flagError("Null expression");
+			// No error, since most of the null expressions come from previous (more focused)
+			// errors.
+			// context.flagError("Null expression");
 			return null;
 		}
 		return compiler.doSwitch(s);

@@ -97,7 +97,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.MEMBER_REF: return createMemberRef();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
-      case GamlPackage.FUNCTION_REF: return createFunctionRef();
+      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.ARBITRARY_NAME: return createArbitraryName();
       case GamlPackage.UNIT_NAME: return createUnitName();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
@@ -445,10 +445,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public FunctionRef createFunctionRef()
+  public Function createFunction()
   {
-    FunctionRefImpl functionRef = new FunctionRefImpl();
-    return functionRef;
+    FunctionImpl function = new FunctionImpl();
+    return function;
   }
 
   /**

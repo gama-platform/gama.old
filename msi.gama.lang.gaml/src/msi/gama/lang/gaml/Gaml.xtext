@@ -62,7 +62,9 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	PrePrimaryExpr returns Expression: TerminalExpression | MemberRef; 
 	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)*;
 	PrimaryExpression returns Expression: AbstractRef | '('Expression')' | '[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' | '{' {Point} (left=Expression op=',' right=Expression ) '}';
-	AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
+	//AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
+	AbstractRef returns Expression: VariableRef | Function;
+	Function returns Expression: {Function}(op=ID '('args+=Expression (',' args+=Expression)*')') ;
 
 /**
  * Cross-references to variables/operators/units
@@ -70,7 +72,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
  	ArbitraryName returns Expression: {ArbitraryName} name = ID;
  	UnitName returns Expression: {UnitName} name= ID;
 	VariableRef : {VariableRef} ref=[GamlVarRef];
-	GamlVarRef: DefinitionFacetExpr | Definition | DefReserved | DefUnary /*| DefBinaryOp */;
+	GamlVarRef: DefinitionFacetExpr | Definition | DefReserved  /*| DefUnary| DefBinaryOp */;
 	
 	
 	//SUPPRIMER DES CROSS_REFERENCES (units / unaries ? / reserved)

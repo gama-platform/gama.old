@@ -92,7 +92,7 @@
         eType="#//Expression" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Point" eSuperTypes="#//Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="FunctionRef" eSuperTypes="#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
