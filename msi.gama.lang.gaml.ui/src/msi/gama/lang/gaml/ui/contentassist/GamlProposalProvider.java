@@ -578,12 +578,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void completeAbstractRef_Args(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		super.completeAbstractRef_Args(model, assignment, context, acceptor);
-	}
-
-	@Override
 	public void completeVariableRef_Ref(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		super.completeVariableRef_Ref(model, assignment, context, acceptor);

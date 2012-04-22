@@ -70,9 +70,13 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				} else if ( obj instanceof DoubleLiteral || obj instanceof ColorLiteral ||
 					obj instanceof BooleanLiteral || obj instanceof IntLiteral ) {
 					setStyle(obj, NUMBER_ID, 0);
-				} else if ( obj instanceof FunctionRef ) {
-					setStyle(obj, BINARY_ID, NodeModelUtils.getNode(obj));
-				} else if ( obj instanceof DefUnary ) {
+				} else if ( obj instanceof Function ) {
+					setStyle(obj, BINARY_ID, ((Function) obj).getOp());
+				}
+				// else if ( obj instanceof FunctionRef ) {
+				// setStyle(obj, BINARY_ID, NodeModelUtils.getNode(obj));
+				// }
+				else if ( obj instanceof DefUnary ) {
 					setStyle(obj, BINARY_ID, ((DefUnary) obj).getName());
 				} else if ( obj instanceof VariableRef /* && ((VariableRef) obj).getRef() != null */) {
 					setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
