@@ -71,6 +71,7 @@ public class MyListener implements KeyListener, MouseListener,
 		// TODO Auto-generated method stub
 		lastx = arg0.getX();
 		lasty = arg0.getY();
+		//myCamera.Init3DView();
 	}
 
 	@Override
@@ -111,15 +112,30 @@ public class MyListener implements KeyListener, MouseListener,
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
+//		if (arg0.getWheelRotation() < 0) {// Move Up
+//			myCamera.zPos -= 0.5;
+//			myCamera.zLPos -= 0.5;
+//			//myCamera.moveForward(0.1);
+//			// camera.look(10);
+//		} else {// Move down
+//			myCamera.zPos += 0.5;
+//			myCamera.zLPos += 0.5;
+//			//myCamera.moveForward(-0.1);
+//		}
+		
+		float incrementalStep=0.5f;
 		if (arg0.getWheelRotation() < 0) {// Move Up
-			myCamera.zPos -= 0.5;
-			myCamera.zLPos -= 0.5;
-			//myCamera.moveForward(0.1);
-			// camera.look(10);
+
+			myCamera.zPos +=incrementalStep;
+			myCamera.zLPos +=incrementalStep;
+			//myCamera.moveForward(incrementalStep);
+			//myCamera.look(10);
 		} else {// Move down
-			myCamera.zPos += 0.5;
-			myCamera.zLPos += 0.5;
-			//myCamera.moveForward(-0.1);
+ 
+			myCamera.zPos -=incrementalStep;
+			myCamera.zLPos -=incrementalStep;
+			//myCamera.moveForward(-incrementalStep);
+			//myCamera.look(10);
 		}
 
 	}
@@ -166,10 +182,10 @@ public class MyListener implements KeyListener, MouseListener,
 			myCamera.look(10);
 			break;
 		case VK_I:
-			myCamera.InitParam();
+			//myCamera.InitParam();
 			break;
 		case VK_H:
-			myCamera.Init3DView();
+			//myCamera.Init3DView();
 			break;
 		}		
 	}

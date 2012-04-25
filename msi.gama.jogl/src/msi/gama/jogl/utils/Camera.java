@@ -58,9 +58,9 @@ public class Camera {
 
 	// Move in the XY plan by changing camera pos and look pos.
 	public void moveXYPlan(double diffx, double diffy, double speed) {
-		
+
 		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
-			speed=Math.abs(diffx)*speed;
+			speed = Math.abs(diffx) * speed;
 			if (diffx > 0) {// move right
 				this.updatePosition(this.getXPos() - speed, this.getYPos(),
 						this.getZPos());
@@ -73,7 +73,7 @@ public class Camera {
 						this.getZLPos());
 			}
 		} else if (Math.abs(diffx) < Math.abs(diffy)) { // Move Y
-			speed=Math.abs(diffy)*speed;
+			speed = Math.abs(diffy) * speed;
 			if (diffy > 0) {// move down
 				this.updatePosition(this.getXPos(), this.getYPos() + speed,
 						this.getZPos());
@@ -181,7 +181,7 @@ public class Camera {
 	public double getYaw() {
 		return yaw;
 	}
-	
+
 	public double getzPos() {
 		return zPos;
 	}
@@ -213,6 +213,7 @@ public class Camera {
 	public void setxLPos(double xLPos) {
 		this.xLPos = xLPos;
 	}
+
 	public double getyLPos() {
 		return yLPos;
 	}
@@ -220,6 +221,7 @@ public class Camera {
 	public void setyLPos(double yLPos) {
 		this.yLPos = yLPos;
 	}
+
 	public double getzLPos() {
 		return zLPos;
 	}
@@ -228,8 +230,8 @@ public class Camera {
 		this.zLPos = zLPos;
 	}
 
-	public void UpdateCamera(GL gl,int width, int height){
-		
+	public void UpdateCamera(GL gl, int width, int height) {
+
 		GLU glu = new GLU();
 		if (height == 0) {
 			height = 1; // prevent divide by zero
@@ -237,44 +239,65 @@ public class Camera {
 		float aspect = (float) width / height;
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(),
-				this.getXLPos(), this.getYLPos(), this.getZLPos(), 0.0,
-				1.0, 0.0);
+				this.getXLPos(), this.getYLPos(), this.getZLPos(), 0.0, 1.0,
+				0.0);
+
+	}
+
+	public void InitializeCamera(float envWidth, float envHeight) {
+
+		this.yaw = -1.5;
+		this.pitch = 0.0f;
 		
+		float scale_rate, maxDim;
+
+		if (envWidth > envHeight) {
+			scale_rate = 10 / envWidth;
+			maxDim = envWidth;
+		} else {
+			scale_rate = 10 / envHeight;
+			maxDim = envHeight;
+		}
+		this.setxPos(envWidth / 2 * scale_rate);
+		this.setxLPos(envWidth / 2 * scale_rate);
+		this.setyPos(-envHeight / 2 * scale_rate);
+		this.setyLPos(-envHeight / 2 * scale_rate);
+		this.PrintParam();
+		// FIXME: This need to be normalize
+		this.setzPos(maxDim / 50 + 5.0f);
+		this.setzLPos(0.0f);
+
 	}
-
-	public void InitParam() {
-
-//		this.yaw = -1.5;
-//		this.pitchDown(0);
-//		this.moveForward(0);
-//		this.look(10);
+	
+	
+	public void Initialize3DCamera(float envWidth, float envHeight) {
 
 		this.yaw = -1.5;
-		this.pitch=0.0f;
-		this.setxPos(-0.1f);
-		this.xLPos=0.6f;
-		this.setyPos(0.0f);
-		this.yLPos=0.0f;
-		//FIXME: need to set the Z value according to the bounds.
-		//this.setzPos(10.0f);
-		this.setzPos(20.0f);
-		this.setzLPos(-10.0f);
-	}
+		this.pitch = 1.5f;
+		
+		float scale_rate, maxDim;
 
-	public void Init3DView() {
+		if (envWidth > envHeight) {
+			scale_rate = 10 / envWidth;
+			maxDim = envWidth;
+		} else {
+			scale_rate = 10 / envHeight;
+			maxDim = envHeight;
+		}
+		this.setxPos(envWidth / 2 * scale_rate);
+		this.setxLPos(envWidth / 2 * scale_rate);
+		this.setyPos(-envHeight  * scale_rate);
+		this.setyLPos(-envHeight / 2 * scale_rate);
+		this.PrintParam();
+		// FIXME: This need to be normalize
+		this.setzPos((maxDim / 50 + 5.0f));
+		this.setzLPos(10.0f);
 
-		this.yaw = -1.5;
-		this.pitch=0.5f;
-		this.setxPos(0.0f);
-		this.xLPos=0.5f;
-		this.setyPos(-5.0f);
-		this.yLPos=0.0f;
-		this.setzPos(1.0f);
-		this.setzLPos(-5.0f);
 	}
 
 	public void PrintParam() {
-		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos() + " zPos:" + getzPos());
+		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos()
+				+ " zPos:" + getzPos());
 		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:"
 				+ getzLPos());
 		System.out.println("yaw:" + yaw + " picth:" + pitch);

@@ -25,6 +25,8 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
+
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
 import msi.gaml.operators.Maths;
@@ -78,6 +80,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
+	
+	public boolean ThreeD= false;
+	
+	//OpenGL list ID
+	private int listID = -1;
 
 	private final PointTransformation pt = new PointTransformation() {
 
@@ -462,6 +469,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		System.out.println("DisplayGraphics::drawGeometry: "
 				+ geometry.getGeometryType());
 		AddGeometryInGeometries(geometry, color);
+		
 		// Use to respect IDisplaySurface interface
 		boolean f = geometry instanceof LineString
 				|| geometry instanceof MultiLineString ? false : fill;
@@ -469,6 +477,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return sw.toShape(geometry).getBounds2D();
 		// return drawShape(color, sw.toShape(geometry), f, angle);
 	}
+	
+    public void draw(GL gl){
+        
+        if(listID == -1){
+            createDisplayList(gl);            
+        }
+        gl.glCallList(listID);
+
+    }
+    
+    private void createDisplayList(GL gl){
+        GLU glu = new GLU();
+        GLUquadric quadric = glu.gluNewQuadric();
+        listID =  gl.glGenLists(1);
+        gl.glNewList(listID, GL.GL_COMPILE);
+        gl.glPushMatrix();
+            gl.glColor3d(1,1,1);
+            glu.gluSphere(quadric, 1+0.4, 30, 30);
+        gl.glPopMatrix();
+        gl.glEndList();
+    }
 
 	/**
 	 * Method drawShape.
@@ -721,7 +750,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			// System.out.println("R:"+(float)curGeometry.color.getRed()/255+"G:"+(float)curGeometry.color.getGreen()/255+"B:"+(float)curGeometry.color.getBlue()/255);
 			if (curGeometry.type == "MultiPolygon"
 					|| curGeometry.type == "Polygon") {
+				
+				if (ThreeD==true){
+					myGl.glColor3f(0.0f,0.0f,1.0f);
+					//top face
+					float z_offset= 1.0f;
+					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,z_offset, myScaleRate);
+					//base face
+					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,0.0f, myScaleRate);
+					// all the front-face of the polygons as a verticle quads.
+					graphicsGLUtils.Draw3DNormalizeQuads(myGl, myGlu, curGeometry,z_offset, myScaleRate);
+				}
+				else{
 				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,0.0f, myScaleRate);
+				}
 				
 			} else if (curGeometry.type == "MultiLineString"
 					|| curGeometry.type == "LineString") {

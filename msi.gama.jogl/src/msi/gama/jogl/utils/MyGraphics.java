@@ -281,6 +281,70 @@ public class MyGraphics {
 		}
 
 	}
+	
+	public void Draw3DNormalizeQuads(GL gl, GLU glu, MyGeometry geometry, float z_offset,float scale) {
+		int curPolyGonNumPoints = geometry.vertices.length;
+		for (int j = 0; j < curPolyGonNumPoints; j++) {
+			int k = (j + 1) % curPolyGonNumPoints;
+			gl.glBegin(GL_QUADS);
+			if (j == 3) {
+				gl.glNormal3f(0.0f, 0.0f, 1.0f);
+			}
+			if (j == 0) {
+				gl.glNormal3f(-1.0f, 0.0f, 0.0f);
+			}
+			if (j == 1) {
+				gl.glNormal3f(0.0f, 0.0f, -1.0f);
+			}
+
+			if (j == 2) {
+				gl.glNormal3f(1.0f, 0.0f, 0.0f);
+			}
+
+			Vertex[] vertices = new Vertex[4];
+			for (int i = 0; i < 4; i++) {
+				vertices[i] = new Vertex();
+			}
+			vertices[0].x = geometry.vertices[j].x*scale;
+			vertices[0].y = geometry.vertices[j].y*scale;
+			vertices[0].z = geometry.vertices[j].z + z_offset;
+
+			vertices[1].x = geometry.vertices[k].x*scale;
+			vertices[1].y = geometry.vertices[k].y*scale;
+			vertices[1].z = geometry.vertices[k].z + z_offset;
+
+			vertices[2].x = geometry.vertices[k].x*scale;
+			vertices[2].y = geometry.vertices[k].y*scale;
+			vertices[2].z = geometry.vertices[k].z;
+
+			vertices[3].x = geometry.vertices[j].x*scale;
+			vertices[3].y = geometry.vertices[j].y*scale;
+			vertices[3].z = geometry.vertices[j].z;
+
+			// Compute the normal of the quad
+			Vector3f normal = new Vector3f(0.0f, 0.0f, 0.0f);
+
+			for (int i = 0; i < 4; i++) {
+				int i1 = (i + 1) % 4;
+				normal.x += (vertices[i].y - vertices[i1].y)
+						* (vertices[i].z + vertices[i1].z);
+				normal.y += (vertices[i].z - vertices[i1].z)
+						* (vertices[i].x + vertices[i1].x);
+				normal.z += (vertices[i].x - vertices[i1].x)
+						* (vertices[i].y + vertices[i1].y);
+			}
+			normal.normalize(normal);
+			// FIXME: The normal is not wel computed.
+			// gl.glNormal3f((float)normal.x, (float)normal.y, (float)normal.z);
+			gl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+			gl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+			gl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+			gl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+
+			gl.glEnd();
+		}
+
+	}
 
 	public void DrawOpenGLHelloWorldShape(GL gl) {
 

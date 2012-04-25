@@ -49,11 +49,17 @@ import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+
+
+
+
 import com.sun.opengl.util.FPSAnimator;
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+
 public final class JOGLAWTDisplaySurface extends JPanel implements
-		IDisplaySurface, GLEventListener {
+		IDisplaySurface{
 
 
 	private static final long serialVersionUID = 1L;
@@ -65,7 +71,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	private volatile boolean canBeUpdated = true;
 	double widthHeightConstraint = 1.0;
 	private PopupMenu agentsMenu = new PopupMenu();
-	private IGraphics openGLGraphics;
+	public IGraphics openGLGraphics;
 	private Color bgColor = Color.black;
 	protected double zoomIncrement = 0.1;
 	protected double zoomFactor = 1.0 + zoomIncrement;
@@ -84,20 +90,18 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	
 
 	//Environment properties useful to set the camera position.
-	private float envWidth, envHeight,scale_rate,maxDim;
+	public float envWidth, envHeight,scale_rate;
 
 
 	/////OpenGL member///////
-	private GLU glu;
-	private GL gl;
 	FPSAnimator animator;
 	public boolean opengl = true;
 	// Event Listener
 	public MyListener myListener;
 
-	private int width, height;
+
 	// Camera
-	private Camera camera;
+	public Camera camera;
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
@@ -108,20 +112,21 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		if (envWidth > envHeight) {
 			scale_rate = 10 / envWidth;
-			maxDim=envWidth;
 		} else {
 			scale_rate = 10 / envHeight;
-			maxDim=envHeight;
 		}
 
 		// Initialize the user camera
 		camera = new Camera();
-		camera.InitParam();
+
 		System.out.println("env_width:" + env_width + "env_height" + env_height);
 
 		GLCanvas canvas = new GLCanvas();
-		canvas.addGLEventListener(this);
+		//canvas.addGLEventListener(this);
+		//canvas.addGLEventListener(new GLRenderer(new CameraArcBall(canvas)));
+		
 		myListener = new MyListener(camera);
+		canvas.addGLEventListener(new JOGLAWTGLRenderer(this));
 		canvas.addKeyListener(myListener);
 		canvas.addMouseListener(myListener);
 		canvas.addMouseMotionListener(myListener);
@@ -635,15 +640,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	}
 
 	@Override
-	public void zoomFit() {
-		camera.setxPos(envWidth / 2 * scale_rate);
-		camera.setxLPos(envWidth / 2 * scale_rate);
-		camera.setyPos(-envHeight / 2 * scale_rate);
-		camera.setyLPos(-envHeight / 2 * scale_rate);
-		camera.PrintParam();
-		//FIXME: This need to be normalize
-		camera.setzPos(maxDim/50+5.0f);
-		camera.setzLPos(0.0f);
+	public void zoomFit() {		
+		camera.Initialize3DCamera(envWidth,envHeight);
 	}
 
 	@Override
@@ -758,155 +756,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public int getOriginY() {
 		return origin.y;
-	}
-
-	// GLEventListener method.
-	@Override
-	public void display(final GLAutoDrawable drawable) {
-
-		// System.out.println("opengl display");
-		// Get the OpenGL graphics context
-		gl = drawable.getGL();
-
-		width = drawable.getWidth();
-		height = drawable.getHeight();
-
-		// Clear the screen and the depth buffer
-		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		gl.glViewport(0, 0, width, height); // Reset The Current Viewport
-
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		// Reset the view (x, y, z axes back to normal)
-		gl.glLoadIdentity();
-
-		gl.glEnable(GL_BLEND); // Turn Blending On
-		gl.glDisable(GL_DEPTH_TEST); // Turn Depth Testing Off
-
-		// handle lighting
-		gl.glEnable(GL_LIGHTING);
-
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-
-		if (height == 0) {
-			height = 1; // prevent divide by zero
-		}
-		float aspect = (float) width / height;
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
-
-		gl.glMatrixMode(GL.GL_MODELVIEW); // Select The Modelview Matrix
-		gl.glLoadIdentity(); // Reset The Modelview Matrix
-
-		// enable color tracking
-		gl.glEnable(GL_COLOR_MATERIAL);
-		// set material properties which will be assigned by glColor
-		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
-		((JOGLAWTDisplayGraphics) openGLGraphics).DrawMyGeometries();
-
-		// this.DrawOpenGLHelloWorldShape(gl);
-
-	}
-
-	@Override
-	public void displayChanged(final GLAutoDrawable arg0, final boolean arg1,
-			final boolean arg2) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void init(final GLAutoDrawable drawable) {
-		width = drawable.getWidth();
-		height = drawable.getHeight();
-		// Get the OpenGL graphics context
-		gl = drawable.getGL();
-		// GL Utilities
-		glu = new GLU();
-
-		// Initialize the IGraphics (FIXME: Should we initialize it here??)
-		openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu, envWidth,
-				envHeight, scale_rate);
-
-		// Enable smooth shading, which blends colors nicely across a polygon,
-		// and smoothes out lighting.
-		GLUtil.enableSmooth(gl);
-		// Set background color (in RGBA). Alpha of 0 for total transparency
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		// the depth buffer & enable the depth testing
-		gl.glClearDepth(1.0f);
-		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
-		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
-		// We want the best perspective correction to be done
-		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		// Enable smooth shading, which blends colors nicely, and smoothes out
-		// lighting.
-		gl.glShadeModel(GL_SMOOTH);
-
-		gl.glEnable(GL_BLEND);
-		// gl.glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		if (height == 0) {
-			height = 1; // prevent divide by zero
-		}
-		float aspect = (float) width / height;
-
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
-
-		// Set up the lighting for Light-1
-		// Ambient light does not come from a particular direction. Need some
-		// ambient light to light up the scene. Ambient's value in RGBA
-		float[] lightAmbientValue = { 0.5f, 0.5f, 0.5f, 1.0f };
-		// Diffuse light comes from a particular location. Diffuse's value in
-		// RGBA
-		float[] lightDiffuseValue = { 1.0f, 1.0f, 1.0f, 1.0f };
-		// Diffuse light location xyz (in front of the screen).
-		float lightDiffusePosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
-
-		gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
-		gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
-		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
-		gl.glEnable(GL_LIGHT1); // Enable Light-1
-		gl.glDisable(GL_LIGHTING); // But disable lighting
-		System.out.println("openGL init ok");
-
-	}
-
-	@Override
-	public void reshape(final GLAutoDrawable drawable, final int x,
-			final int y, final int width, int height) {
-		// Get the OpenGL graphics context
-		gl = drawable.getGL();
-
-		if (height == 0) {
-			height = 1; // prevent divide by zero
-		}
-		float aspect = (float) width / height;
-
-		// Set the viewport (display area) to cover the entire window
-		gl.glViewport(0, 0, width, height);
-
-		// Enable the model view - any new transformations will affect the
-		// model-view matrix
-		gl.glMatrixMode(GL_MODELVIEW);
-		gl.glLoadIdentity(); // reset
-
-		// perspective view
-		gl.glViewport(10, 10, width - 20, height - 20);
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
-
 	}
 
 	public void DrawOpenGLHelloWorldShape(GL gl) {
