@@ -88,9 +88,11 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
+		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
 		this.DrawXYZAxis();
+		this.DrawZValue();
 		//((JOGLAWTDisplayGraphics) openGLGraphics).draw(gl);
 
 		// this.DrawOpenGLHelloWorldShape(gl);
@@ -231,6 +233,13 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 	      gl.glVertex3f(0.0f, 0.0f, 1.1f);
 	    gl.glEnd();
 		
+	}
+	
+	public void DrawZValue(){
+		GLUT glut = new GLUT();
+		//X Axis
+	    gl.glRasterPos3f(0.6f, 0.6f, 0.0f);   
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z = " + String.valueOf(camera.zPos));	
 	}
 
 }
