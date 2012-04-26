@@ -89,9 +89,9 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
+		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
-		this.DrawXYZAxis();
+		//this.DrawXYZAxis();
 		this.DrawZValue();
 		//((JOGLAWTDisplayGraphics) openGLGraphics).draw(gl);
 
@@ -116,7 +116,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
 		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu, displaySurface.envWidth,
-				displaySurface.envHeight, displaySurface.scale_rate);
+				displaySurface.envHeight);
 
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
@@ -238,8 +238,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 	public void DrawZValue(){
 		GLUT glut = new GLUT();
 		//X Axis
-	    gl.glRasterPos3f(0.6f, 0.6f, 0.0f);   
-	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z = " + String.valueOf(camera.zPos));	
+	    gl.glRasterPos3f(0.0f, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myHeight * 0.01f, 0.0f);   
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z = " + String.valueOf((int)camera.zPos));	
 	}
-
 }

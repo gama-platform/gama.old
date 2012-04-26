@@ -80,7 +80,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
 	// Define the environment properties.
-	public float myWidth, myHeight, myScaleRate, myMaxDim;;
+	public float myWidth, myHeight, myMaxDim;;
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
@@ -114,12 +114,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param float scale_rate
 	 */
 	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu, float env_width,
-			float env_height, float scale_rate) {
+			float env_height) {
 		myGl = gl;
 		myGlu = glu;
 		myWidth = env_width;
 		myHeight = env_height;
-		myScaleRate = scale_rate;
 
 		if (myWidth > myHeight) {
 			myMaxDim = myWidth;
@@ -128,7 +127,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 		z = 0.0f;
-		// z = (float) (0.1 / myScaleRate);
 		graphicsGLUtils = new MyGraphics();
 	}
 
@@ -760,29 +758,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					myGl.glColor3f(0.0f, 0.0f, 1.0f);
 					// top face
 					float z_offset = 1.0f;
-					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
-							curGeometry, z_offset, myScaleRate);
+					graphicsGLUtils.DrawGeometry(myGl, myGlu, curGeometry,
+							z_offset);
 					// base face
-					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
-							curGeometry, 0.0f, myScaleRate);
+					graphicsGLUtils
+							.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
 					// all the front-face of the polygons as a verticle quads.
-					graphicsGLUtils.Draw3DNormalizeQuads(myGl, myGlu,
-							curGeometry, z_offset, myScaleRate);
+					graphicsGLUtils.Draw3DQuads(myGl, myGlu, curGeometry,
+							z_offset);
 				} else {
-					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
-							curGeometry, 0.0f, myScaleRate);
+					graphicsGLUtils
+							.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
 				}
 
 			} else if (curGeometry.type == "MultiLineString"
 					|| curGeometry.type == "LineString") {
-				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,
-						myScaleRate, 1.2f);
+				graphicsGLUtils.DrawLine(myGl, myGlu, curGeometry, 1.2f);
 			} else if (curGeometry.type == "Point"
 					|| curGeometry.type == "Circle") {
-				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
+				graphicsGLUtils.DrawCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
-						curGeometry.vertices[0].z, 20, curGeometry.size / 2,
-						myScaleRate);
+						curGeometry.vertices[0].z, 20, curGeometry.size / 2);
 
 			}
 
@@ -795,24 +791,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void DrawEnvironmentBounds() {
 
-		float alpha = 0.9f;
+		float alpha = 0.0f;
 		myGl.glColor4f(0.0f, 0.0f, 1.0f, alpha);
 
 		GLUT glut = new GLUT();
-		myGl.glRasterPos3f(this.myWidth * this.myScaleRate / 2,
-				(this.myHeight * this.myScaleRate) * 0.01f, 0.0f);
-		glut.glutBitmapString(
-				GLUT.BITMAP_TIMES_ROMAN_10,
-				String.valueOf(this.myWidth) + "("
-						+ String.valueOf(this.myWidth * this.myScaleRate) + ")");
+		myGl.glRasterPos3f(this.myWidth / 2, this.myHeight * 0.01f, 0.0f);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
+				String.valueOf(this.myWidth));
 
-		myGl.glRasterPos3f((this.myWidth * this.myScaleRate) * 1.01f,
-				-(this.myHeight * this.myScaleRate / 2), 0.0f);
-		glut.glutBitmapString(
-				GLUT.BITMAP_TIMES_ROMAN_10,
-				String.valueOf(this.myHeight) + "("
-						+ String.valueOf(this.myHeight * this.myScaleRate)
-						+ ")");
+		myGl.glRasterPos3f(this.myWidth * 1.01f, -(this.myHeight / 2), 0.0f);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
+				String.valueOf(this.myHeight));
 
 		MyGeometry backgroundGeometry = new MyGeometry(4);
 
@@ -844,22 +833,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		backgroundGeometry.vertices[3].u = 6.0f;
 		backgroundGeometry.vertices[3].v = 0.0f;
 
-		graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, backgroundGeometry,
-				0.0f, myScaleRate);
+		graphicsGLUtils.DrawGeometry(myGl, myGlu, backgroundGeometry, 0.0f);
 	}
 
 	public void DrawScale() {
 		GLUT glut = new GLUT();
 		// Draw Scale
-		float y_text_pos = -(this.myHeight * this.myScaleRate + this.myHeight
-				* this.myScaleRate * 0.05f);
+		float y_text_pos = -(this.myHeight + this.myHeight * 0.05f);
 		myGl.glRasterPos3f(0.0f, y_text_pos * 0.99f, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
-				"1:" + String.valueOf(1 / this.myScaleRate));
-
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Scale:" + "1");
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glVertex3f(0, 0 + y_text_pos, 0);
-		myGl.glVertex3f(1, 0 + y_text_pos, 0);
+		myGl.glVertex3f(this.myWidth * 0.05f, 0 + y_text_pos, 0);
 
 		myGl.glVertex3f(0, -0.05f + y_text_pos, 0);
 		myGl.glVertex3f(0, 0.05f + y_text_pos, 0);

@@ -90,7 +90,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	
 
 	//Environment properties useful to set the camera position.
-	public float envWidth, envHeight,scale_rate;
+	public float envWidth, envHeight;
 
 
 	/////OpenGL member///////
@@ -109,12 +109,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
-
-		if (envWidth > envHeight) {
-			scale_rate = 10 / envWidth;
-		} else {
-			scale_rate = 10 / envHeight;
-		}
 
 		// Initialize the user camera
 		camera = new Camera();

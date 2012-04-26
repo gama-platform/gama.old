@@ -14,6 +14,8 @@ public class Camera {
 
 	private double pitch;
 	private double yaw;
+	
+	private float maxDim;
 
 	public Camera() {
 		setxPos(0);
@@ -237,7 +239,8 @@ public class Camera {
 			height = 1; // prevent divide by zero
 		}
 		float aspect = (float) width / height;
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		//FIXME: need to see the influence of the different parameter.
+		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*5);
 		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(),
 				this.getXLPos(), this.getYLPos(), this.getZLPos(), 0.0, 1.0,
 				0.0);
@@ -249,33 +252,18 @@ public class Camera {
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
 		
-		float scale_rate, maxDim;
-
 		if (envWidth > envHeight) {
-			scale_rate = 10 / envWidth;
 			maxDim = envWidth;
 		} else {
-			scale_rate = 10 / envHeight;
 			maxDim = envHeight;
 		}
-		this.setxPos(envWidth / 2 * scale_rate);
-		this.setxLPos(envWidth / 2 * scale_rate);
-		this.setyPos(-envHeight / 2 * scale_rate);
-		this.setyLPos(-envHeight / 2 * scale_rate);
+		this.setxPos(envWidth / 2);
+		this.setxLPos(envWidth / 2);
+		this.setyPos(-envHeight / 2);
+		this.setyLPos(-envHeight / 2);
 		this.PrintParam();
-		// FIXME: This need to be normalize
-		this.setzPos(maxDim / 50 + 5.0f);
+		this.setzPos(maxDim*1.5);
 		this.setzLPos(0.0f);
-		
-//		//Center on (0,0,0) point.
-//		this.setxPos(0);
-//		this.setxLPos(0);
-//		this.setyPos(0);
-//		this.setyLPos(0);
-//		this.PrintParam();
-//		this.setzPos(10);
-//		this.setzLPos(0);
-
 	}
 	
 	

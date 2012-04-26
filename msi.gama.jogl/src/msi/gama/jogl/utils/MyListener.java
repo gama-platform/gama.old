@@ -123,7 +123,7 @@ public class MyListener implements KeyListener, MouseListener,
 //			//myCamera.moveForward(-0.1);
 //		}
 		
-		float incrementalStep=0.5f;
+		float incrementalStep=10f;
 		if (arg0.getWheelRotation() < 0) {// Move Up
 
 			myCamera.zPos -=incrementalStep;
