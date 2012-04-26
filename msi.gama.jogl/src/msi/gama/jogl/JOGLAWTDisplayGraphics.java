@@ -19,6 +19,8 @@
 
 package msi.gama.jogl;
 
+import static javax.media.opengl.GL.GL_TRIANGLES;
+
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -31,6 +33,8 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
+
+import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Point;
@@ -80,10 +84,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
-	
-	public boolean ThreeD= false;
-	
-	//OpenGL list ID
+
+	public boolean ThreeD = false;
+
+	// OpenGL list ID
 	private int listID = -1;
 
 	private final PointTransformation pt = new PointTransformation() {
@@ -123,7 +127,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			myMaxDim = myHeight;
 		}
 
-		z = (float) (0.1 / myScaleRate);
+		z = 0.0f;
+		// z = (float) (0.1 / myScaleRate);
 		graphicsGLUtils = new MyGraphics();
 	}
 
@@ -469,7 +474,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		System.out.println("DisplayGraphics::drawGeometry: "
 				+ geometry.getGeometryType());
 		AddGeometryInGeometries(geometry, color);
-		
+
 		// Use to respect IDisplaySurface interface
 		boolean f = geometry instanceof LineString
 				|| geometry instanceof MultiLineString ? false : fill;
@@ -477,27 +482,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return sw.toShape(geometry).getBounds2D();
 		// return drawShape(color, sw.toShape(geometry), f, angle);
 	}
-	
-    public void draw(GL gl){
-        
-        if(listID == -1){
-            createDisplayList(gl);            
-        }
-        gl.glCallList(listID);
 
-    }
-    
-    private void createDisplayList(GL gl){
-        GLU glu = new GLU();
-        GLUquadric quadric = glu.gluNewQuadric();
-        listID =  gl.glGenLists(1);
-        gl.glNewList(listID, GL.GL_COMPILE);
-        gl.glPushMatrix();
-            gl.glColor3d(1,1,1);
-            glu.gluSphere(quadric, 1+0.4, 30, 30);
-        gl.glPopMatrix();
-        gl.glEndList();
-    }
+	public void draw(GL gl) {
+
+		if (listID == -1) {
+			createDisplayList(gl);
+		}
+		gl.glCallList(listID);
+
+	}
+
+	private void createDisplayList(GL gl) {
+		GLU glu = new GLU();
+		GLUquadric quadric = glu.gluNewQuadric();
+		listID = gl.glGenLists(1);
+		gl.glNewList(listID, GL.GL_COMPILE);
+		gl.glPushMatrix();
+		gl.glColor3d(1, 1, 1);
+		glu.gluSphere(quadric, 1 + 0.4, 30, 30);
+		gl.glPopMatrix();
+		gl.glEndList();
+	}
 
 	/**
 	 * Method drawShape.
@@ -699,7 +704,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curGeometry.vertices[0].z = z;
 		curGeometry.vertices[0].u = 6.0f;
 		curGeometry.vertices[0].v = 0.0f;
-		//A point size is equal to 1% of the max size of the environment.
+		// A point size is equal to 1% of the max size of the environment.
 		curGeometry.size = 0.01f * this.myMaxDim;
 		curGeometry.color = color;
 		curGeometry.type = "Point";
@@ -750,32 +755,35 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			// System.out.println("R:"+(float)curGeometry.color.getRed()/255+"G:"+(float)curGeometry.color.getGreen()/255+"B:"+(float)curGeometry.color.getBlue()/255);
 			if (curGeometry.type == "MultiPolygon"
 					|| curGeometry.type == "Polygon") {
-				
-				if (ThreeD==true){
-					myGl.glColor3f(0.0f,0.0f,1.0f);
-					//top face
-					float z_offset= 1.0f;
-					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,z_offset, myScaleRate);
-					//base face
-					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,0.0f, myScaleRate);
+
+				if (ThreeD == true) {
+					myGl.glColor3f(0.0f, 0.0f, 1.0f);
+					// top face
+					float z_offset = 1.0f;
+					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
+							curGeometry, z_offset, myScaleRate);
+					// base face
+					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
+							curGeometry, 0.0f, myScaleRate);
 					// all the front-face of the polygons as a verticle quads.
-					graphicsGLUtils.Draw3DNormalizeQuads(myGl, myGlu, curGeometry,z_offset, myScaleRate);
+					graphicsGLUtils.Draw3DNormalizeQuads(myGl, myGlu,
+							curGeometry, z_offset, myScaleRate);
+				} else {
+					graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu,
+							curGeometry, 0.0f, myScaleRate);
 				}
-				else{
-				graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, curGeometry,0.0f, myScaleRate);
-				}
-				
+
 			} else if (curGeometry.type == "MultiLineString"
 					|| curGeometry.type == "LineString") {
 				graphicsGLUtils.DrawNormalizeLine(myGl, myGlu, curGeometry,
-						myScaleRate,1.2f);
+						myScaleRate, 1.2f);
 			} else if (curGeometry.type == "Point"
 					|| curGeometry.type == "Circle") {
 				graphicsGLUtils.DrawNormalizeCircle(myGl, myGlu,
 						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
-						curGeometry.vertices[0].z, 20, curGeometry.size/2,
+						curGeometry.vertices[0].z, 20, curGeometry.size / 2,
 						myScaleRate);
-				
+
 			}
 
 		}
@@ -789,6 +797,22 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		float alpha = 0.9f;
 		myGl.glColor4f(0.0f, 0.0f, 1.0f, alpha);
+
+		GLUT glut = new GLUT();
+		myGl.glRasterPos3f(this.myWidth * this.myScaleRate / 2,
+				(this.myHeight * this.myScaleRate) * 0.01f, 0.0f);
+		glut.glutBitmapString(
+				GLUT.BITMAP_TIMES_ROMAN_10,
+				String.valueOf(this.myWidth) + "("
+						+ String.valueOf(this.myWidth * this.myScaleRate) + ")");
+
+		myGl.glRasterPos3f((this.myWidth * this.myScaleRate) * 1.01f,
+				-(this.myHeight * this.myScaleRate / 2), 0.0f);
+		glut.glutBitmapString(
+				GLUT.BITMAP_TIMES_ROMAN_10,
+				String.valueOf(this.myHeight) + "("
+						+ String.valueOf(this.myHeight * this.myScaleRate)
+						+ ")");
 
 		MyGeometry backgroundGeometry = new MyGeometry(4);
 
@@ -822,6 +846,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		graphicsGLUtils.DrawNormalizeGeometry(myGl, myGlu, backgroundGeometry,
 				0.0f, myScaleRate);
+	}
+
+	public void DrawScale() {
+		GLUT glut = new GLUT();
+		// Draw Scale
+		float y_text_pos = -(this.myHeight * this.myScaleRate + this.myHeight
+				* this.myScaleRate * 0.05f);
+		myGl.glRasterPos3f(0.0f, y_text_pos * 0.99f, 0.0f);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
+				"1:" + String.valueOf(1 / this.myScaleRate));
+
+		myGl.glBegin(GL.GL_LINES);
+		myGl.glVertex3f(0, 0 + y_text_pos, 0);
+		myGl.glVertex3f(1, 0 + y_text_pos, 0);
+
+		myGl.glVertex3f(0, -0.05f + y_text_pos, 0);
+		myGl.glVertex3f(0, 0.05f + y_text_pos, 0);
+
+		myGl.glVertex3f(1, -0.05f + y_text_pos, 0);
+		myGl.glVertex3f(1, 0.05f + y_text_pos, 0);
+		myGl.glEnd();
 	}
 
 }
