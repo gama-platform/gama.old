@@ -17,6 +17,7 @@ import static javax.media.opengl.GL.GL_NICEST;
 import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
 import static javax.media.opengl.GL.GL_POSITION;
 import static javax.media.opengl.GL.GL_SMOOTH;
+import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -24,6 +25,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
 import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.GLUT;
 
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
@@ -88,6 +90,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 
 		//((JOGLAWTDisplayGraphics) openGLGraphics).DrawEnvironmentBounds();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
+		this.DrawXYZAxis();
 		//((JOGLAWTDisplayGraphics) openGLGraphics).draw(gl);
 
 		// this.DrawOpenGLHelloWorldShape(gl);
@@ -179,6 +182,54 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
 				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
 				1.0, 0.0);
+		
+	}
+	
+	public void DrawXYZAxis(){
+		GLUT glut = new GLUT();
+		//X Axis
+	    gl.glRasterPos3f(1.2f, 0.0f, 0.0f);   
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "x");
+		gl.glBegin(GL.GL_LINES);
+			gl.glColor3f(1,0,0);
+			gl.glVertex3f(0,0,0);
+			gl.glVertex3f(1,0,0);
+		gl.glEnd();
+			
+		gl.glBegin(GL_TRIANGLES); 
+	      gl.glVertex3f(1.0f, 0.05f, 0.0f);
+	      gl.glVertex3f(1.0f, -0.05f, 0.0f);
+	      gl.glVertex3f(1.1f, 0.0f, 0.0f);
+	    gl.glEnd();
+	    
+	    //Y Axis
+	    gl.glRasterPos3f(0.0f, 1.2f, 0.0f);    
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "y");
+	    gl.glBegin(GL.GL_LINES);
+			gl.glColor3f(0,1,0);
+			gl.glVertex3f(0,0,0);
+			gl.glVertex3f(0,1,0);
+		gl.glEnd();
+		gl.glBegin(GL_TRIANGLES); 
+	      gl.glVertex3f(-0.05f, 1f, 0.0f);
+	      gl.glVertex3f(0.05f, 1f, 0.0f);
+	      gl.glVertex3f(0.0f, 1.1f, 0.0f);
+	    gl.glEnd();
+		
+		//Z Axis
+	    gl.glRasterPos3f(0.0f, 0.0f, 1.2f);    
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z");
+		gl.glBegin(GL.GL_LINES);
+			gl.glColor3f(0,0,1);
+			gl.glVertex3f(0,0,0);
+			gl.glVertex3f(0,0,1);
+	    gl.glEnd();
+	    
+	    gl.glBegin(GL_TRIANGLES); 
+	      gl.glVertex3f(0.0f, 0.05f, 1.0f);
+	      gl.glVertex3f(0.0f, -0.05f, 1.0f);
+	      gl.glVertex3f(0.0f, 0.0f, 1.1f);
+	    gl.glEnd();
 		
 	}
 

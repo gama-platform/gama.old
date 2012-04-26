@@ -246,7 +246,7 @@ public class Camera {
 
 	public void InitializeCamera(float envWidth, float envHeight) {
 
-		this.yaw = -1.5;
+		this.yaw = 0.0f;
 		this.pitch = 0.0f;
 		
 		float scale_rate, maxDim;
@@ -266,14 +266,23 @@ public class Camera {
 		// FIXME: This need to be normalize
 		this.setzPos(maxDim / 50 + 5.0f);
 		this.setzLPos(0.0f);
+		
+//		//Center on (0,0,0) point.
+//		this.setxPos(0);
+//		this.setxLPos(0);
+//		this.setyPos(0);
+//		this.setyLPos(0);
+//		this.PrintParam();
+//		this.setzPos(10);
+//		this.setzLPos(0);
 
 	}
 	
 	
 	public void Initialize3DCamera(float envWidth, float envHeight) {
 
-		this.yaw = -1.5;
-		this.pitch = 1.5f;
+		this.yaw = -1.5f;
+		this.pitch = 0.5f;
 		
 		float scale_rate, maxDim;
 
