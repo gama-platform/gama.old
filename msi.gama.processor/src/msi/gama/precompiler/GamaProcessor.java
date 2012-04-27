@@ -112,7 +112,7 @@ public class GamaProcessor extends AbstractProcessor {
 				svars.add(a);
 			}
 		}
-		store.get(GamlProperties.VARS).put("actions_args", svars);
+		// store.get(GamlProperties.VARS).put("actions_args", svars);
 	}
 
 	private void processAction(final Set<? extends Element> set) {
@@ -327,13 +327,7 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 		final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
 		grammarWriter.append("model std").append('\n').println("_gaml {");
-		// "_unary" put on purpose here, to allow binary keywords to be used as operators
-		// printProps(grammarWriter, "Binary keywords", "_unary",
-		// store.get(GamlProperties.BINARIES));
-		// shouldnt have doublons here:
 
-		// printPropsNoDoublons(grammarWriter, "Reserved keywords (unaries)", "_unary",
-		// store.get(GamlProperties.UNARIES));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
 			store.get(GamlProperties.SKILLS));
 		printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
@@ -349,13 +343,24 @@ public class GamaProcessor extends AbstractProcessor {
 	private void printPropsNoDoublons(final PrintWriter writer, final String t, final String prop,
 		final GamlProperties map) {
 		writer.append("\n//").println(t);
-		for ( String s : map.values() ) {
-			if ( !lreserved.contains(s) ) {
-				// exclude the forbidden name & doublons (example: unaries->casting & types)
-				writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-				lreserved.add(s);
+
+		for ( String s : map.keySet() ) {
+			writer.println("// " + s);
+			for ( String name : map.get(s) ) {
+				if ( !lreserved.contains(name) ) {
+					writer.append("\t ").append(prop).append(" &").append(name).println("&;");
+					lreserved.add(s);
+				}
 			}
 		}
+
+		// for ( String s : map.values() ) {
+		// if ( !lreserved.contains(s) ) {
+		// // exclude the forbidden name & doublons (example: unaries->casting & types)
+		// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
+		// lreserved.add(s);
+		// }
+		// }
 	}
 
 	//
