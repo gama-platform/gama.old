@@ -19,15 +19,36 @@
 
 package msi.gama.jogl;
 
+import static javax.media.opengl.GL.GL_NEAREST;
+import static javax.media.opengl.GL.GL_ONE;
+import static javax.media.opengl.GL.GL_REPEAT;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
 import static javax.media.opengl.GL.GL_TRIANGLES;
+import javax.media.opengl.GLContext;
 
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.*;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+import javax.media.opengl.Threading;
+import com.sun.opengl.util.texture.*;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
@@ -35,6 +56,7 @@ import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 
 import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.texture.TextureIO;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Point;
@@ -76,11 +98,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// Handle opengl primitive.
 	public MyGraphics graphicsGLUtils;
 
-	// Each geometry drawn is stored in a tab.
+	// need to have the GLRenderer to enable texture mapping.
+	public JOGLAWTGLRenderer myGLRender;
+
+	// Each geometry drawn is stored in a list.
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
+	// each Imahe is stored in a list
+	public ArrayList<MyImage> myImages = new ArrayList<MyImage>();
+
 	// Define the environment properties.
-	public float myWidth, myHeight, myMaxDim;;
+	public float myWidth, myHeight, myMaxDim;
+
+	// FIXME: need to be defien elsewhere (not as global variable).
+	private TextureCoords textureCoords;
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
@@ -113,8 +144,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param float env_height
 	 * @param float scale_rate
 	 */
-	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu, float env_width,
-			float env_height) {
+	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu,
+			JOGLAWTGLRenderer gLRender, float env_width, float env_height) {
 		myGl = gl;
 		myGlu = glu;
 		myWidth = env_width;
@@ -128,6 +159,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		z = 0.0f;
 		graphicsGLUtils = new MyGraphics();
+
+		myGLRender = gLRender;
 	}
 
 	/**
@@ -325,11 +358,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 			final boolean smooth) {
+		System.out.println("DrawImage");
 		AffineTransform saved = g2.getTransform();
 		if (angle != null) {
 			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY
 					+ curHeight / 2);
 		}
+
+		// AddCircleInGeometries(curX, curY, Color.black, curWidth / 100);
+
+		AddImageInImages(img, curX, curY);
+
 		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
 		g2.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
@@ -369,7 +408,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		System.out.println("DrawCircle");
 		// FIXME: We must define the size of the circle.Not sure if you must use
 		// curWidth
 		AddCircleInGeometries(curX, curY, c, curWidth);
@@ -726,6 +764,46 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	}
 
+	private void AddImageInImages(final BufferedImage img, int curX, int curY) {
+		final MyImage curImage = new MyImage();
+		curImage.image = img;
+		curImage.x = (float) (curX);
+		curImage.y = (float) (curY);
+		this.myImages.add(curImage);
+		// FIXME: the texture initialization should be done here (problem of
+		// threading)
+		//myGLRender.InitTexture(img);
+		
+		final Runnable openGLInitTexture= new Runnable() {
+
+			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
+			@Override
+			public void run() {
+				myGLRender.InitTexture(img);
+			}
+		};
+		
+		
+//		if (!isSingleThreaded()) {
+//		      throw new GLException ("Should only call this in single-threaded mode");
+//		    }
+//
+//		    if (isOpenGLThread()) {
+//		      throw new GLException ("Should only call this from other threads than the OpenGL thread");
+//		    }   
+		EventQueue.invokeLater(openGLInitTexture);
+//		    try {
+//				EventQueue.invokeAndWait(openGLInitTexture);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (InvocationTargetException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		
+	}
+
 	private void AddShapeInGeometries(int x, int y, Color color) {
 		MyGeometry curGeometry = new MyGeometry(1);
 		// FIXME: why we need to use currentScale?
@@ -787,6 +865,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void CleanGeometries() {
 		this.myGeometries.clear();
+	}
+
+	public void CleanImages() {
+		this.myImages.clear();
+	}
+
+	public void DrawMyImages() {
+		Iterator<MyImage> it = this.myImages.iterator();
+		while (it.hasNext()) {
+			MyImage curImage = (MyImage) it.next();
+			myGLRender.DrawTexture(0, curImage);
+		}
 	}
 
 	public void DrawEnvironmentBounds() {

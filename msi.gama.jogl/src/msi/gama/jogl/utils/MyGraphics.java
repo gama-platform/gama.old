@@ -1,12 +1,26 @@
 package msi.gama.jogl.utils;
 
+import static javax.media.opengl.GL.GL_NEAREST;
+import static javax.media.opengl.GL.GL_ONE;
 import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_QUADS;
+import static javax.media.opengl.GL.GL_REPEAT;
+import static javax.media.opengl.GL.GL_SRC_ALPHA;
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
+import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
+import com.sun.opengl.util.texture.*;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -132,6 +146,35 @@ public class MyGraphics {
 		this.DrawLine(gl, glu, geometry, 1.0f);
 
 	}
+	
+	public void DrawTexturedQuad(GL gl, GLU glu, MyImage img, float z_offset){
+
+		
+		
+	gl.glColor3f(1.0f, (float) (Math.random()*1.0f), 0.0f);
+	
+//	TextureCoords textureCoords;
+//    textureCoords = img.texture.getImageTexCoords();
+//    float textureTop = textureCoords.top();
+//    float textureBottom = textureCoords.bottom();
+//    float textureLeft = textureCoords.left();
+//    float textureRight = textureCoords.right();
+//    
+//    img.texture.bind();
+//
+//gl.glBegin(GL_QUADS);
+//	      // Front Face
+//	      gl.glTexCoord2f(textureLeft, textureBottom);
+//	      gl.glVertex3f(img.x, -(img.y+img.image.getHeight()), z_offset); // bottom-left of the texture and quad
+//	      gl.glTexCoord2f(textureRight, textureBottom);
+//	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y+img.image.getHeight()), z_offset); // bottom-right of the texture and quad
+//	      gl.glTexCoord2f(textureRight, textureTop);
+//	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y), z_offset); // top-right of the texture and quad
+//	     gl.glTexCoord2f(textureLeft, textureTop);
+//	      gl.glVertex3f(img.x, -img.y, z_offset); // top-left of the texture and quad	      
+//	      gl.glEnd();
+		
+	}
 
 	public void Draw3DQuads(GL gl, GLU glu, MyGeometry geometry, float z_offset) {
 		int curPolyGonNumPoints = geometry.vertices.length;
@@ -185,7 +228,7 @@ public class MyGraphics {
 						* (vertices[i].y + vertices[i1].y);
 			}
 			normal.normalize(normal);
-			// FIXME: The normal is not wel computed.
+			// FIXME: The normal is not well computed.
 			// gl.glNormal3f((float)normal.x, (float)normal.y, (float)normal.z);
 			gl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
 			gl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
@@ -196,7 +239,7 @@ public class MyGraphics {
 		}
 
 	}
-
+	
 	public void DrawOpenGLHelloWorldShape(GL gl) {
 
 		float red = (float) (Math.random()) * 1;
@@ -212,7 +255,6 @@ public class MyGraphics {
 		gl.glVertex3f(0.0f, 0.0f, 0.0f);
 		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
 		gl.glEnd();
-
 	}
 
 }

@@ -445,6 +445,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 			}
 			canBeUpdated(false);
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
+			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
