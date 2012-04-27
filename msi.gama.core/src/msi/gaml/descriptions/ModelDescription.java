@@ -35,8 +35,6 @@ import msi.gaml.types.*;
  */
 public class ModelDescription extends SymbolDescription {
 
-	private static short id_provider;
-	short id;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
 	private IDescription environment;
@@ -50,7 +48,6 @@ public class ModelDescription extends SymbolDescription {
 	public ModelDescription(final String fileName, final ISyntacticElement source) {
 		super(IKeyword.MODEL, null, new ArrayList(), source, DescriptionFactory.getModelFactory()
 			.getMetaDescriptionFor(null, IKeyword.MODEL));
-		id = id_provider++;
 		types = new TypesManager();
 		setModelFileName(fileName);
 	}
@@ -59,13 +56,9 @@ public class ModelDescription extends SymbolDescription {
 		try {
 			return FileUtils.constructAbsoluteFilePath(filePath, fileName, mustExist);
 		} catch (GamaRuntimeException e) {
-			flagError(e.getMessage());
+			flagError(e.getMessage(), IGamlIssue.GENERAL);
 			return filePath;
 		}
-	}
-
-	public short getId() {
-		return id;
 	}
 
 	/**
@@ -158,49 +151,54 @@ public class ModelDescription extends SymbolDescription {
 	public SpeciesDescription getSpeciesDescription(final String spec) {
 		// if ( spec == null || worldSpecies == null ) { return null; }
 		SpeciesDescription result = allSpeciesDescription.get(spec);
-		return result == null ? findSpecies(worldSpecies, spec) : result;
+		return result; // == null ? findSpecies(worldSpecies, spec) : result;
 	}
 
-	/**
-	 * Search for a species with the specified name.
-	 * 
-	 * The eligible species for the search may be the topSpecies itself or one of the micro-species
-	 * of the topSpecies.
-	 * 
-	 * @param topSpecies the top species of a branch.
-	 * @param specToFind the name of the species to be searched
-	 * @return a species with the specified name or null.
-	 */
-	private SpeciesDescription findSpecies(final SpeciesDescription topSpecies,
-		final String specToFind) {
-		if ( topSpecies == null || specToFind == null ) { return null; }
-
-		if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }
-
-		List<SpeciesDescription> microSpecs = topSpecies.getMicroSpecies();
-
-		for ( SpeciesDescription micro : microSpecs ) {
-			if ( micro.getName().equals(specToFind) ) { return micro; }
-		}
-
-		/*
-		 * Avoid infinite recursion.
-		 * 
-		 * When a species is a sub-species of its direct macro-species,
-		 * it is a micro-species of itself thus this leads to infinite recursion.
-		 */
-		if ( microSpecs.contains(topSpecies) ) {
-			microSpecs.remove(topSpecies);
-		}
-
-		SpeciesDescription retVal;
-		for ( SpeciesDescription micro : microSpecs ) {
-			retVal = findSpecies(micro, specToFind);
-			if ( retVal != null ) { return retVal; }
-		}
-
-		return null;
+	public boolean hasSpeciesDescription(final String spec) {
+		return spec != null && allSpeciesDescription.containsKey(spec);
 	}
+
+	// /**
+	// * Search for a species with the specified name.
+	// *
+	// * The eligible species for the search may be the topSpecies itself or one of the
+	// micro-species
+	// * of the topSpecies.
+	// *
+	// * @param topSpecies the top species of a branch.
+	// * @param specToFind the name of the species to be searched
+	// * @return a species with the specified name or null.
+	// */
+	// private SpeciesDescription findSpecies(final SpeciesDescription topSpecies,
+	// final String specToFind) {
+	// if ( topSpecies == null || specToFind == null ) { return null; }
+	//
+	// if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }
+	//
+	// List<SpeciesDescription> microSpecs = topSpecies.getMicroSpecies();
+	//
+	// for ( SpeciesDescription micro : microSpecs ) {
+	// if ( micro.getName().equals(specToFind) ) { return micro; }
+	// }
+	//
+	// /*
+	// * Avoid infinite recursion.
+	// *
+	// * When a species is a sub-species of its direct macro-species,
+	// * it is a micro-species of itself thus this leads to infinite recursion.
+	// */
+	// if ( microSpecs.contains(topSpecies) ) {
+	// microSpecs.remove(topSpecies);
+	// }
+	//
+	// SpeciesDescription retVal;
+	// for ( SpeciesDescription micro : microSpecs ) {
+	// retVal = findSpecies(micro, specToFind);
+	// if ( retVal != null ) { return retVal; }
+	// }
+	//
+	// return null;
+	// }
 
 	@Override
 	public IType getTypeOf(final String s) {
@@ -214,6 +212,13 @@ public class ModelDescription extends SymbolDescription {
 	@Override
 	public SpeciesDescription getSpeciesContext() {
 		return null; // return getWorldSpecies() ?
+	}
+
+	/**
+	 * @return
+	 */
+	public Set<String> getExperimentNames() {
+		return experiments.keySet();
 	}
 
 }

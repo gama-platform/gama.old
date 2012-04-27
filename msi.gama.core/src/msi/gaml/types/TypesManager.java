@@ -20,6 +20,7 @@ package msi.gaml.types;
 
 import static msi.gaml.types.IType.*;
 import java.util.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gaml.descriptions.SpeciesDescription;
 
 public class TypesManager {
@@ -59,7 +60,8 @@ public class TypesManager {
 		String name = species.getName();
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {
-			species.flagError("Species " + name + " already declared. Species name must be unique");
+			species.flagError("Species " + name + " already declared. Species name must be unique",
+				IGamlIssue.DUPLICATE_NAME, null, name);
 		}
 
 		short newId = ++CURRENT_INDEX;

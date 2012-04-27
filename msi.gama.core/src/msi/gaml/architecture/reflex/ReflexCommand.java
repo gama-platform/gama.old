@@ -42,7 +42,6 @@ public class ReflexCommand extends AbstractCommandSequence {
 
 	public ReflexCommand(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.WHEN);
 		when = getFacet(IKeyword.WHEN);
 		if ( hasFacet(IKeyword.NAME) ) {
 			setName(getLiteral(IKeyword.NAME));

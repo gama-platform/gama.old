@@ -20,7 +20,6 @@ package msi.gaml.species;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.commands;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -31,6 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gaml.architecture.reflex.ReflexCommand;
 import msi.gaml.commands.*;
 import msi.gaml.descriptions.*;
@@ -57,6 +57,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SKILLS, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = IKeyword.BASE, type = IType.LABEL, optional = true),
+	@facet(name = "compile", type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER_STR, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) }, omissible = IKeyword.NAME)
@@ -65,13 +66,6 @@ public class GamlSpecies extends AbstractSpecies {
 
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.WIDTH);
-		verifyFacetType(IKeyword.HEIGHT);
-		verifyFacetType(IKeyword.NEIGHBOURS);
-		verifyFacetType(IKeyword.TORUS);
-		verifyFacetType(IKeyword.FREQUENCY);
-		verifyFacetType(IKeyword.SCHEDULES);
-		verifyFacetType(IKeyword.TOPOLOGY);
 	}
 
 	@Override

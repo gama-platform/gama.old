@@ -24,11 +24,11 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
@@ -64,10 +64,6 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	public ModelEnvironment(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.HEIGHT);
-		verifyFacetType(IKeyword.TORUS);
-		verifyFacetType(IKeyword.WIDTH);
-		verifyFacetType(IKeyword.BOUNDS);
 		boundsExp = getFacet(IKeyword.BOUNDS);
 		widthExp = getFacet(IKeyword.WIDTH);
 		heightExp = getFacet(IKeyword.HEIGHT);
@@ -84,8 +80,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			GamaPoint wh = (GamaPoint) bounds;
 			width = wh.x;
 			height = wh.y;
-		} else if ( bounds instanceof String || bounds instanceof GamaFile) {
-			String boundsStr = bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
+		} else if ( bounds instanceof String || bounds instanceof GamaFile ) {
+			String boundsStr =
+				bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
 			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
 				try {
 					File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));

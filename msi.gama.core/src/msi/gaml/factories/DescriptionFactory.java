@@ -19,9 +19,9 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
 
 /**
@@ -36,7 +36,7 @@ public class DescriptionFactory {
 		final String keyword, final IDescription superDesc, final List<IDescription> children,
 		final Facets facets) {
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
-		AbstractStatementDescription element = new StringBasedStatementDescription(keyword, facets);
+		ISyntacticElement element = new SyntheticStatement(keyword, facets);
 		return factory.createDescription(element, superDesc, children);
 	}
 

@@ -26,16 +26,16 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.layers.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -51,7 +51,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayerDisplayOutput.JAVA2D,
-		LayerDisplayOutput.OPENGL}, optional = true),
+		LayerDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
@@ -67,16 +67,13 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 	String snapshotFileName;
 	private boolean autosave = false;
 	private String displayType = JAVA2D;
-	
+
 	// private GLContext glcontext;
 	// private GLCanvas glcanvas;
 
 	public LayerDisplayOutput(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.BACKGROUND);
-		verifyFacetType(IKeyword.AUTOSAVE);
-		verifyFacetType(IKeyword.TYPE);
-		
+
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}

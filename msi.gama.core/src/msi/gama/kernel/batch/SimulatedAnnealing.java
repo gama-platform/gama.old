@@ -21,11 +21,11 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -59,14 +59,6 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	public SimulatedAnnealing(final IDescription species) {
 		super(species);
-		verifyFacetType(IKeyword.MAXIMIZE);
-		verifyFacetType(IKeyword.MINIMIZE);
-		verifyFacetType(IKeyword.AGGREGATION);
-		verifyFacetType(TEMP_END);
-		verifyFacetType(TEMP_DECREASE);
-		verifyFacetType(TEMP_INIT);
-		verifyFacetType(NB_ITER);
-
 	}
 
 	@Override

@@ -73,6 +73,9 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateCommand.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
 		}
+		if ( kw.equals(DO) ) {
+			assertActionIsExisting(cd, ACTION);
+		}
 		if ( kw.equals(FsmTransitionCommand.TRANSITION) ) {
 			assertBehaviorIsExisting(cd, TO);
 		}
@@ -149,10 +152,14 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			IExpression e = null;
 			IDescription superDesc = cd.getSuperDescription();
 			try {
-				if ( argFacets.containsKey(VALUE) ) {
-					e = argFacets.get(VALUE).compile(superDesc, getExpressionFactory());
-				} else if ( argFacets.containsKey(DEFAULT) ) {
-					e = argFacets.get(DEFAULT).compile(superDesc, getExpressionFactory());
+				IExpressionDescription ed = argFacets.get(VALUE);
+				if ( ed != null ) {
+					e = ed.compile(superDesc, getExpressionFactory());
+				} else {
+					ed = argFacets.get(DEFAULT);
+					if ( ed != null ) {
+						e = ed.compile(superDesc, getExpressionFactory());
+					}
 				}
 			} catch (RuntimeException e1) {
 				cd.flagError("Error in compiling argument " + name + ": " + e1.getMessage(), name);
@@ -231,7 +238,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			IVarExpression exp =
 				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType,
 					getExpressionFactory());
-			ff.get(tag).setExpression(exp);
+			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd);
 		}

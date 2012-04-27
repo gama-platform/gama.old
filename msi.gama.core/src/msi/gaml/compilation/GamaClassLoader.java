@@ -21,6 +21,36 @@ import org.osgi.framework.Bundle;
  */
 public class GamaClassLoader extends ClassLoader {
 
+	public static class ListBasedLoader extends ClassLoader {
+
+		ListBasedLoader() {}
+
+		Set<Class> classes = new LinkedHashSet();
+
+		public boolean addNewClass(final Class c) {
+			return classes.add(c);
+		}
+
+		@Override
+		protected synchronized Class loadClass(final String name, final boolean resolve)
+			throws ClassNotFoundException {
+			Class clazz = findClass(name);
+			if ( resolve ) {
+				resolveClass(clazz);
+			}
+			return clazz;
+		}
+
+		@Override
+		protected Class findClass(final String name) throws ClassNotFoundException {
+			for ( Class c : classes ) {
+				if ( c.getCanonicalName().equals(name) ) { return c; }
+			}
+			return null;
+		}
+
+	}
+
 	public class BundleClassLoader extends ClassLoader {
 
 		private final Bundle bundle;
@@ -74,7 +104,7 @@ public class GamaClassLoader extends ClassLoader {
 	}
 
 	private static GamaClassLoader loader;
-	private final List<BundleClassLoader> loaders = new ArrayList();
+	private final List<ClassLoader> loaders = new ArrayList();
 
 	public static GamaClassLoader getInstance() {
 		if ( loader == null ) {
@@ -83,11 +113,23 @@ public class GamaClassLoader extends ClassLoader {
 		return loader;
 	}
 
-	private GamaClassLoader() {}
+	private final static ListBasedLoader customLoader = new ListBasedLoader();
 
-	public BundleClassLoader addBundle(final Bundle bundle) {
+	private GamaClassLoader() {
+		super();
+	}
+
+	public boolean addNewClass(final Class c) {
+		return customLoader.addNewClass(c);
+	}
+
+	public ClassLoader addBundle(final Bundle bundle) {
 		// TODO verify if the bundle is not already known
 		final BundleClassLoader loader = createBundleClassLoaderFor(bundle);
+		return addLoader(loader);
+	}
+
+	public ClassLoader addLoader(final ClassLoader loader) {
 		loaders.add(loader);
 		return loader;
 	}
@@ -100,7 +142,9 @@ public class GamaClassLoader extends ClassLoader {
 				return loaders.get(i).loadClass(name);
 			} catch (ClassNotFoundException cnfe) {}
 		}
-		throw new ClassNotFoundException(name + " not found in GAMA");
+		Class c = customLoader.findClass(name);
+		if ( c == null ) { throw new ClassNotFoundException(name + " not found in GAMA"); }
+		return c;
 
 	}
 
@@ -113,15 +157,16 @@ public class GamaClassLoader extends ClassLoader {
 		return null;
 	}
 
-	@Override
-	protected Enumeration findResources(final String name) throws IOException {
-		for ( int i = 0, n = loaders.size(); i < n; i++ ) {
-			try {
-				return loaders.get(i).findResources(name);
-			} catch (IOException cnfe) {}
-		}
-		throw new IOException("no resources named " + name + " found in GAMA");
-	}
+	//
+	// @Override
+	// protected Enumeration findResources(final String name) throws IOException {
+	// for ( int i = 0, n = loaders.size(); i < n; i++ ) {
+	// try {
+	// return loaders.get(i).findResources(name);
+	// } catch (IOException cnfe) {}
+	// }
+	// throw new IOException("no resources named " + name + " found in GAMA");
+	// }
 
 	@Override
 	public URL getResource(final String name) {

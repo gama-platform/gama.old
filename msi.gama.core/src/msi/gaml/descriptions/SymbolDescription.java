@@ -59,8 +59,8 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return meta;
 	}
 
-	private void flagError(final String s, final boolean warning, final Object facet)
-		throws GamaRuntimeException {
+	private void flagError(final String s, final String code, final boolean warning,
+		final Object facet, final String ... data) throws GamaRuntimeException {
 		ISyntacticElement e =
 			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSource();
 		IDescription desc = this;
@@ -73,27 +73,34 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
-		new GamlCompilationError(s, e, warning, facet);
+		new GamlCompilationError(this, s, code, e, warning, facet, data);
 	}
 
 	@Override
-	public void flagError(final String s) {
-		flagError(s, null);
+	public void flagError(final String message) {
+		flagError(message, IGamlIssue.GENERAL);
 	}
 
 	@Override
-	public void flagError(final String s, final Object facet) {
-		flagError(s, false, facet);
+	public void flagError(final String message, final String code) {
+		flagError(message, code, false, null, (String[]) null);
 	}
 
 	@Override
-	public void flagWarning(final String s) {
-		flagError(s, true, null);
+	public void flagError(final String s, final String code, final Object facet,
+		final String ... data) {
+		flagError(s, code, false, facet, data);
 	}
 
 	@Override
-	public void flagWarning(final String s, final Object facet) {
-		flagError(s, true, facet);
+	public void flagWarning(final String message, final String code) {
+		flagError(message, code, true, null, (String[]) null);
+	}
+
+	@Override
+	public void flagWarning(final String s, final String code, final Object facet,
+		final String ... data) {
+		flagError(s, code, true, facet, data);
 	}
 
 	@Override
@@ -249,7 +256,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	 */
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String actualSpecies) {
-		IDescription model = getModelDescription();
+		ModelDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getSpeciesDescription(actualSpecies);
 	}

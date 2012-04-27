@@ -23,11 +23,11 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -66,7 +66,6 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		super.prepare(out, sim);
 
-		verifyFacetType(IKeyword.LINES);
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {
 			constantColor = Cast.asColor(sim, lineColor.value(sim));

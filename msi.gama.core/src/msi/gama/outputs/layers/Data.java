@@ -21,11 +21,11 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -53,9 +53,6 @@ public class Data extends Symbol {
 
 	public Data(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.VALUE);
-		verifyFacetType(IKeyword.COLOR);
-		verifyFacetType(IKeyword.STYLE);
 		computeRenderer();
 	}
 

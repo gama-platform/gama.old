@@ -32,13 +32,15 @@ import msi.gaml.types.IType;
  */
 public interface IDescription {
 
-	public void flagError(final String s);
+	public void flagError(final String message);
 
-	public void flagError(final String s, Object facet);
+	public void flagError(final String message, String code);
 
-	public void flagWarning(final String s);
+	public void flagError(final String message, String code, Object element, String ... data);
 
-	public void flagWarning(final String s, Object facet);
+	public void flagWarning(final String message, String code);
+
+	public void flagWarning(final String message, String code, Object element, String ... data);
 
 	public abstract String getKeyword();
 

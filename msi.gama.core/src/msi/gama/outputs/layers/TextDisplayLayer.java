@@ -21,11 +21,11 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -56,7 +56,6 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 
 	public TextDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		verifyFacetType(IKeyword.COLOR);
 		IExpression c = getFacet(IKeyword.COLOR);
 		color = c == null ? new JavaConstExpression(Cast.asColor(null, "white")) : c;
 		c = getFacet(IKeyword.FONT);

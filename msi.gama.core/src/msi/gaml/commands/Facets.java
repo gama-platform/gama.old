@@ -77,6 +77,18 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 		return put(key, new BasicExpressionDescription(expr));
 	}
 
+	@Override
+	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
+		IExpressionDescription previous = get(key);
+		super.put(key, expr);
+		if ( previous != null ) {
+			if ( previous.getAst() != null && expr.getAst() == null ) {
+				expr.setAst(previous.getAst());
+			}
+		}
+		return expr;
+	}
+
 	public boolean equals(final String key, final String o) {
 		IExpressionDescription f = get(key);
 		return f == null ? o == null : f.equalsString(o);

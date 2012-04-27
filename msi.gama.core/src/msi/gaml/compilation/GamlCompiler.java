@@ -443,7 +443,7 @@ public class GamlCompiler {
 
 	}
 
-	public static IAgentConstructor getAgentConstructor(final Class javaBase) {
+	public static synchronized IAgentConstructor getAgentConstructor(final Class javaBase) {
 		IAgentConstructor constructor = agentConstructors.get(javaBase);
 		if ( constructor == null ) {
 			constructor = buildAgentConstructor(javaBase);

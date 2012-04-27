@@ -21,6 +21,7 @@ package msi.gaml.expressions;
 import static msi.gama.common.interfaces.IKeyword.EACH;
 import static msi.gaml.expressions.IExpressionParser.*;
 import java.util.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
@@ -154,9 +155,10 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 					}
 				}
 				if ( temp_types.size() == 0 ) {
-					context.flagError("No operator found for applying '" + op + "' to " +
-						childType + " (operators available for " +
-						Arrays.toString(ops.keySet().toArray()) + ")");
+					context.flagError(
+						"No operator found for applying '" + op + "' to " + childType +
+							" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
+							")", IGamlIssue.UNMATCHED_UNARY);
 					return null;
 				}
 				childType = temp_types.get(0);
@@ -177,7 +179,8 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			final IOperator helper = ops.get(childType);
 			return helper.copy().init(op, child, null, context);
 		}
-		context.flagError("Unary operator " + op + " does not exist");
+		context.flagError("Unary operator " + op + " does not exist", IGamlIssue.UNKNOWN_UNARY,
+			null, op);
 		return null;
 
 	}
@@ -213,7 +216,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 				// No pair is matching the operand types, we throw an exception
 				context.flagError("No binary operator found for applying '" + op +
 					"' to left operand " + leftType.toString() + " and " + rightType.toString() +
-					" (operators available for " + map.keySet() + ")");
+					" (operators available for " + map.keySet() + ")", IGamlIssue.UNMATCHED_BINARY);
 				return null;
 			}
 			// We gather the first one
@@ -247,7 +250,8 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 			// And we return it.
 			return operator.init(op, left, right, context);
 		}
-		context.flagError("Operator: " + op + " does not exist");
+		context.flagError("Operator: " + op + " does not exist", IGamlIssue.UNKNOWN_BINARY, null,
+			op);
 		return null;
 	}
 

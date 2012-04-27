@@ -21,9 +21,9 @@ package msi.gaml.descriptions;
 import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpressionParser;
@@ -239,49 +239,38 @@ public class SymbolMetaDescription {
 
 	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
-		for ( String s : facets.keySet() ) {
-			FacetMetaDescription f = possibleFacets.get(s);
+		for ( String facetName : facets.keySet() ) {
+			FacetMetaDescription f = possibleFacets.get(facetName);
 			if ( f == null ) {
 				continue;
 			}
-			if ( f.types[0].equals(IType.LABEL) ) {
-				facets.put(f.name, facets.get(f.name).compileAsLabel());
-				// facets.compileAsLabel(f.name);
-				boolean found = false;
-				if ( f.values != null && f.values.length != 0 ) {
-					for ( String v : f.values ) {
-						if ( facets.equals(s, v) ) {
-							found = true;
+			if ( f.isLabel ) {
+				facets.put(facetName, facets.get(facetName).compileAsLabel());
+				if ( f.types[0].equals(IType.LABEL) ) {
+					if ( f.values != null && f.values.length != 0 ) {
+						boolean found = false;
+						for ( String possibleValue : f.values ) {
+							if ( facets.equals(facetName, possibleValue) ) {
+								found = true;
+								break;
+							}
+						}
+						if ( !found ) {
+							GamlCompilationError error =
+								new GamlCompilationError("The value of facet " + facetName +
+									" must be one of " + Arrays.toString(f.values), e);
+							error.setObjectOfInterest(facetName);
 						}
 					}
-					if ( !found ) {
+				} else {
+					String facetValue = facets.getLabel(facetName).trim();
+					if ( IExpressionParser.RESERVED.contains(facetValue) ) {
 						GamlCompilationError error =
-							new GamlCompilationError("The value of facet " + s +
-								" must be one of " + Arrays.toString(f.values), e);
-						error.setObjectOfInterest(s);
+							new GamlCompilationError(facetValue +
+								" is a reserved keyword. It cannot be used as an identifier", e);
+						error.setObjectOfInterest(facetValue);
 					}
 				}
-
-			} else if ( IType.ID.equals(f.types[0]) || IType.NEW_TEMP_ID.equals(f.types[0]) ||
-				IType.NEW_VAR_ID.equals(f.types[0]) || IType.TYPE_ID.equals(f.types[0]) ) {
-				facets.put(f.name, facets.get(f.name).compileAsLabel());
-				String id = facets.getLabel(s).trim();
-
-				if ( IExpressionParser.RESERVED.contains(id) ) {
-					GamlCompilationError error =
-						new GamlCompilationError(id +
-							" is a reserved keyword. It cannot be used as an identifiant", e);
-					error.setObjectOfInterest(id);
-				}
-				// if ( !id.isEmpty() && !Character.isJavaIdentifierStart(id.charAt(0)) ) { throw
-				// new GamlException(
-				// "Character " + id.charAt(0) + " not allowed at the beginning of identifiant" +
-				// id, e); }
-				// for ( char ch : id.toCharArray() ) {
-				// if ( !Character.isJavaIdentifierPart(ch) ) { throw new GamlException(
-				// "Character " + ch + " not allowed in identifiant " + id, e); }
-				// }
-
 			}
 
 		}

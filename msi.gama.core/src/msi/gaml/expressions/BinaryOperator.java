@@ -19,6 +19,7 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -115,9 +116,10 @@ public class BinaryOperator extends AbstractBinaryOperator {
 					type = r;
 					return;
 				}
-				context.flagError("Content types of left and right operands do not match (" +
-					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression");
+				context.flagError(
+					"Content types of left and right operands do not match (" + l.toString() + "," +
+						r.toString() + "). Impossible to infer the content type of the expression",
+					IGamlIssue.UNMATCHED_OPERANDS);
 			}
 			return;
 		}
@@ -158,9 +160,10 @@ public class BinaryOperator extends AbstractBinaryOperator {
 					contentType = r;
 					return;
 				}
-				context.flagError("Content types of left and right operands do not match (" +
-					l.toString() + "," + r.toString() +
-					"). Impossible to infer the content type of the expression");
+				context.flagError(
+					"Content types of left and right operands do not match (" + l.toString() + "," +
+						r.toString() + "). Impossible to infer the content type of the expression",
+					IGamlIssue.UNMATCHED_OPERANDS);
 			}
 			return;
 		}

@@ -55,10 +55,8 @@ public class SpeciesFactory extends SymbolFactory {
 		varFactory.addSpeciesNameAsType(name);
 		Class base = md.getBaseClass();
 		String secondBase = facets.getLabel(IKeyword.BASE);
-
-		String firstBase =
-			superDesc.getSpeciesDescription(name) != null ? superDesc.getSpeciesDescription(name)
-				.getFacets().getLabel(IKeyword.BASE) : null;
+		SpeciesDescription previous = superDesc.getSpeciesDescription(name);
+		String firstBase = previous != null ? previous.getFacets().getLabel(IKeyword.BASE) : null;
 
 		if ( secondBase == null && firstBase != null ) {
 			facets.putAsLabel(IKeyword.BASE, firstBase);
@@ -67,8 +65,9 @@ public class SpeciesFactory extends SymbolFactory {
 			try {
 				base = GamaClassLoader.getInstance().loadClass(facets.getLabel(IKeyword.BASE));
 			} catch (ClassNotFoundException e) {
-				superDesc.flagError("Impossible to instantiate '" + keyword + "' because: " +
-					e.getMessage());
+				superDesc.flagError(
+					"Impossible to instantiate '" + keyword + "' because: " + e.getMessage(),
+					IGamlIssue.GENERAL);
 			}
 		}
 		SpeciesDescription sd =

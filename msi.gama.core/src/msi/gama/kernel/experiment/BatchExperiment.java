@@ -20,16 +20,16 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import java.util.concurrent.Semaphore;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.batch.*;
 import msi.gama.outputs.FileOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -79,9 +79,6 @@ public class BatchExperiment extends AbstractExperiment {
 
 	public BatchExperiment(final IDescription description) throws GamaRuntimeException {
 		super(description);
-		verifyFacetType(IKeyword.KEEP_SEED);
-		verifyFacetType(IKeyword.REPEAT);
-		verifyFacetType(IKeyword.UNTIL);
 		IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
 			keep_seed = Cast.asBool(getExperimentScope(), expr.value(getExperimentScope()));
@@ -272,7 +269,8 @@ public class BatchExperiment extends AbstractExperiment {
 		try {
 			exploAlgo.initializeFor(this);
 		} catch (GamaRuntimeException e) {
-			description.flagError(e.getMessage());
+			// TODO Why make an error on the description ?
+			description.flagError(e.getMessage(), IGamlIssue.GENERAL);
 		}
 	}
 

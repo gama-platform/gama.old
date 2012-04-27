@@ -22,11 +22,11 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -53,7 +53,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	public static final short INSPECT_AGENT = 0;
 	public static final short INSPECT_DYNAMIC = 2;
 	public static final short INSPECT_SPECIES = 1;
-	
+
 	static int count = 0;
 
 	// TODO Add the dynamic inspector to the outputs (for the moment, only computed by the view
@@ -68,8 +68,6 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.REFRESH_EVERY);
-		verifyFacetType(IKeyword.TYPE);
 		String type = getLiteral(IKeyword.TYPE);
 		if ( value != null ) {
 			target = INSPECT_DYNAMIC;

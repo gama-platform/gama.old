@@ -11,20 +11,27 @@ import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.IExpressionDescription;
 
 /**
- * The class BasicSyntacticElement.
+ * The class AbstractStatementDescription.
  * 
  * @author drogoul
  * @since 5 févr. 2012
  * 
  */
-public abstract class AbstractStatementDescription implements ISyntacticElement {
+public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 
-	protected IErrorCollector collect; // for the moment, each exception points to it. Needs to be
-										// changed
 	ISyntacticElement parent;
 	String keyword;
 	protected Facets facets = new Facets();
 	List<ISyntacticElement> children;
+
+	public AbstractSyntacticStatement(final String keyword) {
+		this.keyword = keyword;
+	}
+
+	@Override
+	public void setKeyword(final String name) {
+		keyword = name;
+	}
 
 	public void dump() {
 		StringBuilder sb = new StringBuilder();
@@ -32,39 +39,21 @@ public abstract class AbstractStatementDescription implements ISyntacticElement 
 		System.out.println(sb.toString());
 	}
 
-	/**
-	 * @param sb
-	 */
 	private void dump(final StringBuilder sb) {
 		sb.append(keyword).append(" ");
-
 		for ( String key : facets.keySet() ) {
 			sb.append(key).append(": ").append(facets.get(key)).append(" ");
 		}
-
 		sb.append("\n");
-
 		if ( !getChildren().isEmpty() ) {
 			sb.append('[');
 		}
 		for ( ISyntacticElement elt : getChildren() ) {
-			((AbstractStatementDescription) elt).dump(sb);
+			((AbstractSyntacticStatement) elt).dump(sb);
 		}
 		if ( !getChildren().isEmpty() ) {
 			sb.append(']');
 		}
-	}
-
-	/**
- * 
- */
-	public AbstractStatementDescription(final String keyword) {
-		this.keyword = keyword;
-	}
-
-	@Override
-	public void setKeyword(final String name) {
-		keyword = name;
 	}
 
 	/**
@@ -146,15 +135,13 @@ public abstract class AbstractStatementDescription implements ISyntacticElement 
 	 */
 	@Override
 	public Object getUnderlyingElement(final Object facet) {
-		// if ( facet == null ) { return parent != null ? parent.getUnderlyingElement(facet) : null;
-		// }
 		IExpressionDescription f = facets.get(facet);
 		if ( f == null ) {
 			if ( facet instanceof IExpressionDescription ) {
 				f = (IExpressionDescription) facet;
 			}
 		}
-		return f.getAst();
+		return f == null ? null : f.getAst();
 	}
 
 	@Override
@@ -177,18 +164,9 @@ public abstract class AbstractStatementDescription implements ISyntacticElement 
 	 */
 	@Override
 	public IErrorCollector getErrorCollector() {
-		if ( collect == null ) {
-			if ( parent != null ) { return parent.getErrorCollector(); }
-			return null;
-		}
-		return collect;
+		if ( parent != null ) { return parent.getErrorCollector(); }
+		return null;
 	}
-
-	/**
-	 * @see msi.gama.common.interfaces.ISyntacticElement#isSynthetic()
-	 */
-	@Override
-	public abstract boolean isSynthetic();
 
 	/**
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getLabel(java.lang.String)

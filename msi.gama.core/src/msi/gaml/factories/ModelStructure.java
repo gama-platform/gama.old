@@ -8,12 +8,19 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.IErrorCollector;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.LabelExpressionDescription;
 import org.eclipse.core.runtime.FileLocator;
 
+/**
+ * 
+ * The class ModelStructure. Creates a structure where all the syntactic nodes coming from different
+ * models are put together
+ * 
+ * @author drogoul
+ * @since 24 avr. 2012
+ * 
+ */
 public class ModelStructure implements IKeyword {
 
 	static final List<String> GLOBAL_NODES = Arrays.asList(GLOBAL);
@@ -27,8 +34,7 @@ public class ModelStructure implements IKeyword {
 	private List<ISyntacticElement> modelNodes = new ArrayList();
 	private ISyntacticElement source;
 
-	public ModelStructure(final String uri, final List<ISyntacticElement> models,
-		final IErrorCollector collect) {
+	public ModelStructure(final String uri, final List<ISyntacticElement> models) {
 		try {
 			path = new File(FileLocator.resolve(new URL(uri)).getFile()).getAbsolutePath();
 		} catch (MalformedURLException e) {
@@ -36,46 +42,33 @@ public class ModelStructure implements IKeyword {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		init(buildNodes(models), collect);
+		for ( ISyntacticElement speciesNode : buildNodes(models) ) {
+			addSpecies(buildSpeciesStructure(speciesNode));
+		}
 	}
 
 	public ISyntacticElement getSource() {
 		return source;
 	}
 
-	private void init(final List<ISyntacticElement> speciesNodes, final IErrorCollector collect) {
-		for ( ISyntacticElement speciesNode : speciesNodes ) {
-			addSpecies(buildSpeciesStructure(speciesNode, collect));
-		}
-	}
-
 	public String getPath() {
 		return path;
 	}
 
-	private SpeciesStructure buildSpeciesStructure(final ISyntacticElement speciesNode,
-		final IErrorCollector collect) {
-		if ( speciesNode == null ) {
-			collect.add(new GamlCompilationError("Species element is null!", speciesNode));
-			return null;
-		}
-
-		SpeciesStructure species = new SpeciesStructure(speciesNode, collect);
-
+	private SpeciesStructure buildSpeciesStructure(final ISyntacticElement speciesNode) {
+		SpeciesStructure species = new SpeciesStructure(speciesNode);
 		// recursively accumulate micro-species
 		List<ISyntacticElement> microSpecies = new GamaList<ISyntacticElement>();
 		microSpecies.addAll(speciesNode.getChildren(SPECIES));
 		microSpecies.addAll(speciesNode.getChildren(GRID));
 		for ( ISyntacticElement microSpeciesNode : microSpecies ) {
-			species.addMicroSpecies(buildSpeciesStructure(microSpeciesNode, collect));
+			species.addMicroSpecies(buildSpeciesStructure(microSpeciesNode));
 		}
-
 		return species;
 	}
 
 	public void setName(final String name) {
 		if ( name == null ) { return; }
-
 		this.name = name;
 	}
 
@@ -107,7 +100,6 @@ public class ModelStructure implements IKeyword {
 
 	List<ISyntacticElement> buildNodes(final List<ISyntacticElement> documents) {
 		List<ISyntacticElement> speciesNodes = new ArrayList();
-		// List<ISyntacticElement> list = new ArrayList(documents.values());
 		Collections.reverse(documents);
 		for ( ISyntacticElement e : documents ) {
 			if ( source == null ) {

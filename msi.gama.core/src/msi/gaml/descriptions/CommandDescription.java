@@ -123,29 +123,16 @@ public class CommandDescription extends SymbolDescription {
 		final IType contentType, final IExpressionFactory f) {
 		IDescription sup = getSuperDescription();
 		if ( !(sup instanceof CommandDescription) ) {
-			flagError("Impossible to return " + facets.getLabel(facetName));
+			flagError("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
 		String varName = facets.getLabel(facetName);
 		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type, contentType, f);
 	}
 
-	public SpeciesDescription extractExtraSpeciesContext() {
-		if ( facets.getLabel(IKeyword.KEYWORD).equals(IKeyword.CREATE) ) {
-			SpeciesDescription species =
-				getModelDescription().getSpeciesDescription(facets.getLabel(IKeyword.SPECIES));
-			if ( species == null ) {
-				species = getModelDescription().getSpeciesDescription(facets.getLabel(IKeyword.AS));
-			}
-			return species;
-		}
-		return null;
-	}
-
 	@Override
 	public CommandDescription shallowCopy(final IDescription superDescription) {
 		List<IDescription> children = new ArrayList();
-		// GuiUtils.debug("" + this + " is being copied");
 		// TODO Is it necessary to copy all the statements ? Only actions and primitive should be
 		// copied, maybe arg ? Try to see why it is necessary...
 		children.addAll(getChildren());
@@ -194,13 +181,15 @@ public class CommandDescription extends SymbolDescription {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.contains(arg) ) {
 					caller.flagError("Missing argument " + arg + " in call to " + getName() +
-						". Arguments passed are : " + names);
+						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT, null,
+						new String[] { arg });
 				}
 			}
 		}
 		for ( String arg : names ) {
 			if ( !allArgs.contains(arg) ) {
-				caller.flagError("Unknown argument" + arg + " in call to " + getName());
+				caller.flagError("Unknown argument" + arg + " in call to " + getName(),
+					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg });
 			}
 		}
 	}
@@ -213,7 +202,7 @@ public class CommandDescription extends SymbolDescription {
 			executer = declPlace.getAction(actionName);
 		}
 		if ( executer == null ) {
-			flagError("Unknown action " + getName(), IKeyword.ACTION);
+			flagError("Unknown action " + actionName, IKeyword.ACTION);
 			return;
 		}
 		executer.verifyArgs(this, args.keySet());
@@ -250,7 +239,7 @@ public class CommandDescription extends SymbolDescription {
 				s = IKeyword.DEFAULT;
 			} else {
 				if ( getKeyword().equals(IKeyword.REFLEX) ) {
-					flagWarning("Reflexes should be named", null);
+					flagWarning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
 				}
 				s = getKeyword() + String.valueOf(index++);
 			}

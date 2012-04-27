@@ -230,6 +230,7 @@ public class GamaBundleLoader {
 		}
 		int numberOfClasses = classes.size();
 		scanBuiltIn(classes);
+		initTypes();
 		long endTime = System.nanoTime();
 		GuiUtils.debug("===> Scanning of " + numberOfClasses +
 			" support classes, found in plugin " + plugin + ", in " + (endTime - startTime) /
@@ -288,12 +289,16 @@ public class GamaBundleLoader {
 				}
 			}
 		}
+
+		// ModelFactory.computeBuiltInSpecies(new ModelDescription());
+	}
+
+	public static void initTypes() {
 		for ( IType type : Types.getSortedTypes() ) {
 			if ( type != null ) {
 				GamlCompiler.initFieldGetters(type);
 			}
 		}
-		// ModelFactory.computeBuiltInSpecies(new ModelDescription());
 	}
 
 	public static void addGamlExtension(final Bundle bundle, final String pathName) {

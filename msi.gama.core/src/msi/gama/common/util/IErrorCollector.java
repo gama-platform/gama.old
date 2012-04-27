@@ -20,6 +20,6 @@ public interface IErrorCollector {
 	/**
 	 * @return
 	 */
-	public abstract boolean hasErrors();
+	// public abstract boolean hasErrors();
 
 }

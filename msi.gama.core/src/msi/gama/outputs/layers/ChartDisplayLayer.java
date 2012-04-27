@@ -24,16 +24,16 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -101,11 +101,6 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	public ChartDisplayLayer(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
-		verifyFacetType(IKeyword.BACKGROUND);
-		verifyFacetType(IKeyword.AXES);
-		verifyFacetType(IKeyword.COLOR);
-		verifyFacetType(IKeyword.STYLE);
-		verifyFacetType(IKeyword.TYPE);
 		axesColor = Cast.asColor(null, "black");
 		lastValues = new HashMap();
 		lastComputeCycle = 0l;

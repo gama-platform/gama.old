@@ -82,7 +82,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	protected void setSkills(final IExpressionDescription userDefinedSkills) {
 		Set<String> skillNames = new LinkedHashSet();
 		/* We try to add the control architecture if any is defined */
-		if ( facets.get(IKeyword.CONTROL) != null ) {
+		if ( facets.containsKey(IKeyword.CONTROL) ) {
 			skillNames.add(facets.getLabel(IKeyword.CONTROL));
 		}
 		/* We add the keyword as a possible skill (used for 'grid' species) */
@@ -94,6 +94,9 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
 		addBuiltInSkills(skillNames);
+
+		// GuiUtils.debug("Skills defined for " + getName() + ": " + skillNames);
+
 		/* We then create the list of classes from this list of names */
 		Set<Class> skillClasses = new LinkedHashSet();
 		for ( String skillName : skillNames ) {
@@ -238,8 +241,10 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 		CommandDescription existing = behaviors.get(behaviorName);
 		if ( existing != null ) {
 			if ( !existing.getKeyword().equals(r.getKeyword()) ) {
-				r.flagWarning(r.getKeyword() + " " + behaviorName + " replaces the " +
-					existing.getKeyword() + " declared in the parent species.");
+				r.flagWarning(
+					r.getKeyword() + " " + behaviorName + " replaces the " + existing.getKeyword() +
+						" declared in the parent species.", IGamlIssue.SHADOWS_NAME, IKeyword.NAME,
+					behaviorName);
 			}
 			children.remove(existing);
 		}
@@ -259,12 +264,13 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 				return;
 			} else if ( existing.getKeyword().equals(IKeyword.PRIMITIVE) &&
 				ce.getKeyword().equals(IKeyword.ACTION) ) {
-				ce.flagError("action name already declared as a primitive : " + actionName);
+				ce.flagError("action name already declared as a primitive : " + actionName,
+					IGamlIssue.GENERAL);
 			} else if ( !ce.getArgNames().containsAll(existing.getArgNames()) ) {
 				String error =
 					"The list of arguments differ in the two implementations of " + actionName;
-				ce.flagError(error);
-				existing.flagWarning(error);
+				ce.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
+				existing.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 			} else {
 				children.remove(existing);
 			}
@@ -283,7 +289,8 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 			ce.getFacets().putAsLabel(IKeyword.NAME, aspectName);
 		}
 		if ( !aspectName.equals(IKeyword.DEFAULT) && hasAspect(aspectName) ) {
-			ce.flagError("aspect name already declared : " + aspectName);
+			ce.flagError("aspect name already declared : " + aspectName, IGamlIssue.DUPLICATE_NAME,
+				IKeyword.NAME, aspectName);
 		}
 		aspects.put(aspectName, ce);
 	}
@@ -302,7 +309,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 	}
 
 	@Override
-	protected boolean hasAction(final String a) {
+	public boolean hasAction(final String a) {
 		return actions.containsKey(a);
 	}
 
@@ -325,7 +332,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 				String builtInType = bType.toString();
 				String varType = vType.toString();
 				v.flagError("variable " + vName + " is of type " + builtInType +
-					" and cannot be redefined as a " + varType);
+					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
 			}
 			v.copyFrom((VariableDescription) builtIn);
 		}
@@ -448,7 +455,7 @@ public abstract class ExecutionContextDescription extends SymbolDescription {
 
 		if ( agentConstructor == null ) {
 			flagError("The base class " + getJavaBase().getName() +
-				" cannot be used as an agent class");
+				" cannot be used as an agent class", IGamlIssue.GENERAL);
 		}
 	}
 

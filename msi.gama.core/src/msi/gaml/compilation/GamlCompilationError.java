@@ -18,8 +18,10 @@
  */
 package msi.gaml.compilation;
 
+import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.IErrorCollector;
+import msi.gaml.descriptions.IDescription;
 
 /**
  * The Class GamlException.
@@ -28,6 +30,9 @@ public class GamlCompilationError {
 
 	protected boolean isWarning = false;
 	protected final String message;
+	protected String code;
+	protected String[] data;
+	protected IDescription desc;
 	/**
 	 * This element normally contains a reference to the initial statement in GAML
 	 */
@@ -35,6 +40,7 @@ public class GamlCompilationError {
 
 	public GamlCompilationError(final String s) {
 		message = s;
+		code = GENERAL;
 	}
 
 	public Object getStatement() {
@@ -47,12 +53,33 @@ public class GamlCompilationError {
 		addSource(sourceInformation);
 	}
 
-	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation,
-		final boolean warning, final Object facet) {
+	/**
+	 * 
+	 * @param string
+	 * @param code, see IGamlIssue
+	 * @param sourceInformation
+	 * @param warning
+	 * @param facet
+	 * @param data
+	 */
+	public GamlCompilationError(final IDescription desc, final String string, final String code,
+		final ISyntacticElement sourceInformation, final boolean warning, final Object facet,
+		final String ... data) {
 		this(string);
+		this.desc = desc;
 		isWarning = warning;
 		this.facet = facet;
+		this.code = code;
+		this.data = data;
 		addSource(sourceInformation);
+	}
+
+	public String[] getData() {
+		return data;
+	}
+
+	public String getCode() {
+		return code;
 	}
 
 	@Override

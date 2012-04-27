@@ -6,7 +6,7 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.*;
 import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
@@ -36,10 +36,16 @@ public class DescriptionValidator {
 		TypesManager tm = md.getTypesManager();
 		for ( Map.Entry<String, IExpressionDescription> entry : desc.getFacets().entrySet() ) {
 			String facetName = entry.getKey();
-			IExpression expr = entry.getValue().getExpression();
-			if ( expr != null ) {
-				verifyFacetType(desc, facetName, expr, smd, md, tm);
+			IExpressionDescription ed = entry.getValue();
+			if ( ed == null ) {
+				continue;
 			}
+			IExpression expr = ed.getExpression();
+			if ( expr == null ) {
+				continue;
+			}
+			verifyFacetType(desc, facetName, expr, smd, md, tm);
+
 		}
 	}
 
@@ -78,7 +84,7 @@ public class DescriptionValidator {
 		}
 		if ( !compatible ) {
 			desc.flagWarning("Facet '" + facet + "' is expecting " + types + " instead of " +
-				actualType, facet);
+				actualType, IGamlIssue.SHOULD_CAST, facet, types.get(0));
 		}
 
 	}
@@ -88,7 +94,7 @@ public class DescriptionValidator {
 		String type = expr.literalValue();
 		if ( tm.get(type) == null ) {
 			desc.flagError("Facet '" + facet + "' is expecting a type name. " + type +
-				" is not a type name");
+				" is not a type name", IGamlIssue.NOT_A_TYPE, facet, type);
 		}
 	}
 
@@ -122,8 +128,10 @@ public class DescriptionValidator {
 					String error =
 						"The " + desc.getKeyword() + " '" + desc.getName() +
 							"' is defined twice. Only one definition is allowed.";
-					child.flagError(error);
-					desc.flagError(error);
+					child.flagError(error, IGamlIssue.DUPLICATE_NAME, null, desc.getKeyword(),
+						desc.getName());
+					desc.flagError(error, IGamlIssue.DUPLICATE_NAME, null, desc.getKeyword(),
+						desc.getName());
 				}
 			}
 		}
@@ -137,8 +145,8 @@ public class DescriptionValidator {
 				String error =
 					"The command " + desc.getKeyword() +
 						" is defined twice. Only one definition is allowed.";
-				child.flagError(error);
-				desc.flagError(error);
+				child.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());
+				desc.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());
 
 			}
 		}
@@ -155,7 +163,8 @@ public class DescriptionValidator {
 				!expr.type().isAssignableFrom(value.type()) ) {
 				cd.flagWarning("Variable " + expr.toGaml() + " of type " + expr.type() +
 					" is assigned a value of type " + value.type().toString() +
-					", which will be automatically casted.", IKeyword.VALUE);
+					", which will be automatically casted.", IGamlIssue.SHOULD_CAST,
+					IKeyword.VALUE, expr.type().toString());
 			}
 		}
 
@@ -169,7 +178,8 @@ public class DescriptionValidator {
 			SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 			if ( microSpecies == null ) {
 				cd.flagError(macroSpecies.getName() + " species doesn't contain " +
-					microSpeciesName + " as micro-species");
+					microSpeciesName + " as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES,
+					facetContainingSpecies, microSpeciesName);
 			}
 		}
 	}
@@ -193,8 +203,9 @@ public class DescriptionValidator {
 						String error =
 							"A " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
 								"' is defined twice. Only one definition is allowed.";
-						child.flagError(error);
-						previous.flagError(error);
+						child.flagError(error, IGamlIssue.DUPLICATE_DEFINITION, facet, stringValue);
+						previous.flagError(error, IGamlIssue.DUPLICATE_DEFINITION, facet,
+							stringValue);
 					}
 				}
 			}
@@ -219,15 +230,27 @@ public class DescriptionValidator {
 		String error =
 			"No " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
 				"' has been defined. ";
-		sd.flagError(error);
+		sd.flagError(error, IGamlIssue.MISSING_DEFINITION, null, desc.getKeyword(), facet,
+			stringValue);
 	}
 
 	public static void assertBehaviorIsExisting(final IDescription desc, final String facet) {
 		String behavior = desc.getFacets().getLabel(facet);
 		SpeciesDescription sd = desc.getSpeciesContext();
 		if ( !sd.hasBehavior(behavior) ) {
-			desc.flagError("Behavior " + behavior + " does not exist in " + sd.getName(), facet);
+			desc.flagError("Behavior " + behavior + " does not exist in " + sd.getName(),
+				IGamlIssue.UNKNOWN_BEHAVIOR, facet, behavior, sd.getName());
 		}
+	}
+
+	public static void assertActionIsExisting(final IDescription desc, final String facet) {
+		String action = desc.getFacets().getLabel(facet);
+		SpeciesDescription sd = desc.getSpeciesContext();
+		if ( !sd.hasAction(action) ) {
+			desc.flagError("Action " + action + " does not exist in " + sd.getName(),
+				IGamlIssue.UNKNOWN_ACTION, facet, action, sd.getName());
+		}
+
 	}
 
 }

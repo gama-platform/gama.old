@@ -18,13 +18,11 @@
  */
 package msi.gaml.compilation;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
-import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the root of all Gaml
@@ -49,43 +47,6 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	protected void initFields() {}
-
-	protected void verifyFacetType(final String facet) {
-		if ( true ) { return; }
-		final IExpression expr = getFacet(facet);
-		if ( expr == null ) { return; }
-		SymbolMetaDescription smd = description.getMeta();
-		if ( smd == null ) { return; }
-		FacetMetaDescription fmd = smd.getPossibleFacets().get(facet);
-		if ( fmd == null ) { return; }
-		if ( fmd.values.length == 0 ) {
-			boolean compatible = false;
-			IType actualType = expr.type();
-			ModelDescription md = description.getModelDescription();
-			TypesManager tm = md.getTypesManager();
-			for ( String type : fmd.types ) {
-				compatible = compatible || tm.get(type).isAssignableFrom(actualType);
-			}
-			if ( !compatible ) {
-				warning("Facet '" + facet + "' is expecting " + Arrays.toString(fmd.types) +
-					" instead of " + actualType, facet);
-			}
-		} else {
-			String s = expr.literalValue();
-			boolean compatible = false;
-
-			for ( String value : fmd.values ) {
-				compatible = compatible || value.equals(s);
-			}
-			if ( !compatible ) {
-				error(
-					"Facet '" + facet + "' is expecting a value among " +
-						Arrays.toString(fmd.values) + " instead of " + s, facet);
-			}
-
-		}
-
-	}
 
 	@Override
 	public IExpression getFacet(final String key) {

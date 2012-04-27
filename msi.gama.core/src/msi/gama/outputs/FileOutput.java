@@ -24,11 +24,11 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.simulation.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -62,12 +62,6 @@ public class FileOutput extends AbstractOutput {
 	 */
 	public FileOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.DATA);
-		verifyFacetType(IKeyword.REFRESH_EVERY);
-		verifyFacetType(IKeyword.HEADER);
-		verifyFacetType(IKeyword.FOOTER);
-		verifyFacetType(IKeyword.REWRITE);
-		verifyFacetType(IKeyword.TYPE);
 	}
 
 	private PrintWriter writer = null;

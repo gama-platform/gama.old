@@ -22,11 +22,11 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
-import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.StringBasedStatementDescription;
+import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -73,7 +73,8 @@ public class VariableFactory extends SymbolFactory {
 		String name = facets.getLabel(NAME);
 		String env = facets.getLabel(ENVIRONMENT);
 		if ( env == null ) {
-			superDesc.flagError("No environment defined for signal " + name);
+			superDesc.flagError("No environment defined for signal " + name,
+				IGamlIssue.NO_ENVIRONMENT);
 			return;
 		}
 		String decay = facets.getLabel(DECAY);
@@ -83,16 +84,18 @@ public class VariableFactory extends SymbolFactory {
 
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
-			(VariableDescription) createDescription(new StringBasedStatementDescription(
-				IType.FLOAT_STR, new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN,
-					"0")), superDesc, null);
+			(VariableDescription) createDescription(new SyntheticStatement(IType.FLOAT_STR,
+				new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0")), superDesc,
+				null);
 
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
-		if ( superDesc.getSpeciesDescription(env) == null || !environment.isGrid() ) {
+		if ( environment == null || !environment.isGrid() ) {
 			superDesc.flagError("Environment " + env + " of signal " + name +
-				" cannot be determined.");
+				" cannot be determined.", IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
 		}
-		environment.addChild(vd);
+		if ( environment != null ) {
+			environment.addChild(vd);
+		}
 	}
 
 	public void addSpeciesNameAsType(final String name) {

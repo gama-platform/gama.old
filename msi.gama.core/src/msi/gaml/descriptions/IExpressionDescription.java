@@ -4,7 +4,6 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 
 /**
@@ -14,12 +13,11 @@ import msi.gaml.expressions.*;
  * @since 31 mars 2012
  * 
  */
-public interface IExpressionDescription /* extends IExpression */{
+public interface IExpressionDescription {
 
 	public abstract void setExpression(final IExpression expr);
 
-	public abstract IExpression compile(final IDescription context, final IExpressionFactory factory)
-		throws GamaRuntimeException;
+	public abstract IExpression compile(final IDescription context, final IExpressionFactory factory);
 
 	public abstract Object getAst();
 
@@ -29,10 +27,8 @@ public interface IExpressionDescription /* extends IExpression */{
 
 	public abstract IExpressionDescription compileAsLabel();
 
-	/**
-	 * @param o
-	 * @return
-	 */
 	public abstract boolean equalsString(String o);
+
+	public abstract void setAst(Object ast);
 
 }

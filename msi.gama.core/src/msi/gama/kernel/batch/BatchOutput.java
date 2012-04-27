@@ -20,11 +20,11 @@ package msi.gama.kernel.batch;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
@@ -42,7 +42,6 @@ public class BatchOutput extends Symbol {
 
 	public BatchOutput(/* final ISymbol context, */final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.REWRITE);
 	}
 
 	@Override

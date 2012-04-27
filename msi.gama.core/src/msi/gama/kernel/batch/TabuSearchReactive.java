@@ -21,11 +21,11 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -68,16 +68,6 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 	public TabuSearchReactive(final IDescription species) {
 		super(species);
-		verifyFacetType(IKeyword.MAXIMIZE);
-		verifyFacetType(IKeyword.MINIMIZE);
-		verifyFacetType(IKeyword.AGGREGATION);
-		verifyFacetType(ITER_MAX);
-		verifyFacetType(LIST_SIZE_INIT);
-		verifyFacetType(LIST_SIZE_MAX);
-		verifyFacetType(LIST_SIZE_MIN);
-		verifyFacetType(NB_TESTS_MAX);
-		verifyFacetType(CYCLE_SIZE_MAX);
-		verifyFacetType(CYCLE_SIZE_MIN);
 
 	}
 

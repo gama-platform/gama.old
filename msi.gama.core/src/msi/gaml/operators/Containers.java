@@ -80,6 +80,12 @@ public class Containers {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
 	}
 
+	// public IAgent grid_at(ISpecies s, GamaPoint val) {
+	// IScope scope = getScope();
+	// return Containers.getGridAgent(scope, s, val);
+
+	// return null;}
+
 	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {

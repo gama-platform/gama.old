@@ -22,11 +22,11 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -48,7 +48,6 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
-		verifyFacetType(IKeyword.REFRESH_EVERY);
 		value = getFacet(IKeyword.VALUE);
 		expressionText = value == null ? "" : value.toGaml();
 	}

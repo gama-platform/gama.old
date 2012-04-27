@@ -131,7 +131,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 	private SpeciesDescription verifyParent(final String parentName) {
 
 		if ( this.getName().equals(parentName) ) {
-			flagError(getName() + " species can't be a sub-species of itself");
+			flagError(getName() + " species can't be a sub-species of itself", IGamlIssue.GENERAL);
 			return null;
 		}
 
@@ -147,14 +147,10 @@ public class SpeciesDescription extends ExecutionContextDescription {
 				availableSpecies.add(", ");
 			}
 			availableSpecies.remove(availableSpecies.size() - 1);
-			StringBuffer availableSpecsStr = new StringBuffer();
-			availableSpecsStr.append("[");
-			for ( String s : availableSpecies ) {
-				availableSpecsStr.append(s);
-			}
-			availableSpecsStr.append("]");
-			flagError(parentName + " can't be a parent-species of " + this.getName() +
-				" species. Available parent species are: " + availableSpecsStr.toString());
+
+			flagError(parentName + " can't be a parent species of " + this.getName() +
+				" species. Available parent species are: " + availableSpecies,
+				IGamlIssue.WRONG_PARENT, IKeyword.PARENT, availableSpecies.toArray(new String[] {}));
 
 			return null;
 		}
@@ -162,7 +158,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		List<SpeciesDescription> parentsOfParent = potentialParent.getSelfWithParents();
 		if ( parentsOfParent.contains(this) ) {
 			flagError(this.getName() + " species and " + potentialParent.getName() +
-				" species can't be sub-species of each other.");
+				" species can't be sub-species of each other.", IGamlIssue.GENERAL);
 			return null;
 		}
 
@@ -174,9 +170,10 @@ public class SpeciesDescription extends ExecutionContextDescription {
 		// }
 
 		if ( this.getAllMicroSpecies().contains(parentsOfParent) ) {
-			flagError(this.getName() + " species can't be a sub-species of " +
-				potentialParent.getName() +
-				" species because a species can't be sub-species of its direct or indirect micro-species.");
+			flagError(
+				this.getName() + " species can't be a sub-species of " + potentialParent.getName() +
+					" species because a species can't be sub-species of its direct or indirect micro-species.",
+				IGamlIssue.GENERAL);
 			return null;
 		}
 		//
@@ -257,10 +254,11 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					javaBase = parent.javaBase;
 					agentConstructor = parent.agentConstructor;
 				} else {
-					flagError("Species " + getName() + " Java base class (" +
-						javaBase.getSimpleName() + ") is not a subclass of its parent species " +
-						parent.getName() + " base class (" + parent.getJavaBase().getSimpleName() +
-						")");
+					flagError(
+						"Species " + getName() + " Java base class (" + javaBase.getSimpleName() +
+							") is not a subclass of its parent species " + parent.getName() +
+							" base class (" + parent.getJavaBase().getSimpleName() + ")",
+						IGamlIssue.GENERAL);
 				}
 			}
 			skillsClasses.addAll(parent.skillsClasses);
@@ -284,7 +282,7 @@ public class SpeciesDescription extends ExecutionContextDescription {
 					if ( action.isAbstract() ) {
 						this.flagWarning("Abstract action '" + aName +
 							"', which is inherited from " + parent.getName() +
-							", should be redefined.");
+							", should be redefined.", IGamlIssue.GENERAL);
 					}
 					addChild(parent.actions.get(aName));
 				}

@@ -19,7 +19,6 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 
 public class BasicExpressionDescription implements IExpressionDescription {
@@ -58,13 +57,8 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		expression = expr;
 	}
 
-	/**
-	 * @see msi.gaml.descriptions.IExpressionDescription#compile(msi.gaml.descriptions.IDescription,
-	 *      msi.gaml.expressions.IExpressionFactory)
-	 */
 	@Override
-	public IExpression compile(final IDescription context, final IExpressionFactory factory)
-		throws GamaRuntimeException {
+	public IExpression compile(final IDescription context, final IExpressionFactory factory) {
 		if ( expression == null ) {
 			expression = factory.createExpr(this, context);
 		}
@@ -76,7 +70,10 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	 */
 	@Override
 	public IExpressionDescription compileAsLabel() {
-		return new LabelExpressionDescription(StringUtils.toJavaString(toString()));
+		LabelExpressionDescription newEd =
+			new LabelExpressionDescription(StringUtils.toJavaString(toString()));
+		newEd.setAst(getAst());
+		return newEd;
 	}
 
 	@Override
@@ -91,6 +88,9 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	public Object getAst() {
 		return null;
 	}
+
+	@Override
+	public void setAst(final Object ast) {}
 
 	/**
 	 * @see msi.gaml.descriptions.IExpressionDescription#equalsString(java.lang.String)

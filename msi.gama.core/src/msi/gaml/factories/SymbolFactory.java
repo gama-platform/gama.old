@@ -52,9 +52,9 @@ import msi.gaml.expressions.IExpressionFactory;
 @handles({ ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
 public class SymbolFactory implements ISymbolFactory {
 
-	protected Map<String, SymbolMetaDescription> registeredSymbols = new HashMap();
-	protected final Set<ISymbolFactory> availableFactories = new HashSet();
-	protected final Map<String, ISymbolFactory> registeredFactories = new HashMap();
+	protected final Map<String, SymbolMetaDescription> registeredSymbols = new LinkedHashMap();
+	// protected final Set<ISymbolFactory> availableFactories = new HashSet();
+	protected final Map<String, ISymbolFactory> registeredFactories = new LinkedHashMap();
 	protected String name;
 
 	public SymbolFactory(final ISymbolFactory superFactory) {
@@ -106,7 +106,7 @@ public class SymbolFactory implements ISymbolFactory {
 	 * @return
 	 */
 	private boolean canRegisterFactory(final Class c) {
-		for ( ISymbolFactory sf : availableFactories ) {
+		for ( ISymbolFactory sf : registeredFactories.values() ) {
 			if ( sf.getClass() == c ) { return false; }
 		}
 		return true;
@@ -130,19 +130,15 @@ public class SymbolFactory implements ISymbolFactory {
 	}
 
 	public boolean registerFactory(final ISymbolFactory f) {
-		for ( ISymbolFactory sf : availableFactories ) {
+		for ( ISymbolFactory sf : registeredFactories.values() ) {
 			if ( sf.getClass() == f.getClass() ) { return false; }
 		}
-		availableFactories.add(f);
+		// availableFactories.add(f);
 		// Does a pre-registration of the keywords
 		for ( String s : f.getKeywords() ) {
 			registeredFactories.put(s, f);
 		}
 		return true;
-
-		// OutputManager.debug(this.getClass().getSimpleName() + " registers factory " +
-		// f.getClass().getSimpleName() + " for keywords " + f.getKeywords());
-
 	}
 
 	static final Set<Integer> varKinds = new HashSet(Arrays.asList(ISymbolKind.Variable.CONTAINER,
@@ -225,7 +221,8 @@ public class SymbolFactory implements ISymbolFactory {
 			ISymbolFactory f = chooseFactoryFor(keyword, upper);
 			if ( f == null ) {
 				if ( context != null ) {
-					context.flagError("Unknown symbol " + keyword);
+					context.flagError("Unknown symbol " + keyword, IGamlIssue.UNKNOWN_KEYWORD,
+						null, keyword, upper);
 				}
 				return null;
 			}
@@ -260,7 +257,8 @@ public class SymbolFactory implements ISymbolFactory {
 		ISymbolFactory f = chooseFactoryFor(keyword, null);
 		if ( f != this ) {
 			if ( f == null ) {
-				superDesc.flagError("Impossible to parse keyword " + keyword, source);
+				superDesc.flagError("Impossible to parse keyword " + keyword + " in this context",
+					IGamlIssue.UNKNOWN_KEYWORD, source, keyword);
 				return null;
 			}
 			return f.createDescription(source, superDesc, children);
@@ -291,7 +289,8 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( f != this ) {
 			if ( f == null ) {
 				if ( superDesc != null ) {
-					superDesc.flagError("Impossible to parse keyword " + keyword, source);
+					superDesc.flagError("Impossible to parse keyword " + keyword,
+						IGamlIssue.UNKNOWN_KEYWORD, source, keyword, context);
 				}
 				return null;
 			}
@@ -329,13 +328,13 @@ public class SymbolFactory implements ISymbolFactory {
 		if ( handlesKeyword(keyword) ) { return this; }
 		ISymbolFactory fact = registeredFactories.get(keyword);
 		if ( fact != null ) { return fact; }
-		for ( ISymbolFactory f : availableFactories ) {
+		for ( ISymbolFactory f : registeredFactories.values() ) {
 			if ( f.handlesKeyword(keyword) ) {
 				registeredFactories.put(keyword, f);
 				return f;
 			}
 		}
-		for ( ISymbolFactory f : availableFactories ) {
+		for ( ISymbolFactory f : registeredFactories.values() ) {
 			ISymbolFactory f2 = f.chooseFactoryFor(keyword);
 			if ( f2 != null ) {
 				registeredFactories.put(keyword, f2);
@@ -365,7 +364,8 @@ public class SymbolFactory implements ISymbolFactory {
 		ISymbolFactory f =
 			chooseFactoryFor(desc.getKeyword(), superDesc == null ? null : superDesc.getKeyword());
 		if ( f == null ) {
-			desc.flagError("Impossible to compile keyword " + desc.getKeyword());
+			desc.flagError("Impossible to compile keyword " + desc.getKeyword(),
+				IGamlIssue.UNKNOWN_KEYWORD, null, desc.getKeyword());
 			return null;
 		}
 		if ( f != this ) { return f.compileDescription(desc); }
@@ -378,7 +378,8 @@ public class SymbolFactory implements ISymbolFactory {
 		ISymbolFactory f =
 			chooseFactoryFor(desc.getKeyword(), superDesc == null ? null : superDesc.getKeyword());
 		if ( f == null ) {
-			desc.flagError("Impossible to validate keyword " + desc.getKeyword());
+			desc.flagError("Impossible to validate keyword " + desc.getKeyword(),
+				IGamlIssue.UNKNOWN_KEYWORD, null, desc.getKeyword());
 			return;
 		}
 		if ( f != this ) {

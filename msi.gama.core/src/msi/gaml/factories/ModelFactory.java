@@ -26,7 +26,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.GamlCompiler;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 
 /**
@@ -62,12 +62,59 @@ public class ModelFactory extends SymbolFactory {
 	 * @param microSpecies
 	 * @throws GamlException
 	 */
+	// @species("dummy")
+	// public static class Dummy extends GamlAgent {
+
+	// public Dummy(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
+	// super(sim, s);
+	// GuiUtils.debug("Dummy created");
+	// }
+
+	// }
+
 	private void addMicroSpecies(final SpeciesDescription macroSpecies,
 		final SpeciesStructure microSpecies) {
 
 		SpeciesDescription microSpeciesDesc =
 			(SpeciesDescription) createDescription(microSpecies.getNode(), macroSpecies, null);
-		macroSpecies.addChild(microSpeciesDesc);
+
+		String compile = microSpeciesDesc.getFacets().getLabel("compile");
+		if ( compile != null && compile.equals("true") )
+
+		{
+			Class c = null; // do something to generate the class
+			String className = null; // get the name of the class (i.e. c.getCanonicalName()).
+			GamaClassLoader.getInstance().addNewClass(c);
+			Set<Class> set = new HashSet();
+			set.add(c);
+			GamaBundleLoader.scanBuiltIn(set);
+			String[] facets = new String[] { NAME, "dummy", BASE, className };
+			SpeciesDescription sd =
+				(SpeciesDescription) DescriptionFactory.createDescription(SPECIES, macroSpecies,
+					facets);
+
+			// if ( sd != null ) {
+			// builtInSpecies.add(sd);
+			macroSpecies.addChild(sd);
+
+		} else {
+			// Compile the Java class c from microSpeciesDesc
+			// Make it known to GamaClassLoader (GamaClassLoader.getInstance().addNewClass(c);
+			// Inject it in GamaBundleLoader.scanBuiltIn(Set with c);
+			// Create a SpeciesDescription based on c
+			/**
+			 * 
+			 facets = new String[] { NAME, speciesName, BASE, c.getCanonicalName() };
+			 * SpeciesDescription sd =
+			 * (SpeciesDescription) DescriptionFactory.createDescription(SPECIES,
+			 * worldSpeciesDescription, facets);
+			 * if ( sd != null ) {
+			 * builtInSpecies.add(sd);
+			 * }
+			 */
+			// Replace this with macroSpecies.add(sd);
+			macroSpecies.addChild(microSpeciesDesc);
+		}
 
 		for ( SpeciesStructure microSpecStructure : microSpecies.getMicroSpecies() ) {
 			addMicroSpecies(microSpeciesDesc, microSpecStructure);
@@ -140,8 +187,7 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	public synchronized ModelDescription parse(final ModelStructure structure,
-		final IErrorCollector collect) {
+	public ModelDescription parse(final ModelStructure structure, final IErrorCollector collect) {
 		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
@@ -159,7 +205,8 @@ public class ModelFactory extends SymbolFactory {
 		}
 
 		if ( worldSpeciesDesc == null ) {
-			model.flagError("Unable to load the built-in 'world' species. Halting compilation");
+			model.flagError("Unable to load the built-in 'world' species. Halting compilation",
+				IGamlIssue.GENERAL);
 			return model;
 		}
 
@@ -215,6 +262,11 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
+		// Adding the default experiment if it is not already defined
+		if ( !model.hasExperiment(DEFAULT_EXP) ) {
+			model.addChild(createDefaultExperiment());
+		}
+
 		return model;
 	}
 
@@ -224,17 +276,15 @@ public class ModelFactory extends SymbolFactory {
 		// Firstly, create "world_species" (defined in WorldSkill) SpeciesDescription with
 		// ModelDescription as SuperDescription
 		String facets[] = new String[0];
-
-		Class worldSkill = GamlCompiler.getBuiltInSpeciesClasses().get(IKeyword.WORLD_SPECIES_NAME);
 		facets =
 			new String[] { NAME, WORLD_SPECIES_NAME, BASE,
 				GamlCompiler.getBuiltInSpeciesClasses().get(DEFAULT).getCanonicalName() };
-		SpeciesDescription worldSpeciesDescription;
-		worldSpeciesDescription =
+		SpeciesDescription worldSpeciesDescription =
 			(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES, model,
 				facets);
 		if ( worldSpeciesDescription == null ) {
-			model.flagError("Impossible to create the world species. Check your GAML setup.");
+			model.flagError("Impossible to create the world species. Check your GAML setup.",
+				IGamlIssue.GENERAL);
 			return Collections.EMPTY_SET;
 		}
 		builtInSpecies.add(worldSpeciesDescription);
@@ -270,36 +320,23 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	public synchronized IModel compile(final ModelStructure structure, final IErrorCollector collect) {
-		IModel m = null;
+	public IModel compile(final ModelStructure structure, final IErrorCollector collect) {
 		ModelDescription md = parse(structure, collect);
-		if ( !md.hasExperiment(DEFAULT_EXP) ) {
-			md.addChild(createDefaultExperiment());
-		}
-		if ( collect.hasErrors() ) { return null; }
-		m = (IModel) compileDescription(md);
-		return m;
+		// if ( collect.hasErrors() ) { return null; }
+		IModel model = (IModel) compileDescription(md);
+		// if ( collect.hasErrors() ) {
+		// if ( model != null ) {
+		// model.dispose();
+		// }
+		// return null;
+		// }
+		return model;
 	}
 
-	/**
-	 * @param ms
-	 * @param collect
-	 */
-	public synchronized void validate(final ModelStructure structure, final IErrorCollector collect) {
-		long time = System.currentTimeMillis();
+	public ModelDescription validate(final ModelStructure structure, final IErrorCollector collect) {
 		ModelDescription md = parse(structure, collect);
-		long now = System.currentTimeMillis();
-		GuiUtils.debug(structure.getPath() + ": parsing to descriptions took: " + (now - time) +
-			"ms");
-		time = now;
-
-		if ( !md.hasExperiment(DEFAULT_EXP) ) {
-			md.addChild(createDefaultExperiment());
-		}
 		validateDescription(md);
-		GuiUtils.debug(structure.getPath() + ": validation took: " +
-			(System.currentTimeMillis() - time) + "ms");
-		md.dispose();
+		return md;
 	}
 
 }

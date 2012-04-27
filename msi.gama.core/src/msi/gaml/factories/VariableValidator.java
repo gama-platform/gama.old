@@ -5,7 +5,7 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.IUnits;
 import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
@@ -29,7 +29,8 @@ public class VariableValidator extends DescriptionValidator {
 			"It cannot be used as a " +
 				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		if ( vd.getTypeOf(vd.getName()) != Types.NO_TYPE ) {
-			vd.flagError(vd.getName() + " is a type name. " + type);
+			vd.flagError(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME,
+				vd.getName());
 		}
 	}
 
@@ -40,9 +41,10 @@ public class VariableValidator extends DescriptionValidator {
 			if ( expr == null ) {
 				continue;
 			}
-			if ( expr.type() != type ) {
+			if ( expr.type() != type && expr.type() != Types.NO_TYPE && type != Types.NO_TYPE ) {
 				vd.flagWarning("Facet " + s + " of type " + expr.type().toString() +
-					" should be of type " + type.toString(), s);
+					" should be of type " + type.toString(), IGamlIssue.SHOULD_CAST, s,
+					type.toString());
 			}
 		}
 	}
@@ -53,10 +55,10 @@ public class VariableValidator extends DescriptionValidator {
 			"It cannot be used as a " +
 				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		if ( name == null ) {
-			vd.flagError("The attribute 'name' is missing");
+			vd.flagError("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
 		} else if ( IExpressionParser.RESERVED.contains(name) ) {
 			vd.flagError(name + " is a reserved keyword. " + type + " Reserved keywords are: " +
-				IExpressionParser.RESERVED);
+				IExpressionParser.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
 		}/*
 		 * else if ( IExpressionParser.BINARIES.containsKey(name) ) {
 		 * flagError(name + " is a binary operator name. It cannot be used as a variable name");
@@ -64,8 +66,9 @@ public class VariableValidator extends DescriptionValidator {
 		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
 		 * }
 		 */else if ( IUnits.UNITS.containsKey(name) ) {
-			vd.flagError(name + " is a unit name. " + type + " Units in GAML are :" +
-				String.valueOf(IUnits.UNITS.keySet()));
+			vd.flagError(
+				name + " is a unit name. " + type + " Units in GAML are :" +
+					String.valueOf(IUnits.UNITS.keySet()), IGamlIssue.IS_A_UNIT, NAME, name);
 		}
 	}
 
@@ -73,7 +76,7 @@ public class VariableValidator extends DescriptionValidator {
 		IExpression amongExpression = facets.getExpr(AMONG);
 		if ( amongExpression != null && type != amongExpression.getContentType() ) {
 			vd.flagError("Variable " + vd.getName() + " of type " + type.toString() +
-				" cannot be chosen among " + amongExpression.toGaml(), AMONG);
+				" cannot be chosen among " + amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
 		}
 	}
 
@@ -90,7 +93,7 @@ public class VariableValidator extends DescriptionValidator {
 				} else {
 					if ( type != expr.type() ) {
 						vd.flagWarning("The types of  facets '" + s + "' and '" + firstValueFacet +
-							"' are not the same", s);
+							"' are not the same", IGamlIssue.SHOULD_CAST, s, type.toString());
 					}
 				}
 			}
@@ -134,24 +137,26 @@ public class VariableValidator extends DescriptionValidator {
 		IExpression min = facets.getExpr(MIN);
 		IExpression max = facets.getExpr(MAX);
 		if ( facets.getExpr(FUNCTION) != null ) {
-			vd.flagError("Functions cannot be used as parameters", FUNCTION);
+			vd.flagError("Functions cannot be used as parameters", IGamlIssue.REMOVE_FUNCTION,
+				FUNCTION);
 		}
 		if ( min != null && !min.isConst() ) {
-			vd.flagError(p + " min value must be constant", MIN);
+			vd.flagError(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
 		}
 		if ( max != null && !max.isConst() ) {
-			vd.flagError(p + " max value must be constant", MAX);
+			vd.flagError(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 		}
 		if ( facets.getExpr(INIT) == null ) {
-			vd.flagError(p + " must have an initial value");
+			vd.flagError(p + " must have an initial value", IGamlIssue.NO_INIT, null, vd.getType()
+				.toString());
 		} else if ( !facets.getExpr(INIT).isConst() ) {
-			vd.flagError(p + "initial value must be constant");
+			vd.flagError(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 		}
 		IExpression updateExpression = facets.getExpr(UPDATE, facets.getExpr(VALUE));
 		if ( updateExpression != null ) {
-			vd.flagError(p + "cannot have an 'update' or 'value' facet");
+			vd.flagError(p + "cannot have an 'update' or 'value' facet", IGamlIssue.REMOVE_VALUE);
 		} else if ( vd.isNotModifiable() ) {
-			vd.flagError(p + " cannot be declared as constant ");
+			vd.flagError(p + " cannot be declared as constant ", IGamlIssue.REMOVE_CONST);
 		}
 	}
 

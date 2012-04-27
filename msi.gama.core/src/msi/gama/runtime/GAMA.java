@@ -18,7 +18,6 @@
  */
 package msi.gama.runtime;
 
-import msi.gama.common.interfaces.IGamlBuilder;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
@@ -44,7 +43,6 @@ public class GAMA {
 	public static final String _WARNINGS = "warnings";
 	private static volatile IExperiment currentExperiment = null;
 	private static IExpressionFactory expressionFactory = null;
-	private static IGamlBuilder builder = null;
 	public static ISimulationStateProvider state = null;
 
 	public static void interruptLoading() {
@@ -252,14 +250,6 @@ public class GAMA {
 	public static IDescription getModelContext() {
 		if ( currentExperiment == null ) { return null; }
 		return currentExperiment.getModel().getDescription();
-	}
-
-	public static void setGamlBuilder(final IGamlBuilder b) {
-		builder = b;
-	}
-
-	public static IGamlBuilder getGamlBuilder() {
-		return builder;
 	}
 
 }
