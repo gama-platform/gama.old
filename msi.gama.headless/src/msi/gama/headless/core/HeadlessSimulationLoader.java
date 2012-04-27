@@ -3,26 +3,20 @@ package msi.gama.headless.core;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.headless.common.ErrorCollector;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.GamlStandaloneSetup;
-import msi.gama.lang.gaml.linking.GamlLinker;
+import msi.gama.lang.gaml.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.factories.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.linking.ILinker;
-import com.google.inject.Injector;
 
 public class HeadlessSimulationLoader {
-
-	private static Injector inject;
-
-	private static GamlLinker linker;
 
 	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) {
 		configureHeadLessSimulation();
@@ -51,8 +45,7 @@ public class HeadlessSimulationLoader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		inject = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
-		linker = (GamlLinker) inject.getBinding(ILinker.class).getProvider().get();
+		new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		System.out.println("GAMA loading complete");
 	}
 
@@ -62,16 +55,15 @@ public class HeadlessSimulationLoader {
 		IModel lastModel = null;
 		ErrorCollector collect = new ErrorCollector();
 		ResourceSet rs = new ResourceSetImpl();
-		Resource r = rs.getResource(URI.createURI("file:" + fileName), true);
+		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:" + fileName), true);
 		try {
-			Map<URI, ISyntacticElement> elements = linker.buildCompleteSyntacticTree(r);
-			if ( !linker.hasErrors() ) {
+			Map<URI, ISyntacticElement> elements = r.getBuilder().buildCompleteSyntacticTree();
+			if ( r.getErrors().isEmpty() ) {
 				System.out.println("No errors in syntactic tree");
 				ModelStructure ms =
-					new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()),
-						collect);
+					new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()));
 				lastModel = DescriptionFactory.getModelFactory().compile(ms, collect);
-				if ( collect.hasErrors() ) {
+				if ( !r.getErrors().isEmpty() ) {
 					lastModel = null;
 					// System.out.println("End compilation of " + m.getName());
 				}
