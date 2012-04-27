@@ -16,7 +16,7 @@ import msi.gaml.descriptions.BasicExpressionDescription;
  */
 public class EcoreBasedExpressionDescription extends BasicExpressionDescription {
 
-	private final Expression ast;
+	private Expression ast;
 
 	public EcoreBasedExpressionDescription(final Expression exp) {
 		super(null);
@@ -26,6 +26,13 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	@Override
 	public Expression getAst() {
 		return ast;
+	}
+
+	@Override
+	public void setAst(final Object ast) {
+		if ( ast instanceof Expression ) {
+			this.ast = (Expression) ast;
+		}
 	}
 
 	@Override

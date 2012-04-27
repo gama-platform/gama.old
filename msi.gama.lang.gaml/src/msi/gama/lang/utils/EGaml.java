@@ -42,8 +42,8 @@ public class EGaml {
 		// FunctionRef ref = (FunctionRef) f;
 		// return getKeyOf(ref.getLeft());
 		// }
-		if ( f instanceof ArbitraryName ) { return ((ArbitraryName) f).getName(); }
-		if ( f instanceof UnitName ) { return ((UnitName) f).getName(); }
+		if ( f instanceof UnitName ) { return ((UnitName) f).getOp(); }
+		if ( f instanceof ArgPairExpr ) { return ((ArgPairExpr) f).getArg(); }
 		if ( f instanceof Expression ) { return ((Expression) f).getOp(); }
 		if ( f instanceof Model ) { return IKeyword.MODEL; }
 		return null;

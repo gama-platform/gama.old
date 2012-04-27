@@ -86,19 +86,20 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FUNCTION_FACET_EXPR: return createFunctionFacetExpr();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.EXPRESSION: return createExpression();
+      case GamlPackage.PAIR_EXPR: return createPairExpr();
+      case GamlPackage.ABSTRACT_REF: return createAbstractRef();
+      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.GAML_VAR_REF: return createGamlVarRef();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
       case GamlPackage.TERN_EXP: return createTernExp();
-      case GamlPackage.PAIR_EXPR: return createPairExpr();
+      case GamlPackage.ARG_PAIR_EXPR: return createArgPairExpr();
       case GamlPackage.GAML_BINARY_EXPR: return createGamlBinaryExpr();
       case GamlPackage.GAML_UNIT_EXPR: return createGamlUnitExpr();
       case GamlPackage.GAML_UNARY_EXPR: return createGamlUnaryExpr();
       case GamlPackage.MEMBER_REF: return createMemberRef();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
-      case GamlPackage.FUNCTION: return createFunction();
-      case GamlPackage.ARBITRARY_NAME: return createArbitraryName();
       case GamlPackage.UNIT_NAME: return createUnitName();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
@@ -324,6 +325,39 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public PairExpr createPairExpr()
+  {
+    PairExprImpl pairExpr = new PairExprImpl();
+    return pairExpr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AbstractRef createAbstractRef()
+  {
+    AbstractRefImpl abstractRef = new AbstractRefImpl();
+    return abstractRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Function createFunction()
+  {
+    FunctionImpl function = new FunctionImpl();
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public VariableRef createVariableRef()
   {
     VariableRefImpl variableRef = new VariableRefImpl();
@@ -368,10 +402,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public PairExpr createPairExpr()
+  public ArgPairExpr createArgPairExpr()
   {
-    PairExprImpl pairExpr = new PairExprImpl();
-    return pairExpr;
+    ArgPairExprImpl argPairExpr = new ArgPairExprImpl();
+    return argPairExpr;
   }
 
   /**
@@ -438,28 +472,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     PointImpl point = new PointImpl();
     return point;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Function createFunction()
-  {
-    FunctionImpl function = new FunctionImpl();
-    return function;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ArbitraryName createArbitraryName()
-  {
-    ArbitraryNameImpl arbitraryName = new ArbitraryNameImpl();
-    return arbitraryName;
   }
 
   /**

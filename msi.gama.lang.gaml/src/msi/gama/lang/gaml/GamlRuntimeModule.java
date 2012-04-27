@@ -40,7 +40,13 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	@Override
-	// @SingletonBinding(eager = true)
+	@SingletonBinding(eager = true)
+	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+		return msi.gama.lang.gaml.validation.GamlJavaValidator.class;
+	}
+
+	@Override
+	@SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
@@ -54,6 +60,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() {
 		return GamlLinker.class;
+	}
+
+	@Override
+	public Class<? extends XtextResource> bindXtextResource() {
+		return GamlResource.class;
 	}
 
 }

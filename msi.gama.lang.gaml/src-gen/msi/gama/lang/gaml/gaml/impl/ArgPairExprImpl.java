@@ -5,7 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.DefUnary;
+import msi.gama.lang.gaml.gaml.ArgPairExpr;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -13,49 +13,48 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Def Unary</b></em>'.
+ * An implementation of the model object '<em><b>Arg Pair Expr</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.DefUnaryImpl#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.ArgPairExprImpl#getArg <em>Arg</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUnary
+public class ArgPairExprImpl extends PairExprImpl implements ArgPairExpr
 {
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * The default value of the '{@link #getArg() <em>Arg</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getName()
+   * @see #getArg()
    * @generated
    * @ordered
    */
-  protected static final String NAME_EDEFAULT = null;
+  protected static final String ARG_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * The cached value of the '{@link #getArg() <em>Arg</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getName()
+   * @see #getArg()
    * @generated
    * @ordered
    */
-  protected String name = NAME_EDEFAULT;
+  protected String arg = ARG_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected DefUnaryImpl()
+  protected ArgPairExprImpl()
   {
     super();
   }
@@ -68,7 +67,7 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.DEF_UNARY;
+    return GamlPackage.Literals.ARG_PAIR_EXPR;
   }
 
   /**
@@ -76,9 +75,9 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName()
+  public String getArg()
   {
-    return name;
+    return arg;
   }
 
   /**
@@ -86,12 +85,12 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setName(String newName)
+  public void setArg(String newArg)
   {
-    String oldName = name;
-    name = newName;
+    String oldArg = arg;
+    arg = newArg;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.DEF_UNARY__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARG_PAIR_EXPR__ARG, oldArg, arg));
   }
 
   /**
@@ -104,8 +103,8 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_UNARY__NAME:
-        return getName();
+      case GamlPackage.ARG_PAIR_EXPR__ARG:
+        return getArg();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -120,8 +119,8 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_UNARY__NAME:
-        setName((String)newValue);
+      case GamlPackage.ARG_PAIR_EXPR__ARG:
+        setArg((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -137,8 +136,8 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_UNARY__NAME:
-        setName(NAME_EDEFAULT);
+      case GamlPackage.ARG_PAIR_EXPR__ARG:
+        setArg(ARG_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -154,8 +153,8 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
   {
     switch (featureID)
     {
-      case GamlPackage.DEF_UNARY__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case GamlPackage.ARG_PAIR_EXPR__ARG:
+        return ARG_EDEFAULT == null ? arg != null : !ARG_EDEFAULT.equals(arg);
     }
     return super.eIsSet(featureID);
   }
@@ -171,10 +170,10 @@ public class DefUnaryImpl extends MinimalEObjectImpl.Container implements DefUna
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
+    result.append(" (arg: ");
+    result.append(arg);
     result.append(')');
     return result.toString();
   }
 
-} //DefUnaryImpl
+} //ArgPairExprImpl

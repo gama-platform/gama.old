@@ -197,6 +197,33 @@ public interface GamlFactory extends EFactory
   Expression createExpression();
 
   /**
+   * Returns a new object of class '<em>Pair Expr</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Pair Expr</em>'.
+   * @generated
+   */
+  PairExpr createPairExpr();
+
+  /**
+   * Returns a new object of class '<em>Abstract Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Abstract Ref</em>'.
+   * @generated
+   */
+  AbstractRef createAbstractRef();
+
+  /**
+   * Returns a new object of class '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function</em>'.
+   * @generated
+   */
+  Function createFunction();
+
+  /**
    * Returns a new object of class '<em>Variable Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -233,13 +260,13 @@ public interface GamlFactory extends EFactory
   TernExp createTernExp();
 
   /**
-   * Returns a new object of class '<em>Pair Expr</em>'.
+   * Returns a new object of class '<em>Arg Pair Expr</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Pair Expr</em>'.
+   * @return a new object of class '<em>Arg Pair Expr</em>'.
    * @generated
    */
-  PairExpr createPairExpr();
+  ArgPairExpr createArgPairExpr();
 
   /**
    * Returns a new object of class '<em>Binary Expr</em>'.
@@ -294,24 +321,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Point createPoint();
-
-  /**
-   * Returns a new object of class '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function</em>'.
-   * @generated
-   */
-  Function createFunction();
-
-  /**
-   * Returns a new object of class '<em>Arbitrary Name</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Arbitrary Name</em>'.
-   * @generated
-   */
-  ArbitraryName createArbitraryName();
 
   /**
    * Returns a new object of class '<em>Unit Name</em>'.

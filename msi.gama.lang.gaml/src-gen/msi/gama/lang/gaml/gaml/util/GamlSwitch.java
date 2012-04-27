@@ -115,7 +115,6 @@ public class GamlSwitch<T> extends Switch<T>
       {
         DefUnary defUnary = (DefUnary)theEObject;
         T result = caseDefUnary(defUnary);
-        if (result == null) result = caseGamlVarRef(defUnary);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -226,10 +225,36 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.PAIR_EXPR:
+      {
+        PairExpr pairExpr = (PairExpr)theEObject;
+        T result = casePairExpr(pairExpr);
+        if (result == null) result = caseExpression(pairExpr);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.ABSTRACT_REF:
+      {
+        AbstractRef abstractRef = (AbstractRef)theEObject;
+        T result = caseAbstractRef(abstractRef);
+        if (result == null) result = caseExpression(abstractRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = caseAbstractRef(function);
+        if (result == null) result = caseExpression(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.VARIABLE_REF:
       {
         VariableRef variableRef = (VariableRef)theEObject;
         T result = caseVariableRef(variableRef);
+        if (result == null) result = caseAbstractRef(variableRef);
         if (result == null) result = caseExpression(variableRef);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -257,11 +282,12 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.PAIR_EXPR:
+      case GamlPackage.ARG_PAIR_EXPR:
       {
-        PairExpr pairExpr = (PairExpr)theEObject;
-        T result = casePairExpr(pairExpr);
-        if (result == null) result = caseExpression(pairExpr);
+        ArgPairExpr argPairExpr = (ArgPairExpr)theEObject;
+        T result = caseArgPairExpr(argPairExpr);
+        if (result == null) result = casePairExpr(argPairExpr);
+        if (result == null) result = caseExpression(argPairExpr);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -310,22 +336,6 @@ public class GamlSwitch<T> extends Switch<T>
         Point point = (Point)theEObject;
         T result = casePoint(point);
         if (result == null) result = caseExpression(point);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FUNCTION:
-      {
-        Function function = (Function)theEObject;
-        T result = caseFunction(function);
-        if (result == null) result = caseExpression(function);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.ARBITRARY_NAME:
-      {
-        ArbitraryName arbitraryName = (ArbitraryName)theEObject;
-        T result = caseArbitraryName(arbitraryName);
-        if (result == null) result = caseExpression(arbitraryName);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -691,6 +701,54 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Pair Expr</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Pair Expr</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T casePairExpr(PairExpr object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Abstract Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Abstract Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAbstractRef(AbstractRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Variable Ref</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -755,17 +813,17 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Pair Expr</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Arg Pair Expr</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Pair Expr</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Arg Pair Expr</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T casePairExpr(PairExpr object)
+  public T caseArgPairExpr(ArgPairExpr object)
   {
     return null;
   }
@@ -862,38 +920,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T casePoint(Point object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunction(Function object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Arbitrary Name</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Arbitrary Name</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseArbitraryName(ArbitraryName object)
   {
     return null;
   }

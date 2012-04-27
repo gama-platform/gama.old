@@ -22,7 +22,7 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface VariableRef extends Expression
+public interface VariableRef extends AbstractRef
 {
   /**
    * Returns the value of the '<em><b>Ref</b></em>' reference.

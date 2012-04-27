@@ -247,16 +247,16 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 
 	private IExpression compileVarExpr(final String s) {
 		IDescription desc = getContext().getDescriptionDeclaringVar(s);
-		if ( desc == null ) {
-			if ( getContext() instanceof CommandDescription ) {
-				desc = ((CommandDescription) getContext()).extractExtraSpeciesContext();
-			}
-		}
+		// if ( desc == null ) {
+		// if ( getContext() instanceof CommandDescription ) {
+		// desc = ((CommandDescription) getContext()).extractExtraSpeciesContext();
+		// }
+		// }
 		if ( desc != null ) {
 			IVarExpression var = (IVarExpression) desc.getVarExpr(s, factory);
 			return var;
 		}
-		context.flagError("malformed variable :" + s);
+		context.flagError("Unknown variable :" + s);
 		return null;
 	}
 

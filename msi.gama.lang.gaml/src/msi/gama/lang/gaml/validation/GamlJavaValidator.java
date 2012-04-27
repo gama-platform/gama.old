@@ -18,23 +18,70 @@
  */
 package msi.gama.lang.gaml.validation;
 
+import msi.gama.common.util.*;
+import msi.gama.lang.gaml.GamlResource;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.linking.GamlBuilder;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ModelDescription;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.validation.Check;
 
-public class GamlJavaValidator extends AbstractGamlJavaValidator {
+public class GamlJavaValidator extends AbstractGamlJavaValidator implements IErrorCollector {
 
-	// @Check
-	// public void checkImports(final Model model) {
-	// if ( !GamaBundleLoader.contributionsLoaded || model == null ) { return; }
-	// Resource r = model.eResource();
-	// for ( Import imp : model.getImports() ) {
-	// String importUri = imp.getImportURI();
-	// URI iu = URI.createURI(importUri).resolve(r.getURI());
-	// XtextResource ir = (XtextResource) r.getResourceSet().getResource(iu, true);
-	// EList<Resource.Diagnostic> errors = ir.getErrors();
-	// if ( !errors.isEmpty() ) {
-	// error("Imported file " + importUri + " has " + errors.size() +
-	// " error(s). Correct them first", imp, eINSTANCE.getImport_ImportURI(), -1);
-	// }
-	// }
-	// }
+	volatile boolean hasErrors;
 
+	@Check
+	public void validate(final Model model) {
+		GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
+		hasErrors = false;
+		GamlResource r = (GamlResource) model.eResource();
+		GamlBuilder builder = new GamlBuilder(r, this);
+		ModelDescription result = builder.validate();
+		r.setModelDescription(hasErrors, result);
+	}
+
+	public GamlResource getCurrentRessource() {
+		return (GamlResource) getCurrentObject().eResource();
+	}
+
+	/**
+	 * @see msi.gama.common.util.IErrorCollector#add(msi.gaml.compilation.GamlCompilationError)
+	 */
+	@Override
+	public void add(final GamlCompilationError e) {
+		EObject object = (EObject) e.getStatement();
+		if ( object == null ) {
+			object = getCurrentObject();
+		}
+		if ( object.eResource() == null ) { return; }
+		if ( object.eResource() != getCurrentRessource() ) {
+			if ( !e.isWarning() ) {
+				GuiUtils.debug("Validating " + getCurrentRessource().getURI().lastSegment() +
+					" but error in a different resource:" +
+					object.eResource().getURI().lastSegment());
+				EObject imp = findImport(object.eResource().getURI().lastSegment());
+				if ( imp != null ) {
+					hasErrors = true;
+					error("Fix import error first: " + e.toString(), imp, null, "ERROR",
+						(String[]) null);
+				}
+			}
+			return;
+		}
+		if ( e.isWarning() ) {
+			warning(e.toString(), object, null, 0, e.getCode(), e.getData());
+		} else {
+			hasErrors = true;
+			error(e.toString(), object, null, 0, e.getCode(), e.getData());
+		}
+	}
+
+	private EObject findImport(final String lastSegment) {
+		Model m = (Model) getCurrentObject();
+		for ( Import imp : m.getImports() ) {
+			if ( imp.getImportURI().endsWith(lastSegment) ) { return imp; }
+		}
+		return null;
+	}
 }

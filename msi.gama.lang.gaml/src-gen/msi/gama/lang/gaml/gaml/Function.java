@@ -23,7 +23,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface Function extends Expression
+public interface Function extends AbstractRef
 {
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference list.

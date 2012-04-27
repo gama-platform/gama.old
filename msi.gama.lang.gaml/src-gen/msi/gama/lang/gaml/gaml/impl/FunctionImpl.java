@@ -34,7 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class FunctionImpl extends ExpressionImpl implements Function
+public class FunctionImpl extends AbstractRefImpl implements Function
 {
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference list.

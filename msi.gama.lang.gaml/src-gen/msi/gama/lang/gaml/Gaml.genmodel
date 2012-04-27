@@ -26,7 +26,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//DefBinaryOp/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//DefReserved"/>
-    <genClasses ecoreClass="Gaml.ecore#//DefUnary"/>
+    <genClasses ecoreClass="Gaml.ecore#//DefUnary">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//DefUnary/name"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/ref"/>
@@ -58,6 +60,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Expression/op"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Expression/right"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//PairExpr"/>
+    <genClasses ecoreClass="Gaml.ecore#//AbstractRef"/>
+    <genClasses ecoreClass="Gaml.ecore#//Function">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//VariableRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//VariableRef/ref"/>
     </genClasses>
@@ -70,7 +77,9 @@
     <genClasses ecoreClass="Gaml.ecore#//TernExp">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TernExp/ifFalse"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//PairExpr"/>
+    <genClasses ecoreClass="Gaml.ecore#//ArgPairExpr">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//ArgPairExpr/arg"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//GamlBinaryExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//GamlUnitExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//GamlUnaryExpr"/>
@@ -79,15 +88,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Array/exprs"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Point"/>
-    <genClasses ecoreClass="Gaml.ecore#//Function">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//ArbitraryName">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//ArbitraryName/name"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//UnitName">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//UnitName/name"/>
-    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//UnitName"/>
     <genClasses ecoreClass="Gaml.ecore#//IntLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//DoubleLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//ColorLiteral"/>

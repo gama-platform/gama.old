@@ -36,10 +36,7 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 		if ( eObject instanceof GamlVarRef ) {
 			String s = ((GamlVarRef) eObject).getName();
 			if ( s != null && !s.isEmpty() ) {
-				QualifiedName qualifiedName = QualifiedName.create(s);
-				if ( qualifiedName != null ) {
-					acceptor.accept(EObjectDescription.create(qualifiedName, eObject));
-				}
+				acceptor.accept(EObjectDescription.create(QualifiedName.create(s), eObject));
 			}
 			return eObject instanceof Definition ? composed.contains(((Definition) eObject)
 				.getKey()) : false;

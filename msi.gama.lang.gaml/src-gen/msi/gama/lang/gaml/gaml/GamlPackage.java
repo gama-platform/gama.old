@@ -224,7 +224,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlVarRef()
    * @generated
    */
-  int GAML_VAR_REF = 20;
+  int GAML_VAR_REF = 23;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -289,7 +289,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEF_UNARY__NAME = GAML_VAR_REF__NAME;
+  int DEF_UNARY__NAME = 0;
 
   /**
    * The number of structural features of the '<em>Def Unary</em>' class.
@@ -298,7 +298,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEF_UNARY_FEATURE_COUNT = GAML_VAR_REF_FEATURE_COUNT + 0;
+  int DEF_UNARY_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.StatementImpl <em>Statement</em>}' class.
@@ -872,14 +872,14 @@ public interface GamlPackage extends EPackage
   int EXPRESSION_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.VariableRefImpl <em>Variable Ref</em>}' class.
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.PairExprImpl <em>Pair Expr</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.VariableRefImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVariableRef()
+   * @see msi.gama.lang.gaml.gaml.impl.PairExprImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPairExpr()
    * @generated
    */
-  int VARIABLE_REF = 19;
+  int PAIR_EXPR = 19;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -888,7 +888,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VARIABLE_REF__LEFT = EXPRESSION__LEFT;
+  int PAIR_EXPR__LEFT = EXPRESSION__LEFT;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -897,7 +897,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VARIABLE_REF__OP = EXPRESSION__OP;
+  int PAIR_EXPR__OP = EXPRESSION__OP;
 
   /**
    * The feature id for the '<em><b>Right</b></em>' containment reference.
@@ -906,7 +906,154 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VARIABLE_REF__RIGHT = EXPRESSION__RIGHT;
+  int PAIR_EXPR__RIGHT = EXPRESSION__RIGHT;
+
+  /**
+   * The number of structural features of the '<em>Pair Expr</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PAIR_EXPR_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.AbstractRefImpl <em>Abstract Ref</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.AbstractRefImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getAbstractRef()
+   * @generated
+   */
+  int ABSTRACT_REF = 20;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_REF__LEFT = EXPRESSION__LEFT;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_REF__OP = EXPRESSION__OP;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_REF__RIGHT = EXPRESSION__RIGHT;
+
+  /**
+   * The number of structural features of the '<em>Abstract Ref</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
+   * @generated
+   */
+  int FUNCTION = 21;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__LEFT = ABSTRACT_REF__LEFT;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__OP = ABSTRACT_REF__OP;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__RIGHT = ABSTRACT_REF__RIGHT;
+
+  /**
+   * The feature id for the '<em><b>Args</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__ARGS = ABSTRACT_REF_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Function</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION_FEATURE_COUNT = ABSTRACT_REF_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.VariableRefImpl <em>Variable Ref</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.VariableRefImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVariableRef()
+   * @generated
+   */
+  int VARIABLE_REF = 22;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VARIABLE_REF__LEFT = ABSTRACT_REF__LEFT;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VARIABLE_REF__OP = ABSTRACT_REF__OP;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VARIABLE_REF__RIGHT = ABSTRACT_REF__RIGHT;
 
   /**
    * The feature id for the '<em><b>Ref</b></em>' reference.
@@ -915,7 +1062,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VARIABLE_REF__REF = EXPRESSION_FEATURE_COUNT + 0;
+  int VARIABLE_REF__REF = ABSTRACT_REF_FEATURE_COUNT + 0;
 
   /**
    * The number of structural features of the '<em>Variable Ref</em>' class.
@@ -924,7 +1071,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VARIABLE_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int VARIABLE_REF_FEATURE_COUNT = ABSTRACT_REF_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.TerminalExpressionImpl <em>Terminal Expression</em>}' class.
@@ -934,7 +1081,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTerminalExpression()
    * @generated
    */
-  int TERMINAL_EXPRESSION = 21;
+  int TERMINAL_EXPRESSION = 24;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -989,7 +1136,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTernExp()
    * @generated
    */
-  int TERN_EXP = 22;
+  int TERN_EXP = 25;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1037,14 +1184,14 @@ public interface GamlPackage extends EPackage
   int TERN_EXP_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.PairExprImpl <em>Pair Expr</em>}' class.
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArgPairExprImpl <em>Arg Pair Expr</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.PairExprImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPairExpr()
+   * @see msi.gama.lang.gaml.gaml.impl.ArgPairExprImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArgPairExpr()
    * @generated
    */
-  int PAIR_EXPR = 23;
+  int ARG_PAIR_EXPR = 26;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1053,7 +1200,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PAIR_EXPR__LEFT = EXPRESSION__LEFT;
+  int ARG_PAIR_EXPR__LEFT = PAIR_EXPR__LEFT;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -1062,7 +1209,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PAIR_EXPR__OP = EXPRESSION__OP;
+  int ARG_PAIR_EXPR__OP = PAIR_EXPR__OP;
 
   /**
    * The feature id for the '<em><b>Right</b></em>' containment reference.
@@ -1071,16 +1218,25 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PAIR_EXPR__RIGHT = EXPRESSION__RIGHT;
+  int ARG_PAIR_EXPR__RIGHT = PAIR_EXPR__RIGHT;
 
   /**
-   * The number of structural features of the '<em>Pair Expr</em>' class.
+   * The feature id for the '<em><b>Arg</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PAIR_EXPR_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
+  int ARG_PAIR_EXPR__ARG = PAIR_EXPR_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Arg Pair Expr</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ARG_PAIR_EXPR_FEATURE_COUNT = PAIR_EXPR_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.GamlBinaryExprImpl <em>Binary Expr</em>}' class.
@@ -1090,7 +1246,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlBinaryExpr()
    * @generated
    */
-  int GAML_BINARY_EXPR = 24;
+  int GAML_BINARY_EXPR = 27;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1136,7 +1292,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlUnitExpr()
    * @generated
    */
-  int GAML_UNIT_EXPR = 25;
+  int GAML_UNIT_EXPR = 28;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1182,7 +1338,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlUnaryExpr()
    * @generated
    */
-  int GAML_UNARY_EXPR = 26;
+  int GAML_UNARY_EXPR = 29;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1228,7 +1384,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getMemberRef()
    * @generated
    */
-  int MEMBER_REF = 27;
+  int MEMBER_REF = 30;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1274,7 +1430,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArray()
    * @generated
    */
-  int ARRAY = 28;
+  int ARRAY = 31;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1329,7 +1485,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPoint()
    * @generated
    */
-  int POINT = 29;
+  int POINT = 32;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1368,116 +1524,6 @@ public interface GamlPackage extends EPackage
   int POINT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
-   * @generated
-   */
-  int FUNCTION = 30;
-
-  /**
-   * The feature id for the '<em><b>Left</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION__LEFT = EXPRESSION__LEFT;
-
-  /**
-   * The feature id for the '<em><b>Op</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION__OP = EXPRESSION__OP;
-
-  /**
-   * The feature id for the '<em><b>Right</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION__RIGHT = EXPRESSION__RIGHT;
-
-  /**
-   * The feature id for the '<em><b>Args</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION__ARGS = EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Function</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FUNCTION_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl <em>Arbitrary Name</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArbitraryName()
-   * @generated
-   */
-  int ARBITRARY_NAME = 31;
-
-  /**
-   * The feature id for the '<em><b>Left</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARBITRARY_NAME__LEFT = EXPRESSION__LEFT;
-
-  /**
-   * The feature id for the '<em><b>Op</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARBITRARY_NAME__OP = EXPRESSION__OP;
-
-  /**
-   * The feature id for the '<em><b>Right</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARBITRARY_NAME__RIGHT = EXPRESSION__RIGHT;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARBITRARY_NAME__NAME = EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Arbitrary Name</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARBITRARY_NAME_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
-
-  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.UnitNameImpl <em>Unit Name</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1485,7 +1531,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnitName()
    * @generated
    */
-  int UNIT_NAME = 32;
+  int UNIT_NAME = 33;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1515,22 +1561,13 @@ public interface GamlPackage extends EPackage
   int UNIT_NAME__RIGHT = EXPRESSION__RIGHT;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int UNIT_NAME__NAME = EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
    * The number of structural features of the '<em>Unit Name</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int UNIT_NAME_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int UNIT_NAME_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.IntLiteralImpl <em>Int Literal</em>}' class.
@@ -1540,7 +1577,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getIntLiteral()
    * @generated
    */
-  int INT_LITERAL = 33;
+  int INT_LITERAL = 34;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1595,7 +1632,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDoubleLiteral()
    * @generated
    */
-  int DOUBLE_LITERAL = 34;
+  int DOUBLE_LITERAL = 35;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1650,7 +1687,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
    * @generated
    */
-  int COLOR_LITERAL = 35;
+  int COLOR_LITERAL = 36;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1705,7 +1742,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getStringLiteral()
    * @generated
    */
-  int STRING_LITERAL = 36;
+  int STRING_LITERAL = 37;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1760,7 +1797,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBooleanLiteral()
    * @generated
    */
-  int BOOLEAN_LITERAL = 37;
+  int BOOLEAN_LITERAL = 38;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1966,6 +2003,17 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EClass getDefUnary();
+
+  /**
+   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.DefUnary#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see msi.gama.lang.gaml.gaml.DefUnary#getName()
+   * @see #getDefUnary()
+   * @generated
+   */
+  EAttribute getDefUnary_Name();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Statement <em>Statement</em>}'.
@@ -2241,6 +2289,47 @@ public interface GamlPackage extends EPackage
   EReference getExpression_Right();
 
   /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.PairExpr <em>Pair Expr</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Pair Expr</em>'.
+   * @see msi.gama.lang.gaml.gaml.PairExpr
+   * @generated
+   */
+  EClass getPairExpr();
+
+  /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.AbstractRef <em>Abstract Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Abstract Ref</em>'.
+   * @see msi.gama.lang.gaml.gaml.AbstractRef
+   * @generated
+   */
+  EClass getAbstractRef();
+
+  /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Function</em>'.
+   * @see msi.gama.lang.gaml.gaml.Function
+   * @generated
+   */
+  EClass getFunction();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Args</em>'.
+   * @see msi.gama.lang.gaml.gaml.Function#getArgs()
+   * @see #getFunction()
+   * @generated
+   */
+  EReference getFunction_Args();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2325,14 +2414,25 @@ public interface GamlPackage extends EPackage
   EReference getTernExp_IfFalse();
 
   /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.PairExpr <em>Pair Expr</em>}'.
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.ArgPairExpr <em>Arg Pair Expr</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Pair Expr</em>'.
-   * @see msi.gama.lang.gaml.gaml.PairExpr
+   * @return the meta object for class '<em>Arg Pair Expr</em>'.
+   * @see msi.gama.lang.gaml.gaml.ArgPairExpr
    * @generated
    */
-  EClass getPairExpr();
+  EClass getArgPairExpr();
+
+  /**
+   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.ArgPairExpr#getArg <em>Arg</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Arg</em>'.
+   * @see msi.gama.lang.gaml.gaml.ArgPairExpr#getArg()
+   * @see #getArgPairExpr()
+   * @generated
+   */
+  EAttribute getArgPairExpr_Arg();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.GamlBinaryExpr <em>Binary Expr</em>}'.
@@ -2406,48 +2506,6 @@ public interface GamlPackage extends EPackage
   EClass getPoint();
 
   /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Function</em>'.
-   * @see msi.gama.lang.gaml.gaml.Function
-   * @generated
-   */
-  EClass getFunction();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Args</em>'.
-   * @see msi.gama.lang.gaml.gaml.Function#getArgs()
-   * @see #getFunction()
-   * @generated
-   */
-  EReference getFunction_Args();
-
-  /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.ArbitraryName <em>Arbitrary Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Arbitrary Name</em>'.
-   * @see msi.gama.lang.gaml.gaml.ArbitraryName
-   * @generated
-   */
-  EClass getArbitraryName();
-
-  /**
-   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.ArbitraryName#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see msi.gama.lang.gaml.gaml.ArbitraryName#getName()
-   * @see #getArbitraryName()
-   * @generated
-   */
-  EAttribute getArbitraryName_Name();
-
-  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.UnitName <em>Unit Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2456,17 +2514,6 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EClass getUnitName();
-
-  /**
-   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.UnitName#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see msi.gama.lang.gaml.gaml.UnitName#getName()
-   * @see #getUnitName()
-   * @generated
-   */
-  EAttribute getUnitName_Name();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.IntLiteral <em>Int Literal</em>}'.
@@ -2672,6 +2719,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass DEF_UNARY = eINSTANCE.getDefUnary();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEF_UNARY__NAME = eINSTANCE.getDefUnary_Name();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.StatementImpl <em>Statement</em>}' class.
@@ -2908,6 +2963,44 @@ public interface GamlPackage extends EPackage
     EReference EXPRESSION__RIGHT = eINSTANCE.getExpression_Right();
 
     /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.PairExprImpl <em>Pair Expr</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.PairExprImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPairExpr()
+     * @generated
+     */
+    EClass PAIR_EXPR = eINSTANCE.getPairExpr();
+
+    /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.AbstractRefImpl <em>Abstract Ref</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.AbstractRefImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getAbstractRef()
+     * @generated
+     */
+    EClass ABSTRACT_REF = eINSTANCE.getAbstractRef();
+
+    /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
+     * @generated
+     */
+    EClass FUNCTION = eINSTANCE.getFunction();
+
+    /**
+     * The meta object literal for the '<em><b>Args</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference FUNCTION__ARGS = eINSTANCE.getFunction_Args();
+
+    /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.VariableRefImpl <em>Variable Ref</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2980,14 +3073,22 @@ public interface GamlPackage extends EPackage
     EReference TERN_EXP__IF_FALSE = eINSTANCE.getTernExp_IfFalse();
 
     /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.PairExprImpl <em>Pair Expr</em>}' class.
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ArgPairExprImpl <em>Arg Pair Expr</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.PairExprImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPairExpr()
+     * @see msi.gama.lang.gaml.gaml.impl.ArgPairExprImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArgPairExpr()
      * @generated
      */
-    EClass PAIR_EXPR = eINSTANCE.getPairExpr();
+    EClass ARG_PAIR_EXPR = eINSTANCE.getArgPairExpr();
+
+    /**
+     * The meta object literal for the '<em><b>Arg</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ARG_PAIR_EXPR__ARG = eINSTANCE.getArgPairExpr_Arg();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.GamlBinaryExprImpl <em>Binary Expr</em>}' class.
@@ -3058,42 +3159,6 @@ public interface GamlPackage extends EPackage
     EClass POINT = eINSTANCE.getPoint();
 
     /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl <em>Function</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.FunctionImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
-     * @generated
-     */
-    EClass FUNCTION = eINSTANCE.getFunction();
-
-    /**
-     * The meta object literal for the '<em><b>Args</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference FUNCTION__ARGS = eINSTANCE.getFunction_Args();
-
-    /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl <em>Arbitrary Name</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.ArbitraryNameImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArbitraryName()
-     * @generated
-     */
-    EClass ARBITRARY_NAME = eINSTANCE.getArbitraryName();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ARBITRARY_NAME__NAME = eINSTANCE.getArbitraryName_Name();
-
-    /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.UnitNameImpl <em>Unit Name</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3102,14 +3167,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass UNIT_NAME = eINSTANCE.getUnitName();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute UNIT_NAME__NAME = eINSTANCE.getUnitName_Name();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.IntLiteralImpl <em>Int Literal</em>}' class.
