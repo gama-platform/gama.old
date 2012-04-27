@@ -604,10 +604,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__38;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:35:7: ( '-' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:35:9: '-'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:35:7: ( '+' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:35:9: '+'
             {
-            match('-'); 
+            match('+'); 
 
             }
 
@@ -624,10 +624,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__39;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:36:7: ( '!' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:36:9: '!'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:36:7: ( '-' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:36:9: '-'
             {
-            match('!'); 
+            match('-'); 
 
             }
 
@@ -644,11 +644,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__40;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:37:7: ( 'my' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:37:9: 'my'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:37:7: ( '*' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:37:9: '*'
             {
-            match("my"); 
-
+            match('*'); 
 
             }
 
@@ -665,11 +664,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__41;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:38:7: ( 'the' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:38:9: 'the'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:38:7: ( '/' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:38:9: '/'
             {
-            match("the"); 
-
+            match('/'); 
 
             }
 
@@ -686,11 +684,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__42;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:39:7: ( 'not' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:39:9: 'not'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:39:7: ( '^' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:39:9: '^'
             {
-            match("not"); 
-
+            match('^'); 
 
             }
 
@@ -707,11 +704,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__43;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:40:7: ( 'model' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:40:9: 'model'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:40:7: ( '!' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:40:9: '!'
             {
-            match("model"); 
-
+            match('!'); 
 
             }
 
@@ -728,10 +724,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__44;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:41:7: ( '_gaml {' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:41:9: '_gaml {'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:41:7: ( 'my' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:41:9: 'my'
             {
-            match("_gaml {"); 
+            match("my"); 
 
 
             }
@@ -749,10 +745,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__45;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:42:7: ( '}' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:42:9: '}'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:42:7: ( 'the' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:42:9: 'the'
             {
-            match('}'); 
+            match("the"); 
+
 
             }
 
@@ -769,10 +766,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__46;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:43:7: ( 'import' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:43:9: 'import'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:43:7: ( 'not' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:43:9: 'not'
             {
-            match("import"); 
+            match("not"); 
 
 
             }
@@ -790,10 +787,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__47;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:44:7: ( '_binary &' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:44:9: '_binary &'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:44:7: ( 'model' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:44:9: 'model'
             {
-            match("_binary &"); 
+            match("model"); 
 
 
             }
@@ -811,10 +808,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__48;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:45:7: ( '&;' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:45:9: '&;'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:45:7: ( '_gaml {' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:45:9: '_gaml {'
             {
-            match("&;"); 
+            match("_gaml {"); 
 
 
             }
@@ -832,11 +829,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__49;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:46:7: ( '_reserved &' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:46:9: '_reserved &'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:46:7: ( '}' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:46:9: '}'
             {
-            match("_reserved &"); 
-
+            match('}'); 
 
             }
 
@@ -853,10 +849,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__50;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:47:7: ( '_unary &' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:47:9: '_unary &'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:47:7: ( 'import' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:47:9: 'import'
             {
-            match("_unary &"); 
+            match("import"); 
 
 
             }
@@ -874,10 +870,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__51;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:48:7: ( 'else' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:48:9: 'else'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:48:7: ( '_binary &' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:48:9: '_binary &'
             {
-            match("else"); 
+            match("_binary &"); 
 
 
             }
@@ -895,10 +891,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__52;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:49:7: ( ':' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:49:9: ':'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:49:7: ( '&;' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:49:9: '&;'
             {
-            match(':'); 
+            match("&;"); 
+
 
             }
 
@@ -915,10 +912,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__53;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:50:7: ( 'name:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:50:9: 'name:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:50:7: ( '_reserved &' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:50:9: '_reserved &'
             {
-            match("name:"); 
+            match("_reserved &"); 
 
 
             }
@@ -936,10 +933,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__54;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:51:7: ( 'returns:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:51:9: 'returns:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:51:7: ( '_unary &' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:51:9: '_unary &'
             {
-            match("returns:"); 
+            match("_unary &"); 
 
 
             }
@@ -957,10 +954,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__55;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:52:7: ( 'action:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:52:9: 'action:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:52:7: ( 'else' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:52:9: 'else'
             {
-            match("action:"); 
+            match("else"); 
 
 
             }
@@ -978,10 +975,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__56;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:53:7: ( '{' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:53:9: '{'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:53:7: ( ':' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:53:9: ':'
             {
-            match('{'); 
+            match(':'); 
 
             }
 
@@ -998,10 +995,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__57;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:54:7: ( '(' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:54:9: '('
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:54:7: ( 'name:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:54:9: 'name:'
             {
-            match('('); 
+            match("name:"); 
+
 
             }
 
@@ -1018,10 +1016,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__58;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:55:7: ( ')' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:55:9: ')'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:55:7: ( 'returns:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:55:9: 'returns:'
             {
-            match(')'); 
+            match("returns:"); 
+
 
             }
 
@@ -1038,10 +1037,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__59;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:56:7: ( '[' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:56:9: '['
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:56:7: ( 'action:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:56:9: 'action:'
             {
-            match('['); 
+            match("action:"); 
+
 
             }
 
@@ -1058,10 +1058,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__60;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:57:7: ( ']' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:57:9: ']'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:57:7: ( '{' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:57:9: '{'
             {
-            match(']'); 
+            match('{'); 
 
             }
 
@@ -1078,10 +1078,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__61;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:58:7: ( ',' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:58:9: ','
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:58:7: ( '(' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:58:9: '('
             {
-            match(','); 
+            match('('); 
 
             }
 
@@ -1098,11 +1098,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__62;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:59:7: ( 'if' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:59:9: 'if'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:59:7: ( ')' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:59:9: ')'
             {
-            match("if"); 
-
+            match(')'); 
 
             }
 
@@ -1119,11 +1118,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__63;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:7: ( '<-' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:9: '<-'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:7: ( '[' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:9: '['
             {
-            match("<-"); 
-
+            match('['); 
 
             }
 
@@ -1140,11 +1138,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__64;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:7: ( 'function' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:9: 'function'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:7: ( ']' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:9: ']'
             {
-            match("function"); 
-
+            match(']'); 
 
             }
 
@@ -1161,11 +1158,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__65;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:7: ( '->' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:9: '->'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:7: ( ',' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:9: ','
             {
-            match("->"); 
-
+            match(','); 
 
             }
 
@@ -1182,10 +1178,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:7: ( '?' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:9: '?'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:7: ( 'if' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:9: 'if'
             {
-            match('?'); 
+            match("if"); 
+
 
             }
 
@@ -1202,10 +1199,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:64:7: ( 'or' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:64:9: 'or'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:64:7: ( '<-' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:64:9: '<-'
             {
-            match("or"); 
+            match("<-"); 
 
 
             }
@@ -1223,10 +1220,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__68;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:65:7: ( 'and' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:65:9: 'and'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:65:7: ( 'function' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:65:9: 'function'
             {
-            match("and"); 
+            match("function"); 
 
 
             }
@@ -1244,10 +1241,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__69;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:66:7: ( '::' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:66:9: '::'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:66:7: ( '->' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:66:9: '->'
             {
-            match("::"); 
+            match("->"); 
 
 
             }
@@ -1265,10 +1262,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__70;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:67:7: ( '+' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:67:9: '+'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:67:7: ( '?' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:67:9: '?'
             {
-            match('+'); 
+            match('?'); 
 
             }
 
@@ -1285,10 +1282,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__71;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:68:7: ( '*' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:68:9: '*'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:68:7: ( 'or' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:68:9: 'or'
             {
-            match('*'); 
+            match("or"); 
+
 
             }
 
@@ -1305,10 +1303,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__72;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:69:7: ( '/' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:69:9: '/'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:69:7: ( 'and' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:69:9: 'and'
             {
-            match('/'); 
+            match("and"); 
+
 
             }
 
@@ -1325,10 +1324,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__73;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:70:7: ( '^' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:70:9: '^'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:70:7: ( '::' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:70:9: '::'
             {
-            match('^'); 
+            match("::"); 
+
 
             }
 
@@ -1385,10 +1385,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_INTEGER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:14: ( ( '0' | '1' .. '9' ( '0' .. '9' )* ) )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:16: ( '0' | '1' .. '9' ( '0' .. '9' )* )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:14: ( ( '0' | '1' .. '9' ( '0' .. '9' )* ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:16: ( '0' | '1' .. '9' ( '0' .. '9' )* )
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:16: ( '0' | '1' .. '9' ( '0' .. '9' )* )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:16: ( '0' | '1' .. '9' ( '0' .. '9' )* )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1406,17 +1406,17 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:17: '0'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:17: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:21: '1' .. '9' ( '0' .. '9' )*
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:21: '1' .. '9' ( '0' .. '9' )*
                     {
                     matchRange('1','9'); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:30: ( '0' .. '9' )*
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:30: ( '0' .. '9' )*
                     loop1:
                     do {
                         int alt1=2;
@@ -1429,7 +1429,7 @@ public class InternalGamlLexer extends Lexer {
 
                         switch (alt1) {
                     	case 1 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8452:31: '0' .. '9'
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8479:31: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1463,10 +1463,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8454:14: ( ( 'true' | 'false' ) )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8454:16: ( 'true' | 'false' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8481:14: ( ( 'true' | 'false' ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8481:16: ( 'true' | 'false' )
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8454:16: ( 'true' | 'false' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8481:16: ( 'true' | 'false' )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -1484,7 +1484,7 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8454:17: 'true'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8481:17: 'true'
                     {
                     match("true"); 
 
@@ -1492,7 +1492,7 @@ public class InternalGamlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8454:24: 'false'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8481:24: 'false'
                     {
                     match("false"); 
 
@@ -1518,10 +1518,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:9: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )? )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )?
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:9: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )? )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )?
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
             int cnt4=0;
             loop4:
             do {
@@ -1559,7 +1559,7 @@ public class InternalGamlLexer extends Lexer {
                 cnt4++;
             } while (true);
 
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:45: ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )?
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:45: ( '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+ )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -1568,10 +1568,10 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:46: '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:46: '$' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
                     {
                     match('$'); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8456:50: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8483:50: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )+
                     int cnt5=0;
                     loop5:
                     do {
@@ -1631,11 +1631,11 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_COLOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8458:12: ( '#' ( '0' .. '9' | 'A' .. 'F' )+ )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8458:14: '#' ( '0' .. '9' | 'A' .. 'F' )+
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8485:12: ( '#' ( '0' .. '9' | 'A' .. 'F' )+ )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8485:14: '#' ( '0' .. '9' | 'A' .. 'F' )+
             {
             match('#'); 
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8458:18: ( '0' .. '9' | 'A' .. 'F' )+
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8485:18: ( '0' .. '9' | 'A' .. 'F' )+
             int cnt7=0;
             loop7:
             do {
@@ -1689,10 +1689,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:13: ( ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:15: ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:13: ( ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:15: ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:15: ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:15: ( '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -1710,10 +1710,10 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:16: '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:16: '1' .. '9' ( '0' .. '9' )* ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
                     matchRange('1','9'); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:25: ( '0' .. '9' )*
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:25: ( '0' .. '9' )*
                     loop8:
                     do {
                         int alt8=2;
@@ -1726,7 +1726,7 @@ public class InternalGamlLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:26: '0' .. '9'
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:26: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -1738,7 +1738,7 @@ public class InternalGamlLexer extends Lexer {
                         }
                     } while (true);
 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:37: ( '.' ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:37: ( '.' ( '0' .. '9' )+ )?
                     int alt10=2;
                     int LA10_0 = input.LA(1);
 
@@ -1747,10 +1747,10 @@ public class InternalGamlLexer extends Lexer {
                     }
                     switch (alt10) {
                         case 1 :
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:38: '.' ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:38: '.' ( '0' .. '9' )+
                             {
                             match('.'); 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:42: ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:42: ( '0' .. '9' )+
                             int cnt9=0;
                             loop9:
                             do {
@@ -1764,7 +1764,7 @@ public class InternalGamlLexer extends Lexer {
 
                                 switch (alt9) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:43: '0' .. '9'
+                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:43: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -1786,7 +1786,7 @@ public class InternalGamlLexer extends Lexer {
 
                     }
 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:56: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:56: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -1795,7 +1795,7 @@ public class InternalGamlLexer extends Lexer {
                     }
                     switch (alt13) {
                         case 1 :
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:57: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:57: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -1806,7 +1806,7 @@ public class InternalGamlLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:67: ( '+' | '-' )?
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:67: ( '+' | '-' )?
                             int alt11=2;
                             int LA11_0 = input.LA(1);
 
@@ -1832,7 +1832,7 @@ public class InternalGamlLexer extends Lexer {
 
                             }
 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:78: ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:78: ( '0' .. '9' )+
                             int cnt12=0;
                             loop12:
                             do {
@@ -1846,7 +1846,7 @@ public class InternalGamlLexer extends Lexer {
 
                                 switch (alt12) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:79: '0' .. '9'
+                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:79: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -1872,10 +1872,10 @@ public class InternalGamlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:92: '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:92: '0' ( '.' ( '0' .. '9' )+ )? ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
                     match('0'); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:96: ( '.' ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:96: ( '.' ( '0' .. '9' )+ )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -1884,10 +1884,10 @@ public class InternalGamlLexer extends Lexer {
                     }
                     switch (alt15) {
                         case 1 :
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:97: '.' ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:97: '.' ( '0' .. '9' )+
                             {
                             match('.'); 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:101: ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:101: ( '0' .. '9' )+
                             int cnt14=0;
                             loop14:
                             do {
@@ -1901,7 +1901,7 @@ public class InternalGamlLexer extends Lexer {
 
                                 switch (alt14) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:102: '0' .. '9'
+                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:102: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -1923,7 +1923,7 @@ public class InternalGamlLexer extends Lexer {
 
                     }
 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:115: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:115: ( ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -1932,7 +1932,7 @@ public class InternalGamlLexer extends Lexer {
                     }
                     switch (alt18) {
                         case 1 :
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:116: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:116: ( 'E' | 'e' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -1943,7 +1943,7 @@ public class InternalGamlLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:126: ( '+' | '-' )?
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:126: ( '+' | '-' )?
                             int alt16=2;
                             int LA16_0 = input.LA(1);
 
@@ -1969,7 +1969,7 @@ public class InternalGamlLexer extends Lexer {
 
                             }
 
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:137: ( '0' .. '9' )+
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:137: ( '0' .. '9' )+
                             int cnt17=0;
                             loop17:
                             do {
@@ -1983,7 +1983,7 @@ public class InternalGamlLexer extends Lexer {
 
                                 switch (alt17) {
                             	case 1 :
-                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8460:138: '0' .. '9'
+                            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8487:138: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -2027,10 +2027,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:13: ( ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:13: ( ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -2048,10 +2048,10 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt22) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:16: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:16: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:20: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:20: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop20:
                     do {
                         int alt20=3;
@@ -2067,7 +2067,7 @@ public class InternalGamlLexer extends Lexer {
 
                         switch (alt20) {
                     	case 1 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:21: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' )
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:21: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\\\' )
                     	    {
                     	    match('\\'); 
                     	    if ( input.LA(1)=='\"'||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -2083,7 +2083,7 @@ public class InternalGamlLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:61: ~ ( ( '\\\\' | '\"' ) )
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:61: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2108,10 +2108,10 @@ public class InternalGamlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:81: '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:81: '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:86: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:86: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop21:
                     do {
                         int alt21=3;
@@ -2127,7 +2127,7 @@ public class InternalGamlLexer extends Lexer {
 
                         switch (alt21) {
                     	case 1 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:87: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' )
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:87: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\'' | '\\\\' )
                     	    {
                     	    match('\\'); 
                     	    if ( input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -2143,7 +2143,7 @@ public class InternalGamlLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8462:128: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8489:128: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2186,12 +2186,12 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8464:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8464:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8491:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8491:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8464:24: ( options {greedy=false; } : . )*
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8491:24: ( options {greedy=false; } : . )*
             loop23:
             do {
                 int alt23=2;
@@ -2216,7 +2216,7 @@ public class InternalGamlLexer extends Lexer {
 
                 switch (alt23) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8464:52: .
+            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8491:52: .
             	    {
             	    matchAny(); 
 
@@ -2246,12 +2246,12 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop24:
             do {
                 int alt24=2;
@@ -2264,7 +2264,7 @@ public class InternalGamlLexer extends Lexer {
 
                 switch (alt24) {
             	case 1 :
-            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2284,7 +2284,7 @@ public class InternalGamlLexer extends Lexer {
                 }
             } while (true);
 
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:40: ( ( '\\r' )? '\\n' )?
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:40: ( ( '\\r' )? '\\n' )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -2293,9 +2293,9 @@ public class InternalGamlLexer extends Lexer {
             }
             switch (alt26) {
                 case 1 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:41: ( '\\r' )? '\\n'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:41: ( '\\r' )? '\\n'
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:41: ( '\\r' )?
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:41: ( '\\r' )?
                     int alt25=2;
                     int LA25_0 = input.LA(1);
 
@@ -2304,7 +2304,7 @@ public class InternalGamlLexer extends Lexer {
                     }
                     switch (alt25) {
                         case 1 :
-                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8466:41: '\\r'
+                            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8493:41: '\\r'
                             {
                             match('\r'); 
 
@@ -2336,10 +2336,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8468:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8468:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8495:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8495:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8468:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8495:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt27=0;
             loop27:
             do {
@@ -2393,8 +2393,8 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8470:16: ( . )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8470:18: .
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8497:16: ( . )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:8497:18: .
             {
             matchAny(); 
 
@@ -2925,82 +2925,83 @@ public class InternalGamlLexer extends Lexer {
 
     protected DFA28 dfa28 = new DFA28(this);
     static final String DFA28_eotS =
-        "\1\uffff\10\56\1\uffff\1\101\1\uffff\1\104\1\107\1\111\3\56\1\uffff"+
-        "\1\56\1\53\1\127\6\uffff\1\56\1\uffff\1\56\2\uffff\1\146\1\uffff"+
-        "\1\150\1\uffff\2\155\1\uffff\2\53\2\uffff\2\56\1\uffff\3\56\1\167"+
-        "\14\56\13\uffff\10\56\1\uffff\1\56\1\u008f\11\uffff\2\56\1\uffff"+
-        "\1\u0092\12\uffff\1\56\1\uffff\1\155\1\56\2\uffff\5\56\1\uffff\6"+
-        "\56\1\u00a0\1\u00a1\1\56\1\u00a3\2\56\1\u00a6\1\u00a7\1\u00a8\1"+
-        "\56\1\u00aa\6\56\1\uffff\2\56\1\uffff\3\56\1\u00b4\1\56\1\u00b6"+
-        "\7\56\2\uffff\1\56\1\uffff\1\56\1\u00c0\3\uffff\1\u00c1\1\uffff"+
-        "\10\56\1\u00ca\1\uffff\1\u00cb\1\uffff\1\u00cd\1\u00ce\7\56\3\uffff"+
-        "\6\56\1\u00c1\2\uffff\1\56\2\uffff\1\56\1\u00df\1\56\1\u00e1\1\u00e3"+
-        "\1\56\1\u00e5\1\uffff\3\56\1\u00e9\3\56\1\u00ed\1\uffff\1\u00ee"+
-        "\1\uffff\1\56\3\uffff\2\56\2\uffff\3\56\4\uffff\1\56\1\u00f6\1\u00f7"+
-        "\2\56\2\uffff\1\56\1\uffff\2\56\1\u00fd\1\uffff";
+        "\1\uffff\10\56\1\uffff\1\101\1\uffff\1\104\1\107\1\uffff\1\112\1"+
+        "\uffff\1\116\1\uffff\3\56\1\uffff\1\56\1\53\1\135\6\uffff\1\56\1"+
+        "\uffff\1\56\1\150\1\uffff\2\155\1\uffff\2\53\2\uffff\2\56\1\uffff"+
+        "\3\56\1\167\14\56\21\uffff\10\56\1\uffff\1\56\1\u008f\11\uffff\2"+
+        "\56\1\uffff\1\u0092\4\uffff\1\56\1\uffff\1\155\1\56\2\uffff\5\56"+
+        "\1\uffff\6\56\1\u00a0\1\u00a1\1\56\1\u00a3\2\56\1\u00a6\1\u00a7"+
+        "\1\u00a8\1\56\1\u00aa\6\56\1\uffff\2\56\1\uffff\3\56\1\u00b4\1\56"+
+        "\1\u00b6\7\56\2\uffff\1\56\1\uffff\1\56\1\u00c0\3\uffff\1\u00c1"+
+        "\1\uffff\10\56\1\u00ca\1\uffff\1\u00cb\1\uffff\1\u00cd\1\u00ce\7"+
+        "\56\3\uffff\6\56\1\u00c1\2\uffff\1\56\2\uffff\1\56\1\u00df\1\56"+
+        "\1\u00e1\1\u00e3\1\56\1\u00e5\1\uffff\3\56\1\u00e9\3\56\1\u00ed"+
+        "\1\uffff\1\u00ee\1\uffff\1\56\3\uffff\2\56\2\uffff\3\56\4\uffff"+
+        "\1\56\1\u00f6\1\u00f7\2\56\2\uffff\1\56\1\uffff\2\56\1\u00fd\1\uffff";
     static final String DFA28_eofS =
         "\u00fe\uffff";
     static final String DFA28_minS =
         "\1\0\1\141\1\154\2\141\1\145\1\143\1\141\1\165\1\uffff\1\75\1\uffff"+
-        "\1\75\1\55\1\76\1\150\1\141\1\142\1\uffff\1\146\1\73\1\72\6\uffff"+
-        "\1\141\1\uffff\1\162\2\uffff\1\52\1\uffff\1\60\1\uffff\2\44\1\uffff"+
-        "\2\0\2\uffff\1\151\1\162\1\uffff\1\162\1\163\1\164\1\44\1\144\1"+
-        "\160\1\145\1\154\1\153\1\144\1\164\1\144\1\151\1\166\2\164\13\uffff"+
-        "\1\145\1\165\1\164\1\155\1\141\1\151\1\145\1\156\1\uffff\1\160\1"+
-        "\44\11\uffff\1\156\1\154\1\uffff\1\44\12\uffff\1\53\1\uffff\1\44"+
-        "\1\53\2\uffff\1\164\1\156\1\157\1\145\1\143\1\uffff\1\145\1\164"+
-        "\1\141\1\145\1\157\1\165\2\44\1\151\1\44\1\164\1\145\3\44\1\145"+
-        "\1\44\1\145\1\155\1\156\1\163\1\141\1\157\1\uffff\1\143\1\163\1"+
-        "\uffff\2\60\1\145\1\44\1\162\1\44\1\150\1\154\1\165\1\164\1\141"+
-        "\1\166\1\162\2\uffff\1\157\1\uffff\1\143\1\44\3\uffff\1\44\1\uffff"+
-        "\1\72\1\154\1\141\1\145\2\162\1\164\1\145\1\44\1\uffff\1\44\1\uffff"+
-        "\2\44\1\162\1\145\1\163\1\145\2\156\1\150\3\uffff\1\40\2\162\1\171"+
-        "\1\164\1\151\1\44\2\uffff\1\142\2\uffff\1\145\1\44\1\145\2\44\1"+
-        "\72\1\44\1\uffff\1\171\1\166\1\40\1\44\1\157\1\156\1\145\1\44\1"+
-        "\uffff\1\44\1\uffff\1\72\3\uffff\1\40\1\145\2\uffff\1\156\1\145"+
-        "\1\164\4\uffff\1\144\2\44\1\167\1\40\2\uffff\1\145\1\uffff\1\145"+
-        "\1\156\1\44\1\uffff";
+        "\1\75\1\55\1\uffff\1\76\1\uffff\1\52\1\uffff\1\150\1\141\1\142\1"+
+        "\uffff\1\146\1\73\1\72\6\uffff\1\141\1\uffff\1\162\1\60\1\uffff"+
+        "\2\44\1\uffff\2\0\2\uffff\1\151\1\162\1\uffff\1\162\1\163\1\164"+
+        "\1\44\1\144\1\160\1\145\1\154\1\153\1\144\1\164\1\144\1\151\1\166"+
+        "\2\164\21\uffff\1\145\1\165\1\164\1\155\1\141\1\151\1\145\1\156"+
+        "\1\uffff\1\160\1\44\11\uffff\1\156\1\154\1\uffff\1\44\4\uffff\1"+
+        "\53\1\uffff\1\44\1\53\2\uffff\1\164\1\156\1\157\1\145\1\143\1\uffff"+
+        "\1\145\1\164\1\141\1\145\1\157\1\165\2\44\1\151\1\44\1\164\1\145"+
+        "\3\44\1\145\1\44\1\145\1\155\1\156\1\163\1\141\1\157\1\uffff\1\143"+
+        "\1\163\1\uffff\2\60\1\145\1\44\1\162\1\44\1\150\1\154\1\165\1\164"+
+        "\1\141\1\166\1\162\2\uffff\1\157\1\uffff\1\143\1\44\3\uffff\1\44"+
+        "\1\uffff\1\72\1\154\1\141\1\145\2\162\1\164\1\145\1\44\1\uffff\1"+
+        "\44\1\uffff\2\44\1\162\1\145\1\163\1\145\2\156\1\150\3\uffff\1\40"+
+        "\2\162\1\171\1\164\1\151\1\44\2\uffff\1\142\2\uffff\1\145\1\44\1"+
+        "\145\2\44\1\72\1\44\1\uffff\1\171\1\166\1\40\1\44\1\157\1\156\1"+
+        "\145\1\44\1\uffff\1\44\1\uffff\1\72\3\uffff\1\40\1\145\2\uffff\1"+
+        "\156\1\145\1\164\4\uffff\1\144\2\44\1\167\1\40\2\uffff\1\145\1\uffff"+
+        "\1\145\1\156\1\44\1\uffff";
     static final String DFA28_maxS =
         "\1\uffff\2\162\1\171\1\162\1\145\1\163\1\167\1\165\1\uffff\1\75"+
-        "\1\uffff\2\75\1\76\1\162\1\157\1\165\1\uffff\1\155\1\73\1\72\6\uffff"+
-        "\1\165\1\uffff\1\162\2\uffff\1\57\1\uffff\1\106\1\uffff\2\172\1"+
-        "\uffff\2\uffff\2\uffff\1\151\1\162\1\uffff\1\162\1\163\1\164\1\172"+
-        "\1\144\1\160\1\145\1\164\1\153\1\144\1\164\1\144\1\151\1\166\2\164"+
-        "\13\uffff\1\145\1\165\1\164\1\155\1\141\1\151\1\145\1\156\1\uffff"+
-        "\1\160\1\172\11\uffff\1\156\1\154\1\uffff\1\172\12\uffff\1\71\1"+
-        "\uffff\1\172\1\71\2\uffff\1\164\1\156\1\157\1\145\1\143\1\uffff"+
-        "\1\145\1\164\1\141\1\145\1\157\1\165\2\172\1\151\1\172\1\164\1\145"+
-        "\3\172\1\145\1\172\1\145\1\155\1\156\1\163\1\141\1\157\1\uffff\1"+
-        "\143\1\163\1\uffff\2\71\1\145\1\172\1\162\1\172\1\150\1\154\1\165"+
-        "\1\164\1\141\1\166\1\162\2\uffff\1\157\1\uffff\1\143\1\172\3\uffff"+
-        "\1\172\1\uffff\1\72\1\154\1\141\1\145\2\162\1\164\1\145\1\172\1"+
-        "\uffff\1\172\1\uffff\2\172\1\162\1\145\1\163\1\145\2\156\1\150\3"+
-        "\uffff\1\40\2\162\1\171\1\164\1\151\1\172\2\uffff\1\157\2\uffff"+
-        "\1\145\1\172\1\145\2\172\1\72\1\172\1\uffff\1\171\1\166\1\40\1\172"+
-        "\1\157\1\156\1\145\1\172\1\uffff\1\172\1\uffff\1\72\3\uffff\1\40"+
-        "\1\145\2\uffff\1\156\1\145\1\164\4\uffff\1\144\2\172\1\167\1\40"+
-        "\2\uffff\1\145\1\uffff\1\145\1\156\1\172\1\uffff";
+        "\1\uffff\2\75\1\uffff\1\76\1\uffff\1\57\1\uffff\1\162\1\157\1\165"+
+        "\1\uffff\1\155\1\73\1\72\6\uffff\1\165\1\uffff\1\162\1\106\1\uffff"+
+        "\2\172\1\uffff\2\uffff\2\uffff\1\151\1\162\1\uffff\1\162\1\163\1"+
+        "\164\1\172\1\144\1\160\1\145\1\164\1\153\1\144\1\164\1\144\1\151"+
+        "\1\166\2\164\21\uffff\1\145\1\165\1\164\1\155\1\141\1\151\1\145"+
+        "\1\156\1\uffff\1\160\1\172\11\uffff\1\156\1\154\1\uffff\1\172\4"+
+        "\uffff\1\71\1\uffff\1\172\1\71\2\uffff\1\164\1\156\1\157\1\145\1"+
+        "\143\1\uffff\1\145\1\164\1\141\1\145\1\157\1\165\2\172\1\151\1\172"+
+        "\1\164\1\145\3\172\1\145\1\172\1\145\1\155\1\156\1\163\1\141\1\157"+
+        "\1\uffff\1\143\1\163\1\uffff\2\71\1\145\1\172\1\162\1\172\1\150"+
+        "\1\154\1\165\1\164\1\141\1\166\1\162\2\uffff\1\157\1\uffff\1\143"+
+        "\1\172\3\uffff\1\172\1\uffff\1\72\1\154\1\141\1\145\2\162\1\164"+
+        "\1\145\1\172\1\uffff\1\172\1\uffff\2\172\1\162\1\145\1\163\1\145"+
+        "\2\156\1\150\3\uffff\1\40\2\162\1\171\1\164\1\151\1\172\2\uffff"+
+        "\1\157\2\uffff\1\145\1\172\1\145\2\172\1\72\1\172\1\uffff\1\171"+
+        "\1\166\1\40\1\172\1\157\1\156\1\145\1\172\1\uffff\1\172\1\uffff"+
+        "\1\72\3\uffff\1\40\1\145\2\uffff\1\156\1\145\1\164\4\uffff\1\144"+
+        "\2\172\1\167\1\40\2\uffff\1\145\1\uffff\1\145\1\156\1\172\1\uffff";
     static final String DFA28_acceptS =
-        "\11\uffff\1\22\1\uffff\1\24\6\uffff\1\40\3\uffff\1\53\1\54\1\55"+
-        "\1\56\1\57\1\60\1\uffff\1\65\1\uffff\1\71\1\72\1\uffff\1\74\1\uffff"+
-        "\1\76\2\uffff\1\101\2\uffff\1\107\1\110\2\uffff\1\101\20\uffff\1"+
-        "\22\1\23\1\32\1\24\1\25\1\30\1\26\1\62\1\27\1\64\1\31\10\uffff\1"+
-        "\40\2\uffff\1\43\1\70\1\47\1\53\1\54\1\55\1\56\1\57\1\60\2\uffff"+
-        "\1\65\1\uffff\1\71\1\72\1\105\1\106\1\73\1\74\1\75\1\102\1\76\1"+
-        "\103\1\uffff\1\77\2\uffff\1\104\1\107\5\uffff\1\33\27\uffff\1\61"+
-        "\2\uffff\1\66\15\uffff\1\11\1\14\1\uffff\1\67\2\uffff\1\20\1\16"+
-        "\1\34\1\uffff\1\35\11\uffff\1\2\1\uffff\1\46\11\uffff\1\17\1\100"+
-        "\1\50\7\uffff\1\1\1\3\1\uffff\1\4\1\36\7\uffff\1\37\10\uffff\1\13"+
-        "\1\uffff\1\15\1\uffff\1\21\1\52\1\12\2\uffff\1\45\1\41\3\uffff\1"+
-        "\7\1\10\1\51\1\42\5\uffff\1\63\1\5\1\uffff\1\44\3\uffff\1\6";
+        "\11\uffff\1\22\1\uffff\1\24\2\uffff\1\31\1\uffff\1\33\1\uffff\1"+
+        "\35\3\uffff\1\44\3\uffff\1\57\1\60\1\61\1\62\1\63\1\64\1\uffff\1"+
+        "\71\2\uffff\1\76\2\uffff\1\101\2\uffff\1\107\1\110\2\uffff\1\101"+
+        "\20\uffff\1\22\1\23\1\36\1\24\1\25\1\30\1\26\1\66\1\27\1\31\1\70"+
+        "\1\32\1\33\1\105\1\106\1\34\1\35\10\uffff\1\44\2\uffff\1\47\1\74"+
+        "\1\53\1\57\1\60\1\61\1\62\1\63\1\64\2\uffff\1\71\1\uffff\1\75\1"+
+        "\102\1\76\1\103\1\uffff\1\77\2\uffff\1\104\1\107\5\uffff\1\37\27"+
+        "\uffff\1\65\2\uffff\1\72\15\uffff\1\11\1\14\1\uffff\1\73\2\uffff"+
+        "\1\20\1\16\1\40\1\uffff\1\41\11\uffff\1\2\1\uffff\1\52\11\uffff"+
+        "\1\17\1\100\1\54\7\uffff\1\1\1\3\1\uffff\1\4\1\42\7\uffff\1\43\10"+
+        "\uffff\1\13\1\uffff\1\15\1\uffff\1\21\1\56\1\12\2\uffff\1\51\1\45"+
+        "\3\uffff\1\7\1\10\1\55\1\46\5\uffff\1\67\1\5\1\uffff\1\50\3\uffff"+
+        "\1\6";
     static final String DFA28_specialS =
-        "\1\1\47\uffff\1\2\1\0\u00d4\uffff}>";
+        "\1\2\47\uffff\1\1\1\0\u00d4\uffff}>";
     static final String[] DFA28_transitionS = {
-            "\11\53\2\52\2\53\1\52\22\53\1\52\1\12\1\50\1\43\2\53\1\24\1"+
-            "\51\1\27\1\30\1\40\1\37\1\33\1\16\1\44\1\41\1\45\11\46\1\25"+
-            "\1\11\1\15\1\13\1\14\1\35\1\53\32\47\1\31\1\53\1\32\1\42\1\21"+
-            "\1\53\1\6\1\47\1\4\1\47\1\2\1\34\2\47\1\23\3\47\1\3\1\20\1\36"+
-            "\1\10\1\47\1\5\1\7\1\17\2\47\1\1\3\47\1\26\1\53\1\22\uff82\53",
+            "\11\53\2\52\2\53\1\52\22\53\1\52\1\12\1\50\1\43\2\53\1\30\1"+
+            "\51\1\33\1\34\1\20\1\16\1\37\1\17\1\44\1\21\1\45\11\46\1\31"+
+            "\1\11\1\15\1\13\1\14\1\41\1\53\32\47\1\35\1\53\1\36\1\22\1\25"+
+            "\1\53\1\6\1\47\1\4\1\47\1\2\1\40\2\47\1\27\3\47\1\3\1\24\1\42"+
+            "\1\10\1\47\1\5\1\7\1\23\2\47\1\1\3\47\1\32\1\53\1\26\uff82\53",
             "\1\55\20\uffff\1\54",
             "\1\60\5\uffff\1\57",
             "\1\61\15\uffff\1\63\11\uffff\1\62",
@@ -3014,27 +3015,27 @@ public class InternalGamlLexer extends Lexer {
             "",
             "\1\103",
             "\1\106\17\uffff\1\105",
-            "\1\110",
-            "\1\112\11\uffff\1\113",
-            "\1\115\15\uffff\1\114",
-            "\1\117\4\uffff\1\116\12\uffff\1\120\2\uffff\1\121",
             "",
-            "\1\124\6\uffff\1\123",
-            "\1\125",
-            "\1\126",
+            "\1\111",
             "",
+            "\1\114\4\uffff\1\115",
             "",
+            "\1\120\11\uffff\1\121",
+            "\1\123\15\uffff\1\122",
+            "\1\125\4\uffff\1\124\12\uffff\1\126\2\uffff\1\127",
             "",
-            "",
-            "",
-            "",
-            "\1\137\23\uffff\1\136",
-            "",
-            "\1\141",
+            "\1\132\6\uffff\1\131",
+            "\1\133",
+            "\1\134",
             "",
             "",
-            "\1\144\4\uffff\1\145",
             "",
+            "",
+            "",
+            "",
+            "\1\145\23\uffff\1\144",
+            "",
+            "\1\147",
             "\12\151\7\uffff\6\151",
             "",
             "\1\56\11\uffff\1\153\1\uffff\12\56\7\uffff\4\56\1\154\25\56"+
@@ -3077,6 +3078,12 @@ public class InternalGamlLexer extends Lexer {
             "",
             "",
             "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\u0086",
             "\1\u0087",
             "\1\u0088",
@@ -3103,12 +3110,6 @@ public class InternalGamlLexer extends Lexer {
             "",
             "\1\56\13\uffff\12\56\7\uffff\32\56\4\uffff\1\56\1\uffff\32"+
             "\56",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             "",
             "",
@@ -3335,6 +3336,16 @@ public class InternalGamlLexer extends Lexer {
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
+                        int LA28_40 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA28_40>='\u0000' && LA28_40<='\uFFFF')) ) {s = 112;}
+
+                        else s = 43;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
                         int LA28_0 = input.LA(1);
 
                         s = -1;
@@ -3364,47 +3375,47 @@ public class InternalGamlLexer extends Lexer {
 
                         else if ( (LA28_0=='<') ) {s = 13;}
 
-                        else if ( (LA28_0=='-') ) {s = 14;}
+                        else if ( (LA28_0=='+') ) {s = 14;}
 
-                        else if ( (LA28_0=='t') ) {s = 15;}
+                        else if ( (LA28_0=='-') ) {s = 15;}
 
-                        else if ( (LA28_0=='n') ) {s = 16;}
+                        else if ( (LA28_0=='*') ) {s = 16;}
 
-                        else if ( (LA28_0=='_') ) {s = 17;}
+                        else if ( (LA28_0=='/') ) {s = 17;}
 
-                        else if ( (LA28_0=='}') ) {s = 18;}
+                        else if ( (LA28_0=='^') ) {s = 18;}
 
-                        else if ( (LA28_0=='i') ) {s = 19;}
+                        else if ( (LA28_0=='t') ) {s = 19;}
 
-                        else if ( (LA28_0=='&') ) {s = 20;}
+                        else if ( (LA28_0=='n') ) {s = 20;}
 
-                        else if ( (LA28_0==':') ) {s = 21;}
+                        else if ( (LA28_0=='_') ) {s = 21;}
 
-                        else if ( (LA28_0=='{') ) {s = 22;}
+                        else if ( (LA28_0=='}') ) {s = 22;}
 
-                        else if ( (LA28_0=='(') ) {s = 23;}
+                        else if ( (LA28_0=='i') ) {s = 23;}
 
-                        else if ( (LA28_0==')') ) {s = 24;}
+                        else if ( (LA28_0=='&') ) {s = 24;}
 
-                        else if ( (LA28_0=='[') ) {s = 25;}
+                        else if ( (LA28_0==':') ) {s = 25;}
 
-                        else if ( (LA28_0==']') ) {s = 26;}
+                        else if ( (LA28_0=='{') ) {s = 26;}
 
-                        else if ( (LA28_0==',') ) {s = 27;}
+                        else if ( (LA28_0=='(') ) {s = 27;}
 
-                        else if ( (LA28_0=='f') ) {s = 28;}
+                        else if ( (LA28_0==')') ) {s = 28;}
 
-                        else if ( (LA28_0=='?') ) {s = 29;}
+                        else if ( (LA28_0=='[') ) {s = 29;}
 
-                        else if ( (LA28_0=='o') ) {s = 30;}
+                        else if ( (LA28_0==']') ) {s = 30;}
 
-                        else if ( (LA28_0=='+') ) {s = 31;}
+                        else if ( (LA28_0==',') ) {s = 31;}
 
-                        else if ( (LA28_0=='*') ) {s = 32;}
+                        else if ( (LA28_0=='f') ) {s = 32;}
 
-                        else if ( (LA28_0=='/') ) {s = 33;}
+                        else if ( (LA28_0=='?') ) {s = 33;}
 
-                        else if ( (LA28_0=='^') ) {s = 34;}
+                        else if ( (LA28_0=='o') ) {s = 34;}
 
                         else if ( (LA28_0=='#') ) {s = 35;}
 
@@ -3423,16 +3434,6 @@ public class InternalGamlLexer extends Lexer {
                         else if ( ((LA28_0>='\t' && LA28_0<='\n')||LA28_0=='\r'||LA28_0==' ') ) {s = 42;}
 
                         else if ( ((LA28_0>='\u0000' && LA28_0<='\b')||(LA28_0>='\u000B' && LA28_0<='\f')||(LA28_0>='\u000E' && LA28_0<='\u001F')||(LA28_0>='$' && LA28_0<='%')||LA28_0=='@'||LA28_0=='\\'||LA28_0=='`'||LA28_0=='|'||(LA28_0>='~' && LA28_0<='\uFFFF')) ) {s = 43;}
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
-                        int LA28_40 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA28_40>='\u0000' && LA28_40<='\uFFFF')) ) {s = 112;}
-
-                        else s = 43;
 
                         if ( s>=0 ) return s;
                         break;

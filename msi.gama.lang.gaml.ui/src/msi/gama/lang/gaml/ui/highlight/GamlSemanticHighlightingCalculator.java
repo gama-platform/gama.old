@@ -45,40 +45,31 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	public void provideHighlightingFor(final XtextResource resource,
 		final IHighlightedPositionAcceptor a) {
 		acceptor = a;
-		if ( resource == null || resource.getParseResult() == null ) { return; }
+		// if ( resource == null || resource.getParseResult() == null ) { return; }
 		TreeIterator<EObject> root = resource.getAllContents();
+
 		while (root.hasNext()) {
 			EObject obj = root.next();
-			// System.out.println("Highlighting :" + EGaml.getKeyOf(obj) + " of class " +
-			// obj.getClass().getSimpleName());
 			if ( obj != null ) {
 				if ( obj instanceof Statement ) {
-
 					if ( obj instanceof Definition ) {
-						setStyle(obj, VARDEF_ID, ((Definition) obj).getName());
+						setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
 					} else {
 						GamlFacetRef ref = ((Statement) obj).getRef();
 						if ( ref != null ) {
-							setStyle(ref, FACET_ID, ref.getRef());
+							setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
 						}
 					}
 					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
-				} else if ( obj instanceof GamlBinaryExpr ) {
-					setStyle(obj, BINARY_ID, ((GamlBinaryExpr) obj).getOp());
+				} else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
+					setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
 				} else if ( obj instanceof FacetExpr ) {
-					setStyle(obj, FACET_ID, EGaml.getKeyOf(obj));
-				} else if ( obj instanceof DoubleLiteral || obj instanceof ColorLiteral ||
-					obj instanceof BooleanLiteral || obj instanceof IntLiteral ) {
-					setStyle(obj, NUMBER_ID, 0);
-				} else if ( obj instanceof Function ) {
-					setStyle(obj, BINARY_ID, ((Function) obj).getOp());
-				}
-				// else if ( obj instanceof FunctionRef ) {
-				// setStyle(obj, BINARY_ID, NodeModelUtils.getNode(obj));
-				// }
-				else if ( obj instanceof DefUnary ) {
-					setStyle(obj, BINARY_ID, ((DefUnary) obj).getName());
-				} else if ( obj instanceof VariableRef /* && ((VariableRef) obj).getRef() != null */) {
+					setStyle(obj, FACET_ID, 0 /* EGaml.getKeyOf(obj) */);
+				} else if ( obj instanceof TerminalExpression ) {
+					if ( !(obj instanceof StringLiteral) ) {
+						setStyle(obj, NUMBER_ID, 0);
+					}
+				} else if ( obj instanceof VariableRef ) {
 					setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
 				}
 

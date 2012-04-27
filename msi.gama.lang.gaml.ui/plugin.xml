@@ -252,5 +252,16 @@
             extensions="gaml">
     </provider>
   </extension>
+  <extension
+        point="org.eclipse.ui.views">
+     <view
+           allowMultiple="false"
+           class="org.eclipse.search2.internal.ui.SearchView"
+           icon="icons/_inspect.png"
+           id="org.eclipse.search.ui.views.SearchView"
+           name="Search Results"
+           restorable="true">
+     </view>
+  </extension>
 
 </plugin>

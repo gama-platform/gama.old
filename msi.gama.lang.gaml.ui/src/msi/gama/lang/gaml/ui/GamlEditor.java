@@ -4,12 +4,12 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import java.util.LinkedHashSet;
-import msi.gama.common.interfaces.*;
+import java.util.*;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.EGaml;
+import msi.gama.lang.gaml.GamlResource;
+import msi.gama.lang.gaml.validation.IGamlBuilder;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -44,8 +44,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 	Composite toolbar, top, parent;
 	Button[] buttons = new Button[INITIAL_BUTTONS];
 	Label status;
-	LinkedHashSet<String> currentExperiments = new LinkedHashSet();
-	int previousNumberOfErrors;
+	Set<String> currentExperiments = new LinkedHashSet();
+	boolean wasOK;
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -55,7 +55,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 	@Override
 	public void dispose() {
-		GAMA.getGamlBuilder().removeListener(this);
+		if ( getDocument() != null ) {
+			getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+
+				@Override
+				public void process(final XtextResource state) throws Exception {
+					((GamlResource) state).removeListener();
+				}
+
+			});
+		}
+
+		// GAMA.getGamlBuilder().removeListener(this);
 		if ( buttons != null ) {
 			for ( Button b : buttons ) {
 				if ( b != null && !b.isDisposed() ) {
@@ -137,8 +148,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				GAMA.getGamlBuilder().addListener(state.getURI(), GamlEditor.this);
-				updateExperiments(state);
+
+				((GamlResource) state).setListener(GamlEditor.this);
+				// updateExperiments(state, true);
 			}
 		});
 
@@ -148,12 +160,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
+			doSave(null);
 			String name = ((Button) evt.widget).getText();
 			IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
 				@Override
 				public IModel exec(final XtextResource state) throws Exception {
-					return GAMA.getGamlBuilder().build(state);
+					return ((GamlResource) state).doBuild();
 				}
 
 			});
@@ -184,6 +197,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 	}
 
 	private void updateToolbar(final boolean ok) {
+
 		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
@@ -211,44 +225,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
 
 	}
 
-	private void updateExperiments(final org.eclipse.emf.ecore.resource.Resource r) {
-		final LinkedHashSet<String> exp = new LinkedHashSet();
-		exp.add(IKeyword.DEFAULT_EXP);
+	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
+		if ( withErrors == true && wasOK == false ) { return; }
 
-		int status = r.getErrors().size();
-
-		for ( Statement object : ((Model) r.getContents().get(0)).getStatements() ) {
-			if ( IKeyword.EXPERIMENT.equals(object.getKey()) ) {
-				if ( object instanceof Definition ) {
-					String name = ((Definition) object).getName();
-					if ( name == null ) {
-						name = EGaml.getLabelFromFacet(object, IKeyword.NAME);
-					}
-					exp.add(name);
-				}
-			}
-		}
-
-		if ( previousNumberOfErrors == status && exp.equals(currentExperiments) ) { return; }
-		if ( previousNumberOfErrors > 0 && status > 0 ) { return; }
-		previousNumberOfErrors = status;
-		currentExperiments = exp;
-		updateToolbar(status == 0);
+		if ( wasOK && !withErrors && newExperiments.equals(currentExperiments) ) { return; }
+		wasOK = !withErrors;
+		currentExperiments = newExperiments;
+		updateToolbar(wasOK);
 	}
-
-	/**
-	 * 
-	 */
-	// public void updateToolbar() {
-
-	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGamlBuilder.Listener#validationEnded(boolean)
 	 */
 	@Override
-	public void validationEnded(final org.eclipse.emf.ecore.resource.Resource xtextResource) {
-		updateExperiments(xtextResource);
+	public void validationEnded(final Set<String> newExperiments, final boolean withErrors) {
+		updateExperiments(newExperiments, withErrors);
 	}
 
 }

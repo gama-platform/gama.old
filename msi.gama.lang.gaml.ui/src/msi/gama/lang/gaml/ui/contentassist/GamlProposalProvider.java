@@ -20,27 +20,24 @@ package msi.gama.lang.gaml.ui.contentassist;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import java.util.Set;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.utils.*;
+import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.GamlProperties;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.descriptions.*;
-import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.ui.editor.contentassist.*;
+import org.eclipse.xtext.ui.editor.findrefs.IReferenceFinder;
 
 /**
  * see
@@ -48,6 +45,8 @@ import org.eclipse.xtext.ui.editor.contentassist.*;
  * how to customize content assistant
  */
 public class GamlProposalProvider extends AbstractGamlProposalProvider {
+
+	IReferenceFinder f;
 
 	private static Set<String> typeList;
 	private static GamlProperties allowedFacets;
@@ -66,29 +65,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			return new File(url.getFile()).getAbsolutePath();
 		} catch (Exception e) {}
 		return null;
-	}
-
-	private ModelDescription getModel(final Resource r) {
-
-		// TODO Change completely to use validation instead
-
-		if ( !GamaBundleLoader.contributionsLoaded || r == null ) { return null; }
-		ModelDescription lastModel = null;
-		IErrorCollector collect = new ErrorCollector();
-		try {
-			Map<URI, ISyntacticElement> elements = new LinkedHashMap();
-			elements.put(r.getURI(),
-				GamlToSyntacticElements.doConvert((Model) r.getContents().get(0), collect));
-			ModelStructure ms =
-				new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()), collect);
-			lastModel = DescriptionFactory.getModelFactory().parse(ms, collect);
-		} catch (GamaRuntimeException e1) {
-			System.out.println("Exception during compilation:" + e1.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			return lastModel;
-		}
 	}
 
 	// @Override
@@ -184,8 +160,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void completeMemberRef_Op(final MemberRef m, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		if ( m == null ) { return; }
-		ModelDescription model = getModel(context.getRootModel().eResource());
-
+		ModelDescription model =
+			((GamlResource) context.getRootModel().eResource()).getModelDescription();
+		if ( model == null ) { return; }
 		EObject lexp = m.getLeft();
 		final String kname = EGaml.getKeyOf(lexp);
 
