@@ -20,10 +20,13 @@ package msi.gama.precompiler;
 
 import java.io.*;
 import java.util.*;
+
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.tools.*;
+import javax.tools.Diagnostic.Kind;
+
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -91,6 +94,18 @@ public class GamaProcessor extends AbstractProcessor {
 			processAction(env.getElementsAnnotatedWith(action.class));
 			processArgs(env.getElementsAnnotatedWith(args.class));
 			processReserved(env.getElementsAnnotatedWith(reserved.class));
+			
+			if("true".equals(processingEnv.getOptions().get("doc"))){
+				Messager m = processingEnv.getMessager();
+				m.printMessage(Kind.ERROR, "Beginning of the documentation processing" +
+						processingEnv.getOptions().get("doc"));
+				
+				
+				new docProcessor(processingEnv).processDocXML(env, createWriter("doc.xml"));
+
+				m.printMessage(Kind.NOTE, "End of the documentation processing");
+			}
+			
 		}
 		return false;
 	}
@@ -393,5 +408,5 @@ public class GamaProcessor extends AbstractProcessor {
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}
+	}	
 }
