@@ -491,4 +491,22 @@ public final class GamlAnnotations {
 		String[] value();
 	}
 
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	@Inherited
+	public static @interface gamlDoc {
+
+		/**
+		 * Value.
+		 * 
+		 * @return a String representing the description of the element in Gaml
+		 */
+		String result() default "";
+		String comment() default "";
+		String[] specialCases() default {};
+		String[] examples() default {};
+		String[] seeAlso() default {};
+
+	}
 }
