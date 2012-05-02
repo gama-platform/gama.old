@@ -9,7 +9,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
-import msi.gama.lang.gaml.validation.IGamlBuilder;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -28,7 +28,7 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
  * @since 4 mars 2012
  * 
  */
-public class GamlEditor extends XtextEditor implements IGamlBuilder.Listener {
+public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	// Copied from SwtGui. See how to factorize this.
 	public static Image run = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,

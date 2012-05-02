@@ -18,8 +18,11 @@
  */
 package msi.gama.lang.gaml.ui.labeling;
 
+import java.util.regex.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
+import msi.gaml.descriptions.IGamlDescription;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
@@ -41,6 +44,15 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		return "icon-16x16x32b.gif";
 	}
 
+	private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
+
+	public static String removeTags(final String string) {
+		if ( string == null || string.length() == 0 ) { return string; }
+
+		Matcher m = REMOVE_TAGS.matcher(string);
+		return m.replaceAll("");
+	}
+
 	// Import
 	String text(final Import ele) {
 		String display = ele.getImportURI();
@@ -49,6 +61,24 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 			display = display.substring(index + 1);
 		}
 		return display;
+	}
+
+	String text(final EObject ele) {
+		IGamlDescription ed = EGaml.getGamlDescription(ele);
+		if ( ed != null ) { return removeTags(ed.getTitle()); }
+		String trial = EGaml.getKeyOf(ele);
+		return trial == null ? "" : trial;
+	}
+
+	String text(final Definition obj) {
+		IGamlDescription ed = EGaml.getGamlDescription(obj);
+		if ( ed != null ) { return removeTags(ed.getTitle()); }
+		String s = text((EObject) obj);
+		String n = obj.getName();
+		if ( n == null ) {
+			n = "";
+		}
+		return s + " " + obj.getName();
 	}
 
 	String image(final Import ele) {

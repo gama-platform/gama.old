@@ -41,8 +41,8 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	private IHighlightedPositionAcceptor acceptor;
 	Set<INode> done = new HashSet();
 
-	@Override
-	public void provideHighlightingFor(final XtextResource resource,
+	// @Override
+	public void provideHighlightingForOld(final XtextResource resource,
 		final IHighlightedPositionAcceptor a) {
 		acceptor = a;
 		// if ( resource == null || resource.getParseResult() == null ) { return; }
@@ -80,6 +80,48 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		done.clear();
 	}
 
+	@Override
+	// Mettre un ID sur les descriptions pour les répèrer plus facilement.
+	public void provideHighlightingFor(final XtextResource resource,
+		final IHighlightedPositionAcceptor a) {
+		acceptor = a;
+		TreeIterator<EObject> root = resource.getAllContents();
+
+		while (root.hasNext()) {
+			EObject obj = root.next();
+			if ( obj != null ) {
+				if ( obj instanceof Statement ) {
+					if ( obj instanceof Definition ) {
+						if ( ((Definition) obj).getName() != null ) {
+							setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
+						}
+					} else {
+						GamlFacetRef ref = ((Statement) obj).getRef();
+						if ( ref != null ) {
+							setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
+						}
+					}
+					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
+				} else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
+					setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
+				} else if ( obj instanceof FacetExpr ) {
+					setStyle(obj, FACET_ID, 0);
+					if ( obj instanceof NameFacetExpr || obj instanceof ReturnsFacetExpr ) {
+						setStyle(obj, VARDEF_ID, 1);
+					}
+				} else if ( obj instanceof TerminalExpression ) {
+					if ( !(obj instanceof StringLiteral) ) {
+						setStyle(obj, NUMBER_ID, 0);
+					}
+				} else if ( obj instanceof VariableRef ) {
+					setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
+				}
+			}
+
+		}
+		done.clear();
+	}
+
 	private void setStyle(final EObject obj, final String s, final int position) {
 		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
 		if ( obj != null && s != null ) {
@@ -104,12 +146,15 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		}
 	}
 
-	private void setStyle(final EObject obj, final String s, final INode node) {
-		acceptor.addPosition(node.getOffset(), node.getLength(), s);
+	private void setStyle(final EObject obj, final String s, final INode n) {
+		acceptor.addPosition(n.getOffset(), n.getLength(), s);
+		if ( !done.contains(n) ) {
+			done.add(n);
+			acceptor.addPosition(n.getOffset(), n.getLength(), s);
+		}
 	}
 
 	private void setStyle(final EObject obj, final String s, final String text) {
-		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
 		if ( text == null ) { return; }
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);

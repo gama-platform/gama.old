@@ -18,12 +18,16 @@
  */
 package msi.gama.lang.gaml.ui;
 
+import msi.gama.lang.gaml.ui.contentassist.GamlContentAssistProcessor;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
+import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
@@ -45,12 +49,23 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public void configure(final Binder binder) {
 		super.configure(binder);
+		binder.bind(ILocationInFileProvider.class).to(GamlLocationInFileProvider.class);
 		binder
 			.bind(String.class)
 			.annotatedWith(
 				com.google.inject.name.Names
 					.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 			.toInstance(".:");
+	}
+
+	@Override
+	public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
+		return GamlContentAssistProcessor.class;
+	}
+
+	@Override
+	public Class<? extends org.eclipse.jface.text.ITextHover> bindITextHover() {
+		return GamlDispatchingEObjectTextHover.class;
 	}
 
 	/**

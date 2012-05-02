@@ -130,7 +130,12 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 		String castingString = data[0];
 		acceptor.accept(issue, "Cast the expression to " + castingString + "...", "", "",
 			new Surround(issue.getOffset(), issue.getLength(), castingString + "(", ")"));
+	}
 
+	@Fix(IGamlIssue.AS_ARRAY)
+	public void asArray(final Issue issue, final IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Enclose the skill in a list...", "", "",
+			new Surround(issue.getOffset(), issue.getLength(), "[", "]"));
 	}
 
 	// @Fix(QF_NOTKEYOFMODEL)
