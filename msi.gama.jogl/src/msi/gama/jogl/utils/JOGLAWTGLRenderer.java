@@ -109,11 +109,11 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
-		this.DrawXYZAxis();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim/10);
 		this.DrawZValue();
 				
 	}
@@ -222,53 +222,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		
 	}
 	
-	public void DrawXYZAxis(){
-		GLUT glut = new GLUT();
-		//X Axis
-	    gl.glRasterPos3f(1.2f, 0.0f, 0.0f);   
-	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "x");
-		gl.glBegin(GL.GL_LINES);
-			gl.glColor3f(1,0,0);
-			gl.glVertex3f(0,0,0);
-			gl.glVertex3f(1,0,0);
-		gl.glEnd();
-			
-		gl.glBegin(GL_TRIANGLES); 
-	      gl.glVertex3f(1.0f, 0.05f, 0.0f);
-	      gl.glVertex3f(1.0f, -0.05f, 0.0f);
-	      gl.glVertex3f(1.1f, 0.0f, 0.0f);
-	    gl.glEnd();
-	    
-	    //Y Axis
-	    gl.glRasterPos3f(0.0f, 1.2f, 0.0f);    
-	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "y");
-	    gl.glBegin(GL.GL_LINES);
-			gl.glColor3f(0,1,0);
-			gl.glVertex3f(0,0,0);
-			gl.glVertex3f(0,1,0);
-		gl.glEnd();
-		gl.glBegin(GL_TRIANGLES); 
-	      gl.glVertex3f(-0.05f, 1f, 0.0f);
-	      gl.glVertex3f(0.05f, 1f, 0.0f);
-	      gl.glVertex3f(0.0f, 1.1f, 0.0f);
-	    gl.glEnd();
-		
-		//Z Axis
-	    gl.glRasterPos3f(0.0f, 0.0f, 1.2f);    
-	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z");
-		gl.glBegin(GL.GL_LINES);
-			gl.glColor3f(0,0,1);
-			gl.glVertex3f(0,0,0);
-			gl.glVertex3f(0,0,1);
-	    gl.glEnd();
-	    
-	    gl.glBegin(GL_TRIANGLES); 
-	      gl.glVertex3f(0.0f, 0.05f, 1.0f);
-	      gl.glVertex3f(0.0f, -0.05f, 1.0f);
-	      gl.glVertex3f(0.0f, 0.0f, 1.1f);
-	    gl.glEnd();
-		
-	}
+
 	
 	public void DrawZValue(){
 		GLUT glut = new GLUT();

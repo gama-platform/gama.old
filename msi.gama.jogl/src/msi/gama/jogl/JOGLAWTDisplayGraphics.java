@@ -408,9 +408,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		// FIXME: We must define the size of the circle.Not sure if you must use
-		// curWidth
-		AddCircleInGeometries(curX, curY, c, curWidth);
+		AddCircleInGeometries(curX+curWidth/2, curY+curWidth/2, c, curWidth);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 		// return drawShape(c, oval, fill, angle);
@@ -752,8 +750,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private void AddCircleInGeometries(int x, int y, Color color, int size) {
 		MyGeometry curGeometry = new MyGeometry(1);
 		// FIXME: why we need to use currentScale?
-		curGeometry.vertices[0].x = (float) ((float) x / currentXScale - 0.5f);
-		curGeometry.vertices[0].y = (float) (-(float) y / currentYScale - 0.5f);
+		curGeometry.vertices[0].x = (float) ((float) x / currentXScale );
+		curGeometry.vertices[0].y = (float) (-(float) y / currentYScale );
 		curGeometry.vertices[0].z = z;
 		curGeometry.vertices[0].u = 6.0f;
 		curGeometry.vertices[0].v = 0.0f;
@@ -924,6 +922,57 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		backgroundGeometry.vertices[3].v = 0.0f;
 
 		graphicsGLUtils.DrawGeometry(myGl, myGlu, backgroundGeometry, 0.0f);
+	}
+	
+	public void DrawXYZAxis(float size){
+		GLUT glut = new GLUT();
+
+		myGl.glRasterPos3f(size, size , 0.0f);   
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "1:" + String.valueOf(size));	
+		//X Axis
+	    myGl.glRasterPos3f(1.2f*size, 0.0f, 0.0f);   
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "x");
+		myGl.glBegin(GL.GL_LINES);
+			myGl.glColor3f(size,0,0);
+			myGl.glVertex3f(0,0,0);
+			myGl.glVertex3f(size,0,0);
+		myGl.glEnd();
+			
+		myGl.glBegin(GL_TRIANGLES); 
+	      myGl.glVertex3f(1.0f*size, 0.05f*size, 0.0f);
+	      myGl.glVertex3f(1.0f*size, -0.05f*size, 0.0f);
+	      myGl.glVertex3f(1.1f*size, 0.0f, 0.0f);
+	    myGl.glEnd();
+	    
+	    //Y Axis
+	    myGl.glRasterPos3f(0.0f, 1.2f*size, 0.0f);    
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "y");
+	    myGl.glBegin(GL.GL_LINES);
+			myGl.glColor3f(0,size,0);
+			myGl.glVertex3f(0,0,0);
+			myGl.glVertex3f(0,size,0);
+		myGl.glEnd();
+		myGl.glBegin(GL_TRIANGLES); 
+	      myGl.glVertex3f(-0.05f*size, 1f*size, 0.0f);
+	      myGl.glVertex3f(0.05f, 1f*size, 0.0f);
+	      myGl.glVertex3f(0.0f, 1.1f*size, 0.0f);
+	    myGl.glEnd();
+		
+		//Z Axis
+	    myGl.glRasterPos3f(0.0f, 0.0f, 1.2f*size);    
+	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z");
+		myGl.glBegin(GL.GL_LINES);
+			myGl.glColor3f(0,0,size);
+			myGl.glVertex3f(0,0,0);
+			myGl.glVertex3f(0,0,size);
+	    myGl.glEnd();
+	    
+	    myGl.glBegin(GL_TRIANGLES); 
+	      myGl.glVertex3f(0.0f, 0.05f*size, 1.0f*size);
+	      myGl.glVertex3f(0.0f, -0.05f*size, 1.0f*size);
+	      myGl.glVertex3f(0.0f, 0.0f, 1.1f*size);
+	    myGl.glEnd();
+		
 	}
 
 	public void DrawScale() {

@@ -26,6 +26,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
+
 
 
 public class MyListener implements KeyListener, MouseListener,
@@ -36,7 +39,6 @@ public class MyListener implements KeyListener, MouseListener,
 	 */
 	private static final long serialVersionUID = 1L;
 	public Camera myCamera;
-
 
 	//To handle mouse event
 	private int lastx, lasty;
@@ -50,8 +52,8 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		myCamera.PrintParam();
-
+		//myCamera.PrintParam();
+		System.out.println("x:" + arg0.getX() +" y:" +arg0.getY());
 	}
 
 	@Override
