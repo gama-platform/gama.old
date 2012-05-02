@@ -110,7 +110,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
-		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim/10);

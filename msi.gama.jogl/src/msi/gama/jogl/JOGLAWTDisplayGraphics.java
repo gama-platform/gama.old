@@ -53,6 +53,8 @@ import com.sun.opengl.util.texture.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
 import msi.gaml.operators.Maths;
+
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.jfree.chart.JFreeChart;
 
 import com.sun.opengl.util.GLUT;
@@ -365,9 +367,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					+ curHeight / 2);
 		}
 
-		// AddCircleInGeometries(curX, curY, Color.black, curWidth / 100);
-
-		AddImageInImages(img, curX, curY);
+        //FIXME : not working yet
+		//AddImageInImages(img, curX, curY);
 
 		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
 		g2.setTransform(saved);
@@ -408,6 +409,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
+		System.out.println("Draw Circle width= " + curWidth);
 		AddCircleInGeometries(curX+curWidth/2, curY+curWidth/2, c, curWidth);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -440,6 +442,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawLine(final Color c, final double toX,
 			final double toY) {
+		
+		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory( null );
+
+		Coordinate[] coords  =
+		 new Coordinate[] {new Coordinate(curX/this.currentXScale, curY/this.currentYScale), new Coordinate((toX + offsetX)/this.currentYScale, (toY + offsetY)/this.currentYScale) };
+
+        LineString lineString = geometryFactory.createLineString(coords);
+        
+		AddLineInGeometries(lineString, c);
+		
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
 		// return drawShape(c, line, false, null);
