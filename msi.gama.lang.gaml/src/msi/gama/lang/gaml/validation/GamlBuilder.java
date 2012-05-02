@@ -2,26 +2,25 @@
  * Created by drogoul, 11 avr. 2012
  * 
  */
-package msi.gama.lang.gaml.linking;
+package msi.gama.lang.gaml.validation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.IErrorCollector;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.*;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 /**
  * The class GamlBuilder.
@@ -33,47 +32,28 @@ import org.eclipse.xtext.EcoreUtil2;
 public class GamlBuilder {
 
 	private final GamlResource resource;
-	private final IErrorCollector collect;
 
-	public GamlBuilder(final GamlResource c, final IErrorCollector collect) {
+	static {
+		IExpressionFactory fact = GAMA.getExpressionFactory();
+		fact.registerParser(new NewGamlExpressionCompiler());
+	}
+
+	public GamlBuilder(final GamlResource c) {
 		resource = c;
-		this.collect = collect;
 	}
 
 	public ModelDescription validate() {
-		return getModelFactory().validate(parse(), collect);
+		return getModelFactory().validate(parse());
 	}
 
 	public IModel build() {
-		return getModelFactory().compile(parse(), collect);
+		return getModelFactory().compile(parse());
 	}
 
 	private ModelStructure parse() {
 		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree();
 		return new ModelStructure(resource.getURI().toString(), new ArrayList(models.values()));
 	}
-
-	//
-	// public Map<URI, ISyntacticElement> buildRecursiveSyntacticTree(
-	// final Map<URI, ISyntacticElement> models) {
-	// URI uri = resource.getURI();
-	// if ( models.containsKey(uri) ) { return models; }
-	// if ( resource.getContents().isEmpty() ) { return models; }
-	// Model model = (Model) resource.getContents().get(0);
-	// models.put(uri, resource.getSyntacticDescription());
-	// for ( Import imp : model.getImports() ) {
-	// String importUri = imp.getImportURI();
-	// URI iu = URI.createURI(importUri).resolve(uri);
-	// GamlResource ir = (GamlResource) resource.getResourceSet().getResource(iu, true);
-	// if ( !ir.getErrors().isEmpty() ) { // TODO Verify this works
-	// collect.add(new GamlCompilationError("Imported file " + importUri +
-	// " has errors. Fix them first.", new SyntacticStatement(IKeyword.INCLUDE, imp,
-	// collect)));
-	// }
-	// ir.getBuilder().buildRecursiveSyntacticTree(models);
-	// }
-	// return models;
-	// }
 
 	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree() {
 		Model model = (Model) resource.getContents().get(0);
@@ -99,9 +79,8 @@ public class GamlBuilder {
 				e.printStackTrace();
 			}
 
-			models.put(r.getURI(), new GamlBuilder(r, collect).getSyntacticElements());
+			models.put(r.getURI(), r.getBuilder().convModel());
 		}
-		// GuiUtils.debug("Complete models of " + resource.getURI().lastSegment() + ": " + models);
 		return models;
 	}
 
@@ -114,9 +93,10 @@ public class GamlBuilder {
 			GamlResource ir = (GamlResource) r.getResourceSet().getResource(iu, true);
 			if ( ir != null ) {
 				if ( !ir.getErrors().isEmpty() ) {
-					collect.add(new GamlCompilationError("Imported file " +
-						ir.getURI().lastSegment() + " has errors. Fix them first.",
-						new SyntacticStatement(IKeyword.INCLUDE, imp, collect)));
+					r.getErrors().add(
+						new GamlDiagnostic("", new String[] {}, "Imported file " +
+							ir.getURI().lastSegment() + " has errors. Fix them first.",
+							NodeModelUtils.findActualNodeFor(imp)));
 				}
 				imports.add(ir);
 			}
@@ -124,21 +104,12 @@ public class GamlBuilder {
 		return imports;
 	}
 
-	public ISyntacticElement getSyntacticElements() {
-		IExpressionFactory fact = GAMA.getExpressionFactory();
-		if ( fact.getParser() == null ) {
-			fact.registerParser(new NewGamlExpressionCompiler());
-		}
-		Model m = (Model) resource.getContents().get(0);
-		return convModel();
-	}
-
 	private ISyntacticElement convModel() {
 		Model m = (Model) resource.getContents().get(0);
-		final ISyntacticElement model = new SyntacticStatement(MODEL, m, collect);
+		final ISyntacticElement model = new SyntacticStatement(MODEL, m);
 		model.setFacet(NAME, new LabelExpressionDescription(m.getName()));
 		for ( final Import i : m.getImports() ) {
-			final ISyntacticElement include = new SyntacticStatement(INCLUDE, i, collect);
+			final ISyntacticElement include = new SyntacticStatement(INCLUDE, i);
 			include.setFacet(FILE, new LabelExpressionDescription(i.getImportURI()));
 			model.addChild(include);
 		}
@@ -156,13 +127,13 @@ public class GamlBuilder {
 		// If the initial statement is null, we return null
 		if ( stm == null ) { return null; }
 		// We catch its keyword
-		String keyword = EGaml.getKeyOf(stm);
+		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) { return null; }
 		// We see if we can provide the temporary fix for the "collision of save(s)"
 		if ( upper.equals(EXPERIMENT) && keyword.equals(SAVE) ) {
 			keyword = SAVE_BATCH;
 		}
-		final ISyntacticElement elt = new SyntacticStatement(keyword, stm, collect);
+		final ISyntacticElement elt = new SyntacticStatement(keyword, stm);
 
 		// We apply some conversions to the facets expressed in the statement
 		for ( FacetExpr f : stm.getFacets() ) {
@@ -185,9 +156,7 @@ public class GamlBuilder {
 		// We modify the "var" and "const" declarations in order to keep only the type
 		if ( keyword.equals(VAR) || keyword.equals(CONST) ) {
 			String type = elt.getLabel(TYPE);
-			if ( type == null ) {
-				collect.add(new GamlCompilationError("No type defined for this variable", elt));
-			} else {
+			if ( type != null ) {
 				elt.setKeyword(type);
 			}
 			if ( keyword.equals(CONST) ) {
@@ -233,11 +202,15 @@ public class GamlBuilder {
 		for ( FacetExpr facet : s.getFacets() ) {
 			Expression expr = facet.getExpr();
 			if ( expr != null ) {
-				for ( VariableRef var : EcoreUtil2.eAllOfType(expr, VariableRef.class) ) {
-					if ( a == null ) {
-						a = EGaml.getFactory().createArray();
+				for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
+					EObject obj = tree.next();
+					if ( obj instanceof VariableRef ) {
+						if ( a == null ) {
+							a = EGaml.getFactory().createArray();
+						}
+						a.getExprs().add(
+							EGaml.createTerminal(EGaml.getKey.caseVariableRef((VariableRef) obj)));
 					}
-					a.getExprs().add(EGaml.createTerminal(EGaml.getKeyOf(var)));
 				}
 			}
 		}
@@ -247,7 +220,7 @@ public class GamlBuilder {
 	public void convElse(final Statement stm, final ISyntacticElement elt) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
-			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock, collect);
+			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
 				elseElt.addChild(convStatement(IF, (Statement) elseBlock));
 			} else {

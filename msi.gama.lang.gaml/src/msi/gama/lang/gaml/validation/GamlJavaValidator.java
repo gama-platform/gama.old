@@ -18,37 +18,50 @@
  */
 package msi.gama.lang.gaml.validation;
 
-import msi.gama.common.util.*;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.linking.GamlBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.*;
 
-public class GamlJavaValidator extends AbstractGamlJavaValidator implements IErrorCollector {
+public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	volatile boolean hasErrors;
-
-	@Check
+	@Check(CheckType.FAST)
 	public void validate(final Model model) {
-		GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
-		hasErrors = false;
-		GamlResource r = (GamlResource) model.eResource();
-		GamlBuilder builder = new GamlBuilder(r, this);
-		ModelDescription result = builder.validate();
-		r.setModelDescription(hasErrors, result);
+		try {
+			// GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
+			GamlResource r = (GamlResource) model.eResource();
+			ModelDescription result = null;
+			if ( r.getErrors().isEmpty() ) {
+				result = r.doValidate();
+			}
+			boolean hasError = result == null || !result.getErrors().isEmpty();
+			if ( result != null ) {
+				for ( GamlCompilationError warning : result.getWarnings() ) {
+					add(warning);
+				}
+				if ( hasError ) {
+					for ( GamlCompilationError error : result.getErrors() ) {
+						add(error);
+					}
+					result.dispose();
+					r.setModelDescription(true, null);
+				} else {
+					r.setModelDescription(false, result);
+				}
+			} else {
+				r.setModelDescription(true, null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public GamlResource getCurrentRessource() {
 		return (GamlResource) getCurrentObject().eResource();
 	}
 
-	/**
-	 * @see msi.gama.common.util.IErrorCollector#add(msi.gaml.compilation.GamlCompilationError)
-	 */
-	@Override
 	public void add(final GamlCompilationError e) {
 		EObject object = (EObject) e.getStatement();
 		if ( object == null ) {
@@ -57,12 +70,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator implements IErr
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
 			if ( !e.isWarning() ) {
-				GuiUtils.debug("Validating " + getCurrentRessource().getURI().lastSegment() +
-					" but error in a different resource:" +
-					object.eResource().getURI().lastSegment());
+				// GuiUtils.debug("Validating " + getCurrentRessource().getURI().lastSegment() +
+				// " but error in a different resource:" +
+				// object.eResource().getURI().lastSegment());
 				EObject imp = findImport(object.eResource().getURI().lastSegment());
 				if ( imp != null ) {
-					hasErrors = true;
 					error("Fix import error first: " + e.toString(), imp, null, "ERROR",
 						(String[]) null);
 				}
@@ -72,7 +84,6 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator implements IErr
 		if ( e.isWarning() ) {
 			warning(e.toString(), object, null, 0, e.getCode(), e.getData());
 		} else {
-			hasErrors = true;
 			error(e.toString(), object, null, 0, e.getCode(), e.getData());
 		}
 	}

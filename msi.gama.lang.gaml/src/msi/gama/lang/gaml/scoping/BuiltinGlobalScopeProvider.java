@@ -4,7 +4,6 @@ package msi.gama.lang.gaml.scoping;
 
 import java.io.*;
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.GamlVarRef;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.*;
@@ -60,7 +59,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			getEObjectDescriptions();
 			int i = 0;
 			for ( Runnable run : toRunAfterLoad ) {
-				GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
+				// GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
 				run.run();
 			}
 			toRunAfterLoad.clear();
@@ -79,7 +78,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				bundle.getSymbolicName() + "/" + path.toString()));
 		InputStream inputStream;
 		try {
-			GuiUtils.debug("===> Loading " + resource.getURI() + " to populate the global scope.");
+			// GuiUtils.debug("===> Loading " + resource.getURI() +
+			// " to populate the global scope.");
 			inputStream = FileLocator.openStream(bundle, path, false);
 			resource.load(inputStream, Collections.EMPTY_MAP);
 		} catch (IOException e) {
@@ -134,6 +134,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		toRunAfterLoad.add(run);
 	}
 
+	// static private IScope scope;
+
 	/**
 	 * Implementation of IGlobalScopeProvider.
 	 */
@@ -141,7 +143,11 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	public IScope getScope(final Resource context, final EReference reference,
 		final Predicate<IEObjectDescription> filter) {
 		// if ( context.getURI().isPlatform() ) { return IScope.NULLSCOPE; }
+		// if ( scope == null ) {
+		// scope =
 		return MapBasedScope.createScope(uriScopeProvider.getScope(context, reference, filter),
 			getEObjectDescriptions());
+		// }
+		// return scope;
 	}
 }

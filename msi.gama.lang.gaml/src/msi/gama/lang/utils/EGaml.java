@@ -7,6 +7,9 @@ package msi.gama.lang.utils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
+import msi.gaml.descriptions.IGamlDescription;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -20,41 +23,111 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
  */
 public class EGaml {
 
-	public static String getKeyOf(final EObject f) {
-		if ( f instanceof StringLiteral ) { return ((StringLiteral) f).getValue(); }
-		if ( f instanceof FacetExpr ) {
-			FacetRef ref = ((FacetExpr) f).getKey();
-			if ( ref != null ) { return ref.getRef(); }
-			if ( f instanceof ReturnsFacetExpr ) { return IKeyword.RETURNS; }
-			if ( f instanceof NameFacetExpr ) { return IKeyword.NAME; }
-			if ( f instanceof ActionFacetExpr ) { return IKeyword.ACTION; }
-			return null;
+	public static IGamlDescription getGamlDescription(final EObject object) {
+		if ( object == null ) { return null; }
+		for ( Adapter o : object.eAdapters() ) {
+			if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
 		}
-		if ( f instanceof Statement ) { return ((Statement) f).getKey(); }
-		if ( f instanceof VariableRef ) { return NodeModelUtils.getTokenText(NodeModelUtils
-			.getNode(f));
-
-		// VariableRef ref = (VariableRef) f;
-		// return ref.getRef() == null ? "" : ref.getRef().getName();
-		}
-		if ( f instanceof Function ) { return ((Function) f).getOp(); }
-		// if ( f instanceof FunctionRef ) {
-		// FunctionRef ref = (FunctionRef) f;
-		// return getKeyOf(ref.getLeft());
-		// }
-		if ( f instanceof UnitName ) { return ((UnitName) f).getOp(); }
-		if ( f instanceof ArgPairExpr ) { return ((ArgPairExpr) f).getArg(); }
-		if ( f instanceof Expression ) { return ((Expression) f).getOp(); }
-		if ( f instanceof Model ) { return IKeyword.MODEL; }
 		return null;
 	}
 
-	public static String getLabelFromFacet(final Statement container, final String facet) {
-		for ( FacetExpr f : container.getFacets() ) {
-			if ( getKeyOf(f).equals(facet) ) { return f instanceof DefinitionFacetExpr
-				? ((DefinitionFacetExpr) f).getName() : getKeyOf(f.getExpr()); }
+	public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
+		if ( object == null ) { return null; }
+		for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
+			Adapter a = object.eAdapters().get(i);
+			if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
+
 		}
 		return null;
+	}
+
+	public static void setGamlDescription(final EObject object, final IGamlDescription description) {
+		if ( description == null ) { return; }
+		IGamlDescription existing = getGamlDescription(object, description.getClass());
+		if ( existing != null ) {
+			object.eAdapters().remove(existing);
+		}
+		object.eAdapters().add(description);
+	}
+
+	public static final GamlSwitch<String> getKey = new GamlSwitch<String>() {
+
+		@Override
+		public String caseExpression(final Expression object) {
+			return object.getOp();
+		}
+
+		@Override
+		public String caseArgPairExpr(final ArgPairExpr object) {
+			return object.getArg();
+		}
+
+		@Override
+		public String caseModel(final Model object) {
+			return IKeyword.MODEL;
+		}
+
+		@Override
+		public String caseStatement(final Statement object) {
+			return object.getKey();
+		}
+
+		@Override
+		public String caseFacetRef(final FacetRef object) {
+			return object.getRef();
+		}
+
+		@Override
+		public String caseFacetExpr(final FacetExpr object) {
+			FacetRef ref = object.getKey();
+			return ref == null ? null : caseFacetRef(ref);
+
+		}
+
+		@Override
+		public String caseNameFacetExpr(final NameFacetExpr object) {
+			return IKeyword.NAME;
+		}
+
+		@Override
+		public String caseReturnsFacetExpr(final ReturnsFacetExpr object) {
+			return IKeyword.RETURNS;
+		}
+
+		@Override
+		public String caseActionFacetExpr(final ActionFacetExpr object) {
+			return IKeyword.ACTION;
+		}
+
+		@Override
+		public String caseFunctionFacetExpr(final FunctionFacetExpr object) {
+			return IKeyword.FUNCTION;
+		}
+
+		@Override
+		public String caseFunction(final Function object) {
+			return object.getOp();
+		}
+
+		@Override
+		public String caseVariableRef(final VariableRef object) {
+			return NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+		}
+
+		@Override
+		public String caseUnitName(final UnitName object) {
+			return object.getOp();
+		}
+
+		@Override
+		public String caseStringLiteral(final StringLiteral object) {
+			return object.getValue();
+		}
+
+	};
+
+	public static String getKeyOf(final EObject f) {
+		return getKey.doSwitch(f);
 	}
 
 	public static GamlFactory getFactory() {
@@ -78,10 +151,11 @@ public class EGaml {
 
 	final static StringBuilder serializer = new StringBuilder();
 
-	public static String toString(final Expression expr) {
+	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
+		if ( !(expr instanceof Expression) ) { return expr.toString(); }
 		serializer.setLength(0);
-		serialize(expr);
+		serialize((Expression) expr);
 		return serializer.toString();
 	}
 

@@ -25,7 +25,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.IPriority;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -35,11 +35,9 @@ import msi.gaml.types.*;
 /**
  * The Class ExpressionParser.
  */
-public class StringBasedExpressionCompiler implements IExpressionParser<IExpressionDescription> {
+public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpressionDescription> {
 
-	static {
-		UNARIES.put(IKeyword.MY, new GamaMap());
-	}
+	private IVarExpression EACH_EXPR;
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is given, the global context
@@ -48,15 +46,10 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 	 */
 	private IDescription context;
 
-	private GamlExpressionFactory factory;
+	private final IExpressionFactory factory;
 
 	public StringBasedExpressionCompiler() {
-
-	}
-
-	@Override
-	public void setFactory(final IExpressionFactory f) {
-		factory = (GamlExpressionFactory) f;
+		factory = GAMA.getExpressionFactory();
 	}
 
 	public void dispose() {
@@ -64,7 +57,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 	}
 
 	@Override
-	public IExpression parse(final IExpressionDescription s, final IDescription parsingContext) {
+	public IExpression compile(final IExpressionDescription s, final IDescription parsingContext) {
 		IDescription previous = null;
 		if ( parsingContext != null ) {
 			previous = getContext();
@@ -141,7 +134,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 			} else if ( IKeyword.IS.equals(operator) && isTypeName(words.get(opIndex + 1)) ) {
 				return factory.createBinaryExpr(operator, expr1,
 					factory.createConst(words.get(opIndex + 1), Types.get(IType.STRING)), context);
-			} else if ( IExpressionParser.FUNCTIONS.contains(operator) ) {
+			} else if ( IExpressionCompiler.FUNCTIONS.contains(operator) ) {
 				SpeciesDescription sd =
 					getContext().getSpeciesDescription(expr1.getContentType().getSpeciesName());
 				if ( sd == null ) {
@@ -158,10 +151,9 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 			} else {
 				// In case the operator is an iterator, we assign the content type of
 				// the first expression to "each"
-				if ( IExpressionParser.ITERATORS.contains(operator) ) {
+				if ( IExpressionCompiler.ITERATORS.contains(operator) ) {
 					IType t = expr1.getContentType();
-					GamlExpressionFactory.EACH_EXPR.setType(t);
-					GamlExpressionFactory.EACH_EXPR.setContentType(t);
+					EACH_EXPR = new EachExpression(IKeyword.EACH, t, t);
 				}
 				expr2 = compileExpr(words.subList(opIndex + 1, words.size()));
 			}
@@ -224,7 +216,8 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 		if ( s.equalsIgnoreCase(IKeyword.TRUE) ) { return TRUE_EXPR; }
 		if ( s.equalsIgnoreCase(IKeyword.FALSE) ) { return FALSE_EXPR; }
 		if ( s.equalsIgnoreCase(IKeyword.EACH) ) { return EACH_EXPR; }
-		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return NIL_EXPR; }
+		if ( s.equalsIgnoreCase(IKeyword.NULL) ) { return new ConstantExpression(null,
+			Types.NO_TYPE, Types.NO_TYPE); }
 		// assertContext(s);
 		if ( isSpeciesName(s) ) { return factory.createConst(s, Types.get(IType.SPECIES),
 			getSpeciesContext(s).getType()); }
@@ -235,7 +228,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 				return null;
 			}
 			IType tt = getContext().getSpeciesContext().getType();
-			return factory.createVar(IKeyword.SELF, tt, tt, true, IVarExpression.SELF);
+			return factory.createVar(IKeyword.SELF, tt, tt, true, IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(IKeyword.WORLD_AGENT_NAME) ) { return getWorldExpr(); }
 		if ( isDottedExpr(s) ) {
@@ -253,7 +246,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 		// }
 		// }
 		if ( desc != null ) {
-			IVarExpression var = (IVarExpression) desc.getVarExpr(s, factory);
+			IVarExpression var = (IVarExpression) desc.getVarExpr(s);
 			return var;
 		}
 		context.flagError("Unknown variable :" + s);
@@ -269,7 +262,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 	}
 
 	private boolean isTypeName(final String s) {
-		return getContext().getModelDescription().getTypeOf(s) != null;
+		return getContext().getModelDescription().getTypeNamed(s) != null;
 	}
 
 	public static boolean isDottedExpr(final String s) {
@@ -297,7 +290,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 			expr = expr.copyWith(target);
 			return expr;
 		}
-		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var, factory);
+		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var);
 		if ( expr == null ) {
 			context.flagError("Unknown variable :" + var + " in " + contextDesc.getName());
 			return null;
@@ -424,7 +417,8 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 		if ( GamlExpressionFactory.WORLD_EXPR == null ) {
 			IType tt = getContext().getModelDescription().getWorldSpecies().getType();
 			GamlExpressionFactory.WORLD_EXPR =
-				factory.createVar(IKeyword.WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD);
+				factory.createVar(IKeyword.WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD,
+					context.getModelDescription());
 		}
 		return GamlExpressionFactory.WORLD_EXPR;
 	}
@@ -434,7 +428,7 @@ public class StringBasedExpressionCompiler implements IExpressionParser<IExpress
 	}
 
 	private final short priorityOf(final String string) {
-		if ( IExpressionParser.BINARY_PRIORITIES.containsKey(string) ) { return IExpressionParser.BINARY_PRIORITIES
+		if ( IExpressionCompiler.BINARY_PRIORITIES.containsKey(string) ) { return IExpressionCompiler.BINARY_PRIORITIES
 			.get(string); }
 		return IPriority.MIN_PRIORITY - 2;
 	}

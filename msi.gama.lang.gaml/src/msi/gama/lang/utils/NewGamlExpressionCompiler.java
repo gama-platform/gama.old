@@ -20,7 +20,7 @@ package msi.gama.lang.utils;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.GamlExpressionFactory.*;
-import java.text.NumberFormat;
+import java.text.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.StringUtils;
@@ -37,8 +37,10 @@ import org.eclipse.emf.ecore.EObject;
 /**
  * The Class ExpressionParser.
  */
-public class NewGamlExpressionCompiler implements IExpressionParser<Expression> {
 
+public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression> {
+
+	public IVarExpression each_expr;
 	final static NumberFormat nf = NumberFormat.getInstance(Locale.US);
 	private IExpression world = null;
 
@@ -49,16 +51,21 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	 */
 	private IDescription context;
 
-	private GamlExpressionFactory factory;
+	private final IExpressionFactory factory;
 
 	/**
 	 * Represents the string-based parser to be used when the
 	 * information from the AST is not available
 	 */
-	private IExpressionParser fallBackParser;
+	private final IExpressionCompiler fallBackParser;
 
 	static {
-		IExpressionParser.UNARIES.put(MY, new GamaMap());
+		IExpressionCompiler.UNARIES.put(MY, new GamaMap());
+	}
+
+	public NewGamlExpressionCompiler() {
+		factory = GAMA.getExpressionFactory();
+		fallBackParser = new StringBasedExpressionCompiler();
 	}
 
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
@@ -81,23 +88,28 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression caseUnitName(final UnitName object) {
-			return caseVar(object.getOp(), object);
+			String s = object.getOp();
+			if ( IUnits.UNITS.containsKey(s) ) { return factory.createConst(IUnits.UNITS.get(s),
+				Types.get(IType.FLOAT)); }
+			// If it is a unit, we return its float value
+			context.flagError("" + s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object,
+				(String[]) null);
+			return null;
 		}
 
 		public IExpression caseVar(final String s, final EObject object) {
 			if ( s == null ) {
-				getContext().flagError("Unknown variable", IGamlIssue.GENERAL, object);
+				getContext().flagError("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 				return null;
 			}
-			// If it is a unit, we return its float value
-			if ( IUnits.UNITS.containsKey(s) ) { return factory.createConst(IUnits.UNITS.get(s),
-				Types.get(IType.FLOAT)); }
-
-			if ( s.equals(EACH) ) { return EACH_EXPR; }
-			if ( s.equals(NULL) ) { return NIL_EXPR; }
+			if ( s.equals(EACH) ) { return each_expr; }
+			if ( s.equals(NULL) ) { return new ConstantExpression(null, Types.NO_TYPE,
+				Types.NO_TYPE); }
 			// We try to find a species name from the name
-			IDescription temp_sd;
-			temp_sd = getContext().getSpeciesDescription(s);
+			IDescription temp_sd = null;
+			if ( context != null ) {
+				temp_sd = getContext().getSpeciesDescription(s);
+			}
 			if ( temp_sd != null ) { return factory.createConst(s, Types.get(IType.SPECIES),
 				temp_sd.getType()); }
 			if ( s.equals(SELF) ) {
@@ -108,21 +120,17 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 					return null;
 				}
 				IType tt = temp_sd.getType();
-				return factory.createVar(SELF, tt, tt, true, IVarExpression.SELF);
+				return factory.createVar(SELF, tt, tt, true, IVarExpression.SELF, null);
 			}
 			if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
 
 			// By default, we try to find a variable
-			temp_sd = getContext().getDescriptionDeclaringVar(s);
-			// if ( temp_sd == null ) {
-			// if ( getContext() instanceof CommandDescription ) {
-			// temp_sd = ((CommandDescription) getContext()).extractExtraSpeciesContext();
-			// }
-			// }
-			if ( temp_sd != null ) { return temp_sd.getVarExpr(s, factory);
-			// GuiUtils.debug("Parser has found " + var);
+
+			temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
+			if ( temp_sd != null ) { return temp_sd.getVarExpr(s); }
+			if ( context != null ) {
+				context.flagError("Unknown variable: " + s, IGamlIssue.UNKNOWN_VAR, object, s);
 			}
-			context.flagError("Unknown variable: " + s, IGamlIssue.UNKNOWN_VAR, object, s);
 			return null;
 
 		}
@@ -170,7 +178,8 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression caseMemberRef(final MemberRef object) {
-			return compileFieldExpr(object.getLeft(), literal(object.getRight()));
+			return compileFieldExpr(object.getLeft(), EGaml.getKeyOf(object.getRight()),
+				object.getRight());
 		}
 
 		@Override
@@ -190,7 +199,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression casePoint(final Point object) {
-			return binary(IExpressionParser.INTERNAL_POINT, object.getLeft(), object.getRight());
+			return binary(IExpressionCompiler.INTERNAL_POINT, object.getLeft(), object.getRight());
 		}
 
 		@Override
@@ -205,17 +214,39 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 		@Override
 		public IExpression caseIntLiteral(final IntLiteral object) {
-			return compileNumberExpr(object, object.getValue());
+			try {
+				Integer val = Integer.decode(object.getValue());
+				return factory.createConst(val, Types.get(IType.INT));
+			} catch (NumberFormatException e) {
+				context.flagError("Malformed integer: " + object.getValue(),
+					IGamlIssue.UNKNOWN_NUMBER, object);
+				return null;
+			}
 		}
 
 		@Override
 		public IExpression caseDoubleLiteral(final DoubleLiteral object) {
-			return compileNumberExpr(object, object.getValue());
+			try {
+				Number val = nf.parse(object.getValue());
+				return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
+			} catch (ParseException e) {
+				context.flagError("Malformed float: " + object.getValue(),
+					IGamlIssue.UNKNOWN_NUMBER, object);
+				return null;
+			}
+
 		}
 
 		@Override
 		public IExpression caseColorLiteral(final ColorLiteral object) {
-			return compileNumberExpr(object, object.getValue());
+			try {
+				Integer val = Integer.decode(object.getValue());
+				return factory.createConst(val, Types.get(IType.INT));
+			} catch (NumberFormatException e) {
+				context.flagError("Malformed integer: " + object.getValue(),
+					IGamlIssue.UNKNOWN_NUMBER, object);
+				return null;
+			}
 		}
 
 		@Override
@@ -232,8 +263,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		@Override
 		public IExpression defaultCase(final EObject object) {
 			if ( object instanceof Expression ) {
-				getContext().flagError(
-					"Unrecognized expression " + EGaml.toString((Expression) object),
+				getContext().flagError("Unrecognized expression " + EGaml.toString(object),
 					IGamlIssue.GENERAL, object);
 			} else {
 				getContext().flagError("Not an expression: " + object, IGamlIssue.GENERAL, object);
@@ -243,26 +273,16 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 
 	};
 
-	@Override
-	public void setFactory(final IExpressionFactory f) {
-		factory = (GamlExpressionFactory) f;
-		if ( fallBackParser == null ) {
-			fallBackParser = new StringBasedExpressionCompiler();
-			fallBackParser.setFactory(f);
-		}
-
-	}
-
 	public void dispose() {
 		setContext(null);
 	}
 
 	@Override
-	public IExpression parse(final IExpressionDescription s, final IDescription parsingContext) {
+	public IExpression compile(final IExpressionDescription s, final IDescription parsingContext) {
 		// If the AST is not available, we fall back on the robust string-based parser
-		long time = System.currentTimeMillis();
-		EObject e = (EObject) s.getAst();
-		if ( e == null ) { return fallBackParser.parse(s, parsingContext); }
+		// long time = System.currentTimeMillis();
+		EObject e = s.getTarget();
+		if ( e == null ) { return fallBackParser.compile(s, parsingContext); }
 		if ( !(e instanceof Expression) ) {
 			parsingContext.flagError("Compilation error in handling " + s, IGamlIssue.GENERAL, e);
 			return null;
@@ -275,7 +295,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		if ( parsingContext != null ) {
 			setContext(previous);
 		}
-		long now = System.currentTimeMillis();
+		// long now = System.currentTimeMillis();
 		// GuiUtils.debug("Compiling expression " + s.toString() + " took: " + (now - time) + "ms");
 		return result;
 
@@ -288,7 +308,9 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			// context.flagError("Null expression");
 			return null;
 		}
-		return compiler.doSwitch(s);
+		IExpression expr = compiler.doSwitch(s);
+		EGaml.setGamlDescription(s, expr);
+		return expr;
 	}
 
 	protected Expression createArgArray(final List<Expression> args) {
@@ -312,13 +334,14 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	// KEEP
 	private IExpression unary(final String op, final Expression e) {
 		IExpression expr = compile(e);
+		if ( op == null || expr == null ) { return null; }
 		if ( op.equals(MY) ) {
 			IDescription desc = getContext().getDescriptionDeclaringVar(MYSELF);
 			if ( desc != null ) {
 				// We are in a remote context, so 'my' refers to the calling agent
-				IExpression myself = desc.getVarExpr(MYSELF, factory);
+				IExpression myself = desc.getVarExpr(MYSELF);
 				IDescription species = getSpeciesContext(myself.type().getSpeciesName());
-				IExpression var = species.getVarExpr(literal(e), factory);
+				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
 				return factory.createBinaryExpr(_DOT, myself, var, desc);
 			}
 			// Otherwise, we ignore 'my' since it refers to 'self'
@@ -328,20 +351,12 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		return factory.createUnaryExpr(op, expr, context);
 	}
 
-	// KEEP
-	private String literal(final EObject e) {
-		if ( e instanceof VariableRef ) { return EGaml.getKeyOf(e); }
-		// if ( e instanceof GamlVarRef ) { return ((GamlVarRef) e).getName(); }
-		if ( e instanceof StringLiteral ) { return ((StringLiteral) e).getValue(); }
-		return null;
-	}
-
 	private IExpression binary(final String op, final IExpression left, final Expression e1,
 		final Expression e2) {
-
+		if ( left == null ) { return null; }
 		// if the operator is "as", the right-hand expression should be a casting type
 		if ( AS.equals(op) ) {
-			String species = literal(e2);
+			String species = EGaml.getKeyOf(e2);
 			if ( isSpeciesName(species) ) { return factory.createBinaryExpr(op, left,
 				species(species), context); }
 			// allows expression such as 'agent as dead'. Should we allow them ?
@@ -349,7 +364,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 		}
 		// if the operator is "is", the right-hand expression should be a type
 		if ( IS.equals(op) ) {
-			String type = literal(e2);
+			String type = EGaml.getKeyOf(e2);
 			if ( isTypeName(type) ) { return factory.createBinaryExpr(op, left,
 				factory.createConst(type, Types.get(IType.STRING), Types.get(IType.STRING)),
 				context); }
@@ -359,7 +374,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			return null;
 		}
 		// if the operator is an action call, we must verify and compile the arguments apart
-		if ( IExpressionParser.FUNCTIONS.contains(op) ) {
+		if ( IExpressionCompiler.FUNCTIONS.contains(op) ) {
 			SpeciesDescription sd =
 				getContext().getSpeciesDescription(left.getContentType().getSpeciesName());
 			if ( sd == null ) {
@@ -382,10 +397,9 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 			return factory.createBinaryExpr(op, left, right, context);
 		}
 		// if the operator is an iterator, we must initialize "each"
-		if ( IExpressionParser.ITERATORS.contains(op) ) {
+		if ( IExpressionCompiler.ITERATORS.contains(op) ) {
 			IType t = left.getContentType();
-			EACH_EXPR.setType(t);
-			EACH_EXPR.setContentType(t);
+			each_expr = new EachExpression(EACH, t, t);
 		}
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
@@ -397,7 +411,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	// KEEP
 	private IExpression binary(final String op, final Expression e1, final Expression e2) {
 		// if the expression is " var of agents ", we must compile it apart
-		if ( OF.equals(op) ) { return compileFieldExpr(e2, literal(e1)); }
+		if ( OF.equals(op) ) { return compileFieldExpr(e2, EGaml.getKeyOf(e1), e1); }
 		// we can now safely compile the left-hand expression
 		IExpression left = compile(e1);
 		return binary(op, left, e1, e2);
@@ -412,12 +426,14 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	}
 
 	private boolean isTypeName(final String s) {
-		return getContext().getModelDescription().getTypeOf(s) != null;
+		return getContext().getModelDescription().getTypeNamed(s) != null;
 	}
 
 	// KEEP
-	private IExpression compileFieldExpr(final Expression e1, final String var) {
+	private IExpression compileFieldExpr(final Expression e1, final String var,
+		final Expression fieldExpr) {
 		IExpression target = compile(e1);
+		if ( target == null ) { return null; }
 		IType type = target.type();
 		SpeciesDescription contextDesc = getSpeciesContext(type.getSpeciesName());
 		if ( contextDesc == null ) {
@@ -428,39 +444,16 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 				return null;
 			}
 			expr = expr.copyWith(target);
+			EGaml.setGamlDescription(fieldExpr, expr);
 			return expr;
 		}
-		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var, factory);
+		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var);
 		if ( expr == null ) {
 			context.flagError("Unknown variable :" + var + " in " + contextDesc.getName(),
 				IGamlIssue.UNKNOWN_VAR, e1, var, contextDesc.getName());
 		}
+		EGaml.setGamlDescription(fieldExpr, expr);
 		return factory.createBinaryExpr(_DOT, target, expr, context);
-
-	}
-
-	// KEEP
-	private IExpression compileNumberExpr(final TerminalExpression object, final String s) {
-		Number val = null;
-		try {
-			val = nf.parse(s);
-		} catch (final java.text.ParseException e) {
-			if ( s.charAt(0) == '#' ) {
-				try {
-					val = Integer.decode(s);
-				} catch (final NumberFormatException e2) {
-					context.flagError("Malformed number: " + s, IGamlIssue.UNKNOWN_NUMBER, object);
-				}
-			}
-		}
-		if ( val == null ) {
-			context.flagError("\"" + s + "\" not recognized as a number",
-				IGamlIssue.UNKNOWN_NUMBER, object);
-			return null;
-		}
-		if ( (val instanceof Long || val instanceof Integer) && !s.contains(_DOT) ) { return factory
-			.createConst(val.intValue(), Types.get(IType.INT)); }
-		return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
 
 	}
 
@@ -484,7 +477,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 				arg = ((ArgPairExpr) e).getArg();
 			} else {
 				PairExpr p = (PairExpr) e;
-				arg = literal(p.getLeft());
+				arg = EGaml.getKeyOf(p.getLeft());
 
 			}
 			if ( !action.containsArg(arg) ) {
@@ -503,7 +496,9 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	private IExpression getWorldExpr() {
 		if ( world == null ) {
 			IType tt = getContext().getModelDescription().getWorldSpecies().getType();
-			world = factory.createVar(WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD);
+			world =
+				factory.createVar(WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD,
+					context.getModelDescription());
 		}
 		return world;
 	}
@@ -524,7 +519,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	@Override
 	public Map<String, IExpressionDescription> parseArguments(final IExpressionDescription args,
 		final IDescription command) {
-		EObject ast = (EObject) args.getAst();
+		EObject ast = args.getTarget();
 		if ( ast == null ) { return fallBackParser.parseArguments(args, command); }
 		Map<String, IExpressionDescription> argMap = new HashMap();
 
@@ -547,6 +542,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 				arg = EGaml.getKeyOf(pair.getLeft());
 			}
 			IExpressionDescription ed = new EcoreBasedExpressionDescription(exp.getRight());
+			// EGaml.setGamlDescription(exp.getRight(), ed);
 			argMap.put(arg, ed);
 		}
 		return argMap;
@@ -557,7 +553,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 	 */
 	@Override
 	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
-		EObject o = (EObject) s.getAst();
+		EObject o = s.getTarget();
 		if ( o == null ) { return fallBackParser.parseLiteralArray(s, context); }
 		if ( !(o instanceof Array) ) {
 			if ( o instanceof VariableRef ) {
@@ -568,8 +564,7 @@ public class NewGamlExpressionCompiler implements IExpressionParser<Expression> 
 				return Arrays.asList(skillName);
 			}
 			if ( o instanceof Expression ) {
-				context.flagError(
-					"Impossible to recognize valid skills in " + EGaml.toString((Expression) o),
+				context.flagError("Impossible to recognize valid skills in " + EGaml.toString(o),
 					IGamlIssue.UNKNOWN_SKILL, o);
 			} else {
 				context.flagError("Skills should be provided as a list of identifiers.",

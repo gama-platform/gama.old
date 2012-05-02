@@ -4,8 +4,8 @@
  */
 package msi.gama.lang.utils;
 
-import msi.gama.lang.gaml.gaml.Expression;
 import msi.gaml.descriptions.BasicExpressionDescription;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * The class EcoreBasedExpressionDescription.
@@ -16,28 +16,13 @@ import msi.gaml.descriptions.BasicExpressionDescription;
  */
 public class EcoreBasedExpressionDescription extends BasicExpressionDescription {
 
-	private Expression ast;
-
-	public EcoreBasedExpressionDescription(final Expression exp) {
-		super(null);
-		ast = exp;
-	}
-
-	@Override
-	public Expression getAst() {
-		return ast;
-	}
-
-	@Override
-	public void setAst(final Object ast) {
-		if ( ast instanceof Expression ) {
-			this.ast = (Expression) ast;
-		}
+	public EcoreBasedExpressionDescription(final EObject exp) {
+		super(exp);
 	}
 
 	@Override
 	public String toString() {
-		return EGaml.toString(ast);
+		return expression == null ? EGaml.toString(target) : super.toString();
 	}
 
 }

@@ -5,7 +5,6 @@
 package msi.gama.lang.gaml;
 
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescription;
@@ -35,8 +34,8 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	@Override
 	protected List<IEObjectDescription> computeExportedObjects() {
 		List<IEObjectDescription> result = super.computeExportedObjects();
-		GuiUtils.debug("Size of exported object descriptions from " + getURI() + ": " +
-			result.size());
+		// GuiUtils.debug("Size of exported object descriptions from " + getURI() + ": " +
+		// result.size());
 		return result;
 	}
 
