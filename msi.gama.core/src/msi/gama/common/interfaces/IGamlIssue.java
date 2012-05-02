@@ -57,5 +57,6 @@ public interface IGamlIssue {
 	public static String WRONG_PARENT = "gaml.wrong.parent.issue";
 	public static String WRONG_REDEFINITION = "gaml.wrong.redefinition.issue";
 	public static String WRONG_TYPE = "gaml.wrong.type.issue";
+	public static String NOT_A_UNIT = "gaml.not.a.unit.issue";
 
 }

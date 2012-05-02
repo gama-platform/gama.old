@@ -82,8 +82,8 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 		IExpressionDescription previous = get(key);
 		super.put(key, expr);
 		if ( previous != null ) {
-			if ( previous.getAst() != null && expr.getAst() == null ) {
-				expr.setAst(previous.getAst());
+			if ( previous.getTarget() != null && expr.getTarget() == null ) {
+				expr.setTarget(previous.getTarget());
 			}
 		}
 		return expr;

@@ -136,4 +136,18 @@ public class MapExpression extends AbstractExpression {
 		return result;
 	}
 
+	@Override
+	public String getTitle() {
+		return "Literal map expression";
+	}
+
+	/**
+	 * @see msi.gaml.expressions.IExpression#getDocumentation()
+	 */
+
+	@Override
+	public String getDocumentation() {
+		return "Constant " + isConst() + "<br>Contains elements of type " + contentType;
+	}
+
 }

@@ -24,9 +24,6 @@ public class SyntheticStatement extends AbstractSyntacticStatement {
 		this.facets = facets;
 	}
 
-	/**
-	 * @see msi.gaml.compilation.AbstractStatementDescription#isSynthetic()
-	 */
 	@Override
 	public boolean isSynthetic() {
 		return true;

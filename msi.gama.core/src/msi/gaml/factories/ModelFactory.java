@@ -21,7 +21,7 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
@@ -37,6 +37,8 @@ import msi.gaml.descriptions.*;
 @handles({ ISymbolKind.MODEL })
 @uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
 public class ModelFactory extends SymbolFactory {
+
+	public static Set<SpeciesDescription> BUILT_IN_SPECIES;
 
 	/**
 	 * @param superFactory
@@ -54,23 +56,6 @@ public class ModelFactory extends SymbolFactory {
 	}
 
 	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
-
-	/**
-	 * Recursively adds micro-species (built from SpeciesStructure) to a species.
-	 * 
-	 * @param macroSpecies
-	 * @param microSpecies
-	 * @throws GamlException
-	 */
-	// @species("dummy")
-	// public static class Dummy extends GamlAgent {
-
-	// public Dummy(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-	// super(sim, s);
-	// GuiUtils.debug("Dummy created");
-	// }
-
-	// }
 
 	private void addMicroSpecies(final SpeciesDescription macroSpecies,
 		final SpeciesStructure microSpecies) {
@@ -92,27 +77,8 @@ public class ModelFactory extends SymbolFactory {
 			SpeciesDescription sd =
 				(SpeciesDescription) DescriptionFactory.createDescription(SPECIES, macroSpecies,
 					facets);
-
-			// if ( sd != null ) {
-			// builtInSpecies.add(sd);
 			macroSpecies.addChild(sd);
-
 		} else {
-			// Compile the Java class c from microSpeciesDesc
-			// Make it known to GamaClassLoader (GamaClassLoader.getInstance().addNewClass(c);
-			// Inject it in GamaBundleLoader.scanBuiltIn(Set with c);
-			// Create a SpeciesDescription based on c
-			/**
-			 * 
-			 facets = new String[] { NAME, speciesName, BASE, c.getCanonicalName() };
-			 * SpeciesDescription sd =
-			 * (SpeciesDescription) DescriptionFactory.createDescription(SPECIES,
-			 * worldSpeciesDescription, facets);
-			 * if ( sd != null ) {
-			 * builtInSpecies.add(sd);
-			 * }
-			 */
-			// Replace this with macroSpecies.add(sd);
 			macroSpecies.addChild(microSpeciesDesc);
 		}
 
@@ -138,23 +104,12 @@ public class ModelFactory extends SymbolFactory {
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
 		List<ISyntacticElement> children = microSpeciesNode.getChildren();
 
-		Set<String> userRedefinedOrNewVars = new HashSet<String>();
-		List<IDescription> subDescs = new ArrayList<IDescription>();
 		for ( ISyntacticElement child : children ) {
 			// if micro-species were already added, no need to re-add them
 			if ( !ModelFactory.SPECIES_NODES.contains(child.getKeyword()) ) {
-				IDescription desc;
-				desc = f.createDescriptionRecursively(child, speciesDesc);
-				subDescs.add(desc);
-
-				if ( desc instanceof VariableDescription ) {
-					userRedefinedOrNewVars.add(desc.getName());
-				}
-
+				speciesDesc.addChild(f.createDescriptionRecursively(child, speciesDesc));
 			}
 		}
-		speciesDesc.addChildren(subDescs);
-		speciesDesc.setUserRedefinedAndNewVars(userRedefinedOrNewVars);
 
 		// recursively complement micro-species
 		for ( SpeciesStructure microSpec : microSpeciesStructure.getMicroSpecies() ) {
@@ -167,55 +122,21 @@ public class ModelFactory extends SymbolFactory {
 		String keyword = getKeyword(e);
 		String context = sd.getKeyword();
 		ISymbolFactory f = chooseFactoryFor(keyword, context);
-
-		Set<String> userRedefinedOrNewVars = new HashSet<String>();
-		// List<IDescription> subDescs = new ArrayList<IDescription>();
 		for ( ISyntacticElement child : e.getChildren() ) {
-
-			IDescription desc;
-			desc = f.createDescriptionRecursively(child, sd);
-			// subDescs.add(desc);
-
-			if ( desc instanceof VariableDescription ) {
-				userRedefinedOrNewVars.add(desc.getName());
-			}
-
+			f.createDescriptionRecursively(child, sd); // ???
 		}
-		// sd.addChildren(subDescs);
-		sd.setUserRedefinedAndNewVars(userRedefinedOrNewVars);
 		sd.finalizeDescription();
-
 	}
 
-	public ModelDescription parse(final ModelStructure structure, final IErrorCollector collect) {
+	public ModelDescription parse(final ModelStructure structure) {
 		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
+		model.getSourceInformation().setDescription(model);
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
 		// Collecting built-in species & species
-		Set<SpeciesDescription> builtIn = computeBuiltInSpecies(model);
-		SpeciesDescription worldSpeciesDesc = null;
-
-		// Add "world_species" to ModelDescription
-		for ( final SpeciesDescription spd : builtIn ) {
-			if ( IKeyword.WORLD_SPECIES_NAME.equals(spd.getName()) ) {
-				worldSpeciesDesc = spd;
-				model.addChild(spd);
-				break;
-			}
-		}
-
-		if ( worldSpeciesDesc == null ) {
-			model.flagError("Unable to load the built-in 'world' species. Halting compilation",
-				IGamlIssue.GENERAL);
-			return model;
-		}
-
-		// Add built-in species to "world_species"
-		for ( final SpeciesDescription spd : builtIn ) {
-			if ( !IKeyword.WORLD_SPECIES_NAME.equals(spd.getName()) ) {
-				worldSpeciesDesc.addChild(spd);
-			}
-		}
+		SpeciesDescription worldSpeciesDesc =
+			(SpeciesDescription) model.addChild(computeWorldDescription(model));
+		computeBuiltInSpecies(worldSpeciesDesc);
 
 		// recursively add user-defined species to world species and down on to the species
 		// hierarchy
@@ -225,22 +146,11 @@ public class ModelFactory extends SymbolFactory {
 
 		// Complementing the world
 		ISymbolFactory f = chooseFactoryFor(IKeyword.GLOBAL, null);
-		List<IDescription> subDescs = new ArrayList();
-		Set<String> userRedefinedOrNewVars = new HashSet<String>();
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
-				IDescription desc;
-				desc = f.createDescriptionRecursively(child, worldSpeciesDesc);
-				subDescs.add(desc);
-
-				if ( desc instanceof VariableDescription ) {
-					userRedefinedOrNewVars.add(desc.getName());
-				}
-
+				worldSpeciesDesc.addChild(f.createDescriptionRecursively(child, worldSpeciesDesc));
 			}
 		}
-		worldSpeciesDesc.addChildren(subDescs);
-		worldSpeciesDesc.setUserRedefinedAndNewVars(userRedefinedOrNewVars);
 
 		// Complementing species
 		for ( SpeciesStructure specStructure : structure.getSpecies() ) {
@@ -270,40 +180,35 @@ public class ModelFactory extends SymbolFactory {
 		return model;
 	}
 
-	public static Set<SpeciesDescription> computeBuiltInSpecies(final ModelDescription model) {
-		Set<SpeciesDescription> builtInSpecies = new HashSet();
-
-		// Firstly, create "world_species" (defined in WorldSkill) SpeciesDescription with
-		// ModelDescription as SuperDescription
-		String facets[] = new String[0];
-		facets =
-			new String[] { NAME, WORLD_SPECIES_NAME, BASE,
-				GamlCompiler.getBuiltInSpeciesClasses().get(DEFAULT).getCanonicalName() };
-		SpeciesDescription worldSpeciesDescription =
-			(SpeciesDescription) DescriptionFactory.createDescription(IKeyword.SPECIES, model,
-				facets);
-		if ( worldSpeciesDescription == null ) {
-			model.flagError("Impossible to create the world species. Check your GAML setup.",
-				IGamlIssue.GENERAL);
-			return Collections.EMPTY_SET;
+	public SpeciesDescription computeWorldDescription(final ModelDescription model) {
+		String cName = GamlCompiler.getBuiltInSpeciesClasses().get(DEFAULT).getCanonicalName();
+		IDescription wd =
+			DescriptionFactory.createDescription(SPECIES, model, new String[] { NAME,
+				WORLD_SPECIES_NAME, BASE, cName });
+		if ( wd == null ) {
+			model.flagError("Impossible to create world species. Check your GAML setup. ");
+			return null;
 		}
-		builtInSpecies.add(worldSpeciesDescription);
+		return (SpeciesDescription) wd;
 
-		// Secondly, create other built-in SpeciesDescriptions with worldSpeciesDescription as
-		// SuperDescription
-		for ( String speciesName : GamlCompiler.getBuiltInSpeciesClasses().keySet() ) {
-			if ( !WORLD_SPECIES_NAME.equals(speciesName) ) {
-				Class c = GamlCompiler.getBuiltInSpeciesClasses().get(speciesName);
-				facets = new String[] { NAME, speciesName, BASE, c.getCanonicalName() };
-				SpeciesDescription sd =
-					(SpeciesDescription) DescriptionFactory.createDescription(SPECIES,
-						worldSpeciesDescription, facets);
-				if ( sd != null ) {
-					builtInSpecies.add(sd);
+	}
+
+	public static void computeBuiltInSpecies(final SpeciesDescription world) {
+		if ( BUILT_IN_SPECIES == null ) {
+			BUILT_IN_SPECIES = new HashSet();
+			for ( Map.Entry<String, Class> e : GamlCompiler.getBuiltInSpeciesClasses().entrySet() ) {
+				String name = e.getKey();
+				if ( !WORLD_SPECIES_NAME.equals(name) ) {
+					BUILT_IN_SPECIES.add((SpeciesDescription) DescriptionFactory.createDescription(
+						SPECIES, world, new String[] { NAME, name, BASE,
+							e.getValue().getCanonicalName() }));
 				}
 			}
 		}
-		return builtInSpecies;
+		for ( SpeciesDescription sd : BUILT_IN_SPECIES ) {
+			sd.setSuperDescription(world);
+			world.addChild(sd);
+		}
 	}
 
 	private IDescription createDefaultExperiment() {
@@ -320,21 +225,14 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	public IModel compile(final ModelStructure structure, final IErrorCollector collect) {
-		ModelDescription md = parse(structure, collect);
-		// if ( collect.hasErrors() ) { return null; }
+	public IModel compile(final ModelStructure structure) {
+		ModelDescription md = parse(structure);
 		IModel model = (IModel) compileDescription(md);
-		// if ( collect.hasErrors() ) {
-		// if ( model != null ) {
-		// model.dispose();
-		// }
-		// return null;
-		// }
 		return model;
 	}
 
-	public ModelDescription validate(final ModelStructure structure, final IErrorCollector collect) {
-		ModelDescription md = parse(structure, collect);
+	synchronized public ModelDescription validate(final ModelStructure structure) {
+		ModelDescription md = parse(structure);
 		validateDescription(md);
 		return md;
 	}

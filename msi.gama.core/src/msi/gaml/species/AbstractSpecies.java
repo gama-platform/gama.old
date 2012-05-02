@@ -440,12 +440,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IType getAgentType() {
-		return ((ExecutionContextDescription) description).getType();
+		return ((SpeciesDescription) description).getType();
 	}
 
 	@Override
 	public IAgentConstructor getAgentConstructor() {
-		return ((ExecutionContextDescription) description).getAgentConstructor();
+		return ((SpeciesDescription) description).getAgentConstructor();
 	}
 
 	// TODO review this

@@ -33,7 +33,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.skills.GeometricSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
@@ -1073,11 +1072,11 @@ public abstract class Spatial {
 			IList<IAgent> temp =
 				t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop),
 					false);
-			for ( IAgent a : temp ) {
-				if ( a.dead() ) {
-					GuiUtils.debug("Dead agent inside");
-				}
-			}
+			// for ( IAgent a : temp ) {
+			// if ( a.dead() ) {
+			// GuiUtils.debug("Dead agent inside");
+			// }
+			// }
 			// ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.population(pop), false);

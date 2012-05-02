@@ -52,8 +52,6 @@ public interface ISymbolFactory {
 
 	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
 
-	public abstract boolean handlesKeyword(String keyword);
-
 	/**
 	 * @return
 	 */

@@ -92,7 +92,8 @@ public class DescriptionValidator {
 	public static void verifyFacetIsAType(final IDescription desc, final String facet,
 		final IExpression expr, final TypesManager tm) {
 		String type = expr.literalValue();
-		if ( tm.get(type) == null ) {
+		if ( tm.get(type) == Types.NO_TYPE && !IType.NONE_STR.equals(type) &&
+			!IKeyword.SIGNAL.equals(type) ) {
 			desc.flagError("Facet '" + facet + "' is expecting a type name. " + type +
 				" is not a type name", IGamlIssue.NOT_A_TYPE, facet, type);
 		}
@@ -246,6 +247,7 @@ public class DescriptionValidator {
 	public static void assertActionIsExisting(final IDescription desc, final String facet) {
 		String action = desc.getFacets().getLabel(facet);
 		SpeciesDescription sd = desc.getSpeciesContext();
+		if ( sd == null ) { return; }
 		if ( !sd.hasAction(action) ) {
 			desc.flagError("Action " + action + " does not exist in " + sd.getName(),
 				IGamlIssue.UNKNOWN_ACTION, facet, action, sd.getName());

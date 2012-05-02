@@ -19,9 +19,6 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
-
-import org.apache.commons.lang.NotImplementedException;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -34,7 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.commands.IAspect;
 import msi.gaml.compilation.IAgentConstructor;
-import msi.gaml.descriptions.ExecutionContextDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -57,17 +54,16 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	protected final String[] orderedVarNames;
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
-	
+
 	/**
 	 * Listeners, created in a lazy way
 	 */
-	private LinkedList<IPopulationListener> listeners = null; 
-	
+	private LinkedList<IPopulationListener> listeners = null;
 
 	public AbstractPopulation(final IAgent host, final ISpecies species) {
 		this.host = host;
 		this.species = species;
-		ExecutionContextDescription ecd = (ExecutionContextDescription) species.getDescription();
+		SpeciesDescription ecd = (SpeciesDescription) species.getDescription();
 		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
 		List<String> updatableVarNames = ecd.getUpdatableVarNames();
 		int updatableVarsSize = updatableVarNames.size();
@@ -154,8 +150,11 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 
 		for ( IAgent a : list ) {
 
-			// if agent is restored (on the capture or release); then don't need to run the "init" reflex
-			if ( !isRestored ) { a.schedule(); }
+			// if agent is restored (on the capture or release); then don't need to run the "init"
+			// reflex
+			if ( !isRestored ) {
+				a.schedule();
+			}
 		}
 
 		return list;
@@ -288,42 +287,37 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	public String toString() {
 		return "Population of " + species.getName();
 	}
-	
-	
-	
-	
+
 	@Override
-	public void addAll(IContainer value, Object param)
-			throws GamaRuntimeException {
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
 		fireAgentsAdded(value);
 	}
 
 	@Override
-	public void addAll(Integer index, IContainer value, Object param)
-			throws GamaRuntimeException {
-		fireAgentsAdded(value);	
+	public void addAll(final Integer index, final IContainer value, final Object param)
+		throws GamaRuntimeException {
+		fireAgentsAdded(value);
 	}
 
 	@Override
-	public void add(IAgent value, Object param) throws GamaRuntimeException {
+	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
 		fireAgentAdded(value);
 	}
 
 	@Override
-	public void add(Integer index, IAgent value, Object param)
-			throws GamaRuntimeException {
+	public void add(final Integer index, final IAgent value, final Object param)
+		throws GamaRuntimeException {
 		fireAgentAdded(value);
 	}
 
 	@Override
-	public boolean removeAll(IContainer<?, IAgent> value)
-			throws GamaRuntimeException {
+	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
 		fireAgentsRemoved(value);
 		return false;
 	}
 
 	@Override
-	public Object removeAt(Integer index) throws GamaRuntimeException {
+	public Object removeAt(final Integer index) throws GamaRuntimeException {
 		fireAgentRemoved(get(index));
 		return null;
 	}
@@ -332,90 +326,91 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	public void clear() throws GamaRuntimeException {
 		firePopulationCleared();
 	}
-	
 
 	private boolean hasListeners() {
-		return ((listeners != null) && (!listeners.isEmpty()));
-	}
-	
-	@Override
-	public void addListener(IPopulationListener listener) {
-		if (listeners==null)
-			listeners = new LinkedList<IPopulationListener>();
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+		return listeners != null && !listeners.isEmpty();
 	}
 
 	@Override
-	public void removeListener(IPopulationListener listener) {
-		if (listeners==null)
-			return;
+	public void addListener(final IPopulationListener listener) {
+		if ( listeners == null ) {
+			listeners = new LinkedList<IPopulationListener>();
+		}
+		if ( !listeners.contains(listener) ) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(final IPopulationListener listener) {
+		if ( listeners == null ) { return; }
 		listeners.remove(listener);
 	}
 
-	protected void fireAgentAdded(IAgent agent) {
-		if (!hasListeners())
-			return;
+	protected void fireAgentAdded(final IAgent agent) {
+		if ( !hasListeners() ) { return; }
 		try {
-			for (IPopulationListener l : listeners) {
+			for ( IPopulationListener l : listeners ) {
 				l.notifyAgentAdded(this, agent);
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
-	protected void fireAgentsAdded(IContainer container) {
-		if (!hasListeners())
-			return;
+
+	protected void fireAgentsAdded(final IContainer container) {
+		if ( !hasListeners() ) { return; }
 		// create list
 		Collection agents = new LinkedList();
 		Iterator it = container.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			agents.add(it.next());
+		}
 		// send event
 		try {
-			for (IPopulationListener l : listeners) {
+			for ( IPopulationListener l : listeners ) {
 				l.notifyAgentsAdded(this, agents);
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
-	protected void fireAgentRemoved(IAgent agent) {
-		if (!hasListeners())
-			return;
-		System.out.println("agent removed "+agent);
+
+	protected void fireAgentRemoved(final IAgent agent) {
+		if ( !hasListeners() ) { return; }
+		System.out.println("agent removed " + agent);
 		try {
-			for (IPopulationListener l : listeners) {
+			for ( IPopulationListener l : listeners ) {
 				l.notifyAgentRemoved(this, agent);
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
-	protected void fireAgentsRemoved(IContainer container) {
-		if (!hasListeners())
-			return;
+
+	protected void fireAgentsRemoved(final IContainer container) {
+		if ( !hasListeners() ) { return; }
 		// create list
 		Collection agents = new LinkedList();
 		Iterator it = container.iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			agents.add(it.next());
+		}
 		// send event
 		try {
-			for (IPopulationListener l : listeners) {
+			for ( IPopulationListener l : listeners ) {
 				l.notifyAgentsRemoved(this, agents);
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
+
 	protected void firePopulationCleared() {
-		if (!hasListeners())
-			return;
+		if ( !hasListeners() ) { return; }
 		// send event
 		try {
-			for (IPopulationListener l : listeners) {
+			for ( IPopulationListener l : listeners ) {
 				l.notifyPopulationCleared(this);
 			}
 		} catch (RuntimeException e) {

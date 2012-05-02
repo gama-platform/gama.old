@@ -18,13 +18,13 @@
  */
 package msi.gaml.compilation;
 
-import static msi.gaml.expressions.IExpressionParser.*;
+import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.security.ProtectionDomain;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gaml.expressions.*;
 import msi.gaml.skills.ISkill;
@@ -53,6 +53,8 @@ public class GamaCompiler {
 			return super.defineClass(name, data, 0, data.length, pd);
 		}
 	}
+
+	private static IExpressionFactory expressionFactory = new GamlExpressionFactory();
 
 	static class StrippedCompiler extends ClassBodyEvaluator {
 
@@ -200,20 +202,20 @@ public class GamaCompiler {
 	public final static String IAGENT =
 	/* IAgent.class.getCanonicalName(); */"msi.gama.metamodel.agent.IAgent";
 	public final static String IAGENTMANAGER =
-		/* IPopulation.class.getCanonicalName(); */"msi.gama.metamodel.population.IPopulation";
+	/* IPopulation.class.getCanonicalName(); */"msi.gama.metamodel.population.IPopulation";
 	public final static String ISIMULATION =
-		/* ISimulation.class.getCanonicalName(); */"msi.gama.kernel.simulation.ISimulation";
+	/* ISimulation.class.getCanonicalName(); */"msi.gama.kernel.simulation.ISimulation";
 	public final static String ISKILL =
-		/* ISkill.class.getCanonicalName(); */"msi.gaml.skills.ISkill";
+	/* ISkill.class.getCanonicalName(); */"msi.gaml.skills.ISkill";
 	public final static String ISYMBOL =
-		/* ISymbol.class.getCanonicalName(); */"msi.gaml.compilation.ISymbol";
+	/* ISymbol.class.getCanonicalName(); */"msi.gaml.compilation.ISymbol";
 	public final static String IDESCRIPTION =
-		/* IDescription.class.getCanonicalName(); */"msi.gaml.descriptions.IDescription";
+	/* IDescription.class.getCanonicalName(); */"msi.gaml.descriptions.IDescription";
 	public final static String ISCOPE =
-		/* IScope.class.getCanonicalName(); */"msi.gama.runtime.IScope";
+	/* IScope.class.getCanonicalName(); */"msi.gama.runtime.IScope";
 	public final static String OBJECT = Object.class.getCanonicalName();
 	public final static String IVALUE =
-		/* IValue.class.getCanonicalName(); */"msi.gama.common.interfaces.IValue";
+	/* IValue.class.getCanonicalName(); */"msi.gama.common.interfaces.IValue";
 	public final static String EXCEPTION =
 		/* "throws + " GamaRuntimeException.class.getCanonicalName(); */"throws msi.gama.runtime.exceptions.GamaRuntimeException";
 
@@ -348,7 +350,7 @@ public class GamaCompiler {
 		}
 		Map<TypePair, IOperator> existing = BINARIES.get(string);
 		if ( !existing.containsKey(FunctionSignature) ) {
-			IExpressionParser.FUNCTIONS.add(string);
+			IExpressionCompiler.FUNCTIONS.add(string);
 			IOperator newFunct = new PrimitiveOperator(string);
 			existing.put(FunctionSignature, newFunct);
 		}
@@ -408,18 +410,18 @@ public class GamaCompiler {
 		TypePair signature = new TypePair(leftType, rightType);
 		if ( !map.containsKey(signature) ) {
 			IOperator exp =
-				GAMA.getExpressionFactory().createOperator(keyword, true,
-					keyword.equals(IKeyword.OF) || keyword.equals(IKeyword._DOT), returnType,
-					helper, canBeConst, type, contentType, lazy);
+				expressionFactory.createOperator(keyword, true, keyword.equals(IKeyword.OF) ||
+					keyword.equals(IKeyword._DOT), returnType, helper, canBeConst, type,
+					contentType, lazy);
 			// simulation will be set after
 			exp.setName(keyword);
 			map.put(signature, exp);
 		}
 
 		if ( iterator ) {
-			IExpressionParser.ITERATORS.add(keyword);
+			IExpressionCompiler.ITERATORS.add(keyword);
 		}
-		IExpressionParser.BINARY_PRIORITIES.put(keyword, priority);
+		IExpressionCompiler.BINARY_PRIORITIES.put(keyword, priority);
 
 		// GUI.debug("Operator " + keyword + " registered for elements of types " + signature);
 	}
@@ -447,8 +449,8 @@ public class GamaCompiler {
 			// GUI.debug("Registering " + keyword + " implemented by " + methodName + " on " +
 			// declClass.getSimpleName() + " for arguments of type " + childType);
 			result =
-				GAMA.getExpressionFactory().createOperator(keyword, false, false, returnType,
-					helper, canBeConst, type, contentType, false);
+				expressionFactory.createOperator(keyword, false, false, returnType, helper,
+					canBeConst, type, contentType, false);
 			// simulation will be set after
 			result.setName(keyword);
 			if ( !UNARIES.containsKey(keyword) ) {

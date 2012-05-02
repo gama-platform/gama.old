@@ -28,7 +28,7 @@ public class VariableValidator extends DescriptionValidator {
 		String type =
 			"It cannot be used as a " +
 				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
-		if ( vd.getTypeOf(vd.getName()) != Types.NO_TYPE ) {
+		if ( vd.getTypeNamed(vd.getName()) != Types.NO_TYPE ) {
 			vd.flagError(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME,
 				vd.getName());
 		}
@@ -56,9 +56,9 @@ public class VariableValidator extends DescriptionValidator {
 				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		if ( name == null ) {
 			vd.flagError("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
-		} else if ( IExpressionParser.RESERVED.contains(name) ) {
+		} else if ( IExpressionCompiler.RESERVED.contains(name) ) {
 			vd.flagError(name + " is a reserved keyword. " + type + " Reserved keywords are: " +
-				IExpressionParser.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
+				IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
 		}/*
 		 * else if ( IExpressionParser.BINARIES.containsKey(name) ) {
 		 * flagError(name + " is a binary operator name. It cannot be used as a variable name");

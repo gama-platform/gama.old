@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.commands.Facets;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.types.*;
 
 /**
@@ -45,9 +45,19 @@ public class VariableDescription extends SymbolDescription {
 		final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
 		isBuiltIn = source.isSynthetic();
-		if ( !facets.containsKey(IKeyword.TYPE) ) {
+		if ( !facets.containsKey(IKeyword.TYPE) &&
+			!facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER) ) {
 			facets.putAsLabel(IKeyword.TYPE, keyword);
 		}
+	}
+
+	@Override
+	public void dispose() {
+		if ( dependencies != null ) {
+			dependencies.clear();
+		}
+		varExpr = null;
+		super.dispose();
 	}
 
 	@Override
@@ -67,9 +77,9 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	@Override
-	public VariableDescription shallowCopy(final IDescription superDesc) {
+	public VariableDescription copy() {
 		VariableDescription v2 =
-			new VariableDescription(getKeyword(), superDesc, facets, children, getSource(), meta);
+			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(), meta);
 		v2.isBuiltIn = isBuiltIn;
 		return v2;
 	}
@@ -80,7 +90,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-		return getTypeOf(facets.getLabel(IKeyword.TYPE));
+		return getTypeNamed(facets.getLabel(IKeyword.TYPE));
 	}
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
@@ -147,28 +157,22 @@ public class VariableDescription extends SymbolDescription {
 		String of = facets.getLabel(IKeyword.OF);
 		if ( of != null ) {
 			if ( "self".equals(of) ) {
-				contentType = getTypeOf(getSuperDescription().getName());
+				contentType = getTypeNamed(getSuperDescription().getName());
 			} else if ( "instance".equals(of) ) {
 				contentType = Types.NO_TYPE;
 			} else {
-				contentType = getTypeOf(of);
+				contentType = getTypeNamed(of);
 			}
 		}
 		return contentType == null ? getType().defaultContentType() : contentType;
 	}
 
-	@Override
-	public IType getTypeOf(final String s) {
-		ModelDescription m = getModelDescription();
-		if ( m == null ) { return Types.get(s); }
-		return m.getTypeOf(s);
-	}
-
-	public IVarExpression getVarExpr(final IExpressionFactory f) {
+	public IVarExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
 		varExpr =
-			f.createVar(getName(), getType(), getContentType(), isNotModifiable(), isGlobal
-				? IVarExpression.GLOBAL : IVarExpression.AGENT);
+			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(),
+				isNotModifiable(), isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
+				this.getSuperDescription());
 		return varExpr;
 	}
 
@@ -195,6 +199,13 @@ public class VariableDescription extends SymbolDescription {
 		final String pName = facets.getLabel(IKeyword.PARAMETER);
 		if ( pName == null || pName.equals(IKeyword.TRUE) ) { return getName(); }
 		return pName;
+	}
+
+	@Override
+	public String getTitle() {
+		String title = isParameter() ? "Parameter " : isNotModifiable() ? "Constant " : "Variable ";
+		return title + "<b>" + getName() + "</b>";
+		// TODO add type, etc...
 	}
 
 }

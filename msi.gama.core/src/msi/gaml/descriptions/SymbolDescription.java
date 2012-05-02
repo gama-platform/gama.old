@@ -20,11 +20,13 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.IErrorCollector;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
+import org.eclipse.emf.common.notify.*;
 
 /**
  * Written by drogoul Modified on 16 mars 2010
@@ -32,12 +34,12 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-public class SymbolDescription /* extends Base */implements IDescription {
+public class SymbolDescription implements IDescription {
 
 	protected final Facets facets;
 	private ISyntacticElement source;
-	protected IDescription enclosing = null;
-	protected List<IDescription> children;
+	protected IDescription enclosing;
+	protected final List<IDescription> children;
 	protected SymbolMetaDescription meta;
 	protected String name;
 	protected String keyword;
@@ -45,13 +47,17 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
-		initFields();
 		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		setSource(source);
 		meta = md;
 		setSuperDescription(superDesc);
-		copyChildren(children);
+		if ( meta.hasSequence() ) {
+			this.children = new ArrayList();
+			addChildren(children);
+		} else {
+			this.children = null;
+		}
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	private void flagError(final String s, final String code, final boolean warning,
 		final Object facet, final String ... data) throws GamaRuntimeException {
 		ISyntacticElement e =
-			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSource();
+			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSourceInformation();
 		IDescription desc = this;
 		while (e == null && desc != null) {
 			desc = desc.getSuperDescription();
@@ -73,7 +79,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
-		new GamlCompilationError(this, s, code, e, warning, facet, data);
+		getErrorCollector().add(new GamlCompilationError(this, s, code, e, warning, facet, data));
 	}
 
 	@Override
@@ -119,15 +125,15 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return name;
 	}
 
-	protected void initFields() {};
-
 	@Override
 	public void dispose() {
 		// facets.dispose();
-		for ( IDescription c : children ) {
-			c.dispose();
+		if ( children != null ) {
+			for ( IDescription c : children ) {
+				c.dispose();
+			}
+			children.clear();
 		}
-		children.clear();
 	}
 
 	@Override
@@ -136,27 +142,20 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return enclosing.getModelDescription();
 	}
 
-	protected void copyChildren(final List<IDescription> originalChildren) {
-		children = new ArrayList();
-		addChildren(originalChildren);
-	}
-
 	// To add children from outside
 	@Override
-	public void addChildren(final List<IDescription> originalChildren) {
+	public final void addChildren(final List<IDescription> originalChildren) {
 		for ( IDescription c : originalChildren ) {
-			if ( c != null ) {
-				addChild(c);
-			}
+			addChild(c);
 		}
 	}
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		IDescription cc = ((SymbolDescription) child).shallowCopy(this);
-		cc.setSuperDescription(this);
-		children.add(cc);
-		return cc;
+		if ( child == null ) { return null; }
+		child.setSuperDescription(this);
+		children.add(child);
+		return child;
 	}
 
 	@Override
@@ -166,10 +165,11 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public ISyntacticElement getSourceInformation() {
-		return getSource();
+		return source;
 	}
 
-	public IDescription shallowCopy(final IDescription superDesc) {
+	@Override
+	public IDescription copy() {
 		return this;
 	}
 
@@ -180,7 +180,7 @@ public class SymbolDescription /* extends Base */implements IDescription {
 
 	@Override
 	public List<IDescription> getChildren() {
-		return children;
+		return children == null ? Collections.EMPTY_LIST : children;
 	}
 
 	@Override
@@ -213,13 +213,12 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name, final IExpressionFactory factory) {
+	public IExpression getVarExpr(final String name) {
 		return null;
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType,
-		final IExpressionFactory f) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType) {
 		return null;
 	}
 
@@ -229,10 +228,10 @@ public class SymbolDescription /* extends Base */implements IDescription {
 	}
 
 	@Override
-	public IType getTypeOf(final String s) {
+	public IType getTypeNamed(final String s) {
 		ModelDescription m = getModelDescription();
 		if ( m == null ) { return Types.get(s); }
-		return m.getTypeOf(s);
+		return m.getTypeNamed(s);
 	}
 
 	@Override
@@ -279,12 +278,73 @@ public class SymbolDescription /* extends Base */implements IDescription {
 		return model.getWorldSpecies();
 	}
 
-	protected ISyntacticElement getSource() {
-		return source;
-	}
-
 	protected void setSource(final ISyntacticElement source) {
 		this.source = source;
+
 	}
 
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
+	 */
+	@Override
+	public void notifyChanged(final Notification notification) {
+		// Nothing to do yet
+	}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#getTarget()
+	 */
+	@Override
+	public Notifier getTarget() {
+		return (Notifier) getSourceInformation().getUnderlyingElement(null);
+	}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
+	 */
+	@Override
+	public void setTarget(final Notifier newTarget) {}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
+	 */
+	@Override
+	public boolean isAdapterForType(final Object type) {
+		return false;
+	}
+
+	@Override
+	public void unsetTarget(final Notifier object) {
+
+	}
+
+	@Override
+	public String getTitle() {
+		return "Statement <b>" + getKeyword() + "</b> ";
+	}
+
+	@Override
+	public String getDocumentation() {
+		return meta.getDocumentation();
+	}
+
+	@Override
+	public List<GamlCompilationError> getErrors() {
+		IErrorCollector c = getErrorCollector();
+		if ( c == null ) { return Collections.EMPTY_LIST; }
+		return c.getErrors();
+	}
+
+	@Override
+	public List<GamlCompilationError> getWarnings() {
+		IErrorCollector c = getErrorCollector();
+		if ( c == null ) { return Collections.EMPTY_LIST; }
+		return c.getWarnings();
+	}
+
+	@Override
+	public IErrorCollector getErrorCollector() {
+		if ( enclosing == null ) { return null; }
+		return enclosing.getErrorCollector();
+	}
 }

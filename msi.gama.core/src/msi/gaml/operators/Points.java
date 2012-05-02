@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpressionParser;
+import msi.gaml.expressions.IExpressionCompiler;
 
 /**
  * Written by drogoul Modified on 11 déc. 2010
@@ -33,25 +33,25 @@ import msi.gaml.expressions.IExpressionParser;
  */
 public class Points {
 
-	@operator(value = IExpressionParser.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
+	@operator(value = IExpressionCompiler.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionParser.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
+	@operator(value = IExpressionCompiler.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Double b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionParser.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
+	@operator(value = IExpressionCompiler.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Double a, final Integer b) {
 		return new GamaPoint(a, b);
 	}
 
-	@operator(value = IExpressionParser.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
+	@operator(value = IExpressionCompiler.INTERNAL_POINT, priority = IPriority.TERNARY, can_be_const = true)
 	// "special" operator introduced in the parser for the points
 	public static ILocation toPoint(final Integer a, final Integer b) {
 		return new GamaPoint(a, b);

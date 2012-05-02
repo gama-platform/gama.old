@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.IUnits;
-import msi.gaml.expressions.IExpressionParser;
+import msi.gaml.expressions.IExpressionCompiler;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -84,12 +84,12 @@ public class StringUtils {
 			String tmp = "";
 			tmp = expression.substring(m.start(), m.end());
 			if ( tmp != null && IUnits.UNITS.containsKey(tmp) && tokens.size() > 0 ) {
-				if ( !IExpressionParser.BINARIES.containsKey(tokens.get(tokens.size() - 1)) ) {
+				if ( !IExpressionCompiler.BINARIES.containsKey(tokens.get(tokens.size() - 1)) ) {
 					tokens.add("*");
 				}
 				tokens.add(String.valueOf(IUnits.UNITS.get(tmp)));
 			} else {
-				if ( !IExpressionParser.IGNORED.contains(tmp) ) {
+				if ( !IExpressionCompiler.IGNORED.contains(tmp) ) {
 					tokens.add(tmp);
 				}
 			}

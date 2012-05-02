@@ -108,7 +108,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
 				IType t = desc.getSpeciesContext().getType();
-				desc.addTemp(MYSELF, t, t, getExpressionFactory());
+				desc.addTemp(MYSELF, t, t);
 				previousEnclosingDescription = desc.getSuperDescription();
 				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
 			}
@@ -125,7 +125,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
 				IType t = desc.getSpeciesContext().getType();
-				desc.addTemp(MYSELF, t, t, getExpressionFactory());
+				desc.addTemp(MYSELF, t, t);
 				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
 			}
 		}
@@ -154,11 +154,11 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			try {
 				IExpressionDescription ed = argFacets.get(VALUE);
 				if ( ed != null ) {
-					e = ed.compile(superDesc, getExpressionFactory());
+					e = ed.compile(superDesc);
 				} else {
 					ed = argFacets.get(DEFAULT);
 					if ( ed != null ) {
-						e = ed.compile(superDesc, getExpressionFactory());
+						e = ed.compile(superDesc);
 					}
 				}
 			} catch (RuntimeException e1) {
@@ -167,15 +167,14 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 				return ca;
 			}
 			ca.put(name, e);
-			IType type = sd.getTypeOf(argFacets.getLabel(TYPE));
+			IType type = sd.getTypeNamed(argFacets.getLabel(TYPE));
 			if ( type == Types.NO_TYPE && e != null ) {
 				type = e.type();
 			}
 			if ( !isCreate ) {
-				// Special case for create and do, as the "arguments" passed should not be part of
-				// the context
-				cd.addTemp(name, type, e == null ? Types.NO_TYPE : e.getContentType(),
-					getExpressionFactory());
+				// Special case for the calls (create, do, primitives) as the "arguments" passed
+				// should not be part of the context
+				cd.addTemp(name, type, e == null ? Types.NO_TYPE : e.getContentType());
 			}
 
 		}
@@ -189,12 +188,12 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	protected void compileFacet(final String tag, final IDescription sd) {
 		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
 			Facets ff = sd.getFacets();
-			IType type = sd.getTypeOf(ff.getLabel(TYPE));
-			IType contentType = sd.getTypeOf(ff.getLabel(AS));
+			IType type = sd.getTypeNamed(ff.getLabel(TYPE));
+			IType contentType = sd.getTypeNamed(ff.getLabel(AS));
 			if ( contentType == Types.NO_TYPE ) {
-				contentType = sd.getTypeOf(ff.getLabel(SPECIES));
+				contentType = sd.getTypeNamed(ff.getLabel(SPECIES));
 				if ( contentType == Types.NO_TYPE ) {
-					contentType = sd.getTypeOf(ff.getLabel(OF));
+					contentType = sd.getTypeNamed(ff.getLabel(OF));
 				}
 			}
 
@@ -236,8 +235,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 				type = Types.get(IType.CONTAINER);
 			}
 			IVarExpression exp =
-				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType,
-					getExpressionFactory());
+				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType);
 			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd);

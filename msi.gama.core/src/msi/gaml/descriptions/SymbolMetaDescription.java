@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
-import msi.gaml.expressions.IExpressionParser;
+import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.IType;
 
 /**
@@ -264,7 +264,7 @@ public class SymbolMetaDescription {
 					}
 				} else {
 					String facetValue = facets.getLabel(facetName).trim();
-					if ( IExpressionParser.RESERVED.contains(facetValue) ) {
+					if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
 						GamlCompilationError error =
 							new GamlCompilationError(facetValue +
 								" is a reserved keyword. It cannot be used as an identifier", e);
@@ -298,5 +298,23 @@ public class SymbolMetaDescription {
 	 */
 	public String getOmissible() {
 		return omissibleFacet;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getDocumentation() {
+		// TODO Insert here the possibility to grab a @doc annotation in the symbol.
+		StringBuilder sb = new StringBuilder();
+		sb.append("<b>Facets allowed:</b><br><ul>");
+		for ( FacetMetaDescription f : this.getPossibleFacets().values() ) {
+			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types[0])
+				.append(" <i>[").append(f.optional ? "optional" : "required").append("]</i>");
+			if ( f.values != null && f.values.length != 0 ) {
+				sb.append(" among: ").append(Arrays.toString(f.values));
+			}
+			sb.append("</li>");
+		}
+		return sb.toString();
 	}
 }

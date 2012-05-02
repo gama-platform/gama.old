@@ -101,4 +101,14 @@ public class ListExpression extends AbstractExpression {
 		return sb.toString();
 	}
 
+	@Override
+	public String getTitle() {
+		return "Literal list expression";
+	}
+
+	@Override
+	public String getDocumentation() {
+		return "Constant " + isConst() + "<br>Contains elements of type " + contentType;
+	}
+
 }

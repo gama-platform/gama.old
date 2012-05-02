@@ -21,11 +21,11 @@ package msi.gaml.variables;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -86,14 +86,14 @@ public class Variable extends Symbol implements IVariable {
 		definitionOrder = desc.getDefinitionOrder();
 
 		if ( desc.isBuiltIn() ) {
-			ExecutionContextDescription context = desc.getSpeciesContext();
+			SpeciesDescription context = desc.getSpeciesContext();
 			buildHelpers(context);
 		}
 		javaInternal = getter != null && setter != null;
 
 	}
 
-	private void buildHelpers(final ExecutionContextDescription context) {
+	private void buildHelpers(final SpeciesDescription context) {
 		Class valueClass = type.toClass();
 		if ( getFacet(IKeyword.GETTER) != null ) {
 			gName = getLiteral(IKeyword.GETTER);

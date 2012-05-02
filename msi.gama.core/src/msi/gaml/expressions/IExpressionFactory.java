@@ -32,7 +32,7 @@ import msi.gaml.types.IType;
  */
 public interface IExpressionFactory {
 
-	public void registerParser(IExpressionParser parser);
+	public void registerParser(IExpressionCompiler parser);
 
 	public abstract IExpression createConst(final Object val, final IType type)
 		throws GamaRuntimeException;
@@ -42,9 +42,6 @@ public interface IExpressionFactory {
 
 	public abstract IExpression createExpr(final IExpressionDescription s,
 		final IDescription context);
-
-	public abstract IVarExpression createVar(final String name, final IType type,
-		final IType contentType, final boolean isConst, final int scope);
 
 	public abstract IOperator createOperator(final String name, final boolean binary,
 		final boolean var, final IType returnType, final IOperatorExecuter helper,
@@ -58,6 +55,16 @@ public interface IExpressionFactory {
 
 	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context);
 
-	public IExpressionParser getParser();
+	public IExpressionCompiler getParser();
+
+	IVarExpression createVar(String name, IType type, IType contentType, boolean isConst,
+		int scope, IDescription definitionDescription);
+
+	public IExpression createBinaryExpr(String string, IExpression compile, IExpression ifFalse,
+		IDescription context);
+
+	public IExpression createList(final List<? extends IExpression> elements);
+
+	public IExpression createMap(final List<? extends IExpression> elements);
 
 }

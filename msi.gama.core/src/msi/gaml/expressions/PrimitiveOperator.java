@@ -93,4 +93,22 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		return false;
 	}
 
+	@Override
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Action <b>").append(getName()).append("</b><br>");
+		return sb.toString();
+
+	}
+
+	@Override
+	public String getDocumentation() {
+		StringBuilder sb = new StringBuilder();
+		// TODO insert here a @documentation if possible
+		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
+		sb.append("Defined in ").append(command.getDescription().getSpeciesContext().getTitle())
+			.append("<br>");
+		return sb.toString();
+	}
+
 }

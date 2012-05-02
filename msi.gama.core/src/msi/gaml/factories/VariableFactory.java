@@ -85,8 +85,8 @@ public class VariableFactory extends SymbolFactory {
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
 			(VariableDescription) createDescription(new SyntheticStatement(IType.FLOAT_STR,
-				new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0")), superDesc,
-				null);
+				new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")),
+				superDesc, null);
 
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {

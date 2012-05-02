@@ -20,12 +20,12 @@ package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 @inside(kinds = ISymbolKind.SPECIES)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
-	@facet(name = IKeyword.RETURNS, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
 // @with_sequence
 @with_args
 // TODO Verify this
@@ -61,7 +61,7 @@ public class PrimitiveCommand extends ActionCommand {
 		super(desc);
 		String methodName = getLiteral(IKeyword.JAVA);
 
-		ExecutionContextDescription context = desc.getSpeciesContext();
+		SpeciesDescription context = desc.getSpeciesContext();
 		Class methodClass = context.getSkillClassFor(methodName);
 		skill = context.getSharedSkill(methodClass);
 		executer = GamlCompiler.getPrimitive(methodClass, methodName);

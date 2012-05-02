@@ -20,7 +20,6 @@ package msi.gama.kernel.model;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.topology.*;
 import msi.gaml.compilation.*;
@@ -41,7 +40,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 		super(description);
 		count = ++totalCount;
 		instanceCount++;
-		GuiUtils.debug("Model (" + count + ") " + description.getName() + " created ");
+		// GuiUtils.debug("Model (" + count + ") " + description.getName() + " created ");
 	}
 
 	@Override
@@ -89,7 +88,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 		}
 		experiments.clear();
 		instanceCount--;
-		GuiUtils.debug("Model (" + count + ")" + " disposed. IModels left : " + instanceCount);
+		// GuiUtils.debug("Model (" + count + ")" + " disposed. IModels left : " + instanceCount);
 	}
 
 	@Override

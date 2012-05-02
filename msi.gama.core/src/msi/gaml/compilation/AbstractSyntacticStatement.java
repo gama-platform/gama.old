@@ -6,9 +6,8 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.IErrorCollector;
 import msi.gaml.commands.Facets;
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.*;
 
 /**
  * The class AbstractStatementDescription.
@@ -27,6 +26,9 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	public AbstractSyntacticStatement(final String keyword) {
 		this.keyword = keyword;
 	}
+
+	@Override
+	public void setDescription(final IDescription description) {}
 
 	@Override
 	public void setKeyword(final String name) {
@@ -141,7 +143,7 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 				f = (IExpressionDescription) facet;
 			}
 		}
-		return f == null ? null : f.getAst();
+		return f == null ? null : f.getTarget();
 	}
 
 	@Override
@@ -157,15 +159,6 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	@Override
 	public void setParent(final ISyntacticElement p) {
 		parent = p;
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.ISyntacticElement#getErrorCollector()
-	 */
-	@Override
-	public IErrorCollector getErrorCollector() {
-		if ( parent != null ) { return parent.getErrorCollector(); }
-		return null;
 	}
 
 	/**

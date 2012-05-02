@@ -23,8 +23,8 @@ import msi.gaml.types.IType;
 
 public class EachExpression extends VariableExpression {
 
-	protected EachExpression(final String n, final IType type, final IType contentType) {
-		super(n, type, contentType, true);
+	public EachExpression(final String n, final IType type, final IType contentType) {
+		super(n, type, contentType, true, null);
 	}
 
 	@Override
@@ -33,8 +33,16 @@ public class EachExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setContentType(final IType t) {
-		super.setContentType(t);
+	public String getTitle() {
+		return "Pseudo-variable <b>each</b>";
+	}
+
+	/**
+	 * @see msi.gaml.expressions.IExpression#getDocumentation()
+	 */
+	@Override
+	public String getDocumentation() {
+		return "Represents the current object, of type " + type + ", in the iteration";
 	}
 
 }

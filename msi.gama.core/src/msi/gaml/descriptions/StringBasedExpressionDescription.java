@@ -4,6 +4,8 @@
  */
 package msi.gaml.descriptions;
 
+import org.eclipse.emf.ecore.EObject;
+
 /**
  * The class StringBasedExpressionDescription.
  * 
@@ -16,7 +18,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	String string;
 
 	public StringBasedExpressionDescription(final String s) {
-		super(null);
+		super((EObject) null);
 		string = s;
 	}
 

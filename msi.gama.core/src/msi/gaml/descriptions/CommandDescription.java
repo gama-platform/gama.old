@@ -25,7 +25,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.commands.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
@@ -37,28 +37,30 @@ import msi.gaml.types.*;
 public class CommandDescription extends SymbolDescription {
 
 	private final Map<String, IVarExpression> temps;
-	private final Map<String, IDescription> args;
-	private final boolean verifyMandatoryArgs;
-
-	private static int index = 0;
+	private Map<String, IDescription> args = null;
+	private final static String INTERNAL = "internal_";
+	private static int COMMAND_INDEX = 0;
+	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 
 	public CommandDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final boolean hasScope, final boolean hasArgs,
 		final ISyntacticElement source, final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
-		this.verifyMandatoryArgs = !keyword.equals(IKeyword.PRIMITIVE);
-
-		if ( hasScope ) {
-			temps = new HashMap();
-		} else {
-			temps = null;
-		}
+		temps = hasScope ? new HashMap() : null;
 		if ( hasArgs ) {
-			args = new HashMap();
 			collectArgs();
-		} else {
-			args = null;
 		}
+	}
+
+	@Override
+	public void dispose() {
+		if ( temps != null ) {
+			temps.clear();
+		}
+		if ( args != null ) {
+			args.clear();
+		}
+		super.dispose();
 	}
 
 	@Override
@@ -73,74 +75,69 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	private void collectArgs() {
-		List<IDescription> argList = new ArrayList();
-		explodeArgs(argList);
-		exploreArgs(argList);
-		children.addAll(argList);
-		facets.remove(IKeyword.WITH);
-
-		// Now puts all the args in the "args" list, removing them from children
-		// Made here in case other args than the previous ones were declared this way.
-		for ( IDescription c : new ArrayList<IDescription>(children) ) {
+		args = new HashMap();
+		for ( Iterator<IDescription> it = getChildren().iterator(); it.hasNext(); ) {
+			IDescription c = it.next();
 			if ( c.getKeyword().equals(IKeyword.ARG) ) {
 				args.put(c.getName(), c);
-				children.remove(c);
+				it.remove();
 			}
 		}
+		explodeArgs();
+		exploreArgs();
 	}
 
-	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
-	static final Map<String, IExpressionDescription> retained = new HashMap();
-
-	private void exploreArgs(final List<IDescription> argList) {
+	private void exploreArgs() {
 		if ( !getKeyword().equals(IKeyword.DO) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
 			String facet = entry.getKey();
 			if ( !doFacets.contains(facet) ) {
-				retained.put(facet, entry.getValue());
+				Facets f = new Facets(IKeyword.NAME, facet);
+				f.put(IKeyword.VALUE, entry.getValue());
+				args.put(facet, DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
 			}
 		}
-		addArgs(retained, argList);
-		retained.clear();
 	}
 
-	private void explodeArgs(final List<IDescription> argList) {
-		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(IKeyword.WITH), this),
-			argList);
+	private void explodeArgs() {
+		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(IKeyword.WITH), this));
+		facets.remove(IKeyword.WITH);
 	}
 
-	private void addArgs(final Map<String, IExpressionDescription> args,
-		final List<IDescription> argList) {
-		if ( args == null ) { return; }
-		for ( Map.Entry<String, IExpressionDescription> arg : args.entrySet() ) {
-			Facets f = new Facets(IKeyword.NAME, arg.getKey());
+	private void addArgs(final Map<String, IExpressionDescription> arguments) {
+		if ( arguments == null ) { return; }
+		for ( Map.Entry<String, IExpressionDescription> arg : arguments.entrySet() ) {
+			String name = arg.getKey();
+			Facets f = new Facets(IKeyword.NAME, name);
 			f.put(IKeyword.VALUE, arg.getValue());
-			argList.add(DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
+			args.put(name, DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
 		}
 	}
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
-		final IType contentType, final IExpressionFactory f) {
+		final IType contentType) {
 		IDescription sup = getSuperDescription();
 		if ( !(sup instanceof CommandDescription) ) {
 			flagError("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
 		String varName = facets.getLabel(facetName);
-		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type, contentType, f);
+		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type, contentType);
 	}
 
 	@Override
-	public CommandDescription shallowCopy(final IDescription superDescription) {
+	public CommandDescription copy() {
 		List<IDescription> children = new ArrayList();
-		// TODO Is it necessary to copy all the statements ? Only actions and primitive should be
-		// copied, maybe arg ? Try to see why it is necessary...
-		children.addAll(getChildren());
+		for ( IDescription child : getChildren() ) {
+			children.add(child.copy());
+		}
 		if ( args != null ) {
-			children.addAll(args.values());
+			for ( IDescription child : args.values() ) {
+				children.add(child.copy());
+			}
 		}
 		return new CommandDescription(getKeyword(), null, children, temps != null, args != null,
-			getSource(), meta);
+			getSourceInformation(), meta);
 	}
 
 	@Override
@@ -149,20 +146,21 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType,
-		final IExpressionFactory f) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType) {
 		if ( temps == null ) {
 			if ( getSuperDescription() == null ) { return null; }
 			if ( !(getSuperDescription() instanceof CommandDescription) ) { return null; }
-			return ((CommandDescription) getSuperDescription()).addTemp(name, type, contentType, f);
+			return ((CommandDescription) getSuperDescription()).addTemp(name, type, contentType);
 		}
-		IVarExpression result = f.createVar(name, type, contentType, false, IVarExpression.TEMP);
+		IVarExpression result =
+			GAMA.getExpressionFactory().createVar(name, type, contentType, false,
+				IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name, final IExpressionFactory factory) {
+	public IExpression getVarExpr(final String name) {
 		if ( temps != null && temps.containsKey(name) ) { return temps.get(name); }
 		return null;
 	}
@@ -177,7 +175,7 @@ public class CommandDescription extends SymbolDescription {
 				mandatoryArgs.add(n);
 			}
 		}
-		if ( verifyMandatoryArgs ) {
+		if ( !getKeyword().equals(IKeyword.PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.contains(arg) ) {
 					caller.flagError("Missing argument " + arg + " in call to " + getName() +
@@ -195,8 +193,8 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	public void verifyArgs(final String actionName, final Arguments args) {
-		ExecutionContextDescription declPlace =
-			(ExecutionContextDescription) getDescriptionDeclaringAction(actionName);
+		SpeciesDescription declPlace =
+			(SpeciesDescription) getDescriptionDeclaringAction(actionName);
 		CommandDescription executer = null;
 		if ( declPlace != null ) {
 			executer = declPlace.getAction(actionName);
@@ -208,12 +206,8 @@ public class CommandDescription extends SymbolDescription {
 		executer.verifyArgs(this, args.keySet());
 	}
 
-	public List<IDescription> getArgs() {
-		List<IDescription> result = new ArrayList();
-		if ( args != null ) {
-			result.addAll(args.values());
-		}
-		return result;
+	public Collection<IDescription> getArgs() {
+		return args == null ? Collections.EMPTY_SET : args.values();
 	}
 
 	public boolean hasTemps() {
@@ -241,7 +235,7 @@ public class CommandDescription extends SymbolDescription {
 				if ( getKeyword().equals(IKeyword.REFLEX) ) {
 					flagWarning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
 				}
-				s = getKeyword() + String.valueOf(index++);
+				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
 			facets.putAsLabel(IKeyword.NAME, s);
 		}
@@ -249,11 +243,11 @@ public class CommandDescription extends SymbolDescription {
 	}
 
 	public IType getReturnType() {
-		return getTypeOf(facets.getLabel(IKeyword.TYPE));
+		return getTypeNamed(facets.getLabel(IKeyword.TYPE));
 	}
 
 	public IType getReturnContentType() {
-		return getTypeOf(facets.getLabel(IKeyword.OF));
+		return getTypeNamed(facets.getLabel(IKeyword.OF));
 	}
 
 	@Override
@@ -261,30 +255,36 @@ public class CommandDescription extends SymbolDescription {
 		return getKeyword() + " " + getName();
 	}
 
-	@Override
-	public IType getTypeOf(final String s) {
-		if ( s == null ) { return Types.NO_TYPE; }
-		IDescription species = getSpeciesContext();
-		return species == null ? Types.NO_TYPE : species.getTypeOf(s);
-	}
-
 	/**
 	 * @return
 	 */
-	public List<String> getArgNames() {
-		List<String> result = new ArrayList();
-		for ( IDescription d : getArgs() ) {
-			result.add(d.getName());
+	public Set<String> getArgNames() {
+		return args == null ? Collections.EMPTY_SET : args.keySet();
+	}
+
+	@Override
+	public String getTitle() {
+		String kw = getKeyword();
+		kw = Character.toUpperCase(kw.charAt(0)) + kw.substring(1);
+		String name = getName();
+		if ( name.contains(INTERNAL) ) {
+			name = facets.getLabel(IKeyword.ACTION);
+			if ( name == null ) {
+				name = "statement";
+			}
 		}
-		return result;
+		String in = "";
+		if ( meta.isTopLevel() ) {
+			in = " of " + getSuperDescription().getTitle();
+		}
+		return kw + " <b>" + getName() + "</b> " + in;
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isAbstract() {
-		return !getKeyword().equals(IKeyword.PRIMITIVE) &&
-			(getChildren().isEmpty() || args != null && getChildren().size() == args.size());
+		return !getKeyword().equals(IKeyword.PRIMITIVE) && getChildren().isEmpty();
 	}
 
 }

@@ -19,9 +19,8 @@
 package msi.gama.common.interfaces;
 
 import java.util.List;
-import msi.gama.common.util.IErrorCollector;
 import msi.gaml.commands.Facets;
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.*;
 
 /**
  * Written by drogoul
@@ -51,7 +50,7 @@ public interface ISyntacticElement {
 	boolean hasParent(String name);
 
 	/*
-	 * Returns either a LineNumberElement or a Statement
+	 * Returns a Statement
 	 */
 	Object getUnderlyingElement(Object facet);
 
@@ -70,12 +69,12 @@ public interface ISyntacticElement {
 	 */
 	void setParent(ISyntacticElement basicSyntacticElement);
 
-	/**
-	 * @return
-	 */
-	IErrorCollector getErrorCollector();
-
 	boolean isSynthetic();
+
+	/**
+	 * @param symbolDescription
+	 */
+	void setDescription(IDescription symbolDescription);
 
 	/**
 	 * @param name

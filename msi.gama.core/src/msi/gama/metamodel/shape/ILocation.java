@@ -50,6 +50,7 @@ public interface ILocation extends IShape, Comparable {
 
 	public abstract Coordinate toCoordinate();
 
+	@Override
 	public abstract double euclidianDistanceTo(ILocation targ);
 
 	@Override

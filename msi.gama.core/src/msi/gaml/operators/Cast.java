@@ -48,6 +48,7 @@ public class Cast {
 		throws GamaRuntimeException {
 		// TODO Verify this method. And see if the treatment of species and types cannot be unifiedé
 		IType type = asType(scope, b);
+		if ( a == null ) { return type == Types.NO_TYPE; }
 		if ( type.isSpeciesType() ) {
 			ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
 			Object v = a.value(scope);
@@ -70,7 +71,7 @@ public class Cast {
 		Object value = expr.value(scope);
 		if ( value instanceof String ) {
 			IModel m = scope.getSimulationScope().getModel();
-			return m.getDescription().getTypeOf((String) value);
+			return m.getDescription().getTypeNamed((String) value);
 		} else if ( value instanceof ISpecies ) {
 			return ((ISpecies) value).getAgentType();
 		} else {

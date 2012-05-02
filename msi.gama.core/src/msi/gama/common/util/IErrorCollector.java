@@ -4,6 +4,7 @@
  */
 package msi.gama.common.util;
 
+import java.util.List;
 import msi.gaml.compilation.GamlCompilationError;
 
 /**
@@ -17,9 +18,8 @@ public interface IErrorCollector {
 
 	public abstract void add(final GamlCompilationError error);
 
-	/**
-	 * @return
-	 */
-	// public abstract boolean hasErrors();
+	public abstract List<GamlCompilationError> getErrors();
+
+	public abstract List<GamlCompilationError> getWarnings();
 
 }

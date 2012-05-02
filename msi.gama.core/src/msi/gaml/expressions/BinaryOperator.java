@@ -90,11 +90,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		if ( t == BOTH ) {
 			IType l = left.type();
 			IType r = right.type();
-			if ( left == GamlExpressionFactory.NIL_EXPR ) {
+			if ( left.isConst() && left.value(null) == null ) {
 				type = r;
 				return;
 			}
-			if ( right == GamlExpressionFactory.NIL_EXPR ) {
+			if ( right.isConst() && right.value(null) == null ) {
 				type = l;
 				return;
 			}
@@ -118,7 +118,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 				}
 				context.flagError(
 					"Content types of left and right operands do not match (" + l.toString() + "," +
-						r.toString() + "). Impossible to infer the content type of the expression",
+						r.toString() + "). Impossible to infer the type of the expression",
 					IGamlIssue.UNMATCHED_OPERANDS);
 			}
 			return;
@@ -134,11 +134,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		if ( t == BOTH ) {
 			IType l = left.getContentType();
 			IType r = right.getContentType();
-			if ( left == GamlExpressionFactory.NIL_EXPR ) {
+			if ( left.isConst() && left.value(null) == null ) {
 				contentType = r;
 				return;
 			}
-			if ( right == GamlExpressionFactory.NIL_EXPR ) {
+			if ( right.isConst() && right.value(null) == null ) {
 				contentType = l;
 				return;
 			}
@@ -177,6 +177,23 @@ public class BinaryOperator extends AbstractBinaryOperator {
 	@Override
 	public IOperator copy() {
 		return new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy);
+	}
+
+	@Override
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Binary operator <b>").append(getName()).append("</b><br>");
+		return sb.toString();
+	}
+
+	@Override
+	public String getDocumentation() {
+		StringBuilder sb = new StringBuilder();
+		// TODO insert here a @documentation if possible
+		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
+		sb.append("Left operand of type ").append(left.type().toString()).append("<br>");
+		sb.append("Right operand of type ").append(right.type().toString()).append("<br>");
+		return sb.toString();
 	}
 
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {

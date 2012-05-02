@@ -22,6 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -35,9 +36,13 @@ import msi.gaml.species.ISpecies;
  */
 public class GamaAgentType extends GamaType<IAgent> {
 
+	ModelDescription model;
+
 	// SpeciesDescription species;
 
-	public GamaAgentType(final String speciesName, final short speciesId, final Class base) {
+	public GamaAgentType(final String speciesName, final short speciesId, final Class base,
+		final ModelDescription model) {
+		this.model = model;
 		name = speciesName;
 		id = speciesId;
 		supports = new Class[] { base };
@@ -79,11 +84,17 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
+	public SpeciesDescription getSpecies() {
+		return model.getSpeciesDescription(name);
+	}
+
+	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
 		boolean b = super.canBeTypeOf(scope, obj);
 		if ( b ) { return true; }
 		if ( obj instanceof IAgent ) {
-			ISpecies s = scope.getAgentScope().getSimulation().getModel().getSpecies(getSpeciesName());
+			ISpecies s =
+				scope.getAgentScope().getSimulation().getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
 		}
 		return false;

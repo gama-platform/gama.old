@@ -38,4 +38,6 @@ public interface IOperator extends IExpression {
 
 	public abstract IExpression right();
 
+	public String getName();
+
 }

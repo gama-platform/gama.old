@@ -180,7 +180,7 @@ public class GamlCompiler {
 	private static void collectBuiltInActions(final Class c) {
 		IDescription model = null;/* new ModelDescription(); */
 		final HashMap<String, String> names = new HashMap();
-		final HashMap<String, IType> returns = new HashMap();
+		final HashMap<String, IType> types = new HashMap();
 		final HashMap<String, ArrayList<String>> arguments = new HashMap();
 		List<IDescription> commands = new ArrayList();
 
@@ -192,7 +192,7 @@ public class GamlCompiler {
 			if ( vp != null ) {
 				String name = ((action) vp).value();
 				names.put(name, m.getName());
-				returns.put(name, Types.get(m.getReturnType()));
+				types.put(name, Types.get(m.getReturnType()));
 				arguments.put(name, new ArrayList());
 				va = m.getAnnotation(args.class);
 				if ( va != null ) {
@@ -216,7 +216,7 @@ public class GamlCompiler {
 			}
 			IDescription prim =
 				DescriptionFactory.createDescription(IKeyword.PRIMITIVE, model, args,
-					IKeyword.NAME, n, IKeyword.RETURNS, returns.get(n).toString(), IKeyword.JAVA,
+					IKeyword.NAME, n, IKeyword.TYPE, types.get(n).toString(), IKeyword.JAVA,
 					names.get(n));
 			if ( prim != null ) {
 				commands.add(prim);

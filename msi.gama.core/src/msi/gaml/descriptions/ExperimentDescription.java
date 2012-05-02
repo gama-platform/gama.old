@@ -27,8 +27,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
-		super(keyword, superDesc, source.getFacets(), children, ExperimentatorAgent.class,
-			source, md);
+		super(keyword, superDesc, source.getFacets(), children, source, ExperimentatorAgent.class,
+			md);
 	}
 
 	@Override
@@ -41,6 +41,11 @@ public class ExperimentDescription extends SpeciesDescription {
 	protected void addVariable(final VariableDescription var) {
 		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) { return; }
 		super.addVariable(var);
+	}
+
+	@Override
+	public String getTitle() {
+		return "Experiment " + getName();
 	}
 
 }

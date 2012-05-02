@@ -20,8 +20,10 @@ package msi.gaml.descriptions;
 
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.util.IErrorCollector;
 import msi.gaml.commands.Facets;
-import msi.gaml.expressions.*;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
@@ -30,7 +32,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public interface IDescription {
+public interface IDescription extends IGamlDescription {
 
 	public void flagError(final String message);
 
@@ -66,14 +68,11 @@ public interface IDescription {
 
 	public abstract IDescription getDescriptionDeclaringAction(final String name);
 
-	public abstract IExpression getVarExpr(final String name, IExpressionFactory factory);
+	public abstract IExpression getVarExpr(final String name);
 
 	public abstract SpeciesDescription getSpeciesContext();
 
-	public abstract IExpression addTemp(final String name, final IType type,
-		final IType contentType, IExpressionFactory f);
-
-	public abstract void dispose();
+	public abstract IExpression addTemp(final String name, final IType type, final IType contentType);
 
 	public abstract List<IDescription> getChildren();
 
@@ -81,7 +80,7 @@ public interface IDescription {
 
 	public abstract IDescription addChild(IDescription child);
 
-	public abstract IType getTypeOf(String s);
+	public abstract IType getTypeNamed(String s);
 
 	public abstract void copyTempsAbove();
 
@@ -90,4 +89,12 @@ public interface IDescription {
 	public abstract CommandDescription getAction(String name);
 
 	public abstract SpeciesDescription getWorldSpecies();
+
+	public abstract IErrorCollector getErrorCollector();
+
+	public abstract List<GamlCompilationError> getWarnings();
+
+	public abstract List<GamlCompilationError> getErrors();
+
+	public abstract IDescription copy();
 }

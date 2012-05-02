@@ -18,10 +18,11 @@
  */
 package msi.gaml.types;
 
+import java.util.Set;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -109,6 +110,8 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public IExpression getGetter(String name);
 
+	public Set<String> getFieldGetters();
+
 	public boolean isSpeciesType();
 
 	public abstract IType defaultContentType();
@@ -116,6 +119,8 @@ public interface IType<Inner> extends Comparable<IType> {
 	public String getSpeciesName();
 
 	public boolean isAssignableFrom(IType l);
+
+	public SpeciesDescription getSpecies();
 
 	// public boolean
 

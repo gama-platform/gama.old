@@ -20,7 +20,6 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.IErrorCollector;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -90,13 +89,6 @@ public class GamlCompilationError {
 	public void addSource(final ISyntacticElement cur) {
 		if ( source == null ) {
 			source = cur;
-			if ( cur == null ) { return; }
-			IErrorCollector collect = cur.getErrorCollector();
-
-			// FIXME May be added two times
-			if ( collect != null ) {
-				collect.add(this);
-			}
 		}
 	}
 

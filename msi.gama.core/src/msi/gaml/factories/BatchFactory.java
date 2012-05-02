@@ -23,7 +23,6 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
-import msi.gaml.descriptions.IDescription;
 
 /**
  * Written by drogoul Modified on 17 mai 2010
@@ -47,12 +46,6 @@ public class BatchFactory extends SymbolFactory {
 		if ( cur.getKeyword().equals(IKeyword.METHOD) ) { return StringUtils.toJavaString(cur
 			.getLabel(IKeyword.NAME)); }
 		return super.getKeyword(cur);
-	}
-
-	@Override
-	public IDescription createDescriptionRecursively(final ISyntacticElement source,
-		final IDescription superDesc) {
-		return super.createDescriptionRecursively(source, superDesc);
 	}
 
 }

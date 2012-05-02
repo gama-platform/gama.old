@@ -33,9 +33,7 @@ import msi.gaml.types.*;
 @reserved({ "nil", "each", "self", "myself", "their", "its", "her", "his",
 // TMP (retro-compatibility):
 	"world", "visible", "signal" })
-public interface IExpressionParser<T> {
-
-	// T is the type of input expected. Either ExpressionDescription or Expression
+public interface IExpressionCompiler<T> {
 
 	public static final String INTERNAL_POINT = "<->";
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE,
@@ -49,23 +47,12 @@ public interface IExpressionParser<T> {
 	public static final Set<String> ITERATORS = new HashSet();
 	public static final Map<String, Short> BINARY_PRIORITIES = new HashMap();
 
-	public abstract IExpression parse(final IExpressionDescription s,
+	public abstract IExpression compile(final IExpressionDescription s,
 		final IDescription parsingContext);
 
-	public abstract void setFactory(IExpressionFactory factory);
-
-	/**
-	 * @param args
-	 * @param context
-	 * @return
-	 */
 	Map<String, IExpressionDescription> parseArguments(IExpressionDescription args,
 		IDescription context);
 
-	/**
-	 * @param s
-	 * @return
-	 */
 	public abstract List<String> parseLiteralArray(final IExpressionDescription s,
 		final IDescription context);
 }

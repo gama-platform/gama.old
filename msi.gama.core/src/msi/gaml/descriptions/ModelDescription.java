@@ -21,11 +21,12 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
+import org.eclipse.emf.common.notify.*;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -35,6 +36,9 @@ import msi.gaml.types.*;
  */
 public class ModelDescription extends SymbolDescription {
 
+	private static final Map<String, Integer> countPerModel = new HashMap();
+	private final int number;
+	private static int count = 1;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
 	private IDescription environment;
@@ -42,14 +46,65 @@ public class ModelDescription extends SymbolDescription {
 	private String fileName;
 	private String baseDirectory;
 	private SpeciesDescription worldSpecies;
+	private boolean isDisposed = false;
 	// Only used to accelerate the parsing
 	private final Map<String, SpeciesDescription> allSpeciesDescription = new HashMap();
+	private final ErrorCollector collect = new ErrorCollector();
 
 	public ModelDescription(final String fileName, final ISyntacticElement source) {
 		super(IKeyword.MODEL, null, new ArrayList(), source, DescriptionFactory.getModelFactory()
 			.getMetaDescriptionFor(null, IKeyword.MODEL));
-		types = new TypesManager();
+		types = new TypesManager(this);
 		setModelFileName(fileName);
+		number = count++;
+		// inc(fileName);
+		// GuiUtils.debug("Creation of " + this);
+	}
+
+	@Override
+	public String toString() {
+		return "description #" + number + " of model <" +
+			fileName.substring(fileName.lastIndexOf('/')) + ">";
+	}
+
+	@Override
+	public void dispose() {
+		if ( isDisposed ) {
+			// GuiUtils.debug("" + this + " already disposed");
+			return;
+		}
+		// int left = dec(fileName);
+		// GuiUtils.debug("Disposal of " + this + "(models left: " + left + ")");
+		experiments.clear();
+		allSpeciesDescription.clear();
+		output = null;
+		environment = null;
+		types.dispose();
+		worldSpecies = null;
+		super.dispose();
+		isDisposed = true;
+	}
+
+	static int inc(final String fileName) {
+		Integer count = countPerModel.get(fileName);
+		if ( count == null ) {
+			countPerModel.put(fileName, 1);
+			return 1;
+		}
+		countPerModel.put(fileName, count + 1);
+		return count + 1;
+	}
+
+	static int dec(final String fileName) {
+		Integer count = countPerModel.get(fileName);
+		if ( count == null ) // should not happen but well...
+		{ return 0; }
+		if ( count == 1 ) {
+			countPerModel.remove(fileName);
+			return 0;
+		}
+		countPerModel.put(fileName, count - 1);
+		return count - 1;
 	}
 
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
@@ -59,6 +114,21 @@ public class ModelDescription extends SymbolDescription {
 			flagError(e.getMessage(), IGamlIssue.GENERAL);
 			return filePath;
 		}
+	}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
+	 */
+	@Override
+	public void notifyChanged(final Notification notification) {}
+
+	@Override
+	public void unsetTarget(final Notifier object) {
+		// Normally sent when the EObject is destroyed or no longer accepts the current description
+		// as an adapter. In that case, whe should dispose the model description (the underlying
+		// model has changed or been garbaged)
+		// GuiUtils.debug("Removing: " + this + " from its EObject " + object);
+		this.dispose();
 	}
 
 	/**
@@ -138,8 +208,8 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name, final IExpressionFactory factory) {
-		return getWorldSpecies().getVarExpr(name, factory);
+	public IExpression getVarExpr(final String name) {
+		return getWorldSpecies().getVarExpr(name);
 	}
 
 	@Override
@@ -158,50 +228,8 @@ public class ModelDescription extends SymbolDescription {
 		return spec != null && allSpeciesDescription.containsKey(spec);
 	}
 
-	// /**
-	// * Search for a species with the specified name.
-	// *
-	// * The eligible species for the search may be the topSpecies itself or one of the
-	// micro-species
-	// * of the topSpecies.
-	// *
-	// * @param topSpecies the top species of a branch.
-	// * @param specToFind the name of the species to be searched
-	// * @return a species with the specified name or null.
-	// */
-	// private SpeciesDescription findSpecies(final SpeciesDescription topSpecies,
-	// final String specToFind) {
-	// if ( topSpecies == null || specToFind == null ) { return null; }
-	//
-	// if ( topSpecies.getName().equals(specToFind) ) { return topSpecies; }
-	//
-	// List<SpeciesDescription> microSpecs = topSpecies.getMicroSpecies();
-	//
-	// for ( SpeciesDescription micro : microSpecs ) {
-	// if ( micro.getName().equals(specToFind) ) { return micro; }
-	// }
-	//
-	// /*
-	// * Avoid infinite recursion.
-	// *
-	// * When a species is a sub-species of its direct macro-species,
-	// * it is a micro-species of itself thus this leads to infinite recursion.
-	// */
-	// if ( microSpecs.contains(topSpecies) ) {
-	// microSpecs.remove(topSpecies);
-	// }
-	//
-	// SpeciesDescription retVal;
-	// for ( SpeciesDescription micro : microSpecs ) {
-	// retVal = findSpecies(micro, specToFind);
-	// if ( retVal != null ) { return retVal; }
-	// }
-	//
-	// return null;
-	// }
-
 	@Override
-	public IType getTypeOf(final String s) {
+	public IType getTypeNamed(final String s) {
 		return types.get(s);
 	}
 
@@ -214,11 +242,13 @@ public class ModelDescription extends SymbolDescription {
 		return null; // return getWorldSpecies() ?
 	}
 
-	/**
-	 * @return
-	 */
 	public Set<String> getExperimentNames() {
-		return experiments.keySet();
+		return new HashSet(experiments.keySet());
+	}
+
+	@Override
+	public IErrorCollector getErrorCollector() {
+		return collect;
 	}
 
 }

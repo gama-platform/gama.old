@@ -18,14 +18,12 @@
  */
 package msi.gaml.expressions;
 
-import static msi.gama.common.interfaces.IKeyword.EACH;
-import static msi.gaml.expressions.IExpressionParser.*;
+import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
-import msi.gaml.factories.*;
 import msi.gaml.types.*;
 
 /**
@@ -34,39 +32,25 @@ import msi.gaml.types.*;
  * @author drogoul
  */
 
-public class GamlExpressionFactory extends SymbolFactory implements IExpressionFactory {
+public class GamlExpressionFactory implements IExpressionFactory {
 
-	/**
-	 * @param superFactory
-	 */
-	public GamlExpressionFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
-	}
+	public GamlExpressionFactory() {}
 
-	public static IExpression NIL_EXPR;
 	public static IExpression TRUE_EXPR;
 	public static IExpression FALSE_EXPR;
-	public static IVarExpression EACH_EXPR;
 	public static IExpression WORLD_EXPR = null;
 
 	static {
 		IType bool = Types.get(IType.BOOL);
-		IType none = Types.NO_TYPE;
-		NIL_EXPR = new ConstantExpression(null, none, none);
 		TRUE_EXPR = new ConstantExpression(true, bool, bool);
 		FALSE_EXPR = new ConstantExpression(false, bool, bool);
-		EACH_EXPR = new EachExpression(EACH, none, none);
 	}
 
-	// public static int cacheSize = 100;
-	// public final static Map<Object, IExpression> cache = new HashMap(cacheSize);
-
-	IExpressionParser parser;
+	IExpressionCompiler parser;
 
 	@Override
-	public void registerParser(final IExpressionParser f) {
+	public void registerParser(final IExpressionCompiler f) {
 		parser = f;
-		parser.setFactory(this);
 	}
 
 	@Override
@@ -78,13 +62,6 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	public IExpression createConst(final Object val, final IType type, final IType contentType) {
 		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(
 			(String) val, type, contentType); }
-		// IExpression expr = cache.get(val);
-		// if ( expr == null ) {
-		// expr = new ConstantExpression(val, type, contentType);
-		// cache.put(val, expr);
-		// GuiUtils.debug("Constants cache size: " + cache.size());
-		// }
-		// return expr;
 		return new ConstantExpression(val, type, contentType);
 	}
 
@@ -92,7 +69,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	public IExpression createExpr(final IExpressionDescription s, final IDescription context) {
 		if ( s == null ) { return null; }
 		IExpression p = s.getExpression();
-		return p == null ? parser.parse(s, context) : p;
+		return p == null ? parser.compile(s, context) : p;
 	}
 
 	@Override
@@ -104,18 +81,21 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 
 	@Override
 	public IVarExpression createVar(final String name, final IType type, final IType contentType,
-		final boolean isConst, final int scope) {
+		final boolean isConst, final int scope, final IDescription definitionDescription) {
 		switch (scope) {
 			case IVarExpression.GLOBAL:
-				return new GlobalVariableExpression(name, type, contentType, isConst);
+				return new GlobalVariableExpression(name, type, contentType, isConst,
+					definitionDescription.getModelDescription().getWorldSpecies());
 			case IVarExpression.AGENT:
-				return new AgentVariableExpression(name, type, contentType, isConst);
+				return new AgentVariableExpression(name, type, contentType, isConst,
+					definitionDescription);
 			case IVarExpression.TEMP:
-				return new TempVariableExpression(name, type, contentType);
+				return new TempVariableExpression(name, type, contentType, definitionDescription);
 			case IVarExpression.EACH:
 				return new EachExpression(name, type, contentType);
 			case IVarExpression.WORLD:
-				return new WorldExpression(name, type, contentType);
+				return new WorldExpression(name, type, contentType,
+					definitionDescription.getModelDescription());
 			case IVarExpression.SELF:
 				return new SelfExpression(name, type, contentType);
 			default:
@@ -123,10 +103,12 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		}
 	}
 
+	@Override
 	public ListExpression createList(final List<? extends IExpression> elements) {
 		return new ListExpression(elements);
 	}
 
+	@Override
 	public MapExpression createMap(final List<? extends IExpression> elements) {
 		return new MapExpression(elements);
 	}
@@ -138,10 +120,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 		final IDescription context) {
 		IExpression child = c;
 
-		if ( child == null ) {
-			// context.flagError("Operand of '" + op + "' is malformed");
-			return null;
-		}
+		if ( child == null ) { return null; }
 		if ( UNARIES.containsKey(op) ) {
 			Map<IType, IOperator> ops = UNARIES.get(op);
 			IType childType = child.type();
@@ -187,18 +166,13 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 
 	private final List<TypePair> temp_pairs = new ArrayList(10);
 
+	@Override
 	public IExpression createBinaryExpr(final String op, final IExpression l, final IExpression r,
 		final IDescription context /* useful as a workaround for primitive operators */) {
 		IExpression left = l;
 		IExpression right = r;
-		if ( left == null ) {
-			// context.flagError("Left member of '" + op + "' is malformed");
-			return null;
-		}
-		if ( right == null ) {
-			// context.flagError("Right member of '" + op + "' is malformed");
-			return null;
-		}
+		if ( left == null ) { return null; }
+		if ( right == null ) { return null; }
 
 		if ( BINARIES.containsKey(op) ) {
 			// We get the possible pairs of types registered
@@ -280,7 +254,7 @@ public class GamlExpressionFactory extends SymbolFactory implements IExpressionF
 	}
 
 	@Override
-	public IExpressionParser getParser() {
+	public IExpressionCompiler getParser() {
 		return parser;
 	}
 

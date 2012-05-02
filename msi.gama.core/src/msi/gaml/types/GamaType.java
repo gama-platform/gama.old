@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -72,6 +72,12 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
+	public Set<String> getFieldGetters() {
+		if ( isSpeciesType() ) { return new HashSet(getSpecies().getVarNames()); }
+		return getters.keySet();
+	}
+
+	@Override
 	public abstract Inner cast(IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException;
 
@@ -96,6 +102,11 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	@Override
 	public boolean isSpeciesType() {
 		return false;
+	}
+
+	@Override
+	public SpeciesDescription getSpecies() {
+		return null;
 	}
 
 	@Override

@@ -21,7 +21,7 @@ package msi.gaml.types;
 import static msi.gaml.types.IType.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.*;
 
 public class TypesManager {
 
@@ -30,12 +30,14 @@ public class TypesManager {
 	private final HashMap<Short, IType> typeToIType;
 	private final HashMap<String, IType> stringToIType;
 	private final HashMap<Class, IType> classToIType;
+	private final ModelDescription model;
 
 	/**
 	 * To initialize TypesManager of ModelDescription.
 	 */
-	public TypesManager() {
+	public TypesManager(final ModelDescription md) {
 		CURRENT_INDEX = SPECIES_TYPES;
+		model = md;
 
 		typeToIType = new HashMap<Short, IType>();
 		for ( short typeId = 0; typeId < Types.typeToIType.length; typeId++ ) {
@@ -65,11 +67,15 @@ public class TypesManager {
 		}
 
 		short newId = ++CURRENT_INDEX;
-		IType newType = new GamaAgentType(name, newId, base);
+		IType newType = new GamaAgentType(name, newId, base, model);
 		typeToIType.put(newId, newType);
 		stringToIType.put(name, newType);
 		classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
 		return newType;
+	}
+
+	public ModelDescription getModel() {
+		return model;
 	}
 
 	public List<String> getTypeNames() {
@@ -92,5 +98,11 @@ public class TypesManager {
 		IType t = classToIType.get(type);
 
 		return t == null ? Types.NO_TYPE : t;
+	}
+
+	public void dispose() {
+		typeToIType.clear();
+		stringToIType.clear();
+		classToIType.clear();
 	}
 }

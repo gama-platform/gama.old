@@ -19,14 +19,21 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.util.StringUtils;
-import msi.gaml.expressions.*;
+import msi.gama.runtime.GAMA;
+import msi.gaml.expressions.IExpression;
+import org.eclipse.emf.ecore.EObject;
 
 public class BasicExpressionDescription implements IExpressionDescription {
 
 	protected IExpression expression;
+	protected EObject target;
 
 	public BasicExpressionDescription(final IExpression expr) {
 		expression = expr;
+	}
+
+	public BasicExpressionDescription(final EObject object) {
+		target = object;
 	}
 
 	@Override
@@ -58,9 +65,9 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public IExpression compile(final IDescription context, final IExpressionFactory factory) {
+	public IExpression compile(final IDescription context) {
 		if ( expression == null ) {
-			expression = factory.createExpr(this, context);
+			expression = GAMA.getExpressionFactory().createExpr(this, context);
 		}
 		return expression;
 	}
@@ -72,7 +79,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	public IExpressionDescription compileAsLabel() {
 		LabelExpressionDescription newEd =
 			new LabelExpressionDescription(StringUtils.toJavaString(toString()));
-		newEd.setAst(getAst());
+		newEd.setTarget(getTarget());
 		return newEd;
 	}
 
@@ -82,22 +89,29 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	/**
-	 * @see msi.gaml.descriptions.IExpressionDescription#getAst()
-	 */
-	@Override
-	public Object getAst() {
-		return null;
-	}
-
-	@Override
-	public void setAst(final Object ast) {}
-
-	/**
 	 * @see msi.gaml.descriptions.IExpressionDescription#equalsString(java.lang.String)
 	 */
 	@Override
 	public boolean equalsString(final String o) {
 		return o == null ? false : o.equals(toString());
+	}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#getTarget()
+	 */
+	@Override
+	public EObject getTarget() {
+		return target;
+	}
+
+	/**
+	 * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
+	 */
+	@Override
+	public void setTarget(final EObject newTarget) {
+		if ( target == null ) {
+			target = newTarget;
+		}
 	}
 
 }

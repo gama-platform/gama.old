@@ -71,7 +71,7 @@ public class SpeciesFactory extends SymbolFactory {
 			}
 		}
 		SpeciesDescription sd =
-			new SpeciesDescription(keyword, superDesc, facets, children, base, source, md);
+			new SpeciesDescription(keyword, superDesc, facets, children, source, base, md);
 
 		return sd;
 

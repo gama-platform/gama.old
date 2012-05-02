@@ -43,8 +43,12 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.AGENTS, type = IType.LIST_STR),
 	@var(name = IKeyword.HOST, type = IType.NONE_STR),
 	@var(name = IKeyword.LOCATION, type = IType.POINT_STR, depends_on = IKeyword.SHAPE),
-	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR),
-	@var(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR) })
+	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR) /*
+														 * , Problème de conflit de nom
+														 * 
+														 * @var(name = IKeyword.TOPOLOGY, type =
+														 * IType.TOPOLOGY_STR)
+														 */})
 public interface IGamlAgent extends IAgent {
 
 	@Override

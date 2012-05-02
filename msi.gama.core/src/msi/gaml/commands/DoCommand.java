@@ -19,13 +19,13 @@
 package msi.gaml.commands;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.no_scope;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -42,16 +42,27 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.DO, IKeyword.REPEAT }, kind = ISymbolKind.SINGLE_COMMAND)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_COMMAND })
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false),
-	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true) }, omissible = IKeyword.ACTION)
+	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true),
+	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)
 @with_args
 @no_scope
 public class DoCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments args;
+	String returnString;
 
 	public DoCommand(final IDescription desc) {
 		super(desc);
+		returnString = getLiteral(IKeyword.RETURNS);
 		setName(getLiteral(IKeyword.ACTION));
+	}
+
+	@Override
+	public void enterScope(final IScope scope) {
+		if ( returnString != null ) {
+			scope.addVarWithValue(returnString, null);
+		}
+		super.enterScope(scope);
 	}
 
 	public Arguments getArgs() {
@@ -64,11 +75,16 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		ISpecies context = stack.getAgentScope().getSpecies();
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		ISpecies context = scope.getAgentScope().getSpecies();
 		ICommand.WithArgs executer = context.getAction(name);
 		executer.setRuntimeArgs(args);
-		Object result = executer.executeOn(stack);
+		Object result = executer.executeOn(scope);
+		String s = returnString;
+		if ( s != null ) {
+			scope.setVarValue(s, result);
+		}
+
 		return result;
 	}
 
@@ -86,14 +102,13 @@ public class DoCommand extends AbstractCommandSequence implements ICommand.WithA
 		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
 	}
-	
+
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
 		ISpecies context = scope.getAgentScope().getSpecies();
 		ICommand.WithArgs executer = context.getAction(name);
-		if (executer.getPertinence() != null) {
-			return Cast.asFloat(scope, executer.getPertinence().value(scope));
-		}
+		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer
+			.getPertinence().value(scope)); }
 		return 1.0;
 	}
 }

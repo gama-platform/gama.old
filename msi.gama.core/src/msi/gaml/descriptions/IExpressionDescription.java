@@ -4,7 +4,8 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * The class IExpressionDescription.
@@ -17,18 +18,18 @@ public interface IExpressionDescription {
 
 	public abstract void setExpression(final IExpression expr);
 
-	public abstract IExpression compile(final IDescription context, final IExpressionFactory factory);
-
-	public abstract Object getAst();
+	public abstract IExpression compile(final IDescription context);
 
 	public abstract IExpression getExpression();
-
-	public abstract void dispose();
 
 	public abstract IExpressionDescription compileAsLabel();
 
 	public abstract boolean equalsString(String o);
 
-	public abstract void setAst(Object ast);
+	public void dispose();
+
+	public EObject getTarget();
+
+	public void setTarget(EObject target);
 
 }

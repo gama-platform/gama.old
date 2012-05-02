@@ -86,6 +86,22 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return literalValue() + "(" + child + ")";
 	}
 
+	@Override
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Unary operator <b>").append(getName()).append("</b><br>");
+		return sb.toString();
+	}
+
+	@Override
+	public String getDocumentation() {
+		StringBuilder sb = new StringBuilder();
+		// TODO insert here a @documentation if possible
+		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
+		sb.append("Operand of type ").append(child.type().toString()).append("<br>");
+		return sb.toString();
+	}
+
 	public void computeType() {
 		short t = typeProvider;
 		type =
