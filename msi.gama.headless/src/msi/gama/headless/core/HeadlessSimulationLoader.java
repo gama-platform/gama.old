@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.headless.common.ErrorCollector;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.*;
@@ -53,7 +52,6 @@ public class HeadlessSimulationLoader {
 		System.out.println(fileName + " model is loading...");
 
 		IModel lastModel = null;
-		ErrorCollector collect = new ErrorCollector();
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:" + fileName), true);
 		try {
@@ -62,7 +60,7 @@ public class HeadlessSimulationLoader {
 				System.out.println("No errors in syntactic tree");
 				ModelStructure ms =
 					new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()));
-				lastModel = DescriptionFactory.getModelFactory().compile(ms, collect);
+				lastModel = DescriptionFactory.getModelFactory().compile(ms);
 				if ( !r.getErrors().isEmpty() ) {
 					lastModel = null;
 					// System.out.println("End compilation of " + m.getName());

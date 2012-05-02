@@ -1,7 +1,6 @@
 package msi.gama.headless.runtime;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 public class Activator implements BundleActivator {
 
@@ -13,17 +12,21 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
+	@Override
+	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext bundleContext) throws Exception {
+	@Override
+	public void stop(final BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 

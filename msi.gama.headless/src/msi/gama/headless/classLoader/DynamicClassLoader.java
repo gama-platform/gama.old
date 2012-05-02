@@ -1,205 +1,208 @@
 package msi.gama.headless.classLoader;
 
-
-import java.util.*;
-import java.util.jar.JarFile;
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-//import java.lang.*    //Systematically loaded by java.
+import java.net.*;
+import java.util.Enumeration;
+import java.util.jar.JarFile;
+
+// import java.lang.* //Systematically loaded by java.
 /**
- * <p>Class to load dynamic plug-ins using introspection and reflexion.
- * Plug-ins are java class files (compiled files) and they must be stored in the
- * same directory. After loading, classes are associated to an unique name and 
- * stored onto an array. You can either store the class definition or objects
- * created from a loaded class. If you use instance option (that build object
- * from the class), your class must have a default constructor
- * (with no parameters).</p>
+ * <p>
+ * Class to load dynamic plug-ins using introspection and reflexion. Plug-ins are java class files
+ * (compiled files) and they must be stored in the same directory. After loading, classes are
+ * associated to an unique name and stored onto an array. You can either store the class definition
+ * or objects created from a loaded class. If you use instance option (that build object from the
+ * class), your class must have a default constructor (with no parameters).
+ * </p>
  * 
- * <p>Initially created for the software Patty, where it's used to
- * add aircraft or entity specifications to the program.</p>
+ * <p>
+ * Initially created for the software Patty, where it's used to add aircraft or entity
+ * specifications to the program.
+ * </p>
  * 
  * @author VALENTIN Joachim
  */
 public class DynamicClassLoader {
 
-    String PlugInDirectory;     //Source directory for plug-ins.
-    boolean OptionInstance;     //If true, the loader create and store an instance of the class, rather than the class itself.
+	String PlugInDirectory; // Source directory for plug-ins.
+	boolean OptionInstance; // If true, the loader create and store an instance of the class, rather
+							// than the class itself.
 
-    public DynamicClassLoader() {
-        PlugInDirectory = "";
-        OptionInstance = false;
-    }
+	public DynamicClassLoader() {
+		PlugInDirectory = "";
+		OptionInstance = false;
+	}
 
-    /**Constructor that initialize the plug-in directory and the loading option.*/
-    public DynamicClassLoader(String dir, String pack, boolean option) {
-        PlugInDirectory = new String(dir);
-        OptionInstance = option;
-    }
+	/** Constructor that initialize the plug-in directory and the loading option. */
+	public DynamicClassLoader(final String dir, final String pack, final boolean option) {
+		PlugInDirectory = new String(dir);
+		OptionInstance = option;
+	}
 
-    /**Defines the plug-in directory.*/
-    public void SetDirectory(String dir) {
-        PlugInDirectory = new String(dir);
-    }
+	/** Defines the plug-in directory. */
+	public void SetDirectory(final String dir) {
+		PlugInDirectory = new String(dir);
+	}
 
-    /**Returns the plug-in directory.*/
-    public String GetDirectory() {
-        return PlugInDirectory;
-    }
-    /**Defines class instance storage option.*/
-    public void SetInstanceOption() {
-        OptionInstance = true;
-    }
+	/** Returns the plug-in directory. */
+	public String GetDirectory() {
+		return PlugInDirectory;
+	}
 
-    /**Defines class storage option.*/
-    public void UnsetInstanceOption() {
-        OptionInstance = false;
-    }
+	/** Defines class instance storage option. */
+	public void SetInstanceOption() {
+		OptionInstance = true;
+	}
 
-    /**Returns storage option (class or instance).*/
-    public boolean GetInstanceOption() {
-        return OptionInstance;
-    }
+	/** Defines class storage option. */
+	public void UnsetInstanceOption() {
+		OptionInstance = false;
+	}
 
-    /**Defines the plug-in directory and load them.*/
-    public int LoadPlugIn(String dir) {
-        PlugInDirectory = new String(dir);
-        return LoadPlugIn();
-    }
+	/** Returns storage option (class or instance). */
+	public boolean GetInstanceOption() {
+		return OptionInstance;
+	}
 
-    /**Load plug-ins from the previously defined directory.*/
-    
-    public int loadClasses()
-    {
-    	File directory;
-        FilenameFilter classFilter;
-        String[] classFiles;
-        Class tmp_class;
-        PlugInStorage stored;
+	/** Defines the plug-in directory and load them. */
+	public int LoadPlugIn(final String dir) {
+		PlugInDirectory = new String(dir);
+		return LoadPlugIn();
+	}
 
-        //Create the file system object for the plug in directory.
-        directory = new File(PlugInDirectory);
+	/** Load plug-ins from the previously defined directory. */
 
-        //Create a filter to get only class files from the directory.
-        classFilter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
-            }
-        };
+	public int loadClasses() {
+		File directory;
+		FilenameFilter classFilter;
+		String[] classFiles;
+		Class tmp_class;
+		PlugInStorage stored;
 
-        //Get the list of all filtered filename of the directory.
-        //In fact, all *.class files.
-        if ((classFiles = directory.list(classFilter)) == null) {
-            System.err.println("Nothing to load.");
-            return -1;
-        }
+		// Create the file system object for the plug in directory.
+		directory = new File(PlugInDirectory);
 
-        //Get all classes associated with *.class files and put them into the array.
-        for (int index = 0; index < classFiles.length; ++index) {
-            stored = new PlugInStorage();
-            try {
-                //Remove the extension of filename.
-            //    classFiles[index] = classFiles[index].substring(0, classFiles[index].indexOf(".class"));
+		// Create a filter to get only class files from the directory.
+		classFilter = new FilenameFilter() {
 
-                //Load the class from the filename. Send ClassNotFoundException or NoClassDefFoundError on error.
-               
-                
-                
-                // tmp_class = Class.forName(PackagePath + classFiles[index]);
-                URL url=new URL("jar:file:"+PlugInDirectory+"/"+classFiles[index]+"!/");
-                URLClassLoader ucl = new URLClassLoader(new URL[] {url});
-                
-              //On charge le jar en mŽmoire
-    			JarFile jar = new JarFile(PlugInDirectory+"/"+classFiles[index]);
-    			Enumeration enumeration;
-    			String tmp = "";
-    			//On rŽcupŽre le contenu du jar
-    			enumeration = jar.entries();
-    			
-    			while(enumeration.hasMoreElements()){
-    				
-    				tmp = enumeration.nextElement().toString();
-    				
-    				//On vŽrifie que le fichier courant est un .class (et pas un fichier d'informations du jar )
-    				if(tmp.length() > 6 && tmp.substring(tmp.length()-6).compareTo(".class") == 0) {
-    					
-    					tmp = tmp.substring(0,tmp.length()-6);
-    					tmp = tmp.replaceAll("/",".");
-    					System.out.println("class "+tmp);
-    					ucl.loadClass(tmp);
-    					
- //   					Class tmpClass = Class.forName(tmp ,true,ucl);
-    					
-    					}
-    					
-    				
-    			}
-                
-                
-                
-                
-                
-           } catch (Exception e) {
-        	   System.err.println("Unable to create instance of the class \"" + classFiles[index] + "\"");
-        	   System.err.println("Unable to create instance of the class \"" + e);
-                 return -1;
-            }
-        }
+			@Override
+			public boolean accept(final File dir, final String name) {
+				return name.endsWith(".jar");
+			}
+		};
 
-        return 0;
-    }
+		// Get the list of all filtered filename of the directory.
+		// In fact, all *.class files.
+		if ( (classFiles = directory.list(classFilter)) == null ) {
+			System.err.println("Nothing to load.");
+			return -1;
+		}
 
-    public int LoadPlugIn() {
-        File directory;
-        FilenameFilter classFilter;
-        String[] classFiles;
-        Class tmp_class;
-        PlugInStorage stored;
+		// Get all classes associated with *.class files and put them into the array.
+		for ( int index = 0; index < classFiles.length; ++index ) {
+			stored = new PlugInStorage();
+			try {
+				// Remove the extension of filename.
+				// classFiles[index] = classFiles[index].substring(0,
+				// classFiles[index].indexOf(".class"));
 
-        //Create the file system object for the plug in directory.
-        directory = new File(PlugInDirectory);
+				// Load the class from the filename. Send ClassNotFoundException or
+				// NoClassDefFoundError on error.
 
-        //Create a filter to get only class files from the directory.
-        classFilter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
-            }
-        };
+				// tmp_class = Class.forName(PackagePath + classFiles[index]);
+				URL url = new URL("jar:file:" + PlugInDirectory + "/" + classFiles[index] + "!/");
+				URLClassLoader ucl = new URLClassLoader(new URL[] { url });
 
-        //Get the list of all filtered filename of the directory.
-        //In fact, all *.class files.
-        if ((classFiles = directory.list(classFilter)) == null) {
-            System.err.println("Nothing to load.");
-            return -1;
-        }
+				// On charge le jar en mŽmoire
+				JarFile jar = new JarFile(PlugInDirectory + "/" + classFiles[index]);
+				Enumeration enumeration;
+				String tmp = "";
+				// On rŽcupŽre le contenu du jar
+				enumeration = jar.entries();
 
-        //Get all classes associated with *.class files and put them into the array.
-        for (int index = 0; index < classFiles.length; ++index) {
-            stored = new PlugInStorage();
-            try {
-                //Remove the extension of filename.
-            //    classFiles[index] = classFiles[index].substring(0, classFiles[index].indexOf(".class"));
+				while (enumeration.hasMoreElements()) {
 
-                //Load the class from the filename. Send ClassNotFoundException or NoClassDefFoundError on error.
-               
-                
-                
-                // tmp_class = Class.forName(PackagePath + classFiles[index]);
-                URL url=new URL("jar:file:"+PlugInDirectory+"/"+classFiles[index]+"!/");
-                URLClassLoader ucl = new URLClassLoader(new URL[] {url});
-             
-                System.out.println("loading : "+classFiles[index] );
-                
-                
-                
-           } catch (Exception e) {
-        	   System.err.println("Unable to create instance of the class \"" + classFiles[index] + "\"");
-        	   System.err.println("Unable to create instance of the class \"" + e);
-                 return -1;
-            }
-        }
-        loadClasses();
-        return 0;
-    }
+					tmp = enumeration.nextElement().toString();
 
-  }
+					// On vŽrifie que le fichier courant est un .class (et pas un fichier
+					// d'informations du jar )
+					if ( tmp.length() > 6 &&
+						tmp.substring(tmp.length() - 6).compareTo(".class") == 0 ) {
+
+						tmp = tmp.substring(0, tmp.length() - 6);
+						tmp = tmp.replaceAll("/", ".");
+						System.out.println("class " + tmp);
+						ucl.loadClass(tmp);
+
+						// Class tmpClass = Class.forName(tmp ,true,ucl);
+
+					}
+
+				}
+
+			} catch (Exception e) {
+				System.err.println("Unable to create instance of the class \"" + classFiles[index] +
+					"\"");
+				System.err.println("Unable to create instance of the class \"" + e);
+				return -1;
+			}
+		}
+
+		return 0;
+	}
+
+	public int LoadPlugIn() {
+		File directory;
+		FilenameFilter classFilter;
+		String[] classFiles;
+		Class tmp_class;
+		PlugInStorage stored;
+
+		// Create the file system object for the plug in directory.
+		directory = new File(PlugInDirectory);
+
+		// Create a filter to get only class files from the directory.
+		classFilter = new FilenameFilter() {
+
+			@Override
+			public boolean accept(final File dir, final String name) {
+				return name.endsWith(".jar");
+			}
+		};
+
+		// Get the list of all filtered filename of the directory.
+		// In fact, all *.class files.
+		if ( (classFiles = directory.list(classFilter)) == null ) {
+			System.err.println("Nothing to load.");
+			return -1;
+		}
+
+		// Get all classes associated with *.class files and put them into the array.
+		for ( int index = 0; index < classFiles.length; ++index ) {
+			stored = new PlugInStorage();
+			try {
+				// Remove the extension of filename.
+				// classFiles[index] = classFiles[index].substring(0,
+				// classFiles[index].indexOf(".class"));
+
+				// Load the class from the filename. Send ClassNotFoundException or
+				// NoClassDefFoundError on error.
+
+				// tmp_class = Class.forName(PackagePath + classFiles[index]);
+				URL url = new URL("jar:file:" + PlugInDirectory + "/" + classFiles[index] + "!/");
+				URLClassLoader ucl = new URLClassLoader(new URL[] { url });
+
+				System.out.println("loading : " + classFiles[index]);
+
+			} catch (Exception e) {
+				System.err.println("Unable to create instance of the class \"" + classFiles[index] +
+					"\"");
+				System.err.println("Unable to create instance of the class \"" + e);
+				return -1;
+			}
+		}
+		loadClasses();
+		return 0;
+	}
+
+}
