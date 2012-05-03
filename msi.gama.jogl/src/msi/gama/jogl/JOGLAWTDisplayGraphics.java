@@ -30,6 +30,9 @@ import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
 import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GLException;
+import javax.media.opengl.Threading;
+
 
 import java.awt.*;
 import java.awt.color.ColorSpace;
@@ -106,14 +109,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// Each geometry drawn is stored in a list.
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
-	// each Imahe is stored in a list
+	// each Image is stored in a list
 	public ArrayList<MyImage> myImages = new ArrayList<MyImage>();
 
 	// Define the environment properties.
 	public float myWidth, myHeight, myMaxDim;
-
-	// FIXME: need to be defien elsewhere (not as global variable).
-	private TextureCoords textureCoords;
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
@@ -122,7 +122,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// OpenGL list ID
 	private int listID = -1;
-
+	
+	
 	private final PointTransformation pt = new PointTransformation() {
 
 		@Override
@@ -360,16 +361,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 			final boolean smooth) {
-		System.out.println("DrawImage");
+
+		AddImageInImages(img, curX, curY);
+				
 		AffineTransform saved = g2.getTransform();
 		if (angle != null) {
 			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY
 					+ curHeight / 2);
 		}
-
-        //FIXME : not working yet
-		//AddImageInImages(img, curX, curY);
-
 		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
 		g2.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
@@ -409,7 +408,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		System.out.println("Draw Circle width= " + curWidth);
+		System.out.println("Draw Circle curWidth= " + curWidth);
 		AddCircleInGeometries(curX+curWidth/2, curY+curWidth/2, c, curWidth);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -449,7 +448,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		 new Coordinate[] {new Coordinate(curX/this.currentXScale, curY/this.currentYScale), new Coordinate((toX + offsetX)/this.currentYScale, (toY + offsetY)/this.currentYScale) };
 
         LineString lineString = geometryFactory.createLineString(coords);
-        
 		AddLineInGeometries(lineString, c);
 		
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
@@ -775,43 +773,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	private void AddImageInImages(final BufferedImage img, int curX, int curY) {
+		System.out.println("AddImageInImages");
 		final MyImage curImage = new MyImage();
 		curImage.image = img;
-		curImage.x = (float) (curX);
-		curImage.y = (float) (curY);
+		curImage.x = (float) (curX / currentXScale);
+		curImage.y = (float) (curY / currentYScale);
 		this.myImages.add(curImage);
-		// FIXME: the texture initialization should be done here (problem of
-		// threading)
-		//myGLRender.InitTexture(img);
-		
+		 	
 		final Runnable openGLInitTexture= new Runnable() {
-
-			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
 			@Override
 			public void run() {
+				myGLRender.context.makeCurrent();
 				myGLRender.InitTexture(img);
 			}
-		};
-		
-		
-//		if (!isSingleThreaded()) {
-//		      throw new GLException ("Should only call this in single-threaded mode");
-//		    }
-//
-//		    if (isOpenGLThread()) {
-//		      throw new GLException ("Should only call this from other threads than the OpenGL thread");
-//		    }   
+		};	
 		EventQueue.invokeLater(openGLInitTexture);
-//		    try {
-//				EventQueue.invokeAndWait(openGLInitTexture);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (InvocationTargetException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		
 	}
 
 	private void AddShapeInGeometries(int x, int y, Color color) {
@@ -879,13 +855,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void CleanImages() {
 		this.myImages.clear();
+		myGLRender.myTextures.clear();
 	}
 
 	public void DrawMyImages() {
 		Iterator<MyImage> it = this.myImages.iterator();
-		while (it.hasNext()) {
+		int id=0;
+		while (it.hasNext()) {	
 			MyImage curImage = (MyImage) it.next();
-			myGLRender.DrawTexture(0, curImage);
+			myGLRender.DrawTexture(id, curImage);
+			id++;
 		}
 	}
 

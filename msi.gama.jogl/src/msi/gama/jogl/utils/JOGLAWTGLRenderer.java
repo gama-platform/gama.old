@@ -32,10 +32,12 @@ import static javax.media.opengl.GL.GL_TRIANGLES;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLContext;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 
@@ -46,11 +48,12 @@ import com.sun.opengl.util.texture.*;
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 
-public class JOGLAWTGLRenderer implements GLEventListener{
-	
-/////OpenGL member///////
+public class JOGLAWTGLRenderer implements GLEventListener {
+
+	// ///OpenGL member///////
 	private GLU glu;
 	private GL gl;
+	public GLContext context;
 	FPSAnimator animator;
 	public boolean opengl = true;
 	// Event Listener
@@ -59,18 +62,19 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 	private int width, height;
 	// Camera
 	private Camera camera;
-	
-	//Textures list to store all the texture.
-	public ArrayList<Texture> myTextures = new ArrayList<Texture>() ;
-	
-	float textureTop,textureBottom,textureLeft,textureRight;
-	
+
+	// Textures list to store all the texture.
+	public ArrayList<Texture> myTextures = new ArrayList<Texture>();
+
+	float textureTop, textureBottom, textureLeft, textureRight;
+
 	//
 	private JOGLAWTDisplaySurface displaySurface;
 	
-	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d ){
-		displaySurface= d;
-		camera= d.camera;
+	
+	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
+		displaySurface = d;
+		camera = d.camera;
 	}
 
 	@Override
@@ -78,6 +82,7 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		// System.out.println("opengl display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
+		context = drawable.getContext();
 
 		width = drawable.getWidth();
 		height = drawable.getHeight();
@@ -98,8 +103,8 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glEnable(GL_LIGHTING);
 
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		
-		camera.UpdateCamera(gl,width,height);
+
+		camera.UpdateCamera(gl, width, height);
 
 		gl.glMatrixMode(GL.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity(); // Reset The Modelview Matrix
@@ -108,20 +113,24 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glEnable(GL_COLOR_MATERIAL);
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-		
-		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawEnvironmentBounds();
-		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim/10);
+
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+
+		// ((JOGLAWTDisplayGraphics)
+		// displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		// ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+				.DrawMyGeometries();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+				.DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim / 10);
 		this.DrawZValue();
-				
+
 	}
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -133,9 +142,11 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		// GL Utilities
 		glu = new GLU();
 
+		context = drawable.getContext();
+
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
-		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu, this,displaySurface.envWidth,
-				displaySurface.envHeight);
+		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
+				this, displaySurface.envWidth, displaySurface.envHeight);
 
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
@@ -150,12 +161,12 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
-		//gl.glShadeModel(GL_SMOOTH);
+		// gl.glShadeModel(GL_SMOOTH);
 
-		//gl.glEnable(GL_BLEND);
+		// gl.glEnable(GL_BLEND);
 		// gl.glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		camera.UpdateCamera(gl,width,height);
+
+		camera.UpdateCamera(gl, width, height);
 
 		// Set up the lighting for Light-1
 		// Ambient light does not come from a particular direction. Need some
@@ -171,25 +182,23 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
 		gl.glEnable(GL_LIGHT1); // Enable Light-1
-		gl.glDisable(GL_LIGHTING); // But disable lighting
-		
-		//FIXME: Now only one BufferedImage is load to test the texture mapping function. But this should 
-		//be done in IGraphics to create the texture when drawImage is called.
-		//Now there is a thread problem it seems that TextureIO.newTexture(image, false);
-		//can only be call in the opengl thread. (i.e in init() or diaply() method)
-		//FIXME: The calling of this function change the color of the drawn geometry. (need to check that).
-		// Use URL so that can read from JAR and disk file.
-        BufferedImage image = null;
-		try {
-			image = ImageIO.read(this.getClass().getResource(
-			      "arnoi.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//InitTexture(image);
-		System.out.println("openGL init ok");
+		gl.glDisable(GL_LIGHTING); // But disable lighting		
+
+
+		// Nearest filter is least compute-intensive
+		// Use nearer filter if image is larger than the original texture
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		// Use nearer filter if image is smaller than the original texture
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		// For texture coordinates more than 1, set to wrap mode to GL_REPEAT
+		// for both S and T axes (default setting is GL_CLAMP)
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 	
+		System.out.println("openGL init ok");
+
 	}
 
 	@Override
@@ -219,70 +228,62 @@ public class JOGLAWTGLRenderer implements GLEventListener{
 		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
 				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
 				1.0, 0.0);
-		
-	}
-	
 
-	
-	public void DrawZValue(){
+	}
+
+	public void DrawZValue() {
 		GLUT glut = new GLUT();
-		//X Axis
-	    gl.glRasterPos3f(0.0f, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myHeight * 0.01f, 0.0f);   
-	    glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z = " + String.valueOf((int)camera.zPos));	
+		// X Axis
+		gl.glRasterPos3f(
+				0.0f,
+				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myHeight * 0.01f,
+				0.0f);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
+				"z = " + String.valueOf((int) camera.zPos));
 	}
-	
-	public void DrawTexture(int index,MyImage img){
-			
-		Texture t = this.myTextures.get(index);
-		//texture
-	    t.bind();
-	    
-	    TextureCoords textureCoords;
-	    textureCoords = t.getImageTexCoords();
-	    textureTop = textureCoords.top();
-	    textureBottom = textureCoords.bottom();
-	    textureLeft = textureCoords.left();
-	    textureRight = textureCoords.right();
-	        
-		gl.glBegin(GL_QUADS);	           
-	      gl.glTexCoord2f(textureLeft, textureBottom);
-	      gl.glVertex3f(img.x, -(img.y+img.image.getHeight()), 0); // bottom-left of the texture and quad
-	      gl.glTexCoord2f(textureRight, textureBottom);
-	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y+img.image.getHeight()), 0); // bottom-right of the texture and quad
-	      gl.glTexCoord2f(textureRight, textureTop);
-	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y), 0); // top-right of the texture and quad
-	      gl.glTexCoord2f(textureLeft, textureTop);
-	      gl.glVertex3f(img.x, -img.y, 0); // top-left of the texture and quad	      
-       gl.glEnd();	
-	}
-	
-	public void InitTexture(BufferedImage image){
-		
-        // Create a OpenGL Texture object from (URL, mipmap, file suffix)
-        Texture curTexture = TextureIO.newTexture(image, false);
-        // Nearest filter is least compute-intensive
-        // Use nearer filter if image is larger than the original texture
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        // Use nearer filter if image is smaller than the original texture
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        // For texture coordinates more than 1, set to wrap mode to GL_REPEAT for
-        // both S and T axes (default setting is GL_CLAMP)
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// Nearest filter is least compute-intensive
-        // Use nearer filter if image is larger than the original texture
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        // Use nearer filter if image is smaller than the original texture
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-     // For texture coordinates more than 1, set to wrap mode to GL_REPEAT for
-        // both S and T axes (default setting is GL_CLAMP)
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
-     // Enable the texture
-        gl.glEnable(GL_TEXTURE_2D);
-        
-        this.myTextures.add(curTexture);
+	public void DrawTexture(int index, MyImage img) {
+
+		if (this.myTextures.size() > 0) {
+			// Enable the texture
+			gl.glEnable(GL_TEXTURE_2D);
+			Texture t = this.myTextures.get(index);
+ 
+			t.enable();
+			t.bind();
+			
+			//Reset opengl color.
+			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			TextureCoords textureCoords;
+			textureCoords = t.getImageTexCoords();
+			textureTop = textureCoords.top();
+			textureBottom = textureCoords.bottom();
+			textureLeft = textureCoords.left();
+			textureRight = textureCoords.right();
+			
+			gl.glBegin(GL_QUADS);
+			// bottom-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureBottom);
+			gl.glVertex3f(img.x, -(img.y + img.image.getHeight()), 0);
+			// bottom-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureBottom);
+			gl.glVertex3f((img.x + img.image.getWidth()),
+					-(img.y + img.image.getHeight()), 0);
+			// top-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureTop);
+			gl.glVertex3f((img.x + img.image.getWidth()), -(img.y), 0); 
+			// top-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureTop);
+			gl.glVertex3f(img.x, -img.y, 0); 
+			gl.glEnd();
+		}
+		gl.glDisable(GL_TEXTURE_2D);
+	}
+
+	public void InitTexture(BufferedImage image) {
+
+		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
+		Texture curTexture = TextureIO.newTexture(image, false);
+		this.myTextures.add(curTexture);
 	}
 }
