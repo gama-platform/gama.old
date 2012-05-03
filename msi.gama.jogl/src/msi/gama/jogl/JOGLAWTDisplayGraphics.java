@@ -118,7 +118,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
 
-	public boolean ThreeD = false;
+	public boolean ThreeD = true;
 
 	// OpenGL list ID
 	private int listID = -1;
@@ -408,7 +408,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		System.out.println("Draw Circle curWidth= " + curWidth);
+		//System.out.println("Draw Circle curWidth= " + curWidth);
 		AddCircleInGeometries(curX+curWidth/2, curY+curWidth/2, c, curWidth);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -468,7 +468,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawRectangle(final Color color, final boolean fill,
 			final Integer angle) {
-		System.out.println("JOGLDisplayGraphics::drawRectangle");
+		//System.out.println("JOGLDisplayGraphics::drawRectangle");
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 		// return drawShape(color, rect, fill, angle);
@@ -515,8 +515,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		System.out.println("DisplayGraphics::drawGeometry: "
-				+ geometry.getGeometryType());
+//		System.out.println("DisplayGraphics::drawGeometry: "
+//				+ geometry.getGeometryType());
 		AddGeometryInGeometries(geometry, color);
 
 		// Use to respect IDisplaySurface interface
@@ -563,7 +563,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s,
 			final boolean fill, final Integer angle) {
-		System.out.println("drawShape");
+		//System.out.println("drawShape");
 
 		try {
 			Rectangle2D r = s.getBounds2D();
@@ -617,8 +617,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	private void AddGeometryInGeometries(Geometry geometry, Color color) {
 		// For each geometry get the type
-		System.out.println("AddGeometryInGeometries: "
-				+ geometry.getGeometryType());
+//		System.out.println("AddGeometryInGeometries: "
+//				+ geometry.getGeometryType());
 		for (int i = 0; i < geometry.getNumGeometries(); i++) {
 			Envelope e = geometry.getEnvelopeInternal();
 			if (geometry.getGeometryType() == "MultiPolygon") {
@@ -773,7 +773,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	private void AddImageInImages(final BufferedImage img, int curX, int curY) {
-		System.out.println("AddImageInImages");
+		
 		final MyImage curImage = new MyImage();
 		curImage.image = img;
 		curImage.x = (float) (curX / currentXScale);
@@ -821,7 +821,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				if (ThreeD == true) {
 					myGl.glColor3f(0.0f, 0.0f, 1.0f);
 					// top face
-					float z_offset = 1.0f;
+					float z_offset = 100.0f;
 					graphicsGLUtils.DrawGeometry(myGl, myGlu, curGeometry,
 							z_offset);
 					// base face

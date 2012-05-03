@@ -108,17 +108,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		gl.glMatrixMode(GL.GL_MODELVIEW); // Select The Modelview Matrix
 		gl.glLoadIdentity(); // Reset The Modelview Matrix
-
+	
+		
 		// enable color tracking
 		gl.glEnable(GL_COLOR_MATERIAL);
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
-
-		// ((JOGLAWTDisplayGraphics)
-		// displaySurface.openGLGraphics).DrawEnvironmentBounds();
-		// ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
+		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+	    //((JOGLAWTDisplayGraphics)
+		//displaySurface.openGLGraphics).DrawEnvironmentBounds();
+	    //((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
 				.DrawMyGeometries();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
@@ -147,6 +147,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
 		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
 				this, displaySurface.envWidth, displaySurface.envHeight);
+		
+		//displaySurface.zoomFit();
 
 		// Enable smooth shading, which blends colors nicely across a polygon,
 		// and smoothes out lighting.
@@ -161,10 +163,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
-		// gl.glShadeModel(GL_SMOOTH);
-
-		// gl.glEnable(GL_BLEND);
-		// gl.glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		//FIXME: Those lines are strange (drawScale is not working when discomment)
+		//gl.glShadeModel(GL_SMOOTH);
+		//gl.glEnable(GL_BLEND);
+		//gl.glBlendFunc (GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		camera.UpdateCamera(gl, width, height);
 

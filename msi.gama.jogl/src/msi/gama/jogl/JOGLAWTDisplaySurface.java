@@ -635,10 +635,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	}
 
 	@Override
-	public void zoomFit() {	
-		
-		//camera.Initialize3DCamera(envWidth,envHeight);
-		camera.InitializeCamera(envWidth,envHeight);
+	public void zoomFit() {			
+		//	camera.Initialize3DCamera(envWidth,envHeight);
+			camera.InitializeCamera(envWidth,envHeight);
 	}
 
 	@Override
