@@ -118,7 +118,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
 
-	public boolean ThreeD = true;
+	public boolean ThreeD = false;
 
 	// OpenGL list ID
 	private int listID = -1;
