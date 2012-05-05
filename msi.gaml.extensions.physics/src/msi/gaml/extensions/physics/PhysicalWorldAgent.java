@@ -15,6 +15,7 @@ import org.jbox2d.dynamics.World;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -24,6 +25,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -59,6 +61,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 		super(sim, s);
 	}
 
+	@getter(var = "registeredAgents")
 	public IList<IAgent> getRegisteredAgents() {
 		return registeredAgents;
 	}
@@ -157,6 +160,8 @@ public class PhysicalWorldAgent extends GamlAgent {
 		}
 
 	}
+	
+	
 
 	private void _registerAgent(IAgent ia) {
 		System.out.println("Registering : " + ia);
