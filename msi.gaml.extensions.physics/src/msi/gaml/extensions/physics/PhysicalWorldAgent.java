@@ -221,6 +221,17 @@ public class PhysicalWorldAgent extends GamlAgent {
 				.getArg("velocityIterations", IType.INT) : 1);
 		Integer positionIterations = (scope.hasArg("positionIterations") ? (Integer) scope
 				.getArg("positionIterations", IType.INT) : 1);
+
+		for (IAgent ia : registeredMap.keySet()) {
+			Body body = registeredMap.get(ia);
+
+			GamaPoint velocity = ((GamaPoint) ia.getAttribute("velocity"));
+			Vec2 vel=new Vec2();
+			vel.set((float)velocity.getX(),(float)velocity.getY());
+			body.setLinearVelocity(vel);
+		}
+
+		
 		// TODO update positions of every agent to take into account external
 		// movements
 		// for machant
@@ -236,6 +247,12 @@ public class PhysicalWorldAgent extends GamlAgent {
 			System.out.println("Position : " + position.getX() + " : "
 					+ position.getY());
 			ia.setLocation(position);
+			
+			GamaPoint velpoint = new GamaPoint(
+					new Double(body.getLinearVelocity().x), new Double(
+							body.getLinearVelocity().y));
+			ia.setAttribute("velocity",velpoint);
+		
 		}
 		return null;
 
