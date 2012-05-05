@@ -11,7 +11,7 @@ import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.gaml.validation.*;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -92,7 +92,7 @@ public class GamlResource extends LazyLinkingResource {
 		// GuiUtils.debug("Unloading " + oldRootObject + " && getContents().size : " +
 		// getContents().size());
 		if ( oldRootObject == null ) { return; }
-		EList<Adapter> list = oldRootObject.eAdapters();
+		EList<Adapter> list = ECollections.unmodifiableEList(oldRootObject.eAdapters());
 		for ( Adapter adapter : list ) {
 			if ( adapter instanceof ModelDescription ) {
 				((ModelDescription) adapter).dispose();
