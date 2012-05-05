@@ -35,15 +35,14 @@ import msi.gaml.types.IType;
 
 public class SpeciesDescription extends SymbolDescription {
 
-	protected final Map<String, CommandDescription> behaviors;
-	protected final Map<String, CommandDescription> aspects;
-	protected final Map<String, CommandDescription> actions;
-	protected final Map<String, VariableDescription> variables;
+	private Map<String, CommandDescription> behaviors;
+	private Map<String, CommandDescription> aspects;
+	private Map<String, CommandDescription> actions;
+	private Map<String, VariableDescription> variables;
 	protected final IList<String> sortedVariableNames;
 	protected final IList<String> updatableVariableNames;
 	protected final Set<Class> skillsClasses;
 	protected final Map<String, Class> skillsMethods;
-	protected final Map<Class, ISkill> skillInstancesByClass;
 	protected final Map<String, ISkill> skillInstancesByMethod;
 	/**
 	 * Micro-species of a species includes species explicitly declared inside it
@@ -51,9 +50,9 @@ public class SpeciesDescription extends SymbolDescription {
 	 * 
 	 * The following map contains micro-species explicitly declared inside this species.
 	 */
-	private final Map<String, SpeciesDescription> microSpecies;
+	private Map<String, SpeciesDescription> microSpecies;
 
-	protected final List<CommandDescription> inits;
+	private List<CommandDescription> inits;
 
 	protected Class javaBase;
 	protected IAgentConstructor agentConstructor;
@@ -66,19 +65,12 @@ public class SpeciesDescription extends SymbolDescription {
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final Class base, final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
-		skillInstancesByClass = new HashMap();
+		// skillInstancesByClass = new HashMap();
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();
 		updatableVariableNames = new GamaList();
-		behaviors = new HashMap<String, CommandDescription>();
-		aspects = new HashMap<String, CommandDescription>();
-		actions = new HashMap<String, CommandDescription>();
-		variables = new HashMap<String, VariableDescription>();
 		skillsClasses = new HashSet();
 		skillsMethods = new HashMap();
-		inits = new ArrayList<CommandDescription>();
-		microSpecies = new HashMap<String, SpeciesDescription>();
-
 		setSkills(facets.get(IKeyword.SKILLS));
 		setJavaBase(base);
 	}
@@ -86,19 +78,29 @@ public class SpeciesDescription extends SymbolDescription {
 	@Override
 	public void dispose() {
 		if ( ModelFactory.BUILT_IN_SPECIES.contains(this) ) { return; }
-		behaviors.clear();
-		aspects.clear();
-		actions.clear();
-		variables.clear();
-		skillInstancesByClass.clear();
+		if ( hasBehaviors() ) {
+			getBehaviors().clear();
+		}
+		if ( hasAspects() ) {
+			getAspects().clear();
+		}
+		if ( hasActions() ) {
+			getActions().clear();
+		}
+		if ( hasVariables() ) {
+			getVariables().clear();
+		}
+		// skillInstancesByClass.clear();
 		skillInstancesByMethod.clear();
 		if ( control != null ) {
 			control.dispose();
 		}
 		macroSpecies = null;
 		parentSpecies = null;
-		microSpecies.clear();
-		inits.clear();
+		if ( hasMicroSpecies() ) {
+			getMicroSpecies().clear();
+		}
+		getInits().clear();
 		super.dispose();
 	}
 
@@ -111,8 +113,10 @@ public class SpeciesDescription extends SymbolDescription {
 
 	}
 
+	private static final Set<String> skillNames = new LinkedHashSet();
+
 	protected void setSkills(final IExpressionDescription userDefinedSkills) {
-		Set<String> skillNames = new LinkedHashSet();
+		skillNames.clear();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(IKeyword.CONTROL) ) {
 			skillNames.add(facets.getLabel(IKeyword.CONTROL));
@@ -125,40 +129,21 @@ public class SpeciesDescription extends SymbolDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
-		addBuiltInSkills(skillNames);
+		Set<String> skills = GamlProperties.loadFrom(GamlProperties.SPECIES_SKILLS).get(getName());
+		if ( skills != null ) {
+			skillNames.addAll(skills);
+		}
 
 		// GuiUtils.debug("Skills defined for " + getName() + ": " + skillNames);
 
 		/* We then create the list of classes from this list of names */
-		Set<Class> skillClasses = new LinkedHashSet();
 		for ( String skillName : skillNames ) {
-			final Class skillClass = Skill.getSkillClassFor(skillName.trim());
+			final Class skillClass = GamlCompiler.getSkillClasses().get(skillName);
 			if ( skillClass != null ) {
-				skillClasses.add(skillClass);
+				addSkill(skillClass);
 			}
 		}
-		/* And add them as skills to the species */
-		for ( Class skillClass : skillClasses ) {
-			addSkill(skillClass);
-		}
 
-	}
-
-	/**
-	 * Adds to the skills the "built-in" skills described in GamlProperties.SPECIES_SKILLS
-	 * properties
-	 * 
-	 * @param skills
-	 */
-	private void addBuiltInSkills(final Set<String> skills) {
-		Set<String> builtInSkills =
-			GamlProperties.loadFrom(GamlProperties.SPECIES_SKILLS).get(getName());
-		if ( builtInSkills == null ) { return; }
-		for ( String skillName : builtInSkills ) {
-			if ( !skills.contains(skillName) ) {
-				skills.add(skillName);
-			}
-		}
 	}
 
 	/**
@@ -188,16 +173,12 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected void createControl() {
 		String keyword = getControlName();
-		Class c = Skill.getSkillClassFor(keyword);
+		Class c = GamlCompiler.getSkillClasses().get(keyword);
 		if ( c == null ) {
 			control = new ReflexArchitecture();
 		} else {
-			control = (IArchitecture) Skill.createSharedSkillFor(c);
+			control = (IArchitecture) GamlCompiler.getSkillInstanceFor(c);
 		}
-	}
-
-	public ISkill getSharedSkill(final Class c) {
-		return skillInstancesByClass.get(c);
 	}
 
 	public ISkill getSkillFor(final String methodName) {
@@ -209,29 +190,29 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	private void buildSharedSkills() {
-		for ( final Class c : new HashSet<Class>(skillsMethods.values()) ) {
-			if ( Skill.class.isAssignableFrom(c) ) {
-				ISkill skill;
-				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-					// In order to avoid having two objects of the same class
-					skill = control;
-				} else {
-					skill = Skill.createSharedSkillFor(c);
-				}
-				skillInstancesByClass.put(c, skill);
-				// skill.initializeFor(scope);
-			} else {
-				skillInstancesByClass.put(c, null);
-			}
-		}
+		// for ( final Class c : new HashSet<Class>(skillsMethods.values()) ) {
+		// if ( Skill.class.isAssignableFrom(c) ) {
+		// ISkill skill;
+		// if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
+		// // In order to avoid having two objects of the same class
+		// skill = control;
+		// } else {
+		// skill = GamlCompiler.getSkillInstanceFor(c);
+		// }
+		// skillInstancesByClass.put(c, skill);
+		// // skill.initializeFor(scope);
+		// } else {
+		// skillInstancesByClass.put(c, null);
+		// }
+		// }
 		for ( final String s : skillsMethods.keySet() ) {
 			final Class c = skillsMethods.get(s);
-			addSkill(s, skillInstancesByClass.get(c));
+			if ( Skill.class.isAssignableFrom(c) ) {
+				skillInstancesByMethod.put(s, GamlCompiler.getSkillInstanceFor(c));
+			} else {
+				skillInstancesByMethod.put(s, null);
+			}
 		}
-	}
-
-	public void addSkill(final String methodName, final ISkill skill) {
-		skillInstancesByMethod.put(methodName, skill);
 	}
 
 	@Override
@@ -255,18 +236,18 @@ public class SpeciesDescription extends SymbolDescription {
 			addInit((CommandDescription) desc);
 		} else if ( ModelFactory.SPECIES_NODES.contains(kw) ) {
 			getModelDescription().addType((SpeciesDescription) desc);
-			microSpecies.put(desc.getName(), (SpeciesDescription) desc);
+			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}
 		return desc;
 	}
 
 	private void addInit(final CommandDescription init) {
-		inits.add(0, init); // Added at the beginning
+		getInits().add(0, init); // Added at the beginning
 	}
 
 	private void addBehavior(final CommandDescription r) {
 		String behaviorName = r.getName();
-		CommandDescription existing = behaviors.get(behaviorName);
+		CommandDescription existing = getBehaviors().get(behaviorName);
 		if ( existing != null ) {
 			if ( !existing.getKeyword().equals(r.getKeyword()) ) {
 				r.flagWarning(
@@ -276,11 +257,11 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 			children.remove(existing);
 		}
-		behaviors.put(behaviorName, r);
+		getBehaviors().put(behaviorName, r);
 	}
 
 	public boolean hasBehavior(final String a) {
-		return behaviors.containsKey(a);
+		return getBehaviors().containsKey(a);
 	}
 
 	private void addAction(final CommandDescription ce) {
@@ -300,7 +281,7 @@ public class SpeciesDescription extends SymbolDescription {
 				children.remove(existing);
 			}
 		}
-		actions.put(actionName, ce);
+		getActions().put(actionName, ce);
 		GamaCompiler
 			.registerFunction(actionName, getSpeciesContext().getSpeciesContext().getType());
 	}
@@ -315,40 +296,36 @@ public class SpeciesDescription extends SymbolDescription {
 			ce.flagError("aspect name already declared : " + aspectName, IGamlIssue.DUPLICATE_NAME,
 				IKeyword.NAME, aspectName);
 		}
-		aspects.put(aspectName, ce);
+		getAspects().put(aspectName, ce);
 	}
 
 	public Set<String> getAspectsNames() {
-		return aspects.keySet();
+		return aspects == null ? Collections.EMPTY_SET : getAspects().keySet();
 	}
 
 	public CommandDescription getAspect(final String aName) {
-		return aspects.get(aName);
+		return aspects == null ? null : getAspects().get(aName);
 	}
 
 	@Override
 	public CommandDescription getAction(final String aName) {
-		return actions.get(aName);
+		return actions == null ? null : getActions().get(aName);
 	}
 
 	@Override
 	public boolean hasAction(final String a) {
-		return actions.containsKey(a);
-	}
-
-	public Collection<CommandDescription> getActions() {
-		return actions.values();
+		return actions != null && getActions().containsKey(a);
 	}
 
 	public Set<String> getActionsNames() {
-		return actions.keySet();
+		return actions == null ? Collections.EMPTY_SET : getActions().keySet();
 	}
 
 	protected void addVariable(final VariableDescription v) {
 		String vName = v.getName();
 		// GuiUtils.debug("Adding var " + v.getName() + " to " + getName());
 		if ( hasVar(vName) ) {
-			IDescription builtIn = variables.get(vName);
+			IDescription builtIn = getVariables().get(vName);
 			getChildren().remove(builtIn);
 			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(IKeyword.TYPE));
 			IType vType = v.getTypeNamed(v.getFacets().getLabel(IKeyword.TYPE));
@@ -361,7 +338,7 @@ public class SpeciesDescription extends SymbolDescription {
 			v.copyFrom((VariableDescription) builtIn);
 		}
 		v.setDefinitionOrder(varCount++);
-		variables.put(vName, v);
+		getVariables().put(vName, v);
 	}
 
 	public IArchitecture getControl() {
@@ -369,16 +346,12 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public VariableDescription getVariable(final String name) {
-		return variables.get(name);
-	}
-
-	public Map<String, VariableDescription> getVariables() {
-		return variables;
+		return variables == null ? null : getVariables().get(name);
 	}
 
 	@Override
 	public boolean hasVar(final String a) {
-		return variables.containsKey(a);
+		return variables != null && getVariables().containsKey(a);
 	}
 
 	@Override
@@ -397,11 +370,12 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	protected void sortVars() {
+		if ( variables == null ) { return; }
 		// GuiUtils.debug("***** Sorting variables of " + getNameFacetValue());
 		final List<VariableDescription> result = new GamaList();
-		final Collection<VariableDescription> vars = variables.values();
+		final Collection<VariableDescription> vars = getVariables().values();
 		for ( final VariableDescription var : vars ) {
-			var.usedVariablesIn(variables);
+			var.usedVariablesIn(getVariables());
 		}
 		for ( final VariableDescription var : vars ) {
 			var.expandDependencies(new GamaList());
@@ -432,9 +406,6 @@ public class SpeciesDescription extends SymbolDescription {
 				updatableVariableNames.add(s);
 			}
 		}
-
-		// GuiUtils.debug("Sorted variable names of " + facets.getLabel(IKeyword.NAME) + " are " +
-		// sortedVariableNames);
 	}
 
 	/**
@@ -444,12 +415,13 @@ public class SpeciesDescription extends SymbolDescription {
 	 */
 	public List<SpeciesDescription> getAllMicroSpecies() {
 		List<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
-		retVal.addAll(microSpecies.values());
+		if ( hasMicroSpecies() ) {
+			retVal.addAll(getMicroSpecies().values());
 
-		for ( SpeciesDescription micro : microSpecies.values() ) {
-			retVal.addAll(micro.getAllMicroSpecies());
+			for ( SpeciesDescription micro : getMicroSpecies().values() ) {
+				retVal.addAll(micro.getAllMicroSpecies());
+			}
 		}
-
 		return retVal;
 	}
 
@@ -459,7 +431,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	@Override
 	protected boolean hasAspect(final String a) {
-		return aspects.containsKey(a);
+		return aspects != null && getAspects().containsKey(a);
 	}
 
 	@Override
@@ -467,19 +439,23 @@ public class SpeciesDescription extends SymbolDescription {
 		return this;
 	}
 
-	public List<SpeciesDescription> getMicroSpecies() {
-		GamaList<SpeciesDescription> retVal =
-			new GamaList<SpeciesDescription>(microSpecies.values());
+	public List<SpeciesDescription> getSelfAndParentMicroSpecies() {
+		GamaList<SpeciesDescription> retVal = new GamaList<SpeciesDescription>();
+		if ( hasMicroSpecies() ) {
+			retVal.addAll(getMicroSpecies().values());
+		}
 		if ( parentSpecies != null ) {
-			retVal.addAll(parentSpecies.getMicroSpecies());
+			retVal.addAll(parentSpecies.getSelfAndParentMicroSpecies());
 		}
 
 		return retVal;
 	}
 
 	public SpeciesDescription getMicroSpecies(final String name) {
-		SpeciesDescription retVal = microSpecies.get(name);
-		if ( retVal != null ) { return retVal; }
+		if ( hasMicroSpecies() ) {
+			SpeciesDescription retVal = microSpecies.get(name);
+			if ( retVal != null ) { return retVal; }
+		}
 
 		if ( this.parentSpecies != null ) { return parentSpecies.getMicroSpecies(name); }
 		return null;
@@ -569,7 +545,6 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected void copyItemsFromParent() {
 		SpeciesDescription parent = getParentSpecies();
-
 		if ( parent != null ) {
 			if ( !parent.javaBase.isAssignableFrom(javaBase) ) {
 				if ( javaBase == GamlAgent.class ) { // default base class
@@ -587,48 +562,54 @@ public class SpeciesDescription extends SymbolDescription {
 			skillsMethods.putAll(parent.skillsMethods);
 
 			// We only copy the behaviors that are not redefined in this species
-			for ( final CommandDescription b : parent.behaviors.values() ) {
-				if ( !hasBehavior(b.getName()) ) {
-					// Copy done here
-					addChild(b.copy());
-				}
-			}
-
-			for ( final CommandDescription init : parent.inits ) {
-				addChild(init.copy());
-			}
-
-			// We only copy the actions that are not redefined in this species
-			for ( final String aName : parent.actions.keySet() ) {
-				if ( !hasAction(aName) ) {
-					CommandDescription action = parent.actions.get(aName);
-					if ( action.isAbstract() ) {
-						this.flagWarning("Abstract action '" + aName +
-							"', which is inherited from " + parent.getName() +
-							", should be redefined.", IGamlIssue.GENERAL);
+			if ( parent.hasBehaviors() ) {
+				for ( final CommandDescription b : parent.getBehaviors().values() ) {
+					if ( !hasBehavior(b.getName()) ) {
+						// Copy done here
+						addChild(b.copy());
 					}
-					// GuiUtils.debug("Copying action " + aName + " from " + parent + " to " +
-					// this);
-					addChild(parent.actions.get(aName).copy());
 				}
 			}
-
-			for ( final String aName : parent.aspects.keySet() ) {
-				// if ( aName.equals(ISymbol.DEFAULT) || !hasAspect(aName) ) {
-				if ( !hasAspect(aName) ) {
-					addChild(parent.aspects.get(aName).copy());
+			if ( parent.hasInits() ) {
+				for ( final CommandDescription init : parent.getInits() ) {
+					addChild(init.copy());
 				}
 			}
-
-			// We only copy the variables that are not redefined in this species
-			for ( final VariableDescription v : parent.variables.values() ) {
-				if ( v.isBuiltIn() ) {
-					final VariableDescription var = getVariable(v.getName());
-					if ( var == null ) { // || ! isUserDefined ???
+			// We only copy the actions that are not redefined in this species
+			if ( parent.hasActions() ) {
+				for ( final String aName : parent.getActions().keySet() ) {
+					if ( !hasAction(aName) ) {
+						CommandDescription action = parent.getActions().get(aName);
+						if ( action.isAbstract() ) {
+							this.flagWarning("Abstract action '" + aName +
+								"', which is inherited from " + parent.getName() +
+								", should be redefined.", IGamlIssue.GENERAL);
+						}
+						// GuiUtils.debug("Copying action " + aName + " from " + parent + " to " +
+						// this);
+						addChild(parent.getActions().get(aName).copy());
+					}
+				}
+			}
+			if ( parent.hasAspects() ) {
+				for ( final String aName : parent.getAspects().keySet() ) {
+					// if ( aName.equals(ISymbol.DEFAULT) || !hasAspect(aName) ) {
+					if ( !hasAspect(aName) ) {
+						addChild(parent.getAspects().get(aName).copy());
+					}
+				}
+			}
+			if ( parent.hasVariables() ) {
+				// We only copy the variables that are not redefined in this species
+				for ( final VariableDescription v : parent.getVariables().values() ) {
+					if ( v.isBuiltIn() ) {
+						final VariableDescription var = getVariable(v.getName());
+						if ( var == null ) { // || ! isUserDefined ???
+							addChild(v.copy());
+						}
+					} else if ( !hasVar(v.getName()) ) {
 						addChild(v.copy());
 					}
-				} else if ( !hasVar(v.getName()) ) {
-					addChild(v.copy());
 				}
 			}
 		}
@@ -637,7 +618,7 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public boolean isArgOf(final String op, final String arg) {
-		if ( hasAction(op) ) { return actions.get(op).containsArg(arg); }
+		if ( hasAction(op) ) { return getActions().get(op).containsArg(arg); }
 		return false;
 	}
 
@@ -695,7 +676,7 @@ public class SpeciesDescription extends SymbolDescription {
 	 */
 	public List<SpeciesDescription> getPotentialParentSpecies() {
 		List<SpeciesDescription> retVal = getVisibleSpecies();
-		retVal.removeAll(this.getMicroSpecies());
+		retVal.removeAll(this.getSelfAndParentMicroSpecies());
 		retVal.remove(this);
 
 		return retVal;
@@ -717,8 +698,8 @@ public class SpeciesDescription extends SymbolDescription {
 	 * @return
 	 */
 	private List<SpeciesDescription> sortedMicroSpecies() {
-
-		Collection<SpeciesDescription> allMicroSpecies = microSpecies.values();
+		if ( !hasMicroSpecies() ) { return Collections.EMPTY_LIST; }
+		Collection<SpeciesDescription> allMicroSpecies = getMicroSpecies().values();
 		// validate and set the parent parent of each micro-species
 		for ( SpeciesDescription microSpec : allMicroSpecies ) {
 			microSpec.verifyAndSetParent();
@@ -753,7 +734,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 		SpeciesDescription currentSpec = this;
 		while (currentSpec != null) {
-			retVal.addAll(currentSpec.getMicroSpecies());
+			retVal.addAll(currentSpec.getSelfAndParentMicroSpecies());
 
 			// "world" species
 			if ( currentSpec.getMacroSpecies() == null ) {
@@ -860,6 +841,101 @@ public class SpeciesDescription extends SymbolDescription {
 		for ( SpeciesDescription microSpec : sortedMicroSpecies() ) {
 			microSpec.finalizeDescription();
 		}
+	}
+
+	/**
+	 * Lazy initialization
+	 * 
+	 * @return the behaviors declared in this species
+	 */
+	boolean hasBehaviors() {
+		return behaviors != null;
+	}
+
+	protected Map<String, CommandDescription> getBehaviors() {
+		if ( behaviors == null ) {
+			behaviors = new HashMap<String, CommandDescription>();
+		}
+		return behaviors;
+	}
+
+	/**
+	 * Lazy initialization
+	 * 
+	 * @return the aspects declared in this species
+	 */
+
+	boolean hasAspects() {
+		return aspects != null;
+	}
+
+	protected Map<String, CommandDescription> getAspects() {
+		if ( aspects == null ) {
+			aspects = new HashMap<String, CommandDescription>();
+		}
+		return aspects;
+	}
+
+	/**
+	 * Lazy initialization
+	 * 
+	 * @return the actions declared in this species
+	 */
+
+	boolean hasActions() {
+		return actions != null;
+	}
+
+	public Map<String, CommandDescription> getActions() {
+		if ( actions == null ) {
+			actions = new HashMap<String, CommandDescription>();
+		}
+		return actions;
+	}
+
+	/**
+	 * Lazy initialization
+	 * 
+	 * @return the variables declared in this species
+	 */
+
+	boolean hasVariables() {
+		return actions != null;
+	}
+
+	public Map<String, VariableDescription> getVariables() {
+		if ( variables == null ) {
+			variables = new HashMap<String, VariableDescription>();
+		}
+		return variables;
+	}
+
+	/**
+	 * Lazy initialization
+	 * 
+	 * @return the inits declared in this species
+	 */
+
+	boolean hasInits() {
+		return inits != null;
+	}
+
+	protected List<CommandDescription> getInits() {
+		if ( inits == null ) {
+			inits = new ArrayList<CommandDescription>();
+		}
+		return inits;
+	}
+
+	boolean hasMicroSpecies() {
+		return microSpecies != null;
+	}
+
+	private Map<String, SpeciesDescription> getMicroSpecies() {
+		if ( microSpecies == null ) {
+			microSpecies = new HashMap<String, SpeciesDescription>();
+		}
+		return microSpecies;
 	}
 
 }

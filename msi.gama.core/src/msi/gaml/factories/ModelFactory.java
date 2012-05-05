@@ -215,10 +215,10 @@ public class ModelFactory extends SymbolFactory {
 		IDescription def;
 		if ( GuiUtils.isInHeadLessMode() ) {
 			def =
-				DescriptionFactory.createDescription(EXPERIMENT, NAME, DEFAULT_EXP, TYPE,
+				DescriptionFactory.createDescription(HEADLESS_UI, NAME, DEFAULT_EXP, TYPE,
 					HEADLESS_UI);
 		} else {
-			def = DescriptionFactory.createDescription(EXPERIMENT, NAME, DEFAULT_EXP, TYPE, GUI_);
+			def = DescriptionFactory.createDescription(GUI_, NAME, DEFAULT_EXP, TYPE, GUI_);
 		}
 		complementExperimentSpecies((ExperimentDescription) def);
 		return def;

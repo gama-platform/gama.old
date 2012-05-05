@@ -33,7 +33,7 @@ public abstract class Skill implements ISkill {
 	}
 
 	public static ISkill createSharedSkillFor(final Class c) {
-		return GamlCompiler.getSkillConstructor(c).newInstance();
+		return GamlCompiler.getSkillInstanceFor(c);
 	}
 
 }

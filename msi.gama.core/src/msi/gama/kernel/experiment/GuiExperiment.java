@@ -20,18 +20,18 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.commands;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.architecture.reflex.ReflexCommand;
 import msi.gaml.commands.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -43,7 +43,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.EXPERIMENT, IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT)
+@symbol(name = { IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT)
 @with_sequence
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),

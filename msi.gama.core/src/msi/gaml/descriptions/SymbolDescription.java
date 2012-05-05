@@ -60,6 +60,13 @@ public class SymbolDescription implements IDescription {
 		}
 	}
 
+	/**
+	 * A method dedicated to initializing various structures
+	 */
+	protected void initialize() {
+
+	}
+
 	@Override
 	public SymbolMetaDescription getMeta() {
 		return meta;

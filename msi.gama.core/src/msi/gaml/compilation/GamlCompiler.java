@@ -35,6 +35,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
 
 /**
@@ -57,6 +58,7 @@ public class GamlCompiler {
 	private static Map<Class, IAgentConstructor> agentConstructors = new HashMap();
 	private static Map<Class, ISymbolConstructor> symbolConstructors = new HashMap();
 	private static Map<Class, ISkillConstructor> skillConstructors = new HashMap();
+	private static Map<Class, ISkill> skillInstances = new HashMap();
 
 	private static void addSkillMethod(final Class c, final String name) {
 		List<String> names = skillMethodsToAdd.get(c);
@@ -462,6 +464,18 @@ public class GamlCompiler {
 			skillConstructors.put(skillClass, constructor);
 		}
 		return constructor;
+	}
+
+	public static ISkill getSkillInstanceFor(final Class skillClass) {
+		ISkill skill = skillInstances.get(skillClass);
+		if ( skill == null ) {
+			ISkillConstructor constructor = getSkillConstructor(skillClass);
+			if ( constructor == null ) { return null; }
+			skill = constructor.newInstance();
+			skillInstances.put(skillClass, skill);
+		}
+		return skill;
+
 	}
 
 	public static ISkillConstructor getSharedSkillConstructor(final Class skillClass) {

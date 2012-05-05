@@ -63,7 +63,7 @@ public class PrimitiveCommand extends ActionCommand {
 
 		SpeciesDescription context = desc.getSpeciesContext();
 		Class methodClass = context.getSkillClassFor(methodName);
-		skill = context.getSharedSkill(methodClass);
+		skill = GamlCompiler.getSkillInstanceFor(methodClass);
 		executer = GamlCompiler.getPrimitive(methodClass, methodName);
 	}
 

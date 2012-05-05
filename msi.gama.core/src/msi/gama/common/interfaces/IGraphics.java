@@ -38,6 +38,7 @@ public interface IGraphics {
 
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
+
 	/**
 	 * Method setGraphics.
 	 * @param g Graphics2D

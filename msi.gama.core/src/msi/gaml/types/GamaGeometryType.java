@@ -22,8 +22,8 @@ import java.util.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -129,6 +129,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(GeometryUtils.getFactory().createPoint(
 			location == null ? new GamaPoint(0, 0) : (Coordinate) location));
 	}
+
+	static Geometry g = buildTriangle(2, new GamaPoint(0, 0)).getInnerGeometry();
 
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
 		double sqrt2 = Math.sqrt(2.0);
