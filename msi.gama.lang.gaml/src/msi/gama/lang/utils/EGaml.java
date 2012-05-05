@@ -8,7 +8,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
-import msi.gaml.descriptions.IGamlDescription;
+import msi.gaml.descriptions.*;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -48,6 +48,11 @@ public class EGaml {
 			object.eAdapters().remove(existing);
 		}
 		object.eAdapters().add(description);
+	}
+
+	public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
+		if ( object == null ) { return; }
+		object.eAdapters().remove(description);
 	}
 
 	public static final GamlSwitch<String> getKey = new GamlSwitch<String>() {
