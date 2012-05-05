@@ -31,7 +31,7 @@ global {
 			set myPatch <- one_of(vegetation as list);
 			set location <- any_location_in(myPatch);
 		}
-		create predator number: nb_predator_init {
+		create predator number: nb_predator_init { 
 			set myPatch <- one_of(vegetation as list);
 			set location <- any_location_in(myPatch);
 		}

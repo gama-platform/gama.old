@@ -8,19 +8,19 @@ global {
     var initialBugSizeMean type: float init: 0.1 parameter: 'initialBugSizeMean';
     var initialBugSizeSD type: float init: 0.03 parameter: 'initialBugSizeSD';
     var init_data type: matrix init: matrix(file('../data/Stupid_Cell.Data')) const: true;
-    var width type: int init: ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}) max_of each const: true;
-    var height type: int init: ((init_data column_at 1) copy_between {3,init_data.rows - 1}) max_of each const: true;
+    var width type: int init: int(max ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}))  const: true;
+    var height type: int init: int(max((init_data column_at 1) copy_between {3,init_data.rows - 1}))  const: true;
     init { 
         create species: bug number: numberBugs;
 		loop i from: 3 to: ((init_data.rows)) - 1 {
 			let ind_i type: int value: init_data at {0,i}; 
 			let ind_j type: int value: init_data at {1,i};
 			ask stupid_grid grid_at {ind_i,ind_j} {
-				set foodProd value: init_data at {2,i};
+				set foodProd value: init_data at {2,i};  
 			}
 		}
     }
-    reflex shouldHalt when: (time > 1000) or (empty (bug as list)) {
+    reflex shouldHalt when: (time > 1000) or (empty (bug as list)) { 
         do action: halt;
     } 
 }

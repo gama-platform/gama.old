@@ -3,7 +3,7 @@ model evolution_geometry
 global {
 	file shape_file_name_init parameter: 'Path of shapefile to load for the initial agent:' category: 'GIS specific' <- '../gis/init.shp' ;
 	file shape_file_name_background parameter: 'Path of shapefile to load for the background:' category: 'GIS specific' <- '../gis/background.shp';
-	float dying_size min: 100 parameter: 'Size (area) from which an agent dies:' category: 'Population' <-10000 ;
+	float dying_size min: 100 parameter: 'Size (area) from which an agent dies:' category: 'Population' <-10000 ; 
 	float crossover_size min: 100 parameter: 'Min size (area) for crossover:' category: 'Population' <- 1000;
 	float minimum_size min: 100 parameter: 'Minimum size (area) of a agent produced by a crossover:' category: 'Population' <- 500;
 	int time_wthout_co min: 1 parameter: 'Number of steps without crossing-over for an agent:' category: 'Population' <- 7;
@@ -12,14 +12,14 @@ global {
 	float scaling_factor min: 1.001 parameter: 'Scaling factor for agent geometry (at each step):' category: 'Population' <- 1.05;
 	float angle_rotation_max min: 0 parameter: 'Max rotation angle for agent geometry (at each step):' category:'Population' <- 45;
 	int nb_partners_max min: 1 parameter: 'Max number of possible partners for crossing-overs (per step)' category: 'Population' <- 1;
-	int max_side_size min: 1 parameter: 'Size max of the initiale side of an agent:' category: 'Population' <- 5;
+	int max_side_size min: 1 parameter: 'Size max of the initiale side of an agent:' category: 'Population' <- 5; 
 	int background_size_side min: 20 max: 100 parameter:'Size background side:' category: 'Population' <- 80 ;
 	
 	geometry the_background;
 
 	reflex stop when: empty ( people as list ) {
 		do halt;
-	}
+  	} 
 	init {
 		create background from: shape_file_name_background {
 			set color <- rgb ([ 255 , 240 , 240 ]);

@@ -24,9 +24,9 @@ global {
 	float local_density_window_area <- road_width * local_density_window_length depends_on: [ road_width, local_density_window_length ];
 
 	float guider_speed <- 1;
-	rgb guider_color <- rgb('blue'); 
+	rgb guider_color <- rgb('blue');   
 	
-	int macro_patch_length_coeff <- 25 parameter: 'Macro-patch length coefficient';
+	int macro_patch_length_coeff <- 25 parameter: 'Macro-patch length coefficient'; 
 	bool capture_pedestrian <- false parameter: 'Capture pedestrian?';
 
 	list ward_colors of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
@@ -35,6 +35,10 @@ global {
 	string shapeSign <- '/icons/CaliforniaEvacuationRoute.jpg' const: true;  
 
 	list terminal_panel_ids of: int init: [8];
+
+	int toto;
+	int titit;
+	int tata;
 
 	topology road_graph_topology;
 	density_window_builder window_builder;
@@ -53,7 +57,7 @@ global {
 			ask target: (ri) {
 				do action: initialize {
 					arg the_road value: rd;
-				}
+				}     
 			}
 		}
 		
@@ -273,7 +277,7 @@ entities {
 
 		bool reach_shelter <- false;
 		panel current_panel;
-   		float local_density <- 0;
+   		float local_density <- 0; 
    		float speed;
 
 		geometry window_viewer;

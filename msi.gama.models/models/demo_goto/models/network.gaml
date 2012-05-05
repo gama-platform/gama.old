@@ -26,7 +26,7 @@ entities {
 		aspect default {
 			draw shape: geometry color: 'black' ;
 		}
-	}
+	} 
 	species goal {
 		aspect default {
 			draw shape: circle color: 'red' size: 10 ;

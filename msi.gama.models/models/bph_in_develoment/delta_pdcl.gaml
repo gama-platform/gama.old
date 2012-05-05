@@ -85,7 +85,7 @@ entities {
 		action bph_cloud_landing {
 			arg a_bph_cloud type: bph_cloud;
 			
-			let target_district type: district value: one_of(list(district));
+			let target_district type: district value: one_of(list(district)); 
 			ask target_district {
 				do bphs_land_on_d {
 					arg a_bph_cloud value: a_bph_cloud;

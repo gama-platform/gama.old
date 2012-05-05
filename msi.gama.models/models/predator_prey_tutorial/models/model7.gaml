@@ -25,7 +25,7 @@ global {
 		create predator number: nb_predator_init ;
 	}
 }
-entities {
+entities { 
 	species generic_species {
 		const size type: float <- 2 ;
 		const color type: rgb <- 'blue' ;

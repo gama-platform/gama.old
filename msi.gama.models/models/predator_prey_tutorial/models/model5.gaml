@@ -15,14 +15,14 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create prey number: nb_preys_init ;
+		create prey number: nb_preys_init ; 
 		create predator number: nb_predator_init ;
 	}
 }
 entities {
 	species generic_species {
-		const size type: float <- 2 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- float(2) ;
+		const color type: rgb <- rgb('blue') ;
 		const max_energy type: float init: prey_max_energy ;
 		const max_transfert type: float init: prey_max_transfert ;
 		const energy_consum type: float init: prey_energy_consum ;

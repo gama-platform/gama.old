@@ -12,11 +12,11 @@ global {
 	var ants type: int init: 100 min: 1 parameter: 'Number of agents:' category: 'Agents' ;
 	action description {
 		do write message: "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A set of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	
-	} 
+	}  
 	init { 
 		do description ;
 		create ant number: ants ;
-	}
+	} 
 }
 environment width: 100 height: 100 {
 	grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 torus: true {
@@ -25,13 +25,13 @@ environment width: 100 height: 100 {
 		list neighbours -> {self neighbours_at 1} of: ant_grid;   
 	} 
 }
- 
+  
 species name: ant skills: [ moving ] control: fsm { 
-	rgb color <- rgb("white") ;
+	rgb color <- rgb("white") ; 
 	ant_grid place -> {ant_grid (location)} ;
 	reflex wandering { do wander amplitude: 120; }
 	state empty initial: true {
-		transition to: full when: (place.color != black) and ( count(place.neighbours, each.color = place.color) < (rnd(number_of_objects_around))) {
+		transition to: full when: (place.color != black) and ( (place.neighbours count (each.color = place.color)) < (rnd(number_of_objects_around))) {
 			set color <- place.color ;
 			set place.color <- black ; 
 		}

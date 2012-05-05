@@ -2,30 +2,32 @@ model balls_groups
 
 global {
 	const environment_bounds type: point init: {500, 500}; 
-	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) ;
-	const inner_bounds_y type: int init: ((environment_bounds.y) / 20)  ;
+	const inner_bounds_x type: int init: (int((environment_bounds.x) / 20)) ;
+	const inner_bounds_y type: int init: (int((environment_bounds.y) / 20))  ;
 	var xmin type: int init: inner_bounds_x ;
 	var ymin type: int init: inner_bounds_y ; 
-	var xmax type: int init: (environment_bounds.x) - inner_bounds_x ;
-	var ymax type: int init: (environment_bounds.y) - inner_bounds_y ;
+	var xmax type: int init: int((environment_bounds.x) - inner_bounds_x) ;
+	var ymax type: int init: int((environment_bounds.y) - inner_bounds_y) ;
 	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y ;
 	var ball_color type: rgb init: rgb('green'); 
 	var chaos_ball_color type: rgb init: rgb('red');
-	var ball_size type: float init: 3;  
-	var ball_speed type: float init: 1;
+	var ball_size type: float init: 3.0;  
+	var ball_speed type: float init: 1.0;
 	var chaos_ball_speed type: float init: 8 * ball_speed;   
 	var ball_number type: int init: 500 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
 	var ball_separation type: float init: 6 * ball_size;  
 	var create_group type: bool init: true; 
-	var group_creation_distance type: int init: ball_separation + 1;
+	var group_creation_distance type: int init: int(ball_separation + 1);
 	var min_group_member type: int init: 3;
-	var group_base_speed type: int init: (ball_speed * 1.5);
+	var group_base_speed type: float init: ((ball_speed * 1.5));
 	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1;  
 	var creation_frequency type: int init: 3;
 	var update_frequency type: int init: 3;
 	var merge_frequency type: int init: 3;
 	var merge_possibility type: float init: 0.3;
+	
+	var mymap type: map <- [(ball_size = 0 ? 10 : 100) ::10, ball_color::10];
 	
 	init { 
 		create species: ball number: ball_number ;
@@ -94,7 +96,7 @@ entities {
 			arg a_point type: point ;
 			let b1 <- a_point >= {xmin, ymin};
 			let b2 <- a_point <= {xmax, ymax};
-			let b <-  b1 and b2 ; 
+			let b <-  b1 and b2 ;  
 			return b;
 		}
 		 
@@ -155,8 +157,8 @@ entities {
 		
 		var shape type: geometry init: (polygon ( (list (ball_delegation)) )) buffer  10 ;
 		
-		var speed type: float value: group_base_speed ;
-		var perception_range type: float value: base_perception_range + (rnd(5)) ;
+		var speed type: float value: (group_base_speed) ;
+		var perception_range type: float value: float(base_perception_range + (rnd(5))) ;
 		var nearest_free_ball type: ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		var nearest_smaller_group type: group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
 		var target type: base value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
@@ -193,7 +195,7 @@ entities {
 		
 		species ball_delegation parent: ball topology: topology((world).shape)  {
 			
-			float my_age init: 1 value: my_age + 0.01;
+			float my_age init: 1.0 value: my_age + 0.01;
 			 
 			state follow_nearest_ball initial: true { }
 			
@@ -231,8 +233,8 @@ entities {
 						ask target {
 							// Note: can use "capture" in this case instead
 							release target_coms as: ball in: world returns: released_coms;
-							
-							set released_balls value: released_coms;
+							 
+							set released_balls value: list(released_coms);
 							do die ;
 						}
 						capture released_balls as: ball_delegation; 
@@ -303,7 +305,7 @@ entities {
 		}
 	}
 	
-	species text_viewer skills: situated {
+	species text_viewer  {
 		aspect default {
 			draw text: 'Number of groups : ' + (string (length (group as list))) at: {location.x - 100, location.y} color: rgb('blue') size: 20 ;
 		}

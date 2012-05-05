@@ -23,15 +23,15 @@ global {
 	}
 	
 	
-	reflex when: (time = 3) {
+	reflex a when: (time = 3) {
 		ask target: (list(cloud)) at 0 {
 			capture target: list(group) as: group_delegation;
 		}
 	}
-	
+	 
 	// TODO test release command also
 	
-	reflex when: (time = 5) {
+	reflex b when: (time = 5) {
 		ask target: (list(cloud)) {
 			release target: members;
 		}

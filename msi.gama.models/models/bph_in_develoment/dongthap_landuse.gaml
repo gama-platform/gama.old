@@ -14,7 +14,7 @@ global {
 	}
 }
 
-environment bounds: environment_bounds;
+environment bounds: environment_bounds; 
 
 entities {
 	species landunit {

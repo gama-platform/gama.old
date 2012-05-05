@@ -12,7 +12,7 @@ global {
         do action: halt;
     }
 }
-
+ 
 environment {
     grid stupid_grid width: 100 height: 100 torus: true {
         var color type: rgb init: rgb('black');
@@ -26,7 +26,7 @@ entities {
     species bug schedules: (list (bug)) sort_by each.size {
         float size<- 1;
         rgb color value: rgb ([255, 255/size, 255/size]);
-        float maxConsumption <- globalMaxConsumption;
+        float maxConsumption <- globalMaxConsumption; 
         stupid_grid myPlace value: stupid_grid at location;
         
         reflex basic_move {

@@ -2,7 +2,7 @@ model StupidModel9
 
 global {
     var numberBugs type: int init: 100 parameter: 'numberBugs';
-    var globalMaxConsumption type: float init: 1 parameter: 'globalMaxConsumption';
+    var globalMaxConsumption type: float init: float(1) parameter: 'globalMaxConsumption';
     var globalMaxFoodProdRate type: float init: 0.01 parameter: 'globalMaxFoodProdRate';
     init {
         create species: bug number: numberBugs;
@@ -10,20 +10,25 @@ global {
     reflex shouldHalt when: !(empty ((bug as list) where (each.size > 100))) {
         do action: halt;
     }
+    
+    int a ;
+    float b;
+    
 }
 
 environment {
+	
     grid stupid_grid width: 100 height: 100 torus: true {
         var color type: rgb init: rgb('black');
         var maxFoodProdRate type: float value: globalMaxFoodProdRate;
         var foodProd type: float value: (rnd(1000) / 1000) * maxFoodProdRate;
         var food type: float init: 0.0 value: food + foodProd;
-    }
+    }       
 }
 
 entities {
     species bug {
-        var size type: float init: 1;
+        var size type: float init: float(1);
         var color type: rgb value: rgb ([255, 255/size, 255/size]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;

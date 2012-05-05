@@ -16,26 +16,26 @@ global {
 	bool apply_avoid <- true parameter: 'Apply Avoidance ?';   
 	bool apply_wind <- true parameter: 'Apply Wind ?';     
 	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';    
-	int bounds <- (width_and_height_of_environment / 20); 
+	int bounds <- int(width_and_height_of_environment / 20); 
 	point wind_vector <- {0,0} parameter: 'Direction of the wind';  
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
-	int xmin <- bounds;   
+	int xmin <- bounds;    
 	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);    
 	int ymax <- (width_and_height_of_environment - bounds);   
 
 
 	// flock's parameter 
-	const two_boids_distance type: int init: 30; 
+	const two_boids_distance type: int init: 30;  
 	const merging_distance type: int init: 30;
 	var create_flock type: bool init: false;  
 	
 	init {
 		create boids number: number_of_agents { 
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
-		}
+		} 
 		 
 		create obstacle number: number_of_obstacles {
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
@@ -109,7 +109,7 @@ entities {
 		}
 	} 
 	
-	species flock skills: situated {
+	species flock  {
 		var cohesionIndex type: float init: two_boids_distance value: (two_boids_distance + (length (members)));
 		var color type: rgb init: rgb ([64, 64, 64]);
 	 	var shape type: geometry value: !(empty (members)) ? ( (polygon (members collect (boids_delegation (each)).location )) + 2.0 ) : ( polygon ([ {rnd (width_and_height_of_environment), rnd (width_and_height_of_environment)} ]) );
@@ -180,7 +180,7 @@ entities {
 			 		}
 			 	}
 			 	
-			 	if !(empty (added_components)) {
+			 	if !(empty (added_components)) { 
 			 		ask largest_flock {
 			 			capture added_components as: boids_delegation;
 			 		}
@@ -200,19 +200,13 @@ entities {
 		point velocity <- {0,0};
 		int size <- 5;
 		
-		list others update: (boids overlapping (shape + range))  - self;
+		container others update: (boids overlapping (circle (range)))  - self;
 		
-		point mass_center -> { (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location};
-		
-		
-		action others_at type: list of: boids { 
-			arg distance type: float;
-			return others where ((self distance_to each) < distance);
-		}
+		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
 		
 		reflex separation when: apply_separation {
 			let acc value: {0,0};
-			loop boid over: (self others_at [distance :: minimal_distance])  {
+			loop boid over: (boids overlapping (circle(minimal_distance)))  {
 				set acc <- acc - ((location of boid) - location);
 			} 
 			set velocity <- velocity + acc;
@@ -231,7 +225,7 @@ entities {
 		
 		reflex avoid when: apply_avoid {
 			let acc <- {0,0};
-			let nearby_obstacles <- (obstacle overlapping (shape + (minimal_distance * 2)) );
+			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
 				set acc <- acc - ((location of obs) - my (location));
 			}
@@ -268,7 +262,7 @@ entities {
 				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			let old_location <- location;
-			do  goto target: location + velocity;
+			do goto target: location + velocity;
 			set velocity <- location - old_location;
 		}
 		
@@ -278,20 +272,28 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black'; 
+			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black';      
 		}
 		
-		aspect default {
+		aspect default { 
 			draw shape: triangle  size: 15 rotate: 90 + heading color: 'yellow';
 		}
-	}
+	} 
 	
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
 		
-		reflex moving when: moving_obstacles {
-			if flip(0.5) { do goto target: one_of(boids) as list;} else do wander amplitude: 360; 
+		reflex toto when: moving_obstacles {
+//			if flip(0.5)  
+//			{ 
+//				do goto target: one_of(boids);
+//			} 
+//			else{ 
+//				do wander amplitude: 360;   
+//			}
 		}
+		
+ 
 		
 		aspect default {
 			draw shape: triangle color: rgb('yellow') size: 20;
@@ -313,7 +315,7 @@ entities {
 				species boids_delegation;
 			}
 		}
-		
+		 
 		monitor flocks value: length (flock);
 	}
 }*/

@@ -11,13 +11,13 @@ global {
 
 	float insideRoadCoeff <- 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
-	float pedestrian_speed <- 1; // TODO remove this???
+	float pedestrian_speed <- 1.0; // TODO remove this???
 	rgb pedestrian_color <- rgb('green') const: true;
-	float pedestrian_perception_range <- 50; // 50 meters
+	float pedestrian_perception_range <- 50.0; // 50 meters
 	
-	float pedestrian_max_speed <- 5 min: 0.1 parameter: 'Max speed (m per s)' category: 'Pedestrian';
-	float local_density_window_length <- 2 min: 1 max: 5 parameter: 'Density window length' category: 'Pedestrian';
-	float max_density <- 5 min: 1 max: 10 parameter: 'Max density (people per m2)' category: 'Pedestrian';
+	float pedestrian_max_speed <- 5.0 min: 0.1 parameter: 'Max speed (m per s)' category: 'Pedestrian';
+	float local_density_window_length <- 2.0 min: 1.0 max: 5.0 parameter: 'Density window length' category: 'Pedestrian';
+	float max_density <- 5.0 min: 1.0 max: 10.0 parameter: 'Max density (people per m2)' category: 'Pedestrian';
 
 	int road_width <- 15 min: 4 max: 40 parameter: 'Width (m)' category: 'Road';
 	float local_density_window_area <- road_width * local_density_window_length depends_on: [ road_width, local_density_window_length ];

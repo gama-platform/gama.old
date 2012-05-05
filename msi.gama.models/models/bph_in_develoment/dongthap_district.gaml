@@ -14,7 +14,7 @@ global {
 			arg message value: string(length(district_f.contents));
 		}
 		
-		create district from: dongthap_district_gis;
+		create district from: dongthap_district_gis;   
 	}
 }
 

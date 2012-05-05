@@ -19,6 +19,9 @@ global {
 	
 	var capture_pedestrian type: bool init: true parameter: "Capture pedestrian?";
 
+   
+   
+   
 	var theRoadInitializer type: initializerRoad;
 
 	const building_colors type: list init: ['orange', 'red', 'blue', 'black', 'gray', 'magenta'];
@@ -31,7 +34,7 @@ global {
 //		create species: building from: shape_file_building; 
 //		create species: roadwidth from: shape_file_roadwidth;
 //		create species: river from: shape_file_rivers; 
-		create species: destination from: shape_file_destination with: [fid :: read ('IND')];
+		create species: dest from: shape_file_destination with: [fid :: read ('IND')];
 		set the_graph value: as_edge_graph (list(road) collect (each.shape));
 
 		create species: initializerRoad;
@@ -40,12 +43,12 @@ global {
 			ask target: (theRoadInitializer) {
 				do action: InitializeRoad {
 					arg the_road value: rd;
-				}
+				} 
 			}
 		}
 
 		create species: people number: people_number { 
-			set goal value: one_of (destination as list) ;
+			set goal value: one_of (dest as list) ;
 			set location value:any_location_in(one_of(list(road)).shape);
 		}
 	}
@@ -54,7 +57,7 @@ global {
 environment bounds: shape_file_bounds;
 
 entities {
-	species road skills: situated {
+	species road skills: [situated] { 
 		var extremity1 type: geometry;
 		var extremity2 type: geometry;
 		
@@ -141,31 +144,31 @@ entities {
 		}
 	}
 	
-	species roadwidth skills: situated {
+	species roadwidth {
 		aspect default {
 			draw shape: geometry color: 'yellow';
 		}
 	}
 	
-	species building skills: situated {
+	species building  {
 		aspect default {
 			draw shape: geometry color: 'red';
 		}
 	}
 	
-	species beach skills: situated {
+	species beach  {
 		aspect default {
 			draw shape: geometry color: 'green';
 		}
 	}
 	
-	species river skills: situated {
+	species river  {
 		aspect default {
 			draw shape: geometry color: 'blue';
 		}
 	}
 	
-	species destination skills: situated {
+	species dest  {
 		var fid type: int;
 		var color type: rgb init: rgb (one_of (building_colors));
 		
@@ -182,7 +185,7 @@ entities {
 		// hack: people can only travel one direction!!!
 		var last_road type: road;
 
-		var goal type: destination ;
+		var goal type: dest ;
 		var my_path type: path;
 		//var shape_buffer type: geometry init: shape + people_shape_buffer value: shape + people_shape_buffer depends_on: [shape];
 
@@ -192,7 +195,7 @@ entities {
 		}
 	 */
 	 
-		reflex when: (location != goal.location) {
+		reflex  do_move when: (location != goal.location) {
 			set previous_location value: location;
 			do action:goto with: [on::the_graph, target::goal.location, speed::people_speed];
 			//set previous_location value: followedPath.source;

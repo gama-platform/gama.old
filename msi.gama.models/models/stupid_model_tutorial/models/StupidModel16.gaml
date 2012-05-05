@@ -11,7 +11,7 @@ global {
     var width type: int init: ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}) max_of each const: true;
     var height type: int init: ((init_data column_at 1) copy_between {3,((init_data.rows)) - 1}) max_of each const: true;
     init {
-        create species: bug number: numberBugs;
+        create species: bug number: numberBugs; 
         create species: predator number: 200; 
         let i type: int value: 0;  
     	loop from: 3 to: ((init_data.rows)) - 1 var: i {
@@ -19,7 +19,7 @@ global {
    			let ind_j type: int value: init_data at {1,i}; 
 			ask target: (stupid_grid ) grid_at {ind_i,ind_j} {
    				set foodProd value: init_data at {2,i};
-			} 
+			}  
 		}
     }
     reflex shouldHalt when: (time > 1000) or (empty (bug as list)) {
@@ -37,7 +37,7 @@ environment  {
 }
  
 entities {
-    species bug schedules: (list (bug)) sort_by each.size skills: 1 {
+    species bug schedules: (list (bug)) sort_by each.size {
         var size type: float init: gauss({initialBugSizeMean,initialBugSizeSD});
         var color type: rgb value: (size > 0) ? rgb( [255, 255/size, 255/size]) : rgb ([255, 255, 255]);
         var maxConsumption type: float value: globalMaxConsumption;

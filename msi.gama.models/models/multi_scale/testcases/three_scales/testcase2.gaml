@@ -21,7 +21,7 @@ global {
 environment width: 100 height: 100;
 
 entities {
-	species ball control: fsm {
+	species ball control: fsm  {
 //	species ball { // control: fsm {
 		state initial_state initial: true;
 		

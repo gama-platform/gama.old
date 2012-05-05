@@ -12,8 +12,8 @@ global {
 	const pedestrian_speed type: float init: 2.0;
 
 	const corridor_color type: rgb init: rgb ('blue');
-	const corridor_width type: int init: environment_width / 2 depends_on: [environment_width];
-	const corridor_height type: int init: (environment_height * 0.4) depends_on: [environment_height];
+	const corridor_width type: int init: int(environment_width / 2) depends_on: [environment_width];
+	const corridor_height type: int init: (int(environment_height * 0.4)) depends_on: [environment_height];
 
 	const corridor_location_0 type: point init: {environment_width / 2, environment_height / 4} depends_on: [environment_width, environment_height];
 	const corridor_shape_0 type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) depends_on: [corridor_width, corridor_height, corridor_location_0];
@@ -26,7 +26,7 @@ global {
 	const pedestrian_source_1 type: point init: {0, corridor_location_1.y} depends_on: [corridor_location_1];
 	
 	const red_pedestrian_frequency type: int init: 5;
-	
+	 
 	init {
 		create corridor number: 2 returns: new_corridors;
 		
@@ -118,7 +118,7 @@ entities {
 			set capture_pedestrians value: is_hybrid;
 		}
 
-		var max_speed type: float value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER
+		var max_speed type: float value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
 		var macro_length type: float min: 0 init: corridor_width; // the length of macro_patch
 		
 		var incoming_density type: float; // Pr (formula 5)
@@ -129,12 +129,12 @@ entities {
 		var Pmax type: float init: 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
-			var released_time type: int;
+			var released_time type: int;  
 			
 			aspect name: default { }
 		}
 		
-		init {
+		init { 
 			create corridor_info_drawer number: 1 with: [target :: self];
 		}
 		
@@ -143,7 +143,7 @@ entities {
 			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where (each.last_corridor != self);
 			
 			if condition: !(empty (tobe_captured_pedestrians)) {
-				capture target: tobe_captured_pedestrians as: captured_pedestrian returns: cps {
+				capture target: tobe_captured_pedestrians as: captured_pedestrian returns: cps { 
 					set last_corridor value: myself;
 				}
 				
@@ -159,7 +159,7 @@ entities {
 					
 					set Pr value: incoming_density;
 					
-					let group_outgoing_time type: float value: time + (corridor_width / (incoming_average_speed) );
+					let group_outgoing_time type: float value: time + (corridor_width / (incoming_average_speed) ); 
 					
 					let bound1 type: float value:  ( (max_speed * ( (1 - (2 * Pl) / Pmax ) ) ) * group_outgoing_time ); //
 					let bound2 type: float value: ( (max_speed * ( (1 - (2 * Pr) / Pmax ) ) ) * group_outgoing_time ); //
@@ -223,8 +223,8 @@ entities {
 			draw shape: geometry color: corridor_color;
 		}
 	}
-
-	species corridor_info_drawer skills: situated {
+ 
+	species corridor_info_drawer {
 		var target type: corridor;
 		
 		aspect default {
@@ -244,6 +244,10 @@ entities {
 }
 
 environment width: environment_width height: environment_height;
+
+experiment titi type: gui{
+	
+}
 
 experiment default_expr type: gui {
 	output {

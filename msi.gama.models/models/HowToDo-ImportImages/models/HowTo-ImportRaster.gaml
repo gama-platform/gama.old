@@ -10,21 +10,21 @@ global {
 	// Constants 
 	const heightImg type: int init: 5587;
 	const widthImg type: int init: 6201;	 
-	 
+	  
 	// Parameters
 	var mntImageRaster type: file init: '../images/mnt/testAG.png' parameter: 'MNT file' category: 'MNT' ;
 	var factorDiscret type: int init:30 parameter:'Discretization factor' category:'Environment';
 	
-	var nbIzard type: int init: 25 parameter: 'Nb of Izards' category: 'Izard';
+	var nbIzard type: int init: 25 parameter: 'Nb of Izards' category: 'Izard'; 
 	var izardShape type: file init:'../images/icons/izard.gif' parameter: 'Izard Shape' category: 'Izard';
 	
-	// Local variable
+	// Local variable 
 	// var mapColor type: matrix ;
 			
 	// Initialization of grid and creation of the izard agents
 	// - we use the as_matrix operator to transform a image file into a matrix of colors 
 	// (Note that as_matrix takes a Point as right operand, this point specifies the number of lines and columns of the matrix)
-	// - we then set the color built-in attribute of the cell with the value of the corresponding matrix cell
+	// - we then set the color built-in attribute of the cell with the value of the corresponding matrix cell     
 	init {
 		// set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
 		ask target: cell as list {		

@@ -334,7 +334,7 @@ entities {
 				if (last_location_2_first_point > current_location_2_first_point) { // agent moves towards first point
 				 
 					let part2 type: geometry value: first (previous_road.shape split_at previous_location);
-					set current_people.window_viewer value: last ( (geometry(part2)) split_at current_location);
+					set current_people.window_viewer value: last ( (geometry(part2)) split_at current_location); 
 					
 				} else {
 					// agent moves towards last point

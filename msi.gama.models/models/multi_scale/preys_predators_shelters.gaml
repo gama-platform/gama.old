@@ -7,20 +7,20 @@ global {
 	var prey_speed type: float init: 1;
 	var prey_flee_color type: rgb init: rgb ('orange');
 	var prey_invisible_speed type: float init: 3 * 	prey_speed;
-	var prey_invisible_color type: rgb init: rgb ('black');
+	var prey_invisible_color type: rgb init: rgb ('black');  
 	var prey_in_shelter_max_time type: int min: 1 init: 200;
-	var prey_invisible_max_time type: int min: 1 max: 100 init: 70;
+	var prey_invisible_max_time type: int min: 1 max: 100 init: 70; 
 	var number_of_prey type: int min: 1 max: 1000 init: 100;
 	
 	var predator_color type: rgb init: rgb ('red') const: true;
 	var predator_perception type: float init: 3;
 	var predator_size type: float init: 4.0;
 	var predator_speed type: float init: 1;
-	var number_of_predator type: int min: 1 max: 100 init: 30;
+	var number_of_predator type: int min: 1 max: 100 init: 30; 
 	
 	var predator_in_shelter_color type: rgb init: rgb ('yellow') const: true;
 	 
-	var shelter_color type: rgb init: rgb ('blue') const: true;
+	var shelter_color type: rgb init: rgb ('blue') const: true; 
 	var shelter_speed type: float init: 1.5 const: true;
 	var shelter_shape type: geometry init: square (50.0);
 	var number_of_shelter type: int init: 2 const: true;
@@ -97,7 +97,7 @@ entities {
 		} 
 	}
 	
-	species shelter skills: [situated, moving] frequency: 2 {
+	species shelter skills: [situated, moving]  frequency: 2 {
 		var shape type: geometry init: (circle (50.0)) at_location {250, 250};
 		var chased_preys type: list of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
@@ -105,9 +105,9 @@ entities {
 			do wander speed: shelter_speed; 
 		}
 		 
-		reflex capture_chased_preys when: !(empty (chased_preys)) {
+		reflex capture_chased_preys when: !(empty (chased_preys)) { 
 			capture chased_preys as: prey_in_shelter {
-				set state value: 'in_shelter';
+				set state value: 'in_shelter'; 
 				set shape value: ( triangle (4.0) ) at_location location;
 			}
 		}
@@ -119,7 +119,7 @@ entities {
 				set state value: 'invisible';
 				set shape value:  at_location (circle (prey_size), self.location);   
 			}
-		}
+		} 
 		
 		
 		species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {

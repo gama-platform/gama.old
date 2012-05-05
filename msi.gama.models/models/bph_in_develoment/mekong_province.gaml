@@ -141,8 +141,8 @@ entities {
 	}
 
 	species bph_group skills: moving {
-		landunit last_landunit;
-		landunit current_landunit;
+		//landunit last_landunit;
+		//landunit current_landunit; 
 		int landing_time <- time;
 		
 		int bph_in_group;

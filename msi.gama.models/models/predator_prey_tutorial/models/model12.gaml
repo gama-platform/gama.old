@@ -1,9 +1,9 @@
 
 model prey_predator
 //Model 12 of the predator/prey tutorial
-
+ 
 global {
-	file map_init <- '../includes/data/raster_map.png' parameter: 'Initial environement: ' category: 'Environment' ;
+	file map_init <- file('../includes/data/raster_map.png') parameter: 'Initial environement: ' category: 'Environment' ;
 	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
 	int nb_predator_init <- 20 min: 0 max: 200 parameter: 'Initial number of predators ' category: 'Predator' ;
 	float prey_max_energy <- 1 parameter: 'Prey max energy: ' category: 'Prey' ;
@@ -12,7 +12,7 @@ global {
 	float prey_proba_reproduce <- 0.01 parameter: 'Prey probability reproduce: ' category: 'Prey' ;
 	int prey_nb_max_offsprings <- 5 parameter: 'Prey nb max offsprings: ' category: 'Prey' ;
 	float prey_energy_reproduce <- 0.5 parameter: 'Prey energy reproduce: ' category: 'Prey' ;
-	float predator_max_energy <- 1 parameter: 'Predator max energy: ' category: 'Predator' ;
+	float predator_max_energy <- float(1) parameter: 'Predator max energy: ' category: 'Predator' ;
 	float predator_energy_transfert <- 0.5 parameter: 'Predator energy transfert: ' category: 'Predator' ;
 	float predator_energy_consum <- 0.02 parameter: 'Predator energy consumption: ' category: 'Predator' ;
 	float predator_proba_reproduce <- 0.01 parameter: 'Predator probability reproduce: ' category: 'Predator' ; 
@@ -34,12 +34,12 @@ global {
 	
 	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
 		do halt ;
-	} 
+	}  
 }
 entities {
 	species generic_species {
-		const size type: float <- 2 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- float(2) ;
+		const color type: rgb <- rgb('blue') ;
 		const max_energy type: float init: prey_max_energy ;
 		const max_transfert type: float init: prey_max_transfert ;
 		const energy_consum type: float init: prey_energy_consum ;
@@ -86,11 +86,11 @@ entities {
 		}
 		aspect info {
 			draw shape: square size: size color: color ;
-			draw text: energy with_precision 2 size: 3 color: rgb('black') ;
+			draw text: string(energy with_precision 2) size: 3 color: rgb('black') ;
 		}
 	}
 	species prey parent: generic_species {
-		const color type: rgb <- 'blue' ;
+		const color type: rgb <- rgb('blue') ;
 		const max_energy type: float <- prey_max_energy ;
 		const max_transfert type: float <- prey_max_transfert ;
 		const energy_consum type: float <- prey_energy_consum ;
@@ -110,7 +110,7 @@ entities {
 		}
 	}
 	species predator parent: generic_species {
-		const color type: rgb <- 'red' ;
+		const color type: rgb <-  rgb('red') ;
 		const max_energy type: float <- predator_max_energy ;
 		const energy_transfert type: float <- predator_energy_transfert ;
 		const energy_consum type: float <- predator_energy_consum ;
@@ -119,10 +119,11 @@ entities {
 		const energy_reproduce type: float <- predator_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/wolf.png' ;
 		
+		
 		reflex eat when: !(empty (agents_inside(myCell) of_species prey)) {
 			ask one_of (agents_inside(myCell) of_species prey) {
 				do die ;
-			}
+			} 
 			set energy <- energy + energy_transfert ;
 		}
 		action choose_cell {
@@ -131,27 +132,27 @@ entities {
 				set myCell <- myCell_tmp;
 			} else {
 				set myCell <- one_of (myCell.neighbours);
-			} 
-		}
-	}
+			}  
+ 		}
+	} 
 }
 environment width: 100 height: 100 {
 	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
-		float maxFood <- 1.0 ;
+		float maxFood <- 1.0 ; 
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
-		rgb color <- [255 * (1 - food), 255, 255 * (1 - food)] update: [255 * (1 - food), 255, 255 * (1 - food)] ;
+		rgb color <- rgb([255 * (1 - food), 255, 255 * (1 - food)]) update: rgb([255 * (1 - food), 255, 255 * (1 - food)]) ;
 		list neighbours of: vegetation_cell <- (self neighbours_at 2) of_species vegetation_cell;
 	}
 }
 output {
-	display main_display {
-		grid vegetation_cell lines: 'black' ;
+	display main_display { 
+		grid vegetation_cell lines: rgb('black') ;
 		species prey aspect: base ;
 		species predator aspect: base ;
 	}
 	display Population_information refresh_every: 5 {
-		chart name: 'Species evolution' type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} {
+		chart name: 'Species evolution' type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} { 
 			data number_of_preys value: nb_preys color: rgb('blue') ;
 			data number_of_predator value: nb_predators color: rgb('red') ;
 		}

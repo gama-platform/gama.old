@@ -23,7 +23,7 @@ environment {
         float food <- 0.0 update: food + foodProd; 
     }
 } 
-
+ 
 entities {
     species bug schedules: (list (bug)) sort_by each.size { 
         float size <- gauss({initialBugSizeMean,initialBugSizeSD});

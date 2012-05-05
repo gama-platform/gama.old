@@ -136,7 +136,7 @@ global {
 		loop p over: (mekong_f.contents) {
 			let province_code type: string value: geometry(p) get ('P_CODE');
 			if (province_code = 'DT') {
-				create province with: [ shape :: p ];
+				create province with: [ shape :: p ]; 
 			}
 		}
 		create bph_cloud number: bph_cloud_number with: [ bph_in_cloud :: cloud_min_member ];
@@ -548,7 +548,7 @@ entities {
 			let transPointList type: list of: point value: (translatedGeom).points;
 			let currLuCorList type: list of: point value: (currlandunit.shape).points;
 
- 			let polygeo type: geometry value: polygon(transPointList+currLuCorList);
+ 			let polygeo type: geometry value: geometry(transPointList+currLuCorList);
 			set overlappingLandunits value: ( (setOfLandunit as list) overlapping (polygeo));	
 			set overlappingLandunits value: remove_duplicates(overlappingLandunits);	 
  

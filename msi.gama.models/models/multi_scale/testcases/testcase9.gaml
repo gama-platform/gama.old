@@ -19,7 +19,7 @@ entities {
 			species A {
 				
 			}
-		}
+		} 
 	}
 }
 

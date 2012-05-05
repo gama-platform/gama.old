@@ -12,17 +12,17 @@ global {
 	
 	init {
 		create species: road from: shape_file_road with: [ fid :: read('FID') ] returns: the_roads;
-		create species: destination from: shape_file_destination with: [fid :: read ('IND')];
+		create species: dest from: shape_file_destination with: [fid :: read ('IND')];
 		set the_graph value: as_edge_graph (list(road));
 		
 		create species: people from: shape_file_people { 
-			set goal value: one_of (destination as list) ;
+			set goal value: one_of (dest as list) ;
 		}
-	}
+	} 
 }
 
 entities {
-	species road skills: situated {
+	species road {
 		var fid type: int;
 		
 		init {
@@ -31,7 +31,7 @@ entities {
 				let macro_patch_points type: list value: [];
 				let i type: int value: 1;
 				loop times: ((length (points)) - 2) {
-					add item: (points at i) to: macro_patch_points;
+					add item: (points at i) to: macro_patch_points; 
 					set i value: i + 1;
 				}
 				
@@ -40,17 +40,17 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: 'yellow';
+			draw shape: geometry color: rgb('yellow');
 		}
 	}
 	
-	species macro_patch skills: situated {
+	species macro_patch  {
 		aspect default {
-			draw shape: geometry color: 'black';
+			draw shape: geometry color: rgb('black');
 		}
 	}
 
-	species destination skills: situated {
+	species dest  {
 		var fid type: int;
 		var color type: rgb init: rgb (one_of (building_colors));
 		
@@ -60,10 +60,10 @@ entities {
 	}
 
 	species people skills: [moving] {
-		var goal type: destination ;
+		var goal type: dest ;
 	
 		aspect default {
-			draw shape: geometry color: 'green' ;
+			draw shape: geometry color: rgb('green') ;
 		}
 
 		reflex move when: (goal != nil) {
@@ -72,7 +72,7 @@ entities {
 			
 			if condition: ( (length (segments)) > 1 ) {
 				loop line over: segments {
-					let ag type: road value: followedPath agent_from_geometry line;
+					let ag type: road value: road(followedPath agent_from_geometry line);
 					if condition: (ag != nil) {
 						do action: write {
 							arg name: message value: 'time step: ' + (string (time)) + ' ag: ' + (ag) ;

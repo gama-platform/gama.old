@@ -4,19 +4,19 @@ global {
 	var simulated_population_rate type: float init: 0.1 const: true;
 	  
 	// GIS data 
-	var shape_file_road type: string init: '/gis/roadlines.shp';  
+	var shape_file_road type: string init: '/gis/roadlines.shp';   
 	var shape_file_rivers type: string init: '/gis/rivers.shp';    
 	var shape_file_beach type: string init: '/gis/Beacha.shp'; 
 	string shape_file_roadwidth init: '/gis/roads.shp';  
-	string shape_file_building init: '/gis/buildr.shp'; 
+	string shape_file_building init: '/gis/buildr.shp';  
 	var shape_file_bounds type: string init: '/gis/bounds.shp';  
 	var shape_file_ward type: string init: '/gis/wards.shp';  
 	var shape_file_zone type: string init: '/gis/zone.shp';  
 	   
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
 
-	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?  
-	var pedestrian_size type: float init: 1 const: true ; 
+	var pedestrian_speed type: float init: float(1); // TODO how to define precisely 1m/s?  
+	var pedestrian_size type: float init: float(1) const: true ; 
  	var pedestrian_color type: rgb init: rgb('green');
 	 
 	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";   
@@ -25,11 +25,11 @@ global {
 	var ward_colors type: list of: rgb init: [rgb('black'), rgb('magenta'), rgb('blue'), rgb('orange'), rgb('gray'), rgb('yellow'), rgb('red')] const: true;
 	var zone_colors type: list of: rgb init: [rgb('magenta'), rgb('blue'), rgb('yellow')] const: true;
 	var agents_reach_target type: int init: 0; 
-	var average_reaching_target_time type: float init: 0.0;  
-	 
+	var average_reaching_target_time type: float init: 0.0;    
+	  
 	var zone1_building_color type: rgb init: rgb('orange');
-	var zone2_building_color type: rgb init: rgb('gray'); 
-	var zone3_building_color type: rgb init: rgb('yellow') ; 
+	var zone2_building_color type: rgb init: rgb('gray');   
+	var zone3_building_color type: rgb init: rgb('yellow') ;  
 	
  	var road_graph type: graph;
 
@@ -48,7 +48,7 @@ global {
 		create river from: shape_file_rivers;
 		
 		loop b over: ( (list(building)) where (each.floor > 3) ) {
-			create species: destination with: [shape :: b.shape];
+			create species: dest with: [shape :: b.shape];
 		}
 		
 		set road_graph value: as_edge_graph (list(road )) ;
@@ -94,11 +94,11 @@ entities {
 		var macro_patch type: geometry;
 		var macro_patch_buffer type: geometry;
 		
-		var nearby_destinations type: list of: destination init: [];
+		var nearby_destinations type: list of: dest init: [];
 		
 		init {
 			if condition: (macro_patch != nil) {
-				set nearby_destinations value: destination overlapping (shape + 10); // 10m buffer
+				set nearby_destinations value: dest overlapping (shape + 10); // 10m buffer
 			}
 		}
 
@@ -154,7 +154,7 @@ entities {
 			}
 		}
 		
-		reflex initialize when: (time = 1) and (macro_patch != nil) {
+		reflex to_init when: (time = 1) and (macro_patch != nil) {
 			create macro_patch_viewer with: [shape :: macro_patch];
 		} 
 
@@ -171,7 +171,7 @@ entities {
 		}
 	}	
 
-	species destination {
+	species dest {
 		
 	 	aspect base {
 	 		draw shape: geometry color: rgb('magenta');
@@ -234,7 +234,7 @@ entities {
 	   	
 	   	aspect base {
 	   		draw shape: geometry color: color;
-	   	}
+	   	} 
 	}
 	   
 	species beach {
@@ -255,14 +255,14 @@ entities {
 		}
 	}
  
-	species pedestrian skills: moving schedules: (list(pedestrian) select !each.reach_shelter) {
+	species pedestrian skills: [moving] schedules: (list(pedestrian) select !each.reach_shelter) {
 		var previous_location type: point;
 		var last_road type: road;
-		var safe_building type: destination;
-		var reach_shelter type: bool init: false;
+		var safe_building type: dest;
+		var reach_shelter type: bool init: false; 
 		
 		init { 
-			set safe_building value: destination closest_to self;
+			set safe_building value: dest closest_to self;
 		}
 		
 		reflex move when: !(reach_shelter) {
@@ -287,13 +287,13 @@ entities {
 	species road_initializer skills: [moving] {
 		action initialize {
 			arg the_road type: road;
-			
+			arg fin type: int default: 0;
 			let inside_road_geom type: geometry value: the_road.shape;
 			set speed value: (the_road.shape).perimeter * insideRoadCoeff;
 			let point1 type: point value: first(inside_road_geom.points);
 			let point2 type: point value: last(inside_road_geom.points);
 			set location value: point1;
-			
+			 
 			do action: goto {
 				arg target value: point2;
 				arg on value: road_graph; 
@@ -320,25 +320,28 @@ entities {
 			
 		}
 	}  
-}
+}           
 
 experiment toto type: gui { 
-	output { 
-		display full_detail {  
+	output {  
+		display full_detail {     
 		 	species road aspect: base transparency: 0.1;
 		 	species roadwidth aspect: base transparency: 0.1;
-		 	species building aspect: base transparency: 0.1;
-		 	species destination aspect: base transparency: 0.1;
+		 	species building aspect: base transparency: 0.1;  
+		 	species dest aspect: base transparency: 0.1;  
+		 	
+
+		 	
 		 	species beach aspect: base transparency: 0.9; 
 		 	species zone aspect: base transparency: 0.9;
-		 	species river aspect: base transparency: 0.5;
-		 	species ward aspect: base transparency: 0.9;
+		 	species river aspect: base transparency: 0.5; 
+		 	species ward aspect: base transparency: 0.9;      
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
-		
+		 
 		display pedestrian_road_network {
 		 	species road aspect: base transparency: 0.1;  
-		 	species destination aspect: base transparency: 0.1;
+		 	species dest aspect: base transparency: 0.1;
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
 		
@@ -349,7 +352,7 @@ experiment toto type: gui {
 
 //		display Execution_Time {
 //			chart name: 'Simulation step length' type: series background: rgb('black') {
-//				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green'));
+//				data simulation_step_duration_in_mili_second value: duration color: (rgb ('green')); 
 //			}
 //		}
 //
@@ -368,7 +371,7 @@ experiment toto type: gui {
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
-		monitor destinations value: length(destination as list);
+		monitor destinations value: length(dest as list);
 
 		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
 		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));

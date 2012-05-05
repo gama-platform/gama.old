@@ -5,8 +5,8 @@ global {
 	var the_graph type: graph;
 	
 	var capture_pedestrian type: bool init: true parameter: 'Capture pedestrian?';
-
-	var people_speed type: float init: 2 min: 1 max: 100 parameter: 'People speed';
+  
+	var people_speed type: float init: float(2) min: float(1) max: float(100) parameter: 'People speed';
 	var people_number type: int min: 1 init: 100 parameter: "People number";
 	
 	var environment_size type: int init: 500;
@@ -17,14 +17,14 @@ global {
 polyline ( [ {10, 400}, {450, 400} ] )
 	];
 	
-	var road_number type: int min: 1 max: 10 init: 10;
+	var road_number type: int min: 1 max: 10 init: 10; 
 	
-	init {
-		let i type: int value: 0;
-		loop times: road_number {
+	init { 
+		let i type: int value: 0;  
+		loop times: road_number { 
 			create species: road {
 				set shape value: road_data at i;
-			}
+			}  
 			
 			set i value: i + 1;
 		}
@@ -35,7 +35,7 @@ polyline ( [ {10, 400}, {450, 400} ] )
 		loop rd over: (road as list) {
 			ask target: (theRoadInitializer) {
 				do action: InitializeRoad {
-					arg the_road value: rd;
+					arg the_road value: rd; 
 				}
 			} 
 		}
@@ -153,7 +153,7 @@ entities {
 			draw shape: geometry color: 'green' ;
 		}
 		
-		action choose_next_road type: road {
+		action choose_next_road type: road { 
 			arg road_vertex type: point;
 			
 			if condition: ( (the_graph source_of current_road) = road_vertex ) {
@@ -188,7 +188,7 @@ entities {
 		}
 	}
 	
-	species destination {
+	species dest {
 		var color type: rgb init: 'red';
 		aspect default {
 			draw shape: geometry color: color;
@@ -237,7 +237,7 @@ entities {
 
 experiment 10_roads_100_people type: gui {
 	// Hybrid 1ms-2ms/step
-	// ABM 1ms-2ms/step
+	// ABM 1ms-2ms/step 
 	
 	parameter name: 'People number' var: people_number init: 100;
 	
@@ -272,8 +272,8 @@ experiment 10_roads_1000_people_expr type: gui {
 		display default_display {
 			species road aspect: default ;
 			species insideRoad aspect: default;
-			species destination aspect: default ;
-			species people aspect: default;
+			species dest aspect: default ;
+			species people aspect: default; 
 		}
 		
 		monitor people_number value: length (people);
@@ -301,7 +301,7 @@ experiment 10_roads_10000_people type: gui {
 			species insideRoad aspect: default;
 			species destination aspect: default ;
 			species people aspect: default;
-		}
+		} 
 		
 		monitor people_number value: length (people);
 		monitor captured_people_number value: sum (list(road) collect (length (each.members)));

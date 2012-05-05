@@ -16,11 +16,11 @@ global {
 		loop geom over: (the_object_geom.geometries) {
 			create species: object_simple {
 				set shape value: geom;
-			} 
+			}  
 		}
 	}
-}
-environment bounds: shape_file_in ; 
+}  
+environment bounds: shape_file_in ;   
 entities {
 	species object  {
 		aspect default {

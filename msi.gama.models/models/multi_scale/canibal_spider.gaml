@@ -10,14 +10,14 @@ global {
 environment width: 100 height: 100;
  
 entities {
-	species spider skills: moving { 
+	species spider skills: [moving] { 
 		geometry shape <- square (20) at_location ({rnd(100), rnd(100)});
 		
 		init {
 //			create spider_in_spider; this command will create a StackOverflowException because the "init" is inherit from parent species
 		}
 		
-		reflex {
+		reflex toto {
 //			create spider_in_spider; //this command will create a StackOverflowException because the "init" is inherit from parent species
 		}
 		

@@ -31,7 +31,7 @@ global {
 			set start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
 			set end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
 			set living_place <- one_of(residential_buildings) ;
-			set working_place <- one_of(industrial_buildings) ;
+			set working_place <- one_of(industrial_buildings) ; 
 			set location <- any_location_in (living_place); 
 		}
 	}

@@ -18,7 +18,7 @@ global {
 		create building from: shape_file_buildings with: [type::read ('NATURE')] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
-			}
+			} 
 		}
 		create road from: shape_file_roads ;
 		set the_graph <- as_edge_graph(list(road));

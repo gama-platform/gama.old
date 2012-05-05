@@ -15,7 +15,7 @@ global {
 	// GIS data
 	var shape_file_road type: string init: '/gis/roadlines.shp'; 
 	var shape_file_rivers type: string init: '/gis/rivers.shp';
-	var shape_file_beach type: string init: '/gis/Beacha.shp';
+	var shape_file_beach type: string init: '/gis/Beacha.shp'; 
 	var shape_file_roadwidth type: string init: '/gis/roads.shp';
 	var shape_file_building type: string init: '/gis/buildr.shp';
 	var shape_file_bounds type: string init: '/gis/bounds.shp';
@@ -24,12 +24,12 @@ global {
 
 	var insideRoadCoeff type: float init: 0.1 min: 0.01 max: 0.4 parameter: "Size of the external parts of the roads:";
  
-	var pedestrian_speed type: float init: 1; // TODO how to define precisely 1m/s?
-	var pedestrian_size type: float init: 1 const: true;
+	var pedestrian_speed type: float init: 1.0; // TODO how to define precisely 1m/s?
+	var pedestrian_size type: float init: 1.0 const: true;
 	var pedestrian_color type: rgb init: rgb('green');
-	var pedestrian_perception_range type: float init: 100; // 100 meters
+	var pedestrian_perception_range type: float init: 100.0; // 100 meters
 	
-	var guider_speed type: float init: 1;
+	var guider_speed type: float init: 1.0;
 	var guider_color type: rgb init: rgb('blue');
 	 
 	var macro_patch_length_coeff type: int init: 25 parameter: "Macro-patch length coefficient";
@@ -53,7 +53,7 @@ global {
 		 
 		create species: ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
 			do action: init_overlapping_roads;
-		}
+		} 
 		 
 		create species: zone from: shape_file_zone with: [id :: read('ID')];
 		create species: building from: shape_file_building with: [ floor :: read('STAGE'), x :: read('X'), y :: read('Y')];
@@ -61,7 +61,7 @@ global {
 		create species: river from: shape_file_rivers;
 		
 		loop b over: ( (list(building)) where (each.floor > 3) ) {
-			create species: destination with: [shape :: b.shape];
+			create species: dest with: [shape :: b.shape];
 		}
 		
 		set road_graph value: as_edge_graph (list(road) collect (each.shape));
@@ -110,11 +110,11 @@ entities {
 		var macro_patch type: geometry;
 		var macro_patch_buffer type: geometry;
 
-		var nearby_destinations type: list of: destination init: [];
+		var nearby_destinations type: list of: dest init: [];
 
 		init {
 			if condition: (macro_patch != nil) {
-				set nearby_destinations value: destination overlapping (shape + 10); // 10m buffer
+				set nearby_destinations value: dest overlapping (shape + 10); // 10m buffer
 			}
 		}
 
@@ -179,7 +179,7 @@ entities {
 	 	}
 	}
 	 
-	species destination {
+	species dest {
 	 	aspect base {
 	 		draw shape: geometry color: rgb('magenta');
 	 	}
@@ -267,7 +267,7 @@ entities {
 		}
 	}
 	
-	species guider skills: moving {
+	species guider skills: [moving] {
 		var managed_road type: road;
 		var target1 type: point;
 		var target2 type: point;
@@ -275,7 +275,7 @@ entities {
 		var reach_target2 type: bool init: false;
 		var finish_patrolling type: bool init: false;
 
-		var safe_building type: destination;
+		var safe_building type: dest;
 		var reach_shelter type: bool init: false;
 		
 		init {
@@ -283,7 +283,7 @@ entities {
 			set target1 value: first ((managed_road.shape).points);
 			set target2 value: last ((managed_road.shape).points);
 
-			set safe_building value: (list (destination)) closest_to shape;
+			set safe_building value: (list (dest)) closest_to shape;
 		}
 		
 		reflex patrol when: !(finish_patrolling) {
@@ -337,11 +337,11 @@ entities {
  		}
 	}
 
-	species pedestrian skills: moving {
+	species pedestrian skills: [moving] {
 		var previous_location type: point;
 		var last_road type: road;
 
-		var shelter type: destination;
+		var shelter type: dest;
 		var current_road type: road;
 		var reach_shelter type: bool init: false;
 		
@@ -350,7 +350,7 @@ entities {
 		}
 		
 		reflex search_shelter when: (shelter = nil) {
-			let nearest_shelter type: destination value: destination closest_to self;
+			let nearest_shelter type: dest value: dest closest_to self;
 			if condition: ( (nearest_shelter != nil) and ( (nearest_shelter distance_to self) <= pedestrian_perception_range ) ) {
 				set shelter value: nearest_shelter;
 			}
@@ -431,12 +431,12 @@ entities {
 }
 
 experiment default_expr type: gui {
-	output {
+	output { 
 		display full_detail {
 		 	species road aspect: base transparency: 0.1;
 		 	species roadwidth aspect: base transparency: 0.1;
 		 	species building aspect: base transparency: 0.1;
-		 	species destination aspect: base transparency: 0.1;
+		 	species dest aspect: base transparency: 0.1;
 		 	species beach aspect: base transparency: 0.9;
 		 	species zone aspect: base transparency: 0.9;
 		 	species river aspect: base transparency: 0.5;
@@ -447,7 +447,7 @@ experiment default_expr type: gui {
 		
 		display pedestrian_road_network {
 		 	species road aspect: base transparency: 0.1;
-		 	species destination aspect: base transparency: 0.1;
+		 	species dest aspect: base transparency: 0.1;
 		 	species pedestrian aspect: base transparency: 0.1;
 		}
 		
@@ -479,7 +479,7 @@ experiment default_expr type: gui {
 		monitor step_duration value: duration;
 		monitor simulation_duration value: total_duration;
 		monitor average_step_duration value: average_duration;
-		monitor destinations value: length(destination as list);
+		monitor destinations value: length(dest as list);
 
 		monitor roads_WITH_macro_patch value: (length (list(road) where (each.macro_patch != nil)));
 		monitor roads_WITHOUT_macro_patch value: (length (list(road) where (each.macro_patch = nil)));

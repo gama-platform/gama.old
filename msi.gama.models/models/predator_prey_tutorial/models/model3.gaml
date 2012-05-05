@@ -12,26 +12,26 @@ global {
 		create prey number: nb_preys_init ;
 	}
 }
-entities {
+entities { 
 	species prey {
-		const size type: float <- 2 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- 2 ; 
+		const color type: rgb <- 'blue' ; 
 		const max_energy type: float init: prey_max_energy ;
 		const max_transfert type: float init: prey_max_transfert ;
 		const energy_consum type: float init: prey_energy_consum ;
 		
-		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
+		vegetation_cell myCell <- one_of (vegetation_cell as list) ; 
 		float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
 		
-		init {
+		init { 
 			set location <- myCell.location;
 		}
 		
-		reflex basic_move {
+		reflex basic_move { 
 			set myCell <- one_of (myCell.neighbours) ;
 			set location <- myCell.location ;
 		}
-		reflex eat when: myCell.food > 0 {
+		reflex eat when: myCell.food > 0 { 
 			let energy_transfert type: float <- min([max_transfert, myCell.food]) ;
 			set myCell.food <- myCell.food - energy_transfert ;
 			set energy <- energy + energy_transfert ;

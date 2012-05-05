@@ -3,12 +3,12 @@ model tutorial_gis_city_traffic
 global {
 	file shape_file_buildings <- '../includes/building.shp' parameter: 'Shapefile for the buildings:' category: 'GIS' ;
 	file shape_file_roads <- '../includes/road.shp' parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ;
+	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ; 
 	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
 	int max_work_start <- 60 parameter: 'Latest hour to start work' category: 'People' ;
-	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ;
+	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ; 
 	int max_work_end <- 132 parameter: 'Latest hour to end work' category: 'People' ;
 	float min_speed <- 50 parameter: 'minimal speed' category: 'People' ;
 	float max_speed <- 100 parameter: 'maximal speed' category: 'People' ;
@@ -16,11 +16,11 @@ global {
 	graph the_graph;
 	
 	init {
-		create building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::read ('NATURE')] {       
 			if type='Industrial' {
 				set color <- rgb('blue') ;
-			}
-		}
+			}  
+	  	}
 		create road from: shape_file_roads ;
 		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
 		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
@@ -34,7 +34,7 @@ global {
 			set living_place <- one_of(residential_buildings) ;
 			set working_place <- one_of(industrial_buildings) ;
 			set location <- any_location_in (living_place);  
-		}
+		}  
 	}
 	
 	reflex update_graph{
@@ -45,7 +45,7 @@ global {
 entities {
 	species building {
 		string type; 
-		rgb color <- rgb('gray')  ;
+		rgb color <- rgb('gray')  ; 
 		aspect base {
 			draw shape: geometry color: color ;
 		}
@@ -61,7 +61,7 @@ entities {
 	species people skills: [moving]{
 		rgb color <- rgb('yellow') ;
 		building living_place <- nil ;
-		building working_place <- nil ;
+		building working_place <- nil ; 
 		int start_work ;
 		int end_work  ;
 		string objective ; 

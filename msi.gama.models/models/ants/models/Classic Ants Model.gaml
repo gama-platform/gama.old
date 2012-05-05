@@ -15,16 +15,17 @@ global {
 	const blue type: rgb init: rgb('blue') ;
 	const green type: rgb init: rgb('green') ;
 	const white type: rgb init: rgb('white') ; 
-	const FF00FF type: rgb init: rgb('gray') ;
-	const C00CC00 type: rgb init: rgb('#00CC00') ;
-	const C009900 type: rgb init: rgb('#009900') ;
+	const FF00FF type: rgb init: rgb('gray') ; 
+	const C00CC00 type: rgb init: rgb('#00CC00') ;   
+	const C009900 type: rgb init: rgb('#009900') ; 
 	const C005500 type: rgb init: rgb('#005500') ; 
 	const yellow type: rgb init: rgb('yellow') ; 
-	const red type: rgb init: rgb('red') ;
+	const red type: rgb init: rgb('red') ;  
 	const orange type: rgb init: rgb('orange') ; 
 	var food_gathered type: int init: 0 ;
+
 }
-environment width: gridsize height: gridsize {
+environment width: gridsize height: gridsize {  
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 		const neighbours init: self neighbours_at 1 type: list of: ant_grid ;
 		const multiagent type: bool init: true ;
@@ -42,10 +43,10 @@ environment width: gridsize height: gridsize {
 entities {
 	species ant skills: [moving, visible] control: fsm {
 		var speed type: float init: 2 ;
-		var place type: ant_grid value: ant_grid (location );
+		var place type: ant_grid value: ant_grid (location ); 
 		var im type: string init: 'ant_shape_empty' ;
 		var hasFood type: bool init: false ;
-		var road type: signal value:  hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
+		var road type: signal value:  hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
 		action pick {
 			set im var: im value: ant_shape_full ;
 			set hasFood var: hasFood value: true ;
@@ -69,7 +70,7 @@ entities {
 		state wandering initial: true {
 			do action: wander {
 				arg amplitude type: int value: 120 ;
-			}
+			} 
 			transition to: carryingFood when: place.food > 0 {
 				do action: pick ;
 			}
@@ -84,7 +85,7 @@ entities {
 			}
 		}
 		state followingRoad {
-			set location var: location value: self choose_best_place [] ;
+			set location var: location value: (self choose_best_place []) as point ;
 			transition to: carryingFood when: place.food > 0 {
 				do action: pick ;
 			}

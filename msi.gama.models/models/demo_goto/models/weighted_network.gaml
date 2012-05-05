@@ -1,8 +1,8 @@
 model demo_weighted_graph
 
 global {
-	file shape_file_roads parameter: 'Shapefile for the roads:' category: 'GIS' <- '../includes/gis/simpleRoad.shp' ;
-	file shape_file_bounds parameter: 'Shapefile for the roads:' category: 'GIS' <- '../includes/gis/BoundsSimpleRoad.shp' ;
+	file shape_file_roads parameter: 'Shapefile for the roads:' category: 'GIS' <- file('../includes/gis/simpleRoad.shp') ;
+	file shape_file_bounds parameter: 'Shapefile for the roads:' category: 'GIS' <- file('../includes/gis/BoundsSimpleRoad.shp') ;
 	
 	graph the_graph;
 	
@@ -20,7 +20,7 @@ global {
 		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
 		
 		create people number: 1 {
-			set speed <- 2 ;
+			set speed <- 2 ; 
 			set location <- first(((first (roadsList)).shape).points); 
 			set target <- last(((last (roadsList)).shape).points); 
 		}

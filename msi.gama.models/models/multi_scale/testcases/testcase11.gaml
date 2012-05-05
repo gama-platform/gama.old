@@ -9,7 +9,7 @@
  * 		1. A message is printed in the "Console" view in each step indicating that a B agent is running.
  * 
  * @deprecated "scheduling" variable is nolonger available. 
- */
+ */ 
 model testcase11
 
 global {
@@ -24,7 +24,7 @@ entities {
 	}
 	
 	species B parent: A {
-		reflex {
+		reflex { 
 			do action: write {
 				arg name: message value: 'agent: ' + name + ' with x = ' + (string (x));
 			}

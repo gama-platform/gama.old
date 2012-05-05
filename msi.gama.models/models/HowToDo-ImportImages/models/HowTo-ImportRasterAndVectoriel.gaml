@@ -7,26 +7,26 @@
 model HowToImportRasterAndVectoriel
 
 
-
+ 
 global {
 	// Constants
 	const heightImg type: int init: 5587;
 	const widthImg type: int init: 6201;	
-	const boundsMNT type: file init: "../images/mnt/boundsMNT.shp"; 
+	const boundsMNT type: file init: file("../images/mnt/boundsMNT.shp"); 
 	
 	// Parameters related to the MNT
-	var mntImageRaster type: file init: '../images/mnt/testAG.png' parameter: 'MNT file' category: 'MNT' ;
+	var mntImageRaster type: file init: file('../images/mnt/testAG.png') parameter: 'MNT file' category: 'MNT' ;
 	var factorDiscret type: int init:20 parameter:'Discretization factor' category:'MNT';
 	
 	// Parameters related to the Management units	
-	var ManagementUnitShape type: file init: '../images/ug/UGSelect.shp' parameter: 'Management unit:' category: 'MU' ;
+	var ManagementUnitShape type: file init: file('../images/ug/UGSelect.shp') parameter: 'Management unit:' category: 'MU' ;
 	
 	// Parameters related to the water network
-	var waterShape type: file init: '../images/reseauHydro/reseauEau.shp' parameter: 'Rivers shapefile' category: 'Water';
+	var waterShape type: file init: file('../images/reseauHydro/reseauEau.shp') parameter: 'Rivers shapefile' category: 'Water';
 
 	// Parameters related to izard agents
 	var nbIzard type: int init: 25 parameter: 'Nb of Izards' category: 'Izard';
-	var izardShape type: file init:'../images/icons/izard.gif' parameter: 'Izard Shape' category: 'Izard';
+	var izardShape type: file init:file('../images/icons/izard.gif') parameter: 'Izard Shape' category: 'Izard';
 
 
 	// Local variable
@@ -74,7 +74,7 @@ entities {
 	}	
 	species izard {	
 		init{
-			set location value: one_of(cell as list where (empty(each.agents) and each.color = rgb('green')) ) ;
+			set location value: point(one_of(cell as list where (empty(each.agents) and each.color = rgb('green')) )) ;
 		}		
 		aspect basic{
     		draw shape: square color: rgb('orange') size: 5000;

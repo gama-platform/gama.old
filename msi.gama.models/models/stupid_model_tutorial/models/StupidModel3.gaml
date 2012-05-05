@@ -20,7 +20,7 @@ entities {
         var size type: float init: 1;
         var color type: rgb value: rgb ([255, 255/size, 255/size]);
         var maxConsumption type: float value: 1;
-        var myPlace type: stupid_grid value: location as stupid_grid;
+        var myPlace type: stupid_grid value: location as stupid_grid; 
 
         reflex basic_move {
             let destination type: stupid_grid value: one_of ((myPlace neighbours_at 4) where empty(each.agents));

@@ -28,7 +28,7 @@ entities {
 	species B skills: situated {
 		var shape type: geometry init: (square (20.0)) at_location {50, 50};
 		
-		species C spatial_level: 0 parent: A {
+		species C parent: A {
 			var shape type: geometry init: square (3.0);	
 		}
 		

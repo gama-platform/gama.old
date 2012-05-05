@@ -14,28 +14,28 @@ global {
 	const pedestrian_speed type: float init: 2.0;
 	
 	const corridor_wall_color type: rgb init: rgb ('black');
-	const corridor_wall_width type: int init: environment_size / 2;
+	const corridor_wall_width type: int init: int(environment_size / 2);
 	const corridor_wall_height type: int init: 200;
 	const corridor_wall_0_shape type: geometry init: rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, corridor_wall_height / 2};
 	const corridor_wall_1_shape type: geometry init: rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, environment_size - (corridor_wall_height / 2)};
 	
 	const corridor_color type: rgb init: rgb ('blue');
-	const corridor_width type: int init: environment_size / 2 depends_on: [environment_size];
+	const corridor_width type: int init: int(environment_size / 2) depends_on: [environment_size];
 	const corridor_height type: int init: environment_size depends_on: [environment_size];
 	const corridor_location type: point init: {environment_size / 2, environment_size / 2} depends_on: [environment_size];
 	const corridor_shape type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location) - (corridor_wall_0_shape + corridor_wall_1_shape);
-	const corridor_left_bounds type: int init: (corridor_location.x - (corridor_width / 2)) depends_on: [corridor_location, corridor_width];
-	const corridor_right_bounds type: int init: (corridor_location.x + (corridor_width / 2)) depends_on: [corridor_location, corridor_width];
+	const corridor_left_bounds type: int init: (int(corridor_location.x - (corridor_width / 2))) depends_on: [corridor_location, corridor_width];
+	const corridor_right_bounds type: int init: (int(corridor_location.x + (corridor_width / 2))) depends_on: [corridor_location, corridor_width];
 	
 	const new_pedestrian_rate type: int init: 10;
 	const new_pedestian_generate_frequency type: int init: 1;
-	const new_pedestrian_y_distance type: int init: environment_size / new_pedestrian_rate depends_on: [environment_size, new_pedestrian_rate];
+	const new_pedestrian_y_distance type: int init: int(environment_size / new_pedestrian_rate) depends_on: [environment_size, new_pedestrian_rate];
 	
 	var pedestrians type: list of: pedestrian init: [] value: list (pedestrian);
 	
 	init {
 		create species: corridor number: 1;
-		
+		 
 		create species: corridor_wall number: 2 returns: corridor_walls;
 		set (corridor_walls at 0).shape value: corridor_wall_0_shape;
 		set (corridor_walls at 1).shape value: corridor_wall_1_shape;

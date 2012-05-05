@@ -10,7 +10,7 @@ global {
 	action initialize_people {
 		set number_of_people value: density_of_people * length(all_places);
 		create species: people number: number_of_people {
-			set location value: point(one_of(space));
+			set location value: point(one_of(space)); 
 		} 
 		set all_people value: people as list;
 	}

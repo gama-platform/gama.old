@@ -135,7 +135,7 @@ entities {
 environment width: 100 height: 100 {
 	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
 		float maxFood <- 1.0 ;
-		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
+		float foodProd <- (rnd(1000) / 1000) * 0.01 ; 
 		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
 		rgb color <- [255 * (1 - food), 255, 255 * (1 - food)] update: [255 * (1 - food), 255, 255 * (1 - food)] ;
 		list neighbours of: vegetation_cell <- (self neighbours_at 2) of_species vegetation_cell;
@@ -145,13 +145,13 @@ experiment Classic type: gui {
 	output {
 		display main_display {
 			grid vegetation_cell lines: 'black' ;
-			species prey aspect: base ;
+			species prey aspect: base ; 
 			species predator aspect: base ;
 		}
 		display Population_information refresh_every: 5 {
 			chart name: 'Species evolution' type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} {
-				data number_of_preys value: nb_preys color: rgb('blue') ;
-				data number_of_predator value: nb_predators color: rgb('red') ;
+				data number_of_preys value: nb_preys color: rgb('blue') ; 
+				data number_of_predator value: nb_predators color: rgb('red') ; 
 			}
 			chart name: 'Prey Energy Distribution' type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0, 0.5} {
 				data name:"]0;0.25]" value: (prey as list) count (each.energy <= 0.25) ;
@@ -173,7 +173,7 @@ experiment Classic type: gui {
 	   							    + '; nbPredators: ' + nb_predators           
 	   							    + '; minEnergyPredators: ' + ((predator as list) min_of each.energy)          
 	   							    + '; maxSizePredators: ' + ((predator as list) max_of each.energy) ;
-		monitor number_of_preys value: nb_preys refresh_every: 1 ;
+		monitor number_of_preys value: nb_preys refresh_every: 1 ; 
 		monitor number_of_predators value: nb_predators refresh_every: 1 ;	
 	}
 }

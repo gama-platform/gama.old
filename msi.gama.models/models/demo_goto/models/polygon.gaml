@@ -27,7 +27,7 @@ global {
 		}
 		set the_graph <- as_edge_graph(list(skeleton));
 		create goal number: 1 {
-			set location <- any_location_in (one_of(skeleton as list));
+			set location <- any_location_in (one_of(skeleton as list)); 
 		}
 		create people number: 100 {
 			set target <- one_of (goal as list) ; 

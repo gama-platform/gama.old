@@ -12,7 +12,7 @@ global {
 	var torus_environment type: bool parameter: 'true' init: false;
 	var apply_cohesion type: bool init: true parameter: 'true';
 	var apply_alignment type: bool init: true parameter: 'true';
-	var apply_separation type: bool init: true parameter: 'true'; 
+	var apply_separation type: bool init: true parameter: 'true';  
 	var apply_goal type: bool init: true parameter: 'true';
 	var apply_avoid type: bool init: true parameter: 'true';
 	var apply_wind type: bool init: true parameter: 'true';
@@ -27,7 +27,7 @@ global {
 	var xmax type: int value: width_and_height_of_environment - bounds;
 	var ymax type: int value: width_and_height_of_environment - bounds; 
 	init {
-		create species: boids number: number_of_agents {
+		create species: boids number: number_of_agents { 
 			set location value: {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		}
 		create species: obstacle number: number_of_obstacles {

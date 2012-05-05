@@ -1,9 +1,10 @@
 model ants
 // A simple model with one food depot. 
 global {
-	var evaporation_rate type: float init: 0.1 min: 0.01 max: 1 parameter:
+	int t <- 1;
+	var evaporation_rate type: float init: 0.1 min: 0.01 max: float(1) parameter:
 	'Evaporation Rate:';
-	const diffusion_rate type: float init: 0.5 min: 0 max: 1 parameter:
+	const diffusion_rate type: float init: 0.5 min: 0 max: float(1) parameter:
 	'Diffusion Rate:';
 	const gridsize type: int init: 75; 
 	const ants_number type: int init: 100 min: 1 max: 200 parameter:
@@ -12,7 +13,7 @@ global {
 	) init: 10;
 	const center type: point init: { round ( gridsize / 2 ) , round ( gridsize / 2 ) 
 	};
-	const types type: file init: file ( '../images/environment75x75_scarce.pgm' ); 
+	const types type: file of: int init: file ( '../images/environment75x75_scarce.pgm' ); 
 	init {
 		create species: ant number: ants_number with: [ location :: center ];
 	} 
@@ -21,19 +22,20 @@ global {
 environment width: gridsize height: gridsize {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 		var neighbours init: ( self neighbours_at 1 ) of_species ant_grid type: list
-		of: ant_grid;
-		const type type: int init: types at { grid_x , grid_y };
+		of: ant_grid;  
+		const type type: int init: (types at { grid_x , grid_y });
 		const isNestLocation type: bool init: ( self distance_to center ) < 4;
-		const isFoodLocation type: bool init: type = 2; 
-		var color type: rgb value: [ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,
-		road * 30 , road > 15 ? 255 : food * 50 ];
+		const isFoodLocation type: bool init: type = 2;       
+		var color type: rgb value: rgb([ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,
+		road * 30 , road > 15 ? 255 : food * 50 ]); 
+		
 		var food type: int init: isFoodLocation ? 5 : 0; 
-		const nest type: int init: 300 - ( self distance_to center );
+		const nest type: int init: int(300 - ( self distance_to center ));
 	}
 }  
 entities {
-	species ant skills: [ moving ] {
-		var color type: rgb init: 'red';
+	species ant skills: [ moving ] {     
+		var color type: rgb init: rgb('red');
 		var place type: ant_grid value: ant_grid ( location );
 		var hasFood type: bool init: false;
 		var road type: signal value: hasFood ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid; 

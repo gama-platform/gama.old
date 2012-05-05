@@ -16,7 +16,7 @@ entities {
 			draw shape: circle size: size color: color ;
 		}
 	}
-}
+} 
 environment width: 100 height: 100 ;
 output {
 	display main_display {

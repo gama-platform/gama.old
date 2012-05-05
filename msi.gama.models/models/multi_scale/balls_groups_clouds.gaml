@@ -2,27 +2,27 @@ model balls_groups_clouds
 
 global { 
 	const environment_bounds type: point init: {500, 500}; 
-	const inner_bounds_x type: int init: ((environment_bounds.x) / 20) depends_on: environment_bounds ;
-	const inner_bounds_y type: int init: ((environment_bounds.y) / 20) depends_on: environment_bounds ;
+	const inner_bounds_x type: int init: (int((environment_bounds.x) / 20))  ;
+	const inner_bounds_y type: int init: (int((environment_bounds.y) / 20))  ;
 	var xmin type: int init: inner_bounds_x ;
-	var ymin type: int init: inner_bounds_y ; 
-	var xmax type: int init: (environment_bounds.x) - inner_bounds_x ;
-	var ymax type: int init: (environment_bounds.y) - inner_bounds_y ;
-	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y depends_on: environment_bounds ;
+	var ymin type: int init: inner_bounds_y ;       
+	var xmax type: int init: int((environment_bounds.x) - inner_bounds_x) ;
+	var ymax type: int init: int((environment_bounds.y) - inner_bounds_y) ;
+	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y  ;
 	var ball_color type: rgb init: rgb('green'); 
 	var chaos_ball_color type: rgb init: rgb('red');
-	var ball_size type: float init: 3;  
-	var ball_speed type: float init: 1;
+	var ball_size type: float init: float(3);  
+	var ball_speed type: float init: float(1);
 	var chaos_ball_speed type: float init: 8 * ball_speed;  
 	var ball_number type: int init: 200 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
 	var ball_separation type: float init: 6 * ball_size; 
 	var create_group type: bool init: true; 
 	var create_cloud type: bool init: true; 
-	var group_creation_distance type: int init: ball_separation + 1;
+	var group_creation_distance type: int init: int(ball_separation + 1);
 	var min_group_member type: int init: 3;
-	var group_base_speed type: int init: (ball_speed * 1.5);
-	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1 depends_on: environment_bounds;  
+	var group_base_speed type: int init: (int(ball_speed * 1.5));
+	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1 ;  
 	var creation_frequency type: int init: 3;
 	var update_frequency type: int init: 3;
 	var merge_frequency type: int init: 3;
@@ -31,7 +31,7 @@ global {
 	int cloud_creation_distance <- 30 const: true;
 	int min_cloud_member <- 3 const: true;
 	int cloud_speed <- 3 const: true;
-	int cloud_perception_range <- base_perception_range const: true depends_on: base_perception_range;
+	int cloud_perception_range <- base_perception_range const: true ; 
 	
 	init {
 		create ball number: ball_number ;
@@ -64,7 +64,7 @@ global {
 			}
 
 			loop gd over: (newCloud.members) {
-				ask gd as: group_delegation {
+				ask gd as group_delegation {
 					migrate ball_in_group target: ball_in_cloud;
 				}
 			}
@@ -172,8 +172,8 @@ entities {
 		
 		var shape type: geometry init: (polygon ( (list (ball_in_group)) )) buffer  10 ;
 		
-		var speed type: float value: group_base_speed ;
-		var perception_range type: float value: base_perception_range + (rnd(5)) ;
+		var speed type: float value: float(group_base_speed) ;
+		var perception_range type: float value: float(base_perception_range + (rnd(5))) ;
 		var nearest_free_ball type: ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		var nearest_smaller_group type: group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
 		var target type: base value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
@@ -247,7 +247,7 @@ entities {
 						let released_balls type: list of: ball value: [];
 						ask target {
 							release target_coms as: ball in: world returns: released_coms;
-							set released_balls value: released_coms;
+							set released_balls value: list(released_coms);
 							do die ;
 						}
 						capture released_balls as: ball_in_group; 
@@ -317,9 +317,9 @@ entities {
 	species cloud parent: base {
 		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
 		rgb color;
-		int creation_time init: time const: true;
+		int creation_time init: int(time) const: true;
 				
-		species group_delegation parent: group topology: (world.shape) {
+		species group_delegation parent: group topology: (topology(world.shape)) {
 			var shape type: geometry value: (polygon ( (list (ball_in_cloud)) collect (each.location) )) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
@@ -424,7 +424,7 @@ entities {
 		}
 	}
 	
-	species text_viewer skills: situated {
+	species text_viewer  { 
 		aspect default {
 			draw text: 'Number of groups : ' + (string (length (group as list))) at: {location.x - 100, location.y} color: rgb('blue') size: 20 ;
 		}
