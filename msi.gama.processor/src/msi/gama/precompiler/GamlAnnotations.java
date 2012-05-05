@@ -52,6 +52,9 @@ public final class GamlAnnotations {
 		 * first following the keyword of the statement).
 		 */
 		String omissible();
+
+		// gamlDoc doc() default essai;
+
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -80,6 +83,8 @@ public final class GamlAnnotations {
 		 * @return the values that can be taken by this facet.
 		 */
 		String[] values() default {};
+
+		// gamlDoc doc();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -491,7 +496,6 @@ public final class GamlAnnotations {
 		String[] value();
 	}
 
-	
 	@Retention(RetentionPolicy.RUNTIME)
 	// @Target(ElementType.TYPE)
 	@Inherited
@@ -503,10 +507,15 @@ public final class GamlAnnotations {
 		 * @return a String representing the description of the element in Gaml
 		 */
 		String result() default "";
+
 		String comment() default "";
+
 		String[] specialCases() default {};
+
 		String[] examples() default {};
+
 		String[] seeAlso() default {};
+
 
 	}
 }
