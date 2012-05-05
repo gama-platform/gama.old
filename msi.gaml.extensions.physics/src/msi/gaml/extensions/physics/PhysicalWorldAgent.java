@@ -178,6 +178,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 		float density = ((Double) ia.getAttribute("density")).floatValue();
 		GamaPoint velocity = ((GamaPoint) ia.getAttribute("velocity"));
 
+
 		BodyDef bd = new BodyDef();
 		bd.position.set((float) ia.getLocation().getX(), (float) ia
 				.getLocation().getY());
@@ -229,6 +230,11 @@ public class PhysicalWorldAgent extends GamlAgent {
 			Vec2 vel=new Vec2();
 			vel.set((float)velocity.getX(),(float)velocity.getY());
 			body.setLinearVelocity(vel);
+			GamaPoint motor = ((GamaPoint) ia.getAttribute("motor"));
+			Vec2 force=new Vec2();
+			Vec2  pos=body.getPosition();
+			force.set((float)motor.getX(),(float)motor.getY());
+			body.applyForce(force, pos);
 		}
 
 		

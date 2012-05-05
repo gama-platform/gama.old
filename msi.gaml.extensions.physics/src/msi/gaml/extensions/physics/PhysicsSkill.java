@@ -28,7 +28,8 @@ import msi.gaml.types.IType;
 
 @vars({@var(name = "physical_world", type = IType.AGENT_STR),
 	@var(name = "density", type = IType.FLOAT_STR, init="1.0"),
-	@var(name = "velocity", type = IType.POINT_STR, init="{1.0, 1.0}")
+	@var(name = "velocity", type = IType.POINT_STR, init="{0.0, 0.0}"),
+	@var(name = "motor", type = IType.POINT_STR, init="{0.0, 0.0}")
 	})
 @skill("physical")
 public class PhysicsSkill extends Skill{
