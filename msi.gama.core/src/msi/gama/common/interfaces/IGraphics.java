@@ -168,16 +168,6 @@ public interface IGraphics {
 	public abstract Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 		final boolean fill, final Integer angle);
 
-	/**
-	 * Method drawShape.
-	 * @param c Color
-	 * @param s Shape
-	 * @param fill boolean
-	 * @param angle Integer
-	 */
-	public abstract Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
-		final Integer angle);
-
 	public abstract void setDrawingOffset(final int x, final int y);
 
 	public abstract Rectangle2D drawChart(JFreeChart chart);
@@ -201,5 +191,12 @@ public interface IGraphics {
 	 * @return
 	 */
 	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth);
+	
+	/**
+	 * Draw grid as line 
+	 * @param image
+	 * @param lineColor
+	 */
+	public void drawGrid(BufferedImage image, Color lineColor,Point point);
 
 }
