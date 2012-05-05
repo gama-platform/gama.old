@@ -95,13 +95,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	/////OpenGL member///////
 	FPSAnimator animator;
-	public boolean opengl = true;
+
 	// Event Listener
 	public MyListener myListener;
 
 
 	// Camera
 	public Camera camera;
+	
+	public boolean ThreeD = false;
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
@@ -116,9 +118,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		System.out.println("env_width:" + env_width + "env_height" + env_height);
 
 		GLCanvas canvas = new GLCanvas();
-		//canvas.addGLEventListener(this);
-		//canvas.addGLEventListener(new GLRenderer(new CameraArcBall(canvas)));
-		
 		myListener = new MyListener(camera);
 		canvas.addGLEventListener(new JOGLAWTGLRenderer(this));
 		canvas.addKeyListener(myListener);
@@ -569,7 +568,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 	@Override
 	public void zoomIn() {
 
-		if (opengl) {
 			// For 3D camera
 			// this.cameraZPosition += 0.1;
 			// this.cameraLZPosition += 0.1;
@@ -578,20 +576,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 			camera.setzPos(camera.getzPos() - 0.5);
 			camera.setzLPos(camera.getzLPos() - 0.5);
-
-		} else {
-			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
-					/ 2);
-			setZoom(1.0 + zoomIncrement, mousePosition);
-		}
-
 	}
 
 	@Override
 	public void zoomOut() {
-
-		if (opengl) {
-
 			// For 3D camera
 			// this.cameraZPosition -= 0.1;
 			// this.cameraLZPosition -= 0.1;
@@ -600,14 +588,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 			camera.setzPos(camera.getzPos() + 0.5);
 			camera.setzLPos(camera.getzLPos() + 0.5);
-
-		} else {
-			mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight
-					/ 2);
-			;
-			setZoom(1.0 - zoomIncrement, mousePosition);
-		}
-
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -636,8 +616,14 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 
 	@Override
 	public void zoomFit() {			
-		//	camera.Initialize3DCamera(envWidth,envHeight);
+		
+		if(ThreeD){
+			camera.Initialize3DCamera(envWidth,envHeight);
+		}
+		else{
 			camera.InitializeCamera(envWidth,envHeight);
+		}
+			
 	}
 
 	@Override

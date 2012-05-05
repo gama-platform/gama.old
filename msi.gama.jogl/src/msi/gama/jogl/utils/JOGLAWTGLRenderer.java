@@ -17,6 +17,7 @@ import static javax.media.opengl.GL.GL_NEAREST;
 import static javax.media.opengl.GL.GL_NICEST;
 import static javax.media.opengl.GL.GL_ONE;
 import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
+import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_POSITION;
 import static javax.media.opengl.GL.GL_QUADS;
 import static javax.media.opengl.GL.GL_REPEAT;
@@ -69,7 +70,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	float textureTop, textureBottom, textureLeft, textureRight;
 
 	//
-	private JOGLAWTDisplaySurface displaySurface;
+	public	 JOGLAWTDisplaySurface displaySurface;
+	
+	 static float anglePyramid = 0; // rotational angle in degree for pyramid
+	   static float angleCube = 0; // rotational angle in degree for cube
+	   static float speedPyramid = 2.0f; // rotational speed for pyramid
+	   static float speedCube = -1.5f; // rotational speed for cube
 	
 	
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
@@ -115,15 +121,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
-	    //((JOGLAWTDisplayGraphics)
-		//displaySurface.openGLGraphics).DrawEnvironmentBounds();
-	    //((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawScale();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-				.DrawMyGeometries();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-				.DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim / 10);
-		this.DrawZValue();
+
+		 //this.DrawColorTriangle(0, 0, 0, width);
+		 //this.DrawMovingCube(width);
+		this.DrawModel();
+
+			//this.DrawZValue();
+			//this.Draw2DShape();
+			//this.Draw3DynamicShape(100);
 
 	}
 
@@ -154,7 +159,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 		// Set background color (in RGBA). Alpha of 0 for total transparency
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		//gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
@@ -199,6 +204,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+		gl.glDisable(GL.GL_LINE_SMOOTH); 
 	
 		System.out.println("openGL init ok");
 
@@ -286,7 +292,236 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void InitTexture(BufferedImage image) {
 
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
+		
+		//need to have an opengl context valide.
+		this.context.makeCurrent();
+		
 		Texture curTexture = TextureIO.newTexture(image, false);
 		this.myTextures.add(curTexture);
+		System.out.println(this.myTextures.size());
+	}
+	
+	public void Draw2DShape(){
+		// gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+
+	      // ----- Render a triangle -----
+	      gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the screen
+	      gl.glBegin(GL_TRIANGLES); // draw using triangles
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, 1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(1.0f, -1.0f, 0.0f);
+	      gl.glEnd();
+
+	      // ----- Render a Quad -----
+	      // Translate right, relative to the previous translation
+	      gl.glTranslatef(3.0f, 0.0f, 0.0f);
+	      gl.glColor3f(0.5f, 0.5f, 1.0f); // Light-blue
+	      gl.glBegin(GL_QUADS); // draw using quads
+	      gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+	      gl.glVertex3f(1.0f, 1.0f, 0.0f);
+	      gl.glVertex3f(1.0f, -1.0f, 0.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+	      gl.glEnd();
+	
+	}
+	
+	public void Draw3DynamicShape(float size){
+	//System.out.println("ca zaaaaaaaaaa");	
+		float anglePyramid = 0; // rotational angle in degree for pyramid
+		float angleCube = 0; // rotational angle in degree for cube
+	    float speedPyramid = 2.0f; // rotational speed for pyramid
+		float speedCube = -1.5f; // rotational speed for cube
+		//gl.glLoadIdentity();  // reset the model-view matrix
+	      gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the screen
+	      gl.glRotatef(anglePyramid, 0.1f, 1.0f, -0.1f); // rotate about the y-axis
+
+	      gl.glTranslatef(-1.5f, 0.0f, -6.0f); // translate left and into the screen
+	      gl.glRotatef(anglePyramid, 0.1f, 1.0f, -0.1f); // rotate about the y-axis
+
+	      gl.glBegin(GL_TRIANGLES); // of the pyramid
+
+	      // Font-face triangle
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, 1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(1.0f, -1.0f, 1.0f);
+
+	      // Right-face triangle
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, 1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(1.0f, -1.0f, -1.0f);
+
+	      // Back-face triangle
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, 1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+
+	      // Left-face triangle
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, 1.0f, 0.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+
+	      gl.glEnd(); // of the pyramid
+
+	      // ----- Render the Color Cube -----
+	      gl.glLoadIdentity(); // reset the current model-view matrix
+	      gl.glTranslatef(1.5f, 0.0f, -7.0f); // translate right and into the screen
+	      gl.glRotatef(angleCube, 1.0f, 1.0f, 1.0f); // rotate about the x, y and z-axes
+
+	      gl.glBegin(GL_QUADS); // of the color cube
+
+	      // Top-face
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // green
+	      gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glVertex3f(1.0f, 1.0f, 1.0f);
+
+	      // Bottom-face
+	      gl.glColor3f(1.0f, 0.5f, 0.0f); // orange
+	      gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	      gl.glVertex3f(1.0f, -1.0f, -1.0f);
+
+	      // Front-face
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // red
+	      gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	      gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+	      gl.glVertex3f(1.0f, -1.0f, 1.0f);
+
+	      // Back-face
+	      gl.glColor3f(1.0f, 1.0f, 0.0f); // yellow
+	      gl.glVertex3f(1.0f, -1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glVertex3f(1.0f, 1.0f, -1.0f);
+
+	      // Left-face
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // blue
+	      gl.glVertex3f(-1.0f, 1.0f, 1.0f);
+	      gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+	      gl.glVertex3f(-1.0f, -1.0f, 1.0f);
+
+	      // Right-face
+	      gl.glColor3f(1.0f, 0.0f, 1.0f); // violet
+	      gl.glVertex3f(1.0f, 1.0f, -1.0f);
+	      gl.glVertex3f(1.0f, 1.0f, 1.0f);
+	      gl.glVertex3f(1.0f, -1.0f, 1.0f);
+	      gl.glVertex3f(1.0f, -1.0f, -1.0f);
+
+	      gl.glEnd(); // of the color cube
+
+	      // Update the rotational angle after each refresh.
+	      anglePyramid += speedPyramid;
+	      angleCube += speedCube;
+	}
+	
+	public void DrawModel(){
+	    ((JOGLAWTDisplayGraphics)
+		displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+				.DrawMyGeometries();
+        ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+                .DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim / 10);
+	}
+	
+	public void DrawOpenGLHelloWorldShape(float width, float height){
+		float red = (float) (Math.random()) * 1;
+		float green = (float) (Math.random()) * 1;
+		float blue = (float) (Math.random()) * 1;
+
+		// gl.glColor3f(red, green, blue);
+		gl.glColor3f(0.0f, 1.0f, 1.0f);
+		// ----- Render a quad -----
+
+		gl.glBegin(GL_POLYGON); // draw using quads
+		gl.glVertex3f(-width / 2, height / 2, -10.0f);
+		gl.glVertex3f(width / 2, height / 2, -10.0f);
+		gl.glVertex3f(width / 2, -height / 2, -10.f);
+		gl.glVertex3f(-width / 2, -height / 2, -10.0f);
+		gl.glEnd();
+	}
+	
+	public void DrawColorTriangle(float x,float y,float z,float size){
+	      // ----- Render a triangle -----
+	      gl.glTranslatef(x, y, z); // translate left and into the screen
+	      gl.glBegin(GL_TRIANGLES); // draw using triangles
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+	      gl.glVertex3f(0.0f, size, 0.0f);
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+	      gl.glVertex3f(-size, -size, 0.0f);
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+	      gl.glVertex3f(size, -size, 0.0f);
+	      gl.glEnd();
+	}
+	
+	public void DrawMovingCube(float width){
+		gl.glBegin(GL_QUADS); // of the color cube
+
+	      // Top-face
+	      gl.glColor3f(0.0f, 1.0f, 0.0f); // green
+	      gl.glVertex3f(width, width, -width);
+	      gl.glVertex3f(-width, width, -width);
+	      gl.glVertex3f(-width, width, width);
+	      gl.glVertex3f(width, width, width);
+
+	      // Bottom-face
+	      gl.glColor3f(1.0f, 0.5f, 0.0f); // orange
+	      gl.glVertex3f(width, -width, width);
+	      gl.glVertex3f(-width, -width, width);
+	      gl.glVertex3f(-width, -width, -width);
+	      gl.glVertex3f(width, -width, -width);
+
+	      // Front-face
+	      gl.glColor3f(1.0f, 0.0f, 0.0f); // red
+	      gl.glVertex3f(width, width, width);
+	      gl.glVertex3f(-width, width, width);
+	      gl.glVertex3f(-width, -width, width);
+	      gl.glVertex3f(width, -width, width);
+
+	      // Back-face
+	      gl.glColor3f(1.0f, 1.0f, 0.0f); // yellow
+	      gl.glVertex3f(width, -width, -width);
+	      gl.glVertex3f(-width, -width, -width);
+	      gl.glVertex3f(-width, width, -width);
+	      gl.glVertex3f(width, width, -width);
+
+	      // Left-face
+	      gl.glColor3f(0.0f, 0.0f, 1.0f); // blue
+	      gl.glVertex3f(-width, width, width);
+	      gl.glVertex3f(-width, width, -width);
+	      gl.glVertex3f(-width, -width, -width);
+	      gl.glVertex3f(-width, -width, width);
+
+	      // Right-face
+	      gl.glColor3f(1.0f, 0.0f, 1.0f); // violet
+	      gl.glVertex3f(width, width, -width);
+	      gl.glVertex3f(width, width, width);
+	      gl.glVertex3f(width, -width, width);
+	      gl.glVertex3f(width, -width, -width);
+
+	      gl.glEnd(); // of the color cube
+
+	      // Update the rotational angle after each refresh.
+	      anglePyramid += speedPyramid;
+	      angleCube += speedCube;
 	}
 }

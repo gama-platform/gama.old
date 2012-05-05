@@ -52,7 +52,7 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		//myCamera.PrintParam();
+		myCamera.PrintParam();
 		System.out.println("x:" + arg0.getX() +" y:" +arg0.getY());
 	}
 
