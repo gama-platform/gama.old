@@ -177,8 +177,8 @@ public class GamlProperties {
 	}
 
 	public static GamlProperties loadFrom(final String title) {
-		if ( globalRegistry.containsKey(title) ) { return globalRegistry.get(title); }
-		return new GamlProperties();
+		GamlProperties result = globalRegistry.get(title);
+		return result == null ? new GamlProperties() : result;
 	}
 
 	public static GamlProperties loadFrom(final InputStream stream, final String plugin,
