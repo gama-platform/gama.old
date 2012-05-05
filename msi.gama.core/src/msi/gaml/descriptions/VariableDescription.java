@@ -34,7 +34,7 @@ import msi.gaml.types.*;
 public class VariableDescription extends SymbolDescription {
 
 	private Set<VariableDescription> dependencies;
-	private boolean isBuiltIn;
+
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
 	private IType contentType = null;
@@ -44,7 +44,6 @@ public class VariableDescription extends SymbolDescription {
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
-		isBuiltIn = source.isSynthetic();
 		if ( !facets.containsKey(IKeyword.TYPE) &&
 			!facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER) ) {
 			facets.putAsLabel(IKeyword.TYPE, keyword);
@@ -53,6 +52,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
+		if ( builtIn ) { return; }
 		if ( dependencies != null ) {
 			dependencies.clear();
 		}
@@ -67,9 +67,12 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void copyFrom(final VariableDescription v2) {
-		isBuiltIn = v2.isBuiltIn;
+		builtIn = v2.builtIn;
 		// Without replacing
 		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
+			if ( entry == null ) {
+				continue;
+			}
 			if ( !facets.containsKey(entry.getKey()) ) {
 				facets.put(entry.getKey(), entry.getValue());
 			}
@@ -80,12 +83,12 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription copy() {
 		VariableDescription v2 =
 			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(), meta);
-		v2.isBuiltIn = isBuiltIn;
+		v2.builtIn = builtIn;
 		return v2;
 	}
 
 	public boolean isBuiltIn() {
-		return isBuiltIn;
+		return builtIn;
 	}
 
 	@Override
@@ -111,9 +114,6 @@ public class VariableDescription extends SymbolDescription {
 				dependencies.remove(this);
 			}
 		}
-		// if ( this.getName().equals(IKeyword.SHAPE) ) {
-		// GuiUtils.debug("Dependencies of " + this.getName() + " : " + dependencies);
-		// }
 		return dependencies;
 	}
 

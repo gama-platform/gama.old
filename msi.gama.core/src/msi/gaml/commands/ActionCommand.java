@@ -20,15 +20,14 @@ package msi.gaml.commands;
 
 import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.Map;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -43,15 +42,14 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true), 
-	@facet(name = IKeyword.PERTINENCE, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
+	@facet(name = IKeyword.PERTINENCE, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_sequence
 @with_args
 public class ActionCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments actualArgs = new Arguments();
 	Arguments formalArgs;
-
 
 	/**
 	 * The Constructor.
@@ -83,9 +81,11 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 	public void setRuntimeArgs(final Arguments args) {
 		actualArgs.clear();
 		for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
-			String arg = entry.getKey();
-			IExpressionDescription expr = entry.getValue();
-			actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
+			if ( entry != null ) {
+				String arg = entry.getKey();
+				IExpressionDescription expr = entry.getValue();
+				actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
+			}
 		}
 	}
 

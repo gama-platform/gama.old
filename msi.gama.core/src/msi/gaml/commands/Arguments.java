@@ -18,7 +18,6 @@
  */
 package msi.gaml.commands;
 
-import java.util.Map;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -30,7 +29,10 @@ import msi.gaml.expressions.IExpression;
 public class Arguments extends Facets {
 
 	public void stack(final IScope scope) throws GamaRuntimeException {
-		for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
+		for ( Facet entry : entrySet() ) {
+			if ( entry == null ) {
+				continue;
+			}
 			IExpressionDescription o = entry.getValue();
 			IExpression e = o.getExpression();
 			if ( e != null ) {

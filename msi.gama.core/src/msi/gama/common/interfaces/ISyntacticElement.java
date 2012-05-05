@@ -76,6 +76,10 @@ public interface ISyntacticElement {
 	 */
 	void setDescription(IDescription symbolDescription);
 
+	void removeDescription(IDescription symbolDescription);
+
+	void dispose();
+
 	/**
 	 * @param name
 	 * @param name2

@@ -35,6 +35,9 @@ public class DescriptionValidator {
 		ModelDescription md = desc.getModelDescription();
 		TypesManager tm = md.getTypesManager();
 		for ( Map.Entry<String, IExpressionDescription> entry : desc.getFacets().entrySet() ) {
+			if ( entry == null ) {
+				continue;
+			}
 			String facetName = entry.getKey();
 			IExpressionDescription ed = entry.getValue();
 			if ( ed == null ) {

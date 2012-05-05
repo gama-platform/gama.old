@@ -39,6 +39,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.*;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
@@ -373,8 +374,11 @@ public class SymbolFactory implements ISymbolFactory {
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
-		for ( String s : rawFacets.keySet() ) {
-			compileFacet(s, desc);
+		for ( Facet f : rawFacets.entrySet() ) {
+			if ( f == null ) {
+				continue;
+			}
+			compileFacet(f.getKey(), desc);
 		}
 		verifyFacetsType(desc);
 		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
@@ -407,8 +411,10 @@ public class SymbolFactory implements ISymbolFactory {
 		Facets rawFacets = desc.getFacets();
 		// Addition of a facet to keep track of the keyword
 		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
-		for ( String s : rawFacets.keySet() ) {
-			compileFacet(s, desc);
+		for ( Facet f : rawFacets.entrySet() ) {
+			if ( f != null ) {
+				compileFacet(f.getKey(), desc);
+			}
 		}
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }

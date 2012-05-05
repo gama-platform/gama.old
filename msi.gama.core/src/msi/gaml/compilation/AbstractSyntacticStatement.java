@@ -6,7 +6,8 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gaml.commands.Facets;
+import msi.gaml.commands.*;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.descriptions.*;
 
 /**
@@ -31,8 +32,21 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	public void setDescription(final IDescription description) {}
 
 	@Override
+	public void removeDescription(final IDescription description) {}
+
+	@Override
 	public void setKeyword(final String name) {
 		keyword = name;
+	}
+
+	@Override
+	public void dispose() {
+		parent = null;
+		if ( children != null ) {
+			children.clear();
+			children = null;
+		}
+		facets = null;
 	}
 
 	public void dump() {
@@ -43,8 +57,8 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 
 	private void dump(final StringBuilder sb) {
 		sb.append(keyword).append(" ");
-		for ( String key : facets.keySet() ) {
-			sb.append(key).append(": ").append(facets.get(key)).append(" ");
+		for ( Facet f : facets.entrySet() ) {
+			sb.append(f.getKey()).append(": ").append(f.getValue()).append(" ");
 		}
 		sb.append("\n");
 		if ( !getChildren().isEmpty() ) {

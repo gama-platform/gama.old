@@ -23,6 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.commands.*;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
@@ -54,6 +55,7 @@ public class CommandDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
+		if ( builtIn ) { return; }
 		if ( temps != null ) {
 			temps.clear();
 		}
@@ -90,6 +92,9 @@ public class CommandDescription extends SymbolDescription {
 	private void exploreArgs() {
 		if ( !getKeyword().equals(IKeyword.DO) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
+			if ( entry == null ) {
+				continue;
+			}
 			String facet = entry.getKey();
 			if ( !doFacets.contains(facet) ) {
 				Facets f = new Facets(IKeyword.NAME, facet);
@@ -165,7 +170,7 @@ public class CommandDescription extends SymbolDescription {
 		return null;
 	}
 
-	public void verifyArgs(final IDescription caller, final Set<String> names) {
+	public void verifyArgs(final IDescription caller, final Arguments names) {
 		if ( args == null ) { return; }
 		List<String> mandatoryArgs = new ArrayList();
 		Set<String> allArgs = args.keySet();
@@ -177,17 +182,17 @@ public class CommandDescription extends SymbolDescription {
 		}
 		if ( !getKeyword().equals(IKeyword.PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
-				if ( !names.contains(arg) ) {
+				if ( !names.containsKey(arg) ) {
 					caller.flagError("Missing argument " + arg + " in call to " + getName() +
 						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT, null,
 						new String[] { arg });
 				}
 			}
 		}
-		for ( String arg : names ) {
-			if ( !allArgs.contains(arg) ) {
+		for ( Facet arg : names.entrySet() ) {
+			if ( !allArgs.contains(arg.getKey()) ) {
 				caller.flagError("Unknown argument" + arg + " in call to " + getName(),
-					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg });
+					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg.getKey() });
 			}
 		}
 	}
@@ -203,7 +208,7 @@ public class CommandDescription extends SymbolDescription {
 			flagError("Unknown action " + actionName, IKeyword.ACTION);
 			return;
 		}
-		executer.verifyArgs(this, args.keySet());
+		executer.verifyArgs(this, args);
 	}
 
 	public Collection<IDescription> getArgs() {

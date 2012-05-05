@@ -30,20 +30,111 @@ import msi.gaml.expressions.IExpression;
  * retrieved.
  * 
  */
-public class Facets extends HashMap<String, IExpressionDescription> {
+public class Facets {
 
-	public Facets() {
-		super(4);
+	public static class Facet implements Map.Entry<String, IExpressionDescription> {
+
+		Facet(final String s, final IExpressionDescription e) {
+			key = s;
+			value = e;
+		}
+
+		@Override
+		public String toString() {
+			return key + "::" + value;
+		}
+
+		String key;
+		IExpressionDescription value;
+
+		@Override
+		public String getKey() {
+			return key;
+		}
+
+		@Override
+		public IExpressionDescription getValue() {
+			return value;
+		}
+
+		@Override
+		public IExpressionDescription setValue(final IExpressionDescription value) {
+			IExpressionDescription old = this.value;
+			this.value = value;
+			return old;
+		}
 	}
 
+	Facet[] facets = new Facet[0];
+
+	public Facets() {}
+
 	public Facets(final String ... strings) {
+		facets = new Facet[strings.length / 2];
 		int index = 0;
 		if ( !(strings.length % 2 == 0) ) {
 			index = 1;
 		}
+		int i = 0;
 		for ( ; index < strings.length; index += 2 ) {
-			put(strings[index], strings[index + 1]);
+			Facet f =
+				new Facet(strings[index], new StringBasedExpressionDescription(strings[index + 1]));
+			facets[i++] = f;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(facets);
+	}
+
+	public boolean containsKey(final String key) {
+		return indexOf(key) != -1;
+	}
+
+	public Facet[] entrySet() {
+		return facets;
+	}
+
+	public Set<String> keySet() {
+		Set<String> result = new HashSet();
+		for ( int i = 0; i < facets.length; i++ ) {
+			if ( facets[i] != null ) {
+				result.add(facets[i].key);
+			}
+		}
+		return result;
+	}
+
+	public void putAll(final Facets newFacets) {
+		for ( Facet f : newFacets.entrySet() ) {
+			if ( f != null ) {
+				put(f.key, f.value);
+			}
+		}
+	}
+
+	public IExpressionDescription remove(final String key) {
+		int i = indexOf(key);
+		if ( i == -1 ) { return null; }
+		IExpressionDescription expr = facets[i].value;
+		facets[i] = null;
+		return expr;
+	}
+
+	public IExpressionDescription get(final String key) {
+		if ( key == null ) { return null; }
+		for ( int i = 0; i < facets.length; i++ ) {
+			Facet f = facets[i];
+			if ( f != null && f.key.equals(key) ) { return f.value; }
+		}
+		return null;
+	}
+
+	public IExpressionDescription get(final Object key) {
+		if ( key instanceof String ) { return get((String) key); }
+		return null;
+
 	}
 
 	public String getLabel(final String key) {
@@ -79,16 +170,30 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 		return put(key, new BasicExpressionDescription(expr));
 	}
 
-	@Override
 	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		IExpressionDescription previous = get(key);
-		super.put(key, expr);
-		if ( previous != null ) {
+		int i = indexOf(key);
+		if ( i > -1 ) {
+			IExpressionDescription previous = facets[i].value;
+			facets[i].value = expr;
 			if ( previous.getTarget() != null && expr.getTarget() == null ) {
 				expr.setTarget(previous.getTarget());
 			}
+		} else {
+			Facet f = new Facet(key, expr);
+			Facet[] ff = new Facet[facets.length + 1];
+			System.arraycopy(facets, 0, ff, 0, facets.length);
+			facets = ff;
+			facets[facets.length - 1] = f;
 		}
 		return expr;
+	}
+
+	private int indexOf(final String key) {
+		if ( key == null ) { return -1; }
+		for ( int i = 0; i < facets.length; i++ ) {
+			if ( facets[i] != null && facets[i].key.equals(key) ) { return i; }
+		}
+		return -1;
 	}
 
 	public boolean equals(final String key, final String o) {
@@ -97,10 +202,16 @@ public class Facets extends HashMap<String, IExpressionDescription> {
 	}
 
 	public void dispose() {
-		for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
-			entry.getValue().dispose();
+		for ( int i = 0; i < facets.length; i++ ) {
+			if ( facets[i] != null ) {
+				facets[i].value.dispose();
+			}
 		}
 		clear();
+	}
+
+	public void clear() {
+		facets = new Facet[0];
 	}
 
 }

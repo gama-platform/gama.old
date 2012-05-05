@@ -18,6 +18,7 @@
  */
 package msi.gaml.commands;
 
+import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -29,24 +30,13 @@ import msi.gaml.expressions.IExpression;
  * retrieved.
  * 
  */
-public class FacetsArray {
+public class Facets2 extends HashMap<String, IExpressionDescription> {
 
-	public static class Facet {
-
-		Facet(final String s, final IExpressionDescription e) {
-			key = s;
-			value = e;
-		}
-
-		String key;
-		IExpressionDescription value;
+	public Facets2() {
+		super(4);
 	}
 
-	Facet[] facets;
-
-	public FacetsArray() {}
-
-	public FacetsArray(final String ... strings) {
+	public Facets2(final String ... strings) {
 		int index = 0;
 		if ( !(strings.length % 2 == 0) ) {
 			index = 1;
@@ -54,14 +44,6 @@ public class FacetsArray {
 		for ( ; index < strings.length; index += 2 ) {
 			put(strings[index], strings[index + 1]);
 		}
-	}
-
-	public IExpressionDescription get(final String key) {
-		if ( key == null ) { return null; }
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null && facets[i].key.equals(key) ) { return facets[i].value; }
-		}
-		return null;
 	}
 
 	public String getLabel(final String key) {
@@ -97,30 +79,16 @@ public class FacetsArray {
 		return put(key, new BasicExpressionDescription(expr));
 	}
 
+	@Override
 	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		int i = indexOf(key);
-		if ( i > -1 ) {
-			IExpressionDescription previous = facets[i].value;
-			facets[i].value = expr;
+		IExpressionDescription previous = get(key);
+		super.put(key, expr);
+		if ( previous != null ) {
 			if ( previous.getTarget() != null && expr.getTarget() == null ) {
 				expr.setTarget(previous.getTarget());
 			}
-		} else {
-			Facet f = new Facet(key, expr);
-			Facet[] ff = new Facet[facets.length + 1];
-			System.arraycopy(facets, 0, ff, 0, facets.length);
-			facets = ff;
-			facets[facets.length - 1] = f;
 		}
 		return expr;
-	}
-
-	private int indexOf(final String key) {
-		if ( key == null ) { return -1; }
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null && facets[i].key.equals(key) ) { return i; }
-		}
-		return -1;
 	}
 
 	public boolean equals(final String key, final String o) {
@@ -129,16 +97,10 @@ public class FacetsArray {
 	}
 
 	public void dispose() {
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null ) {
-				facets[i].value.dispose();
-			}
+		for ( Map.Entry<String, IExpressionDescription> entry : entrySet() ) {
+			entry.getValue().dispose();
 		}
 		clear();
-	}
-
-	void clear() {
-		facets = new Facet[0];
 	}
 
 }

@@ -30,7 +30,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.skills.ISkill;
+import msi.gaml.skills.*;
 import msi.gaml.types.IType;
 
 /**
@@ -63,7 +63,9 @@ public class PrimitiveCommand extends ActionCommand {
 
 		SpeciesDescription context = desc.getSpeciesContext();
 		Class methodClass = context.getSkillClassFor(methodName);
-		skill = GamlCompiler.getSkillInstanceFor(methodClass);
+		if ( Skill.class.isAssignableFrom(methodClass) ) {
+			skill = GamlCompiler.getSkillInstanceFor(methodClass);
+		}
 		executer = GamlCompiler.getPrimitive(methodClass, methodName);
 	}
 

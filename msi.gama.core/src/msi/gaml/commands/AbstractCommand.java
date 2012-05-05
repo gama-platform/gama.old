@@ -18,12 +18,13 @@
  */
 package msi.gaml.commands;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -36,7 +37,7 @@ import msi.gaml.types.IType;
 public abstract class AbstractCommand extends Symbol implements ICommand {
 
 	protected IExpression pertinence;
-	
+
 	public AbstractCommand(final IDescription desc) {
 		super(desc);
 		pertinence = null;
@@ -88,20 +89,18 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 		String k = getLiteral(IKeyword.KEYWORD);
 		StringBuilder sb = new StringBuilder();
 		sb.append(k).append(' ');
-		for ( Map.Entry<String, IExpressionDescription> e : description.getFacets().entrySet() ) {
-			if ( !e.getKey().equals(IKeyword.KEYWORD) ) {
+		for ( Facet e : description.getFacets().entrySet() ) {
+			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml())
 					.append(" ");
 			}
 		}
 		return sb.toString();
 	}
-	
+
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		if (pertinence != null) {
-			return Cast.asFloat(scope, pertinence.value(scope));
-		}
+		if ( pertinence != null ) { return Cast.asFloat(scope, pertinence.value(scope)); }
 		return 1.0;
 	}
 
@@ -109,6 +108,5 @@ public abstract class AbstractCommand extends Symbol implements ICommand {
 	public IExpression getPertinence() {
 		return pertinence;
 	}
-	
-	
+
 }

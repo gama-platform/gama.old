@@ -43,6 +43,7 @@ public class SymbolDescription implements IDescription {
 	protected SymbolMetaDescription meta;
 	protected String name;
 	protected String keyword;
+	boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final ISyntacticElement source,
@@ -58,13 +59,6 @@ public class SymbolDescription implements IDescription {
 		} else {
 			this.children = null;
 		}
-	}
-
-	/**
-	 * A method dedicated to initializing various structures
-	 */
-	protected void initialize() {
-
 	}
 
 	@Override
@@ -134,12 +128,19 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
-		// facets.dispose();
+		if ( builtIn ) { return; }
+		facets.dispose();
+		facets.clear();
 		if ( children != null ) {
 			for ( IDescription c : children ) {
 				c.dispose();
 			}
 			children.clear();
+		}
+		enclosing = null;
+		if ( source != null ) {
+			source.removeDescription(this);
+			source.dispose();
 		}
 	}
 
@@ -286,6 +287,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected void setSource(final ISyntacticElement source) {
+		builtIn = source.isSynthetic();
 		this.source = source;
 
 	}
@@ -354,4 +356,5 @@ public class SymbolDescription implements IDescription {
 		if ( enclosing == null ) { return null; }
 		return enclosing.getErrorCollector();
 	}
+
 }

@@ -24,7 +24,8 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.*;
-import msi.gaml.commands.Facets;
+import msi.gaml.commands.*;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.IType;
@@ -199,34 +200,35 @@ public class SymbolMetaDescription {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final ISyntacticElement e, final Set<String> facets,
+	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
 		for ( String s : mandatoryFacets ) {
-			if ( !facets.contains(s) ) {
+			if ( !facets.containsKey(s) ) {
 				new GamlCompilationError("Missing facet " + s, e);
 			}
 		}
 	}
 
-	public void verifyFacetsValidity(final ISyntacticElement e, final Set<String> facets,
+	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
-		for ( String s : facets ) {
-			if ( !possibleFacets.containsKey(s) ) {
-				GamlCompilationError error = new GamlCompilationError("Unknown facet " + s, e);
+		for ( Facet s : facets.entrySet() ) {
+			if ( !possibleFacets.containsKey(s.getKey()) ) {
+				GamlCompilationError error =
+					new GamlCompilationError("Unknown facet " + s.getKey(), e);
 				error.setObjectOfInterest(s);
 			}
 		}
 	}
 
-	public void verifyFacetsCombinations(final ISyntacticElement e, final Set<String> facets,
+	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
 		if ( getPossibleCombinations().isEmpty() ) { return; }
 		for ( String[] c : getPossibleCombinations() ) {
 			boolean allPresent = true;
 			for ( String s : c ) {
-				allPresent = allPresent && facets.contains(s);
+				allPresent = allPresent && facets.containsKey(s);
 			}
 			if ( allPresent ) { return; }
 		}
@@ -239,7 +241,11 @@ public class SymbolMetaDescription {
 
 	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
-		for ( String facetName : facets.keySet() ) {
+		for ( Facet facet : facets.entrySet() ) {
+			if ( facet == null ) {
+				continue;
+			}
+			String facetName = facet.getKey();
 			FacetMetaDescription f = possibleFacets.get(facetName);
 			if ( f == null ) {
 				continue;
@@ -257,7 +263,7 @@ public class SymbolMetaDescription {
 						}
 						if ( !found ) {
 							GamlCompilationError error =
-								new GamlCompilationError("The value of facet " + facetName +
+								new GamlCompilationError("The value of facet " + facet.getKey() +
 									" must be one of " + Arrays.toString(f.values), e);
 							error.setObjectOfInterest(facetName);
 						}
@@ -278,10 +284,9 @@ public class SymbolMetaDescription {
 
 	public void verifyFacets(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
-		Set<String> tags = facets.keySet();
-		verifyMandatoryFacets(e, tags, context);
-		verifyFacetsValidity(e, tags, context);
-		verifyFacetsCombinations(e, tags, context);
+		verifyMandatoryFacets(e, facets, context);
+		verifyFacetsValidity(e, facets, context);
+		verifyFacetsCombinations(e, facets, context);
 		verifyFacetsIds(e, facets, context);
 	}
 
