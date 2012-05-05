@@ -44,6 +44,11 @@ public class SyntacticStatement extends AbstractSyntacticStatement {
 		EGaml.setGamlDescription(statement, description);
 	}
 
+	@Override
+	public void removeDescription(final IDescription description) {
+		EGaml.unsetGamlDescription(statement, description);
+	}
+
 	/**
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getUnderlyingElement()
 	 */
