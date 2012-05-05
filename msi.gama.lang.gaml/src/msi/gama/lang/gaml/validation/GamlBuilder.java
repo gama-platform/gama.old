@@ -154,7 +154,7 @@ public class GamlBuilder {
 			elt.setFacet(fname, fexpr);
 		}
 		// We modify the "var" and "const" declarations in order to keep only the type
-		if ( keyword.equals(VAR) || keyword.equals(CONST) ) {
+		if ( keyword.equals(VAR) || keyword.equals(CONST) || keyword.equals(EXPERIMENT) ) {
 			String type = elt.getLabel(TYPE);
 			if ( type != null ) {
 				elt.setKeyword(type);
