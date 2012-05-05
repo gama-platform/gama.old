@@ -37,16 +37,23 @@ import msi.gaml.types.IType;
  * protocol models are defined in the corresponding sub-classes.
  */
 
-@species("conversation")
-@vars({ @var(name = "messages", type = IType.LIST_STR, of = "message"),
-	@var(name = "protocol", type = IType.STRING_STR),
-	@var(name = "initiator", type = IType.AGENT_STR),
-	@var(name = "participants", type = IType.LIST_STR),
-	@var(name = "ended", type = IType.BOOL_STR, init = "false") })
+@species(Conversation.SPECIES_NAME)
+@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST_STR, of = Message.SPECIES_NAME),
+	@var(name = Conversation.PROTOCOL, type = IType.STRING_STR),
+	@var(name = Conversation.INITIATOR, type = IType.AGENT_STR),
+	@var(name = Conversation.PARTICIPANTS, type = IType.LIST_STR),
+	@var(name = Conversation.ENDED, type = IType.BOOL_STR, init = "false") })
 public class Conversation extends GamlAgent {
 
 	/** The protocol. */
 	private FIPAProtocol protocol;
+
+	public final static String SPECIES_NAME = "conversation";
+	public final static String PROTOCOL = "protocol";
+	public final static String INITIATOR = "initiator";
+	public final static String PARTICIPANTS = "participants";
+	public final static String ENDED = "ended";
+	public final static String MESSAGES = "messages";
 
 	/** The owner of this conversation. */
 	private IAgent initiator;
@@ -259,7 +266,7 @@ public class Conversation extends GamlAgent {
 	 * 
 	 * @return the messages
 	 */
-	@getter(var = "messages")
+	@getter(var = MESSAGES)
 	public GamaList getMessages() {
 		return messages;
 	}
@@ -269,7 +276,7 @@ public class Conversation extends GamlAgent {
 	 * 
 	 * @return the intitiator
 	 */
-	@getter(var = "initiator")
+	@getter(var = INITIATOR)
 	public IAgent getIntitiator() {
 		return initiator;
 	}
@@ -279,7 +286,7 @@ public class Conversation extends GamlAgent {
 	 * 
 	 * @return the participants
 	 */
-	@getter(var = "participants")
+	@getter(var = PARTICIPANTS)
 	public GamaList getParticipants() {
 		return participants;
 	}
@@ -289,7 +296,7 @@ public class Conversation extends GamlAgent {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter(var = "protocol")
+	@getter(var = PROTOCOL)
 	public String getProtocolName() {
 		if ( protocol == null ) { return null; }
 		return FIPAConstants.protocolNames[protocol.getIndex()];
@@ -300,7 +307,7 @@ public class Conversation extends GamlAgent {
 	 * 
 	 * @return true, if is ended
 	 */
-	@getter(var = "ended")
+	@getter(var = ENDED)
 	public boolean isEnded() {
 		return ended || areAllNodeEnded();
 	}

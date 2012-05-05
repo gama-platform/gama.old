@@ -16,6 +16,7 @@
  */
 package msi.gaml.extensions.fipa;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -33,16 +34,25 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@species("message")
-@vars({ @var(name = "sender", type = IType.AGENT_STR),
-	@var(name = "receivers", type = IType.LIST_STR),
-	@var(name = "performative", type = IType.STRING_STR),
-	@var(name = "content", type = IType.LIST_STR),
-	@var(name = "unread", type = IType.BOOL_STR, init = "true"),
-	@var(name = "conversation", type = IType.AGENT_STR, species = "conversation"),
-	@var(name = "protocol", type = IType.STRING_STR, depends_on = "conversation"),
-	@var(name = "timestamp", type = IType.STRING_STR) })
+@species(Message.SPECIES_NAME)
+@vars({ @var(name = Message.SENDER, type = IType.AGENT_STR),
+	@var(name = Message.RECEIVERS, type = IType.LIST_STR),
+	@var(name = Message.PERFORMATIVE, type = IType.STRING_STR),
+	@var(name = Message.CONTENT, type = IType.LIST_STR),
+	@var(name = Message.UNREAD, type = IType.BOOL_STR, init = IKeyword.TRUE),
+	@var(name = Message.CONVERSATION, type = IType.AGENT_STR, species = "conversation"),
+	@var(name = Message.PROTOCOL, type = IType.STRING_STR, depends_on = Message.CONVERSATION),
+	@var(name = Message.TIMESTAMP, type = IType.STRING_STR) })
 public class Message extends GamlAgent {
+
+	public final static String CONVERSATION = "current_conversation";
+	public final static String CONTENT = "content";
+	public final static String UNREAD = "unread";
+	public final static String PROTOCOL = "protocol";
+	public final static String TIMESTAMP = "timestamp";
+	public final static String RECEIVERS = "receivers";
+	public final static String PERFORMATIVE = "performative";
+	public final static String SENDER = "sender";
 
 	/** The message. */
 	private MessageData data;
@@ -122,7 +132,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getSender()
 	 */
-	@getter(var = "sender")
+	@getter(var = Message.SENDER)
 	public IAgent getSender() {
 		return data.getSender();
 	}
@@ -132,7 +142,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param sender the sender
 	 */
-	@setter("sender")
+	@setter(Message.SENDER)
 	public void setSender(final IAgent sender) {
 		data.setSender(sender);
 	}
@@ -142,7 +152,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return the receivers a list of the receivers' name.
 	 */
-	@getter(var = "receivers")
+	@getter(var = Message.RECEIVERS)
 	public IList getReceivers() {
 		return data.getReceivers();
 	}
@@ -152,7 +162,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param receivers the list of the receivers' name.
 	 */
-	@setter("receivers")
+	@setter(Message.RECEIVERS)
 	public void setReceivers(final IList receivers) {
 		data.setReceivers(receivers);
 	}
@@ -162,7 +172,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return the contents
 	 */
-	@getter(var = "content")
+	@getter(var = Message.CONTENT)
 	public IList getContent() {
 		// OutputManager.debug("Message " + getName() + " is read.");
 		setUnread(false);
@@ -174,7 +184,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param content the content
 	 */
-	@setter("content")
+	@setter(Message.CONTENT)
 	public void setContent(final IList content) {
 		data.setContent(content);
 	}
@@ -184,7 +194,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return the performative
 	 */
-	@getter(var = "performative")
+	@getter(var = Message.PERFORMATIVE)
 	public String getPerformativeName() {
 		return FIPAConstants.performativeNames[data.getPerformative()];
 	}
@@ -203,7 +213,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param performative the performative to set
 	 */
-	@setter("performative")
+	@setter(Message.PERFORMATIVE)
 	public void setPerformativeName(final String performative) {
 		data.setPerformative(CommunicatingSkill.performativeIndexes.get(performative));
 	}
@@ -222,7 +232,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return the conversationID
 	 */
-	@getter(var = "conversation")
+	@getter(var = Message.CONVERSATION)
 	public IAgent getConversation() {
 		return data.getConversation();
 	}
@@ -232,7 +242,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param conv the conv
 	 */
-	@setter("conversation")
+	@setter(Message.CONVERSATION)
 	public void setConversation(final IAgent conv) {
 		data.setConversation(conv);
 	}
@@ -242,7 +252,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return true, if is unread
 	 */
-	@getter(var = "unread")
+	@getter(var = Message.UNREAD)
 	public boolean isUnread() {
 		return unread;
 	}
@@ -252,7 +262,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @param unread the new unread
 	 */
-	@setter("unread")
+	@setter(Message.UNREAD)
 	public void setUnread(final boolean unread) {
 		this.unread = unread;
 	}
@@ -262,7 +272,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter(var = "protocol")
+	@getter(var = Message.PROTOCOL)
 	public String getProtocolName() {
 		if ( getConversation() == null ) { return null; }
 		return ((Conversation) getConversation()).getProtocolName();
@@ -273,7 +283,7 @@ public class Message extends GamlAgent {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getTimestamp()
 	 */
-	@getter(var = "timestamp")
+	@getter(var = Message.TIMESTAMP)
 	public String getTimestamp() {
 		return data.getTimestamp();
 	}
