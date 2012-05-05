@@ -83,22 +83,7 @@ public class GridDisplay extends ImageDisplay {
 			if ( lineColor == null ) {
 				lineColor = Color.black;
 			}
-			displayGrid(dg);
-		}
-	}
-
-	private void displayGrid(final IGraphics dg) {
-		double stepx = size.x / (double) image.getWidth();
-		for ( int i = 1, end = image.getWidth(); i <= end; i++ ) {
-			double step = i * stepx;
-			dg.setDrawingCoordinates(step, 0);
-			dg.drawLine(lineColor, step, size.y);
-		}
-		double stepy = size.y / (double) image.getHeight();
-		for ( int i = 1, end = image.getHeight(); i <= end; i++ ) {
-			double step = i * stepy;
-			dg.setDrawingCoordinates(0, step);
-			dg.drawLine(lineColor, size.x, step);
+			dg.drawGrid(image,lineColor,size);		
 		}
 	}
 

@@ -21,6 +21,7 @@ package msi.gama.gui.displays;
 
 import static java.awt.RenderingHints.*;
 import java.awt.*;
+import java.awt.Point;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
@@ -394,7 +395,6 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 */
-	@Override
 	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
 		final Integer angle) {
 		try {
@@ -455,6 +455,25 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle getClipping() {
 		return clipping;
+	}
+
+	@Override
+	public void drawGrid(BufferedImage image, Color lineColor,Point size) {
+		//FIXME: This method is implemented in GridDisplay as displayGrid() for the use of OPengl 
+		//We need to add drawGrid in the IGraphics.
+		double stepx = size.x / (double) image.getWidth();
+		for ( int i = 1, end = image.getWidth(); i <= end; i++ ) {
+			double step = i * stepx;
+			this.setDrawingCoordinates(step, 0);
+			this.drawLine(lineColor, step, size.y);
+		}
+		double stepy = size.y / (double) image.getHeight();
+		for ( int i = 1, end = image.getHeight(); i <= end; i++ ) {
+			double step = i * stepy;
+			this.setDrawingCoordinates(0, step);
+			this.drawLine(lineColor, size.x, step);
+		}
+		
 	}
 
 }
