@@ -92,7 +92,7 @@ public class GamlResource extends LazyLinkingResource {
 		// GuiUtils.debug("Unloading " + oldRootObject + " && getContents().size : " +
 		// getContents().size());
 		if ( oldRootObject == null ) { return; }
-		EList<Adapter> list = ECollections.unmodifiableEList(oldRootObject.eAdapters());
+		EList<Adapter> list = new BasicEList<Adapter>(oldRootObject.eAdapters());
 		for ( Adapter adapter : list ) {
 			if ( adapter instanceof ModelDescription ) {
 				((ModelDescription) adapter).dispose();
