@@ -16,8 +16,7 @@
  */
 package msi.gaml.extensions.fipa;
 
-import java.util.List;
-import msi.gama.kernel.simulation.ISimulation;
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -30,31 +29,11 @@ import msi.gama.util.GamaList;
 public class MessageBroker {
 
 	/** The messages to deliver. */
-	private final List<Message> messagesToDeliver = new GamaList();
+
+	private final Map<IAgent, List<Message>> messagesToDeliver = new HashMap();
 
 	/** The instance. */
 	private static MessageBroker instance;
-
-	/**
-	 * Instantiates a new message broker.
-	 * 
-	 * @param sim the sim
-	 */
-	private MessageBroker(final ISimulation sim) {
-		sim.getScheduler().insertBeginAction(this, "deliverMessages");
-	}
-
-	/**
-	 * @throws GamaRuntimeException Deliver messages.
-	 * 
-	 * @throws GamlException the gaml exception
-	 */
-	public void deliverMessages() throws GamaRuntimeException {
-		for ( final Message m : messagesToDeliver ) {
-			deliverMessage(m);
-		}
-		messagesToDeliver.clear();
-	}
 
 	/**
 	 * @throws GamaRuntimeException Deliver message.
@@ -63,29 +42,26 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public void deliverMessage(final Message m) throws GamaRuntimeException {
-		final Conversation conv = (Conversation) m.getConversation();
-		try {
-			conv.addMessage(m);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			deliverFailureInReplyTo(m);
-			final Conversation c = (Conversation) m.getConversation();
-			c.end();
+	public List<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
+		final List<Message> result = messagesToDeliver.get(a);
+		if ( result == null ) { return Collections.EMPTY_LIST; }
+		for ( Message m : messagesToDeliver.get(a) ) {
+			Message message = m;
+			Conversation conv = m.getConversation();
+			try {
+				conv.addMessage(m);
+			} catch (GamaRuntimeException e) {
+				result.remove(m);
+				message = failureMessageInReplyTo(m);
+				conv.end();
+			} finally {
+				result.add(message);
+			}
+
+			// Pas sur que ça produise le même résultat qu'avant...
 		}
-		final List<IAgent> receivers = m.getReceivers();
-		//
-		// for ( final IAgent a : receivers ) {
-		// if ( a == null || a.isDead() ) {
-		// continue;
-		// }
-		// final CommunicatingSkill c =
-		// (CommunicatingSkill) ((IGamlAgent) a).getSpecies().getSharedSkill(
-		// CommunicatingSkill.class);
-		// if ( c != null ) {
-		// c.receiveMessage(m.getSimulationScope(), m);
-		// }
-		// }
+		messagesToDeliver.remove(a);
+		return result;
 	}
 
 	/**
@@ -95,12 +71,10 @@ public class MessageBroker {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	protected void deliverFailureInReplyTo(final Message m) throws GamaRuntimeException {
-		if ( m.getPerformative() == FIPAConstants.Performatives.FAILURE ) { return; }
+	protected Message failureMessageInReplyTo(final Message m) throws GamaRuntimeException {
+		if ( m.getPerformative() == FIPAConstants.Performatives.FAILURE ) { return null; }
 
-		final Message f =
-			new Message(m.getSimulation(), m.getSimulation().getWorld()
-				.getPopulationFor(m.getSpecies()));
+		final Message f = new Message();
 		f.setSender(null);
 		final GamaList<IAgent> receivers = new GamaList();
 		receivers.add(m.getSender());
@@ -108,7 +82,7 @@ public class MessageBroker {
 		f.setPerformative(FIPAConstants.Performatives.FAILURE);
 		f.setConversation(m.getConversation());
 		f.setContent(m.getContent());
-		deliverMessage(f);
+		return f;
 	}
 
 	/**
@@ -117,7 +91,18 @@ public class MessageBroker {
 	 * @param m the m
 	 */
 	public void scheduleForDelivery(final Message m) {
-		messagesToDeliver.add(m);
+		for ( IAgent a : m.getReceivers() ) {
+			scheduleForDelivery(m, a);
+		}
+	}
+
+	private void scheduleForDelivery(final Message m, final IAgent agent) {
+		List<Message> messages = messagesToDeliver.get(agent);
+		if ( messages == null ) {
+			messages = new ArrayList();
+			messagesToDeliver.put(agent, messages);
+		}
+		messages.add(m);
 	}
 
 	/**
@@ -132,7 +117,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final Message m, final Integer protocol) {
 		Conversation conv;
-		conv = new Conversation(m.getSimulation(), protocol, m);
+		conv = new Conversation(protocol, m);
 		m.setConversation(conv);
 		scheduleForDelivery(m);
 	}
@@ -144,9 +129,9 @@ public class MessageBroker {
 	 * 
 	 * @return single instance of MessageBroker
 	 */
-	public static MessageBroker getInstance(final ISimulation sim) {
+	public static MessageBroker getInstance() {
 		if ( instance == null ) {
-			instance = new MessageBroker(sim);
+			instance = new MessageBroker();
 		}
 		return instance;
 		// TODO Il faudrait pouvoir en g√©rer plusieurs (par simulation)

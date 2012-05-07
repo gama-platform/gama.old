@@ -155,7 +155,7 @@ public class MessageData {
 	 * 
 	 * @see msi.misc.current_development.IMessage#getConversation()
 	 */
-	public IAgent getConversation() {
+	public Conversation getConversation() {
 		return conversation;
 	}
 
@@ -165,8 +165,8 @@ public class MessageData {
 	 * @see msi.misc.current_development.IMessage#setConversation(msi.gama.metamodel
 	 * .agent.interfaces.BasicEntity)
 	 */
-	public void setConversation(final IAgent conv) {
-		conversation = (Conversation) conv;
+	public void setConversation(final Conversation conv) {
+		conversation = conv;
 	}
 
 	/*

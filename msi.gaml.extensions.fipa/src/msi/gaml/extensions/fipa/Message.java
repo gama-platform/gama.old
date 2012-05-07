@@ -17,12 +17,9 @@
 package msi.gaml.extensions.fipa;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,7 +31,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@species(Message.SPECIES_NAME)
+
 @vars({ @var(name = Message.SENDER, type = IType.AGENT_STR),
 	@var(name = Message.RECEIVERS, type = IType.LIST_STR),
 	@var(name = Message.PERFORMATIVE, type = IType.STRING_STR),
@@ -43,7 +40,7 @@ import msi.gaml.types.IType;
 	@var(name = Message.CONVERSATION, type = IType.AGENT_STR, species = "conversation"),
 	@var(name = Message.PROTOCOL, type = IType.STRING_STR, depends_on = Message.CONVERSATION),
 	@var(name = Message.TIMESTAMP, type = IType.STRING_STR) })
-public class Message extends GamlAgent {
+public class Message {
 
 	public final static String CONVERSATION = "current_conversation";
 	public final static String CONTENT = "content";
@@ -55,7 +52,7 @@ public class Message extends GamlAgent {
 	public final static String SENDER = "sender";
 
 	/** The message. */
-	private MessageData data;
+	private final MessageData data;
 
 	/** The unread. */
 	private boolean unread = true;
@@ -70,11 +67,8 @@ public class Message extends GamlAgent {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public Message(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
+	public Message() {
 		data = new MessageData();
-		// schedule(sim);
-		// TODO Vérifier que l'on ne doit pas initialiser l'espèce
 	}
 
 	/**
@@ -85,10 +79,8 @@ public class Message extends GamlAgent {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public Message(final ISimulation sim, final Message m) throws GamaRuntimeException {
-		super(sim, sim.getWorld().getPopulationFor(Message.SPECIES_NAME));
+	public Message(final Message m) throws GamaRuntimeException {
 		data = m.getData();
-		// schedule(sim);
 	}
 
 	/**
@@ -103,19 +95,14 @@ public class Message extends GamlAgent {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public Message(final ISimulation sim, final IAgent sender, final IList<IAgent> receivers,
-		final IList content, final int performative, final Conversation conversation)
-		throws GamaRuntimeException {
-		super(sim, sim.getWorld().getPopulationFor(Message.SPECIES_NAME));
+	public Message(final IAgent sender, final IList<IAgent> receivers, final IList content,
+		final int performative, final Conversation conversation) throws GamaRuntimeException {
 		data = new MessageData();
 		setSender(sender);
 		setReceivers(receivers);
 		setContent(content);
 		setPerformative(performative);
 		setConversation(conversation);
-		// OutputManager.debug("Message " + name + " created (sender " +
-		// sender.getName()+")" + "(receivers " + receivers + ")");
-		// schedule(sim);
 	}
 
 	/*
@@ -153,7 +140,7 @@ public class Message extends GamlAgent {
 	 * @return the receivers a list of the receivers' name.
 	 */
 	@getter(var = Message.RECEIVERS)
-	public IList getReceivers() {
+	public IList<IAgent> getReceivers() {
 		return data.getReceivers();
 	}
 
@@ -233,7 +220,7 @@ public class Message extends GamlAgent {
 	 * @return the conversationID
 	 */
 	@getter(var = Message.CONVERSATION)
-	public IAgent getConversation() {
+	public Conversation getConversation() {
 		return data.getConversation();
 	}
 
@@ -243,7 +230,7 @@ public class Message extends GamlAgent {
 	 * @param conv the conv
 	 */
 	@setter(Message.CONVERSATION)
-	public void setConversation(final IAgent conv) {
+	public void setConversation(final Conversation conv) {
 		data.setConversation(conv);
 	}
 
@@ -275,7 +262,7 @@ public class Message extends GamlAgent {
 	@getter(var = Message.PROTOCOL)
 	public String getProtocolName() {
 		if ( getConversation() == null ) { return null; }
-		return ((Conversation) getConversation()).getProtocolName();
+		return getConversation().getProtocolName();
 	}
 
 	/*
@@ -293,10 +280,4 @@ public class Message extends GamlAgent {
 		return "Proxy on " + data;
 	}
 
-	@Override
-	public synchronized void dispose() {
-		super.dispose();
-		// OutputManager.debug("Message " + name + " disposed");
-		data = null;
-	}
 }

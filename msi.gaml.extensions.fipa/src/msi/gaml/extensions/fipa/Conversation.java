@@ -17,11 +17,8 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -37,18 +34,17 @@ import msi.gaml.types.IType;
  * protocol models are defined in the corresponding sub-classes.
  */
 
-@species(Conversation.SPECIES_NAME)
 @vars({ @var(name = Conversation.MESSAGES, type = IType.LIST_STR, of = Message.SPECIES_NAME),
 	@var(name = Conversation.PROTOCOL, type = IType.STRING_STR),
 	@var(name = Conversation.INITIATOR, type = IType.AGENT_STR),
 	@var(name = Conversation.PARTICIPANTS, type = IType.LIST_STR),
 	@var(name = Conversation.ENDED, type = IType.BOOL_STR, init = "false") })
-public class Conversation extends GamlAgent {
+public class Conversation extends GamaList<Message> {
 
 	/** The protocol. */
 	private FIPAProtocol protocol;
 
-	public final static String SPECIES_NAME = "conversation";
+	public final static String TYPE_NAME = "conversation";
 	public final static String PROTOCOL = "protocol";
 	public final static String INITIATOR = "initiator";
 	public final static String PARTICIPANTS = "participants";
@@ -81,19 +77,6 @@ public class Conversation extends GamlAgent {
 	private boolean ended = false;
 
 	/**
-	 * @throws GamaRuntimeException Instantiates a new conversation.
-	 * 
-	 * @param sim the sim
-	 * 
-	 * @throws GamlException the gaml exception
-	 */
-	public Conversation(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
-		// schedule(sim.getSimulationScope());
-		// OutputManager.debug("Conversation " + name + " created");
-	}
-
-	/**
 	 * @throws GamaRuntimeException Method to dynamically load a Conversation instance which follows
 	 *             the given protocol and belongs to the given Agent.
 	 * 
@@ -110,10 +93,8 @@ public class Conversation extends GamlAgent {
 	 * @exception UnknownProtocolException Thrown if a Conversation class cannot be loaded for the
 	 *                given class
 	 */
-	protected Conversation(final ISimulation sim, final Integer p, final Message message)
-		throws GamaRuntimeException {
-		// Create the new instance, and set the ownership
-		this(sim, null);
+	protected Conversation(final Integer p, final Message message) throws GamaRuntimeException {
+
 		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;
 		protocol = FIPAProtocol.named(proto);
 		if ( protocol == null ) { throw new UnknownProtocolException(proto); }
@@ -182,7 +163,7 @@ public class Conversation extends GamlAgent {
 		// OutputManager.debug(name + " adds message " + message);
 
 		// Check if the message belongs to this conversation
-		final Conversation msgConv = (Conversation) message.getConversation();
+		final Conversation msgConv = message.getConversation();
 		if ( msgConv == null || msgConv != this ) { throw new InvalidConversationException(
 			"Conversation is invalid or not specified"); }
 
@@ -341,17 +322,11 @@ public class Conversation extends GamlAgent {
 		ended = true;
 	}
 
-	@Override
 	public synchronized void dispose() {
 		end();
-		super.dispose();
-		for ( Message m : messages ) {
-			m.dispose();
-		}
 		protocolNodeParticipantMap.clear();
 		noProtocolNodeParticipantMap.clear();
 		participants.clear();
 		initiator = null;
-		// OutputManager.debug("Conversation " + name + " disposed");
 	}
 }
