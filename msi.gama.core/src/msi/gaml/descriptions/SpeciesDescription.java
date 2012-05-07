@@ -220,20 +220,18 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( child == null ) { return null; }
 		IDescription desc = super.addChild(child);
 		String kw = desc.getKeyword();
-		if ( kw.equals(IKeyword.REFLEX) ) {
-			addBehavior((CommandDescription) desc);
-		} else if ( kw.equals(IKeyword.ACTION) ) {
+		if ( kw.equals(IKeyword.ACTION) || kw.equals(IKeyword.PRIMITIVE) ) {
 			addAction((CommandDescription) desc);
 		} else if ( kw.equals(IKeyword.ASPECT) ) {
 			addAspect((CommandDescription) desc);
-		} else if ( kw.equals(IKeyword.PRIMITIVE) ) {
-			addAction((CommandDescription) desc);
-		} else if ( desc instanceof CommandDescription && !IKeyword.INIT.equals(kw) ) {
-			addBehavior((CommandDescription) desc);
+		} else if ( desc instanceof CommandDescription ) {
+			if ( IKeyword.INIT.equals(kw) ) {
+				addInit((CommandDescription) desc);
+			} else {
+				addBehavior((CommandDescription) desc);
+			}
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
-		} else if ( kw.equals(IKeyword.INIT) ) {
-			addInit((CommandDescription) desc);
 		} else if ( ModelFactory.SPECIES_NODES.contains(kw) ) {
 			getModelDescription().addType((SpeciesDescription) desc);
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
@@ -601,9 +599,9 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 			if ( parent.hasVariables() ) {
 				// We only copy the variables that are not redefined in this species
-				for ( final VariableDescription v : parent.getVariables().values() ) {
+				for ( final SymbolDescription v : parent.getVariables().values() ) {
 					if ( v.isBuiltIn() ) {
-						final VariableDescription var = getVariable(v.getName());
+						final SymbolDescription var = getVariable(v.getName());
 						if ( var == null ) { // || ! isUserDefined ???
 							addChild(v.copy());
 						}
@@ -854,7 +852,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected Map<String, CommandDescription> getBehaviors() {
 		if ( behaviors == null ) {
-			behaviors = new HashMap<String, CommandDescription>();
+			behaviors = new LinkedHashMap<String, CommandDescription>();
 		}
 		return behaviors;
 	}
@@ -871,7 +869,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected Map<String, CommandDescription> getAspects() {
 		if ( aspects == null ) {
-			aspects = new HashMap<String, CommandDescription>();
+			aspects = new LinkedHashMap<String, CommandDescription>();
 		}
 		return aspects;
 	}
@@ -888,7 +886,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public Map<String, CommandDescription> getActions() {
 		if ( actions == null ) {
-			actions = new HashMap<String, CommandDescription>();
+			actions = new LinkedHashMap<String, CommandDescription>();
 		}
 		return actions;
 	}
@@ -905,7 +903,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public Map<String, VariableDescription> getVariables() {
 		if ( variables == null ) {
-			variables = new HashMap<String, VariableDescription>();
+			variables = new LinkedHashMap<String, VariableDescription>();
 		}
 		return variables;
 	}
@@ -933,7 +931,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	private Map<String, SpeciesDescription> getMicroSpecies() {
 		if ( microSpecies == null ) {
-			microSpecies = new HashMap<String, SpeciesDescription>();
+			microSpecies = new LinkedHashMap<String, SpeciesDescription>();
 		}
 		return microSpecies;
 	}

@@ -18,13 +18,13 @@
  */
 package msi.gaml.factories;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.*;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.descriptions.*;
 
 /**
@@ -87,23 +87,38 @@ public class SpeciesFactory extends SymbolFactory {
 		}
 		return false;
 	}
+	//
+	// @Override
+	// protected List<ISymbol> privateCompileChildren(final IDescription sd) {
+	// List<ISymbol> lce = new ArrayList();
+	// SpeciesDescription desc = sd.getSpeciesContext();
+	// // we first compile the variables in the right order
+	// // long time = System.currentTimeMillis();
+	// for ( String s : desc.getVarNames() ) {
+	// lce.add(varFactory.privateCompile(desc.getVariable(s)));
+	// }
+	// // then the rest
+	// for ( IDescription s : sd.getChildren() ) {
+	// if ( !(s instanceof VariableDescription) ) {
+	// lce.add(compileDescription(s));
+	// }
+	// }
+	// return lce;
+	// }
 
-	@Override
-	protected List<ISymbol> privateCompileChildren(final IDescription sd) {
-		List<ISymbol> lce = new ArrayList();
-		SpeciesDescription desc = sd.getSpeciesContext();
-		// we first compile the variables in the right order
-		// long time = System.currentTimeMillis();
-		for ( String s : desc.getVarNames() ) {
-			lce.add(compileDescription(desc.getVariable(s)));
-		}
-		// then the rest
-		for ( IDescription s : sd.getChildren() ) {
-			if ( !(s instanceof VariableDescription) ) {
-				lce.add(compileDescription(s));
-			}
-		}
-		return lce;
-	}
-
+	// @Override
+	// protected void privateValidateChildren(final IDescription sd) {
+	// SpeciesDescription desc = sd.getSpeciesContext();
+	// // we first validate the variables in the right order
+	// // long time = System.currentTimeMillis();
+	// for ( String s : desc.getVarNames() ) {
+	// varFactory.privateValidate(desc.getVariable(s));
+	// }
+	// // then the rest
+	// for ( IDescription s : sd.getChildren() ) {
+	// if ( !(s instanceof VariableDescription) ) {
+	// validateDescription(s);
+	// }
+	// }
+	// }
 }

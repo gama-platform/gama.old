@@ -77,9 +77,6 @@ public class GuiExperiment extends AbstractExperiment {
 				addRegularParameter(new ExperimentParameter(v));
 			}
 		}
-		// String cat = getSystemParametersCategory();
-		// addSystemParameter(new ExperimentParameter(world.getVar(GAMA._UQR),
-		// "Use quality rendering", cat, null, false));
 		super.addOwnParameters();
 	}
 

@@ -41,9 +41,10 @@ public class SymbolDescription implements IDescription {
 	protected IDescription enclosing;
 	protected final List<IDescription> children;
 	protected SymbolMetaDescription meta;
-	protected String name;
-	protected String keyword;
-	boolean builtIn = false;
+
+	// protected String name;
+	// protected String keyword;
+	// boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final ISyntacticElement source,
@@ -112,23 +113,27 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public String getKeyword() {
-		if ( keyword == null ) {
-			keyword = facets.getLabel(IKeyword.KEYWORD);
-		}
-		return keyword;
+		// if ( keyword == null ) {
+		// keyword =
+
+		return facets.getLabel(IKeyword.KEYWORD);
+		// }
+		// return keyword;
 	}
 
 	@Override
 	public String getName() {
-		if ( name == null ) {
-			name = facets.getLabel(IKeyword.NAME);
-		}
-		return name;
+		// if ( name == null ) {
+		// name =
+
+		return facets.getLabel(IKeyword.NAME);
+		// }
+		// return name;
 	}
 
 	@Override
 	public void dispose() {
-		if ( builtIn ) { return; }
+		if ( isBuiltIn() ) { return; }
 		facets.dispose();
 		facets.clear();
 		if ( children != null ) {
@@ -287,7 +292,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected void setSource(final ISyntacticElement source) {
-		builtIn = source.isSynthetic();
+		// builtIn = source.isSynthetic();
 		this.source = source;
 
 	}
@@ -357,4 +362,8 @@ public class SymbolDescription implements IDescription {
 		return enclosing.getErrorCollector();
 	}
 
+	public boolean isBuiltIn() {
+		return source.isSynthetic();
+		// return builtIn;
+	}
 }

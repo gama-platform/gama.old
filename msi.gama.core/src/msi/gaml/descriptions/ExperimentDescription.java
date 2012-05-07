@@ -31,16 +31,19 @@ public class ExperimentDescription extends SpeciesDescription {
 			md);
 	}
 
-	@Override
-	public String getKeyword() {
-		return facets.getLabel(IKeyword.TYPE);
-		// The type of experiment determines the class to be instantiated
-	}
+	// @Override
+	// public String getKeyword() {
+	// return facets.getLabel(IKeyword.TYPE);
+	// // The type of experiment determines the class to be instantiated
+	// }
 
 	@Override
 	protected void addVariable(final VariableDescription var) {
-		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) { return; }
-		super.addVariable(var);
+		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) {
+			// parameters.add(var);
+		} else {
+			super.addVariable(var);
+		}
 	}
 
 	@Override

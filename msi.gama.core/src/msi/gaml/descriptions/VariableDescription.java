@@ -52,7 +52,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( builtIn ) { return; }
+		if ( isBuiltIn() ) { return; }
 		if ( dependencies != null ) {
 			dependencies.clear();
 		}
@@ -67,7 +67,7 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void copyFrom(final VariableDescription v2) {
-		builtIn = v2.builtIn;
+		// builtIn = v2.builtIn;
 		// Without replacing
 		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
 			if ( entry == null ) {
@@ -81,14 +81,10 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public VariableDescription copy() {
-		VariableDescription v2 =
-			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(), meta);
-		v2.builtIn = builtIn;
-		return v2;
-	}
-
-	public boolean isBuiltIn() {
-		return builtIn;
+		return new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(),
+			meta);
+		// v2.builtIn = builtIn;
+		// return v2;
 	}
 
 	@Override

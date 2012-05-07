@@ -55,7 +55,7 @@ public class CommandDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( builtIn ) { return; }
+		if ( isBuiltIn() ) { return; }
 		if ( temps != null ) {
 			temps.clear();
 		}

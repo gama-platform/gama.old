@@ -19,7 +19,7 @@
 package msi.gaml.factories;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.*;
@@ -42,21 +42,21 @@ public class ExperimentFactory extends SpeciesFactory {
 		super(superFactory);
 	}
 
-	@Override
-	protected String getKeyword(final ISyntacticElement cur) {
-		if ( !cur.getKeyword().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
-		String type = cur.getLabel(IKeyword.TYPE);
-		if ( type == null ) { return super.getKeyword(cur); }
-		return type;
-	}
+	// @Override
+	// protected String getKeyword(final ISyntacticElement cur) {
+	// if ( !cur.getKeyword().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
+	// String type = cur.getLabel(IKeyword.TYPE);
+	// if ( type == null ) { return super.getKeyword(cur); }
+	// return type;
+	// }
 
 	// A lot to do here, probably (handle the batch, outputs, parameters, scheduler, remote and
 	// random specifications)
 
 	@Override
 	protected ExperimentDescription buildDescription(final ISyntacticElement source,
-		final String keyword, final List<IDescription> commands, final IDescription superDesc,
+		final String keyword, final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		return new ExperimentDescription(keyword, superDesc, commands, source, md);
+		return new ExperimentDescription(keyword, superDesc, children, source, md);
 	}
 }
