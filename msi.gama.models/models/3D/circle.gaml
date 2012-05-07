@@ -3,14 +3,14 @@
 model circle
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
-	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 690 ;
-	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
-	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
-	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 4
+	int number_of_agents min: 1 <- 100 ;
+	int radius_of_circle  min: 10 <- 690 ;
+	int repulsion_strength min: 1 <- 5 ;
+	int width_and_height_of_environment min: 10 <- 1600 ; 
+	int range_of_agents min: 1 <- 25 ;
+	float speed_of_agents min: 0.1  <- 4.0;
 
- ; 
+ 
 	int size_of_agents <- 50;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
@@ -26,8 +26,8 @@ environment width: width_and_height_of_environment height: width_and_height_of_e
 entities {
 	species cells skills: [moving] {  
 		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
-		const size type: float <- size_of_agents;
-		const range type: float <- range_of_agents; 
+		const size type: float <- float(size_of_agents);
+		const range type: float <- float(range_of_agents); 
 		const speed type: float <- speed_of_agents;  
 		int heading <- rnd(359);
 		geometry shape <- circle (size) update: circle (size);
@@ -52,10 +52,24 @@ entities {
 	}
 }
 
-output {
+
+	
+	
+
+
+experiment default type: gui{
+	parameter 'Number of Agents' var: number_of_agents;
+	parameter "Range of agents" var: range_of_agents;
+	parameter Dimensions var: width_and_height_of_environment;
+	parameter 'Speed of Agents' var: speed_of_agents;
+	parameter 'Strength of Repulsion' var: repulsion_strength;
+	parameter 'Radius of Circle' var: radius_of_circle;
+	
+	output {
 
 	
 	display Circle type:opengl  refresh_every: 1 {
 		species cells;
 	}
-}
+	
+}}
