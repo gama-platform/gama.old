@@ -306,10 +306,17 @@ public class MyGraphics {
 			glu.gluTessEndPolygon(tobj);
 			
 			
-			// FIXME: This add a black line around the polygon.
-						// For a better visual quality but we should check the cost of it.
-						gl.glColor3f(0.0f, 0.0f, 0.0f);
-						//this.DrawLine(gl, glu, geometry, 1.0f);
+			//Draw contour
+			gl.glColor3f(0.0f, 0.0f, 0.0f);
+			gl.glBegin(GL.GL_LINES);
+			for (int j=0;j<numExtPoints -1;j++){
+				gl.glLineWidth(1.0f);
+					gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
+							-(float) ((p.getExteriorRing().getPointN(j).getY())),0.0f);
+					gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j+1).getX())),
+							-(float) ((p.getExteriorRing().getPointN(j+1).getY())),0.0f);		
+			}
+			gl.glEnd();
 		}
 
 	}

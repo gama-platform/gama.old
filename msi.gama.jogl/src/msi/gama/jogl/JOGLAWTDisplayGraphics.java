@@ -329,7 +329,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
-
 		this.AddJTSGeometryInJTSGeometries(geometry, color);
 		return sw.toShape(geometry).getBounds2D();
 	}
@@ -416,13 +415,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		// FIXME : Seg fault when using with Grid model.
-		System.out.println("Draw Circle");
-//		 Geometry g = GamaGeometryType.buildCircle(curWidth/2, new
-//		 GamaPoint(curX + curWidth / 2,curY + curWidth /
-//		 2)).getInnerGeometry();
-//		 this.AddJTSGeometryInJTSGeometries(g,c);
-		this.AddCircleInGeometries(curX + curWidth / 2, curY + curWidth / 2, c,curWidth / 2);
+		 // FIXME : Need to check if the circle is at the right place.
+		 Geometry g = GamaGeometryType.buildCircle(((double)curWidth)/2, new
+		 GamaPoint(curX + ((double)curWidth) / 2,curY + ((double)curWidth)/2 )).getInnerGeometry();
+		 this.AddJTSGeometryInJTSGeometries(g,c);
+		//this.AddCircleInGeometries(curX + curWidth / 2, curY + curWidth / 2, c,curWidth / 2);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
@@ -522,6 +519,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	private void AddJTSGeometryInJTSGeometries(Geometry geometry, Color color) {
 
+		
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.color = color;
@@ -582,6 +580,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();
+			System.out.println(curGeometry.geometry.getGeometryType());
 			myGl.glColor3f((float) curGeometry.color.getRed() / 255,
 					(float) curGeometry.color.getGreen() / 255,
 					(float) curGeometry.color.getBlue() / 255);

@@ -435,8 +435,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public void DrawModel(){
 	    //((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();	
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
 		
 		float envMaxDim=((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim;
