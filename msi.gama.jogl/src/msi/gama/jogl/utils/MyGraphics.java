@@ -13,6 +13,7 @@ import static javax.media.opengl.GL.GL_TEXTURE_WRAP_S;
 import static javax.media.opengl.GL.GL_TEXTURE_WRAP_T;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -26,6 +27,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -56,7 +58,7 @@ public class MyGraphics {
 		gl.glEnd();
 
 	}
-
+	
 	public void DrawCircle(GL gl, GLU glu, float x, float y, float z,
 			int numPoints, float radius) {
 
@@ -147,34 +149,6 @@ public class MyGraphics {
 
 	}
 	
-	public void DrawTexturedQuad(GL gl, GLU glu, MyImage img, float z_offset){
-
-		
-		
-	gl.glColor3f(1.0f, (float) (Math.random()*1.0f), 0.0f);
-	
-//	TextureCoords textureCoords;
-//    textureCoords = img.texture.getImageTexCoords();
-//    float textureTop = textureCoords.top();
-//    float textureBottom = textureCoords.bottom();
-//    float textureLeft = textureCoords.left();
-//    float textureRight = textureCoords.right();
-//    
-//    img.texture.bind();
-//
-//gl.glBegin(GL_QUADS);
-//	      // Front Face
-//	      gl.glTexCoord2f(textureLeft, textureBottom);
-//	      gl.glVertex3f(img.x, -(img.y+img.image.getHeight()), z_offset); // bottom-left of the texture and quad
-//	      gl.glTexCoord2f(textureRight, textureBottom);
-//	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y+img.image.getHeight()), z_offset); // bottom-right of the texture and quad
-//	      gl.glTexCoord2f(textureRight, textureTop);
-//	      gl.glVertex3f((img.x+img.image.getWidth()), -(img.y), z_offset); // top-right of the texture and quad
-//	     gl.glTexCoord2f(textureLeft, textureTop);
-//	      gl.glVertex3f(img.x, -img.y, z_offset); // top-left of the texture and quad	      
-//	      gl.glEnd();
-		
-	}
 
 	public void Draw3DQuads(GL gl, GLU glu, MyGeometry geometry, float z_offset) {
 		int curPolyGonNumPoints = geometry.vertices.length;
@@ -256,5 +230,223 @@ public class MyGraphics {
 		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
 		gl.glEnd();
 	}
+	
+	public void DrawJTSGeometry(GL gl, GLU glu,Geometry geometry){
+		
+			for (int i = 0; i < geometry.getNumGeometries(); i++) {
+				Envelope e = geometry.getEnvelopeInternal();
+				if (geometry.getGeometryType() == "MultiPolygon") {
+					MultiPolygon polygons = (MultiPolygon) geometry;
+					DrawMultiPolygon(gl,glu,polygons);
+				}
+
+				else if (geometry.getGeometryType() == "Polygon") {
+					Polygon polygon = (Polygon) geometry;
+					DrawPolygon(gl,glu,polygon);
+				}
+
+				else if (geometry.getGeometryType() == "MultiLineString") {
+					MultiLineString lines = (MultiLineString) geometry;
+					DrawMultiLineString(gl,lines);
+				}
+
+				else if (geometry.getGeometryType() == "LineString") {
+					LineString line = (LineString) geometry;
+					DrawLineString(gl,line,1.2f);
+				}
+
+				else if (geometry.getGeometryType() == "Point") {
+					Point point = (Point) geometry;
+					DrawPoint(gl,glu,point,10,10);	
+					//AddPointInGeometries(point, color);
+				}
+			}
+		}
+	
+	public void DrawMultiPolygon(GL gl, GLU glu,MultiPolygon polygons){
+				
+		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
+
+		GLUtessellator tobj = glu.gluNewTess();
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+		
+		int N = polygons.getNumGeometries();
+
+		// for each polygon of a multipolygon, get each point coordinates.
+		for (int i = 0; i < N; i++) {
+
+			Polygon p = (Polygon) polygons.getGeometryN(i);
+			int numExtPoints = p.getExteriorRing().getNumPoints();
+			
+
+			glu.gluTessBeginPolygon(tobj, null);
+			glu.gluTessBeginContour(tobj);
+
+			double tempPolygon[][] = new double[numExtPoints][3];
+
+			// Convert vertices as a list of double for
+			// gluTessVertex
+			for (int j = 0; j < numExtPoints; j++) {
+				tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
+						.getPointN(j).getX());
+				tempPolygon[j][1] = -(float) (p.getExteriorRing()
+						.getPointN(j).getY());
+				tempPolygon[j][2] = (float) (0);
+			}
+
+			for (int j = 0; j < numExtPoints; j++) {
+				glu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
+			}
+			// gl.glNormal3f(0.0f, 1.0f, 0.0f);
+
+			glu.gluTessEndContour(tobj);
+			glu.gluTessEndPolygon(tobj);
+			
+			
+			// FIXME: This add a black line around the polygon.
+						// For a better visual quality but we should check the cost of it.
+						gl.glColor3f(0.0f, 0.0f, 0.0f);
+						//this.DrawLine(gl, glu, geometry, 1.0f);
+		}
+
+	}
+	
+	public void DrawPolygon(GL gl, GLU glu, Polygon p){
+			
+  	
+		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
+
+		GLUtessellator tobj = glu.gluNewTess();
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
+		
+		
+		int numExtPoints = p.getExteriorRing().getNumPoints();
+		
+		
+		glu.gluTessBeginPolygon(tobj, null);
+		glu.gluTessBeginContour(tobj);
+
+		double tempPolygon[][] = new double[numExtPoints][3];
+
+		// Convert vertices as a list of double for
+		// gluTessVertex
+		for (int j = 0; j < numExtPoints; j++) {
+			tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
+					.getPointN(j).getX());
+			tempPolygon[j][1] = -(float) (p.getExteriorRing()
+					.getPointN(j).getY());
+			tempPolygon[j][2] = (float) (0);
+		}
+
+		for (int j = 0; j < numExtPoints; j++) {
+			glu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
+		}
+		// gl.glNormal3f(0.0f, 1.0f, 0.0f);
+
+		glu.gluTessEndContour(tobj);
+		glu.gluTessEndPolygon(tobj);		
+	}
+	
+	
+	public void DrawMultiLineString(GL gl,MultiLineString lines){
+					
+		// get the number of line in the multiline.
+		int N = lines.getNumGeometries();
+
+		// for each line of a multiline, get each point coordinates.
+		for (int i = 0; i < N; i++) {
+
+			LineString l = (LineString) lines.getGeometryN(i);
+			int numPoints = l.getNumPoints();
+			MyGeometry curGeometry = new MyGeometry(numPoints);		
+			//gl.glLineWidth(size);
+			gl.glBegin(GL.GL_LINES);
+			for (int j = 0; j < numPoints - 1; j++) {
+				gl.glVertex3f((float) ((l.getPointN(j).getX())),
+						-(float) ((l.getPointN(j).getY())),
+						(float) (0));
+				gl.glVertex3f((float) ((l.getPointN(j+1).getX())),
+						-(float) ((l.getPointN(j+1).getY())),
+						(float) (0));
+			}
+			gl.glEnd();	
+		}	
+	}
+	
+	public void DrawLineString(GL gl,LineString line,float size){
+		
+		int numPoints = line.getNumPoints();
+		gl.glLineWidth(size);
+		gl.glBegin(GL.GL_LINES);
+		for (int j = 0; j < numPoints - 1; j++) {
+			gl.glVertex3f((float) ((line.getPointN(j).getX())),
+					(float) ((line.getPointN(j).getY())),
+					(float) ((0)));
+			gl.glVertex3f((float) ((line.getPointN(j+1).getX())),
+					(float) ((line.getPointN(j+1).getY())),
+					(float) ((0)));
+		}
+		gl.glEnd();	
+
+	}
+	
+	public void DrawPoint(GL gl, GLU glu, Point point,int numPoints, float radius){
+		
+		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
+
+		GLUtessellator tobj = glu.gluNewTess();
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+
+		glu.gluTessBeginPolygon(tobj, null);
+		glu.gluTessBeginContour(tobj);
+
+		float angle;
+		double tempPolygon[][] = new double[100][3];
+		for (int k = 0; k < numPoints; k++) {
+			angle = (float) (k * 2 * Math.PI / numPoints);
+
+			tempPolygon[k][0] = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
+			tempPolygon[k][1] = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			tempPolygon[k][2] = 0;
+		}
+
+		for (int k = 0; k < numPoints; k++) {
+			glu.gluTessVertex(tobj, tempPolygon[k], 0, tempPolygon[k]);
+		}
+
+		glu.gluTessEndContour(tobj);
+		glu.gluTessEndPolygon(tobj);
+
+		// Add a line around the circle
+		// FIXME/ Check the cost of this line
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glLineWidth(1.1f);
+		gl.glBegin(GL.GL_LINES);
+		float xBegin, xEnd, yBegin, yEnd;
+		for (int k = 0; k < numPoints; k++) {
+			angle = (float) (k * 2 * Math.PI / numPoints);
+			xBegin = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
+			yBegin = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			angle = (float) ((k + 1) * 2 * Math.PI / numPoints);
+			xEnd = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
+			yEnd = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			gl.glVertex3f(xBegin, yBegin, 0);
+			gl.glVertex3f(xEnd, yEnd, 0);
+		}
+		gl.glEnd();
+		
+			
+	}
+	
+
 
 }

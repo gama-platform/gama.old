@@ -159,7 +159,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 		// Set background color (in RGBA). Alpha of 0 for total transparency
-		//gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
@@ -434,11 +434,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 	
 	public void DrawModel(){
-	    ((JOGLAWTDisplayGraphics)
-		displaySurface.openGLGraphics).DrawEnvironmentBounds();
+	    //((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-				.DrawMyGeometries();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
         ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
                 .DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim / 10);
 	}
