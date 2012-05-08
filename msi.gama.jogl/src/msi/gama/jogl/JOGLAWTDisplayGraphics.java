@@ -348,9 +348,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			AddLineInGeometries(geometryFactory.createLineString(coords),
 					lineColor);
 			// FIXME: need to check with y negative value.
-			// Geometry g = GamaGeometryType.buildLine(new GamaPoint(step, 0),
-			// new GamaPoint(step, -image.getWidth())).getInnerGeometry();
-			// this.AddJTSGeometryInJTSGeometries(g, lineColor);
+//			 Geometry g = GamaGeometryType.buildLine(new GamaPoint(step, 0),
+//			 new GamaPoint(step, image.getWidth())).getInnerGeometry();
+//			 this.AddJTSGeometryInJTSGeometries(g, lineColor);
 
 		}
 
@@ -362,9 +362,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			AddLineInGeometries(geometryFactory.createLineString(coords),
 					lineColor);
 
-			// Geometry g = GamaGeometryType.buildLine(new GamaPoint(0,-step),
-			// new GamaPoint(image.getHeight(),-step)).getInnerGeometry();
-			// this.AddJTSGeometryInJTSGeometries(g, lineColor);
+//			 Geometry g = GamaGeometryType.buildLine(new GamaPoint(0,step),
+//			 new GamaPoint(image.getHeight(),step)).getInnerGeometry();
+//			 this.AddJTSGeometryInJTSGeometries(g, lineColor);
 		}
 
 	}
@@ -417,12 +417,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
 		// FIXME : Seg fault when using with Grid model.
-		// Geometry g = GamaGeometryType.buildCircle(curWidth/2, new
-		// GamaPoint(curX + curWidth / 2,curY + curWidth /
-		// 2)).getInnerGeometry();
-		// this.AddJTSGeometryInJTSGeometries(g,c);
-		this.AddCircleInGeometries(curX + curWidth / 2, curY + curWidth / 2, c,
-				curWidth / 2);
+		System.out.println("Draw Circle");
+//		 Geometry g = GamaGeometryType.buildCircle(curWidth/2, new
+//		 GamaPoint(curX + curWidth / 2,curY + curWidth /
+//		 2)).getInnerGeometry();
+//		 this.AddJTSGeometryInJTSGeometries(g,c);
+		this.AddCircleInGeometries(curX + curWidth / 2, curY + curWidth / 2, c,curWidth / 2);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
@@ -696,8 +696,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glVertex3f(0, size, 0);
 		myGl.glEnd();
 		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3f(-0.05f * size, 1f * size, 0.0f);
-		myGl.glVertex3f(0.05f, 1f * size, 0.0f);
+		myGl.glVertex3f(-0.05f * size, 1.0f * size, 0.0f);
+		myGl.glVertex3f(0.05f*size, 1.0f * size, 0.0f);
 		myGl.glVertex3f(0.0f, 1.1f * size, 0.0f);
 		myGl.glEnd();
 
@@ -716,6 +716,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glVertex3f(0.0f, 0.0f, 1.1f * size);
 		myGl.glEnd();
 
+	}
+	
+	public void DrawZValue(float pos,float value){
+		
+		GLUT glut = new GLUT();
+		myGl.glRasterPos3f(pos, pos, 0.0f);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
+				"z:" + String.valueOf(value));
 	}
 
 	public void DrawScale() {

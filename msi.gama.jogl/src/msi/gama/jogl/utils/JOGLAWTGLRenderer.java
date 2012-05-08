@@ -438,8 +438,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyGeometries();
+		
+		float envMaxDim=((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim;
         ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-                .DrawXYZAxis(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim / 10);
+                .DrawXYZAxis( envMaxDim / 10);
+        ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawZValue(-envMaxDim / 10,(float)camera.zPos);
 	}
 	
 	public void DrawOpenGLHelloWorldShape(float width, float height){
