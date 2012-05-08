@@ -24,7 +24,6 @@ environment bounds: {50,50} {
 
 
 
-
 entities {
 	species goal {
 		aspect default { 

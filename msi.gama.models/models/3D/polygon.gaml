@@ -73,7 +73,8 @@ entities {
 }
 
 output {
-	display objects_displaygl type:opengl  {
+	display objects_display 
+  {
 		species object aspect: default ;
 		species triangle aspect: default ;
 		species skeleton aspect: default ;
@@ -81,11 +82,5 @@ output {
 		species goal aspect: default ;
 	}
 	
-		display objects_display   {
-		species object aspect: default ;
-		species triangle aspect: default ;
-		species skeleton aspect: default ;
-		species people aspect: default ;
-		species goal aspect: default ;
-	}
+
 }
