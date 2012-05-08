@@ -342,9 +342,15 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void clearErrors() {
-		ErrorView v = (ErrorView) getPage().findView(ErrorView.ID);
+		final ErrorView v = (ErrorView) getPage().findView(ErrorView.ID);
 		if ( v == null ) { return; }
-		v.clearErrors();
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				v.clearErrors();
+			}
+		});
 	}
 
 	@Override
