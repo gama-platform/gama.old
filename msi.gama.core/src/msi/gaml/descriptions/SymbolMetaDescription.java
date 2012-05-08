@@ -204,7 +204,7 @@ public class SymbolMetaDescription {
 		final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.containsKey(s) ) {
-				new GamlCompilationError("Missing facet " + s, e);
+				context.flagError("Missing facet " + s, IGamlIssue.MISSING_FACET, e, s);
 			}
 		}
 	}
@@ -215,9 +215,8 @@ public class SymbolMetaDescription {
 		if ( e.getKeyword().equals(DO) ) { return; }
 		for ( Facet s : facets.entrySet() ) {
 			if ( !possibleFacets.containsKey(s.getKey()) ) {
-				GamlCompilationError error =
-					new GamlCompilationError("Unknown facet " + s.getKey(), e);
-				error.setObjectOfInterest(s);
+				context.flagError("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET, e,
+					s.getKey());
 			}
 		}
 	}
@@ -232,7 +231,7 @@ public class SymbolMetaDescription {
 			}
 			if ( allPresent ) { return; }
 		}
-		new GamlCompilationError("Wrong combination of facets " + facets, e);
+		context.flagError("Wrong combination of facets " + facets, IGamlIssue.GENERAL, e);
 	}
 
 	public boolean verifyContext(final String context) {
@@ -262,23 +261,22 @@ public class SymbolMetaDescription {
 							}
 						}
 						if ( !found ) {
-							GamlCompilationError error =
-								new GamlCompilationError("The value of facet " + facet.getKey() +
-									" must be one of " + Arrays.toString(f.values), e);
-							error.setObjectOfInterest(facetName);
+							context.flagError("The value of facet " + facet.getKey() +
+								" must be one of " + Arrays.toString(f.values),
+								IGamlIssue.NOT_AMONG, e);
+
+						} else {
+							String facetValue = facets.getLabel(facetName).trim();
+							if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
+								context.flagError(facetValue +
+									" is a reserved keyword. It cannot be used as an identifier",
+									IGamlIssue.IS_RESERVED, e, facetValue);
+							}
 						}
 					}
-				} else {
-					String facetValue = facets.getLabel(facetName).trim();
-					if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
-						GamlCompilationError error =
-							new GamlCompilationError(facetValue +
-								" is a reserved keyword. It cannot be used as an identifier", e);
-						error.setObjectOfInterest(facetValue);
-					}
+
 				}
 			}
-
 		}
 	}
 

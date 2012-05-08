@@ -58,5 +58,7 @@ public interface IGamlIssue {
 	public static String WRONG_REDEFINITION = "gaml.wrong.redefinition.issue";
 	public static String WRONG_TYPE = "gaml.wrong.type.issue";
 	public static String NOT_A_UNIT = "gaml.not.a.unit.issue";
+	public static String MISSING_FACET = "gaml.missing.facet.issue";
+	public static String UNKNOWN_FACET = "gaml.unknown.facet.issue";
 
 }

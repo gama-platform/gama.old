@@ -71,6 +71,18 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
 		@Override
+		public IExpression caseDefinition(final Definition object) {
+			return factory.createConst(StringUtils.unescapeJava(object.getName()),
+				Types.get(IType.STRING));
+		}
+
+		@Override
+		public IExpression caseDefinitionFacetExpr(final DefinitionFacetExpr object) {
+			return factory.createConst(StringUtils.unescapeJava(object.getName()),
+				Types.get(IType.STRING));
+		}
+
+		@Override
 		public IExpression caseExpression(final Expression object) {
 			// in the general case, we try to return a binary expression
 			return binary(object.getOp(), object.getLeft(), object.getRight());
@@ -283,10 +295,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		// long time = System.currentTimeMillis();
 		EObject e = s.getTarget();
 		if ( e == null ) { return fallBackParser.compile(s, parsingContext); }
-		if ( !(e instanceof Expression) ) {
-			parsingContext.flagError("Compilation error in handling " + s, IGamlIssue.GENERAL, e);
-			return null;
-		}
+
 		IDescription previous = getContext();
 		if ( parsingContext != null ) {
 			setContext(parsingContext);
@@ -301,7 +310,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 	}
 
-	public IExpression compile(final EObject s) {
+	private IExpression compile(final EObject s) {
 		if ( s == null ) {
 			// No error, since most of the null expressions come from previous (more focused)
 			// errors.

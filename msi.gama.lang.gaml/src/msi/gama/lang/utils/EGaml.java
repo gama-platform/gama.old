@@ -158,6 +158,10 @@ public class EGaml {
 
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
+		if ( expr instanceof Definition ) {
+			return ((Definition) expr).getName();
+		} else if ( expr instanceof DefinitionFacetExpr ) { return ((DefinitionFacetExpr) expr)
+			.getName(); }
 		if ( !(expr instanceof Expression) ) { return expr.toString(); }
 		serializer.setLength(0);
 		serialize((Expression) expr);

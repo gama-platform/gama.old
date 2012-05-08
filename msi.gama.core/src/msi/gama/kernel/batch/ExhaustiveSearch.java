@@ -30,7 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.METHOD, IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD)
+@symbol(name = { IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),

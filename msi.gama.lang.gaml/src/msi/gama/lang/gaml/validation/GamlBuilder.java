@@ -130,7 +130,7 @@ public class GamlBuilder {
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) { return null; }
 		// We see if we can provide the temporary fix for the "collision of save(s)"
-		if ( upper.equals(EXPERIMENT) && keyword.equals(SAVE) ) {
+		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
 			keyword = SAVE_BATCH;
 		}
 		final ISyntacticElement elt = new SyntacticStatement(keyword, stm);
@@ -145,23 +145,13 @@ public class GamlBuilder {
 				fname = FUNCTION;
 			}
 			// We compute (and convert) the expression attached to the facet
-			IExpressionDescription fexpr = conv(f.getExpr());
+			IExpressionDescription fexpr = convExpr(f.getExpr());
 			// In case it is null and the facet is a definition expr (eg. "returns"), we get the
 			// name feature of the statement instead.
 			if ( fexpr == null && f instanceof DefinitionFacetExpr ) {
-				fexpr = conv(EGaml.createTerminal(((DefinitionFacetExpr) f).getName()));
+				fexpr = convExpr((DefinitionFacetExpr) f);
 			}
 			elt.setFacet(fname, fexpr);
-		}
-		// We modify the "var" and "const" declarations in order to keep only the type
-		if ( keyword.equals(VAR) || keyword.equals(CONST) || keyword.equals(EXPERIMENT) ) {
-			String type = elt.getLabel(TYPE);
-			if ( type != null ) {
-				elt.setKeyword(type);
-			}
-			if ( keyword.equals(CONST) ) {
-				elt.setFacet(CONST, conv(EGaml.createTerminal(true)));
-			}
 		}
 
 		// If the statement is "if", we convert its potential "else" part and put it inside the
@@ -174,18 +164,39 @@ public class GamlBuilder {
 		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
 			Array a = varDependenciesOf(stm);
 			if ( a != null ) {
-				elt.setFacet(DEPENDS_ON, conv(a));
+				elt.setFacet(DEPENDS_ON, convExpr(a));
 			}
 		}
 
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(keyword);
 		if ( def != null && elt.getFacet(def) == null ) {
-			Expression expr =
-				stm instanceof Definition ? EGaml.createTerminal(((Definition) stm).getName())
-					: stm.getExpr();
-			if ( expr != null ) {
-				elt.setFacet(def, conv(expr));
+			IExpressionDescription ed = null;
+			if ( stm instanceof Definition ) {
+				ed = convExpr((Definition) stm);
+			} else {
+				ed = convExpr(stm.getExpr());
+			}
+			if ( ed != null ) {
+				elt.setFacet(def, ed);
+			}
+		}
+		// We modify the "var" and "const" declarations in order to keep only the type
+		if ( keyword.equals(VAR) || keyword.equals(CONST) || keyword.equals(EXPERIMENT) ) {
+			String type = elt.getLabel(TYPE);
+			if ( type != null ) {
+				elt.setKeyword(type);
+			}
+			if ( keyword.equals(CONST) ) {
+				elt.setFacet(CONST, convExpr(EGaml.createTerminal(true)));
+			}
+		}
+		// We apply the same conversion for methods (to get the name instead of the "method"
+		// keyword)
+		else if ( keyword.equals(METHOD) ) {
+			String type = elt.getLabel(NAME);
+			if ( type != null ) {
+				elt.setKeyword(type);
 			}
 		}
 
@@ -230,8 +241,20 @@ public class GamlBuilder {
 		}
 	}
 
-	public IExpressionDescription conv(final Expression expr) {
+	public IExpressionDescription convExpr(final Expression expr) {
 		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
+		return null;
+	}
+
+	public IExpressionDescription convExpr(final DefinitionFacetExpr expr) {
+		if ( expr != null && expr.getName() != null ) { return new EcoreBasedExpressionDescription(
+			expr); }
+		return null;
+	}
+
+	public IExpressionDescription convExpr(final Definition expr) {
+		if ( expr != null && expr.getName() != null ) { return new EcoreBasedExpressionDescription(
+			expr); }
 		return null;
 	}
 

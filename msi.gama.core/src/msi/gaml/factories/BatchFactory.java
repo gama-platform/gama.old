@@ -18,9 +18,6 @@
  */
 package msi.gaml.factories;
 
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.StringUtils;
-import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
 
@@ -36,16 +33,16 @@ public class BatchFactory extends SymbolFactory {
 
 	public BatchFactory(final ISymbolFactory superFactory) {
 		super(superFactory);
-		for ( Class c : ParamSpaceExploAlgorithm.CLASSES ) {
-			this.register(c);
-		}
+		// for ( Class c : ParamSpaceExploAlgorithm.CLASSES ) {
+		// this.register(c);
+		// }
 	}
 
-	@Override
-	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getKeyword().equals(IKeyword.METHOD) ) { return StringUtils.toJavaString(cur
-			.getLabel(IKeyword.NAME)); }
-		return super.getKeyword(cur);
-	}
+	// @Override
+	// protected String getKeyword(final ISyntacticElement cur) {
+	// if ( cur.getKeyword().equals(IKeyword.METHOD) ) { return StringUtils.toJavaString(cur
+	// .getLabel(IKeyword.NAME)); }
+	// return super.getKeyword(cur);
+	// }
 
 }
