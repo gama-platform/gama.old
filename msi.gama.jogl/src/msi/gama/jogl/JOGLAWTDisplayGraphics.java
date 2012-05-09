@@ -127,7 +127,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 		z = 0.0f;
-		graphicsGLUtils = new MyGraphics();
+		graphicsGLUtils = new MyGraphics(myGl,myGlu);
 
 		myGLRender = gLRender;
 	}
@@ -536,7 +536,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			MyJTSGeometry curGeometry = it.next();
 			// System.out.println(curGeometry.geometry.getGeometryType());
 			//System.out.println("Draw:"+ curGeometry.geometry.getGeometryType() + curGeometry.color.getRed() +" " +curGeometry.color.getGreen() +" " + curGeometry.color.getBlue());	
-			graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, curGeometry.geometry,curGeometry.color);
+			graphicsGLUtils.DrawJTSGeometry(curGeometry.geometry,curGeometry.color);
 		}
 
 	}
@@ -569,8 +569,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(myWidth / 2, myHeight / 2)).getInnerGeometry();
 
 
-		Color c =new Color (0,0,255);
-		graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, g,c);
+		Color c = new Color (0,0,255);
+		graphicsGLUtils.DrawJTSGeometry(g,c);
 	}
 
 	public void DrawXYZAxis(float size) {
