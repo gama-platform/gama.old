@@ -25,10 +25,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -335,5 +335,10 @@ public class OutputManager extends Symbol implements IOutputManager {
 	 */
 	public void desynchronizeOutputs() {
 		displays.desynchronizeOutputs();
+	}
+
+	@Override
+	public void forceUpdateOutputs() {
+		displays.forceUpdateOutputs();
 	}
 }

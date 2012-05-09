@@ -18,6 +18,7 @@
  */
 package msi.gama.kernel.experiment;
 
+import java.util.List;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
@@ -27,6 +28,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.commands.ICommand;
 import msi.gaml.compilation.ISymbol;
 
 /**
@@ -115,5 +117,7 @@ public interface IExperiment extends ISymbol {
 	void interrupt();
 
 	public ExperimentatorAgent getAgent();
+
+	public abstract List<ICommand> getCommands();
 
 }

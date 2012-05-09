@@ -65,7 +65,7 @@ public class CommandCommand extends AbstractCommandSequence implements ICommand.
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if ( actionName == null ) { return super.privateExecuteIn(scope); }
 		ISpecies context = scope.getAgentScope().getSpecies();
-		ICommand.WithArgs executer = context.getAction(name);
+		ICommand.WithArgs executer = context.getAction(actionName);
 		executer.setRuntimeArgs(args);
 		Object result = executer.executeOn(scope);
 		return result;

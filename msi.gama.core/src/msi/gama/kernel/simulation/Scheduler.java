@@ -19,15 +19,16 @@
 package msi.gama.kernel.simulation;
 
 import msi.gama.outputs.IOutputManager;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.IScheduledAction;
 
 // TODO change to SimulationScheduler or SimulationControler or GlobalScheduler
-public class Scheduler extends AbstractScheduler implements  Runnable {
+public class Scheduler extends AbstractScheduler implements Runnable {
+
 	public final Thread executionThread;
 
 	private static int threadCount = 0;
-
 
 	protected Scheduler(final ISimulation sim) throws GamaRuntimeException {
 		super(sim);
@@ -74,6 +75,14 @@ public class Scheduler extends AbstractScheduler implements  Runnable {
 	}
 
 	@Override
+	public void executeOneAction(final IScheduledAction action) {
+		super.executeOneAction(action);
+		if ( paused ) {
+			GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+		}
+	}
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		executionThread.interrupt();
@@ -114,5 +123,4 @@ public class Scheduler extends AbstractScheduler implements  Runnable {
 		stepped = false;
 	}
 
-	
 }

@@ -56,4 +56,6 @@ public interface IOutputManager extends IStepable, GamaSelectionListener, GamaSe
 	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput,
 		double w, double h);
 
+	void forceUpdateOutputs();
+
 }

@@ -43,6 +43,8 @@ public interface IScheduler extends IStepable {
 
 	public abstract void removeAction(final IScheduledAction haltAction);
 
+	public void executeOneAction(final IScheduledAction action);
+
 	public abstract boolean inInitSequence();
 
 	public abstract void insertEndAction(IScheduledAction action);

@@ -223,4 +223,10 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 			}
 		}
 	}
+
+	public void forceUpdateOutputs() {
+		for ( IDisplayOutput o : displayOutputs.values() ) {
+			o.update();
+		}
+	}
 }

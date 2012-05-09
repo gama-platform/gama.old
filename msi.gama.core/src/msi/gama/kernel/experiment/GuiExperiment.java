@@ -156,4 +156,9 @@ public class GuiExperiment extends AbstractExperiment {
 		return result;
 	}
 
+	@Override
+	public List<ICommand> getCommands() {
+		return userCommands;
+	}
+
 }

@@ -1,20 +1,17 @@
 package msi.gama.kernel.simulation;
 
 import java.util.List;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamaCompiler;
-import msi.gaml.compilation.IScheduledAction;
-import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.compilation.*;
 
-public abstract class AbstractScheduler  implements IScheduler {
+public abstract class AbstractScheduler implements IScheduler {
+
 	protected final ISimulation simulation;
-	
+
 	// Flag indicating that the simulation has been launched and is alive (maybe paused)
 	public volatile boolean alive = false;
 	// Flag indicating that the simulation is set to pause (it should be alive unless a reload has
@@ -35,9 +32,7 @@ public abstract class AbstractScheduler  implements IScheduler {
 
 	private IAgent world;
 
-	
-	protected AbstractScheduler(final ISimulation sim)
-	{
+	protected AbstractScheduler(final ISimulation sim) {
 		simulation = sim;
 		paused = true;
 		beginActions = new GamaList();
@@ -45,7 +40,7 @@ public abstract class AbstractScheduler  implements IScheduler {
 		agentsToInit = new GamaList();
 		SimulationClock.reset();
 	}
-	
+
 	@Override
 	public void dispose() {
 		alive = false;
@@ -55,7 +50,7 @@ public abstract class AbstractScheduler  implements IScheduler {
 		endActionsNumber = 0;
 		agentsToInit.clear();
 	}
-	
+
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
 		SimulationClock.beginCycle();
@@ -89,6 +84,9 @@ public abstract class AbstractScheduler  implements IScheduler {
 			ScheduledAction[] actions = endActions.toArray(new ScheduledAction[endActionsNumber]);
 			for ( int i = 0, n = endActionsNumber; i < n; i++ ) {
 				actions[i].execute(scope);
+				if ( actions[i].isOneShot() ) {
+					removeAction(actions[i]);
+				}
 			}
 		}
 	}
@@ -99,6 +97,9 @@ public abstract class AbstractScheduler  implements IScheduler {
 				beginActions.toArray(new ScheduledAction[beginActionsNumber]);
 			for ( int i = 0, n = beginActionsNumber; i < n; i++ ) {
 				actions[i].execute(scope);
+				if ( actions[i].isOneShot() ) {
+					removeAction(actions[i]);
+				}
 			}
 		}
 	}
@@ -156,6 +157,19 @@ public abstract class AbstractScheduler  implements IScheduler {
 		if ( action == null ) { return; }
 		endActionsNumber++;
 		endActions.add(action);
+	}
+
+	@Override
+	public void executeOneAction(final IScheduledAction action) {
+		if ( paused ) {
+			IScope scope = simulation.obtainNewScope();
+			action.execute(scope);
+			// TODO outputs update ?
+			simulation.releaseScope(scope);
+		} else {
+			action.setOneShot(true);
+			insertEndAction(action);
+		}
 	}
 
 	@Override
