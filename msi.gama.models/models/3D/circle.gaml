@@ -14,6 +14,12 @@ global {
 	int size_of_agents <- 50;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
+
+	action killSomeCells {
+		ask number_of_agents among list(cells){
+			do die;
+		}
+	}
 	init {
 		create cells number: number_of_agents { 
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
@@ -64,11 +70,16 @@ experiment default type: gui{
 	parameter 'Speed of Agents' var: speed_of_agents;
 	parameter 'Strength of Repulsion' var: repulsion_strength;
 	parameter 'Radius of Circle' var: radius_of_circle;
-	
+	command "Create new cells" {
+		create cells number: number_of_agents { 
+			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
+		}
+	}
+	command "Kill some cells" action: killSomeCells; 
 	output {
 
 	
-	display Circle type:opengl  refresh_every: 1 {
+	display Circle  refresh_every: 1 {
 		species cells;
 	}
 	
