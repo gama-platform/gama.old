@@ -18,14 +18,49 @@
  */
 package msi.gama.gui.views;
 
+import java.util.List;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.*;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.commands.ICommand;
+import msi.gaml.compilation.ScheduledAction;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
 
 	IExperiment experiment;
+	Composite commands;
+
+	@Override
+	public void ownCreatePartControl(final Composite view) {
+		super.ownCreatePartControl(view);
+		Composite intermediate = new Composite(view, SWT.NONE);
+		GridLayout parentLayout = new GridLayout(1, false);
+		parentLayout.marginWidth = 0;
+		parentLayout.marginHeight = 0;
+		parentLayout.verticalSpacing = 0;
+		intermediate.setLayout(parentLayout);
+		commands = new Composite(intermediate, SWT.BORDER_SOLID);
+		commands.setBackground(SwtGui.getDisplay().getSystemColor(
+			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		commands.setForeground(SwtGui.getDisplay().getSystemColor(
+			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		commands.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		GridLayout layout = new GridLayout(1, false);
+		layout.verticalSpacing = 5;
+		commands.setLayout(layout);
+		commands.pack();
+		view.pack();
+		view.layout();
+		parent = intermediate;
+	}
 
 	public void addItem(final IExperiment exp) {
 		if ( exp != null && exp != experiment ) {
@@ -39,8 +74,37 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		}
 	}
 
+	@Override
+	public void displayItems() {
+		super.displayItems();
+		List<ICommand> userCommands = experiment.getCommands();
+		for ( final ICommand command : userCommands ) {
+			Button b = new Button(commands, SWT.PUSH);
+			b.setText(command.getName());
+			b.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					GAMA.getFrontmostSimulation().getScheduler()
+						.executeOneAction(new ScheduledAction() {
+
+							@Override
+							public void execute(final IScope scope) throws GamaRuntimeException {
+								command.executeOn(scope);
+							}
+
+						});
+				}
+
+			});
+		}
+		commands.pack();
+		commands.update();
+	}
+
 	/**
-	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
+	 * @see msi.gama.gui.views.GamaVie@Override
+	 *      wPart#getToolbarActionsId()
 	 */
 	@Override
 	protected Integer[] getToolbarActionsId() {
