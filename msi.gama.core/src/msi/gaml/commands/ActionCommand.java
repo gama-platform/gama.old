@@ -49,7 +49,8 @@ import msi.gaml.types.IType;
 public class ActionCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments actualArgs = new Arguments();
-	Arguments formalArgs;
+
+	// Arguments formalArgs;
 
 	/**
 	 * The Constructor.
@@ -79,18 +80,22 @@ public class ActionCommand extends AbstractCommandSequence implements ICommand.W
 
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
-		actualArgs.clear();
-		for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
-			if ( entry != null ) {
-				String arg = entry.getKey();
-				IExpressionDescription expr = entry.getValue();
-				actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
-			}
+		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
+			actualArgs.put(entry.getKey(), entry.getValue());
 		}
+		// actualArgs.clear();
+		// for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
+		// if ( entry != null ) {
+		// String arg = entry.getKey();
+		// IExpressionDescription expr = entry.getValue();
+		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
+		// }
+		// }
 	}
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
-		formalArgs = args;
+		actualArgs.putAll(args);
+		// formalArgs = args;
 	}
 }

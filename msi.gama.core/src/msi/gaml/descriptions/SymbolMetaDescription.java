@@ -214,7 +214,8 @@ public class SymbolMetaDescription {
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
 		for ( Facet s : facets.entrySet() ) {
-			if ( !possibleFacets.containsKey(s.getKey()) ) {
+
+			if ( s != null && !possibleFacets.containsKey(s.getKey()) ) {
 				context.flagError("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET, e,
 					s.getKey());
 			}

@@ -36,6 +36,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -318,10 +319,12 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 	private void computeInits(final IScope scope, final Map<String, Object> values)
 		throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		for ( String name : init.keySet() ) {
-			IExpression valueExpr = init.getExpr(name);
-			Object val = valueExpr.value(scope);
-			values.put(name, val);
+		for ( Facet f : init.entrySet() ) {
+			if ( f != null ) {
+				IExpression valueExpr = f.getValue().getExpression();
+				Object val = valueExpr.value(scope);
+				values.put(f.getKey(), val);
+			}
 		}
 	}
 
@@ -332,12 +335,15 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			Map<String, Object> initialValues = new HashMap();
 			inits.add(initialValues);
 		}
-		for ( String name : init.keySet() ) {
-			IExpression valueExpr = init.getExpr(name);
-			Object val = valueExpr.value(scope);
-			boolean multiple = val instanceof List && ((List) val).size() == numberOfAgents;
-			for ( int i = 0; i < numberOfAgents; i++ ) {
-				inits.get(i).put(name, multiple ? ((List) val).get(i) : val);
+		for ( Facet f : init.entrySet() ) {
+			if ( f != null ) {
+				String name = f.getKey();
+				IExpression valueExpr = f.getValue().getExpression();
+				Object val = valueExpr.value(scope);
+				boolean multiple = val instanceof List && ((List) val).size() == numberOfAgents;
+				for ( int i = 0; i < numberOfAgents; i++ ) {
+					inits.get(i).put(name, multiple ? ((List) val).get(i) : val);
+				}
 			}
 		}
 	}

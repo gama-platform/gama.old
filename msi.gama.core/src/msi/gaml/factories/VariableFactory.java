@@ -21,11 +21,12 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
-import msi.gaml.commands.Facets;
+import msi.gaml.commands.*;
+import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -47,24 +48,42 @@ public class VariableFactory extends SymbolFactory {
 		super(superFactory);
 	}
 
-	@Override
-	protected String getKeyword(final ISyntacticElement cur) {
-		if ( cur.getKeyword().equals(PARAMETER) ) { return super.getKeyword(cur); }
-		String keyword = cur.getLabel(TYPE);
-		if ( keyword == null ) {
-			keyword = cur.getKeyword();
-		}
-		return keyword;
-	}
+	//
+	// @Override
+	// protected String getKeyword(final ISyntacticElement cur) {
+	// if ( cur.getKeyword().equals(PARAMETER) ) { return PARAMETER; }
+	// String keyword = cur.getLabel(TYPE);
+	// if ( keyword == null ) {
+	// keyword = cur.getKeyword();
+	// }
+	// return keyword;
+	// }
 
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> children, final IDescription superDesc,
 		final SymbolMetaDescription md) {
+		Facets facets = source.getFacets();
 		if ( keyword.equals(SIGNAL) ) {
 			buildSignalDescription(source, keyword, superDesc, md);
+		} else if ( keyword.equals(PARAMETER) ) {
+			// We copy the relevant facets from the targeted var of the parameter
+			String varName = facets.getLabel(VAR);
+			VariableDescription targetedVar = superDesc.getWorldSpecies().getVariable(varName);
+			if ( targetedVar != null ) {
+				facets.complementWith(targetedVar.getFacets());
+			}
+			// We should remove the facets that are not relevant to parameters (see if another way
+			// is possible)
+			Set<String> possibleFacets = md.getPossibleFacets().keySet();
+			for ( int i = 0; i < facets.entrySet().length; i++ ) {
+				Facet f = facets.entrySet()[i];
+				if ( f != null && !possibleFacets.contains(f.getKey()) ) {
+					facets.entrySet()[i] = null;
+				}
+			}
 		}
-		return new VariableDescription(keyword, superDesc, source.getFacets(), children, source, md);
+		return new VariableDescription(keyword, superDesc, facets, children, source, md);
 	}
 
 	private void buildSignalDescription(final ISyntacticElement source, final String keyword,

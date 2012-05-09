@@ -110,12 +110,11 @@ public class VariableValidator extends DescriptionValidator {
 
 	public static void assertCanBeParameter(final VariableDescription vd) {
 		String p = "Parameter '" + vd.getParameterName() + "' ";
-		Facets facets = new Facets();
-		Facets paramFacets = vd.getFacets();
-		if ( paramFacets.equals(KEYWORD, PARAMETER) ) {
-			// We are validating an experiment parameter so we fusion the facets of the targeted var
-			// and those of the parameter
-			String varName = paramFacets.getLabel(VAR);
+		// Facets facets = new Facets();
+		Facets facets = vd.getFacets();
+		if ( facets.equals(KEYWORD, PARAMETER) ) {
+
+			String varName = facets.getLabel(VAR);
 			VariableDescription targetedVar = vd.getWorldSpecies().getVariable(varName);
 			if ( targetedVar == null ) {
 				vd.flagError(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
@@ -125,13 +124,14 @@ public class VariableValidator extends DescriptionValidator {
 				vd.getType().id() != targetedVar.getType().id() ) {
 				vd.flagError(p + "type must be the same as that of " + varName, IKeyword.TYPE);
 			}
-			facets.putAll(targetedVar.getFacets());
-			facets.putAll(paramFacets);
+			// We are validating an experiment parameter so we fusion the facets of the targeted var
+			// and those of the parameter (EDIT: normally done, now, in the construction of the
+			// description)
+			// facets.complementWith(targetedVar.getFacets());
+			// facets.putAll(paramFacets);
 			assertCanBeAmong(vd, targetedVar.getType(), facets);
 			assertFacetsAreOfType(vd, targetedVar.getType(), valueFacetsArray);
 			assertValueFacetsAreTheSameType(vd, facets);
-		} else {
-			facets = paramFacets;
 		}
 
 		IExpression min = facets.getExpr(MIN);

@@ -123,6 +123,7 @@ public class VariableDescription extends SymbolDescription {
 			}
 		}
 		dependencies.addAll(accumulator);
+		// GuiUtils.debug("Total dependencies of " + getName() + " : " + dependencies);
 	}
 
 	public Set<VariableDescription> getDependencies() {

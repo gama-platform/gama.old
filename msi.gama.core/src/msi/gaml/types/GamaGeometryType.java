@@ -171,6 +171,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(geom.buffer(radius));
 	}
 
+	static {
+		buildCircle(10, new GamaPoint(9, 9)).getInnerGeometry();
+	}
+
 	public static GamaShape geometriesToGeometry(final IContainer<?, ? extends IShape> ags)
 		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty() ) { return null; }

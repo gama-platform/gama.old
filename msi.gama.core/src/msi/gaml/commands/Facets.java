@@ -34,6 +34,9 @@ public class Facets {
 
 	public static class Facet implements Map.Entry<String, IExpressionDescription> {
 
+		String key;
+		IExpressionDescription value;
+
 		Facet(final String s, final IExpressionDescription e) {
 			key = s;
 			value = e;
@@ -41,11 +44,8 @@ public class Facets {
 
 		@Override
 		public String toString() {
-			return key + "::" + value;
+			return key + " : " + value;
 		}
-
-		String key;
-		IExpressionDescription value;
 
 		@Override
 		public String getKey() {
@@ -65,9 +65,11 @@ public class Facets {
 		}
 	}
 
-	Facet[] facets = new Facet[0];
+	Facet[] facets;
 
-	public Facets() {}
+	public Facets() {
+		facets = new Facet[0];
+	}
 
 	public Facets(final String ... strings) {
 		facets = new Facet[strings.length / 2];
@@ -96,20 +98,39 @@ public class Facets {
 		return facets;
 	}
 
-	public Set<String> keySet() {
-		Set<String> result = new HashSet();
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null ) {
-				result.add(facets[i].key);
+	/**
+	 * Adds all the facets passed in parameter, replacing the existing ones if any
+	 * @param newFacets
+	 */
+	public void putAll(final Facets newFacets) {
+		if ( facets.length == 0 ) {
+			facets = new Facet[newFacets.facets.length];
+			System.arraycopy(newFacets.facets, 0, facets, 0, newFacets.facets.length);
+			// facets = new Facet[newFacets.facets.length];
+			// for ( int i = 0; i < facets.length; i++ ) {
+			// Facet f = newFacets.facets[i];
+			// if ( f != null ) {
+			// facets[i] = f; // new Facet(f.key, f.value);
+			// }
+			// }
+		} else {
+			for ( Facet f : newFacets.entrySet() ) {
+				if ( f != null ) {
+					put(f.key, f.value);
+				}
 			}
 		}
-		return result;
 	}
 
-	public void putAll(final Facets newFacets) {
+	/*
+	 * Same as putAll(), but without replacing the existing values
+	 */
+	public void complementWith(final Facets newFacets) {
 		for ( Facet f : newFacets.entrySet() ) {
 			if ( f != null ) {
-				put(f.key, f.value);
+				if ( indexOf(f.key) == -1 ) {
+					add(f.key, f.value);
+				}
 			}
 		}
 	}
@@ -170,6 +191,21 @@ public class Facets {
 		return put(key, new BasicExpressionDescription(expr));
 	}
 
+	/**
+	 * Adds the facet without performing any check, assuming it is not present in the map
+	 * @param key
+	 * @param expr
+	 * @return
+	 */
+	private IExpressionDescription add(final String key, final IExpressionDescription expr) {
+		Facet f = new Facet(key, expr);
+		Facet[] ff = new Facet[facets.length + 1];
+		System.arraycopy(facets, 0, ff, 0, facets.length);
+		facets = ff;
+		facets[facets.length - 1] = f;
+		return expr;
+	}
+
 	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
 		int i = indexOf(key);
 		if ( i > -1 ) {
@@ -178,14 +214,10 @@ public class Facets {
 			if ( previous.getTarget() != null && expr.getTarget() == null ) {
 				expr.setTarget(previous.getTarget());
 			}
-		} else {
-			Facet f = new Facet(key, expr);
-			Facet[] ff = new Facet[facets.length + 1];
-			System.arraycopy(facets, 0, ff, 0, facets.length);
-			facets = ff;
-			facets[facets.length - 1] = f;
+			return expr;
 		}
-		return expr;
+		return add(key, expr);
+
 	}
 
 	private int indexOf(final String key) {
