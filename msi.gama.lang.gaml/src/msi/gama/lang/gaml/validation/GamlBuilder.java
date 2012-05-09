@@ -117,13 +117,13 @@ public class GamlBuilder {
 		return model;
 	}
 
-	public void convStatements(final ISyntacticElement elt, final EList<Statement> ss) {
+	private final void convStatements(final ISyntacticElement elt, final EList<Statement> ss) {
 		for ( final Statement stm : ss ) {
 			elt.addChild(convStatement(elt.getKeyword(), stm));
 		}
 	}
 
-	private ISyntacticElement convStatement(final String upper, final Statement stm) {
+	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
 		// If the initial statement is null, we return null
 		if ( stm == null ) { return null; }
 		// We catch its keyword
@@ -162,9 +162,9 @@ public class GamlBuilder {
 
 		// We add the dependencies (only for variable declarations)
 		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
-			Array a = varDependenciesOf(stm);
-			if ( a != null ) {
-				elt.setFacet(DEPENDS_ON, convExpr(a));
+			String s = varDependenciesOf(stm);
+			if ( !s.isEmpty() ) {
+				elt.setFacet(DEPENDS_ON, new StringBasedExpressionDescription(s));
 			}
 		}
 
@@ -208,27 +208,25 @@ public class GamlBuilder {
 		return elt;
 	}
 
-	public Array varDependenciesOf(final Statement s) {
-		Array a = null;
+	static final StringBuilder sb = new StringBuilder();
+
+	private final String varDependenciesOf(final Statement s) {
+		sb.setLength(0);
 		for ( FacetExpr facet : s.getFacets() ) {
 			Expression expr = facet.getExpr();
 			if ( expr != null ) {
 				for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
 					EObject obj = tree.next();
 					if ( obj instanceof VariableRef ) {
-						if ( a == null ) {
-							a = EGaml.getFactory().createArray();
-						}
-						a.getExprs().add(
-							EGaml.createTerminal(EGaml.getKey.caseVariableRef((VariableRef) obj)));
+						sb.append(" ").append(EGaml.getKey.caseVariableRef((VariableRef) obj));
 					}
 				}
 			}
 		}
-		return a;
+		return sb.toString();
 	}
 
-	public void convElse(final Statement stm, final ISyntacticElement elt) {
+	private final void convElse(final Statement stm, final ISyntacticElement elt) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
 			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock);
@@ -241,18 +239,18 @@ public class GamlBuilder {
 		}
 	}
 
-	public IExpressionDescription convExpr(final Expression expr) {
+	private final IExpressionDescription convExpr(final Expression expr) {
 		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
 		return null;
 	}
 
-	public IExpressionDescription convExpr(final DefinitionFacetExpr expr) {
+	private final IExpressionDescription convExpr(final DefinitionFacetExpr expr) {
 		if ( expr != null && expr.getName() != null ) { return new EcoreBasedExpressionDescription(
 			expr); }
 		return null;
 	}
 
-	public IExpressionDescription convExpr(final Definition expr) {
+	private final IExpressionDescription convExpr(final Definition expr) {
 		if ( expr != null && expr.getName() != null ) { return new EcoreBasedExpressionDescription(
 			expr); }
 		return null;
