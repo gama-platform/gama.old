@@ -130,7 +130,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements
 		this.setLayout(new BorderLayout());
 		this.add(canvas, BorderLayout.CENTER);
 
-		int REFRESH_FPS = 60;
+		int REFRESH_FPS = 30;
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 
 		// /////

@@ -58,7 +58,7 @@ public class MyGraphics {
 		gl.glEnd();
 
 	}
-	
+
 	public void DrawCircle(GL gl, GLU glu, float x, float y, float z,
 			int numPoints, float radius) {
 
@@ -148,7 +148,6 @@ public class MyGraphics {
 		this.DrawLine(gl, glu, geometry, 1.0f);
 
 	}
-	
 
 	public void Draw3DQuads(GL gl, GLU glu, MyGeometry geometry, float z_offset) {
 		int curPolyGonNumPoints = geometry.vertices.length;
@@ -213,7 +212,7 @@ public class MyGraphics {
 		}
 
 	}
-	
+
 	public void DrawOpenGLHelloWorldShape(GL gl) {
 
 		float red = (float) (Math.random()) * 1;
@@ -222,7 +221,6 @@ public class MyGraphics {
 
 		gl.glColor3f(red, green, blue);
 		// ----- Render a quad -----
-
 		gl.glBegin(GL_POLYGON); // draw using quads
 		gl.glVertex3f(-1.0f, 1.0f, 0.0f);
 		gl.glVertex3f(1.0f, 1.0f, 0.0f);
@@ -230,42 +228,41 @@ public class MyGraphics {
 		gl.glVertex3f(-1.0f, -1.0f, 0.0f);
 		gl.glEnd();
 	}
-	
-	public void DrawJTSGeometry(GL gl, GLU glu,Geometry geometry){
-		
-		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
-			for (int i = 0; i < geometry.getNumGeometries(); i++) {
-				Envelope e = geometry.getEnvelopeInternal();
-				if (geometry.getGeometryType() == "MultiPolygon") {
-					MultiPolygon polygons = (MultiPolygon) geometry;
-					DrawMultiPolygon(gl,glu,polygons);
-				}
 
-				else if (geometry.getGeometryType() == "Polygon") {
-					Polygon polygon = (Polygon) geometry;
-					DrawPolygon(gl,glu,polygon);
-				}
+	public void DrawJTSGeometry(GL gl, GLU glu, Geometry geometry, Color c) {
 
-				else if (geometry.getGeometryType() == "MultiLineString") {
-					MultiLineString lines = (MultiLineString) geometry;
-					DrawMultiLineString(gl,lines);
-				}
+		// System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
+		for (int i = 0; i < geometry.getNumGeometries(); i++) {
 
-				else if (geometry.getGeometryType() == "LineString") {
-					LineString line = (LineString) geometry;
-					DrawLineString(gl,line,1.2f);
-				}
+			if (geometry.getGeometryType() == "MultiPolygon") {
+				MultiPolygon polygons = (MultiPolygon) geometry;
+				DrawMultiPolygon(gl, glu, polygons,c);
+			}
 
-				else if (geometry.getGeometryType() == "Point") {
-					Point point = (Point) geometry;
-					DrawPoint(gl,glu,point,10,10);	
-					//AddPointInGeometries(point, color);
-				}
+			else if (geometry.getGeometryType() == "Polygon") {
+				Polygon polygon = (Polygon) geometry;
+				DrawPolygon(gl, glu, polygon,c);
+			}
+
+			else if (geometry.getGeometryType() == "MultiLineString") {
+				MultiLineString lines = (MultiLineString) geometry;
+				DrawMultiLineString(gl, lines,c);
+			}
+
+			else if (geometry.getGeometryType() == "LineString") {
+				LineString line = (LineString) geometry;
+				DrawLineString(gl, line, 1.2f,c);
+			}
+
+			else if (geometry.getGeometryType() == "Point") {
+				Point point = (Point) geometry;
+				DrawPoint(gl, glu, point, 10, 10,c);
 			}
 		}
-	
-	public void DrawMultiPolygon(GL gl, GLU glu,MultiPolygon polygons){
-				
+	}
+
+	public void DrawMultiPolygon(GL gl, GLU glu, MultiPolygon polygons, Color c) {
+
 		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
 
 		GLUtessellator tobj = glu.gluNewTess();
@@ -273,58 +270,28 @@ public class MyGraphics {
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
-		
+
+		int numExtPoints;
 		int N = polygons.getNumGeometries();
+
 
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (int i = 0; i < N; i++) {
-
+			gl.glColor3f((float) c.getRed() / 255,
+					(float) c.getGreen() / 255,
+					(float) c.getBlue() / 255);
 			Polygon p = (Polygon) polygons.getGeometryN(i);
-			int numExtPoints = p.getExteriorRing().getNumPoints();
-			
-
-			glu.gluTessBeginPolygon(tobj, null);
-			glu.gluTessBeginContour(tobj);
-
-			double tempPolygon[][] = new double[numExtPoints][3];
-
-			// Convert vertices as a list of double for
-			// gluTessVertex
-			for (int j = 0; j < numExtPoints; j++) {
-				tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
-						.getPointN(j).getX());
-				tempPolygon[j][1] = -(float) (p.getExteriorRing()
-						.getPointN(j).getY());
-				tempPolygon[j][2] = (float) (0);
-			}
-
-			for (int j = 0; j < numExtPoints; j++) {
-				glu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
-			}
-			// gl.glNormal3f(0.0f, 1.0f, 0.0f);
-
-			glu.gluTessEndContour(tobj);
-			glu.gluTessEndPolygon(tobj);
-			
-			
-			//Draw contour
-			gl.glColor3f(0.0f, 0.0f, 0.0f);
-			gl.glBegin(GL.GL_LINES);
-			for (int j=0;j<numExtPoints -1;j++){
-				gl.glLineWidth(1.0f);
-					gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
-							-(float) ((p.getExteriorRing().getPointN(j).getY())),0.0f);
-					gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j+1).getX())),
-							-(float) ((p.getExteriorRing().getPointN(j+1).getY())),0.0f);		
-			}
-			gl.glEnd();
+			DrawPolygon(gl, glu, p,c);
 		}
 
 	}
-	
-	public void DrawPolygon(GL gl, GLU glu, Polygon p){
-			
-  	
+
+	public void DrawPolygon(GL gl, GLU glu, Polygon p,Color c) {
+
+		gl.glColor3f((float) c.getRed() / 255,
+				(float) c.getGreen() / 255,
+				(float) c.getBlue() / 255);
+		
 		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
 
 		GLUtessellator tobj = glu.gluNewTess();
@@ -332,11 +299,9 @@ public class MyGraphics {
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 		glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
-		
-		
+
 		int numExtPoints = p.getExteriorRing().getNumPoints();
-		
-		
+
 		glu.gluTessBeginPolygon(tobj, null);
 		glu.gluTessBeginContour(tobj);
 
@@ -345,10 +310,10 @@ public class MyGraphics {
 		// Convert vertices as a list of double for
 		// gluTessVertex
 		for (int j = 0; j < numExtPoints; j++) {
-			tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
-					.getPointN(j).getX());
-			tempPolygon[j][1] = -(float) (p.getExteriorRing()
-					.getPointN(j).getY());
+			tempPolygon[j][0] = (float) (float) (p.getExteriorRing().getPointN(
+					j).getX());
+			tempPolygon[j][1] = -(float) (p.getExteriorRing().getPointN(j)
+					.getY());
 			tempPolygon[j][2] = (float) (0);
 		}
 
@@ -359,65 +324,73 @@ public class MyGraphics {
 
 		glu.gluTessEndContour(tobj);
 		glu.gluTessEndPolygon(tobj);
-		
-		
-		//Draw contour
+
+		// Draw contour
 		gl.glColor3f(0.0f, 0.0f, 0.0f);
 		gl.glBegin(GL.GL_LINES);
-		for (int j=0;j<numExtPoints -1;j++){
+		for (int j = 0; j < numExtPoints - 1; j++) {
 			gl.glLineWidth(1.0f);
-				gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
-						-(float) ((p.getExteriorRing().getPointN(j).getY())),0.0f);
-				gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j+1).getX())),
-						-(float) ((p.getExteriorRing().getPointN(j+1).getY())),0.0f);		
+			gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
+					-(float) ((p.getExteriorRing().getPointN(j).getY())), 0.0f);
+			gl.glVertex3f(
+					(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
+					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())),
+					0.0f);
 		}
 		gl.glEnd();
 	}
-	
-	
-	public void DrawMultiLineString(GL gl,MultiLineString lines){
-					
+
+	public void DrawMultiLineString(GL gl, MultiLineString lines, Color c) {
+
 		// get the number of line in the multiline.
 		int N = lines.getNumGeometries();
 
 		// for each line of a multiline, get each point coordinates.
 		for (int i = 0; i < N; i++) {
+			
+			gl.glColor3f((float) c.getRed() / 255,
+					(float) c.getGreen() / 255,
+					(float) c.getBlue() / 255);
 
 			LineString l = (LineString) lines.getGeometryN(i);
 			int numPoints = l.getNumPoints();
-			MyGeometry curGeometry = new MyGeometry(numPoints);		
-			//gl.glLineWidth(size);
+			MyGeometry curGeometry = new MyGeometry(numPoints);
+			// gl.glLineWidth(size);
 			gl.glBegin(GL.GL_LINES);
 			for (int j = 0; j < numPoints - 1; j++) {
 				gl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())),
-						(float) (0));
-				gl.glVertex3f((float) ((l.getPointN(j+1).getX())),
-						-(float) ((l.getPointN(j+1).getY())),
-						(float) (0));
+						-(float) ((l.getPointN(j).getY())), (float) (0));
+				gl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+						-(float) ((l.getPointN(j + 1).getY())), (float) (0));
 			}
-			gl.glEnd();	
-		}	
+			gl.glEnd();
+		}
 	}
-	
-	public void DrawLineString(GL gl,LineString line,float size){
-		
+
+	public void DrawLineString(GL gl, LineString line, float size, Color c) {
+
+		gl.glColor3f((float) c.getRed() / 255,
+				(float) c.getGreen() / 255,
+				(float) c.getBlue() / 255);
 		int numPoints = line.getNumPoints();
 		gl.glLineWidth(size);
 		gl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
 			gl.glVertex3f((float) ((line.getPointN(j).getX())),
-					(float) ((line.getPointN(j).getY())),
-					(float) ((0)));
-			gl.glVertex3f((float) ((line.getPointN(j+1).getX())),
-					(float) ((line.getPointN(j+1).getY())),
-					(float) ((0)));
+					(float) ((line.getPointN(j).getY())), (float) ((0)));
+			gl.glVertex3f((float) ((line.getPointN(j + 1).getX())),
+					(float) ((line.getPointN(j + 1).getY())), (float) ((0)));
 		}
-		gl.glEnd();	
+		gl.glEnd();
 
 	}
-	
-	public void DrawPoint(GL gl, GLU glu, Point point,int numPoints, float radius){
+
+	public void DrawPoint(GL gl, GLU glu, Point point, int numPoints,
+			float radius, Color c) {
+
+		gl.glColor3f((float) c.getRed() / 255,
+				(float) c.getGreen() / 255,
+				(float) c.getBlue() / 255);
 		
 		TessellCallBack tessCallback = new TessellCallBack(gl, glu);
 
@@ -435,8 +408,10 @@ public class MyGraphics {
 		for (int k = 0; k < numPoints; k++) {
 			angle = (float) (k * 2 * Math.PI / numPoints);
 
-			tempPolygon[k][0] = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
-			tempPolygon[k][1] = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			tempPolygon[k][0] = (float) (point.getCoordinate().x + (Math
+					.cos(angle)) * radius);
+			tempPolygon[k][1] = (float) (point.getCoordinate().y + (Math
+					.sin(angle)) * radius);
 			tempPolygon[k][2] = 0;
 		}
 
@@ -455,19 +430,20 @@ public class MyGraphics {
 		float xBegin, xEnd, yBegin, yEnd;
 		for (int k = 0; k < numPoints; k++) {
 			angle = (float) (k * 2 * Math.PI / numPoints);
-			xBegin = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
-			yBegin = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			xBegin = (float) (point.getCoordinate().x + (Math.cos(angle))
+					* radius);
+			yBegin = (float) (point.getCoordinate().y + (Math.sin(angle))
+					* radius);
 			angle = (float) ((k + 1) * 2 * Math.PI / numPoints);
-			xEnd = (float) (point.getCoordinate().x + (Math.cos(angle)) * radius);
-			yEnd = (float) (point.getCoordinate().y + (Math.sin(angle)) * radius);
+			xEnd = (float) (point.getCoordinate().x + (Math.cos(angle))
+					* radius);
+			yEnd = (float) (point.getCoordinate().y + (Math.sin(angle))
+					* radius);
 			gl.glVertex3f(xBegin, yBegin, 0);
 			gl.glVertex3f(xEnd, yEnd, 0);
 		}
 		gl.glEnd();
-		
-			
-	}
-	
 
+	}
 
 }

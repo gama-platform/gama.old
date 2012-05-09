@@ -507,6 +507,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	private void AddJTSGeometryInJTSGeometries(Geometry geometry, Color color) {
 
+		//System.out.println("Add:"+ geometry.getGeometryType() + color.getRed() +" " +color.getGreen() +" " + color.getBlue());
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.color = color;
@@ -534,10 +535,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();
 			// System.out.println(curGeometry.geometry.getGeometryType());
-			myGl.glColor3f((float) curGeometry.color.getRed() / 255,
-					(float) curGeometry.color.getGreen() / 255,
-					(float) curGeometry.color.getBlue() / 255);
-			graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, curGeometry.geometry);
+			//System.out.println("Draw:"+ curGeometry.geometry.getGeometryType() + curGeometry.color.getRed() +" " +curGeometry.color.getGreen() +" " + curGeometry.color.getBlue());	
+			graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, curGeometry.geometry,curGeometry.color);
 		}
 
 	}
@@ -569,8 +568,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g = GamaGeometryType.buildRectangle(myWidth, myHeight,
 				new GamaPoint(myWidth / 2, myHeight / 2)).getInnerGeometry();
 
-		myGl.glColor4f(0.0f, 0.0f, 1.0f, 0.0f);
-		graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, g);
+
+		Color c =new Color (0,0,255);
+		graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, g,c);
 	}
 
 	public void DrawXYZAxis(float size) {
@@ -583,7 +583,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glRasterPos3f(1.2f * size, 0.0f, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "x");
 		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor3f(size, 0, 0);
+		myGl.glColor3f(1.0f, 0, 0);
 		myGl.glVertex3f(0, 0, 0);
 		myGl.glVertex3f(size, 0, 0);
 		myGl.glEnd();
@@ -598,7 +598,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glRasterPos3f(0.0f, 1.2f * size, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "y");
 		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor3f(0, size, 0);
+		myGl.glColor3f(0, 1.0f, 0);
 		myGl.glVertex3f(0, 0, 0);
 		myGl.glVertex3f(0, size, 0);
 		myGl.glEnd();
@@ -612,7 +612,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glRasterPos3f(0.0f, 0.0f, 1.2f * size);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z");
 		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor3f(0, 0, size);
+		myGl.glColor3f(0, 0, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
 		myGl.glVertex3f(0, 0, size);
 		myGl.glEnd();

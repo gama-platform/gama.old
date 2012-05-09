@@ -85,7 +85,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		// System.out.println("opengl display");
+		//System.out.println("opengl display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 		context = drawable.getContext();
