@@ -20,7 +20,6 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.commands;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -29,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.architecture.reflex.ReflexCommand;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -49,15 +47,18 @@ import msi.gaml.variables.IVariable;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
 		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
-@commands({ ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class })
+// @commands({ ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class })
 @inside(symbols = IKeyword.MODEL)
 public class GuiExperiment extends AbstractExperiment {
 
 	protected final List<IParameter> regularParameters;
 
+	protected final List<ICommand> userCommands;
+
 	public GuiExperiment(final IDescription description) {
 		super(description);
 		regularParameters = new ArrayList();
+		userCommands = new ArrayList();
 
 	}
 
@@ -134,6 +135,8 @@ public class GuiExperiment extends AbstractExperiment {
 		for ( ISymbol s : children ) {
 			if ( s instanceof IParameter.Batch ) {
 				addRegularParameter((IParameter) s);
+			} else if ( s instanceof CommandCommand ) {
+				userCommands.add((ICommand) s);
 			}
 		}
 	}

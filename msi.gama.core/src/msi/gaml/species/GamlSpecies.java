@@ -21,7 +21,6 @@ package msi.gaml.species;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.precompiler.GamlAnnotations.base;
-import msi.gama.precompiler.GamlAnnotations.commands;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -31,8 +30,6 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
-import msi.gaml.architecture.reflex.ReflexCommand;
-import msi.gaml.commands.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -46,7 +43,8 @@ import msi.gaml.types.IType;
 @base(GamlAgent.class)
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
-@commands({ AspectCommand.class, ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class })
+// @commands({ AspectCommand.class, ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class
+// })
 @facets(value = {
 	@facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT_STR, optional = true),

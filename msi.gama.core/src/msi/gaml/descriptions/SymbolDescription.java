@@ -362,8 +362,7 @@ public class SymbolDescription implements IDescription {
 		return enclosing.getErrorCollector();
 	}
 
-	public boolean isBuiltIn() {
+	protected boolean isBuiltIn() {
 		return source.isSynthetic();
-		// return builtIn;
 	}
 }

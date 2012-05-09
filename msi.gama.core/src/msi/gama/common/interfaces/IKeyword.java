@@ -64,6 +64,7 @@ public interface IKeyword {
 	public static final String CLOSE_POINT = "}";
 	public static final String COLOR = "color";
 	public static final String COMMA = ",";
+	public static final String COMMAND = "command";
 	public static final String CONDITION = "condition";
 	public static final String CONST = "const";
 	public static final String CONTENTS = "contents";

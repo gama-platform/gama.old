@@ -84,11 +84,8 @@ public class Variable extends Symbol implements IVariable {
 		type = desc.getType();
 		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
-
-		if ( desc.isBuiltIn() ) {
-			SpeciesDescription context = desc.getSpeciesContext();
-			buildHelpers(context);
-		}
+		SpeciesDescription context = desc.getSpeciesContext();
+		buildHelpers(context);
 		javaInternal = getter != null && setter != null;
 
 	}
