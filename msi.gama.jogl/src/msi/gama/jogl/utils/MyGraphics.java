@@ -233,6 +233,7 @@ public class MyGraphics {
 	
 	public void DrawJTSGeometry(GL gl, GLU glu,Geometry geometry){
 		
+		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
 			for (int i = 0; i < geometry.getNumGeometries(); i++) {
 				Envelope e = geometry.getEnvelopeInternal();
 				if (geometry.getGeometryType() == "MultiPolygon") {
@@ -357,7 +358,20 @@ public class MyGraphics {
 		// gl.glNormal3f(0.0f, 1.0f, 0.0f);
 
 		glu.gluTessEndContour(tobj);
-		glu.gluTessEndPolygon(tobj);		
+		glu.gluTessEndPolygon(tobj);
+		
+		
+		//Draw contour
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		gl.glBegin(GL.GL_LINES);
+		for (int j=0;j<numExtPoints -1;j++){
+			gl.glLineWidth(1.0f);
+				gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j).getY())),0.0f);
+				gl.glVertex3f((float) ((p.getExteriorRing().getPointN(j+1).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j+1).getY())),0.0f);		
+		}
+		gl.glEnd();
 	}
 	
 	

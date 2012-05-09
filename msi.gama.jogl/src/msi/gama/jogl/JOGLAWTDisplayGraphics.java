@@ -35,14 +35,11 @@ import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.types.GamaGeometryType;
 
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.jfree.chart.JFreeChart;
 
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
@@ -52,7 +49,7 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
  * layouts while objects that wish to be drawn as a shape need only call the
  * appropriate method.
  * 
- * @author Nick Collier, Alexis Drogoul, Patrick Taillandier
+ * @author Arnaud Grignard, Alexis Drogoul, Patrick Taillandier
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
 
@@ -314,7 +311,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// //////// draw method ///////////////
 
 	/**
-	 * Method drawGeometry.Add a given JTS Geometry in the list of all the
+	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
 	 * existing geometry that will be displayed by openGl.
 	 * 
 	 * @param geometry
@@ -329,41 +326,31 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
+		//System.out.println("drawGeometry:" + geometry.getGeometryType());
 		this.AddJTSGeometryInJTSGeometries(geometry, color);
 		return sw.toShape(geometry).getBounds2D();
 	}
 
+	
 	@Override
 	public void drawGrid(BufferedImage image, Color lineColor,
 			java.awt.Point point) {
 
-		GeometryFactory geometryFactory = JTSFactoryFinder
-				.getGeometryFactory(null);
-		double step;
+		double stepX, stepY;
 		for (int i = 0; i <= image.getWidth(); i++) {
-			step = (i / (double) image.getWidth()) * (double) image.getWidth();
-			Coordinate[] coords = new Coordinate[] { new Coordinate(step, 0),
-					new Coordinate((step), (image.getWidth())) };
-			AddLineInGeometries(geometryFactory.createLineString(coords),
-					lineColor);
-			// FIXME: need to check with y negative value.
-//			 Geometry g = GamaGeometryType.buildLine(new GamaPoint(step, 0),
-//			 new GamaPoint(step, image.getWidth())).getInnerGeometry();
-//			 this.AddJTSGeometryInJTSGeometries(g, lineColor);
-
+			stepX = (i / (double) image.getWidth()) * (double) image.getWidth();
+			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
+					new GamaPoint(stepX, -image.getWidth())).getInnerGeometry();
+			this.AddJTSGeometryInJTSGeometries(g, lineColor);
 		}
 
 		for (int i = 0; i <= image.getHeight(); i++) {
-			step = (i / (double) image.getHeight())
+			stepY = -(i / (double) image.getHeight())
 					* (double) image.getHeight();
-			Coordinate[] coords = new Coordinate[] { new Coordinate(0, step),
-					new Coordinate((image.getHeight()), (step)) };
-			AddLineInGeometries(geometryFactory.createLineString(coords),
-					lineColor);
-
-//			 Geometry g = GamaGeometryType.buildLine(new GamaPoint(0,step),
-//			 new GamaPoint(image.getHeight(),step)).getInnerGeometry();
-//			 this.AddJTSGeometryInJTSGeometries(g, lineColor);
+			;
+			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
+					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
+			this.AddJTSGeometryInJTSGeometries(g, lineColor);
 		}
 
 	}
@@ -415,11 +402,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Integer angle) {
-		 // FIXME : Need to check if the circle is at the right place.
-		 Geometry g = GamaGeometryType.buildCircle(((double)curWidth)/2, new
-		 GamaPoint(curX + ((double)curWidth) / 2,curY + ((double)curWidth)/2 )).getInnerGeometry();
-		 this.AddJTSGeometryInJTSGeometries(g,c);
-		//this.AddCircleInGeometries(curX + curWidth / 2, curY + curWidth / 2, c,curWidth / 2);
+		// FIXME : Need to check if the circle is at the right place.
+		Geometry g = GamaGeometryType.buildCircle(
+				((double) curWidth) / 2,
+				new GamaPoint(curX + ((double) curWidth) / 2, curY
+						+ ((double) curWidth) / 2)).getInnerGeometry();
+		this.AddJTSGeometryInJTSGeometries(g, c);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
@@ -519,48 +507,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	private void AddJTSGeometryInJTSGeometries(Geometry geometry, Color color) {
 
-		
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.color = color;
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
-	/**
-	 * @param line
-	 * @param color
-	 */
-	private void AddLineInGeometries(final LineString line, final Color color) {
 
-		int numPoints = line.getNumPoints();
-		MyGeometry curGeometry = new MyGeometry(numPoints);
-		for (int j = 0; j < numPoints; j++) {
-			curGeometry.vertices[j].x = (float) (line.getPointN(j).getX());
-			curGeometry.vertices[j].y = -(float) (line.getPointN(j).getY());
-			curGeometry.vertices[j].z = z;
-			curGeometry.vertices[j].u = 0.0f;
-			curGeometry.vertices[j].v = 0.0f;
-		}
-		curGeometry.color = color;
-		curGeometry.type = "LineString";
-		this.myGeometries.add(curGeometry);
-
-	}
-
-	private void AddCircleInGeometries(int x, int y, Color color, int size) {
-		MyGeometry curGeometry = new MyGeometry(1);
-		// FIXME: why we need to use currentScale?
-		curGeometry.vertices[0].x = (float) ((float) x);
-		curGeometry.vertices[0].y = (float) (-(float) y);
-		curGeometry.vertices[0].z = z;
-		curGeometry.vertices[0].u = 6.0f;
-		curGeometry.vertices[0].v = 0.0f;
-		curGeometry.color = color;
-		curGeometry.size = (float) (size);
-		curGeometry.type = "Circle";
-		this.myGeometries.add(curGeometry);
-
-	}
 
 	private void AddImageInImages(final BufferedImage img, int curX, int curY) {
 
@@ -580,7 +533,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();
-			System.out.println(curGeometry.geometry.getGeometryType());
+			// System.out.println(curGeometry.geometry.getGeometryType());
 			myGl.glColor3f((float) curGeometry.color.getRed() / 255,
 					(float) curGeometry.color.getGreen() / 255,
 					(float) curGeometry.color.getBlue() / 255);
@@ -588,52 +541,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 	}
-
-	public void DrawMyGeometries() {
-
-		Iterator<MyGeometry> it = this.myGeometries.iterator();
-		while (it.hasNext()) {
-			MyGeometry curGeometry = (MyGeometry) it.next();
-			// Color are define in RGB value (from 0 to 255) openGl use value
-			// from 0 to 1.
-			myGl.glColor3f((float) curGeometry.color.getRed() / 255,
-					(float) curGeometry.color.getGreen() / 255,
-					(float) curGeometry.color.getBlue() / 255);
-			// System.out.println("R:"+(float)curGeometry.color.getRed()/255+"G:"+(float)curGeometry.color.getGreen()/255+"B:"+(float)curGeometry.color.getBlue()/255);
-			if (curGeometry.type == "MultiPolygon"
-					|| curGeometry.type == "Polygon") {
-
-				if (myGLRender.displaySurface.ThreeD == true) {
-					myGl.glColor3f(0.0f, 0.0f, 1.0f);
-					// top face
-					float z_offset = 100.0f;
-					graphicsGLUtils.DrawGeometry(myGl, myGlu, curGeometry,
-							z_offset);
-					// base face
-					graphicsGLUtils
-							.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
-					// all the front-face of the polygons as a verticle quads.
-					graphicsGLUtils.Draw3DQuads(myGl, myGlu, curGeometry,
-							z_offset);
-				} else {
-					graphicsGLUtils
-							.DrawGeometry(myGl, myGlu, curGeometry, 0.0f);
-				}
-
-			} else if (curGeometry.type == "MultiLineString"
-					|| curGeometry.type == "LineString") {
-				graphicsGLUtils.DrawLine(myGl, myGlu, curGeometry, 1.2f);
-			} else if (curGeometry.type == "Point"
-					|| curGeometry.type == "Circle") {
-				graphicsGLUtils.DrawCircle(myGl, myGlu,
-						curGeometry.vertices[0].x, curGeometry.vertices[0].y,
-						curGeometry.vertices[0].z, 20, curGeometry.size / 2);
-
-			}
-
-		}
-	}
-
+	
 	public void DrawMyImages() {
 
 		Iterator<MyImage> it = this.myImages.iterator();
@@ -647,7 +555,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void DrawEnvironmentBounds() {
 
-		//Draw Width and height value
+		// Draw Width and height value
 		GLUT glut = new GLUT();
 		myGl.glRasterPos3f(this.myWidth / 2, this.myHeight * 0.01f, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
@@ -656,12 +564,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glRasterPos3f(this.myWidth * 1.01f, -(this.myHeight / 2), 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
 				String.valueOf(this.myHeight));
-		
-		//Draw environment rectangle	
+
+		// Draw environment rectangle
 		Geometry g = GamaGeometryType.buildRectangle(myWidth, myHeight,
-				new GamaPoint(myWidth/2, myHeight/2)).getInnerGeometry();
-		
-		myGl.glColor4f(0.0f,0.0f,1.0f,0.0f);
+				new GamaPoint(myWidth / 2, myHeight / 2)).getInnerGeometry();
+
+		myGl.glColor4f(0.0f, 0.0f, 1.0f, 0.0f);
 		graphicsGLUtils.DrawJTSGeometry(myGl, myGlu, g);
 	}
 
@@ -696,7 +604,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glEnd();
 		myGl.glBegin(GL_TRIANGLES);
 		myGl.glVertex3f(-0.05f * size, 1.0f * size, 0.0f);
-		myGl.glVertex3f(0.05f*size, 1.0f * size, 0.0f);
+		myGl.glVertex3f(0.05f * size, 1.0f * size, 0.0f);
 		myGl.glVertex3f(0.0f, 1.1f * size, 0.0f);
 		myGl.glEnd();
 
@@ -716,9 +624,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glEnd();
 
 	}
-	
-	public void DrawZValue(float pos,float value){
-		
+
+	public void DrawZValue(float pos, float value) {
+
 		GLUT glut = new GLUT();
 		myGl.glRasterPos3f(pos, pos, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
