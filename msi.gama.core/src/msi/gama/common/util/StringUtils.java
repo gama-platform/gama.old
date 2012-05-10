@@ -78,6 +78,7 @@ public class StringUtils {
 	}
 
 	public static List<String> tokenize(final String expression) {
+		if ( expression == null ) { return Collections.EMPTY_LIST; }
 		final List<String> tokens = new ArrayList<String>();
 		final Matcher m = p.matcher(expression);
 		while (m.find()) {
