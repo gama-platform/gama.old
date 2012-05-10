@@ -194,13 +194,11 @@ public class SpeciesDescription extends SymbolDescription {
 		// if ( Skill.class.isAssignableFrom(c) ) {
 		// ISkill skill;
 		// if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-		// // In order to avoid having two objects of the same class
 		// skill = control;
 		// } else {
 		// skill = GamlCompiler.getSkillInstanceFor(c);
 		// }
 		// skillInstancesByClass.put(c, skill);
-		// // skill.initializeFor(scope);
 		// } else {
 		// skillInstancesByClass.put(c, null);
 		// }
@@ -208,7 +206,11 @@ public class SpeciesDescription extends SymbolDescription {
 		for ( final String s : skillsMethods.keySet() ) {
 			final Class c = skillsMethods.get(s);
 			if ( Skill.class.isAssignableFrom(c) ) {
-				skillInstancesByMethod.put(s, GamlCompiler.getSkillInstanceFor(c));
+				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
+					skillInstancesByMethod.put(s, control);
+				} else {
+					skillInstancesByMethod.put(s, GamlCompiler.getSkillInstanceFor(c));
+				}
 			} else {
 				skillInstancesByMethod.put(s, null);
 			}

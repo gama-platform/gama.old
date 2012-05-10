@@ -32,6 +32,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
+import msi.gaml.architecture.IArchitecture;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -467,12 +468,15 @@ public class GamlCompiler {
 	}
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {
+
 		ISkill skill = skillInstances.get(skillClass);
 		if ( skill == null ) {
 			ISkillConstructor constructor = getSkillConstructor(skillClass);
 			if ( constructor == null ) { return null; }
 			skill = constructor.newInstance();
-			skillInstances.put(skillClass, skill);
+			if ( !IArchitecture.class.isAssignableFrom(skillClass) ) {
+				skillInstances.put(skillClass, skill);
+			}
 		}
 		return skill;
 
