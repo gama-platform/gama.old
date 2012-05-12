@@ -1,17 +1,17 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- '../includes/building.shp' parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- '../includes/road.shp' parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ;
+	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
+	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
+	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ;
 	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
 	int max_work_start <- 60 parameter: 'Latest hour to start work' category: 'People' ;
 	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ;
 	int max_work_end <- 132 parameter: 'Latest hour to end work' category: 'People' ;
-	float min_speed <- 50 parameter: 'minimal speed' category: 'People' ;
-	float max_speed <- 100 parameter: 'maximal speed' category: 'People' ;
+	float min_speed <- 50.0 parameter: 'minimal speed' category: 'People' ;
+	float max_speed <- 100.0 parameter: 'maximal speed' category: 'People' ;
 	float destroy <- 0.02 parameter: 'Value of destruction when a people agent takes a road' category: 'Road' ;
 	int repair_time <- 6 parameter: 'Number of steps between two road repairs' category: 'Road' ;
 	
@@ -55,15 +55,15 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species road  {
-		float destruction_coeff <- 1 ;
+		float destruction_coeff <- 1.0 ;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
-		rgb color <- [min([255, colorValue]),max ([0, 255 - colorValue]),0]  update: [min([255, colorValue]),max ([0, 255 - colorValue]),0] ;
+		rgb color <- rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0])  update: rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0]) ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species people skills: [moving]{
@@ -88,7 +88,7 @@ entities {
 			let segments type: list of: geometry <- path_followed.segments;
 			loop line over: segments {
 				let dist type: float <- line.perimeter;
-				let ag type: road <- path_followed agent_from_geometry line; 
+				let ag type: road <- road(path_followed agent_from_geometry line); 
 				ask road(ag) {
 					set destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
 				}

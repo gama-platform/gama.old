@@ -10,8 +10,8 @@ global {
 }
 entities {
 	species prey {
-		const size type: float <- 2 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- 2.0 ;
+		const color type: rgb <- rgb('blue') ;
 		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
 		
 		init {
@@ -28,12 +28,12 @@ environment width: 100 height: 100 {
 		float maxFood <- 1.0 ;
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
-		rgb color <- [255 * (1 - food), 255, 255 * (1 - food)] update: [255 * (1 - food), 255, 255 * (1 - food)] ;
+		rgb color <- rgb([255 * (1 - food), 255, 255 * (1 - food)]) update: rgb([255 * (1 - food), 255, 255 * (1 - food)]) ;
 	}
 }
 output {
 	display main_display {
-		grid vegetation_cell lines: 'black' ;
+		grid vegetation_cell lines: rgb('black') ;
 		species prey aspect: base ;
 	}
 }

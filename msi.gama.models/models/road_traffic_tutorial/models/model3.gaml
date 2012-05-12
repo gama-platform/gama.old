@@ -1,17 +1,17 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- '../includes/building.shp' parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- '../includes/road.shp' parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ;
+	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
+	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
+	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ;
 	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
 	int max_work_start <- 60 parameter: 'Latest hour to start work' category: 'People' ;
 	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ;
 	int max_work_end <- 132 parameter: 'Latest hour to end work' category: 'People' ;
-	float min_speed <- 50 parameter: 'minimal speed' category: 'People' ;
-	float max_speed <- 100 parameter: 'maximal speed' category: 'People' ;
+	float min_speed <- 50.0 parameter: 'minimal speed' category: 'People' ;
+	float max_speed <- 100.0 parameter: 'maximal speed' category: 'People' ;
 	graph the_graph;
 	
 	init {
@@ -40,13 +40,13 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species road  {
 		rgb color <- rgb('black') ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species people skills: [moving]{

@@ -9,8 +9,8 @@ global {
 }
 entities {
 	species prey {
-		const size type: float <- 2 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- 2.0 ;
+		const color type: rgb <- rgb('blue');
 		
 		aspect base {
 			draw shape: circle size: size color: color ;

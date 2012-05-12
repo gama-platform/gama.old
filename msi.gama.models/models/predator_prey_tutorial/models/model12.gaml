@@ -6,7 +6,7 @@ global {
 	file map_init <- file('../includes/data/raster_map.png') parameter: 'Initial environement: ' category: 'Environment' ;
 	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
 	int nb_predator_init <- 20 min: 0 max: 200 parameter: 'Initial number of predators ' category: 'Predator' ;
-	float prey_max_energy <- 1 parameter: 'Prey max energy: ' category: 'Prey' ;
+	float prey_max_energy <- 1.0 parameter: 'Prey max energy: ' category: 'Prey' ;
 	float prey_max_transfert <- 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
 	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
 	float prey_proba_reproduce <- 0.01 parameter: 'Prey probability reproduce: ' category: 'Prey' ;

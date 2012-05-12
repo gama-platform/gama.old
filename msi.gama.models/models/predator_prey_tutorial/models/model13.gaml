@@ -3,17 +3,17 @@ model prey_predator
 //Model 13 of the predator/prey tutorial
 
 global {
-	file map_init <- '../includes/gis/vegetation.shp' parameter: 'Initial environement: ' category: 'Environment' ;
+	file map_init <- file('../includes/gis/vegetation.shp') parameter: 'Initial environement: ' category: 'Environment' ;
 	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
 	int nb_predator_init <- 20 min: 0 max: 200 parameter: 'Initial number of predators ' category: 'Predator' ;
-	float prey_max_energy <- 1 parameter: 'Prey max energy: ' category: 'Prey' ;
+	float prey_max_energy <- 1.0 parameter: 'Prey max energy: ' category: 'Prey' ;
 	float prey_max_transfert <- 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
 	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
 	float prey_proba_reproduce <- 0.01 parameter: 'Prey probability reproduce: ' category: 'Prey' ;
 	int prey_nb_max_offsprings <- 5 parameter: 'Prey nb max offsprings: ' category: 'Prey' ;
 	float prey_energy_reproduce <- 0.5 parameter: 'Prey energy reproduce: ' category: 'Prey' ;
 	float prey_speed <- 10.0 parameter: 'Prey speed: ' category: 'Prey' ;
-	float predator_max_energy <- 1 parameter: 'Predator max energy: ' category: 'Predator' ;
+	float predator_max_energy <- 1.0 parameter: 'Predator max energy: ' category: 'Predator' ;
 	float predator_energy_transfert <- 0.5 parameter: 'Predator energy transfert: ' category: 'Predator' ;
 	float predator_energy_consum <- 0.02 parameter: 'Predator energy consumption: ' category: 'Predator' ;
 	float predator_proba_reproduce <- 0.01 parameter: 'Predator probability reproduce: ' category: 'Predator' ;
@@ -43,17 +43,17 @@ global {
 }
 entities {
 	species vegetation {
-		float max_food <- 100 ;
-		float foodProd <- 10 ;
+		float max_food <- 100.0 ;
+		float foodProd <- 10.0 ;
 		float food update: min([max_food, food + foodProd] );
-		rgb color update: [255 * ((max_food - food) / max_food), 255, 255 * ((max_food - food) / max_food)] ;
+		rgb color update: rgb([255 * ((max_food - food) / max_food), 255, 255 * ((max_food - food) / max_food)]) ;
 		aspect base {
 			draw shape: geometry color: color ;
 		}
 	}
 	species generic_species skills: [moving]{
-		const size type: float <- 4 ;
-		const color type: rgb <- 'blue' ;
+		const size type: float <- 4.0 ;
+		const color type: rgb <- rgb('blue') ;
 		const max_energy type: float init: prey_max_energy ;
 		const max_transfert type: float init: prey_max_transfert ;
 		const energy_consum type: float init: prey_energy_consum ;
@@ -91,11 +91,11 @@ entities {
 		}
 		aspect info {
 			draw shape: square size: size color: color ;
-			draw text: energy with_precision 2 size: 3 color: rgb('black') ;
+			draw text: string(energy with_precision 2) size: 3 color: rgb('black') ;
 		}
 	}
 	species prey parent: generic_species {
-		const color type: rgb <- 'blue' ;
+		const color type: rgb <- rgb('blue') ;
 		const max_energy type: float <- prey_max_energy ;
 		const max_transfert type: float <- prey_max_transfert ;
 		const energy_consum type: float <- prey_energy_consum ;
@@ -103,7 +103,7 @@ entities {
 		const nb_max_offsprings type: int <- prey_nb_max_offsprings ;
 		const energy_reproduce type: float <- prey_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/sheep.png' ;
-		const speed type: float value: prey_speed;
+		const speed type: float <- prey_speed;
 		
 		reflex eat when: myPatch.food > 0 {
 			let energy_transfert type: float <- min ([max_transfert, myPatch.food]) ;
@@ -112,7 +112,7 @@ entities {
 		}
 	}
 	species predator parent: generic_species {
-		const color type: rgb <- 'red' ;
+		const color type: rgb <- rgb('red') ;
 		const max_energy type: float <- predator_max_energy ;
 		const energy_transfert type: float <- predator_energy_transfert ;
 		const energy_consum type: float <- predator_energy_consum ;
@@ -120,7 +120,7 @@ entities {
 		const nb_max_offsprings type: int <- predator_nb_max_offsprings ;
 		const energy_reproduce type: float <- predator_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/wolf.png' ;
-		const speed type: float value: predator_speed;
+		const speed type: float <- predator_speed;
 		
 		reflex eat when: !(empty ((self neighbours_at predator_range) of_species prey)) {
 			ask one_of ((self neighbours_at predator_range) of_species prey) {
