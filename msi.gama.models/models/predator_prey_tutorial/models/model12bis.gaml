@@ -44,24 +44,16 @@ entities {
 		const nb_max_offsprings type: int ;
 		const energy_reproduce type: float ;
 		const my_icon type: string;
-		
 		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
 		float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
-		
 		init {
 			set location <- myCell.location;
 		}
-		
 		reflex basic_move {
 			do choose_cell ;
 			set location <- myCell.location ;
 		}
 		action choose_cell ;
-		reflex eat when: myCell.food > 0 {
-			let energy_transfert type: float <- min([max_transfert, myCell.food]) ;
-			set myCell.food <- myCell.food - energy_transfert ;
-			set energy <- energy + energy_transfert ;
-		}
 		reflex die when: energy <= 0 {
 			do die ;
 		} 
@@ -74,7 +66,6 @@ entities {
 			}
 			set energy <- energy / nb_offsprings ;
 		}
-
 		aspect base {
 			draw shape: circle size: size color: color ;
 		}
@@ -184,7 +175,6 @@ experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 20
 	parameter var: predator_energy_transfert min: 0.1 max: 1.0 step: 0.1 name: 'Predator_energy_transfert:' ;
 	parameter var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1  name: 'Predator_energy_reproduce:' ;
 	method tabu maximize: nb_animals iter_max: 10 tabu_list_size: 3;
-	save nb_animals to: 'max_animals' rewrite: false;
 }
 	
 

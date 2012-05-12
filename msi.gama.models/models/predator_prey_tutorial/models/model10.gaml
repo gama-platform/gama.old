@@ -40,24 +40,16 @@ entities {
 		const nb_max_offsprings type: int ;
 		const energy_reproduce type: float ;
 		const my_icon type: string;
-		
 		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
 		float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
-		
 		init {
 			set location <- myCell.location;
 		}
-		
 		reflex basic_move {
 			do choose_cell ;
 			set location <- myCell.location ;
 		}
 		action choose_cell ;
-		reflex eat when: myCell.food > 0 {
-			let energy_transfert type: float <- min([max_transfert, myCell.food]) ;
-			set myCell.food <- myCell.food - energy_transfert ;
-			set energy <- energy + energy_transfert ;
-		}
 		reflex die when: energy <= 0 {
 			do die ;
 		} 
@@ -70,7 +62,6 @@ entities {
 			}
 			set energy <- energy / nb_offsprings ;
 		}
-
 		aspect base {
 			draw shape: circle size: size color: color ;
 		}
