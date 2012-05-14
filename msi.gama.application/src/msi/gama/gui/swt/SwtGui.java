@@ -904,6 +904,8 @@ public class SwtGui implements IGui {
 				if ( d != null ) {
 					d.close();
 				}
+				hideView(UserControlView.ID);
+
 			}
 
 		});
