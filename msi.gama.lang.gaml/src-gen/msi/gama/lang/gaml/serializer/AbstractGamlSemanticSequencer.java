@@ -8,9 +8,6 @@ import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
-import msi.gama.lang.gaml.gaml.DefBinaryOp;
-import msi.gama.lang.gaml.gaml.DefReserved;
-import msi.gama.lang.gaml.gaml.DefUnary;
 import msi.gama.lang.gaml.gaml.Definition;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -20,7 +17,6 @@ import msi.gama.lang.gaml.gaml.FunctionFacetExpr;
 import msi.gama.lang.gaml.gaml.FunctionGamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
 import msi.gama.lang.gaml.gaml.GamlFacetRef;
-import msi.gama.lang.gaml.gaml.GamlLangDef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.GamlUnaryExpr;
 import msi.gama.lang.gaml.gaml.GamlUnitExpr;
@@ -212,25 +208,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.DEF_BINARY_OP:
-				if(context == grammarAccess.getDefBinaryOpRule()) {
-					sequence_DefBinaryOp(context, (DefBinaryOp) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.DEF_RESERVED:
-				if(context == grammarAccess.getDefReservedRule() ||
-				   context == grammarAccess.getGamlVarRefRule()) {
-					sequence_DefReserved(context, (DefReserved) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.DEF_UNARY:
-				if(context == grammarAccess.getDefUnaryRule()) {
-					sequence_DefUnary(context, (DefUnary) semanticObject); 
-					return; 
-				}
-				else break;
 			case GamlPackage.DEFINITION:
 				if(context == grammarAccess.getDefinitionRule() ||
 				   context == grammarAccess.getGamlVarRefRule() ||
@@ -382,12 +359,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				if(context == grammarAccess.getFacetRefRule() ||
 				   context == grammarAccess.getGamlFacetRefRule()) {
 					sequence_GamlFacetRef(context, (GamlFacetRef) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.GAML_LANG_DEF:
-				if(context == grammarAccess.getGamlLangDefRule()) {
-					sequence_GamlLangDef(context, (GamlLangDef) semanticObject); 
 					return; 
 				}
 				else break;
@@ -778,54 +749,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     name=ID
-	 */
-	protected void sequence_DefBinaryOp(EObject context, DefBinaryOp semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.DEF_BINARY_OP__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.DEF_BINARY_OP__NAME));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getDefBinaryOpAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     name=ID
-	 */
-	protected void sequence_DefReserved(EObject context, DefReserved semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.GAML_VAR_REF__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.GAML_VAR_REF__NAME));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getDefReservedAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     name=ID
-	 */
-	protected void sequence_DefUnary(EObject context, DefUnary semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.DEF_UNARY__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.DEF_UNARY__NAME));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getDefUnaryAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* block=Block?)
 	 */
 	protected void sequence_Definition(EObject context, Definition semanticObject) {
@@ -922,15 +845,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary)+
-	 */
-	protected void sequence_GamlLangDef(EObject context, GamlLangDef semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (left=GamlUnaryExpr_GamlUnaryExpr_1_1_0 (op='-' | op='!' | op='my' | op='the' | op='not') right=GamlUnaryExpr)
 	 */
 	protected void sequence_GamlUnaryExpr(EObject context, GamlUnaryExpr semanticObject) {
@@ -1018,7 +932,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (name=ID imports+=Import* gaml=GamlLangDef? statements+=Statement*)
+	 *     (name=ID imports+=Import* statements+=Statement*)
 	 */
 	protected void sequence_Model(EObject context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -24,20 +24,14 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Assignment cImportsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cImportsImportParserRuleCall_2_0 = (RuleCall)cImportsAssignment_2.eContents().get(0);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Group cGroup_3_0 = (Group)cGroup_3.eContents().get(0);
-		private final Keyword c_gamlKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
-		private final Assignment cGamlAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
-		private final RuleCall cGamlGamlLangDefParserRuleCall_3_0_1_0 = (RuleCall)cGamlAssignment_3_0_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_3_0_2 = (Keyword)cGroup_3_0.eContents().get(2);
-		private final Assignment cStatementsAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cStatementsStatementParserRuleCall_3_1_0 = (RuleCall)cStatementsAssignment_3_1.eContents().get(0);
+		private final Assignment cStatementsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cStatementsStatementParserRuleCall_3_0 = (RuleCall)cStatementsAssignment_3.eContents().get(0);
 		
 		//Model:
-		//	"model" name=ID imports+=Import* (("_gaml {" gaml=GamlLangDef "}")? statements+=Statement*);
+		//	"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*;
 		public ParserRule getRule() { return rule; }
 
-		//"model" name=ID imports+=Import* (("_gaml {" gaml=GamlLangDef "}")? statements+=Statement*)
+		//"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*
 		public Group getGroup() { return cGroup; }
 
 		//"model"
@@ -55,29 +49,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//Import
 		public RuleCall getImportsImportParserRuleCall_2_0() { return cImportsImportParserRuleCall_2_0; }
 
-		//("_gaml {" gaml=GamlLangDef "}")? statements+=Statement*
-		public Group getGroup_3() { return cGroup_3; }
-
-		//("_gaml {" gaml=GamlLangDef "}")?
-		public Group getGroup_3_0() { return cGroup_3_0; }
-
-		//"_gaml {"
-		public Keyword get_gamlKeyword_3_0_0() { return c_gamlKeyword_3_0_0; }
-
-		//gaml=GamlLangDef
-		public Assignment getGamlAssignment_3_0_1() { return cGamlAssignment_3_0_1; }
-
-		//GamlLangDef
-		public RuleCall getGamlGamlLangDefParserRuleCall_3_0_1_0() { return cGamlGamlLangDefParserRuleCall_3_0_1_0; }
-
-		//"}"
-		public Keyword getRightCurlyBracketKeyword_3_0_2() { return cRightCurlyBracketKeyword_3_0_2; }
-
 		//statements+=Statement*
-		public Assignment getStatementsAssignment_3_1() { return cStatementsAssignment_3_1; }
+		public Assignment getStatementsAssignment_3() { return cStatementsAssignment_3; }
 
 		//Statement
-		public RuleCall getStatementsStatementParserRuleCall_3_1_0() { return cStatementsStatementParserRuleCall_3_1_0; }
+		public RuleCall getStatementsStatementParserRuleCall_3_0() { return cStatementsStatementParserRuleCall_3_0; }
 	}
 
 	public class ImportElements extends AbstractParserRuleElementFinder {
@@ -105,128 +81,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getImportURISTRINGTerminalRuleCall_1_0() { return cImportURISTRINGTerminalRuleCall_1_0; }
 	}
 
-	public class GamlLangDefElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GamlLangDef");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cBAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cBDefBinaryOpParserRuleCall_0_0 = (RuleCall)cBAssignment_0.eContents().get(0);
-		private final Assignment cRAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cRDefReservedParserRuleCall_1_0 = (RuleCall)cRAssignment_1.eContents().get(0);
-		private final Assignment cUnariesAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cUnariesDefUnaryParserRuleCall_2_0 = (RuleCall)cUnariesAssignment_2.eContents().get(0);
-		
-		/// **
-		// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA
-		// * / GamlLangDef:
-		//	(b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary)+;
-		public ParserRule getRule() { return rule; }
-
-		//(b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary)+
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//b+=DefBinaryOp
-		public Assignment getBAssignment_0() { return cBAssignment_0; }
-
-		//DefBinaryOp
-		public RuleCall getBDefBinaryOpParserRuleCall_0_0() { return cBDefBinaryOpParserRuleCall_0_0; }
-
-		//r+=DefReserved
-		public Assignment getRAssignment_1() { return cRAssignment_1; }
-
-		//DefReserved
-		public RuleCall getRDefReservedParserRuleCall_1_0() { return cRDefReservedParserRuleCall_1_0; }
-
-		//unaries+=DefUnary
-		public Assignment getUnariesAssignment_2() { return cUnariesAssignment_2; }
-
-		//DefUnary
-		public RuleCall getUnariesDefUnaryParserRuleCall_2_0() { return cUnariesDefUnaryParserRuleCall_2_0; }
-	}
-
-	public class DefBinaryOpElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "DefBinaryOp");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword c_binaryKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Keyword cAmpersandSemicolonKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		
-		//DefBinaryOp:
-		//	"_binary &" name=ID "&;";
-		public ParserRule getRule() { return rule; }
-
-		//"_binary &" name=ID "&;"
-		public Group getGroup() { return cGroup; }
-
-		//"_binary &"
-		public Keyword get_binaryKeyword_0() { return c_binaryKeyword_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
-
-		//"&;"
-		public Keyword getAmpersandSemicolonKeyword_2() { return cAmpersandSemicolonKeyword_2; }
-	}
-
-	public class DefReservedElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "DefReserved");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword c_reservedKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Keyword cAmpersandSemicolonKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		
-		//DefReserved:
-		//	"_reserved &" name=ID "&;";
-		public ParserRule getRule() { return rule; }
-
-		//"_reserved &" name=ID "&;"
-		public Group getGroup() { return cGroup; }
-
-		//"_reserved &"
-		public Keyword get_reservedKeyword_0() { return c_reservedKeyword_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
-
-		//"&;"
-		public Keyword getAmpersandSemicolonKeyword_2() { return cAmpersandSemicolonKeyword_2; }
-	}
-
-	public class DefUnaryElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "DefUnary");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword c_unaryKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Keyword cAmpersandSemicolonKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		
-		//DefUnary:
-		//	"_unary &" name=ID "&;";
-		public ParserRule getRule() { return rule; }
-
-		//"_unary &" name=ID "&;"
-		public Group getGroup() { return cGroup; }
-
-		//"_unary &"
-		public Keyword get_unaryKeyword_0() { return c_unaryKeyword_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
-
-		//"&;"
-		public Keyword getAmpersandSemicolonKeyword_2() { return cAmpersandSemicolonKeyword_2; }
-	}
-
 	public class BuiltInElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "BuiltIn");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -248,6 +102,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSetKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
 		private final Keyword cReturnKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
 		
+		/// **
+		// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA (not used anymore)
+		// * / //GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
+		////DefBinaryOp: '_binary &' name=ID'&;';
+		////DefReserved: '_reserved &' name=ID'&;';
+		////DefUnary: '_unary &'name=ID '&;';
 		/// **
 		// * Built-in keywords (corresponding to special statements)
 		// * / BuiltIn:
@@ -470,13 +330,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cKeyIDTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
-		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
-		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cNameAlternatives_1_0 = (Alternatives)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAlternatives_1_0.eContents().get(0);
+		private final RuleCall cNameSTRINGTerminalRuleCall_1_0_1 = (RuleCall)cNameAlternatives_1_0.eContents().get(1);
+		private final RuleCall cNameBuiltInParserRuleCall_1_0_2 = (RuleCall)cNameAlternatives_1_0.eContents().get(2);
 		private final Assignment cFacetsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cFacetsFacetExprParserRuleCall_2_0 = (RuleCall)cFacetsAssignment_2.eContents().get(0);
 		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
@@ -485,10 +343,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_3_1 = (Keyword)cAlternatives_3.eContents().get(1);
 		
 		//Definition:
-		//	key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";");
+		//	key=ID name=(ID | STRING | BuiltIn)? facets+=FacetExpr* (block=Block | ";");
 		public ParserRule getRule() { return rule; }
 
-		//key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";")
+		//key=ID name=(ID | STRING | BuiltIn)? facets+=FacetExpr* (block=Block | ";")
 		public Group getGroup() { return cGroup; }
 
 		//key=ID
@@ -497,26 +355,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getKeyIDTerminalRuleCall_0_0() { return cKeyIDTerminalRuleCall_0_0; }
 
-		//(name=ID | name=STRING | name=BuiltIn)?
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		//name=(ID | STRING | BuiltIn)?
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 
-		//name=ID
-		public Assignment getNameAssignment_1_0() { return cNameAssignment_1_0; }
+		//ID | STRING | BuiltIn
+		public Alternatives getNameAlternatives_1_0() { return cNameAlternatives_1_0; }
 
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0_0() { return cNameIDTerminalRuleCall_1_0_0; }
 
-		//name=STRING
-		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
-
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
-
-		//name=BuiltIn
-		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+		public RuleCall getNameSTRINGTerminalRuleCall_1_0_1() { return cNameSTRINGTerminalRuleCall_1_0_1; }
 
 		//BuiltIn
-		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
+		public RuleCall getNameBuiltInParserRuleCall_1_0_2() { return cNameBuiltInParserRuleCall_1_0_2; }
 
 		//facets+=FacetExpr*
 		public Assignment getFacetsAssignment_2() { return cFacetsAssignment_2; }
@@ -699,44 +551,36 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "NameFacetExpr");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cNameKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
-		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
-		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cNameAlternatives_1_0 = (Alternatives)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAlternatives_1_0.eContents().get(0);
+		private final RuleCall cNameSTRINGTerminalRuleCall_1_0_1 = (RuleCall)cNameAlternatives_1_0.eContents().get(1);
+		private final RuleCall cNameBuiltInParserRuleCall_1_0_2 = (RuleCall)cNameAlternatives_1_0.eContents().get(2);
 		
 		//NameFacetExpr:
-		//	"name:" (name=ID | name=STRING | name=BuiltIn);
+		//	"name:" name=(ID | STRING | BuiltIn);
 		public ParserRule getRule() { return rule; }
 
-		//"name:" (name=ID | name=STRING | name=BuiltIn)
+		//"name:" name=(ID | STRING | BuiltIn)
 		public Group getGroup() { return cGroup; }
 
 		//"name:"
 		public Keyword getNameKeyword_0() { return cNameKeyword_0; }
 
-		//name=ID | name=STRING | name=BuiltIn
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		//name=(ID | STRING | BuiltIn)
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 
-		//name=ID
-		public Assignment getNameAssignment_1_0() { return cNameAssignment_1_0; }
+		//ID | STRING | BuiltIn
+		public Alternatives getNameAlternatives_1_0() { return cNameAlternatives_1_0; }
 
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0_0() { return cNameIDTerminalRuleCall_1_0_0; }
 
-		//name=STRING
-		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
-
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
-
-		//name=BuiltIn
-		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+		public RuleCall getNameSTRINGTerminalRuleCall_1_0_1() { return cNameSTRINGTerminalRuleCall_1_0_1; }
 
 		//BuiltIn
-		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
+		public RuleCall getNameBuiltInParserRuleCall_1_0_2() { return cNameBuiltInParserRuleCall_1_0_2; }
 	}
 
 	public class ReturnsFacetExprElements extends AbstractParserRuleElementFinder {
@@ -767,44 +611,36 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ActionFacetExpr");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cActionKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAssignment_1_0.eContents().get(0);
-		private final Assignment cNameAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
-		private final Assignment cNameAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final RuleCall cNameBuiltInParserRuleCall_1_2_0 = (RuleCall)cNameAssignment_1_2.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cNameAlternatives_1_0 = (Alternatives)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_1_0_0 = (RuleCall)cNameAlternatives_1_0.eContents().get(0);
+		private final RuleCall cNameSTRINGTerminalRuleCall_1_0_1 = (RuleCall)cNameAlternatives_1_0.eContents().get(1);
+		private final RuleCall cNameBuiltInParserRuleCall_1_0_2 = (RuleCall)cNameAlternatives_1_0.eContents().get(2);
 		
 		//ActionFacetExpr:
-		//	"action:" (name=ID | name=STRING | name=BuiltIn);
+		//	"action:" name=(ID | STRING | BuiltIn);
 		public ParserRule getRule() { return rule; }
 
-		//"action:" (name=ID | name=STRING | name=BuiltIn)
+		//"action:" name=(ID | STRING | BuiltIn)
 		public Group getGroup() { return cGroup; }
 
 		//"action:"
 		public Keyword getActionKeyword_0() { return cActionKeyword_0; }
 
-		//name=ID | name=STRING | name=BuiltIn
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		//name=(ID | STRING | BuiltIn)
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 
-		//name=ID
-		public Assignment getNameAssignment_1_0() { return cNameAssignment_1_0; }
+		//ID | STRING | BuiltIn
+		public Alternatives getNameAlternatives_1_0() { return cNameAlternatives_1_0; }
 
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0_0() { return cNameIDTerminalRuleCall_1_0_0; }
 
-		//name=STRING
-		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
-
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_1_1_0() { return cNameSTRINGTerminalRuleCall_1_1_0; }
-
-		//name=BuiltIn
-		public Assignment getNameAssignment_1_2() { return cNameAssignment_1_2; }
+		public RuleCall getNameSTRINGTerminalRuleCall_1_0_1() { return cNameSTRINGTerminalRuleCall_1_0_1; }
 
 		//BuiltIn
-		public RuleCall getNameBuiltInParserRuleCall_1_2_0() { return cNameBuiltInParserRuleCall_1_2_0; }
+		public RuleCall getNameBuiltInParserRuleCall_1_0_2() { return cNameBuiltInParserRuleCall_1_0_2; }
 	}
 
 	public class FunctionFacetExprElements extends AbstractParserRuleElementFinder {
@@ -1638,7 +1474,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cVariableRefParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cFunctionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
-		////AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 		//AbstractRef:
 		//	VariableRef | Function;
 		public ParserRule getRule() { return rule; }
@@ -1772,13 +1607,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cDefinitionFacetExprParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cDefinitionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cDefReservedParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
-		/// *| DefUnary| DefBinaryOp * / GamlVarRef:
-		//	DefinitionFacetExpr | Definition | DefReserved;
+		/// * | DefReserved  | DefUnary| DefBinaryOp * / GamlVarRef:
+		//	DefinitionFacetExpr | Definition;
 		public ParserRule getRule() { return rule; }
 
-		//DefinitionFacetExpr | Definition | DefReserved
+		//DefinitionFacetExpr | Definition
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//DefinitionFacetExpr
@@ -1786,9 +1620,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//Definition
 		public RuleCall getDefinitionParserRuleCall_1() { return cDefinitionParserRuleCall_1; }
-
-		//DefReserved
-		public RuleCall getDefReservedParserRuleCall_2() { return cDefReservedParserRuleCall_2; }
 	}
 
 	public class TerminalExpressionElements extends AbstractParserRuleElementFinder {
@@ -1890,10 +1721,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	private ModelElements pModel;
 	private ImportElements pImport;
-	private GamlLangDefElements pGamlLangDef;
-	private DefBinaryOpElements pDefBinaryOp;
-	private DefReservedElements pDefReserved;
-	private DefUnaryElements pDefUnary;
 	private BuiltInElements pBuiltIn;
 	private StatementElements pStatement;
 	private ClassicStatementElements pClassicStatement;
@@ -1955,7 +1782,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Model:
-	//	"model" name=ID imports+=Import* (("_gaml {" gaml=GamlLangDef "}")? statements+=Statement*);
+	//	"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*;
 	public ModelElements getModelAccess() {
 		return (pModel != null) ? pModel : (pModel = new ModelElements());
 	}
@@ -1976,47 +1803,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// **
-	// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA
-	// * / GamlLangDef:
-	//	(b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary)+;
-	public GamlLangDefElements getGamlLangDefAccess() {
-		return (pGamlLangDef != null) ? pGamlLangDef : (pGamlLangDef = new GamlLangDefElements());
-	}
-	
-	public ParserRule getGamlLangDefRule() {
-		return getGamlLangDefAccess().getRule();
-	}
-
-	//DefBinaryOp:
-	//	"_binary &" name=ID "&;";
-	public DefBinaryOpElements getDefBinaryOpAccess() {
-		return (pDefBinaryOp != null) ? pDefBinaryOp : (pDefBinaryOp = new DefBinaryOpElements());
-	}
-	
-	public ParserRule getDefBinaryOpRule() {
-		return getDefBinaryOpAccess().getRule();
-	}
-
-	//DefReserved:
-	//	"_reserved &" name=ID "&;";
-	public DefReservedElements getDefReservedAccess() {
-		return (pDefReserved != null) ? pDefReserved : (pDefReserved = new DefReservedElements());
-	}
-	
-	public ParserRule getDefReservedRule() {
-		return getDefReservedAccess().getRule();
-	}
-
-	//DefUnary:
-	//	"_unary &" name=ID "&;";
-	public DefUnaryElements getDefUnaryAccess() {
-		return (pDefUnary != null) ? pDefUnary : (pDefUnary = new DefUnaryElements());
-	}
-	
-	public ParserRule getDefUnaryRule() {
-		return getDefUnaryAccess().getRule();
-	}
-
+	// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA (not used anymore)
+	// * / //GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
+	////DefBinaryOp: '_binary &' name=ID'&;';
+	////DefReserved: '_reserved &' name=ID'&;';
+	////DefUnary: '_unary &'name=ID '&;';
 	/// **
 	// * Built-in keywords (corresponding to special statements)
 	// * / BuiltIn:
@@ -2063,7 +1854,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Definition:
-	//	key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* (block=Block | ";");
+	//	key=ID name=(ID | STRING | BuiltIn)? facets+=FacetExpr* (block=Block | ";");
 	public DefinitionElements getDefinitionAccess() {
 		return (pDefinition != null) ? pDefinition : (pDefinition = new DefinitionElements());
 	}
@@ -2125,7 +1916,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//NameFacetExpr:
-	//	"name:" (name=ID | name=STRING | name=BuiltIn);
+	//	"name:" name=(ID | STRING | BuiltIn);
 	public NameFacetExprElements getNameFacetExprAccess() {
 		return (pNameFacetExpr != null) ? pNameFacetExpr : (pNameFacetExpr = new NameFacetExprElements());
 	}
@@ -2145,7 +1936,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ActionFacetExpr:
-	//	"action:" (name=ID | name=STRING | name=BuiltIn);
+	//	"action:" name=(ID | STRING | BuiltIn);
 	public ActionFacetExprElements getActionFacetExprAccess() {
 		return (pActionFacetExpr != null) ? pActionFacetExpr : (pActionFacetExpr = new ActionFacetExprElements());
 	}
@@ -2331,7 +2122,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getPrimaryExpressionAccess().getRule();
 	}
 
-	////AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 	//AbstractRef:
 	//	VariableRef | Function;
 	public AbstractRefElements getAbstractRefAccess() {
@@ -2374,8 +2164,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getVariableRefAccess().getRule();
 	}
 
-	/// *| DefUnary| DefBinaryOp * / GamlVarRef:
-	//	DefinitionFacetExpr | Definition | DefReserved;
+	/// * | DefReserved  | DefUnary| DefBinaryOp * / GamlVarRef:
+	//	DefinitionFacetExpr | Definition;
 	public GamlVarRefElements getGamlVarRefAccess() {
 		return (pGamlVarRef != null) ? pGamlVarRef : (pGamlVarRef = new GamlVarRefElements());
 	}

@@ -88,26 +88,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createImportAdapter();
       }
       @Override
-      public Adapter caseGamlLangDef(GamlLangDef object)
-      {
-        return createGamlLangDefAdapter();
-      }
-      @Override
-      public Adapter caseDefBinaryOp(DefBinaryOp object)
-      {
-        return createDefBinaryOpAdapter();
-      }
-      @Override
-      public Adapter caseDefReserved(DefReserved object)
-      {
-        return createDefReservedAdapter();
-      }
-      @Override
-      public Adapter caseDefUnary(DefUnary object)
-      {
-        return createDefUnaryAdapter();
-      }
-      @Override
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
@@ -320,66 +300,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createImportAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlLangDef <em>Lang Def</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlLangDef
-   * @generated
-   */
-  public Adapter createGamlLangDefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefBinaryOp <em>Def Binary Op</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefBinaryOp
-   * @generated
-   */
-  public Adapter createDefBinaryOpAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefReserved <em>Def Reserved</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefReserved
-   * @generated
-   */
-  public Adapter createDefReservedAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefUnary <em>Def Unary</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefUnary
-   * @generated
-   */
-  public Adapter createDefUnaryAdapter()
   {
     return null;
   }

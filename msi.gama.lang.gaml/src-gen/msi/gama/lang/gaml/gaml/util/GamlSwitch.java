@@ -89,35 +89,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.GAML_LANG_DEF:
-      {
-        GamlLangDef gamlLangDef = (GamlLangDef)theEObject;
-        T result = caseGamlLangDef(gamlLangDef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.DEF_BINARY_OP:
-      {
-        DefBinaryOp defBinaryOp = (DefBinaryOp)theEObject;
-        T result = caseDefBinaryOp(defBinaryOp);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.DEF_RESERVED:
-      {
-        DefReserved defReserved = (DefReserved)theEObject;
-        T result = caseDefReserved(defReserved);
-        if (result == null) result = caseGamlVarRef(defReserved);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.DEF_UNARY:
-      {
-        DefUnary defUnary = (DefUnary)theEObject;
-        T result = caseDefUnary(defUnary);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.STATEMENT:
       {
         Statement statement = (Statement)theEObject;
@@ -424,70 +395,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseImport(Import object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Lang Def</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Lang Def</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseGamlLangDef(GamlLangDef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Def Binary Op</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Def Binary Op</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDefBinaryOp(DefBinaryOp object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Def Reserved</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Def Reserved</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDefReserved(DefReserved object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Def Unary</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Def Unary</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDefUnary(DefUnary object)
   {
     return null;
   }

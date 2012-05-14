@@ -66,10 +66,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
 
 	@Override
-	public void completeModel_Gaml(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
-
-	@Override
 	public void completeModel_Statements(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
 
@@ -78,47 +74,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
 
 	@Override
-	public void completeGamlLangDef_B(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
-
-	@Override
-	public void completeGamlLangDef_R(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
-
-	@Override
-	public void completeGamlLangDef_Unaries(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
-
-	@Override
-	public void completeDefBinaryOp_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
-
-	@Override
-	public void completeDefReserved_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeDefUnary_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
 	public void completeClassicStatement_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeClassicStatement_Ref(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeClassicStatement_Expr(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
@@ -166,25 +122,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void completeDefinition_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
 	public void completeDefinition_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeDefinition_Facets(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeDefinition_Block(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
@@ -455,36 +393,6 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	@Override
 	public void complete_Import(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_GamlLangDef(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_DefBinaryOp(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_DefReserved(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_DefUnary(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_BuiltIn(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}

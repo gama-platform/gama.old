@@ -12,9 +12,6 @@ import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
-import msi.gama.lang.gaml.gaml.DefBinaryOp;
-import msi.gama.lang.gaml.gaml.DefReserved;
-import msi.gama.lang.gaml.gaml.DefUnary;
 import msi.gama.lang.gaml.gaml.Definition;
 import msi.gama.lang.gaml.gaml.DefinitionFacetExpr;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
@@ -27,7 +24,6 @@ import msi.gama.lang.gaml.gaml.FunctionGamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
 import msi.gama.lang.gaml.gaml.GamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlFactory;
-import msi.gama.lang.gaml.gaml.GamlLangDef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.GamlUnaryExpr;
 import msi.gama.lang.gaml.gaml.GamlUnitExpr;
@@ -75,34 +71,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass importEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass gamlLangDefEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass defBinaryOpEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass defReservedEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass defUnaryEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -433,19 +401,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModel_Gaml()
-  {
-    return (EReference)modelEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getModel_Statements()
   {
-    return (EReference)modelEClass.getEStructuralFeatures().get(3);
+    return (EReference)modelEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -466,96 +424,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EAttribute getImport_ImportURI()
   {
     return (EAttribute)importEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getGamlLangDef()
-  {
-    return gamlLangDefEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getGamlLangDef_B()
-  {
-    return (EReference)gamlLangDefEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getGamlLangDef_R()
-  {
-    return (EReference)gamlLangDefEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getGamlLangDef_Unaries()
-  {
-    return (EReference)gamlLangDefEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getDefBinaryOp()
-  {
-    return defBinaryOpEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getDefBinaryOp_Name()
-  {
-    return (EAttribute)defBinaryOpEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getDefReserved()
-  {
-    return defReservedEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getDefUnary()
-  {
-    return defUnaryEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getDefUnary_Name()
-  {
-    return (EAttribute)defUnaryEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1121,24 +989,10 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     modelEClass = createEClass(MODEL);
     createEAttribute(modelEClass, MODEL__NAME);
     createEReference(modelEClass, MODEL__IMPORTS);
-    createEReference(modelEClass, MODEL__GAML);
     createEReference(modelEClass, MODEL__STATEMENTS);
 
     importEClass = createEClass(IMPORT);
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
-
-    gamlLangDefEClass = createEClass(GAML_LANG_DEF);
-    createEReference(gamlLangDefEClass, GAML_LANG_DEF__B);
-    createEReference(gamlLangDefEClass, GAML_LANG_DEF__R);
-    createEReference(gamlLangDefEClass, GAML_LANG_DEF__UNARIES);
-
-    defBinaryOpEClass = createEClass(DEF_BINARY_OP);
-    createEAttribute(defBinaryOpEClass, DEF_BINARY_OP__NAME);
-
-    defReservedEClass = createEClass(DEF_RESERVED);
-
-    defUnaryEClass = createEClass(DEF_UNARY);
-    createEAttribute(defUnaryEClass, DEF_UNARY__NAME);
 
     statementEClass = createEClass(STATEMENT);
     createEAttribute(statementEClass, STATEMENT__KEY);
@@ -1256,7 +1110,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    defReservedEClass.getESuperTypes().add(this.getGamlVarRef());
     definitionEClass.getESuperTypes().add(this.getStatement());
     definitionEClass.getESuperTypes().add(this.getGamlVarRef());
     gamlFacetRefEClass.getESuperTypes().add(this.getFacetRef());
@@ -1291,24 +1144,10 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Imports(), this.getImport(), null, "imports", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getModel_Gaml(), this.getGamlLangDef(), null, "gaml", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Statements(), this.getStatement(), null, "statements", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(gamlLangDefEClass, GamlLangDef.class, "GamlLangDef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getGamlLangDef_B(), this.getDefBinaryOp(), null, "b", null, 0, -1, GamlLangDef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getGamlLangDef_R(), this.getDefReserved(), null, "r", null, 0, -1, GamlLangDef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getGamlLangDef_Unaries(), this.getDefUnary(), null, "unaries", null, 0, -1, GamlLangDef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(defBinaryOpEClass, DefBinaryOp.class, "DefBinaryOp", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDefBinaryOp_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefBinaryOp.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(defReservedEClass, DefReserved.class, "DefReserved", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(defUnaryEClass, DefUnary.class, "DefUnary", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDefUnary_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefUnary.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStatement_Key(), ecorePackage.getEString(), "key", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

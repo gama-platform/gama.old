@@ -7,7 +7,6 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
-import msi.gama.lang.gaml.gaml.GamlLangDef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
@@ -36,7 +35,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getGaml <em>Gaml</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
@@ -74,16 +72,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @ordered
    */
   protected EList<Import> imports;
-
-  /**
-   * The cached value of the '{@link #getGaml() <em>Gaml</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getGaml()
-   * @generated
-   * @ordered
-   */
-  protected GamlLangDef gaml;
 
   /**
    * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
@@ -158,54 +146,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlLangDef getGaml()
-  {
-    return gaml;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetGaml(GamlLangDef newGaml, NotificationChain msgs)
-  {
-    GamlLangDef oldGaml = gaml;
-    gaml = newGaml;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__GAML, oldGaml, newGaml);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setGaml(GamlLangDef newGaml)
-  {
-    if (newGaml != gaml)
-    {
-      NotificationChain msgs = null;
-      if (gaml != null)
-        msgs = ((InternalEObject)gaml).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__GAML, null, msgs);
-      if (newGaml != null)
-        msgs = ((InternalEObject)newGaml).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__GAML, null, msgs);
-      msgs = basicSetGaml(newGaml, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__GAML, newGaml, newGaml));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<Statement> getStatements()
   {
     if (statements == null)
@@ -227,8 +167,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
     {
       case GamlPackage.MODEL__IMPORTS:
         return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
-      case GamlPackage.MODEL__GAML:
-        return basicSetGaml(null, msgs);
       case GamlPackage.MODEL__STATEMENTS:
         return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
     }
@@ -249,8 +187,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return getName();
       case GamlPackage.MODEL__IMPORTS:
         return getImports();
-      case GamlPackage.MODEL__GAML:
-        return getGaml();
       case GamlPackage.MODEL__STATEMENTS:
         return getStatements();
     }
@@ -274,9 +210,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         getImports().addAll((Collection<? extends Import>)newValue);
-        return;
-      case GamlPackage.MODEL__GAML:
-        setGaml((GamlLangDef)newValue);
         return;
       case GamlPackage.MODEL__STATEMENTS:
         getStatements().clear();
@@ -302,9 +235,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
       case GamlPackage.MODEL__IMPORTS:
         getImports().clear();
         return;
-      case GamlPackage.MODEL__GAML:
-        setGaml((GamlLangDef)null);
-        return;
       case GamlPackage.MODEL__STATEMENTS:
         getStatements().clear();
         return;
@@ -326,8 +256,6 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case GamlPackage.MODEL__IMPORTS:
         return imports != null && !imports.isEmpty();
-      case GamlPackage.MODEL__GAML:
-        return gaml != null;
       case GamlPackage.MODEL__STATEMENTS:
         return statements != null && !statements.isEmpty();
     }

@@ -38,11 +38,11 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 			if ( s != null && !s.isEmpty() ) {
 				acceptor.accept(EObjectDescription.create(QualifiedName.create(s), eObject));
 			}
-			return eObject instanceof Definition ? composed.contains(((Definition) eObject)
-				.getKey()) : false;
+			return eObject instanceof Statement ? composed.contains(((Statement) eObject).getKey())
+				: false;
 		}
 
-		if ( eObject instanceof GamlLangDef || eObject instanceof Block || eObject instanceof Model ) { return true; }
+		if ( eObject instanceof Block || eObject instanceof Model ) { return true; }
 		return false;
 	}
 }

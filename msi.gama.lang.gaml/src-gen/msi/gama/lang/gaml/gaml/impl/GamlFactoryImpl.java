@@ -69,10 +69,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
     {
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.IMPORT: return createImport();
-      case GamlPackage.GAML_LANG_DEF: return createGamlLangDef();
-      case GamlPackage.DEF_BINARY_OP: return createDefBinaryOp();
-      case GamlPackage.DEF_RESERVED: return createDefReserved();
-      case GamlPackage.DEF_UNARY: return createDefUnary();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.DEFINITION: return createDefinition();
       case GamlPackage.FACET_REF: return createFacetRef();
@@ -131,50 +127,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ImportImpl import_ = new ImportImpl();
     return import_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public GamlLangDef createGamlLangDef()
-  {
-    GamlLangDefImpl gamlLangDef = new GamlLangDefImpl();
-    return gamlLangDef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DefBinaryOp createDefBinaryOp()
-  {
-    DefBinaryOpImpl defBinaryOp = new DefBinaryOpImpl();
-    return defBinaryOp;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DefReserved createDefReserved()
-  {
-    DefReservedImpl defReserved = new DefReservedImpl();
-    return defReserved;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DefUnary createDefUnary()
-  {
-    DefUnaryImpl defUnary = new DefUnaryImpl();
-    return defUnary;
   }
 
   /**

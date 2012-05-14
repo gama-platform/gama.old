@@ -44,42 +44,6 @@ public interface GamlFactory extends EFactory
   Import createImport();
 
   /**
-   * Returns a new object of class '<em>Lang Def</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Lang Def</em>'.
-   * @generated
-   */
-  GamlLangDef createGamlLangDef();
-
-  /**
-   * Returns a new object of class '<em>Def Binary Op</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Binary Op</em>'.
-   * @generated
-   */
-  DefBinaryOp createDefBinaryOp();
-
-  /**
-   * Returns a new object of class '<em>Def Reserved</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Reserved</em>'.
-   * @generated
-   */
-  DefReserved createDefReserved();
-
-  /**
-   * Returns a new object of class '<em>Def Unary</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Def Unary</em>'.
-   * @generated
-   */
-  DefUnary createDefUnary();
-
-  /**
    * Returns a new object of class '<em>Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

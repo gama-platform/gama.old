@@ -114,6 +114,12 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 				getContext().flagError("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 				return null;
 			}
+
+			// HACK
+			if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION,
+				Types.get(IType.POINT), Types.NO_TYPE, true, IVarExpression.TEMP, context); }
+
+			// HACK
 			if ( s.equals(EACH) ) { return each_expr; }
 			if ( s.equals(NULL) ) { return new ConstantExpression(null, Types.NO_TYPE,
 				Types.NO_TYPE); }
@@ -141,7 +147,11 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
 			if ( temp_sd != null ) { return temp_sd.getVarExpr(s); }
 			if ( context != null ) {
-				context.flagError("Unknown variable: " + s, IGamlIssue.UNKNOWN_VAR, object, s);
+				context.flagWarning("The variable " + s +
+					" has not been previously defined. Check its name or declare it",
+					IGamlIssue.UNKNOWN_VAR, object, s);
+				return factory.createVar(s, Types.NO_TYPE, Types.NO_TYPE, true,
+					IVarExpression.TEMP, context);
 			}
 			return null;
 

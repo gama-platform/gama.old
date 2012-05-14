@@ -15,7 +15,7 @@ import org.eclipse.xtext.scoping.*;
 import org.eclipse.xtext.scoping.impl.*;
 import org.osgi.framework.Bundle;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 /**
@@ -102,14 +102,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	public Iterable<IEObjectDescription> getEObjectDescriptions() {
 		if ( objectDescriptions == null && GamaBundleLoader.contributionsLoaded ) {
 			List<IEObjectDescription> temp = new ArrayList();
-			for ( Map.Entry<Bundle, String> entry : GamaBundleLoader.gamlAdditionsBundleAndFiles
-				.entrySet() ) {
-				IResourceDescription rd = getResourceDescription(entry.getKey(), entry.getValue());
-				if ( rd != null ) {
-					Iterable<IEObjectDescription> desc = rd.getExportedObjects();
-					Iterables.addAll(temp, desc);
-				}
-			}
+			// for ( Map.Entry<Bundle, String> entry : GamaBundleLoader.gamlAdditionsBundleAndFiles
+			// .entrySet() ) {
+			// IResourceDescription rd = getResourceDescription(entry.getKey(), entry.getValue());
+			// if ( rd != null ) {
+			// Iterable<IEObjectDescription> desc = rd.getExportedObjects();
+			// Iterables.addAll(temp, desc);
+			// }
+			// }
 
 			LinkedHashMap map = Maps.newLinkedHashMap();
 			for ( IEObjectDescription e : temp ) {

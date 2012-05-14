@@ -3,7 +3,7 @@ grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
-	Model : 'model' name=ID (imports+=Import)* /* ('_gaml {' gaml=GamlLangDef '}')?*/ (statements+=Statement)* ;
+	Model : 'model' name=ID (imports+=Import)* /* ('_gaml {' gaml=GamlLangDef '}')?*/ (statements+=(Statement))* ;
 	Import : 'import' importURI=STRING; // must be named importURI
 
 /**
@@ -15,17 +15,20 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	//DefUnary: '_unary &'name=ID '&;';
 
 /**
- * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
+ * Built-in keywords (corresponding to special statements)
  */ 
-	BuiltIn:  ('write'|'warn'|'error'|'match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
+	//BuiltIn:  ('write'|'warn'|'error'|'match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
 
 /**
  * Statements (i.e. commands in the GAML descriptions).
  */ 
-	Statement: (IfEval | ClassicStatement | Definition);
-	ClassicStatement returns Statement: key=BuiltIn ref=GamlFacetRef? expr=Expression (facets+=FacetExpr)* (block=Block | ';');
+	Statement: (IfEval | ClassicStatement);
+	ClassicStatement returns Statement: key=ID (=>name=ID | (ref=GamlFacetRef? expr=Expression))? (facets+=FacetExpr)* (block=Block | ';');
 	IfEval returns Statement: key='if' ref=GamlFacetRef? expr=Expression block=Block (=>'else' else=(Statement | Block))?;
-	Definition: key=ID name=(ID|STRING|BuiltIn)? (facets+=FacetExpr)* (block=Block | ';');
+	//Definition: key=ID (name=ID|name=STRING)? (facets+=FacetExpr)* (block=Block | ';');
+
+	Definition: name=ID ;
+	OmmissibleFacet: ref=GamlFacetRef? expr=Expression;
 
 /**
  * Facets
@@ -35,15 +38,15 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	FunctionGamlFacetRef:  (ref='function' ':'| ref = '->');
 	FacetExpr:    FunctionFacetExpr | DefinitionFacetExpr | (key=GamlFacetRef expr=Expression);
 	DefinitionFacetExpr: ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr;
-	NameFacetExpr: ('name:') name=(ID|STRING|BuiltIn);
+	NameFacetExpr: ('name:') (name=ID|name=STRING);
 	ReturnsFacetExpr : 'returns:' name=ID;
-	ActionFacetExpr: 'action:' name=(ID|STRING|BuiltIn);
+	ActionFacetExpr: 'action:' (name=ID|name=STRING);
 	FunctionFacetExpr: key= FunctionGamlFacetRef '{' expr=Expression '}'; // Introduce "closures" ? 
 
 /**
- * Blocks. An ordered list of statements inside curly brackets
+ * Blocks. Just an ordered list of statements inside curly brackets
  */ 
-	Block: {Block} '{' (statements+=Statement)* '}';
+	Block: {Block} '{' (statements+=(Statement))* '}';
 
 /**
  * Expressions
@@ -104,6 +107,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	PrePrimaryExpr returns Expression: TerminalExpression | MemberRef; 
 	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)*;
 	PrimaryExpression returns Expression: AbstractRef | '('Expression')' | '[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' | '{' {Point} (left=Expression op=',' right=Expression ) '}';
+	//AbstractRef returns Expression: VariableRef ({FunctionRef.left=current} '('args+=Expression (',' args+=Expression)*')')? ;
 	AbstractRef: VariableRef | Function;
 	Function: {Function}(op=ID '('args+=Expression (',' args+=Expression)*')') ;
 

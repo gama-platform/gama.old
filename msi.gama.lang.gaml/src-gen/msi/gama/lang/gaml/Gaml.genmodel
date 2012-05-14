@@ -11,23 +11,10 @@
     <genClasses ecoreClass="Gaml.ecore#//Model">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Model/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/imports"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/gaml"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/statements"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Import/importURI"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//GamlLangDef">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlLangDef/b"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlLangDef/r"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlLangDef/unaries"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//DefBinaryOp">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//DefBinaryOp/name"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//DefReserved"/>
-    <genClasses ecoreClass="Gaml.ecore#//DefUnary">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//DefUnary/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>

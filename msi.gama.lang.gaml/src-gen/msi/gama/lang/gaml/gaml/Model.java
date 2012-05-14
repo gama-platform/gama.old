@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Model#getGaml <em>Gaml</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Model#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
@@ -71,32 +70,6 @@ public interface Model extends EObject
    * @generated
    */
   EList<Import> getImports();
-
-  /**
-   * Returns the value of the '<em><b>Gaml</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Gaml</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Gaml</em>' containment reference.
-   * @see #setGaml(GamlLangDef)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Gaml()
-   * @model containment="true"
-   * @generated
-   */
-  GamlLangDef getGaml();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Model#getGaml <em>Gaml</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Gaml</em>' containment reference.
-   * @see #getGaml()
-   * @generated
-   */
-  void setGaml(GamlLangDef value);
 
   /**
    * Returns the value of the '<em><b>Statements</b></em>' containment reference list.
