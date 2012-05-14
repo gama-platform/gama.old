@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,7 +19,7 @@
 package msi.gama.gui.parameters;
 
 import java.util.List;
-import msi.gama.common.interfaces.IEditorFactory;
+import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -105,26 +105,32 @@ public class EditorFactory implements IEditorFactory {
 	}
 
 	public static AbstractEditor create(final Composite parent, final IParameter var) {
-		AbstractEditor ed = instance.create((IAgent) null, var);
+		return create(parent, var, null);
+	}
+
+	public static AbstractEditor create(final Composite parent, final IParameter var,
+		final EditorListener l) {
+		AbstractEditor ed = instance.create((IAgent) null, var, l);
 		ed.createComposite(parent);
 		return ed;
 	}
 
 	@Override
-	public AbstractEditor create(final IAgent agent, final IParameter var) {
+	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
 		final boolean canBeNull =
 			var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
 		final short type = var.type().id();
 		AbstractEditor gp =
-			type == IType.BOOL ? new BooleanEditor(agent, var) : type == IType.COLOR
-				? new ColorEditor(agent, var) : type == IType.FLOAT ? new FloatEditor(agent, var,
-					canBeNull) : type == IType.INT ? new IntEditor(agent, var, canBeNull)
-					: type == IType.LIST ? new ListEditor(agent, var) : type == IType.POINT
-						? new PointEditor(agent, var) : type == IType.MAP ? new MapEditor(agent,
-							var) : type == IType.MATRIX ? new MatrixEditor(agent, var)
-							: type == IType.FILE ? new FileEditor(agent, var)
-								: type == IType.STRING ? new StringEditor(agent, var)
-									: new GenericEditor(agent, var);
+			type == IType.BOOL ? new BooleanEditor(agent, var, l) : type == IType.COLOR
+				? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(agent,
+					var, canBeNull, l) : type == IType.INT
+					? new IntEditor(agent, var, canBeNull, l) : type == IType.LIST
+						? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(
+							agent, var, l) : type == IType.MAP ? new MapEditor(agent, var, l)
+							: type == IType.MATRIX ? new MatrixEditor(agent, var, l)
+								: type == IType.FILE ? new FileEditor(agent, var, l)
+									: type == IType.STRING ? new StringEditor(agent, var, l)
+										: new GenericEditor(agent, var, l);
 		return gp;
 	}
 }

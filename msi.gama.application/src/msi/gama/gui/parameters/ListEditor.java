@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
@@ -40,13 +41,17 @@ public class ListEditor extends AbstractEditor {
 	}
 
 	ListEditor(final IAgent agent, final IParameter param) {
-		super(agent, param, null);
+		this(agent, param, null);
+	}
+
+	ListEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 	}
 
 	ListEditor(final Composite parent, final String title, final Object value,
 		final EditorListener<java.util.List> whenModified) {
 		// Convenience method
-		super(new SupportParameter(title, value), whenModified);
+		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 

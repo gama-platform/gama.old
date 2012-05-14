@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.eclipse.swt.widgets.*;

@@ -7,7 +7,7 @@ package msi.gama.gui.swt.controls;
 import msi.gama.gui.swt.SwtGui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -83,6 +83,7 @@ public class Popup {
 			return;
 		}
 		popupText.setBackground(provider.getPopupBackground());
+
 		popupText.setText(s);
 		Control c = provider.getPositionControl();
 		if ( c == null || c.isDisposed() ) {
@@ -90,8 +91,23 @@ public class Popup {
 			return;
 		}
 		final Point point = c.toDisplay(c.getLocation().x, c.getSize().y);
-		popup.pack();
+		// popup.pack();
 		popup.setLocation(point.x, point.y);
+
+		// Compute the new window size.
+		final Point newWindowSize = popup.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		// Crop new window size to screen.
+
+		final Rectangle screenArea = popup.getDisplay().getClientArea();
+		if ( newWindowSize.y > screenArea.height - (point.y - screenArea.y) ) {
+			newWindowSize.y = screenArea.height - (point.y - screenArea.y);
+		}
+		if ( newWindowSize.x > screenArea.width - (point.x - screenArea.x) ) {
+			newWindowSize.x = screenArea.width - (point.x - screenArea.x);
+		}
+		popup.setSize(newWindowSize);
+		popup.layout();
 		popup.setVisible(true);
 	}
 

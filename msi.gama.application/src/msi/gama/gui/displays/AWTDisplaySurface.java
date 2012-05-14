@@ -24,7 +24,6 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
@@ -32,7 +31,6 @@ import javax.swing.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
@@ -40,7 +38,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
-import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
 public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -52,7 +49,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	boolean paused;
 	private volatile boolean canBeUpdated = true;
 	double widthHeightConstraint = 1.0;
-	private PopupMenu agentsMenu = new PopupMenu();
+
 	private IGraphics displayGraphics;
 	private Color bgColor = Color.black;
 	protected double zoomIncrement = 0.1;
@@ -67,30 +64,21 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	private final AffineTransform translation = new AffineTransform();
 	private final Semaphore paintingNeeded = new Semaphore(1, true);
 	private boolean synchronous = false;
-	private ActionListener menuListener;
-	private ActionListener focusListener;
 	private final Thread animationThread = new Thread(new Runnable() {
 
 		@Override
 		public void run() {
 			while (true) {
 				try {
-					// GUI.debug("Painting permits remaining before acquiring: "
-					// +
-					// paintingNeeded.availablePermits());
 					paintingNeeded.acquire();
-					// GUI.debug("Painting permits remaining after acquiring: "
-					// +
-					// paintingNeeded.availablePermits());
-
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				repaint();
-				// Toolkit.getDefaultToolkit().sync();
 			}
 		}
 	});
+	private AWTDisplaySurfaceMenu menuManager;
 
 	/**
 	 * Save this surface into an image passed as a parameter
@@ -147,13 +135,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean isPaused() {
 		return paused;
 	}
-
-	// public SWTAuxiliaryDisplaySurface getNavigator() {
-	// if ( navigator == null ) {
-	// navigator = new SWTAuxiliaryDisplaySurface(this);
-	// }
-	// return navigator;
-	// }
 
 	protected Cursor createCursor() {
 		Image im =
@@ -225,70 +206,14 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
-	static class AgentMenuItem extends MenuItem {
-
-		private final IAgent agent;
-		private final IDisplay display;
-
-		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
-			super(name);
-			this.agent = agent;
-			this.display = display;
-		}
-
-		IAgent getAgent() {
-			return agent;
-		}
-
-		IDisplay getDisplay() {
-			return display;
-		}
-	}
-
-	public class SelectedAgent {
-
-		IAgent macro;
-		Map<ISpecies, List<SelectedAgent>> micros;
-
-		void buildMenuItems(final Menu parentMenu, final IDisplay display) {
-			Menu macroMenu = new Menu(macro.getName());
-			parentMenu.add(macroMenu);
-
-			MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
-			inspectItem.addActionListener(menuListener);
-			macroMenu.add(inspectItem);
-
-			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
-			focusItem.addActionListener(focusListener);
-			macroMenu.add(focusItem);
-
-			if ( micros != null && !micros.isEmpty() ) {
-				Menu microsMenu = new Menu("Micro agents");
-				macroMenu.add(microsMenu);
-
-				Menu microSpecMenu;
-				for ( ISpecies microSpec : micros.keySet() ) {
-					microSpecMenu = new Menu("Species " + microSpec.getName());
-					microsMenu.add(microSpecMenu);
-
-					for ( SelectedAgent micro : micros.get(microSpec) ) {
-						micro.buildMenuItems(microSpecMenu, display);
-					}
-				}
-			}
-		}
-	}
-
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
-
 		outputChanged(env_width, env_height, layerDisplayOutput);
 		setOpaque(true);
 		setDoubleBuffered(false);
 		setCursor(createCursor());
-		agentsMenu = new PopupMenu();
-		add(agentsMenu);
+		menuManager = new AWTDisplaySurfaceMenu(this);
 		DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -336,43 +261,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
-		menuListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
-				if ( a != null ) {
-					fireSelectionChanged(a);
-				}
-			}
-
-		};
-
-		focusListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
-				if ( a != null ) {
-					focusOn(a.getGeometry(), source.getDisplay());
-				}
-			}
-
-		};
-
-		// if ( manager != null ) {
-		// manager.dispose();
-		// }
 		if ( manager == null ) {
 			manager = new DisplayManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				// IDisplay d =
 				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
 					env_height, displayGraphics));
-				// d.initMenuItems(this);
 			}
 
 		} else {
@@ -395,27 +289,11 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		return dim;
 	}
 
-	private void selectAgents(final int x, final int y) {
-		agentsMenu.removeAll();
-		agentsMenu.setLabel("Layers");
+	public void selectAgents(final int x, final int y) {
 		int xc = x - origin.x;
 		int yc = y - origin.y;
 		final List<IDisplay> displays = manager.getDisplays(xc, yc);
-		for ( IDisplay display : displays ) {
-			java.awt.Menu m = new java.awt.Menu(display.getName());
-			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
-			if ( !agents.isEmpty() ) {
-				m.addSeparator();
-
-				for ( IAgent agent : agents ) {
-					SelectedAgent sa = new SelectedAgent();
-					sa.macro = agent;
-					sa.buildMenuItems(m, display);
-				}
-			}
-			agentsMenu.add(m);
-		}
-		agentsMenu.show(this, x, y);
+		menuManager.selectAgents(xc, yc, displays);
 	}
 
 	@Override
@@ -425,7 +303,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				// TODO Probl�me si un mod�le est relanc�. Blocage.
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -457,15 +334,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( displayGraphics == null ) { return; }
 		ex[0] = null;
 		displayGraphics.fill(bgColor, 1);
-		// try {
 		manager.drawDisplaysOn(displayGraphics);
-		// } catch (GamaRuntimeException e) {
-		// ex[0] = e;
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// ex[0] = new GamaRuntimeException(e);
-		// ex[0].addContext("in drawing the layers");
-		// }
 	}
 
 	protected final Rectangle getImageClipBounds() {
@@ -506,7 +375,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void dispose() {
-		// GUI.debug("Releasing all the components of AWTDisplaySurface");
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
@@ -517,20 +385,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 		if ( manager != null ) {
 			manager.dispose();
-			// manager = null;
 		}
 
 	}
 
 	@Override
 	public BufferedImage getImage() {
-		// Rectangle clip = displayGraphics.getClipping();
-		// updateDisplay();
-		// paused = false;
-		// FIXME: Draw the displays in case the image is called from outside..
-		// drawDisplaysWithoutRepainting();
-		// paused = true;
-		// displayGraphics.setClipping(clip);
 		return buffImage;
 	}
 
@@ -593,7 +453,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			zoomFactor = factor;
 			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor),
 				c.y - (int) Math.round(imagePY * zoomFactor));
-			// paintingNeeded.release();
 			updateDisplay();
 		}
 	}
@@ -602,7 +461,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() /
 			previousPanelSize.height);
 		paintingNeeded.release();
-		// repaint();
 	}
 
 	void centerImage() {
@@ -614,7 +472,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		if ( resizeImage(getWidth(), getHeight()) ) {
 			centerImage();
-			// paintingNeeded.release();
 			updateDisplay();
 		}
 	}
@@ -633,7 +490,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
 		Rectangle envelop =
 			new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
-		// / PFfff... Quel bordel !
 		double xScale = (double) getWidth() / (rightX - leftX);
 		double yScale = (double) getHeight() / (rightY - leftY);
 		double zoomFactor = Math.min(xScale, yScale);
@@ -655,7 +511,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	public void setNavigationImageEnabled(final boolean enabled) {
 		navigationImageEnabled = enabled;
-		// getNavigator().toggle(enabled);
 	}
 
 	@Override

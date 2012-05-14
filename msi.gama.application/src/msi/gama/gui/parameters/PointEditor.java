@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -39,13 +40,17 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 	}
 
 	PointEditor(final IAgent agent, final IParameter param) {
-		super(agent, param, null);
+		this(agent, param, null);
+	}
+
+	PointEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 	}
 
 	PointEditor(final Composite parent, final String title, final Object value,
 		final EditorListener<GamaPoint> whenModified) {
 		// Convenience method
-		super(new SupportParameter(title, value), whenModified);
+		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 

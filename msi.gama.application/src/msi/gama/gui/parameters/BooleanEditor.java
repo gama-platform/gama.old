@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.types.*;
@@ -36,13 +37,17 @@ public class BooleanEditor extends AbstractEditor {
 
 	BooleanEditor(final Composite parent, final String title, final boolean value,
 		final EditorListener<Boolean> whenModified) {
-		super(new SupportParameter(title, value), whenModified);
+		super(new InputParameter(title, value), whenModified);
 		acceptNull = false;
 		this.createComposite(parent);
 	}
 
 	BooleanEditor(final IAgent agent, final IParameter param) {
-		super(agent, param, null);
+		this(agent, param, null);
+	}
+
+	BooleanEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 		acceptNull = false;
 	}
 

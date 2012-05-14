@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -35,14 +36,18 @@ public class GenericEditor extends AbstractEditor {
 	}
 
 	GenericEditor(final IAgent agent, final IParameter param) {
-		super(agent, param, null);
+		this(agent, param, null);
+	}
+
+	GenericEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 		expectedType = param.type();
 	}
 
 	GenericEditor(final Composite parent, final String title, final Object value,
 		final EditorListener whenModified) {
 		// Convenience method
-		super(new SupportParameter(title, value), whenModified);
+		super(new InputParameter(title, value), whenModified);
 		expectedType = value == null ? Types.NO_TYPE : Types.get(value.getClass());
 		this.createComposite(parent);
 	}
@@ -53,13 +58,6 @@ public class GenericEditor extends AbstractEditor {
 		return control.getControl();
 
 	}
-
-	// @Override
-	// public boolean isValueDifferent(final Object newVal) {
-	// return true;
-	// // Necessary since some objects (eg GamaGeometry) will not report any
-	// // modification.
-	// }
 
 	@Override
 	protected void displayParameterValue() {

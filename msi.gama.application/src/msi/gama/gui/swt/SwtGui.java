@@ -24,7 +24,7 @@ import java.util.concurrent.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.AWTDisplayGraphics;
-import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
@@ -32,12 +32,14 @@ import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserPanel;
 import msi.gaml.compilation.GamaClassLoader;
 import org.apache.log4j.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
@@ -725,7 +727,7 @@ public class SwtGui implements IGui {
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
 
-		if ( currentDescriptor == descriptor ) { return true; }
+		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
 		if ( descriptor != null ) {
 			run(new Runnable() {
 
@@ -831,5 +833,80 @@ public class SwtGui implements IGui {
 
 		// FIXME HACK
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> openUserInputDialog(final String title,
+		final Map<String, Object> initialValues) {
+		final Map<String, Object> result = new HashMap();
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, title);
+				result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
+			}
+		});
+		return result;
+	}
+
+	public void openUserControlDialog(final IScope scope, final UserPanel panel) {
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				UserControlDialog dialog =
+					new UserControlDialog(getShell(), panel.getUserCommands(), "[" +
+						scope.getAgentScope().getName() + "] " + panel.getName(), scope);
+				dialog.open();
+			}
+		});
+
+	}
+
+	@Override
+	public void openUserControlPanel(final IScope scope, final UserPanel panel) {
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				UserControlView part = null;
+				try {
+					part =
+						(UserControlView) getPage().showView(UserControlView.ID, null,
+							IWorkbenchPage.VIEW_CREATE);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+				if ( part != null ) {
+					part.initFor(scope, panel.getUserCommands(), "[" +
+						scope.getAgentScope().getName() + "] " + panel.getName());
+				}
+				GAMA.getFrontmostSimulation().getScheduler().setUserHold(true);
+				try {
+					getPage().showView(UserControlView.ID);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	@Override
+	public void closeDialogs() {
+
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				UserControlDialog d = UserControlDialog.current;
+				if ( d != null ) {
+					d.close();
+				}
+			}
+
+		});
+
 	}
 }

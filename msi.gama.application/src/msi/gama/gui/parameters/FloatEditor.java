@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -33,14 +34,19 @@ public class FloatEditor extends NumberEditor {
 	}
 
 	FloatEditor(final IAgent agent, final IParameter param, final boolean canBeNull) {
-		super(agent, param, null, canBeNull);
+		this(agent, param, canBeNull, null);
+	}
+
+	FloatEditor(final IAgent agent, final IParameter param, final boolean canBeNull,
+		final EditorListener l) {
+		super(agent, param, l, canBeNull);
 	}
 
 	FloatEditor(final Composite parent, final String title, final Double value, final Double min,
 		final Double max, final Double step, final boolean canBeNull,
 		final EditorListener<Double> whenModified) {
 		// Convenience method
-		super(new SupportParameter(title, value, min, max, step), whenModified, canBeNull);
+		super(new InputParameter(title, value, min, max, step), whenModified, canBeNull);
 		this.createComposite(parent);
 	}
 

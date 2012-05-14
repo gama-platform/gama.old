@@ -19,6 +19,7 @@
 package msi.gama.gui.parameters;
 
 import java.util.Map;
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
@@ -38,13 +39,17 @@ public class MapEditor extends AbstractEditor {
 	}
 
 	MapEditor(final IAgent agent, final IParameter param) {
-		super(agent, param, null);
+		this(agent, param, null);
+	}
+
+	MapEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 	}
 
 	MapEditor(final Composite parent, final String title, final Object value,
 		final EditorListener<Map> whenModified) {
 		// Convenience method
-		super(new SupportParameter(title, value), whenModified);
+		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 

@@ -219,8 +219,7 @@ public abstract class AbstractDisplay implements IDisplay {
 			y <= position.y + size.y;
 	}
 
-	protected GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen) {
-		// MetaEnvironment e = simulation.getEnvironment();
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen) {
 		double xScale = size.x / env_width;
 		double yScale = size.y / env_height;
 		int xInDisplay = xOnScreen - position.x;

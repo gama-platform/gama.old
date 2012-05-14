@@ -74,7 +74,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.lang.gaml.ui"/>
       <plugin id="msi.gama.models"/>
       <plugin id="msi.gama.processor"/>
-      <plugin id="msi.gaml.additions.trial"/>
       <plugin id="msi.gaml.extensions.fipa"/>
       <plugin id="msi.gaml.extensions.physics"/>
       <plugin id="msi.gaml.extensions.traffic"/>

@@ -18,13 +18,13 @@
  */
 package msi.gama.gui.views;
 
-import java.util.List;
+import java.util.Collection;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.ICommand;
+import msi.gaml.commands.*;
 import msi.gaml.compilation.ScheduledAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -53,8 +53,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		commands.setForeground(SwtGui.getDisplay().getSystemColor(
 			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		commands.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		GridLayout layout = new GridLayout(1, false);
-		layout.verticalSpacing = 5;
+		GridLayout layout = new GridLayout(3, false);
+		layout.verticalSpacing = 0;
 		commands.setLayout(layout);
 		commands.pack();
 		view.pack();
@@ -77,7 +77,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	@Override
 	public void displayItems() {
 		super.displayItems();
-		List<ICommand> userCommands = experiment.getCommands();
+		for ( Control c : commands.getChildren() ) {
+			c.dispose();
+		}
+		Collection<UserCommandCommand> userCommands = experiment.getUserCommands();
 		for ( final ICommand command : userCommands ) {
 			Button b = new Button(commands, SWT.PUSH);
 			b.setText(command.getName());

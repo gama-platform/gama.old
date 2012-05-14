@@ -20,6 +20,7 @@ package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;

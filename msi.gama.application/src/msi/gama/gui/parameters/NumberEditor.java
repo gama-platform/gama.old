@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
@@ -42,7 +43,7 @@ public abstract class NumberEditor extends AbstractEditor {
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final SupportParameter supportParameter, final EditorListener whenModified,
+	public NumberEditor(final InputParameter supportParameter, final EditorListener whenModified,
 		final boolean canBeNull) {
 		super(supportParameter, whenModified);
 		computeStepValue();

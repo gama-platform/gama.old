@@ -18,12 +18,22 @@
  */
 package msi.gama.gui.views;
 
+import java.util.Collection;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.AgentAttributesEditorsList;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GamaSelectionListener;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.commands.*;
+import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.species.ISpecies;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 	GamaSelectionListener {
@@ -42,6 +52,51 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 	@Override
 	public boolean areItemsClosable() {
 		return true;
+	}
+
+	@Override
+	protected Composite createItemContentsFor(final IAgent agent) {
+		Composite attributes = super.createItemContentsFor(agent);
+		ISpecies species = agent.getSpecies();
+		Collection<UserCommandCommand> userCommands = species.getUserCommands();
+		if ( userCommands.isEmpty() ) { return attributes; }
+		Composite buttons = new Composite(attributes, SWT.BORDER_SOLID);
+		buttons.moveAbove(null);
+		buttons.setBackground(SwtGui.getDisplay().getSystemColor(
+			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		buttons.setForeground(SwtGui.getDisplay().getSystemColor(
+			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		buttons.setLayoutData(data);
+		GridLayout layout = new GridLayout(3, false);
+		buttons.setLayout(layout);
+
+		for ( final ICommand command : userCommands ) {
+			Button b = new Button(buttons, SWT.PUSH);
+			b.setText(command.getName());
+			b.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					if ( agent.dead() ) { return; }
+					GAMA.getFrontmostSimulation().getScheduler()
+						.executeOneAction(new ScheduledAction() {
+
+							@Override
+							public void execute(final IScope scope) throws GamaRuntimeException {
+								if ( !agent.dead() ) {
+									scope.execute(command, agent);
+								}
+							}
+
+						});
+				}
+
+			});
+		}
+		buttons.pack();
+		buttons.update();
+		return attributes;
 	}
 
 	@Override

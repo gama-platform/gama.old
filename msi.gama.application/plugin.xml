@@ -105,6 +105,15 @@
             name="Repositories"
             restorable="true">
       </view>
+      <view
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.UserControlView"
+            fastViewWidthRatio="0.2"
+            icon="icons/menu_pause.png"
+            id="msi.gama.views.userControlView"
+            name="User Control"
+            restorable="true">
+      </view>
    </extension>
 
    <extension

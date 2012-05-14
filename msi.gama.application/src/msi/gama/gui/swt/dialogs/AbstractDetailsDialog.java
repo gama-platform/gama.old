@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -20,7 +20,7 @@ package msi.gama.gui.swt.dialogs;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.*;
 public abstract class AbstractDetailsDialog extends Dialog {
 
 	/** The title. */
-	private final String title;
+	protected String title;
 
 	/** The message. */
 	private final String message;
@@ -42,13 +42,13 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	private final Image image;
 
 	/** The details button. */
-	private Button detailsButton;
+	protected Button detailsButton;
 
 	/** The details area. */
-	private Control detailsArea;
+	protected Control detailsArea;
 
 	/** The cached window size. */
-	private Point cachedWindowSize;
+	protected Point cachedWindowSize;
 
 	// TODO UCdetector: Remove unused code:
 	// /**
@@ -61,10 +61,10 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	// * @param image the image to be displayed
 	// * @param message the message to be displayed
 	// */
-	// public AbstractDetailsDialog(final Shell parentShell, final String title, final Image image,
-	// final String message) {
-	// this(new SameShellProvider(parentShell), title, image, message);
-	// }
+	public AbstractDetailsDialog(final Shell parentShell, final String title, final Image image,
+		final String message) {
+		this(new SameShellProvider(parentShell), title, image, message);
+	}
 
 	/**
 	 * Construct a new instance with the specified elements. Note that the window will have no
@@ -122,19 +122,16 @@ public abstract class AbstractDetailsDialog extends Dialog {
 			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER |
 				GridData.VERTICAL_ALIGN_BEGINNING));
 		}
-
-		final Label label = new Label(composite, SWT.WRAP);
 		if ( message != null ) {
+			final Label label = new Label(composite, SWT.WRAP);
 			label.setText(message);
-		} else {
-			label.setText("Java error in Gama. Please refer to the details below");
+			final GridData data =
+				new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+			data.widthHint =
+				convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+			label.setLayoutData(data);
+			label.setFont(parent.getFont());
 		}
-		final GridData data =
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-		label.setLayoutData(data);
-		label.setFont(parent.getFont());
-
 		return composite;
 	}
 
@@ -171,7 +168,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	 * Toggles the unfolding of the details area. This is triggered by the user pressing the Details
 	 * button.
 	 */
-	private void toggleDetailsArea() {
+	protected void toggleDetailsArea() {
 		final Point oldWindowSize = getShell().getSize();
 		Point newWindowSize = cachedWindowSize;
 		cachedWindowSize = oldWindowSize;

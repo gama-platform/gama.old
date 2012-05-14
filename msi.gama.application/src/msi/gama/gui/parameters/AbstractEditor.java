@@ -18,7 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
-import msi.gama.common.interfaces.IParameterEditor;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
@@ -124,33 +124,6 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected abstract Control getEditorControl();
 
-	// private Point getLocation() {
-	// Point absLoc = new Point(0, 3);
-	// absLoc.y = absLoc.y + titleLabel.getBounds().height + 5;
-	// return absLoc;
-	// }
-
-	// @Override
-	// public void mouseEnter(final MouseEvent e) {
-	// if ( tooltip != null ) {
-	// tooltip.show(getLocation());
-	// }
-	// }
-
-	// @Override
-	// public void mouseExit(final MouseEvent e) {
-	// if ( tooltip != null ) {
-	// tooltip.hide();
-	// }
-	// }
-
-	// @Override
-	// public void mouseHover(final MouseEvent e) {
-	// if ( tooltip != null ) {
-	// tooltip.show(getLocation());
-	// }
-	// }
-
 	public void createComposite(final Composite parent) {
 		// Fixer automatiquement le layout du parent. Ou alors utiliser un nouveau composite.
 
@@ -186,11 +159,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		if ( isEditable && !isCombo ) {
 			displayParameterValue();
 		}
-		// if ( acceptTooltip() ) {
-		// createToolTip(paramControl);
-		// }
-		// paramControl.addMouseTrackListener(this);
-		// titleLabel.addMouseTrackListener(this);
+
 		if ( hasUnit ) {
 			unitLabel = new Label(comp, SWT.READ_ONLY);
 			unitLabel.setFont(SwtGui.unitFont);
@@ -227,7 +196,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	protected GridData getParameterGridData() {
 		GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		d.minimumWidth = 100;
-		d.widthHint = SWT.DEFAULT;
+		d.widthHint = 300; // SWT.DEFAULT
 		return d;
 	}
 
