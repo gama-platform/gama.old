@@ -59,7 +59,6 @@ public final class GamlAnnotations {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	// @Target(ElementType.TYPE)
-	@Inherited
 	public static @interface facet {
 
 		/**
@@ -241,6 +240,7 @@ public final class GamlAnnotations {
 	// * The Interface vars.
 	// */
 	@Retention(RetentionPolicy.RUNTIME)
+	// @Inherited
 	// @Target(ElementType.TYPE)
 	public static @interface vars {
 
@@ -515,7 +515,6 @@ public final class GamlAnnotations {
 		String[] examples() default {};
 
 		String[] seeAlso() default {};
-
 
 	}
 }

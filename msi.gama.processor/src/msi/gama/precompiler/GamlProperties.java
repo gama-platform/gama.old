@@ -33,31 +33,34 @@ public class GamlProperties {
 	private final static Map<String, Map<String, GamlProperties>> registriesByPlugin =
 		new HashMap();
 
-	Map<String, Set<String>> map;
+	Map<String, LinkedHashSet<String>> map;
 
 	public final static String GRAMMAR = "std.gaml";
 	public final static String SKILLS = "skills.properties";
 	public final static String UNARIES = "unaries.properties";
+	public final static String OPERATORS = "operators.properties";
 	public final static String BINARIES = "binaries.properties";
-	public final static String TYPES = "types.classes.properties";
-	public final static String TYPES_NAMES = "types.names.properties";
-	public final static String SPECIES_SKILLS = "species.skills.properties";
+	public final static String TYPES = "types.properties";
+	// public final static String TYPES_NAMES = "types.names.properties";
+	// public final static String SPECIES_SKILLS = "species.skills.properties";
 	public final static String SYMBOLS = "symbols.properties";
-	public final static String DEFINITIONS = "definitions.properties";
-	public final static String CHILDREN = "children.properties";
-	public final static String FACETS = "facets.properties";
-	public final static String KINDS = "kinds.properties";
+	// public final static String DEFINITIONS = "definitions.properties";
+	// public final static String CHILDREN = "children.properties";
+	// public final static String FACETS = "facets.properties";
+	// public final static String KINDS = "kinds.properties";
 	public final static String FACTORIES = "factories.properties";
 	public final static String SPECIES = "species.properties";
-	public final static String VARS = "vars.properties";
-	public static final String[] FILES = new String[] { SKILLS, UNARIES, BINARIES, TYPES,
-		TYPES_NAMES, SYMBOLS, DEFINITIONS, CHILDREN, SPECIES_SKILLS, KINDS, FACTORIES, SPECIES,
-		VARS };
+	// public final static String VARS = "vars.properties";
+	public static final String[] FILES = new String[] { SKILLS, /* UNARIES, BINARIES, */OPERATORS,
+		TYPES,
+		/* TYPES_NAMES, */SYMBOLS, /* DEFINITIONS, CHILDREN, SPECIES_SKILLS, KINDS, */FACTORIES,
+		SPECIES,
+	/* VARS */};
 
 	static final String NULL = "";
 
 	public GamlProperties() {
-		map = new HashMap();
+		map = new LinkedHashMap();
 	}
 
 	public Set<String> keySet() {
@@ -69,14 +72,14 @@ public class GamlProperties {
 	}
 
 	public Set<String> values() {
-		Set<String> result = new HashSet();
-		for ( Map.Entry<String, Set<String>> entry : map.entrySet() ) {
+		Set<String> result = new LinkedHashSet();
+		for ( Map.Entry<String, LinkedHashSet<String>> entry : map.entrySet() ) {
 			result.addAll(entry.getValue());
 		}
 		return result;
 	}
 
-	public Set<String> get(final String key) {
+	public LinkedHashSet<String> get(final String key) {
 		return map.get(key);
 	}
 
@@ -91,12 +94,12 @@ public class GamlProperties {
 
 	public void put(final String key, final String value) {
 		if ( !map.containsKey(key) ) {
-			map.put(key, new HashSet<String>());
+			map.put(key, new LinkedHashSet<String>());
 		}
 		map.get(key).add(value);
 	}
 
-	public void put(final String key, final Set<String> values) {
+	private void put(final String key, final LinkedHashSet<String> values) {
 		if ( !map.containsKey(key) ) {
 			map.put(key, values);
 		} else {
@@ -105,9 +108,13 @@ public class GamlProperties {
 	}
 
 	public void putAll(final GamlProperties m) {
-		for ( String key : m.keySet() ) {
-			put(key, m.get(key));
+		for ( Map.Entry<String, LinkedHashSet<String>> entry : m.entrySet() ) {
+			put(entry.getKey(), entry.getValue());
 		}
+	}
+
+	public Set<Map.Entry<String, LinkedHashSet<String>>> entrySet() {
+		return map.entrySet();
 	}
 
 	public void store(final Writer writer) {
@@ -136,26 +143,6 @@ public class GamlProperties {
 
 	}
 
-	/**
-	 * same than toString, without "set"
-	 * @param strings
-	 * @return toString
-	 */
-	public static String toStringWoSet(final Set<String> strings) {
-		if ( !strings.isEmpty() ) {
-			StringBuilder sb = new StringBuilder();
-			for ( String value : strings ) {
-				// if ( !value.trim().equals("set") ) {
-				sb.append(value).append(',');
-				// }
-			}
-			sb.setLength(sb.length() - 1);
-			return sb.toString();
-		}
-		return NULL;
-
-	}
-
 	public void load(final Reader reader) {
 		Properties prop = new Properties();
 		try {
@@ -168,7 +155,7 @@ public class GamlProperties {
 		}
 		for ( String s : prop.stringPropertyNames() ) {
 			String[] array = prop.getProperty(s, "").split(",");
-			Set<String> values = new HashSet(Arrays.asList(array));
+			LinkedHashSet<String> values = new LinkedHashSet(Arrays.asList(array));
 			put(s, values);
 		}
 		try {

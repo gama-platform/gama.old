@@ -20,29 +20,21 @@ package msi.gama.precompiler;
 
 import java.io.*;
 import java.util.*;
-
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
-import javax.tools.*;
 import javax.tools.Diagnostic.Kind;
-
+import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.reserved;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
 
 @SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -67,7 +59,9 @@ public class GamaProcessor extends AbstractProcessor {
 		Filer filer = processingEnv.getFiler();
 
 		try {
-			prop.load(filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name).openReader(true));
+			FileObject f = filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name);
+			prop.load(f.openReader(true));
+			// f.delete();
 		} catch (IOException e) {}
 		return prop;
 	}
@@ -80,9 +74,10 @@ public class GamaProcessor extends AbstractProcessor {
 
 			processTypes(env.getElementsAnnotatedWith(type.class));
 			processOperators(env.getElementsAnnotatedWith(operator.class));
+			processSkills(env.getElementsAnnotatedWith(skill.class));
 			Set<Element> symbols = (Set<Element>) env.getElementsAnnotatedWith(symbol.class);
 			processSymbols(symbols);
-			processParents(symbols);
+			// processParents(symbols);
 			symbols = new HashSet<Element>(env.getElementsAnnotatedWith(getter.class));
 			symbols.addAll(env.getElementsAnnotatedWith(setter.class));
 			symbols.addAll(env.getElementsAnnotatedWith(action.class));
@@ -90,35 +85,34 @@ public class GamaProcessor extends AbstractProcessor {
 			symbols.addAll(env.getElementsAnnotatedWith(species.class));
 			processClasses(symbols);
 			processFactories(env.getElementsAnnotatedWith(handles.class));
-			processVar(env.getElementsAnnotatedWith(vars.class));
-			processAction(env.getElementsAnnotatedWith(action.class));
+			// processVar(env.getElementsAnnotatedWith(vars.class));
+			// processAction(env.getElementsAnnotatedWith(action.class));
 			processArgs(env.getElementsAnnotatedWith(args.class));
-			processReserved(env.getElementsAnnotatedWith(reserved.class));
-			
-			if("true".equals(processingEnv.getOptions().get("doc"))){
+			// processReserved(env.getElementsAnnotatedWith(reserved.class));
+
+			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
 				Messager m = processingEnv.getMessager();
 				m.printMessage(Kind.ERROR, "Beginning of the documentation processing" +
-						processingEnv.getOptions().get("doc"));
-				
-				
+					processingEnv.getOptions().get("doc"));
+
 				new docProcessor(processingEnv).processDocXML(env, createWriter("doc.xml"));
 
 				m.printMessage(Kind.NOTE, "End of the documentation processing");
 			}
-			
+
 		}
 		return false;
 	}
 
-	private void processReserved(final Set<? extends Element> set) {
-		Set<String> svars = new HashSet<String>();
-		for ( Element e : set ) {
-			for ( String a : e.getAnnotation(reserved.class).value() ) {
-				svars.add(a);
-			}
-		}
-		store.get(GamlProperties.VARS).put("reserved", svars);
-	}
+	// private void processReserved(final Set<? extends Element> set) {
+	// Set<String> svars = new HashSet<String>();
+	// for ( Element e : set ) {
+	// for ( String a : e.getAnnotation(reserved.class).value() ) {
+	// svars.add(a);
+	// }
+	// }
+	// store.get(GamlProperties.VARS).put("reserved", svars);
+	// }
 
 	private void processArgs(final Set<? extends Element> set) {
 		Set<String> svars = new HashSet<String>();
@@ -130,23 +124,23 @@ public class GamaProcessor extends AbstractProcessor {
 		// store.get(GamlProperties.VARS).put("actions_args", svars);
 	}
 
-	private void processAction(final Set<? extends Element> set) {
-		Set<String> sactions = new HashSet<String>();
-		for ( Element e : set ) {
-			sactions.add(e.getAnnotation(action.class).value());
-		}
-		store.get(GamlProperties.VARS).put("actions", sactions);
-	}
+	// private void processAction(final Set<? extends Element> set) {
+	// Set<String> sactions = new HashSet<String>();
+	// for ( Element e : set ) {
+	// sactions.add(e.getAnnotation(action.class).value());
+	// }
+	// store.get(GamlProperties.VARS).put("actions", sactions);
+	// }
 
-	private void processVar(final Set<? extends Element> set) {
-		Set<String> svars = new HashSet<String>();
-		for ( Element e : set ) {
-			for ( var v : e.getAnnotation(vars.class).value() ) {
-				svars.add(v.name());
-			}
-		}
-		store.get(GamlProperties.VARS).put("vars", svars);
-	}
+	// private void processVar(final Set<? extends Element> set) {
+	// Set<String> svars = new HashSet<String>();
+	// for ( Element e : set ) {
+	// for ( var v : e.getAnnotation(vars.class).value() ) {
+	// svars.add(v.name());
+	// }
+	// }
+	// store.get(GamlProperties.VARS).put("vars", svars);
+	// }
 
 	private void processFactories(final Set<? extends Element> types) {
 		for ( Element element : types ) {
@@ -165,6 +159,23 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
+	private void processSkills(final Set<? extends Element> skills) {
+		for ( Element element : skills ) {
+			Element e = element;
+			String className = ((TypeElement) e).getQualifiedName().toString();
+			skill skill_annot = e.getAnnotation(skill.class);
+			String[] skill_names = skill_annot.value();
+			String[] attach_to = skill_annot.attach_to();
+			for ( String skill_name : skill_names ) {
+				store.get(GamlProperties.SKILLS).put(className, skill_name);
+				for ( String species_name : attach_to ) {
+					store.get(GamlProperties.SKILLS).put(className, species_name);
+				}
+			}
+
+		}
+	}
+
 	private void processClasses(final Set<? extends Element> types) {
 		for ( Element element : types ) {
 			Element e = element;
@@ -175,17 +186,6 @@ public class GamaProcessor extends AbstractProcessor {
 				e = e.getEnclosingElement();
 			}
 			String className = ((TypeElement) e).getQualifiedName().toString();
-			skill skill_annot = e.getAnnotation(skill.class);
-			if ( skill_annot != null ) {
-				String[] skill_names = skill_annot.value();
-				String[] attach_to = skill_annot.attach_to();
-				for ( String skill_name : skill_names ) {
-					store.get(GamlProperties.SKILLS).put(className, skill_name);
-					for ( String species_name : attach_to ) {
-						store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
-					}
-				}
-			} /* else */
 
 			species species_annot = e.getAnnotation(species.class);
 			if ( species_annot != null ) {
@@ -193,8 +193,14 @@ public class GamaProcessor extends AbstractProcessor {
 				store.get(GamlProperties.SKILLS).put(className, species_name);
 				store.get(GamlProperties.SPECIES).put(className, species_name);
 				String[] skills = species_annot.skills();
+				GamlProperties gp = store.get(GamlProperties.SKILLS);
 				for ( String skill_name : skills ) {
-					store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
+					for ( Map.Entry<String, LinkedHashSet<String>> entry : gp.entrySet() ) {
+						if ( entry.getValue().contains(skill_name) ) {
+							entry.getValue().add(species_name);
+						}
+					}
+					// store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
 				}
 			}
 
@@ -208,9 +214,9 @@ public class GamaProcessor extends AbstractProcessor {
 				type type_annot = element.getAnnotation(type.class);
 				if ( type_annot != null ) {
 					String typeName = type_annot.value();
-					store.get(GamlProperties.TYPES).put(className, typeName);
 					String typeKind = String.valueOf(type_annot.kind());
-					store.get(GamlProperties.TYPES_NAMES).put(typeKind, typeName);
+					store.get(GamlProperties.TYPES).put(className, typeKind);
+					store.get(GamlProperties.TYPES).put(className, typeName);
 				}
 			}
 		}
@@ -222,7 +228,7 @@ public class GamaProcessor extends AbstractProcessor {
 			String[] op_names = op.value();
 			String keyName = null;
 			for ( String opName : op_names ) {
-				String storeName = getStoreNameForOperator((ExecutableElement) element);
+				// String storeName = getStoreNameForOperator((ExecutableElement) element);
 				TypeElement theClass = (TypeElement) element.getEnclosingElement();
 				NestingKind kind = theClass.getNestingKind();
 				if ( kind == NestingKind.TOP_LEVEL ) {
@@ -233,150 +239,151 @@ public class GamaProcessor extends AbstractProcessor {
 					String enclosingName = theEnclosingClass.getQualifiedName().toString();
 					keyName = enclosingName + "$" + simpleName;
 				}
-				store.get(storeName).put(keyName, opName);
+				store.get(GamlProperties.OPERATORS).put(keyName, opName);
 			}
 		}
 	}
 
-	private String getStoreNameForOperator(final ExecutableElement element) {
-		Set<Modifier> m = element.getModifiers();
-		List<? extends VariableElement> args = element.getParameters();
-		boolean isStatic = m.contains(Modifier.STATIC);
-		if ( args.size() == 0 && !isStatic ) { return GamlProperties.UNARIES; }
-		boolean contextual = args.get(0).asType().toString().contains("IScope");
-		if ( args.size() == 1 && !isStatic && contextual ) { return GamlProperties.UNARIES; }
-		if ( args.size() == 1 && isStatic ) { return GamlProperties.UNARIES; }
-		if ( args.size() == 2 && isStatic && contextual ) { return GamlProperties.UNARIES; }
-		return GamlProperties.BINARIES;
-	}
+	// private String getStoreNameForOperator(final ExecutableElement element) {
+	// Set<Modifier> m = element.getModifiers();
+	// List<? extends VariableElement> args = element.getParameters();
+	// boolean isStatic = m.contains(Modifier.STATIC);
+	// if ( args.size() == 0 && !isStatic ) { return GamlProperties.UNARIES; }
+	// boolean contextual = args.get(0).asType().toString().contains("IScope");
+	// if ( args.size() == 1 && !isStatic && contextual ) { return GamlProperties.UNARIES; }
+	// if ( args.size() == 1 && isStatic ) { return GamlProperties.UNARIES; }
+	// if ( args.size() == 2 && isStatic && contextual ) { return GamlProperties.UNARIES; }
+	// return GamlProperties.BINARIES;
+	// }
 
 	private void processSymbols(final Set<? extends Element> types) {
 		// We loop on the classes annotated with "symbol"
-		Set<String> facet_values = new HashSet<String>();
+		// Set<String> facet_values = new HashSet<String>();
 
 		for ( Element element : types ) {
-			boolean isDefinition = false;
+			// boolean isDefinition = false;
 			String className = ((TypeElement) element).getQualifiedName().toString();
 			symbol mirror = element.getAnnotation(symbol.class);
 			// Set<String> facet_names = new HashSet<String>();
-			facets facets_decl = element.getAnnotation(facets.class);
-			if ( facets_decl != null ) {
-				String omissibleFacet = facets_decl.omissible();
-				facet[] all_facets = facets_decl.value();
-				for ( facet f : all_facets ) {
-					String name = f.name();
-					if ( name.equals(omissibleFacet) ) {
-						String type = f.type()[0];
-						isDefinition = isDefinition(name, type);
-					}
-					for ( String v : f.values() ) {
-						facet_values.add(v);
-					}
-				}
+			// facets facets_decl = element.getAnnotation(facets.class);
+			// if ( facets_decl != null ) {
+			// String omissibleFacet = facets_decl.omissible();
+			// facet[] all_facets = facets_decl.value();
+			// for ( facet f : all_facets ) {
+			// String name = f.name();
+			// if ( name.equals(omissibleFacet) ) {
+			// String type = f.type()[0];
+			// isDefinition = isDefinition(name, type);
+			// }
+			// for ( String v : f.values() ) {
+			// facet_values.add(v);
+			// }
+			// }
+			// }
+			store.get(GamlProperties.SYMBOLS).put(className, String.valueOf(mirror.kind()));
+			for ( String k : mirror.name() ) {
+				store.get(GamlProperties.SYMBOLS).put(className, k);
 			}
 
-			String[] k_names = mirror.name();
-			for ( String k : k_names ) {
-				store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS).put(
-					className, k);
-			}
-			String kind = String.valueOf(mirror.kind());
-			store.get(GamlProperties.KINDS).put(kind, className);
-			Set<String> type_names = store.get(GamlProperties.TYPES_NAMES).get(kind);
-			if ( type_names != null ) {
-				for ( String k : type_names ) {
-					store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS)
-						.put(className, k);
-				}
-			}
-			store.get(GamlProperties.VARS).put("facets_values", facet_values);
+			// store.get(GamlProperties.KINDS).put(kind, className);
+			// Set<String> type_names = store.get(GamlProperties.TYPES_NAMES).get(kind);
+			// if ( type_names != null ) {
+			// for ( String k : type_names ) {
+			// store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS)
+			// .put(className, k);
+			// }
+			// }
+			// store.get(GamlProperties.VARS).put("facets_values", facet_values);
 		}
 	}
 
-	boolean isDefinition(final String facetName, final String facetType) {
-		if ( !facetName.equals("name") && !facetName.equals("var") ) { return false; }
-		if ( !facetType.equals(IFacetType.ID) && !facetType.equals(IFacetType.NEW_TEMP_ID) &&
-			!facetType.equals(IFacetType.NEW_VAR_ID) && !facetType.equals(IFacetType.LABEL) ) { return false; }
-		return true;
-	}
+	//
+	// boolean isDefinition(final String facetName, final String facetType) {
+	// if ( !facetName.equals("name") && !facetName.equals("var") ) { return false; }
+	// if ( !facetType.equals(IFacetType.ID) && !facetType.equals(IFacetType.NEW_TEMP_ID) &&
+	// !facetType.equals(IFacetType.NEW_VAR_ID) && !facetType.equals(IFacetType.LABEL) ) { return
+	// false; }
+	// return true;
+	// }
 
-	private void processParents(final Set<? extends Element> types) {
-		// We loop on the classes annotated with "symbol" to establish the parent/children
-		// relationships
-		for ( Element element : types ) {
-			symbol mirror = element.getAnnotation(symbol.class);
-			inside parent_decl = element.getAnnotation(inside.class);
-			String[] k_names = mirror.name();
-			if ( parent_decl != null ) {
-				for ( String k : k_names ) {
-					String[] parents = parent_decl.symbols();
-					for ( String p : parents ) {
-						store.get(GamlProperties.CHILDREN).put(p, k);
-					}
-					int[] parent_kinds = parent_decl.kinds();
-					for ( int i : parent_kinds ) {
-						Set<String> classes_in_kind =
-							store.get(GamlProperties.KINDS).get(String.valueOf(i));
-						if ( classes_in_kind != null ) {
-							for ( String class_in_kind : classes_in_kind ) {
-								Set<String> keywords_in_kind =
-									store.get(GamlProperties.SYMBOLS).get(class_in_kind);
-								if ( keywords_in_kind == null ) {
-									keywords_in_kind =
-										store.get(GamlProperties.DEFINITIONS).get(class_in_kind);
-								}
-								for ( String keyword_in_kind : keywords_in_kind ) {
-									store.get(GamlProperties.CHILDREN).put(keyword_in_kind, k);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	// private void processParents(final Set<? extends Element> types) {
+	// // We loop on the classes annotated with "symbol" to establish the parent/children
+	// // relationships
+	// for ( Element element : types ) {
+	// symbol mirror = element.getAnnotation(symbol.class);
+	// inside parent_decl = element.getAnnotation(inside.class);
+	// String[] k_names = mirror.name();
+	// if ( parent_decl != null ) {
+	// for ( String k : k_names ) {
+	// String[] parents = parent_decl.symbols();
+	// for ( String p : parents ) {
+	// store.get(GamlProperties.CHILDREN).put(p, k);
+	// }
+	// int[] parent_kinds = parent_decl.kinds();
+	// for ( int i : parent_kinds ) {
+	// Set<String> classes_in_kind =
+	// store.get(GamlProperties.KINDS).get(String.valueOf(i));
+	// if ( classes_in_kind != null ) {
+	// for ( String class_in_kind : classes_in_kind ) {
+	// Set<String> keywords_in_kind =
+	// store.get(GamlProperties.SYMBOLS).get(class_in_kind);
+	// if ( keywords_in_kind == null ) {
+	// keywords_in_kind =
+	// store.get(GamlProperties.DEFINITIONS).get(class_in_kind);
+	// }
+	// for ( String keyword_in_kind : keywords_in_kind ) {
+	// store.get(GamlProperties.CHILDREN).put(keyword_in_kind, k);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	private void dumpFiles() {
 		for ( String file : GamlProperties.FILES ) {
 			store.get(file).store(createWriter(file));
 		}
-		final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
-		grammarWriter.append("model std").append('\n').println("_gaml {");
-
-		printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
-			store.get(GamlProperties.SKILLS));
-		printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
-			store.get(GamlProperties.TYPES));
-		printPropsNoDoublons(grammarWriter, "Reserved keywords (vars)", "_reserved",
-			store.get(GamlProperties.VARS));
-		printPropsNoDoublons(grammarWriter, "Reserved keywords (species)", "_reserved",
-			store.get(GamlProperties.SPECIES));
-		grammarWriter.println("}");
-		grammarWriter.close();
+		// final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
+		// grammarWriter.append("model std").append('\n').println("_gaml {");
+		//
+		// printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
+		// store.get(GamlProperties.SKILLS));
+		// printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
+		// store.get(GamlProperties.TYPES));
+		// // printPropsNoDoublons(grammarWriter, "Reserved keywords (vars)", "_reserved",
+		// // store.get(GamlProperties.VARS));
+		// printPropsNoDoublons(grammarWriter, "Reserved keywords (species)", "_reserved",
+		// store.get(GamlProperties.SPECIES));
+		// grammarWriter.println("}");
+		// grammarWriter.close();
 	}
 
-	private void printPropsNoDoublons(final PrintWriter writer, final String t, final String prop,
-		final GamlProperties map) {
-		writer.append("\n//").println(t);
+	// private void printPropsNoDoublons(final PrintWriter writer, final String t, final String
+	// prop,
+	// final GamlProperties map) {
+	// writer.append("\n//").println(t);
+	//
+	// for ( String s : map.keySet() ) {
+	// writer.println("// " + s);
+	// for ( String name : map.get(s) ) {
+	// if ( !lreserved.contains(name) ) {
+	// writer.append("\t ").append(prop).append(" &").append(name).println("&;");
+	// lreserved.add(s);
+	// }
+	// }
+	// }
 
-		for ( String s : map.keySet() ) {
-			writer.println("// " + s);
-			for ( String name : map.get(s) ) {
-				if ( !lreserved.contains(name) ) {
-					writer.append("\t ").append(prop).append(" &").append(name).println("&;");
-					lreserved.add(s);
-				}
-			}
-		}
-
-		// for ( String s : map.values() ) {
-		// if ( !lreserved.contains(s) ) {
-		// // exclude the forbidden name & doublons (example: unaries->casting & types)
-		// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-		// lreserved.add(s);
-		// }
-		// }
-	}
+	// for ( String s : map.values() ) {
+	// if ( !lreserved.contains(s) ) {
+	// // exclude the forbidden name & doublons (example: unaries->casting & types)
+	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
+	// lreserved.add(s);
+	// }
+	// }
+	// }
 
 	//
 	// private void printProps(final PrintWriter writer, final String t, final String prop,
@@ -408,5 +415,5 @@ public class GamaProcessor extends AbstractProcessor {
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}	
+	}
 }
