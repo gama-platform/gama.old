@@ -77,7 +77,7 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 	@Override
 	public void executeOneAction(final IScheduledAction action) {
 		super.executeOneAction(action);
-		if ( paused ) {
+		if ( paused || on_user_hold ) {
 			GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
 		}
 	}

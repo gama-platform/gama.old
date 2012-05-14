@@ -43,8 +43,8 @@ import msi.gaml.types.IType;
 public class ReflexArchitecture extends Skill implements IArchitecture {
 
 	private final List<ICommand> _inits = new ArrayList();
-	private final List<ICommand> _behaviors = new ArrayList();
-	private int _behaviorsNumber = 0;
+	private final List<ICommand> _reflexes = new ArrayList();
+	private int _reflexesNumber = 0;
 	private int _inits_number = 0;
 
 	@Override
@@ -61,18 +61,22 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 			_inits_number = _inits.size();
 			return;
 		}
-		_behaviors.add(c);
-		_behaviorsNumber++;
+		_reflexes.add(c);
+		_reflexesNumber++;
 
 	}
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		if ( _behaviorsNumber == 0 ) { return null; }
+		return executeReflexes(scope);
+	}
+
+	protected final Object executeReflexes(final IScope scope) {
+		if ( _reflexesNumber == 0 ) { return null; }
 		Object result = null;
 		IGamlAgent a = getCurrentAgent(scope);
-		for ( int i = 0; i < _behaviorsNumber; i++ ) {
-			ICommand r = _behaviors.get(i);
+		for ( int i = 0; i < _reflexesNumber; i++ ) {
+			ICommand r = _reflexes.get(i);
 			if ( !a.dead() ) {
 				result = r.executeOn(scope);
 			}
@@ -199,9 +203,10 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	public void error(final String s, final String facet) {}
 
 	@Override
-	public Double computePertinence(IScope scope) throws GamaRuntimeException {
+	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
 		return 1.0;
 	}
+
 	@Override
 	public IExpression getPertinence() {
 		return null;

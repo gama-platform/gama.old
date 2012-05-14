@@ -32,13 +32,13 @@ import msi.gaml.types.*;
  */
 @reserved({ "nil", "each", "self", "myself", "their", "its", "her", "his",
 // TMP (retro-compatibility):
-	"world", "visible", "signal" })
+	"world", "visible", IKeyword.SIGNAL, IKeyword.USER_LOCATION })
 public interface IExpressionCompiler<T> {
 
 	public static final String INTERNAL_POINT = "<->";
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE,
 		IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER,
-		IKeyword.THEIR, IKeyword.ITS);
+		IKeyword.THEIR, IKeyword.ITS, IKeyword.USER_LOCATION);
 	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR,
 		IKeyword.HIS, IKeyword.ITS, IKeyword.HER);
 	public static final Map<String, Map<IType, IOperator>> UNARIES = new HashMap();

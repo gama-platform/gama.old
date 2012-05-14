@@ -56,6 +56,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	private Map<String, ActionCommand> actions;
 
+	private Map<String, UserCommandCommand> userCommands;
+
 	private IList<ICommand> behaviors;
 
 	protected ISpecies macroSpecies;
@@ -289,6 +291,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		variables = new HashMap<String, IVariable>();
 		actions = new HashMap<String, ActionCommand>();
 		aspects = new HashMap<String, AspectCommand>();
+		userCommands = new LinkedHashMap();
 		behaviors = new GamaList<ICommand>();
 	}
 
@@ -325,6 +328,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void addAction(final ICommand ce) {
 		actions.put(ce.getName(), (ActionCommand) ce);
+	}
+
+	public void addUserCommand(final ICommand ce) {
+		userCommands.put(ce.getName(), (UserCommandCommand) ce);
+	}
+
+	public Collection<UserCommandCommand> getUserCommands() {
+		return userCommands.values();
 	}
 
 	@Override
@@ -380,6 +391,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			addAspect((AspectCommand) s);
 		} else if ( s instanceof ActionCommand ) {
 			addAction((ActionCommand) s);
+		} else if ( s instanceof UserCommandCommand ) {
+			addUserCommand((UserCommandCommand) s); // reflexes, states or tasks
 		} else if ( s instanceof ICommand ) {
 			addBehavior((ICommand) s); // reflexes, states or tasks
 		}

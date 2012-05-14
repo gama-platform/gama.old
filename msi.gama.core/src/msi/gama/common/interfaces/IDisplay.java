@@ -21,6 +21,7 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -36,6 +37,8 @@ public interface IDisplay extends INamed, Comparable<IDisplay> {
 	void drawDisplay(IGraphics simGraphics) throws GamaRuntimeException;
 
 	Set<IAgent> collectAgentsAt(int x, int y);
+
+	GamaPoint getModelCoordinatesFrom(int x, int y);
 
 	public boolean containsScreenPoint(final int x, final int y);
 

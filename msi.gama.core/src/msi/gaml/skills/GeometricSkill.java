@@ -18,7 +18,7 @@
  */
 package msi.gaml.skills;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -28,9 +28,9 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -42,7 +42,7 @@ import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
  * @version $Revision: 1.0 $
  */
 
-@skill({ "situated", "geometric" })
+@skill({ "situated" })
 public class GeometricSkill extends Skill {
 
 	/**

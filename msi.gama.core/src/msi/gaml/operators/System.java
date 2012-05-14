@@ -68,6 +68,15 @@ public class System {
 		return o;
 	}
 
+	@operator(value = "user_input")
+	public static Map<String, Object> userInput(final IScope scope,
+		final Map<String, Object> initialValues) {
+		if ( initialValues.isEmpty() ) { return initialValues; }
+		IAgent agent = scope.getAgentScope();
+		return new GamaMap(GuiUtils.openUserInputDialog(
+			agent.getSpeciesName() + " #" + agent.getIndex() + " request", initialValues));
+	}
+
 	@operator(value = "eval_gaml", can_be_const = false)
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
 		IAgent agent = scope.getAgentScope();

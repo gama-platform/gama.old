@@ -272,6 +272,7 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.metamodel.agent,
    msi.gaml.skills,
    msi.gaml.types",
+ msi.gaml.architecture.user,
  msi.gaml.architecture.weighted_tasks;
   uses:="msi.gaml.architecture.reflex,
    msi.gaml.expressions,

@@ -19,7 +19,6 @@
 package msi.gama.kernel.experiment;
 
 import java.util.*;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
@@ -46,17 +45,9 @@ public interface IParameter {
 
 	public abstract Object value(IScope scope) throws GamaRuntimeException;
 
-	public abstract Object value(IScope scope, IAgent agent) throws GamaRuntimeException;
-
-	public abstract void setVal(IScope scope, IAgent agent, Object v) throws GamaRuntimeException;
-
 	public abstract IType type();
 
-	// public IType getContentType();
-
 	public String toGaml();
-
-	// public String serializeToGaml();
 
 	public abstract Object getInitialValue();
 

@@ -18,7 +18,6 @@
  */
 package msi.gama.kernel.experiment;
 
-import java.util.List;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
@@ -28,8 +27,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.commands.ICommand;
-import msi.gaml.compilation.ISymbol;
+import msi.gaml.species.ISpecies;
 
 /**
  * Written by drogoul Modified on 31 mai 2011
@@ -37,7 +35,7 @@ import msi.gaml.compilation.ISymbol;
  * @todo Description
  * 
  */
-public interface IExperiment extends ISymbol {
+public interface IExperiment extends ISpecies {
 
 	static final String BATCH_CATEGORY_NAME = "Exploration method";
 	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
@@ -117,7 +115,5 @@ public interface IExperiment extends ISymbol {
 	void interrupt();
 
 	public ExperimentatorAgent getAgent();
-
-	public abstract List<ICommand> getCommands();
 
 }

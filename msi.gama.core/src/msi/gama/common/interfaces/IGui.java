@@ -18,9 +18,12 @@
  */
 package msi.gama.common.interfaces;
 
+import java.util.Map;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserPanel;
 
 /**
  * The class IGui.
@@ -107,5 +110,11 @@ public interface IGui {
 	 */
 	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput,
 		double w, double h);
+
+	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues);
+
+	void openUserControlPanel(IScope scope, UserPanel panel);
+
+	void closeDialogs();
 
 }

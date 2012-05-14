@@ -20,7 +20,6 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
@@ -116,25 +115,9 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		return value();
-	}
-
-	@Override
-	public void setVal(final IScope scope, final IAgent agent, final Object v)
-		throws GamaRuntimeException {
-		setValue(v);
-	}
-
-	@Override
 	public IType type() {
 		return type;
 	}
-
-	// @Override
-	// public IType getContentType() {
-	// return type.defaultContentType();
-	// }
 
 	@Override
 	public String toGaml() {

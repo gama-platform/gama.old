@@ -55,20 +55,21 @@ public class Types {
 			short theType = t.id();
 			Class[] w = t.wraps();
 			classes.addAll(Arrays.asList(w));
-			for ( String keyword : mp.get(className) ) {
-				IType theTypeClass;
-				try {
-					theTypeClass = (IType) c.newInstance();
-				} catch (Exception e) {
-					e.printStackTrace();
-					continue;
-				}
-				typeToIType[theType] = theTypeClass;
-				stringToIType.put(keyword, theTypeClass);
-				for ( Class cc : classes ) {
-					classToIType.put(cc, theTypeClass);
-				}
+			List<String> kindAndName = new ArrayList(mp.get(className));
+			String keyword = kindAndName.get(1);
+			IType theTypeClass;
+			try {
+				theTypeClass = (IType) c.newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
 			}
+			typeToIType[theType] = theTypeClass;
+			stringToIType.put(keyword, theTypeClass);
+			for ( Class cc : classes ) {
+				classToIType.put(cc, theTypeClass);
+			}
+
 		}
 		// GUI.debug("Registered types: " + stringToIType);
 		typeToIType[NONE] = NO_TYPE;

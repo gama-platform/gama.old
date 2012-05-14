@@ -21,7 +21,6 @@ package msi.gama.kernel.experiment;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -293,17 +292,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public Object value(final IScope scope) {
 		return value;
-	}
-
-	@Override
-	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		return value;
-	}
-
-	@Override
-	public void setVal(final IScope scope, final IAgent agent, final Object v)
-		throws GamaRuntimeException {
-		setAndVerifyValue(v);
 	}
 
 	@Override

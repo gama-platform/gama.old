@@ -28,7 +28,6 @@ package msi.gama.common.interfaces;
 public interface IKeyword {
 
 	public static final String _DOT = ".";
-	public static final String AUTOSAVE = "autosave";
 	public static final String ACTION = "action";
 	public static final String ADD = "add";
 	public static final String AGENT = "agent";
@@ -44,6 +43,7 @@ public interface IKeyword {
 	public static final String ASPECT = "aspect";
 	public static final String AT = "at";
 	public static final String AUTHOR = "author";
+	public static final String AUTOSAVE = "autosave";
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";
 	public static final String BAR = "bar";
@@ -53,6 +53,7 @@ public interface IKeyword {
 	public static final String BEHAVIORS = "behaviors";
 	public static final String BOUNDS = "bounds";
 	public static final String BREAK = "break";
+	public static final String BRIGHTER = "brighter";
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
 	public static final String CELLULAR = "cellular";
@@ -63,8 +64,10 @@ public interface IKeyword {
 	public static final String CLOSE_LIST = "]";
 	public static final String CLOSE_POINT = "}";
 	public static final String COLOR = "color";
+	public static final String COLOR_BLUE = "blue";
+	public static final String COLOR_GREEN = "green";
+	public static final String COLOR_RED = "red";
 	public static final String COMMA = ",";
-	public static final String COMMAND = "command";
 	public static final String CONDITION = "condition";
 	public static final String CONST = "const";
 	public static final String CONTENTS = "contents";
@@ -73,6 +76,7 @@ public interface IKeyword {
 	public static final String CREATE = "create";
 	public static final String CSV = "csv";
 	public static final String CURRENT_STATE = "currentState";
+	public static final String DARKER = "darker";
 	public static final String DATA = "data";
 	public static final String DECAY = "decay";
 	public static final String DEFAULT = "default";
@@ -82,8 +86,8 @@ public interface IKeyword {
 	public static final String DIFFUSION = "diffusion";
 	public static final String DISABLE = "disable";
 	public static final String DISPLAY = "display";
-	public static final String DISPLAY_GRAPH = "graphdisplay";
 	public static final String DISPLAY_GL = "graphdisplaygl";
+	public static final String DISPLAY_GRAPH = "graphdisplay";
 	public static final String DISTANCE_CACHE = "distance_cache_enabled";
 	public final static String DIVIDE = "/";
 	public static final String DO = "do";
@@ -98,6 +102,7 @@ public interface IKeyword {
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
+	public static final String ERROR = "error";
 	public static final String EXHAUSTIVE = "exhaustive";
 	public static final String EXISTS = "exists";
 	public static final String EXPERIMENT = "experiment";
@@ -120,6 +125,7 @@ public interface IKeyword {
 	public static final String GLOBAL = "global";
 	public static final String GRADIENT = "gradient";
 	public static final String GRAPH = "graph";
+	public static final String GRAPH_SKILL = "graph_user";
 	public static final String GRID = "grid";
 	public static final String GRID_X = "grid_x";
 	public static final String GRID_Y = "grid_y";
@@ -127,6 +133,7 @@ public interface IKeyword {
 	public final static String GUI_ = "gui";
 	public static final String HEADER = "header";
 	public static final String HEADING = "heading";
+	public static final String HEADLESS_UI = "headless";
 	public static final String HEIGHT = "height";
 	public static final String HER = "her";
 	public static final String HILL_CLIMBING = "hill_climbing";
@@ -140,6 +147,7 @@ public interface IKeyword {
 	public static final String INDEX = "index";
 	public static final String INIT = "init";
 	public static final String INITER = "initer";
+	public static final String INPUT = "input";
 	public static final String INSPECT = "inspect";
 	public static final String IS = "is";
 	public static final String ISFOLDER = "is_folder";
@@ -158,10 +166,14 @@ public interface IKeyword {
 	public static final String LOCATION = "location";
 	public static final String LOOP = "loop";
 	public static final String MAPPING = "mapping";
+	public static final String MATCH = "match";
+	public static final String MATCH_BETWEEN = "match_between";
+	public static final String MATCH_ONE = "match_one";
 	public static final String MAX = "max";
 	public static final String MAXIMIZE = "maximize";
 	public static final String MEMBERS = "members";
 	public static final String MERSENNE = "mersenne";
+	public static final String MESSAGE = "message";
 	public static final String METHOD = "method";
 	public static final String MICRO = "micro";
 	public static final String MICRO_LAYER = "micro_layer";
@@ -171,6 +183,7 @@ public interface IKeyword {
 	public final static String MINUS = "-";
 	public static final String MODEL = "model";
 	public static final String MONITOR = "monitor";
+	public static final String MOVING_SKILL = "moving";
 	public final static String MULTIPLY = "*";
 	public static final String MY = "my";
 	public static final String MYSELF = "myself";
@@ -233,21 +246,19 @@ public interface IKeyword {
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
 	public static final String SIZE = "size";
-	public static final String MOVING_SKILL = "moving";
-	public static final String GRAPH_SKILL = "graph_user";
 	public static final String SKILLS = "skills";
 	public static final String SOURCE = "source";
 	public static final String SPECIES = "species";
 	public static final String SPEED = "speed";
 	public static final String SPLINE = "spline";
 	public static final String STACK = "stack";
-	// custom attributes
 	public static final String STATE = "state";
 	public static final String STATE_TO_EXIT = "stateToExit";
 	public static final String STATES = "states";
 	public static final String STEP = "step";
 	public static final String STRATEGY = "scheduling_strategy";
 	public static final String STYLE = "style";
+	public static final String SWITCH = "switch";
 	public static final String TABU = "tabu";
 	public static final String TARGET = "target";
 	public static final String TARGETS = "scheduling_targets";
@@ -267,12 +278,21 @@ public interface IKeyword {
 	public static final String UNIT = "unit";
 	public static final String UNTIL = "until";
 	public static final String UPDATE = "update";
+	public static final String USER_CONTROLLED = "user_controlled";
+	public static final String USER_LOCATION = "user_location";
+	public static final String USER_COMMAND = "user_command";
+	public static final String USER_INPUT = "user_input";
+	public static final String USER_ONLY = "user_only";
+	public static final String USER_FIRST = "user_first";
+	public static final String USER_LAST = "user_last";
+	public static final String USER_PANEL = "user_panel";
 	public static final String VALUE = "value";
 	public static final String VALUES = "values";
 	public static final String VAR = "var";
 	public static final String VARIATION = "variation";
 	public static final String VERSION = "version";
 	public static final String VERTEX = "vertex";
+	public static final String WARNING = "warn";
 	public static final String WEIGHT = "weight";
 	public static final String WHEN = "when";
 	public static final String WHILE = "while";
@@ -281,6 +301,7 @@ public interface IKeyword {
 	public static final String WORLD_AGENT_NAME = "world";
 	public static final String WORLD_SPECIES_NAME = "world_species";
 	public static final String WRITABLE = "writable";
+	public static final String WRITE = "write";
 	public static final String X = "x";
 	public static final String XML = "xml";
 	public static final String XOR = "xor";
@@ -288,18 +309,5 @@ public interface IKeyword {
 	public static final String Y = "y";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
 		REACTIVE_TABU, EXHAUSTIVE };
-	public static final String COLOR_RED = "red";
-	public static final String DARKER = "darker";
-	public static final String BRIGHTER = "brighter";
-	public static final String COLOR_GREEN = "green";
-	public static final String COLOR_BLUE = "blue";
-	public static final String SWITCH = "switch";
-	public static final String MATCH = "match";
-	public static final String MATCH_ONE = "match_one";
-	public static final String MATCH_BETWEEN = "match_between";
-	public static final String HEADLESS_UI = "headless";
-	public static final String WRITE = "write";
-	public static final String WARNING = "warn";
-	public static final String ERROR = "error";
-	public static final String MESSAGE = "message";
+	public static final String USER_INIT = "user_init";
 }

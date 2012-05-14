@@ -18,6 +18,7 @@
  */
 package msi.gaml.commands;
 
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -26,9 +27,12 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -38,22 +42,30 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.COMMAND }, kind = ISymbolKind.SEQUENCE_COMMAND)
-@inside(kinds = { ISymbolKind.EXPERIMENT })
+@symbol(name = { IKeyword.USER_COMMAND }, kind = ISymbolKind.SEQUENCE_COMMAND)
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true) }, omissible = IKeyword.NAME)
 @with_args
 @with_sequence
-public class CommandCommand extends AbstractCommandSequence implements ICommand.WithArgs {
+public class UserCommandCommand extends AbstractCommandSequence implements ICommand.WithArgs {
 
 	Arguments args;
 	final String actionName;
+	final IExpression when;
+	List<UserInputCommand> inputs = new ArrayList();
 
-	public CommandCommand(final IDescription desc) {
+	public UserCommandCommand(final IDescription desc) {
 		super(desc);
 		setName(desc.getName());
 		actionName = this.getLiteral(IKeyword.ACTION);
+		when = this.getFacet(IKeyword.WHEN);
+	}
+
+	public List<UserInputCommand> getInputs() {
+		return inputs;
 	}
 
 	@Override
@@ -62,13 +74,28 @@ public class CommandCommand extends AbstractCommandSequence implements ICommand.
 	}
 
 	@Override
+	public void setChildren(final List<? extends ISymbol> children) {
+		for ( ISymbol c : children ) {
+			if ( c instanceof UserInputCommand ) {
+				inputs.add((UserInputCommand) c);
+			}
+		}
+		children.removeAll(inputs);
+		super.setChildren(children);
+	}
+
+	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( actionName == null ) { return super.privateExecuteIn(scope); }
-		ISpecies context = scope.getAgentScope().getSpecies();
-		ICommand.WithArgs executer = context.getAction(actionName);
-		executer.setRuntimeArgs(args);
-		Object result = executer.executeOn(scope);
-		return result;
+		if ( when == null || Cast.asBool(scope, when.value(scope)) ) {
+			if ( actionName == null ) { return super.privateExecuteIn(scope); }
+			ISpecies context = scope.getAgentScope().getSpecies();
+			ICommand.WithArgs executer = context.getAction(actionName);
+			executer.setRuntimeArgs(args);
+			Object result = executer.executeOn(scope);
+			return result;
+		}
+		scope.setStatus(ExecutionStatus.skipped);
+		return null;
 	}
 
 	@Override
@@ -76,12 +103,14 @@ public class CommandCommand extends AbstractCommandSequence implements ICommand.
 
 	@Override
 	public IType getReturnType() {
-		CommandDescription executer = description.getSpeciesContext().getAction(name);
+		if ( actionName == null ) { return super.getReturnType(); }
+		CommandDescription executer = description.getSpeciesContext().getAction(actionName);
 		return executer.getReturnType();
 	}
 
 	@Override
 	public IType getReturnContentType() {
+		if ( actionName == null ) { return super.getReturnContentType(); }
 		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
 	}

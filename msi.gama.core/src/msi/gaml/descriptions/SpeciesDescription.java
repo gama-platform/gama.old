@@ -129,12 +129,13 @@ public class SpeciesDescription extends SymbolDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
-		Set<String> skills = GamlProperties.loadFrom(GamlProperties.SPECIES_SKILLS).get(getName());
-		if ( skills != null ) {
-			skillNames.addAll(skills);
+		GamlProperties gp = GamlProperties.loadFrom(GamlProperties.SKILLS);
+		for ( Map.Entry<String, LinkedHashSet<String>> entry : gp.entrySet() ) {
+			if ( entry.getValue().contains(getName()) ) {
+				List<String> list = new ArrayList(entry.getValue());
+				skillNames.add(list.get(0));
+			}
 		}
-
-		// GuiUtils.debug("Skills defined for " + getName() + ": " + skillNames);
 
 		/* We then create the list of classes from this list of names */
 		for ( String skillName : skillNames ) {
@@ -173,6 +174,8 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected void createControl() {
 		String keyword = getControlName();
+
+		// GuiUtils.debug("Creating control for " + getName() + " with keyword " + keyword);
 		Class c = GamlCompiler.getSkillClasses().get(keyword);
 		if ( c == null ) {
 			control = new ReflexArchitecture();
@@ -473,12 +476,32 @@ public class SpeciesDescription extends SymbolDescription {
 			GamaCompiler.collectImplementationClasses(javaBase, getSkillClasses());
 		final List<IDescription> children = new ArrayList();
 		for ( final Class c1 : classes ) {
-			children.addAll(GamlCompiler.getVarDescriptions(c1));
-			children.addAll(GamlCompiler.getCommandDescriptions(c1));
-			for ( String s : GamlCompiler.getSkillMethods(c1) ) {
-				addSkillMethod(c1, s);
+			List<IDescription> toAdd = GamlCompiler.getVarDescriptions(c1);
+			if ( !toAdd.isEmpty() ) {
+				// if ( getName().equals("user") ) {
+				// GuiUtils.debug("Adding variables " + toAdd + " to " + getName() +
+				// " from class " + c1.getSimpleName());
+				// }
+				children.addAll(toAdd);
 			}
-
+			toAdd = GamlCompiler.getActionsDescriptions(c1);
+			if ( !toAdd.isEmpty() ) {
+				// if ( getName().equals("user") ) {
+				// GuiUtils.debug("Adding actions " + toAdd + " to " + getName() + " from class " +
+				// c1.getSimpleName());
+				// }
+				children.addAll(toAdd);
+			}
+			List<String> methods = GamlCompiler.getSkillMethods(c1);
+			if ( !methods.isEmpty() ) {
+				// if ( getName().equals("user") ) {
+				// GuiUtils.debug("Adding methods " + methods + " to " + getName() +
+				// " from class " + c1.getSimpleName());
+				// }
+				for ( String s : methods ) {
+					addSkillMethod(c1, s);
+				}
+			}
 		}
 		for ( IDescription v : children ) {
 			addChild(((SymbolDescription) v).copy());
@@ -503,7 +526,7 @@ public class SpeciesDescription extends SymbolDescription {
 			for ( final String s : skillsMethods.keySet() ) {
 				final Class old = skillsMethods.get(s);
 				if ( old != c && old.isAssignableFrom(c) ) {
-					// OutputManager.debug("Change: " + old.getSimpleName() + " replaced by " +
+					// GuiUtils.debug("Change: " + old.getSimpleName() + " replaced by " +
 					// c.getSimpleName() + " in the definition of " + s);
 					skillsMethods.put(s, c);
 				}

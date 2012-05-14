@@ -21,16 +21,16 @@ package msi.gaml.architecture.finite_state_machine;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IGamlAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.commands.AbstractCommandSequence;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -89,10 +89,9 @@ public class FsmStateCommand extends AbstractCommandSequence {
 		super.setChildren(commands);
 	}
 
-	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
 		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
-		if ( agent.dead() ) { return null; }
+		if ( agent.dead() ) { return false; }
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if ( memory == null ) {
 			memory = new HashMap();
@@ -108,7 +107,7 @@ public class FsmStateCommand extends AbstractCommandSequence {
 			if ( stateToExit != null ) {
 				stateToExit.haltOn(scope);
 			}
-			if ( agent.dead() ) { return null; }
+			if ( agent.dead() ) { return false; }
 			memory.clear();
 			scope.removeAllVars();
 			if ( enterActions != null ) {
@@ -117,9 +116,16 @@ public class FsmStateCommand extends AbstractCommandSequence {
 			agent.setAttribute(IKeyword.STATE_TO_EXIT, null);
 			agent.setAttribute(ENTER, false);
 		}
-		if ( agent.dead() ) { return null; }
-		super.privateExecuteIn(scope);
+		if ( agent.dead() ) { return false; }
+		return true;
+	}
 
+	protected Object bodyExecution(final IScope scope) throws GamaRuntimeException {
+		return super.privateExecuteIn(scope);
+	}
+
+	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
+		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
 		for ( int i = 0; i < transitionsSize; i++ ) {
 			final FsmTransitionCommand transition = transitions.get(i);
 
@@ -130,8 +136,18 @@ public class FsmStateCommand extends AbstractCommandSequence {
 				return futureState;
 			}
 		}
-		scope.saveAllVarValuesIn(memory);
+		if ( !agent.dead() ) {
+			scope.saveAllVarValuesIn((Map) agent.getAttribute(STATE_MEMORY));
+		}
 		return name;
+
+	}
+
+	@Override
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		if ( !beginExecution(scope) ) { return null; }
+		bodyExecution(scope);
+		return evaluateTransitions(scope);
 	}
 
 	public void haltOn(final IScope scope) throws GamaRuntimeException {

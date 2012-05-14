@@ -38,7 +38,8 @@ public class GamaBundleLoader {
 	static Map<Integer, List<Class>> CLASSES_BY_KIND = new HashMap();
 	static Map<Integer, Class> FACTORIES_BY_KIND = new HashMap();
 	public static volatile boolean contributionsLoaded = false;
-	public final static Map<Bundle, String> gamlAdditionsBundleAndFiles = new HashMap();
+
+	// public final static Map<Bundle, String> gamlAdditionsBundleAndFiles = new HashMap();
 
 	/**
 	 * 
@@ -63,7 +64,7 @@ public class GamaBundleLoader {
 
 		// Pre-loading (before any other things) the correspondance between the types and the
 		// variable classes, so that further contributions can have working factories
-		preBuildTypeVariables(additions);
+		preloadTypes(additions);
 		// Building the core additions first (others will then be able to overload).
 		preBuild(core, corePath);
 		additions.remove(core);
@@ -81,15 +82,15 @@ public class GamaBundleLoader {
 	 * @throws GamaStartupException
 	 * @param additions
 	 */
-	private static void preBuildTypeVariables(final Map<String, String> additions)
+	private static void preloadTypes(final Map<String, String> additions)
 		throws GamaStartupException {
 		for ( String pluginName : additions.keySet() ) {
 			Bundle bundle = Platform.getBundle(pluginName);
 			try {
 				bundle.start();
 				String pathName = additions.get(pluginName);
-				GamaBundleLoader.addGamlExtension(bundle, pathName);
-				FileUtils.getGamaProperties(bundle, pathName, GamlProperties.TYPES_NAMES);
+				// GamaBundleLoader.addGamlExtension(bundle, pathName);
+				FileUtils.getGamaProperties(bundle, pathName, GamlProperties.TYPES);
 			} catch (BundleException e1) {
 				throw new GamaStartupException("GAML additions in " + pluginName +
 					" cannot be installed due to an error in loading the plug-in.", e1);
@@ -142,22 +143,35 @@ public class GamaBundleLoader {
 
 		try {
 			GamlProperties mp =
-				FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.KINDS);
-			for ( String ks : mp.keySet() ) {
-				Integer i = Integer.decode(ks);
+				FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.SYMBOLS);
 
+			for ( String className : mp.keySet() ) {
+				List<String> values = new ArrayList(mp.get(className));
+				Integer i = Integer.decode(values.get(0));
 				if ( !CLASSES_BY_KIND.containsKey(i) ) {
 					CLASSES_BY_KIND.put(i, new ArrayList());
 				}
-
-				for ( String className : mp.get(ks) ) {
-					try {
-						CLASSES_BY_KIND.get(i).add(plugin.loadClass(className));
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
+				try {
+					CLASSES_BY_KIND.get(i).add(plugin.loadClass(className));
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
 				}
 			}
+			// for ( String ks : mp.keySet() ) {
+			// Integer i = Integer.decode(ks);
+			//
+			// if ( !CLASSES_BY_KIND.containsKey(i) ) {
+			// CLASSES_BY_KIND.put(i, new ArrayList());
+			// }
+			//
+			// for ( String className : mp.get(ks) ) {
+			// try {
+			// CLASSES_BY_KIND.get(i).add(plugin.loadClass(className));
+			// } catch (ClassNotFoundException e) {
+			// e.printStackTrace();
+			// }
+			// }
+			// }
 			mp = FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.FACTORIES);
 
 			for ( String ks : mp.keySet() ) {
@@ -192,8 +206,8 @@ public class GamaBundleLoader {
 		}
 		// Necessary to load this in advanvce for it to be accessible by the parser later
 		// (which does not have a clue about available plugins)
-		FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.CHILDREN);
-		FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.SPECIES_SKILLS);
+		// FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.CHILDREN);
+		// FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.SPECIES_SKILLS);
 		// FileUtils.getGamaProperties(plugin, pathToAdditions, GamlProperties.FACETS);
 		//
 		GamlProperties types =
@@ -203,13 +217,13 @@ public class GamaBundleLoader {
 				.keySet());
 		classNames.addAll(types.keySet());
 		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
-			GamlProperties.UNARIES).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
-			GamlProperties.BINARIES).keySet());
+			GamlProperties.OPERATORS).keySet());
+		// classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
+		// GamlProperties.BINARIES).keySet());
 		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
 			GamlProperties.SYMBOLS).keySet());
-		classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
-			GamlProperties.DEFINITIONS).keySet());
+		// classNames.addAll(FileUtils.getGamaProperties(plugin, pathToAdditions,
+		// GamlProperties.DEFINITIONS).keySet());
 		ClassLoader cl = GamaClassLoader.getInstance().addBundle(plugin);
 		// GamlCompiler.class.getClassLoader();
 
@@ -301,8 +315,8 @@ public class GamaBundleLoader {
 		}
 	}
 
-	public static void addGamlExtension(final Bundle bundle, final String pathName) {
-		gamlAdditionsBundleAndFiles.put(bundle, pathName + "/std.gaml");
-	}
+	// public static void addGamlExtension(final Bundle bundle, final String pathName) {
+	// gamlAdditionsBundleAndFiles.put(bundle, pathName + "/std.gaml");
+	// }
 
 }

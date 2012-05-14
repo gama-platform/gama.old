@@ -187,11 +187,15 @@ public class SymbolFactory implements ISymbolFactory {
 		}
 		contexts = new ArrayList(new HashSet(contexts));
 		if ( varKinds.contains(sKind) ) {
-			GamlProperties gp = GamlProperties.loadFrom(GamlProperties.TYPES_NAMES);
-			Set<String> supplementary_keywords = gp.get(String.valueOf(sKind));
-			if ( supplementary_keywords != null ) {
-				keywords.addAll(supplementary_keywords);
+			GamlProperties gp = GamlProperties.loadFrom(GamlProperties.TYPES);
+			Set<String> supplementary_keywords = new HashSet();
+			for ( Map.Entry<String, LinkedHashSet<String>> entry : gp.entrySet() ) {
+				List<String> values = new ArrayList(entry.getValue());
+				if ( String.valueOf(sKind).equals(values.get(0)) ) {
+					supplementary_keywords.add(values.get(1));
+				}
 			}
+			keywords.addAll(supplementary_keywords);
 			// Special trick and workaround for compiling species rather than variables
 			keywords.remove(IKeyword.SPECIES);
 		}

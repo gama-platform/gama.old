@@ -51,8 +51,8 @@ public interface ISpecies extends IValue, ISymbol {
 	/**
 	 * Returns all the micro-species.
 	 * Micro-species includes:
-	 * 		1. the "direct" micro-species;
-	 * 		2. the micro-species of the parent-species.
+	 * 1. the "direct" micro-species;
+	 * 2. the micro-species of the parent-species.
 	 * 
 	 * @return
 	 */
@@ -111,7 +111,7 @@ public interface ISpecies extends IValue, ISymbol {
 	 * @return a peer species with the specified name or null.
 	 */
 	public abstract ISpecies getPeerSpecies(String peerName);
-	
+
 	/**
 	 * Verifies that if this species is the peer species of other species.
 	 * 
@@ -119,7 +119,7 @@ public interface ISpecies extends IValue, ISymbol {
 	 * @return
 	 */
 	public abstract boolean isPeer(ISpecies other);
-	
+
 	public abstract List<ISpecies> getSelfWithParents();
 
 	/**
@@ -155,6 +155,8 @@ public interface ISpecies extends IValue, ISymbol {
 	public abstract void addChild(final ISymbol s);
 
 	public abstract void addVariable(final IVariable v);
+
+	public abstract Collection<UserCommandCommand> getUserCommands();
 
 	public abstract ICommand.WithArgs getAction(final String name);
 

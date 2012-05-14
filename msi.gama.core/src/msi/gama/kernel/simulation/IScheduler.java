@@ -53,6 +53,10 @@ public interface IScheduler extends IStepable {
 
 	public abstract void stepByStep();
 
+	public abstract void setUserHold(boolean hold);
+
 	public abstract void dispose();
+
+	public abstract boolean isUserHold();
 
 }

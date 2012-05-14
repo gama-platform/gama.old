@@ -18,18 +18,16 @@
  */
 package msi.gama.common.interfaces;
 
-import msi.gama.kernel.experiment.IParameter;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
- * The class IEditorFactory.
+ * Written by drogoul Modified on 27 mai 2011
  * 
- * @author drogoul
- * @since 18 déc. 2011
+ * @todo Description
  * 
  */
-public interface IEditorFactory {
+public interface EditorListener<T> {
 
-	IParameterEditor create(IAgent agent, IParameter var, EditorListener l);
+	void valueModified(T newValue) throws GamaRuntimeException;
 
 }

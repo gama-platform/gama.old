@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
@@ -53,13 +52,9 @@ public class GuiExperiment extends AbstractExperiment {
 
 	protected final List<IParameter> regularParameters;
 
-	protected final List<ICommand> userCommands;
-
 	public GuiExperiment(final IDescription description) {
 		super(description);
 		regularParameters = new ArrayList();
-		userCommands = new ArrayList();
-
 	}
 
 	@Override
@@ -135,8 +130,6 @@ public class GuiExperiment extends AbstractExperiment {
 		for ( ISymbol s : children ) {
 			if ( s instanceof IParameter.Batch ) {
 				addRegularParameter((IParameter) s);
-			} else if ( s instanceof CommandCommand ) {
-				userCommands.add((ICommand) s);
 			}
 		}
 	}
@@ -154,11 +147,6 @@ public class GuiExperiment extends AbstractExperiment {
 			result.add(v.getName());
 		}
 		return result;
-	}
-
-	@Override
-	public List<ICommand> getCommands() {
-		return userCommands;
 	}
 
 }

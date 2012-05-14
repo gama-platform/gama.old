@@ -46,35 +46,35 @@ public class AbstractCommandSequence extends AbstractCommand {
 	}
 
 	@Override
-	public Object executeOn(final IScope stack) throws GamaRuntimeException {
-		enterScope(stack);
+	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		enterScope(scope);
 		Object result;
 		try {
-			result = super.executeOn(stack);
+			result = super.executeOn(scope);
 		} finally {
-			leaveScope(stack);
+			leaveScope(scope);
 		}
 		return result;
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		boolean allSkipped = true;
 		Object lastResult = null;
 		ExecutionStatus statusBeforeSkipped = success;
 		for ( int i = 0; i < commands.length; i++ ) {
-			lastResult = commands[i].executeOn(stack);
-			ExecutionStatus status = stack.getStatus();
+			lastResult = commands[i].executeOn(scope);
+			ExecutionStatus status = scope.getStatus();
 			if ( status != skipped ) {
 				if ( status == interrupt ) {
-					stack.setStatus(interrupt);
+					scope.setStatus(interrupt);
 					return lastResult;
 				}
 				allSkipped = false;
 				statusBeforeSkipped = status;
 			}
 		}
-		stack.setStatus(allSkipped ? skipped : statusBeforeSkipped);
+		scope.setStatus(allSkipped ? skipped : statusBeforeSkipped);
 		return lastResult;
 	}
 

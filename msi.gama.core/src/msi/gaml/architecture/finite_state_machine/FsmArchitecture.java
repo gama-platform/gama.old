@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.ICommand;
 import msi.gaml.species.ISpecies;
@@ -47,7 +47,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	protected Map<String, FsmStateCommand> states = new HashMap();
 	protected GamaList<String> stateNames;
-	private FsmStateCommand initialState;
+	protected FsmStateCommand initialState;
 
 	// private FsmStateCommand finalState;
 
@@ -58,21 +58,21 @@ public class FsmArchitecture extends ReflexArchitecture {
 		for ( final FsmStateCommand s : states.values() ) {
 			if ( s.isInitial() ) {
 				initialState = s;
-			} else if ( s.isFinal() ) {
-				// finalState = s;
 			}
 		}
-		context.getVar(IKeyword.STATE).setValue(initialState.getName());
+		if ( initialState != null ) {
+			context.getVar(IKeyword.STATE).setValue(initialState.getName());
+		}
 		stateNames = new GamaList(states.keySet());
 	}
 
 	@getter(var = IKeyword.STATES, initializer = true)
-	public GamaList getStateNames(final IAgent agent) {
+	public IList getStateNames(final IAgent agent) {
 		return stateNames;
 	}
 
 	@setter(IKeyword.STATES)
-	public void setStateNames(final IAgent agent, final GamaList list) {
+	public void setStateNames(final IAgent agent, final IList list) {
 
 	}
 
@@ -106,8 +106,11 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		// if ( !hasBehavior ) { return null; }
 		super.executeOn(scope);
+		return executeCurrentState(scope);
+	}
+
+	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
 		IGamlAgent agent = getCurrentAgent(scope);
 		if ( agent.dead() ) { return null; }
 		FsmStateCommand currentState = (FsmStateCommand) agent.getAttribute(IKeyword.CURRENT_STATE);

@@ -49,7 +49,7 @@ public class GamlCompiler {
 
 	private static Map<Class, List<String>> skillMethodsToAdd = new HashMap();
 	private static Map<Class, List<IDescription>> varDescriptions = new HashMap();
-	private static Map<Class, List<IDescription>> commandDescriptions = new HashMap();
+	private static Map<Class, List<IDescription>> actionsDescriptions = new HashMap();
 	private static Map<Class, Map<String, PrimitiveExecuter>> primitives = new HashMap();
 	private static Map<Class, Map<String, IOperatorExecuter>> operators = new HashMap();
 	private static Map<Class, Map<String, IOperatorExecuter>> binaryOperators = new HashMap();
@@ -100,11 +100,11 @@ public class GamlCompiler {
 		return descs;
 	}
 
-	public static List<IDescription> getCommandDescriptions(final Class clazz) {
-		if ( !commandDescriptions.containsKey(clazz) ) {
+	public static List<IDescription> getActionsDescriptions(final Class clazz) {
+		if ( !actionsDescriptions.containsKey(clazz) ) {
 			collectBuiltInActions(clazz);
 		}
-		return commandDescriptions.get(clazz);
+		return actionsDescriptions.get(clazz);
 	}
 
 	private static void collectBuiltInAttributes(final Class c) {
@@ -225,7 +225,7 @@ public class GamlCompiler {
 				commands.add(prim);
 			}
 		}
-		commandDescriptions.put(c, commands);
+		actionsDescriptions.put(c, commands);
 	}
 
 	public static IOperatorExecuter getOperator(final Class leftClass, final Class rightClass,

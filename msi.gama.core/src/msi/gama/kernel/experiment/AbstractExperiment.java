@@ -33,7 +33,6 @@ import msi.gama.outputs.OutputManager;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.commands.ICommand;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.*;
@@ -491,6 +490,9 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	protected void closeCurrentSimulation(final boolean closingExperiment) {
 		if ( currentSimulation == null ) { return; }
 		currentSimulation.stop();
+		// Hack. Should be put somewhere else but the dialogs may
+		// block the execution thread.
+		GuiUtils.closeDialogs();
 		currentSimulation.close();
 		currentSimulation = null;
 	}
@@ -552,11 +554,6 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	@Override
 	public boolean isOpen() {
 		return isOpen;
-	}
-
-	@Override
-	public List<ICommand> getCommands() {
-		return Collections.EMPTY_LIST;
 	}
 
 }

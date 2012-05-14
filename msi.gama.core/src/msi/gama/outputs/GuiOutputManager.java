@@ -199,10 +199,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	// }
 	// }
 
-	/**
-	 * @param output
-	 */
-
 	public void setShowDisplayOutputs(final IScope sim, final boolean selection)
 		throws GamaRuntimeException {
 		if ( !selection ) {

@@ -20,6 +20,9 @@ public abstract class AbstractScheduler implements IScheduler {
 	// Flag indicating that the simulation is set to step (temporary flag)
 	public volatile boolean stepped = false;
 
+	// Flag indicating that the thread is set to be on hold, waiting for a user input
+	public volatile boolean on_user_hold = false;
+
 	/** Actions that should be run by the scheduler at the beginning of a cycle. */
 	private final List<IScheduledAction> beginActions;
 	private int beginActionsNumber;
@@ -44,6 +47,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	@Override
 	public void dispose() {
 		alive = false;
+		on_user_hold = false;
 		beginActions.clear();
 		beginActionsNumber = 0;
 		endActions.clear();
@@ -62,6 +66,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		for ( IAgent a : listOfAgentsToSchedule ) {
 			if ( a != null ) {
 				a.step(scope);
+				// while (on_user_hold) {}
 			}
 		}
 		executeEndActions(scope);
@@ -125,10 +130,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	public void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
-		// scope.execute(agent.getSpecies().getArchitecture().init(scope), agent)
 		scope.push(agent);
 		try {
 			agent.init(scope);
+			// while (on_user_hold) {}
 		} catch (Exception e) {
 			GAMA.reportError(new GamaRuntimeException(e));
 		} finally {
@@ -161,7 +166,7 @@ public abstract class AbstractScheduler implements IScheduler {
 
 	@Override
 	public void executeOneAction(final IScheduledAction action) {
-		if ( paused ) {
+		if ( paused || on_user_hold ) {
 			IScope scope = simulation.obtainNewScope();
 			action.execute(scope);
 			// TODO outputs update ?
@@ -193,5 +198,15 @@ public abstract class AbstractScheduler implements IScheduler {
 				init(entity, simulation.getExecutionScope());
 			}
 		}
+	}
+
+	@Override
+	public void setUserHold(final boolean hold) {
+		on_user_hold = hold;
+	}
+
+	@Override
+	public boolean isUserHold() {
+		return on_user_hold;
 	}
 }

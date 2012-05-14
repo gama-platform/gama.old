@@ -18,10 +18,13 @@
  */
 package msi.gama.common.util;
 
+import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserPanel;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -47,27 +50,22 @@ public class GuiUtils {
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
 	private static boolean headlessMode = false;
-	
-	
-	
-	public static boolean isInHeadLessMode()
-	{
+
+	public static boolean isInHeadLessMode() {
 		return headlessMode;
 	}
-	
+
 	/**
-	 * Method called by headless builder to change the GUI Mode 
+	 * Method called by headless builder to change the GUI Mode
 	 * @see ModelFactory
 	 */
-	public static void setHeadLessMode()
-	{
+	public static void setHeadLessMode() {
 		headlessMode = true;
 	}
-	public static void setGUIMode()
-	{
+
+	public static void setGUIMode() {
 		headlessMode = false;
 	}
-
 
 	/**
 	 * Method called by the UI plugin to initialize the SWT environment to talk with.
@@ -325,5 +323,21 @@ public class GuiUtils {
 		if ( gui != null ) {
 			gui.clearErrors();
 		}
+	}
+
+	public static Map<String, Object> openUserInputDialog(final String title,
+		final Map<String, Object> initialValues) {
+		if ( gui == null ) { return initialValues; }
+		return gui.openUserInputDialog(title, initialValues);
+	}
+
+	public static void openUserControlPanel(final IScope scope, final UserPanel panel) {
+		if ( gui == null ) { return; }
+		gui.openUserControlPanel(scope, panel);
+	}
+
+	public static void closeDialogs() {
+		if ( gui == null ) { return; }
+		gui.closeDialogs();
 	}
 }
