@@ -1,40 +1,38 @@
 package msi.gama.headless.runtime;
 
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IEditorFactory;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.IGui;
-import msi.gama.common.interfaces.IKeyword;
+import java.util.Map;
+import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserPanel;
 
 public class HeadlessListener implements IGui {
 
 	@Override
-	public void setStatus(String error, int code) {
+	public void setStatus(final String error, final int code) {
 		// TODO Auto-generated method stub
-	//	IKeyword.GUI_ 
-	}   
+		// IKeyword.GUI_
+	}
 
 	@Override
-	public void run(Runnable block) {
+	public void run(final Runnable block) {
 		block.run();
 	}
 
 	@Override
-	public void asyncRun(Runnable block) {
+	public void asyncRun(final Runnable block) {
 		block.run();
 	}
 
 	@Override
-	public void raise(Throwable ex) {
-		System.out.println("Erreur: "+ ex.getMessage());
+	public void raise(final Throwable ex) {
+		System.out.println("Erreur: " + ex.getMessage());
 	}
 
 	@Override
-	public IGamaView showView(String viewId, String name) {
+	public IGamaView showView(final String viewId, final String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -42,54 +40,54 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void stopIfCancelled() throws InterruptedException {
 		// TODO Auto-generated method stub
-		//System.out.println("Stop Simulation");
+		// System.out.println("Stop Simulation");
 
 	}
 
 	@Override
-	public void tell(String message) {
-		System.out.println("tell : "+ message );
+	public void tell(final String message) {
+		System.out.println("tell : " + message);
 	}
 
 	@Override
-	public void error(String error) {
-		System.out.println("error : "+ error );
+	public void error(final String error) {
+		System.out.println("error : " + error);
 	}
 
 	@Override
-	public void showParameterView(IExperiment exp) {
-	//	System.out.println(exp.get)
+	public void showParameterView(final IExperiment exp) {
+		// System.out.println(exp.get)
 	}
 
 	@Override
-	public void debugConsole(int cycle, String s) {
-		System.out.println("debug console step "+ cycle + ": "+ s );
+	public void debugConsole(final int cycle, final String s) {
+		System.out.println("debug console step " + cycle + ": " + s);
 	}
 
 	@Override
-	public void informConsole(String s) {
-		System.out.println("inform console :"+ s );
+	public void informConsole(final String s) {
+		System.out.println("inform console :" + s);
 	}
 
 	@Override
-	public void updateViewOf(IDisplayOutput output) {
+	public void updateViewOf(final IDisplayOutput output) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void debug(String string) {
-		System.out.println("debug :"+ string );
+	public void debug(final String string) {
+		System.out.println("debug :" + string);
 	}
 
 	@Override
-	public void warn(String string) {
-		System.out.println("warning : "+ string );
+	public void warn(final String string) {
+		System.out.println("warning : " + string);
 	}
 
 	@Override
-	public void runtimeError(GamaRuntimeException g) {
-		System.out.println("runtime error : "+ g.getMessage() );
+	public void runtimeError(final GamaRuntimeException g) {
+		System.out.println("runtime error : " + g.getMessage());
 	}
 
 	@Override
@@ -99,13 +97,13 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean confirmClose(IExperiment experiment) {
+	public boolean confirmClose(final IExperiment experiment) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public void prepareFor(boolean isGui) {
+	public void prepareFor(final boolean isGui) {
 		// TODO Auto-generated method stub
 
 	}
@@ -123,19 +121,19 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void setWorkbenchWindowTitle(String string) {
+	public void setWorkbenchWindowTitle(final String string) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void closeViewOf(IDisplayOutput out) {
+	public void closeViewOf(final IDisplayOutput out) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public IGamaView hideView(String viewId) {
+	public IGamaView hideView(final String viewId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -171,7 +169,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IGraphics newGraphics(int width, int height) {
+	public IGraphics newGraphics(final int width, final int height) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -183,10 +181,22 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(String keyword,
-			IDisplayOutput layerDisplayOutput, double w, double h) {
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
+		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Map<String, Object> openUserInputDialog(final String title,
+		final Map<String, Object> initialValues) {
+		return initialValues;
+	}
+
+	@Override
+	public void openUserControlPanel(final IScope scope, final UserPanel panel) {}
+
+	@Override
+	public void closeDialogs() {}
 
 }
