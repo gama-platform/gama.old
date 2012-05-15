@@ -92,7 +92,11 @@ public class AWTDisplaySurfaceMenu {
 				(AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 			IAgent a = source.getAgent();
 			if ( a != null ) {
-				GuiUtils.setHighlightedAgent(a);
+				if ( a == GuiUtils.getHighlightedAgent() ) {
+					GuiUtils.setHighlightedAgent(null);
+				} else {
+					GuiUtils.setHighlightedAgent(a);
+				}
 			}
 		}
 
@@ -146,17 +150,17 @@ public class AWTDisplaySurfaceMenu {
 			Menu macroMenu = new Menu(name);
 			parentMenu.add(macroMenu);
 
-			MenuItem inspectItem =
-				new AWTDisplaySurfaceMenu.AgentMenuItem("Inspect", macro, display);
+			MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
 			inspectItem.addActionListener(menuListener);
 			macroMenu.add(inspectItem);
 
-			MenuItem focusItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Focus", macro, display);
+			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 
 			MenuItem highlightItem =
-				new AWTDisplaySurfaceMenu.AgentMenuItem("Highlight", macro, display);
+				new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight"
+					: "Highlight", macro, display);
 			highlightItem.addActionListener(highlightListener);
 			macroMenu.add(highlightItem);
 
@@ -164,8 +168,7 @@ public class AWTDisplaySurfaceMenu {
 			if ( !commands.isEmpty() ) {
 				macroMenu.addSeparator();
 				for ( UserCommandCommand c : commands ) {
-					MenuItem actionItem =
-						new AWTDisplaySurfaceMenu.AgentMenuItem(macro, c, userLocation);
+					MenuItem actionItem = new AgentMenuItem(macro, c, userLocation);
 					actionItem.addActionListener(commandListener);
 					macroMenu.add(actionItem);
 				}

@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
@@ -36,18 +37,18 @@ public class HighlightColorItem extends GamaViewItem {
 	protected Image getImage() {
 		int[] components = ((LayeredDisplayView) view).getDisplaySurface().getHighlightColor();
 		if ( components == null ) {
-			rgb = new RGB(255, 200, 200);
-		} else {
-			rgb = new RGB(components[0], components[1], components[2]);
+			components = GuiUtils.defaultHighlight;
 		}
+		rgb = new RGB(components[0], components[1], components[2]);
 		if ( image == null ) {
-			image = new Image(SwtGui.getDisplay(), 16, 16);
+			image = SwtGui.getImageDescriptor("/icons/button_focus.png").createImage();
+			// image = new Image(SwtGui.getDisplay(), 16, 16);
 		}
 		GC gc = new GC(image);
 		Color c = new Color(SwtGui.getDisplay(), rgb);
 		gc.setBackground(c);
 		c.dispose();
-		gc.fillRectangle(2, 2, 12, 12);
+		gc.fillOval(6, 1, 9, 9);
 		gc.dispose();
 		return image;
 	}

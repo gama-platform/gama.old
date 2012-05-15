@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.util.GuiUtils;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -44,7 +45,7 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class AWTDisplayGraphics implements IGraphics {
 
-	int[] highlightColor = new int[] { 0, 200, 200 };
+	int[] highlightColor = GuiUtils.defaultHighlight;
 	boolean ready = false;
 	private Graphics2D g2;
 	private Rectangle clipping;
