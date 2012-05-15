@@ -21,8 +21,9 @@ package msi.gama.common.util;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanel;
 
@@ -340,4 +341,16 @@ public class GuiUtils {
 		if ( gui == null ) { return; }
 		gui.closeDialogs();
 	}
+
+	public static IAgent getHighlightedAgent() {
+		if ( gui == null ) { return null; }
+		return gui.getHighlightedAgent();
+	}
+
+	public static void setHighlightedAgent(final IAgent a) {
+		if ( gui == null ) { return; }
+		gui.setHighlightedAgent(a);
+		GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+	}
+
 }

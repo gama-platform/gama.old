@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.commands;
+package msi.gaml.architecture.user;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.commands.AbstractPlaceHolderCommand;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;

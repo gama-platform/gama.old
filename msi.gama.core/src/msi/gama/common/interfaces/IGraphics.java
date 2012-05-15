@@ -38,7 +38,6 @@ public interface IGraphics {
 
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
-
 	/**
 	 * Method setGraphics.
 	 * @param g Graphics2D
@@ -191,12 +190,22 @@ public interface IGraphics {
 	 * @return
 	 */
 	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth);
-	
+
 	/**
-	 * Draw grid as line 
+	 * Draw grid as line
 	 * @param image
 	 * @param lineColor
 	 */
-	public void drawGrid(BufferedImage image, Color lineColor,Point point);
+	public void drawGrid(BufferedImage image, Color lineColor, Point point);
+
+	/**
+	 * 
+	 * @return an Array of size 3 containing the red, green and blue components
+	 */
+	int[] getHighlightColor();
+
+	void setHighlightColor(int[] rgb);
+
+	public abstract void highlight(Rectangle2D r);
 
 }

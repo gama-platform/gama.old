@@ -132,4 +132,12 @@ public interface IDisplaySurface {
 	 */
 	void initialize(double w, double h, IDisplayOutput layerDisplayOutput);
 
+	/**
+	 * 
+	 * @return an Array of size 3 containing the red, green and blue components
+	 */
+	int[] getHighlightColor();
+
+	void setHighlightColor(int[] rgb);
+
 }

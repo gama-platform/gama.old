@@ -20,6 +20,7 @@ package msi.gama.common.interfaces;
 
 import java.util.Map;
 import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -116,5 +117,9 @@ public interface IGui {
 	void openUserControlPanel(IScope scope, UserPanel panel);
 
 	void closeDialogs();
+
+	IAgent getHighlightedAgent();
+
+	void setHighlightedAgent(IAgent a);
 
 }

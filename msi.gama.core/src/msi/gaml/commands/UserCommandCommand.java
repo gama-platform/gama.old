@@ -29,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserInputCommand;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -60,8 +61,8 @@ public class UserCommandCommand extends AbstractCommandSequence implements IComm
 	public UserCommandCommand(final IDescription desc) {
 		super(desc);
 		setName(desc.getName());
-		actionName = this.getLiteral(IKeyword.ACTION);
-		when = this.getFacet(IKeyword.WHEN);
+		actionName = getLiteral(IKeyword.ACTION);
+		when = getFacet(IKeyword.WHEN);
 	}
 
 	public List<UserInputCommand> getInputs() {
@@ -86,7 +87,7 @@ public class UserCommandCommand extends AbstractCommandSequence implements IComm
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( when == null || Cast.asBool(scope, when.value(scope)) ) {
+		if ( isEnabled(scope) ) {
 			if ( actionName == null ) { return super.privateExecuteIn(scope); }
 			ISpecies context = scope.getAgentScope().getSpecies();
 			ICommand.WithArgs executer = context.getAction(actionName);
@@ -113,6 +114,10 @@ public class UserCommandCommand extends AbstractCommandSequence implements IComm
 		if ( actionName == null ) { return super.getReturnContentType(); }
 		CommandDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
+	}
+
+	public boolean isEnabled(final IScope scope) {
+		return when == null || Cast.asBool(scope, when.value(scope));
 	}
 
 }
