@@ -105,6 +105,13 @@ public class SwtGui implements IGui {
 	public static Image play = getImageDescriptor("/icons/small_button_play.png").createImage();
 	public static Image lock = getImageDescriptor("/icons/small_button_lock.png").createImage();
 	public static Image unlock = getImageDescriptor("/icons/small_button_unlock.png").createImage();
+	public static Image panel_action = getImageDescriptor("/icons/panel_action.png").createImage();
+	public static Image panel_locate = getImageDescriptor("/icons/panel_locate.png").createImage();
+	public static Image panel_continue = getImageDescriptor("/icons/panel_continue.png")
+		.createImage();
+	public static Image panel_goto = getImageDescriptor("/icons/panel_goto.png").createImage();
+	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png")
+		.createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -617,6 +624,8 @@ public class SwtGui implements IGui {
 
 	public static final Font expandFont;
 
+	public static final Font bigFont;
+
 	public static final Font labelFont;
 
 	public static final String PERSPECTIVE_MODELING_ID =
@@ -635,6 +644,10 @@ public class SwtGui implements IGui {
 		expandFont = new Font(Display.getDefault(), fd);
 		fd.setStyle(1 << 1 /* SWT.ITALIC */);
 		unitFont = new Font(Display.getDefault(), fd);
+		fd.setStyle(1 << 0 /* SWT.BOLD */);
+		fd.setHeight(14);
+		fd.setName("Helvetica");
+		bigFont = new Font(Display.getDefault(), fd);
 	}
 
 	@Override

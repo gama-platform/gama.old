@@ -109,7 +109,7 @@
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="icons/menu_pause.png"
+            icon="icons/panel_icon.png"
             id="msi.gama.views.userControlView"
             name="User Control"
             restorable="true">
