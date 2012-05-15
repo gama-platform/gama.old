@@ -3,6 +3,7 @@ package msi.gama.headless.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -198,5 +199,13 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void closeDialogs() {}
+
+	@Override
+	public IAgent getHighlightedAgent() {
+		return null;
+	}
+
+	@Override
+	public void setHighlightedAgent(final IAgent a) {}
 
 }
