@@ -50,6 +50,7 @@ public class GuiUtils {
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
+	public static final int[] defaultHighlight = new int[] { 0, 200, 200 };
 	private static boolean headlessMode = false;
 
 	public static boolean isInHeadLessMode() {
