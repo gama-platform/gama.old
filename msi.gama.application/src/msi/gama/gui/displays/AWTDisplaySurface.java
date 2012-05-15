@@ -594,4 +594,16 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public int getOriginY() {
 		return origin.y;
 	}
+
+	@Override
+	public int[] getHighlightColor() {
+		if ( displayGraphics == null ) { return null; }
+		return displayGraphics.getHighlightColor();
+	}
+
+	@Override
+	public void setHighlightColor(final int[] rgb) {
+		if ( displayGraphics == null ) { return; }
+		displayGraphics.setHighlightColor(rgb);
+	}
 }

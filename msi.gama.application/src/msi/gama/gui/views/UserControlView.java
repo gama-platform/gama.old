@@ -4,8 +4,10 @@ import java.util.List;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.architecture.user.UserInputCommand;
 import msi.gaml.commands.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -117,7 +119,7 @@ public class UserControlView extends GamaViewPart {
 				commandComposite.setLayoutData(data);
 				layout = new GridLayout(3, false);
 				commandComposite.setLayout(layout);
-				commandComposite.setText(c.getName());
+				commandComposite.setText("   "/* c.getName() */);
 				// commandComposite.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 				// sep = new Label(body, SWT.SEPARATOR | SWT.HORIZONTAL);
 				// data = new GridData(SWT.FILL, SWT.CENTER, true, true, 3, 1);
@@ -129,6 +131,7 @@ public class UserControlView extends GamaViewPart {
 				Button b = new Button(commandComposite, SWT.PUSH);
 				b.setText(c.getName());
 				b.setImage(SwtGui.panel_action);
+				b.setEnabled(((UserCommandCommand) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {
@@ -169,4 +172,10 @@ public class UserControlView extends GamaViewPart {
 		// return composite;
 
 	}
+
+	@Override
+	public void update(final IDisplayOutput output) {
+		initFor(scope, userCommands, title);
+	}
+
 }

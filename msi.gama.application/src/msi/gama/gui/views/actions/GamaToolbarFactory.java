@@ -47,6 +47,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new SynchronizeItem(view);
 			case RENDERING:
 				return new RenderingItem(view);
+			case HIGHLIGHT_COLOR:
+				return new HighlightColorItem(view);
 
 		}
 		return null;

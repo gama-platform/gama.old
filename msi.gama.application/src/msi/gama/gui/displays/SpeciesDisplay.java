@@ -18,11 +18,12 @@
  */
 package msi.gama.gui.displays;
 
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.common.util.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
@@ -117,7 +118,11 @@ public class SpeciesDisplay extends AgentDisplay {
 			// draw the population
 			for ( IAgent a : _agents ) {
 				if ( a != null && !a.dead() ) {
-					shapes.put(aspect.draw(scope, a), a);
+					Rectangle2D r = aspect.draw(scope, a);
+					if ( a == GuiUtils.getHighlightedAgent() ) {
+						g.highlight(r);
+					}
+					shapes.put(r, a);
 				}
 			}
 

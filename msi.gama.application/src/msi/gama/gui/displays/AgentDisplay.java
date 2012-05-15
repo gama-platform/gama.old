@@ -21,7 +21,8 @@ package msi.gama.gui.displays;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
@@ -87,7 +88,11 @@ public class AgentDisplay extends AbstractDisplay {
 					if ( aspect == null ) {
 						aspect = AspectCommand.DEFAULT_ASPECT;
 					}
-					shapes.put(aspect.draw(scope, a), a);
+					Rectangle2D r = aspect.draw(scope, a);
+					shapes.put(r, a);
+					if ( a == GuiUtils.getHighlightedAgent() ) {
+						g.highlight(r);
+					}
 				}
 			}
 			GAMA.releaseScope(scope);

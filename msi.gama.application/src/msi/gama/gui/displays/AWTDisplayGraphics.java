@@ -44,6 +44,7 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class AWTDisplayGraphics implements IGraphics {
 
+	int[] highlightColor = new int[] { 0, 200, 200 };
 	boolean ready = false;
 	private Graphics2D g2;
 	private Rectangle clipping;
@@ -458,9 +459,9 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void drawGrid(BufferedImage image, Color lineColor,Point size) {
-		//FIXME: This method is implemented in GridDisplay as displayGrid() for the use of OPengl 
-		//We need to add drawGrid in the IGraphics.
+	public void drawGrid(final BufferedImage image, final Color lineColor, final Point size) {
+		// FIXME: This method is implemented in GridDisplay as displayGrid() for the use of OPengl
+		// We need to add drawGrid in the IGraphics.
 		double stepx = size.x / (double) image.getWidth();
 		for ( int i = 1, end = image.getWidth(); i <= end; i++ ) {
 			double step = i * stepx;
@@ -473,7 +474,27 @@ public class AWTDisplayGraphics implements IGraphics {
 			this.setDrawingCoordinates(0, step);
 			this.drawLine(lineColor, size.x, step);
 		}
-		
+
 	}
 
+	@Override
+	public int[] getHighlightColor() {
+		return highlightColor;
+	}
+
+	@Override
+	public void setHighlightColor(final int[] rgb) {
+		highlightColor = rgb;
+	}
+
+	@Override
+	public void highlight(final Rectangle2D r) {
+		Stroke oldStroke = g2.getStroke();
+		g2.setStroke(new BasicStroke(5));
+		Color old = g2.getColor();
+		g2.setColor(new Color(highlightColor[0], highlightColor[1], highlightColor[2]));
+		g2.draw(r);
+		g2.setStroke(oldStroke);
+		g2.setColor(old);
+	}
 }

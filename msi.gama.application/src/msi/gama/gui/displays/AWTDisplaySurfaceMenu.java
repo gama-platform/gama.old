@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
@@ -83,6 +84,20 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
+	ActionListener highlightListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(final ActionEvent e) {
+			AWTDisplaySurfaceMenu.AgentMenuItem source =
+				(AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			IAgent a = source.getAgent();
+			if ( a != null ) {
+				GuiUtils.setHighlightedAgent(a);
+			}
+		}
+
+	};
+
 	static ActionListener commandListener = new ActionListener() {
 
 		@Override
@@ -139,6 +154,11 @@ public class AWTDisplaySurfaceMenu {
 			MenuItem focusItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
+
+			MenuItem highlightItem =
+				new AWTDisplaySurfaceMenu.AgentMenuItem("Highlight", macro, display);
+			highlightItem.addActionListener(highlightListener);
+			macroMenu.add(highlightItem);
 
 			Collection<UserCommandCommand> commands = macro.getSpecies().getUserCommands();
 			if ( !commands.isEmpty() ) {

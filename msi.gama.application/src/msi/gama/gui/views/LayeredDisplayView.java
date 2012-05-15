@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
 import msi.gama.outputs.LayerDisplayOutput;
 import org.eclipse.swt.SWT;
@@ -57,7 +57,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 	@Override
 	protected Integer[] getToolbarActionsId() {
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
-			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS };
+			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
 
 	public IDisplayManager getDisplayManager() {
@@ -256,7 +256,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 
 	@Override
 	public void zoomToFit() {
-		
+
 		new Thread(new Runnable() {
 
 			@Override
@@ -277,7 +277,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 
 	@Override
 	public void zoomIn() {
-		
+
 		new Thread(new Runnable() {
 
 			@Override
@@ -323,7 +323,7 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 	}
 
 	@Override
-	public void setSynchronized(boolean synchro) {
+	public void setSynchronized(final boolean synchro) {
 		getDisplaySurface().setSynchronized(synchro);
 	}
 

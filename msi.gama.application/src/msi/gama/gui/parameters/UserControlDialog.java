@@ -14,6 +14,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.architecture.user.UserInputCommand;
 import msi.gaml.commands.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -127,6 +128,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 				int nbCol = inputs.size() > 0 ? 1 : 3;
 				Button b = new Button(composite, SWT.PUSH);
 				b.setText(c.getName());
+				b.setEnabled(((UserCommandCommand) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {

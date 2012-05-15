@@ -331,4 +331,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return 0;
 	}
 
+	@Override
+	public int[] getHighlightColor() {
+		return new int[] { 0, 0, 0 };
+	}
+
+	@Override
+	public void setHighlightColor(final int[] rgb) {}
+
 }

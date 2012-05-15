@@ -20,9 +20,9 @@ package msi.gama.gui.views;
 
 import java.util.Collection;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.AgentAttributesEditorsList;
+import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,6 +30,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.commands.*;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -56,7 +57,43 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 
 	@Override
 	protected Composite createItemContentsFor(final IAgent agent) {
+
+		// add highlight in the expand bar ?
+
 		Composite attributes = super.createItemContentsFor(agent);
+		AbstractEditor ed =
+			EditorFactory.create(attributes, new ParameterAdapter("highlight", IType.BOOL) {
+
+				@Override
+				public void setValue(final Object value) {
+					if ( (Boolean) value ) {
+						GuiUtils.setHighlightedAgent(agent);
+					} else {
+						GuiUtils.setHighlightedAgent(null);
+					}
+				}
+
+				@Override
+				public Boolean value() {
+					return agent == GuiUtils.getHighlightedAgent();
+				}
+
+				@Override
+				public boolean isEditable() {
+					return true;
+				}
+
+				@Override
+				public Boolean value(final IScope iScope) throws GamaRuntimeException {
+					// GuiUtils.debug("Asking the value of highlight for " + agent.getName());
+					return value();
+				}
+
+			});
+		editors.getCategories().get(agent).put("highlight", ed);
+		// ed.getEditor().setBackground(
+		// SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+		// ed.getEditor().moveAbove(null);
 		ISpecies species = agent.getSpecies();
 		Collection<UserCommandCommand> userCommands = species.getUserCommands();
 		if ( userCommands.isEmpty() ) { return attributes; }

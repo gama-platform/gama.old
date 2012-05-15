@@ -29,6 +29,7 @@ import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -64,6 +65,8 @@ public class SwtGui implements IGui {
 	public static ImageDescriptor getImageDescriptor(final String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+
+	private IAgent highlightedAgent;
 
 	static {
 		System.out.println("Configuring user interface access through SWT");
@@ -111,6 +114,8 @@ public class SwtGui implements IGui {
 		.createImage();
 	public static Image panel_goto = getImageDescriptor("/icons/panel_goto.png").createImage();
 	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png")
+		.createImage();
+	public static Image highlight = getImageDescriptor("/icons/highlighter-small.png")
 		.createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
@@ -923,5 +928,15 @@ public class SwtGui implements IGui {
 
 		});
 
+	}
+
+	@Override
+	public IAgent getHighlightedAgent() {
+		return highlightedAgent;
+	}
+
+	@Override
+	public void setHighlightedAgent(final IAgent a) {
+		highlightedAgent = a;
 	}
 }
