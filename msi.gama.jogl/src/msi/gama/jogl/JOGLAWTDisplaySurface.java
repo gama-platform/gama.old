@@ -79,44 +79,41 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
-	// ///OpenGL member///////
-	FPSAnimator animator;
+
 
 	// Event Listener
 	public MyListener myListener;
+	
+	public JOGLAWTGLRenderer myGLRender;
 
 	// Camera
-	public Camera camera;
+	//public Camera camera;
 
 	public boolean ThreeD = false;
+	
 
+	 
+	
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
 
+		myGLRender = new JOGLAWTGLRenderer(this);
+		
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
-		// Initialize the user camera
-		camera = new Camera();
+		
 
 		System.out.println("env_width:" + env_width + "env_height" + env_height);
 
-		GLCanvas canvas = new GLCanvas();
-		myListener = new MyListener(camera);
-		canvas.addGLEventListener(new JOGLAWTGLRenderer(this));
-		canvas.addKeyListener(myListener);
-		canvas.addMouseListener(myListener);
-		canvas.addMouseMotionListener(myListener);
-		canvas.addMouseWheelListener(myListener);
-		canvas.setFocusable(true); // To receive key event
-		canvas.requestFocusInWindow();
+		
+		
 
 		this.setLayout(new BorderLayout());
-		this.add(canvas, BorderLayout.CENTER);
+		this.add(myGLRender.canvas, BorderLayout.CENTER);
 
-		int REFRESH_FPS = 30;
-		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
+		
 
 		// /////
 		outputChanged(env_width, env_height, layerDisplayOutput);
@@ -126,7 +123,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 
-		animator.start();
+		myGLRender.animator.start();
 		zoomFit();
 
 		addComponentListener(new ComponentAdapter() {
@@ -526,16 +523,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomIn() {	
-		float incrementalZoomStep=(float) camera.zPos/10;
-		camera.zPos -=incrementalZoomStep;
-		camera.zLPos -=incrementalZoomStep;
+		float incrementalZoomStep=(float) myGLRender.camera.zPos/10;
+		myGLRender.camera.zPos -=incrementalZoomStep;
+		myGLRender.camera.zLPos -=incrementalZoomStep;
 	}
 
 	@Override
 	public void zoomOut() {				
-		float incrementalZoomStep=(float) camera.zPos/10;
-		camera.zPos +=incrementalZoomStep;
-		camera.zLPos +=incrementalZoomStep;
+		float incrementalZoomStep=(float) myGLRender.camera.zPos/10;
+		myGLRender.camera.zPos +=incrementalZoomStep;
+		myGLRender.camera.zLPos +=incrementalZoomStep;
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -565,9 +562,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void zoomFit() {
 
 		if ( ThreeD ) {
-			camera.Initialize3DCamera(envWidth, envHeight);
+			myGLRender.camera.Initialize3DCamera(envWidth, envHeight);
 		} else {
-			camera.InitializeCamera(envWidth, envHeight);
+			myGLRender.camera.InitializeCamera(envWidth, envHeight);
 		}
 
 	}

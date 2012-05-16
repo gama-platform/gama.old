@@ -41,6 +41,8 @@ public class MyGraphics {
 	
 	//FIXME: Create to avoir creating int i,j each framerate.
 	int i,j;
+	
+	float alpha = 0.5f;
 
 	public  MyGraphics(final GL gl, final GLU glu) {
 		
@@ -97,7 +99,7 @@ public class MyGraphics {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
-		myGl.glColor3f(0.0f, 0.0f, 0.0f);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
@@ -147,7 +149,7 @@ public class MyGraphics {
 
 		// FIXME: This add a black line around the polygon.
 		// For a better visual quality but we should check the cost of it.
-		myGl.glColor3f(0.0f, 0.0f, 0.0f);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
 		this.DrawLine(geometry, 1.0f);
 
 	}
@@ -222,7 +224,7 @@ public class MyGraphics {
 		float green = (float) (Math.random()) * 1;
 		float blue = (float) (Math.random()) * 1;
 
-		myGl.glColor3f(red, green, blue);
+		myGl.glColor4f(red, green, blue,alpha);
 		// ----- Render a quad -----
 		myGl.glBegin(GL.GL_POLYGON); // draw using quads
 		myGl.glVertex3f(-1.0f, 1.0f, 0.0f);
@@ -267,13 +269,13 @@ public class MyGraphics {
 	public void DrawMultiPolygon(MultiPolygon polygons, Color c) {
 
 		numGeometries = polygons.getNumGeometries();
-		System.out.println("Draw MultiPolygon:"+numGeometries);
+		//System.out.println("Draw MultiPolygon:"+numGeometries);
 		
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (i = 0; i < numGeometries; i++) {
-			myGl.glColor3f((float) c.getRed() / 255,
+			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255,
-					(float) c.getBlue() / 255);
+					(float) c.getBlue() / 255, alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 			DrawPolygon(curPolygon,c);
 		}
@@ -282,9 +284,9 @@ public class MyGraphics {
 
 	public void DrawPolygon(Polygon p,Color c) {
 
-		myGl.glColor3f((float) c.getRed() / 255,
+		myGl.glColor4f((float) c.getRed() / 255,
 				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255);
+				(float) c.getBlue() / 255,alpha);
 		numExtPoints = p.getExteriorRing().getNumPoints();
 		//System.out.println("Draw Polygon:"+numExtPoints);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
@@ -293,7 +295,7 @@ public class MyGraphics {
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
 
 
-
+		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
 
@@ -312,13 +314,13 @@ public class MyGraphics {
 		for (j = 0; j < numExtPoints; j++) {
 			myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
 		}
-		// myGl.glNormal3f(0.0f, 1.0f, 0.0f);
+
 
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
 
 		// Draw contour
-		myGl.glColor3f(0.0f, 0.0f, 0.0f);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
 		myGl.glBegin(GL.GL_LINES);
 		for (j = 0; j < numExtPoints - 1; j++) {
 			myGl.glLineWidth(1.0f);
@@ -340,9 +342,9 @@ public class MyGraphics {
 		// for each line of a multiline, get each point coordinates.
 		for (i = 0; i < numGeometries; i++) {
 			
-			myGl.glColor3f((float) c.getRed() / 255,
+			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255,
-					(float) c.getBlue() / 255);
+					(float) c.getBlue() / 255,alpha);
 
 			LineString l = (LineString) lines.getGeometryN(i);
 			int numPoints = l.getNumPoints();
@@ -361,9 +363,9 @@ public class MyGraphics {
 
 	public void DrawLineString(LineString line, float size, Color c) {
 
-		myGl.glColor3f((float) c.getRed() / 255,
+		myGl.glColor4f((float) c.getRed() / 255,
 				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255);
+				(float) c.getBlue() / 255,alpha);
 		int numPoints = line.getNumPoints();
 		myGl.glLineWidth(size);
 		myGl.glBegin(GL.GL_LINES);
@@ -380,9 +382,9 @@ public class MyGraphics {
 	public void DrawPoint(Point point, int numPoints,
 			float radius, Color c) {
 
-		myGl.glColor3f((float) c.getRed() / 255,
+		myGl.glColor4f((float) c.getRed() / 255,
 				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255);
+				(float) c.getBlue() / 255,alpha);
 		
 
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
@@ -414,7 +416,7 @@ public class MyGraphics {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
-		myGl.glColor3f(0.0f, 0.0f, 0.0f);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
