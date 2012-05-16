@@ -122,7 +122,7 @@ public class SpeciesDisplay extends AgentDisplay {
 					if ( a == GuiUtils.getHighlightedAgent() ) {
 						g.highlight(r);
 					}
-					shapes.put(r, a);
+					shapes.put(a, r);
 				}
 			}
 

@@ -68,7 +68,7 @@ public class AgentDisplay extends AbstractDisplay {
 		}
 	}
 
-	protected final Map<Rectangle2D, IAgent> shapes = new HashMap();
+	protected final Map<IAgent, Rectangle2D> shapes = new HashMap();
 
 	@Override
 	public void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
@@ -89,7 +89,7 @@ public class AgentDisplay extends AbstractDisplay {
 						aspect = AspectCommand.DEFAULT_ASPECT;
 					}
 					Rectangle2D r = aspect.draw(scope, a);
-					shapes.put(r, a);
+					shapes.put(a, r);
 					if ( a == GuiUtils.getHighlightedAgent() ) {
 						g.highlight(r);
 					}
@@ -129,9 +129,9 @@ public class AgentDisplay extends AbstractDisplay {
 		// Point2D p = new Point2D.Double(x, y);
 
 		// Set<IAgent> closeAgents = new HashSet();
-		for ( Map.Entry<Rectangle2D, IAgent> entry : shapes.entrySet() ) {
-			if ( entry.getKey().intersects(selection) ) {
-				selectedAgents.add(entry.getValue());
+		for ( Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
+			if ( entry.getValue().intersects(selection) ) {
+				selectedAgents.add(entry.getKey());
 			}
 		}
 
