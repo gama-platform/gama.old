@@ -525,28 +525,17 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void zoomIn() {
-
-		// For 3D camera
-		// this.cameraZPosition += 0.1;
-		// this.cameraLZPosition += 0.1;
-		// camera.moveForward(0.1);
-		// camera.look(10);
-
-		camera.setzPos(camera.getzPos() - 0.5);
-		camera.setzLPos(camera.getzLPos() - 0.5);
+	public void zoomIn() {	
+		float incrementalZoomStep=(float) camera.zPos/10;
+		camera.zPos -=incrementalZoomStep;
+		camera.zLPos -=incrementalZoomStep;
 	}
 
 	@Override
-	public void zoomOut() {
-		// For 3D camera
-		// this.cameraZPosition -= 0.1;
-		// this.cameraLZPosition -= 0.1;
-		// camera.moveForward(-0.1);
-		// camera.look(10);
-
-		camera.setzPos(camera.getzPos() + 0.5);
-		camera.setzLPos(camera.getzLPos() + 0.5);
+	public void zoomOut() {				
+		float incrementalZoomStep=(float) camera.zPos/10;
+		camera.zPos +=incrementalZoomStep;
+		camera.zLPos +=incrementalZoomStep;
 	}
 
 	public void setZoom(final double factor, final Point c) {
