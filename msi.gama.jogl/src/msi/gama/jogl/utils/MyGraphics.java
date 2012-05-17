@@ -42,7 +42,7 @@ public class MyGraphics {
 	//FIXME: Create to avoir creating int i,j each framerate.
 	int i,j;
 	
-	float alpha = 0.5f;
+	float alpha = 1.0f;
 
 	public  MyGraphics(final GL gl, final GLU glu) {
 		
