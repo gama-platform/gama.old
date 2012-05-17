@@ -11,5 +11,6 @@ public class MyJTSGeometry {
 	
 	public Color color;
 
+	public String type;
 
 }

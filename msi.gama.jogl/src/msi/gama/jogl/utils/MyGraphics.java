@@ -267,10 +267,10 @@ public class MyGraphics {
 					(float) c.getBlue() / 255, alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 			DrawPolygon(curPolygon,c,0.0f);
+			//DrawPolygonContour(curPolygon,c,0.0f);
 			//Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
 			//Draw3DPolygon(curPolygon,c, 100.0f);
 		}
-
 	}
 
 	public void DrawPolygon(Polygon p,Color c, float z) {
@@ -310,9 +310,14 @@ public class MyGraphics {
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
 
+		DrawPolygonContour(p,c,z);
+	}
+	
+	public void DrawPolygonContour(Polygon p,Color c, float z){
 		// Draw contour
 		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
 		myGl.glBegin(GL.GL_LINES);
+		numExtPoints = p.getExteriorRing().getNumPoints();
 		for (j = 0; j < numExtPoints - 1; j++) {
 			myGl.glLineWidth(1.0f);
 			myGl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
@@ -321,7 +326,7 @@ public class MyGraphics {
 					(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
 					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())),
 					z);
-		}
+		}	
 		myGl.glEnd();
 	}
 	
