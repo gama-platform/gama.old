@@ -18,6 +18,8 @@ import java.io.IOException;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLException;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 
 import msi.gama.common.util.ImageUtils;
 
@@ -192,6 +194,19 @@ public class MyGLToyDrawer {
 	      gl.glEnd(); // of the color cube
 	}
 	
+	
+	public void DrawSphere(GL gl, GLU glu,float x, float y, float z, float radius){
+		// Draw sphere (possible styles: FILL, LINE, POINT).
+        gl.glColor3f(0.3f, 0.5f, 1f);
+        GLUquadric earth = glu.gluNewQuadric();
+        glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+        glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+        glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+        final int slices = 16;
+        final int stacks = 16;
+        glu.gluSphere(earth, radius, slices, stacks);
+        glu.gluDeleteQuadric(earth);
+	}
 	
 	//textured shape
 	

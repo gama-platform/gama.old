@@ -129,16 +129,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float[] lightAmbientValue = { 0.5f, 0.5f, 0.5f, 1.0f };
+		float ambientMean=0.1f;
+		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		// Diffuse light comes from a particular location. Diffuse's value in
 		// RGBA
-		float[] lightDiffuseValue = { 0.1f, 0.1f, 0.1f, 1.0f };
+		float diffuseMean=0.5f;
+		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (in front of the screen at width
 		// position).
 		float lightDiffusePosition[] = { 0.0f, 0.0f, width, 1.0f };
+		
+		//Specular light
+		float specularMean=0.1f;
+        float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
 
 		gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
 		gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightSpecularValue, 0);
 		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
 		gl.glEnable(GL_LIGHT1); // Enable Light-1
 		gl.glDisable(GL_LIGHTING); // But disable lighting
@@ -147,7 +154,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// enable color tracking
 		gl.glEnable(GL_COLOR_MATERIAL);
 		// set material properties which will be assigned by glColor
-		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		//gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		
+		float[] rgba = {0.3f, 0.5f, 1f};
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
+        gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
 
 		// Blending control
 		// Full Brightness with specific alpha (1 for opaque, 0 for transparent)
@@ -238,6 +251,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//myGLDrawer.DrawOpenGLHelloWorldShape(gl,width);
 		//myGLDrawer.DrawColorTriangle(gl,0.0f, 0.0f, 0.0f, width);
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
+		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 		//myGLDrawer.DrawTexturedQuad(gl,width/4);
 		//myGLDrawer.DrawTexturedQuadWithNormal(gl, width / 4);

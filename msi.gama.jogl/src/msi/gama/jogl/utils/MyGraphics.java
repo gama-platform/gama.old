@@ -154,8 +154,12 @@ public class MyGraphics {
 
 	}
 
-	public void Draw3DQuads(MyGeometry geometry, float z_offset) {
-		int curPolyGonNumPoints = geometry.vertices.length;
+	public void Draw3DQuads(Polygon p, Color c, float z_offset) {
+		myGl.glColor4f((float) c.getRed() / 255,
+				(float) c.getGreen() / 255,
+				(float) c.getBlue() / 255,alpha);
+		
+		int curPolyGonNumPoints = p.getNumPoints();
 		for (j = 0; j < curPolyGonNumPoints; j++) {
 			int k = (j + 1) % curPolyGonNumPoints;
 			myGl.glBegin(GL.GL_QUADS);
@@ -177,21 +181,22 @@ public class MyGraphics {
 			for (i = 0; i < 4; i++) {
 				vertices[i] = new Vertex();
 			}
-			vertices[0].x = geometry.vertices[j].x;
-			vertices[0].y = geometry.vertices[j].y;
-			vertices[0].z = geometry.vertices[j].z + z_offset;
+			//FIXME; change double to float in Vertex
+			vertices[0].x = (float) p.getExteriorRing().getPointN(j).getX();
+			vertices[0].y = -(float) p.getExteriorRing().getPointN(j).getY();
+			vertices[0].z = z_offset;
 
-			vertices[1].x = geometry.vertices[k].x;
-			vertices[1].y = geometry.vertices[k].y;
-			vertices[1].z = geometry.vertices[k].z + z_offset;
+			vertices[1].x = (float) p.getExteriorRing().getPointN(k).getX();
+			vertices[1].y = -(float) p.getExteriorRing().getPointN(k).getY();
+			vertices[1].z = z_offset;
 
-			vertices[2].x = geometry.vertices[k].x;
-			vertices[2].y = geometry.vertices[k].y;
-			vertices[2].z = geometry.vertices[k].z;
+			vertices[2].x = (float) p.getExteriorRing().getPointN(k).getX();
+			vertices[2].y = -(float) p.getExteriorRing().getPointN(k).getY();
+			vertices[2].z = 0;
 
-			vertices[3].x = geometry.vertices[j].x;
-			vertices[3].y = geometry.vertices[j].y;
-			vertices[3].z = geometry.vertices[j].z;
+			vertices[3].x = (float) p.getExteriorRing().getPointN(j).getX();
+			vertices[3].y = -(float) p.getExteriorRing().getPointN(j).getY();
+			vertices[3].z = 0;
 
 			// Compute the normal of the quad
 			Vector3f normal = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -218,22 +223,6 @@ public class MyGraphics {
 
 	}
 
-	public void DrawOpenGLHelloWorldShape() {
-
-		float red = (float) (Math.random()) * 1;
-		float green = (float) (Math.random()) * 1;
-		float blue = (float) (Math.random()) * 1;
-
-		myGl.glColor4f(red, green, blue,alpha);
-		// ----- Render a quad -----
-		myGl.glBegin(GL.GL_POLYGON); // draw using quads
-		myGl.glVertex3f(-1.0f, 1.0f, 0.0f);
-		myGl.glVertex3f(1.0f, 1.0f, 0.0f);
-		myGl.glVertex3f(0.0f, 0.0f, 0.0f);
-		myGl.glVertex3f(-1.0f, -1.0f, 0.0f);
-		myGl.glEnd();
-	}
-
 	public void DrawJTSGeometry(Geometry geometry, Color c) {
 
 		// System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
@@ -246,7 +235,7 @@ public class MyGraphics {
 
 			else if (geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry;
-				DrawPolygon(polygon,c);
+				DrawPolygon(polygon,c,0.0f);
 			}
 
 			else if (geometry.getGeometryType() == "MultiLineString") {
@@ -277,12 +266,14 @@ public class MyGraphics {
 					(float) c.getGreen() / 255,
 					(float) c.getBlue() / 255, alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon,c);
+			DrawPolygon(curPolygon,c,0.0f);
+			//Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
+			//Draw3DPolygon(curPolygon,c, 100.0f);
 		}
 
 	}
 
-	public void DrawPolygon(Polygon p,Color c) {
+	public void DrawPolygon(Polygon p,Color c, float z) {
 
 		myGl.glColor4f((float) c.getRed() / 255,
 				(float) c.getGreen() / 255,
@@ -308,7 +299,7 @@ public class MyGraphics {
 					j).getX());
 			tempPolygon[j][1] = -(float) (p.getExteriorRing().getPointN(j)
 					.getY());
-			tempPolygon[j][2] = (float) (0);
+			tempPolygon[j][2] = z;
 		}
 
 		for (j = 0; j < numExtPoints; j++) {
@@ -325,13 +316,21 @@ public class MyGraphics {
 		for (j = 0; j < numExtPoints - 1; j++) {
 			myGl.glLineWidth(1.0f);
 			myGl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
-					-(float) ((p.getExteriorRing().getPointN(j).getY())), 0.0f);
+					-(float) ((p.getExteriorRing().getPointN(j).getY())), z);
 			myGl.glVertex3f(
 					(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
 					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())),
-					0.0f);
+					z);
 		}
 		myGl.glEnd();
+	}
+	
+	public void Draw3DPolygon(Polygon p,Color c,float z_offset){
+		
+		DrawPolygon(p,c,0);
+		DrawPolygon(p,c,z_offset);
+		Draw3DQuads(p,c,z_offset);
+		
 	}
 
 	public void DrawMultiLineString(MultiLineString lines, Color c) {
