@@ -1,14 +1,21 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_province <- '../includes/Test/VNM_adm2_plus.shp' parameter: 'Shapefile for the provinces:' category: 'GIS' ;
+	file shape_file_province <- '../includes/SIG_Vietnam_plus/VNM_adm2_historical_plus.shp' parameter: 'Shapefile for the provinces:' category: 'GIS' ;
 		
 	init {
 	
-		create province from : shape_file_province with: [year_of_creation :: read("Creation"), year_of_destruction :: read ("Destructio")]{		
+		create province from : shape_file_province with: [provinceName :: read("VARNAME_2"), year_of_creation :: read("YEAR_CREAT"), year_of_destruction :: read ("YEAR_FUSIO")]{
+			set color<- rgb ([0, 125,(year_of_creation-1980)*10]);		
 		}
 
-		create layer1 number: 1;				
+		create layer1 number: 1;	
+		
+		//Print the name of each province
+		write (string (length(province)) + "provinces"); 
+		loop p over: list(province) {
+				write (p.provinceName + ": " + p.year_of_creation + " " + p.year_of_destruction );	
+			}			
 	}
 	
 }
@@ -16,10 +23,12 @@ global {
 entities {
 
 	species province{
-		rgb color <- rgb('green');
+		rgb color;// <- rgb('green');
 		string name;
+		string provinceName;
 		int year_of_creation ;
 		int year_of_destruction;
+		
 		
 		
 		aspect default{
@@ -30,7 +39,7 @@ entities {
 	
 	species layer1 {
 		
-		rgb color <- rgb('green');
+		//rgb color <- rgb('green');
 		//Draw all geometry
 		aspect default {
 			loop p over: list(province) {
@@ -40,9 +49,16 @@ entities {
 		}	
 		//Draw only the geometry that exists in the given step
 		aspect real_data {
-			loop p over: (list(province) where (each.year_of_creation < time and each.year_of_destruction > time) ) {
-				draw geometry: p.shape;
+			loop p over: (list(province) where (each.year_of_creation <= time +1981 and each.year_of_destruction > time+1981) ) {
+				
+				draw geometry: p.shape color: p.color ;
+				//write (p.provinceName);
+				//write (string (p.year_of_creation));
+				//write (string (p.year_of_destruction));	
+							
 			}
+			//write (string (length(list(province))));
+			write ("year:" + string (time+1980 ) + ": " + string (length(list(province) where (each.year_of_creation <= time +1980 and each.year_of_destruction > time+1980)))+ " provinces");
 		}
 			
 		}
@@ -50,7 +66,7 @@ entities {
 
 environment bounds: shape_file_province ;
 output {
-	display city_display type:opengl   {
+	display city_display    {
 		//species province aspect: default;
 		species layer1 aspect: real_data;
 		//agents Provinces value: (list(province) where (each.year_of_creation > step * 12) );
