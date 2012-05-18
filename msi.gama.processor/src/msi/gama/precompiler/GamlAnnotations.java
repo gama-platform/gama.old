@@ -83,7 +83,10 @@ public final class GamlAnnotations {
 		 */
 		String[] values() default {};
 
-		// gamlDoc doc();
+		/**
+		 * @return the documentation associated to a facet.
+		 */
+		String doc() default "";
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -276,6 +279,8 @@ public final class GamlAnnotations {
 		String species() default "";
 
 		boolean freezable() default false; // TODO REMOVE!
+		
+		String doc() default "";
 	}
 
 	/**
@@ -497,16 +502,16 @@ public final class GamlAnnotations {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
-	// @Target(ElementType.TYPE)
+	@Target({ElementType.TYPE, ElementType.METHOD})
 	@Inherited
-	public static @interface gamlDoc {
+	public static @interface doc {
 
 		/**
 		 * Value.
 		 * 
-		 * @return a String representing the description of the element in Gaml
+		 * @return a String representing the description of the element
 		 */
-		String result() default "";
+		String value() default "";
 
 		String comment() default "";
 
@@ -514,7 +519,26 @@ public final class GamlAnnotations {
 
 		String[] examples() default {};
 
-		String[] seeAlso() default {};
+		String[] see() default {};
+	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	@Inherited
+	public static @interface docAction {
+		String value() default "";
+		arg[] args() default {};
+		String returns() default "";
+		String[] examples() default {};		
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	// @Target(ElementType.TYPE)
+	@Inherited
+	public static @interface arg {
+		String name() default "";
+		String type() default "";
+		boolean optional() default false;
+		String doc() default "";
 	}
 }

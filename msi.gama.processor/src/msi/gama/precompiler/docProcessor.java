@@ -33,6 +33,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.parsers.DocumentBuilder;
@@ -43,23 +44,34 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import msi.gama.precompiler.GamlAnnotations.gamlDoc;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 
 @SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class docProcessor {
 
+	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
+	
 	ProcessingEnvironment processingEnv;
+	Messager mes;
 	
 	public docProcessor(ProcessingEnvironment procEnv){
 		processingEnv = procEnv;
+		mes = processingEnv.getMessager();		
 	}
 	
 	public void processDocXML(final RoundEnvironment env, Writer out) {
@@ -76,7 +88,7 @@ public class docProcessor {
         Document doc = docBuilder.newDocument();
         
         Set<? extends Element> setRoot = env.getRootElements();        
-        org.w3c.dom.Element root = doc.createElement("DOC"+setRoot.size());
+        org.w3c.dom.Element root = doc.createElement("doc");
 
         //////////////////////////////////////////////////
         ///// Parsing of Operators 
@@ -95,6 +107,12 @@ public class docProcessor {
         Set<? extends Element> setSpecies = 
         		(Set<? extends Element>) env.getElementsAnnotatedWith(species.class);
         root.appendChild(this.processDocXMLSpecies(setSpecies, doc));	        
+ 
+        //////////////////////////////////////////////////
+        ///// Parsing of Commands        
+        Set<? extends Element> setCmds = 
+        		(Set<? extends Element>) env.getElementsAnnotatedWith(symbol.class);
+        root.appendChild(this.processDocXMLCommand(setCmds, doc));
         
         ////////////////////////
         // Final step:      
@@ -137,8 +155,7 @@ public class docProcessor {
 
 	private org.w3c.dom.Element processDocXMLOperators(
 			Set<? extends ExecutableElement> set, Document doc) {
-        org.w3c.dom.Element operators = doc.createElement("Operators"+set.size());
-		Messager mes = processingEnv.getMessager();
+        org.w3c.dom.Element operators = doc.createElement("operators");
 
 		for ( ExecutableElement e : set ) {
 			List<? extends VariableElement> args = e.getParameters();
@@ -217,7 +234,7 @@ public class docProcessor {
 	        
 	        ///////////////////////////////////////////////////////
 	        // Parsing of the documentation
-			gamlDoc docAnnot = e.getAnnotation(gamlDoc.class);
+			doc docAnnot = e.getAnnotation(doc.class);
 
 			if(docAnnot == null) {
 				mes.printMessage(Kind.ERROR, "The operator __" + 
@@ -238,7 +255,7 @@ public class docProcessor {
 				
 				if(firstdocElt){
 					org.w3c.dom.Element resultElt = doc.createElement("result"); 
-					resultElt.setTextContent(docAnnot.result());
+					resultElt.setTextContent(docAnnot.value());
 					docElt.appendChild(resultElt);
 	
 					org.w3c.dom.Element commentElt = doc.createElement("comment"); 
@@ -247,7 +264,7 @@ public class docProcessor {
 				}
 				else {
 					docElt.getElementsByTagName("result").item(0).setTextContent(
-							docElt.getElementsByTagName("result").item(0).getTextContent() + docAnnot.result());
+							docElt.getElementsByTagName("result").item(0).getTextContent() + docAnnot.value());
 					docElt.getElementsByTagName("comment").item(0).setTextContent(
 							docElt.getElementsByTagName("comment").item(0).getTextContent() + docAnnot.comment());					
 				}
@@ -287,7 +304,7 @@ public class docProcessor {
 				if(firstdocElt) {seeAlsoElt = doc.createElement("seeAlso");}
 				else {seeAlsoElt = (org.w3c.dom.Element) docElt.getElementsByTagName("seeAlso").item(0);}				
 				//org.w3c.dom.Element seeAlsoElt = doc.createElement("seeAlso"); 
-				for(String see : docAnnot.seeAlso()){
+				for(String see : docAnnot.see()){
 					org.w3c.dom.Element seesElt = doc.createElement("see"); 
 					seesElt.setAttribute("id", see);	
 					seeAlsoElt.appendChild(seesElt);				
@@ -304,37 +321,113 @@ public class docProcessor {
 	private org.w3c.dom.Element processDocXMLSkills(
 			Set<? extends Element> setSkills, Document doc) {
 		
-        org.w3c.dom.Element skills = doc.createElement("Skills"+setSkills.size());
+        org.w3c.dom.Element skills = doc.createElement("skills");
         
 		for ( Element e : setSkills ) {
-			org.w3c.dom.Element skill = doc.createElement("skill");
+			org.w3c.dom.Element skillElt = doc.createElement("skill");
 			// TODO : id should be precised
 			String id = e.getAnnotation(skill.class).value()[0];
 			
-	        skill.setAttribute("id", id);
-	        skill.setAttribute("name", e.getAnnotation(skill.class).value()[0]);
-	        // TODO : should be completed
-
-	        // (Set<? extends ExecutableElement>) env.getElementsAnnotatedWith(operator.class);
-	        // e.getAnnotation(skill.class);
+	        skillElt.setAttribute("id", id);
+	        skillElt.setAttribute("name", e.getAnnotation(skill.class).value()[0]);
+			
+	        // get extends 
+	        skillElt.setAttribute("class", ((TypeElement)e).getQualifiedName().toString());
+	        skillElt.setAttribute("extends", ((TypeElement)e).getSuperclass().toString());
 	        
-	        skills.appendChild(skill);
+	        if(e.getAnnotation(doc.class) != null) {
+	        	org.w3c.dom.Element docElt = doc.createElement("description");
+	        	docElt.setTextContent(e.getAnnotation(doc.class).value());
+	        	skillElt.appendChild(docElt);
+	        }
+	        else {
+	        	mes.printMessage(Kind.ERROR, "The skill __" + 
+	        			e.getAnnotation(skill.class).value()[0] + "__ is not described. Add a @doc block");	        	
+	        }
+
+	        // Parsing of vars	        
+	        if(e.getAnnotation(vars.class) != null) {
+				org.w3c.dom.Element varsElt = doc.createElement("vars");        
+		        for(var v : e.getAnnotation(vars.class).value()){
+					org.w3c.dom.Element varElt = doc.createElement("var");
+					varElt.setAttribute("name", v.name());								
+					varElt.setAttribute("type", v.type());				
+					varElt.setAttribute("constant", ""+v.constant());
+					varElt.setAttribute("doc", v.doc()); 
+					String dependsOn = new String();
+					for(String dependElement : v.depends_on()){
+						dependsOn = ("".equals(dependsOn) ? "":(dependsOn + ",") ) + dependElement;
+					}
+					varElt.setAttribute("depends_on", dependsOn);
+					varsElt.appendChild(varElt);		
+		        }
+		        skillElt.appendChild(varsElt);
+	        }
+	        
+	        // Parsing of actions
+			org.w3c.dom.Element actionsElt = doc.createElement("actions");        
+	        
+	        for(Element eltMethod : e.getEnclosedElements()){
+	        	if(eltMethod.getAnnotation(action.class) != null){
+	    			org.w3c.dom.Element actionElt = doc.createElement("action");
+	    			actionElt.setAttribute("name", eltMethod.getAnnotation(action.class).value());
+	    			actionElt.setAttribute("returnType", ((ExecutableElement)eltMethod).getReturnType().toString());
+	    			
+	    	        if(eltMethod.getAnnotation(args.class) != null) {
+	    				org.w3c.dom.Element argsElt = doc.createElement("args");        
+	    		        for(String argAction : eltMethod.getAnnotation(args.class).value()){
+	    					org.w3c.dom.Element argElt = doc.createElement("arg");
+	    					argElt.setAttribute("name", argAction);								
+	    					argsElt.appendChild(argElt);		
+	    		        }
+	    		        actionElt.appendChild(argsElt);
+	    	        }	    			
+	        		actionsElt.appendChild(actionElt);
+	        	}
+	        }
+	        
+	        // if(actionsElt.getElementsByTagName("action").getLength() != 0){
+	        	skillElt.appendChild(actionsElt);
+	        //}
+	        
+	        skills.appendChild(skillElt);
+
 	        
 	        // Addition of other skills for alternative names of the species
 	        for(int i = 1; i < e.getAnnotation(skill.class).value().length ; i++){
 				org.w3c.dom.Element skillAlt = doc.createElement("skill");
-		        skill.setAttribute("name", e.getAnnotation(skill.class).value()[i]);				
+		        skillAlt.setAttribute("id", e.getAnnotation(skill.class).value()[i]);								
+		        skillAlt.setAttribute("name", e.getAnnotation(skill.class).value()[i]);				
 				skillAlt.setAttribute("alternativeNameOfSkill", id);
 		        skills.appendChild(skillAlt);	        
 		        }
 		}
+		// check the inheritance between Skills
+		NodeList nlSkill = skills.getElementsByTagName("skill");
+		for(int i = 0; i < nlSkill.getLength() ; i++){
+			org.w3c.dom.Element elt = (org.w3c.dom.Element)nlSkill.item(i);
+			if(elt.hasAttribute("extends")){
+				if(BASIC_SKILL.equals(elt.getAttribute("extends"))){
+					elt.setAttribute("extends", "");
+				}
+				else{
+					for(int j = 0; j < nlSkill.getLength(); j++){
+						org.w3c.dom.Element testedElt = (org.w3c.dom.Element)nlSkill.item(j);
+						if(testedElt.getAttribute("class").equals(elt.getAttribute("extends"))){
+							elt.setAttribute("extends", testedElt.getAttribute("name"));
+						}
+					}
+				}
+			}
+		}
+		
 		return skills;
 	}
 
 
 	private org.w3c.dom.Element processDocXMLSpecies(
 			Set<? extends Element> setSpecies, Document doc) {
-        org.w3c.dom.Element species = doc.createElement("Species"+setSpecies.size());
+        org.w3c.dom.Element species = doc.createElement("species");
         
 		for ( Element e : setSpecies ) {
 			org.w3c.dom.Element spec = doc.createElement("species");
@@ -345,5 +438,41 @@ public class docProcessor {
 		}
 		return species;
 	}
+	
+	private org.w3c.dom.Element processDocXMLCommand(
+			Set<? extends Element> setSpecies, Document doc) {
+        org.w3c.dom.Element cmdsElt = doc.createElement("symbol");
+        
+		for ( Element e : setSpecies ) {
+			org.w3c.dom.Element cmdElt = doc.createElement("command");
+			if(e.getAnnotation(symbol.class).name().length != 0) {
+				cmdElt.setAttribute("id", e.getAnnotation(symbol.class).name()[0]);
+				cmdElt.setAttribute("name", e.getAnnotation(symbol.class).name()[0]);
+			}
+			else {
+				// TODO : case of variables declarations ... Variable, ContainerVariable, NumberVariable
+			}
+	        cmdElt.setAttribute("kind", ""+e.getAnnotation(symbol.class).kind());
+	        
+	        // Parsing of facets	        
+	        if(e.getAnnotation(facets.class) != null) {
+				org.w3c.dom.Element facetsElt = doc.createElement("facets");        
+		        for(facet f : e.getAnnotation(facets.class).value()){
+					org.w3c.dom.Element facetElt = doc.createElement("facet");
+					facetElt.setAttribute("name", f.name());
+					// TODO : check several types
+					facetElt.setAttribute("type", f.type()[0]);				
+					facetElt.setAttribute("optionl", ""+f.optional());
+					facetElt.setAttribute("doc", f.doc());
+					facetElt.setAttribute("omissible", (f.name().equals(e.getAnnotation(facets.class).omissible()))?"true":"false");
+					facetsElt.appendChild(facetElt);		
+		        }
+		        cmdElt.appendChild(facetsElt);
+	        }
+	        
+	        cmdsElt.appendChild(cmdElt);
+		}
+		return cmdsElt;
+	}	
 
 }

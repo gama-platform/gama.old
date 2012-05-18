@@ -19,6 +19,7 @@
 package msi.gaml.operators;
 
 import msi.gama.metamodel.shape.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -46,6 +47,12 @@ public class Stats {
 	}
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(
+		value = "the mean of all the elements of the operand",
+		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
+		specialCases = {"if the container contains points, the result will be a point"},
+		examples = {"mean ([4.5, 3.5, 5.5, 7.0]) -> 5.125 "},
+		see = {"sum"})	
 	public static Object getMean(final IScope scope, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l.length() == 0 ) { return Double.valueOf(0d); }
@@ -55,9 +62,15 @@ public class Stats {
 		return Cast.asFloat(scope, s) / l.length();
 	}
 
-	// Penser ˆ faire ces calculs sur les points, Žgalement (et les entiers ?)
+	// Penser a faire ces calculs sur les points, egalement (et les entiers ?)
 
 	@operator(value = "median")
+	@doc(
+		value = "the median of all the elements of the operand.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+		specialCases = {""},
+		examples = {"median ([4.5, 3.5, 5.5, 7.0]) -> 5.0"},
+		see = {"mean"})		
 	public static Double opMedian(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getMedian();
@@ -72,36 +85,64 @@ public class Stats {
 	// }
 
 	@operator(value = "standard_deviation")
+	@doc(
+		value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+		specialCases = {""},
+		examples = {"standard_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.2930100540985752"},
+		see = {"mean", "mean_deviation"})		
 	public static Double opStDev(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getStandardDeviation();
 	}
 
 	@operator(value = "geometric_mean")
+	@doc(
+		value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+		specialCases = {""},
+		examples = {"geometric_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.962326343467649"},
+		see = {"mean", "median", "harmonic_mean"})		
 	public static Double opGeomMean(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getGeometricMean();
 	}
 
 	@operator(value = "harmonic_mean")
+	@doc(
+		value = "the harmonic mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+		specialCases = {""},
+		examples = {"	harmonic_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.804159445407279"},
+		see = {"mean", "median", "geometric_mean"})		
 	public static Double opHarmonicMean(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getHarmonicMean();
 	}
 
 	@operator(value = "variance")
+	@doc(
+		value = "the variance of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. ",
+		examples = {"variance ([4.5, 3.5, 5.5, 7.0]) -> 1.671875	"},
+		see = {"mean", "median"})		
 	public static Double opVariance(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getVariance();
 	}
 
 	@operator(value = "mean_deviation")
+	@doc(
+		value = "the deviation from the mean of all the elements of the operand. See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+		examples = {"mean_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.125"},
+		see = {"mean", "standard_deviation"})		
 	public static Double opMeanDeviation(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getMeanDeviation();
 	}
 
-	@operator(value = { "frequency_of" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "frequency_of" }, priority = IPriority.ITERATOR, iterator = true)	
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }

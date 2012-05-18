@@ -27,6 +27,9 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.docAction;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -49,12 +52,18 @@ import com.vividsolutions.jts.util.AssertionFailedException;
  * 
  * @author drogoul 4 juil. 07
  */
+
+@doc("The moving skill is intended to define the minimal set of behaviours required from an " +
+		"agent that is able to move")
 @vars({
-	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0"),
-	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd 359"),
-	@var(name = IKeyword.DESTINATION, type = IType.POINT_STR, depends_on = { IKeyword.SPEED,
-		IKeyword.HEADING, IKeyword.LOCATION }) })
-@skill({ IKeyword.MOVING_SKILL })
+	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0", 
+		 doc="the speed of the agent (in meter/second)"),
+	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd 359", 
+		 doc="the absolute heading of the agent in degrees (in the range 0-359)"),
+	@var(name = IKeyword.DESTINATION, type = IType.POINT_STR, 
+		 depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION }, 
+		 doc = "continuously updated destination of the agent with respect to its speed and heading (read-only)") })
+@skill({ IKeyword.MOVING_SKILL }) 
 public class MovingSkill extends GeometricSkill {
 
 	/**
@@ -161,6 +170,15 @@ public class MovingSkill extends GeometricSkill {
 
 	@action("wander")
 	@args({ IKeyword.SPEED, "amplitude", "bounds" })
+	@docAction(
+		value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading.",
+		args = {
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = "the speed to use for this move (replaces the current value of speed)"),
+			@arg(name = "amplitude", type = IType.INT_STR, optional = true, doc = "a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)"),
+			@arg(name = "bounds", type = "localized entity or geometry", optional = true, doc ="the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")},
+		returns = "the path followed by the agent",	
+		examples = {"do action: wander{ \n arg speed value: speed - 10; \n arg amplitude value: 120;\n arg bounds value: agentA;}"}
+		)
 	public IPath primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		IPath pathFollowed = null;
@@ -201,6 +219,15 @@ public class MovingSkill extends GeometricSkill {
 
 	@action("move")
 	@args({ IKeyword.SPEED, IKeyword.HEADING, "bounds" })
+	@docAction(
+		value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed.",
+		args = {
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = "the speed to use for this move (replaces the current value of speed)"),
+			@arg(name = IKeyword.HEADING, type = IType.INT_STR, optional = true, doc = "a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)"),
+			@arg(name = "bounds", type = "localized entity or geometry", optional = true, doc ="the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")},
+		returns = "the path followed by the agent",	
+		examples = {"do action: move { \n arg speed value: speed - 10; \n arg heading value: heading + rnd (30); \n arg bounds value: agentA;}"}
+		)	
 	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		IPath pathFollowed = null;
@@ -229,6 +256,14 @@ public class MovingSkill extends GeometricSkill {
 
 	@action("follow")
 	@args({ IKeyword.SPEED, "path" })
+	@docAction(
+		value = "moves the agent along a given path passed in the arguments.",
+		args = {
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = "the speed to use for this move (replaces the current value of speed)"),
+			@arg(name = "path", type = IType.PATH_STR, optional = true, doc ="a path to be followed.")},
+		returns = "the path followed by the agent.",	
+		examples = {"do action: follow {\n arg speed value: speed * 2;\n arg path value: road_path;\n}"}
+		)	
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		IPath pathFollowed = null;
@@ -253,6 +288,15 @@ public class MovingSkill extends GeometricSkill {
 
 	@action("goto")
 	@args({ "target", IKeyword.SPEED, "on", "return_path" })
+	@docAction(
+		value = "moves the agent towards the target passed in the arguments.",
+		args = {
+			@arg(name = "target", type = "point or agent", optional = false, doc = "the location or entity towards which to move."),				
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = "the speed to use for this move (replaces the current value of speed)"),
+			@arg(name = "on", type = "list, agent, graph, geometry", optional = true, doc = "list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")},
+		returns = "the path followed by the agent.",	
+		examples = {"do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}"}
+		)	
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy();
