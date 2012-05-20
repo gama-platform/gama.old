@@ -216,6 +216,11 @@ public abstract class Spatial {
 	public static abstract class Operators {
 
 		@operator(value = { "inter", "intersection" })
+		@doc(
+				value = "A geometry resulting from the intersection between the two geometries",
+				specialCases = {"returns false if the right-operand is nil"},
+				examples = {"square(5) intersects {10,10} -> false"},
+				see = {"union", "+", "-"})
 		public static IShape opInter(final IShape g1, final IShape g2) {
 			if ( g2 == null || g1 == null ) { return null; }
 			if ( g2.isPoint() && g1.covers(g2.getLocation()) ) { return new GamaShape(g2); }
@@ -233,7 +238,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "+", "union" })
-		public static IShape opUnion(final IShape g1, final IShape g2) {
+		@doc(
+				specialCases = {"if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries"},
+				examples = {"geom1 + geom2 -> a geometry corresponding to union between geom1 and geom2"})
+			public static IShape opUnion(final IShape g1, final IShape g2) {
 			if ( g1 == null ) {
 				if ( g2 == null ) { return null; }
 				return g2;
@@ -253,6 +261,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "union" })
+		@doc(
+				specialCases = {"if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries"},
+				examples = {"union([geom1, geom2, geom3]) -> a geometry corresponding to union between geom1, geom2 and geom3"})
 		public static IShape opUnion(final IScope scope, final GamaList elements) {
 			try {
 				return Cast.asGeometry(scope, elements);
@@ -262,6 +273,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "union" })
+		@doc(
+				value = "The geometry resulting from the union of all geometries of agents of the operand-species",
+				examples = {"union(species1)  -> retutns the geometry resulting from the union of all of the geometries of agents of species species1."})
 		public static IShape opUnion(final IScope scope, final ISpecies target) {
 			try {
 				return Cast.asGeometry(scope, target);
@@ -271,13 +285,19 @@ public abstract class Spatial {
 		}
 
 		@operator(IKeyword.MINUS)
+		@doc(
+			specialCases = {"if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries"},
+			examples = {"geom1 - geom2 -> a geometry corresponding to difference between geom1 and geom2"})
 		public static IShape opDifference(final IShape g1, final IShape g2) {
 			if ( g2 == null || g2.getInnerGeometry() == null ) { return g1; }
 			return new GamaShape(g1.getInnerGeometry().difference(g2.getInnerGeometry()));
 		}
 
 		@operator(IKeyword.MINUS)
-		public static IShape opDifferenceAgents(final IShape g1, final IList<IShape> agents) {
+		@doc(
+				specialCases = {"if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries"},
+				examples = {"geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)"})
+			public static IShape opDifferenceAgents(final IShape g1, final IList<IShape> agents) {
 			if ( agents == null || agents.isEmpty() ) { return g1; }
 			Geometry geom1 = GeometryUtils.getFactory().createGeometry(g1.getInnerGeometry());
 			for ( IShape ag : agents ) {
@@ -289,14 +309,20 @@ public abstract class Spatial {
 		}
 
 		@operator(IKeyword.MINUS)
+		@doc(
+				specialCases = {"if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species"},
+				examples = {"geom1 - speciesA -> a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)"})
 		public static IShape opDifferenceSpecies(final IScope scope, final IShape g1,
 			final ISpecies target) throws GamaRuntimeException {
 			IList agents = target.listValue(scope);
 			return opDifferenceAgents(g1, agents);
 		}
 
-		@operator(IKeyword.PLUS)
-		public static IShape opPlus(final IShape g, final ILocation p) {
+		@operator(value = { "add_point" })
+		@doc(
+				value = "A geometry resulting from the adding of a rigth-point (coordinate) to the rigth-geometry",
+				examples = {"suquare(5) add_point {10,10} -> returns a hexagon"})
+		public static IShape opAddPoint(final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
 			Coordinate point = (Coordinate) p;
 			Geometry geometry = g.getInnerGeometry();
@@ -328,21 +354,28 @@ public abstract class Spatial {
 			return g;
 		}
 
-		@operator("masked_by")
-		public static IShape opMaskedBy(final IScope scope, final IShape source,
-			final GamaList<IAgent> obstacles) {
-			IAgent a = scope.getAgentScope();
-			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return maskedBy(source, obstacles, location);
-		}
+		
 
 		@operator("masked_by")
-		public static IShape opMaskedBy(final IScope scope, final IShape source,
+		@doc(
+			value = "A geometry representing the part of the right operand visible from the point of view of the agent using the operator while considering the obstacles defined by the left operand",
+			examples = {"perception_geom masked_by obstacle_species -> returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species."})
+			public static IShape opMaskedBy(final IScope scope, final IShape source,
 			final ISpecies targets) {
 			IAgent a = scope.getAgentScope();
 			ILocation location = a.getLocation();
 			ITopology t = a.getTopology();
 			IList<IAgent> obstacles = t.getAgentsIn(source, Different.with(), false);
+			return maskedBy(source, obstacles, location);
+		}
+		
+		@operator("masked_by")
+		@doc(
+				examples = {"perception_geom masked_by obstacle_list -> returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list."})
+		public static IShape opMaskedBy(final IScope scope, final IShape source,
+			final GamaList<IAgent> obstacles) {
+			IAgent a = scope.getAgentScope();
+			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return maskedBy(source, obstacles, location);
 		}
 
@@ -431,11 +464,15 @@ public abstract class Spatial {
 		}
 
 		@operator("split_at")
-		public static GamaList<IShape> splitLine(final IShape geom, final ILocation pt) {
+		@doc(
+				value = "The two part of the left-operand lines split at the given right-operand point",
+				specialCases = {"if the left-operand is a point or a polygon, returns an empty list"},		
+				examples = {"polyline([{1,2},{4,6}]) split_at {7,6}  -> [polyline([{1.0;2.0},{7.0;6.0}]), polyline([{7.0;6.0},{4.0;6.0}])]."})
+		public static GamaList<IShape> splitLineAt(final IShape geom, final ILocation pt) {
 			GamaList<IShape> lines = new GamaList<IShape>();
 			GamaList<Geometry> geoms = null;
 			if ( geom.getInnerGeometry() instanceof LineString ) {
-				geoms = splitLine((LineString) geom.getInnerGeometry(), pt);
+				geoms = splitLineAt((LineString) geom.getInnerGeometry(), pt);
 			} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
 				Point point = GeometryUtils.getFactory().createPoint((Coordinate) pt);
 				Geometry geom2 = null;
@@ -448,7 +485,7 @@ public abstract class Spatial {
 						distMin = dist;
 					}
 				}
-				geoms = splitLine((LineString) geom2, pt);
+				geoms = splitLineAt((LineString) geom2, pt);
 			}
 			if ( geoms != null ) {
 				for ( Geometry g : geoms ) {
@@ -459,7 +496,7 @@ public abstract class Spatial {
 		}
 
 		// slit a line at a given point (cutpoint)
-		public static GamaList<Geometry> splitLine(final LineString geom, final ILocation cutPoint) {
+		public static GamaList<Geometry> splitLineAt(final LineString geom, final ILocation cutPoint) {
 			Coordinate[] coords = geom.getCoordinates();
 			Point pt =
 				GeometryUtils.getFactory().createPoint(new GamaPoint(cutPoint.getLocation()));
@@ -644,6 +681,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "split_lines", content_type = IType.GEOMETRY)
+		@doc(
+				value = "A list of geometries resulting after cutting the lines at their intersections.",
+				examples = {"split_lines([line([{0,10}, {20,10}], line([{0,10}, {20,10}]]) -> returns a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])."})
 		public static IList<IShape> splitLines(final IScope scope, final IList geoms)
 			throws GamaRuntimeException {
 			if ( geoms.isEmpty() ) { return new GamaList<IShape>(); }
