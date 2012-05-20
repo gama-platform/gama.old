@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -43,7 +43,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 /**
- * Written by drogoul Modified on 10 dŽc. 2010
+ * Written by drogoul Modified on 10 dï¿½c. 2010
  * 
  * All the spatial operators available in GAML. Regrouped by types of operators.
  * 
@@ -85,7 +85,7 @@ public abstract class Spatial {
 				specialCases = {"returns nil if the operand is nil."},
 				comment =  "the centre of the cone is by default the location of the current agent in which has been called this operator.",
 				examples = {"cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45."},
-				see = {"around, circle, line, link, norm, point, polygon, polyline, rectangle, square, triangle"})
+				see = {"around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opCone(final IScope scope, final GamaPoint p) {
 			if ( p == null ) { return null; }
 
@@ -115,7 +115,7 @@ public abstract class Spatial {
 				specialCases = {"returns nil if the operand is nil."},
 				comment =  "the centre of the square is by default the location of the current agent in which has been called this operator.",
 				examples = {"square(10) -> returns a geometry as a square of side size 10."},
-				see = {"around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, triangle"})
+				see = {"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "triangle"})
 		public static IShape opSquare(final IScope scope, final Double side_size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
@@ -130,7 +130,7 @@ public abstract class Spatial {
 				specialCases = {"returns nil if the operand is nil."},
 				comment =  "the centre of the rectangle is by default the location of the current agent in which has been called this operator.",
 				examples = {"rectangle({10, 5}) -> returns a geometry as a rectangle with width = 10 and heigh = 5."},
-				see = {"around, circle, cone, line, link, norm, point, polygon, polyline, square, triangle"})
+				see = {"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square", "triangle"})
 		public static IShape opRect(final IScope scope, final GamaPoint p) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
@@ -144,7 +144,7 @@ public abstract class Spatial {
 				specialCases = {"returns nil if the operand is nil."},
 				comment =  "the centre of the triangle is by default the location of the current agent in which has been called this operator.",
 				examples = {"triangle(5) -> returns a geometry as a triangle with side_size = 5."},
-				see = {"around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, square"})
+				see = {"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square"})
 		public static IShape opTriangle(final IScope scope, final Double side_size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
@@ -158,7 +158,7 @@ public abstract class Spatial {
 				value = "A polygon geometry from the given list of points.",
 				specialCases = {"if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry; if the operand is composed of 2 points, returns a polyline geometry."},
 				examples = {"polygon([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polygon geometry composed of the 4 points."},
-				see = {"around, circle, cone, line, link, norm, point, polyline, rectangle, square, triangle"})
+				see = {"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opPolygon(final IList<GamaPoint> points) {
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
@@ -176,7 +176,7 @@ public abstract class Spatial {
 				value = "A polyline geometry from the given list of points.",
 				specialCases = {"if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry."},
 				examples = {"polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points."},
-				see = {"around, circle, cone, link, norm, point, polygone, rectangle, square, triangle"})
+				see = {"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle"})
 		public static IShape opPolyline(final IList<GamaPoint> points) {
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
@@ -191,7 +191,7 @@ public abstract class Spatial {
 				specialCases = {"if the operand is null, link returns a point {0,0}; if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species"},
 				comment =  "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.",
 				examples = {"link (geom1::geom2)  -> returns a link geometry between geom1 and geom2."},
-				see = {"around, circle, cone, line, norm, point, polygon, polyline, rectangle, square, triangle"})
+				see = {"around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opLink(final IScope scope, final GamaPair points)
 			throws GamaRuntimeException {
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
@@ -203,7 +203,7 @@ public abstract class Spatial {
 				value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.",
 				specialCases = {"returns a circle geometry of radius right-operand if the left-operand is nil"},
 				examples = {"10 around circle(5) -> returns a the ring geometry between 5 and 10."},
-				see = {"circle, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle"})
+				see = {"circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opFringe(final IScope scope, final Double width,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry);
@@ -321,7 +321,7 @@ public abstract class Spatial {
 		@operator(value = { "add_point" })
 		@doc(
 				value = "A geometry resulting from the adding of a rigth-point (coordinate) to the rigth-geometry",
-				examples = {"suquare(5) add_point {10,10} -> returns a hexagon"})
+				examples = {"square(5) add_point {10,10} -> returns a hexagon"})
 		public static IShape opAddPoint(final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
 			Coordinate point = (Coordinate) p;
@@ -570,7 +570,7 @@ public abstract class Spatial {
 		}
 
 		// @operator(value = "as_matrix", content_type = IType.INT)
-		// // TODO revoir cet opŽrateur qui ne semble plus correspondre ˆ rien...
+		// // TODO revoir cet opï¿½rateur qui ne semble plus correspondre ï¿½ rien...
 		// public static IMatrix asMatrix(final IScope scope, final GamaGeometry gg,
 		// final Double squareSize) {
 		// if ( gg == null ) { return null; }
