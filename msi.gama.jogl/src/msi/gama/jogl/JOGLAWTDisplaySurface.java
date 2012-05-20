@@ -412,8 +412,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		public void run() {
 			if ( !canBeUpdated() ) { return; }
 			canBeUpdated(false);
+			System.out.println("system update");
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
+			((JOGLAWTDisplayGraphics) openGLGraphics).isListCreated = false;
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);

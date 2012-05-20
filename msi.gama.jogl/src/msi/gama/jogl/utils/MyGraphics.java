@@ -1,10 +1,13 @@
 package msi.gama.jogl.utils;
 
-
+import static javax.media.opengl.GL.GL_COMPILE;
+import static javax.media.opengl.GL.GL_QUADS;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
@@ -27,29 +30,39 @@ import com.vividsolutions.jts.geom.Polygon;
 import javax.vecmath.Vector3f;
 
 public class MyGraphics {
-	
+
 	// OpenGL member
 	private GL myGl;
 	private GLU myGlu;
 	private TessellCallBack tessCallback;
 	private GLUtessellator tobj;
-	
-	//FIXME: Is it better to declare an objet polygon here than in DrawMultiPolygon??
+
+	// FIXME: Is it better to declare an objet polygon here than in
+	// DrawMultiPolygon??
 	Polygon curPolygon;
 	int numExtPoints;
 	int numGeometries;
-	
-	//FIXME: Create to avoir creating int i,j each framerate.
-	int i,j;
-	
+
+	// FIXME: Create to avoid creating int i,j each framerate.
+	int i, j;
+
 	float alpha = 1.0f;
 
-	public  MyGraphics(final GL gl, final GLU glu) {
-		
+	// Display List Id
+	private int listId;
+	private int firstList;
+
+	public MyGraphics(final GL gl, final GLU glu) {
+
 		myGl = gl;
 		myGlu = glu;
-		tessCallback = new TessellCallBack(gl, glu);
+		tessCallback = new TessellCallBack(myGl, myGlu);
 		tobj = glu.gluNewTess();
+
+		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
+		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
+		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
 
 	}
 
@@ -69,13 +82,8 @@ public class MyGraphics {
 
 	}
 
-	public void DrawCircle(float x, float y, float z,
-			int numPoints, float radius) {
-		
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+	public void DrawCircle(float x, float y, float z, int numPoints,
+			float radius) {
 
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
@@ -99,7 +107,7 @@ public class MyGraphics {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
-		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
@@ -118,12 +126,6 @@ public class MyGraphics {
 	}
 
 	public void DrawGeometry(MyGeometry geometry, float z_offset) {
-
-
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
 
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
@@ -149,16 +151,15 @@ public class MyGraphics {
 
 		// FIXME: This add a black line around the polygon.
 		// For a better visual quality but we should check the cost of it.
-		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		this.DrawLine(geometry, 1.0f);
 
 	}
 
 	public void Draw3DQuads(Polygon p, Color c, float z_offset) {
-		myGl.glColor4f((float) c.getRed() / 255,
-				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255,alpha);
-		
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
+
 		int curPolyGonNumPoints = p.getNumPoints();
 		for (j = 0; j < curPolyGonNumPoints; j++) {
 			int k = (j + 1) % curPolyGonNumPoints;
@@ -181,7 +182,7 @@ public class MyGraphics {
 			for (i = 0; i < 4; i++) {
 				vertices[i] = new Vertex();
 			}
-			//FIXME; change double to float in Vertex
+			// FIXME; change double to float in Vertex
 			vertices[0].x = (float) p.getExteriorRing().getPointN(j).getX();
 			vertices[0].y = -(float) p.getExteriorRing().getPointN(j).getY();
 			vertices[0].z = z_offset;
@@ -212,7 +213,8 @@ public class MyGraphics {
 			}
 			normal.normalize(normal);
 			// FIXME: The normal is not well computed.
-			// myGl.glNormal3f((float)normal.x, (float)normal.y, (float)normal.z);
+			// myGl.glNormal3f((float)normal.x, (float)normal.y,
+			// (float)normal.z);
 			myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
 			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
 			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
@@ -225,66 +227,64 @@ public class MyGraphics {
 
 	public void DrawJTSGeometry(Geometry geometry, Color c) {
 
-		// System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
+		System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
 		for (i = 0; i < geometry.getNumGeometries(); i++) {
 
 			if (geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry;
-				DrawMultiPolygon(polygons,c);
+				DrawMultiPolygon(polygons, c);
 			}
 
 			else if (geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry;
-				DrawPolygon(polygon,c,0.0f);
+				DrawPolygon(polygon, c, 0.0f);
 			}
 
 			else if (geometry.getGeometryType() == "MultiLineString") {
 				MultiLineString lines = (MultiLineString) geometry;
-				DrawMultiLineString(lines,c);
+				DrawMultiLineString(lines, c);
 			}
 
 			else if (geometry.getGeometryType() == "LineString") {
 				LineString line = (LineString) geometry;
-				DrawLineString(line, 1.2f,c);
+				DrawLineString(line, 1.2f, c);
 			}
 
 			else if (geometry.getGeometryType() == "Point") {
 				Point point = (Point) geometry;
-				DrawPoint(point, 10, 10,c);
+				DrawPoint(point, 10, 10, c);
 			}
 		}
 	}
 
+
+
 	public void DrawMultiPolygon(MultiPolygon polygons, Color c) {
 
 		numGeometries = polygons.getNumGeometries();
-		//System.out.println("Draw MultiPolygon:"+numGeometries);
-		
+		// System.out.println("Draw MultiPolygon:"+numGeometries);
+
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (i = 0; i < numGeometries; i++) {
 			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255,
-					(float) c.getBlue() / 255, alpha);
+					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
+					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon,c,0.0f);
-			//DrawPolygonContour(curPolygon,c,0.0f);
-			//Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
-			//Draw3DPolygon(curPolygon,c, 100.0f);
+			DrawPolygon(curPolygon, c, 0.0f);
+			// DrawPolygonContour(curPolygon,c,0.0f);
+			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
+			// Draw3DPolygon(curPolygon,c, 100.0f);
 		}
 	}
 
-	public void DrawPolygon(Polygon p,Color c, float z) {
 
-		myGl.glColor4f((float) c.getRed() / 255,
-				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255,alpha);
+
+	public void DrawPolygon(Polygon p, Color c, float z) {
+
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
 		numExtPoints = p.getExteriorRing().getNumPoints();
-		//System.out.println("Draw Polygon:"+numExtPoints);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
-
+		// System.out.println("Draw Polygon:"+numExtPoints);
 
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 		myGlu.gluTessBeginPolygon(tobj, null);
@@ -306,36 +306,38 @@ public class MyGraphics {
 			myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
 		}
 
-
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
 
-		DrawPolygonContour(p,c,z);
+		DrawPolygonContour(p, c, z);
 	}
-	
-	public void DrawPolygonContour(Polygon p,Color c, float z){
+
+
+
+	public void DrawPolygonContour(Polygon p, Color c, float z) {
 		// Draw contour
-		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		myGl.glBegin(GL.GL_LINES);
 		numExtPoints = p.getExteriorRing().getNumPoints();
 		for (j = 0; j < numExtPoints - 1; j++) {
 			myGl.glLineWidth(1.0f);
-			myGl.glVertex3f((float) ((p.getExteriorRing().getPointN(j).getX())),
+			myGl.glVertex3f(
+					(float) ((p.getExteriorRing().getPointN(j).getX())),
 					-(float) ((p.getExteriorRing().getPointN(j).getY())), z);
 			myGl.glVertex3f(
 					(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
-					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())),
-					z);
-		}	
+					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())), z);
+		}
 		myGl.glEnd();
 	}
-	
-	public void Draw3DPolygon(Polygon p,Color c,float z_offset){
-		
-		DrawPolygon(p,c,0);
-		DrawPolygon(p,c,z_offset);
-		Draw3DQuads(p,c,z_offset);
-		
+
+
+	public void Draw3DPolygon(Polygon p, Color c, float z_offset) {
+
+		DrawPolygon(p, c, 0);
+		DrawPolygon(p, c, z_offset);
+		Draw3DQuads(p, c, z_offset);
+
 	}
 
 	public void DrawMultiLineString(MultiLineString lines, Color c) {
@@ -345,10 +347,10 @@ public class MyGraphics {
 
 		// for each line of a multiline, get each point coordinates.
 		for (i = 0; i < numGeometries; i++) {
-			
+
 			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255,
-					(float) c.getBlue() / 255,alpha);
+					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
+					alpha);
 
 			LineString l = (LineString) lines.getGeometryN(i);
 			int numPoints = l.getNumPoints();
@@ -367,9 +369,8 @@ public class MyGraphics {
 
 	public void DrawLineString(LineString line, float size, Color c) {
 
-		myGl.glColor4f((float) c.getRed() / 255,
-				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255,alpha);
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
 		int numPoints = line.getNumPoints();
 		myGl.glLineWidth(size);
 		myGl.glBegin(GL.GL_LINES);
@@ -383,18 +384,10 @@ public class MyGraphics {
 
 	}
 
-	public void DrawPoint(Point point, int numPoints,
-			float radius, Color c) {
+	public void DrawPoint(Point point, int numPoints, float radius, Color c) {
 
-		myGl.glColor4f((float) c.getRed() / 255,
-				(float) c.getGreen() / 255,
-				(float) c.getBlue() / 255,alpha);
-		
-
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback);
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
 
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
@@ -420,7 +413,7 @@ public class MyGraphics {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
-		myGl.glColor4f(0.0f, 0.0f, 0.0f,alpha);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
@@ -440,6 +433,38 @@ public class MyGraphics {
 		}
 		myGl.glEnd();
 
+	}
+
+	/**
+	 * Create the display list for each JTS geometries (one list per geometry)
+	 * 
+	 * @param myJTSGeometries
+	 * @param size
+	 */
+	public void buildDisplayLists(ArrayList<MyJTSGeometry> myJTSGeometries) {
+
+		// Build n lists, and returns handle for the first list
+		firstList = myGl.glGenLists(myJTSGeometries.size());
+		listId = firstList;
+		Iterator<MyJTSGeometry> it = myJTSGeometries.iterator();
+		while (it.hasNext()) {
+			MyJTSGeometry curGeometry = it.next();			
+			myGl.glNewList(listId, GL_COMPILE);
+			DrawJTSGeometry(curGeometry.geometry,curGeometry.color);
+			myGl.glEndList();
+			listId = listId + 1;;
+		}
+	}
+	
+	public void DrawDisplayList(int nbDisplayList) {
+		for (int i = 0; i <= nbDisplayList; i++) {
+			myGl.glColor3f((float)Math.random(), (float)Math.random(), (float)Math.random());
+			myGl.glCallList(i);
+		}	
+	}
+	
+	public void DeleteDisplayLists(int nbDisplayList){
+		myGl.glDeleteLists(firstList,nbDisplayList);
 	}
 
 }
