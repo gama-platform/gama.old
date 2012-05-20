@@ -1,0 +1,4028 @@
+#summary Operators(Modeling Guide)
+ 	
+=  Table of Contents  =
+
+
+= Definition =
+
+
+An operator performs a function on one, two, or three operands. An operator that only requires one operand is called a unary operator. An operator that requires two operands is a binary operator. And finally, a ternary operator is one that requires three operands. The GAML programming language has only one ternary operator, ?:, which is a short-hand if-else statement.
+
+
+= Operators =
+
+    
+== - == 
+
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.util.matrix.IMatrix<T>
+    * Right operand: msi.gama.util.matrix.IMatrix<T>  
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.GamaList
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species
+    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries
+    * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries
+  * Comment: 
+  * See also: 
+  {{{  
+   geom1 - speciesA -> a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)
+   geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)
+   geom1 - geom2 -> a geometry corresponding to difference between geom1 and geom2
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== : == 
+
+  * Left operand: java.lang.Object
+  * Right operand: java.lang.Object  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== :: == 
+
+  * Left operand: java.lang.Object
+  * Right operand: java.lang.Object  
+  * Result Type: msi.gama.util.GamaPair
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== ! == 
+
+  * Operand: java.lang.Boolean
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== != == 
+
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Object
+    * Right operand: java.lang.Object  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== ? == 
+
+  * Left operand: java.lang.Boolean
+  * Right operand: java.lang.Boolean  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== / == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== . == 
+
+  * Left operand: msi.gama.metamodel.agent.IAgent
+  * Right operand: msi.gama.metamodel.agent.IAgent  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== ^ == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== * == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== + == 
+
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.GamaList
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.matrix.IMatrix<T>
+    * Right operand: msi.gama.util.matrix.IMatrix<T>  
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.GamaList
+  * Special cases:
+    * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries
+  * Comment: 
+  * See also: 
+  {{{  
+   geom1 + geom2 -> a geometry corresponding to union between geom1 and geom2
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== < == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== <= == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== <-> == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== = == 
+
+  * Possible use: 
+    * Left operand: java.lang.Object
+    * Right operand: java.lang.Object  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== > == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== >= == 
+
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== abs == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== accumulate == 
+
+  * Left operand: msi.gama.util.IList
+  * Right operand: msi.gama.util.IList  
+  * Result Type: msi.gama.util.GamaList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== acos == 
+
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== add_point == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+   suquare(5) add_point {10,10} -> returns a hexagon
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== agent == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== agent_closest_to == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== agent_from_geometry == 
+
+  * Left operand: msi.gama.util.IPath
+  * Right operand: msi.gama.util.IPath  
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== agents_inside == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== agents_overlapping == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== among == 
+
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.util.GamaMap
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== and == 
+
+  * Left operand: java.lang.Boolean
+  * Right operand: java.lang.Boolean  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== any == 
+
+  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+  * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== any_location_in == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.metamodel.shape.ILocation
+  * Special cases:
+  * Comment: 
+  * See also: [#closest_points_with closest_points_with] [#farthest_point_to farthest_point_to] [#points_at points_at] 
+  {{{  
+   any_location_in(square(5)) -> a point of the square, for example : {3,4.6}.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== around == 
+
+  * Left operand: java.lang.Double
+  * Right operand: java.lang.Double  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns a circle geometry of radius right-operand if the left-operand is nil
+  * Comment: 
+  * See also: [#circle, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle circle, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  {{{  
+   10 around circle(5) -> returns a the ring geometry between 5 and 10.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as == 
+
+  * Left operand: java.lang.Object
+  * Right operand: java.lang.Object  
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_4_grid == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_date == 
+
+  * Possible use: 
+    * Operand: double
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Left operand: double
+    * Right operand: double  
+    * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_distance_graph == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_edge_graph == 
+
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer
+    * Result Type: msi.gama.util.graph.IGraph
+  * Possible use: 
+    * Operand: msi.gama.util.GamaMap
+    * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_grid == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_intersection_graph == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_map == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.GamaMap
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_matrix == 
+
+  * Possible use: 
+    * Left operand: java.lang.Object
+    * Right operand: java.lang.Object  
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Right operand: msi.gama.util.IContainer<KeyType,ValueType>  
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_time == 
+
+  * Operand: double
+  * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== asin == 
+
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== at == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Right operand: msi.gama.util.IContainer<KeyType,ValueType>  
+    * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== at_location == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== atan == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== binomial == 
+
+  * Operand: msi.gama.metamodel.shape.GamaPoint
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.
+  * See also: [#poisson poisson] [#gauss gauss] 
+  {{{  
+   binomial({15,0.6})  ->  a random positive integer
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== bool == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== ceil == 
+
+  * Operand: double
+  * Result Type: double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== circle == 
+
+  * Operand: java.lang.Double
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns a point if the operand is lower or equal to 0.
+  * Comment: the centre of the circle is by default the location of the current agent in which has been called this operator.
+  * See also: [#around, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle around, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  {{{  
+   circle(10) -> returns a geometry as a circle of radius 10.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== clean == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== closest_points_with == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>
+  * Special cases:
+  * Comment: 
+  * See also: [#any_location_in any_location_in] [#any_point_in any_point_in] [#farthest_point_to farthest_point_to] [#points_at points_at] 
+  {{{  
+   geom1 closest_points_with(geom2) -> [pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== closest_to == 
+
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
+    * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
+    * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== collate == 
+
+  * Operand: msi.gama.util.IList
+  * Result Type: msi.gama.util.GamaList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== collect == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== column_at == 
+
+  * Left operand: msi.gama.util.matrix.IMatrix<T>
+  * Right operand: msi.gama.util.matrix.IMatrix<T>  
+  * Result Type: java.util.List<T>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== columns_list == 
+
+  * Operand: msi.gama.util.matrix.IMatrix<T>
+  * Result Type: msi.gama.util.IList<msi.gama.util.IList<T>>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== cone == 
+
+  * Operand: msi.gama.metamodel.shape.GamaPoint
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns nil if the operand is nil.
+  * Comment: the centre of the cone is by default the location of the current agent in which has been called this operator.
+  * See also: [#around, circle, line, link, norm, point, polygon, polyline, rectangle, square, triangle around, circle, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  {{{  
+   cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== container == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.IContainer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== contains == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Right operand: msi.gama.util.IContainer<KeyType,ValueType>  
+    * Result Type: boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== contains_all == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer
+    * Right operand: msi.gama.util.IContainer  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== contains_any == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer
+    * Right operand: msi.gama.util.IContainer  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== contains_edge == 
+
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== contains_vertex == 
+
+  * Left operand: msi.gama.util.graph.GamaGraph
+  * Right operand: msi.gama.util.graph.GamaGraph  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== convex_hull == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== copy == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== copy_between == 
+
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== cos == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== count == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== crosses == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== dead == 
+
+  * Operand: msi.gama.metamodel.agent.IAgent
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== directed == 
+
+  * Operand: msi.gama.util.graph.IGraph
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== direction_between == 
+
+  * Left operand: msi.gama.metamodel.topology.ITopology
+  * Right operand: msi.gama.metamodel.topology.ITopology  
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: [#towards towards] [#direction_to direction_to] [#distance_to distance_to] [#distance_between distance_between] [#path_between path_between] [#path_to path_to] 
+  {{{  
+   my_topology direction_between [ag1, ag2] -> the direction between ag1 and ag2 considering the topology my_topology
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== distance_between == 
+
+  * Left operand: msi.gama.metamodel.topology.ITopology
+  * Right operand: msi.gama.metamodel.topology.ITopology  
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: [#towards towards] [#direction_to direction_to] [#distance_to distance_to] [#direction_between direction_between] [#path_between path_between] [#path_to path_to] 
+  {{{  
+   my_topology distance_between [ag1, ag2, ag3] -> the distance between ag1, ag2 and ag3 considering the topology my_topology
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== distance_to == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: [#towards towards] [#direction_to direction_to] [#distance_between distance_between] [#direction_between direction_between] [#path_between path_between] [#path_to path_to] 
+  {{{  
+   ag1 distance_to ag2 -> the distance between ag1 and ag2 considering the topology of the agent applying the operator
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== div == 
+
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== empty == 
+
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== eval_gaml == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== eval_java == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== evaluate_with == 
+
+  * Left operand: java.lang.String
+  * Right operand: java.lang.String  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== even == 
+
+  * Operand: java.lang.Integer
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== every == 
+
+  * Operand: java.lang.Integer
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== exp == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== fact == 
+
+  * Operand: java.lang.Integer
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== farthest_point_to == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.ILocation
+  * Special cases:
+  * Comment: 
+  * See also: [#any_location_in any_location_in] [#any_point_in any_point_in] [#closest_points_with closest_points_with] [#points_at points_at] 
+  {{{  
+   geom farthest_point_to(pt) -> the closest point of geom to pt
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== file == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== first == 
+
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== first_with == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== flip == 
+
+  * Operand: java.lang.Double
+  * Result Type: java.lang.Boolean
+  * Special cases:
+    * flip 0 always returns false, flip 1 true
+  * Comment: 
+  * See also: [#rnd rnd] 
+  {{{  
+   flip (0.66666) -> 2/3 chances to return true.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== float == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== floor == 
+
+  * Operand: double
+  * Result Type: double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== folder == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== frequency_of == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.GamaMap
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== gauss == 
+
+  * Operand: msi.gama.metamodel.shape.GamaPoint
+  * Result Type: java.lang.Double
+  * Special cases:
+    * when the operand is a point, it is read as {mean, standardDeviation}
+    * when standardDeviation value is 0.0, it always returns the mean value
+  * Comment: 
+  * See also: [#truncated_gauss truncated_gauss] [#poisson poisson] 
+  {{{  
+   gauss({0,0.3})  ->  0.22354
+   gauss({0,0.3})  ->  -0.1357
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== generate_barabasi_albert == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== generate_watts_strogatz == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== geometric_mean == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.
+  * See also: [#mean mean] [#median median] [#harmonic_mean harmonic_mean] 
+  {{{  
+   geometric_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.962326343467649
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== geometry == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== get == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== graph == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== grid_at == 
+
+  * Left operand: msi.gaml.species.ISpecies
+  * Right operand: msi.gaml.species.ISpecies  
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== group_by == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.GamaMap
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== harmonic_mean == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.
+  * See also: [#mean mean] [#median median] [#geometric_mean geometric_mean] 
+  {{{  
+   	harmonic_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.804159445407279
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== image == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== in == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Object
+    * Right operand: java.lang.Object  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== in_edges_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== index_of == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.util.matrix.IMatrix
+    * Right operand: msi.gama.util.matrix.IMatrix  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaMap
+    * Right operand: msi.gama.util.GamaMap  
+    * Result Type: java.lang.Object
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== inside == 
+
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
+    * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== int == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== inter == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer
+    * Right operand: msi.gama.util.IContainer  
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+    * returns false if the right-operand is nil
+  * Comment: 
+  * See also: [#union union] [#+ +] [#- -] 
+  {{{  
+   square(5) intersects {10,10} -> false
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== intersects == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is == 
+
+  * Left operand: msi.gaml.expressions.IExpression
+  * Right operand: msi.gaml.expressions.IExpression  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is_image == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is_number == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is_properties == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is_shape == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== is_text == 
+
+  * Operand: java.lang.String
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== last == 
+
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== last_index_of == 
+
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.util.matrix.IMatrix
+    * Right operand: msi.gama.util.matrix.IMatrix  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaMap
+    * Right operand: msi.gama.util.GamaMap  
+    * Result Type: java.lang.Object
+  * Possible use: 
+    * Left operand: java.util.List
+    * Right operand: java.util.List  
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== last_with == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== length == 
+
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: int
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== line == 
+
+  * Operand: msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry.
+  * Comment: 
+  * See also: [#around, circle, cone, link, norm, point, polygone, rectangle, square, triangle around, circle, cone, link, norm, point, polygone, rectangle, square, triangle] 
+  {{{  
+   polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== link == 
+
+  * Operand: msi.gama.util.GamaPair
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * if the operand is null, link returns a point {0,0}; if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species
+  * Comment: The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.
+  * See also: [#around, circle, cone, line, norm, point, polygon, polyline, rectangle, square, triangle around, circle, cone, line, norm, point, polygon, polyline, rectangle, square, triangle] 
+  {{{  
+   link (geom1::geom2)  -> returns a link geometry between geom1 and geom2.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== list == 
+
+  * Possible use: 
+    * Operand: java.lang.Object
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== ln == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_dgs == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_dgs_old == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_dot == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_edge == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_gexf == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_graphml == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_lgl == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_ncol == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_pajek == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== load_graph_from_tlp == 
+
+  * Operand: msi.gama.util.GamaMap
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== map == 
+
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: java.util.Map
+  * Possible use: 
+    * Operand: java.lang.Object
+    * Result Type: msi.gama.util.GamaMap
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== masked_by == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+   perception_geom masked_by obstacle_species -> returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species.
+   perception_geom masked_by obstacle_list -> returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== matrix == 
+
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Operand: java.lang.Object
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== max == 
+
+  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+  * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== max_of == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== mean == 
+
+  * Operand: msi.gama.util.IContainer
+  * Result Type: java.lang.Object
+  * Special cases:
+    * if the container contains points, the result will be a point
+  * Comment: the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.
+  * See also: [#sum sum] 
+  {{{  
+   mean ([4.5, 3.5, 5.5, 7.0]) -> 5.125 
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== mean_deviation == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.
+  * See also: [#mean mean] [#standard_deviation standard_deviation] 
+  {{{  
+   mean_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.125
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== median == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.
+  * See also: [#mean mean] 
+  {{{  
+   median ([4.5, 3.5, 5.5, 7.0]) -> 5.0
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== min == 
+
+  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+  * Result Type: ValueType
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== min_of == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== mod == 
+
+  * Left operand: java.lang.Integer
+  * Right operand: java.lang.Integer  
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== mul == 
+
+  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== neighbours_at == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== neighbours_of == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.topology.ITopology
+    * Right operand: msi.gama.metamodel.topology.ITopology  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.topology.ITopology
+    * Right operand: msi.gama.metamodel.topology.ITopology  
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== new_folder == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== norm == 
+
+  * Operand: msi.gama.metamodel.shape.GamaPoint
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== of_generic_species == 
+
+  * Left operand: msi.gama.util.IList
+  * Right operand: msi.gama.util.IList  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== of_species == 
+
+  * Left operand: msi.gama.util.IList
+  * Right operand: msi.gama.util.IList  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== one_of == 
+
+  * Operand: msi.gaml.species.ISpecies
+  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Special cases:
+    * if the list is empty, returns nil 
+    * If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)
+  * Comment: 
+  * See also: 
+  {{{  
+   one_of (bug) -> bug3     // The species `bug` has previously be defined
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== or == 
+
+  * Left operand: java.lang.Boolean
+  * Right operand: java.lang.Boolean  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== out_edges_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== overlapping == 
+
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
+    * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== overlaps == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== pair == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.GamaPair
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== partially_overlaps == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== path == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.IPath
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== path_between == 
+
+  * Left operand: msi.gama.metamodel.topology.ITopology
+  * Right operand: msi.gama.metamodel.topology.ITopology  
+  * Result Type: msi.gama.util.IPath
+  * Special cases:
+  * Comment: 
+  * See also: [#towards towards] [#direction_to direction_to] [#distance_between distance_between] [#direction_between direction_between] [#path_to path_to] [#distance_to distance_to] 
+  {{{  
+   my_topology path_between [ag1, ag2] -> A path between ag1 and ag2
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== path_to == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.util.IPath
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.util.IPath
+  * Special cases:
+  * Comment: 
+  * See also: [#towards towards] [#direction_to direction_to] [#distance_between distance_between] [#direction_between direction_between] [#path_between path_between] [#distance_to distance_to] 
+  {{{  
+   ag1 path_to ag2 -> the path between ag1 and ag2 considering the topology of the agent applying the operator
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== point == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.metamodel.shape.ILocation
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== points_at == 
+
+  * Left operand: java.lang.Integer
+  * Right operand: java.lang.Integer  
+  * Result Type: msi.gama.util.GamaList
+  * Special cases:
+  * Comment: 
+  * See also: [#any_location_in any_location_in] [#any_point_in any_point_in] [#closest_points_with closest_points_with] [#farthest_point_to farthest_point_to] 
+  {{{  
+   3 points_at(20.0) -> returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== poisson == 
+
+  * Operand: java.lang.Double
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.
+  * See also: [#binomial binomial] [#gauss gauss] 
+  {{{  
+   poisson(3.5) -> a random positive integer
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== polygon == 
+
+  * Operand: msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry; if the operand is composed of 2 points, returns a polyline geometry.
+  * Comment: 
+  * See also: [#around, circle, cone, line, link, norm, point, polyline, rectangle, square, triangle around, circle, cone, line, link, norm, point, polyline, rectangle, square, triangle] 
+  {{{  
+   polygon([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polygon geometry composed of the 4 points.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== predecessors_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== properties == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== read == 
+
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.Object
+  * Possible use: 
+    * Operand: msi.gama.util.file.IGamaFile
+    * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rectangle == 
+
+  * Operand: msi.gama.metamodel.shape.GamaPoint
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns nil if the operand is nil.
+  * Comment: the centre of the rectangle is by default the location of the current agent in which has been called this operator.
+  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, square, triangle around, circle, cone, line, link, norm, point, polygon, polyline, square, triangle] 
+  {{{  
+   rectangle({10, 5}) -> returns a geometry as a rectangle with width = 10 and heigh = 5.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== remove_duplicates == 
+
+  * Operand: msi.gama.util.IContainer
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== remove_node_from == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== reverse == 
+
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: msi.gama.util.IContainer<KeyType,ValueType>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rewire_n == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rewire_p == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rgb == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.util.GamaColor
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rnd == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Operand: msi.gama.metamodel.shape.GamaPoint
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Special cases:
+    * if the operand is a float, it is casted to an int before being evaluated
+    * if the operand is a point, returns a point with two random integers in the interval [0, operand]
+  * Comment: to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision
+  * See also: [#flip flip] 
+  {{{  
+   rnd (2.5) -> 0, 1 or 2
+   rnd (2) -> 0, 1 or 2
+   rnd (1000) / 1000 -> a float between 0 and 1 with a precision of 0.001
+   rnd ({2.5,3}) -> {x,y} with x in [0,2] and y in [0,3]
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rotated_by == 
+
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== round == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== row_at == 
+
+  * Left operand: msi.gama.util.matrix.IMatrix<T>
+  * Right operand: msi.gama.util.matrix.IMatrix<T>  
+  * Result Type: msi.gama.util.IList<T>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== rows_list == 
+
+  * Operand: msi.gama.util.matrix.IMatrix<T>
+  * Result Type: msi.gama.util.IList<msi.gama.util.IList<T>>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== set_verbose == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== shapefile == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== shuffle == 
+
+  * Possible use: 
+    * Operand: msi.gama.util.IList
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Operand: msi.gama.util.matrix.IMatrix
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+    * if the operand is empty, returns an empty list (or string, matrix)
+  * Comment: 
+  * See also: [#reverse reverse] 
+  {{{  
+   shuffle ([12, 13, 14]) -> [14,12,13];
+   shuffle (bug) ->  shuffle the list of all agents of the `bug` species
+   shuffle ('abc') -> 'bac'
+   shuffle ([["c11","c12","c13"],["c21","c22","c23"]]) -> [["c12","c21","c11"],["c13","c22","c23"]]
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== simple_clustering_by_distance == 
+
+  * Left operand: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Right operand: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.
+  * See also: [#simple_clustering_by_envelope_distance simple_clustering_by_envelope_distance] 
+  {{{  
+   [ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 -> for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== simple_clustering_by_envelope_distance == 
+
+  * Left operand: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Right operand: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.
+  * See also: [#simple_clustering_by_distance simple_clustering_by_distance] 
+  {{{  
+   [ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 -> for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== simplification == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== sin == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== skeletonize == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== sort == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: msi.gama.util.GamaList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== source_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== species == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gaml.species.ISpecies
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== split_at == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>
+  * Special cases:
+    * if the left-operand is a point or a polygon, returns an empty list
+  * Comment: 
+  * See also: 
+  {{{  
+   polyline([{1,2},{4,6}]) split_at {7,6}  -> [polyline([{1.0;2.0},{7.0;6.0}]), polyline([{7.0;6.0},{4.0;6.0}])].
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== split_lines == 
+
+  * Operand: msi.gama.util.IList
+  * Result Type: msi.gama.util.IList<msi.gama.metamodel.shape.IShape>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+   split_lines([line([{0,10}, {20,10}], line([{0,10}, {20,10}]]) -> returns a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}]).
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== split_with == 
+
+  * Left operand: java.lang.String
+  * Right operand: java.lang.String  
+  * Result Type: msi.gama.util.GamaList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== sqrt == 
+
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== square == 
+
+  * Operand: java.lang.Double
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns nil if the operand is nil.
+  * Comment: the centre of the square is by default the location of the current agent in which has been called this operator.
+  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, triangle around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, triangle] 
+  {{{  
+   square(10) -> returns a geometry as a square of side size 10.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== standard_deviation == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.
+  * See also: [#mean mean] [#mean_deviation mean_deviation] 
+  {{{  
+   standard_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.2930100540985752
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== string == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== successors_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== sum == 
+
+  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== tan == 
+
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== target_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== text == 
+
+  * Operand: java.lang.String
+  * Result Type: msi.gama.util.file.IGamaFile
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== times == 
+
+  * Left operand: msi.gama.util.matrix.IMatrix<T>
+  * Right operand: msi.gama.util.matrix.IMatrix<T>  
+  * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== to_gaml == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== to_java == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.String
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== topology == 
+
+  * Operand: java.lang.Object
+  * Result Type: msi.gama.metamodel.topology.ITopology
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== touches == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Boolean
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== towards == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: java.lang.Integer
+  * Special cases:
+  * Comment: 
+  * See also: [#distance_between distance_between] [#distance_to distance_to] [#direction_between direction_between] [#path_between path_between] [#path_to path_to] 
+  {{{  
+   ag1 towards ag2 -> the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== transformed_by == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== translated_by == 
+
+  * Left operand: msi.gama.metamodel.shape.IShape
+  * Right operand: msi.gama.metamodel.shape.IShape  
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== triangle == 
+
+  * Operand: java.lang.Double
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * returns nil if the operand is nil.
+  * Comment: the centre of the triangle is by default the location of the current agent in which has been called this operator.
+  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, square around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, square] 
+  {{{  
+   triangle(5) -> returns a geometry as a triangle with side_size = 5.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== triangulate == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== truncated_gauss == 
+
+  * Possible use: 
+    * Operand: msi.gama.util.IList
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: msi.gama.metamodel.shape.GamaPoint
+    * Result Type: java.lang.Double
+  * Special cases:
+    * if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]
+    * when truncated_gauss is called with a list of only one element mean, it will always return 0.0
+    * when the operand is a point, it is read as {mean, standardDeviation}
+  * Comment: 
+  * See also: [#gauss gauss] 
+  {{{  
+   truncated_gauss ([0.5, 0.0])  ->  0.5 (always)
+   truncated_gauss ({0, 0.3})  ->  an float between -0.3 and 0.3
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== undirected == 
+
+  * Operand: msi.gama.util.graph.IGraph
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== union == 
+
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.GamaList
+  * Possible use: 
+    * Operand: msi.gama.util.GamaList
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries
+  * Comment: 
+  * See also: 
+  {{{  
+   union(species1)  -> retutns the geometry resulting from the union of all of the geometries of agents of species species1.
+   union([geom1, geom2, geom3]) -> a geometry corresponding to union between geom1, geom2 and geom3
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== unknown == 
+
+  * Operand: java.lang.Object
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== user_input == 
+
+  * Operand: java.util.Map<java.lang.String,java.lang.Object>
+  * Result Type: java.util.Map<java.lang.String,java.lang.Object>
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== variance == 
+
+  * Operand: msi.gama.util.GamaList
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. 
+  * See also: [#mean mean] [#median median] 
+  {{{  
+   variance ([4.5, 3.5, 5.5, 7.0]) -> 1.671875	
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== weight_of == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== where == 
+
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaMap
+    * Right operand: msi.gama.util.GamaMap  
+    * Result Type: msi.gama.util.GamaMap
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer
+    * Right operand: msi.gama.util.IContainer  
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== with_max_of == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== with_min_of == 
+
+  * Left operand: msi.gama.util.IContainer
+  * Right operand: msi.gama.util.IContainer  
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== with_optimizer_type == 
+
+  * Left operand: msi.gama.util.graph.IGraph
+  * Right operand: msi.gama.util.graph.IGraph  
+  * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== with_precision == 
+
+  * Left operand: java.lang.Double
+  * Right operand: java.lang.Double  
+  * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== with_weights == 
+
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: msi.gama.util.graph.IGraph
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: msi.gama.util.graph.IGraph
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== without_holes == 
+
+  * Operand: msi.gama.metamodel.shape.IShape
+  * Result Type: msi.gama.metamodel.shape.IShape
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== write == 
+
+  * Operand: msi.gama.util.file.IGamaFile
+  * Result Type: java.lang.Object
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
