@@ -70,7 +70,7 @@ public abstract class Spatial {
 				specialCases = {"returns a point if the operand is lower or equal to 0."},
 				comment =  "the centre of the circle is by default the location of the current agent in which has been called this operator.",
 				examples = {"circle(10) -> returns a geometry as a circle of radius 10."},
-				see = {"around, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle"})
+				see = {"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opCircle(final IScope scope, final Double radius) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
@@ -860,6 +860,11 @@ public abstract class Spatial {
 	public static abstract class Properties {
 
 		@operator(value = { "<->", "disjoint_from" }, priority = IPriority.COMPARATOR)
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns true.", "if one operand is a point, returns false if the point is included in the geometry."},
+				examples = {"polyline([{10,10},{20,20}]) disjoint_from polyline([{15,15},{25,25}]) -> false.","polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{15,15},{15,25},{25,25},{25,15}]) -> false.", "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({15,15}) -> false.","polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({25,25}) -> true.", "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}]) -> true"},
+				see = {"intersects", "crosses", "overlaps", "partially_overlaps", "touches"})
 		public static Boolean opDisjoint(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return true; }
 			if ( g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return true; }
@@ -875,6 +880,11 @@ public abstract class Spatial {
 		 */
 
 		@operator("overlaps")
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns false.", "if one operand is a point, returns true if the point is included in the geometry"},
+				examples = {"polyline([{10,10},{20,20}]) overlaps polyline([{15,15},{25,25}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({25,25}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({15,15}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> true"},
+				see = { "<->", "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches"})
 		public static Boolean opOverlaps(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return !opDisjoint(scope, g1, g2);
@@ -889,6 +899,12 @@ public abstract class Spatial {
 		 */
 
 		@operator("partially_overlaps")
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns false."},
+				comment = "if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).",
+				examples = {"polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({25,25}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({15,15}) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> false"},
+				see = { "<->", "disjoint_from", "crosses", "overlaps", "intersects", "touches"})
 		public static Boolean opPartiallyOverlaps(final IShape g1, final IShape g) {
 			if ( g == null ) { return false; }
 			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());
@@ -902,6 +918,12 @@ public abstract class Spatial {
 		 * @return the prim CommandStatus
 		 */
 		@operator("touches")
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns false."},
+				comment = "returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.",
+				examples = {"polyline([{10,10},{20,20}]) touches geometry({15,15}) -> false", "polyline([{10,10},{20,20}]) touches geometry({10,10}) -> true", "geometry({15,15}) touches geometry({15,15}) -> false", "polyline([{10,10},{20,20}]) touches polyline([{10,10},{5,5}]) -> true", "polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) -> false", "polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}]) -> false","polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{15,15},{15,25},{25,25},{25,15}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({15,15}) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({10,15}) -> true"},
+				see = { "<->", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects"})
 		public static Boolean opTouches(final IShape g, final IShape g2) {
 			if ( g == null ) { return false; }
 			return g2.getInnerGeometry().touches(g.getInnerGeometry());
@@ -916,18 +938,29 @@ public abstract class Spatial {
 		 */
 
 		@operator("crosses")
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns false.", "if one operand is a point, returns false."},
+				examples = {"polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}]) -> true.", "polyline([{10,10},{20,20}]) crosses geometry({15,15}) -> false", "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}]) -> true"},
+				see = { "<->", "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches"})
 		public static Boolean opCrosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().crosses(g2.getInnerGeometry());
 		}
 
 		@operator("intersects")
+		@doc(
+				value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).",
+				specialCases = {"if one of the operand is null, returns false."},
+				examples = {"square(5) intersects {10,10} -> false."},
+				see = { "<->", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches"})
 		public static Boolean opIntersects(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().intersects(g2.getInnerGeometry());
 		}
 
 		@operator("intersects")
+		// no documentation because same same as before but optimized for points.
 		public static Boolean opIntersects(final IShape g1, final GamaPoint p) {
 			if ( g1 == null || p == null ) { return false; }
 			return pl.intersects(p, g1.getInnerGeometry());
@@ -1131,6 +1164,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(
+				value = "A list of agents among the left-operand list, covered by the operand (casted as a geometry).",
+				examples = {"[ag1, ag2, ag3] inside(self) -> return the agents among ag1, ag2 and ag3 that are covered by the shape of the agent applying the operator."},
+				see = {"closest_to", "overlapping", "agents_overlapping" , "agents_inside", "agent_closest_to"})
 		public static IList<IAgent> opInside(final IScope scope,
 			final IContainer<?, IShape> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
@@ -1140,6 +1177,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(
+				specialCases = {"if the left-operand is a species, return agents of the specified species."},
+				examples = {"species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator."})
 		public static IList<IAgent> opInside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
@@ -1181,6 +1221,11 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(
+				value = "An agent among the left-operand list, the closest to the operand (casted as a geometry).",
+				comment =  "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+				examples = {"[ag1, ag2, ag3] closest_to(self) -> return the closest agent among ag1, ag2 and ag3 to the agent applying the operator."},
+				see = {"inside", "overlapping", "agents_overlapping" , "agents_inside", "agent_closest_to"})
 		public static Object opClosestTo(final IScope scope, final IContainer<?, IShape> targets,
 			final IShape source) throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
@@ -1193,6 +1238,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(
+				specialCases = {"if the left-operand is a species, return an agent of the specified species."},
+				examples = {"species1 closest_to(self) -> return the closest agent of species species1 to the agent applying the operator."})
 		public static IAgent opClosestTo(final IScope scope, final ISpecies targets,
 			final IShape source) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
@@ -1209,6 +1257,11 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "agent_closest_to", type = IType.NONE)
+		@doc(
+				value = "A agent, the closest to the operand (casted as a geometry).",
+				comment =  "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+				examples = {"agent_closest_to(self) -> return the closest agent to the agent applying the operator."},
+				see = {"agents_inside", "agents_overlapping", "closest_to", "inside", "overlapping"})
 		public static IAgent opAgentsClosestTo(final IScope scope, final Object source)
 			throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
@@ -1221,6 +1274,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "agents_inside", content_type = IType.NONE)
+		@doc(
+				value = "A list of agents covered by the operand (casted as a geometry).",
+				examples = {"agents_inside(self) -> return the agents that are covered by the shape of the agent applying the operator."},
+				see = {"agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping"})
 		public static IList<IAgent> opAgentsIn(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
@@ -1229,6 +1286,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "agents_overlapping", content_type = IType.NONE)
+		@doc(
+				value = "A list of agents overlaping the operand (casted as a geometry).",
+				examples = {"agents_overlapping(self) -> return the agents that overlaps the shape of the agent applying the operator."},
+				see = {"agent_closest_to", "agents_inside", "closest_to", "inside", "overlapping"})
 		public static IList<IAgent> opOverlappingAgents(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
