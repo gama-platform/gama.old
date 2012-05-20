@@ -746,11 +746,19 @@ public abstract class Spatial {
 	public static abstract class Relations {
 
 		@operator(value = { "towards", "direction_to" })
+		@doc(
+				value = "The direction (in degree) between the two geometries (geometries, agents, points) considering the topology of the agent applying the operator.",
+				examples = {"ag1 towards ag2 -> the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator"},
+				see = {"distance_between","distance_to", "direction_between", "path_between", "path_to"})
 		public static Integer opTowards(final IScope scope, final IShape agent, final IShape target) {
 			return scope.getAgentScope().getTopology().directionInDegreesTo(agent, target);
 		}
 
 		@operator("distance_between")
+		@doc(
+				value = "A distance between a list of geometries (geometries, agents, points) considering a topology.",
+				examples = {"my_topology distance_between [ag1, ag2, ag3] -> the distance between ag1, ag2 and ag3 considering the topology my_topology"},
+				see = {"towards", "direction_to","distance_to", "direction_between", "path_between", "path_to"})
 		public static Double opDistanceBetween(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) {
 			int size = geometries.length();
@@ -769,6 +777,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "direction_between")
+		@doc(
+				value = "A direction (in degree) between a list of two geometries (geometries, agents, points) considering a topology.",
+				examples = {"my_topology direction_between [ag1, ag2] -> the direction between ag1 and ag2 considering the topology my_topology"},
+				see = {"towards", "direction_to","distance_to", "distance_between", "path_between", "path_to"})
 		public static Integer opDirectionBetween(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) throws GamaRuntimeException {
 			int size = geometries.length();
@@ -779,6 +791,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "path_between", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(
+				value = "A path between a list of two geometries (geometries, agents or points) considering a topology.",
+				examples = {"my_topology path_between [ag1, ag2] -> A path between ag1 and ag2"},
+				see = {"towards", "direction_to","distance_between", "direction_between", "path_to", "distance_to"})
 		public static IPath pathBetween(final IScope scope, final ITopology graph,
 			final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			// TODO Assumes that all elements in nodes are vertices of the graph... Should be
@@ -804,18 +820,27 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "distance_to")
+		@doc(
+				value = "A distance between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
+				examples = {"ag1 distance_to ag2 -> the distance between ag1 and ag2 considering the topology of the agent applying the operator"},
+				see = {"towards", "direction_to","distance_between", "direction_between", "path_between", "path_to"})
 		public static Double opDistanceTo(final IScope scope, final IShape source,
 			final IShape target) {
 			return scope.getAgentScope().getTopology().distanceBetween(source, target);
 		}
 
 		@operator(value = "distance_to")
+		//No documentation because it is same same as the previous one (but optimized for points?)
 		public static Double opDistanceTo(final IScope scope, final GamaPoint source,
 			final GamaPoint target) {
 			return scope.getAgentScope().getTopology().distanceBetween(source, target);
 		}
 
 		@operator("path_to")
+		@doc(
+				value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.",
+				examples = {"ag1 path_to ag2 -> the path between ag1 and ag2 considering the topology of the agent applying the operator"},
+				see = {"towards", "direction_to","distance_between", "direction_between", "path_between", "distance_to"})
 		public static IPath opPathTo(final IScope scope, final IShape g, final IShape g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
@@ -823,6 +848,7 @@ public abstract class Spatial {
 		}
 
 		@operator("path_to")
+		//No documentation because it is same same as the previous one (but optimized for points?)
 		public static IPath opPathTo(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
@@ -1215,6 +1241,11 @@ public abstract class Spatial {
 	public static abstract class Statistics {
 
 		@operator(value = { "simple_clustering_by_distance" }, content_type = IType.LIST)
+		@doc(
+				value = "A list of agent groups clustered by distance considering a distance min between two groups.",
+				comment =  "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.",
+				examples = {"[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 -> for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]"},
+				see = {"simple_clustering_by_envelope_distance"})
 		public static IList simpleClusteringByDistance(final IScope scope,
 			final IList<IAgent> agents, final Double distance) {
 			int nb = agents.size();
@@ -1253,16 +1284,6 @@ public abstract class Spatial {
 							minFusion = distGp;
 						}
 					}
-					// Geometry gg1 = g1.get(0).getGeometry().geometry;
-					// Geometry gg2 = g2.get(0).getGeometry().geometry;
-					// if ( gg1.isWithinDistance(gg2, distance) ) {
-					// dist = gg1.distance(gg2);
-					// distances.put(distGp, dist);
-					// if ( dist < distMin ) {
-					// distMin = dist;
-					// minFusion = distGp;
-					// }
-					// }
 				}
 			}
 			while (distMin <= distance) {
@@ -1313,6 +1334,11 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
+		@doc(
+				value = "A list of agent groups clustered by distance (considering the agent envelop) considering a distance min between two groups.",
+				comment =  "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.",
+				examples = {"[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 -> for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]"},
+				see = {"simple_clustering_by_distance"})
 		// CHANGER LE NOM !!!
 		public static IList simpleClusteringByEnvelopeDistance(final IScope scope,
 			final IList<IAgent> agents, final Double distance) {
