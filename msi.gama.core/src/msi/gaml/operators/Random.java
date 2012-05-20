@@ -157,7 +157,7 @@ public class Random {
 	@doc(
 		value = "a random element from the list",
 		specialCases = {"if the list is empty, returns nil ",
-						"In the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)"},
+						"If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)"},
 		examples = {"one_of (bug) -> bug3     // The species `bug` has previously be defined"})	
 	public static IAgent opAny(final IScope scope, final ISpecies l) throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(l).getAgentsList().any();

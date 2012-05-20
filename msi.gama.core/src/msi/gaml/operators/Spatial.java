@@ -910,43 +910,14 @@ public abstract class Spatial {
 
 	public static abstract class Points {
 
-		@operator(value = "next_point_to")
-		public static ILocation opNextPointTo(final IScope scope, final ILocation other) {
-			IAgent agent = scope.getAgentScope();
-			ILocation source = agent.getLocation();
-			if ( other == null ) { return source; }
-			return other;
-			// USELESS METHOD for the moment : the speed of the agent is not
-			// taken into account, nor
-			// is
-			// the geometry on which it is moving
-		}
-
-		@operator(value = "next_point_to")
-		public static ILocation opNextPointTo(final IScope scope, final IShape other) {
-			if ( other == null ) { return null; }
-			return opNextPointTo(scope, other.getLocation());
-		}
-
 		@operator(value = { "any_location_in", "any_point_in" })
+		@doc(
+				value = "A point inside (or touching) the operand-geometry.",
+				examples = {"any_location_in(square(5)) -> a point of the square, for example : {3,4.6}."},
+				see = {"closest_points_with", "farthest_point_to", "points_at"})
 		public static ILocation opAnyLocationIn(final IScope scope, final IShape g) {
 			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
-		}
-
-		@operator("contour_points_every")
-		public static GamaList opPointExteriorRing(final IScope scope, final IShape g,
-			final Double distance) {
-			GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
-			Geometry geom = g.getInnerGeometry();
-			if ( geom instanceof GeometryCollection ) {
-				for ( int i = 0; i < geom.getNumGeometries(); i++ ) {
-					locs.addAll(locExteriorRing(geom.getGeometryN(i), distance));
-				}
-			} else {
-				locs.addAll(locExteriorRing(geom, distance));
-			}
-			return locs;
 		}
 
 		private static IList<GamaPoint> locExteriorRing(final Geometry geom, final Double distance) {
@@ -959,9 +930,6 @@ public abstract class Spatial {
 				double dist_cur = 0;
 				int nbSp = geom.getNumPoints();
 				Coordinate[] coordsSimp = geom.getCoordinates();
-				// if ( coordsSimp[0].equals(coordsSimp[nbSp - 1]) ) {
-				// nbSp--;
-				// }
 				boolean same = false;
 				double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
 				for ( int i = 0; i < nbSp - 1; i++ ) {
@@ -1004,6 +972,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "points_at" }, content_type = IType.POINT)
+		@doc(
+				value = "A list of left-operand number of points located at a the right-operand distance to the agent location.",
+				examples = {"3 points_at(20.0) -> returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location"},
+				see = {"any_location_in", "any_point_in", "closest_points_with", "farthest_point_to"})
 		public static GamaList opPointsAt(final IScope scope, final Integer nbLoc,
 			final Double distance) {
 			if ( distance == null || nbLoc == null ) {
@@ -1026,6 +998,10 @@ public abstract class Spatial {
 		}
 
 		@operator("closest_points_with")
+		@doc(
+				value = "A list of two closest points between the two geometries.",
+				examples = {"geom1 closest_points_with(geom2) -> [pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1"},
+				see = {"any_location_in", "any_point_in", "farthest_point_to", "points_at"})
 		public static IList<GamaPoint> opClosestPointsBetween(final IShape a, final IShape b) {
 			Coordinate[] coors =
 				DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
@@ -1033,6 +1009,10 @@ public abstract class Spatial {
 		}
 
 		@operator("farthest_point_to")
+		@doc(
+				value = "the farthest point of the left-operand to the left-point.",
+				examples = {"geom farthest_point_to(pt) -> the closest point of geom to pt"},
+				see = {"any_location_in", "any_point_in", "closest_points_with", "points_at"})
 		public static ILocation opFarthestPointTo(final IShape g, final GamaPoint p) {
 			if ( g == null ) { return p.getLocation(); }
 			if ( p == null ) { return g.getLocation(); }
@@ -1176,7 +1156,7 @@ public abstract class Spatial {
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static Object opClosestTo(final IScope scope, final IContainer<?, IShape> targets,
-			final Object source) throws GamaRuntimeException {
+			final IShape source) throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
 				return scope.getAgentScope().getTopology()
 					.getAgentClosestTo((ILocation) source, In.list(scope, targets));
@@ -1188,7 +1168,7 @@ public abstract class Spatial {
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 		public static IAgent opClosestTo(final IScope scope, final ISpecies targets,
-			final Object source) throws GamaRuntimeException {
+			final IShape source) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return null; }
 			// CHANGE
