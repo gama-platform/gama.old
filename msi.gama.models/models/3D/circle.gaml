@@ -1,4 +1,4 @@
-model circle
+model circle   
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
