@@ -178,7 +178,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glDisable(GL_DEPTH_TEST);
 		//FIXME : should be turn on only if need (if we draw image)
 		//problem when true with glutBitmapString
-		blendingEnabled = true;
+		blendingEnabled = false;
 
 		camera.UpdateCamera(gl, width, height);
 
@@ -284,8 +284,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	
 	public void DrawModel() {
-		// ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		
+		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
+	    blendingEnabled =true;
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
+		}
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 
 		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim;
