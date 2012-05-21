@@ -332,7 +332,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 		//System.out.println("drawGeometry:" + geometry.getGeometryType());
-		this.AddJTSGeometryInJTSGeometries(geometry, color);
+		this.AddJTSGeometryInJTSGeometries(geometry, color,fill);
 		return sw.toShape(geometry).getBounds2D();
 	}
 
@@ -345,7 +345,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, -image.getWidth())).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g, lineColor);
+			this.AddJTSGeometryInJTSGeometries(g, lineColor,true);
 		}
 
 		for (int i = 0; i <= image.getHeight(); i++) {
@@ -353,7 +353,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			;
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g, lineColor);
+			this.AddJTSGeometryInJTSGeometries(g, lineColor,true);
 		}
 
 	}
@@ -376,7 +376,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		//WARNING: problem if an agent reach the 0,0 position...
 		//System.out.println("drawImage" + "curX" + curX + "curY" +curY +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight());
         if((curX == 0 && curY == 0)  ){
-        	AddImageInImages(img, curX, curY,img.getWidth(),img.getHeight(),angle);
+        	//AddImageInImages(img, curX, curY,img.getWidth(),img.getHeight(),angle);
+        	AddImageInImages(img, curX, curY,this.envWidth,this.envHeight,angle);
         	rect.setRect(curX, curY, img.getWidth(), img.getHeight());
         }
         else{
@@ -422,7 +423,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				(double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, c);
+		this.AddJTSGeometryInJTSGeometries(g, c,fill);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
@@ -433,7 +434,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g = GamaGeometryType.buildTriangle(curWidth,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, c);
+		this.AddJTSGeometryInJTSGeometries(g, c, fill);
 		Rectangle2D r = null;
 		return r;
 	}
@@ -453,7 +454,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final double toY) {
 		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY),
 				new GamaPoint(toX, toY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, c);
+		this.AddJTSGeometryInJTSGeometries(g, c,true);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
 	}
@@ -473,7 +474,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final Integer angle) {
 		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, c);
+		this.AddJTSGeometryInJTSGeometries(g, c,fill);
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 	}
@@ -523,12 +524,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param color
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,
-			final Color color) {
+			final Color color, final boolean fill) {
 
 		// System.out.println("Add:"+ geometry.getGeometryType());
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.color = color;
+		curJTSGeometry.fill = fill;
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
@@ -589,7 +591,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			while (it.hasNext()) {
 				MyJTSGeometry curGeometry = it.next();
 				graphicsGLUtils.DrawJTSGeometry(curGeometry.geometry,
-						curGeometry.color);
+						curGeometry.color, curGeometry.fill);
 			}
 		}
 
@@ -632,7 +634,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(0, 0, 255);
-		graphicsGLUtils.DrawJTSGeometry(g, c);
+		graphicsGLUtils.DrawJTSGeometry(g, c,true);
 	}
 
 	public void DrawXYZAxis(final float size) {

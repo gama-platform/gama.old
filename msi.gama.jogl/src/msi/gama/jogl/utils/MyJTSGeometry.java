@@ -12,5 +12,7 @@ public class MyJTSGeometry {
 	public Color color;
 
 	public String type;
+	
+	public Boolean fill;
 
 }

@@ -225,19 +225,19 @@ public class MyGraphics {
 
 	}
 
-	public void DrawJTSGeometry(Geometry geometry, Color c) {
+	public void DrawJTSGeometry(Geometry geometry, Color c, boolean fill) {
 
 		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
 		for (i = 0; i < geometry.getNumGeometries(); i++) {
 
 			if (geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry;
-				DrawMultiPolygon(polygons, c);
+				DrawMultiPolygon(polygons, c,fill);
 			}
 
 			else if (geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry;
-				DrawPolygon(polygon, c, 0.0f);
+				DrawPolygon(polygon, c, 0.0f,fill);
 			}
 
 			else if (geometry.getGeometryType() == "MultiLineString") {
@@ -259,7 +259,7 @@ public class MyGraphics {
 
 
 
-	public void DrawMultiPolygon(MultiPolygon polygons, Color c) {
+	public void DrawMultiPolygon(MultiPolygon polygons, Color c,boolean fill) {
 
 		numGeometries = polygons.getNumGeometries();
 		// System.out.println("Draw MultiPolygon:"+numGeometries);
@@ -270,7 +270,7 @@ public class MyGraphics {
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon, c, 0.0f);
+			DrawPolygon(curPolygon, c, 0.0f,fill);
 			// DrawPolygonContour(curPolygon,c,0.0f);
 			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
 			// Draw3DPolygon(curPolygon,c, 100.0f);
@@ -279,8 +279,9 @@ public class MyGraphics {
 
 
 
-	public void DrawPolygon(Polygon p, Color c, float z) {
+	public void DrawPolygon(Polygon p, Color c, float z,boolean fill) {
 
+		if(fill == true){
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		numExtPoints = p.getExteriorRing().getNumPoints();
@@ -308,15 +309,25 @@ public class MyGraphics {
 
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
-
+		
+		
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		DrawPolygonContour(p, c, z);
+		}
+		
+		else{
+			myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+					(float) c.getBlue() / 255, alpha);
+			DrawPolygonContour(p, c, z);
+		}
+
+		
 	}
 
 
 
 	public void DrawPolygonContour(Polygon p, Color c, float z) {
 		// Draw contour
-		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		myGl.glBegin(GL.GL_LINES);
 		numExtPoints = p.getExteriorRing().getNumPoints();
 		for (j = 0; j < numExtPoints - 1; j++) {
@@ -334,8 +345,8 @@ public class MyGraphics {
 
 	public void Draw3DPolygon(Polygon p, Color c, float z_offset) {
 
-		DrawPolygon(p, c, 0);
-		DrawPolygon(p, c, z_offset);
+		DrawPolygon(p, c, 0,true);
+		DrawPolygon(p, c, z_offset,true);
 		Draw3DQuads(p, c, z_offset);
 
 	}
@@ -450,7 +461,7 @@ public class MyGraphics {
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();			
 			myGl.glNewList(listId, GL_COMPILE);
-			DrawJTSGeometry(curGeometry.geometry,curGeometry.color);
+			DrawJTSGeometry(curGeometry.geometry,curGeometry.color,curGeometry.fill);
 			myGl.glEndList();
 			listId = listId + 1;;
 		}
