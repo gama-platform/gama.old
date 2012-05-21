@@ -539,17 +539,26 @@ public abstract class Spatial {
 	public static abstract class Transformations {
 
 		@operator("convex_hull")
+		@doc(
+				value = "A geometry correspondong to the convex hull of the operand.",
+				examples = {"convex_hull(self) -> returns the convex hull of the geometry of the agent applying the operator"})
 		public static IShape opConvexHull(final IShape g) {
 			return new GamaShape(g.getInnerGeometry().convexHull());
 		}
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" }, priority = IPriority.PRODUCT)
+		@doc(
+				specialCases = {"if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient"},
+				examples = {"shape * 2 -> returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2"})
 		public static IShape opScaledBy(final IShape g, final Double coefficient) {
 			return ((GamaShape) g.getGeometry()).scaledBy(coefficient);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
+		@doc(
+				specialCases = {"if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters"},
+				examples = {"shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment"})
 		public static IShape opBuffer(final IShape g, final GamaMap parameters) {
 			Double distance = (Double) parameters.get("distance");
 			Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
@@ -560,11 +569,17 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
+		@doc(
+				specialCases = {"if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance"},
+				examples = {"shape + 5 -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5"})
 		public static IShape opBuffer(final IShape g, final Double size) {
 			return new GamaShape(g.getInnerGeometry().buffer(size));
 		}
 
 		@operator(value = { "-", "reduced_by" }, priority = IPriority.ADDITION)
+		@doc(
+				specialCases = {"if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance"},
+				examples = {"shape - 5 -> returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5"})
 		public static IShape opNegativeBuffer(final IShape g, final Double size) {
 			return opBuffer(g, -size);
 		}
@@ -587,15 +602,21 @@ public abstract class Spatial {
 		 * @throws GamaRuntimeException
 		 *             Apply a rotation (of a given angle) to the agent geometry
 		 * 
-		 * @param args : angle -> double, rad
+		 * @param args : angle -> double, degree
 		 * @return the prim CommandStatus
 		 */
 		@operator("rotated_by")
+		@doc(
+				value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)",
+				examples = {"self rotated_by 45 -> returns the geometry resulting from a 45¡ rotation to the geometry of the agent applying the operator."},
+				see = {"transformed_by", "translated_by"})
 		public static IShape primRotation(final IShape g1, final Double angle) {
-			return ((GamaShape) g1.getGeometry()).rotatedBy(angle);
+			return ((GamaShape) g1.getGeometry()).rotatedBy(Math.toRadians(angle));
 		}
 
 		@operator("rotated_by")
+		@doc(
+				comment = "the right-hand operand can be a float or a int")
 		public static IShape primRotation(final IShape g1, final Integer angle) {
 			return ((GamaShape) g1.getGeometry()).rotatedBy(angle);
 		}
@@ -610,6 +631,10 @@ public abstract class Spatial {
 		 * @return the prim CommandStatus
 		 */
 		@operator("transformed_by")
+		@doc(
+				value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)",
+				examples = {"self transformed_by {45, 20} -> returns the geometry resulting from 45¡ rotation and 10m translation of the geometry of the agent applying the operator."},
+				see = {"rotated_by", "translated_by"})
 		public static IShape primAffinite(final IShape g, final GamaPoint p) {
 			return opScaledBy(primRotation(g, p.x), p.y);
 		}
@@ -622,6 +647,10 @@ public abstract class Spatial {
 		 * @return the prim CommandStatus
 		 */
 		@operator("translated_by")
+		@doc(
+				value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)",
+				examples = {"self translated_by 45 -> returns the geometry resulting from a 10m translation to the geometry of the agent applying the operator."},
+				see = {"rotated_by", "transformed_by"})
 		public static IShape primTranslationBy(final IShape g, final GamaPoint p)
 			throws GamaRuntimeException {
 			return primTranslationTo(g,
@@ -629,6 +658,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "at_location", "translated_to" })
+		@doc(
+				value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)",
+				examples = {"self at_location {10, 20} -> returns the geometry resulting from a translation to the location {10, 20} of the geometry of the agent applying the operator."})
 		public static IShape primTranslationTo(final IShape g, final ILocation p)
 			throws GamaRuntimeException {
 			GamaShape newShape = (GamaShape) g.copy();
@@ -637,6 +669,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "without_holes", "solid" })
+		@doc(
+				value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes",
+				examples = {"solid(self) -> returns the geometry corresponding to the geometry of the agent applying the operator without its holes."})
 		public static IShape opWithoutHoles(final IShape g) {
 			Geometry geom = g.getInnerGeometry();
 			Geometry result = geom;
@@ -662,11 +697,17 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
+		@doc(
+				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)",
+				examples = {"triangulate(self) -> returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator."})
 		public static GamaList<IShape> primTriangulate(final IShape g) {
 			return GeometryUtils.triangulation(g.getInnerGeometry());
 		}
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
+		@doc(
+				value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
+				examples = {"self as_grid {10, 5} -> returns a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator."})
 		public static IMatrix opAsGrid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
@@ -674,6 +715,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "as_4_grid", content_type = IType.GEOMETRY)
+		@doc(
+				value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)",
+				examples = {"self as_grid {10, 5} -> returns matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator."})
 		public static IMatrix opAs4Grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
@@ -702,6 +746,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "skeletonize", content_type = IType.GEOMETRY)
+		@doc(
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
+				examples = {"skeletonize(self) -> returns the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator."})
 		public static GamaList<IShape> primSkeletonization(final IScope scope, final IShape g) {
 			List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
 			GamaList<IShape> geoms = new GamaList();
@@ -712,6 +759,10 @@ public abstract class Spatial {
 		}
 
 		@operator("clean")
+		@doc(
+				value = "A geometry corresponding to the cleaning of the operand (geometry, agent, point)",
+				comment = "The cleaning corresponds to a buffer with a distance of 0.0",
+				examples = {"cleaning(self) -> returns the geometry resulting from the cleaning of the geometry of the agent applying the operator."})
 		public static IShape opClean(final IShape g) {
 			if ( g == null || g.getInnerGeometry() == null ) { return g; }
 			if ( g.getInnerGeometry() instanceof Polygon ) { return new GamaShape(g
@@ -733,6 +784,10 @@ public abstract class Spatial {
 		 */
 
 		@operator("simplification")
+		@doc(
+				value = "A geometry corresponding to the simplification of the operand (geometry, agent, point) considering a tolerance distance.",
+				comment = "The algorithm used for the simplification is Douglas-Peucker",
+				examples = {"self simplification 0.1 -> returns the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1."})
 		public static IShape opSimplication(final IShape g1, final Double distanceTolerance) {
 			if ( g1 == null || g1.getInnerGeometry() == null ||
 				g1.getInnerGeometry() instanceof Point ||
