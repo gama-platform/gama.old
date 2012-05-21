@@ -25,7 +25,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.navigator.FileBean;
 import msi.gama.gui.swt.perspectives.*;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaStartupException;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -73,11 +72,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			linkSampleModelsToWorkspace(workspace);
 		}
 		/* Early build of the contributions made by plugins to GAMA */
-		try {
-			GamaBundleLoader.preBuildContributions();
-		} catch (GamaStartupException e1) {
-			e1.printStackTrace();
-		}
+		GamaBundleLoader.preBuildContributions();
 
 	}
 
