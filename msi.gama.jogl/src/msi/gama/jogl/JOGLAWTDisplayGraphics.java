@@ -32,6 +32,8 @@ import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
+
+import org.geotools.filter.expression.ThisPropertyAccessorFactory;
 import org.jfree.chart.JFreeChart;
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.awt.*;
@@ -63,6 +65,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// OpenGL member
 	private final GL myGl;
 	private final GLU myGlu;
+	private final GLUT glut;
 
 	// Handle opengl primitive.
 	public MyGraphics graphicsGLUtils;
@@ -78,9 +81,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// each Image is stored in a list
 	public ArrayList<MyImage> myImages = new ArrayList<MyImage>();
+	
+	//List of all the String 
+	public ArrayList<MyString> myStrings = new ArrayList<MyString>();
 
 	// Define the environment properties.
-	public float myWidth, myHeight, myMaxDim;
+	public float envWidth, envHeight, maxEnvDim;
 
 	// All the geometry are drawn in the same z plan (depend on the sale rate).
 	public float z;
@@ -115,13 +121,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final float env_height) {
 		myGl = gl;
 		myGlu = glu;
-		myWidth = env_width;
-		myHeight = env_height;
+		glut = new GLUT();
+		envWidth = env_width;
+		envHeight = env_height;
 
-		if (myWidth > myHeight) {
-			myMaxDim = myWidth;
+		if (envWidth > envHeight) {
+			maxEnvDim = envWidth;
 		} else {
-			myMaxDim = myHeight;
+			maxEnvDim = envHeight;
 		}
 
 		z = 0.0f;
@@ -363,8 +370,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 			final boolean smooth) {
 
-		AddImageInImages(img, curX, curY,angle);
-		rect.setRect(curX, curY, curWidth, curHeight);
+        //FIXME Dirty way to check that img represent the environment. When the image is the enviroment
+        //we set the dimensions on the image as the env dimensions.
+		//FIXME: We should display the image with the size of the environment, this not the case here if the size of the image is greater than the environment
+		//WARNING: problem if an agent reach the 0,0 position...
+		//System.out.println("drawImage" + "curX" + curX + "curY" +curY +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight());
+        if((curX == 0 && curY == 0)  ){
+        	AddImageInImages(img, curX, curY,img.getWidth(),img.getHeight(),angle);
+        	rect.setRect(curX, curY, img.getWidth(), img.getHeight());
+        }
+        else{
+        	//FIXME:how to get the real x and y?
+        	AddImageInImages(img, curX, curY,curWidth,curHeight,angle);
+        	rect.setRect(curX, curY, curWidth, curHeight);
+        }
 		return rect.getBounds2D();
 	}
 
@@ -472,6 +491,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor,
 			final Integer angle) {
+        //FIXME String must be drawn from the gl current context, that the reason why using a list of string
+		AddStringInStrings(string,curX,-curY,0.0f);
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
 		return r;
@@ -512,7 +533,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	private void AddImageInImages(BufferedImage img, final int curX,
-			final int curY,final Integer angle) {
+			final int curY, float widthInModel, float heightInModel, final Integer angle) {
 
 		final MyImage curImage = new MyImage();
 		
@@ -520,6 +541,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		if ( angle != null ) {
 		AffineTransform tx = new AffineTransform();
 	    tx.rotate(Maths.toRad * angle, img.getWidth() / 2, img.getHeight() / 2);
+	    //tx.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 
     
 	    AffineTransformOp op = new AffineTransformOp(tx,
@@ -530,9 +552,22 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.image = img;
 		curImage.x = curX;
 		curImage.y = curY;
+		curImage.width = widthInModel;
+		curImage.height = heightInModel;
 				
 		myGLRender.InitTexture(img);
 		this.myImages.add(curImage);
+	}
+	
+	private void AddStringInStrings(String string, float x, float y, float z){
+		
+		final MyString curString = new MyString();
+		curString.string= string;
+		curString.x=x;
+		curString.y=y;
+		curString.z=z;
+		this.myStrings.add(curString);
+		
 	}
 
 	// /////////////// Draw Method ////////////////////
@@ -572,37 +607,41 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			id++;
 		}
 	}
+	
+	public void DrawMyStrings() {
+
+		Iterator<MyString> it = this.myStrings.iterator();
+				
+		int id = 0;
+		while (it.hasNext()) {
+			
+			MyString curString = it.next();
+			DrawString(curString.string,curString.x,curString.y,0.0f);
+			id++;
+		}
+	}
 
 	public void DrawEnvironmentBounds() {
 
-		// Draw Width and height value
-		GLUT glut = new GLUT();
-		myGl.glRasterPos3f(this.myWidth / 2, this.myHeight * 0.01f, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
-				String.valueOf(this.myWidth));
-
-		myGl.glRasterPos3f(this.myWidth * 1.01f, -(this.myHeight / 2), 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
-				String.valueOf(this.myHeight));
+		// Draw Width and height value		
+		DrawString(String.valueOf(this.envWidth),this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
+		DrawString(String.valueOf(this.envHeight),this.envWidth * 1.01f, -(this.envHeight / 2), 0.0f);
 
 		// Draw environment rectangle
-		Geometry g = GamaGeometryType.buildRectangle(myWidth, myHeight,
-				new GamaPoint(myWidth / 2, myHeight / 2)).getInnerGeometry();
+		Geometry g = GamaGeometryType.buildRectangle(envWidth, envHeight,
+				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(0, 0, 255);
 		graphicsGLUtils.DrawJTSGeometry(g, c);
 	}
 
 	public void DrawXYZAxis(final float size) {
-		GLUT glut = new GLUT();
-		
-		myGl.glColor3f(0.0f, 0.0f, 0.0f);
-		myGl.glRasterPos3f(size, size, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
-				"1:" + String.valueOf(size));
+	
+	
+		myGl.glColor3f(0.0f, 0.0f, 0.0f);		
+		DrawString("1:" + String.valueOf(size),size,size,0.0f);
 		// X Axis
-		myGl.glRasterPos3f(1.2f * size, 0.0f, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "x");
+		DrawString("x",1.2f*size,0.0f,0.0f);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor3f(1.0f, 0, 0);
 		myGl.glVertex3f(0, 0, 0);
@@ -616,8 +655,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glEnd();
 
 		// Y Axis
-		myGl.glRasterPos3f(0.0f, 1.2f * size, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "y");
+		DrawString("x",0.0f,1.2f*size,0.0f);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor3f(0, 1.0f, 0);
 		myGl.glVertex3f(0, 0, 0);
@@ -631,7 +669,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		// Z Axis
 		myGl.glRasterPos3f(0.0f, 0.0f, 1.2f * size);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z");
+		DrawString("z",0.0f, 0.0f, 1.2f * size);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor3f(0, 0, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
@@ -649,23 +687,25 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	public void DrawZValue(final float pos, final float value) {
-
-		GLUT glut = new GLUT();
+		DrawString("z:" + String.valueOf(value),pos,pos,0.0f);
+	}
+	
+	public void DrawString(String string, float x, float y,float z){
+		
 		myGl.glColor3f(0.0f, 0.0f, 0.0f);
-		myGl.glRasterPos3f(pos, pos, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
-				"z:" + String.valueOf(value));
+		myGl.glRasterPos3f(x, y, z);
+		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,string);
+		
 	}
 
 	public void DrawScale() {
-		GLUT glut = new GLUT();
+
 		// Draw Scale
-		float y_text_pos = -(this.myHeight + this.myHeight * 0.05f);
-		myGl.glRasterPos3f(0.0f, y_text_pos * 0.99f, 0.0f);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Scale:" + "1");
+		float y_text_pos = -(this.envHeight + this.envHeight * 0.05f);
+		DrawString("Scale:" + "1",0.0f, y_text_pos * 0.99f, 0.0f);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glVertex3f(0, 0 + y_text_pos, 0);
-		myGl.glVertex3f(this.myWidth * 0.05f, 0 + y_text_pos, 0);
+		myGl.glVertex3f(this.envWidth * 0.05f, 0 + y_text_pos, 0);
 
 		myGl.glVertex3f(0, -0.05f + y_text_pos, 0);
 		myGl.glVertex3f(0, 0.05f + y_text_pos, 0);
@@ -685,6 +725,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void CleanImages() {
 		this.myImages.clear();
 		myGLRender.myTextures.clear();
+	}
+	
+	public void CleanStrings() {
+		this.myStrings.clear();
+	
 	}
 	
 

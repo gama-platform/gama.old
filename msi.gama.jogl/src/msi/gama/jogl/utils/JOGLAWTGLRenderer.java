@@ -286,13 +286,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void DrawModel() {
 		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
 		
+		//Draw Image
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
 	    blendingEnabled =true;
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
 		}
+		
+		//Draw Geometry
+		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries.isEmpty()){
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
-
-		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim;
+		}
+		
+		//Draw String
+		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myStrings.isEmpty()){
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyStrings();
+		}
+		
+		
+		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 		
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
 				.DrawXYZAxis(envMaxDim / 10);
@@ -323,14 +334,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glBegin(GL_QUADS);
 			// bottom-left of the texture and quad
 			gl.glTexCoord2f(textureLeft, textureBottom);
-			gl.glVertex3f(img.x, -(img.y + img.image.getHeight()), 0);
+			gl.glVertex3f(img.x, -(img.y + img.height), 0);
 			// bottom-right of the texture and quad
 			gl.glTexCoord2f(textureRight, textureBottom);
-			gl.glVertex3f((img.x + img.image.getWidth()),
-					-(img.y + img.image.getHeight()), 0);
+			gl.glVertex3f((img.x + img.width),
+					-(img.y + img.height), 0);
 			// top-right of the texture and quad
 			gl.glTexCoord2f(textureRight, textureTop);
-			gl.glVertex3f((img.x + img.image.getWidth()), -(img.y), 0);
+			gl.glVertex3f((img.x + img.width), -(img.y), 0);
 			// top-left of the texture and quad
 			gl.glTexCoord2f(textureLeft, textureTop);
 			gl.glVertex3f(img.x, -img.y, 0);
