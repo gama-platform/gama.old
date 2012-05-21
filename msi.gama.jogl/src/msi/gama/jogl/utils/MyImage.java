@@ -12,5 +12,7 @@ public class MyImage {
 	public int textureId;
 	public float x;
 	public float y;
+	public float width;
+	public float height;
 
 }

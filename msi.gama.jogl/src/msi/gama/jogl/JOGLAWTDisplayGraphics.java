@@ -22,6 +22,7 @@ package msi.gama.jogl;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.media.opengl.GL;
@@ -29,6 +30,7 @@ import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
 import com.sun.opengl.util.GLUT;
@@ -322,7 +324,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
-		System.out.println("drawGeometry:" + geometry.getGeometryType());
+		//System.out.println("drawGeometry:" + geometry.getGeometryType());
 		this.AddJTSGeometryInJTSGeometries(geometry, color);
 		return sw.toShape(geometry).getBounds2D();
 	}
@@ -361,7 +363,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 			final boolean smooth) {
 
-		AddImageInImages(img, curX, curY);
+		AddImageInImages(img, curX, curY,angle);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 	}
@@ -509,13 +511,26 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
-	private void AddImageInImages(final BufferedImage img, final int curX,
-			final int curY) {
+	private void AddImageInImages(BufferedImage img, final int curX,
+			final int curY,final Integer angle) {
 
 		final MyImage curImage = new MyImage();
+		
+		//FIXME. This is really heavy find a way to do it in a faster way.
+		if ( angle != null ) {
+		AffineTransform tx = new AffineTransform();
+	    tx.rotate(Maths.toRad * angle, img.getWidth() / 2, img.getHeight() / 2);
+
+    
+	    AffineTransformOp op = new AffineTransformOp(tx,
+	        AffineTransformOp.TYPE_BILINEAR);
+	    img = op.filter(img, null);
+		}
+		
 		curImage.image = img;
 		curImage.x = curX;
 		curImage.y = curY;
+				
 		myGLRender.InitTexture(img);
 		this.myImages.add(curImage);
 	}
@@ -548,8 +563,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void DrawMyImages() {
 
 		Iterator<MyImage> it = this.myImages.iterator();
+				
 		int id = 0;
 		while (it.hasNext()) {
+			
 			MyImage curImage = it.next();
 			myGLRender.DrawTexture(id, curImage);
 			id++;
@@ -578,7 +595,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void DrawXYZAxis(final float size) {
 		GLUT glut = new GLUT();
-
+		
+		myGl.glColor3f(0.0f, 0.0f, 0.0f);
 		myGl.glRasterPos3f(size, size, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
 				"1:" + String.valueOf(size));
@@ -625,12 +643,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		myGl.glVertex3f(0.0f, -0.05f * size, 1.0f * size);
 		myGl.glVertex3f(0.0f, 0.0f, 1.1f * size);
 		myGl.glEnd();
+		
 
+	
 	}
 
 	public void DrawZValue(final float pos, final float value) {
 
 		GLUT glut = new GLUT();
+		myGl.glColor3f(0.0f, 0.0f, 0.0f);
 		myGl.glRasterPos3f(pos, pos, 0.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
 				"z:" + String.valueOf(value));

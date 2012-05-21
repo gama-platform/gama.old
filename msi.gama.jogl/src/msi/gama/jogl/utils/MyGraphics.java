@@ -227,7 +227,7 @@ public class MyGraphics {
 
 	public void DrawJTSGeometry(Geometry geometry, Color c) {
 
-		System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
+		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
 		for (i = 0; i < geometry.getNumGeometries(); i++) {
 
 			if (geometry.getGeometryType() == "MultiPolygon") {

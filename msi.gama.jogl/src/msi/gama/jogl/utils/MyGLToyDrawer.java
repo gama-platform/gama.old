@@ -35,7 +35,7 @@ public class MyGLToyDrawer {
 	float textureTop, textureBottom, textureLeft, textureRight;
 	private Texture[] textures = new Texture[3];
 	private static int currTextureFilter = 2; // currently used filter
-	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
+	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
 
 	
 	// Display list 
@@ -255,6 +255,34 @@ public class MyGLToyDrawer {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void DrawTexture(GL gl, float width){
+		
+		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
+
+		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
+		// context's state.
+		textures[currTextureFilter].enable();
+		// Binds this texture to the current GL context.
+		textures[currTextureFilter].bind();
+
+		gl.glBegin(GL_QUADS);
+
+		// Front Face
+		gl.glTexCoord2f(textureLeft, textureBottom);
+		gl.glVertex3f(-width, -width, width); // bottom-left of the texture and
+												// quad
+		gl.glTexCoord2f(textureRight, textureBottom);
+		gl.glVertex3f(width, -width, width); // bottom-right of the texture and
+												// quad
+		gl.glTexCoord2f(textureRight, textureTop);
+		gl.glVertex3f(width, width, width); // top-right of the texture and quad
+		gl.glTexCoord2f(textureLeft, textureTop);
+		gl.glVertex3f(-width, width, width); // top-left of the texture and quad
+		
+		gl.glEnd();
+		
 	}
 	
 	public void DrawTexturedQuad(GL gl, float width) {

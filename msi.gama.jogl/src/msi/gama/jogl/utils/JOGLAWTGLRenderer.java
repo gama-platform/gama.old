@@ -12,6 +12,8 @@ import static javax.media.opengl.GL.GL_FRONT;
 import static javax.media.opengl.GL.GL_LEQUAL;
 import static javax.media.opengl.GL.GL_LIGHT1;
 import static javax.media.opengl.GL.GL_LIGHTING;
+import static javax.media.opengl.GL.GL_LINEAR;
+import static javax.media.opengl.GL.GL_LINEAR_MIPMAP_NEAREST;
 import static javax.media.opengl.GL.GL_MODELVIEW;
 import static javax.media.opengl.GL.GL_NICEST;
 import static javax.media.opengl.GL.GL_ONE;
@@ -21,6 +23,8 @@ import static javax.media.opengl.GL.GL_QUADS;
 import static javax.media.opengl.GL.GL_SMOOTH;
 import static javax.media.opengl.GL.GL_SRC_ALPHA;
 import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
+import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 
 
 import java.awt.image.BufferedImage;
@@ -114,7 +118,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				this, displaySurface.envWidth, displaySurface.envHeight);
 
 		// Set background color (in RGBA). Alpha of 0 for total transparency
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
@@ -129,18 +133,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.1f;
+		float ambientMean=1.0f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		// Diffuse light comes from a particular location. Diffuse's value in
 		// RGBA
-		float diffuseMean=0.5f;
+		float diffuseMean=0.1f;
 		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (in front of the screen at width
 		// position).
 		float lightDiffusePosition[] = { 0.0f, 0.0f, width, 1.0f };
 		
 		//Specular light
-		float specularMean=0.1f;
+		float specularMean=1.0f;
         float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
 
 		gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
@@ -156,7 +160,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// set material properties which will be assigned by glColor
 		//gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
-		float[] rgba = {0.3f, 0.5f, 1f};
+		float[] rgba = {0.3f, 0.5f, 1f,1f};
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
@@ -166,15 +170,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Full Brightness with specific alpha (1 for opaque, 0 for transparent)
 		gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 		// Used blending function based On source alpha value
-		gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		//gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+
+
 		gl.glEnable(GL_BLEND);
 		gl.glDisable(GL_DEPTH_TEST);
-		blendingEnabled = false;
+		//FIXME : should be turn on only if need (if we draw image)
+		//problem when true with glutBitmapString
+		blendingEnabled = true;
 
 		camera.UpdateCamera(gl, width, height);
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
-	    //myGLDrawer.LoadTextureFromImage(gl);
+	    myGLDrawer.LoadTextureFromImage(gl);
 		//myGLDrawer.buildDisplayLists(gl, width / 4);
 
 		System.out.println("openGL init ok");
@@ -252,9 +261,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//myGLDrawer.DrawColorTriangle(gl,0.0f, 0.0f, 0.0f, width);
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
+		
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 		//myGLDrawer.DrawTexturedQuad(gl,width/4);
-		//myGLDrawer.DrawTexturedQuadWithNormal(gl, width / 4);
+		//myGLDrawer.DrawTexture(gl, width / 4);
+		
 		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
 	    //myGLDrawer.DrawTexturedDisplayList(gl,width);
 
@@ -278,10 +289,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 
 		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myMaxDim;
+		
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
 				.DrawXYZAxis(envMaxDim / 10);
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawZValue(
 				-envMaxDim / 10, (float) camera.zPos);
+		
 	}
 
 	public void DrawTexture(int index, MyImage img) {
@@ -294,7 +307,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			t.enable();
 			t.bind();
 
-			// Reset opengl color.
+			// Reset opengl color. Set the transparency of the image to 1 (opaque).
 			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			TextureCoords textureCoords;
 			textureCoords = t.getImageTexCoords();
