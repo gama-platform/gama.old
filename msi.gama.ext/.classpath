@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="janino.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler-jdk.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler.jar"/>
-	<classpathentry exported="true" kind="lib" path="janino.jar" sourcepath="sources/janino-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jdom.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
 	<classpathentry exported="true" kind="lib" path="weka.jar"/>

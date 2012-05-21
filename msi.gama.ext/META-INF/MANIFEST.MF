@@ -5,7 +5,6 @@ Bundle-SymbolicName: msi.gama.ext
 Bundle-Version: 1.0.0
 Bundle-ClassPath: commons-compiler-jdk.jar,
  commons-compiler.jar,
- janino.jar,
  jdom.jar,
  jgrapht-jdk1.6.jar,
  weka.jar,
@@ -41,7 +40,8 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  gs-algo-1.1.jar,
  gs-core-1.1.1.jar,
  gs-ui-1.1.1.jar,
- gt-swing-2.7.3.jar
+ gt-swing-2.7.3.jar,
+ janino.jar
 Bundle-Vendor: MSI
 Export-Package: com.keypoint,
  com.sun.media.jai.iterator,
