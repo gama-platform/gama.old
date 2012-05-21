@@ -75,7 +75,7 @@ global {
 }
 
 entities {
-	species base skills: [situated, moving] ;
+	species base skills: [moving] ;
 	
 	species ball parent: base control: fsm {
 		//var shape type: geometry init: ball_shape at_location location ;
@@ -170,7 +170,7 @@ entities {
 	species group parent: base {
 		var color type: rgb init: rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
-		var shape type: geometry init: (polygon ( (list (ball_in_group)) )) buffer  10 ;
+		var shape type: geometry init: polygon ( (list (ball_in_group)) ) buffer  10 ;
 		
 		var speed type: float value: float(group_base_speed) ;
 		var perception_range type: float value: float(base_perception_range + (rnd(5))) ;
@@ -180,16 +180,16 @@ entities {
 		
 		action get_nearer_target type: base {
 			if condition: (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
-				return value: nil ;
+				return nil ;
 			}
 			
 			let distance_to_ball type: float value: (nearest_free_ball != nil) ? (self distance_to nearest_free_ball) : MAX_DISTANCE ;
 			let distance_to_group type: float value: (nearest_smaller_group != nil) ? (self distance_to nearest_smaller_group) : MAX_DISTANCE ;
-			if condition: (distance_to_ball < distance_to_group) {
-				return value: nearest_free_ball ;
+			if (distance_to_ball < distance_to_group) {
+				return nearest_free_ball ;
 			}
 			
-			return value: nearest_smaller_group ;
+			return nearest_smaller_group ;
 		}
 		
 		action separate_components {
@@ -223,8 +223,8 @@ entities {
 		
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			let nearby_free_balls type: list value: (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
-			if condition: !(empty (nearby_free_balls)) {
-				capture target: nearby_free_balls as: ball_in_group;
+			if !(empty (nearby_free_balls)) {
+				capture nearby_free_balls as: ball_in_group;
 			}
 		}
 		
@@ -234,11 +234,11 @@ entities {
 				set state value: 'chaos' ;
 			}
 			
-			do action: die ;
+			do die ;
 		}
 		
 		reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
-			if condition: (target != nil) and ((species_of (target)) = group) {
+			if ( (target != nil) and ((species_of (target)) = group) ) {
 				let nearby_groups type: list of: group value: (group overlapping (shape + perception_range)) - self ;
 				
 				if target in nearby_groups {
@@ -315,12 +315,11 @@ entities {
 	}
 	
 	species cloud parent: base {
-		geometry shape value: polygon(members collect (((group_delegation(each)).shape).location));
+		geometry shape value: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
 		rgb color;
-		int creation_time init: int(time) const: true;
 				
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			var shape type: geometry value: (polygon ( (list (ball_in_cloud)) collect (each.location) )) buffer  10 ;
+			var shape type: geometry value: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			}
