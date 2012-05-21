@@ -37,10 +37,6 @@ public interface IScheduler extends IStepable {
 
 	public abstract void insertAgentToInit(final IAgent entity) throws GamaRuntimeException;
 
-	public abstract IScheduledAction insertBeginAction(final Object target, final String method);
-
-	public abstract IScheduledAction insertEndAction(final Object target, final String method);
-
 	public abstract void removeAction(final IScheduledAction haltAction);
 
 	public void executeOneAction(final IScheduledAction action);

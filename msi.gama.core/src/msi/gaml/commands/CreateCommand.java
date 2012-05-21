@@ -144,7 +144,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			}
 		}
 
-		while (!currentSpec.getName().equals(IKeyword.WORLD_SPECIES_NAME)) {
+		while (!currentSpec.getName().equals(IKeyword.WORLD_SPECIES)) {
 			if ( !ModelFactory.isBuiltIn(currentSpec.getName()) ) {
 				if ( !firstSpec ) {
 					firstSpec = true;

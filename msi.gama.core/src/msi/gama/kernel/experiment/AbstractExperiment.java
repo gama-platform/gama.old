@@ -87,6 +87,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 
 		}
 
+		@msi.gama.precompiler.GamlAnnotations.species("experimentator")
 		public static class ExperimentatorAgent extends GamlAgent {
 
 			private GamaPoint location;

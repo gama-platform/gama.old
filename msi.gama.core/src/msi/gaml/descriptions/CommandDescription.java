@@ -99,7 +99,7 @@ public class CommandDescription extends SymbolDescription {
 			if ( !doFacets.contains(facet) ) {
 				Facets f = new Facets(IKeyword.NAME, facet);
 				f.put(IKeyword.VALUE, entry.getValue());
-				args.put(facet, DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
+				args.put(facet, DescriptionFactory.create(IKeyword.ARG, this, null, f));
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class CommandDescription extends SymbolDescription {
 			String name = arg.getKey();
 			Facets f = new Facets(IKeyword.NAME, name);
 			f.put(IKeyword.VALUE, arg.getValue());
-			args.put(name, DescriptionFactory.createDescription(IKeyword.ARG, this, null, f));
+			args.put(name, DescriptionFactory.create(IKeyword.ARG, this, null, f));
 		}
 	}
 

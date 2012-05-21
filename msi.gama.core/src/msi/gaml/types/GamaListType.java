@@ -21,8 +21,8 @@ package msi.gaml.types;
 import java.awt.Color;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -58,7 +58,7 @@ public class GamaListType extends GamaType<IList> {
 
 	@Override
 	public IType defaultContentType() {
-		return Types.get(NONE);
+		return Types.NO_TYPE;
 	}
 
 }

@@ -67,7 +67,8 @@ public class Variable extends Symbol implements IVariable {
 	public IVarSetter setter;
 	protected String gName, sName, iName, pName, cName;
 	protected ISkill gSkill, iSkill, sSkill;
-	public boolean javaInternal;
+
+	// public boolean javaInternal;
 
 	public Variable(final IDescription sd) {
 		super(sd);
@@ -86,7 +87,7 @@ public class Variable extends Symbol implements IVariable {
 		definitionOrder = desc.getDefinitionOrder();
 		SpeciesDescription context = desc.getSpeciesContext();
 		buildHelpers(context);
-		javaInternal = getter != null && setter != null;
+		// javaInternal = getter != null && setter != null;
 
 	}
 
@@ -95,17 +96,17 @@ public class Variable extends Symbol implements IVariable {
 		if ( getFacet(IKeyword.GETTER) != null ) {
 			gName = getLiteral(IKeyword.GETTER);
 			gSkill = context.getSkillFor(gName);
-			getter = GamlCompiler.getGetter(context.getSkillClassFor(gName), gName, valueClass);
+			getter = AbstractGamlAdditions.getGetter(context.getSkillClassFor(gName), gName);
 		}
 		if ( getFacet(IKeyword.INITER) != null ) {
 			iName = getLiteral(IKeyword.INITER);
 			iSkill = context.getSkillFor(iName);
-			initer = GamlCompiler.getGetter(context.getSkillClassFor(iName), iName, valueClass);
+			initer = AbstractGamlAdditions.getGetter(context.getSkillClassFor(iName), iName);
 		}
 		if ( getFacet(IKeyword.SETTER) != null ) {
 			sName = getLiteral(IKeyword.SETTER);
 			sSkill = context.getSkillFor(sName);
-			setter = GamlCompiler.getSetter(context.getSkillClassFor(sName), sName, valueClass);
+			setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName, valueClass);
 		}
 	}
 

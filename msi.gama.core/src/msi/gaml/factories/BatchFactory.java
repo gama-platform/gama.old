@@ -33,16 +33,6 @@ public class BatchFactory extends SymbolFactory {
 
 	public BatchFactory(final ISymbolFactory superFactory) {
 		super(superFactory);
-		// for ( Class c : ParamSpaceExploAlgorithm.CLASSES ) {
-		// this.register(c);
-		// }
 	}
-
-	// @Override
-	// protected String getKeyword(final ISyntacticElement cur) {
-	// if ( cur.getKeyword().equals(IKeyword.METHOD) ) { return StringUtils.toJavaString(cur
-	// .getLabel(IKeyword.NAME)); }
-	// return super.getKeyword(cur);
-	// }
 
 }

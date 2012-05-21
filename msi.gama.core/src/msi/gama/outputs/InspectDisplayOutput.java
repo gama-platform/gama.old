@@ -78,7 +78,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
-		super(DescriptionFactory.createDescription(IKeyword.INSPECT, IKeyword.NAME, name +
+		super(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name +
 			(type != INSPECT_SPECIES ? count++ : ""), IKeyword.TYPE, types.get(type)));
 		target = type;
 	}

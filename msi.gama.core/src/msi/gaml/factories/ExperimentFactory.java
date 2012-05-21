@@ -35,28 +35,13 @@ import msi.gaml.descriptions.*;
 	ISymbolKind.BEHAVIOR })
 public class ExperimentFactory extends SpeciesFactory {
 
-	/**
-	 * @param superFactory
-	 */
 	public ExperimentFactory(final ISymbolFactory superFactory) {
 		super(superFactory);
 	}
 
-	// @Override
-	// protected String getKeyword(final ISyntacticElement cur) {
-	// if ( !cur.getKeyword().equals(IKeyword.EXPERIMENT) ) { return super.getKeyword(cur); }
-	// String type = cur.getLabel(IKeyword.TYPE);
-	// if ( type == null ) { return super.getKeyword(cur); }
-	// return type;
-	// }
-
-	// A lot to do here, probably (handle the batch, outputs, parameters, scheduler, remote and
-	// random specifications)
-
 	@Override
-	protected ExperimentDescription buildDescription(final ISyntacticElement source,
-		final String keyword, final List<IDescription> children, final IDescription superDesc,
-		final SymbolMetaDescription md) {
-		return new ExperimentDescription(keyword, superDesc, children, source, md);
+	protected ExperimentDescription buildDescription(final ISyntacticElement se, final String kw,
+		final List<IDescription> children, final IDescription sd, final SymbolMetaDescription md) {
+		return new ExperimentDescription(kw, sd, children, se, md);
 	}
 }

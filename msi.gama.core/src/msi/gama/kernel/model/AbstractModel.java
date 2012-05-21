@@ -129,7 +129,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	public IEnvironment getModelEnvironment() {
 		if ( modelEnvironment == null ) {
 			modelEnvironment =
-				new ModelEnvironment(DescriptionFactory.createDescription(IKeyword.ENVIRONMENT));
+				new ModelEnvironment(DescriptionFactory.create(IKeyword.ENVIRONMENT));
 		}
 		return modelEnvironment;
 	}

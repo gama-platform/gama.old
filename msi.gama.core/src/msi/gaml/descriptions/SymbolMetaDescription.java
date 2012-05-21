@@ -81,14 +81,13 @@ public class SymbolMetaDescription {
 	}
 
 	private Class instantiationClass = null;
-	private ISymbolConstructor constructor;
 	private Class baseClass = null;
 	private boolean hasSequence = false;
 	private boolean hasArgs = false;
 	private boolean hasScope = true;
 	private boolean isTopLevel = false;
 	private boolean isRemoteContext = false;
-	private final List<String> possibleContexts;
+	private final Set<String> possibleContexts;
 	private final Map<String, FacetMetaDescription> possibleFacets = new HashMap();
 	private final List<String[]> combinations = new ArrayList();
 	private final List<String> mandatoryFacets = new ArrayList();
@@ -100,7 +99,7 @@ public class SymbolMetaDescription {
 	public SymbolMetaDescription(final Class instantiationClass, final Class baseClass,
 		final String keyword, final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final List<facet> possibleFacets, final String omissible,
-		final List<combination> possibleCombinations, final List<String> contexts,
+		final List<combination> possibleCombinations, final Set<String> contexts,
 		final boolean isRemoteContext) {
 		setInstantiationClass(instantiationClass);
 		setBaseClass(baseClass);
@@ -153,7 +152,6 @@ public class SymbolMetaDescription {
 
 	public void setInstantiationClass(final Class instantiationClass) {
 		this.instantiationClass = instantiationClass;
-		constructor = GamlCompiler.getSymbolConstructor(instantiationClass);
 	}
 
 	public void setBaseClass(final Class baseClass) {
@@ -294,7 +292,7 @@ public class SymbolMetaDescription {
 	}
 
 	public ISymbolConstructor getConstructor() {
-		return constructor;
+		return AbstractGamlAdditions.getSymbolConstructor(instantiationClass);
 	}
 
 	/**

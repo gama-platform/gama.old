@@ -150,13 +150,6 @@ public abstract class AbstractScheduler implements IScheduler {
 		}
 	}
 
-	private IScheduledAction insertActionIn(final Object target, final String method,
-		final List<IScheduledAction> list) {
-		final IScheduledAction action = GamaCompiler.buildAction(target, method);
-		list.add(action);
-		return action;
-	}
-
 	@Override
 	public void insertEndAction(final IScheduledAction action) {
 		if ( action == null ) { return; }
@@ -175,18 +168,6 @@ public abstract class AbstractScheduler implements IScheduler {
 			action.setOneShot(true);
 			insertEndAction(action);
 		}
-	}
-
-	@Override
-	public IScheduledAction insertEndAction(final Object target, final String method) {
-		endActionsNumber++;
-		return insertActionIn(target, method, endActions);
-	}
-
-	@Override
-	public IScheduledAction insertBeginAction(final Object target, final String method) {
-		beginActionsNumber++;
-		return insertActionIn(target, method, beginActions);
 	}
 
 	@Override

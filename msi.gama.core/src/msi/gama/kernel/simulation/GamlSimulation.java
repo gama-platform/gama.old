@@ -21,7 +21,6 @@ package msi.gama.kernel.simulation;
 import java.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.GamlPopulation.WorldPopulation;
 import msi.gama.metamodel.population.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;

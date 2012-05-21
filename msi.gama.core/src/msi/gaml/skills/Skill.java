@@ -20,20 +20,11 @@ package msi.gaml.skills;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gaml.compilation.GamlCompiler;
 
 public abstract class Skill implements ISkill {
 
 	protected IAgent getCurrentAgent(final IScope scope) {
 		return scope.getAgentScope();
-	}
-
-	public static Class getSkillClassFor(final String sn) {
-		return GamlCompiler.getSkillClasses().get(sn);
-	}
-
-	public static ISkill createSharedSkillFor(final Class c) {
-		return GamlCompiler.getSkillInstanceFor(c);
 	}
 
 }

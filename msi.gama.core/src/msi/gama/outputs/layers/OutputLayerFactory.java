@@ -36,6 +36,8 @@ import msi.gaml.species.ISpecies;
 @handles({ ISymbolKind.LAYER })
 public class OutputLayerFactory extends SymbolFactory {
 
+	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
+
 	/**
 	 * @param superFactory
 	 */
@@ -69,7 +71,7 @@ public class OutputLayerFactory extends SymbolFactory {
 
 	public static IDisplayLayer createAgentsLayer(final String title,
 		final IExpression listOfAgents, final String aspect) throws GamaRuntimeException {
-		return createAgentsLayer(title, listOfAgents, aspect, OutputFactory.largeBox);
+		return createAgentsLayer(title, listOfAgents, aspect, largeBox);
 	}
 
 	public static IDisplayLayer createAgentsLayer(final String title, final IExpression listOfAgents)
@@ -91,7 +93,7 @@ public class OutputLayerFactory extends SymbolFactory {
 
 	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species,
 		final String aspect) throws GamaRuntimeException {
-		return createSpeciesLayer(title, species, aspect, OutputFactory.largeBox);
+		return createSpeciesLayer(title, species, aspect, largeBox);
 	}
 
 	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species)
@@ -131,7 +133,7 @@ public class OutputLayerFactory extends SymbolFactory {
 	}
 
 	public static IDisplayLayer createTextLayer(final String text) throws GamaRuntimeException {
-		return createTextLayer(text, OutputFactory.largeBox);
+		return createTextLayer(text, largeBox);
 	}
 
 }

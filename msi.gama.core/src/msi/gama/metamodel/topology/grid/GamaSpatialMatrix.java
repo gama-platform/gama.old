@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
+import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -532,7 +533,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	public GridDiffuser getDiffuser(final IScope scope) {
 		if ( diffuser != null ) { return diffuser; }
 		diffuser = new GridDiffuser(matrix, getNeighbourhood(), cellWidth);
-		scope.getSimulationScope().getScheduler().insertEndAction(this, "diffuse");
+		scope.getSimulationScope().getScheduler().insertEndAction(new ScheduledAction() {
+
+			@Override
+			public void execute(final IScope scope) throws GamaRuntimeException {
+				diffuse(scope);
+			}
+
+		});
 		return diffuser;
 	}
 

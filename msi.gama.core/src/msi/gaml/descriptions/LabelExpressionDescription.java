@@ -4,7 +4,7 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.common.util.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -120,14 +120,6 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public IExpressionDescription compileAsLabel() {
 		return this;
-	}
-
-	@Override
-	public void setExpression(final IExpression expr) {
-		if ( expr == null ) {
-			GuiUtils.debug("");
-		}
-		super.setExpression(expr);
 	}
 
 	@Override

@@ -18,10 +18,8 @@
  */
 package msi.gaml.types;
 
-import static msi.gaml.types.IType.*;
 import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -33,48 +31,37 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class Types {
 
+	public final static HashMap<Integer, Set<String>> keywordsToVariableType = new HashMap();
 	public final static IType[] typeToIType = new IType[256];
 	public final static HashMap<String, IType> stringToIType = new HashMap();
 	public final static HashMap<Class, IType> classToIType = new HashMap();
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	// private final static Map<Short, GamlModelTypes> managers;
+	public static void initType(final Class c) {
+		type t = (type) c.getAnnotation(type.class);
+		String keyword = t.value();
 
-	public static void initWith(final GamlProperties mp, final ClassLoader cl) {
-		Class c;
-		for ( String className : mp.keySet() ) {
+		IType typeInstance;
+		if ( keyword.equals(IType.NONE_STR) ) {
+			typeInstance = NO_TYPE;
+		} else {
 			try {
-				c = cl.loadClass(className);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				continue;
-			}
-			Set<Class> classes = new HashSet();
-			type t = (type) c.getAnnotation(type.class);
-			short theType = t.id();
-			Class[] w = t.wraps();
-			classes.addAll(Arrays.asList(w));
-			List<String> kindAndName = new ArrayList(mp.get(className));
-			String keyword = kindAndName.get(1);
-			IType theTypeClass;
-			try {
-				theTypeClass = (IType) c.newInstance();
+				typeInstance = (IType) c.newInstance();
 			} catch (Exception e) {
-				e.printStackTrace();
-				continue;
+				return;
 			}
-			typeToIType[theType] = theTypeClass;
-			stringToIType.put(keyword, theTypeClass);
-			for ( Class cc : classes ) {
-				classToIType.put(cc, theTypeClass);
-			}
-
 		}
-		// GUI.debug("Registered types: " + stringToIType);
-		typeToIType[NONE] = NO_TYPE;
-		classToIType.put(Object.class, NO_TYPE);
-		stringToIType.put(NONE_STR, NO_TYPE);
+		typeToIType[t.id()] = typeInstance;
+		stringToIType.put(keyword, typeInstance);
+		for ( Class cc : t.wraps() ) {
+			classToIType.put(cc, typeInstance);
+		}
+		int varKind = t.kind();
+		if ( !keywordsToVariableType.containsKey(varKind) ) {
+			keywordsToVariableType.put(varKind, new HashSet());
+		}
+		keywordsToVariableType.get(varKind).add(keyword);
 	}
 
 	public static Object coerce(final IScope scope, final Object value, final IType type,

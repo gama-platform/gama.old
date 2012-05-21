@@ -68,7 +68,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public boolean isGlobal() {
-		return getName().equals(IKeyword.WORLD_SPECIES_NAME);
+		return getName().equals(IKeyword.WORLD_SPECIES);
 	}
 
 	@Override

@@ -5,10 +5,7 @@
 package msi.gama.common.util;
 
 import java.io.*;
-import msi.gama.precompiler.GamlProperties;
-import msi.gama.runtime.exceptions.*;
-import org.eclipse.core.runtime.*;
-import org.osgi.framework.Bundle;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The class FileUtils.
@@ -18,20 +15,6 @@ import org.osgi.framework.Bundle;
  * 
  */
 public class FileUtils {
-
-	public static GamlProperties getGamaProperties(final Bundle plugin,
-		final String pathToAdditions, final String fileName) throws GamaStartupException {
-		try {
-			InputStream inputStream =
-				FileLocator.openStream(plugin, new Path(pathToAdditions + "/" + fileName), false);
-			GamlProperties mp =
-				GamlProperties.loadFrom(inputStream, plugin.getSymbolicName(), fileName);
-			return mp;
-		} catch (IOException e) {
-			throw new GamaStartupException("Impossible to locate the support file " + fileName +
-				" for GAML", e);
-		}
-	}
 
 	/**
 	 * Checks if is absolute path.

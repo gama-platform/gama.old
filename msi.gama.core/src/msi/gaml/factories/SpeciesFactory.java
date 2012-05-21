@@ -18,11 +18,12 @@
  */
 package msi.gaml.factories;
 
+import static msi.gama.precompiler.ISymbolKind.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind.Variable;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.descriptions.*;
@@ -32,93 +33,38 @@ import msi.gaml.descriptions.*;
  * 
  * @author drogoul 25 oct. 07
  */
-@handles({ ISymbolKind.SPECIES })
-@uses({ ISymbolKind.BEHAVIOR, ISymbolKind.ACTION, ISymbolKind.Variable.NUMBER,
-	ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL })
+@handles({ SPECIES })
+@uses({ BEHAVIOR, ACTION, Variable.NUMBER, Variable.CONTAINER, Variable.REGULAR, Variable.SIGNAL })
 public class SpeciesFactory extends SymbolFactory {
 
-	/**
-	 * @param superFactory
-	 */
 	public SpeciesFactory(final ISymbolFactory superFactory) {
 		super(superFactory);
 	}
 
-	private VariableFactory varFactory;
-
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
-		final String keyword, final List<IDescription> children, final IDescription superDesc,
+		final String keyword, final List<IDescription> children, final IDescription sd,
 		final SymbolMetaDescription md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
-		varFactory.addSpeciesNameAsType(name);
+		addSpeciesNameAsType(name);
 		Class base = md.getBaseClass();
 		String secondBase = facets.getLabel(IKeyword.BASE);
-		SpeciesDescription previous = superDesc.getSpeciesDescription(name);
+		SpeciesDescription previous = sd.getSpeciesDescription(name);
 		String firstBase = previous != null ? previous.getFacets().getLabel(IKeyword.BASE) : null;
-
 		if ( secondBase == null && firstBase != null ) {
 			facets.putAsLabel(IKeyword.BASE, firstBase);
 		}
 		if ( facets.containsKey(IKeyword.BASE) ) {
 			try {
 				base = GamaClassLoader.getInstance().loadClass(facets.getLabel(IKeyword.BASE));
-			} catch (ClassNotFoundException e) {
-				superDesc.flagError(
-					"Impossible to instantiate '" + keyword + "' because: " + e.getMessage(),
+			} catch (Exception e) {
+				sd.flagError("Error loading '" + keyword + "': " + e.getMessage(),
 					IGamlIssue.GENERAL);
 			}
 		}
-		SpeciesDescription sd =
-			new SpeciesDescription(keyword, superDesc, facets, children, source, base, md);
-
-		return sd;
+		return new SpeciesDescription(keyword, sd, facets, children, source, base, md);
 
 	}
 
-	@Override
-	public boolean registerFactory(final ISymbolFactory f) {
-		if ( super.registerFactory(f) ) {
-			if ( f instanceof VariableFactory ) {
-				varFactory = (VariableFactory) f;
-				return true;
-			}
-		}
-		return false;
-	}
-	//
-	// @Override
-	// protected List<ISymbol> privateCompileChildren(final IDescription sd) {
-	// List<ISymbol> lce = new ArrayList();
-	// SpeciesDescription desc = sd.getSpeciesContext();
-	// // we first compile the variables in the right order
-	// // long time = System.currentTimeMillis();
-	// for ( String s : desc.getVarNames() ) {
-	// lce.add(varFactory.privateCompile(desc.getVariable(s)));
-	// }
-	// // then the rest
-	// for ( IDescription s : sd.getChildren() ) {
-	// if ( !(s instanceof VariableDescription) ) {
-	// lce.add(compileDescription(s));
-	// }
-	// }
-	// return lce;
-	// }
-
-	// @Override
-	// protected void privateValidateChildren(final IDescription sd) {
-	// SpeciesDescription desc = sd.getSpeciesContext();
-	// // we first validate the variables in the right order
-	// // long time = System.currentTimeMillis();
-	// for ( String s : desc.getVarNames() ) {
-	// varFactory.privateValidate(desc.getVariable(s));
-	// }
-	// // then the rest
-	// for ( IDescription s : sd.getChildren() ) {
-	// if ( !(s instanceof VariableDescription) ) {
-	// validateDescription(s);
-	// }
-	// }
-	// }
 }

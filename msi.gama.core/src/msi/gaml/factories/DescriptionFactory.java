@@ -20,9 +20,11 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.SyntheticStatement;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.factories.ISymbolFactory.Model;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -32,7 +34,7 @@ import msi.gaml.descriptions.*;
  */
 public class DescriptionFactory {
 
-	public synchronized static IDescription createDescription(final ISymbolFactory factory,
+	public synchronized static IDescription create(final ISymbolFactory factory,
 		final String keyword, final IDescription superDesc, final List<IDescription> children,
 		final Facets facets) {
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
@@ -40,46 +42,41 @@ public class DescriptionFactory {
 		return factory.createDescription(element, superDesc, children);
 	}
 
-	public synchronized static IDescription createDescription(final String keyword,
+	public synchronized static IDescription create(final String keyword,
 		final IDescription superDesc, final List<IDescription> children, final Facets facets) {
-		return createDescription(getModelFactory(), keyword, superDesc, children, facets);
+		return create(getModelFactory(), keyword, superDesc, children, facets);
 	}
 
-	public synchronized static IDescription createDescription(final String keyword,
+	public synchronized static IDescription create(final String keyword,
 		final IDescription superDesc, final List<IDescription> children, final String ... facets) {
-		return createDescription(getModelFactory(), keyword, superDesc, children,
-			new Facets(facets));
+		return create(getModelFactory(), keyword, superDesc, children, new Facets(facets));
 	}
 
-	public synchronized static IDescription createDescription(final String keyword,
+	public synchronized static IDescription create(final String keyword,
 		final IDescription superDescription, final String ... facets) {
-		return createDescription(keyword, superDescription, Collections.EMPTY_LIST, facets);
+		return create(keyword, superDescription, Collections.EMPTY_LIST, facets);
 	}
 
-	public synchronized static IDescription createDescription(final String keyword,
-		final String ... facets) {
-		return createDescription(keyword, null, facets);
+	public synchronized static IDescription create(final String keyword, final String ... facets) {
+		return create(keyword, null, facets);
 	}
 
 	public synchronized static IDescription createOutputDescription(final String keyword,
 		final String ... facets) {
-		return createDescription(getOutputFactory(), keyword, null, Collections.EMPTY_LIST,
-			new Facets(facets));
+		return create(getOutputFactory(), keyword, null, Collections.EMPTY_LIST, new Facets(facets));
 	}
 
-	private static Class FACTORY_CLASS;
-	private volatile static ModelFactory modelFactory;
+	private volatile static ISymbolFactory.Model modelFactory;
 
 	public static ISymbolFactory getOutputFactory() {
 		return getModelFactory().chooseFactoryFor(IKeyword.OUTPUT);
 	}
 
-	public static ModelFactory getModelFactory() {
+	public static ISymbolFactory.Model getModelFactory() {
 		if ( modelFactory == null ) {
 			try {
-				modelFactory = (ModelFactory) getFactoryClass().newInstance();
+				modelFactory = (Model) getFactoryClass().newInstance();
 			} catch (Exception e) {
-				e.printStackTrace();
 				return null;
 			}
 		}
@@ -94,16 +91,8 @@ public class DescriptionFactory {
 		return result == null ? Collections.EMPTY_SET : result;
 	}
 
-	public static void disposeModelFactory() {
-		modelFactory = null;
-	}
-
-	public static void setFactoryClass(final Class<ISymbolFactory> fACTORY_CLASS) {
-		FACTORY_CLASS = fACTORY_CLASS;
-	}
-
 	public static Class<ISymbolFactory> getFactoryClass() {
-		return FACTORY_CLASS;
+		return AbstractGamlAdditions.getFactoryForKind(ISymbolKind.MODEL);
 	}
 
 }

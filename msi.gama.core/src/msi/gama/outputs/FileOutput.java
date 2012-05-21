@@ -190,7 +190,7 @@ public class FileOutput extends AbstractOutput {
 
 	public FileOutput(final String name, final String expr, final List<String> columns,
 		final IExperiment exp) throws GamaRuntimeException {
-		super(DescriptionFactory.createDescription(IKeyword.FILE, IKeyword.DATA, expr,
+		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr,
 			IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME, name == null ? expr : name));
 		prepare(exp);
 		expressionText = expr;

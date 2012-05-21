@@ -21,11 +21,9 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
@@ -65,7 +63,6 @@ public class SpeciesDescription extends SymbolDescription {
 		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
 		final Class base, final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
-		// skillInstancesByClass = new HashMap();
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();
 		updatableVariableNames = new GamaList();
@@ -90,7 +87,6 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( hasVariables() ) {
 			getVariables().clear();
 		}
-		// skillInstancesByClass.clear();
 		skillInstancesByMethod.clear();
 		if ( control != null ) {
 			control.dispose();
@@ -129,17 +125,14 @@ public class SpeciesDescription extends SymbolDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
-		GamlProperties gp = GamlProperties.loadFrom(GamlProperties.SKILLS);
-		for ( Map.Entry<String, LinkedHashSet<String>> entry : gp.entrySet() ) {
-			if ( entry.getValue().contains(getName()) ) {
-				List<String> list = new ArrayList(entry.getValue());
-				skillNames.add(list.get(0));
-			}
+		Set<String> builtInSkills = AbstractGamlAdditions.getSpeciesSkills().get(getName());
+		if ( builtInSkills != null ) {
+			skillNames.addAll(builtInSkills);
 		}
 
 		/* We then create the list of classes from this list of names */
 		for ( String skillName : skillNames ) {
-			final Class skillClass = GamlCompiler.getSkillClasses().get(skillName);
+			final Class skillClass = AbstractGamlAdditions.getSkillClasses().get(skillName);
 			if ( skillClass != null ) {
 				addSkill(skillClass);
 			}
@@ -173,15 +166,7 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	protected void createControl() {
-		String keyword = getControlName();
-
-		// GuiUtils.debug("Creating control for " + getName() + " with keyword " + keyword);
-		Class c = GamlCompiler.getSkillClasses().get(keyword);
-		if ( c == null ) {
-			control = new ReflexArchitecture();
-		} else {
-			control = (IArchitecture) GamlCompiler.getSkillInstanceFor(c);
-		}
+		control = AbstractGamlAdditions.getArchitectureInstanceFor(getControlName());
 	}
 
 	public ISkill getSkillFor(final String methodName) {
@@ -212,7 +197,7 @@ public class SpeciesDescription extends SymbolDescription {
 				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
 					skillInstancesByMethod.put(s, control);
 				} else {
-					skillInstancesByMethod.put(s, GamlCompiler.getSkillInstanceFor(c));
+					skillInstancesByMethod.put(s, AbstractGamlAdditions.getSkillInstanceFor(c));
 				}
 			} else {
 				skillInstancesByMethod.put(s, null);
@@ -285,8 +270,8 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 		}
 		getActions().put(actionName, ce);
-		GamaCompiler
-			.registerFunction(actionName, getSpeciesContext().getSpeciesContext().getType());
+		AbstractGamlAdditions.registerFunction(actionName, getSpeciesContext().getSpeciesContext()
+			.getType());
 	}
 
 	private void addAspect(final CommandDescription ce) {
@@ -473,31 +458,19 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( javaBase != null ) { return; }
 		javaBase = c;
 		final List<Class> classes =
-			GamaCompiler.collectImplementationClasses(javaBase, getSkillClasses());
+			AbstractGamlAdditions.collectImplementationClasses(javaBase, getSkillClasses());
 		final List<IDescription> children = new ArrayList();
 		for ( final Class c1 : classes ) {
-			List<IDescription> toAdd = GamlCompiler.getVarDescriptions(c1);
-			if ( !toAdd.isEmpty() ) {
-				// if ( getName().equals("user") ) {
-				// GuiUtils.debug("Adding variables " + toAdd + " to " + getName() +
-				// " from class " + c1.getSimpleName());
-				// }
+			List<IDescription> toAdd = AbstractGamlAdditions.getVarDescriptions(c1);
+			if ( toAdd != null && !toAdd.isEmpty() ) {
 				children.addAll(toAdd);
 			}
-			toAdd = GamlCompiler.getActionsDescriptions(c1);
+			toAdd = AbstractGamlAdditions.getActionsDescriptions(c1);
 			if ( !toAdd.isEmpty() ) {
-				// if ( getName().equals("user") ) {
-				// GuiUtils.debug("Adding actions " + toAdd + " to " + getName() + " from class " +
-				// c1.getSimpleName());
-				// }
 				children.addAll(toAdd);
 			}
-			List<String> methods = GamlCompiler.getSkillMethods(c1);
+			List<String> methods = AbstractGamlAdditions.getSkillMethods(c1);
 			if ( !methods.isEmpty() ) {
-				// if ( getName().equals("user") ) {
-				// GuiUtils.debug("Adding methods " + methods + " to " + getName() +
-				// " from class " + c1.getSimpleName());
-				// }
 				for ( String s : methods ) {
 					addSkillMethod(c1, s);
 				}
@@ -507,7 +480,7 @@ public class SpeciesDescription extends SymbolDescription {
 			addChild(((SymbolDescription) v).copy());
 		}
 		cleanDeclarationClasses();
-		agentConstructor = GamlCompiler.getAgentConstructor(javaBase);
+		agentConstructor = AbstractGamlAdditions.getAgentConstructor(javaBase);
 
 		if ( agentConstructor == null ) {
 			flagError("The base class " + getJavaBase().getName() +
@@ -542,11 +515,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public void addSkillMethod(final Class clazz, final String m) {
 		addSkill(clazz);
-		Class old = skillsMethods.get(m);
-		if ( old == null || old.isAssignableFrom(clazz) ) {
-			skillsMethods.put(m, clazz);
-			return;
-		}
+		skillsMethods.put(m, clazz);
 	}
 
 	public Set<Class> getSkillClasses() {
@@ -582,7 +551,12 @@ public class SpeciesDescription extends SymbolDescription {
 				}
 			}
 			skillsClasses.addAll(parent.skillsClasses);
-			skillsMethods.putAll(parent.skillsMethods);
+
+			for ( Map.Entry<String, Class> entry : parent.skillsMethods.entrySet() ) {
+				if ( !skillsMethods.containsKey(entry.getKey()) ) {
+					skillsMethods.put(entry.getKey(), entry.getValue());
+				}
+			}
 
 			// We only copy the behaviors that are not redefined in this species
 			if ( parent.hasBehaviors() ) {

@@ -42,10 +42,12 @@ public abstract class ScheduledAction implements IScheduledAction {
 	// to be subclassed by a code like this
 	// ((Class) target).method(IScope scope);
 
+	@Override
 	public boolean isOneShot() {
 		return oneShot;
 	}
 
+	@Override
 	public void setOneShot(final boolean b) {
 		oneShot = b;
 	}

@@ -54,7 +54,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public MonitorOutput(final String name, final String expr, final ISimulation sim,
 		final boolean openRightNow) {
-		super(DescriptionFactory.createDescription(IKeyword.MONITOR, IKeyword.VALUE, expr,
+		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr,
 			IKeyword.NAME, name == null ? expr : name));
 		setUserCreated(true);
 		setNewExpressionText(expr, sim);

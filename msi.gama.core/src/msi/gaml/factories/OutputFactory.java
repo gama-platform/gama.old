@@ -21,7 +21,7 @@ package msi.gaml.factories;
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayerDisplayOutput;
-import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.*;
@@ -44,12 +44,10 @@ public class OutputFactory extends SymbolFactory {
 		super(superFactory);
 	}
 
-	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
-
 	public static LayerDisplayOutput createDisplay(final String name, final int refresh,
 		final Color background, final IDisplayLayer ... layers) {
 		IDescription desc;
-		desc = DescriptionFactory.createDescription(IKeyword.DISPLAY, IKeyword.NAME, name);
+		desc = DescriptionFactory.create(IKeyword.DISPLAY, IKeyword.NAME, name);
 		if ( desc == null ) { return null; }
 		LayerDisplayOutput l = new LayerDisplayOutput(desc);
 		l.setRefreshRate(refresh);

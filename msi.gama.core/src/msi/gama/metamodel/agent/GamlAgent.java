@@ -110,7 +110,6 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	// TODO move up to AbstractAgent
 	public void step(final IScope scope) throws GamaRuntimeException {
 		if ( dead() || !simulation.isAlive() ) { return; }
-
 		scope.push(this);
 		try {
 			updateAttributes(scope);
@@ -230,17 +229,18 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	}
 
 	@Override
-	public IAgent captureMicroAgent(final ISpecies microSpecies, final IAgent microAgent) throws GamaRuntimeException {
-		if (this.canCapture(microAgent, microSpecies)) {
+	public IAgent captureMicroAgent(final ISpecies microSpecies, final IAgent microAgent)
+		throws GamaRuntimeException {
+		if ( this.canCapture(microAgent, microSpecies) ) {
 			IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
 			SavedAgent savedMicro = new SavedAgent(microAgent);
 			microAgent.die();
 			return savedMicro.restoreTo(microSpeciesPopulation);
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public IList<IAgent> releaseMicroAgents(final IList<IAgent> microAgents)
 		throws GamaRuntimeException {
@@ -259,24 +259,26 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	}
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
+	 * species.
 	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
 	 */
 	@Override
-	public IList<IAgent> migrateMicroAgents(final IList<IAgent> microAgents, final ISpecies newMicroSpecies) {
+	public IList<IAgent> migrateMicroAgents(final IList<IAgent> microAgents,
+		final ISpecies newMicroSpecies) {
 		IList<IAgent> immigrantCandidates = new GamaList<IAgent>();
-		
-		for (IAgent m : microAgents) {
-			if (m.getSpecies().isPeer(newMicroSpecies)) {
+
+		for ( IAgent m : microAgents ) {
+			if ( m.getSpecies().isPeer(newMicroSpecies) ) {
 				immigrantCandidates.add(m);
 			}
 		}
-		
+
 		IList<IAgent> immigrants = new GamaList<IAgent>();
-		if (!immigrantCandidates.isEmpty()) {
+		if ( !immigrantCandidates.isEmpty() ) {
 			IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
 			for ( IAgent micro : immigrantCandidates ) {
 				SavedAgent savedMicro = new SavedAgent(micro);
@@ -284,34 +286,37 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 				immigrants.add(savedMicro.restoreTo(microSpeciesPopulation));
 			}
 		}
-		
+
 		return immigrants;
 	}
-	
+
 	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
+	 * species.
 	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
 	 */
 	@Override
-	public IList<IAgent> migrateMicroAgents(final ISpecies oldMicroSpecies, final ISpecies newMicroSpecies) {
+	public IList<IAgent> migrateMicroAgents(final ISpecies oldMicroSpecies,
+		final ISpecies newMicroSpecies) {
 		IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
 		IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
 		IList<IAgent> immigrants = new GamaList<IAgent>();
-		
-		for (IAgent m : oldMicroPop.getAgentsList()) {
+
+		for ( IAgent m : oldMicroPop.getAgentsList() ) {
 			SavedAgent savedMicro = new SavedAgent(m);
 			m.die();
 			immigrants.add(savedMicro.restoreTo(newMicroPop));
 		}
-		
+
 		return immigrants;
 	}
 
 	/** Variables which are not saved during the capture and release process. */
-	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST, IKeyword.TOPOLOGY);
+	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS,
+		IKeyword.AGENTS, IKeyword.HOST, IKeyword.TOPOLOGY);
 
 	/**
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
@@ -382,7 +387,8 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		IAgent restoreTo(final IPopulation targetPopulation) throws GamaRuntimeException {
 			List<Map<String, Object>> agentAttrs = new GamaList<Map<String, Object>>();
 			agentAttrs.add(variables);
-			List<? extends IAgent> restoredAgents = targetPopulation.createAgents(simulation.getExecutionScope(), 1, agentAttrs, true);
+			List<? extends IAgent> restoredAgents =
+				targetPopulation.createAgents(simulation.getExecutionScope(), 1, agentAttrs, true);
 			restoreMicroAgents(restoredAgents.get(0));
 
 			return restoredAgents.get(0);
@@ -423,7 +429,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		
+
 		IShape g = getGeometry();
 		return g == null ? null : g.getInnerGeometry();
 	}

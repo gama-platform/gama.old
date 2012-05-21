@@ -48,17 +48,6 @@ public class VariableFactory extends SymbolFactory {
 		super(superFactory);
 	}
 
-	//
-	// @Override
-	// protected String getKeyword(final ISyntacticElement cur) {
-	// if ( cur.getKeyword().equals(PARAMETER) ) { return PARAMETER; }
-	// String keyword = cur.getLabel(TYPE);
-	// if ( keyword == null ) {
-	// keyword = cur.getKeyword();
-	// }
-	// return keyword;
-	// }
-
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final List<IDescription> children, final IDescription superDesc,
@@ -100,13 +89,11 @@ public class VariableFactory extends SymbolFactory {
 		if ( decay == null ) {
 			decay = "0.1";
 		}
-
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
 			(VariableDescription) createDescription(new SyntheticStatement(IType.FLOAT_STR,
 				new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")),
 				superDesc, null);
-
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.flagError("Environment " + env + " of signal " + name +
@@ -117,6 +104,7 @@ public class VariableFactory extends SymbolFactory {
 		}
 	}
 
+	@Override
 	public void addSpeciesNameAsType(final String name) {
 		registeredSymbols.put(name, registeredSymbols.get(AGENT));
 	}

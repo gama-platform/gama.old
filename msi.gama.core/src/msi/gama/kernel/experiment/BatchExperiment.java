@@ -86,7 +86,14 @@ public class BatchExperiment extends AbstractExperiment {
 
 		stopCondition = getFacet(IKeyword.UNTIL);
 		if ( stopCondition != null ) {
-			haltAction = GamaCompiler.buildAction(this, "conditionalHalt");
+			haltAction = new ScheduledAction() {
+
+				@Override
+				public void execute(final IScope scope) throws GamaRuntimeException {
+					conditionalHalt(scope);
+				}
+
+			};
 		}
 		expr = getFacet(IKeyword.REPEAT);
 		if ( expr != null && expr.isConst() ) {

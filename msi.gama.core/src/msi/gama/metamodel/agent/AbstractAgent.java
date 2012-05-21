@@ -181,6 +181,9 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public final synchronized void setAttribute(final String name, final Object val) {
+		if ( name.equals(IKeyword.PEERS) ) {
+			GuiUtils.debug("Peers set ?");
+		}
 		attributes.put(name, val);
 	}
 
@@ -190,14 +193,9 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public void schedule() throws GamaRuntimeException {
 		if ( index != -1 ) {
-			// GuiUtils.debug("Agent " + getName() + " scheduled");
 			simulation.getScheduler().insertAgentToInit(this);
 		}
 	}
-
-	// public boolean isEnabled(final String behavior) {
-	// return true;
-	// }
 
 	public void enable(final String behavior, final boolean enabled) {}
 

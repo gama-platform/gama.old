@@ -62,7 +62,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void setSuperDescription(final IDescription s) {
-		isGlobal = s != null && IKeyword.WORLD_SPECIES_NAME.equals(s.getName());
+		isGlobal = s != null && IKeyword.WORLD_SPECIES.equals(s.getName());
 		super.setSuperDescription(s);
 	}
 

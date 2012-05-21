@@ -299,7 +299,7 @@ public interface IKeyword {
 	public static final String WIDTH = "width";
 	public static final String WITH = "with";
 	public static final String WORLD_AGENT_NAME = "world";
-	public static final String WORLD_SPECIES_NAME = "world_species";
+	public static final String WORLD_SPECIES = "world_species";
 	public static final String WRITABLE = "writable";
 	public static final String WRITE = "write";
 	public static final String X = "x";

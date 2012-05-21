@@ -111,19 +111,30 @@ public class Files {
 	 * @return
 	 */
 	@operator(value = READ)
-	public static Object opRead(final IScope scope, final String s) {
+	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the geometry of the agent, if it has been created from a GIS file.
 		IShape g = scope.getAgentScope().getGeometry();
 		if ( g instanceof GamaGisGeometry ) { return ((GamaGisGeometry) g).getAttribute(s); }
 		// Otherwise, we may be in a process of creating agents, which requires directly reading the
 		// feature. Both processes will be unified later.
 		SimpleFeature gisReader = GisUtils.getCurrentGisReader();
-		if ( gisReader != null ) { return gisReader.getAttribute(s); }
+		if ( gisReader != null ) {
+
+			try {
+				Object result = gisReader.getAttribute(s);
+				return result;
+			} catch (Exception e) {
+				throw new GamaRuntimeException("Attribute " + s + " not found by OpenGIS : " +
+					e.getMessage());
+			}
+
+		}
 		return null;
 	}
 
 	@operator(value = "get")
-	public static Object opRead(final IScope scope, final IShape g, final String s) {
+	public static Object opRead(final IScope scope, final IShape g, final String s)
+		throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		IShape shape = g.getGeometry();
 		if ( shape instanceof GamaGisGeometry ) { return ((GamaGisGeometry) shape).getAttribute(s); }

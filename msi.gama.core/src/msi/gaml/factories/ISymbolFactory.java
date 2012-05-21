@@ -20,9 +20,9 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.kernel.model.IModel;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpressionFactory;
 
 /**
  * Written by drogoul Modified on 28 déc. 2010
@@ -48,13 +48,17 @@ public interface ISymbolFactory {
 
 	public abstract String getOmissibleFacetForSymbol(String symbol);
 
-	public IExpressionFactory getExpressionFactory();
-
 	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
 
-	/**
-	 * @return
-	 */
 	public abstract String getName();
+
+	public interface Model extends ISymbolFactory {
+
+		public abstract IModel compile(ModelStructure ms);
+
+		public abstract ModelDescription validate(ModelStructure parse);
+	}
+
+	public abstract void addSpeciesNameAsType(String name);
 
 }

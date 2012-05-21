@@ -33,12 +33,6 @@ import msi.gama.runtime.IScope;
 @type(value = IType.NONE_STR, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaNoType extends GamaType {
 
-	public GamaNoType() {
-		name = NONE_STR;
-		id = NONE;
-		supports = new Class[] { Object.class };
-	}
-
 	@Override
 	public Object cast(final IScope scope, final Object obj, final Object param) {
 		return obj;
