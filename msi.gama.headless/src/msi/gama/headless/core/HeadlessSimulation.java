@@ -6,8 +6,7 @@ import java.util.Map;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.AbstractSimulation;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IGamlPopulation;
-import msi.gama.metamodel.population.GamlPopulation.WorldPopulation;
+import msi.gama.metamodel.population.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 
