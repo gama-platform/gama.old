@@ -18,15 +18,17 @@
  */
 package msi.gama.precompiler;
 
+import static msi.gama.precompiler.GamlProperties.*;
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.util.*;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.type.*;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -35,385 +37,204 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.JavaWriter.Pair;
 
-@SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class GamaProcessor extends AbstractProcessor {
 
-	private final List<String> lreserved = new ArrayList<String>();
+	private GamlProperties gp;
+	JavaWriter jw;
 
-	private final Map<String, GamlProperties> store = new HashMap<String, GamlProperties>();
+	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 
-	public GamaProcessor() {}
+	static final Class[] classes = new Class[] { operator.class, symbol.class, handles.class,
+		species.class, skill.class, getter.class, setter.class, action.class, type.class };
+	static final String[] cats = new String[] { OPERATORS, SYMBOLS, FACTORIES };
+	static final Set<String> catSet = new HashSet(Arrays.asList(cats));
+	final static Set<String> annotNames = new HashSet();
 
-	@Override
-	public synchronized void init(final ProcessingEnvironment processingEnv) {
-		super.init(processingEnv);
-		for ( String f : GamlProperties.FILES ) {
-			store.put(f, initProperties(f)); // TODO Necessary ??
+	static {
+		for ( Class c : classes ) {
+			annotNames.add(c.getCanonicalName());
 		}
 	}
 
-	private GamlProperties initProperties(final String name) {
-		GamlProperties prop = new GamlProperties();
-		Filer filer = processingEnv.getFiler();
-
+	@Override
+	public synchronized void init(final ProcessingEnvironment pe) {
+		super.init(pe);
 		try {
-			FileObject f = filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name);
-			prop.load(f.openReader(true));
-			// f.delete();
-		} catch (IOException e) {}
-		return prop;
+			gp = new GamlProperties(pe.getFiler().getResource(OUT, "", GAML).openReader(true));
+		} catch (Exception e) {
+			gp = new GamlProperties();
+		}
+		jw = new JavaWriter(processingEnv);
+	}
+
+	@Override
+	public Set<String> getSupportedAnnotationTypes() {
+		return annotNames;
 	}
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
-		if ( env.processingOver() ) {
-			dumpFiles();
-		} else {
-
-			processTypes(env.getElementsAnnotatedWith(type.class));
-			processOperators(env.getElementsAnnotatedWith(operator.class));
-			processSkills(env.getElementsAnnotatedWith(skill.class));
-			Set<Element> symbols = (Set<Element>) env.getElementsAnnotatedWith(symbol.class);
-			processSymbols(symbols);
-			// processParents(symbols);
-			symbols = new HashSet<Element>(env.getElementsAnnotatedWith(getter.class));
-			symbols.addAll(env.getElementsAnnotatedWith(setter.class));
-			symbols.addAll(env.getElementsAnnotatedWith(action.class));
-			symbols.addAll(env.getElementsAnnotatedWith(skill.class));
-			symbols.addAll(env.getElementsAnnotatedWith(species.class));
-			processClasses(symbols);
-			processFactories(env.getElementsAnnotatedWith(handles.class));
-			// processVar(env.getElementsAnnotatedWith(vars.class));
-			// processAction(env.getElementsAnnotatedWith(action.class));
-			processArgs(env.getElementsAnnotatedWith(args.class));
-			// processReserved(env.getElementsAnnotatedWith(reserved.class));
-
+		if ( !env.processingOver() ) {
+			for ( int i = 0; i < cats.length; i++ ) {
+				write(env, classes[i], cats[i]);
+			}
+			processTypes(env);
+			processSpecies(env);
+			processSkills(env);
+			processOperators(env);
+			processActions(env);
+			processGetters(env);
+			processSetters(env);
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
-				Messager m = processingEnv.getMessager();
-				m.printMessage(Kind.ERROR, "Beginning of the documentation processing" +
-					processingEnv.getOptions().get("doc"));
-
 				new docProcessor(processingEnv).processDocXML(env, createWriter("doc.xml"));
-
-				m.printMessage(Kind.NOTE, "End of the documentation processing");
 			}
-
-		}
-		return false;
-	}
-
-	// private void processReserved(final Set<? extends Element> set) {
-	// Set<String> svars = new HashSet<String>();
-	// for ( Element e : set ) {
-	// for ( String a : e.getAnnotation(reserved.class).value() ) {
-	// svars.add(a);
-	// }
-	// }
-	// store.get(GamlProperties.VARS).put("reserved", svars);
-	// }
-
-	private void processArgs(final Set<? extends Element> set) {
-		Set<String> svars = new HashSet<String>();
-		for ( Element e : set ) {
-			for ( String a : e.getAnnotation(args.class).value() ) {
-				svars.add(a);
-			}
-		}
-		// store.get(GamlProperties.VARS).put("actions_args", svars);
-	}
-
-	// private void processAction(final Set<? extends Element> set) {
-	// Set<String> sactions = new HashSet<String>();
-	// for ( Element e : set ) {
-	// sactions.add(e.getAnnotation(action.class).value());
-	// }
-	// store.get(GamlProperties.VARS).put("actions", sactions);
-	// }
-
-	// private void processVar(final Set<? extends Element> set) {
-	// Set<String> svars = new HashSet<String>();
-	// for ( Element e : set ) {
-	// for ( var v : e.getAnnotation(vars.class).value() ) {
-	// svars.add(v.name());
-	// }
-	// }
-	// store.get(GamlProperties.VARS).put("vars", svars);
-	// }
-
-	private void processFactories(final Set<? extends Element> types) {
-		for ( Element element : types ) {
-			Element e = element;
-			if ( e == null ) {
-				continue;
-			}
-			String className = ((TypeElement) e).getQualifiedName().toString();
-			handles fact_annot = e.getAnnotation(handles.class);
-			if ( fact_annot != null ) {
-				int[] kinds = fact_annot.value();
-				for ( int kind : kinds ) {
-					store.get(GamlProperties.FACTORIES).put(String.valueOf(kind), className);
+			gp.store(createWriter(GAML));
+			Writer w = createSourceWriter();
+			if ( w != null ) {
+				try {
+					w.append(jw.write("gaml.additions", gp));
+					w.flush();
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
+		return true;
 	}
 
-	private void processSkills(final Set<? extends Element> skills) {
-		for ( Element element : skills ) {
-			Element e = element;
-			String className = ((TypeElement) e).getQualifiedName().toString();
-			skill skill_annot = e.getAnnotation(skill.class);
-			String[] skill_names = skill_annot.value();
-			String[] attach_to = skill_annot.attach_to();
-			for ( String skill_name : skill_names ) {
-				store.get(GamlProperties.SKILLS).put(className, skill_name);
-				for ( String species_name : attach_to ) {
-					store.get(GamlProperties.SKILLS).put(className, species_name);
-				}
+	private void processSpecies(final RoundEnvironment env) {
+		Set<? extends Element> species = env.getElementsAnnotatedWith(species.class);
+		for ( Element e : species ) {
+			species spec = e.getAnnotation(species.class);
+			String name = spec.value();
+			String[] skillTab = spec.skills();
+			String key = JavaWriter.SPECIES_PREFIX + name;
+			for ( String s : skillTab ) {
+				key += "$" + s;
 			}
-
+			gp.put(key, jw.rawNameOf(e));
 		}
 	}
 
-	private void processClasses(final Set<? extends Element> types) {
-		for ( Element element : types ) {
-			Element e = element;
-			if ( e == null ) {
-				continue;
+	private void processSkills(final RoundEnvironment env) {
+		Set<? extends Element> skills = env.getElementsAnnotatedWith(skill.class);
+		for ( Element e : skills ) {
+			skill skill = e.getAnnotation(skill.class);
+			String name = skill.value()[0];
+			String[] specTab = skill.attach_to();
+			String key = JavaWriter.SKILL_PREFIX + name;
+			for ( String s : specTab ) {
+				key += "$" + s;
 			}
-			if ( !(e instanceof TypeElement) ) {
-				e = e.getEnclosingElement();
-			}
-			String className = ((TypeElement) e).getQualifiedName().toString();
-
-			species species_annot = e.getAnnotation(species.class);
-			if ( species_annot != null ) {
-				String species_name = species_annot.value();
-				store.get(GamlProperties.SKILLS).put(className, species_name);
-				store.get(GamlProperties.SPECIES).put(className, species_name);
-				String[] skills = species_annot.skills();
-				GamlProperties gp = store.get(GamlProperties.SKILLS);
-				for ( String skill_name : skills ) {
-					for ( Map.Entry<String, LinkedHashSet<String>> entry : gp.entrySet() ) {
-						if ( entry.getValue().contains(skill_name) ) {
-							entry.getValue().add(species_name);
-						}
-					}
-					// store.get(GamlProperties.SPECIES_SKILLS).put(species_name, skill_name);
-				}
-			}
-
+			gp.put(key, jw.rawNameOf(e));
 		}
 	}
 
-	private void processTypes(final Set<? extends Element> elements) {
-		for ( Element element : elements ) {
-			if ( element instanceof TypeElement ) {
-				String className = ((TypeElement) element).getQualifiedName().toString();
-				type type_annot = element.getAnnotation(type.class);
-				if ( type_annot != null ) {
-					String typeName = type_annot.value();
-					String typeKind = String.valueOf(type_annot.kind());
-					store.get(GamlProperties.TYPES).put(className, typeKind);
-					store.get(GamlProperties.TYPES).put(className, typeName);
-				}
-			}
-		}
-	}
-
-	private void processOperators(final Set<? extends Element> elements) {
-		for ( Element element : elements ) {
-			operator op = element.getAnnotation(operator.class);
-			String[] op_names = op.value();
-			String keyName = null;
-			for ( String opName : op_names ) {
-				// String storeName = getStoreNameForOperator((ExecutableElement) element);
-				TypeElement theClass = (TypeElement) element.getEnclosingElement();
-				NestingKind kind = theClass.getNestingKind();
-				if ( kind == NestingKind.TOP_LEVEL ) {
-					keyName = theClass.getQualifiedName().toString();
-				} else {
-					String simpleName = theClass.getSimpleName().toString();
-					TypeElement theEnclosingClass = (TypeElement) theClass.getEnclosingElement();
-					String enclosingName = theEnclosingClass.getQualifiedName().toString();
-					keyName = enclosingName + "$" + simpleName;
-				}
-				store.get(GamlProperties.OPERATORS).put(keyName, opName);
-			}
-		}
-	}
-
-	// private String getStoreNameForOperator(final ExecutableElement element) {
-	// Set<Modifier> m = element.getModifiers();
-	// List<? extends VariableElement> args = element.getParameters();
-	// boolean isStatic = m.contains(Modifier.STATIC);
-	// if ( args.size() == 0 && !isStatic ) { return GamlProperties.UNARIES; }
-	// boolean contextual = args.get(0).asType().toString().contains("IScope");
-	// if ( args.size() == 1 && !isStatic && contextual ) { return GamlProperties.UNARIES; }
-	// if ( args.size() == 1 && isStatic ) { return GamlProperties.UNARIES; }
-	// if ( args.size() == 2 && isStatic && contextual ) { return GamlProperties.UNARIES; }
-	// return GamlProperties.BINARIES;
-	// }
-
-	private void processSymbols(final Set<? extends Element> types) {
-		// We loop on the classes annotated with "symbol"
-		// Set<String> facet_values = new HashSet<String>();
-
-		for ( Element element : types ) {
-			// boolean isDefinition = false;
-			String className = ((TypeElement) element).getQualifiedName().toString();
-			symbol mirror = element.getAnnotation(symbol.class);
-			// Set<String> facet_names = new HashSet<String>();
-			// facets facets_decl = element.getAnnotation(facets.class);
-			// if ( facets_decl != null ) {
-			// String omissibleFacet = facets_decl.omissible();
-			// facet[] all_facets = facets_decl.value();
-			// for ( facet f : all_facets ) {
-			// String name = f.name();
-			// if ( name.equals(omissibleFacet) ) {
-			// String type = f.type()[0];
-			// isDefinition = isDefinition(name, type);
-			// }
-			// for ( String v : f.values() ) {
-			// facet_values.add(v);
-			// }
-			// }
-			// }
-			store.get(GamlProperties.SYMBOLS).put(className, String.valueOf(mirror.kind()));
-			for ( String k : mirror.name() ) {
-				store.get(GamlProperties.SYMBOLS).put(className, k);
-			}
-
-			// store.get(GamlProperties.KINDS).put(kind, className);
-			// Set<String> type_names = store.get(GamlProperties.TYPES_NAMES).get(kind);
-			// if ( type_names != null ) {
-			// for ( String k : type_names ) {
-			// store.get(isDefinition ? GamlProperties.DEFINITIONS : GamlProperties.SYMBOLS)
-			// .put(className, k);
-			// }
-			// }
-			// store.get(GamlProperties.VARS).put("facets_values", facet_values);
-		}
-	}
-
-	//
-	// boolean isDefinition(final String facetName, final String facetType) {
-	// if ( !facetName.equals("name") && !facetName.equals("var") ) { return false; }
-	// if ( !facetType.equals(IFacetType.ID) && !facetType.equals(IFacetType.NEW_TEMP_ID) &&
-	// !facetType.equals(IFacetType.NEW_VAR_ID) && !facetType.equals(IFacetType.LABEL) ) { return
-	// false; }
-	// return true;
-	// }
-
-	// private void processParents(final Set<? extends Element> types) {
-	// // We loop on the classes annotated with "symbol" to establish the parent/children
-	// // relationships
-	// for ( Element element : types ) {
-	// symbol mirror = element.getAnnotation(symbol.class);
-	// inside parent_decl = element.getAnnotation(inside.class);
-	// String[] k_names = mirror.name();
-	// if ( parent_decl != null ) {
-	// for ( String k : k_names ) {
-	// String[] parents = parent_decl.symbols();
-	// for ( String p : parents ) {
-	// store.get(GamlProperties.CHILDREN).put(p, k);
-	// }
-	// int[] parent_kinds = parent_decl.kinds();
-	// for ( int i : parent_kinds ) {
-	// Set<String> classes_in_kind =
-	// store.get(GamlProperties.KINDS).get(String.valueOf(i));
-	// if ( classes_in_kind != null ) {
-	// for ( String class_in_kind : classes_in_kind ) {
-	// Set<String> keywords_in_kind =
-	// store.get(GamlProperties.SYMBOLS).get(class_in_kind);
-	// if ( keywords_in_kind == null ) {
-	// keywords_in_kind =
-	// store.get(GamlProperties.DEFINITIONS).get(class_in_kind);
-	// }
-	// for ( String keyword_in_kind : keywords_in_kind ) {
-	// store.get(GamlProperties.CHILDREN).put(keyword_in_kind, k);
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-
-	private void dumpFiles() {
-		for ( String file : GamlProperties.FILES ) {
-			store.get(file).store(createWriter(file));
-		}
-		// final PrintWriter grammarWriter = new PrintWriter(createWriter(GamlProperties.GRAMMAR));
-		// grammarWriter.append("model std").append('\n').println("_gaml {");
-		//
-		// printPropsNoDoublons(grammarWriter, "Reserved keywords (skills)", "_reserved",
-		// store.get(GamlProperties.SKILLS));
-		// printPropsNoDoublons(grammarWriter, "Reserved keywords (types)", "_reserved",
-		// store.get(GamlProperties.TYPES));
-		// // printPropsNoDoublons(grammarWriter, "Reserved keywords (vars)", "_reserved",
-		// // store.get(GamlProperties.VARS));
-		// printPropsNoDoublons(grammarWriter, "Reserved keywords (species)", "_reserved",
-		// store.get(GamlProperties.SPECIES));
-		// grammarWriter.println("}");
-		// grammarWriter.close();
-	}
-
-	// private void printPropsNoDoublons(final PrintWriter writer, final String t, final String
-	// prop,
-	// final GamlProperties map) {
-	// writer.append("\n//").println(t);
-	//
-	// for ( String s : map.keySet() ) {
-	// writer.println("// " + s);
-	// for ( String name : map.get(s) ) {
-	// if ( !lreserved.contains(name) ) {
-	// writer.append("\t ").append(prop).append(" &").append(name).println("&;");
-	// lreserved.add(s);
-	// }
-	// }
-	// }
-
-	// for ( String s : map.values() ) {
-	// if ( !lreserved.contains(s) ) {
-	// // exclude the forbidden name & doublons (example: unaries->casting & types)
-	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-	// lreserved.add(s);
-	// }
-	// }
-	// }
-
-	//
-	// private void printProps(final PrintWriter writer, final String t, final String prop,
-	// final GamlProperties map) {
-	// writer.append("\n//").println(t);
-	// for ( String s : map.values() ) {
-	// if ( s != null && !FORBIDDEN_OPERATORS.contains(s) ) {
-	// writer.append("\t ").append(prop).append(" &").append(s).println("&;");
-	// }
-	// }
-	// }
-
-	private Writer createWriter(final String name) {
-		FileObject file = null;
-		Filer filer = processingEnv.getFiler();
-		try {
-			file = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", name, new Element[] {});
-		} catch (FilerException e2) {
+	private void processTypes(final RoundEnvironment env) {
+		Set<? extends Element> types = env.getElementsAnnotatedWith(type.class);
+		List<String> basicTypes = new ArrayList();
+		List<String> otherTypes = new ArrayList();
+		for ( Element e : types ) {
+			type t = e.getAnnotation(type.class);
+			TypeMirror firstClass;
+			// TRICK
 			try {
-				file = filer.getResource(StandardLocation.SOURCE_OUTPUT, "", name);
-			} catch (IOException e) {
-				throw new RuntimeException(e.getMessage(), e);
+				t.wraps();
+			} catch (MirroredTypesException ex) {
+				firstClass = ex.getTypeMirrors().get(0);
+				if ( jw.rawNameOf(firstClass).startsWith("java") ) {
+					basicTypes.add(0, jw.rawNameOf(e));
+				} else {
+					otherTypes.add(jw.rawNameOf(e));
+				}
+			} catch (MirroredTypeException ex) {
+				firstClass = ex.getTypeMirror();
+				if ( jw.rawNameOf(firstClass).startsWith("java") ) {
+					basicTypes.add(0, jw.rawNameOf(e));
+				} else {
+					otherTypes.add(jw.rawNameOf(e));
+				}
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
+
 		}
+		for ( String s : basicTypes ) {
+			gp.put(JAVA_TYPES, s);
+		}
+		for ( String s : otherTypes ) {
+			gp.put(GAMA_TYPES, s);
+		}
+	}
+
+	void processOperators(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(operator.class) ) {
+			Map<String, String> executers = jw.getOperatorExecutersFor((ExecutableElement) e);
+			for ( Map.Entry<String, String> entry : executers.entrySet() ) {
+				gp.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	void processActions(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
+			Pair executer = jw.getActionExecuterFor((ExecutableElement) e);
+			gp.put(executer.key, executer.value);
+		}
+	}
+
+	void processGetters(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(getter.class) ) {
+			TypeMirror iSkill =
+				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
+			TypeMirror clazz = e.getEnclosingElement().asType();
+			Pair executer;
+			if ( processingEnv.getTypeUtils().isAssignable(clazz, iSkill) ) {
+				executer = jw.getGetter((ExecutableElement) e);
+			} else {
+				executer = jw.getFiedGetter((ExecutableElement) e);
+			}
+			gp.put(executer.key, executer.value);
+		}
+	}
+
+	void processSetters(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(setter.class) ) {
+			Pair executer = jw.getSetter((ExecutableElement) e);
+			gp.put(executer.key, executer.value);
+		}
+	}
+
+	void write(final RoundEnvironment r, final Class<? extends Annotation> c, final String s) {
+		for ( Element e : r.getElementsAnnotatedWith(c) ) {
+			gp.put(s, name((TypeElement) (e instanceof TypeElement ? e : e.getEnclosingElement())));
+		}
+	}
+
+	private String name(final TypeElement e) {
+		if ( e.getNestingKind() == NestingKind.TOP_LEVEL ) { return e.getQualifiedName().toString(); }
+		return name((TypeElement) e.getEnclosingElement()) + "." + e.getSimpleName().toString();
+	}
+
+	private Writer createWriter(final String s) {
 		try {
-			return file.openWriter();
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
+			return processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
+				.openWriter();
+		} catch (Exception e) {
+			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
+		return null;
+	}
+
+	private Writer createSourceWriter() {
+		try {
+			return processingEnv.getFiler()
+				.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
+		} catch (Exception e) {
+			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+		}
+		return null;
 	}
 }

@@ -18,6 +18,8 @@
  */
 package msi.gama.precompiler;
 
+import java.util.*;
+
 /**
  * Written by drogoul Modified on 1 aožt 2010
  * 
@@ -35,6 +37,9 @@ public interface ISymbolKind {
 		public static final int SIGNAL = 103;
 
 		public static final int REGULAR = 104;
+
+		public static final Set<Integer> KINDS = new HashSet(Arrays.asList(NUMBER, CONTAINER,
+			REGULAR, SIGNAL));
 	}
 
 	public static final int SPECIES = 0;

@@ -29,38 +29,31 @@ import java.util.*;
  */
 public class GamlProperties {
 
-	private final static Map<String, GamlProperties> globalRegistry = new HashMap();
-	private final static Map<String, Map<String, GamlProperties>> registriesByPlugin =
-		new HashMap();
+	private static GamlProperties globalRegistry = new GamlProperties();
+	// Plugin name <-> value of "gaml.properties"
+	private final static Map<String, GamlProperties> propertiesByPlugin = new HashMap();
 
 	Map<String, LinkedHashSet<String>> map;
 
-	public final static String GRAMMAR = "std.gaml";
-	public final static String SKILLS = "skills.properties";
-	public final static String UNARIES = "unaries.properties";
-	public final static String OPERATORS = "operators.properties";
-	public final static String BINARIES = "binaries.properties";
-	public final static String TYPES = "types.properties";
-	// public final static String TYPES_NAMES = "types.names.properties";
-	// public final static String SPECIES_SKILLS = "species.skills.properties";
-	public final static String SYMBOLS = "symbols.properties";
-	// public final static String DEFINITIONS = "definitions.properties";
-	// public final static String CHILDREN = "children.properties";
-	// public final static String FACETS = "facets.properties";
-	// public final static String KINDS = "kinds.properties";
-	public final static String FACTORIES = "factories.properties";
-	public final static String SPECIES = "species.properties";
-	// public final static String VARS = "vars.properties";
-	public static final String[] FILES = new String[] { SKILLS, /* UNARIES, BINARIES, */OPERATORS,
-		TYPES,
-		/* TYPES_NAMES, */SYMBOLS, /* DEFINITIONS, CHILDREN, SPECIES_SKILLS, KINDS, */FACTORIES,
-		SPECIES,
-	/* VARS */};
+	public final static String SKILLS = "skills";
+	public final static String OPERATORS = "operators";
+	public final static String JAVA_TYPES = "java_types";
+	public final static String GAMA_TYPES = "gama_types";
+	public final static String GAML = "gaml.properties";
+	public final static String SYMBOLS = "symbols";
+	public final static String FACTORIES = "factories";
+	public final static String SPECIES = "species";
+	public final static String SEPARATOR = "¤";
 
 	static final String NULL = "";
 
 	public GamlProperties() {
 		map = new LinkedHashMap();
+	}
+
+	public GamlProperties(final Reader r) {
+		this();
+		load(r);
 	}
 
 	public Set<String> keySet() {
@@ -92,6 +85,10 @@ public class GamlProperties {
 		return null;
 	}
 
+	public void remove(final String key) {
+		map.remove(key);
+	}
+
 	public void put(final String key, final String value) {
 		if ( !map.containsKey(key) ) {
 			map.put(key, new LinkedHashSet<String>());
@@ -99,7 +96,7 @@ public class GamlProperties {
 		map.get(key).add(value);
 	}
 
-	private void put(final String key, final LinkedHashSet<String> values) {
+	void put(final String key, final LinkedHashSet<String> values) {
 		if ( !map.containsKey(key) ) {
 			map.put(key, values);
 		} else {
@@ -109,7 +106,7 @@ public class GamlProperties {
 
 	public void putAll(final GamlProperties m) {
 		for ( Map.Entry<String, LinkedHashSet<String>> entry : m.entrySet() ) {
-			put(entry.getKey(), entry.getValue());
+			put(entry.getKey(), (LinkedHashSet<String>) entry.getValue().clone());
 		}
 	}
 
@@ -134,7 +131,7 @@ public class GamlProperties {
 		if ( !strings.isEmpty() ) {
 			StringBuilder sb = new StringBuilder();
 			for ( String value : strings ) {
-				sb.append(value).append(',');
+				sb.append(value).append(SEPARATOR);
 			}
 			sb.setLength(sb.length() - 1);
 			return sb.toString();
@@ -143,7 +140,7 @@ public class GamlProperties {
 
 	}
 
-	public void load(final Reader reader) {
+	public GamlProperties load(final Reader reader) {
 		Properties prop = new Properties();
 		try {
 			prop.load(reader);
@@ -151,59 +148,52 @@ public class GamlProperties {
 			try {
 				reader.close();
 			} catch (IOException e1) {}
-			return;
+			return null;
 		}
 		for ( String s : prop.stringPropertyNames() ) {
-			String[] array = prop.getProperty(s, "").split(",");
+			String[] array = prop.getProperty(s, "").split(SEPARATOR);
 			LinkedHashSet<String> values = new LinkedHashSet(Arrays.asList(array));
 			put(s, values);
 		}
 		try {
 			reader.close();
 		} catch (IOException e) {}
+		return this;
 	}
 
-	public static GamlProperties loadFrom(final String title) {
-		GamlProperties result = globalRegistry.get(title);
-		return result == null ? new GamlProperties() : result;
+	public static boolean hasPropertiesFor(final String plugin) {
+		return propertiesByPlugin.containsKey(plugin);
 	}
 
-	public static GamlProperties loadFrom(final InputStream stream, final String plugin,
-		final String title) {
+	public static GamlProperties loadFrom(final InputStream stream, final String plugin) {
 		if ( stream == null ) { return new GamlProperties(); }
-		if ( !registriesByPlugin.containsKey(plugin) ) {
-			registriesByPlugin.put(plugin, new HashMap());
-		}
-		Map<String, GamlProperties> local = registriesByPlugin.get(plugin);
-		if ( !local.containsKey(title) ) {
+		if ( !propertiesByPlugin.containsKey(plugin) ) {
 			GamlProperties mp = new GamlProperties();
 			mp.load(new InputStreamReader(stream));
-			local.put(title, mp);
-			if ( !globalRegistry.containsKey(title) ) {
-				globalRegistry.put(title, new GamlProperties());
-			}
-			globalRegistry.get(title).putAll(mp);
+			propertiesByPlugin.put(plugin, mp);
+			globalRegistry.putAll(mp);
+			return mp;
 		}
-		return local.get(title);
+		return getFrom(plugin);
+	}
+
+	public static GamlProperties getFrom(final String plugin) {
+		// assuming the plugin has been loaded
+		return propertiesByPlugin.get(plugin);
 	}
 
 	private static void reconsolidate() {
-		globalRegistry.clear();
-		for ( String s : registriesByPlugin.keySet() ) {
-			Map<String, GamlProperties> local = registriesByPlugin.get(s);
-			for ( String prop : local.keySet() ) {
-				if ( !globalRegistry.containsKey(prop) ) {
-					globalRegistry.put(prop, new GamlProperties());
-				}
-				globalRegistry.get(prop).putAll(local.get(prop));
-			}
+		globalRegistry = new GamlProperties();
+		for ( String s : propertiesByPlugin.keySet() ) {
+			GamlProperties local = propertiesByPlugin.get(s);
+			globalRegistry.putAll(local);
 		}
 	}
 
 	public static void removePluginProperties(final String plugin) {
-		Map<String, GamlProperties> local = registriesByPlugin.get(plugin);
+		GamlProperties local = propertiesByPlugin.get(plugin);
 		if ( local == null || local.isEmpty() ) { return; }
-		registriesByPlugin.remove(plugin);
+		propertiesByPlugin.remove(plugin);
 		reconsolidate();
 	}
 }
