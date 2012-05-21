@@ -96,7 +96,7 @@ entities {
 }
 environment bounds: shape_file_bounds ;
 output {
-	display city_display type:opengl  refresh_every: 1 {
+	display city_display type: opengl refresh_every: 1 {
 		species building aspect: base ;
 		species road aspect: base ;
 		species people aspect: base ;
