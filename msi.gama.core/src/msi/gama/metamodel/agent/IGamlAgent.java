@@ -52,7 +52,6 @@ import msi.gaml.types.IType;
 public interface IGamlAgent extends IAgent {
 
 	@Override 
-	
 	@getter(var = IKeyword.MEMBERS)
 	public abstract IList<IAgent> getMembers();
 
