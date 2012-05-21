@@ -22,6 +22,7 @@ import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.*;
 
@@ -70,10 +71,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
 			if ( !e.isWarning() ) {
-				// GuiUtils.debug("Validating " + getCurrentRessource().getURI().lastSegment() +
-				// " but error in a different resource:" +
-				// object.eResource().getURI().lastSegment());
-				EObject imp = findImport(object.eResource().getURI().lastSegment());
+				EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
 					error("Fix import error first: " + e.toString(), imp, null, "ERROR",
 						(String[]) null);
@@ -88,10 +86,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
-	private EObject findImport(final String lastSegment) {
+	private EObject findImport(final URI uri) {
 		Model m = (Model) getCurrentObject();
 		for ( Import imp : m.getImports() ) {
-			if ( imp.getImportURI().endsWith(lastSegment) ) { return imp; }
+			URI iu = URI.createURI(imp.getImportURI()).resolve(getCurrentRessource().getURI());
+			if ( uri.equals(iu) ) { return imp; }
 		}
 		return null;
 	}

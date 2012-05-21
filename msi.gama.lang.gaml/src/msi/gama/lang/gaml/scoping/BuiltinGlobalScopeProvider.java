@@ -5,7 +5,6 @@ package msi.gama.lang.gaml.scoping;
 import java.io.*;
 import java.util.*;
 import msi.gama.lang.gaml.gaml.GamlVarRef;
-import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
@@ -45,32 +44,6 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	static Iterable<IEObjectDescription> objectDescriptions = null;
 	public volatile static boolean scopeBuilt;
 
-	public final Runnable postConstributions = new Runnable() {
-
-		@Override
-		public void run() {
-			while (!GamaBundleLoader.contributionsLoaded) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			getEObjectDescriptions();
-			int i = 0;
-			for ( Runnable run : toRunAfterLoad ) {
-				// GuiUtils.debug("RUNNING POST CONTRIBUTION " + i++);
-				run.run();
-			}
-			toRunAfterLoad.clear();
-
-		}
-	};
-
-	{
-		// new Thread(postConstributions).start();
-	}
-
 	private Resource getResource(final Bundle bundle, final String filename) {
 		Path path = new Path(filename);
 		Resource resource =
@@ -100,7 +73,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	 * Get the object descriptions for the built-in scope.
 	 */
 	public Iterable<IEObjectDescription> getEObjectDescriptions() {
-		if ( objectDescriptions == null && GamaBundleLoader.contributionsLoaded ) {
+		if ( objectDescriptions == null ) {
 			List<IEObjectDescription> temp = new ArrayList();
 			// for ( Map.Entry<Bundle, String> entry : GamaBundleLoader.gamlAdditionsBundleAndFiles
 			// .entrySet() ) {
