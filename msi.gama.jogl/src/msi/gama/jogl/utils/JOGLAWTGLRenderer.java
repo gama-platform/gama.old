@@ -300,7 +300,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//Draw Image
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
 	    blendingEnabled =true;
-	    System.out.println("y'a de l'image");
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
 		}
 		
