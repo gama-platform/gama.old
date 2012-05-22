@@ -22,11 +22,13 @@ import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+
 import org.joda.time.*;
 import org.joda.time.chrono.*;
 import org.joda.time.field.PreciseDurationField;
@@ -189,6 +191,9 @@ public class Strings {
 	}
 
 	@operator(value = "reverse", can_be_const = true)
+	@doc(
+		specialCases = {"if it is a string, reverse returns a new string with caracters in the reversed order",},
+		examples = {"reverse ('abcd') 		--: 	'dcba';"})
 	static public String reverse(final String s) {
 		StringBuilder buf = new StringBuilder(s);
 		buf.reverse();
@@ -196,23 +201,35 @@ public class Strings {
 	}
 
 	@operator(value = "empty", can_be_const = true)
+	@doc(
+		specialCases = {"if it is a string, empty returns true if the string does not contain any character, and false otherwise"},
+		examples = {"empty ('abced') 	--: 	false"})
 	static public Boolean isEmpty(final String s) {
 		return s != null && s.isEmpty();
 	}
 
 	@operator(value = "first", can_be_const = true)
+	@doc(
+		specialCases = {"if it is a string, first returns a string composed of its first character"},
+		examples = {"first ('abce')      	--:   'a'"})		
 	static public String first(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(0));
 	}
 
 	@operator(value = "last", can_be_const = true)
+	@doc(
+		specialCases = {"if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty"},
+		examples = {"last ('abce') 		--:   'e'",})
 	static public String last(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
 	@operator(value = "length", can_be_const = true)
+	@doc(
+		specialCases = {"if it is a string, length returns the number of characters"},
+		examples = {"length ('I am an agent') 		--: 	13"})
 	static public Integer length(final String s) {
 		if ( s == null ) { return 0; }
 		return s.length();

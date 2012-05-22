@@ -24,6 +24,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -51,6 +52,8 @@ public class Containers {
 	// THE NAME OF THE SPECIES. AND POPULATIONS WILL BE CONTAINERS.
 
 	@operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(
+		specialCases = {"if it is a species, first returns the first element of the list of the agents in the species"})	
 	public static IAgent getFirst(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -59,6 +62,8 @@ public class Containers {
 	}
 
 	@operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(
+		specialCases = {"if it is a species, last returns the last element of the list of the agents in the species"})		
 	public static IAgent getLast(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -67,7 +72,10 @@ public class Containers {
 		return agents.last();
 	}
 
+	
 	@operator(value = "length")
+	@doc(
+		specialCases = {"if it is a species, length returns the number of elements in the list of the agents in the species"})		
 	public static Integer getLength(final IScope scope, final ISpecies s)
 		throws GamaRuntimeException {
 		if ( s == null ) { return 0; }
