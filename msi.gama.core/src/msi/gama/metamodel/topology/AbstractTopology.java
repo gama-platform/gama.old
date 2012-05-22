@@ -31,6 +31,9 @@ import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 public abstract class AbstractTopology implements ITopology {
 
@@ -325,13 +328,17 @@ public abstract class AbstractTopology implements ITopology {
 		if ( !isValidGeometry(source) ) { return result; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
 		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
-		GamaShape sg =
-			new GamaShape(source.getInnerGeometry().intersection(environment.getInnerGeometry()));
+		PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
+		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
+		PreparedGeometry penv = pgFact.create(environment.getInnerGeometry());
 		for ( IShape sh : shapes ) {
 			IAgent ag = sh.getAgent();
 			// Geometry g = ag.getInnerGeometry();
-			if ( ag != null && !ag.dead() && (covered ? sg.covers(ag) : sg.intersects(ag)) ) {
-				result.add(ag);
+			if ( ag != null && !ag.dead()) {
+				Geometry geom = ag.getInnerGeometry();
+				if (covered ? (pg.covers(geom) && penv.covers(geom)) : (pg.intersects(geom)) && penv.intersects(geom)) {
+					result.add(ag);
+				}
 			}
 		}
 		return result;
