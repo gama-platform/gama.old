@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Phisics
-Bundle-SymbolicName: msi.gaml.extensions.physics;singleton:=true
+Bundle-SymbolicName: simtools.gaml.extensions.physics;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
