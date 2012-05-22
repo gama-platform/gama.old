@@ -1182,7 +1182,7 @@ public abstract class Spatial {
 		@operator(value = "neighbours_of")
 		@doc(
 				specialCases = "a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.",
-				examples = {"topology(self) neighbours_of [self::10]-> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology."})
+				examples = {"topology(self) neighbours_of self::10-> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology."})
 		public static IList opNeighboursOf(final IScope scope, final ITopology t,
 			final GamaPair pair) throws GamaRuntimeException {
 			if ( pair == null ) { return GamaList.EMPTY_LIST; }
