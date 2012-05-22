@@ -132,9 +132,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 		z = 0.0f;
-		graphicsGLUtils = new MyGraphics(myGl, myGlu);
+		
 
 		myGLRender = gLRender;
+		
+		graphicsGLUtils = new MyGraphics(myGl, myGlu,myGLRender);
 	}
 
 	/**
@@ -599,6 +601,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void DrawMyImages() {
 
+		boolean drawImageAsList = false;
+		if (drawImageAsList){
+			if (!isListCreated) {
+				graphicsGLUtils.buildImageDisplayLists(this.myImages);
+				isListCreated = true;
+			} else {
+				graphicsGLUtils.DrawImageDisplayList(this.myImages.size());
+			}
+			
+		}
+		else {
 		Iterator<MyImage> it = this.myImages.iterator();
 				
 		int id = 0;
@@ -607,6 +620,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			MyImage curImage = it.next();
 			myGLRender.DrawTexture(id, curImage);
 			id++;
+		}
 		}
 	}
 	

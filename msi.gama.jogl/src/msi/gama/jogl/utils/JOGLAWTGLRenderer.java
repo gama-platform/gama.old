@@ -183,7 +183,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera.UpdateCamera(gl, width, height);
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
-	    myGLDrawer.LoadTextureFromImage(gl);
+	    //myGLDrawer.LoadTextureFromImage(gl);
 		//myGLDrawer.buildDisplayLists(gl, width / 4);
 
 		System.out.println("openGL init ok");

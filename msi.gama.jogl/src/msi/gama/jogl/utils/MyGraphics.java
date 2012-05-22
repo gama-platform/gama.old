@@ -36,6 +36,9 @@ public class MyGraphics {
 	private GLU myGlu;
 	private TessellCallBack tessCallback;
 	private GLUtessellator tobj;
+	
+	// need to have the GLRenderer to enable texture mapping.
+    public JOGLAWTGLRenderer myGLRender;
 
 	// FIXME: Is it better to declare an objet polygon here than in
 	// DrawMultiPolygon??
@@ -52,10 +55,11 @@ public class MyGraphics {
 	private int listId;
 	private int firstList;
 
-	public MyGraphics(final GL gl, final GLU glu) {
+	public MyGraphics(final GL gl, final GLU glu,final JOGLAWTGLRenderer gLRender ) {
 
 		myGl = gl;
 		myGlu = glu;
+		myGLRender = gLRender;
 		tessCallback = new TessellCallBack(myGl, myGlu);
 		tobj = glu.gluNewTess();
 
@@ -476,6 +480,36 @@ public class MyGraphics {
 	
 	public void DeleteDisplayLists(int nbDisplayList){
 		myGl.glDeleteLists(firstList,nbDisplayList);
+	}
+	
+	
+	/**
+	 * Create the display list for each JTS geometries (one list per geometry)
+	 * 
+	 * @param myJTSGeometries
+	 * @param size
+	 */
+	public void buildImageDisplayLists(ArrayList<MyImage> myImages) {
+
+		// Build n lists, and returns handle for the first list
+		firstList = myGl.glGenLists(myImages.size());
+		listId = firstList;
+		Iterator<MyImage> it = myImages.iterator();
+		int id = 0;
+		while (it.hasNext()) {
+			MyImage curImage = it.next();			
+			myGl.glNewList(listId, GL_COMPILE);
+			myGLRender.DrawTexture(id, curImage);
+			myGl.glEndList();
+			listId = listId + 1;
+			id++;
+		}
+	}
+	
+	public void DrawImageDisplayList(int nbDisplayList) {
+		for (int i = 0; i <= nbDisplayList; i++) {
+			myGl.glCallList(i);
+		}	
 	}
 
 }
