@@ -33,8 +33,8 @@ public class MyGLToyDrawer {
 	
 	//Texture
 	float textureTop, textureBottom, textureLeft, textureRight;
-	private Texture[] textures = new Texture[3];
-	private static int currTextureFilter = 2; // currently used filter
+	public Texture[] textures = new Texture[3];
+	public static int currTextureFilter = 2; // currently used filter
 	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
 
 	

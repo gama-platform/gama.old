@@ -229,34 +229,35 @@ public class MyGraphics {
 
 	}
 
-	public void DrawJTSGeometry(Geometry geometry, Color c, boolean fill) {
+	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
 		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
-		for (i = 0; i < geometry.getNumGeometries(); i++) {
+		
+		for (i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
-			if (geometry.getGeometryType() == "MultiPolygon") {
-				MultiPolygon polygons = (MultiPolygon) geometry;
-				DrawMultiPolygon(polygons, c,fill);
+			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
+				MultiPolygon polygons = (MultiPolygon) geometry.geometry;
+				DrawMultiPolygon(polygons, geometry.color,geometry.fill);
 			}
 
-			else if (geometry.getGeometryType() == "Polygon") {
-				Polygon polygon = (Polygon) geometry;
-				DrawPolygon(polygon, c, 0.0f,fill);
+			else if (geometry.geometry.getGeometryType() == "Polygon") {
+				Polygon polygon = (Polygon) geometry.geometry;
+				DrawPolygon(polygon, geometry.color, 0.0f,geometry.fill,geometry.isTextured);
 			}
 
-			else if (geometry.getGeometryType() == "MultiLineString") {
-				MultiLineString lines = (MultiLineString) geometry;
-				DrawMultiLineString(lines, c);
+			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
+				MultiLineString lines = (MultiLineString) geometry.geometry;
+				DrawMultiLineString(lines, geometry.color);
 			}
 
-			else if (geometry.getGeometryType() == "LineString") {
-				LineString line = (LineString) geometry;
-				DrawLineString(line, 1.2f, c);
+			else if (geometry.geometry.getGeometryType() == "LineString") {
+				LineString line = (LineString) geometry.geometry;
+				DrawLineString(line, 1.2f, geometry.color);
 			}
 
-			else if (geometry.getGeometryType() == "Point") {
-				Point point = (Point) geometry;
-				DrawPoint(point, 10, 10, c);
+			else if (geometry.geometry.getGeometryType() == "Point") {
+				Point point = (Point) geometry.geometry;
+				DrawPoint(point, 10, 10, geometry.color);
 			}
 		}
 	}
@@ -274,7 +275,7 @@ public class MyGraphics {
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon, c, 0.0f,fill);
+			DrawPolygon(curPolygon, c, 0.0f,fill,false);
 			// DrawPolygonContour(curPolygon,c,0.0f);
 			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
 			// Draw3DPolygon(curPolygon,c, 100.0f);
@@ -283,8 +284,8 @@ public class MyGraphics {
 
 
 
-	public void DrawPolygon(Polygon p, Color c, float z,boolean fill) {
-
+	public void DrawPolygon(Polygon p, Color c, float z,boolean fill,boolean isTextured) {
+	
 		if(fill == true){
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
@@ -324,6 +325,36 @@ public class MyGraphics {
 					(float) c.getBlue() / 255, alpha);
 			DrawPolygonContour(p, c, z);
 		}
+		
+
+		//FIXME: Need to check that the polygon is a quad
+		if(isTextured){
+			myGl.glEnable(GL.GL_TEXTURE_2D);
+			// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
+			// context's state.
+			myGLRender.textures[2].enable();
+			// Binds this texture to the current GL context.
+			myGLRender.textures[2].bind();
+			
+			myGl.glBegin(GL_QUADS);
+
+			// Front Face
+			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
+													// quad
+			myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
+													// quad
+			myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
+			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
+			
+			myGl.glEnd();
+			myGl.glDisable(GL.GL_TEXTURE_2D);
+			
+		}
+		
 
 		
 	}
@@ -349,8 +380,8 @@ public class MyGraphics {
 
 	public void Draw3DPolygon(Polygon p, Color c, float z_offset) {
 
-		DrawPolygon(p, c, 0,true);
-		DrawPolygon(p, c, z_offset,true);
+		DrawPolygon(p, c, 0,true,false);
+		DrawPolygon(p, c, z_offset,true,false);
 		Draw3DQuads(p, c, z_offset);
 
 	}
@@ -465,7 +496,7 @@ public class MyGraphics {
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();			
 			myGl.glNewList(listId, GL_COMPILE);
-			DrawJTSGeometry(curGeometry.geometry,curGeometry.color,curGeometry.fill);
+			DrawJTSGeometry(curGeometry);
 			myGl.glEndList();
 			listId = listId + 1;;
 		}

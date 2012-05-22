@@ -15,6 +15,7 @@ import static javax.media.opengl.GL.GL_LIGHTING;
 import static javax.media.opengl.GL.GL_LINEAR;
 import static javax.media.opengl.GL.GL_LINEAR_MIPMAP_NEAREST;
 import static javax.media.opengl.GL.GL_MODELVIEW;
+import static javax.media.opengl.GL.GL_NEAREST;
 import static javax.media.opengl.GL.GL_NICEST;
 import static javax.media.opengl.GL.GL_ONE;
 import static javax.media.opengl.GL.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -28,6 +29,7 @@ import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -36,6 +38,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
 
 import javax.media.opengl.glu.GLU;
 
@@ -44,6 +47,7 @@ import com.sun.opengl.util.FPSAnimator;
 import com.sun.opengl.util.texture.*;
 
 
+import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 
@@ -70,7 +74,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Textures list to store all the texture.
 	public ArrayList<Texture> myTextures = new ArrayList<Texture>();
-	float textureTop, textureBottom, textureLeft, textureRight;
+	
+	
+	float textureTop, textureBottom, textureLeft, textureRight;	
+	public Texture[] textures = new Texture[3];
+	public static int currTextureFilter = 2; // currently used filter
+	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
+
 
 
 
@@ -184,6 +194,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
 	    //myGLDrawer.LoadTextureFromImage(gl);
+	    LoadTextureFromFile(textureFileName);
 		//myGLDrawer.buildDisplayLists(gl, width / 4);
 
 		System.out.println("openGL init ok");
@@ -289,6 +300,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//Draw Image
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
 	    blendingEnabled =true;
+	    System.out.println("y'a de l'image");
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages();
 		}
 		
@@ -357,6 +369,53 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.context.makeCurrent();
 		Texture curTexture = TextureIO.newTexture(image, false);
 		this.myTextures.add(curTexture);
+	}
+	
+	
+	public void LoadTextureFromFile(String textureFileName){
+		
+		// Load textures from image
+		try {
+			// Use URL so that can read from JAR and disk file.
+			BufferedImage image = ImageUtils.getInstance().getImageFromFile(
+					textureFileName);
+
+			// Create a OpenGL Texture object from (URL, mipmap, file suffix)
+			textures[0] = TextureIO.newTexture(image, false);
+			// Nearest filter is least compute-intensive
+			// Use nearer filter if image is larger than the original texture
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			// Use nearer filter if image is smaller than the original texture
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+			textures[1] = TextureIO.newTexture(image, false);
+			// Linear filter is more compute-intensive
+			// Use linear filter if image is larger than the original texture
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			// Use linear filter if image is smaller than the original texture
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+			textures[2] = TextureIO.newTexture(image, true); // mipmap is true
+			// Use mipmap filter is the image is smaller than the texture
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+					GL_LINEAR_MIPMAP_NEAREST);
+
+			// Get the top and bottom coordinates of the textures. Image flips
+			// vertically.
+			TextureCoords textureCoords;
+			textureCoords = textures[0].getImageTexCoords();
+			textureTop = textureCoords.top();
+			textureBottom = textureCoords.bottom();
+			textureLeft = textureCoords.left();
+			textureRight = textureCoords.right();
+
+		} catch (GLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 
