@@ -237,12 +237,12 @@ public class MyGraphics {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry.geometry;
-				DrawMultiPolygon(polygons, geometry.color,geometry.fill);
+				DrawMultiPolygon(polygons, geometry.color,geometry.fill,geometry.angle);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry.geometry;
-				DrawPolygon(polygon, geometry.color, 0.0f,geometry.fill,geometry.isTextured);
+				DrawPolygon(polygon, geometry.color, 0.0f,geometry.fill,geometry.isTextured,geometry.angle);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -264,7 +264,7 @@ public class MyGraphics {
 
 
 
-	public void DrawMultiPolygon(MultiPolygon polygons, Color c,boolean fill) {
+	public void DrawMultiPolygon(MultiPolygon polygons, Color c,boolean fill, Integer angle) {
 
 		numGeometries = polygons.getNumGeometries();
 		// System.out.println("Draw MultiPolygon:"+numGeometries);
@@ -275,7 +275,7 @@ public class MyGraphics {
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon, c, 0.0f,fill,false);
+			DrawPolygon(curPolygon, c, 0.0f,fill,false,angle);
 			// DrawPolygonContour(curPolygon,c,0.0f);
 			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
 			// Draw3DPolygon(curPolygon,c, 100.0f);
@@ -284,8 +284,10 @@ public class MyGraphics {
 
 
 
-	public void DrawPolygon(Polygon p, Color c, float z,boolean fill,boolean isTextured) {
+	public void DrawPolygon(Polygon p, Color c, float z,boolean fill,boolean isTextured, Integer angle) {
 	
+		//FIXME: Angle rotation is not implemented yet
+		
 		if(fill == true){
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
@@ -315,14 +317,16 @@ public class MyGraphics {
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
 		
-		
+
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
+
 		DrawPolygonContour(p, c, z);
+
 		}
 		
 		else{
 			myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
-					(float) c.getBlue() / 255, alpha);
+					(float) c.getBlue() / 255, alpha);	
 			DrawPolygonContour(p, c, z);
 		}
 		
@@ -336,22 +340,49 @@ public class MyGraphics {
 			// Binds this texture to the current GL context.
 			myGLRender.textures[2].bind();
 			
-			myGl.glBegin(GL_QUADS);
+			if(angle!=0){
+				myGl.glTranslatef ((float)p.getCentroid().getX(),-(float)p.getCentroid().getY(),0.0f); 
+				//FIXME:Check counterwise or not, and do we rotate aroudn the center or around a point.
+				myGl.glRotatef(-angle,0.0f,0.0f,1.0f);
+				myGl.glTranslatef (-(float)p.getCentroid().getX(),+(float)p.getCentroid().getY(),0.0f);
+				myGl.glBegin(GL_QUADS);
+	
+				// Front Face
+				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
+														// quad
+				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
+														// quad
+				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
+				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
+				
+				myGl.glEnd();
+				myGl.glTranslatef ((float)p.getCentroid().getX(),-(float)p.getCentroid().getY(),0.0f); 
+				myGl.glRotatef(angle,0.0f,0.0f,1.0f);
+				myGl.glTranslatef (-(float)p.getCentroid().getX(),+(float)p.getCentroid().getY(),0.0f);
+			}
+			else{
+				myGl.glBegin(GL_QUADS);
 
-			// Front Face
-			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
-			myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
-													// quad
-			myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
-			myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
-													// quad
-			myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
-			myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
-			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-			myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
-			
-			myGl.glEnd();
-			myGl.glDisable(GL.GL_TEXTURE_2D);
+				// Front Face
+				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
+														// quad
+				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
+														// quad
+				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
+				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
+				
+				myGl.glEnd();
+			}
+				
+		    myGl.glDisable(GL.GL_TEXTURE_2D);
 			
 		}
 		
@@ -378,10 +409,11 @@ public class MyGraphics {
 	}
 
 
-	public void Draw3DPolygon(Polygon p, Color c, float z_offset) {
+	public void Draw3DPolygon(Polygon p, Color c, float z_offset,Integer angle) {
 
-		DrawPolygon(p, c, 0,true,false);
-		DrawPolygon(p, c, z_offset,true,false);
+		DrawPolygon(p, c, 0,true,false,angle);
+		DrawPolygon(p, c, z_offset,true,false,angle);
+		//FIXME : Will be wrong if angle =!0
 		Draw3DQuads(p, c, z_offset);
 
 	}
