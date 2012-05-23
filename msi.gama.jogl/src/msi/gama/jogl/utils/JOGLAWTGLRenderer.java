@@ -194,7 +194,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
 	    //myGLDrawer.LoadTextureFromImage(gl);
-	    LoadTextureFromFile(textureFileName);
+	    //LoadTextureFromFile(textureFileName);
 		//myGLDrawer.buildDisplayLists(gl, width / 4);
 
 		System.out.println("openGL init ok");
