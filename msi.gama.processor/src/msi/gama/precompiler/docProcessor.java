@@ -69,9 +69,22 @@ public class docProcessor {
 	ProcessingEnvironment processingEnv;
 	Messager mes;
 	
+	boolean firstParsing;
+	
+	// Statistiques values
+	int nbrOperators;
+	int nbrOperatorsDoc;
+	int nbrSkills;
+	int nbrSymbols;
+	
 	public docProcessor(ProcessingEnvironment procEnv){
 		processingEnv = procEnv;
-		mes = processingEnv.getMessager();		
+		mes = processingEnv.getMessager();	
+		firstParsing = true;
+		nbrOperators = 0;
+		nbrOperatorsDoc = 0;
+		nbrSkills = 0;
+		nbrSymbols = 0;		
 	}
 	
 	public void processDocXML(final RoundEnvironment env, Writer out) {
@@ -158,6 +171,7 @@ public class docProcessor {
         org.w3c.dom.Element operators = doc.createElement("operators");
 
 		for ( ExecutableElement e : set ) {
+			nbrOperators++;
 			List<? extends VariableElement> args = e.getParameters();
 			Set<Modifier> m = e.getModifiers();
 			boolean isStatic = m.contains(Modifier.STATIC);
@@ -241,6 +255,7 @@ public class docProcessor {
 						e.getAnnotation(operator.class).value()[0] + "__ is not documented.");
 			}
 			else {
+				nbrOperatorsDoc++;
 				boolean firstdocElt = true;				
 				org.w3c.dom.Element docElt; //= doc.createElement("documentation"); 
 				
@@ -324,6 +339,7 @@ public class docProcessor {
         org.w3c.dom.Element skills = doc.createElement("skills");
         
 		for ( Element e : setSkills ) {
+			nbrSkills++;
 			org.w3c.dom.Element skillElt = doc.createElement("skill");
 			// TODO : id should be precised
 			String id = e.getAnnotation(skill.class).value()[0];
@@ -440,10 +456,11 @@ public class docProcessor {
 	}
 	
 	private org.w3c.dom.Element processDocXMLCommand(
-			Set<? extends Element> setSpecies, Document doc) {
+			Set<? extends Element> setCommand, Document doc) {
         org.w3c.dom.Element cmdsElt = doc.createElement("symbol");
         
-		for ( Element e : setSpecies ) {
+		for ( Element e : setCommand ) {
+			nbrSymbols++;
 			org.w3c.dom.Element cmdElt = doc.createElement("command");
 			if(e.getAnnotation(symbol.class).name().length != 0) {
 				cmdElt.setAttribute("id", e.getAnnotation(symbol.class).name()[0]);

@@ -44,6 +44,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
 	JavaWriter jw;
+	
+	docProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 
@@ -68,6 +70,7 @@ public class GamaProcessor extends AbstractProcessor {
 			gp = new GamlProperties();
 		}
 		jw = new JavaWriter(processingEnv);
+		docProc = new docProcessor(processingEnv);
 	}
 
 	@Override
@@ -89,7 +92,12 @@ public class GamaProcessor extends AbstractProcessor {
 			processGetters(env);
 			processSetters(env);
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
-				new docProcessor(processingEnv).processDocXML(env, createWriter("doc.xml"));
+				if(docProc.firstParsing) {
+					docProc.processDocXML(env, createWriter("doc.xml"));
+					docProc.firstParsing = false;
+				} else {
+					processingEnv.getMessager().printMessage(Kind.NOTE, "Documentation file has already been produced");
+				}
 			}
 			gp.store(createWriter(GAML));
 			Writer w = createSourceWriter();
