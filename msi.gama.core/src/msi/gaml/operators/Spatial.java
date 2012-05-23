@@ -48,7 +48,7 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
  * All the spatial operators available in GAML. Regrouped by types of operators.
  * 
  */
-public abstract class Spatial {
+public abstract class Spatial { 
 
 	/**
 	 * The class Common.
@@ -156,7 +156,10 @@ public abstract class Spatial {
 		@operator({ "polygon" })
 		@doc(
 				value = "A polygon geometry from the given list of points.",
-				specialCases = {"if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry; if the operand is composed of 2 points, returns a polyline geometry."},
+				specialCases = {
+					"if the operand is nil, returns the point geometry {0,0}", "" +
+					"if the operand is composed of a single point, returns a point geometry", 
+					"if the operand is composed of 2 points, returns a polyline geometry."},
 				examples = {"polygon([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polygon geometry composed of the 4 points."},
 				see = {"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square", "triangle"})
 		public static IShape opPolygon(final IList<GamaPoint> points) {
@@ -174,7 +177,9 @@ public abstract class Spatial {
 		@operator({ "line", "polyline" })
 		@doc(
 				value = "A polyline geometry from the given list of points.",
-				specialCases = {"if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry."},
+				specialCases = {
+					"if the operand is nil, returns the point geometry {0,0}", 
+					"if the operand is composed of a single point, returns a point geometry."},
 				examples = {"polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points."},
 				see = {"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square", "triangle"})
 		public static IShape opPolyline(final IList<GamaPoint> points) {
@@ -188,7 +193,9 @@ public abstract class Spatial {
 		@operator({ "link" })
 		@doc(
 				value = "A link between the 2 elements of the pair.",
-				specialCases = {"if the operand is null, link returns a point {0,0}; if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species"},
+				specialCases = {
+					"if the operand is null, link returns a point {0,0}", 
+					"if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species"},
 				comment =  "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.",
 				examples = {"link (geom1::geom2)  -> returns a link geometry between geom1 and geom2."},
 				see = {"around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle"})
@@ -275,7 +282,7 @@ public abstract class Spatial {
 		@operator(value = { "union" })
 		@doc(
 				value = "The geometry resulting from the union of all geometries of agents of the operand-species",
-				examples = {"union(species1)  -> retutns the geometry resulting from the union of all of the geometries of agents of species species1."})
+				examples = {"union(species1)  -> returns the geometry resulting from the union of all of the geometries of agents of species species1."})
 		public static IShape opUnion(final IScope scope, final ISpecies target) {
 			try {
 				return Cast.asGeometry(scope, target);
@@ -540,7 +547,7 @@ public abstract class Spatial {
 
 		@operator("convex_hull")
 		@doc(
-				value = "A geometry correspondong to the convex hull of the operand.",
+				value = "A geometry corresponding to the convex hull of the operand.",
 				examples = {"convex_hull(self) -> returns the convex hull of the geometry of the agent applying the operator"})
 		public static IShape opConvexHull(final IShape g) {
 			return new GamaShape(g.getInnerGeometry().convexHull());
@@ -608,7 +615,7 @@ public abstract class Spatial {
 		@operator("rotated_by")
 		@doc(
 				value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)",
-				examples = {"self rotated_by 45 -> returns the geometry resulting from a 45¡ rotation to the geometry of the agent applying the operator."},
+				examples = {"self rotated_by 45 -> returns the geometry resulting from a 45 degres rotation to the geometry of the agent applying the operator."},
 				see = {"transformed_by", "translated_by"})
 		public static IShape primRotation(final IShape g1, final Double angle) {
 			return ((GamaShape) g1.getGeometry()).rotatedBy(Math.toRadians(angle));
@@ -918,7 +925,12 @@ public abstract class Spatial {
 		@doc(
 				value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).",
 				specialCases = {"if one of the operand is null, returns true.", "if one operand is a point, returns false if the point is included in the geometry."},
-				examples = {"polyline([{10,10},{20,20}]) disjoint_from polyline([{15,15},{25,25}]) -> false.","polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{15,15},{15,25},{25,25},{25,15}]) -> false.", "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({15,15}) -> false.","polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({25,25}) -> true.", "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}]) -> true"},
+				examples = {
+					"polyline([{10,10},{20,20}]) disjoint_from polyline([{15,15},{25,25}]) -> false.",
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{15,15},{15,25},{25,25},{25,15}]) -> false.", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({15,15}) -> false.",
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({25,25}) -> true.", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}]) -> true"},
 				see = {"intersects", "crosses", "overlaps", "partially_overlaps", "touches"})
 		public static Boolean opDisjoint(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return true; }
@@ -938,7 +950,16 @@ public abstract class Spatial {
 		@doc(
 				value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).",
 				specialCases = {"if one of the operand is null, returns false.", "if one operand is a point, returns true if the point is included in the geometry"},
-				examples = {"polyline([{10,10},{20,20}]) overlaps polyline([{15,15},{25,25}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({25,25}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({15,15}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> true"},
+				examples = {
+					"polyline([{10,10},{20,20}]) overlaps polyline([{15,15},{25,25}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({25,25}) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({15,15}) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> true"},
 				see = { "<->", "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches"})
 		public static Boolean opOverlaps(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -958,7 +979,16 @@ public abstract class Spatial {
 				value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).",
 				specialCases = {"if one of the operand is null, returns false."},
 				comment = "if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).",
-				examples = {"polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({25,25}) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({15,15}) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> false"},
+				examples = {
+					"polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({25,25}) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}]) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({15,15}) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> false"},
 				see = { "<->", "disjoint_from", "crosses", "overlaps", "intersects", "touches"})
 		public static Boolean opPartiallyOverlaps(final IShape g1, final IShape g) {
 			if ( g == null ) { return false; }
@@ -977,7 +1007,18 @@ public abstract class Spatial {
 				value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).",
 				specialCases = {"if one of the operand is null, returns false."},
 				comment = "returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.",
-				examples = {"polyline([{10,10},{20,20}]) touches geometry({15,15}) -> false", "polyline([{10,10},{20,20}]) touches geometry({10,10}) -> true", "geometry({15,15}) touches geometry({15,15}) -> false", "polyline([{10,10},{20,20}]) touches polyline([{10,10},{5,5}]) -> true", "polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) -> false", "polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}]) -> false","polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{15,15},{15,25},{25,25},{25,15}]) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}]) -> true", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({15,15}) -> false", "polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({10,15}) -> true"},
+				examples = {
+					"polyline([{10,10},{20,20}]) touches geometry({15,15}) -> false", 
+					"polyline([{10,10},{20,20}]) touches geometry({10,10}) -> true", 
+					"geometry({15,15}) touches geometry({15,15}) -> false", 
+					"polyline([{10,10},{20,20}]) touches polyline([{10,10},{5,5}]) -> true", 
+					"polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) -> false", 
+					"polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}]) -> false",
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{15,15},{15,25},{25,25},{25,15}]) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}]) -> true", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({15,15}) -> false", 
+					"polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({10,15}) -> true"},
 				see = { "<->", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects"})
 		public static Boolean opTouches(final IShape g, final IShape g2) {
 			if ( g == null ) { return false; }
@@ -996,7 +1037,10 @@ public abstract class Spatial {
 		@doc(
 				value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).",
 				specialCases = {"if one of the operand is null, returns false.", "if one operand is a point, returns false."},
-				examples = {"polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}]) -> true.", "polyline([{10,10},{20,20}]) crosses geometry({15,15}) -> false", "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}]) -> true"},
+				examples = {
+					"polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}]) -> true.", 
+					"polyline([{10,10},{20,20}]) crosses geometry({15,15}) -> false", 
+					"polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}]) -> true"},
 				see = { "<->", "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches"})
 		public static Boolean opCrosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
