@@ -17,8 +17,8 @@ global {
 	var ball_number type: int init: 200 min: 2 max: 1000;  
 	const ball_shape type: geometry init: circle (ball_size) ;
 	var ball_separation type: float init: 6 * ball_size; 
-	var create_group type: bool init: true; 
-	var create_cloud type: bool init: true; 
+	var create_group type: bool parameter: 'Create groups?' <- true; 
+	var create_cloud type: bool parameter: 'Create clouds?' <- true; 
 	var group_creation_distance type: int init: int(ball_separation + 1);
 	var min_group_member type: int init: 3;
 	var group_base_speed type: int init: (int(ball_speed * 1.5));
@@ -35,6 +35,8 @@ global {
 	
 	init {
 		create ball number: ball_number ;
+		create group_agents_viewer;
+		create cloud_agents_viewer;
 	}
 	
 	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
@@ -398,7 +400,6 @@ entities {
 					ask (gds at 0) as: group_delegation {
 						migrate ball_in_group target: ball_in_cloud;
 					}
-					
 				}
 			}
 		}
@@ -415,17 +416,25 @@ entities {
 			loop rg over: r_groups {
 				ask rg as: group { do disaggregate; }
 			}
+			
+			do die;
 		}
 	 	 
 		aspect default {
 			draw shape: geometry color: color;
-			draw text: name + ' with composing groups: ' + (string(members)) size: 15 at: {location.x - 20, location.y};
+//			draw text: name + ' with composing groups: ' + (string(members)) size: 15 at: {location.x - 20, location.y};
 		}
 	}
 	
-	species text_viewer  { 
+	species group_agents_viewer  { 
 		aspect default {
-			draw text: 'Number of groups : ' + (string (length (group as list))) at: {location.x - 100, location.y} color: rgb('blue') size: 20 ;
+			draw text: 'Number of groups : ' + (string (length (world.agents of_generic_species group))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('blue') size: 40 style: bold ;
+		}
+	}
+
+	species cloud_agents_viewer  { 
+		aspect default {
+			draw text: 'Number of clouds : ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('green') size: 40 style: bold;
 		}
 	}
 }
@@ -436,21 +445,36 @@ experiment default_expr type: gui {
 	output {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
+			
 			species group aspect: default transparency: 0.5 {
 				species ball_in_group;
 			}
-			species text_viewer aspect: default transparency: 0.5 ;
 			
 			species cloud aspect: default {
-				species group_delegation transparency: 0.8 {
+				species group_delegation transparency: 0.9 {
 					species ball_in_cloud;
 					species ball_in_group;
 				}
 			}
 		}
 		
+		display name: 'Ball display' {
+			species ball;
+		}
+		
+		display name: 'Group display' {
+			species group;
+			species group_agents_viewer;
+		}
+		
+		display name: 'Cloud display' {
+			species cloud;
+			species cloud_agents_viewer;
+		}
+		
 		monitor groups value: list (group);
 		monitor length_groups value: length (list (group));
 		monitor length_clouds value: length(list(cloud));
 	}
+
 }
