@@ -31,6 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
@@ -42,6 +43,8 @@ import org.geotools.data.shapefile.*;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.feature.simple.*;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -68,6 +71,52 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		widthExp = getFacet(IKeyword.WIDTH);
 		heightExp = getFacet(IKeyword.HEIGHT);
 	}
+	
+	
+	public Envelope loadAscFile (String boundsStr) throws IOException {
+		File ascFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+		InputStream ips = new FileInputStream(ascFile);
+		InputStreamReader ipsr = new InputStreamReader(ips);
+		BufferedReader in = new BufferedReader(ipsr);
+
+		String[] nbColsStr = in.readLine().split(" ");
+		int nbCols = Integer.valueOf(nbColsStr[nbColsStr.length - 1]);
+		String[] nbRowsStr = in.readLine().split(" ");
+		int nbRows = Integer.valueOf(nbRowsStr[nbRowsStr.length - 1]);
+		String[] xllcornerStr = in.readLine().split(" ");
+		double xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
+		String[] yllcornerStr = in.readLine().split(" ");
+		double yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+		String[] cellSizeStr = in.readLine().split(" ");
+		double cellSize = Double.valueOf(cellSizeStr[cellSizeStr.length - 1]);
+		Envelope boundsEnv = new Envelope(xllcorner, xllcorner + (cellSize * nbCols), yllcorner, yllcorner + (cellSize * nbRows));
+		in.close();
+		return boundsEnv;
+	}
+	
+	
+	public Envelope loadShapeFile (String boundsStr, MathTransform transformCRS) throws IOException, TransformException {
+		File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+		ShapefileDataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
+		String name = store.getTypeNames()[0];
+		FeatureSource<SimpleFeatureType, SimpleFeature> source =
+			store.getFeatureSource(name);
+		// CoordinateReferenceSystem crs = source.getFeatures()
+		// .getSchema().getCoordinateReferenceSystem();
+		Envelope env = source.getBounds();
+
+		if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
+			ShpFiles shpf = new ShpFiles(shpFile);
+			double latitude = env.centre().x;
+			double longitude = env.centre().y;
+			transformCRS = GisUtils.getTransformCRS(shpf, latitude, longitude);
+			if ( transformCRS != null ) {
+				env = JTS.transform(env, transformCRS);
+			}
+		}
+		store.dispose();
+		return env;
+	}
 
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
@@ -80,59 +129,58 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			GamaPoint wh = (GamaPoint) bounds;
 			width = wh.x;
 			height = wh.y;
+		} else if (bounds instanceof GamaList) {
+			Envelope boundsEnv = null;
+			for (Object el : ((GamaList) bounds)) {
+				String boundsStr =
+						el instanceof String ? (String) bounds : (el instanceof GamaFile  ? ((GamaFile) el).getPath() : null);
+				if (boundsStr != null) {
+					Envelope env = null;
+					try {
+						if ( boundsStr.toLowerCase().endsWith(".shp"))
+							env = loadShapeFile(boundsStr, transformCRS);
+						else if ( boundsStr.toLowerCase().endsWith(".asc") ) 
+							env = loadAscFile(boundsStr);
+							
+						if (env != null) {
+							if (boundsEnv == null) 
+								boundsEnv = env;
+							else 
+								boundsEnv.expandToInclude(env);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (TransformException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (boundsEnv != null) {
+				xMin = boundsEnv.getMinX();
+				yMin = boundsEnv.getMinY();
+				width = boundsEnv.getWidth();
+				height = boundsEnv.getHeight();
+			}
 		} else if ( bounds instanceof String || bounds instanceof GamaFile ) {
 			String boundsStr =
 				bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
 			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
 				try {
-					File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
-					ShapefileDataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
-					String name = store.getTypeNames()[0];
-					FeatureSource<SimpleFeatureType, SimpleFeature> source =
-						store.getFeatureSource(name);
-					// CoordinateReferenceSystem crs = source.getFeatures()
-					// .getSchema().getCoordinateReferenceSystem();
-					Envelope env = source.getBounds();
-
-					if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-						ShpFiles shpf = new ShpFiles(shpFile);
-						double latitude = env.centre().x;
-						double longitude = env.centre().y;
-						transformCRS = GisUtils.getTransformCRS(shpf, latitude, longitude);
-						if ( transformCRS != null ) {
-							env = JTS.transform(env, transformCRS);
-						}
-					}
-					xMin = env.getMinX();
-					yMin = env.getMinY();
-					width = env.getWidth();
-					height = env.getHeight();
-					store.dispose();
+					Envelope boundsEnv = loadShapeFile(boundsStr, transformCRS);
+					xMin = boundsEnv.getMinX();
+					yMin = boundsEnv.getMinY();
+					width = boundsEnv.getWidth();
+					height = boundsEnv.getHeight();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else if ( boundsStr.toLowerCase().endsWith(".asc") ) {
 				try {
-					File ascFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
-					InputStream ips = new FileInputStream(ascFile);
-					InputStreamReader ipsr = new InputStreamReader(ips);
-					BufferedReader in = new BufferedReader(ipsr);
-
-					String[] nbColsStr = in.readLine().split(" ");
-					int nbCols = Integer.valueOf(nbColsStr[nbColsStr.length - 1]);
-					String[] nbRowsStr = in.readLine().split(" ");
-					int nbRows = Integer.valueOf(nbRowsStr[nbRowsStr.length - 1]);
-					String[] xllcornerStr = in.readLine().split(" ");
-					double xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
-					String[] yllcornerStr = in.readLine().split(" ");
-					double yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
-					String[] cellSizeStr = in.readLine().split(" ");
-					double cellSize = Double.valueOf(cellSizeStr[cellSizeStr.length - 1]);
-					xMin = xllcorner;
-					yMin = yllcorner;
-					width = cellSize * nbCols;
-					height = cellSize * nbRows;
-					in.close();
+					Envelope boundsEnv = loadAscFile(boundsStr);
+					xMin = boundsEnv.getMinX();
+					yMin = boundsEnv.getMinY();
+					width = boundsEnv.getWidth();
+					height = boundsEnv.getHeight();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
