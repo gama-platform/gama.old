@@ -47,7 +47,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
 	JavaWriter jw;
-	
+	JavaAgentBaseWriter jabw;
+
 	docProcessor docProc;
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
@@ -73,6 +74,7 @@ public class GamaProcessor extends AbstractProcessor {
 			gp = new GamlProperties();
 		}
 		jw = new JavaWriter(processingEnv);
+		jabw = new JavaAgentBaseWriter(processingEnv);
 		docProc = new docProcessor(processingEnv);
 	}
 
@@ -96,11 +98,12 @@ public class GamaProcessor extends AbstractProcessor {
 			processSymbols(env);
 			processVars(env);
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
-				if(docProc.firstParsing) {
+				if ( docProc.firstParsing ) {
 					docProc.processDocXML(env, createWriter("doc.xml"));
 					docProc.firstParsing = false;
 				} else {
-					processingEnv.getMessager().printMessage(Kind.NOTE, "Documentation file has already been produced");
+					processingEnv.getMessager().printMessage(Kind.NOTE,
+						"Documentation file has already been produced");
 				}
 			}
 			gp.store(createWriter(GAML));
@@ -114,6 +117,16 @@ public class GamaProcessor extends AbstractProcessor {
 					e.printStackTrace();
 				}
 			}
+			// Writer w2 = createAgentBaseSourceWriter();
+			// if ( w2 != null ) {
+			// try {
+			// w2.append(jabw.write("gaml.additions", gp));
+			// w2.flush();
+			// w2.close();
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+			// }
 		}
 		return true;
 	}
@@ -348,6 +361,16 @@ public class GamaProcessor extends AbstractProcessor {
 		try {
 			return processingEnv.getFiler()
 				.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
+		} catch (Exception e) {
+			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+		}
+		return null;
+	}
+
+	private Writer createAgentBaseSourceWriter() {
+		try {
+			return processingEnv.getFiler()
+				.createSourceFile("gaml.additions.JavaBasedAgent", (Element[]) null).openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
