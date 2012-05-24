@@ -18,7 +18,7 @@
  */
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.GamlProperties.*;
+import static msi.gama.precompiler.GamlProperties.GAML;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -37,6 +37,9 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.JavaWriter.Pair;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
@@ -49,10 +52,10 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 
-	static final Class[] classes = new Class[] { operator.class, symbol.class, handles.class,
-		species.class, skill.class, getter.class, setter.class, action.class, type.class };
-	static final String[] cats = new String[] { OPERATORS, SYMBOLS, FACTORIES };
-	static final Set<String> catSet = new HashSet(Arrays.asList(cats));
+	static final Class[] classes = new Class[] { symbol.class, handles.class, species.class,
+		skill.class, getter.class, setter.class, action.class, type.class, operator.class,
+		vars.class };
+
 	final static Set<String> annotNames = new HashSet();
 
 	static {
@@ -81,9 +84,8 @@ public class GamaProcessor extends AbstractProcessor {
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		if ( !env.processingOver() ) {
-			for ( int i = 0; i < cats.length; i++ ) {
-				write(env, classes[i], cats[i]);
-			}
+			write(env, handles.class, GamlProperties.FACTORIES);
+			processFactories(env);
 			processTypes(env);
 			processSpecies(env);
 			processSkills(env);
@@ -91,6 +93,8 @@ public class GamaProcessor extends AbstractProcessor {
 			processActions(env);
 			processGetters(env);
 			processSetters(env);
+			processSymbols(env);
+			processVars(env);
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
 				if(docProc.firstParsing) {
 					docProc.processDocXML(env, createWriter("doc.xml"));
@@ -112,6 +116,132 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 		}
 		return true;
+	}
+
+	void processGetters(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(getter.class) ) {
+			TypeMirror iSkill =
+				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
+			TypeMirror clazz = e.getEnclosingElement().asType();
+			Pair executer;
+			if ( processingEnv.getTypeUtils().isAssignable(clazz, iSkill) ) {
+				executer = jw.getGetter((ExecutableElement) e);
+			} else {
+				executer = jw.getFiedGetter((ExecutableElement) e);
+			}
+			gp.put(executer.key, executer.value);
+		}
+	}
+
+	private void processVars(final RoundEnvironment env) {
+		Set<? extends Element> vars = env.getElementsAnnotatedWith(vars.class);
+		for ( Element e : vars ) {
+			Map<String, Map<String, String>> maps = buildVarsFacetsMap(e);
+			for ( String name : maps.keySet() ) {
+				Map<String, String> facets = maps.get(name);
+				StringBuilder sb = new StringBuilder();
+				sb.append(JavaWriter.VAR_PREFIX).append("\"").append(facets.get("type"))
+					.append("\"$");
+				for ( String facetName : facets.keySet() ) {
+					sb.append("\"").append(facetName).append("\",");
+					sb.append("\"").append(facets.get(facetName)).append("\",");
+				}
+				sb.setLength(sb.length() - 1);
+				gp.put(sb.toString(), jw.rawNameOf(e));
+			}
+		}
+	}
+
+	static Map<String, Map<String, String>> buildVarsFacetsMap(final Element c) {
+		Map<String, Map<String, String>> varMap = new HashMap();
+		vars vars = c.getAnnotation(vars.class);
+		if ( vars == null ) { return null; /* no vars */}
+		for ( final var s : vars.value() ) {
+			String name = s.name();
+			Map<String, String> facets = new HashMap();
+			varMap.put(name, facets);
+			facets.put("type", s.type());
+			facets.put("name", s.name());
+			facets.put("const", s.constant() ? "true" : "false");
+			String depends = "";
+			String[] dependencies = s.depends_on();
+			if ( dependencies.length > 0 ) {
+				for ( String string : dependencies ) {
+					depends += string + " ";
+				}
+				depends = depends.trim();
+				facets.put("depends_on", depends);
+			}
+			String of = s.of();
+			if ( !"".equals(of) ) {
+				facets.put("of", of);
+			}
+			String init = s.init();
+			if ( !"".equals(init) ) {
+				facets.put("init", init);
+			}
+		}
+		for ( final Element m : c.getEnclosedElements() ) {
+			getter getter = m.getAnnotation(getter.class);
+			if ( getter != null ) {
+				final Map<String, String> var = varMap.get(getter.var());
+				if ( var != null ) {
+					var.put("getter", m.getSimpleName().toString());
+					if ( getter.initializer() ) {
+						var.put("initer", m.getSimpleName().toString());
+					}
+					// addSkillMethod(c, m.getName());
+					// final TypeMirror r = ((ExecutableElement) m).getReturnType();
+					// var.put("type", Types.get(r).toString());
+				}
+			}
+			setter setter = m.getAnnotation(setter.class);
+			if ( setter != null ) {
+				final Map<String, String> var = varMap.get(setter.value());
+				if ( var != null ) {
+					var.put("setter", m.getSimpleName().toString());
+					// addSkillMethod(c, m.getName());
+				}
+			}
+		}
+
+		return varMap;
+	}
+
+	private void processSymbols(final RoundEnvironment env) {
+		Set<? extends Element> symbols = env.getElementsAnnotatedWith(symbol.class);
+		for ( Element e : symbols ) {
+			symbol symbol = e.getAnnotation(symbol.class);
+			int kind = symbol.kind();
+			String[] names = symbol.name();
+			String key = JavaWriter.SYMBOL_PREFIX + String.valueOf(kind);
+			for ( String s : names ) {
+				key += "$" + s;
+			}
+			gp.put(key, jw.rawNameOf(e));
+		}
+	}
+
+	private void processFactories(final RoundEnvironment env) {
+		Set<? extends Element> symbols = env.getElementsAnnotatedWith(handles.class);
+		for ( Element e : symbols ) {
+			handles handles = e.getAnnotation(handles.class);
+			int[] hKinds = handles.value();
+			String key = JavaWriter.FACTORY_PREFIX + String.valueOf(hKinds[0]);
+			for ( int i = 1; i < hKinds.length; i++ ) {
+				key += "," + String.valueOf(hKinds[i]);
+			}
+			uses uses = e.getAnnotation(uses.class);
+			if ( uses != null ) {
+				key += "$";
+				int[] uKinds = uses.value();
+				key += String.valueOf(uKinds[0]);
+				for ( int i = 1; i < uKinds.length; i++ ) {
+					key += "," + String.valueOf(uKinds[i]);
+				}
+			}
+			gp.put(key, jw.rawNameOf(e));
+		}
 	}
 
 	private void processSpecies(final RoundEnvironment env) {
@@ -144,37 +274,30 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private void processTypes(final RoundEnvironment env) {
 		Set<? extends Element> types = env.getElementsAnnotatedWith(type.class);
-		List<String> basicTypes = new ArrayList();
-		List<String> otherTypes = new ArrayList();
 		for ( Element e : types ) {
 			type t = e.getAnnotation(type.class);
-			TypeMirror firstClass;
+			List<? extends TypeMirror> wraps = Collections.EMPTY_LIST;
 			// TRICK
 			try {
 				t.wraps();
 			} catch (MirroredTypesException ex) {
-				firstClass = ex.getTypeMirrors().get(0);
-				if ( jw.rawNameOf(firstClass).startsWith("java") ) {
-					basicTypes.add(0, jw.rawNameOf(e));
-				} else {
-					otherTypes.add(jw.rawNameOf(e));
-				}
+				wraps = ex.getTypeMirrors();
 			} catch (MirroredTypeException ex) {
-				firstClass = ex.getTypeMirror();
-				if ( jw.rawNameOf(firstClass).startsWith("java") ) {
-					basicTypes.add(0, jw.rawNameOf(e));
-				} else {
-					otherTypes.add(jw.rawNameOf(e));
-				}
+				wraps = Arrays.asList(ex.getTypeMirror());
 			}
 
+			String keyword = t.value();
+			short id = t.id();
+			int varKind = t.kind();
+			String key =
+				JavaWriter.TYPE_PREFIX + keyword + "$" + String.valueOf(id) + "$" +
+					String.valueOf(varKind);
+			for ( TypeMirror tm : wraps ) {
+				key += "$" + jw.rawNameOf(tm);
+			}
+			gp.put(key, jw.rawNameOf(e));
 		}
-		for ( String s : basicTypes ) {
-			gp.put(JAVA_TYPES, s);
-		}
-		for ( String s : otherTypes ) {
-			gp.put(GAMA_TYPES, s);
-		}
+
 	}
 
 	void processOperators(final RoundEnvironment env) {
@@ -189,21 +312,6 @@ public class GamaProcessor extends AbstractProcessor {
 	void processActions(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
 			Pair executer = jw.getActionExecuterFor((ExecutableElement) e);
-			gp.put(executer.key, executer.value);
-		}
-	}
-
-	void processGetters(final RoundEnvironment env) {
-		for ( Element e : env.getElementsAnnotatedWith(getter.class) ) {
-			TypeMirror iSkill =
-				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
-			TypeMirror clazz = e.getEnclosingElement().asType();
-			Pair executer;
-			if ( processingEnv.getTypeUtils().isAssignable(clazz, iSkill) ) {
-				executer = jw.getGetter((ExecutableElement) e);
-			} else {
-				executer = jw.getFiedGetter((ExecutableElement) e);
-			}
 			gp.put(executer.key, executer.value);
 		}
 	}

@@ -15,6 +15,10 @@ public class JavaWriter {
 	public final static String FIELD_PREFIX = "*";
 	public final static String SPECIES_PREFIX = "&";
 	public final static String SKILL_PREFIX = ")";
+	public final static String TYPE_PREFIX = "(";
+	public final static String SYMBOL_PREFIX = "[";
+	public final static String FACTORY_PREFIX = "]";
+	public final static String VAR_PREFIX = "%";
 	private final ProcessingEnvironment env;
 	static String ln = "\n";
 	static String tab = "\t";
@@ -29,22 +33,31 @@ public class JavaWriter {
 		}
 	}
 
-	final static String IAGENT = "msi.gama.metamodel.agent.IAgent";
+	final static String IAGENT = "IAgent";
 	final static String IPOPULATION = "msi.gama.metamodel.population.IPopulation";
-	final static String ISIMULATION = "msi.gama.kernel.simulation.ISimulation";
-	final static String ISKILL = "msi.gaml.skills.ISkill";
+	final static String ISIMULATION = "ISimulation";
+	final static String ISKILL = "ISkill";
 	final static String ISYMBOL = "ISymbol";
-	final static String IDESCRIPTION = "msi.gaml.descriptions.IDescription";
-	final static String ISCOPE = "msi.gama.runtime.IScope";
+	final static String IDESCRIPTION = "IDescription";
+	final static String ISCOPE = "IScope";
 	final static String OBJECT = "Object";
-	final static String IVALUE = "msi.gama.common.interfaces.IValue";
-	final static String EXCEPTION = "throws msi.gama.runtime.exceptions.GamaRuntimeException";
+	final static String IVALUE = "IValue";
+	final static String EXCEPTION = "throws GamaRuntimeException";
 	final static String IEXPRESSION = "msi.gaml.expressions.IExpression";
 	final static String TYPES = "msi.gaml.types.Types";
-	final static String INTEGER = "java.lang.Integer";
-	final static String DOUBLE = "java.lang.Double";
-	final static String BOOLEAN = "java.lang.Boolean";
-	final static String IMPORTS = "import msi.gaml.compilation.*;";
+	final static String INTEGER = "Integer";
+	final static String DOUBLE = "Double";
+	final static String BOOLEAN = "Boolean";
+	final static String[] IMPORTS = new String[] { "msi.gaml.architecture.weighted_tasks",
+		"msi.gaml.architecture.user", "msi.gaml.architecture.reflex",
+		"msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
+		"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
+		"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util",
+		" msi.gama.metamodel.shape", "msi.gama.common.interfaces", "msi.gama.runtime", "java.lang",
+		"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
+		"msi.gaml.descriptions", "msi.gama.util", "msi.gama.util.file", "msi.gama.util.matrix",
+		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
+		"msi.gaml.commands", "msi.gaml.skills", "msi.gaml.variables" };
 
 	JavaWriter(final ProcessingEnvironment pe) {
 		env = pe;
@@ -53,43 +66,174 @@ public class JavaWriter {
 	public String write(final String packageName, final GamlProperties props) {
 		StringBuilder sb = new StringBuilder();
 		writeHeader(sb, packageName);
-		writeCategory(sb, "types", props.get(GamlProperties.JAVA_TYPES));
 		writeSymbolConstructors(sb, props.get(GamlProperties.SYMBOLS));
-		for ( String s : props.keySet() ) {
-			if ( s.startsWith(OPERATOR_PREFIX) ) {
-				writeOperatorAddition(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(ACTION_PREFIX) ) {
-				writeActionAddition(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(GETTER_PREFIX) ) {
-				writeGetterAddition(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(SETTER_PREFIX) ) {
-				writeSetterAddition(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(FIELD_PREFIX) ) {
-				writeFieldGetterAddition(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(SPECIES_PREFIX) ) {
-				writeSpecies(sb, s.substring(1), props.getFirst(s));
-			} else if ( s.startsWith(SKILL_PREFIX) ) {
-				writeSkill(sb, s.substring(1), props.getFirst(s));
-			}
+
+		for ( Map.Entry<String, String> entry : props.filterFirst(TYPE_PREFIX).entrySet() ) {
+			writeType(sb, entry.getKey(), entry.getValue());
 		}
-		writeCategory(sb, "types", props.get(GamlProperties.GAMA_TYPES));
-		for ( int i = 0; i < GamaProcessor.cats.length; i++ ) {
-			writeCategory(sb, GamaProcessor.cats[i], props.get(GamaProcessor.cats[i]));
+		writeFactoriesAddition(sb, props.filterFirst(FACTORY_PREFIX));
+		for ( Map.Entry<String, String> entry : props.filterFirst(SYMBOL_PREFIX).entrySet() ) {
+			writeSymbolAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, Set<String>> entry : props.filterAll(VAR_PREFIX).entrySet() ) {
+			writeVarAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(OPERATOR_PREFIX).entrySet() ) {
+			writeOperatorAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
+			writeActionAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(GETTER_PREFIX).entrySet() ) {
+			writeGetterAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(SETTER_PREFIX).entrySet() ) {
+			writeSetterAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(FIELD_PREFIX).entrySet() ) {
+			writeFieldGetterAddition(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(SPECIES_PREFIX).entrySet() ) {
+			writeSpecies(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(SKILL_PREFIX).entrySet() ) {
+			writeSkill(sb, entry.getKey(), entry.getValue());
 		}
 		writeFooter(sb);
 		return sb.toString();
 	}
 
-	private void writeOperatorAddition(final StringBuilder sb, final String s, final String code) {
-		String[] segments = s.split("\\$");
-		String left = segments[1] + ".class";
-		String name = segments[0];
-		String right = "null";
-		if ( segments.length == 3 ) {
-			right = segments[2] + ".class";
+	private void writeFactoriesAddition(final StringBuilder sb, final Map<String, String> factoryMap) {
+		if ( factoryMap == null || factoryMap.isEmpty() ) { return; }
+		ln(sb);
+		ln(sb);
+		tab(sb);
+		sb.append("addFactories(");
+		for ( String key : factoryMap.keySet() ) {
+			String[] segments = key.split("\\$");
+			String handles = "Arrays.asList(" + segments[0] + ")";
+			String uses = "null";
+			if ( segments.length > 1 ) {
+				uses = "Arrays.asList(" + segments[1] + ")";
+			}
+			sb.append("new ").append(factoryMap.get(key));
+			sb.append("(").append(handles).append(",").append(uses).append("),");
 		}
-		sb.append(concat(ln, ln, tab, tab, "addOperatorExecuter(\"", name, "\",", left, ",", right,
-			",", code, ");"));
+		sb.setLength(sb.length() - 1);
+		sb.append(");");
+	}
+
+	private void writeVarAddition(final StringBuilder sb, final String var,
+		final Set<String> classes) {
+		String[] segments = var.split("\\$");
+		String type = segments[0];
+		String facets = "new String[] {" + segments[1] + "}";
+		for ( String clazz : classes ) {
+			sb.append(ln).append(tab).append(tab);
+			sb.append("addVarDescription(");
+			sb.append(clazz).append(".class").append(",");
+			sb.append("DescriptionFactory.create(");
+			sb.append(type).append(",");
+			sb.append(facets).append("));");
+		}
+	}
+
+	public static void main(final String[] args) {
+		System.out.println(Arrays.toString(new String[] { "type", "int", "name", "toto" }));
+	}
+
+	private void writeSymbolAddition(final StringBuilder sb, final String s, final String clazz) {
+		String[] segments = s.split("\\$");
+		String kind = segments[0];
+		String sc =
+			concat("new ISymbolConstructor() {@Override public ISymbol ", "create(final " +
+				IDESCRIPTION + " description) {	return new ", clazz, "(description);}}");
+		sb.append(ln).append(tab).append(tab);
+		sb.append("addSymbol(");
+		sb.append(clazz).append(".class").append(",");
+		sb.append(kind).append(",");
+		sb.append(sc);
+		if ( segments.length > 1 ) {
+			for ( int i = 1; i < segments.length; i++ ) {
+				sb.append(",\"").append(segments[i]).append("\"");
+			}
+		}
+		sb.append(");");
+	}
+
+	private void writeType(final StringBuilder sb, final String s, final String clazz) {
+		String[] segments = s.split("\\$");
+		String keyword = segments[0];
+		String id = segments[1];
+		String varKind = segments[2];
+		sb.append(ln).append(tab).append(tab);
+		sb.append("addType(");
+		sb.append('"').append(keyword).append('"').append(',');
+		sb.append("new ").append(clazz).append("()").append(',');
+		sb.append("(short)").append(id).append(',');
+		sb.append("(int)").append(varKind);
+		if ( segments.length > 3 ) {
+			for ( int i = 3; i < segments.length; i++ ) {
+				sb.append(",").append(segments[i]).append(".class");
+			}
+		}
+		sb.append(");");
+	}
+
+	private String operatorKey(final String keyword, final String leftClass,
+		final String rightClass, final boolean canBeConst, final short type,
+		final short contentType, final boolean iterator, final short priority, final String retClass) {
+		return concat(OPERATOR_PREFIX, keyword, "$", leftClass, "$", rightClass, "$",
+			String.valueOf(canBeConst), "$", String.valueOf(type), "$",
+			String.valueOf(contentType), "$", String.valueOf(iterator), "$",
+			String.valueOf(priority), "$", retClass);
+	}
+
+	private void writeOperatorAddition(final StringBuilder sb, final String s, final String helper) {
+		boolean isUnary = true;
+		String[] segments = s.split("\\$");
+		String leftClass = segments[1] + ".class";
+		String keyword = segments[0];
+		String rightClass;
+		if ( segments[2].equals("") ) {
+			rightClass = "null";
+		} else {
+			rightClass = segments[2] + ".class";
+			isUnary = false;
+		}
+		String canBeConst = segments[3];
+		String type = segments[4];
+		String contentType = segments[5];
+		String iterator = segments[6];
+		String priority = segments[7];
+		String returnClass = segments[8] + ".class";
+
+		if ( isUnary ) {
+			sb.append(ln).append(tab).append(tab);
+			sb.append("addUnary(");
+			sb.append('"').append(keyword).append('"').append(',');
+			sb.append(leftClass).append(',');
+			sb.append(returnClass).append(',');
+			sb.append(canBeConst).append(',');
+			sb.append("(short)").append(type).append(',');
+			sb.append("(short)").append(contentType).append(',');
+			sb.append(helper);
+			sb.append(");");
+		} else {
+			sb.append(ln).append(tab).append(tab);
+			sb.append("addBinary(");
+			sb.append('"').append(keyword).append('"').append(',');
+			sb.append(leftClass).append(',');
+			sb.append(rightClass).append(',');
+			sb.append(returnClass).append(',');
+			sb.append(iterator).append(',');
+			sb.append("(short)").append(priority).append(',');
+			sb.append(canBeConst).append(',');
+			sb.append("(short)").append(type).append(',');
+			sb.append("(short)").append(contentType).append(',');
+			sb.append(helper);
+			sb.append(");");
+		}
 	}
 
 	private void writeActionAddition(final StringBuilder sb, final String s, final String code) {
@@ -140,7 +284,7 @@ public class JavaWriter {
 		ln(sb).append(tab).append(tab);
 		sb.append(concat(ln, ln, tab, tab, "addSkillConstructor(", clazz,
 			".class, new ISkillConstructor() { @Override public",
-			" msi.gaml.skills.ISkill newInstance() {return new ", clazz, "();}});"));
+			" ISkill newInstance() {return new ", clazz, "();}});"));
 	}
 
 	private void writeFieldGetterAddition(final StringBuilder sb, final String s, final String code) {
@@ -163,20 +307,6 @@ public class JavaWriter {
 		}
 	}
 
-	private void writeCategory(final StringBuilder sb, final String cat,
-		final LinkedHashSet<String> classes) {
-		if ( classes == null ) { return; }
-		ln(sb);
-		ln(sb);
-		tab(sb).append(tab);
-		sb.append(cat).append("Add(");
-		for ( String clazz : classes ) {
-			sb.append(clazz.replace("$", ".")).append(".class,");
-		}
-		sb.setLength(sb.length() - 1);
-		sb.append(");");
-	}
-
 	private StringBuilder ln(final StringBuilder sb) {
 		return sb.append(ln);
 	}
@@ -187,9 +317,10 @@ public class JavaWriter {
 
 	private void writeHeader(final StringBuilder sb, final String packageName) {
 		sb.append("package ").append(packageName).append(';');
-		ln(sb).append(IMPORTS).append(ln);
-		ln(sb).append(ln).append(
-			"public class GamlAdditions extends msi.gaml.compilation.AbstractGamlAdditions {");
+		for ( int i = 0; i < IMPORTS.length; i++ ) {
+			ln(sb).append("import ").append(IMPORTS[i]).append(".*;");
+		}
+		ln(sb).append(ln).append("public class GamlAdditions extends AbstractGamlAdditions {");
 		ln(sb);
 		tab(sb).append("public GamlAdditions() {");
 	}
@@ -209,6 +340,14 @@ public class JavaWriter {
 		return concat.toString();
 	}
 
+	private String check(final String clazz) {
+		for ( int i = 0; i < IMPORTS.length; i++ ) {
+			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz
+				.substring(clazz.lastIndexOf('.') + 1); }
+		}
+		return clazz;
+	}
+
 	private String checkPrimitiveClass(final String c) {
 		if ( c.equals(int.class.getCanonicalName()) || c.equals(short.class.getCanonicalName()) ||
 			c.equals(long.class.getCanonicalName()) ) { return INTEGER; }
@@ -220,23 +359,21 @@ public class JavaWriter {
 	private String parameter(final String c, final String par) {
 		String jc = checkPrimitiveClass(c);
 		if ( jc.equals(DOUBLE) ) {
-			return concat("(", par, " == null) ? Double.valueOf(0d) : ", par,
-				" instanceof Double ? (Double) ", par, " : Double.valueOf(((Number)", par,
-				").doubleValue())");
+			return concat("(", par, " == null) ? 0d : ", par, " instanceof Double ? (Double) ",
+				par, " : Double.valueOf(((Number)", par, ").doubleValue())");
 		} else if ( jc.equals(INTEGER) ) {
-			return concat("(", par, " == null) ? Integer.valueOf(0) : ", par,
-				" instanceof Integer ? (Integer) ", par, " : Integer.valueOf(((Number)", par,
-				").intValue())");
+			return concat("(", par, " == null) ? 0 : ", par, " instanceof Integer ? (Integer) ",
+				par, " : Integer.valueOf(((Number)", par, ").intValue())");
 		} else if ( jc.equals(BOOLEAN) ) {
-			return concat("(", par, " == null) ? Boolean.valueOf(false) : ((Boolean)", par, ")");
+			return concat("(", par, " == null) ? false : ((Boolean)", par, ")");
 		} else {
 			return concat("((", jc, ")", par, ")");
 		}
 	}
 
 	private String returnWhenNull(final String returnClass) {
-		if ( returnClass.equals(DOUBLE) ) { return " Double.valueOf(0d) "; }
-		if ( returnClass.equals(INTEGER) ) { return " Integer.valueOf(0) "; }
+		if ( returnClass.equals(DOUBLE) ) { return " 0d "; }
+		if ( returnClass.equals(INTEGER) ) { return " 0 "; }
 		if ( returnClass.equals(BOOLEAN) ) { return " false "; }
 		return concat(" (", returnClass, ")", TYPES + ".coerce(null, (Object) null, " + TYPES +
 			".get(", returnClass, ".class), null) ");
@@ -250,7 +387,7 @@ public class JavaWriter {
 		String string = env.getTypeUtils().erasure(t).toString();
 		int i = string.indexOf('<');
 		string = i > -1 ? string.substring(0, i) : string;
-		return string.replace('$', '.');
+		return check(string.replace('$', '.'));
 	}
 
 	public Map<String, String> getOperatorExecutersFor(final ExecutableElement element) {
@@ -265,16 +402,21 @@ public class JavaWriter {
 		String m1 = element.getSimpleName().toString();
 		String ret = rawNameOf(element.getReturnType());
 		boolean context = isContextual(element);
-		boolean lazy = isLazy(element);
 		boolean isUnary = isUnary(element, isStatic, context);
 		Map<String, String> result = new HashMap();
 		for ( String kw : op.value() ) {
 			if ( isUnary ) {
-				Pair p = getUnaryOperator(kw, m1, declClass, ret, args, context, lazy, isStatic);
+				Pair p =
+					getUnaryOperator(kw, m1, declClass, ret, args, context, isStatic,
+						op.can_be_const(), op.type(), op.content_type(), op.iterator(),
+						op.priority());
 				result.put(p.key, p.value);
 
 			} else {
-				Pair p = getBinaryOperator(kw, m1, declClass, ret, args, context, lazy, isStatic);
+				Pair p =
+					getBinaryOperator(kw, m1, declClass, ret, args, context, isStatic,
+						op.can_be_const(), op.type(), op.content_type(), op.iterator(),
+						op.priority());
 				result.put(p.key, p.value);
 			}
 		}
@@ -284,8 +426,10 @@ public class JavaWriter {
 	public Pair getActionExecuterFor(final ExecutableElement element) {
 		String declClass = rawNameOf(element.getEnclosingElement());
 		String m1 = element.getSimpleName().toString();
+		String retClass = rawNameOf(element.getReturnType());
 		Pair result =
-			new Pair(concat(ACTION_PREFIX, m1, "$", declClass), buildActionExecuter(declClass, m1));
+			new Pair(concat(ACTION_PREFIX, m1, "$", declClass), buildActionExecuter(declClass,
+				retClass, m1));
 		return result;
 	}
 
@@ -332,12 +476,6 @@ public class JavaWriter {
 		return false;
 	}
 
-	private boolean isLazy(final ExecutableElement element) {
-		List<? extends VariableElement> args = element.getParameters();
-		return args.size() > 1 &&
-			args.get(args.size() - 1).asType().toString().contains("IExpression");
-	}
-
 	private boolean isContextual(final ExecutableElement element) {
 		List<? extends VariableElement> args = element.getParameters();
 		return args.size() > 0 && args.get(0).asType().toString().contains("IScope");
@@ -350,7 +488,8 @@ public class JavaWriter {
 
 	private Pair getBinaryOperator(final String keyword, final String mName,
 		final String declClass, final String retClass, final String[] argsClasses,
-		final boolean contextual, final boolean lazy, final boolean isStatic) {
+		final boolean contextual, final boolean isStatic, final boolean canBeConst,
+		final short type, final short contentType, final boolean iterator, final short priority) {
 		String leftClass;
 		String rightClass;
 		String methodName = mName;
@@ -363,13 +502,15 @@ public class JavaWriter {
 			leftClass = declClass;
 			rightClass = contextual ? argsClasses[1] : argsClasses[0];
 		}
-		return new Pair(concat(OPERATOR_PREFIX, methodName, "$", leftClass, "$", rightClass),
-			buildBinary(leftClass, rightClass, methodName, retClass, isStatic, contextual, lazy));
+		return new Pair(operatorKey(keyword, leftClass, rightClass, canBeConst, type, contentType,
+			iterator, priority, retClass), buildBinary(leftClass, rightClass, methodName, retClass,
+			isStatic, contextual));
 	}
 
 	private Pair getUnaryOperator(final String keyword, final String mName, final String declClass,
 		final String retClass, final String[] argsClasses, final boolean contextual,
-		final boolean lazy, final boolean isStatic) {
+		final boolean isStatic, final boolean canBeConst, final short type,
+		final short contentType, final boolean iterator, final short priority) {
 		String childClass;
 		String methodName = mName;
 
@@ -379,16 +520,16 @@ public class JavaWriter {
 		} else {
 			childClass = declClass;
 		}
-		return new Pair(concat(OPERATOR_PREFIX, methodName, "$", childClass), buildUnary(
-			childClass, methodName, retClass, isStatic, contextual));
+		return new Pair(operatorKey(keyword, childClass, "", canBeConst, type, contentType,
+			iterator, priority, retClass), buildUnary(childClass, methodName, retClass, isStatic,
+			contextual));
 
 	}
 
 	private String buildBinary(final String leftClass, final String rightClass, final String name,
-		final String retClass, final boolean isStatic, final boolean isContextDependent,
-		final boolean isLazyEvaluation) {
+		final String retClass, final boolean isStatic, final boolean isContextDependent) {
 		String ret = checkPrimitiveClass(retClass);
-		String rc = isLazyEvaluation ? IEXPRESSION : rightClass;
+		String rc = rightClass;
 		String result =
 			isStatic ? isContextDependent ? buildStaticContextDependentBinary(leftClass, rc, name,
 				ret) : buildStaticBinary(leftClass, rc, name, ret) : isContextDependent
@@ -450,10 +591,10 @@ public class JavaWriter {
 	private String buildDynamicContextDependentBinary(final String leftClass,
 		final String rightClass, final String m, final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope,final java.lang.Object left, ",
-			"final java.lang.Object right) ", EXCEPTION, " { if (left == null) return ",
-			returnWhenNull(returnClass), "; \nreturn ((", leftClass, ") left).", m, "(scope,",
-			parameter(rightClass, "right"), ");}");
+			" execute(final " + ISCOPE + " scope,final Object left, ", "final Object right) ",
+			EXCEPTION, " { if (left == null) return ", returnWhenNull(returnClass),
+			"; \nreturn ((", leftClass, ") left).", m, "(scope,", parameter(rightClass, "right"),
+			");}");
 	}
 
 	private String buildStaticBinary(final String leftClass, final String rightClass,
@@ -478,24 +619,27 @@ public class JavaWriter {
 				" { \n return new ", javaBase, "(sim, manager);}");
 	}
 
-	private String buildActionExecuter(final String targetClass, final String m) {
-		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", OBJECT,
-			" execute(final ", ISKILL, " target, ", IAGENT, " agent, final ", ISCOPE, " scope) ",
-			EXCEPTION, " { \n return ((", targetClass, ") target).", m, "(scope);  }");
+	private String buildActionExecuter(final String targetClass, final String retClass,
+		final String m) {
+		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ",
+			checkPrimitiveClass(retClass), " execute(final ", ISKILL, " target, ", IAGENT,
+			" agent, final ", ISCOPE, " scope) ", EXCEPTION, " { \n return ((", targetClass,
+			") target).", m, "(scope);  }", ln, "@Override public IType getReturnType()",
+			" { return Types.get(", retClass, ".class);}");
 	}
 
 	private String buildGetter(final String target, final String method, final String r,
 		final boolean dynamic) {
 		String ret = checkPrimitiveClass(r);
-		return concat("public ", ret, " execute(final ", IAGENT, " agent, final ", ISKILL,
-			" target) ", EXCEPTION, " { if (target == null) return ", returnWhenNull(ret),
+		return concat("@Override public ", ret, " execute(final ", IAGENT, " agent, final ",
+			ISKILL, " target) ", EXCEPTION, " { if (target == null) return ", returnWhenNull(ret),
 			"; \n  return (" + ret + ")((", target, ") target).", method, dynamic ? "(agent);}"
 				: "();}");
 	}
 
 	private String buildFieldGetter(final String target, final String method, final String r) {
 		String ret = checkPrimitiveClass(r);
-		return concat("public ", ret, " value(final ", IVALUE, " v) ", EXCEPTION,
+		return concat("@Override public ", ret, " value(final ", IVALUE, " v) ", EXCEPTION,
 			" { if (v == null) return ", returnWhenNull(ret), "; \n", ret, " result = ((", target,
 			") v).", method, "(); return result;}");
 	}
@@ -503,7 +647,7 @@ public class JavaWriter {
 	private String buildSetter(final String target, final String method, final String param,
 		final boolean dynamic) {
 		String pcName = checkPrimitiveClass(param);
-		return concat("public void execute(final ", IAGENT, " agent, final ", ISKILL,
+		return concat("@Override public void execute(final ", IAGENT, " agent, final ", ISKILL,
 			" target, final ", OBJECT, " arg) ", EXCEPTION, " { if (target == null) return;  \n((",
 			target, ") target).", method, "(", dynamic ? "agent, " : "", "(" + pcName + ")",
 			"arg); }");

@@ -266,7 +266,7 @@ public final class GamlAnnotations {
 		 */
 		String name();
 
-		String type() default "unknown";
+		String type();
 
 		String of() default "";
 
@@ -279,7 +279,7 @@ public final class GamlAnnotations {
 		String species() default "";
 
 		boolean freezable() default false; // TODO REMOVE!
-		
+
 		String doc() default "";
 	}
 
@@ -502,7 +502,7 @@ public final class GamlAnnotations {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.TYPE, ElementType.METHOD})
+	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Inherited
 	public static @interface doc {
 
@@ -526,19 +526,27 @@ public final class GamlAnnotations {
 	// @Target(ElementType.TYPE)
 	@Inherited
 	public static @interface docAction {
+
 		String value() default "";
+
 		arg[] args() default {};
+
 		String returns() default "";
-		String[] examples() default {};		
+
+		String[] examples() default {};
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	// @Target(ElementType.TYPE)
 	@Inherited
 	public static @interface arg {
+
 		String name() default "";
+
 		String type() default "";
+
 		boolean optional() default false;
+
 		String doc() default "";
 	}
 }
