@@ -79,7 +79,7 @@ public class ImageDisplay extends AbstractDisplay {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(image, null);
+		dg.drawImage(image, null,imageFileName);
 	}
 
 	@Override

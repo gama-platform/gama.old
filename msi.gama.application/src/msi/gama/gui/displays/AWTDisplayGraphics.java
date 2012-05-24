@@ -272,7 +272,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final boolean smooth) {
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final boolean smooth,final String name) {
 		AffineTransform saved = g2.getTransform();
 		// RenderingHints hints = g2.getRenderingHints();
 		if ( angle != null ) {
@@ -289,8 +289,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle) {
-		return drawImage(img, angle, true);
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final String name) {
+		return drawImage(img, angle, true,name);
 	}
 
 	/**

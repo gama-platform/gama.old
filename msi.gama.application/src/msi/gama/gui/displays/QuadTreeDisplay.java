@@ -37,7 +37,7 @@ public class QuadTreeDisplay extends AbstractDisplay {
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
 		if ( disposed ) { return; }
-		dg.drawImage(((QuadTreeDisplayLayer) model).getSupportImage(), null, false);
+		dg.drawImage(((QuadTreeDisplayLayer) model).getSupportImage(), null, false,"QuadTreeDisplay");
 	}
 
 	@Override
