@@ -118,7 +118,7 @@ entities {
 		species boids_delegation parent: boids topology: topology(world.shape)  {
 			
 			// je ne comprends pas pourquoi cette liste peut contenir des agents morts de l'espèces "boids_delegation"?
-			var others type: list of: boids_delegation value: ( (agents_overlapping (shape + range)) of_species boids_delegation) - self;
+			list others value: ( (boids_delegation overlapping (shape + range))) - self;
 
 			action compute_mass_center type: point {
 				loop o over: others {
@@ -200,7 +200,7 @@ entities {
 		point velocity <- {0,0};
 		int size <- 5;
 		
-		container others update: (boids overlapping (circle (range)))  - self;
+		list others update: ((boids overlapping (circle (range)))  - self);
 		
 		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
 		
@@ -208,19 +208,20 @@ entities {
 			let acc value: {0,0};
 			loop boid over: (boids overlapping (circle(minimal_distance)))  {
 				set acc <- acc - ((location of boid) - location);
-			} 
+			}  
 			set velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
+			let toto <- others collect each;
 			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
 			set velocity <- velocity + (acc / alignment_factor);
 		}
-		
+		 
 		reflex cohesion when: apply_cohesion {
 			let acc value: mass_center - location;
 			set acc value: acc / cohesion_factor;
-			set velocity value: velocity + acc;
+			set velocity value: velocity + acc; 
 		}
 		
 		reflex avoid when: apply_avoid {
@@ -229,7 +230,7 @@ entities {
 			loop obs over: nearby_obstacles {
 				set acc <- acc - ((location of obs) - my (location));
 			}
-			set velocity <- velocity + acc;
+			set velocity <- velocity + acc; 
 		}
 		
 		action bounding {
@@ -272,17 +273,17 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black';      
+			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black');      
 		}
 		
 		aspect default { 
-			draw shape: triangle  size: 15 rotate: 90 + heading color: 'yellow';
+			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
 		}
 	} 
 	
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
-		
+		  
 		reflex toto when: moving_obstacles {
 //			if flip(0.5)  
 //			{ 
