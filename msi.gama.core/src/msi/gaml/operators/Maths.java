@@ -185,6 +185,16 @@ public class Maths {
 	public static Double atan(final Integer rv) {
 		return Math.atan(rv) * toDeg;
 	}
+	
+	@operator(value = "tanh", can_be_const = true)
+	public static Double tanh(final Double rv) {
+		return Math.tanh(rv);
+	}	
+	
+	@operator(value = "tanh", can_be_const = true)
+	public static Double tanh(final Integer rv) {
+		return Math.tanh(rv);
+	}
 
 	@operator(value = "cos", can_be_const = true)
 	public static Double cos(final Double rv) {
