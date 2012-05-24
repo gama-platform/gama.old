@@ -20,7 +20,10 @@ package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.*;
@@ -32,6 +35,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
@@ -95,7 +99,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	}
 	
 	
-	public Envelope loadShapeFile (String boundsStr, MathTransform transformCRS) throws IOException, TransformException {
+	public Map<String, Object> loadShapeFile (String boundsStr, MathTransform transformCRS) throws IOException, TransformException {
 		File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
 		ShapefileDataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
 		String name = store.getTypeNames()[0];
@@ -104,18 +108,23 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// CoordinateReferenceSystem crs = source.getFeatures()
 		// .getSchema().getCoordinateReferenceSystem();
 		Envelope env = source.getBounds();
-
 		if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 			ShpFiles shpf = new ShpFiles(shpFile);
 			double latitude = env.centre().x;
 			double longitude = env.centre().y;
-			transformCRS = GisUtils.getTransformCRS(shpf, latitude, longitude);
-			if ( transformCRS != null ) {
+			MathTransform transformCRSNew = GisUtils.getTransformCRS(shpf, latitude, longitude);
+			if (transformCRS == null)
+				transformCRS = transformCRSNew;
+			if ( transformCRSNew != null && transformCRS != null ) {
 				env = JTS.transform(env, transformCRS);
 			}
+			
 		}
 		store.dispose();
-		return env;
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("envelope", env);
+		result.put("transformCRS", transformCRS);
+		return result;
 	}
 
 	@Override
@@ -137,11 +146,12 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				if (boundsStr != null) {
 					Envelope env = null;
 					try {
-						if ( boundsStr.toLowerCase().endsWith(".shp"))
-							env = loadShapeFile(boundsStr, transformCRS);
-						else if ( boundsStr.toLowerCase().endsWith(".asc") ) 
+						if ( boundsStr.toLowerCase().endsWith(".shp")) {
+							Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
+							env = (Envelope) result.get("envelope");
+							transformCRS = (MathTransform) result.get("transformCRS");
+						} else if ( boundsStr.toLowerCase().endsWith(".asc") ) 
 							env = loadAscFile(boundsStr);
-							
 						if (env != null) {
 							if (boundsEnv == null) 
 								boundsEnv = env;
@@ -166,7 +176,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
 			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
 				try {
-					Envelope boundsEnv = loadShapeFile(boundsStr, transformCRS);
+					Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
+					Envelope boundsEnv = (Envelope) result.get("envelope");
+					transformCRS = (MathTransform) result.get("transformCRS");
 					xMin = boundsEnv.getMinX();
 					yMin = boundsEnv.getMinY();
 					width = boundsEnv.getWidth();

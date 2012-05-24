@@ -286,10 +286,14 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
 			FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				ShpFiles shpf = new ShpFiles(shpFile);
-				double latitude = featureShp.getBounds().centre().x;
-				double longitude = featureShp.getBounds().centre().y;
-				transformCRS = GisUtils.getTransformCRS(shpf, latitude, longitude);
+				if (GisUtils.transformCRS == null) {
+					ShpFiles shpf = new ShpFiles(shpFile);
+					double latitude = featureShp.getBounds().centre().x;
+					double longitude = featureShp.getBounds().centre().y;
+					transformCRS = GisUtils.getTransformCRS(shpf, latitude, longitude);
+				} else {
+					transformCRS = GisUtils.transformCRS;
+				}
 			}
 			return featureShp.features();
 		} catch (IOException e) {
