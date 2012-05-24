@@ -14,5 +14,7 @@ public class MyImage {
 	public float y;
 	public float width;
 	public float height;
+	public Integer angle = 0;
+	public String name;
 
 }

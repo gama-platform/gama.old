@@ -73,7 +73,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
-
+	
 	// Each geometry drawn is stored in a list.
 	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
@@ -371,46 +371,29 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
-			final boolean smooth) {
+			final boolean smooth,final String name) {
 
         //FIXME Dirty way to check that img represent the environment. When the image is the enviroment
         //we set the dimensions on the image as the env dimensions.
-		//FIXME: We should display the image with the size of the environment, this not the case here if the size of the image is greater than the environment
+		//We should display the image with the size of the environment, this not the case here if the size of the image is greater than the environment
+		
 		//WARNING: problem if an agent reach the 0,0 position...
 		//System.out.println("drawImage" + "curX" + curX + "curY" +curY +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight());
         if((curX == 0 && curY == 0)  ){
-        	//AddImageInImages(img, curX, curY,img.getWidth(),img.getHeight(),angle);
-        	AddImageInImages(img, curX, curY,this.envWidth,this.envHeight,angle);
+        	AddImageInImages(img, curX, curY,this.envWidth,this.envHeight,name,angle);
         	rect.setRect(curX, curY, img.getWidth(), img.getHeight());
         }
         else{
-        	//FIXME:how to get the real x and y?
-        	boolean AddAsImage=true;
-        	
-        	//If AddAsImage is true the image is drawn as a buffered Image (much more time consuming)
-        	//If AddAsImage is false the image is drawn as a texture bended on a rectangle (faster need to load alony once the bufferedImage)
-        	if(AddAsImage){
-        	AddImageInImages(img, curX, curY,curWidth,curHeight,angle);
-        	}
-        	else{	
-        	Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
-    				new GamaPoint(curX, curY)).getInnerGeometry();
-        	Color c= new Color(255,0,0);
-        	
-    		this.AddJTSGeometryInJTSGeometries(g, c,false,true,angle);
-        	}
-        	
+        	AddImageInImages(img, curX, curY,curWidth,curHeight,name,angle);
         	rect.setRect(curX, curY, curWidth, curHeight);
         }
-        
 
-        
 		return rect.getBounds2D();
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle) {
-		return drawImage(img, angle, true);
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final String name) {
+		return drawImage(img, angle, true, name);
 	}
 
 	/**
@@ -559,31 +542,47 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	private void AddImageInImages(BufferedImage img, final int curX,
-			final int curY, float widthInModel, float heightInModel, final Integer angle) {
+			final int curY, float widthInModel, float heightInModel, final String name,final Integer angle) {
 
 		final MyImage curImage = new MyImage();
-		
-		//FIXME. This is really heavy find a way to do it in a faster way.
-		if ( angle != null ) {
-		AffineTransform tx = new AffineTransform();
-	    tx.rotate(Maths.toRad * angle, img.getWidth() / 2, img.getHeight() / 2);
-	    //tx.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
-
-    
-	    AffineTransformOp op = new AffineTransformOp(tx,
-	        AffineTransformOp.TYPE_BILINEAR);
-	    img = op.filter(img, null);
-		}
-		
+				
 		curImage.image = img;
 		curImage.x = curX;
 		curImage.y = curY;
 		curImage.width = widthInModel;
 		curImage.height = heightInModel;
-				
+		if(angle == null){
+			curImage.angle= 0;
+		}else{
+			curImage.angle= angle;	
+		}
 		
-		myGLRender.InitTexture(img);
+		curImage.name=name;
+			
+		//For grid display we must 
+		if((curImage.name).equals("GridDisplay") == true|| (curImage.name).equals("QuadTreeDisplay") ){
+			myGLRender.InitTexture(img,name);
+		}
+		else{
+			if(!IsTextureExist(name)){
+				myGLRender.InitTexture(img,name);				
+			}
+		}
 		this.myImages.add(curImage);
+		
+	
+	}
+	
+	private boolean IsTextureExist(String name){
+		//Check that the texture is not already initialize
+		Iterator<MyTexture> it = myGLRender.myTextures.iterator();
+		while (it.hasNext()) {			
+			MyTexture curTexture = it.next();
+			if((name).equals(curTexture.ImageName) == true){
+			return true;
+			}
+		}
+		return false;
 	}
 	
 	private void AddStringInStrings(String string, float x, float y, float z){
@@ -633,15 +632,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			}
 			
 		}
-		else {
+		else {	
 		Iterator<MyImage> it = this.myImages.iterator();
-				
-		int id = 0;
 		while (it.hasNext()) {
-			
 			MyImage curImage = it.next();
-			myGLRender.DrawTexture(id, curImage);
-			id++;
+			myGLRender.DrawTexture(curImage);
 		}
 		}
 	}
@@ -773,7 +768,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void CleanImages() {
 		this.myImages.clear();
-		myGLRender.myTextures.clear();
+		
+		//We remove only the texture that has to be redrawn: we keep all the texture coming form a file.
+		Iterator<MyTexture> it = this.myGLRender.myTextures.iterator();
+		while (it.hasNext()) {
+			MyTexture curtexture = it.next();
+			//If the texture is coming from a file I keep it
+			if(((curtexture.ImageName).indexOf(".png")!= -1) || ((curtexture.ImageName).indexOf(".jpg")!= -1) || ((curtexture.ImageName).indexOf(".jpeg")!= -1)){
+				
+			}//Else I remove to recreate a new texture (e.g for GridDisplay).
+			else{
+				it.remove();
+			}
+		}	
 	}
 	
 	public void CleanStrings() {

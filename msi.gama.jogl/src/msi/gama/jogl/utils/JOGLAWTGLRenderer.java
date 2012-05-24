@@ -31,6 +31,7 @@ import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 import javax.media.opengl.GL;
@@ -65,6 +66,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Event Listener
 	public MyListener myListener;
 
+
 	private int width, height;
 	// Camera
 	public Camera camera;
@@ -73,17 +75,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public MyGLToyDrawer myGLDrawer;
 
 	// Textures list to store all the texture.
-	public ArrayList<Texture> myTextures = new ArrayList<Texture>();
+	public ArrayList<MyTexture> myTextures = new ArrayList<MyTexture>();
 	
 	
 	float textureTop, textureBottom, textureLeft, textureRight;	
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
 	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
-
-
-
-
 
 	// Lighting
 	private static boolean isLightOn;
@@ -182,7 +180,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Used blending function based On source alpha value
 		//gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
 
 		gl.glEnable(GL_BLEND);
 		gl.glDisable(GL_DEPTH_TEST);
@@ -323,50 +320,94 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 	}
 
-	public void DrawTexture(int index, MyImage img) {
+	public void DrawTexture(MyImage img) {
 
 		if (this.myTextures.size() > 0) {
-			// Enable the texture
-			gl.glEnable(GL_TEXTURE_2D);
-			Texture t = this.myTextures.get(index);
+			
+			Iterator<MyTexture> it = this.myTextures.iterator();
+			while (it.hasNext()) {			
+				MyTexture curTexture = it.next();
 
-			t.enable();
-			t.bind();
+				if( (img.name).equals(curTexture.ImageName))
+				{
 
-			// Reset opengl color. Set the transparency of the image to 1 (opaque).
-			gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			TextureCoords textureCoords;
-			textureCoords = t.getImageTexCoords();
-			textureTop = textureCoords.top();
-			textureBottom = textureCoords.bottom();
-			textureLeft = textureCoords.left();
-			textureRight = textureCoords.right();
-
-			gl.glBegin(GL_QUADS);
-			// bottom-left of the texture and quad
-			gl.glTexCoord2f(textureLeft, textureBottom);
-			gl.glVertex3f(img.x, -(img.y + img.height), 0);
-			// bottom-right of the texture and quad
-			gl.glTexCoord2f(textureRight, textureBottom);
-			gl.glVertex3f((img.x + img.width),
-					-(img.y + img.height), 0);
-			// top-right of the texture and quad
-			gl.glTexCoord2f(textureRight, textureTop);
-			gl.glVertex3f((img.x + img.width), -(img.y), 0);
-			// top-left of the texture and quad
-			gl.glTexCoord2f(textureLeft, textureTop);
-			gl.glVertex3f(img.x, -img.y, 0);
-			gl.glEnd();
+					// Enable the texture
+					gl.glEnable(GL_TEXTURE_2D);
+					Texture t = curTexture.texture;
+		
+					t.enable();
+					t.bind();
+		
+					// Reset opengl color. Set the transparency of the image to 1 (opaque).
+					gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					TextureCoords textureCoords;
+					textureCoords = t.getImageTexCoords();
+					textureTop = textureCoords.top();
+					textureBottom = textureCoords.bottom();
+					textureLeft = textureCoords.left();
+					textureRight = textureCoords.right();
+		
+					
+					if(img.angle!=0){
+						
+						gl.glTranslatef ((float)(img.x+img.width/2),-(float)(img.y+img.height/2),0.0f); 
+						//FIXME:Check counterwise or not, and do we rotate around the center or around a point.
+						gl.glRotatef(-img.angle,0.0f,0.0f,1.0f);
+						gl.glTranslatef (-(float)(img.x+img.width/2),+(float)(img.y+img.height/2),0.0f);
+						
+						gl.glBegin(GL_QUADS);
+						// bottom-left of the texture and quad
+						gl.glTexCoord2f(textureLeft, textureBottom);
+						gl.glVertex3f(img.x, -(img.y + img.height), 0);
+						// bottom-right of the texture and quad
+						gl.glTexCoord2f(textureRight, textureBottom);
+						gl.glVertex3f((img.x + img.width),
+								-(img.y + img.height), 0);
+						// top-right of the texture and quad
+						gl.glTexCoord2f(textureRight, textureTop);
+						gl.glVertex3f((img.x + img.width), -(img.y), 0);
+						// top-left of the texture and quad
+						gl.glTexCoord2f(textureLeft, textureTop);
+						gl.glVertex3f(img.x, -img.y, 0);
+						gl.glEnd();
+						gl.glTranslatef ((float)(img.x+img.width/2),-(float)(img.y+img.height/2),0.0f); 
+						gl.glRotatef(img.angle,0.0f,0.0f,1.0f);
+						gl.glTranslatef (-(float)(img.x+img.width/2),+(float)(img.y+img.height/2),0.0f);
+						
+					}
+					else{
+					gl.glBegin(GL_QUADS);
+					// bottom-left of the texture and quad
+					gl.glTexCoord2f(textureLeft, textureBottom);
+					gl.glVertex3f(img.x, -(img.y + img.height), 0);
+					// bottom-right of the texture and quad
+					gl.glTexCoord2f(textureRight, textureBottom);
+					gl.glVertex3f((img.x + img.width),
+							-(img.y + img.height), 0);
+					// top-right of the texture and quad
+					gl.glTexCoord2f(textureRight, textureTop);
+					gl.glVertex3f((img.x + img.width), -(img.y), 0);
+					// top-left of the texture and quad
+					gl.glTexCoord2f(textureLeft, textureTop);
+					gl.glVertex3f(img.x, -img.y, 0);
+					gl.glEnd();
+					}
+					gl.glDisable(GL_TEXTURE_2D);
+					break;
+				}
+			}
 		}
-		gl.glDisable(GL_TEXTURE_2D);
 	}
 
-	public void InitTexture(BufferedImage image) {
+	public void InitTexture(BufferedImage image,String name) {
 
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide.
 		this.context.makeCurrent();
-		Texture curTexture = TextureIO.newTexture(image, false);
+		Texture texture = TextureIO.newTexture(image, false);
+		MyTexture curTexture = new MyTexture();
+		curTexture.texture=texture;
+		curTexture.ImageName=name;
 		this.myTextures.add(curTexture);
 	}
 	

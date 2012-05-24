@@ -342,7 +342,7 @@ public class MyGraphics {
 			
 			if(angle!=0){
 				myGl.glTranslatef ((float)p.getCentroid().getX(),-(float)p.getCentroid().getY(),0.0f); 
-				//FIXME:Check counterwise or not, and do we rotate aroudn the center or around a point.
+				//FIXME:Check counterwise or not, and do we rotate around the center or around a point.
 				myGl.glRotatef(-angle,0.0f,0.0f,1.0f);
 				myGl.glTranslatef (-(float)p.getCentroid().getX(),+(float)p.getCentroid().getY(),0.0f);
 				myGl.glBegin(GL_QUADS);
@@ -562,7 +562,7 @@ public class MyGraphics {
 		while (it.hasNext()) {
 			MyImage curImage = it.next();			
 			myGl.glNewList(listId, GL_COMPILE);
-			myGLRender.DrawTexture(id, curImage);
+			myGLRender.DrawTexture(curImage);
 			myGl.glEndList();
 			listId = listId + 1;
 			id++;
