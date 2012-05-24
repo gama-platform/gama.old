@@ -120,10 +120,10 @@ public class DisplayManager implements IDisplayManager {
 	@Override
 	public void drawDisplaysOn(final IGraphics g) {
 		try {
+			g.initLayers();
 			for ( int i = 0, n = enabledDisplays.size(); i < n; i++ ) {
 				final IDisplay dis = enabledDisplays.get(i);
 				dis.drawDisplay(g);
-
 			}
 			if ( surface.isPaused() ) {
 				pd.drawDisplay(g);

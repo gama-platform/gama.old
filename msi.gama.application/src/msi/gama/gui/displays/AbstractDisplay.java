@@ -22,7 +22,7 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.IDisplayLayer;
@@ -141,6 +141,7 @@ public abstract class AbstractDisplay implements IDisplay {
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
 		if ( model != null ) {
+			g.newLayer();
 			g.setOpacity(model.getTransparency());
 			setPositionAndSize(model.getBoundingBox(), g);
 		}
@@ -219,6 +220,7 @@ public abstract class AbstractDisplay implements IDisplay {
 			y <= position.y + size.y;
 	}
 
+	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen) {
 		double xScale = size.x / env_width;
 		double yScale = size.y / env_height;

@@ -113,7 +113,8 @@ public interface IGraphics {
 	 * @param angle Integer
 	 * @param String name
 	 */
-	public abstract Rectangle2D drawImage(final BufferedImage img, final Integer angle,final String name);
+	public abstract Rectangle2D drawImage(final BufferedImage img, final Integer angle,
+		final String name);
 
 	/**
 	 * Method drawCircle.
@@ -191,7 +192,7 @@ public interface IGraphics {
 	 * @param name
 	 * @return
 	 */
-	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth,String name);
+	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth, String name);
 
 	/**
 	 * Draw grid as line
@@ -210,5 +211,16 @@ public interface IGraphics {
 
 	public abstract void highlight(Rectangle2D r);
 
+	/*
+	 * For IGraphics implementations that support the notion of layers in a way or another...
+	 * Indicates that the painting of all layers is about to begin.
+	 */
+	public abstract void initLayers();
+
+	/*
+	 * For IGraphics implementations that support the notion of layers in a way or another...
+	 * Indicates that the painting of a new layer is about to begin.
+	 */
+	public abstract void newLayer();
 
 }
