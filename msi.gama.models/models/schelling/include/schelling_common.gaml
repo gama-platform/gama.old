@@ -9,7 +9,7 @@ global {
 	var color_5 type: rgb init: rgb('green') parameter: 'Color of group 5:' category: 'User interface' ;
 	var color_6 type: rgb init: rgb('pink') parameter: 'Color of group 6:' category: 'User interface' ;
 	var color_7 type: rgb init: rgb('magenta') parameter: 'Color of group 7:' category: 'User interface'  ;
-	var color_8 type: rgb init: rgb('cyan') parameter: 'Color of group 8:' category: 'User interface' ; 
+	var color_8 type: rgb init: rgb('cyan') parameter: 'Color of group 8:' category: 'User interface' ;  
 	const black type: rgb init: rgb('black') ;
 	var number_of_groups type: int init: 2 max: 8 parameter: 'Number of groups:' category: 'Population' ;
 	var density_of_people type: float init: 0.7 parameter: 'Density of people:' category: 'Population' min: 0.01 max: 0.99 ;
@@ -30,25 +30,23 @@ global {
 		do description ; 
 		do initialize_places ;      
 		set number_of_people value: length(all_places) * density_of_people ; 
-		do initialize_people ;
+		do initialize_people ; 
 	}
-	action initialize_places;
+	action initialize_places;  
 	action initialize_people;  
 }   
-entities { 
+ 
 	species base {
 		var color type: rgb ;
 		var location type: point ;
 		var my_neighbours type: list init: [] of: base ;
-		var similar_nearby type: int init: 0 value:  (my_neighbours count (each.color = color))  ;
+		var similar_nearby type: int init: 0 value:  (my_neighbours count (each.color = color))  ; 
 		var total_nearby type: int value: length(my_neighbours) ;
 		var is_happy type: bool value: similar_nearby >= (percent_similar_wanted * total_nearby ) ;
-		reflex migrate when: !is_happy {
-			set location value: point(all_places first_with (empty(each.agents))) ;
+		reflex migrate when: !is_happy { 
+			set location value: point(all_places first_with (empty(each.agents)));
 		} 
-		//action toto;
 	}
-}
 output {
 	display Segregation {
 		chart name: 'Proportion of happiness' type: pie background: rgb('lightGray') style: exploded {
