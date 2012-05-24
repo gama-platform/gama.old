@@ -471,7 +471,7 @@ public class SpeciesDescription extends SymbolDescription {
 				children.addAll(toAdd);
 			}
 			List<String> methods = AbstractGamlAdditions.getSkillMethods(c1);
-			if ( !methods.isEmpty() ) {
+			if ( methods != null && !methods.isEmpty() ) {
 				for ( String s : methods ) {
 					addSkillMethod(c1, s);
 				}
