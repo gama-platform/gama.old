@@ -309,6 +309,7 @@ public class DrawCommand extends AbstractCommandSequence {
 					constantSize.getX(), g));
 			String img =
 				constantImage == null ? Cast.asString(scope, image.value(scope)) : constantImage;
+				
 			BufferedImage image;
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(img);
@@ -322,6 +323,7 @@ public class DrawCommand extends AbstractCommandSequence {
 			int x = Maths.round(from.getX()) - displayWidth / 2;
 			int y = Maths.round(from.getY()) - displayHeight / 2;
 			g.setDrawingDimensions(displayWidth, displayHeight);
+			
 			g.setDrawingCoordinates(x, y);
 			Color c = null;
 			Integer angle =
@@ -358,11 +360,11 @@ public class DrawCommand extends AbstractCommandSequence {
 				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				// g2d.dispose();
 
-				Rectangle2D result = g.drawImage(workImage, angle, true);
+				Rectangle2D result = g.drawImage(workImage, angle, true,img);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(image, angle, true);
+			return g.drawImage(image, angle, true,img);
 		}
 
 	}

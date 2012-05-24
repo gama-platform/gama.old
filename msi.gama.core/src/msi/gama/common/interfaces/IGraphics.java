@@ -111,8 +111,9 @@ public interface IGraphics {
 	 * Method drawImage.
 	 * @param img Image
 	 * @param angle Integer
+	 * @param String name
 	 */
-	public abstract Rectangle2D drawImage(final BufferedImage img, final Integer angle);
+	public abstract Rectangle2D drawImage(final BufferedImage img, final Integer angle,final String name);
 
 	/**
 	 * Method drawCircle.
@@ -187,9 +188,10 @@ public interface IGraphics {
 	 * @param img
 	 * @param angle
 	 * @param smooth
+	 * @param name
 	 * @return
 	 */
-	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth);
+	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth,String name);
 
 	/**
 	 * Draw grid as line
@@ -207,5 +209,6 @@ public interface IGraphics {
 	void setHighlightColor(int[] rgb);
 
 	public abstract void highlight(Rectangle2D r);
+
 
 }
