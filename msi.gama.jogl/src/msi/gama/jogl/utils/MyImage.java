@@ -12,6 +12,7 @@ public class MyImage {
 	public int textureId;
 	public float x;
 	public float y;
+	public float z;
 	public float width;
 	public float height;
 	public Integer angle = 0;

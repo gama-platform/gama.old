@@ -288,7 +288,7 @@ public class Camera {
 		this.PrintParam();
 		// FIXME: This need to be normalize
 		this.setzPos((maxDim / 50 + 5.0f));
-		this.setzLPos(10.0f);
+		this.setzLPos(20.0f);
 
 	}
 

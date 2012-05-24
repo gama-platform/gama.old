@@ -233,38 +233,39 @@ public class MyGraphics {
 
 		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
 		
+		
 		for (i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry.geometry;
-				DrawMultiPolygon(polygons, geometry.color,geometry.fill,geometry.angle);
+				DrawMultiPolygon(polygons,geometry.z,geometry.color,geometry.fill,geometry.angle);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry.geometry;
-				DrawPolygon(polygon, geometry.color, 0.0f,geometry.fill,geometry.isTextured,geometry.angle);
+				DrawPolygon(polygon, geometry.z, geometry.color,geometry.fill,geometry.isTextured,geometry.angle);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				MultiLineString lines = (MultiLineString) geometry.geometry;
-				DrawMultiLineString(lines, geometry.color);
+				DrawMultiLineString(lines, geometry.z,geometry.color);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
 				LineString line = (LineString) geometry.geometry;
-				DrawLineString(line, 1.2f, geometry.color);
+				DrawLineString(line,geometry.z, 1.2f, geometry.color);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				Point point = (Point) geometry.geometry;
-				DrawPoint(point, 10, 10, geometry.color);
+				DrawPoint(point,geometry.z, 10, 10, geometry.color);
 			}
 		}
 	}
 
 
 
-	public void DrawMultiPolygon(MultiPolygon polygons, Color c,boolean fill, Integer angle) {
+	public void DrawMultiPolygon(MultiPolygon polygons, float z,Color c,boolean fill, Integer angle) {
 
 		numGeometries = polygons.getNumGeometries();
 		// System.out.println("Draw MultiPolygon:"+numGeometries);
@@ -275,7 +276,7 @@ public class MyGraphics {
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon, c, 0.0f,fill,false,angle);
+			DrawPolygon(curPolygon, z, c ,fill,false,angle);
 			// DrawPolygonContour(curPolygon,c,0.0f);
 			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
 			// Draw3DPolygon(curPolygon,c, 100.0f);
@@ -284,7 +285,7 @@ public class MyGraphics {
 
 
 
-	public void DrawPolygon(Polygon p, Color c, float z,boolean fill,boolean isTextured, Integer angle) {
+	public void DrawPolygon(Polygon p,float z, Color c,boolean fill,boolean isTextured, Integer angle) {
 	
 		//FIXME: Angle rotation is not implemented yet
 		
@@ -349,15 +350,15 @@ public class MyGraphics {
 	
 				// Front Face
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
+				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), z); // bottom-left of the texture and
 														// quad
 				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
+				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), z); // bottom-right of the texture and
 														// quad
 				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
+				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), z); // top-right of the texture and quad
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
+				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), z); // top-left of the texture and quad
 				
 				myGl.glEnd();
 				myGl.glTranslatef ((float)p.getCentroid().getX(),-(float)p.getCentroid().getY(),0.0f); 
@@ -369,15 +370,15 @@ public class MyGraphics {
 
 				// Front Face
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), 0.0f); // bottom-left of the texture and
+				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p.getExteriorRing().getPointN(0).getY(), z); // bottom-left of the texture and
 														// quad
 				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), 0.0f); // bottom-right of the texture and
+				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p.getExteriorRing().getPointN(1).getY(), z); // bottom-right of the texture and
 														// quad
 				myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), 0.0f); // top-right of the texture and quad
+				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p.getExteriorRing().getPointN(2).getY(), z); // top-right of the texture and quad
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), 0.0f); // top-left of the texture and quad
+				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p.getExteriorRing().getPointN(3).getY(), z); // top-left of the texture and quad
 				
 				myGl.glEnd();
 			}
@@ -409,16 +410,16 @@ public class MyGraphics {
 	}
 
 
-	public void Draw3DPolygon(Polygon p, Color c, float z_offset,Integer angle) {
+	public void Draw3DPolygon(Polygon p, float z,Color c, float z_offset,Integer angle) {
 
-		DrawPolygon(p, c, 0,true,false,angle);
-		DrawPolygon(p, c, z_offset,true,false,angle);
+		DrawPolygon(p, z, c,true,false,angle);
+		DrawPolygon(p, z+z_offset, c,true,false,angle);
 		//FIXME : Will be wrong if angle =!0
-		Draw3DQuads(p, c, z_offset);
+		Draw3DQuads(p, c, z+z_offset);
 
 	}
 
-	public void DrawMultiLineString(MultiLineString lines, Color c) {
+	public void DrawMultiLineString(MultiLineString lines, float z,Color c) {
 
 		// get the number of line in the multiline.
 		numGeometries = lines.getNumGeometries();
@@ -437,15 +438,15 @@ public class MyGraphics {
 			myGl.glBegin(GL.GL_LINES);
 			for (j = 0; j < numPoints - 1; j++) {
 				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), (float) (0));
+						-(float) ((l.getPointN(j).getY())), z);
 				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), (float) (0));
+						-(float) ((l.getPointN(j + 1).getY())), z);
 			}
 			myGl.glEnd();
 		}
 	}
 
-	public void DrawLineString(LineString line, float size, Color c) {
+	public void DrawLineString(LineString line, float z, float size, Color c) {
 
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
@@ -454,15 +455,15 @@ public class MyGraphics {
 		myGl.glBegin(GL.GL_LINES);
 		for (j = 0; j < numPoints - 1; j++) {
 			myGl.glVertex3f((float) ((line.getPointN(j).getX())),
-					(float) ((line.getPointN(j).getY())), (float) ((0)));
+					(float) ((line.getPointN(j).getY())), z);
 			myGl.glVertex3f((float) ((line.getPointN(j + 1).getX())),
-					(float) ((line.getPointN(j + 1).getY())), (float) ((0)));
+					(float) ((line.getPointN(j + 1).getY())), z);
 		}
 		myGl.glEnd();
 
 	}
 
-	public void DrawPoint(Point point, int numPoints, float radius, Color c) {
+	public void DrawPoint(Point point, float z, int numPoints, float radius, Color c) {
 
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
@@ -479,7 +480,7 @@ public class MyGraphics {
 					.cos(angle)) * radius);
 			tempPolygon[k][1] = (float) (point.getCoordinate().y + (Math
 					.sin(angle)) * radius);
-			tempPolygon[k][2] = 0;
+			tempPolygon[k][2] = z;
 		}
 
 		for (int k = 0; k < numPoints; k++) {
@@ -506,8 +507,8 @@ public class MyGraphics {
 					* radius);
 			yEnd = (float) (point.getCoordinate().y + (Math.sin(angle))
 					* radius);
-			myGl.glVertex3f(xBegin, yBegin, 0);
-			myGl.glVertex3f(xEnd, yEnd, 0);
+			myGl.glVertex3f(xBegin, yBegin, z);
+			myGl.glVertex3f(xEnd, yEnd, z);
 		}
 		myGl.glEnd();
 

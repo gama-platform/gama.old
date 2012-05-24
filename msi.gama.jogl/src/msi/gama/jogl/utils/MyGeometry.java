@@ -12,7 +12,7 @@ public class MyGeometry {
 	public String type;
 	
 	public float size;
-
+	
 	public MyGeometry(int numPoints) {
 		vertices = new Vertex[numPoints];
 		for (int i = 0; i < numPoints; i++) {

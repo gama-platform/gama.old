@@ -358,17 +358,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 						gl.glBegin(GL_QUADS);
 						// bottom-left of the texture and quad
 						gl.glTexCoord2f(textureLeft, textureBottom);
-						gl.glVertex3f(img.x, -(img.y + img.height), 0);
+						gl.glVertex3f(img.x, -(img.y + img.height), img.z);
 						// bottom-right of the texture and quad
 						gl.glTexCoord2f(textureRight, textureBottom);
 						gl.glVertex3f((img.x + img.width),
-								-(img.y + img.height), 0);
+								-(img.y + img.height), img.z);
 						// top-right of the texture and quad
 						gl.glTexCoord2f(textureRight, textureTop);
-						gl.glVertex3f((img.x + img.width), -(img.y), 0);
+						gl.glVertex3f((img.x + img.width), -(img.y), img.z);
 						// top-left of the texture and quad
 						gl.glTexCoord2f(textureLeft, textureTop);
-						gl.glVertex3f(img.x, -img.y, 0);
+						gl.glVertex3f(img.x, -img.y, img.z);
 						gl.glEnd();
 						gl.glTranslatef ((float)(img.x+img.width/2),-(float)(img.y+img.height/2),0.0f); 
 						gl.glRotatef(img.angle,0.0f,0.0f,1.0f);
@@ -379,17 +379,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					gl.glBegin(GL_QUADS);
 					// bottom-left of the texture and quad
 					gl.glTexCoord2f(textureLeft, textureBottom);
-					gl.glVertex3f(img.x, -(img.y + img.height), 0);
+					gl.glVertex3f(img.x, -(img.y + img.height), img.z);
 					// bottom-right of the texture and quad
 					gl.glTexCoord2f(textureRight, textureBottom);
 					gl.glVertex3f((img.x + img.width),
-							-(img.y + img.height), 0);
+							-(img.y + img.height), img.z);
 					// top-right of the texture and quad
 					gl.glTexCoord2f(textureRight, textureTop);
-					gl.glVertex3f((img.x + img.width), -(img.y), 0);
+					gl.glVertex3f((img.x + img.width), -(img.y), img.z);
 					// top-left of the texture and quad
 					gl.glTexCoord2f(textureLeft, textureTop);
-					gl.glVertex3f(img.x, -img.y, 0);
+					gl.glVertex3f(img.x, -img.y, img.z);
 					gl.glEnd();
 					}
 					gl.glDisable(GL_TEXTURE_2D);

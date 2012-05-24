@@ -9,6 +9,8 @@ public class MyJTSGeometry {
 	
 	public Geometry geometry;
 	
+	public float z;
+	
 	public Color color;
 
 	public String type;

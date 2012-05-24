@@ -103,17 +103,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
-		
-
 		System.out.println("env_width:" + env_width + "env_height" + env_height);
-
-		
-		
 
 		this.setLayout(new BorderLayout());
 		this.add(myGLRender.canvas, BorderLayout.CENTER);
-
-		
 
 		// /////
 		outputChanged(env_width, env_height, layerDisplayOutput);
@@ -335,6 +328,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 				// IDisplay d =
 				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
 					env_height, openGLGraphics));
+				System.out.println("Create Display: " + layer.getName());
 				// d.initMenuItems(this);
 			}
 
