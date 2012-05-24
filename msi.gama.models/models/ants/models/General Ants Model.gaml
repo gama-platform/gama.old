@@ -43,7 +43,7 @@ global {
 }
 environment width : gridsize height : gridsize { }  
 grid ant_grid width : gridsize height : gridsize neighbours : 8 torus : false
-frequency : grid_frequency {
+frequency : grid_frequency { 
 	const neighbours type : list of : ant_grid init : self neighbours_at 1;
 	const is_nest type : bool init : ( topology ( ant_grid ) distance_between [
 	self , center ] ) < 4;
@@ -68,19 +68,19 @@ entities {
 		}
 		action drop {
 			set food_gathered <- food_gathered + 1 ;
-			set has_food <- false ;
+			set has_food <- false ;  
 			set heading <- heading - 180 ;
 		}
 		action choose_best_place type : point {
 			let list_places type : container value : (ant_grid ( location )).neighbours;
-			if ( list_places count ( each . food > 0 ) ) > 0 {
+			if ( list_places count ( each . food > 0 ) ) > 0 {  
 				return point ( list_places first_with ( each . food > 0 ) ) ;
 			} else {
 				set list_places <- ( list_places where ( ( each . road > 0 ) and ( ( each
 				distance_to center ) > ( self distance_to center ) ) ) ) sort_by ( each .
 				road ) ;
 				return point ( last ( list_places ) ) ;
-			}
+			}  
 		}
 		reflex drop when : has_food and ( ant_grid ( location ) ) . is_nest {
 			do drop;
