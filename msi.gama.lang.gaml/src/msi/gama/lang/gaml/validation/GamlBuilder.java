@@ -89,6 +89,7 @@ public class GamlBuilder {
 		for ( Import imp : model.getImports() ) {
 			GamlResource r = (GamlResource) model.eResource();
 			String importUri = imp.getImportURI();
+			// FIXME BUG WHEN NOT FOUND ?
 			URI iu = URI.createURI(importUri).resolve(r.getURI());
 			GamlResource ir = (GamlResource) r.getResourceSet().getResource(iu, true);
 			if ( ir != null ) {
@@ -129,9 +130,12 @@ public class GamlBuilder {
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) { return null; }
-		// We see if we can provide the temporary fix for the "collision of save(s)"
+		// We see if we can provide the temporary fix for the "collision of save(s)" and the
+		// "collision of species"
 		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
 			keyword = SAVE_BATCH;
+		} else if ( (upper.equals(DISPLAY) || upper.equals(POPULATION)) && keyword.equals(SPECIES) ) {
+			keyword = POPULATION;
 		}
 		final ISyntacticElement elt = new SyntacticStatement(keyword, stm);
 
@@ -154,6 +158,14 @@ public class GamlBuilder {
 			elt.setFacet(fname, fexpr);
 		}
 
+		// We do the same for the special case of the "ref" + "expr" facet found in statements
+		GamlFacetRef ref = stm.getRef();
+		if ( ref != null ) {
+			String fname = ref.getRef();
+			IExpressionDescription ed = convExpr(stm.getExpr());
+			elt.setFacet(fname, ed);
+		}
+
 		// If the statement is "if", we convert its potential "else" part and put it inside the
 		// syntactic element (as the legacy GAML expects it)
 		if ( keyword.equals(IKeyword.IF) ) {
@@ -170,6 +182,7 @@ public class GamlBuilder {
 
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(keyword);
+
 		if ( def != null && elt.getFacet(def) == null ) {
 			IExpressionDescription ed = null;
 			if ( stm instanceof Definition ) {
