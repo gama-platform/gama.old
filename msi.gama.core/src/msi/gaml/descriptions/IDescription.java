@@ -98,4 +98,6 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract IDescription copy();
 
+	public int getKind();
+
 }

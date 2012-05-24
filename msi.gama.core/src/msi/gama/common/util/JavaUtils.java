@@ -19,6 +19,8 @@
 package msi.gama.common.util;
 
 import java.util.*;
+import msi.gama.runtime.IScope;
+import msi.gaml.skills.ISkill;
 
 /**
  * Written by drogoul Modified on 28 déc. 2010
@@ -28,6 +30,7 @@ import java.util.*;
  */
 public class JavaUtils {
 
+	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new HashMap();
 	private static Map<Class, Set<Class>> allInterfaces = new HashMap();
 	private static Map<Class, Set<Class>> allSuperclasses = new HashMap();
 
@@ -68,6 +71,31 @@ public class JavaUtils {
 		allSuperclasses.put(c, result);
 
 		return result;
+	}
+
+	public static List<Class> collectImplementationClasses(final Class baseClass,
+		final Set<Class> skillClasses) {
+		Set<Class> classes = new HashSet();
+		classes.add(baseClass);
+		classes.addAll(skillClasses);
+		Set<Class> key = new HashSet(classes);
+		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
+		classes.addAll(allInterfacesOf(baseClass));
+		for ( final Class classi : new ArrayList<Class>(classes) ) {
+			classes.addAll(allSuperclassesOf(classi));
+		}
+		classes.remove(ISkill.class);
+		classes.remove(IScope.class);
+		final ArrayList<Class> classes2 = new ArrayList();
+		for ( final Class c : classes ) {
+			if ( !classes2.contains(c.getSuperclass()) ) {
+				classes2.add(0, c);
+			} else {
+				classes2.add(c);
+			}
+		}
+		IMPLEMENTATION_CLASSES.put(key, classes2);
+		return classes2;
 	}
 
 }

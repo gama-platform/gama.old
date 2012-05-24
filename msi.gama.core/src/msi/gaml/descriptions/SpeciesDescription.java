@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
@@ -458,7 +459,7 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( javaBase != null ) { return; }
 		javaBase = c;
 		final List<Class> classes =
-			AbstractGamlAdditions.collectImplementationClasses(javaBase, getSkillClasses());
+			JavaUtils.collectImplementationClasses(javaBase, getSkillClasses());
 		final List<IDescription> children = new ArrayList();
 		for ( final Class c1 : classes ) {
 			List<IDescription> toAdd = AbstractGamlAdditions.getVarDescriptions(c1);

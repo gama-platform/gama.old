@@ -20,7 +20,6 @@ package msi.gaml.expressions;
 
 import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.IType;
 
@@ -42,10 +41,6 @@ public interface IExpressionFactory {
 
 	public abstract IExpression createExpr(final IExpressionDescription s,
 		final IDescription context);
-
-	public abstract IOperator createOperator(final String name, final boolean binary,
-		final boolean var, final IType returnType, final IOperatorExecuter helper,
-		final boolean canBeConst, final short type, final short contentType, final boolean lazy);
 
 	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
 		IDescription context);

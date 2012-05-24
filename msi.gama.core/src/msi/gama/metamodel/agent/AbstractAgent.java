@@ -60,9 +60,9 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * All the populations that manage the micro-agents. Each population manages agents of a
-	 * micro-species.
+	 * micro-species. Final so that it is correctly garbaged.
 	 */
-	protected Map<ISpecies, IPopulation> microPopulations = Collections.EMPTY_MAP;
+	protected final Map<ISpecies, IPopulation> microPopulations = new HashMap();
 
 	public AbstractAgent(final ISimulation sim, final IPopulation p) {
 		simulation = sim;
@@ -75,7 +75,7 @@ public abstract class AbstractAgent implements IAgent {
 		List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
 
 		if ( !allMicroSpecies.isEmpty() ) {
-			microPopulations = new HashMap<ISpecies, IPopulation>();
+			// microPopulations = new HashMap<ISpecies, IPopulation>();
 			IPopulation microPop;
 			for ( ISpecies microSpec : allMicroSpecies ) {
 
@@ -152,7 +152,10 @@ public abstract class AbstractAgent implements IAgent {
 			}
 			microPopulations.clear();
 		}
-		microPopulations = null;
+		// Do not put it to null yet. Let the GC do its job, while
+		// keeping some degree of compatibility with the other processes
+		// that might want to access the field.
+		// microPopulations = null;
 
 		try {
 			population.removeFirst(this);

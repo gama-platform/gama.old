@@ -22,17 +22,17 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.commands.IAspect;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.SPECIES, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER)
 @inside(symbols = { IKeyword.DISPLAY, IKeyword.SPECIES })
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),

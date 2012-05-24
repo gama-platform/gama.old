@@ -38,15 +38,11 @@ import msi.gaml.descriptions.*;
 @uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
 public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model {
 
+	public ModelFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
+	}
+
 	public static Set<SpeciesDescription> BUILT_IN_SPECIES = null;
-
-	public ModelFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
-	}
-
-	public ModelFactory() {
-		super(null);
-	}
 
 	public static boolean isBuiltIn(final String name) {
 		return AbstractGamlAdditions.getBuiltInSpeciesClasses().containsKey(name);
@@ -151,7 +147,8 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 		// We compute the built-in species if necessary, only once
 		if ( BUILT_IN_SPECIES == null ) {
 			BUILT_IN_SPECIES = new LinkedHashSet();
-			for ( Map.Entry<String, Class> e : AbstractGamlAdditions.getBuiltInSpeciesClasses().entrySet() ) {
+			for ( Map.Entry<String, Class> e : AbstractGamlAdditions.getBuiltInSpeciesClasses()
+				.entrySet() ) {
 				String name = e.getKey();
 				if ( !WORLD_SPECIES.equals(name) ) {
 					String clazz = e.getValue().getName();

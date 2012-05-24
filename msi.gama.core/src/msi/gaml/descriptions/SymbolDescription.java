@@ -63,6 +63,11 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
+	public int getKind() {
+		return meta.getKind();
+	}
+
+	@Override
 	public SymbolMetaDescription getMeta() {
 		return meta;
 	}

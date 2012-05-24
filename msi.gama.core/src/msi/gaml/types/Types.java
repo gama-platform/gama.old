@@ -18,10 +18,13 @@
  */
 package msi.gaml.types;
 
+import static msi.gama.common.interfaces.IKeyword.GETTER;
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.TypeFieldExpression;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -38,26 +41,16 @@ public class Types {
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	public static void initType(final Class c) {
-		type t = (type) c.getAnnotation(type.class);
-		String keyword = t.value();
-
-		IType typeInstance;
+	public static void initType(final String keyword, IType typeInstance, final short id,
+		final int varKind, final Class ... wraps) {
 		if ( keyword.equals(IType.NONE_STR) ) {
 			typeInstance = NO_TYPE;
-		} else {
-			try {
-				typeInstance = (IType) c.newInstance();
-			} catch (Exception e) {
-				return;
-			}
 		}
-		typeToIType[t.id()] = typeInstance;
+		typeToIType[id] = typeInstance;
 		stringToIType.put(keyword, typeInstance);
-		for ( Class cc : t.wraps() ) {
+		for ( Class cc : wraps ) {
 			classToIType.put(cc, typeInstance);
 		}
-		int varKind = t.kind();
 		if ( !keywordsToVariableType.containsKey(varKind) ) {
 			keywordsToVariableType.put(varKind, new HashSet());
 		}
@@ -103,6 +96,27 @@ public class Types {
 		types.removeAll(Collections.singleton(null));
 		Collections.sort(types);
 		return types;
+	}
+
+	public static void initFieldGetters(final IType t) {
+		List<IDescription> vars = AbstractGamlAdditions.getFieldDescriptions(t.toClass());
+		if ( vars != null ) {
+			for ( IDescription v : vars ) {
+				String n = v.getName();
+				IFieldGetter g =
+					AbstractGamlAdditions.getFieldGetter(t.toClass(), v.getFacets()
+						.getLabel(GETTER));
+				t.addFieldGetter(n, new TypeFieldExpression(n, v.getType(), v.getContentType(), g));
+			}
+		}
+	}
+
+	public static void init() {
+		for ( IType type : getSortedTypes() ) {
+			if ( type != null ) {
+				initFieldGetters(type);
+			}
+		}
 	}
 
 }

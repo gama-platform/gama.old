@@ -207,6 +207,7 @@ public interface IKeyword {
 	public static final String PIE = "pie";
 	public static final String PLACES = "places";
 	public final static String PLUS = "+";
+	public final static String POPULATION = "population";
 	public static final String POSITION = "position";
 	public static final String PRIMITIVE = "primitive";
 	public static final String PRIORITY = "priority";

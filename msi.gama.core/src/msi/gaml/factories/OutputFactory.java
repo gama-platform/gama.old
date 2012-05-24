@@ -19,6 +19,7 @@
 package msi.gaml.factories;
 
 import java.awt.Color;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayerDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
@@ -37,11 +38,8 @@ import msi.gaml.descriptions.IDescription;
 @uses({ ISymbolKind.LAYER })
 public class OutputFactory extends SymbolFactory {
 
-	/**
-	 * @param superFactory
-	 */
-	public OutputFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public OutputFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	public static LayerDisplayOutput createDisplay(final String name, final int refresh,

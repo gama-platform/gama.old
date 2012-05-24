@@ -27,8 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-
+import msi.gama.util.*;
 import org.joda.time.*;
 import org.joda.time.chrono.*;
 import org.joda.time.field.PreciseDurationField;
@@ -98,7 +97,7 @@ public class Strings {
 	}
 
 	@operator(value = { "split_with", "tokenize" }, can_be_const = true)
-	public static GamaList opTokenize(final String target, final String pattern) {
+	public static IList opTokenize(final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return new GamaList(Collections.list(st));
 	}

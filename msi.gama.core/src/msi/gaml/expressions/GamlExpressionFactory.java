@@ -21,9 +21,7 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gaml.compilation.IOperatorExecuter;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
 import msi.gaml.types.*;
 
 /**
@@ -227,24 +225,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		context.flagError("Operator: " + op + " does not exist", IGamlIssue.UNKNOWN_BINARY, null,
 			op);
 		return null;
-	}
-
-	@Override
-	public IOperator createOperator(final String name, final boolean binary, final boolean var,
-		final IType returnType, final IOperatorExecuter helper, final boolean canBeConst,
-		final short type, final short contentType, final boolean lazy) {
-		IOperator op;
-		if ( binary ) {
-			if ( var ) {
-				op = new BinaryVarOperator(returnType, helper, canBeConst, type, contentType, lazy);
-			} else {
-				op = new BinaryOperator(returnType, helper, canBeConst, type, contentType, lazy);
-			}
-		} else {
-			op = new UnaryOperator(returnType, helper, canBeConst, type, contentType);
-		}
-		op.setName(name);
-		return op;
 	}
 
 	@Override

@@ -41,11 +41,8 @@ import msi.gaml.types.*;
 	ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 
-	/**
-	 * @param superFactory
-	 */
-	public VariableFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public VariableFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	@Override

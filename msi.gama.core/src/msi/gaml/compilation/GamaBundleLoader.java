@@ -6,7 +6,7 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gaml.types.*;
+import msi.gaml.types.Types;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -23,6 +23,7 @@ public class GamaBundleLoader {
 	public static String EXTENSION = "gaml.grammar.addition";
 
 	public static void preBuildContributions() {
+		final long start = System.currentTimeMillis();
 		Set<String> plugins = new LinkedHashSet();
 		for ( IConfigurationElement e : Platform.getExtensionRegistry()
 			.getConfigurationElementsFor(EXTENSION) ) {
@@ -35,11 +36,10 @@ public class GamaBundleLoader {
 		for ( String addition : plugins ) {
 			preBuild(addition);
 		}
-		for ( IType type : Types.getSortedTypes() ) {
-			if ( type != null ) {
-				AbstractGamlAdditions.initFieldGetters(type);
-			}
-		}
+		Types.init();
+
+		long end = System.currentTimeMillis();
+		GuiUtils.debug("All GAML additions " + " loaded in " + (end - start) + " ms.");
 	}
 
 	public static void preBuild(final String s) {

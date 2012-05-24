@@ -41,11 +41,8 @@ import msi.gaml.types.*;
 	ISymbolKind.ACTION })
 public class CommandFactory extends SymbolFactory implements IKeyword {
 
-	/**
-	 * @param superFactory
-	 */
-	public CommandFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public CommandFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	@Override

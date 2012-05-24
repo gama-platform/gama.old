@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR),
 	@var(name = IKeyword.MEMBERS, type = IType.LIST_STR),
 	@var(name = IKeyword.PEERS, type = IType.LIST_STR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST_STR),
+	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
 	@var(name = IKeyword.HOST, type = IType.NONE_STR),
 	@var(name = IKeyword.LOCATION, type = IType.POINT_STR, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR) /*
@@ -51,7 +51,7 @@ import msi.gaml.types.IType;
 														 */})
 public interface IGamlAgent extends IAgent {
 
-	@Override 
+	@Override
 	@getter(var = IKeyword.MEMBERS)
 	public abstract IList<IAgent> getMembers();
 

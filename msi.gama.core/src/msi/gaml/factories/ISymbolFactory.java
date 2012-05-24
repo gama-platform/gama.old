@@ -44,21 +44,26 @@ public interface ISymbolFactory {
 
 	public abstract ISymbolFactory chooseFactoryFor(String keyword);
 
-	public abstract Set<String> getKeywords();
+	public abstract void assembleWith(Map<Integer, ISymbolFactory> factoriesByKind);
 
 	public abstract String getOmissibleFacetForSymbol(String symbol);
 
 	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
-
-	public abstract String getName();
 
 	public interface Model extends ISymbolFactory {
 
 		public abstract IModel compile(ModelStructure ms);
 
 		public abstract ModelDescription validate(ModelStructure parse);
+
 	}
 
 	public abstract void addSpeciesNameAsType(String name);
+
+	public abstract void registerSymbol(SymbolMetaDescription md, List<String> names);
+
+	public abstract Set<Integer> getHandles();
+
+	public abstract boolean handles(String keyword);
 
 }

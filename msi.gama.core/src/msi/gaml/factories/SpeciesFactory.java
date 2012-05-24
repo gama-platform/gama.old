@@ -37,8 +37,8 @@ import msi.gaml.descriptions.*;
 @uses({ BEHAVIOR, ACTION, Variable.NUMBER, Variable.CONTAINER, Variable.REGULAR, Variable.SIGNAL })
 public class SpeciesFactory extends SymbolFactory {
 
-	public SpeciesFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public SpeciesFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	@Override

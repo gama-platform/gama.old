@@ -92,7 +92,6 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	private void buildHelpers(final SpeciesDescription context) {
-		Class valueClass = type.toClass();
 		if ( getFacet(IKeyword.GETTER) != null ) {
 			gName = getLiteral(IKeyword.GETTER);
 			gSkill = context.getSkillFor(gName);
@@ -106,7 +105,7 @@ public class Variable extends Symbol implements IVariable {
 		if ( getFacet(IKeyword.SETTER) != null ) {
 			sName = getLiteral(IKeyword.SETTER);
 			sSkill = context.getSkillFor(sName);
-			setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName, valueClass);
+			setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName);
 		}
 	}
 

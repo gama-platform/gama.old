@@ -19,6 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
@@ -38,11 +39,8 @@ public class OutputLayerFactory extends SymbolFactory {
 
 	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
 
-	/**
-	 * @param superFactory
-	 */
-	public OutputLayerFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public OutputLayerFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	public static IDisplayLayer createChartLayer() {

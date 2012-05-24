@@ -35,8 +35,8 @@ import msi.gaml.descriptions.*;
 	ISymbolKind.BEHAVIOR })
 public class ExperimentFactory extends SpeciesFactory {
 
-	public ExperimentFactory(final ISymbolFactory superFactory) {
-		super(superFactory);
+	public ExperimentFactory(final List<Integer> handles, final List<Integer> uses) {
+		super(handles, uses);
 	}
 
 	@Override

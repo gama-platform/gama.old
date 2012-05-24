@@ -244,7 +244,7 @@ public class Containers {
 	}
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static GamaList opMinus(final IList l1, final Object l) {
+	public static IList opMinus(final IList l1, final Object l) {
 		if ( l == null ) { return new GamaList(l1); }
 		GamaList result = new GamaList(l1);
 		result.remove(l);
@@ -280,7 +280,7 @@ public class Containers {
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static GamaList opPlus(final IList l1, final IList l) {
+	public static IList opPlus(final IList l1, final IList l) {
 		if ( l == null ) { return new GamaList(l1); }
 		GamaList result = new GamaList(l1.size() + l.size());
 		result.addAll(l1);
@@ -289,7 +289,7 @@ public class Containers {
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static GamaList opPlus(final IList l1, final Object l) {
+	public static IList opPlus(final IList l1, final Object l) {
 		if ( l == null ) { return new GamaList(l1); }
 		GamaList result = new GamaList(l1);
 		result.add(l);
@@ -297,7 +297,7 @@ public class Containers {
 	}
 
 	@operator(value = "union", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static GamaList opUnion(final IList l1, final IList l) {
+	public static IList opUnion(final IList l1, final IList l) {
 		if ( l == null ) { return new GamaList(l1); }
 		Set s = new HashSet(l.size() + l1.size());
 		s.addAll(l1);
@@ -427,8 +427,8 @@ public class Containers {
 	}
 
 	@operator(value = { "sort", "sort_by" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaList sort(final IScope scope, final IContainer original,
-		final IExpression filter) throws GamaRuntimeException {
+	public static IList sort(final IScope scope, final IContainer original, final IExpression filter)
+		throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		final GamaList lv = new GamaList(original.listValue(scope));
 		// copy in order to prevent any side effect on the left member
@@ -519,7 +519,7 @@ public class Containers {
 	}
 
 	@operator(value = { "accumulate" }, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaList accumulate(final IScope scope, final IList original,
+	public static IList accumulate(final IScope scope, final IList original,
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaList result = new GamaList();
 		if ( original == null ) { return result; }
@@ -536,7 +536,7 @@ public class Containers {
 	}
 
 	@operator(value = "collate", content_type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static GamaList interleave(final IScope scope, final IList original) {
+	public static IList interleave(final IScope scope, final IList original) {
 
 		final GamaList result = new GamaList();
 		if ( original == null ) { return result; }

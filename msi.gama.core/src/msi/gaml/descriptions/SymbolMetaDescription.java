@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.*;
 import msi.gaml.commands.*;
 import msi.gaml.commands.Facets.Facet;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.IType;
 
@@ -80,14 +80,15 @@ public class SymbolMetaDescription {
 		}
 	}
 
-	private Class instantiationClass = null;
+	private final ISymbolConstructor constructor;
+	private final int kind;
 	private Class baseClass = null;
 	private boolean hasSequence = false;
 	private boolean hasArgs = false;
 	private boolean hasScope = true;
-	private boolean isTopLevel = false;
 	private boolean isRemoteContext = false;
-	private final Set<String> possibleContexts;
+	private final Set<String> contextKeywords;
+	private final Set<Short> contextKinds;
 	private final Map<String, FacetMetaDescription> possibleFacets = new HashMap();
 	private final List<String[]> combinations = new ArrayList();
 	private final List<String> mandatoryFacets = new ArrayList();
@@ -96,18 +97,19 @@ public class SymbolMetaDescription {
 	private static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
-	public SymbolMetaDescription(final Class instantiationClass, final Class baseClass,
-		final String keyword, final boolean hasSequence, final boolean hasArgs, final int kind,
-		final boolean doesNotHaveScope, final List<facet> possibleFacets, final String omissible,
-		final List<combination> possibleCombinations, final Set<String> contexts,
-		final boolean isRemoteContext) {
-		setInstantiationClass(instantiationClass);
+	public SymbolMetaDescription(final Class baseClass, final boolean hasSequence,
+		final boolean hasArgs, final int kind, final boolean doesNotHaveScope,
+		final List<facet> possibleFacets, final String omissible,
+		final List<combination> possibleCombinations, final Set<String> contextKeywords,
+		final Set<Short> contextKinds, final boolean isRemoteContext,
+		final ISymbolConstructor constr) {
+		constructor = constr;
 		setBaseClass(baseClass);
 		setRemoteContext(isRemoteContext);
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);
 		this.omissibleFacet = omissible;
-		this.isTopLevel = kind == ISymbolKind.BEHAVIOR;
+		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		getPossibleFacets().put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD());
 		getPossibleFacets().put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON());
@@ -119,7 +121,8 @@ public class SymbolMetaDescription {
 				getMandatoryFacets().add(f.name);
 			}
 		}
-		possibleContexts = contexts;
+		this.contextKeywords = contextKeywords;
+		this.contextKinds = contextKinds;
 	}
 
 	public boolean isRemoteContext() {
@@ -150,16 +153,8 @@ public class SymbolMetaDescription {
 		return !isDefinition();
 	}
 
-	public void setInstantiationClass(final Class instantiationClass) {
-		this.instantiationClass = instantiationClass;
-	}
-
 	public void setBaseClass(final Class baseClass) {
 		this.baseClass = baseClass;
-	}
-
-	public Class getInstantiationClass() {
-		return instantiationClass;
 	}
 
 	public Class getBaseClass() {
@@ -233,8 +228,9 @@ public class SymbolMetaDescription {
 		context.flagError("Wrong combination of facets " + facets, IGamlIssue.GENERAL, e);
 	}
 
-	public boolean verifyContext(final String context) {
-		return possibleContexts.contains(context);
+	public boolean verifyContext(final IDescription upper) {
+		return contextKeywords.contains(upper.getKeyword()) ||
+			contextKinds.contains(upper.getKind());
 	}
 
 	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
@@ -288,11 +284,15 @@ public class SymbolMetaDescription {
 	}
 
 	public boolean isTopLevel() {
-		return isTopLevel;
+		return kind == ISymbolKind.BEHAVIOR;
+	}
+
+	public int getKind() {
+		return kind;
 	}
 
 	public ISymbolConstructor getConstructor() {
-		return AbstractGamlAdditions.getSymbolConstructor(instantiationClass);
+		return constructor;
 	}
 
 	/**

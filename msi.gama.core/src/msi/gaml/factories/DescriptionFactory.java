@@ -20,11 +20,9 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.commands.Facets;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
-import msi.gaml.factories.ISymbolFactory.Model;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -73,13 +71,6 @@ public class DescriptionFactory {
 	}
 
 	public static ISymbolFactory.Model getModelFactory() {
-		if ( modelFactory == null ) {
-			try {
-				modelFactory = (Model) getFactoryClass().newInstance();
-			} catch (Exception e) {
-				return null;
-			}
-		}
 		return modelFactory;
 	}
 
@@ -91,8 +82,8 @@ public class DescriptionFactory {
 		return result == null ? Collections.EMPTY_SET : result;
 	}
 
-	public static Class<ISymbolFactory> getFactoryClass() {
-		return AbstractGamlAdditions.getFactoryForKind(ISymbolKind.MODEL);
+	public static void setModelFactory(final ISymbolFactory iSymbolFactory) {
+		modelFactory = (ModelFactory) iSymbolFactory;
 	}
 
 }

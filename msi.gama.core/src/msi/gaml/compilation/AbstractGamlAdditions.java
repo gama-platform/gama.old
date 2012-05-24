@@ -2,9 +2,9 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.*;
-import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -12,27 +12,20 @@ import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.no_scope;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.remote_context;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
+import msi.gaml.factories.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
 
@@ -46,20 +39,58 @@ import msi.gaml.types.*;
  */
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
-	private final static Map<Integer, Class> FACTORIES_BY_KIND = new HashMap();
-	private final static Map<Integer, List<Class>> SYMBOLS_BY_KIND = new HashMap();
+	public static class HelperProvider<T> {
+
+		Map<Class, Map<String, T>> cache = new HashMap();
+
+		void put(final Class clazz, final String key, final T helper) {
+			if ( helper == null ) {
+				GuiUtils.debug("HelperProvider.put null");
+			}
+			Map<String, T> map = cache.get(clazz);
+			if ( map == null ) {
+				map = new HashMap();
+				cache.put(clazz, map);
+			}
+			map.put(key, helper);
+		}
+
+		boolean has(final Class clazz, final String key) {
+			Map<String, T> map = cache.get(clazz);
+			return map != null && map.containsKey(key);
+		}
+
+		T get(final Class clazz, final String key) {
+			Map<String, T> map = cache.get(clazz);
+			return map == null ? null : map.get(key);
+		}
+
+		T getCompatible(final Class clazz, final String key) {
+			T helper = get(clazz, key);
+			if ( helper == null ) {
+				// We look for an alternative in the assignable classes
+				for ( Map.Entry<Class, Map<String, T>> entry : cache.entrySet() ) {
+					Class altern = entry.getKey();
+					if ( altern.isAssignableFrom(clazz) && has(altern, key) ) {
+						helper = get(altern, key);
+						// We cache the newly found helper in the new class
+						put(clazz, key, helper);
+						break;
+					}
+				}
+			}
+			return helper;
+		}
+
+	}
+
 	private final static Map<String, Class> SKILL_CLASSES = new HashMap();
 	private final static Map<String, Class> SPECIES_CLASSES = new HashMap();
 	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
-	private final static Map<Class, Map<String, SymbolMetaDescription>> SYMBOL_META = new HashMap();
-	private final static Map<Class, List<String>> SYMBOL_NAMES = new HashMap();
-	private final static Map<Class, Map<String, PrimitiveExecuter>> ACTION_HELPERS = new HashMap();
-	private final static Map<String, Map<Class, IOperatorExecuter>> UNARY_HELPERS = new HashMap();
-	private final static Map<String, Map<ClassPair, IOperatorExecuter>> BINARY_HELPERS =
-		new HashMap();
-	private final static Map<Class, Map<String, IVarGetter>> GETTER_HELPERS = new HashMap();
-	private final static Map<Class, Map<String, IFieldGetter>> FIELD_HELPERS = new HashMap();
-	private final static Map<Class, Map<String, IVarSetter>> SETTER_HELPERS = new HashMap();
+	private final static HelperProvider<PrimitiveExecuter> ACTION_HELPERS = new HelperProvider();
+	private final static HelperProvider<IVarGetter> GETTER_HELPERS = new HelperProvider();
+	private final static HelperProvider<IFieldGetter> FIELD_HELPERS = new HelperProvider();
+	private final static HelperProvider<IVarSetter> SETTER_HELPERS = new HelperProvider();
 	private final static Map<Class, IAgentConstructor> AGENT_CONSTRUCTORS = new HashMap();
 	private final static Map<Class, ISymbolConstructor> SYMBOL_CONSTRUCTORS = new HashMap();
 	private final static Map<Class, ISkillConstructor> SKILL_CONSTRUCTORS = new HashMap();
@@ -67,32 +98,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private final static Map<Class, List<String>> SKILL_METHODS = new HashMap();
 	private final static Map<Class, List<IDescription>> VAR_DESCRIPTIONS = new HashMap();
 	private final static Map<Class, List<IDescription>> ACTION_DESCRIPTIONS = new HashMap();
-	private static IExpressionFactory EXPRESSION_FACTORY;
 	static final TypePair FUNCTION_SIG = new TypePair(Types.get(IType.AGENT), Types.get(IType.MAP));
-	private final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new HashMap();
-
-	static class ClassPair {
-
-		Class left;
-		Class right;
-
-		ClassPair(final Class l, final Class r) {
-			left = l;
-			right = r;
-		}
-
-		@Override
-		public boolean equals(final Object o) {
-			if ( o == null ) { return false; }
-			if ( !(o instanceof ClassPair) ) { return false; }
-			return left.equals(((ClassPair) o).left) && right.equals(((ClassPair) o).right);
-		}
-
-		@Override
-		public int hashCode() {
-			return left.hashCode() + right.hashCode() * 2;
-		}
-	}
 
 	@Override
 	protected void finalize() {
@@ -106,10 +112,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		SPECIES_CLASSES.put(name, clazz);
 	}
 
-	protected void typesAdd(final Class ... classes) {
-		for ( Class clazz : classes ) {
-			Types.initType(clazz);
-		}
+	protected void addType(final String keyword, final IType typeInstance, final short id,
+		final int varKind, final Class ... wraps) {
+		Types.initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
 	protected void skillsAdd(final String name, final Class clazz, final String ... species) {
@@ -119,40 +124,21 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		SKILL_CLASSES.put(name, clazz);
 	}
 
-	protected void symbolsAdd(final Class ... classes) {
-		for ( Class clazz : classes ) {
-			symbol sym = (symbol) clazz.getAnnotation(symbol.class);
-			Integer i = sym.kind();
-			if ( !SYMBOLS_BY_KIND.containsKey(i) ) {
-				SYMBOLS_BY_KIND.put(i, new ArrayList());
+	protected void addFactories(final ISymbolFactory ... factories) {
+		Map<Integer, ISymbolFactory> factoriesByKind = new HashMap();
+		for ( ISymbolFactory f : factories ) {
+			for ( Integer kind : f.getHandles() ) {
+				factoriesByKind.put(kind, f);
 			}
-			SYMBOLS_BY_KIND.get(i).add(clazz);
-			SYMBOL_NAMES.put(clazz, Arrays.asList(sym.name()));
 		}
-		for ( Map.Entry<Integer, List<Class>> entry : SYMBOLS_BY_KIND.entrySet() ) {
-			Integer i = entry.getKey();
-			for ( Class clazz : entry.getValue() ) {
-				createMetaDescription(i, clazz);
-			}
+		DescriptionFactory.setModelFactory(factoriesByKind.get(ISymbolKind.MODEL));
+		for ( ISymbolFactory f : factories ) {
+			f.assembleWith(factoriesByKind);
 		}
 	}
 
-	protected void factoriesAdd(final Class ... classes) {
-		for ( Class clazz : classes ) {
-			handles han = (handles) clazz.getAnnotation(handles.class);
-			for ( Integer i : han.value() ) {
-				FACTORIES_BY_KIND.put(i, clazz);
-			}
-		}
-	}
-
-	protected void operatorsAdd(final Class ... classes) {
-		for ( Class clazz : classes ) {
-			scanOperators(clazz);
-		}
-	}
-
-	private void createMetaDescription(final Integer sKind, final Class c) {
+	protected void addSymbol(final Class c, final int sKind, final ISymbolConstructor sc,
+		final String ... names) {
 		Class base = null;
 		String omissible = null;
 		boolean canHaveArgs = c.getAnnotation(with_args.class) != null;
@@ -163,8 +149,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if ( b != null ) {
 			base = b.value();
 		}
-		Set<String> keywords = new HashSet(SYMBOL_NAMES.get(c));
-		Set<String> contexts = new HashSet();
+		Set<String> contextKeywords = new HashSet();
+		Set<Short> contextKinds = new HashSet();
 		facets ff = (facets) c.getAnnotation(facets.class);
 		List<facet> facets = ff != null ? Arrays.asList(ff.value()) : Collections.EMPTY_LIST;
 		List<combination> combinations =
@@ -173,16 +159,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		inside parents = (inside) c.getAnnotation(inside.class);
 		if ( parents != null ) {
 			for ( String p : parents.symbols() ) {
-				contexts.add(p);
+				contextKeywords.add(p);
 			}
-			for ( int kind : parents.kinds() ) {
-				List<Class> classes = SYMBOLS_BY_KIND.get(kind);
-				for ( Class clazz : classes ) {
-					contexts.addAll(SYMBOL_NAMES.get(clazz));
-				}
+			for ( int p : parents.kinds() ) {
+				contextKinds.add((short) p);
 			}
+
 		}
-		contexts = new HashSet(contexts);
+		List<String> keywords = new ArrayList(Arrays.asList(names));
 		// if the symbol is a variable
 		if ( ISymbolKind.Variable.KINDS.contains(sKind) ) {
 			Set<String> additonal = Types.keywordsToVariableType.get(sKind);
@@ -192,20 +176,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			// Special trick and workaround for compiling species rather than variables
 			keywords.remove(SPECIES);
 		}
-		Map<String, SymbolMetaDescription> map = new HashMap();
-		SYMBOL_META.put(c, map);
-		for ( String k : keywords ) {
-			if ( !ISymbolKind.Variable.KINDS.contains(sKind) ) {
-				SymbolMetaDescription.nonVariableStatements.add(k);
-			}
-			map.put(k, new SymbolMetaDescription(c, base, k, canHaveSequence, canHaveArgs, sKind,
-				doesNotHaveScope, facets, omissible, combinations, contexts, isRemoteContext));
-		}
 
-	}
+		SymbolMetaDescription md =
+			new SymbolMetaDescription(base, canHaveSequence, canHaveArgs, sKind, doesNotHaveScope,
+				facets, omissible, combinations, contextKeywords, contextKinds, isRemoteContext, sc);
+		DescriptionFactory.getModelFactory().registerSymbol(md, keywords);
 
-	protected void addSymbolConstructor(final Class clazz, final ISymbolConstructor sc) {
-		SYMBOL_CONSTRUCTORS.put(clazz, sc);
 	}
 
 	protected void addAgentConstructor(final Class clazz, final IAgentConstructor ac) {
@@ -216,108 +192,20 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		SKILL_CONSTRUCTORS.put(clazz, sc);
 	}
 
-	protected void addOperatorExecuter(final String name, final Class left, final Class right,
-		final IOperatorExecuter e) {
-		boolean isUnary = right == null;
-		if ( isUnary ) {
-			if ( !UNARY_HELPERS.containsKey(name) ) {
-				UNARY_HELPERS.put(name, new HashMap());
-			}
-			UNARY_HELPERS.get(name).put(unaryKey(left), e);
-		} else {
-			if ( !BINARY_HELPERS.containsKey(name) ) {
-				BINARY_HELPERS.put(name, new HashMap());
-			}
-			BINARY_HELPERS.get(name).put(binaryKey(left, right), e);
-		}
-	}
-
 	protected void addGetterExecuter(final String name, final Class clazz, final IVarGetter e) {
-		addHelper(GETTER_HELPERS, name, clazz, e);
+		GETTER_HELPERS.put(clazz, name, e);
 	}
 
 	protected void addSetterExecuter(final String name, final Class clazz, final IVarSetter e) {
-		addHelper(SETTER_HELPERS, name, clazz, e);
+		SETTER_HELPERS.put(clazz, name, e);
 	}
 
 	protected void addFieldGetterExecuter(final String name, final Class clazz, final IFieldGetter e) {
-		addHelper(FIELD_HELPERS, name, clazz, e);
+		FIELD_HELPERS.put(clazz, name, e);
 	}
 
 	protected void addActionExecuter(final String name, final Class clazz, final PrimitiveExecuter e) {
-		addHelper(ACTION_HELPERS, name, clazz, e);
-	}
-
-	final void addHelper(final Map map, final String name, final Class clazz, final Object helper) {
-		Map<String, Object> intern = (Map<String, Object>) map.get(clazz);
-		if ( intern == null ) {
-			intern = new HashMap<String, Object>();
-			map.put(clazz, intern);
-		}
-		intern.put(name, helper);
-	}
-
-	protected void scanOperators(final Class c) {
-		for ( final Method m : c.getDeclaredMethods() ) {
-			operator op = m.getAnnotation(operator.class);
-			if ( op == null ) {
-				continue;
-			}
-			boolean isStatic = Modifier.isStatic(m.getModifiers());
-			Class[] args = m.getParameterTypes();
-			String m1 = m.getName();
-			Class retClass = m.getReturnType();
-			boolean contextual = args.length > 0 && args[0] == IScope.class;
-			boolean canBeConst = op.can_be_const();
-			short type = op.type();
-			short contentType = op.content_type();
-			boolean isUnary = isUnary(args, isStatic);
-			for ( String keyword : op.value() ) {
-				if ( isUnary ) {
-					registerUnaryOperator(keyword, m1, c, retClass, args, contextual, isStatic,
-						canBeConst, type, contentType);
-				} else {
-					int l = args.length;
-					boolean lazy = l > 1 && IExpression.class.isAssignableFrom(args[l - 1]);
-					boolean iterator = op.iterator();
-					registerBinaryOperator(keyword, m1, c, retClass, args, contextual, lazy,
-						iterator, isStatic, op.priority(), canBeConst, type, contentType);
-				}
-			}
-		}
-	}
-
-	protected boolean isUnary(final Class[] args, final boolean isStatic) {
-		if ( args.length == 0 && !isStatic ) { return true; }
-		if ( args.length == 1 && !isStatic && args[0] == IScope.class ) { return true; }
-		if ( args.length == 1 && isStatic ) { return true; }
-		if ( args.length == 2 && isStatic && args[0] == IScope.class ) { return true; }
-		return false;
-	}
-
-	public static List<Class> collectImplementationClasses(final Class baseClass,
-		final Set<Class> skillClasses) {
-		Set<Class> classes = new HashSet();
-		classes.add(baseClass);
-		classes.addAll(skillClasses);
-		Set<Class> key = new HashSet(classes);
-		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
-		classes.addAll(JavaUtils.allInterfacesOf(baseClass));
-		for ( final Class classi : new ArrayList<Class>(classes) ) {
-			classes.addAll(JavaUtils.allSuperclassesOf(classi));
-		}
-		classes.remove(ISkill.class);
-		classes.remove(IScope.class);
-		final ArrayList<Class> classes2 = new ArrayList();
-		for ( final Class c : classes ) {
-			if ( !classes2.contains(c.getSuperclass()) ) {
-				classes2.add(0, c);
-			} else {
-				classes2.add(c);
-			}
-		}
-		AbstractGamlAdditions.IMPLEMENTATION_CLASSES.put(key, classes2);
-		return classes2;
+		ACTION_HELPERS.put(clazz, name, e);
 	}
 
 	public static void registerNewFunction(final String string) {
@@ -338,73 +226,44 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		BINARIES.get(string).put(new TypePair(species, Types.get(IType.MAP)), newFunct);
 	}
 
-	public static void registerBinaryOperator(final String keyword, final String mName,
-		final Class declClass, final Class retClass, final Class[] args, final boolean contextual,
-		final boolean lazy, final boolean iterator, final boolean isStatic, final short priority,
-		final boolean canBeConst, final short type, final short contentType) {
-		IOperatorExecuter helper;
-		Class leftClass;
-		Class rightClass;
-		String methodName = mName;
-
-		if ( isStatic ) {
-			leftClass = contextual ? args[1] : args[0];
-			rightClass = contextual ? args[2] : args[1];
-			methodName = declClass.getCanonicalName() + _DOT + methodName;
-		} else {
-			leftClass = declClass;
-			rightClass = contextual ? args[1] : args[0];
+	public static void addBinary(final String kw, final Class left, final Class right,
+		final Class ret, final boolean iterator, final short p, final boolean c, final short t,
+		final short content, final IOperatorExecuter helper) {
+		if ( !BINARIES.containsKey(kw) ) {
+			BINARIES.put(kw, new GamaMap());
 		}
-		helper = getBinaryOperatorExecuter(leftClass, rightClass, methodName);
-		if ( helper == null ) { return; }
-
-		IType leftType = Types.get(leftClass);
-		IType rightType = Types.get(rightClass);
-		IType returnType = Types.get(retClass);
-		if ( !BINARIES.containsKey(keyword) ) {
-			BINARIES.put(keyword, new GamaMap());
+		if ( iterator ) {
+			IExpressionCompiler.ITERATORS.add(kw);
 		}
-		Map<TypePair, IOperator> map = BINARIES.get(keyword);
-		TypePair signature = new TypePair(leftType, rightType);
+
+		IExpressionCompiler.BINARY_PRIORITIES.put(kw, p);
+		Map<TypePair, IOperator> map = BINARIES.get(kw);
+		TypePair signature = new TypePair(Types.get(left), Types.get(right));
 		if ( !map.containsKey(signature) ) {
-			IOperator exp =
-				getExpressionFactory().createOperator(keyword, true,
-					keyword.equals(OF) || keyword.equals(_DOT), returnType, helper, canBeConst,
-					type, contentType, lazy);
+			IOperator exp;
+			if ( kw.equals(OF) || kw.equals(_DOT) ) {
+				exp =
+					new BinaryVarOperator(Types.get(ret), helper, c, t, content,
+						IExpression.class.equals(right));
+			} else {
+				exp =
+					new BinaryOperator(Types.get(ret), helper, c, t, content,
+						IExpression.class.equals(right));
+			}
 			// simulation will be set after
-			exp.setName(keyword);
+			exp.setName(kw);
 			map.put(signature, exp);
 		}
 
-		if ( iterator ) {
-			IExpressionCompiler.ITERATORS.add(keyword);
-		}
-		IExpressionCompiler.BINARY_PRIORITIES.put(keyword, priority);
 	}
 
-	public static void registerUnaryOperator(final String keyword, final String mName,
-		final Class declClass, final Class retClass, final Class[] args, final boolean contextual,
-		final boolean isStatic, final boolean canBeConst, final short type, final short contentType) {
-		IOperator result;
-		IOperatorExecuter helper;
-		Class childClass;
-		String methodName = mName;
-
-		if ( isStatic ) {
-			childClass = contextual ? args[1] : args[0];
-			methodName = declClass.getCanonicalName() + _DOT + methodName;
-		} else {
-			childClass = declClass;
-		}
-		helper = getUnaryOperatorExecuter(childClass, methodName);
-		if ( helper == null ) { return; }
+	public static void addUnary(final String keyword, final Class childClass, final Class retClass,
+		final boolean canBeConst, final short type, final short contentType,
+		final IOperatorExecuter helper) {
 		IType childType = Types.get(childClass);
 		IType returnType = Types.get(retClass);
 		if ( !(UNARIES.containsKey(keyword) && UNARIES.get(keyword).containsKey(childType)) ) {
-			result =
-				getExpressionFactory().createOperator(keyword, false, false, returnType, helper,
-					canBeConst, type, contentType, false);
-			// simulation will be set after
+			IOperator result = new UnaryOperator(returnType, helper, canBeConst, type, contentType);
 			result.setName(keyword);
 			if ( !UNARIES.containsKey(keyword) ) {
 				UNARIES.put(keyword, new HashMap<IType, IOperator>());
@@ -423,22 +282,30 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static List<String> getSkillMethods(final Class clazz) {
-		if ( !SKILL_METHODS.containsKey(clazz) ) {
-			SKILL_METHODS.put(clazz, new ArrayList());
-			collectBuiltInAttributes(clazz);
-		}
 		return SKILL_METHODS.get(clazz);
 	}
 
 	public static List<IDescription> getVarDescriptions(final Class clazz) {
-		if ( !VAR_DESCRIPTIONS.containsKey(clazz) ) {
-			collectBuiltInAttributes(clazz);
-		}
 		return VAR_DESCRIPTIONS.get(clazz);
 	}
 
+	protected static void addVarDescription(final Class clazz, final IDescription desc) {
+		if ( !VAR_DESCRIPTIONS.containsKey(clazz) ) {
+			VAR_DESCRIPTIONS.put(clazz, new ArrayList());
+		}
+		VAR_DESCRIPTIONS.get(clazz).add(desc);
+		String m = desc.getFacets().getLabel(GETTER);
+		if ( m != null ) {
+			addSkillMethod(clazz, m);
+		}
+		m = desc.getFacets().getLabel(SETTER);
+		if ( m != null ) {
+			addSkillMethod(clazz, m);
+		}
+	}
+
 	public static List<IDescription> getFieldDescriptions(final Class clazz) {
-		List<Class> classes = collectImplementationClasses(clazz, Collections.EMPTY_SET);
+		List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET);
 		Map<String, IDescription> fieldsMap = new LinkedHashMap();
 		for ( Class c : classes ) {
 			List<IDescription> descriptions = getVarDescriptions(c);
@@ -458,72 +325,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			collectBuiltInActions(clazz);
 		}
 		return ACTION_DESCRIPTIONS.get(clazz);
-	}
-
-	static void collectBuiltInAttributes(final Class c) {
-		final Map<String, IDescription> varList = new HashMap();
-		vars va = null;
-		getter vp = null;
-		setter vs = null;
-		va = (vars) c.getAnnotation(vars.class);
-		if ( va == null ) { return; /* no getter and setters */}
-		for ( final var s : va.value() ) {
-			List<String> ff =
-				new GamaList(new String[] { TYPE, s.type(), NAME, s.name(), CONST,
-					s.constant() ? TRUE : FALSE });
-			String depends = "";
-			String[] dependencies = s.depends_on();
-			if ( dependencies.length > 0 ) {
-				for ( String string : dependencies ) {
-					depends += string + " ";
-				}
-				depends = depends.trim();
-				ff.add(DEPENDS_ON);
-				ff.add(depends);
-			}
-			String of = s.of();
-			if ( !"".equals(of) ) {
-				ff.add(OF);
-				ff.add(of);
-			}
-			String init = s.init();
-			if ( !"".equals(init) ) {
-				ff.add(INIT);
-				ff.add(init);
-			}
-			String[] facetArray = new String[ff.size()];
-			facetArray = ff.toArray(facetArray);
-			IDescription vd = DescriptionFactory.create(s.type(), (IDescription) null, facetArray);
-			if ( vd != null ) {
-				varList.put(s.name(), vd);
-			}
-		}
-		for ( final Method m : c.getDeclaredMethods() ) {
-			String varName = null;
-			vp = m.getAnnotation(getter.class);
-			if ( vp != null ) {
-				varName = vp.var();
-				final IDescription var = varList.get(varName);
-				if ( var != null ) {
-					var.getFacets().putAsLabel(GETTER, m.getName());
-					if ( vp.initializer() ) {
-						var.getFacets().putAsLabel(INITER, m.getName());
-					}
-					addSkillMethod(c, m.getName());
-					final Class r = m.getReturnType();
-					var.getFacets().putAsLabel(TYPE, Types.get(r).toString());
-				}
-			}
-			vs = m.getAnnotation(setter.class);
-			if ( vs != null ) {
-				final IDescription var = varList.get(vs.value());
-				if ( var != null ) {
-					var.getFacets().putAsLabel(SETTER, m.getName());
-					addSkillMethod(c, m.getName());
-				}
-			}
-		}
-		VAR_DESCRIPTIONS.put(c, new GamaList(varList.values()));
 	}
 
 	static void collectBuiltInActions(final Class c) {
@@ -568,17 +369,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	public static void initFieldGetters(final IType t) {
-		List<IDescription> vars = getFieldDescriptions(t.toClass());
-		if ( vars != null ) {
-			for ( IDescription v : vars ) {
-				String n = v.getName();
-				IFieldGetter g = getFieldGetter(t.toClass(), v.getFacets().getLabel(GETTER));
-				t.addFieldGetter(n, new TypeFieldExpression(n, v.getType(), v.getContentType(), g));
-			}
-		}
-	}
-
 	public static ISkill getSkillInstanceFor(final Class skillClass) {
 		ISkill skill = SKILL_INSTANCES.get(skillClass);
 		if ( skill == null ) {
@@ -594,146 +384,51 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return (IArchitecture) getSkillConstructor(clazz).newInstance();
 	}
 
+	static final Class[] EXECUTE_ARGS = new Class[] { IAgent.class, ISkill.class };
+
 	public static IPrimitiveExecuter getPrimitive(final Class originalClass, final String methodName) {
-		Class methodClass = originalClass;
-		Map<String, PrimitiveExecuter> classExecuters = ACTION_HELPERS.get(methodClass);
-		if ( !originalClass.isInterface() &&
-			(classExecuters == null || !classExecuters.containsKey(methodName)) ) {
-			try {
-				while (!methodClass.isInterface() &&
-					methodClass.getSuperclass().getMethod(methodName, new Class[] { IScope.class }) != null) {
-					methodClass = methodClass.getSuperclass();
-				}
-			} catch (final Exception e) {}
-		}
-		if ( methodClass != originalClass ) {
-			classExecuters = ACTION_HELPERS.get(methodClass);
-		}
-		if ( classExecuters == null ) {
-			classExecuters = new HashMap();
-			ACTION_HELPERS.put(methodClass, classExecuters);
-		}
-		PrimitiveExecuter methodExecuter = classExecuters.get(methodName);
-		IType type = methodExecuter.getReturnType();
+		PrimitiveExecuter helper = ACTION_HELPERS.getCompatible(originalClass, methodName);
+		if ( helper == null ) { return null; }
+		IType type = helper.getReturnType();
 		if ( type == null ) {
 			try {
 				Class returnClass =
-					methodClass.getMethod(methodName, new Class[] { IScope.class }).getReturnType();
+					helper.getClass().getMethod("execute", EXECUTE_ARGS).getReturnType();
 				IType returnType = Types.get(returnClass);
-				methodExecuter.setReturnType(returnType);
+				helper.setReturnType(returnType);
 			} catch (Exception e) {
-				methodExecuter.setReturnType(Types.NO_TYPE);
+				helper.setReturnType(Types.NO_TYPE);
 			}
 		}
-		if ( methodClass != originalClass ) {
-			classExecuters = ACTION_HELPERS.get(originalClass);
-			if ( classExecuters == null ) {
-				classExecuters = new HashMap();
-				ACTION_HELPERS.put(originalClass, classExecuters);
-			}
-			classExecuters.put(methodName, methodExecuter);
-
-		}
-		return methodExecuter;
-	}
-
-	static Class findCompatibleClass(final Map<Class, ?> executers, final Class original,
-		final String method) {
-		if ( executers.containsKey(original) ) {
-			Map<String, ?> val = (Map<String, ?>) executers.get(original);
-			if ( val.containsKey(method) ) { return original; }
-		}
-		for ( Map.Entry<Class, ?> entry : executers.entrySet() ) {
-			Class key = entry.getKey();
-			Map<String, ?> val = (Map<String, ?>) entry.getValue();
-			if ( key.isAssignableFrom(original) && val.containsKey(method) ) { return key; }
-		}
-		return null;
+		return helper;
 	}
 
 	public static IVarGetter getGetter(final Class original, final String methodName) {
-		Class actual = findCompatibleClass(GETTER_HELPERS, original, methodName);
-		if ( actual == null ) {
+		IVarGetter helper = GETTER_HELPERS.getCompatible(original, methodName);
+		if ( helper == null ) {
 			final IFieldGetter fg = getFieldGetter(original, methodName);
-			IVarGetter helper = new IVarGetter() {
+			if ( fg == null ) {
+				GuiUtils.debug("getGetter");
+			}
+			helper = new IVarGetter() {
 
 				@Override
 				public Object execute(final IAgent agent, final ISkill skill)
 					throws GamaRuntimeException {
 					return fg.value(agent); // ?
 				}
-
 			};
-			Map<String, IVarGetter> methods = GETTER_HELPERS.get(original);
-			if ( methods == null ) {
-				methods = new HashMap();
-				GETTER_HELPERS.put(original, methods);
-			}
-			methods.put(methodName, helper);
-			return helper;
-		}
-		Map<String, IVarGetter> methods = GETTER_HELPERS.get(actual);
-		IVarGetter helper = methods.get(methodName);
-		if ( actual != original ) {
-			methods = GETTER_HELPERS.get(original);
-			if ( methods == null ) {
-				methods = new HashMap();
-				GETTER_HELPERS.put(original, methods);
-			}
-			methods.put(methodName, helper);
+			GETTER_HELPERS.put(original, methodName, helper);
 		}
 		return helper;
 	}
 
 	public static IFieldGetter getFieldGetter(final Class original, final String methodName) {
-		Class actual = findCompatibleClass(FIELD_HELPERS, original, methodName);
-		Map<String, IFieldGetter> classExecuters = FIELD_HELPERS.get(actual);
-		IFieldGetter helper = classExecuters.get(methodName);
-		if ( actual != original ) {
-			classExecuters = FIELD_HELPERS.get(original);
-			if ( classExecuters == null ) {
-				classExecuters = new HashMap();
-				FIELD_HELPERS.put(original, classExecuters);
-			}
-			classExecuters.put(methodName, helper);
-		}
-		return helper;
+		return FIELD_HELPERS.getCompatible(original, methodName);
 	}
 
-	public static IVarSetter getSetter(final Class original, final String methodName,
-		final Class paramClass) {
-		Class actual = findCompatibleClass(SETTER_HELPERS, original, methodName);
-		Map<String, IVarSetter> classExecuters = SETTER_HELPERS.get(actual);
-		IVarSetter helper = classExecuters.get(methodName);
-		if ( actual != original ) {
-			classExecuters = SETTER_HELPERS.get(original);
-			if ( classExecuters == null ) {
-				classExecuters = new HashMap();
-				SETTER_HELPERS.put(original, classExecuters);
-			}
-			classExecuters.put(methodName, helper);
-
-		}
-		return helper;
-
-	}
-
-	static ClassPair binaryKey(final Class leftClass, final Class rightClass) {
-		return new ClassPair(leftClass, rightClass);
-	}
-
-	static Class unaryKey(final Class childClass) {
-		return childClass;
-	}
-
-	public static IOperatorExecuter getBinaryOperatorExecuter(final Class leftClass,
-		final Class rightClass, final String methodName) {
-		return BINARY_HELPERS.get(methodName).get(binaryKey(leftClass, rightClass));
-	}
-
-	public static IOperatorExecuter getUnaryOperatorExecuter(final Class childClass,
-		final String methodName) {
-		return UNARY_HELPERS.get(methodName).get(unaryKey(childClass));
+	public static IVarSetter getSetter(final Class original, final String methodName) {
+		return SETTER_HELPERS.getCompatible(original, methodName);
 	}
 
 	public static Map<String, Class> getBuiltInSpeciesClasses() {
@@ -742,14 +437,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Map<String, Class> getSkillClasses() {
 		return SKILL_CLASSES;
-	}
-
-	public static Class getFactoryForKind(final int kind) {
-		return FACTORIES_BY_KIND.get(kind);
-	}
-
-	public static Map<Integer, List<Class>> getClassesByKind() {
-		return SYMBOLS_BY_KIND;
 	}
 
 	public static IAgentConstructor getAgentConstructor(final Class javaBase) {
@@ -769,17 +456,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static GamlProperties getSpeciesSkills() {
 		return SPECIES_SKILLS;
-	}
-
-	public static Map<Class, Map<String, SymbolMetaDescription>> getSymbolMetas() {
-		return SYMBOL_META;
-	}
-
-	private static IExpressionFactory getExpressionFactory() {
-		if ( EXPRESSION_FACTORY == null ) {
-			EXPRESSION_FACTORY = new GamlExpressionFactory();
-		}
-		return EXPRESSION_FACTORY;
 	}
 
 }

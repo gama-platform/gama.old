@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
  * 
  */
 @vars({ @var(name = IKeyword.COLOR, type = IType.COLOR_STR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST_STR),
+	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
 	@var(name = IKeyword.GRID_X, type = IType.INT_STR, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT_STR, constant = true) })
 @skill({ GridSkill.SKILL_NAME })

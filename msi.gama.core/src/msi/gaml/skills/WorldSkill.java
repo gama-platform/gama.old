@@ -41,10 +41,10 @@ import msi.gaml.types.IType;
 
 @vars({ @var(name = GAMA._FATAL, type = IType.BOOL_STR, init = "false"),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL_STR, init = "false"),
-	@var(name = IKeyword.TIME, type = IType.INT_STR),
+	@var(name = IKeyword.TIME, type = IType.FLOAT_STR),
 	@var(name = IKeyword.SEED, type = IType.FLOAT_STR),
 	@var(name = IKeyword.RNG, type = IType.STRING_STR, init = "'" + IKeyword.MERSENNE + "'"),
-	@var(name = IKeyword.STEP, type = IType.INT_STR, constant = true),
+	@var(name = IKeyword.STEP, type = IType.FLOAT_STR, constant = true),
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
