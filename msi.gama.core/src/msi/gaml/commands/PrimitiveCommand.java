@@ -83,20 +83,6 @@ public class PrimitiveCommand extends ActionCommand {
 		actualArgs = args;
 	}
 
-	// @Override
-	// public void verifyArgs(final Arguments args) {
-	// // for ( String arg : formalArgs.names() ) {
-	// // if ( formalArgs.getArg(arg) == null && !args.has(arg) ) { throw new
-	// // GamlException("Missing argument " + arg + " in call to " + getName()); }
-	// // }
-	// // For the moment, primitive arguments are not considered as "mandatory"
-	// for ( String arg : args.keySet() ) {
-	// if ( !formalArgs.containsKey(arg) ) {
-	// error("Unknown argument " + arg + " in call to " + getName(), arg);
-	// }
-	// }
-	// }
-
 	@Override
 	public IType getReturnType() {
 		return executer.getReturnType();
