@@ -12,6 +12,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
@@ -20,6 +21,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.*;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 /**
  * The class GamlBuilder.
@@ -95,9 +97,10 @@ public class GamlBuilder {
 			GamlResource ir = (GamlResource) r.getResourceSet().getResource(iu, true);
 			if ( ir != null ) {
 				if ( !ir.getErrors().isEmpty() ) {
-					r.add(new GamlCompilationError("Imported file " + ir.getURI().lastSegment() +
-						" has errors. Fix them first."));
-
+					r.getErrors().add(
+						new GamlDiagnostic("", new String[] {}, "Imported file " +
+							ir.getURI().lastSegment() + " has errors. Fix them first.",
+							NodeModelUtils.findActualNodeFor(imp)));
 				}
 				imports.add(ir);
 			}
