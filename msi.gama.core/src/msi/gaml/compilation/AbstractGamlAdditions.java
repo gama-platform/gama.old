@@ -2,12 +2,9 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.*;
-import java.lang.reflect.Method;
 import java.util.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -98,14 +95,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private final static Map<Class, List<String>> SKILL_METHODS = new HashMap();
 	private final static Map<Class, List<IDescription>> VAR_DESCRIPTIONS = new HashMap();
 	private final static Map<Class, List<IDescription>> ACTION_DESCRIPTIONS = new HashMap();
-	static final TypePair FUNCTION_SIG = new TypePair(Types.get(IType.AGENT), Types.get(IType.MAP));
+	static TypePair FUNCTION_SIG;
 
-	@Override
-	protected void finalize() {
-
-	}
-
-	public void speciesAdd(final String name, final Class clazz, final String ... skills) {
+	public void addSpecies(final String name, final Class clazz, final IAgentConstructor helper,
+		final String ... skills) {
+		AGENT_CONSTRUCTORS.put(clazz, helper);
 		for ( String s : skills ) {
 			SPECIES_SKILLS.put(name, s);
 		}
@@ -117,7 +111,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		Types.initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void skillsAdd(final String name, final Class clazz, final String ... species) {
+	protected void addSkill(final String name, final Class clazz, final ISkillConstructor helper,
+		final String ... species) {
+		SKILL_CONSTRUCTORS.put(clazz, helper);
 		for ( String spec : species ) {
 			SPECIES_SKILLS.put(spec, name);
 		}
@@ -184,14 +180,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
-	protected void addAgentConstructor(final Class clazz, final IAgentConstructor ac) {
-		AGENT_CONSTRUCTORS.put(clazz, ac);
-	}
-
-	protected void addSkillConstructor(final Class clazz, final ISkillConstructor sc) {
-		SKILL_CONSTRUCTORS.put(clazz, sc);
-	}
-
 	protected void addGetterExecuter(final String name, final Class clazz, final IVarGetter e) {
 		GETTER_HELPERS.put(clazz, name, e);
 	}
@@ -204,13 +192,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		FIELD_HELPERS.put(clazz, name, e);
 	}
 
-	protected void addActionExecuter(final String name, final Class clazz, final PrimitiveExecuter e) {
-		ACTION_HELPERS.put(clazz, name, e);
-	}
-
 	public static void registerNewFunction(final String string) {
 		if ( !BINARIES.containsKey(string) ) {
 			BINARIES.put(string, new HashMap());
+		}
+		if ( FUNCTION_SIG == null ) {
+			FUNCTION_SIG = new TypePair(Types.get(IType.AGENT), Types.get(IType.MAP));
 		}
 		Map<TypePair, IOperator> existing = BINARIES.get(string);
 		if ( !existing.containsKey(FUNCTION_SIG) ) {
@@ -321,52 +308,26 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static List<IDescription> getActionsDescriptions(final Class clazz) {
-		if ( !ACTION_DESCRIPTIONS.containsKey(clazz) ) {
-			collectBuiltInActions(clazz);
-		}
 		return ACTION_DESCRIPTIONS.get(clazz);
 	}
 
-	static void collectBuiltInActions(final Class c) {
-		final HashMap<String, String> names = new HashMap();
-		final HashMap<String, IType> types = new HashMap();
-		final HashMap<String, List<String>> arguments = new HashMap();
-		List<IDescription> commands = new ArrayList();
-		ACTION_DESCRIPTIONS.put(c, commands);
-		for ( final Method m : c.getDeclaredMethods() ) {
-			action vp = m.getAnnotation(action.class);
-			if ( vp != null ) {
-				String name = vp.value();
-				names.put(name, m.getName());
-				types.put(name, Types.get(m.getReturnType()));
-				args va = m.getAnnotation(args.class);
-				arguments
-					.put(name, va == null ? Collections.EMPTY_LIST : Arrays.asList(va.value()));
+	protected void addAction(final String methodName, final Class clazz, final PrimitiveExecuter e,
+		final String actionName, final String ... args) {
+		ACTION_HELPERS.put(clazz, methodName, e);
+		addSkillMethod(clazz, methodName);
+		List<IDescription> argDescs = Collections.EMPTY_LIST;
+		if ( args != null && args.length > 0 ) {
+			argDescs = new ArrayList();
+			for ( String arg : args ) {
+				argDescs.add(DescriptionFactory.create(ARG, NAME, arg));
 			}
 		}
-
-		for ( final Map.Entry<String, String> entry : names.entrySet() ) {
-			String n = entry.getKey();
-			addSkillMethod(c, entry.getValue());
-			List<String> argNames = arguments.get(n);
-			List<IDescription> args = Collections.EMPTY_LIST;
-			if ( argNames != null ) {
-				args = new ArrayList();
-				for ( String s : argNames ) {
-					IDescription arg = DescriptionFactory.create(ARG, (IDescription) null, NAME, s);
-					if ( arg != null ) {
-						args.add(arg);
-					}
-				}
-			}
-
-			IDescription prim =
-				DescriptionFactory.create(PRIMITIVE, null, args, NAME, n, TYPE, types.get(n)
-					.toString(), JAVA, names.get(n));
-			if ( prim != null ) {
-				commands.add(prim);
-			}
+		if ( !ACTION_DESCRIPTIONS.containsKey(clazz) ) {
+			ACTION_DESCRIPTIONS.put(clazz, new ArrayList());
 		}
+		ACTION_DESCRIPTIONS.get(clazz).add(
+			DescriptionFactory.create(PRIMITIVE, null, argDescs, NAME, actionName, TYPE, e
+				.getReturnType().toString(), JAVA, methodName));
 	}
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {
@@ -387,20 +348,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	static final Class[] EXECUTE_ARGS = new Class[] { IAgent.class, ISkill.class };
 
 	public static IPrimitiveExecuter getPrimitive(final Class originalClass, final String methodName) {
-		PrimitiveExecuter helper = ACTION_HELPERS.getCompatible(originalClass, methodName);
-		if ( helper == null ) { return null; }
-		IType type = helper.getReturnType();
-		if ( type == null ) {
-			try {
-				Class returnClass =
-					helper.getClass().getMethod("execute", EXECUTE_ARGS).getReturnType();
-				IType returnType = Types.get(returnClass);
-				helper.setReturnType(returnType);
-			} catch (Exception e) {
-				helper.setReturnType(Types.NO_TYPE);
-			}
-		}
-		return helper;
+		return ACTION_HELPERS.getCompatible(originalClass, methodName);
 	}
 
 	public static IVarGetter getGetter(final Class original, final String methodName) {
@@ -440,18 +388,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static IAgentConstructor getAgentConstructor(final Class javaBase) {
-		IAgentConstructor constructor = AGENT_CONSTRUCTORS.get(javaBase);
-		return constructor;
+		return AGENT_CONSTRUCTORS.get(javaBase);
 	}
 
 	public static ISkillConstructor getSkillConstructor(final Class skillClass) {
-		ISkillConstructor constructor = SKILL_CONSTRUCTORS.get(skillClass);
-		return constructor;
+		return SKILL_CONSTRUCTORS.get(skillClass);
 	}
 
 	public static ISymbolConstructor getSymbolConstructor(final Class instantiationClass) {
-		ISymbolConstructor constructor = SYMBOL_CONSTRUCTORS.get(instantiationClass);
-		return constructor;
+		return SYMBOL_CONSTRUCTORS.get(instantiationClass);
 	}
 
 	public static GamlProperties getSpeciesSkills() {
