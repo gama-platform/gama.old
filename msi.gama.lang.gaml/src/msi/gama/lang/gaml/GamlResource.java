@@ -9,12 +9,14 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.gaml.validation.*;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import com.google.inject.Inject;
 
 /**
  * The class GamlResource.
@@ -27,6 +29,8 @@ public class GamlResource extends LazyLinkingResource {
 
 	GamlBuilder builder;
 	private IGamlBuilderListener listener;
+	@Inject
+	GamlJavaValidator validator;
 
 	// ModelDescription lastDescription;
 
@@ -98,6 +102,10 @@ public class GamlResource extends LazyLinkingResource {
 				((ModelDescription) adapter).dispose();
 			}
 		}
+	}
+
+	public void add(final GamlCompilationError e) {
+		validator.add(e);
 	}
 
 	// @Override
