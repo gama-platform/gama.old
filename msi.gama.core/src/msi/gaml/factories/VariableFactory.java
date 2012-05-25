@@ -125,6 +125,7 @@ public class VariableFactory extends SymbolFactory {
 		assertNameIsNotTypeOrSpecies(vd);
 		assertNameIsNotReserved(vd);
 		assertCanBeFunction(vd);
+		assertValueOrFunctionIsNotConst(vd);
 		if ( !vd.getFacets().equals(KEYWORD, PARAMETER) ) {
 			assertCanBeAmong(vd, vd.getType(), vd.getFacets());
 			assertValueFacetsAreTheSameType(vd, vd.getFacets());

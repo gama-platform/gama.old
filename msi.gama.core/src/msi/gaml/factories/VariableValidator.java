@@ -100,11 +100,29 @@ public class VariableValidator extends DescriptionValidator {
 		}
 	}
 
+	public static void assertValueOrFunctionIsNotConst(final VariableDescription vd) {
+		Facets ff = vd.getFacets();
+		if ( vd.isNotModifiable() ) {
+			if ( ff.containsKey(CONST) && ff.getLabel(CONST).equals(TRUE) ) {
+				if ( ff.containsKey(VALUE) | ff.containsKey(UPDATE) ) {
+					vd.flagWarning(
+						"A constant variable cannot have an update value (use init or <- instead)",
+						IGamlIssue.REMOVE_CONST, UPDATE);
+				} else if ( ff.containsKey(FUNCTION) ) {
+					vd.flagError(
+						"A constant variable cannot be a function (use init or <- instead)",
+						IGamlIssue.REMOVE_CONST, FUNCTION);
+				}
+			}
+		}
+	}
+
 	public static void assertCanBeFunction(final VariableDescription vd) {
 		Facets ff = vd.getFacets();
 		if ( ff.containsKey(FUNCTION) &&
 			(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
-			vd.flagError("A function cannot have an 'init' or 'update' facet", FUNCTION);
+			vd.flagError("A function cannot have an 'init' or 'update' facet",
+				IGamlIssue.REMOVE_VALUE, FUNCTION);
 		}
 	}
 
@@ -117,12 +135,14 @@ public class VariableValidator extends DescriptionValidator {
 			String varName = facets.getLabel(VAR);
 			VariableDescription targetedVar = vd.getWorldSpecies().getVariable(varName);
 			if ( targetedVar == null ) {
-				vd.flagError(p + "cannot refer to the non-global variable " + varName, IKeyword.VAR);
+				vd.flagError(p + "cannot refer to the non-global variable " + varName,
+					IGamlIssue.UNKNOWN_VAR, IKeyword.VAR);
 				return;
 			}
 			if ( !vd.getType().equals(Types.NO_TYPE) &&
 				vd.getType().id() != targetedVar.getType().id() ) {
-				vd.flagError(p + "type must be the same as that of " + varName, IKeyword.TYPE);
+				vd.flagError(p + "type must be the same as that of " + varName,
+					IGamlIssue.UNMATCHED_TYPES, IKeyword.TYPE);
 			}
 			// We are validating an experiment parameter so we fusion the facets of the targeted var
 			// and those of the parameter (EDIT: normally done, now, in the construction of the
