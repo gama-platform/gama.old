@@ -9,12 +9,14 @@ import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.*;
@@ -30,6 +32,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
  * 
  */
 public class GamlBuilder {
+
+	GamlJavaValidator validator;
 
 	private final GamlResource resource;
 
@@ -124,6 +128,15 @@ public class GamlBuilder {
 		}
 	}
 
+	private void addFacet(final Statement stm, final ISyntacticElement e, final String key,
+		final IExpressionDescription expr) {
+		if ( e.getFacet(key) != null ) {
+			resource.add(new GamlCompilationError("Duplicated definition of facet " + key +
+				". Only the last one will be considered", e, true));
+		}
+		e.setFacet(key, expr);
+	}
+
 	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
 		// If the initial statement is null, we return null
 		if ( stm == null ) { return null; }
@@ -155,7 +168,7 @@ public class GamlBuilder {
 			if ( fexpr == null && f instanceof DefinitionFacetExpr ) {
 				fexpr = convExpr((DefinitionFacetExpr) f);
 			}
-			elt.setFacet(fname, fexpr);
+			addFacet(stm, elt, fname, fexpr);
 		}
 
 		// We do the same for the special case of the "ref" + "expr" facet found in statements
@@ -163,7 +176,7 @@ public class GamlBuilder {
 		if ( ref != null ) {
 			String fname = ref.getRef();
 			IExpressionDescription ed = convExpr(stm.getExpr());
-			elt.setFacet(fname, ed);
+			addFacet(stm, elt, fname, ed);
 		}
 
 		// If the statement is "if", we convert its potential "else" part and put it inside the
@@ -174,9 +187,24 @@ public class GamlBuilder {
 
 		// We add the dependencies (only for variable declarations)
 		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
+			GuiUtils.debug("Building var dependencies for " + keyword);
 			String s = varDependenciesOf(stm);
 			if ( !s.isEmpty() ) {
 				elt.setFacet(DEPENDS_ON, new StringBasedExpressionDescription(s));
+			}
+			if ( !keyword.equals(VAR) && !keyword.equals(CONST) && !keyword.equals(EXPERIMENT) &&
+				!keyword.equals(METHOD) ) { // FIXME Why are experiment and method here ??
+				String type = elt.getLabel(TYPE);
+				if ( type != null ) {
+					if ( type.equals(keyword) ) {
+						resource.add(new GamlCompilationError("Duplicated declaration of type",
+							elt, true));
+					} else {
+						resource.add(new GamlCompilationError("Conflicting declaration of type (" +
+							type + " and " + keyword + "), only the last one will be considered",
+							elt, true));
+					}
+				}
 			}
 		}
 
@@ -197,10 +225,17 @@ public class GamlBuilder {
 		// We modify the "var" and "const" declarations in order to keep only the type
 		if ( keyword.equals(VAR) || keyword.equals(CONST) || keyword.equals(EXPERIMENT) ) {
 			String type = elt.getLabel(TYPE);
-			if ( type != null ) {
+			if ( type == null ) {
+				resource.add(new GamlCompilationError("The type of the variable is missing", elt));
+			} else {
 				elt.setKeyword(type);
 			}
 			if ( keyword.equals(CONST) ) {
+				String constant = elt.getLabel(CONST);
+				if ( constant != null && constant.equals(FALSE) ) {
+					resource.add(new GamlCompilationError("Is this variable constant or not ?",
+						elt, true));
+				}
 				elt.setFacet(CONST, convExpr(EGaml.createTerminal(true)));
 			}
 		}
