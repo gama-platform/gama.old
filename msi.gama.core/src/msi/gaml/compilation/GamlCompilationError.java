@@ -52,6 +52,13 @@ public class GamlCompilationError {
 		addSource(sourceInformation);
 	}
 
+	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation,
+		final boolean isWarning) {
+		this(string);
+		addSource(sourceInformation);
+		setWarning(isWarning);
+	}
+
 	/**
 	 * 
 	 * @param string
