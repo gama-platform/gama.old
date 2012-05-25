@@ -9,11 +9,9 @@ import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
@@ -22,7 +20,6 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.*;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 /**
  * The class GamlBuilder.
@@ -98,10 +95,9 @@ public class GamlBuilder {
 			GamlResource ir = (GamlResource) r.getResourceSet().getResource(iu, true);
 			if ( ir != null ) {
 				if ( !ir.getErrors().isEmpty() ) {
-					r.getErrors().add(
-						new GamlDiagnostic("", new String[] {}, "Imported file " +
-							ir.getURI().lastSegment() + " has errors. Fix them first.",
-							NodeModelUtils.findActualNodeFor(imp)));
+					r.add(new GamlCompilationError("Imported file " + ir.getURI().lastSegment() +
+						" has errors. Fix them first."));
+
 				}
 				imports.add(ir);
 			}
@@ -187,7 +183,7 @@ public class GamlBuilder {
 
 		// We add the dependencies (only for variable declarations)
 		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
-			GuiUtils.debug("Building var dependencies for " + keyword);
+			// GuiUtils.debug("Building var dependencies for " + keyword);
 			String s = varDependenciesOf(stm);
 			if ( !s.isEmpty() ) {
 				elt.setFacet(DEPENDS_ON, new StringBasedExpressionDescription(s));
