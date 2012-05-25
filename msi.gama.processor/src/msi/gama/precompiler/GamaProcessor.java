@@ -29,6 +29,7 @@ import javax.lang.model.type.*;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -324,8 +325,22 @@ public class GamaProcessor extends AbstractProcessor {
 
 	void processActions(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
+			action action = e.getAnnotation(action.class);
 			Pair executer = jw.getActionExecuterFor((ExecutableElement) e);
-			gp.put(executer.key, executer.value);
+			String key = executer.key;
+			key += "$" + action.value();
+			args args = e.getAnnotation(args.class);
+			if ( args != null && args.value().length > 0 ) {
+				key += "$";
+				for ( int i = 0; i < args.value().length; i++ ) {
+					String s = args.value()[i];
+					if ( i > 0 ) {
+						key += ",";
+					}
+					key += "\"" + s + "\"";
+				}
+			}
+			gp.put(key, executer.value);
 		}
 	}
 

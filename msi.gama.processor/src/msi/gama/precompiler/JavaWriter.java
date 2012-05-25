@@ -237,14 +237,6 @@ public class JavaWriter {
 		}
 	}
 
-	protected void writeActionAddition(final StringBuilder sb, final String s, final String code) {
-		String[] segments = s.split("\\$");
-		String clazz = segments[1];
-		String name = segments[0];
-		sb.append(concat(ln, ln, tab, tab, "addActionExecuter(\"", name, "\",", clazz,
-			".class, new PrimitiveExecuter() {", code, "});"));
-	}
-
 	protected void writeGetterAddition(final StringBuilder sb, final String s, final String code) {
 		String[] segments = s.split("\\$");
 		String clazz = segments[1];
@@ -264,28 +256,38 @@ public class JavaWriter {
 	protected void writeSpecies(final StringBuilder sb, final String s, final String clazz) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
-		sb.append(concat(ln, ln, tab, tab, "speciesAdd(\"", name, "\",", clazz, ".class"));
+		String helper = "new IAgentConstructor() {" + buildAgentConstructor(clazz) + "}";
+		sb.append(concat(ln, ln, tab, tab, "addSpecies(\"", name, "\",", clazz, ".class,", helper));
 		for ( int i = 1; i < segments.length; i++ ) {
 			sb.append(",").append('\"').append(segments[i]).append('\"');
 		}
 		sb.append(");");
-		ln(sb).append(tab).append(tab);
-		sb.append(concat(ln, ln, tab, tab, "addAgentConstructor(", clazz,
-			".class, new IAgentConstructor() {", buildAgentConstructor(clazz), "});"));
+	}
+
+	protected void writeActionAddition(final StringBuilder sb, final String s, final String code) {
+		String[] segments = s.split("\\$");
+		String clazz = segments[1];
+		String methodName = segments[0];
+		String actionName = segments[2];
+		String args = "";
+		if ( segments.length > 3 ) {
+			args = "," + segments[3];
+		}
+		sb.append(concat(ln, ln, tab, tab, "addAction(\"", methodName, "\",", clazz,
+			".class, new PrimitiveExecuter() {", code, "}, \"", actionName, "\"", args, ");"));
 	}
 
 	protected void writeSkill(final StringBuilder sb, final String s, final String clazz) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
-		sb.append(concat(ln, ln, tab, tab, "skillsAdd(\"", name, "\",", clazz, ".class"));
+		String helper =
+			"new ISkillConstructor() { @Override public" + " ISkill newInstance() {return new " +
+				clazz + "();}}";
+		sb.append(concat(ln, ln, tab, tab, "addSkill(\"", name, "\",", clazz, ".class,", helper));
 		for ( int i = 1; i < segments.length; i++ ) {
 			sb.append(",").append('\"').append(segments[i]).append('\"');
 		}
 		sb.append(");");
-		ln(sb).append(tab).append(tab);
-		sb.append(concat(ln, ln, tab, tab, "addSkillConstructor(", clazz,
-			".class, new ISkillConstructor() { @Override public",
-			" ISkill newInstance() {return new ", clazz, "();}});"));
 	}
 
 	protected void writeFieldGetterAddition(final StringBuilder sb, final String s,
@@ -325,7 +327,9 @@ public class JavaWriter {
 		}
 		ln(sb).append(ln).append(classDefinition()).append(" {");
 		ln(sb);
-		tab(sb).append("public ").append(simpleClassName()).append("() {");
+		tab(sb).append("public ").append(simpleClassName()).append("() {}");
+		ln(sb).append(ln).append(tab);
+		sb.append("public void initialize() {");
 	}
 
 	protected String classDefinition() {
@@ -338,7 +342,6 @@ public class JavaWriter {
 
 	protected void writeFooter(final StringBuilder sb) {
 		ln(sb);
-		tab(sb).append("finalize();");
 		tab(sb).append('}');
 		ln(sb).append('}');
 	}
