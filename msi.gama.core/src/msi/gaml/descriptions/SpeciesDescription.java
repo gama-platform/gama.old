@@ -179,19 +179,6 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	private void buildSharedSkills() {
-		// for ( final Class c : new HashSet<Class>(skillsMethods.values()) ) {
-		// if ( Skill.class.isAssignableFrom(c) ) {
-		// ISkill skill;
-		// if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-		// skill = control;
-		// } else {
-		// skill = GamlCompiler.getSkillInstanceFor(c);
-		// }
-		// skillInstancesByClass.put(c, skill);
-		// } else {
-		// skillInstancesByClass.put(c, null);
-		// }
-		// }
 		for ( final String s : skillsMethods.keySet() ) {
 			final Class c = skillsMethods.get(s);
 			if ( Skill.class.isAssignableFrom(c) ) {
@@ -467,7 +454,7 @@ public class SpeciesDescription extends SymbolDescription {
 				children.addAll(toAdd);
 			}
 			toAdd = AbstractGamlAdditions.getActionsDescriptions(c1);
-			if ( !toAdd.isEmpty() ) {
+			if ( toAdd != null && !toAdd.isEmpty() ) {
 				children.addAll(toAdd);
 			}
 			List<String> methods = AbstractGamlAdditions.getSkillMethods(c1);
