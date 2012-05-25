@@ -26,7 +26,7 @@ import msi.gaml.descriptions.*;
  * Written by drogoul
  * Modified on 18 nov. 2011
  * 
- * An interface to manipulate syntactic elements (either jdom elements or EObjects)
+ * An interface to manipulate syntactic elements (either String elements or EObjects)
  * 
  */
 public interface ISyntacticElement {
