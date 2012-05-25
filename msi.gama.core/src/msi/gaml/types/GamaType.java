@@ -19,7 +19,6 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -53,12 +52,19 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	Map<String, IExpression> getters = new HashMap();
 
 	public GamaType() {
-		type annotation = getClass().getAnnotation(type.class);
-		if ( annotation != null ) {
-			name = annotation.value();
-			id = annotation.id();
-			supports = annotation.wraps();
-		}
+		// type annotation = getClass().getAnnotation(type.class);
+		// if ( annotation != null ) {
+		// name = annotation.value();
+		// id = annotation.id();
+		// supports = annotation.wraps();
+		// }
+	}
+
+	@Override
+	public void init(final short id, final String name, final Class ... supports) {
+		this.id = id;
+		this.name = name;
+		this.supports = supports;
 	}
 
 	@Override

@@ -152,4 +152,6 @@ public interface IType<Inner> extends Comparable<IType> {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
+	public void init(final short id, final String name, final Class ... supports);
+
 }

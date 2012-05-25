@@ -46,6 +46,7 @@ public class Types {
 		if ( keyword.equals(IType.NONE_STR) ) {
 			typeInstance = NO_TYPE;
 		}
+		typeInstance.init(id, keyword, wraps);
 		typeToIType[id] = typeInstance;
 		stringToIType.put(keyword, typeInstance);
 		for ( Class cc : wraps ) {
