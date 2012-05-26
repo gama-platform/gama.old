@@ -108,6 +108,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 				displays.fireSelectionChanged(null);
 			}
 			displays = new GuiOutputManager(this);
+			
 			for ( IOutput output : outputs.values() ) {
 				if ( output instanceof IDisplayOutput ) {
 					displays.addDisplayOutput(output);
@@ -116,6 +117,25 @@ public class OutputManager extends Symbol implements IOutputManager {
 			displays.buildOutputs(exp);
 
 		}
+		else
+		{
+			if ( displays != null ) {
+				// GuiUtils.debug("Cancelling any previous selection");
+				displays.fireSelectionChanged(null);
+			}
+//Hack Nico 2			
+			displays = new HeadlessOutputManager(this);
+
+			for ( IOutput output : outputs.values() ) {
+				if ( output instanceof IDisplayOutput ) {
+
+					displays.addDisplayOutput(output);
+				}
+			}
+			displays.buildOutputs(exp);
+			
+		}
+		
 		GuiUtils.run(new Runnable() {
 
 			@Override
@@ -306,8 +326,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,
-			w, h); }
+		if ( displays != null ) {
+			return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,w, h); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}

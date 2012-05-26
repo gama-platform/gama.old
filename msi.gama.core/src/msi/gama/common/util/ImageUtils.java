@@ -140,11 +140,19 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage createCompatibleImage(final int width, final int height) {
-		GraphicsConfiguration gfx_config =
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDefaultConfiguration();
-		BufferedImage new_image = gfx_config.createCompatibleImage(width, height);
-		new_image.setAccelerationPriority(1f);
+		BufferedImage new_image = null;
+		if(GuiUtils.isInHeadLessMode())
+		{
+			new_image = new BufferedImage(width!=0?width:1024, height!=0?height:1024, BufferedImage.TYPE_INT_RGB);
+		}
+		else
+		{
+			GraphicsConfiguration gfx_config =
+					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+						.getDefaultConfiguration();
+			 new_image = gfx_config.createCompatibleImage(width, height);
+			new_image.setAccelerationPriority(1f);
+		}
 		return new_image;
 	}
 
@@ -263,6 +271,7 @@ public class ImageUtils {
 	 */
 	public static BufferedImage downScale(final BufferedImage img, final int targetWidth,
 		final int targetHeight, final Object hint, final boolean higherQuality) {
+		
 		int type =
 			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB
 				: BufferedImage.TYPE_INT_ARGB;

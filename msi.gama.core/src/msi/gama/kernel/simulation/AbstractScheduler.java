@@ -190,4 +190,6 @@ public abstract class AbstractScheduler implements IScheduler {
 	public boolean isUserHold() {
 		return on_user_hold;
 	}
+	
+	public abstract void pause();
 }

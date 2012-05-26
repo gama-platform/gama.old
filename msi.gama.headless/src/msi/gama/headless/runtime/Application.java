@@ -1,6 +1,18 @@
 package msi.gama.headless.runtime;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Calendar;
+
+import javax.imageio.ImageIO;
+
 import msi.gama.headless.core.*;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.outputs.LayerDisplayOutput;
+import msi.gama.outputs.MonitorOutput;
+import msi.gama.outputs.OutputManager;
 import msi.gama.runtime.GAMA;
 import org.eclipse.equinox.app.*;
 
@@ -20,15 +32,10 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 		IHeadLessExperiment exp =
-			HeadlessSimulationLoader.newHeadlessSimulation("/tmp/src/model1.gaml");
+			HeadlessSimulationLoader.newHeadlessSimulation("/Users/marilleau/model_gama_test.gaml");
 
-		/*
-		 * Thread.sleep(1000);
-		 * System.out.println("Initialize experiment");
-		 * GAMA.getExperiment().initialize(new ParametersSet(), 0.0);
-		 * Thread.sleep(1000);
-		 */
-		System.out.println("Starting experiment");
+//	GAMA.getExperiment().setParameterValue(name, v)
+//	GAMA.getExperiment().in
 		/*
 		 * Runnable rnb = new Runnable(){ public void run() {GAMA.startOrPauseExperiment();}};
 		 * Thread exec = new Thread(rnb);
@@ -46,25 +53,39 @@ public class Application implements IApplication {
 
 		// GAMA.startOrPauseExperiment();
 		//
-		GAMA.getExperiment().step();
-		System.out
-			.println("Step experimentfdsqf*****************************************************************");
-		GAMA.getExperiment().step();
-		System.out
-			.println("Step experimentfdsqf*****************************************************************");
-		GAMA.getExperiment().step();
-		System.out.println("Step experimentfdsqf");
-		// System.out.println("ccoucoe 4");
-		//
-		// GAMA.getExperiment().step();
-		//
-		// System.out.println("coucou start end vsqdfdsqdf");
-		//
-		Thread.sleep(1000000);
+		 MonitorOutput m =  ((OutputManager)GAMA.getExperiment().getOutputManager()).getMonitors().get(0);
+		//Thread.sleep(1000);
+			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).setImageFileName("/tmp/test");
 
+			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().setSnapshotFileName("/pouet");
+			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().setAutoSave(true);
+			
+			
+		 
+		 long start = Calendar.getInstance().getTimeInMillis();
+		// GAMA.getExperiment().getOutputManager().getOutput(id)
+		GAMA.getExperiment().step();
+		
+		
+		for(int i=0; i<150; i++)
+		{
+		GAMA.getExperiment().step();
+		BufferedImage buf=((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getImage();
+		
+		ImageIO.write(buf, "png", new File("/tmp/snap/snap"+i+".png"));
+		}
+		
+		 long end = Calendar.getInstance().getTimeInMillis();
+
+		 System.out.println("duration (ms)" + (end-start));
 		return null;
 	}
 
+//	((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().snapshot();
+		//Image img =Toolkit.getDefaultToolkit().createImage(buf.getSource());
+		//((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getImage()
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

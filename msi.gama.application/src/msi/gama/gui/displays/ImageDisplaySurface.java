@@ -20,14 +20,22 @@ package msi.gama.gui.displays;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.util.List;
+import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.IDisplayLayer;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.operators.Files;
 
 public class ImageDisplaySurface implements IDisplaySurface {
 
@@ -39,6 +47,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private IGraphics displayGraphics;
 	protected Color bgColor = Color.black;
 	IDisplayManager manager;
+	private String snapshotFileName;
+	public static String snapshotFolder = "/tmp/";
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double,
@@ -47,7 +57,49 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void initialize(final double w, final double h, final IDisplayOutput output) {
 		outputChanged(w, h, output);
+//Hack Nico		
+		if ( displayGraphics == null ) {
+			displayGraphics = GuiUtils.newGraphics((int)w, (int)h);
+		}
+		
 	}
+	/**
+	 * Save this surface into an image passed as a parameter
+	 * @param scope
+	 * @param image
+	 */
+	public void save(final IScope scope, final RenderedImage image) {
+		try {
+			Files.newFolder(scope, snapshotFolder);
+		} catch (GamaRuntimeException e1) {
+			e1.addContext("Impossible to create folder " + snapshotFolder);
+			GAMA.reportError(e1);
+			e1.printStackTrace();
+			return;
+		}
+		
+		String file = snapshotFolder + "/" + snapshotFileName + SimulationClock.getCycle() + ".png";
+		DataOutputStream os = null;
+		try {
+			os = new DataOutputStream(new FileOutputStream(file));
+			ImageIO.write(image, "png", os);
+		} catch (java.io.IOException ex) {
+			GamaRuntimeException e = new GamaRuntimeException(ex);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(e);
+		} finally {
+			try {
+				if ( os != null ) {
+					os.close();
+				}
+			} catch (Exception ex) {
+				GamaRuntimeException e = new GamaRuntimeException(ex);
+				e.addContext("Unable to close output stream for snapshot image");
+				GAMA.reportError(e);
+			}
+		}
+	}
+
 
 	@Override
 	public IDisplayManager getManager() {
@@ -118,7 +170,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
-		displayGraphics.setGraphics(g2);
+		displayGraphics.setGraphics(g2); 
 	}
 
 	private void paint() {
@@ -259,18 +311,18 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void setAutoSave(final boolean autosave) {}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSnapshotFileName(java.lang.String)
-	 */
 	@Override
-	public void setSnapshotFileName(final String string) {}
+	public void setSnapshotFileName(final String file) {
+		snapshotFileName = file;
+	}
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#snapshot()
 	 */
 	@Override
-	public void snapshot() {}
-
+	public void snapshot() {
+		save(GAMA.getDefaultScope(), buffImage);
+	}
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
 	 */

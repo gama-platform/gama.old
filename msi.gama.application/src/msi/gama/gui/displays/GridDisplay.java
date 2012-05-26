@@ -19,8 +19,10 @@
 package msi.gama.gui.displays;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,6 +31,7 @@ import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
+import weka.classifiers.bayes.net.GUI;
 
 public class GridDisplay extends ImageDisplay {
 

@@ -97,7 +97,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	};
 	private final ShapeWriter sw = new ShapeWriter(pt);
 
-	AWTDisplayGraphics(final BufferedImage image) {
+	public AWTDisplayGraphics(final BufferedImage image) {
 		this(image.getWidth(), image.getHeight());
 		setGraphics((Graphics2D) image.getGraphics());
 	}

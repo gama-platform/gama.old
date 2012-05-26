@@ -28,7 +28,7 @@ public class HeadlessSimulationLoader {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
 		try {
-			new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("coucou"))));
+			new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("/Users/marilleau/outGama.txt"))));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

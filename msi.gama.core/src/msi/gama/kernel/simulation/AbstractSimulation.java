@@ -36,7 +36,7 @@ import msi.gama.util.GamaList;
  */
 public abstract class AbstractSimulation implements ISimulation {
 
-	protected final Scheduler scheduler;
+	protected AbstractScheduler scheduler;
 	protected final IExperiment experiment;
 	protected IPopulation worldPopulation;
 	protected boolean isLoading;
@@ -53,10 +53,12 @@ public abstract class AbstractSimulation implements ISimulation {
 		outputStack = obtainNewScope();
 		globalStack = obtainNewScope();
 		// GUI.debug("Instanciating a new scheduler");
-		scheduler = new Scheduler(this);
+		initSchedulingPolicy();
+		//scheduler = new Scheduler(this);
 		// GUI.debug("Initializing the simulation with " + parameters);
 		// initialize(parameters);
 	}
+    protected abstract void initSchedulingPolicy();
 
 	@Override
 	public IScheduler getScheduler() {

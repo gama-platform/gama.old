@@ -17,6 +17,11 @@ public class HeadlessSimulation extends AbstractSimulation {
 		super(exp);
 	}
 
+	protected void initSchedulingPolicy()
+	{
+		System.out.println("starting headless scheduler");
+		this.scheduler= new HeadlessScheduler(this);
+	}
 	@Override
 	protected void initializeWorldPopulation() {
 		worldPopulation = new WorldPopulation(getModel().getWorldSpecies());

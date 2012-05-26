@@ -91,12 +91,10 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 				setBackgroundColor(Cast.asColor(getOwnScope(), "white"));
 			}
 		}
-		/***/
 		IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
 		}
-		/***/
 		for ( final ISymbol layer : getLayers() ) {
 			try {
 				((IDisplayLayer) layer).prepare(this, getOwnScope());
