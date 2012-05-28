@@ -315,7 +315,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {	
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, angle);
 	}
@@ -504,5 +504,5 @@ public class AWTDisplayGraphics implements IGraphics {
 	public void initLayers() {}
 
 	@Override
-	public void newLayer() {}
+	public void newLayer(double elevation) {}
 }

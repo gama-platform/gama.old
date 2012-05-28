@@ -130,6 +130,18 @@ public abstract class AbstractDisplay implements IDisplay {
 				}
 
 			});
+		EditorFactory.create(compo, "Elevation:", model.getElevation(), 0.0, 1.0, 0.1, false,
+			new EditorListener<Double>() {
+
+				@Override
+				public void valueModified(final Double newValue) {
+					setElevation(newValue);
+					if ( container.isPaused() ) {
+						container.updateDisplay();
+					}
+				}
+
+			});
 	}
 
 	@Override
@@ -141,7 +153,7 @@ public abstract class AbstractDisplay implements IDisplay {
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
 		if ( model != null ) {
-			g.newLayer();
+			g.newLayer(model.getElevation());
 			g.setOpacity(model.getTransparency());
 			setPositionAndSize(model.getBoundingBox(), g);
 		}
@@ -159,6 +171,10 @@ public abstract class AbstractDisplay implements IDisplay {
 
 	public void setExtent(final GamaPoint p) {
 		model.getBox().setExtent(p);
+	}
+	
+	public void setElevation(final Double elevation) {
+		model.setElevation(elevation);
 	}
 
 	/**

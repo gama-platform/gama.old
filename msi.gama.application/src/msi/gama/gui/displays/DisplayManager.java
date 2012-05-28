@@ -177,9 +177,11 @@ public class DisplayManager implements IDisplayManager {
 	@Override
 	public void updateItemValues() {}
 
-	public static IDisplay createDisplay(final IDisplayLayer layer, final double env_width,
-		final double env_height, final IGraphics dg) {
+	public static IDisplay createDisplay(final IDisplayLayer layer, final double env_width,	
+		final double env_height, final IGraphics dg) {	
+		
 		switch (layer.getType()) {
+			
 			case IDisplayLayer.GRID: {
 				return new GridDisplay(env_width, env_height, layer, dg);
 			}
