@@ -19,17 +19,17 @@ global {
 			arg message value: 'This model is destined to be used as a skeleton for the GIS tutorial. It is not functional.';
 		}
 	}
-}
+} 
 
 entities {
-	species people parent: base skills: [situated, visible] { 
+	species people parent: base  { 
 		set shape value: circle(2);
 		const size type: float init: 2;
 		const color type: rgb init: colors at (rnd (number_of_groups - 1));
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people;
 		reflex migrate when: !is_happy;
 	}  
-	species space skills: [visible, situated] {
+	species space  {
 		var agents type: list of: people init: [];  
 	}    
 }
