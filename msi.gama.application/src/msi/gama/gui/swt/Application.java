@@ -130,7 +130,6 @@ public class Application implements IApplication {
 	@Override
 	public void stop() {
 		if ( !PlatformUI.isWorkbenchRunning() ) { return; }
-		// TODO OutputManager.run() ?
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
 		display.syncExec(new Runnable() {
