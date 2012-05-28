@@ -119,17 +119,12 @@ public class Files {
 		// feature. Both processes will be unified later.
 		SimpleFeature gisReader = GisUtils.getCurrentGisReader();
 		if ( gisReader != null ) {
-
-			try {
-				Object result = gisReader.getAttribute(s);
-				return result;
-			} catch (Exception e) {
-				throw new GamaRuntimeException("Attribute " + s + " not found by OpenGIS : " +
-					e.getMessage());
-			}
-
+			Object result = gisReader.getAttribute(s);
+			if ( result == null ) { throw new GamaRuntimeException("Attribute " + s +
+				" not found in shapefile " + gisReader.getDescriptor().getLocalName()); }
+			return result;
 		}
-		throw new GamaRuntimeException("Attribute " + s + " cannot be read ");
+		return null;
 	}
 
 	@operator(value = "get")
