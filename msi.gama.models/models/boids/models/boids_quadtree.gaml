@@ -3,12 +3,12 @@ model boids
 global {
 	var number_of_agents type: int parameter: 'true' init: 500 min: 1 max: 1000000;
 	var number_of_obstacles type: int parameter: 'true' init: 0 min: 0;
-	var maximal_speed type: float parameter: 'true' init: 15 min: 0.1 max: 15;
+	var maximal_speed type: float parameter: 'true' init: 15.0 min: 0.1 max: 15.0;
 	var cohesion_factor type: int parameter: 'true' init: 200;
 	var alignment_factor type: int parameter: 'true' init: 100;
 	var minimal_distance type: float parameter: 'true' init: 10.0;
 	var maximal_turn type: int parameter: 'true' init: 90 min: 0 max: 359;
-	var width_and_height_of_environment type: int parameter: 'true' init: 2000;
+	var width_and_height_of_environment type: int parameter: 'true' init: 2000; 
 	var torus_environment type: bool parameter: 'true' init: false;
 	var apply_cohesion type: bool init: true parameter: 'true';
 	var apply_alignment type: bool init: true parameter: 'true';
@@ -41,16 +41,16 @@ global {
 
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
 entities {
-	species boids_goal skills: moving {
-		const range type: float init: 20;
-		const size type: float init: 10;
-		reflex {
+	species boids_goal skills: [moving] {
+		const range type: float init: 20.0;
+		const size type: float init: 10.0;
+		reflex wander {
 			do  wander amplitude:45 speed: 20 ;
 			set goal value: location;
 		}
 		aspect default {
-			draw shape: circle color: 'red' size: 10;
-			draw shape: circle color: 'orange' size: 40 empty: true;
+			draw shape: circle color: rgb('red') size: 10;
+			draw shape: circle color: rgb('orange') size: 40 empty: true;
 		}
 	}
 	species boids skills: [moving] {
@@ -58,12 +58,12 @@ entities {
 		var range type: float init: minimal_distance * 2;
 		var heading type: int max: heading + maximal_turn min: heading - maximal_turn;
 		var velocity type: point init: {0,0};
-		var others type: list value: ((self neighbours_at range) of_species boids) - self;
+		var others type: list value: ((self neighbours_at range) of_species boids) - self  ;
 		const size type: int init: 5;
 		action others_at type: list of: boids {
 			arg distance type: float;
 			return value: others where ((self distance_to each) < distance);
-		}
+		} 
 		reflex separation when: apply_separation {
 			let acc value: {0,0};
 	
@@ -71,7 +71,7 @@ entities {
 				set acc value: acc - ((location of boid) - my location);
 			}
 			set velocity value: velocity + acc;
-		}
+		} 
 		action compute_mass_center type: point {
 			return value: (length(others) > 0) ? mean (others collect (each.location)) as point : location;
 		}
@@ -82,9 +82,9 @@ entities {
 		reflex cohesion when: apply_cohesion {
 			let acc value: ((self compute_mass_center []) as point) - location;
 			set acc value: acc / cohesion_factor;
-			set velocity value: velocity + acc;
+			set velocity value: velocity + acc; 
 		}
-		reflex avoid when: apply_avoid {
+		reflex avoid when: apply_avoid { 
 			let acc value: {0,0};
 
 			loop obs over: (self others_at [distance::(minimal_distance * 2)]) of_species obstacle  {
@@ -130,10 +130,10 @@ entities {
 			do  do_move;
 		}
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: 'black';
+			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black');
 		}
 		aspect default {
-			draw shape: triangle size: 7 rotate: heading color: 'yellow';
+			draw shape: triangle size: 7 rotate: heading color: rgb('yellow');
 		}
 		
 		
@@ -141,7 +141,7 @@ entities {
 	}
 	species obstacle skills: [moving] {
 		var speed type: float init: 0.1;
-		reflex when: moving_obstacles {
+		reflex avoid when: moving_obstacles {
 			if condition: flip(0.5) 
 				{do goto target: one_of(boids) as list;}
 			else 
