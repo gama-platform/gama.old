@@ -46,12 +46,6 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract String getKeyword();
 
-	public abstract String getName();
-
-	public abstract IType getType();
-
-	public abstract IType getContentType();
-
 	public abstract ModelDescription getModelDescription();
 
 	public abstract void setSuperDescription(final IDescription desc);

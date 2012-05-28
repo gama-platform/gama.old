@@ -78,7 +78,7 @@ public class DescriptionValidator {
 	public static void verifyFacetTypeIsCompatible(final IDescription desc, final String facet,
 		final IExpression expr, final List<String> types, final TypesManager tm) {
 		boolean compatible = false;
-		IType actualType = expr.type();
+		IType actualType = expr.getType();
 		for ( String type : types ) {
 			compatible = compatible || tm.get(type).isAssignableFrom(actualType);
 			if ( compatible ) {
@@ -163,12 +163,12 @@ public class DescriptionValidator {
 			cd.flagError("This expression is not a reference to a variable ", IKeyword.NAME);
 		} else {
 			IExpression value = cd.getFacets().getExpr(VALUE);
-			if ( value != null && value.type() != Types.NO_TYPE &&
-				!expr.type().isAssignableFrom(value.type()) ) {
-				cd.flagWarning("Variable " + expr.toGaml() + " of type " + expr.type() +
-					" is assigned a value of type " + value.type().toString() +
+			if ( value != null && value.getType() != Types.NO_TYPE &&
+				!expr.getType().isAssignableFrom(value.getType()) ) {
+				cd.flagWarning("Variable " + expr.toGaml() + " of type " + expr.getType() +
+					" is assigned a value of type " + value.getType().toString() +
 					", which will be automatically casted.", IGamlIssue.SHOULD_CAST,
-					IKeyword.VALUE, expr.type().toString());
+					IKeyword.VALUE, expr.getType().toString());
 			}
 		}
 

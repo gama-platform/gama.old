@@ -21,7 +21,6 @@ package msi.gaml.expressions;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 25 déc. 2010
@@ -38,9 +37,5 @@ public interface IExpression extends IGamlDescription {
 	public abstract String toGaml();
 
 	public abstract String literalValue();
-
-	public abstract IType getContentType();
-
-	public IType type();
 
 }

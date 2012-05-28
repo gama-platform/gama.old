@@ -18,7 +18,7 @@
  */
 package msi.gaml.types;
 
-import java.util.Set;
+import java.util.Map;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -110,7 +110,7 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public IExpression getGetter(String name);
 
-	public Set<String> getFieldGetters();
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions();
 
 	public boolean isSpeciesType();
 

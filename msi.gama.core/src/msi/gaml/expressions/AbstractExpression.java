@@ -42,7 +42,7 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return type == null ? Types.NO_TYPE : type;
 	}
 

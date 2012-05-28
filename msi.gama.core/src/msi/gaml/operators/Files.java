@@ -129,7 +129,7 @@ public class Files {
 			}
 
 		}
-		return null;
+		throw new GamaRuntimeException("Attribute " + s + " cannot be read ");
 	}
 
 	@operator(value = "get")

@@ -59,6 +59,11 @@ public class TypeFieldExpression implements IExpression {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public String toGaml() {
 		return left.toGaml() + "." + name;
 	}
@@ -88,7 +93,7 @@ public class TypeFieldExpression implements IExpression {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return type == null ? Types.NO_TYPE : type;
 	}
 
@@ -102,7 +107,7 @@ public class TypeFieldExpression implements IExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Type " + type() + " from object of type " + left.type();
+		return "Type " + getType() + " from object of type " + left.getType();
 	}
 
 	/**

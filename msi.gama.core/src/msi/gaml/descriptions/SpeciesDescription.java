@@ -86,6 +86,7 @@ public class SpeciesDescription extends SymbolDescription {
 			getActions().clear();
 		}
 		if ( hasVariables() ) {
+			// GuiUtils.debug("Variables of " + this + " disposed");
 			getVariables().clear();
 		}
 		skillInstancesByMethod.clear();

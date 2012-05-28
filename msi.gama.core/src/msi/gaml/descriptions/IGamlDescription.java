@@ -4,6 +4,7 @@
  */
 package msi.gaml.descriptions;
 
+import msi.gaml.types.IType;
 import org.eclipse.emf.common.notify.Adapter;
 
 /**
@@ -20,5 +21,11 @@ public interface IGamlDescription extends Adapter.Internal {
 	public String getTitle();
 
 	public String getDocumentation();
+
+	public abstract IType getContentType();
+
+	public IType getType();
+
+	public abstract String getName();
 
 }

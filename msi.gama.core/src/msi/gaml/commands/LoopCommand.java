@@ -64,7 +64,7 @@ public class LoopCommand extends AbstractCommandSequence {
 		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
 		executer =
 			isWhile ? new LoopWhileExecuter(this) : isList
-				? getFacet(IKeyword.OVER).type().id() == IType.POINT ? new LoopIntervalExecuter(
+				? getFacet(IKeyword.OVER).getType().id() == IType.POINT ? new LoopIntervalExecuter(
 					this) : new LoopListExecuter(this) : isBounded ? new LoopBoundedExecuter(this)
 					: new LoopTimesExecuter(this);
 

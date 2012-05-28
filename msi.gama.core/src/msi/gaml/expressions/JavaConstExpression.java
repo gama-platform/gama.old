@@ -51,6 +51,11 @@ public class JavaConstExpression extends JavaExpression {
 	}
 
 	@Override
+	public String getName() {
+		return literalValue();
+	}
+
+	@Override
 	public String getDocumentation() {
 		return literalValue();
 	}

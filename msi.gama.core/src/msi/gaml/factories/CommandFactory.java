@@ -55,6 +55,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected void privateValidate(final IDescription desc) {
+		// GuiUtils.debug("Validating " + desc);
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
 		CommandDescription cd = (CommandDescription) desc;
@@ -166,7 +167,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 			ca.put(name, e);
 			IType type = sd.getTypeNamed(argFacets.getLabel(TYPE));
 			if ( type == Types.NO_TYPE && e != null ) {
-				type = e.type();
+				type = e.getType();
 			}
 			if ( !isCreate ) {
 				// Special case for the calls (create, do, primitives) as the "arguments" passed
@@ -183,6 +184,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected void compileFacet(final String tag, final IDescription sd) {
+		// GuiUtils.debug("Compiling facet " + tag);
 		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
 			Facets ff = sd.getFacets();
 			IType type = sd.getTypeNamed(ff.getLabel(TYPE));
@@ -199,7 +201,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 					compileFacet(VALUE, sd);
 					IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
-						type = expr.type();
+						type = expr.getType();
 					}
 				} else if ( ff.containsKey(OVER) ) {
 					compileFacet(OVER, sd);
@@ -211,7 +213,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 					compileFacet(FROM, sd);
 					IExpression expr = ff.getExpr(FROM);
 					if ( expr != null ) {
-						type = expr.type();
+						type = expr.getType();
 					}
 				}
 			}

@@ -337,8 +337,8 @@ public class Containers {
 	@operator(value = { "max_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
 	public static Object maxOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
-		if ( original == null ) { return filter.type().getDefault(); }
-		if ( filter.type().id() == IType.INT ) {
+		if ( original == null ) { return filter.getType().getDefault(); }
+		if ( filter.getType().id() == IType.INT ) {
 			int max = Integer.MIN_VALUE;
 			for ( Object each : original ) {
 				scope.setEach(each);
@@ -363,8 +363,8 @@ public class Containers {
 	@operator(value = { "min_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
 	public static Object minOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
-		if ( original == null ) { return filter.type().getDefault(); }
-		if ( filter.type().id() == IType.INT ) {
+		if ( original == null ) { return filter.getType().getDefault(); }
+		if ( filter.getType().id() == IType.INT ) {
 			int min = Integer.MAX_VALUE;
 			for ( Object each : original ) {
 				scope.setEach(each);
@@ -433,7 +433,7 @@ public class Containers {
 		final GamaList lv = new GamaList(original.listValue(scope));
 		// copy in order to prevent any side effect on the left member
 		if ( lv.isEmpty() ) { return lv; }
-		short fType = filter.type().id();
+		short fType = filter.getType().id();
 		boolean isComparable = fType == IType.STRING || fType == IType.INT || fType == IType.FLOAT;
 		for ( int i = 0, n = lv.size(); i < n; i++ ) {
 			Object each = lv.get(i);
@@ -487,7 +487,7 @@ public class Containers {
 	@operator(value = { "with_max_of" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
 	public static Object withMaxOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
-		if ( original == null ) { return filter.type().getDefault(); }
+		if ( original == null ) { return filter.getType().getDefault(); }
 		double max = Double.MIN_VALUE;
 		Object result = null;
 		for ( Object each : original ) {

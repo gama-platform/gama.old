@@ -73,8 +73,9 @@ public class ModelDescription extends SymbolDescription {
 			// GuiUtils.debug("" + this + " already disposed");
 			return;
 		}
+		isDisposed = true;
 		// int left = dec(fileName);
-		// GuiUtils.debug("Disposal of " + this + "(models left: " + left + ")");
+		// GuiUtils.debug("Disposal of " + this);
 		experiments.clear();
 		allSpeciesDescription.clear();
 		output = null;
@@ -82,7 +83,7 @@ public class ModelDescription extends SymbolDescription {
 		types.dispose();
 		worldSpecies = null;
 		super.dispose();
-		isDisposed = true;
+
 	}
 
 	static int inc(final String fileName) {

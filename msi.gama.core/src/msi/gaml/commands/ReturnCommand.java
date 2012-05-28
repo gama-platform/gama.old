@@ -57,7 +57,7 @@ public class ReturnCommand extends AbstractCommand {
 
 	@Override
 	public IType getReturnType() {
-		return value.type();
+		return value.getType();
 	}
 
 }

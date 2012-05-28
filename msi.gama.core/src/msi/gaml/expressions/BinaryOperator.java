@@ -88,8 +88,8 @@ public class BinaryOperator extends AbstractBinaryOperator {
 	public void computeType(final IDescription context) {
 		short t = typeProvider;
 		if ( t == BOTH ) {
-			IType l = left.type();
-			IType r = right.type();
+			IType l = left.getType();
+			IType r = right.getType();
 			if ( left.isConst() && left.value(null) == null ) {
 				type = r;
 				return;
@@ -124,7 +124,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		type =
-			t == LEFT_TYPE ? left.type() : t == RIGHT_TYPE ? right.type() : t == LEFT_CONTENT_TYPE
+			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType() : t == LEFT_CONTENT_TYPE
 				? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right.getContentType() : t >= 0
 					? Types.get(t) : type;
 	}
@@ -168,7 +168,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		contentType =
-			t == LEFT_TYPE ? left.type() : t == RIGHT_TYPE ? right.type() : t == LEFT_CONTENT_TYPE
+			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType() : t == LEFT_CONTENT_TYPE
 				? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right.getContentType() : t >= 0
 					? Types.get(t) : type.id() == IType.LIST || type.id() == IType.MATRIX ? left
 						.getContentType() : type.isSpeciesType() ? type : type.defaultContentType();
@@ -191,8 +191,8 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		StringBuilder sb = new StringBuilder();
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Left operand of type ").append(left.type().toString()).append("<br>");
-		sb.append("Right operand of type ").append(right.type().toString()).append("<br>");
+		sb.append("Left operand of type ").append(left.getType().toString()).append("<br>");
+		sb.append("Right operand of type ").append(right.getType().toString()).append("<br>");
 		return sb.toString();
 	}
 

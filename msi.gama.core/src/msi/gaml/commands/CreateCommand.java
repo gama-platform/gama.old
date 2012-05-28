@@ -199,7 +199,7 @@ public class CreateCommand extends AbstractCommandSequence implements ICommand.W
 		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
 
 		if ( from != null ) {
-			IType type = from.type();
+			IType type = from.getType();
 			if ( type.id() == IType.STRING || type.id() == IType.FILE ) {
 				FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
 				final List<Map<String, Object>> initialValues = new GamaList();

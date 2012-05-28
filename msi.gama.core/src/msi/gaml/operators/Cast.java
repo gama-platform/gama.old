@@ -55,7 +55,7 @@ public class Cast {
 			if ( v instanceof IAgent ) { return ((IAgent) v).isInstanceOf(s, false); }
 			return false;
 		}
-		return type.isAssignableFrom(a.type());
+		return type.isAssignableFrom(a.getType());
 	}
 
 	//
@@ -75,7 +75,7 @@ public class Cast {
 		} else if ( value instanceof ISpecies ) {
 			return ((ISpecies) value).getAgentType();
 		} else {
-			return expr.type();
+			return expr.getType();
 		}
 	}
 

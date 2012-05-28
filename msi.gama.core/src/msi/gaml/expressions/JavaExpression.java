@@ -53,7 +53,7 @@ public abstract class JavaExpression implements IExpression {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return Types.get(IType.NONE);
 	}
 

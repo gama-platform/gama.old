@@ -45,12 +45,12 @@ public class ListExpression extends AbstractExpression {
 		if ( n != 0 ) {
 			IExpression e = elements.get(0);
 			if ( e != null ) {
-				contentType = e.type();
+				contentType = e.getType();
 			}
 			for ( int i = 1; i < n; i++ ) {
 				e = elements.get(i);
 				if ( e != null ) {
-					allTheSame = e.type() == contentType;
+					allTheSame = e.getType() == contentType;
 				}
 				if ( !allTheSame ) {
 					break;

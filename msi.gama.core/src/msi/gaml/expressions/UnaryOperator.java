@@ -98,21 +98,21 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		StringBuilder sb = new StringBuilder();
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Operand of type ").append(child.type().toString()).append("<br>");
+		sb.append("Operand of type ").append(child.getType().toString()).append("<br>");
 		return sb.toString();
 	}
 
 	public void computeType() {
 		short t = typeProvider;
 		type =
-			t == CHILD_TYPE ? child.type() : t == CHILD_CONTENT_TYPE ? child.getContentType()
+			t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child.getContentType()
 				: t >= 0 ? Types.get(t) : type;
 	}
 
 	public void computeContentType() {
 		short t = contentTypeProvider;
 		contentType =
-			t == CHILD_TYPE ? child.type() : t == CHILD_CONTENT_TYPE ? child.getContentType()
+			t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child.getContentType()
 				: t >= 0 ? Types.get(t) : type.id() == IType.LIST || type.id() == IType.MATRIX ||
 					type.id() == IType.CONTAINER ? child.getContentType() : type.isSpeciesType()
 					? type : type.defaultContentType();

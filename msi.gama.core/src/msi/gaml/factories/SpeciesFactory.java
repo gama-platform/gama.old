@@ -67,4 +67,20 @@ public class SpeciesFactory extends SymbolFactory {
 
 	}
 
+	@Override
+	protected void privateValidateChildren(final IDescription sd) {
+		SpeciesDescription desc = sd.getSpeciesContext();
+		// we first validate the variables in the right order
+		// Necessary to make content assist work correctly
+		for ( String s : desc.getVarNames() ) {
+			validateDescription(desc.getVariable(s));
+		}
+		// then the rest
+		for ( IDescription s : sd.getChildren() ) {
+			if ( !(s instanceof VariableDescription) ) {
+				validateDescription(s);
+			}
+		}
+	}
+
 }

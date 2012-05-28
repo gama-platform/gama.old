@@ -78,9 +78,8 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public Set<String> getFieldGetters() {
-		if ( isSpeciesType() ) { return new HashSet(getSpecies().getVarNames()); }
-		return getters.keySet();
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions() {
+		return getters;
 	}
 
 	@Override

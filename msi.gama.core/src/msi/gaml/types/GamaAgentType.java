@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import java.util.Map;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -76,6 +77,11 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public boolean isSpeciesType() {
 		return true;
+	}
+
+	@Override
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions() {
+		return getSpecies().getVariables();
 	}
 
 	@Override

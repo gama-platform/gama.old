@@ -136,7 +136,7 @@ public class System {
 			for ( Object e : param.entrySet() ) {
 				Map.Entry<IExpression, IExpression> entry = (Map.Entry<IExpression, IExpression>) e;
 				parameterNames[i] = entry.getKey().literalValue();
-				parameterTypes[i] = entry.getValue().type().toClass();
+				parameterTypes[i] = entry.getValue().getType().toClass();
 				parameterValues[i] = entry.getValue().value(scope);
 				i++;
 			}

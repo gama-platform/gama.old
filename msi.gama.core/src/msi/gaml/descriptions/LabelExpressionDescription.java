@@ -54,7 +54,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		}
 
 		@Override
-		public IType type() {
+		public IType getType() {
 			return Types.get(IType.STRING);
 		}
 
@@ -64,6 +64,11 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		@Override
 		public String getDocumentation() {
 			return "Constant string: " + value;
+		}
+
+		@Override
+		public String getName() {
+			return value;
 		}
 
 		/**

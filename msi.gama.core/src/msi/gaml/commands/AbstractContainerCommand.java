@@ -39,7 +39,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 
 		public GamaIndexTypeWarning(final Object i, final IType t, final IExpression in) {
 			super("Cannot use " + t.toString() + " " + StringUtils.toGaml(i) + " as an index for " +
-				in.type().toString() + " " + in.toGaml());
+				in.getType().toString() + " " + in.toGaml());
 		}
 
 	}
@@ -48,7 +48,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 
 		public GamaValueTypeWarning(final Object o, final IType t, final IExpression in) {
 			super("Cannot use " + t.toString() + " " + StringUtils.toGaml(o) + " as a value for " +
-				in.type().toString() + " " + in.toGaml());
+				in.getType().toString() + " " + in.toGaml());
 		}
 
 	}
@@ -56,7 +56,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 	public static class GamaContainerTypeWarning extends GamaRuntimeWarning {
 
 		public GamaContainerTypeWarning(final IExpression in) {
-			super("Cannot use " + in.type().toString() + " " + in.toGaml() + " as a container");
+			super("Cannot use " + in.getType().toString() + " " + in.toGaml() + " as a container");
 		}
 
 	}
@@ -101,7 +101,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 		throws GamaRuntimeException {
 		final Object position = index == null ? null : index.value(scope);
 		if ( index != null && !container.checkIndex(position) ) { throw new GamaIndexTypeWarning(
-			position, index.type(), list); }
+			position, index.getType(), list); }
 		return position;
 	}
 
@@ -111,7 +111,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 			if ( item == null ) { return null; }
 			final Object object = item.value(scope);
 			if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
-				item.type(), list); }
+				item.getType(), list); }
 			return object;
 		}
 		Object whole = all.value(scope);
@@ -120,7 +120,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 				asAll = (Boolean) whole;
 				final Object object = item.value(scope);
 				if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
-					item.type(), list); }
+					item.getType(), list); }
 				return asAll ? GamaList.with(object) : object;
 			}
 			throw new GamaRuntimeWarning("'all: " + StringUtils.toGaml(whole) +
@@ -131,7 +131,7 @@ public abstract class AbstractContainerCommand extends AbstractCommand {
 			whole = GamaList.with(whole);
 		}
 		for ( Object o : (IContainer) whole ) {
-			if ( !container.checkValue(o) ) { throw new GamaValueTypeWarning(o, all.type(), list); }
+			if ( !container.checkValue(o) ) { throw new GamaValueTypeWarning(o, all.getType(), list); }
 		}
 		return whole;
 	}

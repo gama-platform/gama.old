@@ -162,7 +162,7 @@ public class SaveCommand extends AbstractCommandSequence {
 						System.getProperty("line.separator"));
 				} else if ( type.equals("csv") ) {
 					item.getContentType();
-					if ( item.type().id() == IType.LIST ) {
+					if ( item.getType().id() == IType.LIST ) {
 						IList values = Cast.asList(scope, item.value(scope));
 						for ( int i = 0; i < values.size() - 1; i++ ) {
 							fw.write(Cast.asString(scope, values.get(i)) + ",");

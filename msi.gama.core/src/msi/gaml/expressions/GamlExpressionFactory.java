@@ -121,7 +121,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if ( child == null ) { return null; }
 		if ( UNARIES.containsKey(op) ) {
 			Map<IType, IOperator> ops = UNARIES.get(op);
-			IType childType = child.type();
+			IType childType = child.getType();
 			IType originalChildType = childType;
 
 			if ( !ops.containsKey(childType) ) {
@@ -147,7 +147,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						dist = d;
 					}
 				}
-				IType coercingType = childType.coerce(child.type(), context);
+				IType coercingType = childType.coerce(child.getType(), context);
 				if ( coercingType != null ) {
 					child = createUnaryExpr(coercingType.toString(), child, context);
 				}
@@ -175,8 +175,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if ( BINARIES.containsKey(op) ) {
 			// We get the possible pairs of types registered
 			Map<TypePair, IOperator> map = BINARIES.get(op);
-			IType leftType = left.type();
-			IType rightType = right.type();
+			IType leftType = left.getType();
+			IType rightType = right.getType();
 			temp_pairs.clear();
 			// We filter the one(s) compatible with the operand types
 			for ( TypePair p : map.keySet() ) {
@@ -211,11 +211,11 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We make a copy of the operator object.
 			operator = operator.copy();
 			// We coerce the two expressions to closely match the pair of types declared
-			IType coercingType = pair.left().coerce(left.type(), context);
+			IType coercingType = pair.left().coerce(left.getType(), context);
 			if ( coercingType != null ) {
 				left = createUnaryExpr(coercingType.toString(), left, context);
 			}
-			coercingType = pair.right().coerce(right.type(), context);
+			coercingType = pair.right().coerce(right.getType(), context);
 			if ( coercingType != null ) {
 				right = createUnaryExpr(coercingType.toString(), right, context);
 			}

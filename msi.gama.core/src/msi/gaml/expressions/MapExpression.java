@@ -59,7 +59,7 @@ public class MapExpression extends AbstractExpression {
 		IType previousType = Types.get(IType.NONE);
 		contentType = previousType;
 		for ( IExpression e : vals ) {
-			IType type = e.type();
+			IType type = e.getType();
 			if ( previousType == Types.get(IType.NONE) || type == previousType ) {
 				contentType = type;
 				previousType = type;

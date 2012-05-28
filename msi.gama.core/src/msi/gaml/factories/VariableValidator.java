@@ -41,8 +41,8 @@ public class VariableValidator extends DescriptionValidator {
 			if ( expr == null ) {
 				continue;
 			}
-			if ( expr.type() != type && expr.type() != Types.NO_TYPE && type != Types.NO_TYPE ) {
-				vd.flagWarning("Facet " + s + " of type " + expr.type().toString() +
+			if ( expr.getType() != type && expr.getType() != Types.NO_TYPE && type != Types.NO_TYPE ) {
+				vd.flagWarning("Facet " + s + " of type " + expr.getType().toString() +
 					" should be of type " + type.toString(), IGamlIssue.SHOULD_CAST, s,
 					type.toString());
 			}
@@ -88,10 +88,10 @@ public class VariableValidator extends DescriptionValidator {
 			IExpression expr = facets.getExpr(s);
 			if ( expr != null ) {
 				if ( type == null ) {
-					type = expr.type();
+					type = expr.getType();
 					firstValueFacet = s;
 				} else {
-					if ( type != expr.type() ) {
+					if ( type != expr.getType() ) {
 						vd.flagWarning("The types of  facets '" + s + "' and '" + firstValueFacet +
 							"' are not the same", IGamlIssue.SHOULD_CAST, s, type.toString());
 					}
