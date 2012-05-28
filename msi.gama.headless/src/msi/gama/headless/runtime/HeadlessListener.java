@@ -20,7 +20,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaClassLoader;
-import msi.gaml.architecture.user.UserPanel;
+import msi.gaml.architecture.user.UserPanelStatement;
 
 public class HeadlessListener implements IGui {
 
@@ -32,7 +32,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void openUserControlPanel(IScope scope, UserPanel panel) {
+	public void openUserControlPanel(IScope scope, UserPanelStatement panel) {
 		// TODO Auto-generated method stub
 		
 	}
