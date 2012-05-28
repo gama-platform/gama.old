@@ -8,18 +8,18 @@ global {
 	const pedestrian_red type: rgb init: rgb ('red');
 	
 	const pedestrian_size type: float init: 1.0;
-	const pedestrian_shape type: geometry init: circle (pedestrian_size) depends_on: pedestrian_size;
+	const pedestrian_shape type: geometry init: circle (pedestrian_size) ;
 	const pedestrian_speed type: float init: 2.0;
 
 	const corridor_color type: rgb init: rgb ('blue');
 	const corridor_width type: int init: int(environment_width / 2) depends_on: [environment_width];
 	const corridor_height type: int init: (int(environment_height * 0.4)) depends_on: [environment_height];
 
-	const corridor_location_0 type: point init: {environment_width / 2, environment_height / 4} depends_on: [environment_width, environment_height];
-	const corridor_shape_0 type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) depends_on: [corridor_width, corridor_height, corridor_location_0];
+	const corridor_location_0 type: point init: {environment_width / 2, environment_height / 4} ;
+	const corridor_shape_0 type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) ;
 
-	const corridor_location_1 type: point init: {environment_width / 2, environment_height * 0.75} depends_on: [environment_width, environment_height];
-	const corridor_shape_1 type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_1) depends_on: [corridor_width, corridor_height, corridor_location_1];
+	const corridor_location_1 type: point init: {environment_width / 2, environment_height * 0.75} ;
+	const corridor_shape_1 type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_1) ;
 
 	const new_pedestian_generate_frequency type: int init: 8;
 	const pedestrian_source_0 type: point init: {0, corridor_location_0.y} depends_on: [corridor_location_0];
@@ -220,7 +220,7 @@ entities {
 		}
 		
 		aspect name: default {
-			draw shape: geometry color: corridor_color;
+			draw shape: geometry color: corridor_color; 
 		}
 	}
  
