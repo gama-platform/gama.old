@@ -589,12 +589,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void DrawMyJTSGeometries() {
 
 		boolean drawAsList = false;
-
+		//	System.out.println("isListCreated="+isListCreated);
 		if ( drawAsList ) {
 			if ( !isListCreated ) {
+				System.out.println("Create" + this.myJTSGeometries.size() + "list");
 				graphicsGLUtils.buildDisplayLists(this.myJTSGeometries);
+				System.out.println("Create" + this.myJTSGeometries.size() + "list ok");
 				isListCreated = true;
 			} else {
+				//System.out.println("Call" + this.myJTSGeometries.size() + "list");
 				graphicsGLUtils.DrawDisplayList(this.myJTSGeometries.size());
 			}
 		} else {
@@ -746,7 +749,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void CleanGeometries() {
 		// FIXME : check that display list is used.
-		// graphicsGLUtils.DeleteDisplayLists(this.myJTSGeometries.size());
+		graphicsGLUtils.DeleteDisplayLists(this.myJTSGeometries.size());
 		this.myGeometries.clear();
 		this.myJTSGeometries.clear();
 	}
@@ -808,15 +811,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public void highlight(final Rectangle2D r) {}
 
+	
+	/**
+	 * Each new step the Z value of the first layer is set to 0.
+	 */
 	@Override
 	public void initLayers() {
-		
-		//currentZvalue=-(maxEnvDim/10);
+		currentZvalue=0.0f;
 	}
 
+	/**
+	 * Set the value z of the current Layer. If no value is define is defined set it to 0.
+	 */
 	@Override
-	public void newLayer() {
-		//currentZvalue=currentZvalue+(maxEnvDim/10);
+	public void newLayer(double elevation) {
+		currentZvalue=(float) (currentZvalue+(maxEnvDim*elevation));
 	}
 
 }

@@ -328,7 +328,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 				// IDisplay d =
 				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
 					env_height, openGLGraphics));
-				System.out.println("Create Display: " + layer.getName());
 				// d.initMenuItems(this);
 			}
 

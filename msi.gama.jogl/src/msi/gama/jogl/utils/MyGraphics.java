@@ -45,6 +45,9 @@ public class MyGraphics {
 	Polygon curPolygon;
 	int numExtPoints;
 	int numGeometries;
+	
+	double tempPolygon[][];
+	double temp[];
 
 	// FIXME: Create to avoid creating int i,j each framerate.
 	int i, j;
@@ -62,6 +65,7 @@ public class MyGraphics {
 		myGLRender = gLRender;
 		tessCallback = new TessellCallBack(myGl, myGlu);
 		tobj = glu.gluNewTess();
+		
 
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
@@ -93,7 +97,7 @@ public class MyGraphics {
 		myGlu.gluTessBeginContour(tobj);
 
 		float angle;
-		double tempPolygon[][] = new double[100][3];
+		tempPolygon	 = new double[100][3];
 		for (int k = 0; k < numPoints; k++) {
 			angle = (float) (k * 2 * Math.PI / numPoints);
 
@@ -135,7 +139,7 @@ public class MyGraphics {
 		myGlu.gluTessBeginContour(tobj);
 
 		int curPolyGonNumPoints = geometry.vertices.length;
-		double tempPolygon[][] = new double[curPolyGonNumPoints][3];
+		tempPolygon = new double[curPolyGonNumPoints][3];
 
 		// Convert vertices as a list of double for
 		// gluTessVertex
@@ -293,16 +297,14 @@ public class MyGraphics {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		numExtPoints = p.getExteriorRing().getNumPoints();
-		// System.out.println("Draw Polygon:"+numExtPoints);
+		//System.out.println("Draw Polygon with Tessellation :"+numExtPoints);
 
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
 
-		double tempPolygon[][] = new double[numExtPoints][3];
-
-		// Convert vertices as a list of double for
-		// gluTessVertex
+		tempPolygon = new double[numExtPoints][3];
+		//Convert vertices as a list of double for gluTessVertex
 		for (j = 0; j < numExtPoints; j++) {
 			tempPolygon[j][0] = (float) (float) (p.getExteriorRing().getPointN(
 					j).getX());
@@ -311,17 +313,30 @@ public class MyGraphics {
 			tempPolygon[j][2] = z;
 		}
 
-		for (j = 0; j < numExtPoints; j++) {
+		for (j = 0; j < numExtPoints; j++) {	
 			myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
 		}
+		
+//		temp= new double [3];
+//		
+//		for (j = 0; j < numExtPoints; j++) {
+//			
+//			temp[0] = (float) (float) (p.getExteriorRing().getPointN(
+//					j).getX());
+//			temp[1] = -(float) (p.getExteriorRing().getPointN(j)
+//					.getY());
+//			temp[2] = z;
+//			
+//			myGlu.gluTessVertex(tobj, temp, 0, temp);
+//			
+//		}
 
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
 		
 
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-
-		DrawPolygonContour(p, c, z);
+        DrawPolygonContour(p, c, z);
 
 		}
 		
