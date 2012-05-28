@@ -199,7 +199,7 @@ entities {
 		}
 	}
 
-	species guider skills: moving {
+	species guider skills: [moving] {
 		road managed_road;
 		point target1;
 		point target2;
@@ -271,7 +271,7 @@ entities {
 		}
 	}
 	
-	species pedestrian skills: moving {
+	species pedestrian skills: [moving] {
 		point previous_location;
 		road last_road;
 
