@@ -48,7 +48,7 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	public AbstractDisplayLayer(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION),
-			getFacet(IKeyword.SIZE)));
+			getFacet(IKeyword.SIZE),getFacet(IKeyword.Z)));
 		title = getFacet(IKeyword.NAME);
 		if ( title.isConst() ) {
 			setName(title.literalValue());
@@ -79,6 +79,11 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	public final Double getTransparency() {
 		return getBox().getTransparency();
 	}
+	
+	@Override
+	public final Double getElevation() {
+		return getBox().getElevation();
+	}
 
 	@Override
 	public Rectangle2D.Double getBoundingBox() {
@@ -104,6 +109,12 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 	@Override
 	public void setOpacity(final Double opacity) {
 		getBox().setTransparency(opacity);
+	}
+	
+	
+	@Override
+	public void setElevation(final Double elevation) {
+		getBox().setElevation(elevation);
 	}
 
 	/**

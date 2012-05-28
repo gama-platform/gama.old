@@ -62,7 +62,9 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GIS, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 public class ImageDisplayLayer extends AbstractDisplayLayer {
 
 	public ImageDisplayLayer(final IDescription desc) throws GamaRuntimeException {

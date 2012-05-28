@@ -45,7 +45,9 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 public class QuadTreeDisplayLayer extends AbstractDisplayLayer {
 
 	BufferedImage supportImage;

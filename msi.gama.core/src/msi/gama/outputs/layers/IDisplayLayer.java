@@ -50,12 +50,16 @@ public interface IDisplayLayer extends INamed {
 	public abstract void compute(final IScope scope, final long cycle) throws GamaRuntimeException;
 
 	public abstract Double getTransparency();
+	
+	public abstract Double getElevation();
 
 	public abstract Rectangle2D.Double getBoundingBox();
 
 	public abstract IDisplayLayerBox getBox();
 
 	// public abstract void setPhysicalLayer(IDisplay abstractDisplay);
+	
+	public abstract void setElevation(Double elevation);
 
 	public abstract void setOpacity(Double opacity);
 

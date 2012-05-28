@@ -48,7 +48,9 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 public class GridDisplayLayer extends AbstractDisplayLayer {
 
 	public GridDisplayLayer(/* final ISymbol context, */final IDescription desc)

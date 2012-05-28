@@ -221,6 +221,6 @@ public interface IGraphics {
 	 * For IGraphics implementations that support the notion of layers in a way or another...
 	 * Indicates that the painting of a new layer is about to begin.
 	 */
-	public abstract void newLayer();
+	public abstract void newLayer(double elevation);
 
 }

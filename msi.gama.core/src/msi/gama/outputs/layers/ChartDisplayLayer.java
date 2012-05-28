@@ -70,7 +70,9 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 @with_sequence
 public class ChartDisplayLayer extends AbstractDisplayLayer {
 

@@ -41,7 +41,9 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 public class TextDisplayLayer extends AbstractDisplayLayer {
 
 	private final IExpression color;

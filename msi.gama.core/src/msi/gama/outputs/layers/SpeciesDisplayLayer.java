@@ -49,7 +49,10 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true), 
+    @facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
+
 @with_sequence
 public class SpeciesDisplayLayer extends AgentDisplayLayer {
 
@@ -122,7 +125,8 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	public void setAspect(final String currentAspect) {
 		super.setAspect(currentAspect);
 	}
-
+	
+	
 	@Override
 	public void computeAspectName(final IScope sim) throws GamaRuntimeException {
 		super.computeAspectName(sim);

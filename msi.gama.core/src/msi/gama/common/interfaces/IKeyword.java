@@ -308,6 +308,7 @@ public interface IKeyword {
 	public static final String XOR = "xor";
 	public static final String XY = "xy";
 	public static final String Y = "y";
+	public static final String Z = "z";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
 		REACTIVE_TABU, EXHAUSTIVE };
 	public static final String USER_INIT = "user_init";

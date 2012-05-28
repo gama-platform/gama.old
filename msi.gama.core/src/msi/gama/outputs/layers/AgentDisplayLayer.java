@@ -48,7 +48,9 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FOCUS, type = IType.AGENT_STR, optional = true),
-	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
+    
 public class AgentDisplayLayer extends AbstractDisplayLayer {
 
 	private IExpression setOfAgents;

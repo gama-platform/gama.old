@@ -36,19 +36,22 @@ public class LayerBox implements IDisplayLayerBox {
 	IExpression transparency = new JavaConstExpression(0d);
 	IExpression position = new JavaConstExpression(new GamaPoint(0, 0));
 	IExpression extent = new JavaConstExpression(new GamaPoint(1, 1));
+	IExpression elevation = new JavaConstExpression(0d);
 
 	Double currentTransparency;
 	ILocation currentPosition;
 	ILocation currentExtent;
+	Double currentElevation;
 
 	ILocation constantPosition = null;
 	ILocation constantExtent = null;
 	Double constantTransparency = null;
+	Double constantElevation = null;
 
 	Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
-	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext)
+	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev)
 		throws GamaRuntimeException {
 		if ( transp != null ) {
 			transparency = transp;
@@ -59,22 +62,28 @@ public class LayerBox implements IDisplayLayerBox {
 		if ( ext != null ) {
 			extent = ext;
 		}
+		if ( elev != null ) {
+			elevation = elev;
+		}
 		setTransparency(transparency);
 		setPosition(position);
 		setExtent(extent);
+		setElevation(elevation);
 	}
 
-	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext) {
+	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext,final Double elev) {
 		setTransparency(transp);
 		setPosition(pos);
 		setExtent(ext);
+		setElevation(elev);
 	}
 
 	public LayerBox(final Double transp, final Double posx, final Double posy, final Double extx,
-		final Double exty) {
+		final Double exty,final Double elev) {
 		setTransparency(transp);
 		setPosition(posx, posy);
 		setExtent(extx, exty);
+		setElevation(elev);
 	}
 
 	@Override
@@ -93,6 +102,9 @@ public class LayerBox implements IDisplayLayerBox {
 				if ( currentPosition != null && currentExtent != null ) {
 					computeBoundingBox();
 				}
+			currentElevation =
+				constantElevation== null ? Cast.asFloat(sim, elevation.value(sim))
+					: constantElevation;
 			}
 		} catch (Exception e) {
 			throw new GamaRuntimeException(e);
@@ -132,6 +144,17 @@ public class LayerBox implements IDisplayLayerBox {
 			}
 		}
 	}
+	
+	@Override
+	public void setElevation(final IExpression e) throws GamaRuntimeException {
+		if ( e != null ) {
+			elevation = e;
+			if ( e.isConst() ) {
+				setElevation(Cast.asFloat(GAMA.getDefaultScope(),
+					e.value(GAMA.getDefaultScope())));
+			}
+		}
+	}
 
 	@Override
 	public void setTransparency(final double f) {
@@ -165,11 +188,17 @@ public class LayerBox implements IDisplayLayerBox {
 			computeBoundingBox();
 		}
 	}
+	
+	@Override
+	public void setElevation(final double e) {
+		currentElevation = constantElevation = e;
+	}
 
 	@Override
 	public final Double getTransparency() {
 		return currentTransparency;
 	}
+
 
 	@Override
 	public Rectangle2D.Double getBoundingBox() {
@@ -184,6 +213,11 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public ILocation getExtent() {
 		return currentExtent;
+	}
+	
+	@Override
+	public final Double getElevation() {
+		return currentElevation;
 	}
 
 	private Rectangle2D.Double computeBoundingBox() {

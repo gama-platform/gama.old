@@ -37,7 +37,7 @@ import msi.gaml.species.ISpecies;
 @handles({ ISymbolKind.LAYER })
 public class OutputLayerFactory extends SymbolFactory {
 
-	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d);
+	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d,0d);
 
 	public OutputLayerFactory(final List<Integer> handles, final List<Integer> uses) {
 		super(handles, uses);
