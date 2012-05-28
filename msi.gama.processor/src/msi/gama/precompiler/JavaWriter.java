@@ -57,7 +57,7 @@ public class JavaWriter {
 		"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
 		"msi.gaml.descriptions", "msi.gama.util", "msi.gama.util.file", "msi.gama.util.matrix",
 		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
-		"msi.gaml.commands", "msi.gaml.skills", "msi.gaml.variables" };
+		"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables" };
 
 	JavaWriter(final ProcessingEnvironment pe) {
 		env = pe;
