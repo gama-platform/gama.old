@@ -32,9 +32,9 @@ entities {
 			draw shape: circle color: rgb('green') size: 0.5;
 		}
 		reflex reflex1 {
-			let neighs type: list of: cell <- nil;
-			ask cell(location) { set neighs <- (self neighbours_at myself.speed);}
-			add cell(location) to: neighs;
+			let neighs type: list of: cell <- (cell(location) neighbours_at speed) + cell(location);
+			//ask cell(location) { set neighs <- (self neighbours_at myself.speed);}
+			//add cell(location) to: neighs;
 			let followed_path type: path <- self goto [on::cell, target::target, speed::speed, return_path::true];
 			let path_geom type: geometry <- geometry(followed_path.segments);
 			ask (neighs where (each.shape intersects path_geom)) {set color <- rgb('magenta');}
