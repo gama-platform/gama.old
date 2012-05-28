@@ -24,9 +24,9 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.GamlAnnotations.uses;
 import msi.gama.precompiler.ISymbolKind.Variable;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.Facets;
 
 /**
  * SpeciesFactory.

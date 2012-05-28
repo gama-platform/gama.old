@@ -221,7 +221,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {}
+	public void setChildren(final List<? extends ISymbol> children) {}
 
 	@Override
 	public String getName() {

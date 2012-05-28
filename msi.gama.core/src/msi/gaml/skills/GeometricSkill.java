@@ -156,7 +156,6 @@ public class GeometricSkill extends Skill {
 	 *            float, size of the "interior" buffer applied to the geometry
 	 * 
 	 * @param scope IScope
-	 * @return the prim CommandStatus
 	 */
 	@action("neighbourhood_exclusive")
 	@args({ "distance", "species", "buffer_others", "buffer_in" })

@@ -21,9 +21,9 @@ package msi.gaml.descriptions;
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.IErrorCollector;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -80,7 +80,7 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract SpeciesDescription getSpeciesDescription(String actualSpecies);
 
-	public abstract CommandDescription getAction(String name);
+	public abstract StatementDescription getAction(String name);
 
 	public abstract SpeciesDescription getWorldSpecies();
 

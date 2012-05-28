@@ -22,9 +22,9 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.IErrorCollector;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -282,7 +282,7 @@ public class SymbolDescription implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getAction(java.lang.String)
 	 */
 	@Override
-	public CommandDescription getAction(final String name) {
+	public StatementDescription getAction(final String name) {
 		return null;
 	}
 

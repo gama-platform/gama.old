@@ -147,7 +147,7 @@ public class DescriptionValidator {
 		for ( IDescription child : sd.getChildren() ) {
 			if ( child.getKeyword().equals(desc.getKeyword()) && child != desc ) {
 				String error =
-					"The command " + desc.getKeyword() +
+					"The statement " + desc.getKeyword() +
 						" is defined twice. Only one definition is allowed.";
 				child.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());
 				desc.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());

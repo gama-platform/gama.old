@@ -24,9 +24,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
@@ -146,19 +146,19 @@ public interface ISpecies extends IValue, ISymbol {
 	 */
 	Map mapValue(IScope scope) throws GamaRuntimeException;
 
-	public abstract void addAction(final ICommand ce);
+	public abstract void addAction(final IStatement ce);
 
-	public abstract void addAspect(final ICommand ce);
+	public abstract void addAspect(final IStatement ce);
 
-	public abstract void addBehavior(ICommand b);
+	public abstract void addBehavior(IStatement b);
 
 	public abstract void addChild(final ISymbol s);
 
 	public abstract void addVariable(final IVariable v);
 
-	public abstract Collection<UserCommandCommand> getUserCommands();
+	public abstract Collection<UserCommandStatement> getUserCommands();
 
-	public abstract ICommand.WithArgs getAction(final String name);
+	public abstract IStatement.WithArgs getAction(final String name);
 
 	public abstract IAgentConstructor getAgentConstructor();
 
@@ -168,7 +168,7 @@ public interface ISpecies extends IValue, ISymbol {
 
 	public abstract IList<String> getAspectNames();
 
-	public abstract IList<ICommand> getBehaviors();
+	public abstract IList<IStatement> getBehaviors();
 
 	public abstract IArchitecture getArchitecture();
 

@@ -93,7 +93,7 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public abstract void setChildren(final List<? extends ISymbol> commands);
+	public abstract void setChildren(final List<? extends ISymbol> children);
 
 	@Override
 	public void setName(final String n) {

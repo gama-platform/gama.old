@@ -24,10 +24,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.*;
-import msi.gaml.commands.*;
-import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 
 /**

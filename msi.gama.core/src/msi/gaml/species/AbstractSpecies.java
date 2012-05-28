@@ -26,10 +26,10 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.commands.*;
-import msi.gaml.commands.ICommand.WithArgs;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.*;
+import msi.gaml.statements.IStatement.WithArgs;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 
@@ -52,13 +52,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	private Map<String, IVariable> variables;
 
-	private Map<String, AspectCommand> aspects;
+	private Map<String, AspectStatement> aspects;
 
-	private Map<String, ActionCommand> actions;
+	private Map<String, ActionStatement> actions;
 
-	private Map<String, UserCommandCommand> userCommands;
+	private Map<String, UserCommandStatement> userCommands;
 
-	private IList<ICommand> behaviors;
+	private IList<IStatement> behaviors;
 
 	protected ISpecies macroSpecies;
 
@@ -289,10 +289,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		super.initFields();
 		microSpecies = new HashMap<String, ISpecies>();
 		variables = new HashMap<String, IVariable>();
-		actions = new HashMap<String, ActionCommand>();
-		aspects = new HashMap<String, AspectCommand>();
+		actions = new HashMap<String, ActionStatement>();
+		aspects = new HashMap<String, AspectStatement>();
 		userCommands = new LinkedHashMap();
-		behaviors = new GamaList<ICommand>();
+		behaviors = new GamaList<IStatement>();
 	}
 
 	@Override
@@ -326,15 +326,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void addAction(final ICommand ce) {
-		actions.put(ce.getName(), (ActionCommand) ce);
+	public void addAction(final IStatement ce) {
+		actions.put(ce.getName(), (ActionStatement) ce);
 	}
 
-	public void addUserCommand(final ICommand ce) {
-		userCommands.put(ce.getName(), (UserCommandCommand) ce);
+	public void addUserCommand(final IStatement ce) {
+		userCommands.put(ce.getName(), (UserCommandStatement) ce);
 	}
 
-	public Collection<UserCommandCommand> getUserCommands() {
+	public Collection<UserCommandStatement> getUserCommands() {
 		return userCommands.values();
 	}
 
@@ -344,8 +344,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void addAspect(final ICommand ce) {
-		aspects.put(ce.getName(), (AspectCommand) ce);
+	public void addAspect(final IStatement ce) {
+		aspects.put(ce.getName(), (AspectStatement) ce);
 	}
 
 	@Override
@@ -364,18 +364,18 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void addBehavior(final ICommand c) {
+	public void addBehavior(final IStatement c) {
 		behaviors.add(c);
 	}
 
 	@Override
-	public IList<ICommand> getBehaviors() {
+	public IList<IStatement> getBehaviors() {
 		return behaviors;
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol s : commands ) {
+	public void setChildren(final List<? extends ISymbol> children) {
+		for ( ISymbol s : children ) {
 			addChild(s);
 		}
 		createControl();
@@ -387,20 +387,20 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			addOneMicroSpecies((ISpecies) s);
 		} else if ( s instanceof IVariable ) {
 			addVariable((IVariable) s);
-		} else if ( s instanceof AspectCommand ) {
-			addAspect((AspectCommand) s);
-		} else if ( s instanceof ActionCommand ) {
-			addAction((ActionCommand) s);
-		} else if ( s instanceof UserCommandCommand ) {
-			addUserCommand((UserCommandCommand) s); // reflexes, states or tasks
-		} else if ( s instanceof ICommand ) {
-			addBehavior((ICommand) s); // reflexes, states or tasks
+		} else if ( s instanceof AspectStatement ) {
+			addAspect((AspectStatement) s);
+		} else if ( s instanceof ActionStatement ) {
+			addAction((ActionStatement) s);
+		} else if ( s instanceof UserCommandStatement ) {
+			addUserCommand((UserCommandStatement) s); // reflexes, states or tasks
+		} else if ( s instanceof IStatement ) {
+			addBehavior((IStatement) s); // reflexes, states or tasks
 		}
 	}
 
 	private void createControl() {
 		IArchitecture control = getArchitecture();
-		List<ICommand> behaviors = getBehaviors();
+		List<IStatement> behaviors = getBehaviors();
 		if ( control == null ) {
 			this.error("The control of this species cannot be computed", IKeyword.CONTROL);
 			return;
@@ -419,18 +419,18 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		variables.clear();
 		variables = null;
 
-		for ( AspectCommand ac : aspects.values() ) {
+		for ( AspectStatement ac : aspects.values() ) {
 			ac.dispose();
 		}
 		aspects.clear();
 		aspects = null;
 
-		for ( ActionCommand ac : actions.values() ) {
+		for ( ActionStatement ac : actions.values() ) {
 			ac.dispose();
 		}
 		actions.clear();
 
-		for ( ICommand c : behaviors ) {
+		for ( IStatement c : behaviors ) {
 			c.dispose();
 		}
 		behaviors.clear();

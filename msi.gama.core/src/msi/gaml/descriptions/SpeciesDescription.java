@@ -25,18 +25,18 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.ModelFactory;
 import msi.gaml.skills.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 public class SpeciesDescription extends SymbolDescription {
 
-	private Map<String, CommandDescription> behaviors;
-	private Map<String, CommandDescription> aspects;
-	private Map<String, CommandDescription> actions;
+	private Map<String, StatementDescription> behaviors;
+	private Map<String, StatementDescription> aspects;
+	private Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
 	protected final IList<String> sortedVariableNames;
 	protected final IList<String> updatableVariableNames;
@@ -51,7 +51,7 @@ public class SpeciesDescription extends SymbolDescription {
 	 */
 	private Map<String, SpeciesDescription> microSpecies;
 
-	private List<CommandDescription> inits;
+	private List<StatementDescription> inits;
 
 	protected Class javaBase;
 	protected IAgentConstructor agentConstructor;
@@ -200,14 +200,14 @@ public class SpeciesDescription extends SymbolDescription {
 		IDescription desc = super.addChild(child);
 		String kw = desc.getKeyword();
 		if ( kw.equals(IKeyword.ACTION) || kw.equals(IKeyword.PRIMITIVE) ) {
-			addAction((CommandDescription) desc);
+			addAction((StatementDescription) desc);
 		} else if ( kw.equals(IKeyword.ASPECT) ) {
-			addAspect((CommandDescription) desc);
-		} else if ( desc instanceof CommandDescription ) {
+			addAspect((StatementDescription) desc);
+		} else if ( desc instanceof StatementDescription ) {
 			if ( IKeyword.INIT.equals(kw) ) {
-				addInit((CommandDescription) desc);
+				addInit((StatementDescription) desc);
 			} else {
-				addBehavior((CommandDescription) desc);
+				addBehavior((StatementDescription) desc);
 			}
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
@@ -218,13 +218,13 @@ public class SpeciesDescription extends SymbolDescription {
 		return desc;
 	}
 
-	private void addInit(final CommandDescription init) {
+	private void addInit(final StatementDescription init) {
 		getInits().add(0, init); // Added at the beginning
 	}
 
-	private void addBehavior(final CommandDescription r) {
+	private void addBehavior(final StatementDescription r) {
 		String behaviorName = r.getName();
-		CommandDescription existing = getBehaviors().get(behaviorName);
+		StatementDescription existing = getBehaviors().get(behaviorName);
 		if ( existing != null ) {
 			if ( !existing.getKeyword().equals(r.getKeyword()) ) {
 				r.flagWarning(
@@ -241,9 +241,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return getBehaviors().containsKey(a);
 	}
 
-	private void addAction(final CommandDescription ce) {
+	private void addAction(final StatementDescription ce) {
 		String actionName = ce.getName();
-		CommandDescription existing = getAction(actionName);
+		StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			String previous = existing.getKeyword();
 			if ( previous.equals(IKeyword.PRIMITIVE) && ce.getKeyword().equals(IKeyword.ACTION) ) {
@@ -263,7 +263,7 @@ public class SpeciesDescription extends SymbolDescription {
 			.getType());
 	}
 
-	private void addAspect(final CommandDescription ce) {
+	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
 		if ( aspectName == null ) {
 			aspectName = IKeyword.DEFAULT;
@@ -280,12 +280,12 @@ public class SpeciesDescription extends SymbolDescription {
 		return aspects == null ? Collections.EMPTY_SET : getAspects().keySet();
 	}
 
-	public CommandDescription getAspect(final String aName) {
+	public StatementDescription getAspect(final String aName) {
 		return aspects == null ? null : getAspects().get(aName);
 	}
 
 	@Override
-	public CommandDescription getAction(final String aName) {
+	public StatementDescription getAction(final String aName) {
 		return actions == null ? null : getActions().get(aName);
 	}
 
@@ -549,7 +549,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 			// We only copy the behaviors that are not redefined in this species
 			if ( parent.hasBehaviors() ) {
-				for ( final CommandDescription b : parent.getBehaviors().values() ) {
+				for ( final StatementDescription b : parent.getBehaviors().values() ) {
 					if ( !hasBehavior(b.getName()) ) {
 						// Copy done here
 						addChild(b.copy());
@@ -557,7 +557,7 @@ public class SpeciesDescription extends SymbolDescription {
 				}
 			}
 			if ( parent.hasInits() ) {
-				for ( final CommandDescription init : parent.getInits() ) {
+				for ( final StatementDescription init : parent.getInits() ) {
 					addChild(init.copy());
 				}
 			}
@@ -565,7 +565,7 @@ public class SpeciesDescription extends SymbolDescription {
 			if ( parent.hasActions() ) {
 				for ( final String aName : parent.getActions().keySet() ) {
 					if ( !hasAction(aName) ) {
-						CommandDescription action = parent.getActions().get(aName);
+						StatementDescription action = parent.getActions().get(aName);
 						if ( action.isAbstract() ) {
 							this.flagWarning("Abstract action '" + aName +
 								"', which is inherited from " + parent.getName() +
@@ -838,9 +838,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return behaviors != null;
 	}
 
-	protected Map<String, CommandDescription> getBehaviors() {
+	protected Map<String, StatementDescription> getBehaviors() {
 		if ( behaviors == null ) {
-			behaviors = new LinkedHashMap<String, CommandDescription>();
+			behaviors = new LinkedHashMap<String, StatementDescription>();
 		}
 		return behaviors;
 	}
@@ -855,9 +855,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return aspects != null;
 	}
 
-	protected Map<String, CommandDescription> getAspects() {
+	protected Map<String, StatementDescription> getAspects() {
 		if ( aspects == null ) {
-			aspects = new LinkedHashMap<String, CommandDescription>();
+			aspects = new LinkedHashMap<String, StatementDescription>();
 		}
 		return aspects;
 	}
@@ -872,9 +872,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return actions != null;
 	}
 
-	public Map<String, CommandDescription> getActions() {
+	public Map<String, StatementDescription> getActions() {
 		if ( actions == null ) {
-			actions = new LinkedHashMap<String, CommandDescription>();
+			actions = new LinkedHashMap<String, StatementDescription>();
 		}
 		return actions;
 	}
@@ -906,9 +906,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return inits != null;
 	}
 
-	protected List<CommandDescription> getInits() {
+	protected List<StatementDescription> getInits() {
 		if ( inits == null ) {
-			inits = new ArrayList<CommandDescription>();
+			inits = new ArrayList<StatementDescription>();
 		}
 		return inits;
 	}

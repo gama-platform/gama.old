@@ -16,42 +16,28 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.compilation;
+package msi.gaml.statements;
 
-import java.util.List;
-import msi.gama.common.interfaces.INamed;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 19 mars 2010
+ * Written by drogoul Modified on 8 févr. 2010
  * 
  * @todo Description
  * 
  */
-public interface ISymbol extends INamed {
+@symbol(name = IKeyword.ELSE, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@inside(symbols = IKeyword.IF)
+public class ElseStatement extends AbstractStatementSequence {
 
-	public abstract void dispose();
+	public ElseStatement(final IDescription desc) {
+		super(desc);
+		setName(IKeyword.ELSE);
+	}
 
-	public abstract IDescription getDescription();
-
-	public abstract IExpression getFacet(String key);
-
-	public abstract boolean hasFacet(String key);
-
-	public abstract void setChildren(List<? extends ISymbol> children);
-
-	public abstract void error(String s);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void warning(String s, String facet);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void error(String s, String facet);
 }

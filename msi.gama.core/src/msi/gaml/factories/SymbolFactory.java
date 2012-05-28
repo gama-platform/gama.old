@@ -25,10 +25,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
-import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 
 /**
  * Written by Alexis Drogoul Modified on 11 mai 2010
@@ -97,9 +97,9 @@ public class SymbolFactory extends AbstractFactory {
 	private IDescription createDescriptionInternal(final String keyword,
 		final ISyntacticElement source, final IDescription superDesc,
 		final List<IDescription> children, final SymbolMetaDescription md) {
-		List<IDescription> commandList = children == null ? new ArrayList() : children;
+		List<IDescription> statements = children == null ? new ArrayList() : children;
 		md.verifyFacets(source, source.getFacets(), superDesc);
-		IDescription desc = buildDescription(source, keyword, commandList, superDesc, md);
+		IDescription desc = buildDescription(source, keyword, statements, superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
@@ -224,7 +224,7 @@ public class SymbolFactory extends AbstractFactory {
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {
-			((ICommand.WithArgs) cs).setFormalArgs(privateCompileArgs((CommandDescription) desc));
+			((IStatement.WithArgs) cs).setFormalArgs(privateCompileArgs((StatementDescription) desc));
 		}
 		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( md.isRemoteContext() ) {
@@ -236,7 +236,7 @@ public class SymbolFactory extends AbstractFactory {
 
 	}
 
-	protected Arguments privateCompileArgs(final CommandDescription desc) {
+	protected Arguments privateCompileArgs(final StatementDescription desc) {
 		return new Arguments();
 	}
 

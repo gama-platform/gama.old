@@ -22,10 +22,10 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.*;
 
 /**
  * PrimitiveOperator. An operator that wraps a primitive and defines its own scope for running it.
@@ -35,7 +35,7 @@ import msi.gaml.operators.Cast;
 
 public class PrimitiveOperator extends AbstractBinaryOperator {
 
-	ICommand.WithArgs command;
+	IStatement.WithArgs statement;
 
 	public PrimitiveOperator(final String op) {
 		setName(op);
@@ -56,10 +56,10 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		IDescription cd =
 			DescriptionFactory.create(IKeyword.DO, /* sd */context.getSpeciesContext(),
 				IKeyword.ACTION, name);
-		command = new DoCommand(cd);
-		type = command.getReturnType();
-		contentType = command.getReturnContentType();
-		command.setFormalArgs(createArgs());
+		statement = new DoStatement(cd);
+		type = statement.getReturnType();
+		contentType = statement.getReturnContentType();
+		statement.setFormalArgs(createArgs());
 		return this;
 	}
 
@@ -68,7 +68,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		IAgent target = Cast.asAgent(scope, left.value(scope));
 		if ( target == null ) { return null; }
 		if ( scope == null ) { return null; }
-		Object result = scope.execute(command, target);
+		Object result = scope.execute(statement, target);
 		return result;
 	}
 
@@ -106,7 +106,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		StringBuilder sb = new StringBuilder();
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Defined in ").append(command.getDescription().getSpeciesContext().getTitle())
+		sb.append("Defined in ").append(statement.getDescription().getSpeciesContext().getTitle())
 			.append("<br>");
 		return sb.toString();
 	}

@@ -4,7 +4,7 @@
  */
 package msi.gaml.compilation;
 
-import msi.gaml.commands.Facets;
+import msi.gaml.statements.Facets;
 
 /**
  * The class StringBasedStatementDescription.

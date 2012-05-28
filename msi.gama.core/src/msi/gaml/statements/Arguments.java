@@ -16,42 +16,28 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.compilation;
+package msi.gaml.statements;
 
-import java.util.List;
-import msi.gama.common.interfaces.INamed;
-import msi.gaml.descriptions.IDescription;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 19 mars 2010
- * 
- * @todo Description
- * 
+ * @author drogoul
  */
-public interface ISymbol extends INamed {
+public class Arguments extends Facets {
 
-	public abstract void dispose();
-
-	public abstract IDescription getDescription();
-
-	public abstract IExpression getFacet(String key);
-
-	public abstract boolean hasFacet(String key);
-
-	public abstract void setChildren(List<? extends ISymbol> children);
-
-	public abstract void error(String s);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void warning(String s, String facet);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void error(String s, String facet);
+	public void stack(final IScope scope) throws GamaRuntimeException {
+		for ( Facet entry : entrySet() ) {
+			if ( entry == null ) {
+				continue;
+			}
+			IExpressionDescription o = entry.getValue();
+			IExpression e = o.getExpression();
+			if ( e != null ) {
+				scope.addVarWithValue(entry.getKey(), e.value(scope));
+			}
+		}
+	}
 }

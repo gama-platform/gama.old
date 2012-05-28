@@ -6,9 +6,9 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gaml.commands.*;
-import msi.gaml.commands.Facets.Facet;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 
 /**
  * The class AbstractStatementDescription.

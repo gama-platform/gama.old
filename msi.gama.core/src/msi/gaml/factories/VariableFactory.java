@@ -25,11 +25,11 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
-import msi.gaml.commands.*;
-import msi.gaml.commands.Facets.Facet;
 import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 
 /**

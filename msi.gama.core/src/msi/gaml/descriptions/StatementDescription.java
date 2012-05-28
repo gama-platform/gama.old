@@ -22,10 +22,10 @@ import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.commands.*;
-import msi.gaml.commands.Facets.Facet;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 
 /**
@@ -35,7 +35,7 @@ import msi.gaml.types.IType;
  * 
  */
 
-public class CommandDescription extends SymbolDescription {
+public class StatementDescription extends SymbolDescription {
 
 	private final Map<String, IVarExpression> temps;
 	private Map<String, IDescription> args = null;
@@ -43,7 +43,7 @@ public class CommandDescription extends SymbolDescription {
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 
-	public CommandDescription(final String keyword, final IDescription superDesc,
+	public StatementDescription(final String keyword, final IDescription superDesc,
 		final List<IDescription> children, final boolean hasScope, final boolean hasArgs,
 		final ISyntacticElement source, final SymbolMetaDescription md) {
 		super(keyword, superDesc, children, source, md);
@@ -68,9 +68,9 @@ public class CommandDescription extends SymbolDescription {
 	@Override
 	public void copyTempsAbove() {
 		IDescription d = getSuperDescription();
-		while (d != null && d instanceof CommandDescription) {
-			if ( ((CommandDescription) d).hasTemps() ) {
-				temps.putAll(((CommandDescription) d).temps);
+		while (d != null && d instanceof StatementDescription) {
+			if ( ((StatementDescription) d).hasTemps() ) {
+				temps.putAll(((StatementDescription) d).temps);
 			}
 			d = d.getSuperDescription();
 		}
@@ -122,16 +122,16 @@ public class CommandDescription extends SymbolDescription {
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
 		final IType contentType) {
 		IDescription sup = getSuperDescription();
-		if ( !(sup instanceof CommandDescription) ) {
+		if ( !(sup instanceof StatementDescription) ) {
 			flagError("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
 		String varName = facets.getLabel(facetName);
-		return (IVarExpression) ((CommandDescription) sup).addTemp(varName, type, contentType);
+		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType);
 	}
 
 	@Override
-	public CommandDescription copy() {
+	public StatementDescription copy() {
 		List<IDescription> children = new ArrayList();
 		for ( IDescription child : getChildren() ) {
 			children.add(child.copy());
@@ -141,7 +141,7 @@ public class CommandDescription extends SymbolDescription {
 				children.add(child.copy());
 			}
 		}
-		return new CommandDescription(getKeyword(), null, children, temps != null, args != null,
+		return new StatementDescription(getKeyword(), null, children, temps != null, args != null,
 			getSourceInformation(), meta);
 	}
 
@@ -154,8 +154,8 @@ public class CommandDescription extends SymbolDescription {
 	public IExpression addTemp(final String name, final IType type, final IType contentType) {
 		if ( temps == null ) {
 			if ( getSuperDescription() == null ) { return null; }
-			if ( !(getSuperDescription() instanceof CommandDescription) ) { return null; }
-			return ((CommandDescription) getSuperDescription()).addTemp(name, type, contentType);
+			if ( !(getSuperDescription() instanceof StatementDescription) ) { return null; }
+			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType);
 		}
 		IVarExpression result =
 			GAMA.getExpressionFactory().createVar(name, type, contentType, false,
@@ -200,7 +200,7 @@ public class CommandDescription extends SymbolDescription {
 	public void verifyArgs(final String actionName, final Arguments args) {
 		SpeciesDescription declPlace =
 			(SpeciesDescription) getDescriptionDeclaringAction(actionName);
-		CommandDescription executer = null;
+		StatementDescription executer = null;
 		if ( declPlace != null ) {
 			executer = declPlace.getAction(actionName);
 		}

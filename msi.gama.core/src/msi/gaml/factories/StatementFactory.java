@@ -25,10 +25,10 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.handles;
 import msi.gama.precompiler.*;
 import msi.gaml.architecture.finite_state_machine.*;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.statements.*;
 import msi.gaml.types.*;
 
 /**
@@ -37,19 +37,19 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@handles({ ISymbolKind.SEQUENCE_COMMAND, ISymbolKind.SINGLE_COMMAND, ISymbolKind.BEHAVIOR,
+@handles({ ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR,
 	ISymbolKind.ACTION })
-public class CommandFactory extends SymbolFactory implements IKeyword {
+public class StatementFactory extends SymbolFactory implements IKeyword {
 
-	public CommandFactory(final List<Integer> handles, final List<Integer> uses) {
+	public StatementFactory(final List<Integer> handles, final List<Integer> uses) {
 		super(handles, uses);
 	}
 
 	@Override
-	protected CommandDescription buildDescription(final ISyntacticElement source, final String kw,
+	protected StatementDescription buildDescription(final ISyntacticElement source, final String kw,
 		final List<IDescription> commands, final IDescription superDesc,
 		final SymbolMetaDescription md) {
-		return new CommandDescription(kw, superDesc, commands, md.hasScope(), md.hasArgs(), source,
+		return new StatementDescription(kw, superDesc, commands, md.hasScope(), md.hasArgs(), source,
 			md);
 	}
 
@@ -58,23 +58,23 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 		// GuiUtils.debug("Validating " + desc);
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
-		CommandDescription cd = (CommandDescription) desc;
+		StatementDescription cd = (StatementDescription) desc;
 		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
 			assertNameIsNotTypeOrSpecies(cd);
 		}
 		if ( kw.equals(STATE) ) {
-			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateCommand.INITIAL,
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
-			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateCommand.FINAL,
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.FINAL,
 				GamlExpressionFactory.TRUE_EXPR);
-			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateCommand.INITIAL,
+			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateStatement.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
 		}
 		if ( kw.equals(DO) ) {
 			assertActionIsExisting(cd, ACTION);
 		}
-		if ( kw.equals(FsmTransitionCommand.TRANSITION) ) {
+		if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
 			assertBehaviorIsExisting(cd, TO);
 		}
 		if ( kw.equals(SET) || kw.equals(LET) ) {
@@ -82,8 +82,8 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(REFLEX) || kw.equals(STATE) || kw.equals(ASPECT) || kw.equals(ARG) ||
 			kw.equals(ACTION) ) {
 			assertNameIsUniqueInSuperDescription(cd);
-		} else if ( kw.equals(DEFAULT) || kw.equals(RETURN) || kw.equals(FsmStateCommand.ENTER) |
-			kw.equals(FsmStateCommand.EXIT) ) {
+		} else if ( kw.equals(DEFAULT) || kw.equals(RETURN) || kw.equals(FsmStateStatement.ENTER) |
+			kw.equals(FsmStateStatement.EXIT) ) {
 			assertKeywordIsUniqueInSuperDescription(cd);
 		} else if ( kw.equals(CAPTURE) ) {
 			assertMicroSpeciesIsVisible(cd, AS);
@@ -98,7 +98,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected void privateValidateChildren(final IDescription desc) {
-		if ( ((CommandDescription) desc).hasArgs() ) {
+		if ( ((StatementDescription) desc).hasArgs() ) {
 			validateArgs(desc);
 		}
 		IDescription previousEnclosingDescription = null;
@@ -134,11 +134,11 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 	 * @param desc
 	 */
 	private void validateArgs(final IDescription desc) {
-		privateCompileArgs((CommandDescription) desc);
+		privateCompileArgs((StatementDescription) desc);
 	}
 
 	@Override
-	protected Arguments privateCompileArgs(final CommandDescription cd) {
+	protected Arguments privateCompileArgs(final StatementDescription cd) {
 		Arguments ca = new Arguments();
 		String keyword = cd.getKeyword();
 		boolean isCreate =
@@ -234,7 +234,7 @@ public class CommandFactory extends SymbolFactory implements IKeyword {
 				type = Types.get(IType.CONTAINER);
 			}
 			IVarExpression exp =
-				((CommandDescription) sd).addNewTempIfNecessary(tag, type, contentType);
+				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType);
 			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd);

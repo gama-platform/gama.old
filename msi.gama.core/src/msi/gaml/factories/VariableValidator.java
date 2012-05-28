@@ -7,9 +7,9 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.IUnits;
-import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**

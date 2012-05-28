@@ -16,42 +16,39 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.compilation;
+package msi.gaml.statements;
 
-import java.util.List;
-import msi.gama.common.interfaces.INamed;
-import msi.gaml.descriptions.IDescription;
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.types.IType;
 
 /**
- * Written by drogoul Modified on 19 mars 2010
+ * Written by drogoul Feb. 2009
  * 
  * @todo Description
  * 
  */
-public interface ISymbol extends INamed {
+public interface IStatement extends ISymbol, IGamlable {
 
-	public abstract void dispose();
+	public abstract Object executeOn(final IScope scope) throws GamaRuntimeException;
 
-	public abstract IDescription getDescription();
+	public abstract IType getReturnType();
 
-	public abstract IExpression getFacet(String key);
+	public abstract IType getReturnContentType();
+	
+	public abstract Double computePertinence(final IScope scope) throws GamaRuntimeException;
+	
+	public abstract IExpression getPertinence();
 
-	public abstract boolean hasFacet(String key);
+	public interface WithArgs extends IStatement {
 
-	public abstract void setChildren(List<? extends ISymbol> children);
+		public abstract void setFormalArgs(Arguments args);
 
-	public abstract void error(String s);
+		public abstract void setRuntimeArgs(Arguments args);
 
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void warning(String s, String facet);
+	}
 
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void error(String s, String facet);
 }

@@ -43,8 +43,6 @@ import msi.gaml.types.IType;
 @base(GamlAgent.class)
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
-// @commands({ AspectCommand.class, ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class
-// })
 @facets(value = {
 	@facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT_STR, optional = true),

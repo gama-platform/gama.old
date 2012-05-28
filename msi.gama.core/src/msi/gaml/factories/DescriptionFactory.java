@@ -20,9 +20,9 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gaml.commands.Facets;
 import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.Facets;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
