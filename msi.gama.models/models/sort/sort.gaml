@@ -2,7 +2,7 @@
 
 global {
 
-	rgb black <- rgb('black') ;
+	rgb black <- rgb('black')  ;
 	const colors type: list init: ['yellow','red', 'orange', 'blue', 'green','cyan', 'gray','pink','magenta'] ;
 	var number_of_different_colors type: int init: 4 max: 9 parameter: 'Number of colors:' category: 'Environment' ;
 	var density_percent type: int init: 30 min: 0 max: 99 parameter: 'Density of colors:' category: 'Environment' ;
@@ -26,7 +26,7 @@ environment width: 100 height: 100 {
 	} 
 }
   
-species name: ant skills: [ moving ] control: fsm { 
+species ant skills: [ moving ] control: fsm { 
 	rgb color <- rgb("white") ; 
 	ant_grid place -> {ant_grid (location)} ;
 	reflex wandering { do wander amplitude: 120; }
@@ -56,6 +56,6 @@ species name: ant skills: [ moving ] control: fsm {
 output {
 	display grille refresh_every: 100 /*autosave: true*/ {
 		grid ant_grid size: {0.8,0.8} position: {0.1,0.1} ;
-		species ant transparency: 0.5 size: {0.8,0.8} position: {0.1,0.1} ;
+		species ant transparency: 0.5 size: {0.8,0.8} position: {0.1,0.1};
 	}
 }
