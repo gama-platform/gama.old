@@ -29,7 +29,6 @@ global {
 environment width: dimensions height: dimensions {
 	grid space parent: base width: dimensions height: dimensions neighbours: 8 torus: true {
 		var color type: rgb init: black;
-		const multiagent type: bool value: false;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) select (each.color != black) of: space;
 		reflex migrate;
 		action migrate {
