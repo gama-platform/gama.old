@@ -56,7 +56,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	protected OutputManager output;
 	protected RandomUtils random;
 	private ItemList parametersEditors;
-	private final Map<String, IParameter> targetedVars;
+	protected final Map<String, IParameter> targetedVars;
 	private final ExperimentScope stack;
 	public volatile Thread experimentThread;
 	protected volatile ArrayBlockingQueue<Integer> commands;

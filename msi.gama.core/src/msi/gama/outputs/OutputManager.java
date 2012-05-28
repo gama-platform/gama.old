@@ -21,6 +21,9 @@ package msi.gama.outputs;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.Semaphore;
+
+import javax.xml.crypto.dsig.spec.HMACParameterSpec;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
@@ -49,12 +52,15 @@ public class OutputManager extends Symbol implements IOutputManager {
 	private final Map<String, IOutput> outputs = new HashMap<String, IOutput>();
 	private final Set<IOutput> outputsToUnschedule = new HashSet<IOutput>();
 	private final Set<IOutput> scheduledOutputs = new HashSet<IOutput>();
+	
+	/*Hack Nico need to be checked for the headless*/
 	public static Thread OUTPUT_THREAD = new Thread(null, new Runnable() {
 
 		@Override
 		public void run() {
 			boolean cond = false;
 			while (cond) {
+				/*C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant l'instruction juste avant cond=false...*/
 				try {
 					OutputManager.OUTPUT_AUTHORIZATION.acquire();
 				} catch (InterruptedException e1) {
@@ -91,6 +97,16 @@ public class OutputManager extends Symbol implements IOutputManager {
 		return outputs.get(id);
 	}
 
+	public IOutput getOutputWithName(final String name)
+	{
+		for ( IOutput output : outputs.values() ) {
+			if ( output.getName().equals(name) ) {
+				return output;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public void addOutput(final IOutput output) {
 		if ( output == null || outputs.containsValue(output) ) { return; }
@@ -119,60 +135,74 @@ public class OutputManager extends Symbol implements IOutputManager {
 		}
 		else
 		{
-			if ( displays != null ) {
-				// GuiUtils.debug("Cancelling any previous selection");
-				displays.fireSelectionChanged(null);
-			}
-//Hack Nico 2			
-			displays = new HeadlessOutputManager(this);
-
-			for ( IOutput output : outputs.values() ) {
-				if ( output instanceof IDisplayOutput ) {
-
-					displays.addDisplayOutput(output);
-				}
-			}
-			displays.buildOutputs(exp);
-			
-		}
-		
-		GuiUtils.run(new Runnable() {
-
-			@Override
-			public void run() {
-				for ( final IOutput output : outputs.values() ) {
-					if ( !output.isPermanent() ) {
-						try {
-							// GuiUtils.debug("Preparing output " + output.getName());
-							output.prepare(exp.getCurrentSimulation());
-						} catch (GamaRuntimeException e) {
-							e.addContext("in preparing output " + output.getName());
-							e.addContext("output " + output.getName() + " has not been opened");
-							GAMA.reportError(e);
-							continue;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						try {
-							// GuiUtils.debug("Scheduling and opening output " + output.getName());
-							output.schedule();
-							output.open();
-							output.update();
-						} catch (GamaRuntimeException e) {
-							e.addContext("in opening output " + output.getName());
-							e.addContext("output " + output.getName() + " has not been opened");
-							GAMA.reportError(e);
-							continue;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
+			if(GuiUtils.isInHeadLessMode())
+			{
+				if ( displays != null ) {
+					// GuiUtils.debug("Cancelling any previous selection");
+					displays.fireSelectionChanged(null);
+				}			
+				displays = new HeadlessOutputManager(this);
+	
+				for ( IOutput output : outputs.values() ) {
+					if ( output instanceof IDisplayOutput ) {
+	
+						displays.addDisplayOutput(output);
 					}
 				}
+				displays.buildOutputs(exp);
 			}
-		});
+		}
+		
+		if(!GuiUtils.isInHeadLessMode())
+		{
+			GuiUtils.run(new Runnable() {
+	
+				@Override
+				public void run() {
+					loadOutputs(exp);
+				}
+			});
+		}
+		else
+		{
+			loadOutputs(exp);
+		}
 	}
 
+	
+	private  void loadOutputs(final IExperiment exp)
+	{
+		for ( final IOutput output : outputs.values() ) {
+			if ( !output.isPermanent() ) {
+				try {
+					// GuiUtils.debug("Preparing output " + output.getName());
+					output.prepare(exp.getCurrentSimulation());
+				} catch (GamaRuntimeException e) {
+					e.addContext("in preparing output " + output.getName());
+					e.addContext("output " + output.getName() + " has not been opened");
+					GAMA.reportError(e);
+					continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				try {
+					// GuiUtils.debug("Scheduling and opening output " + output.getName());
+					output.schedule();
+					output.open();
+					output.update();
+				} catch (GamaRuntimeException e) {
+					e.addContext("in opening output " + output.getName());
+					e.addContext("output " + output.getName() + " has not been opened");
+					GAMA.reportError(e);
+					continue;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
+	}
+	
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
 			// GuiUtils.debug("Disposing the outputs");

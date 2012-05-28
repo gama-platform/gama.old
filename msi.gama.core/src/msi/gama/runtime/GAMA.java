@@ -20,6 +20,7 @@ package msi.gama.runtime;
 
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
