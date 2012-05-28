@@ -1,5 +1,6 @@
 package msi.gama.headless.core;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -14,14 +15,12 @@ public class Simulation  {
 	private String[] listenedVariable;
 	private Object [] results;
 	private Integer [] listenedVariableFrameRate;
-
 	private Vector<Parameter> parameters;
 	private Vector<Output> outputs;
-
 	private Writer outputFile;
-	
 	private String sourcePath;
 	private String driver;
+
 	/**
 	 * simulator to be loaded
 	 */
@@ -36,7 +35,6 @@ public class Simulation  {
 	 * id of current experiment
 	 */
 	private int experimentID;
-	
 	public int maxStep;
 	
 	public void setBufferedWriter(Writer w)
@@ -75,7 +73,7 @@ public class Simulation  {
 		for(int i=0; i<parameters.size();i++)
 		{
 			Parameter temp=parameters.get(i);
-			this.model.setVariableWithName(temp.getName(), temp.getValue());
+			this.model.setParameterWithName(temp.getName(), temp.getValue());
 			System.out.println("initialisation variable : "+ temp.getName()+" "+temp.getValue());
 		}
 		for(int i=0; i<outputs.size();i++)
@@ -104,20 +102,23 @@ public class Simulation  {
 	
 	public void play()
 	{
+		this.model.initialize();
 		if(this.outputFile!=null)
 			this.outputFile.writeSimulationHeader(this);
+		long startdate = Calendar.getInstance().getTimeInMillis();
 		for(;step<maxStep;step++)
 			nextStepDone();
+		long endDate= Calendar.getInstance().getTimeInMillis();
 		this.model.free();
 		if(this.outputFile!=null)
 			this.outputFile.close();
+		System.out.println("Simulation duration: "+ (endDate - startdate)+"ms");
 	}
 	
 	public void nextStepDone()
 	{
 		model.nextStep(this.step);
 		this.exportData();
-		System.out.println("nextStep "+ step);
 	}
 	
 	public int getExperimentID() {

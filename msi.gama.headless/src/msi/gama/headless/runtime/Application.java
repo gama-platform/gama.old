@@ -5,10 +5,14 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import msi.gama.headless.core.*;
+import msi.gama.headless.xml.Reader;
+import msi.gama.headless.xml.XMLWriter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.outputs.LayerDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
@@ -31,60 +35,40 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		IHeadLessExperiment exp =
-			HeadlessSimulationLoader.newHeadlessSimulation("/Users/marilleau/model_gama_test.gaml");
-
-//	GAMA.getExperiment().setParameterValue(name, v)
-//	GAMA.getExperiment().in
+	
 		/*
-		 * Runnable rnb = new Runnable(){ public void run() {GAMA.startOrPauseExperiment();}};
-		 * Thread exec = new Thread(rnb);
-		 * exec.start();
-		 */
-		// GAMA.startOrPauseExperiment();
-		// GAMA.startOrPauseExperiment();
-		// GAMA.getExperiment().startCurrentSimulation();
-		// System.out.println("ccoucoe 3");
-		//
-		//
-		//
-		//
-		Thread.sleep(2000);
-
-		// GAMA.startOrPauseExperiment();
-		//
-		 MonitorOutput m =  ((OutputManager)GAMA.getExperiment().getOutputManager()).getMonitors().get(0);
-		//Thread.sleep(1000);
-			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).setImageFileName("/tmp/test");
-
-			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().setSnapshotFileName("/pouet");
-			((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().setAutoSave(true);
-			
-			
-		 
-		 long start = Calendar.getInstance().getTimeInMillis();
-		// GAMA.getExperiment().getOutputManager().getOutput(id)
-		GAMA.getExperiment().step();
+		Map<String, String[]> mm=context.getArguments();
 		
-		
-		for(int i=0; i<150; i++)
+		for(String s:mm.keySet())
 		{
-		GAMA.getExperiment().step();
-		BufferedImage buf=((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getImage();
-		
-		ImageIO.write(buf, "png", new File("/tmp/snap/snap"+i+".png"));
+			System.out.println("arg "+ s + "  "+ mm.get(s).length );//+ " value: "+ mm.get(s).toString());
 		}
-		
-		 long end = Calendar.getInstance().getTimeInMillis();
-
-		 System.out.println("duration (ms)" + (end-start));
-		return null;
+		*/
+		Reader in=new Reader("/Users/marilleau/in.xml");
+		XMLWriter ou=new XMLWriter("/Users/marilleau/out.xml");
+		in.parseXmlFile();
+		Iterator<Simulation> it=in.getSimulation().iterator();
+		while(it.hasNext())
+		{
+			Simulation si = it.next();
+			try {
+				si.setBufferedWriter(ou);
+				si.loadAndBuild();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			si.play();
+		}
+			return null;
 	}
 
-//	((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getSurface().snapshot();
-		//Image img =Toolkit.getDefaultToolkit().createImage(buf.getSource());
-		//((LayerDisplayOutput)( ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutput("msi.gama.application.view.LayeredDisplayViewmain_display"))).getImage()
-	
 	
 	/*
 	 * (non-Javadoc)

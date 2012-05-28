@@ -14,14 +14,7 @@ public class Load {
 	 */
 	public static void main(String[] args) {
 		
-		/* String AC_Dir = "./lib";
-	     String AC_Package = "";
-	     DynamicClassLoader AC_Loader = new DynamicClassLoader(AC_Dir, AC_Package, true);
-	     String[] AC_Array;
-	     if (AC_Loader.LoadPlugIn() != 0) {
-	            return;
-	        }
-	    */
+
 		Reader in=new Reader(args[0]);
 		XMLWriter ou=new XMLWriter(args[1]);
 		in.parseXmlFile();

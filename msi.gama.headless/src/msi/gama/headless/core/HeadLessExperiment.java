@@ -170,17 +170,15 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	public void initialize(final ParametersSet sol, final Double seed) throws InterruptedException,
 		GamaRuntimeException {
 		
-		
-		/*for ( IParameter p : targetedVars.values() ) {
+		for ( IParameter p : targetedVars.values() ) {
 			String name = p.getName();
 			this.getParameter(name);
 			
 			if ( sol.containsKey(name) ) {
 				p.setValue(sol.get(name));
-				// TODO NECESSARY ?? Parameters have normally already been changed.
 			}
 		}
-		*/
+	
 		
 		
 		// GUI.debug("Initializing the random agent");

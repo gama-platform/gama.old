@@ -10,7 +10,7 @@ public interface ISimulator {
 	 * @param name name of the variable
 	 * @param value the value
 	 */
-    public void   setVariableWithName(java.lang.String name, Object value );
+    public void   setParameterWithName(java.lang.String name, Object value );
     /**
      * get the current value of the model variable
      * @param name name of the variable

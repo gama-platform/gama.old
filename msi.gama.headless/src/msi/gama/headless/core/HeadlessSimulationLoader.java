@@ -5,6 +5,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.*;
 import msi.gama.runtime.GAMA;
@@ -17,13 +18,51 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 public class HeadlessSimulationLoader {
 
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) {
+	/**
+	 * load in headless mode a specified model and create an experiment
+	 * @param fileName model to load
+	 * @return the loaded experiment
+	 * @throws InterruptedException
+	 */
+	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) throws InterruptedException {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		loadModel(fileName);
+		IHeadLessExperiment exp = (IHeadLessExperiment) GAMA.getExperiment();
+		waitLoading(exp);
 		return (IHeadLessExperiment) GAMA.getExperiment();
 	}
 
+	/**
+
+	 * load in headless mode a specified model and create an experiment
+	 * @param fileName model to load
+	 * @param params parameters of the experiment
+	 * @return the loaded experiment
+	 * @throws GamaRuntimeException
+	 * @throws InterruptedException
+	 */
+	public static IHeadLessExperiment newHeadlessSimulation(final String fileName, final ParametersSet params) throws GamaRuntimeException, InterruptedException {
+		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
+		GAMA.getExperiment().initialize(params, Math.random());
+		waitLoading(exp);
+		return exp;
+				
+	}
+	private static void waitLoading(final IHeadLessExperiment exp)
+	{
+		do{
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("loading waiting ");
+		} while(exp.getCurrentSimulation()!= null && exp.getCurrentSimulation().isLoading());	
+	
+	}
+	
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
@@ -77,6 +116,14 @@ public class HeadlessSimulationLoader {
 
 		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
+	}
+	
+	private static void loadExperiment(final ParametersSet param)
+	{
+		/*if(para == null)
+		{
+			
+		}*/
 	}
 
 }
