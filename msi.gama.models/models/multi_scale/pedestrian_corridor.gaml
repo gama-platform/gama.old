@@ -6,10 +6,10 @@ global {
 	var capture_pedestrians <- false type: bool parameter: 'Capture pedestrians?';
 	
 	const environment_size type: int init: 2000;
-	const environment_bounds type: point init: {environment_size, environment_size} depends_on: [environment_size];
+	const environment_bounds type: point init: {environment_size, environment_size} ;
 	
 	const pedestrian_size type: float init: 1.0;
-	const pedestrian_shape type: geometry init: circle (pedestrian_size) depends_on: pedestrian_size;
+	const pedestrian_shape type: geometry init: circle (pedestrian_size);
 	const pedestrian_color type: rgb init: rgb ('green'); 
 	const pedestrian_speed type: float init: 2.0;
 	
@@ -20,16 +20,16 @@ global {
 	const corridor_wall_1_shape type: geometry init: rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, environment_size - (corridor_wall_height / 2)};
 	
 	const corridor_color type: rgb init: rgb ('blue');
-	const corridor_width type: int init: int(environment_size / 2) depends_on: [environment_size];
-	const corridor_height type: int init: environment_size depends_on: [environment_size];
-	const corridor_location type: point init: {environment_size / 2, environment_size / 2} depends_on: [environment_size];
+	const corridor_width type: int init: int(environment_size / 2) ;
+	const corridor_height type: int init: environment_size ;
+	const corridor_location type: point init: {environment_size / 2, environment_size / 2} ;
 	const corridor_shape type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location) - (corridor_wall_0_shape + corridor_wall_1_shape);
-	const corridor_left_bounds type: int init: (int(corridor_location.x - (corridor_width / 2))) depends_on: [corridor_location, corridor_width];
-	const corridor_right_bounds type: int init: (int(corridor_location.x + (corridor_width / 2))) depends_on: [corridor_location, corridor_width];
+	const corridor_left_bounds type: int init: (int(corridor_location.x - (corridor_width / 2))) ;
+	const corridor_right_bounds type: int init: (int(corridor_location.x + (corridor_width / 2))) ;
 	
 	const new_pedestrian_rate type: int init: 10;
 	const new_pedestian_generate_frequency type: int init: 1;
-	const new_pedestrian_y_distance type: int init: int(environment_size / new_pedestrian_rate) depends_on: [environment_size, new_pedestrian_rate];
+	const new_pedestrian_y_distance type: int init: int(environment_size / new_pedestrian_rate);
 	
 	var pedestrians type: list of: pedestrian init: [] value: list (pedestrian);
 	
@@ -190,7 +190,7 @@ entities {
 			set location value: target.location;
 		}
 		
-		aspect default {
+		aspect default { 
 			draw text: 'WALL' color: rgb ('green') size: 65 at: {(location).x - 40, (location).y};
 		}
 	}
