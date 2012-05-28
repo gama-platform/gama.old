@@ -26,10 +26,10 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.IPriority;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
-import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Strings;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**
@@ -141,7 +141,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 					context.flagError("the left side of " + operator + " is not an agent");
 					return null;
 				}
-				CommandDescription cd = sd.getAction(operator);
+				StatementDescription cd = sd.getAction(operator);
 				if ( cd == null ) {
 					context.flagError(operator + " is not available for agents of species " +
 						sd.getName());
@@ -353,7 +353,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 		return factory.createList(list);
 	}
 
-	private IExpression compileArguments(final CommandDescription action, final List<String> words) {
+	private IExpression compileArguments(final StatementDescription action, final List<String> words) {
 		final GamaList list = new GamaList();
 		int begin = 0;
 		int end = 0;

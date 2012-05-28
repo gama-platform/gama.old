@@ -400,7 +400,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 					IGamlIssue.NOT_AN_AGENT, e1);
 				return null;
 			}
-			CommandDescription cd = sd.getAction(op);
+			StatementDescription cd = sd.getAction(op);
 			if ( cd == null ) {
 				context.flagError(op + " is not available for agents of species " + sd.getName(),
 					IGamlIssue.UNKNOWN_ACTION, e1, op, sd.getName());
@@ -476,7 +476,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 	}
 
 	// KEEP
-	private IExpression compileArguments(final CommandDescription action,
+	private IExpression compileArguments(final StatementDescription action,
 		final List<Expression> words) {
 		if ( action == null ) {
 			context.flagError("Action cannot be determined", IGamlIssue.UNKNOWN_ACTION);
