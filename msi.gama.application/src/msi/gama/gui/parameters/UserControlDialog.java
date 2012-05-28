@@ -14,8 +14,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.architecture.user.UserInputCommand;
-import msi.gaml.commands.*;
+import msi.gaml.architecture.user.UserInputStatement;
+import msi.gaml.statements.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -51,11 +51,11 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	public static UserControlDialog current = null;
 	public static PreviousDialog previous = null;
 
-	final List<ICommand> userCommands;
+	final List<IStatement> userCommands;
 	final IScope scope;
 	boolean inspecting;
 
-	public UserControlDialog(final Shell parentShell, final List<ICommand> values,
+	public UserControlDialog(final Shell parentShell, final List<IStatement> values,
 		final String title, final IScope executionScope) {
 		super((Shell) null, title, null, null);
 		setShellStyle(SWT.CLOSE | SWT.BORDER | SWT.TOOL | SWT.MODELESS | SWT.RESIZE);
@@ -121,14 +121,14 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		// data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		// data.heightHint = 20;
 		// sep.setLayoutData(data);
-		for ( final ICommand c : userCommands ) {
-			if ( c instanceof UserCommandCommand ) {
-				List<UserInputCommand> inputs = ((UserCommandCommand) c).getInputs();
+		for ( final IStatement c : userCommands ) {
+			if ( c instanceof UserCommandStatement ) {
+				List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
 				int nbLines = inputs.size() > 1 ? inputs.size() : 1;
 				int nbCol = inputs.size() > 0 ? 1 : 3;
 				Button b = new Button(composite, SWT.PUSH);
 				b.setText(c.getName());
-				b.setEnabled(((UserCommandCommand) c).isEnabled(scope));
+				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {
@@ -140,7 +140,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					}
 
 				});
-				for ( final UserInputCommand i : inputs ) {
+				for ( final UserInputStatement i : inputs ) {
 
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
 					EditorFactory.create(composite, i, new EditorListener() {

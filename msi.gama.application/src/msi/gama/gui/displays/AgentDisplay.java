@@ -27,8 +27,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.*;
 import msi.gaml.types.*;
 import org.eclipse.swt.widgets.Composite;
 
@@ -86,7 +86,7 @@ public class AgentDisplay extends AbstractDisplay {
 				if ( a != null && !a.dead() ) {
 					IAspect aspect = a.getSpecies().getAspect(aspectName);
 					if ( aspect == null ) {
-						aspect = AspectCommand.DEFAULT_ASPECT;
+						aspect = AspectStatement.DEFAULT_ASPECT;
 					}
 					Rectangle2D r = aspect.draw(scope, a);
 					shapes.put(a, r);

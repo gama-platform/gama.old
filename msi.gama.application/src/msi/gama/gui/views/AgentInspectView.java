@@ -27,9 +27,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -95,7 +95,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 		// SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 		// ed.getEditor().moveAbove(null);
 		ISpecies species = agent.getSpecies();
-		Collection<UserCommandCommand> userCommands = species.getUserCommands();
+		Collection<UserCommandStatement> userCommands = species.getUserCommands();
 		if ( userCommands.isEmpty() ) { return attributes; }
 		Composite buttons = new Composite(attributes, SWT.BORDER_SOLID);
 		buttons.moveAbove(null);
@@ -108,7 +108,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 		GridLayout layout = new GridLayout(3, false);
 		buttons.setLayout(layout);
 
-		for ( final ICommand command : userCommands ) {
+		for ( final IStatement command : userCommands ) {
 			Button b = new Button(buttons, SWT.PUSH);
 			b.setText(command.getName());
 			b.addSelectionListener(new SelectionAdapter() {

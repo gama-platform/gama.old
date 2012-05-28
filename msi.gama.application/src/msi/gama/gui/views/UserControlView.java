@@ -7,8 +7,8 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.user.UserInputCommand;
-import msi.gaml.commands.*;
+import msi.gaml.architecture.user.UserInputStatement;
+import msi.gaml.statements.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -19,11 +19,11 @@ public class UserControlView extends GamaViewPart {
 	public static String ID = "msi.gama.views.userControlView";
 
 	IScope scope;
-	List<ICommand> userCommands;
+	List<IStatement> userCommands;
 	String title;
 	Composite body, buttons;
 
-	public void initFor(final IScope scope, final List<ICommand> userCommands, final String title) {
+	public void initFor(final IScope scope, final List<IStatement> userCommands, final String title) {
 		this.scope = scope;
 		this.userCommands = userCommands;
 		this.title = title;
@@ -112,8 +112,8 @@ public class UserControlView extends GamaViewPart {
 		body = new Composite(parent, SWT.None);
 		layout = new GridLayout(3, false);
 		body.setLayout(layout);
-		for ( final ICommand c : userCommands ) {
-			if ( c instanceof UserCommandCommand ) {
+		for ( final IStatement c : userCommands ) {
+			if ( c instanceof UserCommandStatement ) {
 				Group commandComposite = new Group(body, SWT.SHADOW_IN);
 				data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 				commandComposite.setLayoutData(data);
@@ -125,13 +125,13 @@ public class UserControlView extends GamaViewPart {
 				// data = new GridData(SWT.FILL, SWT.CENTER, true, true, 3, 1);
 				// data.heightHint = 20;
 				// sep.setLayoutData(data);
-				List<UserInputCommand> inputs = ((UserCommandCommand) c).getInputs();
+				List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
 				int nbLines = inputs.size() > 1 ? inputs.size() : 1;
 				int nbCol = inputs.size() > 0 ? 1 : 3;
 				Button b = new Button(commandComposite, SWT.PUSH);
 				b.setText(c.getName());
 				b.setImage(SwtGui.panel_action);
-				b.setEnabled(((UserCommandCommand) c).isEnabled(scope));
+				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);
 				b.addSelectionListener(new SelectionAdapter() {
@@ -143,7 +143,7 @@ public class UserControlView extends GamaViewPart {
 					}
 
 				});
-				for ( final UserInputCommand i : inputs ) {
+				for ( final UserInputStatement i : inputs ) {
 
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
 					EditorFactory.create(commandComposite, i, new EditorListener() {

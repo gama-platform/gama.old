@@ -31,8 +31,8 @@ import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.*;
 import org.eclipse.swt.widgets.Composite;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -108,7 +108,7 @@ public class SpeciesDisplay extends AgentDisplay {
 		throws GamaRuntimeException {
 		IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
-			aspect = AspectCommand.DEFAULT_ASPECT;
+			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
 		g.setOpacity(layer.getTransparency());
 

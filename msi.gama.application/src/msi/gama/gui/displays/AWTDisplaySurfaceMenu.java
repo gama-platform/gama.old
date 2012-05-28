@@ -10,9 +10,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.*;
 
 public class AWTDisplaySurfaceMenu {
 
@@ -108,7 +108,7 @@ public class AWTDisplaySurfaceMenu {
 		public void actionPerformed(final ActionEvent e) {
 			AgentMenuItem source = (AgentMenuItem) e.getSource();
 			final IAgent a = source.getAgent();
-			final ICommand c = source.getCommand();
+			final IStatement c = source.getCommand();
 			final ILocation p = source.getLocation();
 			if ( c != null && a != null && !a.dead() ) {
 				IScheduledAction action = new ScheduledAction() {
@@ -164,10 +164,10 @@ public class AWTDisplaySurfaceMenu {
 			highlightItem.addActionListener(highlightListener);
 			macroMenu.add(highlightItem);
 
-			Collection<UserCommandCommand> commands = macro.getSpecies().getUserCommands();
+			Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
 			if ( !commands.isEmpty() ) {
 				macroMenu.addSeparator();
-				for ( UserCommandCommand c : commands ) {
+				for ( UserCommandStatement c : commands ) {
 					MenuItem actionItem = new AgentMenuItem(macro, c, userLocation);
 					actionItem.addActionListener(commandListener);
 					macroMenu.add(actionItem);
@@ -194,7 +194,7 @@ public class AWTDisplaySurfaceMenu {
 
 		private final IAgent agent;
 		private final IDisplay display;
-		private final ICommand command;
+		private final IStatement command;
 		private final GamaPoint userLocation;
 
 		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
@@ -205,7 +205,7 @@ public class AWTDisplaySurfaceMenu {
 			userLocation = null;
 		}
 
-		AgentMenuItem(final IAgent agent, final ICommand command, final GamaPoint point) {
+		AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
 			super(command.getName());
 			this.agent = agent;
 			this.display = null;
@@ -221,7 +221,7 @@ public class AWTDisplaySurfaceMenu {
 			return agent;
 		}
 
-		ICommand getCommand() {
+		IStatement getCommand() {
 			return command;
 		}
 

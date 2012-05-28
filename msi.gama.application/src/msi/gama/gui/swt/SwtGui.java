@@ -33,7 +33,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.user.UserPanel;
+import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import org.apache.log4j.*;
 import org.eclipse.core.runtime.*;
@@ -868,7 +868,7 @@ public class SwtGui implements IGui {
 		return result;
 	}
 
-	public void openUserControlDialog(final IScope scope, final UserPanel panel) {
+	public void openUserControlDialog(final IScope scope, final UserPanelStatement panel) {
 		run(new Runnable() {
 
 			@Override
@@ -883,7 +883,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void openUserControlPanel(final IScope scope, final UserPanel panel) {
+	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
 		run(new Runnable() {
 
 			@Override

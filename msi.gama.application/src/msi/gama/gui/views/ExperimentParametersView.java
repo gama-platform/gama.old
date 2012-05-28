@@ -24,8 +24,8 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.*;
 import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.statements.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -80,8 +80,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		for ( Control c : commands.getChildren() ) {
 			c.dispose();
 		}
-		Collection<UserCommandCommand> userCommands = experiment.getUserCommands();
-		for ( final ICommand command : userCommands ) {
+		Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
+		for ( final IStatement command : userCommands ) {
 			Button b = new Button(commands, SWT.PUSH);
 			b.setText(command.getName());
 			b.addSelectionListener(new SelectionAdapter() {
