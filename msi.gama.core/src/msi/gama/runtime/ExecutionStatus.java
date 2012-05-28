@@ -19,30 +19,31 @@
 package msi.gama.runtime;
 
 /**
- * The Enum PrimCommandStatus.
+ * The Enum ExecutionStatus.
  */
 public enum ExecutionStatus {
 
 	/**
-	 * The command/action/primitive has stopped, but failed during its execution. The
+	 * The statement/action/primitive has stopped, but failed during its execution. The
 	 * semantics of "failure" is dependent on the designer.
 	 */
 	failure,
 
 	/**
-	 * Indicates that the command/action/primitive is still running. Default status for most of the
+	 * Indicates that the statement/action/primitive is still running. Default status for most of
+	 * the
 	 * primitives
 	 */
 	running,
 
 	/**
-	 * The command/action/primitive has stopped, but been successfull in its execution. The
+	 * The statement/action/primitive has stopped, but been successfull in its execution. The
 	 * semantics of "success" is dependent on the designer.
 	 */
 	success,
 
 	/**
-	 * The command/action/primitive has terminated, but its execution wil not "count" if the agent
+	 * The statement/action/primitive has terminated, but its execution wil not "count" if the agent
 	 * has only one action to do at a time. Declaring "skipped" allows it to let another action
 	 * execute. To use with caution since it can lead to endless loops during an agent execution
 	 */
@@ -55,14 +56,16 @@ public enum ExecutionStatus {
 	condition_failed,
 
 	/**
-	 * The command/action/primitive has signified that the outer block of commands (an action or a
+	 * The statement/action/primitive has signified that the outer block of statement (an action or
+	 * a
 	 * behavior) in which it is situated should be discontinued
 	 */
 	interrupt,
 
 	/**
-	 * The last command/action/primitive has signified that the inner loop or switch it is in should
-	 * be halted and that the control flow should continue to the next command
+	 * The last statement/action/primitive has signified that the inner loop or switch it is in
+	 * should
+	 * be halted and that the control flow should continue to the next statement
 	 */
 	_break;
 

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -23,8 +23,8 @@ import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.commands.ICommand;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
@@ -36,11 +36,11 @@ public interface IScope {
 
 	public abstract void push(IAgent agent);
 
-	public abstract void push(ICommand command);
+	public abstract void push(IStatement statement);
 
 	public abstract void pop(IAgent agent);
 
-	public abstract void pop(ICommand command);
+	public abstract void pop(IStatement statement);
 
 	public abstract IAgent getAgentScope();
 
@@ -48,7 +48,7 @@ public interface IScope {
 
 	public abstract ISimulation getSimulationScope();
 
-	public abstract Object execute(ICommand command, IAgent agent) throws GamaRuntimeException;
+	public abstract Object execute(IStatement statement, IAgent agent) throws GamaRuntimeException;
 
 	public abstract Object evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
 
@@ -67,7 +67,7 @@ public interface IScope {
 	public abstract Object getEach();
 
 	// Used to setup a "context" (i.e. a persistent object)
-	// like the graphics context for Draw commands, for instance
+	// like the graphics context for Draw statements, for instance
 	public abstract void setContext(Object val);
 
 	public abstract Object getContext();

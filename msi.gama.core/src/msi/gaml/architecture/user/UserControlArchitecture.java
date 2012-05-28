@@ -16,18 +16,18 @@ import msi.gaml.types.IType;
 @vars(@var(name = IKeyword.USER_CONTROLLED, init = IKeyword.TRUE, type = IType.BOOL_STR))
 public abstract class UserControlArchitecture extends FsmArchitecture {
 
-	UserInitPanel initPanel;
+	UserInitPanelStatement initPanel;
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {
 		super.verifyBehaviors(context);
 		if ( initialState == null && states.size() == 1 ) {
-			initialState = new ArrayList<FsmStateCommand>(states.values()).get(0);
+			initialState = new ArrayList<FsmStateStatement>(states.values()).get(0);
 			context.getVar(IKeyword.STATE).setValue(initialState.getName());
 		}
-		for ( final FsmStateCommand s : states.values() ) {
-			if ( s instanceof UserInitPanel ) {
-				initPanel = (UserInitPanel) s;
+		for ( final FsmStateStatement s : states.values() ) {
+			if ( s instanceof UserInitPanelStatement ) {
+				initPanel = (UserInitPanelStatement) s;
 			}
 		}
 	}

@@ -29,26 +29,26 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 /**
- * The Class StateCommand.
+ * The Class FsmStateStatement.
  * 
  * @author drogoul
  */
 
-@symbol(name = FsmStateCommand.STATE, kind = ISymbolKind.BEHAVIOR)
+@symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = FsmStateCommand.INITIAL, type = IType.BOOL_STR, optional = true),
-	@facet(name = FsmStateCommand.FINAL, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL_STR, optional = true),
+	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, combinations = {
-	@combination({ IKeyword.NAME, FsmStateCommand.FINAL }), @combination({ IKeyword.NAME }),
-	@combination({ IKeyword.NAME, FsmStateCommand.INITIAL }) }, omissible = IKeyword.NAME)
-public class FsmStateCommand extends AbstractCommandSequence {
+	@combination({ IKeyword.NAME, FsmStateStatement.FINAL }), @combination({ IKeyword.NAME }),
+	@combination({ IKeyword.NAME, FsmStateStatement.INITIAL }) }, omissible = IKeyword.NAME)
+public class FsmStateStatement extends AbstractStatementSequence {
 
 	public static final String STATE_MEMORY = "state_memory";
 
@@ -57,36 +57,36 @@ public class FsmStateCommand extends AbstractCommandSequence {
 	protected static final String STATE = "state";
 	public static final String ENTER = "enter";
 	public static final String EXIT = "exit";
-	private FsmEnterCommand enterActions = null;
-	private FsmExitCommand exitActions = null;
-	List<FsmTransitionCommand> transitions = new ArrayList();
+	private FsmEnterStatement enterActions = null;
+	private FsmExitStatement exitActions = null;
+	List<FsmTransitionStatement> transitions = new ArrayList();
 	private int transitionsSize;
 	boolean isInitial;
 	boolean isFinal;
 
-	public FsmStateCommand(final IDescription desc) {
+	public FsmStateStatement(final IDescription desc) {
 		super(desc);
 		setName(getLiteral(IKeyword.NAME)); // A VOIR
-		isInitial = Cast.asBool(null, getLiteral(FsmStateCommand.INITIAL));
-		isFinal = Cast.asBool(null, getLiteral(FsmStateCommand.FINAL));
+		isInitial = Cast.asBool(null, getLiteral(FsmStateStatement.INITIAL));
+		isFinal = Cast.asBool(null, getLiteral(FsmStateStatement.FINAL));
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol c : commands ) {
-			if ( c instanceof FsmEnterCommand ) {
-				enterActions = (FsmEnterCommand) c;
-			} else if ( c instanceof FsmExitCommand ) {
-				exitActions = (FsmExitCommand) c;
-			} else if ( c instanceof FsmTransitionCommand ) {
-				transitions.add((FsmTransitionCommand) c);
+	public void setChildren(final List<? extends ISymbol> children) {
+		for ( ISymbol c : children ) {
+			if ( c instanceof FsmEnterStatement ) {
+				enterActions = (FsmEnterStatement) c;
+			} else if ( c instanceof FsmExitStatement ) {
+				exitActions = (FsmExitStatement) c;
+			} else if ( c instanceof FsmTransitionStatement ) {
+				transitions.add((FsmTransitionStatement) c);
 			}
 		}
-		commands.remove(enterActions);
-		commands.remove(exitActions);
-		commands.removeAll(transitions);
+		children.remove(enterActions);
+		children.remove(exitActions);
+		children.removeAll(transitions);
 		transitionsSize = transitions.size();
-		super.setChildren(commands);
+		super.setChildren(children);
 	}
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
@@ -102,8 +102,8 @@ public class FsmStateCommand extends AbstractCommandSequence {
 		}
 		Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		if ( enter ) {
-			FsmStateCommand stateToExit =
-				(FsmStateCommand) agent.getAttribute(IKeyword.STATE_TO_EXIT);
+			FsmStateStatement stateToExit =
+				(FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
 			if ( stateToExit != null ) {
 				stateToExit.haltOn(scope);
 			}
@@ -127,7 +127,7 @@ public class FsmStateCommand extends AbstractCommandSequence {
 	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
 		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
 		for ( int i = 0; i < transitionsSize; i++ ) {
-			final FsmTransitionCommand transition = transitions.get(i);
+			final FsmTransitionStatement transition = transitions.get(i);
 
 			if ( /* agent.isEnabled(futureState) && */transition.evaluatesTrueOn(scope) ) {
 				final String futureState = transition.getName();
@@ -156,7 +156,7 @@ public class FsmStateCommand extends AbstractCommandSequence {
 		}
 	}
 
-	public FsmExitCommand getExitCommand() {
+	public FsmExitStatement getExitStatement() {
 		return exitActions;
 	}
 

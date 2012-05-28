@@ -25,12 +25,12 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.commands.ICommand;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -42,19 +42,19 @@ import msi.gaml.types.IType;
 @skill("reflex")
 public class ReflexArchitecture extends Skill implements IArchitecture {
 
-	private final List<ICommand> _inits = new ArrayList();
-	private final List<ICommand> _reflexes = new ArrayList();
+	private final List<IStatement> _inits = new ArrayList();
+	private final List<IStatement> _reflexes = new ArrayList();
 	private int _reflexesNumber = 0;
 	private int _inits_number = 0;
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol c : commands ) {
-			addBehavior((ICommand) c);
+	public void setChildren(final List<? extends ISymbol> children) {
+		for ( ISymbol c : children ) {
+			addBehavior((IStatement) c);
 		}
 	}
 
-	public void addBehavior(final ICommand c) {
+	public void addBehavior(final IStatement c) {
 		if ( IKeyword.INIT.equals(c.getFacet(IKeyword.KEYWORD).literalValue()) ) {
 
 			_inits.add(0, c);
@@ -76,7 +76,7 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 		Object result = null;
 		IGamlAgent a = getCurrentAgent(scope);
 		for ( int i = 0; i < _reflexesNumber; i++ ) {
-			ICommand r = _reflexes.get(i);
+			IStatement r = _reflexes.get(i);
 			if ( !a.dead() ) {
 				result = r.executeOn(scope);
 			}
@@ -104,7 +104,7 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.ICommand#getReturnType()
+	 * @see msi.gama.interfaces.IStatement#getReturnType()
 	 */
 	@Override
 	public IType getReturnType() {
@@ -114,7 +114,7 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.ICommand#getReturnContentType()
+	 * @see msi.gama.interfaces.IStatement#getReturnContentType()
 	 */
 	@Override
 	public IType getReturnContentType() {
@@ -124,7 +124,7 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.ICommand#toGaml()
+	 * @see msi.gama.interfaces.IStatement#toGaml()
 	 */
 	@Override
 	public String toGaml() {

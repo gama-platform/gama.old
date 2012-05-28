@@ -28,9 +28,9 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractPlaceHolderCommand;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.AbstractPlaceHolderStatement;
 import msi.gaml.types.*;
 
 /**
@@ -39,7 +39,7 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_COMMAND)
+@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT)
 @inside(symbols = IKeyword.USER_COMMAND)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
@@ -48,7 +48,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.MAX, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = false),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-public class UserInputCommand extends AbstractPlaceHolderCommand implements IParameter {
+public class UserInputStatement extends AbstractPlaceHolderStatement implements IParameter {
 
 	int order;
 	static int index;
@@ -57,7 +57,7 @@ public class UserInputCommand extends AbstractPlaceHolderCommand implements IPar
 	IExpression min, max, among;
 	String tempVar;
 
-	public UserInputCommand(final IDescription desc) {
+	public UserInputStatement(final IDescription desc) {
 		super(desc);
 		order = index++;
 		value = initialValue = getFacet(IKeyword.INIT).value(null);

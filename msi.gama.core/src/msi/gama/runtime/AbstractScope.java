@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -23,8 +23,8 @@ import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.commands.ICommand;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 
 /**
@@ -59,10 +59,10 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	private final Record[] vars = new Record[MAX_VARS];
-	private final int[] commandsPointers = new int[MAX_COMMMANDS];
+	private final int[] statementsPointers = new int[MAX_COMMMANDS];
 	protected final IAgent[] agentsStack = new IAgent[MAX_AGENTS];
 	private Object each = null;
-	private int commandsPointer = 0;
+	private int statementsPointer = 0;
 	private int varsPointer = 0;
 	protected int agentsPointer = 0;
 	private Object context;
@@ -159,14 +159,15 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public final Object getArg(final String varName, final short type) throws GamaRuntimeException {
 		int i = getVarIndex(varName); // Only in the local scope
-		Object result = i > -1 && i >= commandsPointers[commandsPointer - 1] ? vars[i].value : null;
+		Object result =
+			i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;
 		return type == IType.NONE ? result : Types.get(type).cast(this, result, null);
 	}
 
 	@Override
 	public final boolean hasArg(final String varName) {
 		int i = getVarIndex(varName);// Only in the local scope
-		return i > -1 && i >= commandsPointers[commandsPointer - 1];
+		return i > -1 && i >= statementsPointers[statementsPointer - 1];
 	}
 
 	@Override
@@ -202,8 +203,8 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final void push(final ICommand command) {
-		commandsPointers[commandsPointer++] = varsPointer;
+	public final void push(final IStatement statement) {
+		statementsPointers[statementsPointer++] = varsPointer;
 	}
 
 	@Override
@@ -212,29 +213,29 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public void pop(final ICommand command) {
-		varsPointer = commandsPointers[--commandsPointer];
+	public void pop(final IStatement statement) {
+		varsPointer = statementsPointers[--statementsPointer];
 	}
 
 	@Override
 	public final void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		for ( int i = commandsPointers[commandsPointer - 1]; i < varsPointer; i++ ) {
+		for ( int i = statementsPointers[statementsPointer - 1]; i < varsPointer; i++ ) {
 			varsToSave.put(vars[i].name, vars[i].value);
 		}
 	}
 
 	@Override
 	public final void removeAllVars() {
-		varsPointer = commandsPointers[commandsPointer - 1];
+		varsPointer = statementsPointers[statementsPointer - 1];
 	}
 
 	@Override
-	public final Object execute(final ICommand command, final IAgent agent)
+	public final Object execute(final IStatement statement, final IAgent agent)
 		throws GamaRuntimeException {
 		Object result;
 		push(agent);
 		try {
-			result = command.executeOn(this);
+			result = statement.executeOn(this);
 		} finally {
 			pop(agent);
 		}

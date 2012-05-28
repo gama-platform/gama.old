@@ -25,7 +25,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.user.UserPanel;
+import msi.gaml.architecture.user.UserPanelStatement;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -333,7 +333,7 @@ public class GuiUtils {
 		return gui.openUserInputDialog(title, initialValues);
 	}
 
-	public static void openUserControlPanel(final IScope scope, final UserPanel panel) {
+	public static void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
 		if ( gui == null ) { return; }
 		gui.openUserControlPanel(scope, panel);
 	}

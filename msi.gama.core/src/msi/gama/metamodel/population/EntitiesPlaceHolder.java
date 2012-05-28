@@ -6,10 +6,10 @@ package msi.gama.metamodel.population;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 
@@ -33,6 +33,6 @@ public class EntitiesPlaceHolder extends Symbol {
 	 * @see msi.gaml.compilation.Symbol#setChildren(java.util.List)
 	 */
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {}
+	public void setChildren(final List<? extends ISymbol> children) {}
 
 }

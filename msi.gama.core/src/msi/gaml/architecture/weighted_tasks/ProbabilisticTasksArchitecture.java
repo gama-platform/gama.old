@@ -26,7 +26,7 @@ public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 	double[] weights;
 
 	@Override
-	protected WeightedTaskCommand chooseTask(final IScope scope) throws GamaRuntimeException {
+	protected WeightedTaskStatement chooseTask(final IScope scope) throws GamaRuntimeException {
 		Double sum = 0d;
 		for ( int i = 0; i < weights.length; i++ ) {
 			double weight = tasks.get(i).computeWeight(scope);

@@ -19,20 +19,20 @@
 package msi.gaml.architecture.finite_state_machine;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.no_scope;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.statements.AbstractStatementSequence;
 
-@symbol(name = FsmStateCommand.ENTER, kind = ISymbolKind.SEQUENCE_COMMAND)
-@inside(symbols = { FsmStateCommand.STATE })
+@symbol(name = FsmStateStatement.EXIT, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@inside(symbols = { FsmStateStatement.STATE })
 @no_scope
-public class FsmEnterCommand extends AbstractCommandSequence {
+public class FsmExitStatement extends AbstractStatementSequence {
 
-	public FsmEnterCommand(/* final ISymbol enclosingScope, */final IDescription desc) {
+	public FsmExitStatement(/* final ISymbol enclosingScope, */final IDescription desc) {
 		super(/* enclosingScope, */desc);
 	}
 

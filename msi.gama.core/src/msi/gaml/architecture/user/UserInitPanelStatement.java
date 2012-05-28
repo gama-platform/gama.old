@@ -8,9 +8,9 @@ import msi.gaml.descriptions.IDescription;
 
 @symbol(name = IKeyword.USER_INIT, kind = ISymbolKind.BEHAVIOR)
 @inside(kinds = { ISymbolKind.SPECIES })
-public class UserInitPanel extends UserPanel {
+public class UserInitPanelStatement extends UserPanelStatement {
 
-	public UserInitPanel(final IDescription desc) {
+	public UserInitPanelStatement(final IDescription desc) {
 		super(desc);
 	}
 

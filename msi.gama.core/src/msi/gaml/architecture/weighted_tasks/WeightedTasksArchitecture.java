@@ -8,7 +8,7 @@ import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
-import msi.gaml.commands.ICommand;
+import msi.gaml.statements.IStatement;
 import msi.gama.precompiler.GamlAnnotations.skill;
 
 /**
@@ -27,21 +27,21 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	public static final String WT = "weighted_tasks";
-	List<WeightedTaskCommand> tasks = new ArrayList();
+	List<WeightedTaskStatement> tasks = new ArrayList();
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		// We let inits, reflexes run
 		super.executeOn(scope);
-		WeightedTaskCommand active = chooseTask(scope);
+		WeightedTaskStatement active = chooseTask(scope);
 		if ( active != null ) { return active.executeOn(scope); }
 		return null;
 	}
 
-	protected WeightedTaskCommand chooseTask(final IScope scope) throws GamaRuntimeException {
+	protected WeightedTaskStatement chooseTask(final IScope scope) throws GamaRuntimeException {
 		Double max = Double.MIN_VALUE;
-		WeightedTaskCommand active = null;
-		for ( WeightedTaskCommand c : tasks ) {
+		WeightedTaskStatement active = null;
+		for ( WeightedTaskStatement c : tasks ) {
 			Double weight = c.computeWeight(scope);
 			if ( weight > max ) {
 				active = c;
@@ -52,9 +52,9 @@ public class WeightedTasksArchitecture extends ReflexArchitecture {
 	}
 
 	@Override
-	public void addBehavior(final ICommand c) {
-		if ( c instanceof WeightedTaskCommand ) {
-			tasks.add((WeightedTaskCommand) c);
+	public void addBehavior(final IStatement c) {
+		if ( c instanceof WeightedTaskStatement ) {
+			tasks.add((WeightedTaskStatement) c);
 		} else {
 			super.addBehavior(c);
 		}

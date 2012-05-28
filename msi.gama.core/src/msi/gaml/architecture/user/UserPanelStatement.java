@@ -10,36 +10,36 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.finite_state_machine.FsmStateCommand;
-import msi.gaml.commands.*;
+import msi.gaml.architecture.finite_state_machine.FsmStateStatement;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.USER_PANEL, kind = ISymbolKind.BEHAVIOR)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = FsmStateCommand.INITIAL, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, omissible = IKeyword.NAME)
-public class UserPanel extends FsmStateCommand {
+public class UserPanelStatement extends FsmStateStatement {
 
-	List<ICommand> userCommands = new ArrayList();
+	List<IStatement> userCommands = new ArrayList();
 
-	public UserPanel(final IDescription desc) {
+	public UserPanelStatement(final IDescription desc) {
 		super(desc);
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol c : commands ) {
-			if ( c instanceof UserCommandCommand ) {
-				userCommands.add((ICommand) c);
+	public void setChildren(final List<? extends ISymbol> children) {
+		for ( ISymbol c : children ) {
+			if ( c instanceof UserCommandStatement ) {
+				userCommands.add((IStatement) c);
 			}
 		}
-		commands.removeAll(userCommands);
-		super.setChildren(commands);
+		children.removeAll(userCommands);
+		super.setChildren(children);
 	}
 
-	public List<ICommand> getUserCommands() {
+	public List<IStatement> getUserCommands() {
 		return userCommands;
 	}
 

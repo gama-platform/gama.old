@@ -29,12 +29,12 @@ import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.commands.IAspect;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IAspect;
 import msi.gaml.variables.IVariable;
 
 /**

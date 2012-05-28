@@ -20,9 +20,9 @@ package msi.gaml.architecture;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.ICommand;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 12 sept. 2010
@@ -30,7 +30,7 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-public interface IArchitecture extends ISkill, ICommand {
+public interface IArchitecture extends ISkill, IStatement {
 
 	public abstract void init(IScope scope) throws GamaRuntimeException;
 

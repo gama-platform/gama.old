@@ -30,8 +30,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
-import msi.gaml.commands.ICommand;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -45,17 +45,15 @@ import msi.gaml.types.IType;
 @skill(IKeyword.FSM)
 public class FsmArchitecture extends ReflexArchitecture {
 
-	protected Map<String, FsmStateCommand> states = new HashMap();
+	protected Map<String, FsmStateStatement> states = new HashMap();
 	protected GamaList<String> stateNames;
-	protected FsmStateCommand initialState;
-
-	// private FsmStateCommand finalState;
+	protected FsmStateStatement initialState;
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {
 		super.verifyBehaviors(context);
 		// hasBehavior = hasBehavior || states.size() > 0;
-		for ( final FsmStateCommand s : states.values() ) {
+		for ( final FsmStateStatement s : states.values() ) {
 			if ( s.isInitial() ) {
 				initialState = s;
 			}
@@ -78,12 +76,13 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	@getter(var = IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
-		FsmStateCommand currentState = (FsmStateCommand) agent.getAttribute(IKeyword.CURRENT_STATE);
+		FsmStateStatement currentState =
+			(FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == null ) { return null; }
 		return currentState.getName();
 	}
 
-	public FsmStateCommand getState(final String stateName) {
+	public FsmStateStatement getState(final String stateName) {
 		return states.get(stateName);
 	}
 
@@ -95,9 +94,9 @@ public class FsmArchitecture extends ReflexArchitecture {
 	}
 
 	@Override
-	public void addBehavior(final ICommand c) {
-		if ( c instanceof FsmStateCommand ) {
-			FsmStateCommand state = (FsmStateCommand) c;
+	public void addBehavior(final IStatement c) {
+		if ( c instanceof FsmStateStatement ) {
+			FsmStateStatement state = (FsmStateStatement) c;
 			states.put(state.getName(), state);
 		} else {
 			super.addBehavior(c);
@@ -113,13 +112,15 @@ public class FsmArchitecture extends ReflexArchitecture {
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
 		IGamlAgent agent = getCurrentAgent(scope);
 		if ( agent.dead() ) { return null; }
-		FsmStateCommand currentState = (FsmStateCommand) agent.getAttribute(IKeyword.CURRENT_STATE);
+		FsmStateStatement currentState =
+			(FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == null ) { return null; }
 		return currentState.executeOn(scope);
 	}
 
-	public void setCurrentState(final IAgent agent, final FsmStateCommand state) {
-		FsmStateCommand currentState = (FsmStateCommand) agent.getAttribute(IKeyword.CURRENT_STATE);
+	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
+		FsmStateStatement currentState =
+			(FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == state ) { return; }
 		if ( currentState != null && currentState.hasExitActions() ) {
 			agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);

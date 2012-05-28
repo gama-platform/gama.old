@@ -26,21 +26,21 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.REFLEX, IKeyword.INIT }, kind = ISymbolKind.BEHAVIOR)
 @inside(kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
-public class ReflexCommand extends AbstractCommandSequence {
+public class ReflexStatement extends AbstractStatementSequence {
 
 	private final IExpression when;
 
-	public ReflexCommand(final IDescription desc) {
+	public ReflexStatement(final IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);
 		if ( hasFacet(IKeyword.NAME) ) {

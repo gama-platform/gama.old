@@ -19,8 +19,8 @@
 package msi.gama.common.interfaces;
 
 import java.util.List;
-import msi.gaml.commands.Facets;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.Facets;
 
 /**
  * Written by drogoul

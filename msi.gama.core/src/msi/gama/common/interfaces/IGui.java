@@ -24,7 +24,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.user.UserPanel;
+import msi.gaml.architecture.user.UserPanelStatement;
 
 /**
  * The class IGui.
@@ -114,7 +114,7 @@ public interface IGui {
 
 	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues);
 
-	void openUserControlPanel(IScope scope, UserPanel panel);
+	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
 	void closeDialogs();
 

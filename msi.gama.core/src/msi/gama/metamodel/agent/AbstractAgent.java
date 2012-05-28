@@ -495,7 +495,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public void setMembers(final IList<IAgent> newMembers) {
 		// Directly change "members" not supported
-		// Use "capture" and "release" commands to change it.
+		// Use "capture" and "release" statements to change it.
 	}
 
 	@Override
@@ -602,6 +602,6 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public void setHost(final IAgent macroAgent) {
 		// not supported
-		// use "capture" or "release" command to change macro-agent instead
+		// use "capture" or "release" statement to change macro-agent instead
 	}
 }

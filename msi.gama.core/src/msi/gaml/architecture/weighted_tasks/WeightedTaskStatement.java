@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gaml.architecture.finite_state_machine;
+package msi.gaml.architecture.weighted_tasks;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
@@ -26,37 +26,40 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.commands.AbstractCommandSequence;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
-@symbol(name = FsmTransitionCommand.TRANSITION, kind = ISymbolKind.SEQUENCE_COMMAND)
-@inside(symbols = { FsmStateCommand.STATE })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
-	@facet(name = FsmTransitionCommand.TO, type = IType.ID, optional = false) }, omissible = IKeyword.WHEN)
-public class FsmTransitionCommand extends AbstractCommandSequence {
+/**
+ * The Class WeightedTaskCommand. A simple definition of a task (set of commands) with a weight that
+ * can be computed dynamically. Depending on the architecture in which the tasks are defined, this
+ * weight can be used to choose the active task, or to define the order in which they are executed
+ * each step.
+ * 
+ * @author drogoul
+ */
 
-	// TODO En faire une sous classe de if ?
+@symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR)
+@inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES })
+@facets(value = {
+	@facet(name = WeightedTaskStatement.WEIGHT, type = IType.FLOAT_STR, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, omissible = IKeyword.NAME)
+public class WeightedTaskStatement extends AbstractStatementSequence {
 
-	final IExpression when;
+	protected static final String WEIGHT = "weight";
+	protected static final String TASK = "task";
+	protected IExpression weight;
 
-	/** Constant field TRANSITION. */
-	public static final String TRANSITION = "transition";
-
-	protected static final String TO = "to";
-
-	public FsmTransitionCommand(final IDescription desc) {
+	public WeightedTaskStatement(final IDescription desc) {
 		super(desc);
-		String stateName = getLiteral(TO);
-		setName(stateName);
-		when = getFacet(IKeyword.WHEN);
+		setName(getLiteral(IKeyword.NAME));
+		weight = getFacet(WEIGHT);
 	}
 
-	public boolean evaluatesTrueOn(final IScope scope) throws GamaRuntimeException {
-		return Cast.asBool(scope, when.value(scope));
-		// Normally, the agent is still in the "currentState" scope.
+	public Double computeWeight(final IScope scope) throws GamaRuntimeException {
+		return Cast.asFloat(scope, weight.value(scope));
 	}
 
 }

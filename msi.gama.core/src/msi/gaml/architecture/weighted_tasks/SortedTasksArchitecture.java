@@ -22,11 +22,11 @@ import msi.gaml.compilation.ISymbol;
 public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 
 	public static final String ST = "sorted_tasks";
-	final Map<WeightedTaskCommand, Double> weights = new HashMap();
-	Comparator<WeightedTaskCommand> sortBlock = new Comparator<WeightedTaskCommand>() {
+	final Map<WeightedTaskStatement, Double> weights = new HashMap();
+	Comparator<WeightedTaskStatement> sortBlock = new Comparator<WeightedTaskStatement>() {
 
 		@Override
-		public int compare(final WeightedTaskCommand o1, final WeightedTaskCommand o2) {
+		public int compare(final WeightedTaskStatement o1, final WeightedTaskStatement o2) {
 			return weights.get(o1).compareTo(weights.get(o2));
 		}
 
@@ -37,7 +37,7 @@ public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 		// we let a chance to the reflexes, etc. to execute
 		super.executeOn(scope);
 		// We first compute the weights and cache them in the "weights" map
-		for ( Map.Entry<WeightedTaskCommand, Double> entry : weights.entrySet() ) {
+		for ( Map.Entry<WeightedTaskStatement, Double> entry : weights.entrySet() ) {
 			entry.setValue(entry.getKey().computeWeight(scope));
 		}
 		// We then sort the tasks by their respective weight (from the smallest to the biggest)
@@ -51,14 +51,14 @@ public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 	}
 
 	@Override
-	protected WeightedTaskCommand chooseTask(final IScope scope) throws GamaRuntimeException {
+	protected WeightedTaskStatement chooseTask(final IScope scope) throws GamaRuntimeException {
 		return null;
 	}
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 		super.setChildren(commands);
-		for ( WeightedTaskCommand c : tasks ) {
+		for ( WeightedTaskStatement c : tasks ) {
 			weights.put(c, 0d);
 		}
 	}
