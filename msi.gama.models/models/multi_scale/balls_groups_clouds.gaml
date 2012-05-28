@@ -340,7 +340,7 @@ entities {
 				arg with_speed type: float;
 				
 				loop m over: members {
-					ask m as: ball_in_cloud {
+					ask m as ball_in_cloud {
 						do move with: [ with_heading :: with_heading, with_speed :: with_speed ];
 					}
 				}
@@ -372,7 +372,7 @@ entities {
 				let direction_target type: float value: self towards(target_group);
 				
 				loop m over: members {
-					ask m as: group_delegation {
+					ask m as group_delegation {
 						do move with: [ with_heading :: direction_target, with_speed :: cloud_speed ];
 					}				
 				}
@@ -400,6 +400,7 @@ entities {
 					ask (gds at 0) as: group_delegation {
 						migrate ball_in_group target: ball_in_cloud;
 					}
+					
 				}
 			}
 		}
@@ -430,8 +431,8 @@ entities {
 		aspect default {
 			draw text: 'Number of groups : ' + (string (length (world.agents of_generic_species group))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('blue') size: 40 style: bold ;
 		}
-	}
-
+	}		
+	
 	species cloud_agents_viewer  { 
 		aspect default {
 			draw text: 'Number of clouds : ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('green') size: 40 style: bold;
@@ -445,7 +446,6 @@ experiment default_expr type: gui {
 	output {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
-			
 			species group aspect: default transparency: 0.5 {
 				species ball_in_group;
 			}
@@ -476,5 +476,4 @@ experiment default_expr type: gui {
 		monitor length_groups value: length (list (group));
 		monitor length_clouds value: length(list(cloud));
 	}
-
 }
