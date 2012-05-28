@@ -4,11 +4,11 @@
 global {
 	int number_of_agents parameter: 'true' min: 1 max: 5000 <- 1000;
 	int width_and_height_of_environment parameter: 'true' min: 10 max: 2000 <- 400 ;
-	float range_of_agents type: float parameter: 'true' min: 1.0 max: 10.0 <- 4.0;
-	float speed_of_agents type: float parameter: 'true' min: 0.1 max: 10.0 <- 4.0;
-	bool grow_leader type: bool parameter: 'true' <- true ;
-	bool torus type: bool parameter: 'true' <- true ;
-	bool multiple_agents_per_place type: bool parameter: 'true' <- false ;
+	float range_of_agents  parameter: 'true' min: 1.0 max: 10.0 <- 4.0;
+	float speed_of_agents  parameter: 'true' min: 0.1 max: 10.0 <- 4.0;
+	bool grow_leader  parameter: 'true' <- true ;
+	bool torus  parameter: 'true' <- true ;
+	bool multiple_agents_per_place  parameter: 'true' <- false ;
 	init { 
 		create cells number: number_of_agents ;
 	}
