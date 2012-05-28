@@ -182,7 +182,7 @@ entities {
 		}
 	}
 
-	species pedestrian skills: moving {
+	species pedestrian skills: [moving] {
 		panel current_panel;
 		
 		point previous_location;
@@ -270,7 +270,7 @@ entities {
 				let lines1 type: list of: geometry value: (inside_road_geom split_at location);
 				set the_road.extremity1 value: lines1  first_with (geometry(each).points contains point1);
 				set inside_road_geom value: lines1 first_with (!(geometry(each).points contains point1));
-				set location value: point2;
+				set location value: point2; 
 				do action: goto {
 					arg target value: point1;
 					arg on value: road_graph_topology; 
