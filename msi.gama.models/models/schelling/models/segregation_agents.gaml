@@ -19,7 +19,7 @@ global {
 }
 environment width: dimensions height: dimensions {  
 	grid space width: dimensions height: dimensions neighbours: 8 torus: false {
-		const color type: rgb value: black;
+		const color type: rgb <- black;
 	}
 } 
 entities {
