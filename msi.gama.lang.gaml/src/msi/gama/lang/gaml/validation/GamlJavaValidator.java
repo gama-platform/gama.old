@@ -18,6 +18,7 @@
  */
 package msi.gama.lang.gaml.validation;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gaml.compilation.GamlCompilationError;
@@ -28,14 +29,18 @@ import org.eclipse.xtext.validation.*;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
+	static boolean FORCE_VALIDATION = true;
+
 	@Check(CheckType.FAST)
 	public void validate(final Model model) {
 		try {
-			// GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
+			GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
 			ModelDescription result = null;
-			if ( r.getErrors().isEmpty() ) {
+			if ( r.getErrors().isEmpty() || FORCE_VALIDATION ) {
 				result = r.doValidate();
+			} else {
+				GuiUtils.debug("Syntactic errors detected. No validation");
 			}
 			boolean hasError = result == null || !result.getErrors().isEmpty();
 			if ( result != null ) {
@@ -46,7 +51,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 					for ( GamlCompilationError error : result.getErrors() ) {
 						add(error);
 					}
-					result.dispose();
+					// Commenting the disposal to see if it plays any role in
+					// garbage collecting -- and to enable content assist
+					// result.dispose();
 					r.setModelDescription(true, null);
 				} else {
 					r.setModelDescription(false, result);
@@ -60,7 +67,14 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public GamlResource getCurrentRessource() {
-		return (GamlResource) getCurrentObject().eResource();
+		EObject e;
+		try {
+			e = getCurrentObject();
+		} catch (NullPointerException ex) {
+			return null;
+		}
+		if ( e == null ) { return null; }
+		return (GamlResource) e.eResource();
 	}
 
 	public void add(final GamlCompilationError e) {

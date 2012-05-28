@@ -271,7 +271,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 	}
 
 	private IExpression compileFieldExpr(final IExpression target, final String var) {
-		IType type = target.type();
+		IType type = target.getType();
 		if ( StringBasedExpressionCompiler.isDottedExpr(var) ) {
 
 			final String[] ss = var.split("\\.");
@@ -344,7 +344,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 				end++;
 			}
 			final IExpression item = compileExpr(words.subList(begin, end));
-			allPairs = allPairs && item.type().id() == IType.PAIR;
+			allPairs = allPairs && item.getType().id() == IType.PAIR;
 			list.add(item);
 			begin = end + 1;
 			end = begin;
@@ -379,7 +379,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 			words.set(begin, StringUtils.toGamlString(arg));
 			List<String> pair = words.subList(begin, end);
 			final IExpression item = compileExpr(pair);
-			if ( item.type().id() != IType.PAIR ) {
+			if ( item.getType().id() != IType.PAIR ) {
 				context.flagError("Arguments must be provided as pairs arg::value; " +
 					item.toGaml() + " is not a pair");
 				return null;

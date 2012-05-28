@@ -200,8 +200,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 		@Override
 		public IExpression caseMemberRef(final MemberRef object) {
-			return compileFieldExpr(object.getLeft(), EGaml.getKeyOf(object.getRight()),
-				object.getRight());
+			return compileFieldExpr(object.getLeft(), object.getRight());
 		}
 
 		@Override
@@ -359,7 +358,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			if ( desc != null ) {
 				// We are in a remote context, so 'my' refers to the calling agent
 				IExpression myself = desc.getVarExpr(MYSELF);
-				IDescription species = getSpeciesContext(myself.type().getSpeciesName());
+				IDescription species = getSpeciesContext(myself.getType().getSpeciesName());
 				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
 				return factory.createBinaryExpr(_DOT, myself, var, desc);
 			}
@@ -428,12 +427,12 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 	}
 
 	// KEEP
-	private IExpression binary(final String op, final Expression e1, final Expression e2) {
+	private IExpression binary(final String op, final Expression e1, final Expression right) {
 		// if the expression is " var of agents ", we must compile it apart
-		if ( OF.equals(op) ) { return compileFieldExpr(e2, EGaml.getKeyOf(e1), e1); }
+		if ( OF.equals(op) ) { return compileFieldExpr(right, e1); }
 		// we can now safely compile the left-hand expression
 		IExpression left = compile(e1);
-		return binary(op, left, e1, e2);
+		return binary(op, left, e1, right);
 	}
 
 	private SpeciesDescription getSpeciesContext(final String e) {
@@ -449,17 +448,17 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 	}
 
 	// KEEP
-	private IExpression compileFieldExpr(final Expression e1, final String var,
-		final Expression fieldExpr) {
-		IExpression target = compile(e1);
+	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
+		String var = EGaml.getKeyOf(fieldExpr);
+		IExpression target = compile(leftExpr);
 		if ( target == null ) { return null; }
-		IType type = target.type();
+		IType type = target.getType();
 		SpeciesDescription contextDesc = getSpeciesContext(type.getSpeciesName());
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) {
 				context.flagError("Field " + var + " unknown for " + target.toGaml() + " of type " +
-					type, IGamlIssue.UNKNOWN_FIELD, e1, var, type.toString());
+					type, IGamlIssue.UNKNOWN_FIELD, leftExpr, var, type.toString());
 				return null;
 			}
 			expr = expr.copyWith(target);
@@ -469,7 +468,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		IVarExpression expr = (IVarExpression) contextDesc.getVarExpr(var);
 		if ( expr == null ) {
 			context.flagError("Unknown variable :" + var + " in " + contextDesc.getName(),
-				IGamlIssue.UNKNOWN_VAR, e1, var, contextDesc.getName());
+				IGamlIssue.UNKNOWN_VAR, leftExpr, var, contextDesc.getName());
 		}
 		EGaml.setGamlDescription(fieldExpr, expr);
 		return factory.createBinaryExpr(_DOT, target, expr, context);

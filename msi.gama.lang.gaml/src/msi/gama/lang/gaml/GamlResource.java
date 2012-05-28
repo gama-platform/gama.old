@@ -32,8 +32,6 @@ public class GamlResource extends LazyLinkingResource {
 	@Inject
 	GamlJavaValidator validator;
 
-	// ModelDescription lastDescription;
-
 	public GamlBuilder getBuilder() {
 		if ( builder == null ) {
 			builder = new GamlBuilder(this);
@@ -47,13 +45,11 @@ public class GamlResource extends LazyLinkingResource {
 			Set<String> exp = model == null ? Collections.EMPTY_SET : model.getExperimentNames();
 			listener.validationEnded(exp, withErrors);
 		}
-		// if ( model != null ) {
-		// model.dispose();
+		//
 		// if ( lastDescription != null ) {
 		// lastDescription.dispose();
 		// }
 		// lastDescription = model;
-		// }
 	}
 
 	public IModel doBuild() {
@@ -107,39 +103,5 @@ public class GamlResource extends LazyLinkingResource {
 	public void add(final GamlCompilationError e) {
 		validator.add(e);
 	}
-
-	// @Override
-	// public IParseResult getParseResult() {
-	// return super.getParseResult();
-	// }
-	//
-	// @Override
-	// public void reparse(final String newContent) throws IOException {
-	// GuiUtils.debug("Reparsing " + this);
-	// super.reparse(newContent);
-	// }
-	//
-	// @Override
-	// protected void updateInternalState(final IParseResult newParseResult) {
-	// GuiUtils.debug("Updating the internal state of " + this);
-	// super.updateInternalState(newParseResult);
-	// }
-	//
-	// @Override
-	// public void doSave(final OutputStream outputStream, final Map<?, ?> options) throws
-	// IOException {
-	// GuiUtils.debug("Saving " + this);
-	// super.doSave(outputStream, options);
-	// }
-	//
-	// @Override
-	// public boolean isValidationDisabled() {
-	// return super.isValidationDisabled();
-	// }
-	//
-	// @Override
-	// public void setValidationDisabled(final boolean validationDisabled) {
-	// super.setValidationDisabled(validationDisabled);
-	// }
 
 }
