@@ -46,9 +46,9 @@ public interface ISymbolKind {
 
 	public static final int MODEL = 1;
 
-	public static final int SINGLE_COMMAND = 2;
+	public static final int SINGLE_STATEMENT = 2;
 
-	public static final int SEQUENCE_COMMAND = 11;
+	public static final int SEQUENCE_STATEMENT = 11;
 
 	public static final int BEHAVIOR = 3;
 

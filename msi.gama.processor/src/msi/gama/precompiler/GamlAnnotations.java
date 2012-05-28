@@ -176,9 +176,9 @@ public final class GamlAnnotations {
 	public static @interface remote_context {
 
 		/**
-		 * Indicates that the context of this command is actually an hybrid context: although it
+		 * Indicates that the context of this statement is actually an hybrid context: although it
 		 * will be executed in a remote context, any temporary variables declared in the enclosing
-		 * scopes should be passed on as if the command was executed in the current context.
+		 * scopes should be passed on as if the statement was executed in the current context.
 		 */
 
 	}
@@ -306,7 +306,7 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface no_scope {
-		// Indicates that the command (usually a sequence) does not define its own scope.
+		// Indicates that the statement (usually a sequence) does not define its own scope.
 		// I.e. all the temporary variables defined in it are actually defined in the
 		// super-scope
 	}
@@ -452,18 +452,6 @@ public final class GamlAnnotations {
 		 * @return The inner type (in terms of GAML) returned by the getter.
 		 */
 		Class value();
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@Target(ElementType.TYPE)
-	public static @interface commands {
-
-		/**
-		 * @return The classes to register for new commands offered by a species.
-		 */
-		@SuppressWarnings("rawtypes")
-		Class[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
