@@ -98,7 +98,7 @@ entities {
 					if condition: (road_source_to_previous_location.perimeter < road_source_to_current_location.perimeter) { // agent moves towards extremity2
 						set skip_distance value: geometry( (macro_patch split_at cp.location) last_with (geometry(each).points contains cp.location) ).perimeter;
 						set cp.released_location value: last (macro_patch.points);
-						
+						 
 
 					}
 					else { // agent moves towards extremity2 
@@ -132,13 +132,13 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: 'black';
+			draw shape: geometry color: rgb('black');
 		}
 	}
 	
 	species insideRoad {
 		aspect default {
-			draw shape: geometry color: 'red';
+			draw shape: geometry color: rgb('red');
 		}
 	}
 	
@@ -150,7 +150,7 @@ entities {
 		var current_road type: road;
 		
 		aspect default {
-			draw shape: geometry color: 'green' ;
+			draw shape: geometry color: rgb('green') ;
 		}
 		
 		action choose_next_road type: road { 
@@ -189,7 +189,7 @@ entities {
 	}
 	
 	species dest {
-		var color type: rgb init: 'red';
+		var color type: rgb init: rgb('red');
 		aspect default {
 			draw shape: geometry color: color;
 		}
