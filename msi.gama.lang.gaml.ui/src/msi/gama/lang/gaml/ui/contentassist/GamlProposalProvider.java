@@ -18,20 +18,24 @@
  */
 package msi.gama.lang.gaml.ui.contentassist;
 
-import java.util.Set;
+import java.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.*;
+import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.*;
-import org.eclipse.xtext.util.Strings;
+import com.google.inject.Inject;
 
 /**
  * see
@@ -50,6 +54,12 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		"/icons/_type.png").createImage();
 	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
 		"/icons/_var.png").createImage();
+
+	@Inject
+	GamlLabelProvider provider;
+
+	@Inject
+	private IImageHelper imageHelper;
 
 	@Override
 	public void completeMemberRef_Op(final EObject model, final Assignment assignment,
@@ -82,7 +92,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void completeClassicStatement_Facets(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ClassicStatement facets");
 	}
 
 	@Override
@@ -130,55 +140,68 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void completeGamlFacetRef_Ref(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		completeFacetExpr_Key(model, assignment, context, acceptor);
 	}
 
 	@Override
 	public void completeFunctionGamlFacetRef_Ref(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FunctionGamlFacetRef ref");
 	}
 
 	@Override
 	public void completeFacetExpr_Key(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FacetExpr_Key");
+		if ( model instanceof Statement ) {
+			IGamlDescription gd = EGaml.getGamlDescription(model);
+			if ( gd instanceof IDescription ) {
+				IDescription desc = (IDescription) gd;
+				Map<String, FacetMetaDescription> facets = desc.getMeta().getPossibleFacets();
+				for ( String s : facets.keySet() ) {
+					acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
+						(facets.get(s).optional ? "optional" : "required") + ")", facetImage,
+						context));
+				}
+			}
+		}
+		GuiUtils.debug("Complete facetExpr key");
 	}
 
 	@Override
 	public void completeFacetExpr_Expr(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete facetExpr expr");
 	}
 
 	@Override
 	public void completeNameFacetExpr_Name(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete facetExpr name");
 	}
 
 	@Override
 	public void completeReturnsFacetExpr_Name(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ReturnsFacetExpr name");
 	}
 
 	@Override
 	public void completeActionFacetExpr_Name(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ActionFacetExpr name");
 	}
 
 	@Override
 	public void completeFunctionFacetExpr_Key(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FunctionFacetExpr key");
 	}
 
 	@Override
 	public void completeFunctionFacetExpr_Expr(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FunctionFacetExpr expr");
 	}
 
 	@Override
@@ -400,13 +423,13 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_Statement(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete Statement");
 	}
 
 	@Override
 	public void complete_ClassicStatement(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ClassicStatement");
 	}
 
 	@Override
@@ -418,13 +441,13 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_Definition(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete Definition");
 	}
 
 	@Override
 	public void complete_FacetRef(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FacetRef");
 	}
 
 	@Override
@@ -436,43 +459,43 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_FunctionGamlFacetRef(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FunctionGamlFacetRef");
 	}
 
 	@Override
 	public void complete_FacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FacetExpr");
 	}
 
 	@Override
 	public void complete_DefinitionFacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete DefinitionFacetExpr");
 	}
 
 	@Override
 	public void complete_NameFacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete NameFacetExpr");
 	}
 
 	@Override
 	public void complete_ReturnsFacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ReturnsFacetExpr");
 	}
 
 	@Override
 	public void complete_ActionFacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete ActionFacetExpr");
 	}
 
 	@Override
 	public void complete_FunctionFacetExpr(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Complete FunctionFacetExpr");
 	}
 
 	@Override
@@ -568,13 +591,13 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_PrimaryExpression(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Completing PrimaryExpression");
 	}
 
 	@Override
 	public void complete_AbstractRef(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Completing AbstractRef");
 	}
 
 	@Override
@@ -592,7 +615,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_VariableRef(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Completing VariableRef");
 	}
 
 	@Override
@@ -658,31 +681,19 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	public void complete_WS(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
+		GuiUtils.debug("Completing WS");
 	}
 
 	@Override
 	public void complete_ANY_OTHER(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeAssignment(final Assignment assignment,
-		final ContentAssistContext contentAssistContext, final ICompletionProposalAcceptor acceptor) {
-		ParserRule parserRule = GrammarUtil.containingParserRule(assignment);
-		String methodName =
-			"complete" + Strings.toFirstUpper(parserRule.getName()) + "_" +
-				Strings.toFirstUpper(assignment.getFeature());
-		// GuiUtils.debug("Invoking method " + methodName);
-		invokeMethod(methodName, acceptor, contentAssistContext.getCurrentModel(), assignment,
-			contentAssistContext);
-
+		GuiUtils.debug("Completing OTHER");
 	}
 
 	@Override
 	public void completeMemberRef_Right(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+
 		if ( !(model instanceof MemberRef) ) { return; }
 		Expression left = ((MemberRef) model).getLeft();
 		EObject obj = model;
@@ -692,19 +703,17 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			obj = obj.eContainer();
 			desc = EGaml.getGamlDescription(obj, IDescription.class);
 		}
-		// if ( desc == null ) {
-		// GuiUtils.debug("No upper description found");
-		// }
 		if ( desc != null ) {
-			// GuiUtils.debug("Compiling " + EGaml.toString(left) +
-			// " to get the type of the left operand");
 			IExpressionDescription ed = new EcoreBasedExpressionDescription(left);
 			IExpression expression = GAMA.getExpressionFactory().createExpr(ed, desc);
 			if ( expression != null ) {
-				IType type = expression.type();
-				Set<String> strings = type.getFieldGetters();
-				for ( String s : strings ) {
-					acceptor.accept(this.createCompletionProposal(s, context));
+				IType type = expression.getType();
+				Map<String, ? extends IGamlDescription> descs = type.getFieldDescriptions();
+				for ( String s : descs.keySet() ) {
+					IGamlDescription d = descs.get(s);
+					String ss = provider.removeTags(d.getTitle()) + " (type: " + d.getType() + ")";
+					acceptor.accept(createCompletionProposal(s, ss,
+						imageHelper.getImage(provider.typeImage(d.getType().toString())), context));
 				}
 			}
 		}

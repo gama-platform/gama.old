@@ -4,6 +4,7 @@
  */
 package msi.gama.lang.gaml.ui.contentassist;
 
+import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.xtext.resource.XtextResource;
@@ -31,6 +32,8 @@ public class GamlProposalComputer extends CompletionProposalComputer {
 	@Override
 	public ICompletionProposal[] exec(final XtextResource resource) throws Exception {
 		// Addition of the validation before doing anything on the resource
+		// ((GamlResource) resource).doValidate();
+		GuiUtils.debug("ProposalComputer begins validation of " + resource);
 		resource.getResourceServiceProvider().getResourceValidator()
 			.validate(resource, CheckMode.FAST_ONLY, null);
 		return super.exec(resource);

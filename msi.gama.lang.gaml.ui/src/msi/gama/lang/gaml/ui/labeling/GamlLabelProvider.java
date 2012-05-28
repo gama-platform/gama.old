@@ -46,7 +46,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 
 	private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
 
-	public static String removeTags(final String string) {
+	public String removeTags(final String string) {
 		if ( string == null || string.length() == 0 ) { return string; }
 
 		Matcher m = REMOVE_TAGS.matcher(string);
@@ -127,17 +127,21 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	// }
 
 	// Statement : keyword.value
-	String image(final/* Sub */Statement ele) {
+	public String image(final/* Sub */Statement ele) {
 		String kw = EGaml.getKeyOf(ele);
 		if ( kw.equals("var") || kw.equals("const") ) {
 			for ( FacetExpr f : ele.getFacets() ) {
 				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
 					VariableRef type = (VariableRef) f.getExpr();
-					return "_" + EGaml.getKeyOf(type) + ".png";
+					return typeImage(EGaml.getKeyOf(type));
 				}
 			}
 		}
 		return "_" + kw + ".png";
+	}
+
+	public String typeImage(final String string) {
+		return "_" + string + ".png";
 	}
 
 	// String text(final Evaluation ele) {
