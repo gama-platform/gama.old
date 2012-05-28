@@ -312,9 +312,6 @@ public final class GamlAnnotations {
 	}
 
 	/**
-	 * The Interface operator.
-	 */
-	/**
 	 * Written by drogoul Modified on 9 aožt 2010
 	 * 
 	 * @todo Description
