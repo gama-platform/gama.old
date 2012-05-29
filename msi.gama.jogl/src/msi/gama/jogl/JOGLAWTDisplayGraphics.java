@@ -825,7 +825,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public void newLayer(double elevation) {
-		currentZvalue=(float) (currentZvalue+(maxEnvDim*elevation));
+		currentZvalue=(float) (maxEnvDim*elevation);
 	}
 
 }
