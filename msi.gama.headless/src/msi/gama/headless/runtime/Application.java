@@ -14,7 +14,7 @@ import msi.gama.headless.core.*;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.kernel.experiment.ParametersSet;
-import msi.gama.outputs.LayerDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.OutputManager;
 import msi.gama.runtime.GAMA;

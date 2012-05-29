@@ -13,7 +13,7 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.gui.displays.AWTDisplayGraphics;
+import msi.gama.gui.displays.awt.AWTDisplayGraphics;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;

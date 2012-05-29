@@ -14,7 +14,7 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.IHeadLessExperiment;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.outputs.IOutput;
-import msi.gama.outputs.LayerDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.OutputManager;
 import msi.gama.runtime.GAMA;
@@ -64,9 +64,9 @@ public class GamaSimulator implements ISimulator {
 		if(output instanceof MonitorOutput)
 			return ((MonitorOutput)output).getLastValue();
 		else
-			if(output instanceof LayerDisplayOutput)
+			if(output instanceof LayeredDisplayOutput)
 			{
-				BufferedImage buf= ((LayerDisplayOutput)output).getImage();
+				BufferedImage buf= ((LayeredDisplayOutput)output).getImage();
 				return writeImageInFile(buf,name);
 			}
 		return null;
@@ -88,7 +88,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public DataType getVariableTypeWithName(String name) {
 		IOutput output = ((OutputManager)GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
-		if(output instanceof LayerDisplayOutput)
+		if(output instanceof LayeredDisplayOutput)
     		return DataType.DISPLAY2D;
 		if(!(output instanceof MonitorOutput))
 			return DataType.UNDEFINED;

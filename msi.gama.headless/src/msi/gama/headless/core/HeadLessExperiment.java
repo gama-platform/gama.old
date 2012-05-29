@@ -1,78 +1,49 @@
 package msi.gama.headless.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.headless.common.DataType;
-import msi.gama.headless.common.ISimulator;
-import msi.gama.kernel.experiment.AbstractExperiment;
-import msi.gama.kernel.experiment.ExperimentParameter;
-import msi.gama.kernel.experiment.IParameter;
-import msi.gama.kernel.experiment.ParametersSet;
-import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.GamlSimulation;
-import msi.gama.kernel.simulation.IScheduler;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
-import msi.gaml.variables.IVariable;
 
-
-
-@symbol(name = {  IKeyword.HEADLESS_UI }, kind = ISymbolKind.EXPERIMENT)
-@with_sequence
+@symbol(name = { IKeyword.HEADLESS_UI }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.HEADLESS_UI }, optional = false) }, omissible = IKeyword.NAME)
-@inside(symbols=IKeyword.MODEL)
+@inside(symbols = IKeyword.MODEL)
 public class HeadLessExperiment extends AbstractExperiment implements IHeadLessExperiment {
 
 	protected final List<IParameter> regularParameters;
 
-	
-	
-	public HeadLessExperiment(IDescription description) {
+	public HeadLessExperiment(final IDescription description) {
 		super(description);
 		regularParameters = new ArrayList();
 	}
 
-
-	private ParametersSet parameters = new ParametersSet();
+	private final ParametersSet parameters = new ParametersSet();
 	private double seed;
-	
 
 	@Override
-	public void setSeed(double seed) {
-		this.seed=seed;
+	public void setSeed(final double seed) {
+		this.seed = seed;
 	}
 
-
 	@Override
-	public void start(int nbStep) {
-		for(int i=0; i<nbStep;i++)
+	public void start(final int nbStep) {
+		for ( int i = 0; i < nbStep; i++ ) {
 			this.stepExperiment();
-			
-		
-	}
+		}
 
+	}
 
 	@Override
 	public IList<IParameter> getParametersToDisplay() {
@@ -81,8 +52,7 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		result.addAll(systemParameters);
 		return result;
 	}
-	
-	
+
 	@Override
 	public void stop() {}
 
@@ -98,8 +68,7 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	public void stopExperiment() {}
 
 	@Override
-	public void startExperiment() throws GamaRuntimeException {	}
-
+	public void startExperiment() throws GamaRuntimeException {}
 
 	@Override
 	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
@@ -141,27 +110,23 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		return result;
 	}
 
-
-
 	@Override
 	public void stepExperiment() {
 		this.currentSimulation.step();
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
 	@Override
-	public void setParameterWithName(String name, Object value)
-			throws GamaRuntimeException, InterruptedException {
+	public void setParameterWithName(final String name, final Object value)
+		throws GamaRuntimeException, InterruptedException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
 	@Override
-	public Object getParameterWithName(String name)
-			throws GamaRuntimeException, InterruptedException {
+	public Object getParameterWithName(final String name) throws GamaRuntimeException,
+		InterruptedException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -169,18 +134,16 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	@Override
 	public void initialize(final ParametersSet sol, final Double seed) throws InterruptedException,
 		GamaRuntimeException {
-		
+
 		for ( IParameter p : targetedVars.values() ) {
 			String name = p.getName();
 			this.getParameter(name);
-			
+
 			if ( sol.containsKey(name) ) {
 				p.setValue(sol.get(name));
 			}
 		}
-	
-		
-		
+
 		// GUI.debug("Initializing the random agent");
 		getParameter(IKeyword.SEED).setValue(seed);
 		random = new RandomUtils(seed);
@@ -190,5 +153,5 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		currentSimulation.initialize(sol);
 		buildOutputs();
 	}
-	
+
 }
