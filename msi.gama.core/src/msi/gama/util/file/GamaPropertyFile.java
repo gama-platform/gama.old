@@ -39,7 +39,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isProperties(file.getName()) ) { throw new GamaRuntimeException(
+		if ( !GamaFileType.isProperties(getFile().getName()) ) { throw new GamaRuntimeException(
 			"The extension " + this.getExtension() + " is not recognized for properties files"); }
 	}
 
@@ -69,7 +69,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 		Properties p = new Properties();
 		GamaMap m = new GamaMap();
 		try {
-			p.load(new FileReader(file));
+			p.load(new FileReader(getFile()));
 		} catch (FileNotFoundException e) {
 			throw new GamaRuntimeException(e);
 		} catch (IOException e) {

@@ -156,4 +156,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		return null;
 	}
 
+	@Override
+	public void reinitIfNull() {}
+
 }

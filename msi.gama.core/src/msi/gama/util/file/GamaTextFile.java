@@ -40,7 +40,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isTextFile(file.getName()) ) { throw new GamaRuntimeException(
+		if ( !GamaFileType.isTextFile(getFile().getName()) ) { throw new GamaRuntimeException(
 			"The extension " + this.getExtension() + " is not recognized for text files"); }
 	}
 
@@ -88,7 +88,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	protected void fillBuffer() throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		try {
-			final BufferedReader in = new BufferedReader(new FileReader(file));
+			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
 			final GamaList<String> allLines = new GamaList();
 			String str;
 			str = in.readLine();

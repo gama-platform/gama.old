@@ -319,7 +319,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object getInitialValue() {
-		if ( initExpression != null && initExpression.isConst() ) {
+		if ( initExpression != null /* && initExpression.isConst() */) {
 			try {
 				return initExpression.value(GAMA.getDefaultScope());
 			} catch (GamaRuntimeException e) {
@@ -348,5 +348,8 @@ public class Variable extends Symbol implements IVariable {
 	public boolean allowsTooltip() {
 		return true;
 	}
+
+	@Override
+	public void reinitIfNull() {}
 
 }

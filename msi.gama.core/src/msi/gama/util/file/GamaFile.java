@@ -39,7 +39,9 @@ import msi.gaml.types.*;
 
 public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
-	protected final File file;
+	private File file;
+
+	protected final String path;
 
 	protected boolean writable = false;
 
@@ -47,26 +49,31 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		if ( pathName == null ) { throw new GamaRuntimeException("Attempt to create a null file"); }
-		file = new File(scope.getSimulationScope().getModel().getRelativeFilePath(pathName, false));
-		checkValidity();
-		setWritable(false);
+		path = pathName;
+		if ( scope != null ) {
+			// file = new File(scope.getSimulationScope().getModel().getRelativeFilePath(pathName,
+			// false));
+			checkValidity();
+			setWritable(false);
+		}
 	}
 
 	public GamaFile(final String pathName) throws GamaRuntimeException {
 		if ( pathName == null ) { throw new GamaRuntimeException("Attempt to create a null file"); }
-		file = new File(pathName);
+		path = pathName;
+		// file = new File(pathName);
 		checkValidity();
 	}
 
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( file.isDirectory() ) { throw new GamaRuntimeException(file.getAbsolutePath() +
-			" is a folder. Files can not overwrite folders"); }
+		if ( getFile().isDirectory() ) { throw new GamaRuntimeException(
+			getFile().getAbsolutePath() + " is a folder. Files can not overwrite folders"); }
 	}
 
 	@Override
 	public void setWritable(final boolean w) {
 		writable = w;
-		file.setWritable(w);
+		getFile().setWritable(w);
 	}
 
 	protected abstract void fillBuffer() throws GamaRuntimeException;
@@ -224,7 +231,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	@getter(var = IKeyword.EXISTS)
 	public Boolean exists() {
-		return file.exists();
+		return getFile().exists();
 	}
 
 	/*
@@ -248,7 +255,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	@getter(var = IKeyword.EXTENSION)
 	public String getExtension() {
-		String path = file.getPath();
+		String path = getFile().getPath();
 		int mid = path.lastIndexOf(".");
 		if ( mid == -1 ) { return ""; }
 		return path.substring(mid + 1, path.length());
@@ -257,21 +264,21 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	@getter(var = IKeyword.NAME)
 	public String getName() {
-		return file.getName();
+		return getFile().getName();
 	}
 
 	@Override
 	@getter(var = IKeyword.PATH)
 	public String getPath() {
-		return file.getPath();
+		return getFile().getPath();
 	}
 
 	@Override
 	@getter(var = IKeyword.CONTENTS)
 	public IContainer getContents() throws GamaRuntimeException {
-		if ( file == null ) { return null; }
-		if ( !file.exists() ) { throw new GamaRuntimeException("File " + file.getAbsolutePath() +
-			" does not exist"); }
+		if ( getFile() == null ) { return null; }
+		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " +
+			getFile().getAbsolutePath() + " does not exist"); }
 		fillBuffer();
 		return buffer;
 	}
@@ -300,7 +307,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	@getter(var = IKeyword.ISFOLDER)
 	public Boolean isFolder() {
-		return file.isDirectory();
+		return getFile().isDirectory();
 	}
 
 	@Override
@@ -311,13 +318,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	@getter(var = IKeyword.READABLE)
 	public Boolean isReadable() {
-		return file.canRead();
+		return getFile().canRead();
 	}
 
 	@Override
 	@getter(var = IKeyword.WRITABLE)
 	public Boolean isWritable() {
-		return file.canWrite();
+		return getFile().canWrite();
 	}
 
 	@Override
@@ -533,5 +540,14 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 			e.printStackTrace();
 		}
 		return buffer.any();
+	}
+
+	protected File getFile() {
+		if ( file == null ) {
+			if ( GAMA.getModel() != null ) {
+				file = new File(GAMA.getModel().getRelativeFilePath(path, false));
+			}
+		}
+		return file;
 	}
 }

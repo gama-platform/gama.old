@@ -80,4 +80,6 @@ public interface IParameter {
 		public boolean canBeExplored();
 
 	}
+
+	public abstract void reinitIfNull();
 }

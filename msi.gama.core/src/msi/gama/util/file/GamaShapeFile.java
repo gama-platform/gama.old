@@ -49,7 +49,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isShape(file.getName()) ) { throw new GamaRuntimeException(
+		if ( !GamaFileType.isShape(getFile().getName()) ) { throw new GamaRuntimeException(
 			"The extension " + this.getExtension() + " is not recognized for ESRI shapefiles"); }
 	}
 
@@ -89,7 +89,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	protected void fillBuffer() throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		FeatureIterator<SimpleFeature> features = GisUtils.getFeatureIterator(file);
+		FeatureIterator<SimpleFeature> features = GisUtils.getFeatureIterator(getFile());
 		if ( features == null ) { return; }
 		while (features.hasNext()) {
 			SimpleFeature feature = features.next();

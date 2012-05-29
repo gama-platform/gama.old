@@ -36,10 +36,10 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( !file.isDirectory() ) { throw new GamaRuntimeException(file.getAbsolutePath() +
+		if ( !getFile().isDirectory() ) { throw new GamaRuntimeException(getFile().getAbsolutePath() +
 			"is not a folder"); }
-		if ( !file.exists() ) { throw new GamaRuntimeException("The folder " +
-			file.getAbsolutePath() + " does not exist. Please use 'new_folder' instead"); }
+		if ( !getFile().exists() ) { throw new GamaRuntimeException("The folder " +
+			getFile().getAbsolutePath() + " does not exist. Please use 'new_folder' instead"); }
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	@Override
 	public String toGaml() {
-		return Files.FOLDER + "(" + file.getPath() + ")";
+		return Files.FOLDER + "(" + getFile().getPath() + ")";
 	}
 
 	/*
@@ -66,7 +66,7 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	@Override
 	protected void fillBuffer() throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
-		buffer = new GamaList(file.list());
+		buffer = new GamaList(getFile().list());
 	}
 
 	/*

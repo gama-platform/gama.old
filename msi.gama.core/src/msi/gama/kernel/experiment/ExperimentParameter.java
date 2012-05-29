@@ -203,6 +203,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setValue(UNDEFINED);
 	}
 
+	public void reinitIfNull() {
+		setValue(GAMA.getFrontmostSimulation().getWorld().getDirectVarValue(varName));
+	}
+
 	private Number drawRandomValue() {
 		double step = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if ( type.id() == IType.INT ) {

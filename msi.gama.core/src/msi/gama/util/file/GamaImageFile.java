@@ -49,7 +49,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isImageFile(file.getName()) ) { throw new GamaRuntimeException(
+		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw new GamaRuntimeException(
 			"The extension " + this.getExtension() + " is not recognized for image files"); }
 	}
 
@@ -84,7 +84,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	private IMatrix matrixValueFromImage(final ILocation preferredSize) throws GamaRuntimeException {
 		BufferedImage colorImage = null;
 		try {
-			colorImage = ImageIO.read(file);
+			colorImage = ImageIO.read(getFile());
 		} catch (final Exception e) {
 			throw new GamaRuntimeException(e);
 		}
@@ -115,7 +115,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		// TODO PreferredSize is not respected here
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new FileReader(file));
+			in = new BufferedReader(new FileReader(getFile()));
 			StringTokenizer tok;
 			String str = in.readLine();
 			if ( !str.equals("P2") ) { throw new UnsupportedEncodingException(
