@@ -29,7 +29,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.SAVE_BATCH, kind = ISymbolKind.BATCH_METHOD)
+@symbol(name = IKeyword.SAVE_BATCH, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = { @facet(name = IKeyword.TO, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),

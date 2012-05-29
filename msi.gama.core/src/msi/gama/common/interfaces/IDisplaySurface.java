@@ -52,11 +52,11 @@ public interface IDisplaySurface {
 
 	void zoomFit();
 
-	IDisplayManager getManager();
+	ILayerManager getManager();
 
 	void fireSelectionChanged(Object a);
 
-	void focusOn(IShape geometry, IDisplay display);
+	void focusOn(IShape geometry, ILayer display);
 
 	boolean canBeUpdated();
 

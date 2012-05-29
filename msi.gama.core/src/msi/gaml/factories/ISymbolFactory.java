@@ -33,7 +33,7 @@ import msi.gaml.descriptions.*;
 public interface ISymbolFactory {
 
 	public abstract IDescription createDescription(ISyntacticElement cur,
-		final IDescription superDescription, final List<IDescription> children);
+		final IDescription superDescription, final IChildrenProvider children);
 
 	public abstract IDescription createDescriptionRecursively(ISyntacticElement cur,
 		IDescription superDesc);

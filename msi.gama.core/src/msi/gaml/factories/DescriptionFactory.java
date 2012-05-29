@@ -33,7 +33,7 @@ import msi.gaml.statements.Facets;
 public class DescriptionFactory {
 
 	public synchronized static IDescription create(final ISymbolFactory factory,
-		final String keyword, final IDescription superDesc, final List<IDescription> children,
+		final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final Facets facets) {
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		ISyntacticElement element = new SyntheticStatement(keyword, facets);
@@ -41,18 +41,18 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final String keyword,
-		final IDescription superDesc, final List<IDescription> children, final Facets facets) {
+		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
 		return create(getModelFactory(), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword,
-		final IDescription superDesc, final List<IDescription> children, final String ... facets) {
+		final IDescription superDesc, final IChildrenProvider children, final String ... facets) {
 		return create(getModelFactory(), keyword, superDesc, children, new Facets(facets));
 	}
 
 	public synchronized static IDescription create(final String keyword,
 		final IDescription superDescription, final String ... facets) {
-		return create(keyword, superDescription, Collections.EMPTY_LIST, facets);
+		return create(keyword, superDescription, IChildrenProvider.NONE, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final String ... facets) {
@@ -61,7 +61,7 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription createOutputDescription(final String keyword,
 		final String ... facets) {
-		return create(getOutputFactory(), keyword, null, Collections.EMPTY_LIST, new Facets(facets));
+		return create(getOutputFactory(), keyword, null, IChildrenProvider.NONE, new Facets(facets));
 	}
 
 	private volatile static ISymbolFactory.Model modelFactory;

@@ -6,7 +6,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.remote_context;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -29,15 +28,12 @@ import msi.gaml.types.IType;
  * + they are "peer" species (sharing the same direct macro-species)
  * + they have sub-species vs. parent-species relationship.
  */
-@symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	// @facet(name = IKeyword.SOURCE, type = { IType.AGENT_STR, IType.CONTAINER_STR,
-	// IType.SPECIES_STR }, optional = false),
 	@facet(name = IKeyword.SOURCE, type = IType.ID, optional = false), // workaround
 	@facet(name = IKeyword.TARGET, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.SOURCE)
-@remote_context
 public class MigrateStatement extends AbstractStatementSequence {
 
 	// private IExpression source;

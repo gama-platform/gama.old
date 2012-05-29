@@ -44,7 +44,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER)
+@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 

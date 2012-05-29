@@ -27,19 +27,19 @@ import java.util.List;
  * @since 15 déc. 2011
  * 
  */
-public interface IDisplayManager extends ItemList<IDisplay> {
+public interface ILayerManager extends ItemList<ILayer> {
 
 	/**
 	 * @param abstractDisplay
 	 * @param newValue
 	 */
-	void enableDisplay(IDisplay display, Boolean newValue);
+	void enableLayer(ILayer display, Boolean newValue);
 
 	/**
 	 * @param abstractDisplay
 	 * @return
 	 */
-	boolean isEnabled(IDisplay display);
+	boolean isEnabled(ILayer display);
 
 	/**
 	 * @param env_width
@@ -52,12 +52,12 @@ public interface IDisplayManager extends ItemList<IDisplay> {
 	 * @param yc
 	 * @return
 	 */
-	List<IDisplay> getDisplays(int xc, int yc);
+	List<ILayer> getLayersIntersecting(int xc, int yc);
 
 	/**
 	 * @param displayGraphics
 	 */
-	void drawDisplaysOn(IGraphics displayGraphics);
+	void drawLayersOn(IGraphics displayGraphics);
 
 	/**
 	 * 
@@ -68,6 +68,6 @@ public interface IDisplayManager extends ItemList<IDisplay> {
 	 * @param createDisplay
 	 * @return
 	 */
-	IDisplay addDisplay(IDisplay createDisplay);
+	ILayer addLayer(ILayer createDisplay);
 
 }

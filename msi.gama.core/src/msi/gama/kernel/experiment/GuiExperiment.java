@@ -24,7 +24,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -40,8 +39,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT)
-@with_sequence
+@symbol(name = { IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,

@@ -8,7 +8,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -19,11 +18,10 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 @SuppressWarnings("unchecked")
-@symbol(name = IKeyword.DISPLAY_GRAPH, kind = ISymbolKind.OUTPUT)
+@symbol(name = IKeyword.DISPLAY_GRAPH, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING_STR, optional = true),
 	@facet(name = "graph", type = IType.GRAPH_STR, optional = false),
 	@facet(name = "lowquality", type = IType.BOOL_STR, optional = true), }, omissible = IKeyword.NAME)
-@with_sequence
 @inside(symbols = IKeyword.OUTPUT)
 public class GraphstreamOutput extends AbstractDisplayOutput {
 

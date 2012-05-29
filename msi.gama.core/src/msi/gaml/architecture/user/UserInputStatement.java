@@ -39,7 +39,7 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = { IKeyword.USER_INPUT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.USER_COMMAND)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),

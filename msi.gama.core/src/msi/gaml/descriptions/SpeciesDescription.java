@@ -27,7 +27,7 @@ import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.ModelFactory;
+import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -61,9 +61,9 @@ public class SpeciesDescription extends SymbolDescription {
 	protected SpeciesDescription parentSpecies;
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
 		final Class base, final SymbolMetaDescription md) {
-		super(keyword, superDesc, children, source, md);
+		super(keyword, superDesc, cp, source, md);
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();
 		updatableVariableNames = new GamaList();

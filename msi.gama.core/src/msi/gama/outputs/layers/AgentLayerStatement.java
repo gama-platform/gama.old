@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.AGENTS, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.CONTAINER_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
@@ -49,9 +49,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FOCUS, type = IType.AGENT_STR, optional = true),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-public class AgentDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class AgentLayerStatement extends AbstractLayerStatement {
 
 	private IExpression setOfAgents;
 	final HashSet<IAgent> agents;
@@ -60,7 +59,7 @@ public class AgentDisplayLayer extends AbstractDisplayLayer {
 	protected IExpression aspectExpr;
 	protected IExpression focusExpr;
 
-	public AgentDisplayLayer(final IDescription desc) throws GamaRuntimeException {
+	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
 		aspectExpr = getFacet(IKeyword.ASPECT);
@@ -107,7 +106,7 @@ public class AgentDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.AGENTS;
+		return ILayerStatement.AGENTS;
 	}
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {

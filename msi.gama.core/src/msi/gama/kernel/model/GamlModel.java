@@ -23,13 +23,12 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.topology.*;
 import msi.gama.outputs.OutputManager;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
+import msi.gama.precompiler.*;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -40,8 +39,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL)
-@with_sequence
+@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)

@@ -24,7 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -52,8 +52,8 @@ public class ModelDescription extends SymbolDescription {
 	private final ErrorCollector collect = new ErrorCollector();
 
 	public ModelDescription(final String fileName, final ISyntacticElement source) {
-		super(IKeyword.MODEL, null, new ArrayList(), source, DescriptionFactory.getModelFactory()
-			.getMetaDescriptionFor(null, IKeyword.MODEL));
+		super(IKeyword.MODEL, null, IChildrenProvider.NONE, source, DescriptionFactory
+			.getModelFactory().getMetaDescriptionFor(null, IKeyword.MODEL));
 		types = new TypesManager(this);
 		setModelFileName(fileName);
 		number = count++;

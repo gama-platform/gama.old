@@ -19,7 +19,7 @@ import msi.gaml.descriptions.IDescription;
  * @since 22 avr. 2012
  * 
  */
-@symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE, IKeyword.DEFAULT })
 public class BreakStatement extends AbstractStatement {
 

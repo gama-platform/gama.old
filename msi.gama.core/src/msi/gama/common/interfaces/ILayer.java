@@ -30,7 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-public interface IDisplay extends INamed, Comparable<IDisplay> {
+public interface ILayer extends INamed, Comparable<ILayer> {
 
 	String getMenuName();
 

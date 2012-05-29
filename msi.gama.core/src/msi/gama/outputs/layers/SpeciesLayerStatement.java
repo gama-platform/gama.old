@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,32 +42,29 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY, IKeyword.SPECIES })
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true), 
-    @facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-
-@with_sequence
-public class SpeciesDisplayLayer extends AgentDisplayLayer {
+	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	private IAspect aspect;
 
 	protected ISpecies hostSpecies;
 	protected ISpecies species;
-	protected List<SpeciesDisplayLayer> microSpeciesLayers;
-	protected List<GridDisplayLayer> gridLayers;
-	protected List<AbstractDisplayLayer> subLayers;
+	protected List<SpeciesLayerStatement> microSpeciesLayers;
+	protected List<GridLayerStatement> gridLayers;
+	protected List<AbstractLayerStatement> subLayers;
 
-	public SpeciesDisplayLayer(/* final ISymbol context, */final IDescription desc)
+	public SpeciesLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(/* context, */desc);
-		microSpeciesLayers = new GamaList<SpeciesDisplayLayer>();
-		gridLayers = new GamaList<GridDisplayLayer>();
+		microSpeciesLayers = new GamaList<SpeciesLayerStatement>();
+		gridLayers = new GamaList<GridLayerStatement>();
 	}
 
 	@Override
@@ -86,7 +82,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 			"not a suitable species to display: " + getName()); }
 		super.prepare(out, sim);
 
-		for ( SpeciesDisplayLayer microLayer : microSpeciesLayers ) {
+		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.setHostSpecies(species);
 			microLayer.prepare(out, sim);
 		}
@@ -96,7 +92,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
 		super.compute(scope, cycle);
 
-		for ( SpeciesDisplayLayer microLayer : microSpeciesLayers ) {
+		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.compute(scope, cycle);
 		}
 	}
@@ -114,7 +110,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.SPECIES;
+		return ILayerStatement.SPECIES;
 	}
 
 	public List<String> getAspects() {
@@ -125,8 +121,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	public void setAspect(final String currentAspect) {
 		super.setAspect(currentAspect);
 	}
-	
-	
+
 	@Override
 	public void computeAspectName(final IScope sim) throws GamaRuntimeException {
 		super.computeAspectName(sim);
@@ -147,14 +142,14 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		List<SpeciesDisplayLayer> microL = new GamaList<SpeciesDisplayLayer>();
-		List<GridDisplayLayer> gridL = new GamaList<GridDisplayLayer>();
+		List<SpeciesLayerStatement> microL = new GamaList<SpeciesLayerStatement>();
+		List<GridLayerStatement> gridL = new GamaList<GridLayerStatement>();
 
 		for ( ISymbol c : commands ) {
-			if ( c instanceof SpeciesDisplayLayer ) {
-				microL.add((SpeciesDisplayLayer) c);
-			} else if ( c instanceof GridDisplayLayer ) {
-				gridL.add((GridDisplayLayer) c);
+			if ( c instanceof SpeciesLayerStatement ) {
+				microL.add((SpeciesLayerStatement) c);
+			} else if ( c instanceof GridLayerStatement ) {
+				gridL.add((GridLayerStatement) c);
 			}
 		}
 
@@ -162,14 +157,14 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 		setGridLayers(gridL);
 	}
 
-	private void setMicroSpeciesLayers(final List<SpeciesDisplayLayer> layers) {
+	private void setMicroSpeciesLayers(final List<SpeciesLayerStatement> layers) {
 		if ( layers == null ) { return; }
 
 		microSpeciesLayers.clear();
 		microSpeciesLayers.addAll(layers);
 	}
 
-	private void setGridLayers(final List<GridDisplayLayer> layers) {
+	private void setGridLayers(final List<GridLayerStatement> layers) {
 		if ( layers == null ) { return; }
 
 		gridLayers.clear();
@@ -181,7 +176,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	 * 
 	 * @return
 	 */
-	public List<SpeciesDisplayLayer> getMicroSpeciesLayers() {
+	public List<SpeciesLayerStatement> getMicroSpeciesLayers() {
 		return microSpeciesLayers;
 	}
 
@@ -190,7 +185,7 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	 * 
 	 * @return
 	 */
-	public List<GridDisplayLayer> getGridLayers() {
+	public List<GridLayerStatement> getGridLayers() {
 		return gridLayers;
 	}
 
@@ -200,9 +195,9 @@ public class SpeciesDisplayLayer extends AgentDisplayLayer {
 	 * 
 	 * @return
 	 */
-	public List<AbstractDisplayLayer> getSubLayers() {
+	public List<AbstractLayerStatement> getSubLayers() {
 		if ( subLayers == null ) {
-			subLayers = new GamaList<AbstractDisplayLayer>();
+			subLayers = new GamaList<AbstractLayerStatement>();
 			subLayers.addAll(gridLayers);
 			subLayers.addAll(microSpeciesLayers);
 		}

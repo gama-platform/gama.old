@@ -43,94 +43,94 @@ public class OutputLayerFactory extends SymbolFactory {
 		super(handles, uses);
 	}
 
-	public static IDisplayLayer createChartLayer() {
+	public static ILayerStatement createChartLayer() {
 		return null;
 	}
 
-	public static IDisplayLayer createGridLayer() {
+	public static ILayerStatement createGridLayer() {
 		return null;
 	}
 
-	public static IDisplayLayer createImageLayer() {
+	public static ILayerStatement createImageLayer() {
 		return null;
 	}
 
-	public static IDisplayLayer createAgentsLayer(final String title,
+	public static ILayerStatement createAgentsLayer(final String title,
 		final IExpression listOfAgents, final String aspect, final IDisplayLayerBox box)
 		throws GamaRuntimeException {
 		IDescription desc;
 		desc = DescriptionFactory.createOutputDescription(IKeyword.AGENTS, IKeyword.NAME, title);
-		AgentDisplayLayer l = new AgentDisplayLayer(desc);
+		AgentLayerStatement l = new AgentLayerStatement(desc);
 		l.setAspect(aspect);
 		l.setBox(box);
 		l.setAgentsExpr(listOfAgents);
 		return l;
 	}
 
-	public static IDisplayLayer createAgentsLayer(final String title,
+	public static ILayerStatement createAgentsLayer(final String title,
 		final IExpression listOfAgents, final String aspect) throws GamaRuntimeException {
 		return createAgentsLayer(title, listOfAgents, aspect, largeBox);
 	}
 
-	public static IDisplayLayer createAgentsLayer(final String title, final IExpression listOfAgents)
+	public static ILayerStatement createAgentsLayer(final String title, final IExpression listOfAgents)
 		throws GamaRuntimeException {
 		return createAgentsLayer(title, listOfAgents, IKeyword.DEFAULT);
 	}
 
-	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species,
+	public static ILayerStatement createSpeciesLayer(final String title, final ISpecies species,
 		final String aspect, final IDisplayLayerBox box) throws GamaRuntimeException {
 		IDescription desc;
 		desc =
 			DescriptionFactory.createOutputDescription(IKeyword.SPECIES, IKeyword.NAME,
 				species.getName());
-		SpeciesDisplayLayer l = new SpeciesDisplayLayer(desc);
+		SpeciesLayerStatement l = new SpeciesLayerStatement(desc);
 		l.setAspect(aspect);
 		l.setBox(box);
 		return l;
 	}
 
-	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species,
+	public static ILayerStatement createSpeciesLayer(final String title, final ISpecies species,
 		final String aspect) throws GamaRuntimeException {
 		return createSpeciesLayer(title, species, aspect, largeBox);
 	}
 
-	public static IDisplayLayer createSpeciesLayer(final String title, final ISpecies species)
+	public static ILayerStatement createSpeciesLayer(final String title, final ISpecies species)
 		throws GamaRuntimeException {
 		return createSpeciesLayer(title, species, IKeyword.DEFAULT);
 	}
 
-	public static IDisplayLayer createSpeciesLayer(final ISpecies species)
+	public static ILayerStatement createSpeciesLayer(final ISpecies species)
 		throws GamaRuntimeException {
 		return createSpeciesLayer(species.getName(), species);
 	}
 
-	public static IDisplayLayer createTextLayer(final String title, final IExpression text,
+	public static ILayerStatement createTextLayer(final String title, final IExpression text,
 		final Color color, final IDisplayLayerBox box) throws GamaRuntimeException {
 		IDescription desc;
 		desc = DescriptionFactory.createOutputDescription(IKeyword.TEXT, IKeyword.NAME, title);
-		TextDisplayLayer l = new TextDisplayLayer(desc);
+		TextLayerStatement l = new TextLayerStatement(desc);
 		l.setTextExpr(text);
 		l.setBox(box);
 		l.setColor(color);
 		return l;
 	}
 
-	public static IDisplayLayer createTextLayer(final String title, final String text,
+	public static ILayerStatement createTextLayer(final String title, final String text,
 		final Color color, final IDisplayLayerBox box) throws GamaRuntimeException {
 		return createTextLayer(title, new JavaConstExpression(text), color, box);
 	}
 
-	public static IDisplayLayer createTextLayer(final String text, final Color color,
+	public static ILayerStatement createTextLayer(final String text, final Color color,
 		final IDisplayLayerBox box) throws GamaRuntimeException {
 		return createTextLayer(text, text, color, box);
 	}
 
-	public static IDisplayLayer createTextLayer(final String text, final IDisplayLayerBox box)
+	public static ILayerStatement createTextLayer(final String text, final IDisplayLayerBox box)
 		throws GamaRuntimeException {
 		return createTextLayer(text, text, Color.black, box);
 	}
 
-	public static IDisplayLayer createTextLayer(final String text) throws GamaRuntimeException {
+	public static ILayerStatement createTextLayer(final String text) throws GamaRuntimeException {
 		return createTextLayer(text, largeBox);
 	}
 

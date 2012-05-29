@@ -20,11 +20,11 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -39,7 +39,7 @@ import msi.gaml.types.*;
  * 
  */
 
-@symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING_STR, optional = false) }, omissible = IKeyword.MESSAGE)
 public class ErrorStatement extends AbstractStatement {

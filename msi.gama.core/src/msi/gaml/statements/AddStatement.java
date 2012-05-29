@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.ITEM)
-@symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 public class AddStatement extends AbstractContainerStatement {
 

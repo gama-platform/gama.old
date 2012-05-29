@@ -33,7 +33,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.HILL_CLIMBING, kind = ISymbolKind.BATCH_METHOD)
+@symbol(name = IKeyword.HILL_CLIMBING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),

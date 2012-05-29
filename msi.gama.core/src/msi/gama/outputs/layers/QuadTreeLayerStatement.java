@@ -24,11 +24,11 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -40,21 +40,20 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-public class QuadTreeDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class QuadTreeLayerStatement extends AbstractLayerStatement {
 
 	BufferedImage supportImage;
 
 	private IEnvironment modelEnv;
 
-	public QuadTreeDisplayLayer(/* final ISymbol context, */final IDescription desc)
+	public QuadTreeLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
 	}
@@ -78,7 +77,7 @@ public class QuadTreeDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.QUADTREE;
+		return ILayerStatement.QUADTREE;
 	}
 
 	@Override

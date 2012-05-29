@@ -42,18 +42,17 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.GRID, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.GRID, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-public class GridDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class GridLayerStatement extends AbstractLayerStatement {
 
-	public GridDisplayLayer(/* final ISymbol context, */final IDescription desc)
+	public GridLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
 	}
@@ -92,7 +91,7 @@ public class GridDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.GRID;
+		return ILayerStatement.GRID;
 	}
 
 	public Color getLineColor() {

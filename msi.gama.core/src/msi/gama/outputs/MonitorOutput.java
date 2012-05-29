@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT)
+@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.NAME)
@@ -54,8 +54,8 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public MonitorOutput(final String name, final String expr, final ISimulation sim,
 		final boolean openRightNow) {
-		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr,
-			IKeyword.NAME, name == null ? expr : name));
+		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
+			name == null ? expr : name));
 		setUserCreated(true);
 		setNewExpressionText(expr, sim);
 		prepare(sim);

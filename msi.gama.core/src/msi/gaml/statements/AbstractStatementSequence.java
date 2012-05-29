@@ -20,14 +20,12 @@ package msi.gaml.statements;
 
 import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.List;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 
-@with_sequence
 public class AbstractStatementSequence extends AbstractStatement {
 
 	protected IStatement[] commands;

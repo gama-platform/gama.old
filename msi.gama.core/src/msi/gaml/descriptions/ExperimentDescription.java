@@ -18,17 +18,15 @@
  */
 package msi.gaml.descriptions;
 
-import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
+import msi.gaml.factories.IChildrenProvider;
 
 public class ExperimentDescription extends SpeciesDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final List<IDescription> children, final ISyntacticElement source,
-		final SymbolMetaDescription md) {
-		super(keyword, superDesc, source.getFacets(), children, source, ExperimentatorAgent.class,
-			md);
+		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
+		super(keyword, superDesc, source.getFacets(), cp, source, ExperimentatorAgent.class, md);
 	}
 
 	// @Override

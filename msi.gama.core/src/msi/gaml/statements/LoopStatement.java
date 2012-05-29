@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 
 // A group of commands that can be executed repeatedly.
 
-@symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = { @facet(name = IKeyword.FROM, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),

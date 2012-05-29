@@ -54,7 +54,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
@@ -63,11 +63,10 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.GIS, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-public class ImageDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class ImageLayerStatement extends AbstractLayerStatement {
 
-	public ImageDisplayLayer(final IDescription desc) throws GamaRuntimeException {
+	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 	}
 
@@ -83,8 +82,8 @@ public class ImageDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		if ( getFacet(IKeyword.GIS) == null ) { return IDisplayLayer.IMAGE; }
-		return IDisplayLayer.GIS;
+		if ( getFacet(IKeyword.GIS) == null ) { return ILayerStatement.IMAGE; }
+		return ILayerStatement.GIS;
 	}
 
 	public String getImageFileName() {

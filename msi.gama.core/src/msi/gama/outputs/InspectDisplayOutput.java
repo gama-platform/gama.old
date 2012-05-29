@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @SuppressWarnings("unchecked")
-@symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT)
+@symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = IKeyword.OUTPUT)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),

@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.FILE, kind = ISymbolKind.OUTPUT)
+@symbol(name = IKeyword.FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = IKeyword.OUTPUT)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
@@ -190,8 +190,8 @@ public class FileOutput extends AbstractOutput {
 
 	public FileOutput(final String name, final String expr, final List<String> columns,
 		final IExperiment exp) throws GamaRuntimeException {
-		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr,
-			IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME, name == null ? expr : name));
+		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE,
+			IKeyword.CSV, IKeyword.NAME, name == null ? expr : name));
 		prepare(exp);
 		expressionText = expr;
 		refreshExpression();

@@ -24,6 +24,7 @@ import msi.gama.common.util.IErrorCollector;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
@@ -47,8 +48,7 @@ public class SymbolDescription implements IDescription {
 	// boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final List<IDescription> children, final ISyntacticElement source,
-		final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
 		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		setSource(source);
@@ -56,7 +56,7 @@ public class SymbolDescription implements IDescription {
 		setSuperDescription(superDesc);
 		if ( meta.hasSequence() ) {
 			this.children = new ArrayList();
-			addChildren(children);
+			addChildren(cp.getChildren());
 		} else {
 			this.children = null;
 		}

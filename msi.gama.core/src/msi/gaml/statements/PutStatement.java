@@ -20,12 +20,12 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.IContainer;
@@ -50,7 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.IN, type = { IType.CONTAINER_STR }, optional = false) }, combinations = {
 	@combination({ IKeyword.AT, IKeyword.ITEM, IKeyword.IN }),
 	@combination({ IKeyword.ALL, IKeyword.IN }) }, omissible = IKeyword.ITEM)
-@symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 public class PutStatement extends AbstractContainerStatement {
 

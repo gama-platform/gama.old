@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
@@ -41,9 +42,9 @@ public class VariableDescription extends SymbolDescription {
 	private boolean isGlobal;
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final List<IDescription> children, final ISyntacticElement source,
+		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
-		super(keyword, superDesc, children, source, md);
+		super(keyword, superDesc, cp, source, md);
 		if ( !facets.containsKey(IKeyword.TYPE) &&
 			!facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER) ) {
 			facets.putAsLabel(IKeyword.TYPE, keyword);

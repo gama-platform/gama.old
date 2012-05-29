@@ -19,10 +19,9 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.precompiler.*;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -31,7 +30,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.ELSE, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = IKeyword.ELSE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(symbols = IKeyword.IF)
 public class ElseStatement extends AbstractStatementSequence {
 

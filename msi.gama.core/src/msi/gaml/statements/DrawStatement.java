@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 
 // A command that is used to draw shapes, figures, text on the display
 
-@symbol(name = IKeyword.DRAW, kind = ISymbolKind.SINGLE_STATEMENT)
+@symbol(name = IKeyword.DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
 	@facet(name = IType.GEOM_STR, type = IType.GEOM_STR, optional = true),
@@ -58,10 +58,11 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SCALE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.ROTATE, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.FONT, type = IType.STRING_STR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
 combinations = {
-	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.COLOR }),
+	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.COLOR, IKeyword.Z }),
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.AT, IKeyword.EMPTY,
 		IKeyword.ROTATE }),
 	@combination({ IKeyword.TO, IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY }),
@@ -107,7 +108,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, location, color, rotate;
+		IExpression size, location, color, rotate, elevation;
 
 		Color constantColor = null;
 		ILocation constantSize = null;
@@ -115,6 +116,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
 			IScope scope = GAMA.getDefaultScope();
+			elevation = getFacet(IKeyword.Z);
 			size = getFacet(IKeyword.SIZE);
 			if ( size == null ) {
 				constantSize = new GamaPoint(1.0, 1.0);
@@ -214,7 +216,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				c = constantColor;
 			}
 
-			int displaySize =
+			int objectSize =
 				constantSize == null ? Maths
 					.round(scale(Cast.asFloat(scope, size.value(scope)), g)) : Maths.round(scale(
 					constantSize.getX(), g));
@@ -226,13 +228,13 @@ public class DrawStatement extends AbstractStatementSequence {
 
 				ILocation target = Cast.asPoint(scope, toExpr.value(scope));
 				target = scale(agent.getLocation(), g);
-				return drawLine(from, target, displaySize, c, g);
+				return drawLine(from, target, objectSize, c, g);
 
 			}
 			boolean isEmpty =
 				constantEmpty == null ? empty == null ? false : Cast.asBool(scope,
 					empty.value(scope)) : constantEmpty;
-			return draw(scope, shapeIndex, from, displaySize, c, isEmpty, g);
+			return draw(scope, shapeIndex, from, objectSize, c, isEmpty, g);
 		}
 
 		private Rectangle2D draw(final IScope scope, final Integer shapeIndex, final ILocation at,
@@ -247,6 +249,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					IShape geom = Cast.asGeometry(scope, shape.value(scope));
 					if ( geom == null ) {
 						geom = scope.getAgentScope().getGeometry();
+						geom.getInnerGeometry().setUserData(
+							elevation == null ? null : elevation.value(scope));
 					}
 					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, getRotation(scope));
 				}
@@ -309,7 +313,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					constantSize.getX(), g));
 			String img =
 				constantImage == null ? Cast.asString(scope, image.value(scope)) : constantImage;
-				
+
 			BufferedImage image;
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(img);
@@ -323,7 +327,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			int x = Maths.round(from.getX()) - displayWidth / 2;
 			int y = Maths.round(from.getY()) - displayHeight / 2;
 			g.setDrawingDimensions(displayWidth, displayHeight);
-			
+
 			g.setDrawingCoordinates(x, y);
 			Color c = null;
 			Integer angle =
@@ -360,11 +364,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				// g2d.dispose();
 
-				Rectangle2D result = g.drawImage(workImage, angle, true,img);
+				Rectangle2D result = g.drawImage(workImage, angle, true, img);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(image, angle, true,img);
+			return g.drawImage(image, angle, true, img);
 		}
 
 	}

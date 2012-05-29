@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -55,7 +54,7 @@ import org.jfree.ui.RectangleInsets;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING_STR, optional = true), */
@@ -71,10 +70,8 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-@with_sequence
-public class ChartDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class ChartLayerStatement extends AbstractLayerStatement {
 
 	private static final int SERIES_CHART = 0;
 	private static final int HISTOGRAM_CHART = 1;
@@ -91,16 +88,16 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	private Dataset dataset;
 	private boolean exploded;
 	String xAxisName = "time";
-	List<Data> datas;
+	List<ChartDataStatement> datas;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
-	Data timeSeriesXData = null;
+	ChartDataStatement timeSeriesXData = null;
 
 	public JFreeChart getChart() {
 		return chart;
 	}
 
-	public ChartDisplayLayer(/* final ISymbol context, */final IDescription desc)
+	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
 		axesColor = Cast.asColor(null, "black");
@@ -112,8 +109,8 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	public void setChildren(final List<? extends ISymbol> commands) {
 		datas = new GamaList();
 		for ( ISymbol s : commands ) {
-			if ( s instanceof Data ) {
-				datas.add((Data) s);
+			if ( s instanceof ChartDataStatement ) {
+				datas.add((ChartDataStatement) s);
 			}
 		}
 	}
@@ -125,7 +122,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 			// set the range axis to display integers only...
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 			timeSeriesXData =
-				(Data) DescriptionFactory.getModelFactory().compileDescription(
+				(ChartDataStatement) DescriptionFactory.getModelFactory().compileDescription(
 					DescriptionFactory.create(IKeyword.DATA, description, IKeyword.NAME,
 						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
 			timeSeriesXData.prepare(scope);
@@ -140,7 +137,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 		}
 
 		for ( int i = 0; i < datas.size(); i++ ) {
-			Data e = datas.get(i);
+			ChartDataStatement e = datas.get(i);
 			final String legend = e.getName();
 			if ( i != 0 ) { // the first data is the domain
 				dataset = new DefaultTableXYDataset();
@@ -163,7 +160,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	}
 
 	private void createData(final IScope scope) throws GamaRuntimeException {
-		for ( Data e : datas ) {
+		for ( ChartDataStatement e : datas ) {
 			e.prepare(scope);
 		}
 		switch (type) {
@@ -189,7 +186,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 		int i = 0;
 		dataset = new DefaultPieDataset();
 		final PiePlot plot = (PiePlot) chart.getPlot();
-		for ( final Data e : datas ) {
+		for ( final ChartDataStatement e : datas ) {
 			final String legend = (String) e.getFacet(IKeyword.NAME).value(scope);
 			((DefaultPieDataset) dataset).insertValue(i, legend, null);
 			history.append(legend);
@@ -216,7 +213,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 	private void createBars(final IScope scope) {
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		dataset = new DefaultCategoryDataset();
-		for ( final Data e : datas ) {
+		for ( final ChartDataStatement e : datas ) {
 			String legend = e.getName();
 			((DefaultCategoryDataset) dataset).addValue(0, legend, legend);
 			history.append(legend);
@@ -356,7 +353,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 				return;
 		}
 
-		for ( final Data d : datas ) {
+		for ( final ChartDataStatement d : datas ) {
 			lastValues.put(d.getName(), d.getValue(scope));
 		}
 		for ( final Map.Entry<String, Double> d : lastValues.entrySet() ) {
@@ -404,7 +401,7 @@ public class ChartDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.CHART;
+		return ILayerStatement.CHART;
 	}
 
 	@Override

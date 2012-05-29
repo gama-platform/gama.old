@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -48,8 +47,7 @@ import org.jfree.data.statistics.Statistics;
  * @todo Description
  * 
  */
-@symbol(name = { IKeyword.BATCH }, kind = ISymbolKind.EXPERIMENT)
-@with_sequence
+@symbol(name = { IKeyword.BATCH }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL_STR, optional = true),

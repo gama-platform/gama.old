@@ -18,18 +18,15 @@
  */
 package msi.gaml.architecture.finite_state_machine;
 
-import msi.gama.runtime.IScope;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.no_scope;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gaml.compilation.*;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
-@symbol(name = FsmStateStatement.ENTER, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = FsmStateStatement.ENTER, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_scope = false)
 @inside(symbols = { FsmStateStatement.STATE })
-@no_scope
 public class FsmEnterStatement extends AbstractStatementSequence {
 
 	public FsmEnterStatement(/* final ISymbol enclosingScope, */final IDescription desc) {

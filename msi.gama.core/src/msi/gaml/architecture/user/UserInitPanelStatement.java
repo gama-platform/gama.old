@@ -6,7 +6,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gaml.descriptions.IDescription;
 
-@symbol(name = IKeyword.USER_INIT, kind = ISymbolKind.BEHAVIOR)
+@symbol(name = IKeyword.USER_INIT, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES })
 public class UserInitPanelStatement extends UserPanelStatement {
 

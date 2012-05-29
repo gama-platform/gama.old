@@ -79,11 +79,8 @@ public class SymbolFactory extends AbstractFactory {
 	 */
 	@Override
 	public final IDescription createDescription(final ISyntacticElement source,
-		final IDescription superDesc, final List<IDescription> children) {
+		final IDescription superDesc, final IChildrenProvider cp) {
 		String keyword = getKeyword(source);
-		// if ( keyword.equals("species") ) {
-		// GuiUtils.debug("CreateDescription");
-		// }
 		SymbolFactory f = (SymbolFactory) chooseFactoryFor(keyword, null);
 		if ( f == null ) {
 			superDesc.flagError("Impossible to parse keyword " + keyword + " in this context",
@@ -91,15 +88,14 @@ public class SymbolFactory extends AbstractFactory {
 			return null;
 		}
 		SymbolMetaDescription md = f.getMetaDescriptionFor(superDesc, keyword);
-		return f.createDescriptionInternal(keyword, source, superDesc, children, md);
+		return f.createDescriptionInternal(keyword, source, superDesc, cp, md);
 	}
 
 	private IDescription createDescriptionInternal(final String keyword,
-		final ISyntacticElement source, final IDescription superDesc,
-		final List<IDescription> children, final SymbolMetaDescription md) {
-		List<IDescription> statements = children == null ? new ArrayList() : children;
+		final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp,
+		final SymbolMetaDescription md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
-		IDescription desc = buildDescription(source, keyword, statements, superDesc, md);
+		IDescription desc = buildDescription(source, keyword, cp, superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
@@ -140,15 +136,15 @@ public class SymbolFactory extends AbstractFactory {
 				children.add(createDescriptionRecursively(e, superDesc));
 			}
 		}
-		IDescription desc = buildDescription(source, keyword, children, superDesc, md);
+		IDescription desc =
+			buildDescription(source, keyword, new ChildrenProvider(children), superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final List<IDescription> children, final IDescription superDesc,
-		final SymbolMetaDescription md) {
-		return new SymbolDescription(keyword, superDesc, children, source, md);
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolMetaDescription md) {
+		return new SymbolDescription(keyword, superDesc, cp, source, md);
 	}
 
 	@Override
@@ -224,7 +220,8 @@ public class SymbolFactory extends AbstractFactory {
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {
-			((IStatement.WithArgs) cs).setFormalArgs(privateCompileArgs((StatementDescription) desc));
+			((IStatement.WithArgs) cs)
+				.setFormalArgs(privateCompileArgs((StatementDescription) desc));
 		}
 		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( md.isRemoteContext() ) {

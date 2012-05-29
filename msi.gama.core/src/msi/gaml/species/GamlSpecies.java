@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -39,9 +38,8 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@with_sequence
 @base(GamlAgent.class)
-@symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES)
+@symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
 @facets(value = {
 	@facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),

@@ -23,7 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
@@ -44,9 +44,9 @@ public class StatementDescription extends SymbolDescription {
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 
 	public StatementDescription(final String keyword, final IDescription superDesc,
-		final List<IDescription> children, final boolean hasScope, final boolean hasArgs,
+		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
 		final ISyntacticElement source, final SymbolMetaDescription md) {
-		super(keyword, superDesc, children, source, md);
+		super(keyword, superDesc, cp, source, md);
 		temps = hasScope ? new HashMap() : null;
 		if ( hasArgs ) {
 			collectArgs();
@@ -141,8 +141,8 @@ public class StatementDescription extends SymbolDescription {
 				children.add(child.copy());
 			}
 		}
-		return new StatementDescription(getKeyword(), null, children, temps != null, args != null,
-			getSourceInformation(), meta);
+		return new StatementDescription(getKeyword(), null, new ChildrenProvider(children),
+			temps != null, args != null, getSourceInformation(), meta);
 	}
 
 	@Override

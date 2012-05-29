@@ -31,7 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @since 14 déc. 2011
  * 
  */
-public interface IDisplayLayer extends INamed {
+public interface ILayerStatement extends INamed {
 
 	public final static short GRID = 1;
 	public final static short AGENTS = 2;

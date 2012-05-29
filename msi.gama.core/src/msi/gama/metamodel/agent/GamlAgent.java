@@ -52,8 +52,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	 */
 	public GamlAgent(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
 		super(sim, s);
-		if ( s == null ) { // built-in species/agents like Conversion, Message, ClusterBuilder,
-							// MulticriteriaAnalyzer, ...
+		if ( s == null ) {
 			population = findPopulation(sim);
 			getPopulation().createVariablesFor(sim.getGlobalScope(), this);
 			population.add(this, null);

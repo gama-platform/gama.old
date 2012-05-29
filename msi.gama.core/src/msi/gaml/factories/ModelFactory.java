@@ -52,7 +52,7 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 	private void addMicroSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
 		SpeciesDescription mDesc =
-			(SpeciesDescription) createDescription(micro.getNode(), macro, null);
+			(SpeciesDescription) createDescription(micro.getNode(), macro, IChildrenProvider.NONE);
 		macro.addChild(mDesc);
 		for ( SpeciesStructure microSpecStructure : micro.getMicroSpecies() ) {
 			addMicroSpecies(mDesc, microSpecStructure);

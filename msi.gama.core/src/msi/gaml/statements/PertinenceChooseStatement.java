@@ -10,7 +10,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 
-@symbol(name = IKeyword.CHOOSE, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = IKeyword.CHOOSE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 public class PertinenceChooseStatement extends PertinenceStatement {
 
 	private IStatement mostPertinentCommand;

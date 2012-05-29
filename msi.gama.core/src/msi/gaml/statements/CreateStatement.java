@@ -28,9 +28,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.remote_context;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_args;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -68,7 +66,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * The newly created agent(s) will take the macro-agent of invoking agent's macro-agent as its/their
  * macro-agent.
  */
-@symbol(name = IKeyword.CREATE, kind = ISymbolKind.SEQUENCE_STATEMENT)
+@symbol(name = IKeyword.CREATE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true),
@@ -78,8 +76,6 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
 	@facet(name = IKeyword.SIZE, type = { IType.FLOAT_STR }, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.STRING_STR }, optional = true) }, omissible = IKeyword.SPECIES)
-@remote_context
-@with_args
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;
@@ -286,7 +282,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
 			FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				if (GisUtils.transformCRS == null) {
+				if ( GisUtils.transformCRS == null ) {
 					ShpFiles shpf = new ShpFiles(shpFile);
 					double latitude = featureShp.getBounds().centre().x;
 					double longitude = featureShp.getBounds().centre().y;

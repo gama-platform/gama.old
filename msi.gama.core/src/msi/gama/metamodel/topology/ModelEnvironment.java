@@ -50,7 +50,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  * @todo Description
  */
-@symbol(name = IKeyword.ENVIRONMENT, kind = ISymbolKind.ENVIRONMENT)
+@symbol(name = IKeyword.ENVIRONMENT, kind = ISymbolKind.ENVIRONMENT, with_sequence = false)
 @inside(symbols = IKeyword.MODEL)
 @facets(value = { @facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT_STR, optional = true),

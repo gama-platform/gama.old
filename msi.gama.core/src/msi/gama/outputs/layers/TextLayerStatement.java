@@ -33,7 +33,7 @@ import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
@@ -42,9 +42,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true)}, omissible = IKeyword.NAME)
-    
-public class TextDisplayLayer extends AbstractDisplayLayer {
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+public class TextLayerStatement extends AbstractLayerStatement {
 
 	private final IExpression color;
 	private final IExpression font;
@@ -56,7 +55,7 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 	private Color currentColor = null;
 	private String currentFont = null;
 
-	public TextDisplayLayer(final IDescription desc) throws GamaRuntimeException {
+	public TextLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		IExpression c = getFacet(IKeyword.COLOR);
 		color = c == null ? new JavaConstExpression(Cast.asColor(null, "white")) : c;
@@ -75,7 +74,7 @@ public class TextDisplayLayer extends AbstractDisplayLayer {
 
 	@Override
 	public short getType() {
-		return IDisplayLayer.TEXT;
+		return ILayerStatement.TEXT;
 	}
 
 	public String getFontName() {

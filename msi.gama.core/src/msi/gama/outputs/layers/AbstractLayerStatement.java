@@ -32,11 +32,13 @@ import msi.gaml.expressions.IExpression;
 /**
  * Written by drogoul Modified on 9 nov. 2009
  * 
+ * GAML statement to define the properties of a layer in a display
+ * 
  * @todo Description
  * 
  */
 @inside(symbols = IKeyword.DISPLAY)
-public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLayer {
+public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
 
 	private IDisplayLayerBox box;
 	IExpression title;
@@ -45,7 +47,7 @@ public abstract class AbstractDisplayLayer extends Symbol implements IDisplayLay
 
 	// protected IDisplay physicalLayer;
 
-	public AbstractDisplayLayer(final IDescription desc) throws GamaRuntimeException {
+	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION),
 			getFacet(IKeyword.SIZE), getFacet(IKeyword.Z)));

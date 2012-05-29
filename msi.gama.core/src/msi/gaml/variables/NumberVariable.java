@@ -51,7 +51,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.NUMBER)
+@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 public class NumberVariable extends Variable {
 

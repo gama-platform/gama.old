@@ -8,7 +8,6 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
@@ -20,9 +19,8 @@ import msi.gaml.descriptions.IDescription;
  * @since 13 févr. 2012
  * 
  */
-@symbol(kind = ISymbolKind.ABSTRACT_SECTION, name = { IKeyword.ENTITIES })
+@symbol(kind = ISymbolKind.ABSTRACT_SECTION, name = { IKeyword.ENTITIES }, with_sequence = true)
 @inside(kinds = ISymbolKind.MODEL)
-@with_sequence
 public class EntitiesPlaceHolder extends Symbol {
 
 	public EntitiesPlaceHolder(final IDescription desc) {

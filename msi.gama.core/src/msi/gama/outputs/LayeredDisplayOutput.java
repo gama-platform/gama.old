@@ -30,7 +30,6 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -46,38 +45,34 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT)
+@symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayerDisplayOutput.JAVA2D,
-		LayerDisplayOutput.OPENGL }, optional = true),
+	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
+		LayeredDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
-@with_sequence
 @inside(symbols = IKeyword.OUTPUT)
-public class LayerDisplayOutput extends AbstractDisplayOutput {
+public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 
-	private List<AbstractDisplayLayer> layers;
+	private List<AbstractLayerStatement> layers;
 	private Color backgroundColor;
 	protected IDisplaySurface surface;
 	String snapshotFileName;
 	private boolean autosave = false;
 	private String displayType = JAVA2D;
 
-	// private GLContext glcontext;
-	// private GLCanvas glcanvas;
-
-	public LayerDisplayOutput(final IDescription desc) {
+	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
-		layers = new GamaList<AbstractDisplayLayer>();
+		layers = new GamaList<AbstractLayerStatement>();
 	}
 
 	@Override
@@ -95,9 +90,9 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		if ( auto != null ) {
 			autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
 		}
-		for ( final ISymbol layer : getLayers() ) {
+		for ( final ILayerStatement layer : getLayers() ) {
 			try {
-				((IDisplayLayer) layer).prepare(this, getOwnScope());
+				layer.prepare(this, getOwnScope());
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
@@ -108,7 +103,7 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
 		// GUI.debug("Computing the expressions of output " + getName() + " at cycle " + cycle);
-		for ( IDisplayLayer layer : getLayers() ) {
+		for ( ILayerStatement layer : getLayers() ) {
 			layer.compute(scope, cycle);
 		}
 	}
@@ -178,7 +173,13 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		setLayers((List<AbstractDisplayLayer>) commands);
+
+		for ( ISymbol s : commands ) {
+			if ( !(s instanceof ILayerStatement) ) {
+				System.out.print("");
+			}
+		}
+		setLayers((List<AbstractLayerStatement>) commands);
 	}
 
 	@Override
@@ -199,11 +200,11 @@ public class LayerDisplayOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	public void setLayers(final List<AbstractDisplayLayer> layers) {
+	public void setLayers(final List<AbstractLayerStatement> layers) {
 		this.layers = layers;
 	}
 
-	List<AbstractDisplayLayer> getLayers() {
+	List<AbstractLayerStatement> getLayers() {
 		return layers;
 	}
 

@@ -10,10 +10,6 @@ import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.no_scope;
-import msi.gama.precompiler.GamlAnnotations.remote_context;
-import msi.gama.precompiler.GamlAnnotations.with_args;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -133,14 +129,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	protected void addSymbol(final Class c, final int sKind, final ISymbolConstructor sc,
-		final String ... names) {
+	protected void addSymbol(final Class c, final int sKind, final boolean remote,
+		final boolean args, final boolean scope, final boolean sequence,
+		final ISymbolConstructor sc, final String ... names) {
 		Class base = null;
 		String omissible = null;
-		boolean canHaveArgs = c.getAnnotation(with_args.class) != null;
-		boolean canHaveSequence = c.getAnnotation(with_sequence.class) != null;
-		boolean doesNotHaveScope = c.getAnnotation(no_scope.class) != null;
-		boolean isRemoteContext = c.getAnnotation(remote_context.class) != null;
 		base b = (base) c.getAnnotation(base.class);
 		if ( b != null ) {
 			base = b.value();
@@ -174,8 +167,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 
 		SymbolMetaDescription md =
-			new SymbolMetaDescription(base, canHaveSequence, canHaveArgs, sKind, doesNotHaveScope,
-				facets, omissible, combinations, contextKeywords, contextKinds, isRemoteContext, sc);
+			new SymbolMetaDescription(base, sequence, args, sKind, !scope, facets, omissible,
+				combinations, contextKeywords, contextKinds, remote, sc);
 		DescriptionFactory.getModelFactory().registerSymbol(md, keywords);
 
 	}
@@ -213,9 +206,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		BINARIES.get(string).put(new TypePair(species, Types.get(IType.MAP)), newFunct);
 	}
 
-	public static void addBinary(final String kw, final Class left, final Class right,
-		final Class ret, final boolean iterator, final short p, final boolean c, final short t,
-		final short content, final IOperatorExecuter helper) {
+	public void addBinary(final String kw, final Class left, final Class right, final Class ret,
+		final boolean iterator, final short p, final boolean c, final short t, final short content,
+		final IOperatorExecuter helper) {
 		if ( !BINARIES.containsKey(kw) ) {
 			BINARIES.put(kw, new GamaMap());
 		}
@@ -244,7 +237,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
-	public static void addUnary(final String keyword, final Class childClass, final Class retClass,
+	public void addUnary(final String keyword, final Class childClass, final Class retClass,
 		final boolean canBeConst, final short type, final short contentType,
 		final IOperatorExecuter helper) {
 		IType childType = Types.get(childClass);
@@ -259,7 +252,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	private static void addSkillMethod(final Class c, final String name) {
+	private void addSkillMethod(final Class c, final String name) {
 		List<String> names = SKILL_METHODS.get(c);
 		if ( names == null ) {
 			names = new ArrayList();
@@ -276,7 +269,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return VAR_DESCRIPTIONS.get(clazz);
 	}
 
-	protected static void addVarDescription(final Class clazz, final IDescription desc) {
+	protected void addVarDescription(final Class clazz, final IDescription desc) {
 		if ( !VAR_DESCRIPTIONS.containsKey(clazz) ) {
 			VAR_DESCRIPTIONS.put(clazz, new ArrayList());
 		}
@@ -326,8 +319,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			ACTION_DESCRIPTIONS.put(clazz, new ArrayList());
 		}
 		ACTION_DESCRIPTIONS.get(clazz).add(
-			DescriptionFactory.create(PRIMITIVE, null, argDescs, NAME, actionName, TYPE, e
-				.getReturnType().toString(), JAVA, methodName));
+			DescriptionFactory.create(PRIMITIVE, null, new ChildrenProvider(argDescs), NAME,
+				actionName, TYPE, e.getReturnType().toString(), JAVA, methodName));
 	}
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {

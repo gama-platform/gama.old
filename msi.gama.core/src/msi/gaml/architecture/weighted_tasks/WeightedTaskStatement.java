@@ -19,11 +19,11 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR)
+@symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES })
 @facets(value = {
 	@facet(name = WeightedTaskStatement.WEIGHT, type = IType.FLOAT_STR, optional = false),

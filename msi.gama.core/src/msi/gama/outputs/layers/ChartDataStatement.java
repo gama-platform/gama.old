@@ -36,7 +36,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import org.jfree.chart.renderer.xy.*;
 
-@symbol(name = IKeyword.DATA, kind = ISymbolKind.LAYER)
+@symbol(name = IKeyword.DATA, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.CHART)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
@@ -45,13 +45,13 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK,
 		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.NAME)
-public class Data extends Symbol {
+public class ChartDataStatement extends Symbol {
 
 	GamaColor color;
 	IExpression value;
 	AbstractXYItemRenderer renderer;
 
-	public Data(final IDescription desc) {
+	public ChartDataStatement(final IDescription desc) {
 		super(desc);
 		computeRenderer();
 	}

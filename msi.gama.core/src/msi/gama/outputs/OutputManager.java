@@ -21,16 +21,12 @@ package msi.gama.outputs;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.Semaphore;
-
-import javax.xml.crypto.dsig.spec.HMACParameterSpec;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.with_sequence;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,24 +39,26 @@ import msi.gaml.descriptions.IDescription;
  * 
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
-@symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT)
+@symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
-@with_sequence
 public class OutputManager extends Symbol implements IOutputManager {
 
 	private GuiOutputManager displays;
 	private final Map<String, IOutput> outputs = new HashMap<String, IOutput>();
 	private final Set<IOutput> outputsToUnschedule = new HashSet<IOutput>();
 	private final Set<IOutput> scheduledOutputs = new HashSet<IOutput>();
-	
-	/*Hack Nico need to be checked for the headless*/
+
+	/* Hack Nico need to be checked for the headless */
 	public static Thread OUTPUT_THREAD = new Thread(null, new Runnable() {
 
 		@Override
 		public void run() {
 			boolean cond = false;
 			while (cond) {
-				/*C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant l'instruction juste avant cond=false...*/
+				/*
+				 * C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant
+				 * l'instruction juste avant cond=false...
+				 */
 				try {
 					OutputManager.OUTPUT_AUTHORIZATION.acquire();
 				} catch (InterruptedException e1) {
@@ -97,16 +95,13 @@ public class OutputManager extends Symbol implements IOutputManager {
 		return outputs.get(id);
 	}
 
-	public IOutput getOutputWithName(final String name)
-	{
+	public IOutput getOutputWithName(final String name) {
 		for ( IOutput output : outputs.values() ) {
-			if ( output.getName().equals(name) ) {
-				return output;
-			}
+			if ( output.getName().equals(name) ) { return output; }
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void addOutput(final IOutput output) {
 		if ( output == null || outputs.containsValue(output) ) { return; }
@@ -124,7 +119,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 				displays.fireSelectionChanged(null);
 			}
 			displays = new GuiOutputManager(this);
-			
+
 			for ( IOutput output : outputs.values() ) {
 				if ( output instanceof IDisplayOutput ) {
 					displays.addDisplayOutput(output);
@@ -132,46 +127,38 @@ public class OutputManager extends Symbol implements IOutputManager {
 			}
 			displays.buildOutputs(exp);
 
-		}
-		else
-		{
-			if(GuiUtils.isInHeadLessMode())
-			{
+		} else {
+			if ( GuiUtils.isInHeadLessMode() ) {
 				if ( displays != null ) {
 					// GuiUtils.debug("Cancelling any previous selection");
 					displays.fireSelectionChanged(null);
-				}			
+				}
 				displays = new HeadlessOutputManager(this);
-	
+
 				for ( IOutput output : outputs.values() ) {
 					if ( output instanceof IDisplayOutput ) {
-	
+
 						displays.addDisplayOutput(output);
 					}
 				}
 				displays.buildOutputs(exp);
 			}
 		}
-		
-		if(!GuiUtils.isInHeadLessMode())
-		{
+
+		if ( !GuiUtils.isInHeadLessMode() ) {
 			GuiUtils.run(new Runnable() {
-	
+
 				@Override
 				public void run() {
 					loadOutputs(exp);
 				}
 			});
-		}
-		else
-		{
+		} else {
 			loadOutputs(exp);
 		}
 	}
 
-	
-	private  void loadOutputs(final IExperiment exp)
-	{
+	private void loadOutputs(final IExperiment exp) {
 		for ( final IOutput output : outputs.values() ) {
 			if ( !output.isPermanent() ) {
 				try {
@@ -202,7 +189,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 			}
 		}
 	}
-	
+
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
 			// GuiUtils.debug("Disposing the outputs");
@@ -356,8 +343,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
-		if ( displays != null ) {
-			return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,w, h); }
+		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,
+			w, h); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}
