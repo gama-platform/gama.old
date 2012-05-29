@@ -18,13 +18,16 @@
  */
 package msi.gama.gui.parameters;
 
-import java.io.File;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.IGamaFile;
+import msi.gaml.operators.Files;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public class FileEditor extends AbstractEditor {
@@ -51,29 +54,47 @@ public class FileEditor extends AbstractEditor {
 	}
 
 	@Override
+	protected Object getParameterValue() throws GamaRuntimeException {
+		param.reinitIfNull();
+		return super.getParameterValue();
+	}
+
+	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		textBox = new Button(comp, SWT.FLAT);
+		textBox.setText("AAA");
 		textBox.addSelectionListener(this);
+		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		d.heightHint = 20;
+		textBox.setLayoutData(d);
 		return textBox;
 	}
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 		FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
+		IGamaFile file = (IGamaFile) currentValue;
+		dialog.setFileName(file.getPath());
+		// dialog.set
+		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
 		String path = dialog.open();
 		if ( path != null ) {
-			File file = new File(path);
-			modifyAndDisplayValue(file.isFile() ? file.toString() : file.list()[0]);
+			file = Files.from(getScope(), path);
+			modifyAndDisplayValue(file);
 		}
 	}
 
 	@Override
 	protected void displayParameterValue() {
+		internalModification = true;
 		if ( currentValue == null ) {
-			textBox.setText("");
+			textBox.setText("No file");
 			return;
 		}
-		textBox.setText((String) currentValue);
+		IGamaFile file = (IGamaFile) currentValue;
+		textBox.setText(file.getPath());
+		textBox.update();
+		internalModification = false;
 	}
 
 	@Override
