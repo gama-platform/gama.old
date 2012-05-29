@@ -229,6 +229,10 @@ public class GamaProcessor extends AbstractProcessor {
 			int kind = symbol.kind();
 			String[] names = symbol.name();
 			String key = JavaWriter.SYMBOL_PREFIX + String.valueOf(kind);
+			key += "$" + String.valueOf(symbol.remote_context());
+			key += "$" + String.valueOf(symbol.with_args());
+			key += "$" + String.valueOf(symbol.with_scope());
+			key += "$" + String.valueOf(symbol.with_sequence());
 			for ( String s : names ) {
 				key += "$" + s;
 			}

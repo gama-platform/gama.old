@@ -42,7 +42,7 @@ public class JavaWriter {
 	final static String ISCOPE = "IScope";
 	final static String OBJECT = "Object";
 	final static String IVALUE = "IValue";
-	final static String EXCEPTION = "throws GamaRuntimeException";
+	// final static String EXCEPTION = "throws GamaRuntimeException";
 	final static String IEXPRESSION = "msi.gaml.expressions.IExpression";
 	final static String TYPES = "msi.gaml.types.Types";
 	final static String INTEGER = "Integer";
@@ -59,6 +59,9 @@ public class JavaWriter {
 		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
 		"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables" };
 
+	// final static String[] CLASS_IMPORTS = new String[] { "msi.gaml.operators.Containers",
+	// "msi.gaml.operators.Cast", "msi.gaml.operators.Maths" };
+
 	JavaWriter(final ProcessingEnvironment pe) {
 		env = pe;
 	}
@@ -66,7 +69,7 @@ public class JavaWriter {
 	public String write(final String packageName, final GamlProperties props) {
 		StringBuilder sb = new StringBuilder();
 		writeHeader(sb, packageName);
-		writeSymbolConstructors(sb, props.get(GamlProperties.SYMBOLS));
+		// writeSymbolConstructors(sb, props.get(GamlProperties.SYMBOLS));
 
 		for ( Map.Entry<String, String> entry : props.filterFirst(TYPE_PREFIX).entrySet() ) {
 			writeType(sb, entry.getKey(), entry.getValue());
@@ -146,6 +149,10 @@ public class JavaWriter {
 	protected void writeSymbolAddition(final StringBuilder sb, final String s, final String clazz) {
 		String[] segments = s.split("\\$");
 		String kind = segments[0];
+		String remote = segments[1];
+		String args = segments[2];
+		String scope = segments[3];
+		String sequence = segments[4];
 		String sc =
 			concat("new ISymbolConstructor() {@Override public ISymbol ", "create(final " +
 				IDESCRIPTION + " description) {	return new ", clazz, "(description);}}");
@@ -153,9 +160,13 @@ public class JavaWriter {
 		sb.append("addSymbol(");
 		sb.append(clazz).append(".class").append(",");
 		sb.append(kind).append(",");
+		sb.append(remote).append(",");
+		sb.append(args).append(",");
+		sb.append(scope).append(",");
+		sb.append(sequence).append(",");
 		sb.append(sc);
-		if ( segments.length > 1 ) {
-			for ( int i = 1; i < segments.length; i++ ) {
+		if ( segments.length > 5 ) {
+			for ( int i = 5; i < segments.length; i++ ) {
 				sb.append(",\"").append(segments[i]).append("\"");
 			}
 		}
@@ -299,18 +310,18 @@ public class JavaWriter {
 			".class, new IFieldGetter() {", code, "});"));
 	}
 
-	protected void writeSymbolConstructors(final StringBuilder sb,
-		final LinkedHashSet<String> symbols) {
-		if ( symbols == null ) { return; }
-		ln(sb);
-		for ( String clazz : symbols ) {
-			sb.append(concat(ln, ln, tab, tab, "addSymbolConstructor(", clazz,
-				".class, new ISymbolConstructor() {", ln, ln, tab, "@Override", ln, tab, tab,
-				"public ISymbol ",
-				"create(final msi.gaml.descriptions.IDescription description) {", ln, tab, tab,
-				tab, "	return new ", clazz, "(description);}});"));
-		}
-	}
+	// protected void writeSymbolConstructors(final StringBuilder sb,
+	// final LinkedHashSet<String> symbols) {
+	// if ( symbols == null ) { return; }
+	// ln(sb);
+	// for ( String clazz : symbols ) {
+	// sb.append(concat(ln, ln, tab, tab, "addSymbolConstructor(", clazz,
+	// ".class, new ISymbolConstructor() {", ln, ln, tab, "@Override", ln, tab, tab,
+	// "public ISymbol ",
+	// "create(final msi.gaml.descriptions.IDescription description) {", ln, tab, tab,
+	// tab, "	return new ", clazz, "(description);}});"));
+	// }
+	// }
 
 	protected StringBuilder ln(final StringBuilder sb) {
 		return sb.append(ln);
@@ -325,11 +336,14 @@ public class JavaWriter {
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			ln(sb).append("import ").append(IMPORTS[i]).append(".*;");
 		}
+		// for ( int i = 0; i < CLASS_IMPORTS.length; i++ ) {
+		// ln(sb).append("import ").append(CLASS_IMPORTS[i]).append(";");
+		// }
 		ln(sb).append(ln).append(classDefinition()).append(" {");
 		ln(sb);
 		tab(sb).append("public ").append(simpleClassName()).append("() {}");
 		ln(sb).append(ln).append(tab);
-		sb.append("public void initialize() {");
+		sb.append("@Override public void initialize() {");
 	}
 
 	protected String classDefinition() {
@@ -355,10 +369,16 @@ public class JavaWriter {
 	}
 
 	protected String check(final String clazz) {
+		// for ( int i = 0; i < CLASS_IMPORTS.length; i++ ) {
+		// if ( clazz.startsWith(CLASS_IMPORTS[i]) ) { return clazz.substring(clazz
+		// .lastIndexOf('.') + 1); }
+		// }
+
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz
 				.substring(clazz.lastIndexOf('.') + 1); }
 		}
+
 		return clazz;
 	}
 
@@ -568,46 +588,48 @@ public class JavaWriter {
 	protected String buildDynamicUnary(final String targetClass, final String m,
 		final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope, final Object target, final Object right) ",
-			EXCEPTION, "{ if (target == null) return ", returnWhenNull(returnClass),
-			"; \nreturn ((", targetClass, ") target).", m, "();}");
+			" execute(final " + ISCOPE +
+				" scope, final Object target, final Object right) { if (target == null) return ",
+			returnWhenNull(returnClass), "; \nreturn ((", targetClass, ") target).", m, "();}");
 	}
 
 	protected String buildDynamicContextDependentUnary(final String targetClass, final String m,
 		final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final ", ISCOPE, " scope,final Object target, final Object right)",
-			EXCEPTION, " { if (target == null) return ", returnWhenNull(returnClass),
-			"; \nreturn ((", targetClass, ") target).", m, "(scope);}");
+			" execute(final ", ISCOPE,
+			" scope,final Object target, final Object right) { if (target == null) return ",
+			returnWhenNull(returnClass), "; \nreturn ((", targetClass, ") target).", m, "(scope);}");
 	}
 
 	protected String buildStaticUnary(final String targetClass, final String m,
 		final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope, final Object target, final Object right) ",
-			EXCEPTION, " { return ", m, "(", parameter(targetClass, "target"), ");}");
+			" execute(final " + ISCOPE +
+				" scope, final Object target, final Object right) { return ", m, "(",
+			parameter(targetClass, "target"), ");}");
 	}
 
 	protected String buildStaticContextDependentUnary(final String targetClass, final String m,
 		final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope, final Object target, final Object right) ",
-			EXCEPTION, " { return " + m + "(scope,", parameter(targetClass, "target"), ");}");
+			" execute(final " + ISCOPE +
+				" scope, final Object target, final Object right) { return " + m + "(scope,",
+			parameter(targetClass, "target"), ");}");
 	}
 
 	protected String buildDynamicBinary(final String leftClass, final String rightClass,
 		final String m, final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope,final Object left,", " final Object right) ",
-			EXCEPTION, " { if (left == null) return ", returnWhenNull(returnClass),
+			" execute(final " + ISCOPE + " scope,final Object left,",
+			" final Object right) { if (left == null) return ", returnWhenNull(returnClass),
 			"; \nreturn ((", leftClass, ") left).", m, "(", parameter(rightClass, "right"), ");}");
 	}
 
 	protected String buildDynamicContextDependentBinary(final String leftClass,
 		final String rightClass, final String m, final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope,final Object left, ", "final Object right) ",
-			EXCEPTION, " { if (left == null) return ", returnWhenNull(returnClass),
+			" execute(final " + ISCOPE + " scope,final Object left, ",
+			"final Object right) { if (left == null) return ", returnWhenNull(returnClass),
 			"; \nreturn ((", leftClass, ") left).", m, "(scope,", parameter(rightClass, "right"),
 			");}");
 	}
@@ -615,57 +637,56 @@ public class JavaWriter {
 	protected String buildStaticBinary(final String leftClass, final String rightClass,
 		final String m, final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope, final Object left, ", "final Object right) ",
-			EXCEPTION, " { return ", m, "(", parameter(leftClass, "left"), ",",
+			" execute(final " + ISCOPE + " scope, final Object left, ",
+			"final Object right)  { return ", m, "(", parameter(leftClass, "left"), ",",
 			parameter(rightClass, "right"), ");}");
 	}
 
 	protected String buildStaticContextDependentBinary(final String leftClass,
 		final String rightClass, final String m, final String returnClass) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", returnClass,
-			" execute(final " + ISCOPE + " scope, final Object left, final Object right) ",
-			EXCEPTION, " { return " + m + "(scope,", parameter(leftClass, "left"), ",",
-			parameter(rightClass, "right"), ");}");
+			" execute(final " + ISCOPE +
+				" scope, final Object left, final Object right) { return " + m + "(scope,",
+			parameter(leftClass, "left"), ",", parameter(rightClass, "right"), ");}");
 	}
 
 	protected String buildAgentConstructor(final String javaBase) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ", IAGENT,
-			" createOneAgent(", ISIMULATION, " sim,", IPOPULATION, " manager) " + EXCEPTION +
-				" { \n return new ", javaBase, "(sim, manager);}");
+			" createOneAgent(", ISIMULATION, " sim,", IPOPULATION, " manager)  { \n return new ",
+			javaBase, "(sim, manager);}");
 	}
 
 	protected String buildActionExecuter(final String targetClass, final String retClass,
 		final String m) {
 		return concat(ln, tab, tab, tab, "@Override", ln, tab, tab, tab, "public ",
 			checkPrimitiveClass(retClass), " execute(final ", ISKILL, " target, ", IAGENT,
-			" agent, final ", ISCOPE, " scope) ", EXCEPTION, " { \n return ((", targetClass,
-			") target).", m, "(scope);  }", ln, "@Override public IType getReturnType()",
-			" { return Types.get(", retClass, ".class);}");
+			" agent, final ", ISCOPE, " scope) { \n return ((", targetClass, ") target).", m,
+			"(scope);  }", ln, "@Override public IType getReturnType()", " { return Types.get(",
+			retClass, ".class);}");
 	}
 
 	protected String buildGetter(final String target, final String method, final String r,
 		final boolean dynamic) {
 		String ret = checkPrimitiveClass(r);
 		return concat("@Override public ", ret, " execute(final ", IAGENT, " agent, final ",
-			ISKILL, " target) ", EXCEPTION, " { if (target == null) return ", returnWhenNull(ret),
+			ISKILL, " target) { if (target == null) return ", returnWhenNull(ret),
 			"; \n  return (" + ret + ")((", target, ") target).", method, dynamic ? "(agent);}"
 				: "();}");
 	}
 
 	protected String buildFieldGetter(final String target, final String method, final String r) {
 		String ret = checkPrimitiveClass(r);
-		return concat("@Override public ", ret, " value(final ", IVALUE, " v) ", EXCEPTION,
-			" { if (v == null) return ", returnWhenNull(ret), "; \n", ret, " result = ((", target,
-			") v).", method, "(); return result;}");
+		return concat("@Override public ", ret, " value(final ", IVALUE,
+			" v)  { if (v == null) return ", returnWhenNull(ret), "; \n", ret, " result = ((",
+			target, ") v).", method, "(); return result;}");
 	}
 
 	protected String buildSetter(final String target, final String method, final String param,
 		final boolean dynamic) {
 		String pcName = checkPrimitiveClass(param);
 		return concat("@Override public void execute(final ", IAGENT, " agent, final ", ISKILL,
-			" target, final ", OBJECT, " arg) ", EXCEPTION, " { if (target == null) return;  \n((",
-			target, ") target).", method, "(", dynamic ? "agent, " : "", "(" + pcName + ")",
-			"arg); }");
+			" target, final ", OBJECT, " arg) { if (target == null) return;  \n((", target,
+			") target).", method, "(", dynamic ? "agent, " : "", "(" + pcName + ")", "arg); }");
 	}
 
 }

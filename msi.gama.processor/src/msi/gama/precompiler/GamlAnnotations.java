@@ -160,27 +160,14 @@ public final class GamlAnnotations {
 	public static @interface inside {
 
 		/**
-		 * Determines where the symbol should be located. Either direct symbol names (in symbols) or
-		 * generic symbol kinds (in contexts, see ISymbolKind) can be used
+		 * Determines where a symbol should be located. Either direct symbol names (in symbols) or
+		 * generic symbol kinds (in kinds, see ISymbolKind) can be used
 		 * 
 		 */
 
 		String[] symbols() default {};
 
 		int[] kinds() default {};
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@Inherited
-	public static @interface remote_context {
-
-		/**
-		 * Indicates that the context of this statement is actually an hybrid context: although it
-		 * will be executed in a remote context, any temporary variables declared in the enclosing
-		 * scopes should be passed on as if the statement was executed in the current context.
-		 */
-
 	}
 
 	/**
@@ -256,16 +243,20 @@ public final class GamlAnnotations {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
-	// @Target(ElementType.TYPE)
 	public static @interface var {
 
 		/**
 		 * Value.
 		 * 
-		 * @return an Array of strings, each representing a variable name
+		 * @return The name of the variable
 		 */
 		String name();
 
+		/**
+		 * Type.
+		 * 
+		 * @return The type of the variable (see IType)
+		 */
 		String type();
 
 		String of() default "";
@@ -278,8 +269,6 @@ public final class GamlAnnotations {
 
 		String species() default "";
 
-		boolean freezable() default false; // TODO REMOVE!
-
 		String doc() default "";
 	}
 
@@ -291,7 +280,7 @@ public final class GamlAnnotations {
 	public static @interface symbol {
 
 		/**
-		 * Value.
+		 * Name.
 		 * 
 		 * @return an Array of strings, each representing a possible keyword for a GAML statement.
 		 *         Elements annotated by this annotation should also indicate what kind of symbol
@@ -299,16 +288,47 @@ public final class GamlAnnotations {
 		 */
 		String[] name() default {};
 
+		/**
+		 * Kind.
+		 * @return the kind of the annotated symbol. See ISymbolKind
+		 */
 		int kind();
 
-	}
+		/**
+		 * NoScope.
+		 * 
+		 * @return Indicates if the statement (usually a sequence) defines its own scope.
+		 *         Otherwise, all the temporary variables defined in it are actually defined in the
+		 *         super-scope
+		 */
+		boolean with_scope() default true;
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public static @interface no_scope {
-		// Indicates that the statement (usually a sequence) does not define its own scope.
-		// I.e. all the temporary variables defined in it are actually defined in the
-		// super-scope
+		/**
+		 * WithSequence.
+		 * 
+		 * @return Indicates wether or not a sequence can ou should follow the symbol denoted by
+		 *         this class.
+		 */
+		boolean with_sequence();
+
+		/**
+		 * WithArgs.
+		 * 
+		 * @return Indicates wether or not the symbol denoted by this class has arguments
+		 */
+		boolean with_args() default false;
+
+		/**
+		 * RemoteContext.
+		 * 
+		 * @return Indicates that the context of this statement is actually an hybrid context:
+		 *         although it will be executed in a remote context, any temporary variables
+		 *         declared in the enclosing scopes should be passed on as if the statement was
+		 *         executed in the current context.
+		 */
+
+		boolean remote_context() default false;
+
 	}
 
 	/**
@@ -418,26 +438,6 @@ public final class GamlAnnotations {
 		 *         getter.
 		 */
 		String value();
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@Inherited
-	public static @interface with_sequence {
-		/**
-		 * @return Indicates wether or not a sequence can ou should follow the symbol denoted by
-		 *         this class.
-		 */
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	// @Inherited
-	public static @interface with_args {
-		/**
-		 * @return Indicates wether or not the symbol denoted by this class has arguments
-		 */
 	}
 
 	/**
