@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.awt;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,10 +27,11 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.layers.IDisplayLayer;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -46,7 +47,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private int width, height;
 	private IGraphics displayGraphics;
 	protected Color bgColor = Color.black;
-	IDisplayManager manager;
+	ILayerManager manager;
 	private String snapshotFileName;
 	public static String snapshotFolder = "/tmp/";
 
@@ -102,7 +103,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 
 	@Override
-	public IDisplayManager getManager() {
+	public ILayerManager getManager() {
 		return manager;
 	}
 
@@ -113,10 +114,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		if ( output == null ) { return; }
 		bgColor = output.getBackgroundColor();
 		if ( manager == null ) {
-			manager = new DisplayManager(this);
+			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
+				manager.addLayer(LayerManager.createDisplay((ILayerStatement) layer, env_width,
 					env_height, displayGraphics));
 			}
 		} else {
@@ -164,7 +165,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void drawAllDisplays() {
 		if ( displayGraphics == null ) { return; }
 		displayGraphics.fill(bgColor, 1);
-		manager.drawDisplaysOn(displayGraphics);
+		manager.drawLayersOn(displayGraphics);
 	}
 
 	private void createBuffImage() {
@@ -247,7 +248,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * msi.gama.gui.displays.IDisplay)
 	 */
 	@Override
-	public void focusOn(final IShape geometry, final IDisplay display) {
+	public void focusOn(final IShape geometry, final ILayer display) {
 		// TODO Auto-generated method stub
 
 	}

@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.awt;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -30,10 +30,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.gui.displays.*;
+import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.layers.IDisplayLayer;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -45,7 +48,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	private boolean autosave = false;
 	private String snapshotFileName;
 	public static String snapshotFolder = "snapshots";
-	protected IDisplayManager manager;
+	protected ILayerManager manager;
 	boolean paused;
 	private volatile boolean canBeUpdated = true;
 	double widthHeightConstraint = 1.0;
@@ -127,7 +130,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public IDisplayManager getManager() {
+	public ILayerManager getManager() {
 		return manager;
 	}
 
@@ -262,10 +265,10 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
 		if ( manager == null ) {
-			manager = new DisplayManager(this);
+			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
+				manager.addLayer(LayerManager.createDisplay((ILayerStatement) layer, env_width,
 					env_height, displayGraphics));
 			}
 
@@ -292,7 +295,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void selectAgents(final int x, final int y) {
 		int xc = x - origin.x;
 		int yc = y - origin.y;
-		final List<IDisplay> displays = manager.getDisplays(xc, yc);
+		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
 		menuManager.selectAgents(xc, yc, displays);
 	}
 
@@ -334,7 +337,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( displayGraphics == null ) { return; }
 		ex[0] = null;
 		displayGraphics.fill(bgColor, 1);
-		manager.drawDisplaysOn(displayGraphics);
+		manager.drawLayersOn(displayGraphics);
 	}
 
 	protected final Rectangle getImageClipBounds() {
@@ -477,7 +480,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void focusOn(final IShape geometry, final IDisplay display) {
+	public void focusOn(final IShape geometry, final ILayer display) {
 		Envelope env = geometry.getEnvelope();
 		double minX = env.getMinX();
 		double minY = env.getMinY();

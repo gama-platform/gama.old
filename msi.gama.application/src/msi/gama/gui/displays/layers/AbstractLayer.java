@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
@@ -25,7 +25,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.IDisplayLayer;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 
@@ -35,22 +35,22 @@ import org.eclipse.swt.widgets.Composite;
  * @todo Description
  * 
  */
-public abstract class AbstractDisplay implements IDisplay {
+public abstract class AbstractLayer implements ILayer {
 
 	protected Integer order = 0;
 	protected boolean disposed = false;
-	protected IDisplayLayer model;
+	protected ILayerStatement definition;
 	private String name;
 	private final java.awt.Point position; // The position in pixels
 	protected java.awt.Point size; // The extension (from the position) in pixels
 	protected double env_width, env_height;
 
-	protected AbstractDisplay(final double env_width, final double env_height,
-		final IDisplayLayer layer, final IGraphics dg) {
-		model = layer;
-		if ( model != null ) {
+	protected AbstractLayer(final double env_width, final double env_height,
+		final ILayerStatement layer, final IGraphics dg) {
+		definition = layer;
+		if ( definition != null ) {
 			// model.setPhysicalLayer(this);
-			setName(model.getName());
+			setName(definition.getName());
 		}
 		size = new Point(0, 0);
 		position = new Point(0, 0);
@@ -76,8 +76,8 @@ public abstract class AbstractDisplay implements IDisplay {
 	}
 
 	@Override
-	public int compareTo(final IDisplay o) {
-		return order.compareTo(((AbstractDisplay) o).getOrder());
+	public int compareTo(final ILayer o) {
+		return order.compareTo(((AbstractLayer) o).getOrder());
 	}
 
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
@@ -88,13 +88,13 @@ public abstract class AbstractDisplay implements IDisplay {
 				@Override
 				public void valueModified(final Boolean newValue) {
 
-					container.getManager().enableDisplay(AbstractDisplay.this, newValue);
+					container.getManager().enableLayer(AbstractLayer.this, newValue);
 					if ( container.isPaused() ) {
 						container.updateDisplay();
 					}
 				}
 			});
-		EditorFactory.create(compo, "Opacity:", model.getTransparency(), 0.0, 1.0, 0.1, false,
+		EditorFactory.create(compo, "Opacity:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 
 				@Override
@@ -106,7 +106,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				}
 
 			});
-		EditorFactory.create(compo, "Position:", model.getBox().getPosition(),
+		EditorFactory.create(compo, "Position:", definition.getBox().getPosition(),
 			new EditorListener<GamaPoint>() {
 
 				@Override
@@ -118,7 +118,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				}
 
 			});
-		EditorFactory.create(compo, "Extent:", model.getBox().getExtent(),
+		EditorFactory.create(compo, "Extent:", definition.getBox().getExtent(),
 			new EditorListener<GamaPoint>() {
 
 				@Override
@@ -130,7 +130,7 @@ public abstract class AbstractDisplay implements IDisplay {
 				}
 
 			});
-		EditorFactory.create(compo, "Elevation:", model.getElevation(), 0.0, 1.0, 0.1, false,
+		EditorFactory.create(compo, "Elevation:", definition.getElevation(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 
 				@Override
@@ -152,29 +152,29 @@ public abstract class AbstractDisplay implements IDisplay {
 	@Override
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
-		if ( model != null ) {
-			g.newLayer(model.getElevation());
-			g.setOpacity(model.getTransparency());
-			setPositionAndSize(model.getBoundingBox(), g);
+		if ( definition != null ) {
+			g.newLayer(definition.getElevation());
+			g.setOpacity(definition.getTransparency());
+			setPositionAndSize(definition.getBoundingBox(), g);
 		}
 		privateDrawDisplay(g);
 	}
 
 	@Override
 	public void setOpacity(final Double opacity) {
-		model.setOpacity(opacity);
+		definition.setOpacity(opacity);
 	}
 
 	public void setPosition(final GamaPoint p) {
-		model.getBox().setPosition(p);
+		definition.getBox().setPosition(p);
 	}
 
 	public void setExtent(final GamaPoint p) {
-		model.getBox().setExtent(p);
+		definition.getBox().setExtent(p);
 	}
 	
 	public void setElevation(final Double elevation) {
-		model.setElevation(elevation);
+		definition.setElevation(elevation);
 	}
 
 	/**

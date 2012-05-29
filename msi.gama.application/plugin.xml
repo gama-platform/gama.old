@@ -1595,11 +1595,11 @@
       <extension
             point="gama.display">
          <implementation
-               class="msi.gama.gui.displays.AWTDisplaySurface"
+               class="msi.gama.gui.displays.awt.AWTDisplaySurface"
                keyword="java2D">
          </implementation>
          <implementation
-               class="msi.gama.gui.displays.ImageDisplaySurface"
+               class="msi.gama.gui.displays.awt.ImageDisplaySurface"
                keyword="image">
          </implementation>
       </extension>

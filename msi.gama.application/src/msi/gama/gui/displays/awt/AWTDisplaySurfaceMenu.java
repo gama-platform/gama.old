@@ -1,4 +1,4 @@
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.awt;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,14 +26,14 @@ public class AWTDisplaySurfaceMenu {
 
 	}
 
-	public void selectAgents(final int x, final int y, final List<IDisplay> displays) {
+	public void selectAgents(final int x, final int y, final List<ILayer> displays) {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
 		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y);
 		SelectedAgent world = new SelectedAgent(GAMA.getFrontmostSimulation().getWorld(), p);
 		world.buildMenuItems(agentsMenu, displays.get(0), "World agent");
 		agentsMenu.addSeparator();
-		for ( IDisplay display : displays ) {
+		for ( ILayer display : displays ) {
 			Set<IAgent> agents = display.collectAgentsAt(x, y);
 			if ( agents.isEmpty() ) {
 				continue;
@@ -142,11 +142,11 @@ public class AWTDisplaySurfaceMenu {
 
 		}
 
-		void buildMenuItems(final Menu parentMenu, final IDisplay display) {
+		void buildMenuItems(final Menu parentMenu, final ILayer display) {
 			buildMenuItems(parentMenu, display, macro.getName());
 		}
 
-		void buildMenuItems(final Menu parentMenu, final IDisplay display, final String name) {
+		void buildMenuItems(final Menu parentMenu, final ILayer display, final String name) {
 			Menu macroMenu = new Menu(name);
 			parentMenu.add(macroMenu);
 
@@ -193,11 +193,11 @@ public class AWTDisplaySurfaceMenu {
 	static class AgentMenuItem extends MenuItem {
 
 		private final IAgent agent;
-		private final IDisplay display;
+		private final ILayer display;
 		private final IStatement command;
 		private final GamaPoint userLocation;
 
-		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
+		AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
 			super(name);
 			this.agent = agent;
 			this.display = display;
@@ -225,7 +225,7 @@ public class AWTDisplaySurfaceMenu {
 			return command;
 		}
 
-		IDisplay getDisplay() {
+		ILayer getDisplay() {
 			return display;
 		}
 	}

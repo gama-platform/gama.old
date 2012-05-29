@@ -7,6 +7,7 @@ package msi.gama.gui.views.actions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.*;
+import msi.gama.gui.displays.layers.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.views.*;
@@ -30,17 +31,17 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	private static Map<Class, Image> images = new HashMap();
 
 	static {
-		images.put(GridDisplay.class, SwtGui.getImageDescriptor("/icons/display_grid.png")
+		images.put(GridLayer.class, SwtGui.getImageDescriptor("/icons/display_grid.png")
 			.createImage());
-		images.put(AgentDisplay.class, SwtGui.getImageDescriptor("/icons/display_agents.png")
+		images.put(AgentLayer.class, SwtGui.getImageDescriptor("/icons/display_agents.png")
 			.createImage());
-		images.put(ImageDisplay.class, SwtGui.getImageDescriptor("/icons/display_image.png")
+		images.put(ImageLayer.class, SwtGui.getImageDescriptor("/icons/display_image.png")
 			.createImage());
-		images.put(TextDisplay.class, SwtGui.getImageDescriptor("/icons/display_text.png")
+		images.put(TextLayer.class, SwtGui.getImageDescriptor("/icons/display_text.png")
 			.createImage());
-		images.put(SpeciesDisplay.class, SwtGui.getImageDescriptor("/icons/display_species.png")
+		images.put(SpeciesLayer.class, SwtGui.getImageDescriptor("/icons/display_species.png")
 			.createImage());
-		images.put(ChartDisplay.class, SwtGui.getImageDescriptor("/icons/display_chart.png")
+		images.put(ChartLayer.class, SwtGui.getImageDescriptor("/icons/display_chart.png")
 			.createImage());
 	}
 
@@ -99,7 +100,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 		public void widgetSelected(final SelectionEvent e) {
 			MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			final IDisplay d = (IDisplay) mi.getData("display");
+			final ILayer d = (ILayer) mi.getData("display");
 			final IDisplaySurface s = (IDisplaySurface) mi.getData("surface");
 			if ( a != null && !a.dead() ) {
 				new Thread(new Runnable() {
@@ -126,10 +127,10 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 	private class FocusOnSelection extends SelectionAdapter {
 
-		IDisplay display;
+		ILayer display;
 		IDisplaySurface surface;
 
-		FocusOnSelection(final IDisplay display, final IDisplaySurface surface) {
+		FocusOnSelection(final ILayer display, final IDisplaySurface surface) {
 			this.display = display;
 			this.surface = surface;
 		}
@@ -171,17 +172,17 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	public void fill(final Menu menu, final int index) {
 		LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
-		for ( final IDisplay item : view.getDisplayManager().getItems() ) {
+		for ( final ILayer item : view.getDisplayManager().getItems() ) {
 			FocusOnSelection adapter = new FocusOnSelection(item, displaySurface);
-			if ( item instanceof SpeciesDisplay ) {
-				SpeciesDisplay display = (SpeciesDisplay) item;
+			if ( item instanceof SpeciesLayer ) {
+				SpeciesLayer display = (SpeciesLayer) item;
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
 				AgentsMenu.createSpeciesSubMenu(displayMenu, GAMA.getFrontmostSimulation()
 					.getWorld().getMicroPopulation(display.getName()), adapter);
-			} else if ( item instanceof AgentDisplay ) {
-				AgentDisplay display = (AgentDisplay) item;
+			} else if ( item instanceof AgentLayer ) {
+				AgentLayer display = (AgentLayer) item;
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
@@ -194,8 +195,8 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 					agentItem.addSelectionListener(adapter);
 				}
 				displayMenu.setMenu(agentsMenu);
-			} else if ( item instanceof GridDisplay ) {
-				GridDisplay display = (GridDisplay) item;
+			} else if ( item instanceof GridLayer ) {
+				GridLayer display = (GridLayer) item;
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText("Grid layer: " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));

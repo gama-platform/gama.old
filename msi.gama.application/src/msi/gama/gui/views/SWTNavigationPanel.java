@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.views;
 
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IDisplaySurface;

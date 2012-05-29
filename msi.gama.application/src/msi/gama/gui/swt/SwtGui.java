@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.AWTDisplayGraphics;
+import msi.gama.gui.displays.awt.AWTDisplayGraphics;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;

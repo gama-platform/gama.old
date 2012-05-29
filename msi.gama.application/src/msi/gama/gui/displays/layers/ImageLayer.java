@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
@@ -31,19 +31,19 @@ import org.eclipse.swt.widgets.Composite;
  * @todo Description
  * 
  */
-public class ImageDisplay extends AbstractDisplay {
+public class ImageLayer extends AbstractLayer {
 
 	BufferedImage image = null;
 	private String imageFileName = "";
 
-	public ImageDisplay(final double env_width, final double env_height, final IDisplayLayer layer,
+	public ImageLayer(final double env_width, final double env_height, final ILayerStatement layer,
 		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 		buildImage();
 	}
 
 	protected void buildImage() {
-		String newImage = ((ImageDisplayLayer) model).getImageFileName();
+		String newImage = ((ImageLayerStatement) definition).getImageFileName();
 		if ( imageFileName != null && imageFileName.equals(newImage) ) { return; }
 		imageFileName = newImage;
 		if ( imageFileName == null || imageFileName.length() == 0 ) {
@@ -62,13 +62,13 @@ public class ImageDisplay extends AbstractDisplay {
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
 
-		if ( model instanceof ImageDisplayLayer ) {
+		if ( definition instanceof ImageLayerStatement ) {
 			EditorFactory.createFile(compo, "Image:",
-				((ImageDisplayLayer) model).getImageFileName(), new EditorListener<String>() {
+				((ImageLayerStatement) definition).getImageFileName(), new EditorListener<String>() {
 
 					@Override
 					public void valueModified(final String newValue) {
-						((ImageDisplayLayer) model).setImageFileName(newValue);
+						((ImageLayerStatement) definition).setImageFileName(newValue);
 					}
 
 				});

@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -33,15 +33,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 import weka.classifiers.bayes.net.GUI;
 
-public class GridDisplay extends ImageDisplay {
+public class GridLayer extends ImageLayer {
 
 	private boolean turnGridOn;
 	private Color lineColor;
 
-	public GridDisplay(final double env_width, final double env_height, final IDisplayLayer model,
+	public GridLayer(final double env_width, final double env_height, final ILayerStatement model,
 		final IGraphics dg) {
 		super(env_width, env_height, model, dg);
-		turnGridOn = ((GridDisplayLayer) model).drawLines();
+		turnGridOn = ((GridLayerStatement) model).drawLines();
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class GridDisplay extends ImageDisplay {
 
 	@Override
 	protected void buildImage() {
-		GridDisplayLayer g = (GridDisplayLayer) model;
+		GridLayerStatement g = (GridLayerStatement) definition;
 		GamaSpatialMatrix m = g.getEnvironment();
 		if ( image == null ) {
 			image = ImageUtils.createCompatibleImage(m.numCols, m.numRows);
@@ -82,7 +82,7 @@ public class GridDisplay extends ImageDisplay {
 		if ( image == null ) { return; }
 		dg.drawImage(image, null, false,"GridDisplay");
 		if ( turnGridOn ) {
-			lineColor = ((GridDisplayLayer) model).getLineColor();
+			lineColor = ((GridLayerStatement) definition).getLineColor();
 			if ( lineColor == null ) {
 				lineColor = Color.black;
 			}
@@ -91,7 +91,7 @@ public class GridDisplay extends ImageDisplay {
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {
-		return ((GridDisplayLayer) model).getEnvironment().getPlaceAt(loc).getAgent();
+		return ((GridLayerStatement) definition).getEnvironment().getPlaceAt(loc).getAgent();
 	}
 
 	@Override

@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.*;
 import msi.gama.common.interfaces.*;
@@ -32,11 +32,11 @@ import org.eclipse.swt.widgets.Composite;
  * @todo Description
  * 
  */
-public class TextDisplay extends AbstractDisplay {
+public class TextLayer extends AbstractLayer {
 
 	private Font font;
 
-	public TextDisplay(final double env_width, final double env_height, final IDisplayLayer layer,
+	public TextLayer(final double env_width, final double env_height, final ILayerStatement layer,
 		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 		font = new Font("Helvetica", Font.PLAIN, 24);
@@ -46,29 +46,29 @@ public class TextDisplay extends AbstractDisplay {
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
 		EditorFactory.createExpression(compo, "Expression:",
-			((TextDisplayLayer) model).getTextExpr(), new EditorListener<IExpression>() {
+			((TextLayerStatement) definition).getTextExpr(), new EditorListener<IExpression>() {
 
 				@Override
 				public void valueModified(final IExpression newValue) {
-					((TextDisplayLayer) model).setTextExpr(newValue);
+					((TextLayerStatement) definition).setTextExpr(newValue);
 					container.updateDisplay();
 				}
 			}, Types.get(IType.STRING));
-		EditorFactory.create(compo, "Color:", ((TextDisplayLayer) model).getColor(),
+		EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
 			new EditorListener<Color>() {
 
 				@Override
 				public void valueModified(final Color newValue) {
-					((TextDisplayLayer) model).setColor(newValue);
+					((TextLayerStatement) definition).setColor(newValue);
 					container.updateDisplay();
 				}
 			});
-		EditorFactory.create(compo, "Font:", ((TextDisplayLayer) model).getFontName(), true,
+		EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFontName(), true,
 			new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) {
-					((TextDisplayLayer) model).setFont(newValue);
+					((TextLayerStatement) definition).setFont(newValue);
 					container.updateDisplay();
 				}
 			});
@@ -77,7 +77,7 @@ public class TextDisplay extends AbstractDisplay {
 	@Override
 	public void privateDrawDisplay(final IGraphics g) {
 		if ( disposed ) { return; }
-		TextDisplayLayer model = (TextDisplayLayer) this.model;
+		TextLayerStatement model = (TextLayerStatement) this.definition;
 		String text = model.getText();
 		Color color = model.getColor();
 		String f = model.getFontName();

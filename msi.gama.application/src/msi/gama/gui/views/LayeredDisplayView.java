@@ -23,10 +23,10 @@ import java.awt.event.MouseWheelEvent;
 import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.*;
+import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
-import msi.gama.outputs.LayerDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseWheelListener;
@@ -34,7 +34,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements IViewWithZoom {
+public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
@@ -57,11 +57,12 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 	@Override
 	protected Integer[] getToolbarActionsId() {
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
-			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
+			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR, SEPARATOR,
+			CAMERA };
 	}
 
-	public IDisplayManager getDisplayManager() {
-		return ((LayerDisplayOutput) getOutput()).getSurface().getManager();
+	public ILayerManager getDisplayManager() {
+		return ((LayeredDisplayOutput) getOutput()).getSurface().getManager();
 	}
 
 	@Override
@@ -214,26 +215,26 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 	}
 
 	@Override
-	public boolean addItem(final IDisplay d) {
+	public boolean addItem(final ILayer d) {
 		createItem(d, false);
 		return true;
 	}
 
 	@Override
-	protected Composite createItemContentsFor(final IDisplay d) {
+	protected Composite createItemContentsFor(final ILayer d) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		if ( d instanceof AbstractDisplay ) {
-			((AbstractDisplay) d).fillComposite(compo,
-				((LayerDisplayOutput) getOutput()).getSurface());
+		if ( d instanceof AbstractLayer ) {
+			((AbstractLayer) d).fillComposite(compo,
+				((LayeredDisplayOutput) getOutput()).getSurface());
 		}
 		return compo;
 	}
 
 	public IDisplaySurface getDisplaySurface() {
-		return ((LayerDisplayOutput) getOutput()).getSurface();
+		return ((LayeredDisplayOutput) getOutput()).getSurface();
 	}
 
 	public void toggleControls() {
@@ -242,12 +243,12 @@ public class LayeredDisplayView extends ExpandableItemsView<IDisplay> implements
 	}
 
 	@Override
-	public String getItemDisplayName(final IDisplay obj, final String previousName) {
+	public String getItemDisplayName(final ILayer obj, final String previousName) {
 		return getDisplayManager().getItemDisplayName(obj, previousName);
 	}
 
 	@Override
-	public java.util.List<IDisplay> getItems() {
+	public java.util.List<ILayer> getItems() {
 		return getDisplayManager().getItems();
 	}
 

@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.*;
@@ -26,9 +26,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 import com.vividsolutions.jts.geom.Geometry;
 
-public class GisDisplay extends AbstractDisplay {
+public class GisLayer extends AbstractLayer {
 
-	public GisDisplay(final double env_width, final double env_height, final IDisplayLayer layer,
+	public GisLayer(final double env_width, final double env_height, final ILayerStatement layer,
 		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 
@@ -37,8 +37,8 @@ public class GisDisplay extends AbstractDisplay {
 	@Override
 	public void privateDrawDisplay(final IGraphics g) {
 		if ( disposed ) { return; }
-		Color color = ((ImageDisplayLayer) model).getGisLayer().getColor();
-		for ( Geometry geom : ((ImageDisplayLayer) model).getGisLayer().getObjects() ) {
+		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
+		for ( Geometry geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
 			if ( geom != null ) {
 				g.drawGeometry(geom, color, true, null);
 			}
@@ -49,11 +49,11 @@ public class GisDisplay extends AbstractDisplay {
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
 		EditorFactory.createFile(compo, "Shapefile:",
-			((ImageDisplayLayer) model).getImageFileName(), new EditorListener<String>() {
+			((ImageLayerStatement) definition).getImageFileName(), new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) throws GamaRuntimeException {
-					((ImageDisplayLayer) model).setGisLayerName(newValue);
+					((ImageLayerStatement) definition).setGisLayerName(newValue);
 				}
 
 			});

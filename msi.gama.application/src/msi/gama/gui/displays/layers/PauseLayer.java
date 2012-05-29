@@ -16,10 +16,12 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
+import java.awt.*;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -27,22 +29,37 @@ import msi.gama.outputs.layers.*;
  * @todo Description
  * 
  */
-public class QuadTreeDisplay extends AbstractDisplay {
+public class PauseLayer extends AbstractLayer {
 
-	public QuadTreeDisplay(final double env_width, final double env_height,
-		final IDisplayLayer layer, final IGraphics dg) {
+	/**
+	 * @param env_width
+	 * @param env_height
+	 * @param layer
+	 * @param dg
+	 */
+	protected PauseLayer(final double env_width, final double env_height,
+		final ILayerStatement layer, final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 	}
 
+	/**
+	 * @see msi.gama.gui.displays.AbstractDisplay#privateDrawDisplay(msi.gama.common.interfaces.IGraphics)
+	 */
 	@Override
-	public void privateDrawDisplay(final IGraphics dg) {
-		if ( disposed ) { return; }
-		dg.drawImage(((QuadTreeDisplayLayer) model).getSupportImage(), null, false,"QuadTreeDisplay");
+	protected void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
+		g.fill(Color.DARK_GRAY, 0.5);
+		g.setFont(new Font("Helvetica", Font.BOLD, 18));
+		g.setDrawingOffset(0, 0);
+		g.setDrawingCoordinates(20, 20);
+		g.setOpacity(1);
+		g.drawString("Display paused", Color.white, 0);
 	}
 
+	/**
+	 * @see msi.gama.gui.displays.AbstractDisplay#getType()
+	 */
 	@Override
 	protected String getType() {
-		return "Quadtree layer";
+		return "Pause screen";
 	}
-
 }

@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -39,13 +39,13 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class AgentDisplay extends AbstractDisplay {
+public class AgentLayer extends AbstractLayer {
 
 	// private final Set<IAgent> agents = new HashSet();
 
 	// private final Set<SelectedAgent> selectedAgents = new HashSet<SelectedAgent>();
 
-	public AgentDisplay(final double env_width, final double env_height, final IDisplayLayer layer,
+	public AgentLayer(final double env_width, final double env_height, final ILayerStatement layer,
 		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 	}
@@ -53,7 +53,7 @@ public class AgentDisplay extends AbstractDisplay {
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		IExpression expr = ((AgentDisplayLayer) model).getFacet(IKeyword.VALUE);
+		IExpression expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 		if ( expr != null ) {
 			EditorFactory.createExpression(compo, "Agents:", expr.toGaml(),
 				new EditorListener<IExpression>() {
@@ -61,7 +61,7 @@ public class AgentDisplay extends AbstractDisplay {
 					@Override
 					public void valueModified(final IExpression newValue)
 						throws GamaRuntimeException {
-						((AgentDisplayLayer) model).setAgentsExpr(newValue);
+						((AgentLayerStatement) definition).setAgentsExpr(newValue);
 						container.updateDisplay();
 					}
 				}, Types.get(IType.LIST));
@@ -75,7 +75,7 @@ public class AgentDisplay extends AbstractDisplay {
 
 		shapes.clear();
 		// performance issue
-		String aspectName = ((AgentDisplayLayer) model).getAspectName();
+		String aspectName = ((AgentLayerStatement) definition).getAspectName();
 		IScope scope = GAMA.obtainNewScope();
 		if ( scope != null ) {
 			scope.setContext(g);
@@ -107,7 +107,7 @@ public class AgentDisplay extends AbstractDisplay {
 
 	public Set<IAgent> getAgentsToDisplay() {
 		// return agents;
-		return ((AgentDisplayLayer) model).getAgentsToDisplay();
+		return ((AgentLayerStatement) definition).getAgentsToDisplay();
 	}
 
 	@Override

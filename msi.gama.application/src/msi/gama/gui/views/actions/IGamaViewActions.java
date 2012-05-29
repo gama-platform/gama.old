@@ -28,5 +28,6 @@ public interface IGamaViewActions {
 	public final static int SYNCHRONIZE = 12;
 	public final static int RENDERING = 13;
 	public final static int HIGHLIGHT_COLOR = 14;
+	public final static int CAMERA = 15;
 
 }

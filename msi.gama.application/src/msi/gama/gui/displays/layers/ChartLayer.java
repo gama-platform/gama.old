@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
@@ -34,15 +34,15 @@ import org.jfree.experimental.chart.swt.editor.SWTChartEditor;
  * @todo Description
  * 
  */
-public class ChartDisplay extends AbstractDisplay {
+public class ChartLayer extends AbstractLayer {
 
-	public ChartDisplay(final double env_width, final double env_height, final IDisplayLayer model,
+	public ChartLayer(final double env_width, final double env_height, final ILayerStatement model,
 		final IGraphics dg) {
 		super(env_width, env_height, model, dg);
 	}
 
 	private JFreeChart getChart() {
-		return ((ChartDisplayLayer) model).getChart();
+		return ((ChartLayerStatement) definition).getChart();
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class ChartDisplay extends AbstractDisplay {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				((ChartDisplayLayer) model).saveHistory();
+				((ChartLayerStatement) definition).saveHistory();
 			}
 
 		});

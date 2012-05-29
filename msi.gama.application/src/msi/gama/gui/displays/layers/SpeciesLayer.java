@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.gui.displays;
+package msi.gama.gui.displays.layers;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -40,18 +40,18 @@ import com.vividsolutions.jts.geom.Envelope;
  * Written by drogoul Modified on 23 août 2008
  */
 
-public class SpeciesDisplay extends AgentDisplay {
+public class SpeciesLayer extends AgentLayer {
 
-	public SpeciesDisplay(final double env_width, final double env_height,
-		final IDisplayLayer layer, final IGraphics dg) {
+	public SpeciesLayer(final double env_width, final double env_height,
+		final ILayerStatement layer, final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 	}
 
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		EditorFactory.choose(compo, "Aspect:", ((SpeciesDisplayLayer) model).getAspectName(), true,
-			((SpeciesDisplayLayer) model).getAspects(), new EditorListener<String>() {
+		EditorFactory.choose(compo, "Aspect:", ((SpeciesLayerStatement) definition).getAspectName(), true,
+			((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) {
@@ -64,11 +64,11 @@ public class SpeciesDisplay extends AgentDisplay {
 	@Override
 	public Set<IAgent> getAgentsForMenu() {
 		return new HashSet(GAMA.getDefaultScope().getWorldScope()
-			.getMicroPopulation(((SpeciesDisplayLayer) model).getSpecies()).getAgentsList());
+			.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
 	}
 
 	private void changeAspect(final String s) {
-		((SpeciesDisplayLayer) model).setAspect(s);
+		((SpeciesLayerStatement) definition).setAspect(s);
 	}
 
 	@Override
@@ -87,14 +87,14 @@ public class SpeciesDisplay extends AgentDisplay {
 			// micro-populations
 
 			// start drawing agents of "level 1" species ...
-			ISpecies species = ((SpeciesDisplayLayer) model).getSpecies();
+			ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
 			if ( species.getLevel() == 1 ) {
 				IAgent world = scope.getWorldScope();
 				if ( !world.dead() ) {
 					IPopulation microPop = world.getMicroPopulation(species);
 					if ( microPop != null ) {
 						scope.setContext(g);
-						drawPopulation(world, (SpeciesDisplayLayer) model, microPop, scope, g);
+						drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope, g);
 					}
 				}
 			}
@@ -103,7 +103,7 @@ public class SpeciesDisplay extends AgentDisplay {
 		}
 	}
 
-	private void drawPopulation(final IAgent host, final SpeciesDisplayLayer layer,
+	private void drawPopulation(final IAgent host, final SpeciesLayerStatement layer,
 		final IPopulation population, final IScope scope, final IGraphics g)
 		throws GamaRuntimeException {
 		IAspect aspect = population.getAspect(layer.getAspectName());
@@ -129,8 +129,8 @@ public class SpeciesDisplay extends AgentDisplay {
 			IPopulation microPop;
 
 			// draw grids first...
-			List<GridDisplayLayer> gridLayers = layer.getGridLayers();
-			for ( GridDisplayLayer gl : gridLayers ) {
+			List<GridLayerStatement> gridLayers = layer.getGridLayers();
+			for ( GridLayerStatement gl : gridLayers ) {
 				for ( IAgent a : _agents ) {
 					if ( a.acquireLock() ) {
 						try {
@@ -147,8 +147,8 @@ public class SpeciesDisplay extends AgentDisplay {
 			}
 
 			// then recursively draw the micro-populations
-			List<SpeciesDisplayLayer> microLayers = layer.getMicroSpeciesLayers();
-			for ( SpeciesDisplayLayer ml : microLayers ) {
+			List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
+			for ( SpeciesLayerStatement ml : microLayers ) {
 				for ( IAgent a : _agents ) {
 					if ( a.acquireLock() ) {
 						try {
@@ -166,7 +166,7 @@ public class SpeciesDisplay extends AgentDisplay {
 		}
 	}
 
-	private void drawGridPopulation(final IAgent host, final GridDisplayLayer layer,
+	private void drawGridPopulation(final IAgent host, final GridLayerStatement layer,
 		final IPopulation population, final IScope scope, final IGraphics g)
 		throws GamaRuntimeException {
 		GamaSpatialMatrix gridAgentStorage =
