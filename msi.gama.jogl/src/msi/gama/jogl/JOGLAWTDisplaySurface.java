@@ -34,12 +34,14 @@ import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.*;
+import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.*;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.layers.IDisplayLayer;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -54,7 +56,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	private boolean autosave = false;
 	private String snapshotFileName;
 	public static String snapshotFolder = "snapshots";
-	protected IDisplayManager manager;
+	protected ILayerManager manager;
 	boolean paused;
 	private volatile boolean canBeUpdated = true;
 	double widthHeightConstraint = 1.0;
@@ -186,7 +188,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public IDisplayManager getManager() {
+	public ILayerManager getManager() {
 		return manager;
 	}
 
@@ -224,9 +226,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	static class AgentMenuItem extends MenuItem {
 
 		private final IAgent agent;
-		private final IDisplay display;
+		private final ILayer display;
 
-		AgentMenuItem(final String name, final IAgent agent, final IDisplay display) {
+		AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
 			super(name);
 			this.agent = agent;
 			this.display = display;
@@ -236,7 +238,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			return agent;
 		}
 
-		IDisplay getDisplay() {
+		ILayer getDisplay() {
 			return display;
 		}
 	}
@@ -246,7 +248,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		IAgent macro;
 		Map<ISpecies, List<SelectedAgent>> micros;
 
-		void buildMenuItems(final Menu parentMenu, final IDisplay display) {
+		void buildMenuItems(final Menu parentMenu, final ILayer display) {
 			Menu macroMenu = new Menu(macro.getName());
 			parentMenu.add(macroMenu);
 
@@ -322,11 +324,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		};
 
 		if ( manager == null ) {
-			manager = new DisplayManager(this);
+			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
 				// IDisplay d =
-				manager.addDisplay(DisplayManager.createDisplay((IDisplayLayer) layer, env_width,
+				manager.addLayer(LayerManager.createDisplay((ILayerStatement) layer, env_width,
 					env_height, openGLGraphics));
 				// d.initMenuItems(this);
 			}
@@ -356,8 +358,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		agentsMenu.setLabel("Layers");
 		int xc = x - origin.x;
 		int yc = y - origin.y;
-		final List<IDisplay> displays = manager.getDisplays(xc, yc);
-		for ( IDisplay display : displays ) {
+		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
+		for ( ILayer display : displays ) {
 			java.awt.Menu m = new java.awt.Menu(display.getName());
 			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
 			if ( !agents.isEmpty() ) {
@@ -420,7 +422,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void drawDisplaysWithoutRepaintingGL() {
 		if ( openGLGraphics == null ) { return; }
 		ex[0] = null;
-		manager.drawDisplaysOn(openGLGraphics);
+		manager.drawLayersOn(openGLGraphics);
 
 	}
 
@@ -566,7 +568,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void focusOn(final IShape geometry, final IDisplay display) {
+	public void focusOn(final IShape geometry, final ILayer display) {
 		Envelope env = geometry.getEnvelope();
 		double minX = env.getMinX();
 		double minY = env.getMinY();
