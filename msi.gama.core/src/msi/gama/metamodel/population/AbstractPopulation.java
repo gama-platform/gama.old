@@ -20,6 +20,7 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -116,15 +117,48 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 		firePopulationCleared();
 	}
 
+	/**
+	 * Special case for creating agents directly from geometries
+	 * @param scope
+	 * @param number
+	 * @param initialValues
+	 * @param geometries
+	 * @return
+	 */
+	@Override
+	public IList<? extends IAgent> createAgents(final IScope scope,
+		final IContainer<?, IShape> geometries) {
+		int number = geometries.length();
+		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
+		IList<IAgent> list = new GamaList(number);
+		IAgentConstructor constr = species.getAgentConstructor();
+		ISimulation sim = scope.getSimulationScope();
+		for ( IShape geom : geometries ) {
+			IAgent a = constr.createOneAgent(sim, this);
+			int ind = currentAgentIndex++;
+			a.setIndex(ind);
+			a.setGeometry(geom);
+			list.add(a);
+		}
+		addAll(list, null);
+		for ( IAgent a : list ) {
+			a.initializeMicroPopulations(scope);
+		}
+		createVariablesFor(scope, list, Collections.EMPTY_LIST);
+		return list;
+
+	}
+
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope sim, final int number,
 		final List<Map<String, Object>> initialValues, final boolean isRestored)
 		throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
-		IList<IAgent> list = new GamaList();
+		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
+		ISimulation simulation = sim.getSimulationScope();
 		for ( int i = 0; i < number; i++ ) {
-			IAgent a = constr.createOneAgent(sim.getSimulationScope(), this);
+			IAgent a = constr.createOneAgent(simulation, this);
 			int ind = currentAgentIndex++;
 			a.setIndex(ind);
 			// Try to grab the location earlier

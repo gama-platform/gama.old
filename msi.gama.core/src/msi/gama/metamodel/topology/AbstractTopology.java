@@ -18,8 +18,6 @@
  */
 package msi.gama.metamodel.topology;
 
-import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -30,10 +28,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*;
 
 public abstract class AbstractTopology implements ITopology {
 
@@ -64,14 +60,7 @@ public abstract class AbstractTopology implements ITopology {
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {
 		// Create the population from the places of the topology
 		if ( !canCreateAgents() ) { return; }
-		List<Map<String, Object>> initialValues = new GamaList(places.length());
-		Map<String, Object> vars;
-		for ( IShape g : places ) {
-			vars = new HashMap();
-			vars.put(IKeyword.SHAPE, g.getGeometry());
-			initialValues.add(vars);
-		}
-		pop.createAgents(scope, places.length(), initialValues, false);
+		pop.createAgents(scope, places);
 
 	}
 
@@ -104,13 +93,13 @@ public abstract class AbstractTopology implements ITopology {
 
 	private void setEnvironmentBounds() {
 		Envelope environmentEnvelope = environment.getEnvelope();
-		
+
 		// shape host has not yet been initialized
-		if (environmentEnvelope == null) {
+		if ( environmentEnvelope == null ) {
 			steps = new double[] {};
 			return;
 		}
-		
+
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
 		environmentMinX = environmentEnvelope.getMinX();
@@ -334,9 +323,10 @@ public abstract class AbstractTopology implements ITopology {
 		for ( IShape sh : shapes ) {
 			IAgent ag = sh.getAgent();
 			// Geometry g = ag.getInnerGeometry();
-			if ( ag != null && !ag.dead()) {
+			if ( ag != null && !ag.dead() ) {
 				Geometry geom = ag.getInnerGeometry();
-				if (covered ? (pg.covers(geom) && penv.covers(geom)) : (pg.intersects(geom)) && penv.intersects(geom)) {
+				if ( covered ? pg.covers(geom) && penv.covers(geom) : pg.intersects(geom) &&
+					penv.intersects(geom) ) {
 					result.add(ag);
 				}
 			}

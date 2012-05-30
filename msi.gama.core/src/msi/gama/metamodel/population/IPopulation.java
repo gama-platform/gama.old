@@ -20,7 +20,7 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -59,6 +59,9 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number,
 		List<Map<String, Object>> initialValues, boolean isRestored) throws GamaRuntimeException;
+
+	public abstract IList<? extends IAgent> createAgents(final IScope scope,
+		final IContainer<?, IShape> geometries) throws GamaRuntimeException;
 
 	public abstract IList<IAgent> getAgentsList();
 
@@ -126,9 +129,9 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @return
 	 */
 	public abstract IAgent getAgent(Integer obj);
-	
+
 	public void addListener(IPopulationListener listener);
+
 	public void removeListener(IPopulationListener listener);
-	
-	
+
 }

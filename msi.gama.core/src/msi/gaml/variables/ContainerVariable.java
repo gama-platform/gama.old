@@ -55,31 +55,33 @@ import msi.gaml.types.IType;
 public class ContainerVariable extends Variable {
 
 	private GamaPoint size;
+	private final IExpression sizeExpr;
+	private final IExpression fillExpr;
 
 	public ContainerVariable(final IDescription sd) {
 		super(sd);
+		sizeExpr = getFacet(IKeyword.SIZE);
+		fillExpr = getFacet(IKeyword.FILL_WITH);
 	}
 
 	@Override
 	public void initializeWith(final IScope scope, final IAgent owner, final Object v)
 		throws GamaRuntimeException {
 		super.initializeWith(scope, owner, v);
-		final IExpression size = getFacet(IKeyword.SIZE);
-		if ( size != null ) {
-			setSize(scope, owner, scope.evaluate(size, owner));
+		if ( sizeExpr != null ) {
+			setSize(scope, owner, scope.evaluate(sizeExpr, owner));
 		}
-		final IExpression with = getFacet(IKeyword.FILL_WITH);
-		if ( with != null ) {
-			setInitialValues(scope, owner, with);
+		if ( fillExpr != null ) {
+			setInitialValues(scope, owner);
 		}
 	}
 
-	private void setInitialValues(final IScope scope, final IAgent owner, final IExpression initial)
+	private void setInitialValues(final IScope scope, final IAgent owner)
 		throws GamaRuntimeException {
 		final Object val = value(scope, owner);
 		if ( val == null ) { return; }
 		if ( !(val instanceof IContainer) ) { return; }
-		Object o = scope.evaluate(initial, owner);
+		Object o = scope.evaluate(fillExpr, owner);
 		((IContainer) val).putAll(o, null);
 	}
 
