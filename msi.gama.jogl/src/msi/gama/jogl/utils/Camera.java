@@ -271,25 +271,15 @@ public class Camera {
 
 		this.yaw = -1.5f;
 		this.pitch = 0.5f;
+
+		this.setxPos(envWidth / 2);
+		this.setxLPos(envWidth / 2);
+		this.setyPos(-envHeight  * 3);
+		this.setyLPos(-envHeight *2);
+		this.setzPos(maxDim / 2.5);
+		this.setzLPos(maxDim / 2.5 -50);
 		
-		float scale_rate, maxDim;
-
-		if (envWidth > envHeight) {
-			scale_rate = 10 / envWidth;
-			maxDim = envWidth;
-		} else {
-			scale_rate = 10 / envHeight;
-			maxDim = envHeight;
-		}
-		this.setxPos(envWidth / 2 * scale_rate);
-		this.setxLPos(envWidth / 2 * scale_rate);
-		this.setyPos(-envHeight  * scale_rate);
-		this.setyLPos(-envHeight / 2 * scale_rate);
 		this.PrintParam();
-		// FIXME: This need to be normalize
-		this.setzPos((maxDim / 50 + 5.0f));
-		this.setzLPos(20.0f);
-
 	}
 
 	public void PrintParam() {

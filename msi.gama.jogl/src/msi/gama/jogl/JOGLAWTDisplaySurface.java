@@ -91,6 +91,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Camera
 	//public Camera camera;
 
+	//Use to toggle the 3D view.
 	public boolean ThreeD = false;
 	
 
@@ -558,14 +559,25 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomFit() {
-
 		if ( ThreeD ) {
+			System.out.println("ca zoom fit en 3D");
 			myGLRender.camera.Initialize3DCamera(envWidth, envHeight);
 		} else {
+			System.out.println("ca zoom fit en 2D");
 			myGLRender.camera.InitializeCamera(envWidth, envHeight);
 		}
 
 	}
+	
+	@Override
+	public void toggleView() {
+
+		System.out.println("toggleView");
+	    ThreeD=!ThreeD;
+	    zoomFit();
+	}
+	
+	
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
