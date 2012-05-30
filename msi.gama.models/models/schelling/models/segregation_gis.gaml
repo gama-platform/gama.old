@@ -48,7 +48,7 @@ entities {
 			draw shape: geometry size: 5;
 		}
 	}
-	species space skills: situated skills:[moving]
+	species space skills:[moving]
 	{	var insiders type: list of: people init: [];
 		var color type: rgb init: [255, 255, 255] as rgb; 
 		var surface type: float;
