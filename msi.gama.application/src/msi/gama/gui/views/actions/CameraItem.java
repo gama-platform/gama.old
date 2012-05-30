@@ -30,14 +30,14 @@ public class CameraItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Toggle camera", IAction.AS_CHECK_BOX,
-				getImageDescriptor("icons/button_zoomfit.png")) {
+			new GamaAction("Toggle 3D view", IAction.AS_CHECK_BOX,
+				getImageDescriptor("icons/button_toggle_view.png")) {
 
 				@Override
 				public void run() {
 					IViewWithZoom view = (IViewWithZoom) getView();
 					if ( view == null ) { return; }
-					view.zoomToFit();
+					view.toggleView();
 				}
 			};
 		return new ActionContributionItem(action);

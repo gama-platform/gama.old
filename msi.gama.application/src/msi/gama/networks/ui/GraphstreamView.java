@@ -541,6 +541,14 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 			threadAsyncEvents.kill();
 		super.dispose();
 	}
+	
+	/**
+	 * This method does nothing for Graphstream display 
+	 */
+	@Override
+	public void toggleView() {
+		System.out.println("toggle view is only available for Opengl Display");
+	}
 
 	
 

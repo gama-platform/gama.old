@@ -317,6 +317,27 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		}).start();
 	}
+	
+	@Override
+	public void toggleView() {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				IDisplaySurface surface = getDisplaySurface();
+				while (!surface.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				surface.toggleView();
+
+			}
+		}).start();
+	}
 
 	@Override
 	public void snapshot() {

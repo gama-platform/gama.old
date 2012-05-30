@@ -391,5 +391,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void setHighlightColor(final int[] rgb) {}
+	
+	/**
+	 * This method does nothing for Image display 
+	 */
+	@Override
+	public void toggleView() {
+		System.out.println("toggle view is only available for Opengl Display");
+	}
 
 }

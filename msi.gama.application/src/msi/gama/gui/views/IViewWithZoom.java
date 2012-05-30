@@ -12,6 +12,7 @@ public interface IViewWithZoom {
 	public void zoomToFit();
 	public void zoomIn();
 	public void zoomOut();
+	public void toggleView();
 	
 	public void snapshot();
 	

@@ -609,4 +609,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		if ( displayGraphics == null ) { return; }
 		displayGraphics.setHighlightColor(rgb);
 	}
+
+	/**
+	 * This method does nothing for JAVA2D display 
+	 */
+	@Override
+	public void toggleView() {
+		System.out.println("toggle view is only available for Opengl Display");
+	}
 }
