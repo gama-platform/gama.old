@@ -56,9 +56,18 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	 */
 	@Override
 	protected Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
-			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR, SEPARATOR,
-			CAMERA };
+		
+		//Add the toggle 3D view button for opengl display
+		if(this.output.getDescription().getFacets().equals("type","opengl"))
+		{
+			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
+				SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR, SEPARATOR,
+				CAMERA };	
+		}
+		else{
+			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
+				SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
+		}
 	}
 
 	public ILayerManager getDisplayManager() {
