@@ -64,7 +64,7 @@ import msi.gaml.types.IType;
 combinations = {
 	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.COLOR, IKeyword.Z }),
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.AT, IKeyword.EMPTY,
-		IKeyword.ROTATE }),
+		IKeyword.ROTATE,IKeyword.Z}),
 	@combination({ IKeyword.TO, IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY }),
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY, IKeyword.ROTATE }),
 	@combination({ IKeyword.TEXT, IKeyword.SIZE, IKeyword.COLOR, IKeyword.AT, IKeyword.ROTATE }),
@@ -249,12 +249,19 @@ public class DrawStatement extends AbstractStatementSequence {
 					IShape geom = Cast.asGeometry(scope, shape.value(scope));
 					if ( geom == null ) {
 						geom = scope.getAgentScope().getGeometry();
-						geom.getInnerGeometry().setUserData(
-							elevation == null ? null : elevation.value(scope));
+						//geom.getInnerGeometry().setUserData(
+							//elevation == null ? null : elevation.value(scope));
+						if(elevation != null){
+							geom.getInnerGeometry().setUserData(elevation.value(scope));	
+						}
+						
 					}
 					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, getRotation(scope));
 				}
 				case 0: {
+						if(elevation != null){
+							scope.getAgentScope().getGeometry().getInnerGeometry().setUserData(elevation.value(scope));						
+					     }
 					return g.drawGeometry(scope.getAgentScope().getInnerGeometry(), c, !isEmpty,
 						getRotation(scope));
 				}
