@@ -51,6 +51,10 @@ public interface IDisplaySurface {
 	void zoomOut();
 
 	void zoomFit();
+	/**
+	 * Switch between 2D and 3D view (Onlye with Opengl view)
+	 */
+	void toggleView();
 
 	ILayerManager getManager();
 
@@ -139,5 +143,7 @@ public interface IDisplaySurface {
 	int[] getHighlightColor();
 
 	void setHighlightColor(int[] rgb);
+
+	
 
 }
