@@ -1,11 +1,11 @@
 model $TITLE$
 
 global {
-	/** Insert the global definitions, parameters and actions here */
+	/** Insert the global definitions, variables and actions here */
 }
 
 environment {
-	/** Insert the grid or gis environment(s) in which the agents will be located */
+	/** Insert the grids and the properties of the environment */
 }
 
 entities {
@@ -13,5 +13,5 @@ entities {
 }
 
 experiment default type: gui {
-	/** Insert here the definition of the default gui experiment */
+	/** Insert here the definition of the input and output of the model */
 }
