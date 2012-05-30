@@ -274,10 +274,10 @@ public class Camera {
 
 		this.setxPos(envWidth / 2);
 		this.setxLPos(envWidth / 2);
-		this.setyPos(-envHeight  * 3);
-		this.setyLPos(-envHeight *2);
-		this.setzPos(maxDim / 2.5);
-		this.setzLPos(maxDim / 2.5 -50);
+		this.setyPos(-envHeight  * 1.75);
+		this.setyLPos(-envHeight * 0.5);
+		this.setzPos(maxDim);
+		this.setzLPos(0);
 		
 		this.PrintParam();
 	}
