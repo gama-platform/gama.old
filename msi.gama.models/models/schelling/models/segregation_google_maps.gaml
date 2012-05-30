@@ -30,7 +30,7 @@ environment width: dimensions height: dimensions {
 }
 entities { 
 	species people parent: base  { 
-		var location type: point init: point(all_places first_with empty(each.agents)) ;
+		//var location type: point init: point(all_places first_with empty(each.agents)) ;
 		const color type: rgb init: colors at (rnd (number_of_groups - 1)) ;
 		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people ;
 		init {
@@ -45,7 +45,7 @@ entities {
 		}
 		
 	aspect geom {
-			draw shape: square color: color size: 1 ;
+			draw geometry: square(1) color: color  ;
 		}
 		aspect default {
 			draw shape: square color: rgb('black') size: 2 ;
@@ -55,7 +55,7 @@ entities {
 output {
 	display Segregation background: rgb('black') {
 		image name: 'bg' file: bitmap_file_name size: {0.6,0.6} position: {0.35,0.35} ;
-		agents agents value: agents of_species people transparency: 0.5 size: {0.6,0.6} position: {0.35,0.35} ;
+	//	agents agents value: agents of_species people transparency: 0.5 size: {0.6,0.6} position: {0.35,0.35} ;
 		grid space size: {0.6,0.6} position: {0.05,0.05} transparency: 0 ;
 		species people transparency: 0.5 size: {0.6,0.6} position: {0.05,0.05} aspect: geom ;
 		text ttt value: 'Reference image:' /* font: 'Helvetica' */ position: {0.7,0.92} size: {0.2,0.03} color: rgb('black') ;
