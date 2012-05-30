@@ -21,7 +21,7 @@ package msi.gama.gui.displays.layers;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
 import org.eclipse.swt.widgets.Composite;
 
@@ -63,8 +63,9 @@ public class ImageLayer extends AbstractLayer {
 		super.fillComposite(compo, container);
 
 		if ( definition instanceof ImageLayerStatement ) {
-			EditorFactory.createFile(compo, "Image:",
-				((ImageLayerStatement) definition).getImageFileName(), new EditorListener<String>() {
+			EditorFactory.create(compo, "Image:",
+				((ImageLayerStatement) definition).getImageFileName(), false,
+				new EditorListener<String>() {
 
 					@Override
 					public void valueModified(final String newValue) {
@@ -79,7 +80,7 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(image, null,imageFileName);
+		dg.drawImage(image, null, imageFileName);
 	}
 
 	@Override
