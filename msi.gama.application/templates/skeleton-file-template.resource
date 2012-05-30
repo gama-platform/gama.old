@@ -12,6 +12,6 @@ entities {
 	/** Insert here the definition of the species of agents */
 }
 
-output {
-	/** Insert here the definition of the different outputs shown during the simulations */
+experiment default type: gui {
+	/** Insert here the definition of the default gui experiment */
 }
