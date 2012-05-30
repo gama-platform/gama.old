@@ -324,7 +324,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
 		final Integer angle) {
 		// System.out.println("drawGeometry:" + geometry.getGeometryType());
-		this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle);
+		//System.out.println("drawGeometry elevation:" + geometry.getUserData());
+		
+		//Check if the geometry has a z elevation value
+		float elevation;
+		if (geometry.getUserData() !=null){
+			elevation = new Float(geometry.getUserData().toString());
+			this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle,elevation);
+		}
+		else{
+			this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle,0);
+		}
+		
 		return sw.toShape(geometry).getBounds2D();
 	}
 
@@ -338,7 +349,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, -image.getWidth())).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0);
+			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0,0);
 		}
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
@@ -346,7 +357,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0);
+			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0,0);
 		}
 
 	}
@@ -417,7 +428,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			GamaGeometryType.buildCircle((double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY + (double) curWidth / 2))
 				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, 0);
+		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, 0,0);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
@@ -427,7 +438,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g =
 			GamaGeometryType.buildTriangle(curWidth, new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle);
+		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle,0);
 		Rectangle2D r = null;
 		return r;
 	}
@@ -447,7 +458,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g =
 			GamaGeometryType.buildLine(new GamaPoint(curX, curY), new GamaPoint(toX, toY))
 				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, true, false, 0);
+		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, true, false, 0,0);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
 	}
@@ -467,7 +478,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g =
 			GamaGeometryType.buildRectangle(curWidth, curHeight, new GamaPoint(curX, curY))
 				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle);
+		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle,0);
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 	}
@@ -519,7 +530,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param isTextured
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry, final float z,final Color color,
-		final boolean fill, final boolean isTextured, final Integer angle) {
+		final boolean fill, final boolean isTextured, final Integer angle,final float elevation) {
 
 		// System.out.println("Add:"+ geometry.getGeometryType());
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
@@ -529,6 +540,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curJTSGeometry.fill = fill;
 		curJTSGeometry.isTextured = isTextured;
 		curJTSGeometry.angle = angle;
+		curJTSGeometry.elevation= elevation;
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 

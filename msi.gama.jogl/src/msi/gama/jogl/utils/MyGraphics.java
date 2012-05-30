@@ -235,19 +235,26 @@ public class MyGraphics {
 
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
-		//System.out.println("DrawJTSGraphics:" + geometry.getGeometryType());
+		//System.out.println("DrawJTSGraphics:" + geometry.elevation);
 		
 		
 		for (i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				MultiPolygon polygons = (MultiPolygon) geometry.geometry;
-				DrawMultiPolygon(polygons,geometry.z,geometry.color,geometry.fill,geometry.angle);
+				DrawMultiPolygon(polygons,geometry.z,geometry.color,geometry.fill,geometry.angle,geometry.elevation);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				Polygon polygon = (Polygon) geometry.geometry;
-				DrawPolygon(polygon, geometry.z, geometry.color,geometry.fill,geometry.isTextured,geometry.angle);
+				
+				if(geometry.elevation>0){
+					Draw3DPolygon(curPolygon,geometry.z,geometry.color, geometry.elevation,geometry.angle);
+				}
+				else{
+					DrawPolygon(polygon, geometry.z, geometry.color,geometry.fill,geometry.isTextured,geometry.angle);	
+				}
+				
 			}
 
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -269,7 +276,7 @@ public class MyGraphics {
 
 
 
-	public void DrawMultiPolygon(MultiPolygon polygons, float z,Color c,boolean fill, Integer angle) {
+	public void DrawMultiPolygon(MultiPolygon polygons, float z,Color c,boolean fill, Integer angle,float elevation) {
 
 		numGeometries = polygons.getNumGeometries();
 		// System.out.println("Draw MultiPolygon:"+numGeometries);
@@ -280,10 +287,13 @@ public class MyGraphics {
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
-			DrawPolygon(curPolygon, z, c ,fill,false,angle);
-			// DrawPolygonContour(curPolygon,c,0.0f);
-			// Draw3DPolygon(curPolygon,c, 100.0f* (float) Math.random());
-			// Draw3DPolygon(curPolygon,c, 100.0f);
+				
+			if(elevation>0){
+				Draw3DPolygon(curPolygon,z,c, elevation,angle);
+			}
+			else{
+				DrawPolygon(curPolygon, z, c ,fill,false,angle);	
+			}			
 		}
 	}
 
@@ -317,19 +327,6 @@ public class MyGraphics {
 			myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
 		}
 		
-//		temp= new double [3];
-//		
-//		for (j = 0; j < numExtPoints; j++) {
-//			
-//			temp[0] = (float) (float) (p.getExteriorRing().getPointN(
-//					j).getX());
-//			temp[1] = -(float) (p.getExteriorRing().getPointN(j)
-//					.getY());
-//			temp[2] = z;
-//			
-//			myGlu.gluTessVertex(tobj, temp, 0, temp);
-//			
-//		}
 
 		myGlu.gluTessEndContour(tobj);
 		myGlu.gluTessEndPolygon(tobj);
@@ -339,7 +336,7 @@ public class MyGraphics {
         DrawPolygonContour(p, c, z);
 
 		}
-		
+		//fill = false. Draw only the contour of the polygon.
 		else{
 			myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 					(float) c.getBlue() / 255, alpha);	

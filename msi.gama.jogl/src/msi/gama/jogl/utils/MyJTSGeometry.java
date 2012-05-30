@@ -21,4 +21,5 @@ public class MyJTSGeometry {
 	
 	public Integer angle =0;
 
+	public float elevation=0;
 }
