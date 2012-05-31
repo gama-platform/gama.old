@@ -374,20 +374,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
 		final boolean smooth, final String name) {
 	
-		// FIXME Dirty way to check that img represent the environment. When the image is the
-		// enviroment
-		// we set the dimensions on the image as the env dimensions.
-		// We should display the image with the size of the environment, this not the case here if
-		// the size of the image is greater than the environment
+		/* FIXME Dirty way to check that img represent the environment. 
+		
+			if(image represent the environment){
+			   drawImage with the size of the envirnoment
+			   }
+			 else{
+			 drawImage with the size of the agent (curWidth and curHeight)
+			}
+	
+         WARNING1: problem if an agent reach the 0,0 position it will be displayed wit the size of the enviroment
+         WARNING2: if the environment is represented with a png and is not located at 0,0 (e.g boids environment is sky.png) how to know if this image is the enviroment?
+		 */
 
-		// WARNING: problem if an agent reach the 0,0 position...
-		// System.out.println("drawImage" + "curX" + curX + "curY" +curY
-		// +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight());
-		if ( curX == 0 && curY == 0 ) {
+		//System.out.println("drawImage" + "curX" + curX + "curY" +curY
+		//+"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight() + name);
+		
+		if ( curX == 0 && curY == 0 || (name.equals("GridDisplay") == true || name.equals("QuadTreeDisplay"))) {
 			AddImageInImages(img, curX, curY, currentZvalue,this.envWidth, this.envHeight, name, angle);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			AddImageInImages(img, curX, curY,currentZvalue, curWidth, curHeight, name, angle);
+			AddImageInImages(img, curX, curY,currentZvalue, curWidth, curHeight, name, angle);	
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
 
