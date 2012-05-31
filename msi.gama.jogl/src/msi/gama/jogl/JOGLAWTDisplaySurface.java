@@ -81,21 +81,14 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
-
-
 	// Event Listener
 	public MyListener myListener;
 	
 	public JOGLAWTGLRenderer myGLRender;
 
-	// Camera
-	//public Camera camera;
-
 	//Use to toggle the 3D view.
 	public boolean ThreeD = false;
 	
-
-	 
 	
 	@Override
 	public void initialize(final double env_width, final double env_height,
@@ -213,16 +206,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 				new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2), "CIRCLE");
 		return c;
 	}
-
-	// FIXME: Move in MyListener
-	// public void mouseClicked(final MouseEvent evt) {
-	// if (evt.getClickCount() == 2) {
-	// zoomFit();
-	// } else if (evt.isControlDown() || evt.isMetaDown()
-	// || evt.isPopupTrigger()) {
-	// selectAgents(evt.getX(), evt.getY());
-	// }
-	// }
 
 	static class AgentMenuItem extends MenuItem {
 
@@ -408,7 +391,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		public void run() {
 			if ( !canBeUpdated() ) { return; }
 			canBeUpdated(false);
-			//System.out.println("Update");
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
@@ -680,25 +662,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		return origin.y;
 	}
 
-	public void DrawOpenGLHelloWorldShape(final GL gl) {
-
-		float red = (float) Math.random() * 1;
-		float green = (float) Math.random() * 1;
-		float blue = (float) Math.random() * 1;
-
-		// gl.glColor3f(red, green, blue);
-		gl.glColor3f(0.0f, 1.0f, 1.0f);
-		// ----- Render a quad -----
-
-		gl.glBegin(GL_POLYGON); // draw using quads
-		gl.glVertex3f(-envWidth / 2, envHeight / 2, -10.0f);
-		gl.glVertex3f(envWidth / 2, envHeight / 2, -10.0f);
-		gl.glVertex3f(envWidth / 2, -envHeight / 2, -10.f);
-		gl.glVertex3f(-envWidth / 2, -envHeight / 2, -10.0f);
-		gl.glEnd();
-
-	}
-
+	
 	@Override
 	public int[] getHighlightColor() {
 		if ( openGLGraphics == null ) { return null; }

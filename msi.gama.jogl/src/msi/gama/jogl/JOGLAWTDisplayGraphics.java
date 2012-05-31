@@ -61,16 +61,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// OpenGL member
 	private final GL myGl;
 	private final GLU myGlu;
-	private final GLUT glut;
-
+	
 	// Handle opengl primitive.
 	public MyGraphics graphicsGLUtils;
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
-
-	// Each geometry drawn is stored in a list.
-	public ArrayList<MyGeometry> myGeometries = new ArrayList<MyGeometry>();
 
 	// List of all the JTS gemoetry present in the model
 	public ArrayList<MyJTSGeometry> myJTSGeometries = new ArrayList<MyJTSGeometry>();
@@ -90,33 +86,38 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// OpenGL list ID
 	private int listID = -1;
 	public boolean isListCreated = false;
-
+	
+	
+	
+	//FIXME: This need to be remove. Only here to return the bounds of a geometry.
 	private final PointTransformation pt = new PointTransformation() {
-
+	
 		@Override
 		public void transform(final Coordinate c, final Point2D p) {
-
-		}
-	};
+		
+				}
+			};
 	private final ShapeWriter sw = new ShapeWriter(pt);
 
+	
 	/**
-	 * Constructor for OpenGL DisplayGraphics constructor. Simplify for opengl
-	 * display. The environment property are given from the display surface.
+	 * The environment property are given from the display surface.
 	 * 
-	 * @param GL
-	 *            gl
-	 * @param GLU
-	 *            glu
+	 * @param GL gl
+	 * @param GLU glu
 	 * @param float env_width
 	 * @param float env_height
-	 * @param float scale_rate
 	 */
 	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender,
 		final float env_width, final float env_height) {
+		
 		myGl = gl;
 		myGlu = glu;
-		glut = new GLUT();
+		myGLRender = gLRender;
+		graphicsGLUtils = new MyGraphics(myGl, myGlu, myGLRender);
+		
+		
+		//Initialize the current environment data.
 		envWidth = env_width;
 		envHeight = env_height;
 
@@ -124,11 +125,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			maxEnvDim = envWidth;
 		} else {
 			maxEnvDim = envHeight;
-		}
-
-		myGLRender = gLRender;
-
-		graphicsGLUtils = new MyGraphics(myGl, myGlu, myGLRender);
+		}	
 	}
 
 	/**
@@ -323,8 +320,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
 		final Integer angle) {
-		// System.out.println("drawGeometry:" + geometry.getGeometryType());
-		//System.out.println("drawGeometry elevation:" + geometry.getUserData());
 		
 		//Check if the geometry has a z elevation value
 		float elevation;
@@ -335,7 +330,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		else{
 			this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle,0);
 		}
-		
+		//FIXME: Need to remove the use of sw.
 		return sw.toShape(geometry).getBounds2D();
 	}
 
@@ -502,8 +497,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle) {
-		// FIXME String must be drawn from the gl current context, that the reason why using a list
-		// of string
 		AddStringInStrings(string, curX, -curY, 0.0f);
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
@@ -528,18 +521,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// ///////////////Add method ////////////////////////////
 
 	/**
-	 * Add geometry and its associated color in the list of JTSGeometry that are
+	 * Add geometry and its associated parameter in the list of JTSGeometry that are
 	 * drawn by Opengl
 	 * 
 	 * @param geometry
 	 * @param color
 	 * @param fill
 	 * @param isTextured
+	 * @param angle
+	 * @param elevation
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry, final float z,final Color color,
 		final boolean fill, final boolean isTextured, final Integer angle,final float elevation) {
 
-		// System.out.println("Add:"+ geometry.getGeometryType());
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.z=z;
@@ -551,6 +545,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
+	/**
+	 * Add image and its associated parameter in the list of Image that are
+	 * drawn by Opengl
+	 * 
+	 * @param img
+	 * @param curX
+	 * @param curY
+	 * @param z
+	 * @param widthInModel
+	 * @param heightInModel
+	 * @param name
+	 * @param angle
+	 */
 	private void AddImageInImages(final BufferedImage img, final int curX, final int curY,final float z,
 		final float widthInModel, final float heightInModel, final String name, final Integer angle) {
 
@@ -570,10 +577,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		curImage.name = name;
 
-		// For grid display we must
+		// For grid display and quadtree display the image is recomputed every iteration
 		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
 			myGLRender.InitTexture(img, name);
-		} else {
+		} else {//For texture coming from a file there is no need to redraw it.
 			if ( !IsTextureExist(name) ) {
 				myGLRender.InitTexture(img, name);
 			}
@@ -582,8 +589,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	}
 
+	/**
+	 * Check that the texture "name" has not already be created.
+	 * @param name
+	 * @return
+	 */
 	private boolean IsTextureExist(final String name) {
-		// Check that the texture is not already initialize
+		
 		Iterator<MyTexture> it = myGLRender.myTextures.iterator();
 		while (it.hasNext()) {
 			MyTexture curTexture = it.next();
@@ -592,6 +604,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return false;
 	}
 
+	/**
+	 * Add string and its postion in the list of String that are
+	 * drawn by Opengl
+	 * 
+	 * @param string
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	private void AddStringInStrings(final String string, final float x, final float y, final float z) {
 
 		final MyString curString = new MyString();
@@ -605,6 +626,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// /////////////// Draw Method ////////////////////
 
+	/**
+	 * Once the list of JTSGeometries has been created, OpenGL display call this method every framerate.
+	 * FIXME: Need to be optimize with the use of Vertex Array or even VBO
+	 * 
+	 */
 	public void DrawMyJTSGeometries() {
 
 		boolean drawAsList = false;
@@ -630,6 +656,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	}
 
+	/**
+	 * Once the list of Images has been created, OpenGL display call this method every framerate.
+	 * FIXME: Need to be optimize with the use of Vertex Array or even VBO
+	 * 
+	 */
 	public void DrawMyImages() {
 
 		boolean drawImageAsList = false;
@@ -650,24 +681,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 	}
 
+	/**
+	 * Once the list of String has been created, OpenGL display call this method every framerate.
+	 * 
+	 */
 	public void DrawMyStrings() {
 
 		Iterator<MyString> it = this.myStrings.iterator();
-
-		int id = 0;
 		while (it.hasNext()) {
-
 			MyString curString = it.next();
-			DrawString(curString.string, curString.x, curString.y, 0.0f);
-			id++;
+			graphicsGLUtils.DrawString(curString.string, curString.x, curString.y, 0.0f);
 		}
 	}
-
+	
 	public void DrawEnvironmentBounds() {
 
 		// Draw Width and height value
-		DrawString(String.valueOf(this.envWidth), this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
-		DrawString(String.valueOf(this.envHeight), this.envWidth * 1.01f, -(this.envHeight / 2),
+		this.graphicsGLUtils.DrawString(String.valueOf(this.envWidth), this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
+		this.graphicsGLUtils.DrawString(String.valueOf(this.envHeight), this.envWidth * 1.01f, -(this.envHeight / 2),
 			0.0f);
 
 		// Draw environment rectangle
@@ -684,115 +715,43 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		graphicsGLUtils.DrawJTSGeometry(curGeometry);
 	}
 
-	public void DrawXYZAxis(final float size) {
+/////////////////Clean method /////////////////////////
 
-		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		DrawString("1:" + String.valueOf(size), size, size, 0.0f);
-		// X Axis
-		DrawString("x", 1.2f * size, 0.0f, 0.0f);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4f(1.0f, 0, 0, 1.0f);
-		myGl.glVertex3f(0, 0, 0);
-		myGl.glVertex3f(size, 0, 0);
-		myGl.glEnd();
-
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3f(1.0f * size, 0.05f * size, 0.0f);
-		myGl.glVertex3f(1.0f * size, -0.05f * size, 0.0f);
-		myGl.glVertex3f(1.1f * size, 0.0f, 0.0f);
-		myGl.glEnd();
-
-		// Y Axis
-		DrawString("y", 0.0f, 1.2f * size, 0.0f);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4f(0, 1.0f, 0, 1.0f);
-		myGl.glVertex3f(0, 0, 0);
-		myGl.glVertex3f(0, size, 0);
-		myGl.glEnd();
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3f(-0.05f * size, 1.0f * size, 0.0f);
-		myGl.glVertex3f(0.05f * size, 1.0f * size, 0.0f);
-		myGl.glVertex3f(0.0f, 1.1f * size, 0.0f);
-		myGl.glEnd();
-
-		// Z Axis
-		myGl.glRasterPos3f(0.0f, 0.0f, 1.2f * size);
-		DrawString("z", 0.0f, 0.0f, 1.2f * size);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4f(0, 0, 1.0f, 1.0f);
-		myGl.glVertex3f(0, 0, 0);
-		myGl.glVertex3f(0, 0, size);
-		myGl.glEnd();
-
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3f(0.0f, 0.05f * size, 1.0f * size);
-		myGl.glVertex3f(0.0f, -0.05f * size, 1.0f * size);
-		myGl.glVertex3f(0.0f, 0.0f, 1.1f * size);
-		myGl.glEnd();
-
-	}
-
-	public void DrawZValue(final float pos, final float value) {
-		DrawString("z:" + String.valueOf(value), pos, pos, 0.0f);
-	}
-
-	public void DrawString(final String string, final float x, final float y, final float z) {
-
-		// Need to disable blending when drawing glutBitmapString;
-		myGl.glDisable(GL_BLEND);
-		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		myGl.glRasterPos3f(x, y, z);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
-		// myGl.glEnable(GL_BLEND);
-
-		// glut.glutStrokeString(GLUT.STROKE_ROMAN,string);
-
-	}
-
-	public void DrawScale() {
-
-		// Draw Scale
-		float y_text_pos = -(this.envHeight + this.envHeight * 0.05f);
-		DrawString("Scale:" + "1", 0.0f, y_text_pos * 0.99f, 0.0f);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glVertex3f(0, 0 + y_text_pos, 0);
-		myGl.glVertex3f(this.envWidth * 0.05f, 0 + y_text_pos, 0);
-
-		myGl.glVertex3f(0, -0.05f + y_text_pos, 0);
-		myGl.glVertex3f(0, 0.05f + y_text_pos, 0);
-
-		myGl.glVertex3f(1, -0.05f + y_text_pos, 0);
-		myGl.glVertex3f(1, 0.05f + y_text_pos, 0);
-		myGl.glEnd();
-	}
-
+	/**
+	 * Call every new iteration when updateDisplay() is called
+	 */
 	public void CleanGeometries() {
 		// FIXME : check that display list is used.
 		graphicsGLUtils.DeleteDisplayLists(this.myJTSGeometries.size());
-		this.myGeometries.clear();
 		this.myJTSGeometries.clear();
 	}
 
+	/**
+	 *  Call every new iteration when updateDisplay() is called
+	 *  Remove only the texture that has to be redrawn.
+	 *  Keep all the texture coming form a file.
+	 *  FIXME: Only work for png and jpg/jpeg file.
+	 */
 	public void CleanImages() {
 		this.myImages.clear();
-
-		// We remove only the texture that has to be redrawn: we keep all the texture coming form a
-		// file.
 		Iterator<MyTexture> it = this.myGLRender.myTextures.iterator();
 		while (it.hasNext()) {
 			MyTexture curtexture = it.next();
-			// If the texture is coming from a file I keep it
+			// If the texture is coming from a file keep it
 			if ( curtexture.ImageName.indexOf(".png") != -1 ||
 				curtexture.ImageName.indexOf(".jpg") != -1 ||
 				curtexture.ImageName.indexOf(".jpeg") != -1 ) {
 
-			}// Else I remove to recreate a new texture (e.g for GridDisplay).
+			}// Else remove to recreate a new texture (e.g for GridDisplay).
 			else {
 				it.remove();
 			}
 		}
 	}
 
+	/**
+	 * Call every new iteration when updateDisplay() is called
+	 */
 	public void CleanStrings() {
 		this.myStrings.clear();
 
@@ -818,6 +777,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
+	
 
 	@Override
 	public int[] getHighlightColor() {

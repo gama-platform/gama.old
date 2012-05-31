@@ -194,6 +194,113 @@ public class MyGLToyDrawer {
 	      gl.glEnd(); // of the color cube
 	}
 	
+	public void Draw3DCube(GL gl, float size){
+
+	      // ----- Render the Centered Cube -----
+		  gl.glColor3f(0.0f, 0.0f, 0.0f); // black
+	      // Top-face
+		  gl.glBegin(GL.GL_LINES);
+		  
+	      gl.glVertex3f(size, size, -size);
+	      gl.glVertex3f(-size, size, -size);
+	      
+	      gl.glVertex3f(-size, size, -size);
+	      gl.glVertex3f(-size, size, size);
+	      
+	      gl.glVertex3f(-size, size, size);
+	      gl.glVertex3f(size, size, size);
+	      
+	      gl.glVertex3f(size, size, size);
+	      gl.glVertex3f(size, size, -size);
+	      
+	      gl.glEnd();
+
+	      // Bottom-face
+	      gl.glBegin(GL.GL_LINES);
+	      
+	      gl.glVertex3f(size, -size, size);
+	      gl.glVertex3f(-size, -size, size);
+	      
+	      gl.glVertex3f(-size, -size, size);
+	      gl.glVertex3f(-size, -size, -size);
+	      
+	      gl.glVertex3f(-size, -size, -size);
+	      gl.glVertex3f(size, -size, -size);
+	      
+	      gl.glVertex3f(size, -size, -size);
+	      gl.glVertex3f(size, -size, size);
+	      
+	      gl.glEnd();
+
+	      // Front-face
+	      gl.glBegin(GL.GL_LINES);
+	      
+	      gl.glVertex3f(size, size, size);
+	      gl.glVertex3f(-size, size, size);
+	      
+	      gl.glVertex3f(-size, size, size);
+	      gl.glVertex3f(-size, -size, size);
+	      
+	      gl.glVertex3f(-size, -size, size);
+	      gl.glVertex3f(size, -size, size);
+	      
+	      gl.glVertex3f(size, -size, size);
+	      gl.glVertex3f(size, size, size);
+	      
+	      gl.glEnd();
+
+	      // Back-face
+	      gl.glBegin(GL.GL_LINES);
+	      
+	      gl.glVertex3f(size, -size, -size);
+	      gl.glVertex3f(-size, -size, -size);
+	      
+	      gl.glVertex3f(-size, -size, -size);
+	      gl.glVertex3f(-size, size, -size);
+	      
+	      gl.glVertex3f(-size, size, -size);
+	      gl.glVertex3f(size, size, -size);
+	      
+	      gl.glVertex3f(size, size, -size);
+	      gl.glVertex3f(size, -size, -size);
+	      
+	      
+	      gl.glEnd();
+
+	      // Left-face
+	      gl.glBegin(GL.GL_LINES);
+	      
+	      gl.glVertex3f(-size, size, size);
+	      gl.glVertex3f(-size, size, -size);
+	      
+	      gl.glVertex3f(-size, size, -size);
+	      gl.glVertex3f(-size, -size, -size);
+	      
+	      gl.glVertex3f(-size, -size, -size);
+	      gl.glVertex3f(-size, -size, size);
+	      
+	      gl.glVertex3f(-size, -size, size);
+	      gl.glVertex3f(-size, size, size);
+	      
+	      gl.glEnd();
+
+	      // Right-face
+	      gl.glBegin(GL.GL_LINES);
+	      gl.glVertex3f(size, size, -size);
+	      gl.glVertex3f(size, size, size);
+	      
+	      gl.glVertex3f(size, size, size);
+	      gl.glVertex3f(size, -size, size);
+	      
+	      gl.glVertex3f(size, -size, size);
+	      gl.glVertex3f(size, -size, -size);
+	      
+	      gl.glVertex3f(size, -size, -size);
+	      gl.glVertex3f(size, size, -size);
+	      
+	      gl.glEnd(); 
+	}
+	
 	
 	public void DrawSphere(GL gl, GLU glu,float x, float y, float z, float radius){
 		// Draw sphere (possible styles: FILL, LINE, POINT).

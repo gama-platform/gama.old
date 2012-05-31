@@ -268,6 +268,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//myGLDrawer.DrawOpenGLHelloWorldShape(gl,width);
 		//myGLDrawer.DrawColorTriangle(gl,0.0f, 0.0f, 0.0f, width);
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
+		//myGLDrawer.Draw3DCube(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
@@ -310,12 +311,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyStrings();
 		}
 		
-		
 		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 		
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
 				.DrawXYZAxis(envMaxDim / 10);
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawZValue(
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.DrawZValue(
 				-envMaxDim / 10, (float) camera.zPos);
 		
 	}
