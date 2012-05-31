@@ -46,8 +46,9 @@ entities {
 	species building {
 		string type; 
 		rgb color <- rgb('gray')  ; 
+		//Add an arbitrary elevation for building
 		aspect base {
-			draw shape: geometry color: color ;
+			draw shape: geometry color: color ; 
 		}
 	}
 	species road  {
@@ -95,11 +96,13 @@ entities {
 	}
 }
 environment bounds: shape_file_bounds ;
+
+
 output {
 	display city_display type:opengl refresh_every: 1 {
-		species building aspect: base ;
-		species road aspect: base ;
-		species people aspect: base ;
+		species building aspect:base;
+		species road aspect: base;
+		species people aspect: base;
 	}
 }
 

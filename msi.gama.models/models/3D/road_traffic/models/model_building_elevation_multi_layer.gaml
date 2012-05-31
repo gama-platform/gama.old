@@ -46,8 +46,9 @@ entities {
 	species building {
 		string type; 
 		rgb color <- rgb('gray')  ; 
+		//Add an arbitrary elevation for building
 		aspect base {
-			draw shape: geometry color: color ;
+			draw shape: geometry color: color z:100; 
 		}
 	}
 	species road  {
@@ -95,25 +96,14 @@ entities {
 	}
 }
 environment bounds: shape_file_bounds ;
-output {
-	
-			display chart_display refresh_every: 10 {
-		chart name: 'Road Status' type: series background: rgb('lightGray') size: {0.9, 0.4} position: {0.05, 0.05} {
-			data name:'Mean road destruction' value: mean ((road as list) collect each.destruction_coeff) style: line color: rgb('green') ;
-			data name:'Max road destruction' value: (road as list) max_of (each.destruction_coeff) style: line color: rgb('red') ;
-		}
-		chart name: 'People Objectif' type: pie background: rgb('lightGray') style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
-			data name:'Working' value: length ((people as list) where (each.objective='working')) color: rgb('green') ;
-			data name:'Staying home' value: length ((people as list) where (each.objective='go home')) color: rgb('blue') ;
-		}
-	}
-	display city_display type: opengl refresh_every: 1 {
-		species building aspect: base ;
-		species road aspect: base ;
-		species people aspect: base ;
-	}
-	
 
+
+output {
+	display city_display type:opengl refresh_every: 1 {
+		species building aspect:base z:0;
+		species road aspect: base z:0.5;
+		species people aspect: base z:1;
+	}
 }
 
 
