@@ -51,6 +51,7 @@ public class HeadlessSimulationLoader {
 	}
 	private static void waitLoading(final IHeadLessExperiment exp)
 	{
+		System.out.println("Simulation loading...");
 		do{
 			try {
 				Thread.sleep(10);
@@ -58,20 +59,12 @@ public class HeadlessSimulationLoader {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("loading waiting ");
 		} while(exp.getCurrentSimulation()!= null && exp.getCurrentSimulation().isLoading());	
-	
 	}
 	
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
-		try {
-			new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("/Users/marilleau/outGama.txt"))));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private static void preloadGAMA() {

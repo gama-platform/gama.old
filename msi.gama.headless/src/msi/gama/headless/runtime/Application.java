@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import msi.gama.headless.common.Globals;
+import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.*;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
@@ -28,6 +30,59 @@ public class Application implements IApplication {
 		return headLessSimulation;
 	}
 
+	private static void showLaunchingError()
+	{
+		System.out.println("Launching error... try again");
+	}
+	private static void checkParameters(String[] args)
+	{
+		if(args == null)
+		{
+			showError(HeadLessErrors.LAUNCHING_ERROR,null);
+			System.exit(-1);
+		}
+		if(args.length < 2)
+		{
+			showError(HeadLessErrors.PARAMETER_ERROR,null);
+			System.exit(-1);
+		}
+		Globals.OUTPUT_PATH=args[1];
+		Globals.IMAGES_PATH=args[1]+"/snapshot";
+		
+		
+		boolean success = ( new File(Globals.OUTPUT_PATH).exists());
+		if (success) {
+			showError(HeadLessErrors.EXIST_DIRECTORY_ERROR,Globals.OUTPUT_PATH);
+			System.exit(-1);
+		} 
+
+		 success = ( new File(args[0]).exists());
+		if (!success) {
+			showError(HeadLessErrors.NOT_EXIST_FILE_ERROR,Globals.OUTPUT_PATH);
+			System.exit(-1);
+		} 
+
+		
+		success = ( new File(Globals.OUTPUT_PATH).mkdir());
+		if (!success) {
+			showError(HeadLessErrors.PERMISSION_ERROR,Globals.OUTPUT_PATH);
+			System.exit(-1);
+			} 
+		success = (new File(Globals.IMAGES_PATH).mkdir());
+		if (!success) {
+			showError(HeadLessErrors.PERMISSION_ERROR,Globals.IMAGES_PATH);
+			System.exit(-1);
+		 } 
+		
+	//	System.out.println(HeadLessErrors.getError(errorCode, path)
+	}
+
+	private static void showError(int errorCode, String path)
+	{
+		System.out.println(HeadLessErrors.getError(errorCode, path));
+		System.exit(-1);
+	}
+			
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -35,17 +90,12 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-	
-		/*
 		Map<String, String[]> mm=context.getArguments();
+		String[] args = mm.get("application.args");
+		checkParameters(args);
 		
-		for(String s:mm.keySet())
-		{
-			System.out.println("arg "+ s + "  "+ mm.get(s).length );//+ " value: "+ mm.get(s).toString());
-		}
-		*/
-		Reader in=new Reader("/Users/marilleau/in.xml");
-		XMLWriter ou=new XMLWriter("/Users/marilleau/out.xml");
+		Reader in=new Reader(args[0]);
+		XMLWriter ou=new XMLWriter(Globals.OUTPUT_PATH+"/"+Globals.OUTPUT_FILENAME);
 		in.parseXmlFile();
 		Iterator<Simulation> it=in.getSimulation().iterator();
 		while(it.hasNext())

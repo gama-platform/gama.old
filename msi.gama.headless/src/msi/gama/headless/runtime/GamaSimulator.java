@@ -8,8 +8,8 @@ import javax.imageio.ImageIO;
 
 import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.Display2D;
+import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.ISimulator;
-import msi.gama.headless.core.Globals;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.IHeadLessExperiment;
 import msi.gama.kernel.experiment.ParametersSet;

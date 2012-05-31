@@ -14,3 +14,27 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.processor;bundle-version="1.4.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: gaml.additions;uses:="msi.gaml.compilation",
+ msi.gama.headless.classLoader,
+ msi.gama.headless.common,
+ msi.gama.headless.core;
+  uses:="msi.gama.headless.xml,
+   msi.gama.kernel.simulation,
+   msi.gama.kernel.experiment,
+   msi.gama.headless.common,
+   msi.gama.util,
+   msi.gaml.descriptions",
+ msi.gama.headless.runtime;
+  uses:="msi.gama.common.interfaces,
+   msi.gama.outputs,
+   msi.gama.kernel.experiment,
+   msi.gama.runtime,
+   msi.gama.headless.common,
+   org.eclipse.equinox.app,
+   org.osgi.framework,
+   msi.gama.metamodel.agent,
+   msi.gaml.architecture.user,
+   msi.gama.runtime.exceptions",
+ msi.gama.headless.xml;uses:="msi.gama.headless.core"
+Bundle-ClassPath: bin/
+

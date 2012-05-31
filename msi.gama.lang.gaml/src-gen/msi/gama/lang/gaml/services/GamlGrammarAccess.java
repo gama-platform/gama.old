@@ -109,7 +109,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		////DefReserved: '_reserved &' name=ID'&;';
 		////DefUnary: '_unary &'name=ID '&;';
 		/// **
-		// * Built-in keywords (corresponding to special statements)
+		// * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
 		// * / BuiltIn:
 		//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
 		//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
@@ -690,7 +690,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		/// **
-		// * Blocks. Just an ordered list of statements inside curly brackets
+		// * Blocks. An ordered list of statements inside curly brackets
 		// * / Block:
 		//	{Block} "{" statements+=Statement* "}";
 		public ParserRule getRule() { return rule; }
@@ -1809,7 +1809,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	////DefReserved: '_reserved &' name=ID'&;';
 	////DefUnary: '_unary &'name=ID '&;';
 	/// **
-	// * Built-in keywords (corresponding to special statements)
+	// * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
 	// * / BuiltIn:
 	//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
 	//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
@@ -1957,7 +1957,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// **
-	// * Blocks. Just an ordered list of statements inside curly brackets
+	// * Blocks. An ordered list of statements inside curly brackets
 	// * / Block:
 	//	{Block} "{" statements+=Statement* "}";
 	public BlockElements getBlockAccess() {

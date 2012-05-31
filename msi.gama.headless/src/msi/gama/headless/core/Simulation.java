@@ -105,14 +105,26 @@ public class Simulation  {
 		this.model.initialize();
 		if(this.outputFile!=null)
 			this.outputFile.writeSimulationHeader(this);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.print("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
+		int affDelay = maxStep/100;
 		for(;step<maxStep;step++)
+		{
+			if(step%affDelay == 0)
+				System.out.print(".");
 			nextStepDone();
+		}
 		long endDate= Calendar.getInstance().getTimeInMillis();
 		this.model.free();
 		if(this.outputFile!=null)
 			this.outputFile.close();
-		System.out.println("Simulation duration: "+ (endDate - startdate)+"ms");
+		System.out.println("\nSimulation duration: "+ (endDate - startdate)+"ms");
 	}
 	
 	public void nextStepDone()
