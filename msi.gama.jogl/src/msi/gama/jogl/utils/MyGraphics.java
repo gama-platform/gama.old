@@ -190,7 +190,7 @@ public class MyGraphics {
 
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
-		//System.out.println("DrawJTSGraphics:" + geometry.elevation);
+		//System.out.println("DrawJTSGraphics:" + geometry.geometry.getGeometryType());
 		
 		
 		for (i = 0; i < geometry.geometry.getNumGeometries(); i++) {
@@ -422,9 +422,9 @@ public class MyGraphics {
 		myGl.glBegin(GL.GL_LINES);
 		for (j = 0; j < numPoints - 1; j++) {
 			myGl.glVertex3f((float) ((line.getPointN(j).getX())),
-					(float) ((line.getPointN(j).getY())), z);
+					-(float) ((line.getPointN(j).getY())), z);
 			myGl.glVertex3f((float) ((line.getPointN(j + 1).getX())),
-					(float) ((line.getPointN(j + 1).getY())), z);
+					-(float) ((line.getPointN(j + 1).getY())), z);
 		}
 		myGl.glEnd();
 
@@ -445,7 +445,7 @@ public class MyGraphics {
 
 			tempPolygon[k][0] = (float) (point.getCoordinate().x + (Math
 					.cos(angle)) * radius);
-			tempPolygon[k][1] = (float) (point.getCoordinate().y + (Math
+			tempPolygon[k][1] = -(float) (point.getCoordinate().y + (Math
 					.sin(angle)) * radius);
 			tempPolygon[k][2] = z;
 		}
@@ -467,12 +467,12 @@ public class MyGraphics {
 			angle = (float) (k * 2 * Math.PI / numPoints);
 			xBegin = (float) (point.getCoordinate().x + (Math.cos(angle))
 					* radius);
-			yBegin = (float) (point.getCoordinate().y + (Math.sin(angle))
+			yBegin = -(float) (point.getCoordinate().y + (Math.sin(angle))
 					* radius);
 			angle = (float) ((k + 1) * 2 * Math.PI / numPoints);
 			xEnd = (float) (point.getCoordinate().x + (Math.cos(angle))
 					* radius);
-			yEnd = (float) (point.getCoordinate().y + (Math.sin(angle))
+			yEnd = -(float) (point.getCoordinate().y + (Math.sin(angle))
 					* radius);
 			myGl.glVertex3f(xBegin, yBegin, z);
 			myGl.glVertex3f(xEnd, yEnd, z);
