@@ -1,5 +1,6 @@
 package msi.gama.headless.xml;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Vector;
@@ -95,6 +96,21 @@ public class Reader {
 		int max=Integer.valueOf(e.getAttribute("finalstep"));
 		String sourcePath=e.getAttribute("sourcePath");
 		String driver=e.getAttribute("driver");
+		if(sourcePath.charAt(0)!='/')
+		{
+			File ff=( new File(fileName));
+			String prt;
+			try {
+				prt = ff.getCanonicalPath();
+				String pr = prt.substring(0, (int)(prt.length()- ff.getName().length()));
+					sourcePath = pr+sourcePath;
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+			
+		}
+		
 		Simulation res=new Simulation(expId, sourcePath, driver, max);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
