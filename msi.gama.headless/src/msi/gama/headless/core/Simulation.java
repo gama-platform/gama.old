@@ -105,12 +105,6 @@ public class Simulation  {
 		this.model.initialize();
 		if(this.outputFile!=null)
 			this.outputFile.writeSimulationHeader(this);
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		System.out.print("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
 		int affDelay = maxStep/100;

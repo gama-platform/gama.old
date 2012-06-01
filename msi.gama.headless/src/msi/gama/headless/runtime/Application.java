@@ -58,7 +58,7 @@ public class Application implements IApplication {
 
 		 success = ( new File(args[0]).exists());
 		if (!success) {
-			showError(HeadLessErrors.NOT_EXIST_FILE_ERROR,Globals.OUTPUT_PATH);
+			showError(HeadLessErrors.NOT_EXIST_FILE_ERROR,args[0]);
 			System.exit(-1);
 		} 
 
