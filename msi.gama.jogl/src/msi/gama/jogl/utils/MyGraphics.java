@@ -121,9 +121,11 @@ public class MyGraphics {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 
-		int curPolyGonNumPoints = p.getNumPoints();
+		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 		for (j = 0; j < curPolyGonNumPoints; j++) {
+			
 			int k = (j + 1) % curPolyGonNumPoints;
+			
 			myGl.glBegin(GL.GL_QUADS);
 			if (j == 3) {
 				myGl.glNormal3f(0.0f, 0.0f, 1.0f);
