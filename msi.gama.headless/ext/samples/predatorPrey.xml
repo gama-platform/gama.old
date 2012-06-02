@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./predatorPrey/predatorPrey.gaml" finalstep="1000">
   <Parameters>
-    nb_preys_init
     <Parameter name="nb_predator_init" type="INT" value="53" />
     <Parameter name="nb_preys_init" type="INT" value="621" />
   </Parameters>
