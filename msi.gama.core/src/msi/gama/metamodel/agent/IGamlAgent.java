@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.MEMBERS, type = IType.LIST_STR),
 	@var(name = IKeyword.PEERS, type = IType.LIST_STR),
 	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
-	@var(name = IKeyword.HOST, type = IType.NONE_STR),
+	@var(name = IKeyword.HOST, type = IType.AGENT_STR),
 	@var(name = IKeyword.LOCATION, type = IType.POINT_STR, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR) /*
 														 * , Problème de conflit de nom

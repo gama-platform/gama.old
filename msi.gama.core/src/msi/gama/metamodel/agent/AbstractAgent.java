@@ -48,7 +48,7 @@ public abstract class AbstractAgent implements IAgent {
 	protected int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
-
+	protected String name;
 	protected ISimulation simulation;
 
 	/**
@@ -209,13 +209,17 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public String getName() {
-		if ( dead() ) { return "dead agent"; }
-		return getSpeciesName() + index;
+		// if ( dead() ) { return "dead agent"; }
+		if ( name == null ) {
+			if ( dead() ) { return "dead agent"; }
+			return getSpeciesName() + index;
+		}
+		return name;
 	}
 
 	@Override
 	public void setName(final String name) {
-
+		this.name = name;
 	}
 
 	@Override
