@@ -117,12 +117,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 		toolbar = new Composite(top, SWT.None);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.heightHint = 20;
 		toolbar.setLayoutData(data);
 		layout = new GridLayout(INITIAL_BUTTONS + 1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
+
 		toolbar.setLayout(layout);
 
 		status = new Label(toolbar, SWT.NONE);
