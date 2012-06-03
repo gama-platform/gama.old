@@ -9,8 +9,7 @@ Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
  org.eclipse.emf.ecore
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: gaml.additions,
- msi.gama.common.interfaces;
+Export-Package: msi.gama.common.interfaces;
   uses:="org.eclipse.emf.ecore.resource,
    msi.gama.precompiler,
    org.jfree.chart,
