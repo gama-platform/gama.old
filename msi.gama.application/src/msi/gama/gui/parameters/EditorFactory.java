@@ -121,16 +121,17 @@ public class EditorFactory implements IEditorFactory {
 			var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
 		final short type = var.type().id();
 		AbstractEditor gp =
-			type == IType.BOOL ? new BooleanEditor(agent, var, l) : type == IType.COLOR
-				? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(agent,
-					var, canBeNull, l) : type == IType.INT
-					? new IntEditor(agent, var, canBeNull, l) : type == IType.LIST
-						? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(
-							agent, var, l) : type == IType.MAP ? new MapEditor(agent, var, l)
-							: type == IType.MATRIX ? new MatrixEditor(agent, var, l)
-								: type == IType.FILE ? new FileEditor(agent, var, l)
-									: type == IType.STRING ? new StringEditor(agent, var, l)
-										: new GenericEditor(agent, var, l);
+			var.type().isSpeciesType() | type == IType.AGENT ? new AgentEditor(agent, var, l)
+				: type == IType.BOOL ? new BooleanEditor(agent, var, l) : type == IType.COLOR
+					? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(agent,
+						var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var,
+						canBeNull, l) : type == IType.LIST ? new ListEditor(agent, var, l)
+						: type == IType.POINT ? new PointEditor(agent, var, l) : type == IType.MAP
+							? new MapEditor(agent, var, l) : type == IType.MATRIX
+								? new MatrixEditor(agent, var, l) : type == IType.FILE
+									? new FileEditor(agent, var, l) : type == IType.STRING
+										? new StringEditor(agent, var, l) : new GenericEditor(
+											agent, var, l);
 		return gp;
 	}
 }

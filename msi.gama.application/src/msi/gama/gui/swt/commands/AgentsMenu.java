@@ -38,7 +38,7 @@ public class AgentsMenu extends ContributionItem {
 		super(id);
 	}
 
-	static SelectionAdapter adapter = new SelectionAdapter() {
+	public static SelectionAdapter adapter = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -62,6 +62,10 @@ public class AgentsMenu extends ContributionItem {
 
 	private static void fillAgentsMenu(final Menu menu, final IPopulation species,
 		final SelectionListener select) {
+		if ( species == null ) {
+			fill(menu, select);
+			return;
+		}
 		SelectionListener listener = select == null ? adapter : select;
 		List<IAgent> agents = species.getAgentsList();
 		int size = agents.size();
@@ -111,7 +115,8 @@ public class AgentsMenu extends ContributionItem {
 		return agentsMenu;
 	}
 
-	private void populateComponents(final Menu parent, final IAgent macro) {
+	private static void populateComponents(final Menu parent, final IAgent macro,
+		final SelectionListener listener) {
 		MenuItem microAgentsItem = new MenuItem(parent, SWT.CASCADE);
 		microAgentsItem.setText("Micro agents");
 
@@ -124,28 +129,30 @@ public class AgentsMenu extends ContributionItem {
 		for ( String microSpec : microSpeciesNames ) {
 			microPopulation = macro.getMicroPopulation(microSpec);
 			if ( microPopulation != null && microPopulation.size() > 0 ) {
-				populateSpecies(microSpeciesMenu, microPopulation, false);
+				populateSpecies(microSpeciesMenu, microPopulation, false, listener);
 			}
 		}
 	}
 
-	private void populateAgentContent(final Menu parent, final IAgent agent) {
+	private static void populateAgentContent(final Menu parent, final IAgent agent,
+		final SelectionListener listener) {
 		MenuItem agentItem = new MenuItem(parent, SWT.PUSH);
 		agentItem.setData("agent", agent);
 		agentItem.setText(agent.getName());
-		agentItem.addSelectionListener(adapter);
+		agentItem.addSelectionListener(listener);
 		agentItem.setImage(SwtGui.agentImage);
 
-		populateComponents(parent, agent);
+		populateComponents(parent, agent, listener);
 	}
 
-	private void populateAgent(final Menu parent, final IAgent agent) {
+	private static void populateAgent(final Menu parent, final IAgent agent,
+		final SelectionListener listener) {
 		if ( !agent.hasMembers() ) { // TODO review IAgent.isGridAgent
 			MenuItem agentItem = new MenuItem(parent, SWT.PUSH);
 			agentItem.setData("agent", agent);
 			agentItem.setText(agent.getName());
 			agentItem.setImage(SwtGui.agentImage);
-			agentItem.addSelectionListener(adapter);
+			agentItem.addSelectionListener(listener);
 		} else {
 			MenuItem agentItem = new MenuItem(parent, SWT.CASCADE);
 			agentItem.setData("agent", agent);
@@ -155,12 +162,12 @@ public class AgentsMenu extends ContributionItem {
 			Menu agentMenu = new Menu(agentItem);
 			agentItem.setMenu(agentMenu);
 
-			populateAgentContent(agentMenu, agent);
+			populateAgentContent(agentMenu, agent, listener);
 		}
 	}
 
-	private void populateSpecies(final Menu parent, final IPopulation population,
-		final boolean isGlobal) {
+	private static void populateSpecies(final Menu parent, final IPopulation population,
+		final boolean isGlobal, final SelectionListener listener) {
 		MenuItem speciesItem = null;
 		if ( isGlobal ) {
 			speciesItem = new MenuItem(parent, SWT.CASCADE, 0);
@@ -179,7 +186,7 @@ public class AgentsMenu extends ContributionItem {
 
 		if ( size < 100 ) {
 			for ( IAgent a : agents ) {
-				populateAgent(speciesMenu, a);
+				populateAgent(speciesMenu, a, listener);
 			}
 		} else {
 			int nb = size / 100;
@@ -191,17 +198,21 @@ public class AgentsMenu extends ContributionItem {
 				Menu rangeMenu = new Menu(rangeItem);
 				for ( int j = begin; j < end; j++ ) {
 					IAgent agent = agents.get(j);
-					populateAgent(rangeMenu, agent);
+					populateAgent(rangeMenu, agent, listener);
 				}
 				rangeItem.setMenu(rangeMenu);
 			}
 		}
 	}
 
-	@Override
-	public void fill(final Menu parent, final int index) {
+	public static void fill(final Menu parent, final SelectionListener listener) {
 		ISimulation sim = GAMA.getFrontmostSimulation();
 		IPopulation worldPopulation = sim.getWorldPopulation();
-		populateSpecies(parent, worldPopulation, true);
+		populateSpecies(parent, worldPopulation, true, listener);
+	}
+
+	@Override
+	public void fill(final Menu parent, final int index) {
+		fill(parent, adapter);
 	}
 }
