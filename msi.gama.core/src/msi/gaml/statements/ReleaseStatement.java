@@ -160,7 +160,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 					macroOfMacro = macroOfMacro.getHost();
 				}
 
-				if ( microSpecies != null ) {
+				if ( macroOfMacro != null && microSpecies != null ) {
 					releasedMicroAgents.add(macroOfMacro.captureMicroAgent(microSpecies, m));
 				} else {
 					// TODO throw exception when target population not found to release the agent

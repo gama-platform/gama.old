@@ -169,9 +169,14 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
 			}
-		} else if ( bounds instanceof String || bounds instanceof GamaFile ) {
-			String boundsStr =
-				bounds instanceof String ? (String) bounds : ((GamaFile) bounds).getPath();
+		} else if ( bounds != null && (bounds instanceof String || bounds instanceof GamaFile) ) {
+			String boundsStr;
+			if ( bounds instanceof String ) {
+				boundsStr = (String) bounds;
+			} else {
+				boundsStr = ((GamaFile) bounds).getPath();
+			}
+
 			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
 				try {
 					Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);

@@ -32,8 +32,9 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	protected final Map<String, IExperiment> experiments = new HashMap<String, IExperiment>();
 	private ModelEnvironment modelEnvironment;
 	protected ISpecies worldSpecies;
+
 	// private static int instanceCount;
-	private static int totalCount;
+	// private static int totalCount;
 
 	// private final int count;
 

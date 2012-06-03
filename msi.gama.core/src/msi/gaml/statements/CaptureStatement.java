@@ -182,14 +182,11 @@ public class CaptureStatement extends AbstractStatementSequence {
 				raB.append(s);
 			}
 
-			if ( microSpeciesName != null ) {
-				throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
-					raStr.toString() + " as " + microSpeciesName + " agent");
-			} else {
-				throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
-					raStr.toString() +
-					" as micro-agents because no appripriate micro-population is found to welcome these agents.");
-			}
+			if ( microSpeciesName != null ) { throw new GamaRuntimeException(macroAgent.getName() +
+				" can't capture " + raStr.toString() + " as " + microSpeciesName + " agent"); }
+			throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
+				raStr.toString() +
+				" as micro-agents because no appripriate micro-population is found to welcome these agents.");
 		}
 
 		return null;

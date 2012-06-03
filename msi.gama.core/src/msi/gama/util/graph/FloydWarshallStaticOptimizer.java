@@ -172,18 +172,18 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 	}
 
 	protected final void floydWarshallDistributed(final boolean verbose) {
-		float density = 0f;
-		int blank = computeBlankNodes();
-		final long one_step = number / 100;
-		final int number2 = number * number;
-		final float one_percent = one_step;
+		// float density = 0f;
+		// int blank = computeBlankNodes();
+		// final long one_step = number / 100;
+		// final int number2 = number * number;
+		// final float one_percent = one_step;
 		if ( verbose ) {
-			density = (1 - (float) blank / (float) number2) * 100;
+			// density = (1 - (float) blank / (float) number2) * 100;
 			// GuiUtils.debug("--- Initial density of the matrix :" + density + "%");
 			// GuiUtils.debug("3) Computing optimal paths between all the intersections...");
 		}
 		int distik, i, k;
-		final long debut = System.currentTimeMillis();
+		// final long debut = System.currentTimeMillis();
 		for ( k = 0; k < number; k++ ) { // Outer loop
 			for ( i = 0; i < k; i++ ) {
 				distik = adj[i][k]; // distance from i to k
@@ -199,18 +199,18 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 			}
 
-			if ( verbose && k % one_step == 0 ) {
-				// GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
-			}
+			// if ( verbose && k % one_step == 0 ) {
+			// GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
+			// }
 		}
-		if ( verbose ) {
-			final long totalTime = System.currentTimeMillis() - debut;
-			density = 0f;
-			blank = computeBlankNodes();
-			density = (1 - (float) blank / (float) number2) * 100;
-			// GuiUtils.debug("--- Final density of the matrix :" + density + "%");
-			// GuiUtils.debug("--- Computed in " + (float) totalTime / 1000 + "seconds");
-		}
+		// if ( verbose ) {
+		// final long totalTime = System.currentTimeMillis() - debut;
+		// density = 0f;
+		// blank = computeBlankNodes();
+		// density = (1 - (float) blank / (float) number2) * 100;
+		// GuiUtils.debug("--- Final density of the matrix :" + density + "%");
+		// GuiUtils.debug("--- Computed in " + (float) totalTime / 1000 + "seconds");
+		// }
 	}
 
 	/**
