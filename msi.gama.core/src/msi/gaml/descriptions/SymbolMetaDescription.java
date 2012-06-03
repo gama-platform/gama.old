@@ -21,7 +21,6 @@ package msi.gaml.descriptions;
 import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.ISymbolConstructor;
@@ -36,7 +35,6 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-// @facet(name = IKeyword.KEYWORD, type = IType.ID, optional = true)
 public class SymbolMetaDescription {
 
 	public static Set<String> nonVariableStatements = new HashSet();
@@ -48,10 +46,12 @@ public class SymbolMetaDescription {
 		public boolean optional;
 		public boolean isLabel;
 		public String[] values;
+		static FacetMetaDescription KEYWORD = KEYWORD();
+		static FacetMetaDescription DEPENDS_ON = DEPENDS_ON();
 
 		private FacetMetaDescription() {}
 
-		FacetMetaDescription(final facet f) {
+		public FacetMetaDescription(final facet f) {
 			name = f.name();
 			types = f.type();
 			optional = f.optional();
@@ -89,8 +89,8 @@ public class SymbolMetaDescription {
 	private boolean isRemoteContext = false;
 	private final Set<String> contextKeywords;
 	private final Set<Short> contextKinds;
-	private final Map<String, FacetMetaDescription> possibleFacets = new HashMap();
-	private final List<String[]> combinations = new ArrayList();
+	private final Map<String, FacetMetaDescription> possibleFacets;
+	private final List<String[]> combinations;
 	private final List<String> mandatoryFacets = new ArrayList();
 	private final String omissibleFacet;
 
@@ -98,23 +98,22 @@ public class SymbolMetaDescription {
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
 	public SymbolMetaDescription(final boolean hasSequence, final boolean hasArgs, final int kind,
-		final boolean doesNotHaveScope, final List<facet> possibleFacets, final String omissible,
-		final List<combination> possibleCombinations, final Set<String> contextKeywords,
-		final Set<Short> contextKinds, final boolean isRemoteContext,
-		final ISymbolConstructor constr) {
+		final boolean doesNotHaveScope, final Map<String, FacetMetaDescription> possibleFacets,
+		final String omissible, final List<String[]> possibleCombinations,
+		final Set<String> contextKeywords, final Set<Short> contextKinds,
+		final boolean isRemoteContext, final ISymbolConstructor constr) {
 		constructor = constr;
 		setRemoteContext(isRemoteContext);
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);
 		this.omissibleFacet = omissible;
+		this.combinations = possibleCombinations;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
-		getPossibleFacets().put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD());
-		getPossibleFacets().put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON());
-		for ( facet f : possibleFacets ) {
-			getPossibleFacets().put(f.name(), new FacetMetaDescription(f));
-		}
-		for ( FacetMetaDescription f : getPossibleFacets().values() ) {
+		this.possibleFacets = possibleFacets;
+		this.possibleFacets.put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD);
+		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON);
+		for ( FacetMetaDescription f : possibleFacets.values() ) {
 			if ( !f.optional ) {
 				getMandatoryFacets().add(f.name);
 			}
@@ -215,15 +214,16 @@ public class SymbolMetaDescription {
 
 	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
-		if ( getPossibleCombinations().isEmpty() ) { return; }
-		for ( String[] c : getPossibleCombinations() ) {
-			boolean allPresent = true;
-			for ( String s : c ) {
-				allPresent = allPresent && facets.containsKey(s);
-			}
-			if ( allPresent ) { return; }
-		}
-		context.flagError("Wrong combination of facets " + facets, IGamlIssue.GENERAL, e);
+		return;
+		// if ( getPossibleCombinations().isEmpty() ) { return; }
+		// for ( String[] c : getPossibleCombinations() ) {
+		// boolean allPresent = true;
+		// for ( String s : c ) {
+		// allPresent = allPresent && facets.containsKey(s);
+		// }
+		// if ( allPresent ) { return; }
+		// }
+		// context.flagError("Wrong combination of facets " + facets, IGamlIssue.GENERAL, e);
 	}
 
 	public boolean verifyContext(final IDescription upper) {
