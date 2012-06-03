@@ -5,7 +5,6 @@ import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.*;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -15,6 +14,7 @@ import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.expressions.BinaryOperator.BinaryVarOperator;
 import msi.gaml.factories.*;
@@ -131,14 +131,22 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void addSymbol(final Class c, final int sKind, final boolean remote,
 		final boolean args, final boolean scope, final boolean sequence,
 		final ISymbolConstructor sc, final String ... names) {
-		String omissible = null;
 		Set<String> contextKeywords = new HashSet();
 		Set<Short> contextKinds = new HashSet();
 		facets ff = (facets) c.getAnnotation(facets.class);
-		List<facet> facets = ff != null ? Arrays.asList(ff.value()) : Collections.EMPTY_LIST;
-		List<combination> combinations =
-			ff != null ? Arrays.asList(ff.combinations()) : Collections.EMPTY_LIST;
-		omissible = ff != null ? ff.omissible() : null;
+		final Map<String, FacetMetaDescription> facets = new HashMap();
+		// List<String[]> combinations = Collections.EMPTY_LIST;
+		String omissible = null;
+		if ( ff != null ) {
+			for ( facet f : ff.value() ) {
+				facets.put(f.name(), new FacetMetaDescription(f));
+			}
+			// combinations = new ArrayList();
+			// for ( combination comb : ff.combinations() ) {
+			// combinations.add(comb.value());
+			// }
+			omissible = ff.omissible();
+		}
 		inside parents = (inside) c.getAnnotation(inside.class);
 		if ( parents != null ) {
 			for ( String p : parents.symbols() ) {
@@ -162,7 +170,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 		SymbolMetaDescription md =
 			new SymbolMetaDescription(sequence, args, sKind, !scope, facets, omissible,
-				combinations, contextKeywords, contextKinds, remote, sc);
+				Collections.EMPTY_LIST, contextKeywords, contextKinds, remote, sc);
 		DescriptionFactory.getModelFactory().registerSymbol(md, keywords);
 
 	}
