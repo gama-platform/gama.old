@@ -41,6 +41,48 @@ import org.joda.time.format.*;
  */
 public class Strings {
 
+	static Pattern p = Pattern.compile("%[YMDhms]");
+	private static PeriodFormatterBuilder format;
+	private static PeriodFormatter dateFormat;
+	private static PeriodFormatter timeFormat;
+	private static GamaChronology chronology;
+
+	static PeriodFormatterBuilder getCustomFormat() {
+		if ( format == null ) {
+			format = new PeriodFormatterBuilder();
+		}
+		return format;
+	}
+
+	static PeriodFormatter getTimeFormat() {
+		if ( timeFormat == null ) {
+			timeFormat =
+				new PeriodFormatterBuilder().printZeroAlways().minimumPrintedDigits(2)
+					.appendHours().appendLiteral(":").appendMinutes().appendLiteral(":")
+					.appendSeconds().toFormatter();
+		}
+		return timeFormat;
+	}
+
+	static PeriodFormatter getDateFormat() {
+		if ( dateFormat == null ) {
+			dateFormat =
+				new PeriodFormatterBuilder().appendYears().appendSuffix(" year", " years")
+					.appendSeparator(", ").appendMonths().appendSuffix(" month", " months")
+					.appendSeparator(", ").appendWeeks().appendSuffix(" week", " weeks")
+					.appendSeparator(", ").appendDays().appendSuffix(" day", " days")
+					.appendSeparator(" ").toFormatter();
+		}
+		return dateFormat;
+	}
+
+	static GamaChronology getChronology() {
+		if ( chronology == null ) {
+			chronology = new GamaChronology(GregorianChronology.getInstanceUTC());
+		}
+		return chronology;
+	}
+
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
 	public static String opPlus(final String a, final String b) {
 		return a + b;
@@ -190,9 +232,7 @@ public class Strings {
 	}
 
 	@operator(value = "reverse", can_be_const = true)
-	@doc(
-		special_cases = {"if it is a string, reverse returns a new string with caracters in the reversed order",},
-		examples = {"reverse ('abcd') 		--: 	'dcba';"})
+	@doc(special_cases = { "if it is a string, reverse returns a new string with caracters in the reversed order", }, examples = { "reverse ('abcd') 		--: 	'dcba';" })
 	static public String reverse(final String s) {
 		StringBuilder buf = new StringBuilder(s);
 		buf.reverse();
@@ -200,35 +240,27 @@ public class Strings {
 	}
 
 	@operator(value = "empty", can_be_const = true)
-	@doc(
-		special_cases = {"if it is a string, empty returns true if the string does not contain any character, and false otherwise"},
-		examples = {"empty ('abced') 	--: 	false"})
+	@doc(special_cases = { "if it is a string, empty returns true if the string does not contain any character, and false otherwise" }, examples = { "empty ('abced') 	--: 	false" })
 	static public Boolean isEmpty(final String s) {
 		return s != null && s.isEmpty();
 	}
 
 	@operator(value = "first", can_be_const = true)
-	@doc(
-		special_cases = {"if it is a string, first returns a string composed of its first character"},
-		examples = {"first ('abce')      	--:   'a'"})		
+	@doc(special_cases = { "if it is a string, first returns a string composed of its first character" }, examples = { "first ('abce')      	--:   'a'" })
 	static public String first(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(0));
 	}
 
 	@operator(value = "last", can_be_const = true)
-	@doc(
-		special_cases = {"if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty"},
-		examples = {"last ('abce') 		--:   'e'",})
+	@doc(special_cases = { "if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty" }, examples = { "last ('abce') 		--:   'e'", })
 	static public String last(final String s) {
 		if ( s == null || s.isEmpty() ) { return ""; }
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
 	@operator(value = "length", can_be_const = true)
-	@doc(
-		special_cases = {"if it is a string, length returns the number of characters"},
-		examples = {"length ('I am an agent') 		--: 	13"})
+	@doc(special_cases = { "if it is a string, length returns the number of characters" }, examples = { "length ('I am an agent') 		--: 	13" })
 	static public Integer length(final String s) {
 		if ( s == null ) { return 0; }
 		return s.length();
@@ -238,19 +270,6 @@ public class Strings {
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
-
-	static PeriodFormatter dateFormat = new PeriodFormatterBuilder().appendYears()
-		.appendSuffix(" year", " years").appendSeparator(", ").appendMonths()
-		.appendSuffix(" month", " months").appendSeparator(", ").appendWeeks()
-		.appendSuffix(" week", " weeks").appendSeparator(", ").appendDays()
-		.appendSuffix(" day", " days").appendSeparator(" ").toFormatter();
-
-	static PeriodFormatter timeFormat = new PeriodFormatterBuilder().printZeroAlways()
-		.minimumPrintedDigits(2).appendHours().appendLiteral(":").appendMinutes()
-		.appendLiteral(":").appendSeconds().toFormatter();
-
-	static final GamaChronology chronology = new GamaChronology(
-		GregorianChronology.getInstanceUTC());
 
 	private static final class GamaChronology extends AssembledChronology {
 
@@ -283,16 +302,12 @@ public class Strings {
 
 	}
 
-	static Pattern p = Pattern.compile("%[YMDhms]");
-
-	static PeriodFormatterBuilder format = new PeriodFormatterBuilder();
-
 	@operator(value = "as_date", can_be_const = true)
 	public static String asDate(final double time, final String pattern) {
 		// Pattern should include : "%Y %M %D %h %m %s" for outputting years, months, days, hours,
 		// minutes, seconds
 		if ( pattern == null || pattern.isEmpty() ) { return asDate(time) + " " + asTime(time); }
-		format.clear();
+		getCustomFormat().clear();
 		List<String> dateList = new ArrayList();
 		final Matcher m = p.matcher(pattern);
 		int i = 0;
@@ -307,103 +322,40 @@ public class Strings {
 		if ( i != pattern.length() ) {
 			dateList.add(pattern.substring(i));
 		}
-		// GuiUtils.debug("Output find: " + dateList);
-
-		// String[] strings = p.split(pattern);
-		// GuiUtils.debug("Output split: " + Arrays.toString(strings));
 		for ( i = 0; i < dateList.size(); i++ ) {
 			String s = dateList.get(i);
 			if ( s.charAt(0) == '%' && s.length() == 2 ) {
 				Character c = s.charAt(1);
 				switch (c) {
 					case 'Y':
-						format.appendYears();
+						getCustomFormat().appendYears();
 						break;
 					case 'M':
-						format.appendMonths();
+						getCustomFormat().appendMonths();
 						break;
 					case 'D':
-						format.appendDays();
+						getCustomFormat().appendDays();
 						break;
 					case 'h':
-						format.appendHours();
+						getCustomFormat().appendHours();
 						break;
 					case 'm':
-						format.appendMinutes();
+						getCustomFormat().appendMinutes();
 						break;
 					case 's':
-						format.appendSeconds();
+						getCustomFormat().appendSeconds();
 						break;
 					default:
-						format.appendLiteral(s);
+						getCustomFormat().appendLiteral(s);
 				}
 			} else {
-				format.appendLiteral(s);
+				getCustomFormat().appendLiteral(s);
 			}
 		}
 
-		// for ( String s : strings ) {
-		// Character c = s.charAt(0);
-		// switch (c) {
-		// case 'Y':
-		// format.appendYears();
-		// break;
-		// case 'M':
-		// format.appendMonths();
-		// break;
-		// case 'D':
-		// format.appendDays();
-		// break;
-		// case 'h':
-		// format.appendHours();
-		// break;
-		// case 'm':
-		// format.appendMinutes();
-		// break;
-		// case 's':
-		// format.appendSeconds();
-		// break;
-		// default:
-		// format.appendLiteral(c.toString());
-		// }
-		// format.appendLiteral(s.substring(1));
-		// }
-
-		// for ( int i = 0, n = pattern.length(); i < n; i++ ) {
-		// Character c = pattern.charAt(i);
-		// if ( c != '%' ) {
-		// if ( patternFound ) {
-		// patternFound = false;
-		// switch (c) {
-		// case 'Y':
-		// format.appendYears();
-		// break;
-		// case 'M':
-		// format.appendMonths();
-		// break;
-		// case 'D':
-		// format.appendDays();
-		// break;
-		// case 'h':
-		// format.appendHours();
-		// break;
-		// case 'm':
-		// format.appendMinutes();
-		// break;
-		// case 's':
-		// format.appendSeconds();
-		// break;
-		// }
-		// } else {
-		// format.appendLiteral(c.toString()); // not very efficient...
-		// }
-		// } else {
-		// patternFound = true;
-		// }
-		// }
-		PeriodFormatter pf = format.toFormatter();
+		PeriodFormatter pf = getCustomFormat().toFormatter();
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return pf.print(new Period(new Duration((long) time * 1000), chronology)
+		return pf.print(new Period(new Duration((long) time * 1000), getChronology())
 			.normalizedStandard(pt));
 
 	}
@@ -411,14 +363,15 @@ public class Strings {
 	@operator(value = "as_date", can_be_const = true)
 	public static String asDate(final double time) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return dateFormat.print(new Period(new Duration((long) time * 1000), chronology)
-			.normalizedStandard(pt));
+		return getDateFormat().print(
+			new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
 	}
 
 	@operator(value = "as_time", can_be_const = true)
 	public static String asTime(final double cycles) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
-		return timeFormat.print(new Period(new Duration((long) cycles * 1000), chronology)
-			.normalizedStandard(pt));
+		return getTimeFormat().print(
+			new Period(new Duration((long) cycles * 1000), getChronology()).normalizedStandard(pt));
 	}
+
 }
