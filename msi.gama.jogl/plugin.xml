@@ -9,7 +9,7 @@
          </implementation>
          
     </extension>
-    <extension
+<!--    <extension
           point="org.eclipse.ui.views">
            <view 
             allowMultiple="true"
@@ -19,7 +19,7 @@
             name="GL"
             restorable="true">
   		</view>
-    </extension>
+    </extension>-->
     
 
 </plugin>
