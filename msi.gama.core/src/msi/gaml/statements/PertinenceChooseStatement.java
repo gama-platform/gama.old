@@ -21,7 +21,7 @@ public class PertinenceChooseStatement extends PertinenceStatement {
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		pertinence = 0;
+		pertinenceValue = 0;
 		List<IStatement> pertinentsCommands = new GamaList<IStatement>();
 		for ( ISymbol c : commands ) {
 			if ( !(c instanceof IStatement) ) {
@@ -29,11 +29,11 @@ public class PertinenceChooseStatement extends PertinenceStatement {
 			}
 			IStatement command = (IStatement) c;
 			Double p = command.computePertinence(scope);
-			if ( p > pertinence ) {
+			if ( p > pertinenceValue ) {
 				pertinentsCommands = new GamaList<IStatement>();
 				pertinentsCommands.add(command);
-				pertinence = p;
-			} else if ( p == pertinence ) {
+				pertinenceValue = p;
+			} else if ( p == pertinenceValue ) {
 				pertinentsCommands.add(command);
 			}
 		}
@@ -41,13 +41,13 @@ public class PertinenceChooseStatement extends PertinenceStatement {
 			mostPertinentCommand =
 				pertinentsCommands.get(GAMA.getRandom().between(0, pertinentsCommands.size() - 1));
 		}
-		return pertinence;
+		return pertinenceValue;
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		computePertinence(scope);
-		if ( pertinence > 0 ) { return mostPertinentCommand.executeOn(scope); }
+		if ( pertinenceValue > 0 ) { return mostPertinentCommand.executeOn(scope); }
 		return null;
 	}
 }

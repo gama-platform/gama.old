@@ -83,8 +83,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final IExpression number;
 	private final IExpression speciesExpr;
 	private final String returnString;
-	private final double sizeSquare = -1;
-	private final String typeDiscretisation = "";
+	// private final double sizeSquare = -1;
+	// private final String typeDiscretisation = "";
 
 	private AbstractStatementSequence sequence;
 

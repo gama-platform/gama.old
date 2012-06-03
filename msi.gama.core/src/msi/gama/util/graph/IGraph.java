@@ -56,19 +56,19 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public Collection _internalEdgeSet();
 	public Collection _internalNodesSet();
 	
-	@getter(var = "edges")
+	@getter( "edges")
 	public abstract IList getEdges();
 
-	@getter(var = "vertices")
+	@getter( "vertices")
 	public abstract IList getVertices();
 
-	@getter(var = "spanning_tree")
+	@getter( "spanning_tree")
 	public abstract IList getSpanningTree();
 
-	@getter(var = "circuit")
+	@getter( "circuit")
 	public abstract IValue getCircuit();
 
-	@getter(var = "connected")
+	@getter( "connected")
 	public abstract Boolean getConnected();
 
 	public abstract boolean isDirected();
@@ -79,7 +79,7 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 
 	public abstract void setOptimizerType(String optiType);
 	
-	@getter(var = "verbose")
+	@getter( "verbose")
 	public abstract Boolean isVerbose();
 
 	public abstract void setVerbose(final Boolean isVerbose);

@@ -27,7 +27,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
-@type(value = IType.MAP_STR, id = IType.MAP, wraps = { GamaMap.class, Map.class, HashMap.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IType.MAP_STR, id = IType.MAP, wraps = { GamaMap.class, Map.class, HashMap.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMapType extends GamaType<Map> {
 
 	@Override

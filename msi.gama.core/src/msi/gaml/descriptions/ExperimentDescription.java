@@ -19,27 +19,18 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
 import msi.gaml.factories.IChildrenProvider;
 
 public class ExperimentDescription extends SpeciesDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
-		super(keyword, superDesc, source.getFacets(), cp, source, ExperimentatorAgent.class, md);
+		super(keyword, superDesc, source.getFacets(), cp, source, md);
 	}
-
-	// @Override
-	// public String getKeyword() {
-	// return facets.getLabel(IKeyword.TYPE);
-	// // The type of experiment determines the class to be instantiated
-	// }
 
 	@Override
 	protected void addVariable(final VariableDescription var) {
-		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) {
-			// parameters.add(var);
-		} else {
+		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) {} else {
 			super.addVariable(var);
 		}
 	}

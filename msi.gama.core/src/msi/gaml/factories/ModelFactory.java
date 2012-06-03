@@ -23,8 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
@@ -34,8 +33,8 @@ import msi.gaml.descriptions.*;
  * 
  * @todo Description
  */
-@handles({ ISymbolKind.MODEL })
-@uses({ ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES, ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
+@factory(handles = { ISymbolKind.MODEL }, uses = { ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES,
+	ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
 public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model {
 
 	public ModelFactory(final List<Integer> handles, final List<Integer> uses) {
@@ -140,9 +139,8 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 	public static SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
 		// We create a new world
-		String w = AbstractGamlAdditions.getBuiltInSpeciesClasses().get(WORLD_SPECIES).getName();
-		IDescription world =
-			DescriptionFactory.create(SPECIES, model, NAME, WORLD_SPECIES, BASE, w);
+		// String w = AbstractGamlAdditions.getBuiltInSpeciesClasses().get(WORLD_SPECIES).getName();
+		IDescription world = DescriptionFactory.create(SPECIES, model, NAME, WORLD_SPECIES);
 		model.addChild(world);
 		// We compute the built-in species if necessary, only once
 		if ( BUILT_IN_SPECIES == null ) {
@@ -151,9 +149,9 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 				.entrySet() ) {
 				String name = e.getKey();
 				if ( !WORLD_SPECIES.equals(name) ) {
-					String clazz = e.getValue().getName();
+					// String clazz = e.getValue().getName();
 					BUILT_IN_SPECIES.add((SpeciesDescription) DescriptionFactory.create(SPECIES,
-						world, NAME, name, BASE, clazz));
+						world, NAME, name));
 				}
 			}
 		}

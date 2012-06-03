@@ -334,6 +334,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		userCommands.put(ce.getName(), (UserCommandStatement) ce);
 	}
 
+	@Override
 	public Collection<UserCommandStatement> getUserCommands() {
 		return userCommands.values();
 	}

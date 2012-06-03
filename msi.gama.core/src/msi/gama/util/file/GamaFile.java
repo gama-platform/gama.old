@@ -229,7 +229,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter(var = IKeyword.EXISTS)
+	@getter( IKeyword.EXISTS)
 	public Boolean exists() {
 		return getFile().exists();
 	}
@@ -253,7 +253,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter(var = IKeyword.EXTENSION)
+	@getter( IKeyword.EXTENSION)
 	public String getExtension() {
 		String path = getFile().getPath();
 		int mid = path.lastIndexOf(".");
@@ -262,19 +262,19 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter(var = IKeyword.NAME)
+	@getter( IKeyword.NAME)
 	public String getName() {
 		return getFile().getName();
 	}
 
 	@Override
-	@getter(var = IKeyword.PATH)
+	@getter( IKeyword.PATH)
 	public String getPath() {
 		return getFile().getPath();
 	}
 
 	@Override
-	@getter(var = IKeyword.CONTENTS)
+	@getter( IKeyword.CONTENTS)
 	public IContainer getContents() throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
 		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " +
@@ -305,7 +305,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter(var = IKeyword.ISFOLDER)
+	@getter( IKeyword.ISFOLDER)
 	public Boolean isFolder() {
 		return getFile().isDirectory();
 	}
@@ -316,13 +316,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter(var = IKeyword.READABLE)
+	@getter( IKeyword.READABLE)
 	public Boolean isReadable() {
 		return getFile().canRead();
 	}
 
 	@Override
-	@getter(var = IKeyword.WRITABLE)
+	@getter( IKeyword.WRITABLE)
 	public Boolean isWritable() {
 		return getFile().canWrite();
 	}

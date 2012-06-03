@@ -47,7 +47,6 @@ public interface IKeyword {
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";
 	public static final String BAR = "bar";
-	public static final String BASE = "base";
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";

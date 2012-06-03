@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  */
 @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
 	@var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
-@skill(IKeyword.FSM)
+@skill(name = IKeyword.FSM)
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected Map<String, FsmStateStatement> states = new HashMap();
@@ -64,7 +64,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 		stateNames = new GamaList(states.keySet());
 	}
 
-	@getter(var = IKeyword.STATES, initializer = true)
+	@getter(value = IKeyword.STATES, initializer = true)
 	public IList getStateNames(final IAgent agent) {
 		return stateNames;
 	}
@@ -74,7 +74,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	}
 
-	@getter(var = IKeyword.STATE)
+	@getter(IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
 		FsmStateStatement currentState =
 			(FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);

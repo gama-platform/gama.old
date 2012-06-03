@@ -150,6 +150,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	@Override
 	public void reinitRandomly() {}
 
+	@Override
 	public void reinitIfNull() {}
 
 	@Override

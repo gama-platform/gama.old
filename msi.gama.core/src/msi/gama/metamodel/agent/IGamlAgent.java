@@ -52,11 +52,11 @@ import msi.gaml.types.IType;
 public interface IGamlAgent extends IAgent {
 
 	@Override
-	@getter(var = IKeyword.MEMBERS)
+	@getter(IKeyword.MEMBERS)
 	public abstract IList<IAgent> getMembers();
 
 	@Override
-	@getter(var = IKeyword.TOPOLOGY)
+	@getter(IKeyword.TOPOLOGY)
 	public abstract ITopology getTopology();
 
 	@setter(IKeyword.TOPOLOGY)
@@ -71,7 +71,7 @@ public interface IGamlAgent extends IAgent {
 	public abstract void setAgents(IList<IAgent> agents);
 
 	@Override
-	@getter(var = IKeyword.AGENTS)
+	@getter(IKeyword.AGENTS)
 	public abstract IList<IAgent> getAgents();
 
 	@Override
@@ -84,11 +84,11 @@ public interface IGamlAgent extends IAgent {
 	 * @return
 	 */
 	@Override
-	@getter(var = IKeyword.PEERS)
+	@getter(IKeyword.PEERS)
 	public abstract IList<IAgent> getPeers() throws GamaRuntimeException;
 
 	@Override
-	@getter(var = IKeyword.NAME)
+	@getter(IKeyword.NAME)
 	public abstract String getName();
 
 	@Override
@@ -96,7 +96,7 @@ public interface IGamlAgent extends IAgent {
 	public abstract void setName(String name);
 
 	@Override
-	@getter(var = IKeyword.LOCATION, initializer = true)
+	@getter(value = IKeyword.LOCATION, initializer = true)
 	public ILocation getLocation();
 
 	@Override
@@ -104,7 +104,7 @@ public interface IGamlAgent extends IAgent {
 	public void setLocation(final ILocation l);
 
 	@Override
-	@getter(var = IKeyword.SHAPE)
+	@getter(IKeyword.SHAPE)
 	public IShape getGeometry();
 
 	@Override
@@ -115,7 +115,7 @@ public interface IGamlAgent extends IAgent {
 	public abstract boolean dead();
 
 	@Override
-	@getter(var = IKeyword.HOST)
+	@getter(IKeyword.HOST)
 	public abstract IAgent getHost();
 
 	@Override

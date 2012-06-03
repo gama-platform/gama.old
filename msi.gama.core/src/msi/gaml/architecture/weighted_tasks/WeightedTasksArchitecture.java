@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
  * @since 21 déc. 2011
  * 
  */
-@skill(WeightedTasksArchitecture.WT)
+@skill(name = WeightedTasksArchitecture.WT)
 public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	public static final String WT = "weighted_tasks";

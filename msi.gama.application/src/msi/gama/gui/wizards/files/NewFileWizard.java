@@ -222,11 +222,11 @@ public class NewFileWizard extends Wizard implements INewWizard {
 	// return new ByteArrayInputStream(contents.getBytes());
 	// }
 
-	private void throwCoreException(final String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "msi.gama.gui.wizards", IStatus.OK, message, null);
-		throw new CoreException(status);
-	}
+	// private void throwCoreException(final String message) throws CoreException {
+	// IStatus status =
+	// new Status(IStatus.ERROR, "msi.gama.gui.wizards", IStatus.OK, message, null);
+	// throw new CoreException(status);
+	// }
 
 	/** Initialize the file contents to contents of the given resource. */
 	private InputStream openContentStreamHtmlFile(final String title, final String desc,

@@ -62,7 +62,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
-		final Class base, final SymbolMetaDescription md) {
+		final SymbolMetaDescription md) {
 		super(keyword, superDesc, cp, source, md);
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();
@@ -70,7 +70,7 @@ public class SpeciesDescription extends SymbolDescription {
 		skillsClasses = new HashSet();
 		skillsMethods = new HashMap();
 		setSkills(facets.get(IKeyword.SKILLS));
-		setJavaBase(base);
+		initJavaBase();
 	}
 
 	@Override
@@ -443,9 +443,9 @@ public class SpeciesDescription extends SymbolDescription {
 		return "Description of " + getName();
 	}
 
-	public void setJavaBase(final Class c) {
+	public void initJavaBase() {
 		if ( javaBase != null ) { return; }
-		javaBase = c;
+		javaBase = AbstractGamlAdditions.getBuiltInSpeciesClass(getName());
 		final List<Class> classes =
 			JavaUtils.collectImplementationClasses(javaBase, getSkillClasses());
 		final List<IDescription> children = new ArrayList();

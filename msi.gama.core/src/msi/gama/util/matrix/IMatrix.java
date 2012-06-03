@@ -53,13 +53,13 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 
 	public static final String COLUMNS = "columns";
 
-	@getter(var = ROWS)
+	@getter( ROWS)
 	public abstract int getRows();
 
-	@getter(var = COLUMNS)
+	@getter( COLUMNS)
 	public abstract int getCols();
 
-	@getter(var = DIMENSION)
+	@getter( DIMENSION)
 	public abstract ILocation getDimensions();
 
 	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST)

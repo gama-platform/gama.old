@@ -34,7 +34,7 @@ import msi.gaml.operators.Files;
  * @todo Description
  * 
  */
-@type(value = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
+@type(name = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
 public class GamaFileType extends GamaType<IGamaFile> {
 
 	/** Constant field textSuffixes. */

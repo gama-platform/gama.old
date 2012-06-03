@@ -42,7 +42,7 @@ import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
  * @version $Revision: 1.0 $
  */
 
-@skill({ "situated" })
+@skill(name = "situated")
 public class GeometricSkill extends Skill {
 
 	/**
@@ -51,8 +51,8 @@ public class GeometricSkill extends Skill {
 	 * @param args Arguments
 	 * @return GamaList
 	 */
-	@action("percieved_area")
-	@args({ "agent", "geometry", "range", "precision" })
+	@action(name = "percieved_area")
+	@args(names = { "agent", "geometry", "range", "precision" })
 	public GamaShape primPercievedArea(final IScope scope) throws GamaRuntimeException {
 		List<List<List<ILocation>>> coords = scope.getListArg("geometry");
 		IAgent ag = (IAgent) scope.getArg("agent", IType.AGENT);
@@ -157,8 +157,8 @@ public class GeometricSkill extends Skill {
 	 * 
 	 * @param scope IScope
 	 */
-	@action("neighbourhood_exclusive")
-	@args({ "distance", "species", "buffer_others", "buffer_in" })
+	@action(name = "neighbourhood_exclusive")
+	@args(names = { "distance", "species", "buffer_others", "buffer_in" })
 	public IShape primNeighbourhoodExclu(final IScope scope) throws GamaRuntimeException {
 		Double distance = scope.hasArg("distance") ? scope.getFloatArg("distance") : null;
 		if ( distance == null ) {

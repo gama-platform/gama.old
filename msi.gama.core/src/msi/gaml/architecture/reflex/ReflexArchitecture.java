@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@skill("reflex")
+@skill(name = "reflex")
 public class ReflexArchitecture extends Skill implements IArchitecture {
 
 	private final List<IStatement> _inits = new ArrayList();

@@ -48,7 +48,7 @@ import msi.gaml.types.IType;
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR) })
-@skill(value = { IKeyword.GLOBAL }, attach_to = IKeyword.WORLD_SPECIES)
+@skill(name = IKeyword.GLOBAL, attach_to = IKeyword.WORLD_SPECIES)
 public class WorldSkill extends GeometricSkill {
 
 	public static final String DURATION = "duration";
@@ -57,22 +57,22 @@ public class WorldSkill extends GeometricSkill {
 
 	public static final String AVERAGE_DURATION = "average_duration";
 
-	@getter(var = DURATION)
+	@getter(DURATION)
 	public String getDuration(final IAgent agent) {
 		return Long.toString(SimulationClock.getDuration());
 	}
 
-	@getter(var = TOTAL_DURATION)
+	@getter(TOTAL_DURATION)
 	public String getTotalDuration(final IAgent agent) {
 		return Long.toString(SimulationClock.getTotalDuration());
 	}
 
-	@getter(var = AVERAGE_DURATION)
+	@getter(AVERAGE_DURATION)
 	public String getAverageDuration(final IAgent agent) {
 		return Double.toString(SimulationClock.getAverageDuration());
 	}
 
-	@getter(var = IKeyword.TIME)
+	@getter(IKeyword.TIME)
 	public double getTime(final IAgent agent) {
 		return SimulationClock.getTime();
 	}
@@ -82,7 +82,7 @@ public class WorldSkill extends GeometricSkill {
 		SimulationClock.setTime(t);
 	}
 
-	@getter(var = GAMA._FATAL, initializer = true)
+	@getter(value = GAMA._FATAL, initializer = true)
 	public Boolean getFatalErrors(final IAgent agent) {
 		return SimulationClock.TREAT_ERRORS_AS_FATAL;
 	}
@@ -92,7 +92,7 @@ public class WorldSkill extends GeometricSkill {
 		SimulationClock.TREAT_ERRORS_AS_FATAL = t;
 	}
 
-	@getter(var = GAMA._WARNINGS, initializer = true)
+	@getter(value = GAMA._WARNINGS, initializer = true)
 	public Boolean getWarningsAsErrors(final IAgent agent) {
 		return SimulationClock.TREAT_WARNINGS_AS_ERRORS;
 	}
@@ -102,7 +102,7 @@ public class WorldSkill extends GeometricSkill {
 		SimulationClock.TREAT_WARNINGS_AS_ERRORS = t;
 	}
 
-	@getter(var = IKeyword.STEP)
+	@getter(IKeyword.STEP)
 	public double getTimeStep(final IAgent agent) {
 		return SimulationClock.getStep();
 	}
@@ -112,7 +112,7 @@ public class WorldSkill extends GeometricSkill {
 		SimulationClock.setStep(t);
 	}
 
-	@getter(var = IKeyword.SEED, initializer = true)
+	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed(final IAgent agent) {
 		return (double) GAMA.getRandom().getSeed();
 	}
@@ -122,7 +122,7 @@ public class WorldSkill extends GeometricSkill {
 		GAMA.getRandom().setSeed(s);
 	}
 
-	@getter(var = IKeyword.RNG, initializer = true)
+	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng(final IAgent agent) {
 		return GAMA.getRandom().getGeneratorName();
 	}
@@ -132,8 +132,8 @@ public class WorldSkill extends GeometricSkill {
 		GAMA.getRandom().setGenerator(newRng);
 	}
 
-	@action("pause")
-	@args({})
+	@action(name="pause")
+	@args(names = {})
 	public Object primPause(final IScope scope) {
 		if ( !getSimulation(scope).isPaused() ) {
 			getSimulation(scope).pause();
@@ -141,8 +141,8 @@ public class WorldSkill extends GeometricSkill {
 		return null;
 	}
 
-	@action("halt")
-	@args({})
+	@action(name="halt")
+	@args(names = {})
 	public Object primHalt(final IScope scope) {
 		if ( getSimulation(scope).isAlive() ) {
 			getSimulation(scope)./* stop() */pause();

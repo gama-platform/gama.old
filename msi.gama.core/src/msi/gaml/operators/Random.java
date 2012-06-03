@@ -43,7 +43,7 @@ public class Random {
 	@operator(value = { "truncated_gauss", "TGauss"})
 	@doc(
 		value = "A random value from a normally distributed random variable in the interval ]mean - standardDeviation; mean + standardDeviation[.",
-		specialCases = {"when the operand is a point, it is read as {mean, standardDeviation}"},
+		special_cases = {"when the operand is a point, it is read as {mean, standardDeviation}"},
 		examples = {"truncated_gauss ({0, 0.3})  ->  an float between -0.3 and 0.3"},
 		see = {"gauss"})	
 	public static Double opTGauss(final IScope scope, final GamaPoint p) {
@@ -52,7 +52,7 @@ public class Random {
 
 	@operator(value = { "truncated_gauss", "TGauss" })
 	@doc(
-		specialCases = {"if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]",
+		special_cases = {"if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]",
 			"when truncated_gauss is called with a list of only one element mean, it will always return 0.0"},			
 		examples = {"truncated_gauss ([0.5, 0.0])  ->  0.5 (always)"})
 	public static Double opTGauss(final IScope scope, final IList list) {
@@ -82,7 +82,7 @@ public class Random {
 	@operator(value = "gauss")
 	@doc(
 		value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.",
-		specialCases = {"when the operand is a point, it is read as {mean, standardDeviation}", 
+		special_cases = {"when the operand is a point, it is read as {mean, standardDeviation}", 
 			"when standardDeviation value is 0.0, it always returns the mean value"},
 		examples = {"gauss({0,0.3})  ->  0.22354", 
 			"gauss({0,0.3})  ->  -0.1357"},
@@ -119,7 +119,7 @@ public class Random {
 	@operator(value = "shuffle", content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
 		value = "The elements of the operand in random order.",
-		specialCases = {"if the operand is empty, returns an empty list (or string, matrix)"},
+		special_cases = {"if the operand is empty, returns an empty list (or string, matrix)"},
 		examples = {"shuffle ([12, 13, 14]) -> [14,12,13];"},
 		see = {"reverse"})	
 	public static IList opShuffle(final IScope scope, final IList target) {
@@ -156,7 +156,7 @@ public class Random {
 	@operator(value = { "one_of", "any" }, type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
 		value = "a random element from the list",
-		specialCases = {"if the list is empty, returns nil ",
+		special_cases = {"if the list is empty, returns nil ",
 						"If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)"},
 		examples = {"one_of (bug) -> bug3     // The species `bug` has previously be defined"})	
 	public static IAgent opAny(final IScope scope, final ISpecies l) throws GamaRuntimeException {
@@ -167,7 +167,7 @@ public class Random {
 	@doc(
 		value = "a random integer in the interval [0, operand]",
 		comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision",
-		specialCases = {""},
+		special_cases = {""},
 		examples = {"rnd (2) -> 0, 1 or 2",
 					"rnd (1000) / 1000 -> a float between 0 and 1 with a precision of 0.001"},
 		see = {"flip"})
@@ -178,7 +178,7 @@ public class Random {
 
 	@operator(value = "rnd")
 	@doc(
-		specialCases = {"if the operand is a float, it is casted to an int before being evaluated"},
+		special_cases = {"if the operand is a float, it is casted to an int before being evaluated"},
 		examples = {"rnd (2.5) -> 0, 1 or 2"})
 	public static Integer opRnd(final IScope scope, final Double max) {
 		return GAMA.getRandom().between(0, max.intValue());
@@ -186,7 +186,7 @@ public class Random {
 
 	@operator(value = "rnd")
 	@doc(
-		specialCases = {"if the operand is a point, returns a point with two random integers in the interval [0, operand]"},
+		special_cases = {"if the operand is a point, returns a point with two random integers in the interval [0, operand]"},
 		examples = {"rnd ({2.5,3}) -> {x,y} with x in [0,2] and y in [0,3]"})	
 	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
 		final Integer x = GAMA.getRandom().between(0, (int) max.x);
@@ -198,7 +198,7 @@ public class Random {
 	@doc(
 		value = "true or false given the probability represented by the operand",
 		comment = "",
-		specialCases = {"flip 0 always returns false, flip 1 true"},
+		special_cases = {"flip 0 always returns false, flip 1 true"},
 		examples = {"flip (0.66666) -> 2/3 chances to return true."},
 		see = {"rnd"})
 	public static Boolean opFlip(final IScope scope, final Double probability) {

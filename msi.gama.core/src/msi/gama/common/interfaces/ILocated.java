@@ -46,7 +46,7 @@ public interface ILocated {
 	 * 
 	 * @return the absolute (i.e. agent-like) location
 	 */
-	@getter(var = IKeyword.LOCATION)
+	@getter( IKeyword.LOCATION)
 	public abstract ILocation getLocation();
 
 }

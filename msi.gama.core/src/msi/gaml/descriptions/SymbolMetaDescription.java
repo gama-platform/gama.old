@@ -97,14 +97,12 @@ public class SymbolMetaDescription {
 	private static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
-	public SymbolMetaDescription(final Class baseClass, final boolean hasSequence,
-		final boolean hasArgs, final int kind, final boolean doesNotHaveScope,
-		final List<facet> possibleFacets, final String omissible,
+	public SymbolMetaDescription(final boolean hasSequence, final boolean hasArgs, final int kind,
+		final boolean doesNotHaveScope, final List<facet> possibleFacets, final String omissible,
 		final List<combination> possibleCombinations, final Set<String> contextKeywords,
 		final Set<Short> contextKinds, final boolean isRemoteContext,
 		final ISymbolConstructor constr) {
 		constructor = constr;
-		setBaseClass(baseClass);
 		setRemoteContext(isRemoteContext);
 		setHasSequence(hasSequence);
 		setHasArgs(hasArgs);

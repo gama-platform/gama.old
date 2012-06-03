@@ -19,8 +19,6 @@
 package msi.gaml.species;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.precompiler.GamlAnnotations.base;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -38,7 +36,6 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@base(GamlAgent.class)
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
 @facets(value = {
@@ -49,8 +46,9 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LABEL, optional = true),
+	// FIXME Build a list of control architectures dynamically at startup and populate the values
+	// attribute
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
-	@facet(name = IKeyword.BASE, type = IType.LABEL, optional = true),
 	@facet(name = "compile", type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER_STR, optional = true),
@@ -78,7 +76,7 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	@getter(var = "name")
+	@getter("name")
 	public String getName() {
 		return super.getName();
 	}

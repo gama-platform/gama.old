@@ -33,7 +33,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(value = IType.PAIR_STR, id = IType.PAIR, wraps = { GamaPair.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.PAIR_STR, id = IType.PAIR, wraps = { GamaPair.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPairType extends GamaType<GamaPair> {
 
 	@Override

@@ -33,7 +33,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(value = IType.POINT_STR, id = IType.POINT, wraps = { ILocation.class, GamaPoint.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.POINT_STR, id = IType.POINT, wraps = { ILocation.class, GamaPoint.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPointType extends GamaType<ILocation> {
 
 	@Override

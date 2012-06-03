@@ -5,7 +5,7 @@
 package msi.gama.lang.gaml.ui;
 
 import java.util.*;
-import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlResource;
@@ -51,6 +51,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
 		fd.setStyle(SWT.BOLD);
 		labelFont = new Font(Display.getDefault(), fd);
+	}
+
+	public void disposeButtons() {
+
 	}
 
 	@Override
@@ -130,11 +134,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
 			buttons[i] = new Button(toolbar, SWT.PUSH);
-			data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			data = new GridData(SWT.LEFT, SWT.FILL, false, true);
 			buttons[i].setLayoutData(data);
 			buttons[i].setText("Experiment " + i);
 			buttons[i].addSelectionListener(listener);
-			buttons[i].setVisible(false);
+			hideButton(buttons[i]);
 		}
 
 		// Asking the editor to fill the rest
@@ -161,7 +165,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
 			doSave(null);
-			String name = ((Button) evt.widget).getText();
+			String name = convert(((Button) evt.widget).getText());
 			IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
 				@Override
@@ -177,15 +181,23 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	};
 
+	private String convert(final String s) {
+		if ( s.equals(IKeyword.DEFAULT) ) { return "Run model"; }
+		if ( s.equals("Run model") ) { return IKeyword.DEFAULT; }
+		return s;
+	}
+
 	private void enableButton(final int index, final String text/* , final Image image */) {
 		if ( text == null ) { return; }
+		((GridData) buttons[index].getLayoutData()).exclude = false;
 		buttons[index].setVisible(true);
-		buttons[index].setText(text);
+		buttons[index].setText(convert(text));
 		// buttons[index].setImage(image);
 		buttons[index].pack();
 	}
 
 	private void hideButton(final Button b) {
+		((GridData) b.getLayoutData()).exclude = true;
 		b.setVisible(false);
 	}
 
@@ -209,8 +221,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
-					setStatus(COLOR_OK, "Run experiments:");
+					if ( currentExperiments.size() == 1 &&
+						currentExperiments.contains(IKeyword.DEFAULT) ) {
+						setStatus(
+							COLOR_WARNING,
+							"No experiments have been defined. Run the default experiment with the parameters and outputs directly defined in the model.");
+					} else {
+						setStatus(COLOR_OK, "Run experiments:");
+					}
 					int i = 0;
+					if ( currentExperiments.size() > 1 ) {
+						currentExperiments.remove(IKeyword.DEFAULT);
+					}
 					for ( String e : currentExperiments ) {
 						enableButton(i++, e);
 					}

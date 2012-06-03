@@ -85,7 +85,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	 */
 	private final boolean horizontal;
 	/** The percentage of the slider that is used when the position of the slider updated */
-	private double jumpSize = 0;
+	// private double jumpSize = 0;
 	/** A lock object for the <code>CoolSliderToolTipInterperter</code> */
 	private final Object tooltipIntLock = new Object();
 	/**
@@ -108,7 +108,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	private int incrementValue = 1;
 	private final boolean snapStyle;
 	private final List<Integer> snapPoints = new ArrayList<Integer>();
-	private int jumpIncrement = 1;
+	// private int jumpIncrement = 1;
 
 	private Color popupColor;
 	private final Popup popup;
@@ -752,38 +752,6 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			snapPoints.add(new Integer((int) (ratio * i)));
 		}
 		snapPoints.add(new Integer(total));
-	}
-
-	/**
-	 * Sets the percentage that the slider thumb must move when the
-	 * ARROW keys are pressed.\n
-	 * The only keys that the slider will respond to is LEFT and RIGHT ARROW keys
-	 * when in SWT.HORIZONTAL mode, UP and DOWN ARROW keys when
-	 * in SWT.VERTICAL mode.
-	 * 
-	 * @param percentageJumpSize
-	 */
-	public void setKeyMoveIncrement(final double percentageJumpSize) {
-		checkWidget();
-		if ( percentageJumpSize > 1 || percentageJumpSize < 0 ) { throw new IllegalArgumentException(
-			"The jump size specified must be a number between 0 and 1 (inclusive)"); }
-		jumpSize = percentageJumpSize;
-	}
-
-	/**
-	 * Sets the jumpSize in increments that the slider thumb must move when the
-	 * ARROW keys are pressed.\n
-	 * The only keys that the slider will respond to is LEFT and RIGHT ARROW keys
-	 * when in SWT.HORIZONTAL mode, UP and DOWN ARROW keys when
-	 * in SWT.VERTICAL mode.
-	 * 
-	 * @param increment
-	 */
-	public void setKeyMoveIncrement(final int increment) {
-		checkWidget();
-		if ( increment < 0 ) { throw new IllegalArgumentException(
-			"The increment must be a positive integer"); }
-		jumpIncrement = increment;
 	}
 
 	/**

@@ -203,6 +203,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setValue(UNDEFINED);
 	}
 
+	@Override
 	public void reinitIfNull() {
 		setValue(GAMA.getFrontmostSimulation().getWorld().getDirectVarValue(varName));
 	}

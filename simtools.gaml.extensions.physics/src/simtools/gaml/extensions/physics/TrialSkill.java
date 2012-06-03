@@ -7,11 +7,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.Skill;
 
-@skill("trial")
+@skill(name = "trial")
 public class TrialSkill extends Skill {
 
-	@action("trial_write")
-	@args({ "test" })
+	@action(name = "trial_write")
+	@args(names = { "test" })
 	public Object trialWrite(final IScope scope) throws GamaRuntimeException {
 		System.out.println("Hello World");
 		return null;

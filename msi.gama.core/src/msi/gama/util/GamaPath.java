@@ -19,7 +19,6 @@
 package msi.gama.util;
 
 import java.util.*;
-
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -28,10 +27,11 @@ import msi.gama.metamodel.topology.graph.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Points;
 import msi.gaml.types.GamaGeometryType;
 import org.jgrapht.*;
+import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.*;
 
 // Si construit à partir d'une liste de points, crée la géométrie correspondante
@@ -87,7 +87,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 					edge2 = edge;
 					pt = c1;
 				}
-				if ( ag != null && graph != null && graph.isAgentEdge()) {
+				if ( ag != null && graph != null && graph.isAgentEdge() ) {
 					realObjects.put(edge2, ag);
 				} else {
 					realObjects.put(edge2, edge);
@@ -280,17 +280,16 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public double getDistance() {
-		if (getEdgeList() == null ||  getEdgeList().isEmpty())
-			return Double.MAX_VALUE;
+		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return Double.MAX_VALUE; }
 		Coordinate[] coordsSource = getEdgeList().get(0).getInnerGeometry().getCoordinates();
-		Coordinate[] coordsTarget = getEdgeList().get(getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
-		if (coordsSource.length == 0 || coordsTarget.length == 0)
-			return Double.MAX_VALUE;
+		Coordinate[] coordsTarget =
+			getEdgeList().get(getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
+		if ( coordsSource.length == 0 || coordsTarget.length == 0 ) { return Double.MAX_VALUE; }
 		GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
 		GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
 		boolean keepSource = source.getLocation().equals(sourceEdges);
 		boolean keepTarget = target.getLocation().equals(targetEdges);
-		if (keepSource && keepTarget) {
+		if ( keepSource && keepTarget ) {
 			double d = 0d;
 			for ( IShape g : segments ) {
 				d += g.getInnerGeometry().getLength();
@@ -300,7 +299,6 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		return getDistanceComplex(keepSource, keepTarget);
 	}
 
-	
 	private double getDistanceComplex(final boolean keepSource, final boolean keepTarget) {
 		double distance = 0;
 		int index = 0;
@@ -308,7 +306,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		ILocation currentLocation = source.getLocation().copy();
 		IList<IShape> edges = getEdgeList();
 		int nb = edges.size();
-		if (! keepSource) {
+		if ( !keepSource ) {
 			double distanceS = Double.MAX_VALUE;
 			IShape line = null;
 			for ( int i = 0; i < nb; i++ ) {
@@ -320,7 +318,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				}
 			}
 			line = edges.get(index);
-			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
+			currentLocation = Points.opClosestPointTo(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
@@ -342,7 +340,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		IShape lineEnd = edges.get(nb - 1);
 		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
 		GamaPoint falseTarget = new GamaPoint(target.getLocation());
-		if (! keepTarget) {
+		if ( !keepTarget ) {
 			falseTarget = (GamaPoint) Points.opClosestPointTo(getEndVertex(), lineEnd);
 			endIndexSegment = 1;
 			Point pointGeom = (Point) falseTarget.getInnerGeometry();
@@ -362,7 +360,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 					}
 				}
 			}
-		} 
+		}
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
@@ -403,14 +401,14 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		return realObjects.get(obj);
 	}
 
-	public void setSource(IShape source) {
+	@Override
+	public void setSource(final IShape source) {
 		this.source = source;
 	}
 
-	public void setTarget(IShape target) {
+	@Override
+	public void setTarget(final IShape target) {
 		this.target = target;
 	}
-	
-	
 
 }

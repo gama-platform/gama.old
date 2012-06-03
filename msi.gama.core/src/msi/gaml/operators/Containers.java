@@ -53,7 +53,7 @@ public class Containers {
 
 	@operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		specialCases = {"if it is a species, first returns the first element of the list of the agents in the species"})	
+		special_cases = {"if it is a species, first returns the first element of the list of the agents in the species"})	
 	public static IAgent getFirst(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -63,7 +63,7 @@ public class Containers {
 
 	@operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		specialCases = {"if it is a species, last returns the last element of the list of the agents in the species"})		
+		special_cases = {"if it is a species, last returns the last element of the list of the agents in the species"})		
 	public static IAgent getLast(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -75,7 +75,7 @@ public class Containers {
 	
 	@operator(value = "length")
 	@doc(
-		specialCases = {"if it is a species, length returns the number of elements in the list of the agents in the species"})		
+		special_cases = {"if it is a species, length returns the number of elements in the list of the agents in the species"})		
 	public static Integer getLength(final IScope scope, final ISpecies s)
 		throws GamaRuntimeException {
 		if ( s == null ) { return 0; }

@@ -59,9 +59,6 @@ public class JavaWriter {
 		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
 		"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables" };
 
-	// final static String[] CLASS_IMPORTS = new String[] { "msi.gaml.operators.Containers",
-	// "msi.gaml.operators.Cast", "msi.gaml.operators.Maths" };
-
 	JavaWriter(final ProcessingEnvironment pe) {
 		env = pe;
 	}
@@ -310,19 +307,6 @@ public class JavaWriter {
 			".class, new IFieldGetter() {", code, "});"));
 	}
 
-	// protected void writeSymbolConstructors(final StringBuilder sb,
-	// final LinkedHashSet<String> symbols) {
-	// if ( symbols == null ) { return; }
-	// ln(sb);
-	// for ( String clazz : symbols ) {
-	// sb.append(concat(ln, ln, tab, tab, "addSymbolConstructor(", clazz,
-	// ".class, new ISymbolConstructor() {", ln, ln, tab, "@Override", ln, tab, tab,
-	// "public ISymbol ",
-	// "create(final msi.gaml.descriptions.IDescription description) {", ln, tab, tab,
-	// tab, "	return new ", clazz, "(description);}});"));
-	// }
-	// }
-
 	protected StringBuilder ln(final StringBuilder sb) {
 		return sb.append(ln);
 	}
@@ -336,9 +320,6 @@ public class JavaWriter {
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			ln(sb).append("import ").append(IMPORTS[i]).append(".*;");
 		}
-		// for ( int i = 0; i < CLASS_IMPORTS.length; i++ ) {
-		// ln(sb).append("import ").append(CLASS_IMPORTS[i]).append(";");
-		// }
 		ln(sb).append(ln).append(classDefinition()).append(" {");
 		ln(sb);
 		tab(sb).append("public ").append(simpleClassName()).append("() {}");
@@ -369,11 +350,6 @@ public class JavaWriter {
 	}
 
 	protected String check(final String clazz) {
-		// for ( int i = 0; i < CLASS_IMPORTS.length; i++ ) {
-		// if ( clazz.startsWith(CLASS_IMPORTS[i]) ) { return clazz.substring(clazz
-		// .lastIndexOf('.') + 1); }
-		// }
-
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
 			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz
 				.substring(clazz.lastIndexOf('.') + 1); }

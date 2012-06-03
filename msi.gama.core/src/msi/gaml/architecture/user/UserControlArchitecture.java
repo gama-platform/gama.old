@@ -32,7 +32,7 @@ public abstract class UserControlArchitecture extends FsmArchitecture {
 		}
 	}
 
-	@getter(var = IKeyword.USER_CONTROLLED)
+	@getter( IKeyword.USER_CONTROLLED)
 	public Boolean isUserControlled(final IAgent agent) {
 		return (Boolean) agent.getAttribute(IKeyword.USER_CONTROLLED);
 	}

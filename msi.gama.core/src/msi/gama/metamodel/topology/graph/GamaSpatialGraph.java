@@ -19,17 +19,14 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.List;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
-
 import org.jgrapht.Graphs;
-import org.jgrapht.alg.BellmanFordShortestPath;
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.*;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph {
 
@@ -57,17 +54,18 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	}
 
-
 	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel) {
 		super(vertices, byEdge, directed, rel);
 		try {
-			agentEdge = byEdge && vertices != null && !(vertices.isEmpty()) && (vertices.first() instanceof IAgent);
+			agentEdge =
+				byEdge && vertices != null && !vertices.isEmpty() &&
+					vertices.first() instanceof IAgent;
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}
 		verbose = false;
-		
+
 	}
 
 	@Override
@@ -76,7 +74,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			(IShape) v1, (IShape) v2); }
 		return super.createNewEdgeObjectFromVertices(v1, v2);
 	}
-	
+
 	public boolean isAgentEdge() {
 		return agentEdge;
 	}
@@ -91,28 +89,32 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	public IPath computeShortestPathBetween(final Object source, final Object target) {
-		return pathFromEdges(source, target,computeBestRouteBetween(source,target));
+		return pathFromEdges(source, target, computeBestRouteBetween(source, target));
 	}
-	
+
+	@Override
 	public IList<IShape> computeBestRouteBetween(final Object source, final Object target) {
 		switch (optimizerType) {
-		case 1:
-			if ( pathFinder == null ) {
-				pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
-			}
-			return new GamaList<IShape>(pathFinder.bestRouteBetween((ILocation) source, (ILocation) target));
-		case 2:
-			BellmanFordShortestPath p1 = new BellmanFordShortestPath(getProxyGraph(), source);
-			return new GamaList<IShape>(p1.getPathEdgeList(target));
-		case 3:
-			DijkstraShortestPath<GamaShape, GamaShape> p2 = new DijkstraShortestPath(getProxyGraph(), source, target);
-			return  new GamaList<IShape>(p2.getPathEdgeList());
-		case 4:
-			AStarShortestPath p3 = new AStarShortestPath(this, (IShape)source, (IShape)target);
-			return new GamaList<IShape>(p3.getPathEdgeList());
+			case 1:
+				if ( pathFinder == null ) {
+					pathFinder = new FloydWarshallStaticOptimizer(this, verbose);
+				}
+				return new GamaList<IShape>(pathFinder.bestRouteBetween((ILocation) source,
+					(ILocation) target));
+			case 2:
+				BellmanFordShortestPath p1 = new BellmanFordShortestPath(getProxyGraph(), source);
+				return new GamaList<IShape>(p1.getPathEdgeList(target));
+			case 3:
+				DijkstraShortestPath<GamaShape, GamaShape> p2 =
+					new DijkstraShortestPath(getProxyGraph(), source, target);
+				return new GamaList<IShape>(p2.getPathEdgeList());
+			case 4:
+				AStarShortestPath p3 =
+					new AStarShortestPath(this, (IShape) source, (IShape) target);
+				return new GamaList<IShape>(p3.getPathEdgeList());
 		}
 		return new GamaList<IShape>();
-		
+
 	}
 
 	@Override
@@ -132,7 +134,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 					addEdge(o1, o2);
 				}
 			}
-		} 
+		}
 	}
 
 	@Override
@@ -203,7 +205,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public IPath getCircuit() {
 		return (IPath) super.getCircuit();
 	}
-	
+
 	public void reInitPathFinder() {
 		pathFinder = null;
 	}

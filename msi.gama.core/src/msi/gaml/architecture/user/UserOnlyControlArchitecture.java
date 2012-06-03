@@ -5,7 +5,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-@skill(IKeyword.USER_ONLY)
+@skill(name = IKeyword.USER_ONLY)
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
 // @var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
 public class UserOnlyControlArchitecture extends UserControlArchitecture {

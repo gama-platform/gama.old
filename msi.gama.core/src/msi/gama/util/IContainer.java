@@ -49,7 +49,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the first element of the operand",
 		comment = "the first operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, first returns the red component",			
 			"if it is a list, first returns the first element of the list, or nil if the list is empty",
 			"if it is a map, first returns nil (the map do not keep track of the order of elements)",
@@ -70,7 +70,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the last element of the operand",
 		comment = "the last operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, last returns the blue component",
 			"if it is a list, last returns the last element of the list, or nil if the list is empty",
 			"if it is a map, last returns nil (the map do not keep track of the order of elements)",
@@ -91,7 +91,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the number of elements contained in the operand",
 		comment = "the length operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, length always returns 3",
 			"if it is a list or a map, length returns the number of elements in the list",
 			"if it is a point or a pair, length always return 2",
@@ -105,7 +105,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the maximum element found in the operand",
 		comment = "the max operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, max returns the maximum of the three components",
 			"if it is a list of int of float, max returns the maximum of all the elements",
 			"if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
@@ -126,7 +126,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the minimum element found in the operand.",
 		comment = "the min operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, min returns the minimum of the three components",
 			"if it is a list of int or float: min returns the minimum of all the elements",
 			"if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
@@ -147,7 +147,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the product of all the elements of the operand",
 		comment = "the mul operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, mul returns the product of the three components",
 			"if it is a list of int or float: mul returns the product of all the elements",
 			"if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)",
@@ -168,7 +168,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the sum of all the elements of the operand",
 		comment = "the sum operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color, sum returns the sum of the three components",
 			"if it is a list of int or float: sum returns the sum of all the elements",
 			"if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
@@ -189,7 +189,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value ="true if the operand is empty, false otherwise.",
 		comment = "the empty operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color or a point, empty returns the false",
 			"if it is a list, empty returns true if there is no element in the list, and false otherwise",
 			"if it is a map, empty returns true if the map contains no key-value mappings, and false otherwise",
@@ -206,7 +206,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc(
 		value = "the operand elements in the reversed order in a copy of the operand.",
 		comment = "the reverse operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if it is a color (say RRGGBB), reverse returns a new color with the colors in the reversed order (BBGGRR)",
 			"if it is a list, reverse return a copy of the operand list with elements in the reversed order",
 			"if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)",
@@ -229,7 +229,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@doc( 
 		value = "a random element from the container",
 		comment = "the one_of operator behavior depends on the nature of the operand",
-		specialCases = {
+		special_cases = {
 			"if the operand is empty, one_of returns nil",
 			"if it is a list, one_of returns one of the element of the list",			
 			"if it is a map, one_of returns one of the values of the map",

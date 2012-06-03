@@ -77,12 +77,12 @@ public class GamaShape implements IShape {
 		return Types.get(IType.GEOMETRY);
 	}
 
-	@getter(var = "multiple")
+	@getter( "multiple")
 	public boolean isMultiple() {
 		return getInnerGeometry() instanceof GeometryCollection;
 	}
 
-	@getter(var = "geometries")
+	@getter( "geometries")
 	public GamaList<GamaShape> getGeometries() {
 		GamaList<GamaShape> result = new GamaList();
 		if ( isMultiple() ) {
@@ -294,7 +294,7 @@ public class GamaShape implements IShape {
 		return this;
 	}
 
-	@getter(var = "area")
+	@getter( "area")
 	public Double getArea() {
 		return getInnerGeometry().getArea();
 	}
@@ -304,7 +304,7 @@ public class GamaShape implements IShape {
 		return getInnerGeometry().getLength();
 	}
 
-	@getter(var = "holes")
+	@getter( "holes")
 	public GamaList<GamaShape> getHoles() {
 		GamaList<GamaShape> holes = new GamaList();
 		if ( getInnerGeometry() instanceof Polygon ) {
@@ -317,7 +317,7 @@ public class GamaShape implements IShape {
 		return holes;
 	}
 
-	@getter(var = "contour")
+	@getter( "contour")
 	public GamaShape getExteriorRing() {
 		Geometry result = getInnerGeometry();
 		if ( result instanceof Polygon ) {
@@ -336,22 +336,22 @@ public class GamaShape implements IShape {
 		return new GamaShape(result);
 	}
 
-	@getter(var = "width")
+	@getter( "width")
 	public Double getWidth() {
 		return getInnerGeometry().getEnvelopeInternal().getWidth();
 	}
 
-	@getter(var = "height")
+	@getter( "height")
 	public Double getHeight() {
 		return getInnerGeometry().getEnvelopeInternal().getHeight();
 	}
 
-	@getter(var = "envelope")
+	@getter( "envelope")
 	public GamaShape getGeometricEnvelope() {
 		return new GamaShape(getInnerGeometry().getEnvelope());
 	}
 
-	@getter(var = "points")
+	@getter( "points")
 	public IList<GamaPoint> getPoints() {
 		GamaList<GamaPoint> result = new GamaList();
 		Coordinate[] points = getInnerGeometry().getCoordinates();

@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
 	@var(name = IKeyword.GRID_X, type = IType.INT_STR, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT_STR, constant = true) })
-@skill({ GridSkill.SKILL_NAME })
+@skill(name = GridSkill.SKILL_NAME)
 public class GridSkill extends GeometricSkill {
 
 	public static final String SKILL_NAME = "grid";
@@ -50,19 +50,19 @@ public class GridSkill extends GeometricSkill {
 		return (GamaSpatialMatrix) agent.getPopulation().getTopology().getPlaces();
 	}
 
-	@getter(var = "agents")
+	@getter("agents")
 	public final List<IAgent> getAgents(final IAgent agent) {
 		return agent.getTopology().getAgentsIn(agent.getGeometry(), Different.with(), false);
 
 		// TODO Remove this (to consider instead "agents_in" or "agents_intersecting")
 	}
 
-	@getter(var = "grid_x")
+	@getter("grid_x")
 	public final int getX(final IAgent agent) {
 		return getGrid(agent).getX(agent.getLocation().getX());
 	}
 
-	@getter(var = "grid_y")
+	@getter("grid_y")
 	public final int getY(final IAgent agent) {
 		return getGrid(agent).getY(agent.getLocation().getY());
 	}
@@ -82,7 +82,7 @@ public class GridSkill extends GeometricSkill {
 
 	}
 
-	@getter(var = "color")
+	@getter("color")
 	public final GamaColor getColor(final IAgent agent) {
 		return getGrid(agent).getColor(agent.getLocation());
 	}

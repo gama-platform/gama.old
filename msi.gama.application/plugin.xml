@@ -144,10 +144,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="msi.gama.application.GamaApplication"
-            name="Gama 1.4">
+            name="Gama 1.5">
          <property
                name="appName"
-               value="Gama 1.4">
+               value="Gama 1.5">
          </property>
          <property
                name="preferenceCustomization"
@@ -159,7 +159,7 @@
          </property>
          <property
                name="aboutText"
-               value="* GAMA - V1.4 alpha&#x0A;* Generic Agent-based Modelling Architecture&#x0A;&#x0A;* (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;* (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;&#x0A;Visit http://code.google.com/p/gama-platform/">
+               value="* GAMA - V1.4.5&#x0A;* Generic Agent-based Modelling Architecture&#x0A;&#x0A;* (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;* (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;&#x0A;Visit http://code.google.com/p/gama-platform/">
          </property>
          <property
                name="windowImages"
@@ -167,15 +167,15 @@
          </property>
          <property
                name="startupForegroundColor"
-               value="AB2741">
+               value="367D2F">
          </property>
          <property
                name="startupMessageRect"
-               value="25,400,400,20">
+               value="25,500,400,20">
          </property>
          <property
                name="startupProgressRect"
-               value="25,420,400,10">
+               value="25,520,400,10">
          </property>
       </product>
    </extension>

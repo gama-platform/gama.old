@@ -18,7 +18,7 @@ import msi.gaml.compilation.ISymbol;
  * @since 22 déc. 2011
  * 
  */
-@skill(SortedTasksArchitecture.ST)
+@skill(name = SortedTasksArchitecture.ST)
 public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 
 	public static final String ST = "sorted_tasks";

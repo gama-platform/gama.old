@@ -307,17 +307,17 @@ public class GamaMap extends HashMap implements IContainer {
 		return super.entrySet();
 	}
 
-	@getter(var = "keys")
+	@getter( "keys")
 	public GamaList getKeys() {
 		return new GamaList(keySet());
 	}
 
-	@getter(var = "values")
+	@getter( "values")
 	public GamaList getValues() {
 		return new GamaList(values());
 	}
 
-	@getter(var = "pairs")
+	@getter( "pairs")
 	public GamaList<GamaPair> getPairs() {
 		return listValue(null);
 	}

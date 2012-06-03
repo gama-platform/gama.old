@@ -39,7 +39,7 @@ import msi.gaml.species.ISpecies;
  * @since 26 nov. 2011
  * 
  */
-@type(value = IType.TOPOLOGY_STR, id = IType.TOPOLOGY, wraps = { ITopology.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.TOPOLOGY_STR, id = IType.TOPOLOGY, wraps = { ITopology.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaTopologyType extends GamaType<ITopology> {
 
 	public static ITopology staticCast(final IScope scope, final Object obj, final Object param)

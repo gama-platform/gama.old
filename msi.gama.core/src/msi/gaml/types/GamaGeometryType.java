@@ -36,7 +36,7 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-@type(value = IType.GEOM_STR, id = IType.GEOMETRY, wraps = { GamaShape.class, IShape.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.GEOM_STR, id = IType.GEOMETRY, wraps = { GamaShape.class, IShape.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override

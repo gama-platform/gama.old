@@ -23,7 +23,7 @@ import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
@@ -37,7 +37,7 @@ import msi.gaml.types.*;
  * 
  * @todo Description
  */
-@handles({ ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER,
+@factory(handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER,
 	ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 

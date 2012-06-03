@@ -22,6 +22,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -39,7 +40,8 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.CAPTURE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = false, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.AGENT_STR, IType.CONTAINER_STR }, optional = false),
+	@facet(doc = @doc("The agent or agents that are bound to be captured"), name = IKeyword.TARGET, type = {
+		IType.AGENT_STR, IType.CONTAINER_STR }, optional = false),
 	@facet(name = IKeyword.AS, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.TARGET)
 public class CaptureStatement extends AbstractStatementSequence {
@@ -117,16 +119,14 @@ public class CaptureStatement extends AbstractStatementSequence {
 					" population because the " + microSpeciesName +
 					" population is not visible or doesn't exist."); }
 
-				if ( microSpecies != null ) {
-					for ( IAgent c : microAgents ) {
-						if ( !macroAgent.canCapture(c, microSpecies) ) {
-							removedComponents.add(c);
-						}
+				for ( IAgent c : microAgents ) {
+					if ( !macroAgent.canCapture(c, microSpecies) ) {
+						removedComponents.add(c);
 					}
+				}
 
-					if ( !removedComponents.isEmpty() ) {
-						microAgents.removeAll(removedComponents);
-					}
+				if ( !removedComponents.isEmpty() ) {
+					microAgents.removeAll(removedComponents);
 				}
 
 				if ( !microAgents.isEmpty() ) {
@@ -135,7 +135,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 					if ( !capturedAgents.isEmpty() ) {
 						stack.addVarWithValue(IKeyword.MYSELF, macroAgent);
-						if ( !sequence.isEmpty() ) {
+						if ( sequence != null && !sequence.isEmpty() ) {
 							for ( IAgent capturedA : capturedAgents ) {
 								stack.execute(sequence, capturedA);
 							}

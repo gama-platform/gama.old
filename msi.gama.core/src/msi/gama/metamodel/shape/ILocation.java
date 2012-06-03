@@ -36,10 +36,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 	@var(name = IKeyword.Y, type = IType.FLOAT_STR) })
 public interface ILocation extends IShape, Comparable {
 
-	@getter(var = IKeyword.X)
+	@getter( IKeyword.X)
 	public abstract double getX();
 
-	@getter(var = IKeyword.Y)
+	@getter( IKeyword.Y)
 	public abstract double getY();
 
 	// public abstract boolean equals(final Coordinate o);

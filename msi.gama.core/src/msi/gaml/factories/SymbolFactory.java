@@ -22,7 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -36,7 +36,7 @@ import msi.gaml.statements.Facets.Facet;
  * @todo Description
  * 
  */
-@handles({ ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
+@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
 public class SymbolFactory extends AbstractFactory {
 
 	public SymbolFactory(final List<Integer> handles, final List<Integer> uses) {

@@ -33,7 +33,7 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-@type(value = IType.SPECIES_STR, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.SPECIES_STR, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaSpeciesType extends GamaType<ISpecies> {
 
 	@Override

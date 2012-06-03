@@ -19,7 +19,7 @@ import msi.gaml.compilation.ISymbol;
  * @since 22 déc. 2011
  * 
  */
-@skill(ProbabilisticTasksArchitecture.PT)
+@skill(name = ProbabilisticTasksArchitecture.PT)
 public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 
 	public final static String PT = "probabilistic_tasks";

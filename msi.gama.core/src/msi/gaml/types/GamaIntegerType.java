@@ -32,7 +32,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(value = IType.INT_STR, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
+@type(name = IType.INT_STR, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override

@@ -9,4 +9,16 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.0.0"
 Bundle-ClassPath: lib/jbox2d-library-2.1.2.2.jar, lib/slf4j-api-1.6.4.jar, 
  .
-Export-Package: simtools.gaml.extensions.physics
+Export-Package: org.jbox2d.callbacks,
+ org.jbox2d.collision,
+ org.jbox2d.collision.broadphase,
+ org.jbox2d.collision.shapes,
+ org.jbox2d.common,
+ org.jbox2d.dynamics,
+ org.jbox2d.dynamics.contacts,
+ org.jbox2d.dynamics.joints,
+ org.jbox2d.pooling,
+ org.jbox2d.pooling.arrays,
+ org.jbox2d.pooling.normal,
+ org.jbox2d.pooling.stacks,
+ simtools.gaml.extensions.physics

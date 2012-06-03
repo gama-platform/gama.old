@@ -30,11 +30,11 @@ public class GamlSimulation extends AbstractSimulation {
 	public GamlSimulation(final IExperiment exp) throws GamaRuntimeException {
 		super(exp);
 	}
-    protected  void initSchedulingPolicy()
-    {
-    	scheduler = new Scheduler(this);
-    }
 
+	@Override
+	protected void initSchedulingPolicy() {
+		scheduler = new Scheduler(this);
+	}
 
 	@Override
 	protected void initializeWorldPopulation() {

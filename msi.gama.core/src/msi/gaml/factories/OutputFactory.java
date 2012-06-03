@@ -18,53 +18,20 @@
  */
 package msi.gaml.factories;
 
-import java.awt.Color;
 import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.ILayerStatement;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gama.util.GamaList;
-import msi.gaml.descriptions.IDescription;
 
 /**
  * The Class OutputFactory.
  * 
  * @author drogoul
  */
-@handles({ ISymbolKind.OUTPUT })
-@uses({ ISymbolKind.LAYER })
+@factory(handles = { ISymbolKind.OUTPUT }, uses = { ISymbolKind.LAYER })
 public class OutputFactory extends SymbolFactory {
 
 	public OutputFactory(final List<Integer> handles, final List<Integer> uses) {
 		super(handles, uses);
-	}
-
-	public static LayeredDisplayOutput createDisplay(final String name, final int refresh,
-		final Color background, final ILayerStatement ... layers) {
-		IDescription desc;
-		desc = DescriptionFactory.create(IKeyword.DISPLAY, IKeyword.NAME, name);
-		if ( desc == null ) { return null; }
-		LayeredDisplayOutput l = new LayeredDisplayOutput(desc);
-		l.setRefreshRate(refresh);
-		l.setBackgroundColor(background);
-		l.setLayers(new GamaList(layers));
-		return l;
-	}
-
-	public static LayeredDisplayOutput createDisplay(final String name, final int refresh,
-		final Color background) {
-		return createDisplay(name, refresh, background, new ILayerStatement[0]);
-	}
-
-	public static LayeredDisplayOutput createDisplay(final String name, final int refresh) {
-		return createDisplay(name, refresh, Color.white);
-	}
-
-	public static LayeredDisplayOutput createDisplay(final String name) {
-		return createDisplay(name, 1);
 	}
 
 }

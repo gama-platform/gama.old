@@ -30,7 +30,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 
-@type(value = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override

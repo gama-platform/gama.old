@@ -50,7 +50,7 @@ public class Stats {
 	@doc(
 		value = "the mean of all the elements of the operand",
 		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.",
-		specialCases = {"if the container contains points, the result will be a point"},
+		special_cases = {"if the container contains points, the result will be a point"},
 		examples = {"mean ([4.5, 3.5, 5.5, 7.0]) -> 5.125 "},
 		see = {"sum"})	
 	public static Object getMean(final IScope scope, final IContainer l)
@@ -68,7 +68,7 @@ public class Stats {
 	@doc(
 		value = "the median of all the elements of the operand.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		specialCases = {""},
+		special_cases = {""},
 		examples = {"median ([4.5, 3.5, 5.5, 7.0]) -> 5.0"},
 		see = {"mean"})		
 	public static Double opMedian(final IScope scope, final GamaList values) {
@@ -88,7 +88,7 @@ public class Stats {
 	@doc(
 		value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		specialCases = {""},
+		special_cases = {""},
 		examples = {"standard_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.2930100540985752"},
 		see = {"mean", "mean_deviation"})		
 	public static Double opStDev(final IScope scope, final GamaList values) {
@@ -100,7 +100,7 @@ public class Stats {
 	@doc(
 		value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		specialCases = {""},
+		special_cases = {""},
 		examples = {"geometric_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.962326343467649"},
 		see = {"mean", "median", "harmonic_mean"})		
 	public static Double opGeomMean(final IScope scope, final GamaList values) {
@@ -112,7 +112,7 @@ public class Stats {
 	@doc(
 		value = "the harmonic mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
 		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
-		specialCases = {""},
+		special_cases = {""},
 		examples = {"	harmonic_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.804159445407279"},
 		see = {"mean", "median", "geometric_mean"})		
 	public static Double opHarmonicMean(final IScope scope, final GamaList values) {

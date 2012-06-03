@@ -32,7 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-@type(value = IType.AGENT_STR, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.AGENT_STR, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaGenericAgentType extends GamaType<IAgent> {
 
 	@Override

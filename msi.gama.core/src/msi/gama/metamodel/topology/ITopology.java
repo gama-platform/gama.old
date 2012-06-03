@@ -117,7 +117,7 @@ public interface ITopology extends IValue {
 	 * 
 	 * @return an instance of IGamaContainer, which geometries can be iterated.
 	 */
-	@getter(var = IKeyword.PLACES)
+	@getter( IKeyword.PLACES)
 	public abstract IContainer<?, IShape> getPlaces();
 
 	/**
@@ -125,7 +125,7 @@ public interface ITopology extends IValue {
 	 * 
 	 * @return an instance of IGeometry.
 	 */
-	@getter(var = IKeyword.ENVIRONMENT)
+	@getter( IKeyword.ENVIRONMENT)
 	public abstract IShape getEnvironment();
 
 	/**

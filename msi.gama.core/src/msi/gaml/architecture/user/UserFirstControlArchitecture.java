@@ -7,7 +7,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
 // @var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
-@skill(IKeyword.USER_FIRST)
+@skill(name = IKeyword.USER_FIRST)
 public class UserFirstControlArchitecture extends UserControlArchitecture {
 
 	@Override

@@ -33,7 +33,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  * 
  */
-@type(value = IType.STRING_STR, id = IType.STRING, wraps = { String.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.STRING_STR, id = IType.STRING, wraps = { String.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaStringType extends GamaType<String> {
 
 	@Override

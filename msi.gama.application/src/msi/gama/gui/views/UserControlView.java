@@ -67,7 +67,7 @@ public class UserControlView extends GamaViewPart {
 		// text.setText(title);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		// text.setLayoutData(data);
-		Label sep;
+		// Label sep;
 		// Label sep = new Label(body, SWT.SEPARATOR | SWT.HORIZONTAL);
 		// data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		// data.heightHint = 20;

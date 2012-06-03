@@ -21,10 +21,8 @@ package msi.gaml.factories;
 import static msi.gama.precompiler.ISymbolKind.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind.Variable;
-import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -33,8 +31,9 @@ import msi.gaml.statements.Facets;
  * 
  * @author drogoul 25 oct. 07
  */
-@handles({ SPECIES })
-@uses({ BEHAVIOR, ACTION, Variable.NUMBER, Variable.CONTAINER, Variable.REGULAR, Variable.SIGNAL })
+
+@factory(handles = { SPECIES }, uses = { BEHAVIOR, ACTION, Variable.NUMBER, Variable.CONTAINER,
+	Variable.REGULAR, Variable.SIGNAL })
 public class SpeciesFactory extends SymbolFactory {
 
 	public SpeciesFactory(final List<Integer> handles, final List<Integer> uses) {
@@ -48,22 +47,7 @@ public class SpeciesFactory extends SymbolFactory {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
 		addSpeciesNameAsType(name);
-		Class base = md.getBaseClass();
-		String secondBase = facets.getLabel(IKeyword.BASE);
-		SpeciesDescription previous = sd.getSpeciesDescription(name);
-		String firstBase = previous != null ? previous.getFacets().getLabel(IKeyword.BASE) : null;
-		if ( secondBase == null && firstBase != null ) {
-			facets.putAsLabel(IKeyword.BASE, firstBase);
-		}
-		if ( facets.containsKey(IKeyword.BASE) ) {
-			try {
-				base = GamaClassLoader.getInstance().loadClass(facets.getLabel(IKeyword.BASE));
-			} catch (Exception e) {
-				sd.flagError("Error loading '" + keyword + "': " + e.getMessage(),
-					IGamlIssue.GENERAL);
-			}
-		}
-		return new SpeciesDescription(keyword, sd, facets, cp, source, base, md);
+		return new SpeciesDescription(keyword, sd, facets, cp, source, md);
 
 	}
 

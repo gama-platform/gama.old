@@ -21,7 +21,7 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 
 	ISyntacticElement parent;
 	String keyword;
-	protected Facets facets = new Facets();
+	protected  Facets facets = new Facets();
 	List<ISyntacticElement> children;
 
 	public AbstractSyntacticStatement(final String keyword) {
@@ -46,7 +46,6 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 			children.clear();
 			children = null;
 		}
-		facets = null;
 	}
 
 	public void dump() {

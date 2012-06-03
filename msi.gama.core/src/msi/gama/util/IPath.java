@@ -50,19 +50,19 @@ import msi.gaml.types.IType;
 })
 public interface IPath extends IShape {
 
-	@getter(var = IKeyword.SOURCE)
+	@getter( IKeyword.SOURCE)
 	public abstract ILocation getStartVertex();
 
-	@getter(var = IKeyword.TARGET)
+	@getter( IKeyword.TARGET)
 	public abstract ILocation getEndVertex();
 
-	@getter(var = IKeyword.SEGMENTS)
+	@getter( IKeyword.SEGMENTS)
 	public abstract IList<IShape> getEdgeList();
 
-	@getter(var = IKeyword.AGENTS)
+	@getter( IKeyword.AGENTS)
 	public abstract List<IShape> getAgentList();
 
-	@getter(var = IKeyword.GRAPH)
+	@getter( IKeyword.GRAPH)
 	public IGraph getGraph();
 
 	public abstract IList<ILocation> getVertexList();

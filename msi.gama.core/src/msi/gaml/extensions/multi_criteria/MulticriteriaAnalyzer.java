@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,16 +19,17 @@
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
-
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.precompiler.GamlAnnotations.*;
 
-@species("multicriteria_analyzer")
+@species(name = "multicriteria_analyzer")
 public class MulticriteriaAnalyzer extends GamlAgent {
 
 	public MulticriteriaAnalyzer(final ISimulation sim, final IPopulation s)
@@ -36,8 +37,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		super(sim, s);
 	}
 
-	@action("weighted_means_DM")
-	@args({ "candidates", "criteria" })
+	@action(name="weighted_means_DM")
+	@args(names = { "candidates", "criteria" })
 	public Integer WeightedMeansDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
@@ -80,8 +81,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	@action("promethee_DM")
-	@args({ "candidates", "criteria" })
+	@action(name="promethee_DM")
+	@args(names = { "candidates", "criteria" })
 	public Integer PrometheeDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
@@ -166,8 +167,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	@action("electre_DM")
-	@args({ "candidates", "criteria", "fuzzy_cut" })
+	@action(name="electre_DM")
+	@args(names = { "candidates", "criteria", "fuzzy_cut" })
 	public Integer electreDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
@@ -245,20 +246,22 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	@action("evidence_theory_DM")
-	@args({ "candidates", "criteria", "simple"})
+	@action(name="evidence_theory_DM")
+	@args(names = { "candidates", "criteria", "simple" })
 	public Integer evidenceTheoryDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List> cands = scope.getListArg("candidates");
 		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
 		Boolean simple = scope.getBoolArg("simple");
-		if (simple == null) 
+		if ( simple == null ) {
 			simple = false;
+		}
 		Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
 		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
 		List<String> criteriaStr = new LinkedList<String>();
-		LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<CritereFonctionsCroyances>();
+		LinkedList<CritereFonctionsCroyances> criteresFC =
+			new LinkedList<CritereFonctionsCroyances>();
 		for ( Map<String, Object> critMap : criteriaMap ) {
 			String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -315,7 +318,8 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			if ( max != null && max instanceof Boolean ) {
 				maximizeCrit.put(name, (Boolean) max);
 			}
-			//System.out.println(name + " s1 : " + s1 + " s2: " + s2 + " v1Pour : " + v1Pour + " v2Pour : " + v2Pour  + " v1Contre : " + v1Contre + " v2Contre : " + v2Contre);
+			// System.out.println(name + " s1 : " + s1 + " s2: " + s2 + " v1Pour : " + v1Pour +
+			// " v2Pour : " + v2Pour + " v1Contre : " + v1Contre + " v2Contre : " + v2Contre);
 			CritereFonctionsCroyances cfc =
 				new CritereFctCroyancesBasique(name, s1, v2Pour, v1Pour, v1Contre, v2Contre, s2);
 			criteresFC.add(cfc);
@@ -326,30 +330,32 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			int i = 0;
 			for ( String crit : criteriaStr ) {
 				Object val = cand.get(i);
-				if (val instanceof Integer) 
+				if ( val instanceof Integer ) {
 					valCriteria.put(crit, ((Integer) val).doubleValue());
-				else valCriteria.put(crit, (Double) val);
+				} else {
+					valCriteria.put(crit, (Double) val);
+				}
 				i++;
 			}
 			Candidate c = new Candidate(cpt, valCriteria);
 			candidates.add(c);
 			cpt++;
 		}
-		//System.out.println("candidates : " + candidates.size());
+		// System.out.println("candidates : " + candidates.size());
 		LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
-		if ( candsFilter.isEmpty() ) { 
-			return GAMA.getRandom().between(0, candidates.size() - 1);
+		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1);
 
 		}
-		//System.out.println("candfilter : " + candsFilter);
+		// System.out.println("candfilter : " + candsFilter);
 		Candidate decision = evt.decision(criteresFC, candsFilter, simple);
-		//System.out.println("decision : " + decision.getIndex());
-		
+		// System.out.println("decision : " + decision.getIndex());
+
 		return decision.getIndex();
 
 	}
 
-	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates, Map<String, Boolean> maximizeCrit) {
+	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates,
+		final Map<String, Boolean> maximizeCrit) {
 		LinkedList<Candidate> cands = new LinkedList<Candidate>();
 		LinkedList<Map<String, Double>> paretoVals = new LinkedList<Map<String, Double>>();
 		for ( Candidate c1 : candidates ) {
@@ -363,7 +369,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					break;
 				}
 			}
-			if ( paretoFront && ! (paretoVals.contains(c1.getValCriteria()))) {
+			if ( paretoFront && !paretoVals.contains(c1.getValCriteria()) ) {
 				cands.add(c1);
 				paretoVals.add(c1.getValCriteria());
 			}
@@ -371,13 +377,14 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		return cands;
 	}
 
-	private boolean paretoInf(final Candidate c1, final Candidate c2, final Map<String, Boolean> maximizeCrit) {
+	private boolean paretoInf(final Candidate c1, final Candidate c2,
+		final Map<String, Boolean> maximizeCrit) {
 		int equals = 0;
 		for ( String crit : c1.getValCriteria().keySet() ) {
-			boolean maximize = ! (maximizeCrit.containsKey(crit)) ? true : maximizeCrit.get(crit);
+			boolean maximize = !maximizeCrit.containsKey(crit) ? true : maximizeCrit.get(crit);
 			double v1 = c1.getValCriteria().get(crit);
 			double v2 = c2.getValCriteria().get(crit);
-			if (maximize) {
+			if ( maximize ) {
 				if ( v1 > v2 ) { return false; }
 			} else {
 				if ( v1 < v2 ) { return false; }

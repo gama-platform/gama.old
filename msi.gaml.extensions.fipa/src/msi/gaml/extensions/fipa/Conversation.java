@@ -247,7 +247,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the messages
 	 */
-	@getter(var = MESSAGES)
+	@getter( MESSAGES)
 	public GamaList getMessages() {
 		return messages;
 	}
@@ -257,7 +257,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the intitiator
 	 */
-	@getter(var = INITIATOR)
+	@getter( INITIATOR)
 	public IAgent getIntitiator() {
 		return initiator;
 	}
@@ -267,7 +267,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the participants
 	 */
-	@getter(var = PARTICIPANTS)
+	@getter( PARTICIPANTS)
 	public GamaList getParticipants() {
 		return participants;
 	}
@@ -277,7 +277,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter(var = PROTOCOL)
+	@getter( PROTOCOL)
 	public String getProtocolName() {
 		if ( protocol == null ) { return null; }
 		return FIPAConstants.protocolNames[protocol.getIndex()];
@@ -288,7 +288,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return true, if is ended
 	 */
-	@getter(var = ENDED)
+	@getter( ENDED)
 	public boolean isEnded() {
 		return ended || areAllNodeEnded();
 	}

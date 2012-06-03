@@ -117,6 +117,7 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 		}
 	}
 
+	@Override
 	public void pause() {
 		alive = true;
 		paused = true;

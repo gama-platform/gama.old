@@ -65,7 +65,7 @@ public abstract class Spatial {
 	public static abstract class Creation {
 
 		@operator("circle")
-		@doc(value = "A circle geometry which radius is equal to the operand.", specialCases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the circle is by default the location of the current agent in which has been called this operator.", examples = { "circle(10) -> returns a geometry as a circle of radius 10." }, see = {
+		@doc(value = "A circle geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the circle is by default the location of the current agent in which has been called this operator.", examples = { "circle(10) -> returns a geometry as a circle of radius 10." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 			"square", "triangle" })
 		public static IShape opCircle(final IScope scope, final Double radius) {
@@ -77,7 +77,7 @@ public abstract class Spatial {
 		}
 
 		@operator("cone")
-		@doc(value = "A cone geometry which min and max angles are given by the operands.", specialCases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
+		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
 			"around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
 		public static IShape opCone(final IScope scope, final GamaPoint p) {
@@ -104,7 +104,7 @@ public abstract class Spatial {
 		}
 
 		@operator("square")
-		@doc(value = "A square geometry which side size is equal to the operand.", specialCases = { "returns nil if the operand is nil." }, comment = "the centre of the square is by default the location of the current agent in which has been called this operator.", examples = { "square(10) -> returns a geometry as a square of side size 10." }, see = {
+		@doc(value = "A square geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the square is by default the location of the current agent in which has been called this operator.", examples = { "square(10) -> returns a geometry as a square of side size 10." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "triangle" })
 		public static IShape opSquare(final IScope scope, final Double side_size) {
@@ -116,7 +116,7 @@ public abstract class Spatial {
 		}
 
 		@operator("rectangle")
-		@doc(value = "A rectangle geometry which side sizes are given by the operands.", specialCases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle({10, 5}) -> returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
+		@doc(value = "A rectangle geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle({10, 5}) -> returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"square", "triangle" })
 		public static IShape opRect(final IScope scope, final GamaPoint p) {
@@ -127,7 +127,7 @@ public abstract class Spatial {
 		}
 
 		@operator("triangle")
-		@doc(value = "A triangle geometry which side size is given by the operand.", specialCases = { "returns nil if the operand is nil." }, comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.", examples = { "triangle(5) -> returns a geometry as a triangle with side_size = 5." }, see = {
+		@doc(value = "A triangle geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.", examples = { "triangle(5) -> returns a geometry as a triangle with side_size = 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square" })
 		public static IShape opTriangle(final IScope scope, final Double side_size) {
@@ -139,7 +139,7 @@ public abstract class Spatial {
 		}
 
 		@operator({ "polygon" })
-		@doc(value = "A polygon geometry from the given list of points.", specialCases = {
+		@doc(value = "A polygon geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
 			"" + "if the operand is composed of a single point, returns a point geometry",
 			"if the operand is composed of 2 points, returns a polyline geometry." }, examples = { "polygon([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polygon geometry composed of the 4 points." }, see = {
@@ -158,7 +158,7 @@ public abstract class Spatial {
 		}
 
 		@operator({ "line", "polyline" })
-		@doc(value = "A polyline geometry from the given list of points.", specialCases = {
+		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
 			"if the operand is composed of a single point, returns a point geometry." }, examples = { "polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points." }, see = {
 			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
@@ -172,7 +172,7 @@ public abstract class Spatial {
 		}
 
 		@operator({ "link" })
-		@doc(value = "A link between the 2 elements of the pair.", specialCases = {
+		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
 			"if the operand is null, link returns a point {0,0}",
 			"if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species" }, comment = "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.", examples = { "link (geom1::geom2)  -> returns a link geometry between geom1 and geom2." }, see = {
 			"around", "circle", "cone", "line", "norm", "point", "polygon", "polyline",
@@ -184,7 +184,7 @@ public abstract class Spatial {
 		}
 
 		@operator("around")
-		@doc(value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.", specialCases = { "returns a circle geometry of radius right-operand if the left-operand is nil" }, examples = { "10 around circle(5) -> returns a the ring geometry between 5 and 10." }, see = {
+		@doc(value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.", special_cases = { "returns a circle geometry of radius right-operand if the left-operand is nil" }, examples = { "10 around circle(5) -> returns a the ring geometry between 5 and 10." }, see = {
 			"circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 			"square", "triangle" })
 		public static IShape opFringe(final IScope scope, final Double width,
@@ -199,7 +199,7 @@ public abstract class Spatial {
 	public static abstract class Operators {
 
 		@operator(value = { "inter", "intersection" })
-		@doc(value = "A geometry resulting from the intersection between the two geometries", specialCases = { "returns false if the right-operand is nil" }, examples = { "square(5) intersects {10,10} -> false" }, see = {
+		@doc(value = "A geometry resulting from the intersection between the two geometries", special_cases = { "returns false if the right-operand is nil" }, examples = { "square(5) intersects {10,10} -> false" }, see = {
 			"union", "+", "-" })
 		public static IShape opInter(final IShape g1, final IShape g2) {
 			if ( g2 == null || g1 == null ) { return null; }
@@ -218,7 +218,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "+", "union" })
-		@doc(specialCases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries" }, examples = { "geom1 + geom2 -> a geometry corresponding to union between geom1 and geom2" })
+		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries" }, examples = { "geom1 + geom2 -> a geometry corresponding to union between geom1 and geom2" })
 		public static IShape opUnion(final IShape g1, final IShape g2) {
 			if ( g1 == null ) {
 				if ( g2 == null ) { return null; }
@@ -239,7 +239,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "union" })
-		@doc(specialCases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries" }, examples = { "union([geom1, geom2, geom3]) -> a geometry corresponding to union between geom1, geom2 and geom3" })
+		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries" }, examples = { "union([geom1, geom2, geom3]) -> a geometry corresponding to union between geom1, geom2 and geom3" })
 		public static IShape opUnion(final IScope scope, final GamaList elements) {
 			try {
 				return Cast.asGeometry(scope, elements);
@@ -259,14 +259,14 @@ public abstract class Spatial {
 		}
 
 		@operator(IKeyword.MINUS)
-		@doc(specialCases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 -> a geometry corresponding to difference between geom1 and geom2" })
+		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 -> a geometry corresponding to difference between geom1 and geom2" })
 		public static IShape opDifference(final IShape g1, final IShape g2) {
 			if ( g2 == null || g2.getInnerGeometry() == null ) { return g1; }
 			return new GamaShape(g1.getInnerGeometry().difference(g2.getInnerGeometry()));
 		}
 
 		@operator(IKeyword.MINUS)
-		@doc(specialCases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
+		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
 		public static IShape opDifferenceAgents(final IShape g1, final IList<IShape> agents) {
 			if ( agents == null || agents.isEmpty() ) { return g1; }
 			Geometry geom1 = GeometryUtils.getFactory().createGeometry(g1.getInnerGeometry());
@@ -279,7 +279,7 @@ public abstract class Spatial {
 		}
 
 		@operator(IKeyword.MINUS)
-		@doc(specialCases = { "if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species" }, examples = { "geom1 - speciesA -> a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)" })
+		@doc(special_cases = { "if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species" }, examples = { "geom1 - speciesA -> a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)" })
 		public static IShape opDifferenceSpecies(final IScope scope, final IShape g1,
 			final ISpecies target) throws GamaRuntimeException {
 			IList agents = target.listValue(scope);
@@ -425,7 +425,7 @@ public abstract class Spatial {
 		}
 
 		@operator("split_at")
-		@doc(value = "The two part of the left-operand lines split at the given right-operand point", specialCases = { "if the left-operand is a point or a polygon, returns an empty list" }, examples = { "polyline([{1,2},{4,6}]) split_at {7,6}  -> [polyline([{1.0;2.0},{7.0;6.0}]), polyline([{7.0;6.0},{4.0;6.0}])]." })
+		@doc(value = "The two part of the left-operand lines split at the given right-operand point", special_cases = { "if the left-operand is a point or a polygon, returns an empty list" }, examples = { "polyline([{1,2},{4,6}]) split_at {7,6}  -> [polyline([{1.0;2.0},{7.0;6.0}]), polyline([{7.0;6.0},{4.0;6.0}])]." })
 		public static GamaList<IShape> splitLineAt(final IShape geom, final ILocation pt) {
 			GamaList<IShape> lines = new GamaList<IShape>();
 			GamaList<Geometry> geoms = null;
@@ -503,14 +503,14 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" }, priority = IPriority.PRODUCT)
-		@doc(specialCases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient" }, examples = { "shape * 2 -> returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2" })
+		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient" }, examples = { "shape * 2 -> returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2" })
 		public static IShape opScaledBy(final IShape g, final Double coefficient) {
 			return ((GamaShape) g.getGeometry()).scaledBy(coefficient);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
-		@doc(specialCases = { "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters" }, examples = { "shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment" })
+		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters" }, examples = { "shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment" })
 		public static IShape opBuffer(final IShape g, final GamaMap parameters) {
 			Double distance = (Double) parameters.get("distance");
 			Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
@@ -521,13 +521,13 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
-		@doc(specialCases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
+		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
 		public static IShape opBuffer(final IShape g, final Double size) {
 			return new GamaShape(g.getInnerGeometry().buffer(size));
 		}
 
 		@operator(value = { "-", "reduced_by" }, priority = IPriority.ADDITION)
-		@doc(specialCases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance" }, examples = { "shape - 5 -> returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5" })
+		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance" }, examples = { "shape - 5 -> returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5" })
 		public static IShape opNegativeBuffer(final IShape g, final Double size) {
 			return opBuffer(g, -size);
 		}
@@ -828,7 +828,7 @@ public abstract class Spatial {
 	public static abstract class Properties {
 
 		@operator(value = { "<->", "disjoint_from" }, priority = IPriority.COMPARATOR)
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).", specialCases = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns true.",
 			"if one operand is a point, returns false if the point is included in the geometry." }, examples = {
 			"polyline([{10,10},{20,20}]) disjoint_from polyline([{15,15},{25,25}]) -> false.",
@@ -852,7 +852,7 @@ public abstract class Spatial {
 		 */
 
 		@operator("overlaps")
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).", specialCases = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) overlaps the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns false.",
 			"if one operand is a point, returns true if the point is included in the geometry" }, examples = {
 			"polyline([{10,10},{20,20}]) overlaps polyline([{15,15},{25,25}]) -> true",
@@ -879,7 +879,7 @@ public abstract class Spatial {
 		 */
 
 		@operator("partially_overlaps")
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).", specialCases = { "if one of the operand is null, returns false." }, comment = "if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).", examples = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, comment = "if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).", examples = {
 			"polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}]) -> true",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({25,25}) -> true",
@@ -903,7 +903,7 @@ public abstract class Spatial {
 		 * 
 		 */
 		@operator("touches")
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).", specialCases = { "if one of the operand is null, returns false." }, comment = "returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.", examples = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, comment = "returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.", examples = {
 			"polyline([{10,10},{20,20}]) touches geometry({15,15}) -> false",
 			"polyline([{10,10},{20,20}]) touches geometry({10,10}) -> true",
 			"geometry({15,15}) touches geometry({15,15}) -> false",
@@ -930,7 +930,7 @@ public abstract class Spatial {
 		 */
 
 		@operator("crosses")
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).", specialCases = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) crosses the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns false.",
 			"if one operand is a point, returns false." }, examples = {
 			"polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}]) -> true.",
@@ -943,7 +943,7 @@ public abstract class Spatial {
 		}
 
 		@operator("intersects")
-		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).", specialCases = { "if one of the operand is null, returns false." }, examples = { "square(5) intersects {10,10} -> false." }, see = {
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) intersects {10,10} -> false." }, see = {
 			"<->", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean opIntersects(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
@@ -966,57 +966,6 @@ public abstract class Spatial {
 		public static ILocation opAnyLocationIn(final IScope scope, final IShape g) {
 			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
-		}
-
-		private static IList<GamaPoint> locExteriorRing(final Geometry geom, final Double distance) {
-			IList<GamaPoint> locs = new GamaList<GamaPoint>();
-
-			if ( geom instanceof Point ) {
-				locs.add(new GamaPoint(geom.getCoordinate()));
-			}
-			if ( geom instanceof LineString ) {
-				double dist_cur = 0;
-				int nbSp = geom.getNumPoints();
-				Coordinate[] coordsSimp = geom.getCoordinates();
-				boolean same = false;
-				double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
-				for ( int i = 0; i < nbSp - 1; i++ ) {
-					if ( !same ) {
-						Coordinate s = coordsSimp[i];
-						Coordinate t = coordsSimp[i + 1];
-						x_t = t.x;
-						y_t = t.y;
-						x_s = s.x;
-						y_s = s.y;
-					} else {
-						i = i - 1;
-					}
-					double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
-					if ( dist_cur < dist ) {
-						double ratio = dist_cur / dist;
-						x_s = x_s + ratio * (x_t - x_s);
-						y_s = y_s + ratio * (y_t - y_s);
-						locs.add(new GamaPoint(x_s, y_s));
-						dist_cur = distance;
-						same = true;
-					} else if ( dist_cur > dist ) {
-						dist_cur = dist_cur - dist;
-						same = false;
-					} else {
-						locs.add(new GamaPoint(x_t, y_t));
-						dist_cur = distance;
-						same = false;
-					}
-				}
-			}
-			if ( geom instanceof Polygon ) {
-				Polygon poly = (Polygon) geom;
-				locs.addAll(locExteriorRing(poly.getExteriorRing(), distance));
-				for ( int i = 0; i < poly.getNumInteriorRing(); i++ ) {
-					locs.addAll(locExteriorRing(poly.getInteriorRingN(i), distance));
-				}
-			}
-			return locs;
 		}
 
 		@operator(value = { "points_at" }, content_type = IType.POINT)
@@ -1107,7 +1056,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "neighbours_of")
-		@doc(specialCases = "a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.", examples = { "topology(self) neighbours_of self::10-> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology." })
+		@doc(special_cases = "a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.", examples = { "topology(self) neighbours_of self::10-> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology." })
 		public static IList opNeighboursOf(final IScope scope, final ITopology t,
 			final GamaPair pair) throws GamaRuntimeException {
 			if ( pair == null ) { return GamaList.EMPTY_LIST; }
@@ -1167,7 +1116,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-		@doc(specialCases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator." })
+		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator." })
 		public static IList<IAgent> opInside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
@@ -1192,16 +1141,16 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-		@doc(specialCases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 overlapping(self) -> return the agents of species species1 that overlap the shape of the agent applying the operator." })
+		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 overlapping(self) -> return the agents of species species1 that overlap the shape of the agent applying the operator." })
 		public static IList<IAgent> opOverlapping(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return new GamaList(); }
 			// CHANGE
 			ITopology t = pop.getTopology();
-			IList<IAgent> temp =
-				t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop),
-					false);
+			// IList<IAgent> temp =
+			// t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop),
+			// false);
 			// for ( IAgent a : temp ) {
 			// if ( a.dead() ) {
 			// GuiUtils.debug("Dead agent inside");
@@ -1228,7 +1177,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
-		@doc(specialCases = { "if the left-operand is a species, return an agent of the specified species." }, examples = {
+		@doc(special_cases = { "if the left-operand is a species, return an agent of the specified species." }, examples = {
 			"neighbours_at",
 			"neighbours_of",
 			"species1 closest_to(self) -> return the closest agent of species species1 to the agent applying the operator." })

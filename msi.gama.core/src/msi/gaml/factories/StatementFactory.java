@@ -22,7 +22,7 @@ import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.architecture.finite_state_machine.*;
 import msi.gaml.compilation.ISymbol;
@@ -37,8 +37,8 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@handles({ ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR,
-	ISymbolKind.ACTION })
+@factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT,
+	ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	public StatementFactory(final List<Integer> handles, final List<Integer> uses) {

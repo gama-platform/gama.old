@@ -97,27 +97,27 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 		return Types.get(IType.COLOR);
 	}
 
-	@getter(var = IKeyword.COLOR_RED)
+	@getter( IKeyword.COLOR_RED)
 	public Integer red() {
 		return super.getRed();
 	}
 
-	@getter(var = IKeyword.COLOR_BLUE)
+	@getter( IKeyword.COLOR_BLUE)
 	public Integer blue() {
 		return super.getBlue();
 	}
 
-	@getter(var = IKeyword.COLOR_GREEN)
+	@getter( IKeyword.COLOR_GREEN)
 	public Integer green() {
 		return super.getGreen();
 	}
 
-	@getter(var = IKeyword.BRIGHTER)
+	@getter( IKeyword.BRIGHTER)
 	public GamaColor getBrighter() {
 		return new GamaColor(super.brighter());
 	}
 
-	@getter(var = IKeyword.DARKER)
+	@getter( IKeyword.DARKER)
 	public GamaColor getDarker() {
 		return new GamaColor(super.darker());
 	}

@@ -12,7 +12,7 @@ import msi.gaml.factories.ModelFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 
-@species(IKeyword.WORLD_SPECIES)
+@species(name = IKeyword.WORLD_SPECIES)
 public class WorldAgent extends GamlAgent {
 
 	private GamaPoint location;

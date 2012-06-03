@@ -20,14 +20,14 @@ package msi.gaml.types;
 
 import java.io.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 
-@type(value = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
+@type(name = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
 	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaType<IMatrix> {
 
@@ -40,16 +40,15 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
 			if ( obj instanceof String ) { return from((String) obj, null); }
 		}
-		
-		if((((GamaPoint)param).getX() <= 0) || (((GamaPoint)param).getY() < 0)) {
-			throw new GamaRuntimeException("Dimensions of a matrix should be positive.");
-		}
-		
+
+		if ( param != null && (((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0) ) { throw new GamaRuntimeException(
+			"Dimensions of a matrix should be positive."); }
+
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
 			(GamaPoint) param); }
 		if ( obj instanceof String ) { return from((String) obj, (GamaPoint) param); }
 		if ( obj instanceof Double ) { return with(((Double) obj).doubleValue(), (GamaPoint) param); }
-		if ( obj instanceof Integer ) { return with(((Integer) obj).intValue(), (GamaPoint) param); }		
+		if ( obj instanceof Integer ) { return with(((Integer) obj).intValue(), (GamaPoint) param); }
 		return with(obj);
 	}
 
@@ -118,13 +117,13 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 
 	public static IMatrix with(final int val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaIntMatrix((int) p.x, (int) p.y);
-		((GamaIntMatrix)matrix).fillWith(val);
+		((GamaIntMatrix) matrix).fillWith(val);
 		return matrix;
 	}
-	
+
 	public static IMatrix with(final double val, final GamaPoint p) throws GamaRuntimeException {
 		final IMatrix matrix = new GamaFloatMatrix((int) p.x, (int) p.y);
-		((GamaFloatMatrix)matrix)._putAll(val,null);		
+		((GamaFloatMatrix) matrix)._putAll(val, null);
 		return matrix;
 	}
 }

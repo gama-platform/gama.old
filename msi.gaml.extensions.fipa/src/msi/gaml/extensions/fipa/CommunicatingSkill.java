@@ -37,7 +37,7 @@ import msi.gaml.types.*;
  * communicating agents with primitives to manipulate the Conversation and Message objects.
  */
 
-@skill("communicating")
+@skill(name = "communicating")
 @vars({
 	@var(name = "conversations", type = IType.LIST_STR, of = Message.SPECIES_NAME, init = "[]"),
 	@var(name = "messages", type = IType.LIST_STR, of = Message.SPECIES_NAME, init = "[]"),
@@ -94,8 +94,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("send")
-	@args({ Message.SPECIES_NAME, "receivers", "content", "performative", "protocol",
+	@action(name="send")
+	@args(names = { Message.SPECIES_NAME, "receivers", "content", "performative", "protocol",
 		"conversation" })
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final Message m =
@@ -152,7 +152,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return a list of currently active conversations.
 	 */
-	@getter(var = "conversations")
+	@getter( "conversations")
 	public List getConversations(final IAgent agent) throws GamaRuntimeException {
 		List<Conversation> conversations =
 			(List<Conversation>) agent.getDirectVarValue("conversations");
@@ -205,8 +205,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("reply")
-	@args({ Message.SPECIES_NAME, "performative", "content" })
+	@action(name="reply")
+	@args(names = { Message.SPECIES_NAME, "performative", "content" })
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -233,8 +233,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("accept_proposal")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="accept_proposal")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primAcceptProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -254,8 +254,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("agree")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="agree")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -276,8 +276,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("cancel")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="cancel")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primCancel(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -298,8 +298,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("cfp")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="cfp")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primCfp(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -320,8 +320,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("end")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="end")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primEnd(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -343,8 +343,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("failure")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="failure")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primFailure(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -365,8 +365,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("inform")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="inform")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primInform(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -387,8 +387,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("propose")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="propose")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primPropose(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -409,8 +409,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("query")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="query")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primQuery(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -431,8 +431,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("refuse")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="refuse")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primRefuse(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -453,8 +453,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("reject_proposal")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="reject_proposal")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primRejectProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -475,8 +475,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("request")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="request")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primRequest(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -497,8 +497,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action("subscribe")
-	@args({ Message.SPECIES_NAME, "content" })
+	@action(name="subscribe")
+	@args(names = { Message.SPECIES_NAME, "content" })
 	public Object primSubscribe(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -515,7 +515,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the messages
 	 */
-	@getter(var = "messages")
+	@getter( "messages")
 	public List getMessages(final IAgent agent) {
 		List<Message> result = (List) agent.getAttribute("inBox");
 		List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
@@ -534,7 +534,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the accept proposal msgs
 	 */
-	@getter(var = "accept_proposals")
+	@getter( "accept_proposals")
 	public List getAcceptProposalMsgs(final IAgent agent) {
 		return filter(agent, ACCEPT_PROPOSAL);
 	}
@@ -544,7 +544,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the agree msgs
 	 */
-	@getter(var = "agrees")
+	@getter( "agrees")
 	public List getAgreeMsgs(final IAgent agent) {
 		return filter(agent, AGREE);
 	}
@@ -554,7 +554,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the cancel msgs
 	 */
-	@getter(var = "cancels")
+	@getter( "cancels")
 	public List getCancelMsgs(final IAgent agent) {
 		return filter(agent, CANCEL);
 	}
@@ -564,7 +564,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the cfp msgs
 	 */
-	@getter(var = "cfps")
+	@getter( "cfps")
 	public List getCfpMsgs(final IAgent agent) {
 		final List cfps = filter(agent, CFP);
 		return cfps;
@@ -575,7 +575,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the failure msgs
 	 */
-	@getter(var = "failures")
+	@getter( "failures")
 	public List getFailureMsgs(final IAgent agent) {
 		return filter(agent, FAILURE);
 	}
@@ -585,7 +585,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the inform msgs
 	 */
-	@getter(var = "informs")
+	@getter( "informs")
 	public List getInformMsgs(final IAgent agent) {
 		final List informs = filter(agent, INFORM);
 		return informs;
@@ -596,7 +596,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the propose msgs
 	 */
-	@getter(var = "proposes")
+	@getter( "proposes")
 	public List getProposeMsgs(final IAgent agent) {
 		return filter(agent, PROPOSE);
 	}
@@ -606,7 +606,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the query msgs
 	 */
-	@getter(var = "queries")
+	@getter( "queries")
 	public List getQueryMsgs(final IAgent agent) {
 		return filter(agent, QUERY);
 	}
@@ -616,7 +616,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the refuses msgs
 	 */
-	@getter(var = "refuses")
+	@getter( "refuses")
 	public List getRefusesMsgs(final IAgent agent) {
 		return filter(agent, REFUSE);
 	}
@@ -626,7 +626,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the reject proposal msgs
 	 */
-	@getter(var = "reject_proposals")
+	@getter( "reject_proposals")
 	public List getRejectProposalMsgs(final IAgent agent) {
 		return filter(agent, REJECT_PROPOSAL);
 	}
@@ -636,7 +636,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the request msgs
 	 */
-	@getter(var = "requests")
+	@getter( "requests")
 	public List getRequestMsgs(final IAgent agent) {
 		final List requests = filter(agent, REQUEST);
 		return requests;
@@ -647,7 +647,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the request when msgs
 	 */
-	@getter(var = "requestWhens")
+	@getter( "requestWhens")
 	public List getRequestWhenMsgs(final IAgent agent) {
 		return filter(agent, REQUEST_WHEN);
 	}
@@ -657,7 +657,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the subscribe msgs
 	 */
-	@getter(var = "subscribes")
+	@getter( "subscribes")
 	public List getSubscribeMsgs(final IAgent agent) {
 		return filter(agent, SUBSCRIBE);
 	}

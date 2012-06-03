@@ -19,15 +19,11 @@
 package msi.gama.common.util;
 
 import java.util.*;
-
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
-import msi.gaml.types.GamaGeometryType;
-
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
@@ -40,7 +36,12 @@ import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder
  */
 public class GeometryUtils {
 
+	// TODO static CoordinateSequenceFactory csf = new PackedCoordinateSequenceFactory(
+	// PackedCoordinateSequenceFactory.DOUBLE, 2);
+
 	public static GeometryFactory factory = new GeometryFactory();
+
+	// TODO : see the possibility to use new LiteCoordinateSequenceFactory()
 
 	public static GeometryFactory getFactory() {
 		return factory;
@@ -247,12 +248,12 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
+
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		IList<LineString> network = new GamaList<LineString>();
 		IList polys = new GamaList(GeometryUtils.triangulation(geom));
 		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
-		
+
 		Collection<GamaShape> nodes = graph.vertexSet();
 		GeometryFactory geomFact = GeometryUtils.getFactory();
 		for ( GamaShape node : nodes ) {

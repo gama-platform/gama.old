@@ -32,14 +32,15 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	protected final Map<String, IExperiment> experiments = new HashMap<String, IExperiment>();
 	private ModelEnvironment modelEnvironment;
 	protected ISpecies worldSpecies;
-	private static int instanceCount;
+	// private static int instanceCount;
 	private static int totalCount;
-	private final int count;
+
+	// private final int count;
 
 	protected AbstractModel(final IDescription description) {
 		super(description);
-		count = ++totalCount;
-		instanceCount++;
+		// count = ++totalCount;
+		// instanceCount++;
 		// GuiUtils.debug("Model (" + count + ") " + description.getName() + " created ");
 	}
 
@@ -87,7 +88,7 @@ public abstract class AbstractModel extends Symbol implements IModel {
 			exp.dispose();
 		}
 		experiments.clear();
-		instanceCount--;
+		// instanceCount--;
 		// GuiUtils.debug("Model (" + count + ")" + " disposed. IModels left : " + instanceCount);
 	}
 

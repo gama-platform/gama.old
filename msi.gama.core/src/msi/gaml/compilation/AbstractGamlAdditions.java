@@ -4,8 +4,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
 import msi.gama.common.util.*;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.base;
+import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -132,12 +131,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void addSymbol(final Class c, final int sKind, final boolean remote,
 		final boolean args, final boolean scope, final boolean sequence,
 		final ISymbolConstructor sc, final String ... names) {
-		Class base = null;
 		String omissible = null;
-		base b = (base) c.getAnnotation(base.class);
-		if ( b != null ) {
-			base = b.value();
-		}
 		Set<String> contextKeywords = new HashSet();
 		Set<Short> contextKinds = new HashSet();
 		facets ff = (facets) c.getAnnotation(facets.class);
@@ -167,7 +161,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 
 		SymbolMetaDescription md =
-			new SymbolMetaDescription(base, sequence, args, sKind, !scope, facets, omissible,
+			new SymbolMetaDescription(sequence, args, sKind, !scope, facets, omissible,
 				combinations, contextKeywords, contextKinds, remote, sc);
 		DescriptionFactory.getModelFactory().registerSymbol(md, keywords);
 
@@ -348,9 +342,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		IVarGetter helper = GETTER_HELPERS.getCompatible(original, methodName);
 		if ( helper == null ) {
 			final IFieldGetter fg = getFieldGetter(original, methodName);
-			if ( fg == null ) {
-				GuiUtils.debug("getGetter");
-			}
 			helper = new IVarGetter() {
 
 				@Override
@@ -374,6 +365,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Map<String, Class> getBuiltInSpeciesClasses() {
 		return SPECIES_CLASSES;
+	}
+
+	public static Class getBuiltInSpeciesClass(final String speciesName) {
+		Class c = SPECIES_CLASSES.get(speciesName);
+		return c == null ? GamlAgent.class : c;
 	}
 
 	public static Map<String, Class> getSkillClasses() {

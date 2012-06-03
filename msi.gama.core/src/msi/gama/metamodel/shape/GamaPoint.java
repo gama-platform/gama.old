@@ -157,12 +157,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new Coordinate(x, y);
 	}
 
-	@getter(var = "x")
+	@getter( "x")
 	public Double first() {
 		return x;
 	}
 
-	@getter(var = "y")
+	@getter( "y")
 	public Double last() {
 		return y;
 	}

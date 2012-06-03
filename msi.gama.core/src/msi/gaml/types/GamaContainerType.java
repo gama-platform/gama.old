@@ -31,7 +31,7 @@ import msi.gama.util.IContainer;
  * A generic type for containers. Tentative.
  * 
  */
-@type(value = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaContainerType extends GamaType<IContainer> {
 
 	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)

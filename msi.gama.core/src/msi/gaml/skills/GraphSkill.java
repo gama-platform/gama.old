@@ -1,10 +1,9 @@
 package msi.gaml.skills;
 
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.skill;
 
-@skill({ IKeyword.GRAPH_SKILL })
+@skill(name = IKeyword.GRAPH_SKILL)
 /**
  * A future graph skill (to be defined)
  * 
@@ -12,8 +11,5 @@ import msi.gama.precompiler.GamlAnnotations.skill;
  *
  */
 public class GraphSkill extends Skill {
-	
-	
-	
-	
+
 }

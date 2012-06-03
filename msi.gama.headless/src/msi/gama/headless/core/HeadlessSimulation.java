@@ -1,8 +1,6 @@
 package msi.gama.headless.core;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.simulation.AbstractSimulation;
 import msi.gama.metamodel.agent.IAgent;
@@ -10,18 +8,18 @@ import msi.gama.metamodel.population.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 
-
 public class HeadlessSimulation extends AbstractSimulation {
 
-	public HeadlessSimulation(IExperiment exp) throws GamaRuntimeException {
+	public HeadlessSimulation(final IExperiment exp) throws GamaRuntimeException {
 		super(exp);
 	}
 
-	protected void initSchedulingPolicy()
-	{
+	@Override
+	protected void initSchedulingPolicy() {
 		System.out.println("starting headless scheduler");
-		this.scheduler= new HeadlessScheduler(this);
+		this.scheduler = new HeadlessScheduler(this);
 	}
+
 	@Override
 	protected void initializeWorldPopulation() {
 		worldPopulation = new WorldPopulation(getModel().getWorldSpecies());
@@ -38,6 +36,5 @@ public class HeadlessSimulation extends AbstractSimulation {
 		world.schedule();
 		world.initializeMicroPopulations(getGlobalScope());
 	}
-
 
 }

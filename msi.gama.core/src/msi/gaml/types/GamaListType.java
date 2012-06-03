@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
-@type(value = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaListType extends GamaType<IList> {
 
 	@Override

@@ -30,7 +30,7 @@ import msi.gama.runtime.IScope;
  * @todo Description
  * 
  */
-@type(value = IType.NONE_STR, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.NONE_STR, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaNoType extends GamaType {
 
 	@Override

@@ -20,7 +20,6 @@ package msi.gaml.expressions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.reserved;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.*;
 
@@ -30,9 +29,6 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@reserved({ "nil", "each", "self", "myself", "their", "its", "her", "his",
-// TMP (retro-compatibility):
-	"world", "visible", IKeyword.SIGNAL, IKeyword.USER_LOCATION })
 public interface IExpressionCompiler<T> {
 
 	public static final String INTERNAL_POINT = "<->";

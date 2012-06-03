@@ -19,7 +19,7 @@
 package msi.gaml.factories;
 
 import java.util.List;
-import msi.gama.precompiler.GamlAnnotations.handles;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 
 /**
@@ -29,7 +29,7 @@ import msi.gama.precompiler.*;
  * 
  */
 
-@handles({ ISymbolKind.BATCH_METHOD })
+@factory(handles = { ISymbolKind.BATCH_METHOD })
 public class BatchFactory extends SymbolFactory {
 
 	public BatchFactory(final List<Integer> handles, final List<Integer> uses) {

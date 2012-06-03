@@ -119,7 +119,7 @@ public class Message {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getSender()
 	 */
-	@getter(var = Message.SENDER)
+	@getter( Message.SENDER)
 	public IAgent getSender() {
 		return data.getSender();
 	}
@@ -139,7 +139,7 @@ public class Message {
 	 * 
 	 * @return the receivers a list of the receivers' name.
 	 */
-	@getter(var = Message.RECEIVERS)
+	@getter( Message.RECEIVERS)
 	public IList<IAgent> getReceivers() {
 		return data.getReceivers();
 	}
@@ -159,7 +159,7 @@ public class Message {
 	 * 
 	 * @return the contents
 	 */
-	@getter(var = Message.CONTENT)
+	@getter( Message.CONTENT)
 	public IList getContent() {
 		// OutputManager.debug("Message " + getName() + " is read.");
 		setUnread(false);
@@ -181,7 +181,7 @@ public class Message {
 	 * 
 	 * @return the performative
 	 */
-	@getter(var = Message.PERFORMATIVE)
+	@getter( Message.PERFORMATIVE)
 	public String getPerformativeName() {
 		return FIPAConstants.performativeNames[data.getPerformative()];
 	}
@@ -219,7 +219,7 @@ public class Message {
 	 * 
 	 * @return the conversationID
 	 */
-	@getter(var = Message.CONVERSATION)
+	@getter( Message.CONVERSATION)
 	public Conversation getConversation() {
 		return data.getConversation();
 	}
@@ -239,7 +239,7 @@ public class Message {
 	 * 
 	 * @return true, if is unread
 	 */
-	@getter(var = Message.UNREAD)
+	@getter( Message.UNREAD)
 	public boolean isUnread() {
 		return unread;
 	}
@@ -259,7 +259,7 @@ public class Message {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter(var = Message.PROTOCOL)
+	@getter( Message.PROTOCOL)
 	public String getProtocolName() {
 		if ( getConversation() == null ) { return null; }
 		return getConversation().getProtocolName();
@@ -270,7 +270,7 @@ public class Message {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getTimestamp()
 	 */
-	@getter(var = Message.TIMESTAMP)
+	@getter( Message.TIMESTAMP)
 	public String getTimestamp() {
 		return data.getTimestamp();
 	}

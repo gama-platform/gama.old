@@ -85,13 +85,13 @@ public class GamaPair<K, V> implements IContainer<K, V> {
 	}
 
 	@Override
-	@getter(var = "key")
+	@getter( "key")
 	public V first() {
 		return (V) key;
 	}
 
 	@Override
-	@getter(var = "value")
+	@getter( "value")
 	public V last() {
 		return value;
 	}

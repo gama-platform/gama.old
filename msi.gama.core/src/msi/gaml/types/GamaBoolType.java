@@ -32,7 +32,7 @@ import msi.gama.util.IContainer;
  * @todo Description
  * 
  */
-@type(value = IType.BOOL_STR, id = IType.BOOL, wraps = { Boolean.class, boolean.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.BOOL_STR, id = IType.BOOL, wraps = { Boolean.class, boolean.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override

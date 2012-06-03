@@ -34,7 +34,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(value = IType.COLOR_STR, id = IType.COLOR, wraps = { GamaColor.class, Color.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IType.COLOR_STR, id = IType.COLOR, wraps = { GamaColor.class, Color.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override

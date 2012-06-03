@@ -21,7 +21,7 @@ public class PertinenceChainStatement extends PertinenceStatement {
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		pertinence = 0;
+		pertinenceValue = 0;
 		pertinentsCommands = new GamaList<IStatement>();
 		for ( ISymbol c : commands ) {
 			if ( !(c instanceof IStatement) ) {
@@ -33,11 +33,11 @@ public class PertinenceChainStatement extends PertinenceStatement {
 			if ( p > 0.0 ) {
 				pertinentsCommands.add(command);
 			}
-			if ( p > pertinence ) {
-				pertinence = p;
+			if ( p > pertinenceValue ) {
+				pertinenceValue = p;
 			}
 		}
-		return pertinence;
+		return pertinenceValue;
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
-@type(value = Message.SPECIES_NAME, id = MessageType.CONV_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = Message.SPECIES_NAME, id = MessageType.CONV_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
 public class MessageType extends GamaType<Message> {
 
 	public final static short CONV_ID = 99;

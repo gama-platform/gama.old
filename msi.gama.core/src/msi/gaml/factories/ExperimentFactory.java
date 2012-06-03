@@ -20,8 +20,7 @@ package msi.gaml.factories;
 
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.precompiler.GamlAnnotations.handles;
-import msi.gama.precompiler.GamlAnnotations.uses;
+import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.descriptions.*;
 
@@ -30,9 +29,8 @@ import msi.gaml.descriptions.*;
  * 
  * @author drogoul
  */
-@handles({ ISymbolKind.EXPERIMENT })
-@uses({ ISymbolKind.OUTPUT, ISymbolKind.PARAMETER, ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION,
-	ISymbolKind.BEHAVIOR })
+@factory(handles = { ISymbolKind.EXPERIMENT }, uses = { ISymbolKind.OUTPUT, ISymbolKind.PARAMETER,
+	ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION, ISymbolKind.BEHAVIOR })
 public class ExperimentFactory extends SpeciesFactory {
 
 	public ExperimentFactory(final List<Integer> handles, final List<Integer> uses) {

@@ -39,7 +39,7 @@ import com.vividsolutions.jts.geom.*;
  * The Class Agent. Represents agents that can be manipulated in GAML. They are provided with
  * everything their species defines .
  */
-@species("default")
+@species(name = "default")
 public class GamlAgent extends AbstractAgent implements IGamlAgent {
 
 	/**
@@ -64,7 +64,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		final species sa = this.getClass().getAnnotation(species.class);
 		String speciesName = null;
 		if ( sa != null ) {
-			speciesName = sa.value();
+			speciesName = sa.name();
 		}
 		spec = (IGamlPopulation) sim.getWorld().getPopulationFor(speciesName);
 		return spec;
@@ -137,39 +137,39 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		}
 	}
 
-	@action("debug")
-	@args({ "message" })
+	@action(name="debug")
+	@args(names = { "message" })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
 		debug(m + "\nsender: " + toMap());
 		return m;
 	}
 
-	@action("write")
-	@args({ "message" })
+	@action(name="write")
+	@args(names = { "message" })
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		String s = (String) scope.getArg("message", IType.STRING);
 		super.write(s);
 		return s;
 	}
 
-	@action("error")
-	@args({ "message" })
+	@action(name="error")
+	@args(names = { "message" })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		String error = (String) scope.getArg("message", IType.STRING);
 		super.error(error);
 		return error;
 	}
 
-	@action("tell")
-	@args({ "message" })
+	@action(name="tell")
+	@args(names = { "message" })
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
 		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
 		super.tell(s);
 		return s;
 	}
 
-	@action("die")
+	@action(name="die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		scope.setStatus(ExecutionStatus.interrupt);
 		die();
