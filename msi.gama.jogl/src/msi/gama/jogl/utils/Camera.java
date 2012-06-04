@@ -290,9 +290,9 @@ public class Camera {
 		if(isModelCentered){
 			this.setxPos(0);
 			this.setxLPos(0);
-			this.setyPos(-envHeight  * 1.75+envHeight);
-			this.setyLPos(-envHeight * 0.5+envHeight);
-			this.setzPos(maxDim);
+			this.setyPos(-envHeight  * 1.75+envHeight/2);
+			this.setyLPos(-envHeight * 0.5+envHeight/2);
+			this.setzPos(maxDim*2);
 			this.setzLPos(0);
 			
 		}else{
