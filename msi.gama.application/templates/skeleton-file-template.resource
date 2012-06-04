@@ -12,6 +12,6 @@ entities {
 	/** Insert here the definition of the species of agents */
 }
 
-experiment default type: gui {
+experiment $TITLE$ type: gui {
 	/** Insert here the definition of the input and output of the model */
 }
