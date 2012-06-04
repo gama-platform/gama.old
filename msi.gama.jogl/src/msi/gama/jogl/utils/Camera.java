@@ -16,6 +16,10 @@ public class Camera {
 	private double yaw;
 	
 	private float maxDim;
+	
+	
+	//Draw the model on 0,0,0 coordinate
+	public boolean isModelCentered= true;
 
 	public Camera() {
 		setxPos(0);
@@ -257,13 +261,24 @@ public class Camera {
 		} else {
 			maxDim = envHeight;
 		}
+		
+		if(isModelCentered){
+			this.setxPos(0);
+			this.setxLPos(0);
+			this.setyPos(0);
+			this.setyLPos(0);
+			this.setzPos(maxDim*1.5);
+			this.setzLPos(0.0f);
+		}
+		else{
 		this.setxPos(envWidth / 2);
 		this.setxLPos(envWidth / 2);
 		this.setyPos(-envHeight / 2);
 		this.setyLPos(-envHeight / 2);
-		this.PrintParam();
 		this.setzPos(maxDim*1.5);
 		this.setzLPos(0.0f);
+		}
+		this.PrintParam();
 	}
 	
 	
@@ -272,12 +287,24 @@ public class Camera {
 		this.yaw = -1.5f;
 		this.pitch = 0.5f;
 
-		this.setxPos(envWidth / 2);
-		this.setxLPos(envWidth / 2);
-		this.setyPos(-envHeight  * 1.75);
-		this.setyLPos(-envHeight * 0.5);
-		this.setzPos(maxDim);
-		this.setzLPos(0);
+		if(isModelCentered){
+			this.setxPos(0);
+			this.setxLPos(0);
+			this.setyPos(-envHeight  * 1.75+envHeight);
+			this.setyLPos(-envHeight * 0.5+envHeight);
+			this.setzPos(maxDim);
+			this.setzLPos(0);
+			
+		}else{
+			this.setxPos(envWidth / 2);
+			this.setxLPos(envWidth / 2);
+			this.setyPos(-envHeight  * 1.75);
+			this.setyLPos(-envHeight * 0.5);
+			this.setzPos(maxDim);
+			this.setzLPos(0);
+		}
+		
+		
 		
 		this.PrintParam();
 	}

@@ -147,6 +147,7 @@ public class MyGLToyDrawer {
 	      
 	      gl.glTranslatef(3.0f*size, 0.0f, 0.0f); // translate right and into the screen
 
+	      
 	      gl.glBegin(GL_QUADS); // of the color cube
 
 	      // Top-face
@@ -192,12 +193,56 @@ public class MyGLToyDrawer {
 	      gl.glVertex3f(size, -size, -size);
 
 	      gl.glEnd(); // of the color cube
+	      
+	      
+	      
 	}
 	
+	
+	public void DrawArrayListCube(GL gl,float size){
+	      float vertices[] = {
+				// Top-face
+				size, size, -size,
+			    -size, size, -size,
+			    -size, size, size,
+			    size, size, size, 
+			    // Bottom-face
+			    size, -size, size,
+			    -size, -size, size,
+			    -size, -size, -size,
+			    size, -size, -size,
+			    // Front-face
+			    size, size, size,
+			    -size, size, size,
+			    -size, -size, size,
+			    size, -size, size,
+			    // Back-face
+			    size, -size, -size,
+			    -size, -size, -size,
+			    -size, size, -size,
+			    size, size, -size,
+			    // Left-face
+			    -size, size, size,
+			    -size, size, -size,
+			    -size, -size, -size,
+			    -size, -size, size,
+			    // Right-face
+			    size, size, -size,
+			    size, size, size,
+			    size, -size, size,
+			    size, -size, -size, 
+	      };
+	      
+	      gl.glBegin(GL_QUADS);
+	      for (int i = 0; i < 24; i++)
+	        gl.glVertex3f(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
+	      gl.glEnd();
+	}
 	public void Draw3DCube(GL gl, float size){
 
 	      // ----- Render the Centered Cube -----
 		  gl.glColor3f(0.0f, 0.0f, 0.0f); // black
+		  		  
 	      // Top-face
 		  gl.glBegin(GL.GL_LINES);
 		  

@@ -543,8 +543,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void zoomFit() {
 		if ( ThreeD ) {
 			myGLRender.camera.Initialize3DCamera(envWidth, envHeight);
+			if(myGLRender.camera.isModelCentered){
+				myGLRender.reset();
+			}
+			
 		} else {
 			myGLRender.camera.InitializeCamera(envWidth, envHeight);
+			if(myGLRender.camera.isModelCentered){
+				myGLRender.reset();
+			}
 		}
 
 	}

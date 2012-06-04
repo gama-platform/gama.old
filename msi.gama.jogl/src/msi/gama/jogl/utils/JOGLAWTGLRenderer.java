@@ -28,6 +28,8 @@ import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
 import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 
 
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 
 import com.sun.opengl.util.FPSAnimator;
 
@@ -51,6 +54,9 @@ import com.sun.opengl.util.texture.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
+import msi.gama.jogl.utils.myarcball.ArcBall;
+import msi.gama.jogl.utils.myarcball.Matrix4f;
+import msi.gama.jogl.utils.myarcball.Quat4f;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
@@ -65,8 +71,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean opengl = true;
 	// Event Listener
 	public MyListener myListener;
-
-
+	
 	private int width, height;
 	// Camera
 	public Camera camera;
@@ -90,20 +95,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private static boolean blendingEnabled; // blending on/off
 
 	public JOGLAWTDisplaySurface displaySurface;
-
-	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
+	
+		public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
 		camera = new Camera();
 		
 		myGLDrawer= new MyGLToyDrawer();
 
 		canvas = new GLCanvas();
-		myListener = new MyListener(camera);
+		//myListener = new MyListener(camera);
+		myListener = new MyListener(camera, this);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(myListener);
 		canvas.addMouseListener(myListener);
 		canvas.addMouseMotionListener(myListener);
 		canvas.addMouseWheelListener(myListener);
+	
+		
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
@@ -196,6 +204,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		System.out.println("openGL init ok");
 
+		// hdviet added 28j/05/2012
+		// Start Of User Initialization
+        LastRot.setIdentity(); // Reset Rotation
+        ThisRot.setIdentity(); // Reset Rotation
+        ThisRot.get(matrix);
+
 	}
 
 	@Override
@@ -222,14 +236,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(),
-				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 0.0,
-				1.0, 0.0);
-
+		glu.gluLookAt(
+				camera.getXPos(), camera.getYPos(), camera.getZPos(),
+				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 
+				0.0, 1.0, 0.0);
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		// hdviet added 28/05/2012
+		synchronized(matrixLock) {
+            ThisRot.get(matrix);
+        }
+		
 		// System.out.println("opengl display");
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
@@ -264,11 +283,25 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glDisable(GL_BLEND); // Turn blending off
 			gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
 		}
+		
+		// hdviet added 02/06/2012
+		gl.glPushMatrix();
+		gl.glMultMatrixf(matrix,0);
+				
+		
 
-		//myGLDrawer.DrawOpenGLHelloWorldShape(gl,width);
-		//myGLDrawer.DrawColorTriangle(gl,0.0f, 0.0f, 0.0f, width);
+		
+		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+		myGLDrawer.Draw3DCube(gl, envMaxDim/2);
+	
+		
+		//Display the model center on 0,0,0
+		if(camera.isModelCentered){
+			gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
+		}
+		
+		this.DrawModel();
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
-		//myGLDrawer.Draw3DCube(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
@@ -277,17 +310,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
 	    //myGLDrawer.DrawTexturedDisplayList(gl,width);
-
-		
-		this.DrawModel();
-
+		gl.glPopMatrix(); 
 
 	}
 
 	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {
 		// TODO Auto-generated method stub
-
+		// hdviet added 28/05/2012
+		// init(arg0);
 	}
 	
 	
@@ -458,5 +489,43 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 	}
 
+	// hdviet 27/05/2012
+	// add new listener for ArcBall
+	// public InputHandler arcBallListener;
+	// private GLUquadric quadratic;          // Used For Our Quadric
+	// hdviet 27/05/2012
+	// add attribute to ArcBall model
+	private Matrix4f LastRot = new Matrix4f();
+    private Matrix4f ThisRot = new Matrix4f();
+    private final Object matrixLock = new Object();
+    private float[] matrix = new float[16];
 
+    
+    //FIXME: Need to set the width and height of the displaysurface.
+    private ArcBall arcBall = new ArcBall(480.0f, 640.0f); 
+	
+	// add function to capture mouse event of ArcBall model
+	public void drag(Point mousePoint){
+		Quat4f ThisQuat = new Quat4f();
+
+        arcBall.drag( mousePoint, ThisQuat); // Update End Vector And Get Rotation As Quaternion
+        synchronized(matrixLock) {
+            ThisRot.setRotation(ThisQuat);   // Convert Quaternion Into Matrix3fT
+            ThisRot.mul( ThisRot, LastRot);  // Accumulate Last Rotation Into This One
+        }
+	}
+	
+	public void startDrag(Point mousePoint){
+		synchronized(matrixLock) {
+            LastRot.set( ThisRot );			// Set Last Static Rotation To Last Dynamic One
+        }
+        arcBall.click( mousePoint );		// Update Start Vector And Prepare For Dragging
+	}
+	
+	public void reset(){
+		synchronized(matrixLock) {
+            LastRot.setIdentity();			// Reset Rotation
+            ThisRot.setIdentity();			// Reset Rotation
+        }
+	}
 }

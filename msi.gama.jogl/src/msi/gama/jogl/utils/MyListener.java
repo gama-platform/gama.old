@@ -17,6 +17,7 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_Z;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -28,7 +29,9 @@ import java.io.IOException;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
+import javax.swing.SwingUtilities;
 
+import msi.gama.jogl.utils.myarcball.*;
 
 
 public class MyListener implements KeyListener, MouseListener,
@@ -39,21 +42,34 @@ public class MyListener implements KeyListener, MouseListener,
 	 */
 	private static final long serialVersionUID = 1L;
 	public Camera myCamera;
+	private JOGLAWTGLRenderer myRenderer;
 
 	//To handle mouse event
 	private int lastx, lasty;
+	
+	public boolean isArcBallEnable=false;
 
 	public MyListener(Camera camera) {
 		myCamera = camera;
 	}
 
-
+	public MyListener(Camera camera, JOGLAWTGLRenderer renderer){
+		myCamera = camera;
+		myRenderer = renderer;
+	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(MouseEvent mouseEvent) {
 		// TODO Auto-generated method stub
-		myCamera.PrintParam();
-		System.out.println("x:" + arg0.getX() +" y:" +arg0.getY());
+		if (mouseEvent.isControlDown() && myCamera.isModelCentered) {
+			if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+				myRenderer.reset();
+			}
+		} else {
+			myCamera.PrintParam();
+			System.out.println( "x:" + mouseEvent.getX() + 
+								" y:" + mouseEvent.getY());
+		}
 	}
 
 	@Override
@@ -69,11 +85,17 @@ public class MyListener implements KeyListener, MouseListener,
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		lastx = arg0.getX();
-		lasty = arg0.getY();
-		//myCamera.Init3DView();
+	public void mousePressed(MouseEvent mouseEvent) {
+		
+		//FIXME: Need to use mouseEvent.isControlDown() for windows and Linux
+		if (mouseEvent.isMetaDown() && myCamera.isModelCentered) {
+			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+				myRenderer.startDrag(mouseEvent.getPoint());
+			}
+		} else{
+			lastx = mouseEvent.getX();
+			lasty = mouseEvent.getY();
+		}
 	}
 
 	@Override
@@ -83,27 +105,34 @@ public class MyListener implements KeyListener, MouseListener,
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseDragged(MouseEvent mouseEvent) {
 
-		int diffx = arg0.getX() - lastx; // check the difference between the
-											// current x and the last x position
-		int diffy = arg0.getY() - lasty; // check the difference between the
-											// current y and the last y position
-		lastx = arg0.getX(); // set lastx to the current x position
-		lasty = arg0.getY(); // set lasty to the current y position
-
-		double speed = 0.035;
-
-		// Decrease the speed of the translation if z is negative.
-		if (myCamera.getZPos() < 0) {
-			speed = (speed / Math.abs(myCamera.getZPos()) * 2);
+		//FIXME: Need to use mouseEvent.isControlDown() for windows and Linux
+		if (mouseEvent.isMetaDown() && myCamera.isModelCentered) {
+			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+				myRenderer.drag(mouseEvent.getPoint());
+			}
 		} else {
-			speed = (speed * Math.abs(myCamera.getZPos()) / 4);
-		}
-		// camera.PrintParam();
-		myCamera.moveXYPlan(diffx, diffy, speed);
+			int diffx = mouseEvent.getX() - lastx; // check the difference between the
+												// current x and the last x
+												// position
+			int diffy = mouseEvent.getY() - lasty; // check the difference between the
+												// current y and the last y
+												// position
+			lastx = mouseEvent.getX(); // set lastx to the current x position
+			lasty = mouseEvent.getY(); // set lasty to the current y position
 
+			double speed = 0.035;
+
+			// Decrease the speed of the translation if z is negative.
+			if (myCamera.getZPos() < 0) {
+				speed = (speed / Math.abs(myCamera.getZPos()) * 2);
+			} else {
+				speed = (speed * Math.abs(myCamera.getZPos()) / 4);
+			}
+			// camera.PrintParam();
+			myCamera.moveXYPlan(diffx, diffy, speed);
+		}
 	}
 
 	@Override
@@ -145,7 +174,6 @@ public class MyListener implements KeyListener, MouseListener,
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("keyPressed");
 		switch (e.getKeyCode()) {
 		case VK_LEFT: // player turns left (scene rotates right)
 			myCamera.strafeLeft(0.1);

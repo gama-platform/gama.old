@@ -427,7 +427,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
 		// FIXME : Need to check if the circle is at the right place.
 		Geometry g =
-			GamaGeometryType.buildCircle((double) curWidth / 2,
+				GamaGeometryType.buildCircle((double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY + (double) curWidth / 2))
 				.getInnerGeometry();
 		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, 0,0);
