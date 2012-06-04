@@ -37,9 +37,9 @@ entities {
 }
 environment bounds: shape_file_grid ;
 output {
-	display city_display type:opengl refresh_every: 1 {
-		//species lightrap aspect: base ;
-		//species grid aspect: base ;
+	display city_display refresh_every: 1 {
+		species lightrap aspect: base ;
+		species grid aspect: base ;
 		species district aspect: base;
 	}
 }
