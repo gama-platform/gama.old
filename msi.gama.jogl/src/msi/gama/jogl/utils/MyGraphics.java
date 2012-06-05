@@ -122,6 +122,7 @@ public class MyGraphics {
 				(float) c.getBlue() / 255, alpha);
 
 		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
+
 		for (j = 0; j < curPolyGonNumPoints; j++) {
 			
 			int k = (j + 1) % curPolyGonNumPoints;
@@ -190,7 +191,7 @@ public class MyGraphics {
 
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
-		//System.out.println("DrawJTSGraphics:" + geometry.geometry.getGeometryType());
+		//System.out.println("DrawJTSGraphics:" + geometry.geometry.getGeometryType() + "elevation" + geometry.elevation);
 		
 		
 		for (i = 0; i < geometry.geometry.getNumGeometries(); i++) {
@@ -204,7 +205,7 @@ public class MyGraphics {
 				Polygon polygon = (Polygon) geometry.geometry;
 				
 				if(geometry.elevation>0){
-					Draw3DPolygon(curPolygon,geometry.z,geometry.color, geometry.elevation,geometry.angle);
+					Draw3DPolygon(polygon,geometry.z,geometry.color, geometry.elevation,geometry.angle);
 				}
 				else{
 					DrawPolygon(polygon, geometry.z, geometry.color,geometry.fill,geometry.isTextured,geometry.angle);	
@@ -262,6 +263,7 @@ public class MyGraphics {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		numExtPoints = p.getExteriorRing().getNumPoints();
+
 		//System.out.println("Draw Polygon with Tessellation :"+numExtPoints);
 
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
@@ -379,6 +381,7 @@ public class MyGraphics {
 
 	public void Draw3DPolygon(Polygon p, float z,Color c, float z_offset,Integer angle) {
 
+		
 		DrawPolygon(p, z, c,true,false,angle);
 		DrawPolygon(p, z+z_offset, c,true,false,angle);
 		//FIXME : Will be wrong if angle =!0

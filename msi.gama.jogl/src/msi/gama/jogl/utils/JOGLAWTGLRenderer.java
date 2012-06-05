@@ -291,8 +291,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 
 		
-		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
-		myGLDrawer.Draw3DCube(gl, envMaxDim/2);
+		//float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+		//myGLDrawer.Draw3DCube(gl, envMaxDim/2);
 	
 		
 		//Display the model center on 0,0,0
