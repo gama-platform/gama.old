@@ -48,8 +48,8 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color;
-			//draw geometry: circle(20) at_location self.location color : self.color;
+			draw shape: geometry color: color z:100;
+			//draw geometry: circle(20) at_location self.location color : self.color z:100;
 		}
 	}
 }
