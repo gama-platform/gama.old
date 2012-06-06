@@ -173,12 +173,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-
-		for ( ISymbol s : commands ) {
-			if ( !(s instanceof ILayerStatement) ) {
-				System.out.print("");
-			}
-		}
 		setLayers((List<AbstractLayerStatement>) commands);
 	}
 
