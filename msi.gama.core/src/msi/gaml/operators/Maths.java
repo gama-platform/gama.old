@@ -50,6 +50,7 @@ public class Maths {
 
 	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Double pow(final Double a, final Integer b) {
+
 		return pow(a, b.doubleValue());
 	}
 
@@ -60,88 +61,89 @@ public class Maths {
 
 	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
 	public static Double pow(final Double a, final Double b) {
+		return Math.pow(a, b);
 		// Based on the Taylor series approximation.
-		double a1 = a.doubleValue();
-		double b1 = b.doubleValue();
-		int oc = -1; // used to alternate math symbol (+,-)
-		int iter = 20; // number of iterations
-		double p, x, x2, sumX, sumY; // is exponent a whole number?
-		if ( b1 - floor(b1) == 0 ) { // return base^exponent
-			double x1 = a1;
-			int y = (int) b1;
-			switch (y) {
-				case -3:
-					return 1 / (x1 * x1 * x1);
-				case -2:
-					return 1 / (x1 * x1);
-				case -1:
-					return 1 / x1;
-				case 0:
-					return 1d;
-				case 1:
-					return x1;
-				case 2:
-					return x1 * x1;
-				case 3:
-					return x1 * x1 * x1;
-				case 4:
-					return x1 * x1 * x1 * x1;
-				default:
-					if ( y > 0 ) {
-						double z = 1;
-						do {
-							if ( (y & 1) != 0 ) {
-								z *= x1;
-							}
-							x1 *= x1;
-							y >>= 1;
-						} while (y != 0);
-						return z;
-					}
-					y = -y;
-					double z = 1;
-					do {
-						if ( (y & 1) != 0 ) {
-							z /= x1;
-						}
-						x1 *= x1;
-						y >>= 1;
-					} while (y != 0);
-					return z;
-			}
-		}
-		// true if base is greater
-		// than 1
-		boolean gt1 = Math.sqrt((a1 - 1) * (a1 - 1)) <= 1 ? false : true;
-		x = gt1 ? a1 / (a1 - 1) : // base is greater than 1
-			a1 - 1; // base is 1 or less
-		sumX = gt1 ? 1 / x : // base is greater than 1
-			x; // base is 1 or less
-		for ( int i = 2; i < iter; i++ ) { // find x^iteration
-			p = x;
-			for ( int j = 1; j < i; j++ ) {
-				p *= x;
-			}
-			double xTemp = gt1 ? 1 / (i * p) : // base is greater than 1
-				p / i; // base is 1 or less
-			sumX = gt1 ? sumX + xTemp : // base is greater than 1
-				sumX + xTemp * oc; // base is 1 or less
-			oc *= -1; // change math symbol (+,-)
-		}
-		x2 = b1 * sumX;
-		sumY = 1 + x2; // our estimate
-		for ( int i = 2; i <= iter; i++ ) { // find x2^iteration
-			p = x2;
-			for ( int j = 1; j < i; j++ ) {
-				p *= x2; // multiply iterations (ex: 3 iterations = 3*2*1)
-			}
-			int yTemp = 2;
-			for ( int j = i; j > 2; j-- ) {
-				yTemp *= j; // add to estimate (ex: 3rd iteration => (x2^3)/(3*2*1) )
-			}
-			sumY += p / yTemp;
-		}
-		return sumY; // return our estimate
+		// double a1 = a.doubleValue();
+		// double b1 = b.doubleValue();
+		// int oc = -1; // used to alternate math symbol (+,-)
+		// int iter = 20; // number of iterations
+		// double p, x, x2, sumX, sumY; // is exponent a whole number?
+		// if ( b1 - floor(b1) == 0 ) { // return base^exponent
+		// double x1 = a1;
+		// int y = (int) b1;
+		// switch (y) {
+		// case -3:
+		// return 1 / (x1 * x1 * x1);
+		// case -2:
+		// return 1 / (x1 * x1);
+		// case -1:
+		// return 1 / x1;
+		// case 0:
+		// return 1d;
+		// case 1:
+		// return x1;
+		// case 2:
+		// return x1 * x1;
+		// case 3:
+		// return x1 * x1 * x1;
+		// case 4:
+		// return x1 * x1 * x1 * x1;
+		// default:
+		// if ( y > 0 ) {
+		// double z = 1;
+		// do {
+		// if ( (y & 1) != 0 ) {
+		// z *= x1;
+		// }
+		// x1 *= x1;
+		// y >>= 1;
+		// } while (y != 0);
+		// return z;
+		// }
+		// y = -y;
+		// double z = 1;
+		// do {
+		// if ( (y & 1) != 0 ) {
+		// z /= x1;
+		// }
+		// x1 *= x1;
+		// y >>= 1;
+		// } while (y != 0);
+		// return z;
+		// }
+		// }
+		// // true if base is greater
+		// // than 1
+		// boolean gt1 = Math.sqrt((a1 - 1) * (a1 - 1)) <= 1 ? false : true;
+		// x = gt1 ? a1 / (a1 - 1) : // base is greater than 1
+		// a1 - 1; // base is 1 or less
+		// sumX = gt1 ? 1 / x : // base is greater than 1
+		// x; // base is 1 or less
+		// for ( int i = 2; i < iter; i++ ) { // find x^iteration
+		// p = x;
+		// for ( int j = 1; j < i; j++ ) {
+		// p *= x;
+		// }
+		// double xTemp = gt1 ? 1 / (i * p) : // base is greater than 1
+		// p / i; // base is 1 or less
+		// sumX = gt1 ? sumX + xTemp : // base is greater than 1
+		// sumX + xTemp * oc; // base is 1 or less
+		// oc *= -1; // change math symbol (+,-)
+		// }
+		// x2 = b1 * sumX;
+		// sumY = 1 + x2; // our estimate
+		// for ( int i = 2; i <= iter; i++ ) { // find x2^iteration
+		// p = x2;
+		// for ( int j = 1; j < i; j++ ) {
+		// p *= x2; // multiply iterations (ex: 3 iterations = 3*2*1)
+		// }
+		// int yTemp = 2;
+		// for ( int j = i; j > 2; j-- ) {
+		// yTemp *= j; // add to estimate (ex: 3rd iteration => (x2^3)/(3*2*1) )
+		// }
+		// sumY += p / yTemp;
+		// }
+		// return sumY; // return our estimate
 	}
 
 	// ==== Operators
@@ -185,12 +187,12 @@ public class Maths {
 	public static Double atan(final Integer rv) {
 		return Math.atan(rv) * toDeg;
 	}
-	
+
 	@operator(value = "tanh", can_be_const = true)
 	public static Double tanh(final Double rv) {
 		return Math.tanh(rv);
-	}	
-	
+	}
+
 	@operator(value = "tanh", can_be_const = true)
 	public static Double tanh(final Integer rv) {
 		return Math.tanh(rv);
