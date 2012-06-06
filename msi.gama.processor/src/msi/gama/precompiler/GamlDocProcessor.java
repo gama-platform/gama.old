@@ -82,7 +82,7 @@ public class GamlDocProcessor {
 
 		Document doc = docBuilder.newDocument();
 
-		Set<? extends Element> setRoot = env.getRootElements();
+		// Set<? extends Element> setRoot = env.getRootElements();
 		org.w3c.dom.Element root = doc.createElement("doc");
 
 		// ////////////////////////////////////////////////
@@ -139,11 +139,8 @@ public class GamlDocProcessor {
 		boolean found = false;
 		while (!found && i < nL.getLength()) {
 			org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-			if ( eltName.equals(elt.getAttribute("id")) ) {
-				return elt;
-			} else {
-				i++;
-			}
+			if ( eltName.equals(elt.getAttribute("id")) ) { return elt; }
+			i++;
 		}
 		return null;
 	}
