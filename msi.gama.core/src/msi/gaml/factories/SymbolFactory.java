@@ -174,7 +174,7 @@ public class SymbolFactory extends AbstractFactory {
 		if ( md == null ) { return; }
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
-		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
+		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f == null ) {
 				continue;
@@ -211,7 +211,7 @@ public class SymbolFactory extends AbstractFactory {
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();
 		// Addition of a facet to keep track of the keyword
-		rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
+		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f != null ) {
 				compileFacet(f.getKey(), desc);
