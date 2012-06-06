@@ -35,7 +35,7 @@ public class DescriptionFactory {
 	public synchronized static IDescription create(final ISymbolFactory factory,
 		final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final Facets facets) {
-		facets.putAsLabel(IKeyword.KEYWORD, keyword);
+		// facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		ISyntacticElement element = new SyntheticStatement(keyword, facets);
 		return factory.createDescription(element, superDesc, children);
 	}
