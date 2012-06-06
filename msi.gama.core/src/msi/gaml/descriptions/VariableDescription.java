@@ -18,8 +18,9 @@
  */
 package msi.gaml.descriptions;
 
+import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.IChildrenProvider;
@@ -38,17 +39,24 @@ public class VariableDescription extends SymbolDescription {
 
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
-	private IType contentType = null;
-	private boolean isGlobal;
+	private IType type = null, contentType = null;
+	private final boolean _isGlobal, _isFunction, _isNotModifiable, _isParameter, _isUpdatable;
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
 		final SymbolMetaDescription md) {
 		super(keyword, superDesc, cp, source, md);
-		if ( !facets.containsKey(IKeyword.TYPE) &&
-			!facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER) ) {
-			facets.putAsLabel(IKeyword.TYPE, keyword);
+		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
+		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
+			facets.putAsLabel(TYPE, keyword);
 		}
+		_isGlobal = superDesc != null && WORLD_SPECIES.equals(superDesc.getName());
+		_isFunction = facets.containsKey(FUNCTION);
+		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
+		_isNotModifiable = _isFunction || facets.equals(CONST, TRUE) && !_isParameter;
+		_isUpdatable =
+			!_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
+
 	}
 
 	@Override
@@ -61,14 +69,7 @@ public class VariableDescription extends SymbolDescription {
 		super.dispose();
 	}
 
-	@Override
-	public void setSuperDescription(final IDescription s) {
-		isGlobal = s != null && IKeyword.WORLD_SPECIES.equals(s.getName());
-		super.setSuperDescription(s);
-	}
-
 	public void copyFrom(final VariableDescription v2) {
-		// builtIn = v2.builtIn;
 		// Without replacing
 		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
 			if ( entry == null ) {
@@ -84,20 +85,21 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription copy() {
 		return new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(),
 			meta);
-		// v2.builtIn = builtIn;
-		// return v2;
 	}
 
 	@Override
 	public IType getType() {
-		return getTypeNamed(facets.getLabel(IKeyword.TYPE));
+		if ( type == null ) {
+			type = getTypeNamed(facets.getLabel(TYPE));
+		}
+		return type;
 	}
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
 		if ( dependencies == null ) {
 			dependencies = new HashSet();
 			final Set<String> names = new HashSet();
-			IExpressionDescription depends = facets.get(IKeyword.DEPENDS_ON);
+			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
 				List<String> dependsList =
 					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());
@@ -124,7 +126,6 @@ public class VariableDescription extends SymbolDescription {
 			}
 		}
 		dependencies.addAll(accumulator);
-		// GuiUtils.debug("Total dependencies of " + getName() + " : " + dependencies);
 	}
 
 	public Set<VariableDescription> getDependencies() {
@@ -132,27 +133,25 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public boolean isUpdatable() {
-		return !isNotModifiable() &&
-			(facets.containsKey(IKeyword.VALUE) || facets.containsKey(IKeyword.UPDATE));
+		return _isUpdatable;
 	}
 
 	public boolean isFunction() {
-		return facets.containsKey(IKeyword.FUNCTION);
+		return _isFunction;
 	}
 
 	public boolean isNotModifiable() {
-		return isFunction() || facets.equals(IKeyword.CONST, "true") && !isParameter();
+		return _isNotModifiable;
 	}
 
 	public boolean isParameter() {
-		return facets.containsKey(IKeyword.PARAMETER) ||
-			facets.equals(IKeyword.KEYWORD, IKeyword.PARAMETER);
+		return _isParameter;
 	}
 
 	@Override
 	public IType getContentType() {
 		if ( contentType != null && contentType != Types.NO_TYPE ) { return contentType; }
-		String of = facets.getLabel(IKeyword.OF);
+		String of = facets.getLabel(OF);
 		if ( of != null ) {
 			if ( "self".equals(of) ) {
 				contentType = getTypeNamed(getSuperDescription().getName());
@@ -169,7 +168,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( varExpr != null ) { return varExpr; }
 		varExpr =
 			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(),
-				isNotModifiable(), isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
+				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
 				this.getSuperDescription());
 		return varExpr;
 	}
@@ -194,8 +193,8 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public String getParameterName() {
-		final String pName = facets.getLabel(IKeyword.PARAMETER);
-		if ( pName == null || pName.equals(IKeyword.TRUE) ) { return getName(); }
+		final String pName = facets.getLabel(PARAMETER);
+		if ( pName == null || pName.equals(TRUE) ) { return getName(); }
 		return pName;
 	}
 
