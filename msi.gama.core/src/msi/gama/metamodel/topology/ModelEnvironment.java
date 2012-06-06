@@ -158,8 +158,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
+						throw new GamaRuntimeException(e);
 					} catch (TransformException e) {
 						e.printStackTrace();
+						throw new GamaRuntimeException(e);
 					}
 				}
 			}
@@ -188,6 +190,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					height = boundsEnv.getHeight();
 				} catch (Exception e) {
 					e.printStackTrace();
+					throw new GamaRuntimeException(e);
 				}
 			} else if ( boundsStr.toLowerCase().endsWith(".asc") ) {
 				try {
@@ -198,6 +201,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					height = boundsEnv.getHeight();
 				} catch (Exception e) {
 					e.printStackTrace();
+					throw new GamaRuntimeException(e);
 				}
 			}
 		} else {
