@@ -81,5 +81,5 @@ public interface IParameter {
 
 	}
 
-	public abstract void reinitIfNull();
+	public abstract void tryToInit();
 }

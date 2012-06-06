@@ -151,7 +151,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public void reinitRandomly() {}
 
 	@Override
-	public void reinitIfNull() {}
+	public void tryToInit() {}
 
 	@Override
 	public Set<Object> neighbourValues() throws GamaRuntimeException {

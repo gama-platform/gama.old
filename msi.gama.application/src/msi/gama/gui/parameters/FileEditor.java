@@ -21,7 +21,6 @@ package msi.gama.gui.parameters;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 import msi.gaml.types.*;
@@ -53,11 +52,12 @@ public class FileEditor extends AbstractEditor {
 		this.createComposite(parent);
 	}
 
-	@Override
-	protected Object getParameterValue() throws GamaRuntimeException {
-		param.reinitIfNull();
-		return super.getParameterValue();
-	}
+	//
+	// @Override
+	// protected Object getParameterValue() throws GamaRuntimeException {
+	// param.tryToInit();
+	// return super.getParameterValue();
+	// }
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {

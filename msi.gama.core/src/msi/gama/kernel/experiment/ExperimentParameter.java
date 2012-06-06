@@ -49,7 +49,7 @@ import msi.gaml.types.*;
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
-	Object value;
+	private Object value = UNDEFINED;
 	int order;
 	static int INDEX = 0;
 	Number minValue, maxValue, stepValue;
@@ -84,7 +84,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
 		stepValue = step == null ? null : (Number) step.value(GAMA.getDefaultScope());
 		amongValue = among == null ? null : (List) among.value(GAMA.getDefaultScope());
-		setValue(init == null ? UNDEFINED : init.value(GAMA.getDefaultScope()));
+		// setValue(init == null ? UNDEFINED : init.value(GAMA.getDefaultScope()));
 		isEditable = true;
 		isLabel = false; // ??
 		allowsTooltip = true; // ??
@@ -204,8 +204,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void reinitIfNull() {
-		setValue(GAMA.getFrontmostSimulation().getWorld().getDirectVarValue(varName));
+	public void tryToInit() {
+		if ( value != UNDEFINED ) { return; }
+		IExpression expr = getFacet(IKeyword.INIT);
+		if ( expr != null ) {
+			setValue(expr.value(GAMA.getDefaultScope()));
+		} else {
+			setValue(GAMA.getFrontmostSimulation().getWorld().getDirectVarValue(varName));
+		}
 	}
 
 	private Number drawRandomValue() {
@@ -296,17 +302,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value(final IScope scope) {
-		return value;
+		return getValue();
 	}
 
 	@Override
 	public Object value() {
-		return value;
+		return getValue();
 	}
 
 	@Override
 	public Object getInitialValue() {
-		return value;
+		return getValue();
 	}
 
 	@Override
@@ -336,7 +342,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String toGaml() {
-		return StringUtils.toGaml(value);
+		return StringUtils.toGaml(getValue());
 	}
 
 	@Override
@@ -359,6 +365,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public String getUnitLabel() {
 		return unitLabel;
+	}
+
+	Object getValue() {
+		tryToInit();
+		return value;
 	}
 
 }
