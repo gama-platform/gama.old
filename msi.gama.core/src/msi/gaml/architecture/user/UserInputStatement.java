@@ -157,6 +157,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public void reinitIfNull() {}
+	public void tryToInit() {}
 
 }
