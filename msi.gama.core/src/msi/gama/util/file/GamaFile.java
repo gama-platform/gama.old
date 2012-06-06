@@ -20,10 +20,8 @@ package msi.gama.util.file;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -229,7 +227,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter( IKeyword.EXISTS)
+	// @getter( IKeyword.EXISTS)
 	public Boolean exists() {
 		return getFile().exists();
 	}
@@ -253,7 +251,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter( IKeyword.EXTENSION)
+	// @getter( IKeyword.EXTENSION)
 	public String getExtension() {
 		String path = getFile().getPath();
 		int mid = path.lastIndexOf(".");
@@ -262,19 +260,19 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter( IKeyword.NAME)
+	// @getter( IKeyword.NAME)
 	public String getName() {
 		return getFile().getName();
 	}
 
 	@Override
-	@getter( IKeyword.PATH)
+	// @getter( IKeyword.PATH)
 	public String getPath() {
 		return getFile().getPath();
 	}
 
 	@Override
-	@getter( IKeyword.CONTENTS)
+	// @getter( IKeyword.CONTENTS)
 	public IContainer getContents() throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
 		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " +
@@ -305,7 +303,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter( IKeyword.ISFOLDER)
+	// @getter( IKeyword.ISFOLDER)
 	public Boolean isFolder() {
 		return getFile().isDirectory();
 	}
@@ -316,13 +314,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	@getter( IKeyword.READABLE)
+	// @getter( IKeyword.READABLE)
 	public Boolean isReadable() {
 		return getFile().canRead();
 	}
 
 	@Override
-	@getter( IKeyword.WRITABLE)
+	// @getter( IKeyword.WRITABLE)
 	public Boolean isWritable() {
 		return getFile().canWrite();
 	}
