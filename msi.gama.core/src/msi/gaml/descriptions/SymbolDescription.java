@@ -44,13 +44,14 @@ public class SymbolDescription implements IDescription {
 	protected SymbolMetaDescription meta;
 
 	// protected String name;
-	// protected String keyword;
-	// boolean builtIn = false;
+	protected String keyword;
+	boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
 		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
+		this.keyword = keyword;
 		setSource(source);
 		meta = md;
 		setSuperDescription(superDesc);
@@ -119,11 +120,9 @@ public class SymbolDescription implements IDescription {
 	@Override
 	public String getKeyword() {
 		// if ( keyword == null ) {
-		// keyword =
-
-		return facets.getLabel(IKeyword.KEYWORD);
+		// keyword = facets.getLabel(IKeyword.KEYWORD);
 		// }
-		// return keyword;
+		return keyword;
 	}
 
 	@Override
@@ -297,7 +296,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected void setSource(final ISyntacticElement source) {
-		// builtIn = source.isSynthetic();
+		builtIn = source.isSynthetic();
 		this.source = source;
 
 	}
@@ -368,6 +367,6 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected boolean isBuiltIn() {
-		return source.isSynthetic();
+		return builtIn;
 	}
 }
