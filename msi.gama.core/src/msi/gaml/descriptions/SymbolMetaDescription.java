@@ -42,7 +42,7 @@ public class SymbolMetaDescription {
 	public static class FacetMetaDescription {
 
 		public String name;
-		public String[] types;
+		public List<String> types;
 		public boolean optional;
 		public boolean isLabel;
 		public String[] values;
@@ -53,16 +53,17 @@ public class SymbolMetaDescription {
 
 		public FacetMetaDescription(final facet f) {
 			name = f.name();
-			types = f.type();
+			String[] fTypes = f.type();
+			types = Arrays.asList(fTypes);
 			optional = f.optional();
-			isLabel = ids.contains(types[0]);
+			isLabel = ids.contains(fTypes[0]);
 			values = f.values();
 		}
 
 		static FacetMetaDescription DEPENDS_ON() {
 			FacetMetaDescription f = new FacetMetaDescription();
 			f.name = IKeyword.DEPENDS_ON;
-			f.types = new String[] { IType.NONE_STR };
+			f.types = Arrays.asList(IType.NONE_STR);
 			f.optional = true;
 			f.isLabel = true;
 			f.values = new String[0];
@@ -72,7 +73,7 @@ public class SymbolMetaDescription {
 		static FacetMetaDescription KEYWORD() {
 			FacetMetaDescription f = new FacetMetaDescription();
 			f.name = IKeyword.KEYWORD;
-			f.types = new String[] { IType.ID };
+			f.types = Arrays.asList(IType.ID);
 			f.optional = true;
 			f.isLabel = true;
 			f.values = new String[0];
@@ -133,7 +134,7 @@ public class SymbolMetaDescription {
 	public boolean isFacetDeclaringANewTemp(final String s) {
 		FacetMetaDescription f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
-		return f.types[0].equals(IType.NEW_TEMP_ID);
+		return f.types.get(0).equals(IType.NEW_TEMP_ID);
 	}
 
 	public boolean isLabel(final String s) {
@@ -244,7 +245,7 @@ public class SymbolMetaDescription {
 			}
 			if ( f.isLabel ) {
 				facets.put(facetName, facets.get(facetName).compileAsLabel());
-				if ( f.types[0].equals(IType.LABEL) ) {
+				if ( f.types.get(0).equals(IType.LABEL) ) {
 					if ( f.values != null && f.values.length != 0 ) {
 						boolean found = false;
 						for ( String possibleValue : f.values ) {
@@ -308,7 +309,7 @@ public class SymbolMetaDescription {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<b>Facets allowed:</b><br><ul>");
 		for ( FacetMetaDescription f : this.getPossibleFacets().values() ) {
-			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types[0])
+			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types.get(0))
 				.append(" <i>[").append(f.optional ? "optional" : "required").append("]</i>");
 			if ( f.values != null && f.values.length != 0 ) {
 				sb.append(" among: ").append(Arrays.toString(f.values));
