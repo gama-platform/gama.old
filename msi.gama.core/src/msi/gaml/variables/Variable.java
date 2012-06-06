@@ -350,6 +350,6 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public void reinitIfNull() {}
+	public void tryToInit() {}
 
 }
