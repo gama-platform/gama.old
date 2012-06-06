@@ -7,7 +7,6 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.util.GamaList;
 import msi.gaml.descriptions.*;
 import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
 import msi.gaml.expressions.*;
@@ -64,7 +63,7 @@ public class DescriptionValidator {
 			return;
 		}
 		// The facet is supposed to be a type (IType.TYPE_ID)
-		List<String> types = new GamaList(fmd.types);
+		List<String> types = fmd.types;
 		if ( types.contains(IType.TYPE_ID) ) {
 			verifyFacetIsAType(desc, facet, expr, tm);
 			return;
