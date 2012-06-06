@@ -53,10 +53,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		labelFont = new Font(Display.getDefault(), fd);
 	}
 
-	public void disposeButtons() {
-
-	}
-
 	@Override
 	public void dispose() {
 		if ( getDocument() != null ) {
@@ -70,7 +66,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			});
 		}
 
-		// GAMA.getGamlBuilder().removeListener(this);
 		if ( buttons != null ) {
 			for ( Button b : buttons ) {
 				if ( b != null && !b.isDisposed() ) {
@@ -156,7 +151,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			public void process(final XtextResource state) throws Exception {
 
 				((GamlResource) state).setListener(GamlEditor.this);
-				// updateExperiments(state, true);
 			}
 		});
 
@@ -166,7 +160,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
-			doSave(null);
+			GamlEditor.this.performSave(true, null);
 			String name = convert(((Button) evt.widget).getText());
 			IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 

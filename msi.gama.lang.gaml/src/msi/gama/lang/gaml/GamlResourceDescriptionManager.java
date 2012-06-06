@@ -4,9 +4,8 @@
  */
 package msi.gama.lang.gaml;
 
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
+import org.eclipse.xtext.util.IResourceScopeCache;
 
 /**
  * The class GamlResourceDescriptionManager.
@@ -18,9 +17,9 @@ import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager {
 
 	@Override
-	protected IResourceDescription internalGetResourceDescription(final Resource resource,
-		final IDefaultResourceDescriptionStrategy strategy) {
-		return new GamlResourceDescription(resource, strategy, getCache());
+	public IResourceScopeCache getCache() {
+		// To remove one day ?
+		return IResourceScopeCache.NullImpl.INSTANCE;
 	}
 
 }

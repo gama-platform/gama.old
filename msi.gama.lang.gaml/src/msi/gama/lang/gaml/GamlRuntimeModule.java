@@ -18,10 +18,9 @@
  */
 package msi.gama.lang.gaml;
 
-import msi.gama.lang.gaml.linking.*;
+import msi.gama.lang.gaml.linking.GamlLinkingService;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.resource.*;
-import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.service.SingletonBinding;
 import com.google.inject.Binder;
 
@@ -52,17 +51,6 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	// bindIGlobalScopeProvider() {
 	// return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	// }
-
-	@Override
-	public Class<? extends IContainer.Manager> bindIContainer$Manager() {
-		return StateBasedContainerManager.class;
-	}
-
-	@Override
-	@SingletonBinding(eager = true)
-	public Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() {
-		return GamlLinker.class;
-	}
 
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {

@@ -93,10 +93,10 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 		if ( GamlPackage.Literals.GAML_VAR_REF.isSuperTypeOf(ref.getEReferenceType()) ) {
 			String name = getCrossRefNodeAsString(node);
-			// GuiUtils.debug("Missing reference to " + name);
+			//GuiUtils.debug("Missing reference to " + name);
 			GamlVarRef stub = stubbedRefs.get(name);
 			if ( stub == null ) {
-				// GuiUtils.debug("Creating stub reference to " + name);
+				//GuiUtils.debug("Creating stub reference to " + name);
 				stub = EGaml.getFactory().createGamlVarRef();
 				stub.setName(name);
 				getResource().getContents().add(stub);

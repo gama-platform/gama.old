@@ -54,7 +54,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 					// Commenting the disposal to see if it plays any role in
 					// garbage collecting -- and to enable content assist
 					// result.dispose();
-					r.setModelDescription(true, null);
+					r.setModelDescription(true, result);
 				} else {
 					r.setModelDescription(false, result);
 				}
