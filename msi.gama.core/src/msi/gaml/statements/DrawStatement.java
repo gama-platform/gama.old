@@ -248,13 +248,10 @@ public class DrawStatement extends AbstractStatementSequence {
 				case -1: {
 					IShape geom = Cast.asGeometry(scope, shape.value(scope));
 					if ( geom == null ) {
-						geom = scope.getAgentScope().getGeometry();
-						//geom.getInnerGeometry().setUserData(
-							//elevation == null ? null : elevation.value(scope));
-						if(elevation != null){
-							geom.getInnerGeometry().setUserData(elevation.value(scope));	
-						}
-						
+						geom = scope.getAgentScope().getGeometry();	
+					}
+					if(elevation != null){
+						geom.getInnerGeometry().setUserData(elevation.value(scope));	
 					}
 					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, getRotation(scope));
 				}
