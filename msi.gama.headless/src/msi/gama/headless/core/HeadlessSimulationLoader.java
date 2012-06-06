@@ -1,6 +1,5 @@
 package msi.gama.headless.core;
 
-import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -8,6 +7,7 @@ import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.*;
+import msi.gama.lang.gaml.validation.GamlBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
@@ -24,7 +24,7 @@ public class HeadlessSimulationLoader {
 	 * @return the loaded experiment
 	 * @throws InterruptedException
 	 */
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) throws InterruptedException {
+	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		loadModel(fileName);
@@ -34,7 +34,7 @@ public class HeadlessSimulationLoader {
 	}
 
 	/**
-
+	 * 
 	 * load in headless mode a specified model and create an experiment
 	 * @param fileName model to load
 	 * @param params parameters of the experiment
@@ -42,26 +42,27 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName, final ParametersSet params) throws GamaRuntimeException, InterruptedException {
+	public static IHeadLessExperiment newHeadlessSimulation(final String fileName,
+		final ParametersSet params) throws GamaRuntimeException, InterruptedException {
 		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
 		GAMA.getExperiment().initialize(params, Math.random());
 		waitLoading(exp);
 		return exp;
-				
+
 	}
-	private static void waitLoading(final IHeadLessExperiment exp)
-	{
+
+	private static void waitLoading(final IHeadLessExperiment exp) {
 		System.out.println("Simulation loading...");
-		do{
+		do {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} while(exp.getCurrentSimulation()!= null && exp.getCurrentSimulation().isLoading());	
+		} while (exp.getCurrentSimulation() != null && exp.getCurrentSimulation().isLoading());
 	}
-	
+
 	private static void configureHeadLessSimulation() {
 		System.setProperty("java.awt.headless", "true");
 		GuiUtils.setHeadLessMode();
@@ -87,7 +88,8 @@ public class HeadlessSimulationLoader {
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:" + fileName), true);
 		try {
-			Map<URI, ISyntacticElement> elements = r.getBuilder().buildCompleteSyntacticTree();
+			Map<URI, ISyntacticElement> elements =
+				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
 			if ( r.getErrors().isEmpty() ) {
 				System.out.println("No errors in syntactic tree");
 				ModelStructure ms =
@@ -110,13 +112,14 @@ public class HeadlessSimulationLoader {
 		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
 	}
-	
-	private static void loadExperiment(final ParametersSet param)
-	{
-		/*if(para == null)
-		{
-			
-		}*/
+
+	private static void loadExperiment(final ParametersSet param) {
+		/*
+		 * if(para == null)
+		 * {
+		 * 
+		 * }
+		 */
 	}
 
 }
