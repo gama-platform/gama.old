@@ -142,7 +142,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		super(description);
 		setName(description.getName());
 		targetedVars = new LinkedHashMap();
-		stack = new ExperimentScope(this);
+		stack = new ExperimentScope(this, "Experiment scope of " + getName());
 		commands = new ArrayBlockingQueue(10);
 		systemParameters = new ArrayList();
 	}
