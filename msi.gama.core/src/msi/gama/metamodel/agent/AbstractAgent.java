@@ -184,9 +184,6 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public final synchronized void setAttribute(final String name, final Object val) {
-		if ( name.equals(IKeyword.PEERS) ) {
-			GuiUtils.debug("Peers set ?");
-		}
 		attributes.put(name, val);
 	}
 
@@ -233,7 +230,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public Object getDirectVarValue(final String s) throws GamaRuntimeException {
+	public Object getDirectVarValue(IScope scope, final String s) throws GamaRuntimeException {
 		return getAttribute(s);
 	}
 

@@ -54,7 +54,8 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		super(sim, s);
 		if ( s == null ) {
 			population = findPopulation(sim);
-			getPopulation().createVariablesFor(sim.getGlobalScope(), this);
+			getPopulation().createVariablesFor(sim.getExecutionScope(), this);
+			// or .getGlobalScope() ?
 			population.add(this, null);
 		}
 	}
@@ -76,13 +77,13 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	}
 
 	@Override
-	public Object getDirectVarValue(final String n) throws GamaRuntimeException {
+	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
 		IVariable var = population.getVar(this, n);
-		if ( var != null ) { return var.value(simulation.getExecutionScope(), this); }
+		if ( var != null ) { return var.value(scope, this); }
 		IAgent host = this.getHost();
 		if ( host != null ) {
 			IVariable varOfHost = host.getPopulation().getVar(host, n);
-			if ( varOfHost != null ) { return varOfHost.value(simulation.getExecutionScope(), host); }
+			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
 		}
 
 		return null;
@@ -137,7 +138,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		}
 	}
 
-	@action(name="debug")
+	@action(name = "debug")
 	@args(names = { "message" })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
@@ -145,7 +146,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return m;
 	}
 
-	@action(name="write")
+	@action(name = "write")
 	@args(names = { "message" })
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		String s = (String) scope.getArg("message", IType.STRING);
@@ -153,7 +154,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return s;
 	}
 
-	@action(name="error")
+	@action(name = "error")
 	@args(names = { "message" })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		String error = (String) scope.getArg("message", IType.STRING);
@@ -161,7 +162,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return error;
 	}
 
-	@action(name="tell")
+	@action(name = "tell")
 	@args(names = { "message" })
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
 		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
@@ -169,7 +170,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return s;
 	}
 
-	@action(name="die")
+	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		scope.setStatus(ExecutionStatus.interrupt);
 		die();

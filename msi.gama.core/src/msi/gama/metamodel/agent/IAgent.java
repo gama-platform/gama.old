@@ -72,7 +72,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
 
-	public abstract Object getDirectVarValue(String s) throws GamaRuntimeException;
+	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
