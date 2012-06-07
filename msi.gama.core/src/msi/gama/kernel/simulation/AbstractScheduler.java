@@ -66,7 +66,6 @@ public abstract class AbstractScheduler implements IScheduler {
 		for ( IAgent a : listOfAgentsToSchedule ) {
 			if ( a != null ) {
 				a.step(scope);
-				// while (on_user_hold) {}
 			}
 		}
 		executeEndActions(scope);
@@ -133,7 +132,6 @@ public abstract class AbstractScheduler implements IScheduler {
 		scope.push(agent);
 		try {
 			agent.init(scope);
-			// while (on_user_hold) {}
 		} catch (Exception e) {
 			GAMA.reportError(new GamaRuntimeException(e));
 		} finally {
@@ -158,7 +156,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	@Override
-	public void executeOneAction(final IScheduledAction action) {
+	public synchronized void executeOneAction(final IScheduledAction action) {
 		if ( paused || on_user_hold ) {
 			IScope scope = simulation.obtainNewScope();
 			action.execute(scope);
@@ -190,6 +188,6 @@ public abstract class AbstractScheduler implements IScheduler {
 	public boolean isUserHold() {
 		return on_user_hold;
 	}
-	
+
 	public abstract void pause();
 }
