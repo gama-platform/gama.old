@@ -30,7 +30,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.displays.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.kernel.simulation.SimulationClock;
@@ -301,7 +300,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void updateDisplay() {
-		if ( synchronous && !EventQueue.isDispatchThread() ) {
+		if ( synchronous && !EventQueue.isDispatchThread() &&
+			!GAMA.getFrontmostSimulation().isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {
@@ -611,7 +611,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	/**
-	 * This method does nothing for JAVA2D display 
+	 * This method does nothing for JAVA2D display
 	 */
 	@Override
 	public void toggleView() {
