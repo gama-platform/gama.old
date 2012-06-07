@@ -243,7 +243,7 @@ public class SymbolMetaDescription {
 			if ( f == null ) {
 				continue;
 			}
-			if ( f.isLabel ) {
+			if ( f.isLabel && facets.containsKey(facetName) ) {
 				facets.put(facetName, facets.get(facetName).compileAsLabel());
 				if ( f.types.get(0).equals(IType.LABEL) ) {
 					if ( f.values != null && f.values.length != 0 ) {
