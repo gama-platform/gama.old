@@ -49,16 +49,17 @@ public abstract class AbstractSimulation implements ISimulation {
 		experiment = exp;
 		number = simulationNumber++;
 		stackPool = new GamaList();
-		executionStack = obtainNewScope();
-		outputStack = obtainNewScope();
-		globalStack = obtainNewScope();
+		executionStack = obtainNewScope("Execution stack of " + exp.getName());
+		outputStack = obtainNewScope("Output stack of " + exp.getName());
+		globalStack = obtainNewScope("Global stack of " + exp.getName());
 		// GUI.debug("Instanciating a new scheduler");
 		initSchedulingPolicy();
-		//scheduler = new Scheduler(this);
+		// scheduler = new Scheduler(this);
 		// GUI.debug("Initializing the simulation with " + parameters);
 		// initialize(parameters);
 	}
-    protected abstract void initSchedulingPolicy();
+
+	protected abstract void initSchedulingPolicy();
 
 	@Override
 	public IScheduler getScheduler() {
@@ -72,7 +73,8 @@ public abstract class AbstractSimulation implements ISimulation {
 
 	@Override
 	public boolean isPaused() {
-		return /* scheduler.alive && */scheduler.paused;
+		// TODO Verify that the use of user_hold here does not harm the run
+		return /* scheduler.alive && */scheduler.paused || scheduler.on_user_hold;
 	}
 
 	@Override
@@ -178,12 +180,21 @@ public abstract class AbstractSimulation implements ISimulation {
 
 	@Override
 	public IScope obtainNewScope() {
-		if ( stackPool.isEmpty() ) { return new RuntimeScope(this); }
+		if ( stackPool.isEmpty() ) { return new RuntimeScope(this, "Pool runtime scope for " +
+			getName()); }
 		return stackPool.remove(stackPool.size() - 1);
+	}
+
+	public IScope obtainNewScope(final String name) {
+		for ( IScope scope : stackPool ) {
+			if ( scope.getName().equals(name) ) { return scope; }
+		}
+		return new RuntimeScope(this, name);
 	}
 
 	@Override
 	public void releaseScope(final IScope scope) {
+		scope.clear();
 		stackPool.add(scope);
 	}
 
