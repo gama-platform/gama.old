@@ -50,7 +50,8 @@ public class SpeciesLayer extends AgentLayer {
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		EditorFactory.choose(compo, "Aspect:", ((SpeciesLayerStatement) definition).getAspectName(), true,
+		EditorFactory.choose(compo, "Aspect:",
+			((SpeciesLayerStatement) definition).getAspectName(), true,
 			((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
 
 				@Override
@@ -81,8 +82,7 @@ public class SpeciesLayer extends AgentLayer {
 
 		shapes.clear();
 		IScope scope = GAMA.obtainNewScope();
-		if ( scope != null ) {
-
+		try {
 			// TODO search for hostPopulations then recursively draw micro-grid-populations and
 			// micro-populations
 
@@ -94,13 +94,15 @@ public class SpeciesLayer extends AgentLayer {
 					IPopulation microPop = world.getMicroPopulation(species);
 					if ( microPop != null ) {
 						scope.setContext(g);
-						drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope, g);
+						drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope,
+							g);
 					}
 				}
 			}
-
+		} finally {
 			GAMA.releaseScope(scope);
 		}
+
 	}
 
 	private void drawPopulation(final IAgent host, final SpeciesLayerStatement layer,
@@ -171,7 +173,7 @@ public class SpeciesLayer extends AgentLayer {
 		throws GamaRuntimeException {
 		GamaSpatialMatrix gridAgentStorage =
 			(GamaSpatialMatrix) population.getTopology().getPlaces();
-		gridAgentStorage.refreshDisplayData();
+		gridAgentStorage.refreshDisplayData(scope);
 
 		// MUST cache this image as GridDisplayLayer does to increase performance
 		BufferedImage supportImage =
