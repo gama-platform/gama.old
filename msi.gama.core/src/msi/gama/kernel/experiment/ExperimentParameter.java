@@ -58,6 +58,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	IType type;
 	boolean isEditable, allowsTooltip, isLabel;
 	boolean canBeNull;
+	final IExpression init;
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -68,17 +69,18 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		unitLabel = getLiteral(IKeyword.UNIT);
 		ModelDescription md = desc.getModelDescription();
 		SpeciesDescription wd = md.getWorldSpecies();
-		SymbolDescription vd = wd.getVariable(varName);
+		SymbolDescription targetedGlobalVar = wd.getVariable(varName);
 		if ( type.equals(Types.NO_TYPE) ) {
-			type = vd.getType();
+			type = targetedGlobalVar.getType();
 		}
 		setCategory(desc.getFacets().getLabel(IKeyword.CATEGORY));
-		IExpression init = getFacet(IKeyword.INIT);
 		IExpression min = getFacet(IKeyword.MIN);
 		IExpression max = getFacet(IKeyword.MAX);
 		IExpression step = getFacet(IKeyword.STEP);
 		IExpression among = getFacet(IKeyword.AMONG);
-
+		init =
+			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets()
+				.getExpr(IKeyword.INIT);
 		order = desc.getDefinitionOrder();
 		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
@@ -102,6 +104,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public ExperimentParameter(final IParameter p, final String title, final String category,
 		final String unit, final List among, final boolean canBeNull) {
 		super(null);
+		init = null;
 		this.title = title;
 		this.canBeNull = canBeNull;
 		this.order = p.getDefinitionOrder();
@@ -206,12 +209,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public void tryToInit() {
 		if ( value != UNDEFINED ) { return; }
-		IExpression expr = getFacet(IKeyword.INIT);
-		if ( expr != null ) {
-			setValue(expr.value(GAMA.getDefaultScope()));
-		} else {
-			setValue(GAMA.getFrontmostSimulation().getWorld().getDirectVarValue(varName));
-		}
+		if ( init == null ) { return; }
+		setValue(init.value(GAMA.getDefaultScope()));
 	}
 
 	private Number drawRandomValue() {
