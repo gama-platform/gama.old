@@ -18,7 +18,7 @@
  */
 package msi.gama.runtime;
 
-import java.util.*;
+import java.util.Map;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -67,6 +67,7 @@ public abstract class AbstractScope implements IScope {
 	protected int agentsPointer = 0;
 	private Object context;
 	private ExecutionStatus currentStatus;
+	private final String name;
 
 	{
 		for ( int i = 0; i < vars.length; i++ ) {
@@ -76,8 +77,13 @@ public abstract class AbstractScope implements IScope {
 
 	// private final HashMap<String, Integer> varIndex = new HashMap();
 
-	public AbstractScope() {
+	public AbstractScope(final String name) {
+		this.name = name;
+	}
 
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -104,8 +110,9 @@ public abstract class AbstractScope implements IScope {
 		for ( int i = agentsPointer; i > 0; i-- ) {
 			IAgent agent = agentsStack[i - 1];
 
-			if ( !agent.dead() ) { return agent.getDirectVarValue(name); // What if agent doesn't
-																			// have var?
+			if ( !agent.dead() ) { return agent.getDirectVarValue(this, name); // What if agent
+																				// doesn't
+																				// have var?
 			}
 
 		}
@@ -230,6 +237,15 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
+	public final void clear() {
+		each = null;
+		statementsPointer = 0;
+		varsPointer = 0;
+		agentsPointer = 0;
+		context = null;
+	}
+
+	@Override
 	public final Object execute(final IStatement statement, final IAgent agent)
 		throws GamaRuntimeException {
 		Object result;
@@ -291,7 +307,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final String toString() {
-		return Arrays.toString(vars);
+		return getName() + "; current agent: " + getAgentScope();
 	}
 
 	@Override

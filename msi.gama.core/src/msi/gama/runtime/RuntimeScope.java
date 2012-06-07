@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,8 +18,6 @@
  */
 package msi.gama.runtime;
 
-import msi.gama.common.interfaces.*;
-
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,7 +27,8 @@ public class RuntimeScope extends AbstractScope {
 	final ISimulation simulation;
 	IAgent world;
 
-	public RuntimeScope(final ISimulation sim) {
+	public RuntimeScope(final ISimulation sim, final String name) {
+		super(name);
 		simulation = sim;
 		// world = simulation.getWorldScope();
 	}
@@ -49,7 +48,7 @@ public class RuntimeScope extends AbstractScope {
 
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-		return getWorldScope().getDirectVarValue(name);
+		return getWorldScope().getDirectVarValue(this, name);
 	}
 
 	@Override

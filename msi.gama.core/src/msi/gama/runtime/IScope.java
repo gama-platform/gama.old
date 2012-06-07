@@ -34,6 +34,8 @@ import msi.gaml.statements.IStatement;
  */
 public interface IScope {
 
+	public abstract void clear();
+
 	public abstract void push(IAgent agent);
 
 	public abstract void push(IStatement statement);
@@ -102,5 +104,7 @@ public interface IScope {
 	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 
 	public abstract void setGlobalVarValue(String name, Object v) throws GamaRuntimeException;
+
+	public abstract Object getName();
 
 }
