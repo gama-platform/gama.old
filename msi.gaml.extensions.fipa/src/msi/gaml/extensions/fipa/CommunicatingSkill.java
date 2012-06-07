@@ -154,8 +154,10 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@getter("conversations")
 	public List getConversations(final IAgent agent) throws GamaRuntimeException {
+		// TODO Understand why the scope is not available there.
 		List<Conversation> conversations =
-			(List<Conversation>) agent.getDirectVarValue("conversations");
+			(List<Conversation>) agent.getDirectVarValue(agent.getSimulation().getExecutionScope(),
+				"conversations");
 		return conversations;
 	}
 
