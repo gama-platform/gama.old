@@ -19,6 +19,7 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -514,7 +515,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return g.getAgent();
 	}
 
-	public void refreshDisplayData() throws GamaRuntimeException {
+	public void refreshDisplayData(final IScope scope) throws GamaRuntimeException {
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
 				int index = j * this.numCols + i;
@@ -523,7 +524,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 					IAgent a = g.getAgent();
 					if ( a != null ) {
 						supportImagePixels[index] =
-							((GamaColor) a.getDirectVarValue("color")).getRGB();
+							((GamaColor) a.getDirectVarValue(scope, IKeyword.COLOR)).getRGB();
 					}
 				}
 			}

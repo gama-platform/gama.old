@@ -55,7 +55,8 @@ public class ClusterBuilder extends GamlAgent {
 			for ( int i = 0; i < nb; i++ ) {
 				String attrib = attributes.get(i);
 				Double var =
-					Cast.asFloat(simulation.getGlobalScope(), ag.getDirectVarValue(attrib));
+					Cast.asFloat(simulation.getGlobalScope(),
+						ag.getDirectVarValue(simulation.getGlobalScope(), attrib));
 				vals[i] = var;
 			}
 			Instance instance = new Instance(1, vals);
@@ -99,7 +100,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * maximum number of clusters min_num_clusters -- set minimum number of clusters seed -- The
 	 * random number seed to be used.
 	 */
-	@action(name="clustering_xmeans")
+	@action(name = "clustering_xmeans")
 	@args(names = { "agents", "attributes", "bin_value", "cut_off_factor", "distance_f",
 		"max_iterations", "max_kmeans", "max_kmeans_for_children", "max_kmeans_for_children",
 		"max_num_clusters", "min_num_clusters", "seed" })
@@ -161,7 +162,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * of clusters preserve_instances_order -- Preserve order of instances. seed -- The random
 	 * number seed to be used.
 	 */
-	@action(name="clustering_simple_kmeans")
+	@action(name = "clustering_simple_kmeans")
 	@args(names = { "agents", "attributes", "distance_f", "dont_replace_missing_values",
 		"max_iterations", "num_clusters", "preserve_instances_order", "seed" })
 	public List<List<IAgent>> primClusteringSimpleKMeans(final IScope scope)
@@ -211,7 +212,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * minStdDev -- set minimum allowable standard deviation seed -- The random number seed to be
 	 * used.
 	 */
-	@action(name="clustering_em")
+	@action(name = "clustering_em")
 	@args(names = { "agents", "attributes", "max_iterations", "num_clusters", "min_std_dev", "seed" })
 	public List<List<IAgent>> primClusteringEM(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
@@ -247,7 +248,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * minStdDev -- set minimum allowable standard deviation seed -- The random number seed to be
 	 * used.
 	 */
-	@action(name="clustering_farthestFirst")
+	@action(name = "clustering_farthestFirst")
 	@args(names = { "agents", "attributes", "num_clusters", "seed" })
 	public List<List<IAgent>> primClusteringFarthestFirst(final IScope scope)
 		throws GamaRuntimeException {
@@ -279,7 +280,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * epsilon-range-queries minPoints -- minimun number of DataObjects required in an
 	 * epsilon-range-query
 	 */
-	@action(name="clustering_DBScan")
+	@action(name = "clustering_DBScan")
 	@args(names = { "agents", "attributes", "distance_f", "epsilon", "min_points" })
 	public List<List<IAgent>> primClusteringDBScan(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
@@ -315,7 +316,7 @@ public class ClusterBuilder extends GamlAgent {
 	 * acuity -- minimum standard deviation for numeric attributes cutoff -- category utility
 	 * threshold by which to prune nodes seed -- random number seed to be used.
 	 */
-	@action(name="clustering_cobweb")
+	@action(name = "clustering_cobweb")
 	@args(names = { "agents", "attributes", "acuity", "cutoff", "seed" })
 	public List<List<IAgent>> primClusteringCobweb(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
