@@ -307,7 +307,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 		} catch (final ParseException e) {
 			if ( s.charAt(0) == '#' ) {
 				try {
-					val = Integer.decode(s);
+					val = Integer.parseInt(s, 16);
 				} catch (final NumberFormatException e2) {
 					context.flagError("Malformed number: " + s);
 				}

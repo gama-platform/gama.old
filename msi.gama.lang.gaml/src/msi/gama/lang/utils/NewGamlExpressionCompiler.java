@@ -236,7 +236,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		@Override
 		public IExpression caseIntLiteral(final IntLiteral object) {
 			try {
-				Integer val = Integer.decode(object.getValue());
+				Integer val = Integer.parseInt(object.getValue(), 10);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
 				context.flagError("Malformed integer: " + object.getValue(),
@@ -261,7 +261,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		@Override
 		public IExpression caseColorLiteral(final ColorLiteral object) {
 			try {
-				Integer val = Integer.decode(object.getValue());
+				Integer val = Integer.parseInt(object.getValue(), 16);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
 				context.flagError("Malformed integer: " + object.getValue(),
