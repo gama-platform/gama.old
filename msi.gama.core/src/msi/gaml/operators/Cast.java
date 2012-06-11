@@ -144,6 +144,17 @@ public class Cast {
 		return GamaIntegerType.staticCast(scope, val, null);
 	}
 
+	@operator(value = "as_int", can_be_const = true)
+	public static Integer asInt(final IScope scope, final String string, final Integer radix)
+		throws GamaRuntimeException {
+		if ( string == null || string.isEmpty() ) { return 0; }
+		try {
+			return Integer.parseInt(string, radix);
+		} catch (NumberFormatException e) {
+			throw new GamaRuntimeException(e);
+		}
+	}
+
 	@operator(value = IType.LIST_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static IList asList(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaListType.staticCast(scope, val, null);
