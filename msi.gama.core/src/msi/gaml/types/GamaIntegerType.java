@@ -51,7 +51,7 @@ public class GamaIntegerType extends GamaType<Integer> {
 
 			try {
 				// If the string contains an hexadecimal number, parse it with a radix of 16.
-				if ( n.startsWith("#") ) { return Integer.parseInt(n, 16); }
+				if ( n.startsWith("#") ) { return Integer.parseInt(n.substring(1), 16); }
 				// Otherwise use by default a "natural" radix of 10 (which can be bypassed with the
 				// as_int operator)
 				return Integer.parseInt(n, 10);
