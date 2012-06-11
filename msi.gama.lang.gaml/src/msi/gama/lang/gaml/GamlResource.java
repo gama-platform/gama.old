@@ -201,7 +201,7 @@ public class GamlResource extends LazyLinkingResource {
 		}
 
 		// We add the dependencies (only for variable declarations)
-		if ( !SymbolMetaDescription.nonVariableStatements.contains(keyword) ) {
+		if ( !SymbolProto.nonVariableStatements.contains(keyword) ) {
 			// GuiUtils.debug("Building var dependencies for " + keyword);
 			String s = varDependenciesOf(stm);
 			if ( !s.isEmpty() ) {
