@@ -26,7 +26,6 @@ import msi.gama.lang.utils.*;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gaml.descriptions.*;
-import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
@@ -157,7 +156,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			IGamlDescription gd = EGaml.getGamlDescription(model);
 			if ( gd instanceof IDescription ) {
 				IDescription desc = (IDescription) gd;
-				Map<String, FacetMetaDescription> facets = desc.getMeta().getPossibleFacets();
+				Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
 				for ( String s : facets.keySet() ) {
 					acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
 						(facets.get(s).optional ? "optional" : "required") + ")", facetImage,
