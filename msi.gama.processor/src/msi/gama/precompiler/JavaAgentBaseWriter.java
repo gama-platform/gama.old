@@ -1,13 +1,8 @@
 package msi.gama.precompiler;
 
 import java.util.Map;
-import javax.annotation.processing.ProcessingEnvironment;
 
 public class JavaAgentBaseWriter extends JavaWriter {
-
-	JavaAgentBaseWriter(final ProcessingEnvironment pe) {
-		super(pe);
-	}
 
 	@Override
 	public String write(final String packageName, final GamlProperties props) {
@@ -95,8 +90,8 @@ public class JavaAgentBaseWriter extends JavaWriter {
 
 	@Override
 	protected void writeFooter(final StringBuilder sb) {
-		ln(sb);
-		tab(sb).append('}');
+		sb.append(ln);
+		sb.append(tab).append('}');
 	}
 
 }

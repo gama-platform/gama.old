@@ -19,6 +19,7 @@
 package msi.gama.precompiler;
 
 import static msi.gama.precompiler.GamlProperties.GAML;
+import static msi.gama.precompiler.JavaWriter.*;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -31,8 +32,12 @@ import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -41,13 +46,21 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.JavaWriter.Pair;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class GamaProcessor extends AbstractProcessor {
 
+	class Pair {
+
+		String key, value;
+
+		Pair(final String s1, final String s2) {
+			key = s1;
+			value = s2;
+		}
+	}
+
 	private GamlProperties gp;
-	JavaWriter jw;
 	// JavaAgentBaseWriter jabw;
 
 	GamlDocProcessor docProc;
@@ -74,7 +87,6 @@ public class GamaProcessor extends AbstractProcessor {
 		} catch (Exception e) {
 			gp = new GamlProperties();
 		}
-		jw = new JavaWriter(processingEnv);
 		// jabw = new JavaAgentBaseWriter(processingEnv);
 		docProc = new GamlDocProcessor(processingEnv);
 	}
@@ -112,7 +124,7 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( w != null ) {
 				// try {
 				try {
-					w.append(jw.write("gaml.additions", gp));
+					w.append(new JavaWriter().write("gaml.additions", gp));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -141,19 +153,71 @@ public class GamaProcessor extends AbstractProcessor {
 		return true;
 	}
 
+	// Format: prefix 0.method 1.declClass 2.retClass 3.isDynamic
 	void processGetters(final RoundEnvironment env) {
+		TypeMirror iSkill =
+			processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
 		for ( Element e : env.getElementsAnnotatedWith(getter.class) ) {
-			TypeMirror iSkill =
-				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
-			TypeMirror clazz = e.getEnclosingElement().asType();
-			Pair executer;
+			ExecutableElement ex = (ExecutableElement) e;
+			TypeMirror clazz = ex.getEnclosingElement().asType();
+			StringBuilder sb = new StringBuilder();
+			// prefix
 			if ( processingEnv.getTypeUtils().isAssignable(clazz, iSkill) ) {
-				executer = jw.getGetter((ExecutableElement) e);
+				sb.append(GETTER_PREFIX);
 			} else {
-				executer = jw.getFiedGetter((ExecutableElement) e);
+				sb.append(FIELD_PREFIX);
 			}
-			gp.put(executer.key, executer.value);
+			// method
+			sb.append(ex.getSimpleName()).append(SEP);
+			// declClass
+			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
+			// retClass
+			sb.append(rawNameOf(ex.getReturnType())).append(SEP);
+			// dynamic
+			sb.append(ex.getParameters().size() > 0);
+			gp.put(sb.toString(), "");
 		}
+	}
+
+	// Format: prefix 0.method 1.declClass 2.paramClass 3.isDynamic
+	void processSetters(final RoundEnvironment env) {
+		for ( Element e : env.getElementsAnnotatedWith(setter.class) ) {
+			ExecutableElement ex = (ExecutableElement) e;
+			List<? extends VariableElement> params = ex.getParameters();
+			boolean isDynamic = params.size() == 2;
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(SETTER_PREFIX);
+			// method
+			sb.append(ex.getSimpleName()).append(SEP);
+			// declClass
+			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
+			// paramClass
+			sb.append(rawNameOf(isDynamic ? params.get(1) : params.get(0))).append(SEP);
+			// isDynamic
+			sb.append(isDynamic);
+			gp.put(sb.toString(), "");
+		}
+	}
+
+	String rawNameOf(final Element e) {
+		return rawNameOf(e.asType());
+	}
+
+	String rawNameOf(final TypeMirror t) {
+		String string = processingEnv.getTypeUtils().erasure(t).toString();
+		int i = string.indexOf('<');
+		string = i > -1 ? string.substring(0, i) : string;
+		return check(string.replace('$', '.'));
+	}
+
+	protected String check(final String clazz) {
+		for ( int i = 0; i < IMPORTS.length; i++ ) {
+			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz
+				.substring(clazz.lastIndexOf('.') + 1); }
+		}
+
+		return clazz;
 	}
 
 	private void processVars(final RoundEnvironment env) {
@@ -163,19 +227,23 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( String name : maps.keySet() ) {
 				Map<String, String> facets = maps.get(name);
 				StringBuilder sb = new StringBuilder();
-				sb.append(JavaWriter.VAR_PREFIX).append("\"").append(facets.get("type"))
-					.append("\"$");
+				sb.append(VAR_PREFIX).append(facets.get("type")).append(SEP);
+				sb.append(rawNameOf(e)).append(SEP);
 				for ( String facetName : facets.keySet() ) {
-					sb.append("\"").append(facetName).append("\",");
-					sb.append("\"").append(facets.get(facetName)).append("\",");
+					sb.append(facetName).append(",");
+					sb.append(replaceCommas(facets.get(facetName))).append(",");
 				}
 				sb.setLength(sb.length() - 1);
-				gp.put(sb.toString(), jw.rawNameOf(e));
+				gp.put(sb.toString(), ""); /* doc */
 			}
 		}
 	}
 
-	static Map<String, Map<String, String>> buildVarsFacetsMap(final Element c) {
+	private String replaceCommas(final String s) {
+		return s.replace(",", "COMMA");
+	}
+
+	private Map<String, Map<String, String>> buildVarsFacetsMap(final Element c) {
 		Map<String, Map<String, String>> varMap = new HashMap();
 		vars vars = c.getAnnotation(vars.class);
 		if ( vars == null ) { return null; /* no vars */}
@@ -184,7 +252,7 @@ public class GamaProcessor extends AbstractProcessor {
 			Map<String, String> facets = new HashMap();
 			varMap.put(name, facets);
 			facets.put("type", s.type());
-			facets.put("name", s.name());
+			facets.put("name", name);
 			facets.put("const", s.constant() ? "true" : "false");
 			String depends = "";
 			String[] dependencies = s.depends_on();
@@ -201,7 +269,7 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			String init = s.init();
 			if ( !"".equals(init) ) {
-				facets.put("init", init);
+				facets.put("init", replaceCommas(init));
 			}
 		}
 		for ( final Element m : c.getEnclosedElements() ) {
@@ -220,86 +288,249 @@ public class GamaProcessor extends AbstractProcessor {
 				final Map<String, String> var = varMap.get(setter.value());
 				if ( var != null ) {
 					var.put("setter", m.getSimpleName().toString());
-					// addSkillMethod(c, m.getName());
 				}
 			}
 		}
 		return varMap;
 	}
 
+	/**
+	 * Computes the representation of symbols.
+	 * Format: prefix 0.kind 1.class 2.remote 3.with_args 4.with_scope 5.with_sequence
+	 * 6.symbols_inside 7.kinds_inside 8.nbFacets 9.[facet]* 10.omissible 11.[name$]*
+	 * @param env
+	 */
 	private void processSymbols(final RoundEnvironment env) {
 		Set<? extends Element> symbols = env.getElementsAnnotatedWith(symbol.class);
 		for ( Element e : symbols ) {
+			StringBuilder sb = new StringBuilder();
 			symbol symbol = e.getAnnotation(symbol.class);
-			int kind = symbol.kind();
-			String[] names = symbol.name();
-			String key = JavaWriter.SYMBOL_PREFIX + String.valueOf(kind);
-			key += "$" + String.valueOf(symbol.remote_context());
-			key += "$" + String.valueOf(symbol.with_args());
-			key += "$" + String.valueOf(symbol.with_scope());
-			key += "$" + String.valueOf(symbol.with_sequence());
-			for ( String s : names ) {
-				key += "$" + s;
+			// prefix
+			sb.append(SYMBOL_PREFIX);
+			// kind
+			sb.append(symbol.kind()).append(SEP);
+			// class
+			sb.append(rawNameOf(e)).append(SEP);
+			// remote
+			sb.append(symbol.remote_context()).append(SEP);
+			// with_args
+			sb.append(symbol.with_args()).append(SEP);
+			// with_scope
+			sb.append(symbol.with_scope()).append(SEP);
+			// with_sequence
+			sb.append(symbol.with_sequence()).append(SEP);
+			inside inside = e.getAnnotation(inside.class);
+			// symbols_inside && kinds_inside
+			if ( inside != null ) {
+				String[] parentSymbols = inside.symbols();
+				for ( int i = 0; i < parentSymbols.length; i++ ) {
+					if ( i > 0 ) {
+						sb.append(',');
+					}
+					sb.append(parentSymbols[i]);
+				}
+				sb.append(SEP);
+				int[] parentKinds = inside.kinds();
+				for ( int i = 0; i < parentKinds.length; i++ ) {
+					if ( i > 0 ) {
+						sb.append(',');
+					}
+					sb.append(parentKinds[i]);
+				}
+				sb.append(SEP);
+
+			} else {
+				sb.append(SEP).append(SEP);
 			}
-			gp.put(key, jw.rawNameOf(e));
+			facets facets = e.getAnnotation(facets.class);
+			// facets
+			if ( facets == null ) {
+				sb.append('0').append(SEP).append(SEP).append(SEP);
+			} else {
+				sb.append(facets.value().length).append(SEP);
+				sb.append(facetsToString(facets)).append(SEP);
+				sb.append(facets.omissible()).append(SEP);
+			}
+			// names
+			for ( String s : symbol.name() ) {
+				sb.append(s).append(SEP);
+			}
+			sb.setLength(sb.length() - 1);
+			// combinations missing
+			gp.put(sb.toString(), docToString(symbol.doc())); /* doc */
 		}
 	}
 
+	/**
+	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples
+	 * 7.[examples$]*
+	 * Uses its own separator (DOC_SEP)
+	 * 
+	 * @param docs an Array of @doc annotations (only the 1st is significant)
+	 * @return aString containing the documentation formatted using the format above
+	 */
+	private String docToString(final doc[] docs) {
+		if ( docs == null || docs.length == 0 ) { return ""; }
+		doc doc = docs[0];
+		StringBuilder sb = new StringBuilder();
+		sb.append(doc.value()).append(DOC_SEP);
+		sb.append(doc.deprecated()).append(DOC_SEP);
+		sb.append(doc.returns()).append(DOC_SEP);
+		sb.append(doc.comment()).append(DOC_SEP);
+		String[] cases = doc.special_cases();
+		sb.append(cases.length).append(DOC_SEP);
+		for ( int i = 0; i < cases.length; i++ ) {
+			sb.append(cases[i]).append(DOC_SEP);
+		}
+		String[] examples = doc.examples();
+		sb.append(examples.length).append(DOC_SEP);
+		for ( int i = 0; i < examples.length; i++ ) {
+			sb.append(examples[i]).append(DOC_SEP);
+		}
+		String[] see = doc.see();
+		sb.append(see.length).append(DOC_SEP);
+		for ( int i = 0; i < see.length; i++ ) {
+			sb.append(see[i]).append(DOC_SEP);
+		}
+		sb.setLength(sb.length() - 1);
+		return sb.toString();
+	}
+
+	private String facetsToString(final facets facets) {
+		StringBuilder sb = new StringBuilder();
+		if ( facets.value() != null ) {
+			for ( facet f : facets.value() ) {
+				sb.append(facetToString(f)).append(SEP);
+			}
+			if ( facets.value().length > 0 ) {
+				sb.setLength(sb.length() - 1);
+			}
+		}
+		return sb.toString();
+	}
+
+	// Format: 1.name 2.[type,]+ 3.[value,]* 4.optional 5.doc
+	private String facetToString(final facet facet) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(facet.name()).append(SEP);
+		sb.append(arrayToString(facet.type())).append(SEP);
+		sb.append(arrayToString(facet.values())).append(SEP);
+		sb.append(facet.optional()).append(SEP);
+		sb.append(docToString(facet.doc()));
+		return sb.toString();
+	}
+
+	private String arrayToString(final String[] array) {
+		if ( array.length == 0 ) { return ""; }
+		StringBuilder sb = new StringBuilder();
+		for ( String i : array ) {
+			sb.append(replaceCommas(i)).append(",");
+		}
+		sb.setLength(sb.length() - 1);
+		return sb.toString();
+	}
+
+	/**
+	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]*
+	 * Format : ]class$handles*$uses*
+	 * @param env
+	 */
 	private void processFactories(final RoundEnvironment env) {
 		Set<? extends Element> factories = env.getElementsAnnotatedWith(factory.class);
 		for ( Element e : factories ) {
 			factory factory = e.getAnnotation(factory.class);
 			int[] hKinds = factory.handles();
-			String key = JavaWriter.FACTORY_PREFIX + String.valueOf(hKinds[0]);
-			for ( int i = 1; i < hKinds.length; i++ ) {
-				key += "," + String.valueOf(hKinds[i]);
-			}
 			int[] uKinds = factory.uses();
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(FACTORY_PREFIX);
+			// class
+			sb.append(rawNameOf(e)).append(SEP);
+			// handles
+			sb.append(String.valueOf(hKinds[0]));
+			for ( int i = 1; i < hKinds.length; i++ ) {
+				sb.append(',').append(String.valueOf(hKinds[i]));
+			}
+			// uses
 			if ( uKinds.length > 0 ) {
-				key += "$";
-				key += String.valueOf(uKinds[0]);
+				sb.append(SEP).append(String.valueOf(uKinds[0]));
 				for ( int i = 1; i < uKinds.length; i++ ) {
-					key += "," + String.valueOf(uKinds[i]);
+					sb.append(',').append(String.valueOf(uKinds[i]));
 				}
 			}
-			gp.put(key, jw.rawNameOf(e));
+			gp.put(sb.toString(), ""); /* doc ? */
 		}
 	}
 
+	/**
+	 * Format : prefix 0.name 1.class 2.[skill$]*
+	 * @param env
+	 */
 	private void processSpecies(final RoundEnvironment env) {
 		Set<? extends Element> species = env.getElementsAnnotatedWith(species.class);
 		for ( Element e : species ) {
 			species spec = e.getAnnotation(species.class);
-			String name = spec.name();
-			String[] skillTab = spec.skills();
-			String key = JavaWriter.SPECIES_PREFIX + name;
-			for ( String s : skillTab ) {
-				key += "$" + s;
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(SPECIES_PREFIX);
+			// name
+			sb.append(spec.name()).append(SEP);
+			// class
+			sb.append(rawNameOf(e));
+			// skills
+			for ( String s : spec.skills() ) {
+				sb.append(SEP).append(s);
 			}
-			gp.put(key, jw.rawNameOf(e));
+			gp.put(sb.toString(), docToString(spec.doc())); /* doc */
 		}
 	}
 
+	/**
+	 * Format : prefix 0.name 1.class 2.[species$]*
+	 * @param env
+	 */
 	private void processSkills(final RoundEnvironment env) {
 		Set<? extends Element> skills = env.getElementsAnnotatedWith(skill.class);
 		for ( Element e : skills ) {
 			skill skill = e.getAnnotation(skill.class);
-			String name = skill.name();
-			String[] specTab = skill.attach_to();
-			String key = JavaWriter.SKILL_PREFIX + name;
-			for ( String s : specTab ) {
-				key += "$" + s;
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(SKILL_PREFIX);
+			// name
+			sb.append(skill.name()).append(SEP);
+			// class
+			sb.append(rawNameOf(e));
+			// species
+			for ( String s : skill.attach_to() ) {
+				sb.append(SEP).append(s);
 			}
-			gp.put(key, jw.rawNameOf(e));
+			gp.put(sb.toString(), docToString(skill.doc())); /* doc */
 		}
 	}
 
+	/**
+	 * Format : prefix 0.name 1.id 2.varKind 3.class 4.[wrapped_class$]+
+	 * @param env
+	 */
 	private void processTypes(final RoundEnvironment env) {
 		Set<? extends Element> types = env.getElementsAnnotatedWith(type.class);
 		for ( Element e : types ) {
 			type t = e.getAnnotation(type.class);
+
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(TYPE_PREFIX);
+			// name
+			sb.append(t.name()).append(SEP);
+			// id
+			sb.append(t.id()).append(SEP);
+			// kind
+			sb.append(t.kind()).append(SEP);
+			// class
+			sb.append(rawNameOf(e));
+			// wraps
 			List<? extends TypeMirror> wraps = Collections.EMPTY_LIST;
-			// TRICK
+			// Trick to obtain the names of the classes...
 			try {
 				t.wraps();
 			} catch (MirroredTypesException ex) {
@@ -307,73 +538,129 @@ public class GamaProcessor extends AbstractProcessor {
 			} catch (MirroredTypeException ex) {
 				wraps = Arrays.asList(ex.getTypeMirror());
 			}
-
-			String keyword = t.name();
-			short id = t.id();
-			int varKind = t.kind();
-			String key =
-				JavaWriter.TYPE_PREFIX + keyword + "$" + String.valueOf(id) + "$" +
-					String.valueOf(varKind);
 			for ( TypeMirror tm : wraps ) {
-				key += "$" + jw.rawNameOf(tm);
+				sb.append(SEP).append(rawNameOf(tm));
 			}
-			gp.put(key, jw.rawNameOf(e));
+			gp.put(sb.toString(), docToString(t.doc()));
 		}
-
 	}
 
-	void processOperators(final RoundEnvironment env) {
+	/**
+	 * Format : prefix 0.leftClass 1.rightClass 2.const 3.type 4.contentType 5.iterator 6.priority
+	 * 7.returnClass 8.methodName 9.static 10.contextual 11.[name$]+
+	 * @param env
+	 */
+
+	public void processOperators(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(operator.class) ) {
-			Map<String, String> executers = jw.getOperatorExecutersFor((ExecutableElement) e);
-			for ( Map.Entry<String, String> entry : executers.entrySet() ) {
-				gp.put(entry.getKey(), entry.getValue());
+			ExecutableElement ex = (ExecutableElement) e;
+			operator op = ex.getAnnotation(operator.class);
+			boolean stat = ex.getModifiers().contains(Modifier.STATIC);
+			String declClass = rawNameOf(ex.getEnclosingElement());
+			List<? extends VariableElement> argParams = ex.getParameters();
+			String[] args = new String[argParams.size()];
+			for ( int i = 0; i < args.length; i++ ) {
+				args[i] = rawNameOf(argParams.get(i));
 			}
+			int n = args.length;
+			String methodName = ex.getSimpleName().toString();
+			String ret = rawNameOf(ex.getReturnType());
+			boolean scope = n > 0 && args[0].contains("IScope");
+			boolean unary =
+				n == 0 && !stat || n == 1 && (stat || !stat && scope) || n == 2 && stat && scope;
+			String leftClass, rightClass;
+			leftClass = stat ? scope ? args[1] : args[0] : declClass;
+			rightClass = unary ? "" : stat ? scope ? args[2] : args[1] : scope ? args[1] : args[0];
+			methodName = stat ? declClass + "." + methodName : methodName;
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(OPERATOR_PREFIX);
+			// 0.left (or child) class
+			sb.append(leftClass).append(SEP);
+			// 1.right class
+			sb.append(rightClass).append(SEP);
+			// 2.canBeConst
+			sb.append(op.can_be_const()).append(SEP);
+			// 3.type
+			sb.append(op.type()).append(SEP);
+			// 4.contentType
+			sb.append(op.content_type()).append(SEP);
+			// 5.iterator
+			sb.append(op.iterator()).append(SEP);
+			// 6.priority
+			sb.append(op.priority()).append(SEP);
+			// 7.return class
+			sb.append(ret).append(SEP);
+			// 8.methodName
+			sb.append(methodName).append(SEP);
+			// 9.static
+			sb.append(stat).append(SEP);
+			// 10.contextual
+			sb.append(scope);
+			// 11+. names
+			String[] names = op.value();
+			for ( int i = 0; i < names.length; i++ ) {
+				sb.append(SEP).append(names[i]);
+			}
+			gp.put(sb.toString(), docToString(op.doc()));
 		}
 	}
 
+	// Format: prefix 0.method 1.declClass 2.retClass 3.name 4.nbArgs 5.[arg]*
 	void processActions(final RoundEnvironment env) {
 		for ( Element e : env.getElementsAnnotatedWith(action.class) ) {
 			action action = e.getAnnotation(action.class);
+			ExecutableElement ex = (ExecutableElement) e;
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(ACTION_PREFIX);
+			// method
+			sb.append(ex.getSimpleName()).append(SEP);
+			// declClass
+			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
+			// retClass
+			sb.append(rawNameOf(ex.getReturnType())).append(SEP);
+			// name
+			sb.append(action.name()).append(SEP);
+			// argNumber
 			arg[] args = action.args();
-			List<String> strings = new ArrayList();
-			Pair executer = jw.getActionExecuterFor((ExecutableElement) e);
-			String key = executer.key;
-			key += "$" + action.name();
+			args deprecatedArgs = e.getAnnotation(args.class);
+			// gathering names (in case of doublons)
+			Set<String> strings = new HashSet();
+			for ( int i = 0; i < args.length; i++ ) {
+				strings.add(args[i].name());
+			}
+			if ( deprecatedArgs != null ) {
+				for ( int i = 0; i < deprecatedArgs.names().length; i++ ) {
+					strings.add(deprecatedArgs.names()[i]);
+				}
+			}
+			int nb = strings.size();
+			sb.append(nb).append(SEP);
+			// args format 1.name 2.[type,]+ 3.optional
+			strings.clear();
 			if ( args.length > 0 ) {
 				for ( int i = 0; i < args.length; i++ ) {
+					arg arg = args[i];
+					sb.append(arg.name()).append(SEP);
+					sb.append(arrayToString(arg.type())).append(SEP);
+					sb.append(arg.optional()).append(SEP);
+					sb.append(docToString(arg.doc())).append(SEP);
 					strings.add(args[i].name());
 				}
 			}
-			args deprecatedArguments = e.getAnnotation(args.class);
-			if ( deprecatedArguments != null && deprecatedArguments.names().length > 0 ) {
-				for ( int i = 0; i < deprecatedArguments.names().length; i++ ) {
-					String s = deprecatedArguments.names()[i];
+			if ( deprecatedArgs != null && deprecatedArgs.names().length > 0 ) {
+				for ( int i = 0; i < deprecatedArgs.names().length; i++ ) {
+					String s = deprecatedArgs.names()[i];
 					if ( !strings.contains(s) ) {
-						strings.add(s);
+						sb.append(s).append(SEP);
+						sb.append("unknown").append(SEP);
+						sb.append("true").append(SEP);
+						sb.append("").append(SEP);
 					}
 				}
 			}
-
-			int n = strings.size();
-			if ( n > 0 ) {
-				key += "$";
-				for ( int i = 0; i < n; i++ ) {
-					String s = strings.get(i);
-					if ( i > 0 ) {
-						key += ",";
-					}
-					key += "\"" + s + "\"";
-				}
-
-			}
-			gp.put(key, executer.value);
-		}
-	}
-
-	void processSetters(final RoundEnvironment env) {
-		for ( Element e : env.getElementsAnnotatedWith(setter.class) ) {
-			Pair executer = jw.getSetter((ExecutableElement) e);
-			gp.put(executer.key, executer.value);
+			gp.put(sb.toString(), docToString(action.doc())); /* doc */
 		}
 	}
 

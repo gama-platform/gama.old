@@ -43,7 +43,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	@Inherited
 	public static @interface facets {
@@ -82,7 +82,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	public static @interface facet {
 
 		/**
@@ -102,20 +102,20 @@ public final class GamlAnnotations {
 		String[] type();
 
 		/**
-		 * Optional.
-		 * 
-		 * @return whether or not this facet is optional or mandatory.
-		 */
-
-		boolean optional() default false;
-
-		/**
 		 * Values.
 		 * 
 		 * @return the values that can be taken by this facet. The value of the facet expression
 		 *         will be chosen among the values described here
 		 */
 		String[] values() default {};
+
+		/**
+		 * Optional.
+		 * 
+		 * @return whether or not this facet is optional or mandatory.
+		 */
+
+		boolean optional() default false;
 
 		/**
 		 * Doc.
@@ -126,7 +126,7 @@ public final class GamlAnnotations {
 		doc[] doc() default {};
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	public static @interface combination {
 
 		/**
@@ -146,7 +146,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Inherited
 	@Target(ElementType.TYPE)
 	public static @interface type {
@@ -199,7 +199,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	public static @interface skill {
 
@@ -240,7 +240,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	@Inherited
 	public static @interface inside {
@@ -261,7 +261,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	public static @interface species {
 
@@ -296,7 +296,7 @@ public final class GamlAnnotations {
 	 * @deprecated use action.args() instead
 	 * @see action
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.METHOD)
 	@Deprecated
 	public static @interface args {
@@ -322,7 +322,7 @@ public final class GamlAnnotations {
 	 * @see species
 	 * @see skill
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.METHOD)
 	public static @interface action {
 
@@ -358,7 +358,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Inherited
 	public static @interface arg {
 
@@ -402,7 +402,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	public static @interface vars {
 
 		/**
@@ -422,7 +422,7 @@ public final class GamlAnnotations {
 	 * @since 2 juin 2012
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	public static @interface var {
 
 		/**
@@ -492,7 +492,7 @@ public final class GamlAnnotations {
 	 * what kind of symbol they represent
 	 * @see ISymbolKind
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	public static @interface symbol {
 
@@ -547,6 +547,14 @@ public final class GamlAnnotations {
 
 		boolean remote_context() default false;
 
+		/**
+		 * Doc.
+		 * 
+		 * @return the documentation attached to this symbol.
+		 * @see doc
+		 */
+		doc[] doc() default {};
+
 	}
 
 	/**
@@ -555,7 +563,7 @@ public final class GamlAnnotations {
 	 * Used to annotate methods that can be used as operators in GAML.
 	 * 
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target({ ElementType.METHOD, ElementType.TYPE })
 	public static @interface operator {
 
@@ -623,7 +631,7 @@ public final class GamlAnnotations {
 	 * 
 	 * @see vars
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.METHOD)
 	public static @interface getter {
 
@@ -650,7 +658,7 @@ public final class GamlAnnotations {
 	 * 
 	 * @see vars
 	 */
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.METHOD)
 	public static @interface setter {
 
@@ -675,7 +683,7 @@ public final class GamlAnnotations {
 	 * 
 	 */
 
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	public static @interface factory {
 
@@ -706,7 +714,7 @@ public final class GamlAnnotations {
 	 * 
 	 */
 
-	@Retention(RetentionPolicy.RUNTIME)
+	@Retention(RetentionPolicy.SOURCE)
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Inherited
 	public static @interface doc {
