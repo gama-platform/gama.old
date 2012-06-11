@@ -35,7 +35,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.Chrono;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.Spatial.Points;
+import msi.gaml.operators.Spatial.Punctal;
 
 /**
  * The class GraphTopology.

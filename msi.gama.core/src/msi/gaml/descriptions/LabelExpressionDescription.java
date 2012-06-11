@@ -4,6 +4,7 @@
  */
 package msi.gaml.descriptions;
 
+import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -20,9 +21,20 @@ import org.eclipse.emf.common.notify.*;
  */
 public class LabelExpressionDescription extends BasicExpressionDescription {
 
-	static class StringConstantExpression implements IExpression {
+	static Map<String, StringConstantExpression> cache = new HashMap();
 
-		String value;
+	StringConstantExpression get(final String s) {
+		StringConstantExpression sc = cache.get(s);
+		if ( sc == null ) {
+			sc = new StringConstantExpression(s);
+			cache.put(s, sc);
+		}
+		return sc;
+	}
+
+	String value;
+
+	class StringConstantExpression implements IExpression {
 
 		StringConstantExpression(final String constant) {
 			value = constant;
@@ -119,7 +131,9 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	public LabelExpressionDescription(final String label) {
-		super(new StringConstantExpression(label));
+		super((IExpression) null);
+		value = label;
+		// expression = get(value);
 	}
 
 	@Override
@@ -129,7 +143,22 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	@Override
 	public String toString() {
-		return expression.literalValue();
+		return value;
+	}
+
+	@Override
+	public IExpression getExpression() {
+		return expression == null ? get(value) : expression;
+	}
+
+	@Override
+	public IExpression compile(final IDescription context) {
+		return getExpression();
+	}
+
+	@Override
+	public boolean equalsString(final String o) {
+		return value.equals(o);
 	}
 
 }

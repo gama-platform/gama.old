@@ -47,7 +47,7 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final IChildrenProvider cp, final IDescription superDesc, final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		if ( keyword.equals(SIGNAL) ) {
 			buildSignalDescription(source, keyword, superDesc, md);
@@ -72,7 +72,7 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
-		final IDescription superDesc, final SymbolMetaDescription md) {
+		final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(NAME);
 		String env = facets.getLabel(ENVIRONMENT);
@@ -102,7 +102,9 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	public void addSpeciesNameAsType(final String name) {
-		registeredSymbols.put(name, registeredSymbols.get(AGENT));
+		if ( !name.equals(AGENT) ) {
+			registeredSymbols.put(name, registeredSymbols.get(AGENT));
+		}
 	}
 
 	@Override

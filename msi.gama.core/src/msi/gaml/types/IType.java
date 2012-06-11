@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.Map;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -74,25 +75,25 @@ public interface IType<Inner> extends Comparable<IType> {
 	public final static String MAP_STR = "map";
 	/** Constant field AGENT. */
 	public final static short AGENT = 11;
-	public final static String AGENT_STR = "agent";
+	public final static String AGENT_STR = IKeyword.AGENT;
 	/** Constant field SPECIES. */
 	public final static short SPECIES = 14;
-	public final static String SPECIES_STR = "species";
+	public final static String SPECIES_STR = IKeyword.SPECIES;
 	/** Constant field FILE. */
 	public final static short FILE = 12;
-	public final static String FILE_STR = "file";
+	public final static String FILE_STR = IKeyword.FILE;
 	/** Constant field GEOMETRY. */
 	public static final short GEOMETRY = 13;
 	public final static String GEOM_STR = "geometry";
 
 	public static final short GRAPH = 15;
-	public static final String GRAPH_STR = "graph";
+	public static final String GRAPH_STR = IKeyword.GRAPH;
 
 	public static final short PATH = 17;
-	public static final String PATH_STR = "path";
+	public static final String PATH_STR = IKeyword.PATH;
 
 	public static final short TOPOLOGY = 18;
-	public static final String TOPOLOGY_STR = "topology";
+	public static final String TOPOLOGY_STR = IKeyword.TOPOLOGY;
 
 	public static final short CONTAINER = 16;
 	public static final String CONTAINER_STR = "container";

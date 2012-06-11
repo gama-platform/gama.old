@@ -28,7 +28,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
-import msi.gaml.operators.Spatial.Points;
+import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import org.jgrapht.*;
 import org.jgrapht.Graphs;
@@ -318,7 +318,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				}
 			}
 			line = edges.get(index);
-			currentLocation = Points.opClosestPointTo(currentLocation, line);
+			currentLocation = Punctal.opClosestPointTo(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
@@ -341,7 +341,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
 		GamaPoint falseTarget = new GamaPoint(target.getLocation());
 		if ( !keepTarget ) {
-			falseTarget = (GamaPoint) Points.opClosestPointTo(getEndVertex(), lineEnd);
+			falseTarget = (GamaPoint) Punctal.opClosestPointTo(getEndVertex(), lineEnd);
 			endIndexSegment = 1;
 			Point pointGeom = (Point) falseTarget.getInnerGeometry();
 			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {

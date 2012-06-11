@@ -39,7 +39,7 @@ public class ExperimentFactory extends SpeciesFactory {
 
 	@Override
 	protected ExperimentDescription buildDescription(final ISyntacticElement se, final String kw,
-		final IChildrenProvider cp, final IDescription sd, final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
 		return new ExperimentDescription(kw, sd, cp, se, md);
 	}
 }

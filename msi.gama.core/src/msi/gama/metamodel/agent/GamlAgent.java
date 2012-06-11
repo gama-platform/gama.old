@@ -39,7 +39,7 @@ import com.vividsolutions.jts.geom.*;
  * The Class Agent. Represents agents that can be manipulated in GAML. They are provided with
  * everything their species defines .
  */
-@species(name = "default")
+@species(name = IKeyword.AGENT)
 public class GamlAgent extends AbstractAgent implements IGamlAgent {
 
 	/**

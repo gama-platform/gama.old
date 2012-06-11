@@ -958,7 +958,7 @@ public abstract class Spatial {
 		}
 	}
 
-	public static abstract class Points {
+	public static abstract class Punctal {
 
 		@operator(value = { "any_location_in", "any_point_in" })
 		@doc(value = "A point inside (or touching) the operand-geometry.", examples = { "any_location_in(square(5)) -> a point of the square, for example : {3,4.6}." }, see = {

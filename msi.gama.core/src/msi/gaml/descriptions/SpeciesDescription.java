@@ -62,7 +62,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
-		final SymbolMetaDescription md) {
+		final SymbolProto md) {
 		super(keyword, superDesc, cp, source, md);
 		skillInstancesByMethod = new HashMap();
 		sortedVariableNames = new GamaList();

@@ -73,7 +73,7 @@ public class Types {
 		return t == null ? Types.NO_TYPE : t;
 	}
 
-	public static IType get(final Class type) {
+	public static <T> IType<T> get(final Class<T> type) {
 		IType t = classToIType.get(type);
 		if ( t != null ) { return t; }
 		// Set<Class> classes = classToIType.keySet();

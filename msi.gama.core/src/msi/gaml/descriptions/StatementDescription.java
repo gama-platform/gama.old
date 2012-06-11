@@ -45,7 +45,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public StatementDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
-		final ISyntacticElement source, final SymbolMetaDescription md) {
+		final ISyntacticElement source, final SymbolProto md) {
 		super(keyword, superDesc, cp, source, md);
 		temps = hasScope ? new HashMap() : null;
 		if ( hasArgs ) {

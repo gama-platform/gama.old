@@ -43,7 +43,7 @@ public class SpeciesFactory extends SymbolFactory {
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
 		final String keyword, final IChildrenProvider cp, final IDescription sd,
-		final SymbolMetaDescription md) {
+		final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
 		addSpeciesNameAsType(name);

@@ -76,7 +76,7 @@ public class DescriptionFactory {
 
 	public static Set<String> getAllowedFacetsFor(final String key) {
 		if ( key == null ) { return Collections.EMPTY_SET; }
-		SymbolMetaDescription md = null;
+		SymbolProto md = null;
 		md = getModelFactory().getMetaDescriptionFor(null, key);
 		Set<String> result = md == null ? null : md.getPossibleFacets().keySet();
 		return result == null ? Collections.EMPTY_SET : result;

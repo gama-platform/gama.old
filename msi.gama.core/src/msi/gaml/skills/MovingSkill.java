@@ -39,7 +39,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
-import msi.gaml.operators.Spatial.Points;
+import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.util.AssertionFailedException;
@@ -345,7 +345,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 			line = edges.get(index);
 
-			currentLocation = (GamaPoint) Points.opClosestPointTo(currentLocation, line);
+			currentLocation = (GamaPoint) Punctal.opClosestPointTo(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
@@ -365,7 +365,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 		}
 		IShape lineEnd = edges.get(nb - 1);
-		GamaPoint falseTarget = (GamaPoint) Points.opClosestPointTo(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal.opClosestPointTo(path.getEndVertex(), lineEnd);
 		endIndexSegment = 1;
 		Point pointGeom = (Point) falseTarget.getInnerGeometry();
 		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -595,7 +595,7 @@ public class MovingSkill extends GeometricSkill {
 				.getLocation(); }
 			frontier = geomsSimp;
 		}
-		ILocation computedPt = Points.opClosestPointTo(loc, new GamaShape(frontier));
+		ILocation computedPt = Punctal.opClosestPointTo(loc, new GamaShape(frontier));
 		if ( computedPt != null ) { return computedPt; }
 		return getCurrentAgent(scope).getLocation();
 	}

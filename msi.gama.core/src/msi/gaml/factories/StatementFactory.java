@@ -48,7 +48,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected StatementDescription buildDescription(final ISyntacticElement source,
 		final String kw, final IChildrenProvider cp, final IDescription superDesc,
-		final SymbolMetaDescription md) {
+		final SymbolProto md) {
 		return new StatementDescription(kw, superDesc, cp, md.hasScope(), md.hasArgs(), source, md);
 	}
 

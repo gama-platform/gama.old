@@ -52,7 +52,7 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract ISyntacticElement getSourceInformation();
 
-	public abstract SymbolMetaDescription getMeta();
+	public abstract SymbolProto getMeta();
 
 	public abstract Facets getFacets();
 

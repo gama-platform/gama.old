@@ -24,7 +24,7 @@ import msi.gaml.factories.IChildrenProvider;
 public class ExperimentDescription extends SpeciesDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final ISyntacticElement source, final SymbolProto md) {
 		super(keyword, superDesc, source.getFacets(), cp, source, md);
 	}
 

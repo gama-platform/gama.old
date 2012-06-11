@@ -48,7 +48,7 @@ public interface ISymbolFactory {
 
 	public abstract String getOmissibleFacetForSymbol(String symbol);
 
-	SymbolMetaDescription getMetaDescriptionFor(IDescription context, String keyword);
+	SymbolProto getMetaDescriptionFor(IDescription context, String keyword);
 
 	public interface Model extends ISymbolFactory {
 
@@ -60,7 +60,7 @@ public interface ISymbolFactory {
 
 	public abstract void addSpeciesNameAsType(String name);
 
-	public abstract void registerSymbol(SymbolMetaDescription md, List<String> names);
+	public abstract void registerSymbol(SymbolProto md, List<String> names);
 
 	public abstract Set<Integer> getHandles();
 

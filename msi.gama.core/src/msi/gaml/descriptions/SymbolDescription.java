@@ -41,14 +41,14 @@ public class SymbolDescription implements IDescription {
 	private ISyntacticElement source;
 	protected IDescription enclosing;
 	protected final List<IDescription> children;
-	protected SymbolMetaDescription meta;
+	protected SymbolProto meta;
 
 	// protected String name;
 	protected String keyword;
 	boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source, final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final ISyntacticElement source, final SymbolProto md) {
 		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		this.keyword = keyword;
@@ -69,7 +69,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public SymbolMetaDescription getMeta() {
+	public SymbolProto getMeta() {
 		return meta;
 	}
 

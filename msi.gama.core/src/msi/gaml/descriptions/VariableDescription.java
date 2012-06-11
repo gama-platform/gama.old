@@ -44,7 +44,7 @@ public class VariableDescription extends SymbolDescription {
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
-		final SymbolMetaDescription md) {
+		final SymbolProto md) {
 		super(keyword, superDesc, cp, source, md);
 		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
 		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {

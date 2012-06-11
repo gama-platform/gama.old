@@ -21,8 +21,7 @@ package msi.gaml.descriptions;
 import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.statements.*;
@@ -35,51 +34,9 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public class SymbolMetaDescription {
+public class SymbolProto {
 
 	public static Set<String> nonVariableStatements = new HashSet();
-
-	public static class FacetMetaDescription {
-
-		public String name;
-		public List<String> types;
-		public boolean optional;
-		public boolean isLabel;
-		public String[] values;
-		static FacetMetaDescription KEYWORD = KEYWORD();
-		static FacetMetaDescription DEPENDS_ON = DEPENDS_ON();
-
-		private FacetMetaDescription() {}
-
-		public FacetMetaDescription(final facet f) {
-			name = f.name();
-			String[] fTypes = f.type();
-			types = Arrays.asList(fTypes);
-			optional = f.optional();
-			isLabel = ids.contains(fTypes[0]);
-			values = f.values();
-		}
-
-		static FacetMetaDescription DEPENDS_ON() {
-			FacetMetaDescription f = new FacetMetaDescription();
-			f.name = IKeyword.DEPENDS_ON;
-			f.types = Arrays.asList(IType.NONE_STR);
-			f.optional = true;
-			f.isLabel = true;
-			f.values = new String[0];
-			return f;
-		}
-
-		static FacetMetaDescription KEYWORD() {
-			FacetMetaDescription f = new FacetMetaDescription();
-			f.name = IKeyword.KEYWORD;
-			f.types = Arrays.asList(IType.ID);
-			f.optional = true;
-			f.isLabel = true;
-			f.values = new String[0];
-			return f;
-		}
-	}
 
 	private final ISymbolConstructor constructor;
 	private final int kind;
@@ -90,16 +47,16 @@ public class SymbolMetaDescription {
 	private boolean isRemoteContext = false;
 	private final Set<String> contextKeywords;
 	private final Set<Short> contextKinds;
-	private final Map<String, FacetMetaDescription> possibleFacets;
+	private final Map<String, FacetProto> possibleFacets;
 	private final List<String[]> combinations;
 	private final List<String> mandatoryFacets = new ArrayList();
 	private final String omissibleFacet;
 
-	private static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
+	static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
 
-	public SymbolMetaDescription(final boolean hasSequence, final boolean hasArgs, final int kind,
-		final boolean doesNotHaveScope, final Map<String, FacetMetaDescription> possibleFacets,
+	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
+		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets,
 		final String omissible, final List<String[]> possibleCombinations,
 		final Set<String> contextKeywords, final Set<Short> contextKinds,
 		final boolean isRemoteContext, final ISymbolConstructor constr) {
@@ -112,9 +69,9 @@ public class SymbolMetaDescription {
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
-		this.possibleFacets.put(IKeyword.KEYWORD, FacetMetaDescription.KEYWORD);
-		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetMetaDescription.DEPENDS_ON);
-		for ( FacetMetaDescription f : possibleFacets.values() ) {
+		this.possibleFacets.put(IKeyword.KEYWORD, FacetProto.KEYWORD);
+		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetProto.DEPENDS_ON);
+		for ( FacetProto f : possibleFacets.values() ) {
 			if ( !f.optional ) {
 				getMandatoryFacets().add(f.name);
 			}
@@ -132,23 +89,15 @@ public class SymbolMetaDescription {
 	}
 
 	public boolean isFacetDeclaringANewTemp(final String s) {
-		FacetMetaDescription f = getPossibleFacets().get(s);
+		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
 		return f.types.get(0).equals(IType.NEW_TEMP_ID);
 	}
 
 	public boolean isLabel(final String s) {
-		FacetMetaDescription f = getPossibleFacets().get(s);
+		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
 		return f.isLabel;
-	}
-
-	public boolean isDefinition() {
-		return isLabel(omissibleFacet);
-	}
-
-	public boolean isControl() {
-		return !isDefinition();
 	}
 
 	public void setBaseClass(final Class baseClass) {
@@ -179,7 +128,7 @@ public class SymbolMetaDescription {
 		return hasScope;
 	}
 
-	public Map<String, FacetMetaDescription> getPossibleFacets() {
+	public Map<String, FacetProto> getPossibleFacets() {
 		return possibleFacets;
 	}
 
@@ -239,7 +188,7 @@ public class SymbolMetaDescription {
 				continue;
 			}
 			String facetName = facet.getKey();
-			FacetMetaDescription f = possibleFacets.get(facetName);
+			FacetProto f = possibleFacets.get(facetName);
 			if ( f == null ) {
 				continue;
 			}
@@ -308,7 +257,7 @@ public class SymbolMetaDescription {
 		// TODO Insert here the possibility to grab a @doc annotation in the symbol.
 		StringBuilder sb = new StringBuilder();
 		sb.append("<b>Facets allowed:</b><br><ul>");
-		for ( FacetMetaDescription f : this.getPossibleFacets().values() ) {
+		for ( FacetProto f : this.getPossibleFacets().values() ) {
 			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types.get(0))
 				.append(" <i>[").append(f.optional ? "optional" : "required").append("]</i>");
 			if ( f.values != null && f.values.length != 0 ) {

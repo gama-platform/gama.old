@@ -8,7 +8,6 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.descriptions.SymbolMetaDescription.FacetMetaDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 
@@ -30,7 +29,7 @@ public class DescriptionValidator {
 	 */
 
 	public static void verifyFacetsType(final IDescription desc) {
-		SymbolMetaDescription smd = desc.getMeta();
+		SymbolProto smd = desc.getMeta();
 		ModelDescription md = desc.getModelDescription();
 		TypesManager tm = md.getTypesManager();
 		for ( Map.Entry<String, IExpressionDescription> entry : desc.getFacets().entrySet() ) {
@@ -52,9 +51,9 @@ public class DescriptionValidator {
 	}
 
 	public static void verifyFacetType(final IDescription desc, final String facet,
-		final IExpression expr, final SymbolMetaDescription smd, final ModelDescription md,
+		final IExpression expr, final SymbolProto smd, final ModelDescription md,
 		final TypesManager tm) {
-		FacetMetaDescription fmd = smd.getPossibleFacets().get(facet);
+		FacetProto fmd = smd.getPossibleFacets().get(facet);
 		if ( fmd == null ) { return; }
 
 		// We have a multi-valued facet

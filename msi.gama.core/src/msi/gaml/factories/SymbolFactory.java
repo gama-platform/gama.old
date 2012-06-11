@@ -44,9 +44,9 @@ public class SymbolFactory extends AbstractFactory {
 	}
 
 	@Override
-	public final SymbolMetaDescription getMetaDescriptionFor(final IDescription context,
+	public final SymbolProto getMetaDescriptionFor(final IDescription context,
 		final String keyword) {
-		SymbolMetaDescription md = registeredSymbols.get(keyword);
+		SymbolProto md = registeredSymbols.get(keyword);
 		if ( md == null ) {
 			String upper = context == null ? null : context.getKeyword();
 			ISymbolFactory f = chooseFactoryFor(keyword, upper);
@@ -64,7 +64,7 @@ public class SymbolFactory extends AbstractFactory {
 
 	@Override
 	public String getOmissibleFacetForSymbol(final String keyword) {
-		SymbolMetaDescription md = getMetaDescriptionFor(null, keyword);
+		SymbolProto md = getMetaDescriptionFor(null, keyword);
 		return md == null ? IKeyword.NAME /* by default */: md.getOmissible();
 	}
 
@@ -87,13 +87,13 @@ public class SymbolFactory extends AbstractFactory {
 				IGamlIssue.UNKNOWN_KEYWORD, source, keyword);
 			return null;
 		}
-		SymbolMetaDescription md = f.getMetaDescriptionFor(superDesc, keyword);
+		SymbolProto md = f.getMetaDescriptionFor(superDesc, keyword);
 		return f.createDescriptionInternal(keyword, source, superDesc, cp, md);
 	}
 
 	private IDescription createDescriptionInternal(final String keyword,
 		final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp,
-		final SymbolMetaDescription md) {
+		final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
 		IDescription desc = buildDescription(source, keyword, cp, superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
@@ -118,12 +118,12 @@ public class SymbolFactory extends AbstractFactory {
 			}
 			return null;
 		}
-		SymbolMetaDescription md = f.getMetaDescriptionFor(superDesc, keyword);
+		SymbolProto md = f.getMetaDescriptionFor(superDesc, keyword);
 		return f.createDescriptionRecursivelyInternal(keyword, source, superDesc, md);
 	}
 
 	private IDescription createDescriptionRecursivelyInternal(final String keyword,
-		final ISyntacticElement source, final IDescription superDesc, final SymbolMetaDescription md) {
+		final ISyntacticElement source, final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		md.verifyFacets(source, facets, superDesc);
 		List<IDescription> children = new ArrayList();
@@ -143,7 +143,7 @@ public class SymbolFactory extends AbstractFactory {
 	}
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
-		final IChildrenProvider cp, final IDescription superDesc, final SymbolMetaDescription md) {
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		return new SymbolDescription(keyword, superDesc, cp, source, md);
 	}
 
@@ -170,7 +170,7 @@ public class SymbolFactory extends AbstractFactory {
 	}
 
 	protected void privateValidate(final IDescription desc) {
-		SymbolMetaDescription md = desc.getMeta();
+		SymbolProto md = desc.getMeta();
 		if ( md == null ) { return; }
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
@@ -207,7 +207,7 @@ public class SymbolFactory extends AbstractFactory {
 	}
 
 	protected ISymbol privateCompile(final IDescription desc) {
-		SymbolMetaDescription md = desc.getMeta();
+		SymbolProto md = desc.getMeta();
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();
 		// Addition of a facet to keep track of the keyword

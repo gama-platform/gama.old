@@ -2,13 +2,13 @@ package msi.gaml.factories;
 
 import java.util.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.descriptions.SymbolMetaDescription;
+import msi.gaml.descriptions.SymbolProto;
 
 public abstract class AbstractFactory implements ISymbolFactory {
 
 	protected static final Map<ISymbolFactory, Set<ISymbolFactory>> HIERARCHY = new HashMap();
 
-	protected final Map<String, SymbolMetaDescription> registeredSymbols = new LinkedHashMap();
+	protected final Map<String, SymbolProto> registeredSymbols = new LinkedHashMap();
 	protected final Map<String, ISymbolFactory> registeredFactories = new HashMap();
 	protected final Set<ISymbolFactory> childFactories = new HashSet();
 	protected final Set<Integer> kindsHandled;
@@ -30,11 +30,11 @@ public abstract class AbstractFactory implements ISymbolFactory {
 	}
 
 	@Override
-	public void registerSymbol(final SymbolMetaDescription md, final List<String> names) {
+	public void registerSymbol(final SymbolProto md, final List<String> names) {
 		int kind = md.getKind();
 		if ( handles(kind) ) {
 			if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
-				SymbolMetaDescription.nonVariableStatements.addAll(names);
+				SymbolProto.nonVariableStatements.addAll(names);
 			} // FIXME DONE SEVERAL TIMES. MAYBE UNNECESSARY
 			for ( String s : names ) {
 				if ( registeredSymbols.containsKey(s) ) { return; }
