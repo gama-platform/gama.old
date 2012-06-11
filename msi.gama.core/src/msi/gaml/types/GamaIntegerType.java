@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -47,10 +47,16 @@ public class GamaIntegerType extends GamaType<Integer> {
 		if ( obj instanceof Color ) { return ((Color) obj).getRGB(); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).getIndex(); }
 		if ( obj instanceof String ) {
+			String n = (String) obj;
+
 			try {
-				return Integer.decode((String) obj);
+				// If the string contains an hexadecimal number, parse it with a radix of 16.
+				if ( n.startsWith("#") ) { return Integer.parseInt(n, 16); }
+				// Otherwise use by default a "natural" radix of 10 (which can be bypassed with the
+				// as_int operator)
+				return Integer.parseInt(n, 10);
 			} catch (NumberFormatException e) {
-				return 0;
+				throw new GamaRuntimeException(e);
 			}
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1 : 0; }
