@@ -261,7 +261,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		@Override
 		public IExpression caseColorLiteral(final ColorLiteral object) {
 			try {
-				Integer val = Integer.parseInt(object.getValue(), 16);
+				Integer val = Integer.parseInt(object.getValue().substring(1), 16);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
 				context.flagError("Malformed integer: " + object.getValue(),
