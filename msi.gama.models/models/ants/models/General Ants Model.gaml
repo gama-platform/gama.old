@@ -140,7 +140,7 @@ experiment Complete type : gui {
 			//grid ant_grid lines: rgb ('black') position: { 0.05 , 0.05 } transparency: grid_transparency size: { 0.9 , 0.9 };
 			agents ant_grid2 transparency : grid_transparency position : { 0.05 , 0.05 } size : { 0.9 , 0.9 } value : ant_grid as list where ( ( each . food > 0 ) or ( each . road > 0 ) or ( each . is_nest ) );
 			//species ant_grid transparency : grid_transparency  position : { 0.05 , 0.05 } size : { 0.9 , 0.9 };
-			species ant position : { 0.05 , 0.05 } size : { 0.9 , 0.9 } aspect : default;
+			species ant position : { 0.05 , 0.05 } size : { 0.9 , 0.9 } aspect : icon;
 			text food value : 'Food foraged : ' + string ( ( ( food_gathered /food_placed ) * 100 ) with_precision 2 ) + '%' position : { 0.05 , 0.03 }
 			color : rgb ( 'black' ) size : { 1 , 0.02 };
 			text agents value : 'Carrying ants : ' + string ( int ( ant as list count (

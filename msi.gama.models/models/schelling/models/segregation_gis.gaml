@@ -53,7 +53,6 @@ entities {
 		var color type: rgb init: [255, 255, 255] as rgb; 
 		var surface type: float;
 		var capacity type: int init: 1 + int(surface / square_meters_per_people);    
-		reflex wander {do wander;}
 		action accept {
 			arg one_people;
 			add item: one_people to: insiders of self;

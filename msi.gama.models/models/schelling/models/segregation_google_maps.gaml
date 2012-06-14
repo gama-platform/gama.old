@@ -54,11 +54,11 @@ entities {
 }
 output {
 	display Segregation background: rgb('black') {
-		image name: 'bg' file: bitmap_file_name size: {0.6,0.6} position: {0.35,0.35} ;
+		image name: 'bg' file: bitmap_file_name ;
 	//	agents agents value: agents of_species people transparency: 0.5 size: {0.6,0.6} position: {0.35,0.35} ;
-		grid space size: {0.6,0.6} position: {0.05,0.05} transparency: 0 ;
-		species people transparency: 0.5 size: {0.6,0.6} position: {0.05,0.05} aspect: geom ;
-		text ttt value: 'Reference image:' /* font: 'Helvetica' */ position: {0.7,0.92} size: {0.2,0.03} color: rgb('black') ;
+		//grid space size: {0.6,0.6} position: {0.05,0.05} transparency: 0 ;
+		species people transparency: 0.5 aspect: geom ;
+	//	text ttt value: 'Reference image:' /* font: 'Helvetica' */ position: {0.7,0.92} size: {0.2,0.03} color: rgb('black') ;
 	}
 	display charts {
 		chart name: 'Proportion of happiness' type: histogram axes: rgb('white') position: {0,0} size: {1,0.5} {

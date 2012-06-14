@@ -2,15 +2,15 @@ model sugarscape
 
   
 global {
-	int sugarGrowthRate <- 1 parameter: 'Growth rate of sugar:' category: 'Environment';
-	int minDeathAge <- 60 parameter: 'Minimum age of death:' category: 'Agents';
-	int maxDeathAge <- 100 parameter: 'Maximum age of death:' category: 'Agents';
-	int maxMetabolism <- 3 parameter: 'Maximum metabolism:' category: 'Agents';
-	int maxInitialSugar <- 25 parameter: 'Maximum initial sugar per cell:' category: 'Environment';
-	int minInitialSugar <- 5 parameter: 'Minimum initial sugar per cell:' category: 'Environment';
-	float maxRange <- 6 parameter: 'Maximum range of vision:' category: 'Agents';
-	bool replace <- true parameter: 'Replace dead agents ?' category: 'Agents';
-	int numberOfAgents <- 400 parameter: 'Number of agents:' category: 'Agents';
+	int sugarGrowthRate <- 1;
+	int minDeathAge <- 60;
+	int maxDeathAge <- 100;
+	int maxMetabolism <- 3;
+	int maxInitialSugar <- 25 ;
+	int minInitialSugar <- 5;
+	float maxRange <- 6.0;
+	bool replace <- true;
+	int numberOfAgents <- 400;
 	const types type: file <- file('../images/sugarscape.pgm');
 	const red type: rgb <- rgb('red');
 	const white type: rgb <- rgb('white');
@@ -41,13 +41,13 @@ environment width: 50 height: 50 {
 entities {
 	species animal {
 		const color type: rgb <- red;
-		const speed type: float <- 1;
+		const speed type: float <- 1.0;
 		const metabolism type: int min: 1 <- rnd(maxMetabolism);
 		const vision type: int min: 1 <- rnd(maxRange);
 		const maxAge type: int min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
 		const size type: float <- 0.5;
 		int sugar min: 0 <- (rnd (maxInitialSugar - minInitialSugar)) + minInitialSugar update: sugar - metabolism;
-		int age max: maxAge <- 0 update: age + step;
+		int age max: maxAge <- 0 update: int(age + step);
 		sugar_cell place <- location as sugar_cell; 
 		
 		reflex basic_move { 
@@ -69,21 +69,33 @@ entities {
 		}
 	}
 }
-output {
-	display grille {
-		grid sugar_cell;
-		species animal;
-	}
-	display chart refresh_every: 5 {
-		chart name: 'Energy' type: pie background: rgb('lightGray') style: exploded {
-			data strong value: (animal as list) count (each.sugar > 8);
-			data weak value: (animal as list) count (each.sugar < 9);
+experiment sugarscape type: gui{
+	parameter 'Growth rate of sugar:' var: sugarGrowthRate category: 'Environment';
+	parameter 'Minimum age of death:' var: minDeathAge <- 60 category: 'Agents';
+	parameter 'Maximum age of death:' var: maxDeathAge <- 100 category: 'Agents';
+	parameter 'Maximum metabolism:' var: maxMetabolism <- 3 category: 'Agents';
+	parameter 'Maximum initial sugar per cell:'  var: maxInitialSugar <- 25 category: 'Environment';
+	parameter 'Minimum initial sugar per cell:' var: minInitialSugar <- 5 category: 'Environment';
+	parameter 'Maximum range of vision:' var: maxRange <- 6.0 category: 'Agents';
+	parameter 'Replace dead agents ?' var: replace <- true category: 'Agents';
+	parameter 'Number of agents:' var: numberOfAgents <- 400 category: 'Agents';
+	
+	output {
+		display grille {
+			grid sugar_cell;
+			species animal;
 		}
-	}
-	display chart2 refresh_every: 5 {
-		chart name: 'Energy' type: histogram background: rgb('lightGray') {
-			data strong value: (animal as list) count (each.sugar > 8);
-			data weak value: (animal as list) count (each.sugar < 9);
+		display chart refresh_every: 5 {
+			chart name: 'Energy' type: pie background: rgb('lightGray') style: exploded {
+				data strong value: (animal as list) count (each.sugar > 8);
+				data weak value: (animal as list) count (each.sugar < 9);
+			}
+		}
+		display chart2 refresh_every: 5 {
+			chart name: 'Energy' type: histogram background: rgb('lightGray') {
+				data strong value: (animal as list) count (each.sugar > 8);
+				data weak value: (animal as list) count (each.sugar < 9);
+			}
 		}
 	}
 }

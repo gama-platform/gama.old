@@ -1,13 +1,12 @@
 model clusters
 
 global {
-	int number_of_agents parameter: 'true' min: 1 max: 5000 <- 1000;
-	int width_and_height_of_environment parameter: 'true' min: 10 max: 2000 <- 400 ;
-	float range_of_agents parameter: 'true' min: 1.0 max: 10.0 <- 4.0;
-	float speed_of_agents parameter: 'true' min: 0.1 max: 10.0 <- 4.0;
-	bool grow_leader parameter: 'true' <- true ;
-	bool torus  parameter: 'true' <- true ;
-	bool multiple_agents_per_place  parameter: 'true' <- false ;
+	int number_of_agents min: 1 max: 5000 <- 1000;
+	int width_and_height_of_environment min: 10 max: 2000 <- 400 ;
+	float range_of_agents min: 1.0 max: 10.0 <- 10.0;
+	float speed_of_agents min: 0.1 max: 10.0 <- 4.0;
+	bool grow_leader <- true ;
+	bool torus <- true ;
 	init {  
 		create cells number: number_of_agents ;
 	}
@@ -25,12 +24,11 @@ entities {
 		rgb color <- [100 + rnd(155),100 + rnd(155), 100 + rnd(155)] as rgb update: !(leader != self) ? color : leader.color ;
 		float size min: 1.0 max: 10.0 <- 4.0;
 		int strength <- 0 ;
-		float range  min: range_of_agents max: width_and_height_of_environment / 3 <- range_of_agents update: !(leader != self) ? range : range_of_agents ;
+		float range  min: range_of_agents max: width_and_height_of_environment / 3 <- range_of_agents update: (leader = self) ? range : range_of_agents ;
 		cells leader <- self ;
 		int heading <- rnd(359) update: leader.heading;
 		reflex move {    
 			do move ;
-			do wander with: [amplitude::200];
 		}  
 		reflex change_leader when: (leader != self) and (self distance_to leader > (leader.range - (leader.range / 10.0))) {
 			if grow_leader {
@@ -61,13 +59,19 @@ entities {
 		}
 	}
 }
-output {
-	display Graphics refresh_every: 1 {
-		species cells aspect: default ;
-	}
-	monitor name: 'number of clusters' value: (cells as list) count (each.leader = each) ;
-}
+
 
 experiment EZE type: gui {
-	
+	parameter 'Number of agents :' var: number_of_agents;
+	parameter 'Width and height of the environment' var:  width_and_height_of_environment;
+	parameter 'Range of agents'var: range_of_agents;
+	parameter 'Speed of agents'var: speed_of_agents;
+	parameter 'Grow leader?' var: grow_leader;
+	parameter 'Torus?'var: torus;
+	output {
+		display Graphics refresh_every: 1 {
+			species cells aspect: default ;
+		}
+		monitor name: 'number of clusters' value: (cells as list) count (each.leader = each) ;
+	}
 }

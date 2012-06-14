@@ -1,12 +1,12 @@
 model circle
 
-global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
-	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 690 ;
-	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
-	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
-	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
+global { 
+	int number_of_agents min: 1 <- 50 ;
+	int radius_of_circle min: 10 <- 1000 ;
+	int repulsion_strength min: 1 <- 5 ;
+	int width_and_height_of_environment min: 10 <- 3000 ; 
+	int range_of_agents min: 1 <- 25 ;
+	float speed_of_agents min: 0.1  <- 2.0 ; 
 	int size_of_agents <- 100;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
@@ -17,10 +17,6 @@ global {
 	}  
 } 
  
- 
- 
-
-
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
  
   
@@ -31,7 +27,7 @@ entities {
 		const range type: float <- float(range_of_agents); 
 		const speed type: float <- speed_of_agents;   
 		int heading <- rnd(359);
-		geometry shape <- circle (size) ;
+		geometry shape <- circle (size) simplification (1);
 		
 		reflex go_to_center {
 			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
@@ -48,13 +44,23 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color;
+			draw geometry: shape color: color;
 		}
 	}
 }
 
-output {
-	display Circle refresh_every: 1 type: opengl {
-		species cells;
+experiment circle type: gui {
+	parameter 'Number of Agents' var: number_of_agents;
+	parameter 'Radius of Circle' var: radius_of_circle; 
+	parameter 'Strength of Repulsion' var: repulsion_strength;
+	parameter 'Dimensions' var: width_and_height_of_environment;
+	parameter 'Range of Agents' var: range_of_agents;
+	parameter 'Speed of Agents' var: speed_of_agents ; 
+	
+	output {
+		display Circle refresh_every: 1 {
+			species cells;
+		}
 	}
 }
+
