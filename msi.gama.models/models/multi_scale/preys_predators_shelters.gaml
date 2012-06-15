@@ -115,7 +115,7 @@ entities {
 		reflex release_member_preys {
 			let to_be_released type: list of: prey_in_shelter value: (list (prey_in_shelter)) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
 			 
-			release to_be_released as: prey { 
+			release to_be_released in: world as: prey { 
 				set state value: 'invisible';
 				set shape value:  at_location (circle (prey_size), self.location);   
 			}
