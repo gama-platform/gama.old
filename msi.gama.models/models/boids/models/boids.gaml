@@ -1,24 +1,24 @@
 model boids 
 global { 
-	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
-	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
-	float maximal_speed parameter: 'Maximal speed' <- 15 min: 0.1 max: 15;
-	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
-	int alignment_factor parameter: 'Alignment Factor' <- 100; 
-	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
-	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
-	int width_and_height_of_environment parameter: 'Width/Height of the Environment' <- 800;  
-	bool torus_environment parameter: 'Toroidal Environment ?' <- false; 
-	bool apply_cohesion <- true parameter: 'Apply Cohesion ?';
-	bool apply_alignment <- true parameter: 'Apply Alignment ?';   
-	bool apply_separation <- true parameter: 'Apply Separation ?';   
-	bool apply_goal <- true parameter: 'Follow Goal ?'; 
-	bool apply_avoid <- true parameter: 'Apply Avoidance ?';   
-	bool apply_wind <- true parameter: 'Apply Wind ?';     
-	bool moving_obstacles <- false parameter: 'Moving Obstacles ?';    
+	int number_of_agents <- 100 min: 1 max: 1000000;
+	int number_of_obstacles <- 5 min: 0;
+	float maximal_speed <- 15.0 min: 0.1 max: 15.0;
+	int cohesion_factor <- 200;
+	int alignment_factor <- 100; 
+	float minimal_distance <- 10.0; 
+	int maximal_turn <- 90 min: 0 max: 359; 
+	int width_and_height_of_environment <- 800;  
+	bool torus_environment <- false; 
+	bool apply_cohesion <- true ;
+	bool apply_alignment <- true ;
+	bool apply_separation <- true;
+	bool apply_goal <- true;
+	bool apply_avoid <- true;  
+	bool apply_wind <- true;   
+	bool moving_obstacles <- false;   
 	int bounds <- int(width_and_height_of_environment / 20); 
-	point wind_vector <- {0,0} parameter: 'Direction of the wind';  
-	int goal_duration <- 30 value: (goal_duration - 1); 
+	point wind_vector <- {0,0}; 
+	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
 	int xmin <- bounds;    
@@ -26,12 +26,6 @@ global {
 	int xmax <- (width_and_height_of_environment - bounds);    
 	int ymax <- (width_and_height_of_environment - bounds);   
 
-
-	// flock's parameter 
-	const two_boids_distance type: int init: 30;  
-	const merging_distance type: int init: 30;
-	var create_flock type: bool init: false;  
-	
 	init {
 		create boids number: number_of_agents { 
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
@@ -44,59 +38,15 @@ global {
 		create  boids_goal number: 1 {
 			set location <- goal;
 		}
-	}
-	
-	 reflex create_flocks {
-	 	if create_flock {
-	 		let free_boids type: list of: boids value: list (boids); 
-	 		let potentialBoidsNeighboursMap type: map value: ([] as map);
-	 		
-	 		loop one_boids over: free_boids {
-	 			let free_neighbours 
-	 				type: list of: boids 
-	 				value: ( ( list ((agents_overlapping (one_boids.shape + (float (two_boids_distance)))) ) of_species boids) );
-	 			remove one_boids from: free_neighbours;  
-
-	 			if !(empty (free_neighbours)) {
-	 				add (one_boids::free_neighbours) to: potentialBoidsNeighboursMap;
-	 			} 
-	 		}
-	 		
-	 		let sorted_free_boids type: list of: boids value: (potentialBoidsNeighboursMap.keys) sort_by (length (list (potentialBoidsNeighboursMap at (boids (each)))));
-	 		loop one_boids over: sorted_free_boids {
-	 			let one_boids_neighbours type: list of: boids value: (potentialBoidsNeighboursMap at one_boids);
-	 			
-	 			if  (one_boids_neighbours != nil) {
-	 				loop one_neighbour over: one_boids_neighbours {
-	 					remove one_neighbour from: potentialBoidsNeighboursMap; 
-	 				}
-	 			}
-	 		}
-	 		
-		 	let boids_neighbours type: list of: boids value: (potentialBoidsNeighboursMap.keys);
-		 	loop one_key over: boids_neighbours {
-		 		put (remove_duplicates ((list (potentialBoidsNeighboursMap at (one_key))) + one_key)) at: one_key in: potentialBoidsNeighboursMap;
-		 	}
-		 	
-		 	loop one_key over: (potentialBoidsNeighboursMap.keys) {
-		 		let micro_agents type: list of: boids value: (potentialBoidsNeighboursMap at one_key);
-		 			
-		 		if ( (length (micro_agents)) > 1 ) {
-		 			create flock number: 1 with: [ color::[rnd (255), rnd (255), rnd (255)] ] { 
-		 				capture micro_agents as: boids_delegation;
-		 			}
-		 		}
-		 	} 
-		}
-	}  
+	}	
 }
-
+	
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
 
 entities {
 	species name: boids_goal skills: [moving] {
-		const range type: float init: 20;
-		const size type: float init: 10;
+		const range type: float init: 20.0;
+		const size type: float init: 10.0;
 		
 		reflex wander { 
 			do  wander amplitude: 45 speed: 20;  
@@ -104,94 +54,10 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: circle color: 'red' size: 10;
-			draw shape: circle color: 'orange' size: 40 empty: true;
+			draw shape: circle color: rgb('red') size: 10;
+			draw shape: circle color: rgb('orange') size: 40 empty: true;
 		}
 	} 
-	
-	species flock  {
-		var cohesionIndex type: float init: two_boids_distance value: (two_boids_distance + (length (members)));
-		var color type: rgb init: rgb ([64, 64, 64]);
-	 	var shape type: geometry value: !(empty (members)) ? ( (polygon (members collect (boids_delegation (each)).location )) + 2.0 ) : ( polygon ([ {rnd (width_and_height_of_environment), rnd (width_and_height_of_environment)} ]) );
-		 
- 
-		species boids_delegation parent: boids topology: topology(world.shape)  {
-			
-			// je ne comprends pas pourquoi cette liste peut contenir des agents morts de l'espces "boids_delegation"?
-			list others value: ( (boids_delegation overlapping (shape + range))) - self;
-
-			action compute_mass_center type: point {
-				loop o over: others {
-					if condition: dead(o) { // a peut faire lever un message "warning" dans la vue "Errors" 
-						do write message: 'in ' + name + ' agent with others contains death agents'; 
-					} 
-				}
-				 
-				return (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
-			}
-
-			reflex separation when: apply_separation {
-			}
-			
-			reflex alignment when: apply_alignment {
-			}
-			
-			reflex cohesion when: apply_cohesion {
-				let acc value: ((self compute_mass_center []) as point) - location;
-				set acc value: acc / cohesion_factor;
-				set velocity value: velocity + acc;
-			}
-			
-			reflex avoid when: apply_avoid {
-			}		
-		}
-		
-		reflex capture_release_boids {
-			 let removed_components type: list of: boids_delegation value: (list (boids_delegation)) where ((each distance_to location) > cohesionIndex );
-			 if !(empty (removed_components)) {
-			 	release removed_components;
-			 }
-			 
-			 let added_components type: list of: boids value: (list (boids)) where ((each distance_to location) < cohesionIndex );
-			 if !(empty (added_components)) {
-			 	capture added_components as: boids_delegation;
-			 }
-		}
-		
-		reflex dispose when: ((length (members)) < 2) {
-			 release members;
-			 do die;
-		}
-		
-		reflex merge_nearby_flocks {
-			let nearby_flocks type: list of: flock value: (flock overlapping (shape +  merging_distance));
-			if !(empty (nearby_flocks)) {
-			 	set nearby_flocks <- nearby_flocks sort_by (length (each.members));
-			 	let largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
-			 	 
-			 	remove largest_flock from: nearby_flocks;
-			 	 
-			 	let added_components type: list of: boids value: [];
-			 	loop one_flock over: nearby_flocks {
-			 		release one_flock.members returns: released_boids; 
-			 		
-			 		loop rb over: list(released_boids) {
-			 			add rb to: added_components;
-			 		}
-			 	}
-			 	
-			 	if !(empty (added_components)) { 
-			 		ask largest_flock {
-			 			capture added_components as: boids_delegation;
-			 		}
-			 	} 
-			 }
-		}
-		
-		aspect default {
-			draw shape: geometry color: color;
-		}
-	}
 	
 	species boids skills: [moving] {
 		float speed max: maximal_speed <- maximal_speed;
@@ -282,46 +148,42 @@ entities {
 	} 
 	
 	species obstacle skills: [moving] {
-		float speed <- 0.1;
+		float speed <- 2.0;
 		  
 		reflex toto when: moving_obstacles {
-//			if flip(0.5)  
-//			{ 
-//				do goto target: one_of(boids);
-//			} 
-//			else{ 
-//				do wander amplitude: 360;   
-//			}
+			if flip(0.5)  
+			{ 
+				do goto target: one_of(boids);
+			} 
+			else{ 
+				do wander amplitude: 360;   
+			}
 		}
-		
- 
-		
 		aspect default {
 			draw shape: triangle color: rgb('yellow') size: 20;
 		}
 	}
 }
 
-/*experiment with_flocks type: gui {
-	parameter name: 'Create flock?' var: create_flock init: true category: 'Flock: ';
+experiment boids type: gui {
+	parameter 'Number of agents' var: number_of_agents;
+	parameter 'Number of obstacles' var: number_of_obstacles;
+	parameter 'Maximal speed' var: maximal_speed;
+	parameter 'Cohesion Factor' var: cohesion_factor;
+	parameter 'Alignment Factor' var: alignment_factor; 
+	parameter 'Minimal Distance'  var: minimal_distance; 
+	parameter 'Maximal Turn'  var: maximal_turn; 
+	parameter 'Width/Height of the Environment' var: width_and_height_of_environment ;  
+	parameter 'Toroidal Environment ?'  var: torus_environment ; 
+	parameter 'Apply Cohesion ?' var: apply_cohesion ;
+	parameter 'Apply Alignment ?' var: apply_alignment ;   
+	parameter 'Apply Separation ?' var: apply_separation ;   
+	parameter 'Follow Goal ?' var: apply_goal ; 
+	parameter 'Apply Avoidance ?' var: apply_avoid ;   
+	parameter 'Apply Wind ?' var: apply_wind ;     
+	parameter 'Moving Obstacles ?' var: moving_obstacles  ;    
+	parameter 'Direction of the wind' var: wind_vector ;  
 	
-	output {
-		display Sky refresh_every: 1 {
-			image name:'background' file:'../images/sky.jpg';
-			species boids;
-			species boids_goal;
-			species obstacle;
-			
-			species flock transparency: 0.5 {
-				species boids_delegation;
-			}
-		}
-		 
-		monitor flocks value: length (flock);
-	}
-}*/
-
-experiment without_flocks type: gui {
 	output {
 		inspect name: 'Inspector' type: agent;
 		display Sky refresh_every: 1 {

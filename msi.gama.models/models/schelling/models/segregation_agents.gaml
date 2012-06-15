@@ -1,20 +1,17 @@
 model segregation
-// gen by Xml2Gaml
 
-
-//import "../include/schelling_common.gaml" 
 import "../include/schelling_common.gaml"
 
 global {
-	var free_places type: list init: [] of: space;   
-	var all_places type: list init: [] of: space; 
+	list free_places <- [] of: space;   
+	list all_places <- [] of: space; 
 	action initialize_people {
-		create species: people number: number_of_people;     
-		set all_people value: people as list;  
+		create people number: number_of_people;     
+		set all_people <- people as list;  
 	} 
 	action initialize_places { 
-		set all_places value: shuffle (space as list);
-		set free_places value: all_places;
+		set all_places <- shuffle (space as list);
+		set free_places <- all_places;
 	} 
 }
 environment width: dimensions height: dimensions {  
@@ -23,27 +20,39 @@ environment width: dimensions height: dimensions {
 	}
 } 
 entities {
-	species people parent: base skills: [situated, visible] {
-		const color type: rgb init: colors at (rnd (number_of_groups - 1));
-		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people of: people;
+	species people parent: base  {
+		const color type: rgb <- colors at (rnd (number_of_groups - 1));
+		list my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} of: people;
 		init {
-			remove item: location as space from: free_places;
+			set location <- (one_of(free_places)).location; 
+			remove location as space from: free_places;
 		} 
 		reflex migrate when: !is_happy {
-			//warn string(self) + " is migrating";
-			add item: location as space to: free_places;
-			set location value: point(any(free_places));
-			remove item: location as space from: free_places;
+			add location as space to: free_places;
+			set location <- any(free_places).location;
+			remove location as space from: free_places;
 		}
 		
 		aspect default{ 
-			draw shape:circle size:1.2 color: color; 
+			draw shape:circle size:1.0 color: color; 
 		}
 	}
-}
-output {
-	display Segregation {
-		species people;
+} 
+
+experiment schelling type: gui {	
+	output {
+		display Segregation {
+			species people;
+		}	
+		display Charts {
+			chart name: 'Proportion of happiness' type: pie background: rgb('lightGray') style: exploded position: {0,0} size: {1.0,0.5}{
+				data Unhappy value: number_of_people - sum_happy_people ;
+				data Happy value: sum_happy_people ;
+			}
+			chart name: 'Global happiness and similarity' type: series background: rgb('lightGray') axes: rgb('white') position: {0,0.5} size: {1.0,0.5} {
+				data happy color: rgb('blue') value:  (sum_happy_people / number_of_people) * 100 style: spline ;
+				data similarity color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+			}
+		}
 	}
-	inspect name: 'agents' type: agent;
 }

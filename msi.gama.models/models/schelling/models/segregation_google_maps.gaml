@@ -1,50 +1,46 @@
 model segregation
-// gen by Xml2Gaml
 
-
-import "../include/schelling_common.gaml"   
+import "../include/schelling_common.gaml"    
 
 global {
-		var free_places type: list init: [] of: space; 
-	var all_places type: list init: [] of: space;
-	var neighbours_distance type: int init: 10 max: 100 min: 1 parameter: 'Distance of perception:' category: 'Population' ;
-	const google_buildings type: list init: [rgb('#EBE6DC'), rgb('#D1D0CD'), rgb('#F2EFE9'), rgb('#EEEBE1'), rgb('#F9EFE8')] ;
-	var available_places type: list of: space ;
-	var bitmap_file_name type: string init: '../images/hanoi.png' parameter: 'Name of image file to load:' category: 'Environment' ;
-	var map_colors type: matrix ;
-	action initialize_places { 
-		set map_colors value: file(bitmap_file_name) as_matrix {dimensions,dimensions} ;
-		ask target: space as list {
-			set color value: map_colors at {grid_x,grid_y} ;
-		}
-		set all_places value: shuffle ((space as list) select (each.color in google_buildings)) ;
-		set available_places value: all_places ; 
-	} 
+	list free_places <- [] of: space; 
+	list all_places <- [] of: space;
+	const google_buildings type: list <- [rgb('#EBE6DC'), rgb('#D1D0CD'), rgb('#F2EFE9'), rgb('#EEEBE1'), rgb('#F9EFE8')] ;
+	list available_places of: space ;
+	string bitmap_file_name <- '../images/hanoi.png' parameter: 'Name of image file to load:' category: 'Environment' ;
+	matrix map_colors;
+ 
 	action initialize_people {
-		create species: people number: number_of_people ;  
-		set all_people value: people as list ;  
-	} 
+		create people number: number_of_people ;  
+		set all_people <- people as list ;  
+	}
+	 
+	action initialize_places { 
+		set map_colors <- file(bitmap_file_name) as_matrix {dimensions,dimensions} ;
+		ask space as list {
+			set color <- map_colors at {grid_x,grid_y} ;
+		}
+		set all_places <- shuffle ((space as list) where (each.color in google_buildings)) ;
+		set free_places <- all_places;
+	}  
 }
 environment width: dimensions height: dimensions {
 	grid space width: dimensions height: dimensions neighbours: 8 torus: true ; 
 }
 entities { 
-	species people parent: base  { 
-		//var location type: point init: point(all_places first_with empty(each.agents)) ;
-		const color type: rgb init: colors at (rnd (number_of_groups - 1)) ;
-		var my_neighbours type: list value: (self neighbours_at neighbours_distance) of_species people ;
+	species people parent: base  {
+		const color type: rgb <- colors at (rnd (number_of_groups - 1));
+		list my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} of: people;
 		init {
-			set location value: point(last(available_places)) ; 
-			remove item: location as space from: available_places ;
-		}
+			set location <- (one_of(free_places)).location; 
+			remove location as space from: free_places;
+		} 
 		reflex migrate when: !is_happy {
-			let old_loc value: location ;
-			set location value: point(any(available_places)) ;  
-			remove item: location as space from: available_places ;
-			add item: old_loc as space  to: available_places ;
+			add location as space to: free_places;
+			set location <- any(free_places).location;
+			remove location as space from: free_places;
 		}
-		
-	aspect geom {
+		aspect geom {
 			draw geometry: square(1) color: color  ;
 		}
 		aspect default {
@@ -52,22 +48,22 @@ entities {
 		}
 	}
 }
-output {
-	display Segregation background: rgb('black') {
-		image name: 'bg' file: bitmap_file_name ;
-	//	agents agents value: agents of_species people transparency: 0.5 size: {0.6,0.6} position: {0.35,0.35} ;
-		//grid space size: {0.6,0.6} position: {0.05,0.05} transparency: 0 ;
-		species people transparency: 0.5 aspect: geom ;
-	//	text ttt value: 'Reference image:' /* font: 'Helvetica' */ position: {0.7,0.92} size: {0.2,0.03} color: rgb('black') ;
-	}
-	display charts {
-		chart name: 'Proportion of happiness' type: histogram axes: rgb('white') position: {0,0} size: {1,0.5} {
-			data Unhappy value: number_of_people - sum_happy_people ;
-			data Happy value: sum_happy_people ;
-		}
-		chart name: 'Global happiness and similarity' type: series axes: rgb('white') position: {0,0.5} size: {1,0.5} {
-			data similarity color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: area ;
-			data happy color: rgb('yellow') value:  (sum_happy_people / number_of_people) * 100 style: area ;
+
+experiment schelling type: gui {	
+	output {
+		display Segregation {
+			image name: 'bg' file: bitmap_file_name ;
+			species people transparency: 0.5 aspect: geom;
+		}	
+		display Charts {
+			chart name: 'Proportion of happiness' type: pie background: rgb('lightGray') style: exploded position: {0,0} size: {1.0,0.5}{
+				data Unhappy value: number_of_people - sum_happy_people ;
+				data Happy value: sum_happy_people ;
+			}
+			chart name: 'Global happiness and similarity' type: series background: rgb('lightGray') axes: rgb('white') position: {0,0.5} size: {1.0,0.5} {
+				data happy color: rgb('blue') value:  (sum_happy_people / number_of_people) * 100 style: spline ;
+				data similarity color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+			}
 		}
 	}
 }
