@@ -1,19 +1,19 @@
 model evolution_geometry
-// gen by Xml2Gaml 
+
 global {
-	file shape_file_name_init parameter: 'Path of shapefile to load for the initial agent:' category: 'GIS specific' <- '../gis/init.shp' ;
-	file shape_file_name_background parameter: 'Path of shapefile to load for the background:' category: 'GIS specific' <- '../gis/background.shp';
-	float dying_size min: 100 parameter: 'Size (area) from which an agent dies:' category: 'Population' <-10000 ; 
-	float crossover_size min: 100 parameter: 'Min size (area) for crossover:' category: 'Population' <- 1000;
-	float minimum_size min: 100 parameter: 'Minimum size (area) of a agent produced by a crossover:' category: 'Population' <- 500;
-	int time_wthout_co min: 1 parameter: 'Number of steps without crossing-over for an agent:' category: 'Population' <- 7;
-	float speed min: 1 parameter: 'Agent deplacement speed:' category: 'Population' <- 10; 
-	float crossover_rate min: 0.1 parameter:'Rate of crossover' category: 'Population' <- 0.95; 
-	float scaling_factor min: 1.001 parameter: 'Scaling factor for agent geometry (at each step):' category: 'Population' <- 1.05;
-	float angle_rotation_max min: 0 parameter: 'Max rotation angle for agent geometry (at each step):' category:'Population' <- 45;
-	int nb_partners_max min: 1 parameter: 'Max number of possible partners for crossing-overs (per step)' category: 'Population' <- 1;
-	int max_side_size min: 1 parameter: 'Size max of the initiale side of an agent:' category: 'Population' <- 5; 
-	int background_size_side min: 20 max: 100 parameter:'Size background side:' category: 'Population' <- 80 ;
+	file shape_file_name_init  <- file('../gis/init.shp') ;
+	file shape_file_name_background  <- file('../gis/background.shp');
+	float dying_size min: 100.0  <-10000.0 ; 
+	float crossover_size min: 100.0  <- 1000.0;
+	float minimum_size min: 100.0 <- 500.0;
+	int time_wthout_co min: 1 <- 7;
+	float speed min: 1.0  <- 10.0; 
+	float crossover_rate min: 0.1  <- 0.95; 
+	float scaling_factor min: 1.001 <- 1.05;
+	float angle_rotation_max min: 0.0 <- 45.0;
+	int nb_partners_max min: 1  <- 1;
+	int max_side_size min: 1 <- 5; 
+	int background_size_side min: 20 max: 100 <- 80 ;
 	
 	geometry the_background;
 
@@ -72,20 +72,34 @@ species people topology: topology(shape_file_name_init) {
 	}
 		
 	aspect default {
-		draw shape: geometry color: color;
+		draw geometry: shape color: color;
 	}
 }
 
 species background {
 	rgb color;
 	aspect default {
-		draw shape: geometry color: color;
+		draw geometry: shape color: color;
 	}	
 }
-
-output {
-	display space_display refresh_every: 1 {
-		species background;
-		species people transparency: 0.3;
+experiment evolution_geometry type: gui {
+	parameter 'Path of shapefile to load for the initial agent:' var: shape_file_name_init  category: 'GIS specific' ;
+	parameter 'Path of shapefile to load for the background:' var: shape_file_name_background category: 'GIS specific';
+	parameter 'Size (area) from which an agent dies:' var: dying_size min: 100  category: 'Population'; 
+	parameter 'Min size (area) for crossover:' var:crossover_size category: 'Population';
+	parameter 'Minimum size (area) of a agent produced by a crossover:' var:minimum_size category: 'Population';
+	parameter 'Number of steps without crossing-over for an agent:' var:time_wthout_co category: 'Population';
+	parameter 'Agent deplacement speed:' var:speed category: 'Population' ; 
+	parameter 'Rate of crossover' var:crossover_rate category: 'Population'; 
+	parameter 'Scaling factor for agent geometry (at each step):' var:scaling_factor category: 'Population';
+	parameter 'Max rotation angle for agent geometry (at each step):' var:angle_rotation_max category:'Population';
+	parameter 'Max number of possible partners for crossing-overs (per step)' var:nb_partners_max category: 'Population' ;
+	parameter 'Size max of the initiale side of an agent:' var:max_side_size category: 'Population'; 
+	parameter 'Size background side:' var: background_size_side category: 'Population' ;
+	output {
+		display space_display refresh_every: 1 type: opengl{
+			species background;
+			species people ;
+		}
 	}
 }

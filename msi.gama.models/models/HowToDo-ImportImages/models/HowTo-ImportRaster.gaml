@@ -8,18 +8,15 @@ model HowToImportRaster
 
 global {	
 	// Constants 
-	const heightImg type: int init: 5587;
-	const widthImg type: int init: 6201;	 
+	const heightImg type: int <- 5587;
+	const widthImg type: int <- 6201;	 
 	  
-	// Parameters
-	var mntImageRaster type: file init: '../images/mnt/testAG.png' parameter: 'MNT file' category: 'MNT' ;
-	var factorDiscret type: int init:30 parameter:'Discretization factor' category:'Environment';
+	// Global variables
+	int factorDiscret <- 30 ;
+	file mntImageRaster <- file('../images/mnt/testAG.png') ;
 	
-	var nbIzard type: int init: 25 parameter: 'Nb of Izards' category: 'Izard'; 
-	var izardShape type: file init:'../images/icons/izard.gif' parameter: 'Izard Shape' category: 'Izard';
-	
-	// Local variable 
-	// var mapColor type: matrix ;
+	int nbIzard <- 250 ; 
+	file izardShape <- file('../images/icons/izard.gif');
 			
 	// Initialization of grid and creation of the izard agents
 	// - we use the as_matrix operator to transform a image file into a matrix of colors 
@@ -27,10 +24,10 @@ global {
 	// - we then set the color built-in attribute of the cell with the value of the corresponding matrix cell     
 	init {
 		// set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
-		ask target: cell as list {		
-			set color value: mntImageRaster at {grid_x,grid_y} ;
+		ask cell as list {		
+			set color <- mntImageRaster at {grid_x,grid_y} ;
 		}
-		create species: izard number: nbIzard; 
+		create izard number: nbIzard; 
     }
 }
  
@@ -43,35 +40,44 @@ environment {
 	grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
 }
 
-// We create izard agents and locate them on one random 'cellule' among the list of cellules empty ('empty(each.agents)') 
-// and with white color 'each.color = rgb('white')'
+// We create izard agents and locate them on one'cell' among the list of cellules that verifies the following conditions : is empty ('empty(each.agents)') 
+// and with a color that is not white 'each.color != rgb('white')'
+// the shuffle operator is used to randomized the list of cells
 
 entities {
 	species izard {	
 		init{
-			set location value: one_of(cell as list where (empty(each.agents) and each.color = rgb('green')) ) ;
+			set location <- (shuffle(cell as list) first_with ((each.color != rgb('white')) and (empty(each.agents)))).location ;
 		}		
 		aspect basic{
     		draw shape: square color: rgb('orange') size: 1;
     	}
     	aspect image{
-    		draw image: izardShape.path;
+    		draw image: izardShape.path size: 1;
     	}
 	}
 }
 
-// We display:
-// - the grid
-// - the original MNT image as background
-// - izard agents
-// We can thus compare the original MNT image and the discretized image in the grid.
-// For cosmetic need, we can choose to not display the grid. 
-
-output {
-	display HowToImportRaster {
-       grid cell;
-       image name: 'Background' file: mntImageRaster.path;
-       species izard aspect: image; 
-    }   
-    inspect name: 'Species' type: species refresh_every: 5;
+experiment main type: gui {
+	// Parameters
+	parameter 'MNT file' var: mntImageRaster category: 'MNT' ;
+	parameter'Discretization factor' var: factorDiscret category:'Environment';
+	
+	parameter 'Nb of Izards' var: nbIzard category: 'Izard'; 
+	parameter 'Izard Shape' var: izardShape category: 'Izard';
+	
+	// We display:
+	// - the grid
+	// - the original MNT image as background
+	// - izard agents
+	// We can thus compare the original MNT image and the discretized image in the grid.
+	// For cosmetic need, we can choose to not display the grid. 
+	output {
+		display HowToImportRaster {
+	       grid cell;
+	       image name: 'Background' file: mntImageRaster.path;
+	       species izard aspect: image; 
+	    }   
+	    inspect name: 'Species' type: species refresh_every: 5;
+	}	
 }

@@ -1,8 +1,8 @@
 model demo_weighted_graph
 
 global {
-	file shape_file_roads parameter: 'Shapefile for the roads:' category: 'GIS' <- file('../includes/gis/simpleRoad.shp') ;
-	file shape_file_bounds parameter: 'Shapefile for the roads:' category: 'GIS' <- file('../includes/gis/BoundsSimpleRoad.shp') ;
+	file shape_file_roads  <- file('../includes/gis/simpleRoad.shp') ;
+	file shape_file_bounds  <- file('../includes/gis/BoundsSimpleRoad.shp') ;
 	
 	graph the_graph;
 	
@@ -31,18 +31,15 @@ entities {
 		float destruction_coeff;
 		rgb color  ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species people skills: [moving]{
 		rgb color <- rgb('yellow') ;
 		point target <- nil ;
 		
-		reflex move when: target != nil {
-			do goto target: target on: the_graph ; 
-			switch target { 
-				match location {set target value: nil ;}
-			}
+		reflex move  {
+			do goto target: target on: the_graph ;
 		}
 		aspect base {
 			draw shape: circle color: color size: 5 ;
@@ -50,10 +47,13 @@ entities {
 	}
 }
 environment bounds: shape_file_bounds ;
-output {
-	display city_display refresh_every: 1 {
-		species road aspect: base ;
-		species people aspect: base ;
+
+experiment goto_weighted_network type: gui {
+	output {
+		display object_display refresh_every: 1 {
+			species road aspect: base ;
+			species people aspect: base ;
+		}
 	}
 }
 

@@ -13,7 +13,7 @@ global {
 	} 
 }
 environment bounds: {50,50} { 
-	grid cell width: 50 height: 50 neighbours: 4 torus: false frequency: 1 {
+	grid cell width: 50 height: 50 neighbours: 4 torus: false {
 		rgb color <- rgb('white');
 	} 
 }
@@ -33,18 +33,19 @@ entities {
 		}
 		reflex reflex1 {
 			let neighs type: list of: cell <- (cell(location) neighbours_at speed) + cell(location);
-			//ask cell(location) { set neighs <- (self neighbours_at myself.speed);}
-			//add cell(location) to: neighs;
 			let followed_path type: path <- self goto [on::cell, target::target, speed::speed, return_path::true];
 			let path_geom type: geometry <- geometry(followed_path.segments);
 			ask (neighs where (each.shape intersects path_geom)) {set color <- rgb('magenta');}
 		}
 	}
 }
-output {
-	display objects_display {
-		grid cell lines: rgb('black');
-		species goal aspect: default ;
-		species people aspect: default ;
+
+experiment goto_grid type: gui {
+	output {
+		display objects_display {
+			grid cell lines: rgb('black');
+			species goal aspect: default ;
+			species people aspect: default ;
+		}
 	}
 }

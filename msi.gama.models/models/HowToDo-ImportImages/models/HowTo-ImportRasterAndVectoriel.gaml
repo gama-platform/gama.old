@@ -10,23 +10,23 @@ model HowToImportRasterAndVectoriel
  
 global {
 	// Constants
-	const heightImg type: int init: 5587;
-	const widthImg type: int init: 6201;	
-	const boundsMNT type: file init: file("../images/mnt/boundsMNT.shp"); 
+	const heightImg type: int <- 5587;
+	const widthImg type: int <- 6201;	
+	const boundsMNT type: file <- file("../images/mnt/boundsMNT.shp"); 
 	
-	// Parameters related to the MNT
-	var mntImageRaster type: file init: file('../images/mnt/testAG.png') parameter: 'MNT file' category: 'MNT' ;
-	var factorDiscret type: int init:20 parameter:'Discretization factor' category:'MNT';
+	// Global variables related to the MNT
+	file mntImageRaster <- file('../images/mnt/testAG.png') ;
+	int factorDiscret  <- 20;
 	
-	// Parameters related to the Management units	
-	var ManagementUnitShape type: file init: file('../images/ug/UGSelect.shp') parameter: 'Management unit:' category: 'MU' ;
+	// Global variables  related to the Management units	
+	file ManagementUnitShape <- file('../images/ug/UGSelect.shp');
 	
-	// Parameters related to the water network
-	var waterShape type: file init: file('../images/reseauHydro/reseauEau.shp') parameter: 'Rivers shapefile' category: 'Water';
+	// Global variables  related to the water network
+	file waterShape <- file('../images/reseauHydro/reseauEau.shp');
 
-	// Parameters related to izard agents
-	var nbIzard type: int init: 25 parameter: 'Nb of Izards' category: 'Izard';
-	var izardShape type: file init:file('../images/icons/izard.gif') parameter: 'Izard Shape' category: 'Izard';
+	// Global variables  related to izard agents
+	int nbIzard <- 25 ;
+	file izardShape <-file('../images/icons/izard.gif') ;
 
 
 	// Local variable
@@ -35,16 +35,16 @@ global {
 	// Initialization of grid and creation of the izard agents.
 	// Creation of managmentUnit and rivers agents from the corresponding shapefile
 	init {
-		create species: managementUnit from: ManagementUnitShape.path 
+		create managementUnit from: ManagementUnitShape.path 
 				with: [MUcode::read('Code_UG'), MULabel::read('Libelle_UG'), pgeSAGE::read('PGE_SAGE')] ;
 				
-		create species: river from: waterShape.path;
+		create river from: waterShape.path;
 				
-		set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
-		ask target: cell as list {		
-			set color value: mapColor at {grid_x,grid_y} ;
+		set mapColor <- mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
+		ask cell as list {		
+			set color <- mapColor at {grid_x,grid_y} ;
 		}
-		create species: izard number: nbIzard; 			
+		create izard number: nbIzard; 			
     }
 }
 
@@ -59,23 +59,23 @@ environment bounds: boundsMNT.path {
 entities {	
 	species river {
 		aspect basic{
-			draw shape: geometry color: rgb('blue');
+			draw geometry: shape color: rgb('blue');
 		}	
 	}
 	
 	species managementUnit{
-		var MUcode type: int;
-		var MULabel type: string;
-		var pgeSAGE type: string;
+		int MUcode;
+		string MULabel;
+		string pgeSAGE;
 		
 		aspect basic{
-    		draw shape: geometry;
+    		draw geometry: shape;
     	}
 	}	
 	species izard {	
 		init{
-			set location value: point(one_of(cell as list where (empty(each.agents) and each.color = rgb('green')) )) ;
-		}		
+			set location <- (shuffle(cell as list) first_with ((each.color != rgb('white')) and (empty(each.agents)))).location ;
+		}	
 		aspect basic{
     		draw shape: square color: rgb('orange') size: 5000;
     	}
@@ -85,24 +85,36 @@ entities {
 	}	
 }
 
-// We display:
-// - the original MNT image as background
-// - the grid representing the MNT
-// - izard agents
-// - the management unit shapefile
-// - the river shapefile
-// We can thus compare the original MNT image and the discretized image in the grid.
-// For cosmetic need, we can choose to not display the grid. 
-
-output {
-	display HowToImportVectorial {
-        image name: 'Background' file: mntImageRaster.path;  		
-       	grid cell;
- 		species managementUnit aspect: basic transparency: 0.5;
- 		species river aspect: basic;
- 		species izard aspect: image;  
+experiment main type: gui {
+	// Parameters
+	parameter 'MNT file' var: mntImageRaster category: 'MNT' ;
+	parameter'Discretization factor' var: factorDiscret category:'Environment';
+	
+	parameter 'Nb of Izards' var: nbIzard category: 'Izard'; 
+	parameter 'Izard Shape' var: izardShape category: 'Izard';
+	
+	parameter 'Management unit' var: ManagementUnitShape category: 'MU' ;
+	
+	parameter 'Rivers shapefile' var: waterShape category: 'Water';
+	
+	// We display:
+	// - the original MNT image as background
+	// - the grid representing the MNT
+	// - izard agents
+	// - the management unit shapefile
+	// - the river shapefile
+	// We can thus compare the original MNT image and the discretized image in the grid.
+	// For cosmetic need, we can choose to not display the grid. 
+	output {
+		display HowToImportVectorial {
+	        image name: 'Background' file: mntImageRaster.path;  		
+	       	grid cell;
+	 		species managementUnit aspect: basic transparency: 0.5;
+	 		species river aspect: basic;
+	 		species izard aspect: image;  
+		}
+	    inspect name: 'Species' type: species refresh_every: 5;
 	}
-    inspect name: 'Species' type: species refresh_every: 5;
 }
 
 

@@ -43,7 +43,7 @@ entities {
 			}
 		}
 		
-		aspect default {
+		aspect default { 
 			draw geometry: shape color: color;
 		}
 	}

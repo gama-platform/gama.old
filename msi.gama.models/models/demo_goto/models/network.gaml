@@ -24,12 +24,12 @@ entities {
 	species road  {
 		float speed_coef ;
 		aspect default {
-			draw shape: geometry color: 'black' ;
+			draw geometry: shape color: rgb('black') ;
 		}
 	} 
 	species goal {
 		aspect default {
-			draw shape: circle color: 'red' size: 10 ;
+			draw shape: circle color: rgb('red') size: 10 ;
 		}
 	}
 	species people skills: [moving] {
@@ -37,22 +37,20 @@ entities {
 		path my_path; 
 	
 		aspect default {
-			draw shape: circle color: 'green' size: 10 ;
+			draw shape: circle color: rgb('green') size: 10 ;
 		}
-		reflex {
+		reflex movement {
 			do goto on:the_graph target:target speed:1;
 		}
-		reflex when: flip(0.2) {do die;}
 	}
 }
-output {
-	display objects_display {
-		species road aspect: default ;
-		species people aspect: default ;
-		species goal aspect: default ;
-	}
-	
-	graphdisplay test graph:the_graph {
-		
+
+experiment goto_network type: gui {
+	output {
+		display objects_display {
+			species road aspect: default ;
+			species people aspect: default ;
+			species goal aspect: default ;
+		}
 	}
 }

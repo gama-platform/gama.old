@@ -24,7 +24,7 @@ experiment circle type: gui {
 	
 	output {
 		display Circle refresh_every: 1 {
-			species cells;
+			species cells; 
 		}
 	}
 }

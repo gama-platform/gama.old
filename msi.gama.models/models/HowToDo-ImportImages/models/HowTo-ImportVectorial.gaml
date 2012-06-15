@@ -9,10 +9,11 @@ model HowToImportVectorial
 
 
 global {
-	var ManagementUnitShape type: file init: '../images/ug/UGSelect.shp' parameter: 'Management unit:' category: 'GIS' ;
+	// Global variables  related to the Management units	
+	file ManagementUnitShape <- file('../images/ug/UGSelect.shp'); 
 	
 	init {
-		create species: managementUnit from: ManagementUnitShape.path 
+		create managementUnit from: ManagementUnitShape.path 
 			with: [MUcode::read('Code_UG'), MULabel::read('Libelle_UG'), pgeSAGE::read('PGE_SAGE')] ;
     }
 }
@@ -21,22 +22,26 @@ environment bounds: ManagementUnitShape.path {}
 
 entities {	
 	species managementUnit{
-		var MUcode type: int;
-		var MULabel type: string;
-		var pgeSAGE type: string;
+		int MUcode;
+		string MULabel;
+		string pgeSAGE;
 		
 		aspect basic{
-    		draw shape: geometry;
+    		draw geometry: shape;
     	}
 	}	
 }
 
-output {
-	display HowToImportVectorial {
-   		image name: 'GISBackground' gis: ManagementUnitShape.path color: rgb('blue');
-   		species managementUnit aspect: basic; 
+experiment main type: gui {
+	parameter 'Management unit' var: ManagementUnitShape category: 'MU' ;
+		
+	output {
+		display HowToImportVectorial {
+	   		image name: 'GISBackground' gis: ManagementUnitShape.path color: rgb('blue');
+	   		species managementUnit aspect: basic; 
+		}
+	    inspect name: 'Species' type: species refresh_every: 5;
 	}
-    inspect name: 'Species' type: species refresh_every: 5;
 }
 
 

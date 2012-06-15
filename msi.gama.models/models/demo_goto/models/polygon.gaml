@@ -4,7 +4,7 @@
  *  Description: 
  */ 
 
-model testTriangulation
+model polygon
 global {
 	file shape_file_in <- file('../includes/gis/squareHole.shp') ;
 	graph the_graph;
@@ -39,23 +39,23 @@ environment bounds: shape_file_in ;
 entities {
 	species object  {
 		aspect default {
-			draw shape: geometry color: 'gray' ;
+			draw geometry: shape color: rgb('gray') ;
 		}
 	}
 	species triangle  {
 		rgb color <- rgb([150 +rnd(100),150 + rnd(100),150 + rnd(100)]);
 		aspect default {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species skeleton  {
 		aspect default {
-			draw shape: geometry color: 'black' ;
+			draw geometry: shape buffer 0.2 color: rgb('red') ;
 		}
 	}
 	species goal {
 		aspect default {
-			draw shape: circle color: 'red' size: 3 ;
+			draw shape: circle color:rgb('red') size: 3 ;
 		}
 	}
 	species people skills: [moving] {
@@ -66,16 +66,20 @@ entities {
 			do goto on:the_graph target:target speed:1;
 		}
 		aspect default {
-			draw shape: circle color: 'green' size: 3 ;
+			draw shape: circle color: rgb('green') size: 3 ;
 		}
 	}
 }
-output {
-	display objects_display {
-		species object aspect: default ;
-		species triangle aspect: default ;
-		species skeleton aspect: default ;
-		species people aspect: default ;
-		species goal aspect: default ;
+
+experiment goto_polygon type: gui {
+	output {
+		display objects_display {
+			species object aspect: default ;
+			species triangle aspect: default ;
+			species skeleton aspect: default ;
+			species people aspect: default ;
+			species goal aspect: default ;
+		}
 	}
 }
+
