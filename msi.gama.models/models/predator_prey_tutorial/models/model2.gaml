@@ -3,7 +3,7 @@ model prey_predator
 //Model 2 of the predator/prey tutorial
 
 global {
-	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
+	int nb_preys_init <- 200 min: 1 max: 1000 ;
 	init {
 		create prey number: nb_preys_init ;
 	}
@@ -31,10 +31,15 @@ environment width: 100 height: 100 {
 		rgb color <- rgb([255 * (1 - food), 255, 255 * (1 - food)]) update: rgb([255 * (1 - food), 255, 255 * (1 - food)]) ;
 	}
 }
-output {
-	display main_display {
-		grid vegetation_cell lines: rgb('black') ;
-		species prey aspect: base ;
+ 
+experiment prey_predator type: gui {
+	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
+	output {
+		display main_display {
+			grid vegetation_cell lines: rgb('black') ;
+			species prey aspect: base ;
+		}
 	}
 }
+
  

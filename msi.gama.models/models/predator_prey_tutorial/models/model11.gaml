@@ -3,26 +3,26 @@ model prey_predator
 //Model 11 of the predator/prey tutorial
 
 global {
-	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
-	int nb_predator_init <- 20 min: 0 max: 200 parameter: 'Initial number of predators ' category: 'Predator' ;
-	float prey_max_energy <- 1.0 parameter: 'Prey max energy: ' category: 'Prey' ;
-	float prey_max_transfert <- 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
-	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
-	float prey_proba_reproduce <- 0.01 parameter: 'Prey probability reproduce: ' category: 'Prey' ;
-	int prey_nb_max_offsprings <- 5 parameter: 'Prey nb max offsprings: ' category: 'Prey' ;
-	float prey_energy_reproduce <- 0.5 parameter: 'Prey energy reproduce: ' category: 'Prey' ;
-	float predator_max_energy <- 1.0 parameter: 'Predator max energy: ' category: 'Predator' ;
-	float predator_energy_transfert <- 0.5 parameter: 'Predator energy transfert: ' category: 'Predator' ;
-	float predator_energy_consum <- 0.02 parameter: 'Predator energy consumption: ' category: 'Predator' ;
-	float predator_proba_reproduce <- 0.01 parameter: 'Predator probability reproduce: ' category: 'Predator' ;
-	int predator_nb_max_offsprings <- 3 parameter: 'Predator nb max offsprings: ' category: 'Predator' ;
-	float predator_energy_reproduce <- 0.5 parameter: 'Predator energy reproduce: ' category: 'Predator' ;
+	int nb_preys_init <- 200 min: 1 max: 1000 ;
+	int nb_predators_init <- 20 min: 0 max: 200;
+	float prey_max_energy <- 1.0;
+	float prey_max_transfert <- 0.1 ;
+	float prey_energy_consum <- 0.05;
+	float predator_max_energy <- 1.0;
+	float predator_energy_transfert <- 0.5;
+	float predator_energy_consum <- 0.02;
+	float prey_proba_reproduce <- 0.01;
+	int prey_nb_max_offsprings <- 5; 
+	float prey_energy_reproduce <- 0.5; 
+	float predator_proba_reproduce <- 0.01;
+	int predator_nb_max_offsprings <- 3;
+	float predator_energy_reproduce <- 0.5;
 	int nb_preys function: {length (prey as list)};
 	int nb_predators function: {length (predator as list)};
 	
 	init {
 		create prey number: nb_preys_init ;
-		create predator number: nb_predator_init ;
+		create predator number: nb_predators_init ;
 	}
 	
 	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
@@ -128,37 +128,55 @@ environment width: 100 height: 100 {
 		list neighbours of: vegetation_cell <- (self neighbours_at 2) of_species vegetation_cell;
 	}
 }
-output {
-	display main_display {
-		grid vegetation_cell lines: rgb('black') ;
-		species prey aspect: base ;
-		species predator aspect: base ;
+
+experiment prey_predator type: gui {
+	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
+	parameter 'Prey max energy: ' var: prey_max_energy category: 'Prey' ;
+	parameter 'Prey max transfert: ' var: prey_max_transfert  category: 'Prey' ;
+	parameter 'Prey energy consumption: ' var: prey_energy_consum  category: 'Prey' ;
+	parameter 'Initial number of predators: ' var: nb_predators_init category: 'Predator' ;
+	parameter 'Predator max energy: ' var: predator_max_energy category: 'Predator' ;
+	parameter 'Predator energy transfert: ' var: predator_energy_transfert  category: 'Predator' ;
+	parameter 'Predator energy consumption: ' var: predator_energy_consum  category: 'Predator' ;
+	parameter 'Prey probability reproduce: ' var: prey_proba_reproduce category: 'Prey' ;
+	parameter 'Prey nb max offsprings: ' var: prey_nb_max_offsprings category: 'Prey' ;
+	parameter 'Prey energy reproduce: ' var: prey_energy_reproduce category: 'Prey' ;
+	parameter 'Predator probability reproduce: ' var: predator_proba_reproduce category: 'Predator' ;
+	parameter 'Predator nb max offsprings: ' var: predator_nb_max_offsprings category: 'Predator' ;
+	parameter 'Predator energy reproduce: ' var: predator_energy_reproduce category: 'Predator' ;
+	
+	output {
+		display main_display {
+			grid vegetation_cell lines: rgb('black') ;
+			species prey aspect: icon ;
+			species predator aspect: icon ;
+		}
+		display Population_information refresh_every: 5 {
+			chart "Species evolution" type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} {
+				data number_of_preys value: nb_preys color: rgb('blue') ;
+				data number_of_predator value: nb_predators color: rgb('red') ;
+			}
+			chart "Prey Energy Distribution" type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0, 0.5} {
+				data "]0;0.25]" value: (prey as list) count (each.energy <= 0.25) ;
+				data "]0.25;0.5]" value: (prey as list) count ((each.energy > 0.25) and (each.energy <= 0.5)) ;
+				data "]0.5;0.75]" value: (prey as list) count ((each.energy > 0.5) and (each.energy <= 0.75)) ;
+				data "]0.75;1]" value: (prey as list) count (each.energy > 0.75) ;
+			}
+			chart "Predator Energy Distribution" type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0.5, 0.5} {
+				data "]0;0.25]" value: (predator as list) count (each.energy <= 0.25) ;
+				data "]0.25;0.5]" value: (predator as list) count ((each.energy > 0.25) and (each.energy <= 0.5)) ;
+				data "]0.5;0.75]" value: (predator as list) count ((each.energy > 0.5) and (each.energy <= 0.75)) ;
+				data "]0.75;1]" value: (predator as list) count (each.energy > 0.75) ;
+			}
+		}
+		file  "results" type: text data: 'cycle: '+ time
+						            + '; nbPreys: ' + nb_preys
+						            + '; minEnergyPreys: ' + ((prey as list) min_of each.energy)
+								    + '; maxSizePreys: ' + ((prey as list) max_of each.energy) 
+	   							    + '; nbPredators: ' + nb_predators           
+	   							    + '; minEnergyPredators: ' + ((predator as list) min_of each.energy)          
+	   							    + '; maxSizePredators: ' + ((predator as list) max_of each.energy) ;
+		monitor number_of_preys value: nb_preys refresh_every: 1 ;
+		monitor number_of_predators value: nb_predators refresh_every: 1 ;
 	}
-	display Population_information refresh_every: 5 {
-		chart name: 'Species evolution' type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} {
-			data number_of_preys value: nb_preys color: rgb('blue') ;
-			data number_of_predator value: nb_predators color: rgb('red') ;
-		}
-		chart name: 'Prey Energy Distribution' type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0, 0.5} {
-			data name:"]0;0.25]" value: (prey as list) count (each.energy <= 0.25) ;
-			data name:"]0.25;0.5]" value: (prey as list) count ((each.energy > 0.25) and (each.energy <= 0.5)) ;
-			data name:"]0.5;0.75]" value: (prey as list) count ((each.energy > 0.5) and (each.energy <= 0.75)) ;
-			data name:"]0.75;1]" value: (prey as list) count (each.energy > 0.75) ;
-		}
-		chart name: 'Predator Energy Distribution' type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0.5, 0.5} {
-			data name:"]0;0.25]" value: (predator as list) count (each.energy <= 0.25) ;
-			data name:"]0.25;0.5]" value: (predator as list) count ((each.energy > 0.25) and (each.energy <= 0.5)) ;
-			data name:"]0.5;0.75]" value: (predator as list) count ((each.energy > 0.5) and (each.energy <= 0.75)) ;
-			data name:"]0.75;1]" value: (predator as list) count (each.energy > 0.75) ;
-		}
-	}
-	file name: 'results' type: text data: 'cycle: '+ time
-					            + '; nbPreys: ' + nb_preys
-					            + '; minEnergyPreys: ' + ((prey as list) min_of each.energy)
-							    + '; maxSizePreys: ' + ((prey as list) max_of each.energy) 
-   							    + '; nbPredators: ' + nb_predators           
-   							    + '; minEnergyPredators: ' + ((predator as list) min_of each.energy)          
-   							    + '; maxSizePredators: ' + ((predator as list) max_of each.energy) ;
-	monitor number_of_preys value: nb_preys refresh_every: 1 ;
-	monitor number_of_predators value: nb_predators refresh_every: 1 ;
 }

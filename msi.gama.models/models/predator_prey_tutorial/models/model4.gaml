@@ -3,10 +3,10 @@ model prey_predator
 //Model 4 of the predator/prey tutorial
 
 global {
-	int nb_preys_init <- 200 min: 1 max: 1000 parameter: 'Initial number of preys: ' category: 'Prey' ;
-	float prey_max_energy <- 1.0 parameter: 'Prey max energy: ' category: 'Prey' ;
-	float prey_max_transfert <- 0.1 parameter: 'Prey max transfert: ' category: 'Prey' ;
-	float prey_energy_consum <- 0.05 parameter: 'Prey energy consumption: ' category: 'Prey' ;
+	int nb_preys_init <- 200 min: 1 max: 1000 ;
+	float prey_max_energy <- 1.0;
+	float prey_max_transfert <- 0.1;
+	float prey_energy_consum <- 0.05;
 	int nb_preys function: {length (prey as list)};
 	
 	init {
@@ -55,11 +55,17 @@ environment width: 100 height: 100 {
 		list neighbours of: vegetation_cell <- (self neighbours_at 2) of_species vegetation_cell;
 	}
 }
-output {
-	display main_display {
-		grid vegetation_cell lines: rgb('black') ;
-		species prey aspect: base ;
+
+experiment prey_predator type: gui {
+	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
+	parameter 'Prey max energy: ' var: prey_max_energy category: 'Prey' ;
+	parameter 'Prey max transfert: ' var: prey_max_transfert  category: 'Prey' ;
+	parameter 'Prey energy consumption: ' var: prey_energy_consum  category: 'Prey' ;
+	output {
+		display main_display {
+			grid vegetation_cell lines: rgb('black') ;
+			species prey aspect: base ;
+		}
+		monitor number_of_preys value: nb_preys refresh_every: 1 ;
 	}
-	monitor number_of_preys value: nb_preys refresh_every: 1 ;
 }
- 
