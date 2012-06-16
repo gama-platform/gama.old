@@ -2,10 +2,10 @@ model tutorial_gis_city_traffic
 
 
 global {
-	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ;
-	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
+	file shape_file_buildings <- file('../includes/building.shp');
+	file shape_file_roads <- file('../includes/road.shp');
+	file shape_file_bounds <- file('../includes/bounds.shp');
+	int nb_people <- 100;
 	
 	init {
 		create building from: shape_file_buildings with: [type::read ('NATURE')] {
@@ -42,11 +42,18 @@ entities {
 	}
 }
 environment bounds: shape_file_bounds ;
-output {
-	display city_display refresh_every: 1 {
-		species building aspect: base ;
-		species road aspect: base ;
-		species people aspect: base ;
+
+experiment road_traffic type: gui {
+	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;
+	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
+	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	parameter 'Number of people agents' var: nb_people category: 'People' ;
+	output {
+		display city_display refresh_every: 1 {
+			species building aspect: base ;
+			species road aspect: base ;
+			species people aspect: base ;
+		}
 	}
 }
 

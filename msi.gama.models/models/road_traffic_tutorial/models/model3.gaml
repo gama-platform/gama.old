@@ -1,17 +1,17 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ;
-	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
+	file shape_file_buildings <- file('../includes/building.shp');
+	file shape_file_roads <- file('../includes/road.shp');
+	file shape_file_bounds <- file('../includes/bounds.shp');
+	int nb_people <- 100;
 	int day_time update: time mod 144 ;
-	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
-	int max_work_start <- 60 parameter: 'Latest hour to start work' category: 'People' ;
-	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ;
-	int max_work_end <- 132 parameter: 'Latest hour to end work' category: 'People' ;
-	float min_speed <- 50.0 parameter: 'minimal speed' category: 'People' ;
-	float max_speed <- 100.0 parameter: 'maximal speed' category: 'People' ;
+	int min_work_start <- 36;
+	int max_work_start <- 60;
+	int min_work_end <- 84; 
+	int max_work_end <- 132; 
+	float min_speed <- 50.0;
+	float max_speed <- 100.0; 
 	graph the_graph;
 	
 	init {
@@ -78,12 +78,25 @@ entities {
 	}
 }
 environment bounds: shape_file_bounds ;
-output {
-	display city_display refresh_every: 1 {
-		species building aspect: base ;
-		species road aspect: base ;
-		species people aspect: base ;
+
+experiment road_traffic type: gui {
+	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;
+	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
+	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	parameter 'Number of people agents' var: nb_people category: 'People' ;
+	parameter 'Earliest hour to start work' var: min_work_start category: 'People' ;
+	parameter 'Latest hour to start work' var: max_work_start category: 'People' ;
+	parameter 'Earliest hour to end work' var: min_work_end category: 'People' ;
+	parameter 'Latest hour to end work' var: max_work_end category: 'People' ;
+	parameter 'minimal speed' var: min_speed category: 'People' ;
+	parameter 'maximal speed' var: max_speed category: 'People' ;
+	
+	output {
+		display city_display refresh_every: 1 {
+			species building aspect: base ;
+			species road aspect: base ;
+			species people aspect: base ;
+		}
 	}
 }
-
 
