@@ -82,7 +82,7 @@ public class SwtGui implements IGui {
 	private Error error = null;
 	private Views views = null;
 	private static ConsoleView console = null;
-	private static final StringBuilder consoleBuffer = new StringBuilder();
+	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png")
 		.createImage();
@@ -809,28 +809,29 @@ public class SwtGui implements IGui {
 		return new AWTDisplayGraphics(width, height);
 	}
 
+	static final Map<String, Class> displayClasses = new HashMap();
+
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
-		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
-		Map<String, Class> displayClasses = new HashMap();
+		if ( displayClasses.isEmpty() ) {
 
-		IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
-		for ( IConfigurationElement e : config ) {
-			final String pluginKeyword = e.getAttribute("keyword");
-			final String pluginClass = e.getAttribute("class");
-			// final Class<IDisplaySurface> displayClass = .
-			final String pluginName = e.getContributor().getName();
-			System.out.println("Display found in " + pluginName + " with keyword " + pluginKeyword +
-				" and class " + pluginClass);
-			ClassLoader cl =
-				GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-			try {
-				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
+			IConfigurationElement[] config =
+				Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
+			for ( IConfigurationElement e : config ) {
+				final String pluginKeyword = e.getAttribute("keyword");
+				final String pluginClass = e.getAttribute("class");
+				final String pluginName = e.getContributor().getName();
+				System.out.println("Display found in " + pluginName + " with keyword " +
+					pluginKeyword + " and class " + pluginClass);
+				ClassLoader cl =
+					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+				try {
+					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 
@@ -839,8 +840,8 @@ public class SwtGui implements IGui {
 			" is not defined anywhere."); }
 		try {
 			IDisplaySurface surface = clazz.newInstance();
-			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
-				" display");
+			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
+			// " display");
 			surface.initialize(w, h, layerDisplayOutput);
 			return surface;
 		} catch (InstantiationException e1) {
@@ -849,7 +850,6 @@ public class SwtGui implements IGui {
 			e1.printStackTrace();
 		}
 
-		// FIXME HACK
 		return null;
 	}
 
