@@ -154,7 +154,7 @@ public class EGaml {
 		return expr;
 	}
 
-	final static StringBuilder serializer = new StringBuilder();
+	final static StringBuilder serializer = new StringBuilder(100);
 
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
