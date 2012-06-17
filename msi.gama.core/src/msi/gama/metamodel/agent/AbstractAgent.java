@@ -28,7 +28,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.factories.ModelFactory;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -80,7 +80,7 @@ public abstract class AbstractAgent implements IAgent {
 			for ( ISpecies microSpec : allMicroSpecies ) {
 
 				// TODO what to do with built-in species?
-				if ( ModelFactory.isBuiltIn(microSpec.getName()) ) {
+				if ( AbstractGamlAdditions.isBuiltIn(microSpec.getName()) ) {
 					continue;
 				}
 
@@ -230,7 +230,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public Object getDirectVarValue(IScope scope, final String s) throws GamaRuntimeException {
+	public Object getDirectVarValue(final IScope scope, final String s) throws GamaRuntimeException {
 		return getAttribute(s);
 	}
 
@@ -392,6 +392,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		// if (dead()) return false;
+		if ( s.getName().equals(IType.AGENT_STR) ) { return true; }
 		return population.manages(s, direct);
 	}
 
@@ -604,5 +605,10 @@ public abstract class AbstractAgent implements IAgent {
 	public void setHost(final IAgent macroAgent) {
 		// not supported
 		// use "capture" or "release" statement to change macro-agent instead
+	}
+
+	@Override
+	public IAgent duplicate() {
+		return this;
 	}
 }
