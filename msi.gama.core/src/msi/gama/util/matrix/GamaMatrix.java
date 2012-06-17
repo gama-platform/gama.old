@@ -176,7 +176,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public String stringValue() throws GamaRuntimeException {
-		final StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
 		for ( int line = 0; line < numRows; line++ ) {
 			for ( int col = 0; col < numCols; col++ ) {
 				sb.append(Cast.asString(GAMA.getDefaultScope(), get(col, line)));
