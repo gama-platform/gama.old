@@ -7,7 +7,7 @@ public interface IChildrenProvider {
 
 	public List<IDescription> getChildren();
 
-	public Class getJavaBase();
+	// public Class getJavaBase();
 
 	public static IChildrenProvider NONE = new IChildrenProvider() {
 
@@ -16,10 +16,10 @@ public interface IChildrenProvider {
 			return Collections.EMPTY_LIST;
 		}
 
-		@Override
-		public Class getJavaBase() {
-			return null;
-		}
+		// @Override
+		// public Class getJavaBase() {
+		// return null;
+		// }
 
 	};
 
