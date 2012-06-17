@@ -81,7 +81,11 @@ public class GamaAgentType extends GamaType<IAgent> {
 
 	@Override
 	public Map<String, ? extends IGamlDescription> getFieldDescriptions() {
-		return getSpecies().getVariables();
+		return getModel().getSpeciesDescription(name).getVariables();
+	}
+
+	protected ModelDescription getModel() {
+		return model;
 	}
 
 	@Override
@@ -90,9 +94,15 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public SpeciesDescription getSpecies() {
-		return model.getSpeciesDescription(name);
+	public boolean isSuperTypeOf(final IType type) {
+		return type != this && type instanceof GamaAgentType &&
+			toClass().isAssignableFrom(type.toClass());
 	}
+
+	// @Override
+	// public SpeciesDescription getSpecies() {
+	// return model.getSpeciesDescription(name);
+	// }
 
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
