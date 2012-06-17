@@ -8,7 +8,7 @@ import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.factories.ModelFactory;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 
@@ -53,7 +53,7 @@ public class WorldAgent extends GamlAgent {
 
 		if ( pop != null ) { return pop; }
 
-		if ( ModelFactory.isBuiltIn(speciesName) ) {
+		if ( AbstractGamlAdditions.isBuiltIn(speciesName) ) {
 			ISpecies microSpec = this.getSpecies().getMicroSpecies(speciesName);
 			pop = new GamlPopulation(this, microSpec);
 			microPopulations.put(microSpec, pop);
