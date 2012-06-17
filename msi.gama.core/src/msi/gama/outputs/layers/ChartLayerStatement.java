@@ -315,7 +315,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	@Override
 	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
 		super.prepare(out, scope);
-		history = new StringBuilder();
+		history = new StringBuilder(500);
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		if ( string1 != null ) {
 			String t = Cast.asString(scope, string1.value(scope));
