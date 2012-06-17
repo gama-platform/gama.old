@@ -242,7 +242,7 @@ public class GamlResource extends LazyLinkingResource {
 			String type = elt.getLabel(TYPE);
 			if ( type == null ) {
 				((GamlResource) stm.eResource()).add(new GamlCompilationError(
-					"The type of the variable is missing", elt));
+					"Facet 'type' is missing", elt));
 			} else {
 				elt.setKeyword(type);
 			}
@@ -272,7 +272,7 @@ public class GamlResource extends LazyLinkingResource {
 		return elt;
 	}
 
-	static final StringBuilder sb = new StringBuilder();
+	static final StringBuilder sb = new StringBuilder(30);
 
 	private final String varDependenciesOf(final Statement s) {
 		sb.setLength(0);
