@@ -119,7 +119,7 @@ public interface IKeyword {
 	public static final String FUNCTION = "function";
 	public static final String GAML = "gaml";
 	public static final String GENETIC = "genetic";
-	public static final String GETTER = "getter";
+	// public static final String GETTER = "getter";
 	public static final String GIS = "gis";
 	public static final String GLOBAL = "global";
 	public static final String GRADIENT = "gradient";
@@ -145,7 +145,7 @@ public interface IKeyword {
 	public static final String INCLUDE = "include";
 	public static final String INDEX = "index";
 	public static final String INIT = "init";
-	public static final String INITER = "initer";
+	// public static final String INITER = "initer";
 	public static final String INPUT = "input";
 	public static final String INSPECT = "inspect";
 	public static final String IS = "is";
@@ -241,7 +241,7 @@ public interface IKeyword {
 	public static final String SELF = "self";
 	public static final String SERIES = "series";
 	public static final String SET = "set";
-	public static final String SETTER = "setter";
+	// public static final String SETTER = "setter";
 	public static final String SHAPE = "shape";
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
