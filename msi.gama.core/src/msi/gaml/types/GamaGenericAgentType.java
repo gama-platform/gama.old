@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.ModelDescription;
 
 /**
  * The "generic" agent type.
@@ -34,8 +34,13 @@ import msi.gaml.descriptions.SpeciesDescription;
  * @modified 08 juin 2012
  * 
  */
-@type(name = IType.AGENT_STR, id = IType.AGENT, wraps = { IGamlAgent.class, IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
-public class GamaGenericAgentType extends GamaType<IAgent> {
+@type(name = IType.AGENT_STR, id = IType.AGENT, wraps = { IGamlAgent.class, IAgent.class,
+	GamlAgent.class }, kind = ISymbolKind.Variable.REGULAR)
+public class GamaGenericAgentType extends GamaAgentType {
+
+	public GamaGenericAgentType() {
+		super(IType.AGENT_STR, IType.AGENT, IGamlAgent.class, null);
+	}
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param)
@@ -46,23 +51,13 @@ public class GamaGenericAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IAgent getDefault() {
-		return null;
-	}
-
-	@Override
 	public boolean isSuperTypeOf(final IType type) {
 		return type != this && type instanceof GamaAgentType;
 	}
 
 	@Override
-	public boolean isSpeciesType() {
-		return true;
-	}
-
-	@Override
-	public SpeciesDescription getSpecies() {
-		return GAMA.getModelContext().getSpeciesDescription(name);
+	public ModelDescription getModel() {
+		return (ModelDescription) GAMA.getModelContext();
 	}
 
 }
