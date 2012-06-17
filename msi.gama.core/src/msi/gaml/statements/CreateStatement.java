@@ -34,10 +34,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
-import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.ModelFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Facets.Facet;
@@ -128,7 +127,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		boolean firstSpec = false;
 		ISpecies currentSpec = executor.getSpecies();
 		for ( ISpecies m : currentSpec.getMicroSpecies() ) {
-			if ( ModelFactory.isBuiltIn(m.getName()) ) {
+			if ( AbstractGamlAdditions.isBuiltIn(m.getName()) ) {
 				continue;
 			}
 
@@ -141,7 +140,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		}
 
 		while (!currentSpec.getName().equals(IKeyword.WORLD_SPECIES)) {
-			if ( !ModelFactory.isBuiltIn(currentSpec.getName()) ) {
+			if ( !AbstractGamlAdditions.isBuiltIn(currentSpec.getName()) ) {
 				if ( !firstSpec ) {
 					firstSpec = true;
 					retVal.append(currentSpec.getName());
@@ -151,7 +150,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			}
 
 			for ( ISpecies p : currentSpec.getPeersSpecies() ) {
-				if ( ModelFactory.isBuiltIn(p.getName()) ) {
+				if ( AbstractGamlAdditions.isBuiltIn(p.getName()) ) {
 					continue;
 				}
 				retVal.append(", " + p.getName());
