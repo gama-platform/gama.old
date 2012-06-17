@@ -26,7 +26,7 @@ global {
 	topology road_graph_topology;
 	density_window_builder window_builder;
 	
-	list nearest_roads_to_shelters <- [] type: list of: road;
+	list nearest_roads_to_shelters <- [] of: road;
 	
 	rgb shelter_color <- rgb('blue') const: true;
 	rgb road_color <- rgb('black') const: true;
