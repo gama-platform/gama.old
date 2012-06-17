@@ -21,11 +21,12 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 
 	ISyntacticElement parent;
 	String keyword;
-	protected  Facets facets = new Facets();
+	protected final Facets facets;
 	List<ISyntacticElement> children;
 
 	public AbstractSyntacticStatement(final String keyword) {
 		this.keyword = keyword;
+		facets = new Facets();
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	}
 
 	public void dump() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(256);
 		dump(sb);
 		System.out.println(sb.toString());
 	}
@@ -117,6 +118,7 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	 */
 	@Override
 	public List<ISyntacticElement> getChildren(final String name) {
+		if ( children == null ) { return Collections.EMPTY_LIST; }
 		List<ISyntacticElement> result = new ArrayList();
 		for ( ISyntacticElement e : getChildren() ) {
 			if ( e.getKeyword().equals(name) ) {

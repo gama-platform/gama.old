@@ -21,7 +21,11 @@ public class SyntheticStatement extends AbstractSyntacticStatement {
 	 */
 	public SyntheticStatement(final String keyword, final Facets facets) {
 		super(keyword);
-		this.facets = facets;
+		this.facets.putAll(facets);
+	}
+
+	public SyntheticStatement(final String keyword) {
+		super(keyword);
 	}
 
 	@Override
