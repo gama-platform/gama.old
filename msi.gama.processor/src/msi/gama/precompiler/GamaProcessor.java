@@ -108,15 +108,7 @@ public class GamaProcessor extends AbstractProcessor {
 			processActions(env);
 			processSymbols(env);
 			processVars(env);
-			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
-				if ( docProc.firstParsing ) {
-					docProc.processDocXML(env, createWriter("doc.xml"));
-					docProc.firstParsing = false;
-				} else {
-					processingEnv.getMessager().printMessage(Kind.NOTE,
-						"Documentation file has already been produced");
-				}
-			}
+
 			gp.store(createWriter(GAML));
 			Writer w = createSourceWriter();
 			if ( w != null ) {
@@ -137,6 +129,17 @@ public class GamaProcessor extends AbstractProcessor {
 				// "Exception while generating GamlAdditions file ");
 				// }
 			}
+			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
+				// if ( docProc.firstParsing ) {
+					// docProc.processDocXML(env, createWriter("doc.xml"));
+					new XMLWriter(processingEnv).write(createWriter("doc.xml"), gp);
+					// docProc.firstParsing = false;
+				// } else {
+				// 	processingEnv.getMessager().printMessage(Kind.NOTE,
+				//		"Documentation file has already been produced");
+				// }
+			}
+			
 			// Writer w2 = createAgentBaseSourceWriter();
 			// if ( w2 != null ) {
 			// try {
