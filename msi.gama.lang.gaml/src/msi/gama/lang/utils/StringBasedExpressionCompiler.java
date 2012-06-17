@@ -475,7 +475,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 				context.flagError("Arguments must be provided as pairs arg::value; " +
 					words.subList(begin, end) + " is not a pair");
 			}
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder(50);
 			for ( String token : words.subList(begin + parenthesis + 2, end - parenthesis) ) {
 				sb.append(token);
 			}
