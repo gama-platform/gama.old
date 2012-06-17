@@ -43,12 +43,14 @@ public interface IModel extends ISymbol {
 
 	String getRelativeFilePath(String filePath, boolean shouldExist);
 
-	String getBaseDirectory();
+	String getFolderPath();
 
-	public abstract String getFileName();
+	public abstract String getFilePath();
 
 	public abstract Collection<IExperiment> getExperiments();
 
 	public abstract IEnvironment getModelEnvironment();
+
+	public abstract String getProjectPath();
 
 }
