@@ -20,7 +20,6 @@ package msi.gama.runtime;
 
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -60,7 +59,7 @@ public class GAMA {
 		// TODO if newExperiment.isGui() ...
 		if ( currentExperiment != null ) {
 			IModel m = currentExperiment.getModel();
-			if ( !m.getFileName().equals(model.getFileName()) ) {
+			if ( !m.getFilePath().equals(model.getFilePath()) ) {
 				if ( !verifyClose() ) { return; }
 				closeCurrentExperiment();
 				m.dispose();
@@ -174,6 +173,7 @@ public class GAMA {
 	public static Object evaluateExpression(final String expression, final IAgent a)
 		throws GamaRuntimeException {
 		try {
+			if ( a == null ) { return null; }
 			final IExpression expr =
 				getExpressionFactory().createExpr(new StringBasedExpressionDescription(expression),
 					a.getSpecies().getDescription());
