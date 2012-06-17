@@ -4,13 +4,10 @@
  */
 package msi.gaml.factories;
 
-import java.io.*;
-import java.net.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.LabelExpressionDescription;
-import org.eclipse.core.runtime.FileLocator;
 
 /**
  * 
@@ -28,20 +25,18 @@ public class ModelStructure implements IKeyword {
 	static final List<String> NODES_TO_REMOVE = Arrays.asList(INCLUDE, GLOBAL, SPECIES, GRID);
 	static final List<String> NODES_TO_EXPAND = Arrays.asList(ENTITIES);
 	private String name = "";
-	private String path = "";
+	private String modelPath = "";
+	private final String projectPath;
 	private final List<SpeciesStructure> species = new ArrayList();
 	private final List<ISyntacticElement> globalNodes = new ArrayList();
 	private List<ISyntacticElement> modelNodes = new ArrayList();
 	private ISyntacticElement source;
 
-	public ModelStructure(final String uri, final List<ISyntacticElement> models) {
-		try {
-			path = new File(FileLocator.resolve(new URL(uri)).getFile()).getAbsolutePath();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public ModelStructure(final String projectPath, final String modelPath,
+		final List<ISyntacticElement> models) {
+		this.projectPath = projectPath;
+		this.modelPath = modelPath;
+
 		for ( ISyntacticElement speciesNode : buildNodes(models) ) {
 			addSpecies(buildSpeciesStructure(speciesNode));
 		}
@@ -52,7 +47,11 @@ public class ModelStructure implements IKeyword {
 	}
 
 	public String getPath() {
-		return path;
+		return modelPath;
+	}
+
+	public String getProjectPath() {
+		return projectPath;
 	}
 
 	private SpeciesStructure buildSpeciesStructure(final ISyntacticElement speciesNode) {
