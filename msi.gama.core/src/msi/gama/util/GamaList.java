@@ -187,9 +187,9 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	@Override
 	// @operator(value = "string", can_be_const = true)
 	public String stringValue() throws GamaRuntimeException {
-		final StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder(size() * 5);
 		sb.append('[');
-		for ( int i = 0; i < size(); i++ ) {
+		for ( int i = 0, n = size(); i < n; i++ ) {
 			if ( i != 0 ) {
 				sb.append(',');
 			}

@@ -281,7 +281,7 @@ public class GamaMap extends HashMap implements IContainer {
 
 		public boolean execute(final Object a, final Object b) {
 
-			StringBuilder res = new StringBuilder();
+			StringBuilder res = new StringBuilder(50);
 			res.append(string);
 			res.append(a);
 			res.append(',');
@@ -307,17 +307,17 @@ public class GamaMap extends HashMap implements IContainer {
 		return super.entrySet();
 	}
 
-	@getter( "keys")
+	@getter("keys")
 	public GamaList getKeys() {
 		return new GamaList(keySet());
 	}
 
-	@getter( "values")
+	@getter("values")
 	public GamaList getValues() {
 		return new GamaList(values());
 	}
 
-	@getter( "pairs")
+	@getter("pairs")
 	public GamaList<GamaPair> getPairs() {
 		return listValue(null);
 	}
