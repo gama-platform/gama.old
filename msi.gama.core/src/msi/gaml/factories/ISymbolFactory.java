@@ -56,6 +56,8 @@ public interface ISymbolFactory {
 
 		public abstract ModelDescription validate(ModelStructure parse);
 
+		public abstract SpeciesFactory getSpeciesFactory();
+
 	}
 
 	public abstract void addSpeciesNameAsType(String name);
