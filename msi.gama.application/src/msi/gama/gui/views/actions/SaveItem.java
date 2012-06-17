@@ -56,7 +56,7 @@ public class SaveItem extends GamaViewItem {
 						saveXmlFileDialog.setFileName(fileName);
 						saveXmlFileDialog.setText("Save a new XML File");
 						saveXmlFileDialog.setFilterPath(GAMA.getExperiment().getModel()
-							.getBaseDirectory());
+							.getFolderPath());
 						final String xmlFilePath = saveXmlFileDialog.open();
 						final File file = new File(xmlFilePath);
 						PrintWriter pw;
@@ -69,7 +69,7 @@ public class SaveItem extends GamaViewItem {
 						pw.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>");
 						pw.println("<" + GAMA.getExperiment().getName() + ">");
 						final String simpleName =
-							new File(GAMA.getExperiment().getModel().getFileName()).getName();
+							new File(GAMA.getExperiment().getModel().getFilePath()).getName();
 						pw.println("<include file=\"" + simpleName + "\"/>");
 						pw.println("<global>");
 						try {
