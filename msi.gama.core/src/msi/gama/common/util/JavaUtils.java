@@ -86,14 +86,20 @@ public class JavaUtils {
 		}
 		classes.remove(ISkill.class);
 		classes.remove(IScope.class);
-		final ArrayList<Class> classes2 = new ArrayList();
-		for ( final Class c : classes ) {
-			if ( !classes2.contains(c.getSuperclass()) ) {
-				classes2.add(0, c);
-			} else {
-				classes2.add(c);
+		final ArrayList<Class> classes2 = new ArrayList(classes);
+		Collections.sort(classes2, new Comparator<Class>() {
+
+			@Override
+			public int compare(final Class o1, final Class o2) {
+				if ( o1 == o2 ) { return 0; }
+				if ( o1.isAssignableFrom(o2) ) { return -1; }
+				if ( o2.isAssignableFrom(o1) ) { return 1; }
+				if ( o1.isInterface() && !o2.isInterface() ) { return -1; }
+				if ( o2.isInterface() && !o1.isInterface() ) { return 1; }
+				return 1;
 			}
-		}
+		});
+
 		IMPLEMENTATION_CLASSES.put(key, classes2);
 		return classes2;
 	}
