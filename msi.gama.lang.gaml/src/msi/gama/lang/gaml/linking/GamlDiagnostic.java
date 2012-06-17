@@ -37,8 +37,7 @@ public class GamlDiagnostic extends AbstractDiagnostic {
 		if ( node == null ) { throw new NullPointerException("The given node should not be null"); }
 		this.code = code;
 		this.data = copyOf(data, data.length);
-		this.message = new StringBuilder();
-		this.message.append(message);
+		this.message = new StringBuilder(message);
 		this.node = node;
 	}
 
