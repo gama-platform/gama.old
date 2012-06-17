@@ -106,8 +106,6 @@ public class GamaProcessor extends AbstractProcessor {
 			processSkills(env);
 			processOperators(env);
 			processActions(env);
-			processGetters(env);
-			processSetters(env);
 			processSymbols(env);
 			processVars(env);
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
@@ -153,51 +151,14 @@ public class GamaProcessor extends AbstractProcessor {
 		return true;
 	}
 
-	// Format: prefix 0.method 1.declClass 2.retClass 3.isDynamic
-	void processGetters(final RoundEnvironment env) {
-		TypeMirror iSkill =
-			processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
-		for ( Element e : env.getElementsAnnotatedWith(getter.class) ) {
-			ExecutableElement ex = (ExecutableElement) e;
-			TypeMirror clazz = ex.getEnclosingElement().asType();
-			StringBuilder sb = new StringBuilder();
-			// prefix
-			if ( processingEnv.getTypeUtils().isAssignable(clazz, iSkill) ) {
-				sb.append(GETTER_PREFIX);
-			} else {
-				sb.append(FIELD_PREFIX);
-			}
-			// method
-			sb.append(ex.getSimpleName()).append(SEP);
-			// declClass
-			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
-			// retClass
-			sb.append(rawNameOf(ex.getReturnType())).append(SEP);
-			// dynamic
-			sb.append(ex.getParameters().size() > 0);
-			gp.put(sb.toString(), "");
-		}
-	}
+	TypeMirror iSkill;
 
-	// Format: prefix 0.method 1.declClass 2.paramClass 3.isDynamic
-	void processSetters(final RoundEnvironment env) {
-		for ( Element e : env.getElementsAnnotatedWith(setter.class) ) {
-			ExecutableElement ex = (ExecutableElement) e;
-			List<? extends VariableElement> params = ex.getParameters();
-			boolean isDynamic = params.size() == 2;
-			StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(SETTER_PREFIX);
-			// method
-			sb.append(ex.getSimpleName()).append(SEP);
-			// declClass
-			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
-			// paramClass
-			sb.append(rawNameOf(isDynamic ? params.get(1) : params.get(0))).append(SEP);
-			// isDynamic
-			sb.append(isDynamic);
-			gp.put(sb.toString(), "");
+	TypeMirror getISkill() {
+		if ( iSkill == null ) {
+			iSkill =
+				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
 		}
+		return iSkill;
 	}
 
 	String rawNameOf(final Element e) {
@@ -220,78 +181,104 @@ public class GamaProcessor extends AbstractProcessor {
 		return clazz;
 	}
 
+	/**
+	 * Format : 0.type 1.type 2. contentType 3.varName 4.class 5.[facetName, facetValue]+ 6.getter
+	 * 7.initializer(true/false)? 8.setter
+	 * @param env
+	 */
 	private void processVars(final RoundEnvironment env) {
-		Set<? extends Element> vars = env.getElementsAnnotatedWith(vars.class);
-		for ( Element e : vars ) {
-			Map<String, Map<String, String>> maps = buildVarsFacetsMap(e);
-			for ( String name : maps.keySet() ) {
-				Map<String, String> facets = maps.get(name);
+		Set<? extends Element> elements = env.getElementsAnnotatedWith(vars.class);
+		for ( Element e : elements ) {
+			boolean isISkill;
+			TypeMirror clazz = e.asType();
+			isISkill = processingEnv.getTypeUtils().isAssignable(clazz, getISkill());
+
+			vars vars = e.getAnnotation(vars.class);
+			for ( final var s : vars.value() ) {
 				StringBuilder sb = new StringBuilder();
-				sb.append(VAR_PREFIX).append(facets.get("type")).append(SEP);
+				String type = s.type();
+				String contentType = s.of();
+				// 0.type
+				sb.append(VAR_PREFIX).append(type).append(SEP);
+				// 1.contentType
+				sb.append(contentType).append(SEP);
+				String varName = s.name();
+				// 2.var name
+				sb.append(varName).append(SEP);
+				// 3. class of declaration
 				sb.append(rawNameOf(e)).append(SEP);
-				for ( String facetName : facets.keySet() ) {
-					sb.append(facetName).append(",");
-					sb.append(replaceCommas(facets.get(facetName))).append(",");
+				// 4. facets
+				sb.append("type").append(',').append(type).append(',');
+				sb.append("name").append(',').append(varName).append(',');
+				sb.append("const").append(',').append(s.constant() ? "true" : "false");
+				String depends = "";
+				String[] dependencies = s.depends_on();
+				if ( dependencies.length > 0 ) {
+					for ( String string : dependencies ) {
+						depends += string + " ";
+					}
+					depends = depends.trim();
+					sb.append(',').append("depends_on").append(',').append(depends);
 				}
-				sb.setLength(sb.length() - 1);
-				gp.put(sb.toString(), ""); /* doc */
+				if ( !"".equals(contentType) ) {
+					sb.append(',').append("of").append(',').append(contentType);
+				}
+				String init = s.init();
+				if ( !"".equals(init) ) {
+					sb.append(',').append("init").append(',').append(replaceCommas(init));
+				}
+				boolean found = false;
+				sb.append(SEP);
+				for ( final Element m : e.getEnclosedElements() ) {
+					getter getter = m.getAnnotation(getter.class);
+					if ( getter != null && getter.value().equals(varName) ) {
+						ExecutableElement ex = (ExecutableElement) m;
+						// method
+						sb.append(ex.getSimpleName()).append(SEP);
+						// retClass
+						sb.append(rawNameOf(ex.getReturnType())).append(SEP);
+						// dynamic ?
+						sb.append(ex.getParameters().size() > 0).append(SEP);
+						// field ?
+						sb.append(!isISkill);
+						sb.append(SEP).append(getter.initializer());
+						found = true;
+						break;
+					}
+				}
+				if ( !found ) {
+					sb.append("null");
+				}
+				found = false;
+				sb.append(SEP);
+				for ( final Element m : e.getEnclosedElements() ) {
+					setter setter = m.getAnnotation(setter.class);
+					if ( setter != null && setter.value().equals(varName) ) {
+						ExecutableElement ex = (ExecutableElement) m;
+						// method
+						sb.append(ex.getSimpleName()).append(SEP);
+						// paramClass
+						List<? extends VariableElement> params = ex.getParameters();
+						boolean isDynamic = params.size() == 2;
+						sb.append(rawNameOf(isDynamic ? params.get(1) : params.get(0))).append(SEP);
+						// isDynamic
+						sb.append(isDynamic);
+						found = true;
+						break;
+					}
+				}
+				if ( !found ) {
+					sb.append("null");
+				}
+				sb.append(SEP);
+				gp.put(sb.toString(), "");
 			}
 		}
+
 	}
 
 	private String replaceCommas(final String s) {
 		return s.replace(",", "COMMA");
-	}
-
-	private Map<String, Map<String, String>> buildVarsFacetsMap(final Element c) {
-		Map<String, Map<String, String>> varMap = new HashMap();
-		vars vars = c.getAnnotation(vars.class);
-		if ( vars == null ) { return null; /* no vars */}
-		for ( final var s : vars.value() ) {
-			String name = s.name();
-			Map<String, String> facets = new HashMap();
-			varMap.put(name, facets);
-			facets.put("type", s.type());
-			facets.put("name", name);
-			facets.put("const", s.constant() ? "true" : "false");
-			String depends = "";
-			String[] dependencies = s.depends_on();
-			if ( dependencies.length > 0 ) {
-				for ( String string : dependencies ) {
-					depends += string + " ";
-				}
-				depends = depends.trim();
-				facets.put("depends_on", depends);
-			}
-			String of = s.of();
-			if ( !"".equals(of) ) {
-				facets.put("of", of);
-			}
-			String init = s.init();
-			if ( !"".equals(init) ) {
-				facets.put("init", replaceCommas(init));
-			}
-		}
-		for ( final Element m : c.getEnclosedElements() ) {
-			getter getter = m.getAnnotation(getter.class);
-			if ( getter != null ) {
-				final Map<String, String> var = varMap.get(getter.value());
-				if ( var != null ) {
-					var.put("getter", m.getSimpleName().toString());
-					if ( getter.initializer() ) {
-						var.put("initer", m.getSimpleName().toString());
-					}
-				}
-			}
-			setter setter = m.getAnnotation(setter.class);
-			if ( setter != null ) {
-				final Map<String, String> var = varMap.get(setter.value());
-				if ( var != null ) {
-					var.put("setter", m.getSimpleName().toString());
-				}
-			}
-		}
-		return varMap;
 	}
 
 	/**
