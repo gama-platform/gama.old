@@ -146,7 +146,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	@Override
 	public String toGaml() {
 		final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
-		StringBuilder s = new StringBuilder();
+		StringBuilder s = new StringBuilder(200);
 		for ( final MonitorOutput output : outputs ) {
 			s.append("<monitor name=\"").append(output.getViewName()).append("\" value=\"")
 				.append(output.expressionText).append("\" refresh_every=\"")
