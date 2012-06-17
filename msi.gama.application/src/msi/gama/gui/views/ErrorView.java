@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.SWT;
@@ -198,7 +198,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	@Override
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(300);
 		if ( obj instanceof GamaRuntimeException ) {
 			String a = obj.getAgent();
 			if ( a != null ) {
