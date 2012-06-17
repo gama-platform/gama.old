@@ -120,7 +120,7 @@ public class SaveStatement extends AbstractStatementSequence {
 			MapExpression mapExpr = (MapExpression) att.getFacet(IKeyword.INIT);
 			attributes = mapExpr.getElements();
 		}
-		StringBuilder specs = new StringBuilder();
+		StringBuilder specs = new StringBuilder(agents.size() * 20);
 		for ( IAgent be : agents ) {
 			if ( be.getGeometry() != null ) {
 				IAgent ag = be;
