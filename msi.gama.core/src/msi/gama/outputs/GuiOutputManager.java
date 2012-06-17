@@ -79,7 +79,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				GuiUtils.hideMonitorView();
 				// GUI.debug("Setting the title of the workbench");
 				GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " +
-					exp.getModel().getFileName());
+					exp.getModel().getFilePath());
 				if ( !monitorOutputs.isEmpty() ) {
 					// GUI.debug("Redisplaying the monitors");
 					GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
