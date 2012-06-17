@@ -87,7 +87,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public String toGaml() {
 		String k = getLiteral(IKeyword.KEYWORD);
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(100);
 		sb.append(k).append(' ');
 		for ( Facet e : description.getFacets().entrySet() ) {
 			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
