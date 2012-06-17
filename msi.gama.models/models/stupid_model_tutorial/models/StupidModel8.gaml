@@ -2,7 +2,7 @@ model StupidModel8
 
 global {
     var numberBugs type: int init: 100 parameter: 'numberBugs';
-    var globalMaxConsumption type: float init: 1 parameter: 'globalMaxConsumption';
+    var globalMaxConsumption type: float init: 1.0 parameter: 'globalMaxConsumption';
     var globalMaxFoodProdRate type: float init: 0.01 parameter: 'globalMaxFoodProdRate';
     init {
         create species: bug number: numberBugs;
@@ -23,7 +23,7 @@ environment {
 
 entities {
     species bug {
-        var size type: float init: 1;
+        var size type: float init: 1.0;
         var color type: rgb value: rgb  ([255, 255/size, 255/size]);
         var maxConsumption type: float value: globalMaxConsumption;
         var myPlace type: stupid_grid value: location as stupid_grid;
