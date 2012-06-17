@@ -51,9 +51,9 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
@@ -65,8 +65,8 @@ public class Variable extends Symbol implements IVariable {
 	private final int definitionOrder;
 	public IVarGetter getter, initer;
 	public IVarSetter setter;
-	protected String gName, sName, iName, pName, cName;
-	protected ISkill gSkill, iSkill, sSkill;
+	protected String /* gName, sName, iName, */pName, cName;
+	protected ISkill gSkill/* , iSkill */, sSkill;
 
 	// public boolean javaInternal;
 
@@ -85,29 +85,59 @@ public class Variable extends Symbol implements IVariable {
 		type = desc.getType();
 		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
-		SpeciesDescription context = desc.getSpeciesContext();
-		buildHelpers(context);
+		// SpeciesDescription context = desc.getSpeciesContext();
+		// buildHelpers(context);
+		buildHelpers(desc);
 		// javaInternal = getter != null && setter != null;
 
 	}
 
-	private void buildHelpers(final SpeciesDescription context) {
-		if ( getFacet(IKeyword.GETTER) != null ) {
-			gName = getLiteral(IKeyword.GETTER);
-			gSkill = context.getSkillFor(gName);
-			getter = AbstractGamlAdditions.getGetter(context.getSkillClassFor(gName), gName);
+	private void buildHelpers(final VariableDescription var) {
+		SpeciesDescription species = var.getSpeciesContext();
+		getter = var.getGetter();
+		if ( getter != null ) {
+			gSkill = species.getSkillFor(getter.getSkillClass());
 		}
-		if ( getFacet(IKeyword.INITER) != null ) {
-			iName = getLiteral(IKeyword.INITER);
-			iSkill = context.getSkillFor(iName);
-			initer = AbstractGamlAdditions.getGetter(context.getSkillClassFor(iName), iName);
+		initer = var.getIniter();
+		setter = var.getSetter();
+		if ( setter != null ) {
+			sSkill = species.getSkillFor(setter.getSkillClass());
 		}
-		if ( getFacet(IKeyword.SETTER) != null ) {
-			sName = getLiteral(IKeyword.SETTER);
-			sSkill = context.getSkillFor(sName);
-			setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName);
-		}
+		// if ( getFacet(IKeyword.GETTER) != null ) {
+		// //gName = getLiteral(IKeyword.GETTER);
+		// //gSkill = species.getSkillFor(gName);
+		// getter = var.getGetter();
+		// gSkill = species.getSkillFor(getter.getSkillClass());
+		// }
+		// if ( getFacet(IKeyword.INITER) != null ) {
+		// // iName = getLiteral(IKeyword.INITER);
+		// // iSkill = species.getSkillFor(iName);
+		// initer = var.getIniter();
+		// }
+		// if ( getFacet(IKeyword.SETTER) != null ) {
+		// sName = getLiteral(IKeyword.SETTER);
+		// sSkill = species.getSkillFor(sName);
+		// setter = var.getSetter();
+		// }
 	}
+
+	// private void buildHelpers(final SpeciesDescription context) {
+	// if ( getFacet(IKeyword.GETTER) != null ) {
+	// gName = getLiteral(IKeyword.GETTER);
+	// gSkill = context.getSkillFor(gName);
+	// getter = AbstractGamlAdditions.getGetter(context.getSkillClassFor(gName), gName);
+	// }
+	// if ( getFacet(IKeyword.INITER) != null ) {
+	// iName = getLiteral(IKeyword.INITER);
+	// iSkill = context.getSkillFor(iName);
+	// initer = AbstractGamlAdditions.getGetter(context.getSkillClassFor(iName), iName);
+	// }
+	// if ( getFacet(IKeyword.SETTER) != null ) {
+	// sName = getLiteral(IKeyword.SETTER);
+	// sSkill = context.getSkillFor(sName);
+	// setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName);
+	// }
+	// }
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v)
 		throws GamaRuntimeException {
@@ -160,7 +190,7 @@ public class Variable extends Symbol implements IVariable {
 		getter = null;
 		setter = null;
 		sSkill = null;
-		iSkill = null;
+		// iSkill = null;
 		gSkill = null;
 	}
 
@@ -194,7 +224,7 @@ public class Variable extends Symbol implements IVariable {
 			} else if ( initExpression != null ) {
 				_setVal(a, scope, scope.evaluate(initExpression, a));
 			} else if ( initer != null ) {
-				_setVal(a, scope, initer.execute(a, iSkill == null ? (ISkill) a : iSkill));
+				_setVal(a, scope, initer.run(a, gSkill == null ? (ISkill) a : gSkill));
 			} else {
 				doUpdate = true;
 				_setVal(a, scope, type().getDefault());
@@ -246,7 +276,7 @@ public class Variable extends Symbol implements IVariable {
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
 		if ( setter != null ) {
-			setter.execute(agent, sSkill == null ? agent : sSkill, val);
+			setter.run(agent, sSkill == null ? agent : sSkill, val);
 		} else {
 			agent.setAttribute(name, val);
 		}
@@ -270,7 +300,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		if ( getter != null ) { return getter.execute(agent, gSkill == null ? agent : gSkill); }
+		if ( getter != null ) { return getter.run(agent, gSkill == null ? agent : gSkill); }
 		if ( functionExpression != null ) { return scope.evaluate(functionExpression, agent); }
 		return agent.getAttribute(name);
 	}

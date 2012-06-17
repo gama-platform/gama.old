@@ -97,9 +97,9 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.VARIATION, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.RANGE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })

@@ -47,9 +47,9 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.MIN, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.MAX, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
+	// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
