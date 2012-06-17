@@ -30,9 +30,6 @@ import msi.gama.util.IList;
 import msi.gaml.types.IType;
 
 /**
- * A basic entity has a species, variables which it can update, skills which it can use (mainly for
- * updating the variables, since it does not have any behaviour) and at least a "name" among its
- * variables.
  * 
  * @author Alexis Drogoul, 9 juin 07
  */
@@ -43,12 +40,8 @@ import msi.gaml.types.IType;
 	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
 	@var(name = IKeyword.HOST, type = IType.AGENT_STR),
 	@var(name = IKeyword.LOCATION, type = IType.POINT_STR, depends_on = IKeyword.SHAPE),
-	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR) /*
-														 * , Problème de conflit de nom
-														 * 
-														 * @var(name = IKeyword.TOPOLOGY, type =
-														 * IType.TOPOLOGY_STR)
-														 */})
+	@var(name = IKeyword.SHAPE, type = IType.GEOM_STR) })
+// Problème de conflit de nom : @var(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR)
 public interface IGamlAgent extends IAgent {
 
 	@Override
@@ -56,10 +49,10 @@ public interface IGamlAgent extends IAgent {
 	public abstract IList<IAgent> getMembers();
 
 	@Override
-	@getter(IKeyword.TOPOLOGY)
+	// @getter(IKeyword.TOPOLOGY)
 	public abstract ITopology getTopology();
 
-	@setter(IKeyword.TOPOLOGY)
+	// @setter(IKeyword.TOPOLOGY)
 	public abstract void setTopology(ITopology t);
 
 	@Override
