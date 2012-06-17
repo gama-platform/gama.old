@@ -100,7 +100,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	public String getPopupText() {
 		if ( !GuiUtils.isSimulationPerspective() ) { return null; }
 		if ( status == IGui.ERROR || status == IGui.WAIT ) { return label.getText(); }
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(300);
 		String nl = StringUtils.getLineSeparator();
 		sb.append("Cycles elapsed: ").append("\t").append(SimulationClock.getCycle()).append(nl);
 		sb.append("Simulated time: ").append("\t")
