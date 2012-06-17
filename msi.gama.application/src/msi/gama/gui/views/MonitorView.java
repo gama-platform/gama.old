@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
@@ -170,7 +170,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 		update(o);
 	}
 
-	StringBuilder sb = new StringBuilder();
+	StringBuilder sb = new StringBuilder(100);
 
 	@Override
 	public String getItemDisplayName(final MonitorOutput o, final String previousName) {
