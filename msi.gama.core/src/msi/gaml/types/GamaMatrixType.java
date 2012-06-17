@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.io.*;
+import java.util.regex.Pattern;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -62,18 +63,20 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		return Types.get(NONE);
 	}
 
+	// Simplified pattern : only ';', ',', tab and white space are accepted
+	private static Pattern csvPattern = Pattern.compile(";|,|\t|\\s");
+
 	public static IMatrix from(final String string, final ILocation preferredSize)
 		throws GamaRuntimeException {
 		try {
 			final BufferedReader in = new BufferedReader(new StringReader(string));
-			final String delim = ";|,|\\s|\t|\n|\r|\f|\\|";
 			final GamaList<String[]> allLines = new GamaList();
 			String[] splitStr;
 			String str;
 			int columns = 0;
 			str = in.readLine();
 			while (str != null) {
-				splitStr = str.split(delim, -1);
+				splitStr = csvPattern.split(str, -1);
 				allLines.add(splitStr);
 				if ( splitStr.length > columns ) {
 					columns = splitStr.length;
