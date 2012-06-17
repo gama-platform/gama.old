@@ -24,14 +24,9 @@ import msi.gama.metamodel.agent.IGamlAgent;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 12 sept. 2010
@@ -39,8 +34,8 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@skill(name = "reflex")
-public class ReflexArchitecture extends Skill implements IArchitecture {
+@skill(name = IKeyword.REFLEX)
+public class ReflexArchitecture extends AbstractArchitecture {
 
 	private final List<IStatement> _inits = new ArrayList();
 	private final List<IStatement> _reflexes = new ArrayList();
@@ -56,7 +51,6 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 
 	public void addBehavior(final IStatement c) {
 		if ( IKeyword.INIT.equals(c.getFacet(IKeyword.KEYWORD).literalValue()) ) {
-
 			_inits.add(0, c);
 			_inits_number = _inits.size();
 			return;
@@ -97,118 +91,5 @@ public class ReflexArchitecture extends Skill implements IArchitecture {
 	}
 
 	@Override
-	public IGamlAgent getCurrentAgent(final IScope scope) {
-		return (IGamlAgent) super.getCurrentAgent(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IStatement#getReturnType()
-	 */
-	@Override
-	public IType getReturnType() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IStatement#getReturnContentType()
-	 */
-	@Override
-	public IType getReturnContentType() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IStatement#toGaml()
-	 */
-	@Override
-	public String toGaml() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISymbol#dispose()
-	 */
-	@Override
 	public void dispose() {}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISymbol#getDescription()
-	 */
-	@Override
-	public IDescription getDescription() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISymbol#getFacet(java.lang.String)
-	 */
-	@Override
-	public IExpression getFacet(final String key) {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISymbol#hasFacet(java.lang.String)
-	 */
-	@Override
-	public boolean hasFacet(final String key) {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.INamed#getName()
-	 */
-	@Override
-	public String getName() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.INamed#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(final String newName) {}
-
-	/**
-	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String)
-	 */
-	@Override
-	public void error(final String s) {}
-
-	@Override
-	public void warning(final String s, final String facet) {}
-
-	/**
-	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void error(final String s, final String facet) {}
-
-	@Override
-	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		return 1.0;
-	}
-
-	@Override
-	public IExpression getPertinence() {
-		return null;
-	}
 }

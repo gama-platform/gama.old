@@ -27,4 +27,13 @@ public abstract class Skill implements ISkill {
 		return scope.getAgentScope();
 	}
 
+	/**
+	 * By default, skills are singletons. This behavior is redefined in AbstractArchitecture
+	 * @see msi.gaml.skills.ISkill#copy()
+	 */
+	@Override
+	public ISkill duplicate() {
+		return this;
+	}
+
 }
