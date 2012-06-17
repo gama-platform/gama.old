@@ -13,7 +13,7 @@ public class HeadlessOutputManager extends GuiOutputManager {
 	public void buildOutputs(final IExperiment exp) {
 		System.out.println("build output headless");
 		GuiUtils.hideMonitorView();
-		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFileName());
+		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		GuiUtils.showParameterView(exp);
 		GuiUtils.informStatus(" Simulation of experiment " + exp.getName() + " of model " +
 			exp.getModel().getName() + " ready.");
