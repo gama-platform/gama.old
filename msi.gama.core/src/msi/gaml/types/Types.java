@@ -18,12 +18,10 @@
  */
 package msi.gaml.types;
 
-import static msi.gama.common.interfaces.IKeyword.GETTER;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.TypeFieldExpression;
 
 /**
@@ -100,16 +98,8 @@ public class Types {
 	}
 
 	public static void initFieldGetters(final IType t) {
-		List<IDescription> vars = AbstractGamlAdditions.getFieldDescriptions(t.toClass());
-		if ( vars != null ) {
-			for ( IDescription v : vars ) {
-				String n = v.getName();
-				IFieldGetter g =
-					AbstractGamlAdditions.getFieldGetter(t.toClass(), v.getFacets()
-						.getLabel(GETTER));
-				t.addFieldGetter(n, new TypeFieldExpression(n, v.getType(), v.getContentType(), g));
-			}
-		}
+		Map<String, TypeFieldExpression> vars = AbstractGamlAdditions.getAllFields(t.toClass());
+		t.setFieldGetters(vars);
 	}
 
 	public static void init() {

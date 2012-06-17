@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 
 /**
  * Written by drogoul Modified on 25 aožt 2010
@@ -49,16 +49,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	protected short id;
 	protected String name;
 	protected Class[] supports;
-	Map<String, IExpression> getters = new HashMap();
-
-	public GamaType() {
-		// type annotation = getClass().getAnnotation(type.class);
-		// if ( annotation != null ) {
-		// name = annotation.value();
-		// id = annotation.id();
-		// supports = annotation.wraps();
-		// }
-	}
+	Map<String, TypeFieldExpression> getters = new HashMap();
 
 	@Override
 	public void init(final short id, final String name, final Class ... supports) {
@@ -68,8 +59,8 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public void addFieldGetter(final String n, final IExpression typeFieldExpression) {
-		getters.put(n, typeFieldExpression);
+	public void setFieldGetters(final Map<String, TypeFieldExpression> map) {
+		getters = map;
 	}
 
 	@Override
@@ -109,10 +100,10 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		return false;
 	}
 
-	@Override
-	public SpeciesDescription getSpecies() {
-		return null;
-	}
+	// @Override
+	// public SpeciesDescription getSpecies() {
+	// return null;
+	// }
 
 	@Override
 	public IType defaultContentType() {

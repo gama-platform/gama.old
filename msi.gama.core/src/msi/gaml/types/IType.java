@@ -24,7 +24,7 @@ import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -121,7 +121,7 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public boolean isAssignableFrom(IType l);
 
-	public SpeciesDescription getSpecies();
+	// public SpeciesDescription getSpecies();
 
 	// public boolean
 
@@ -145,7 +145,7 @@ public interface IType<Inner> extends Comparable<IType> {
 	 * @param n
 	 * @param typeFieldExpression
 	 */
-	public void addFieldGetter(String n, IExpression typeFieldExpression);
+	public void setFieldGetters(Map<String, TypeFieldExpression> map);
 
 	/**
 	 * @param c
