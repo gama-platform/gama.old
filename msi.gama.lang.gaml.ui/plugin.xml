@@ -34,6 +34,14 @@
             </reference>
          </activeWhen>
       </handler>
+        <handler
+              class="RebuildAllHandler"
+              commandId="org.eclipse.ui.project.rebuildAll">
+        </handler>
+        <handler
+              class="CleanAllHandler"
+              commandId="org.eclipse.ui.project.cleanAction">
+        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="msi.gama.lang.gaml.Gaml.Editor.opened">
@@ -95,6 +103,16 @@
             description="Trigger expensive validation"
             id="msi.gama.lang.gaml.Gaml.validate"
             name="Validate">
+      </command>
+      <command
+            defaultHandler="EnableAutomaticBuildHandler"
+            id="msi.gama.lang.gaml.ui.enableAutomaticBuild"
+            name="Enable automatic validation">
+      </command>
+      <command
+            defaultHandler="DisableAutomaticBuildHandler"
+            id="msi.gama.lang.gaml.ui.disableAutomaticBuild"
+            name="Disable automatic validation">
       </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
@@ -262,6 +280,51 @@
            name="Search Results"
            restorable="true">
      </view>
+  </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           locationURI="menu:org.eclipse.ui.main.menu">
+        <menu
+              id="validationMenu"
+              label="Validation">
+           <visibleWhen
+                 checkEnabled="false">
+              <reference
+                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+              </reference>
+           </visibleWhen>
+           <command
+                 commandId="org.eclipse.ui.project.cleanAction"
+                 label="Clean and validate all models"
+                 style="push">
+           </command>
+           <command
+                 commandId="org.eclipse.ui.project.rebuildAll"
+                 label="Validate all models"
+                 style="push">
+           </command>
+           <separator
+                 name="msi.gama.lang.gaml.ui.separator1"
+                 visible="true">
+           </separator>
+           <command
+                 commandId="msi.gama.lang.gaml.ui.enableAutomaticBuild"
+                 label="Enable automatic validation"
+                 style="push">
+           </command>
+           <command
+                 commandId="msi.gama.lang.gaml.ui.disableAutomaticBuild"
+                 label="Disable automatic validation"
+                 style="push">
+           </command>
+           <command
+                 commandId="msi.gama.lang.gaml.Gaml.validate"
+                 label="Validate model"
+                 style="push">
+           </command>
+        </menu>
+     </menuContribution>
   </extension>
 
 </plugin>
