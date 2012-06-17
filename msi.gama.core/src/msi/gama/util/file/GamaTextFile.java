@@ -66,7 +66,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	@Override
 	public String _stringValue() throws GamaRuntimeException {
 		getContents();
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(buffer.length() * 200);
 		for ( String s : buffer ) {
 			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
 		}
