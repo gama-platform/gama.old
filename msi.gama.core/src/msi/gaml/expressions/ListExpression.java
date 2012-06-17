@@ -89,7 +89,7 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public String toGaml() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(elements.length * 5);
 		sb.append('[');
 		for ( int i = 0; i < elements.length; i++ ) {
 			if ( i > 0 ) {
