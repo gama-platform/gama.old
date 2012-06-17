@@ -216,7 +216,7 @@ public class FileOutput extends AbstractOutput {
 	 */
 	private void createFileName() throws GamaRuntimeException {
 		this.fileName = getName();
-		final String dir = GAMA.getModel().getBaseDirectory() + "/" + LOG_FOLDER + "/";
+		final String dir = GAMA.getModel().getFolderPath() + "/" + LOG_FOLDER + "/";
 		final File logFolder = new File(dir);
 		if ( !logFolder.exists() ) {
 			final boolean isCreated = logFolder.mkdir();
@@ -286,7 +286,7 @@ public class FileOutput extends AbstractOutput {
 				break;
 			case CSV:
 				if ( solution == null ) { return; }
-				StringBuilder s = new StringBuilder();
+				StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
 				for ( final String var : loggedBatchParam ) {
 					s.append(solution.get(var)).append(',');
 				}
@@ -399,7 +399,7 @@ public class FileOutput extends AbstractOutput {
 				}
 				break;
 			case CSV:
-				StringBuilder s = new StringBuilder();
+				StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
 				for ( final String var : loggedBatchParam ) {
 					s.append(var).append(',');
 				}
