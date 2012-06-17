@@ -30,7 +30,7 @@ import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.GAMA;
-import msi.gaml.factories.ModelFactory;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -83,7 +83,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		layout.verticalSpacing = 0;
 		compo.setLayout(layout);
 		String cat = getItemDisplayName(species, null);
-		boolean isBuiltIn = ModelFactory.isBuiltIn(species.getName());
+		boolean isBuiltIn = AbstractGamlAdditions.isBuiltIn(species.getName());
 		boolean hasParent = species.getSpecies().getParentName() != null;
 		boolean hasAgents = species.size() != 0;
 		boolean hasAspects = !species.getAspectNames().isEmpty();
@@ -258,7 +258,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		final IPopulation worldSpecies = sim.getWorldPopulation();
 		final List<IPopulation> builtInSpeciesList = new ArrayList();
 		for ( IPopulation m : allSpeciesList ) {
-			if ( ModelFactory.isBuiltIn(m.getName()) ) {
+			if ( AbstractGamlAdditions.isBuiltIn(m.getName()) ) {
 				builtInSpeciesList.add(m);
 			}
 		}
@@ -272,7 +272,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public String getItemDisplayName(final IPopulation obj, final String previousName) {
-		boolean isBuiltIn = ModelFactory.isBuiltIn(obj.getName());
+		boolean isBuiltIn = AbstractGamlAdditions.isBuiltIn(obj.getName());
 		int size = obj.size();
 		return "Species" + ItemList.SEPARATION_CODE +
 			(isBuiltIn ? ItemList.ERROR_CODE : ItemList.INFO_CODE) + obj.getName() +
