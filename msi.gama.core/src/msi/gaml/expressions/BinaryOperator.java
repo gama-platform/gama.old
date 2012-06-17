@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IOperatorExecuter;
+import msi.gaml.compilation.IOpRun;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
@@ -35,7 +35,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	protected final boolean lazy;
 	protected final boolean canBeConst;
-	protected final IOperatorExecuter helper;
+	protected final IOpRun helper;
 	protected final short typeProvider;
 	protected final short contentTypeProvider;
 
@@ -45,7 +45,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		return canBeConst && left.isConst() && right.isConst();
 	}
 
-	public BinaryOperator(final IType ret, final IOperatorExecuter exec, final boolean canBeConst,
+	public BinaryOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
 		final short tProv, final short ctProv, final boolean lazy) {
 		this.lazy = lazy;
 		this.canBeConst = canBeConst;
@@ -71,7 +71,7 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		Object leftVal = left.value(scope);
 		Object rightVal = lazy ? right : right.value(scope);
 		try {
-			Object result = helper.execute(scope, leftVal, rightVal);
+			Object result = helper.run(scope, leftVal, rightVal);
 			return result;
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal +
@@ -124,9 +124,9 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		type =
-			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType() : t == LEFT_CONTENT_TYPE
-				? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right.getContentType() : t >= 0
-					? Types.get(t) : type;
+			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType()
+				: t == LEFT_CONTENT_TYPE ? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right
+					.getContentType() : t >= 0 ? Types.get(t) : type;
 	}
 
 	public void computeContentType(final IDescription context) {
@@ -168,10 +168,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		contentType =
-			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType() : t == LEFT_CONTENT_TYPE
-				? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right.getContentType() : t >= 0
-					? Types.get(t) : type.id() == IType.LIST || type.id() == IType.MATRIX ? left
-						.getContentType() : type.isSpeciesType() ? type : type.defaultContentType();
+			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType()
+				: t == LEFT_CONTENT_TYPE ? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right
+					.getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
+					type.id() == IType.MATRIX ? left.getContentType() : type.isSpeciesType() ? type
+					: type.defaultContentType();
 	}
 
 	@Override
@@ -181,14 +182,14 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(50);
 		sb.append("Binary operator <b>").append(getName()).append("</b><br>");
 		return sb.toString();
 	}
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
 		sb.append("Left operand of type ").append(left.getType().toString()).append("<br>");
@@ -198,8 +199,8 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {
 
-		public BinaryVarOperator(final IType ret, final IOperatorExecuter exec,
-			final boolean canBeConst, final short type, final short contentType, final boolean lazy) {
+		public BinaryVarOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
+			final short type, final short contentType, final boolean lazy) {
 			super(ret, exec, canBeConst, type, contentType, lazy);
 		}
 
