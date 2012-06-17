@@ -43,19 +43,21 @@ public class ModelDescription extends SymbolDescription {
 	private IDescription output;
 	private IDescription environment;
 	final TypesManager types;
-	private String fileName;
-	private String baseDirectory;
+	private String modelFilePath;
+	private String modelFolderPath;
+	private String modelProjectPath;
 	private SpeciesDescription worldSpecies;
 	private boolean isDisposed = false;
 	// Only used to accelerate the parsing
 	private final Map<String, SpeciesDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(final String fileName, final ISyntacticElement source) {
+	public ModelDescription(final String projectPath, final String filePath,
+		final ISyntacticElement source) {
 		super(IKeyword.MODEL, null, IChildrenProvider.NONE, source, DescriptionFactory
 			.getModelFactory().getMetaDescriptionFor(null, IKeyword.MODEL));
 		types = new TypesManager(this);
-		setModelFileName(fileName);
+		setModelFilePath(projectPath, filePath);
 		number = count++;
 		// inc(fileName);
 		// GuiUtils.debug("Creation of " + this);
@@ -64,7 +66,7 @@ public class ModelDescription extends SymbolDescription {
 	@Override
 	public String toString() {
 		return "description #" + number + " of model <" +
-			fileName.substring(fileName.lastIndexOf('/')) + ">";
+			modelFilePath.substring(modelFilePath.lastIndexOf('/')) + ">";
 	}
 
 	@Override
@@ -110,7 +112,7 @@ public class ModelDescription extends SymbolDescription {
 
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
 		try {
-			return FileUtils.constructAbsoluteFilePath(filePath, fileName, mustExist);
+			return FileUtils.constructAbsoluteFilePath(filePath, modelFilePath, mustExist);
 		} catch (GamaRuntimeException e) {
 			flagError(e.getMessage(), IGamlIssue.GENERAL);
 			return filePath;
@@ -137,21 +139,22 @@ public class ModelDescription extends SymbolDescription {
 	 * 
 	 * @return the model file name
 	 */
-	public String getModelFileName() {
-		return fileName;
+	public String getModelFilePath() {
+		return modelFilePath;
 	}
 
-	public void setModelFileName(final String name) {
-		fileName = name;
-		setBaseDirectory(new File(name).getAbsoluteFile().getParent());
+	public String getModelFolderPath() {
+		return modelFolderPath;
 	}
 
-	public void setBaseDirectory(final String name) {
-		baseDirectory = name;
+	public String getModelProjectPath() {
+		return modelProjectPath;
 	}
 
-	public String getBaseDirectory() {
-		return baseDirectory;
+	public void setModelFilePath(final String projectPath, final String filePath) {
+		modelFilePath = filePath;
+		modelFolderPath = new File(filePath).getAbsoluteFile().getParent();
+		modelProjectPath = projectPath;
 	}
 
 	public void addType(final SpeciesDescription species) {
