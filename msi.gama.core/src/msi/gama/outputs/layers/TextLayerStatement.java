@@ -35,9 +35,10 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
+	@facet(name = IKeyword.SIZE, type = { IType.INT_STR, IType.FLOAT_STR, IType.POINT_STR }, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
