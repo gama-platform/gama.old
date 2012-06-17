@@ -18,9 +18,10 @@
  */
 package msi.gaml.descriptions;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
@@ -38,19 +39,13 @@ public class SpeciesDescription extends SymbolDescription {
 	private Map<String, StatementDescription> aspects;
 	private Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
-	protected final IList<String> sortedVariableNames;
-	protected final IList<String> updatableVariableNames;
-	protected final Set<Class> skillsClasses;
-	protected final Map<String, Class> skillsMethods;
-	protected final Map<String, ISkill> skillInstancesByMethod;
+	protected final IList<String> sortedVariableNames = new GamaList();
+	protected final IList<String> updatableVariableNames = new GamaList();
+	protected final Map<Class, ISkill> skills = new HashMap();
 	/**
-	 * Micro-species of a species includes species explicitly declared inside it
-	 * and micro-species of its parent.
-	 * 
 	 * The following map contains micro-species explicitly declared inside this species.
 	 */
 	private Map<String, SpeciesDescription> microSpecies;
-
 	private List<StatementDescription> inits;
 
 	protected Class javaBase;
@@ -64,18 +59,25 @@ public class SpeciesDescription extends SymbolDescription {
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
 		final SymbolProto md) {
 		super(keyword, superDesc, cp, source, md);
-		skillInstancesByMethod = new HashMap();
-		sortedVariableNames = new GamaList();
-		updatableVariableNames = new GamaList();
-		skillsClasses = new HashSet();
-		skillsMethods = new HashMap();
-		setSkills(facets.get(IKeyword.SKILLS));
+		setSkills(facets.get(IKeyword.SKILLS), new HashSet()
+		/*
+		 * TODO Always Empty ?
+		 * AbstractGamlAdditions.getSpeciesSkills(getName())
+		 */);
 		initJavaBase();
+	}
+
+	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
+		final IAgentConstructor helper, final Set<String> skills2, final SymbolProto md) {
+		super(IKeyword.SPECIES, superDesc, IChildrenProvider.NONE, new SyntheticStatement(
+			IKeyword.SPECIES, new Facets(IKeyword.NAME, name)), md);
+		setSkills(null, skills2);
+		initJavaBase(clazz, helper);
 	}
 
 	@Override
 	public void dispose() {
-		if ( ModelFactory.BUILT_IN_SPECIES.contains(this) ) { return; }
+		if ( AbstractGamlAdditions.isBuiltIn(getName()) ) { return; }
 		if ( hasBehaviors() ) {
 			getBehaviors().clear();
 		}
@@ -89,7 +91,7 @@ public class SpeciesDescription extends SymbolDescription {
 			// GuiUtils.debug("Variables of " + this + " disposed");
 			getVariables().clear();
 		}
-		skillInstancesByMethod.clear();
+		skills.clear();
 		if ( control != null ) {
 			control.dispose();
 		}
@@ -113,7 +115,8 @@ public class SpeciesDescription extends SymbolDescription {
 
 	private static final Set<String> skillNames = new LinkedHashSet();
 
-	protected void setSkills(final IExpressionDescription userDefinedSkills) {
+	protected void setSkills(final IExpressionDescription userDefinedSkills,
+		final Set<String> builtInSkills) {
 		skillNames.clear();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(IKeyword.CONTROL) ) {
@@ -127,10 +130,7 @@ public class SpeciesDescription extends SymbolDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
 		 */
-		Set<String> builtInSkills = AbstractGamlAdditions.getSpeciesSkills().get(getName());
-		if ( builtInSkills != null ) {
-			skillNames.addAll(builtInSkills);
-		}
+		skillNames.addAll(builtInSkills);
 
 		/* We then create the list of classes from this list of names */
 		for ( String skillName : skillNames ) {
@@ -158,38 +158,35 @@ public class SpeciesDescription extends SymbolDescription {
 
 	public String getControlName() {
 		String controlName = facets.getLabel(IKeyword.CONTROL);
-
 		// if the "control" is not explicitly declared then inherit it from the parent species.
 		if ( controlName == null && parentSpecies != null ) {
 			controlName = parentSpecies.getControlName();
 		}
-
+		if ( controlName == null ) {
+			// Default value
+			controlName = IKeyword.REFLEX;
+		}
 		return controlName;
 	}
 
 	protected void createControl() {
-		control = AbstractGamlAdditions.getArchitectureInstanceFor(getControlName());
+		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 	}
 
-	public ISkill getSkillFor(final String methodName) {
-		return skillInstancesByMethod.get(methodName);
-	}
-
-	public Class getSkillClassFor(final String getterName) {
-		return skillsMethods.get(getterName);
+	public ISkill getSkillFor(final Class clazz) {
+		return skills.get(clazz);
 	}
 
 	private void buildSharedSkills() {
-		for ( final String s : skillsMethods.keySet() ) {
-			final Class c = skillsMethods.get(s);
+		for ( final Class c : skills.keySet() ) {
 			if ( Skill.class.isAssignableFrom(c) ) {
 				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-					skillInstancesByMethod.put(s, control);
+					skills.put(c, control);
 				} else {
-					skillInstancesByMethod.put(s, AbstractGamlAdditions.getSkillInstanceFor(c));
+					skills.put(c, AbstractGamlAdditions.getSkillInstanceFor(c));
 				}
 			} else {
-				skillInstancesByMethod.put(s, null);
+				skills.put(c, null);
 			}
 		}
 	}
@@ -219,6 +216,9 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	private void addInit(final StatementDescription init) {
+		if ( inits != null && !inits.isEmpty() ) {
+			GuiUtils.debug("");
+		}
 		getInits().add(0, init); // Added at the beginning
 	}
 
@@ -300,8 +300,9 @@ public class SpeciesDescription extends SymbolDescription {
 
 	protected void addVariable(final VariableDescription v) {
 		String vName = v.getName();
-		// GuiUtils.debug("Adding var " + v.getName() + " to " + getName());
+
 		if ( hasVar(vName) ) {
+			// GuiUtils.debug("Redefining var " + v.getName() + " for " + getName());
 			IDescription builtIn = getVariables().get(vName);
 			getChildren().remove(builtIn);
 			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(IKeyword.TYPE));
@@ -402,10 +403,6 @@ public class SpeciesDescription extends SymbolDescription {
 		return retVal;
 	}
 
-	public Map<String, Class> getSkillsMethods() {
-		return skillsMethods;
-	}
-
 	@Override
 	protected boolean hasAspect(final String a) {
 		return aspects != null && getAspects().containsKey(a);
@@ -443,72 +440,41 @@ public class SpeciesDescription extends SymbolDescription {
 		return "Description of " + getName();
 	}
 
-	public void initJavaBase() {
+	public void initJavaBase(final Class clazz, final IAgentConstructor helper) {
 		if ( javaBase != null ) { return; }
-		javaBase = AbstractGamlAdditions.getBuiltInSpeciesClass(getName());
-		final List<Class> classes =
-			JavaUtils.collectImplementationClasses(javaBase, getSkillClasses());
-		final List<IDescription> children = new ArrayList();
-		for ( final Class c1 : classes ) {
-			List<IDescription> toAdd = AbstractGamlAdditions.getVarDescriptions(c1);
-			if ( toAdd != null && !toAdd.isEmpty() ) {
-				children.addAll(toAdd);
-			}
-			toAdd = AbstractGamlAdditions.getActionsDescriptions(c1);
-			if ( toAdd != null && !toAdd.isEmpty() ) {
-				children.addAll(toAdd);
-			}
-			List<String> methods = AbstractGamlAdditions.getSkillMethods(c1);
-			if ( methods != null && !methods.isEmpty() ) {
-				for ( String s : methods ) {
-					addSkillMethod(c1, s);
-				}
-			}
+		javaBase = clazz;
+		if ( helper == null ) {
+			flagError("The base class " + javaBase.getName() + " cannot be used as an agent class",
+				IGamlIssue.GENERAL);
+			return;
 		}
+		agentConstructor = helper;
+		final List<IDescription> children =
+			AbstractGamlAdditions.getAllChildrenOf(javaBase, getSkillClasses());
 		for ( IDescription v : children ) {
 			addChild(((SymbolDescription) v).copy());
 		}
-		cleanDeclarationClasses();
-		agentConstructor = AbstractGamlAdditions.getAgentConstructor(javaBase);
 
-		if ( agentConstructor == null ) {
-			flagError("The base class " + getJavaBase().getName() +
-				" cannot be used as an agent class", IGamlIssue.GENERAL);
-		}
+	}
+
+	public void initJavaBase() {
+		initJavaBase(AbstractGamlAdditions.DEFAULT_AGENT_CLASS,
+			AbstractGamlAdditions.DEFAULT_AGENT_CONSTRUCTOR);
 	}
 
 	public IAgentConstructor getAgentConstructor() {
 		return agentConstructor;
 	}
 
-	public void cleanDeclarationClasses() {
-		final Set<Class> allClasses = new HashSet();
-		allClasses.addAll(skillsMethods.values());
-		for ( final Class c : allClasses ) {
-			for ( final String s : skillsMethods.keySet() ) {
-				final Class old = skillsMethods.get(s);
-				if ( old != c && old.isAssignableFrom(c) ) {
-					// GuiUtils.debug("Change: " + old.getSimpleName() + " replaced by " +
-					// c.getSimpleName() + " in the definition of " + s);
-					skillsMethods.put(s, c);
-				}
-			}
-		}
-	}
-
 	public void addSkill(final Class c) {
-		if ( c != null && ISkill.class.isAssignableFrom(c) && !c.isInterface() ) {
-			skillsClasses.add(c);
+		if ( c != null && ISkill.class.isAssignableFrom(c) && !c.isInterface() &&
+			!Modifier.isAbstract(c.getModifiers()) ) {
+			skills.put(c, null);
 		}
-	}
-
-	public void addSkillMethod(final Class clazz, final String m) {
-		addSkill(clazz);
-		skillsMethods.put(m, clazz);
 	}
 
 	public Set<Class> getSkillClasses() {
-		return skillsClasses;
+		return skills.keySet();
 	}
 
 	public Class getJavaBase() {
@@ -539,11 +505,9 @@ public class SpeciesDescription extends SymbolDescription {
 						IGamlIssue.GENERAL);
 				}
 			}
-			skillsClasses.addAll(parent.skillsClasses);
-
-			for ( Map.Entry<String, Class> entry : parent.skillsMethods.entrySet() ) {
-				if ( !skillsMethods.containsKey(entry.getKey()) ) {
-					skillsMethods.put(entry.getKey(), entry.getValue());
+			for ( Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
+				if ( !skills.containsKey(entry.getKey()) ) {
+					skills.put(entry.getKey(), entry.getValue());
 				}
 			}
 
@@ -588,12 +552,7 @@ public class SpeciesDescription extends SymbolDescription {
 			if ( parent.hasVariables() ) {
 				// We only copy the variables that are not redefined in this species
 				for ( final SymbolDescription v : parent.getVariables().values() ) {
-					if ( v.isBuiltIn() ) {
-						final SymbolDescription var = getVariable(v.getName());
-						if ( var == null ) { // || ! isUserDefined ???
-							addChild(v.copy());
-						}
-					} else if ( !hasVar(v.getName()) ) {
+					if ( !hasVar(v.getName()) ) {
 						addChild(v.copy());
 					}
 				}
