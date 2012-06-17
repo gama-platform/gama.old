@@ -12,6 +12,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.factories.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -92,8 +93,11 @@ public class HeadlessSimulationLoader {
 				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
 			if ( r.getErrors().isEmpty() ) {
 				System.out.println("No errors in syntactic tree");
+				String modelPath =
+					new Path(r.getURI().toPlatformString(false)).toFile().getAbsolutePath();
+
 				ModelStructure ms =
-					new ModelStructure(r.getURI().toString(), new ArrayList(elements.values()));
+					new ModelStructure("", modelPath, new ArrayList(elements.values()));
 				lastModel = DescriptionFactory.getModelFactory().compile(ms);
 				if ( !r.getErrors().isEmpty() ) {
 					lastModel = null;
