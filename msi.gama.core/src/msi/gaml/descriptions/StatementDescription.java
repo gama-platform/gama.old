@@ -22,6 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.IPrimRun;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
@@ -37,11 +38,20 @@ import msi.gaml.types.IType;
 
 public class StatementDescription extends SymbolDescription {
 
+	private IPrimRun helper; // TODO Only used by primitives. Should be in a subclass.
 	private final Map<String, IVarExpression> temps;
 	private Map<String, IDescription> args = null;
 	private final static String INTERNAL = "internal_";
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
+
+	public IPrimRun getHelper() {
+		return helper;
+	}
+
+	public void setHelper(final IPrimRun helper) {
+		this.helper = helper;
+	}
 
 	public StatementDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
@@ -141,8 +151,11 @@ public class StatementDescription extends SymbolDescription {
 				children.add(child.copy());
 			}
 		}
-		return new StatementDescription(getKeyword(), null, new ChildrenProvider(children),
-			temps != null, args != null, getSourceInformation(), meta);
+		StatementDescription desc =
+			new StatementDescription(getKeyword(), null, new ChildrenProvider(children),
+				temps != null, args != null, getSourceInformation(), meta);
+		desc.setHelper(helper);
+		return desc;
 	}
 
 	@Override
