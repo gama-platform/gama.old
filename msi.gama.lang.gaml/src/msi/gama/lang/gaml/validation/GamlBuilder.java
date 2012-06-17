@@ -17,6 +17,8 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.ModelStructure;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.xtext.resource.*;
@@ -64,7 +66,12 @@ public class GamlBuilder {
 	private ModelStructure parse(final GamlResource resource, final XtextResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models =
 			buildCompleteSyntacticTree(resource, resourceSet);
-		return new ModelStructure(resource.getURI().toString(), new ArrayList(models.values()));
+
+		IPath path = new Path(resource.getURI().toPlatformString(false));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		String modelPath = file.getLocation().toOSString();
+		String projectPath = file.getProject().getLocation().toOSString();
+		return new ModelStructure(projectPath, modelPath, new ArrayList(models.values()));
 	}
 
 	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
