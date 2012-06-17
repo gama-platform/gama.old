@@ -18,17 +18,29 @@
  */
 package msi.gaml.compilation;
 
-import msi.gama.common.interfaces.IValue;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.skills.Skill;
 
 /**
- * Written by drogoul Modified on 18 déc. 2010
+ * Written by drogoul Modified on 14 août 2010
  * 
  * @todo Description
  * 
  */
-public interface IFieldGetter {
+public abstract class GamaHelper implements IGamaHelper {
 
-	Object run(IValue v) throws GamaRuntimeException;
+	final Class skillClass;
+
+	public GamaHelper(final Class clazz) {
+		if ( Skill.class.isAssignableFrom(clazz) ) {
+			skillClass = clazz;
+		} else {
+			skillClass = null;
+		}
+	}
+
+	@Override
+	public Class getSkillClass() {
+		return skillClass;
+	}
 
 }

@@ -30,22 +30,22 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public abstract class PrimitiveExecuter implements IPrimitiveExecuter {
+public abstract class PrimRun extends GamaHelper implements IPrimRun {
 
-	IType returnType = null;
+	final IType returnType;
+
+	public PrimRun(final IType t, final Class clazz) {
+		super(clazz);
+		returnType = t;
+	}
 
 	@Override
-	public abstract Object execute(ISkill skill, IAgent agent, IScope scope)
+	public abstract Object run(ISkill skill, IAgent agent, IScope scope)
 		throws GamaRuntimeException;
 
 	@Override
 	public IType getReturnType() {
 		return returnType;
-	}
-
-	@Override
-	public void setReturnType(final IType returnType) {
-		this.returnType = returnType;
 	}
 
 }
