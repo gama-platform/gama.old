@@ -40,15 +40,14 @@ public class SymbolProto {
 
 	private final ISymbolConstructor constructor;
 	private final int kind;
-	private Class baseClass = null;
-	private boolean hasSequence = false;
-	private boolean hasArgs = false;
-	private boolean hasScope = true;
-	private boolean isRemoteContext = false;
+	private final boolean hasSequence;
+	private final boolean hasArgs;
+	private final boolean hasScope;
+	private final boolean isRemoteContext;
 	private final Set<String> contextKeywords;
 	private final Set<Short> contextKinds;
 	private final Map<String, FacetProto> possibleFacets;
-	private final List<String[]> combinations;
+	// private final List<String[]> combinations;
 	private final List<String> mandatoryFacets = new ArrayList();
 	private final String omissibleFacet;
 
@@ -61,11 +60,11 @@ public class SymbolProto {
 		final Set<String> contextKeywords, final Set<Short> contextKinds,
 		final boolean isRemoteContext, final ISymbolConstructor constr) {
 		constructor = constr;
-		setRemoteContext(isRemoteContext);
-		setHasSequence(hasSequence);
-		setHasArgs(hasArgs);
+		this.isRemoteContext = isRemoteContext;
+		this.hasSequence = hasSequence;
+		this.hasArgs = hasArgs;
 		this.omissibleFacet = omissible;
-		this.combinations = possibleCombinations;
+		// this.combinations = possibleCombinations;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
@@ -73,7 +72,7 @@ public class SymbolProto {
 		this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetProto.DEPENDS_ON);
 		for ( FacetProto f : possibleFacets.values() ) {
 			if ( !f.optional ) {
-				getMandatoryFacets().add(f.name);
+				mandatoryFacets.add(f.name);
 			}
 		}
 		this.contextKeywords = contextKeywords;
@@ -82,10 +81,6 @@ public class SymbolProto {
 
 	public boolean isRemoteContext() {
 		return isRemoteContext;
-	}
-
-	public void setRemoteContext(final boolean isRemoteContext) {
-		this.isRemoteContext = isRemoteContext;
 	}
 
 	public boolean isFacetDeclaringANewTemp(final String s) {
@@ -100,24 +95,8 @@ public class SymbolProto {
 		return f.isLabel;
 	}
 
-	public void setBaseClass(final Class baseClass) {
-		this.baseClass = baseClass;
-	}
-
-	public Class getBaseClass() {
-		return baseClass;
-	}
-
-	public void setHasSequence(final boolean hasSequence) {
-		this.hasSequence = hasSequence;
-	}
-
 	public boolean hasSequence() {
 		return hasSequence;
-	}
-
-	public void setHasArgs(final boolean hasArgs) {
-		this.hasArgs = hasArgs;
 	}
 
 	public boolean hasArgs() {
@@ -132,9 +111,10 @@ public class SymbolProto {
 		return possibleFacets;
 	}
 
-	public List<String[]> getPossibleCombinations() {
-		return combinations;
-	}
+	//
+	// public List<String[]> getPossibleCombinations() {
+	// return combinations;
+	// }
 
 	public List<String> getMandatoryFacets() {
 		return mandatoryFacets;
@@ -255,7 +235,7 @@ public class SymbolProto {
 	 */
 	public String getDocumentation() {
 		// TODO Insert here the possibility to grab a @doc annotation in the symbol.
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(200);
 		sb.append("<b>Facets allowed:</b><br><ul>");
 		for ( FacetProto f : this.getPossibleFacets().values() ) {
 			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types.get(0))
