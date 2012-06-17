@@ -27,9 +27,9 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
-import msi.gaml.skills.*;
+import msi.gaml.skills.ISkill;
 import msi.gaml.types.IType;
 
 /**
@@ -45,7 +45,6 @@ import msi.gaml.types.IType;
 public class PrimitiveStatement extends ActionStatement {
 
 	private ISkill skill = null;
-	private final IPrimitiveExecuter executer;
 
 	/**
 	 * The Constructor.
@@ -55,14 +54,22 @@ public class PrimitiveStatement extends ActionStatement {
 	 */
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
-		String methodName = getLiteral(IKeyword.JAVA);
+		skill =
+			AbstractGamlAdditions.getSkillInstanceFor(((StatementDescription) desc).getHelper()
+				.getSkillClass());
+		// String methodName = getLiteral(IKeyword.JAVA);
 
-		SpeciesDescription context = desc.getSpeciesContext();
-		Class methodClass = context.getSkillClassFor(methodName);
-		if ( Skill.class.isAssignableFrom(methodClass) ) {
-			skill = AbstractGamlAdditions.getSkillInstanceFor(methodClass);
-		}
-		executer = AbstractGamlAdditions.getPrimitive(methodClass, methodName);
+		// SpeciesDescription context = desc.getSpeciesContext();
+		// Class methodClass = context.getSkillClassFor(methodName);
+		// if ( Skill.class.isAssignableFrom(methodClass) ) {
+		// skill = AbstractGamlAdditions.getSkillInstanceFor(methodClass);
+		// }
+		// executer = AbstractGamlAdditions.getPrimitive(methodClass, methodName);
+	}
+
+	@Override
+	public StatementDescription getDescription() {
+		return (StatementDescription) description;
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class PrimitiveStatement extends ActionStatement {
 		Object result = null;
 		actualArgs.stack(stack);
 		IAgent agent = stack.getAgentScope();
-		result = executer.execute(skill == null ? agent : skill, agent, stack);
+		result = getDescription().getHelper().run(skill == null ? agent : skill, agent, stack);
 		return result;
 	}
 
@@ -81,7 +88,7 @@ public class PrimitiveStatement extends ActionStatement {
 
 	@Override
 	public IType getReturnType() {
-		return executer.getReturnType();
+		return getDescription().getHelper().getReturnType();
 	}
 
 }
