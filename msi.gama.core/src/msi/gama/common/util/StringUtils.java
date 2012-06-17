@@ -53,7 +53,7 @@ public class StringUtils {
 
 	static public String toGamlString(final String s) {
 		if ( s == null ) { return null; }
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(s.length());
 		sb.append('\'');
 		sb.append(StringEscapeUtils.escapeJavaScript(s));
 		sb.append('\'');
@@ -69,7 +69,7 @@ public class StringUtils {
 	}
 
 	static public String stringArrayToString(final String[] array) {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(array.length * 10);
 		for ( String s : array ) {
 			sb.append(s);
 			sb.append(' ');
