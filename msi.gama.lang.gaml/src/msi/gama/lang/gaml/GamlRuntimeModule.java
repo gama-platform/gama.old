@@ -20,6 +20,7 @@ package msi.gama.lang.gaml;
 
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import org.eclipse.xtext.linking.ILinkingService;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.service.SingletonBinding;
 import com.google.inject.Binder;
@@ -35,6 +36,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		super.configure(binder);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(
 			GamlResourceDescriptionStrategy.class);
+		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
 	}
