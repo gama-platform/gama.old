@@ -21,7 +21,7 @@ package msi.gaml.expressions;
 import static msi.gama.precompiler.ITypeProvider.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IOperatorExecuter;
+import msi.gaml.compilation.IOpRun;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 
@@ -31,7 +31,7 @@ import msi.gaml.types.*;
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	protected IExpression child;
-	private final IOperatorExecuter helper;
+	private final IOpRun helper;
 	private final boolean canBeConst;
 	private final short typeProvider;
 	private final short contentTypeProvider;
@@ -41,7 +41,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return canBeConst && child.isConst();
 	}
 
-	public UnaryOperator(final IType rt, final IOperatorExecuter exec, final boolean canBeConst,
+	public UnaryOperator(final IType rt, final IOpRun exec, final boolean canBeConst,
 		final short tProv, final short ctProv) {
 		type = rt;
 		helper = exec;
@@ -55,7 +55,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 		Object childValue = child.value(scope);
 		try {
-			return helper.execute(scope, childValue, null);
+			return helper.run(scope, childValue, null);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;
@@ -88,14 +88,14 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(50);
 		sb.append("Unary operator <b>").append(getName()).append("</b><br>");
 		return sb.toString();
 	}
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
 		sb.append("Operand of type ").append(child.getType().toString()).append("<br>");
