@@ -41,12 +41,6 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 		super(handles, uses);
 	}
 
-	public static Set<SpeciesDescription> BUILT_IN_SPECIES = null;
-
-	public static boolean isBuiltIn(final String name) {
-		return AbstractGamlAdditions.getBuiltInSpeciesClasses().containsKey(name);
-	}
-
 	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
 
 	private void addMicroSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
@@ -91,7 +85,9 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 	}
 
 	public ModelDescription parse(final ModelStructure structure) {
-		ModelDescription model = new ModelDescription(structure.getPath(), structure.getSource());
+		ModelDescription model =
+			new ModelDescription(structure.getProjectPath(), structure.getPath(),
+				structure.getSource());
 		model.getSourceInformation().setDescription(model);
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 
@@ -137,26 +133,21 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 		return model;
 	}
 
-	public static SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
+	@Override
+	public SpeciesFactory getSpeciesFactory() {
+		return (SpeciesFactory) chooseFactoryFor(IKeyword.SPECIES);
+	}
+
+	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
 		// We create a new world
-		// String w = AbstractGamlAdditions.getBuiltInSpeciesClasses().get(WORLD_SPECIES).getName();
-		IDescription world = DescriptionFactory.create(SPECIES, model, NAME, WORLD_SPECIES);
+		IDescription world =
+			getSpeciesFactory().createSpeciesDescription(WORLD_SPECIES,
+				AbstractGamlAdditions.WORLD_AGENT_CLASS, model,
+				AbstractGamlAdditions.WORLD_AGENT_CONSTRUCTOR,
+				AbstractGamlAdditions.getSpeciesSkills(WORLD_SPECIES));
 		model.addChild(world);
-		// We compute the built-in species if necessary, only once
-		if ( BUILT_IN_SPECIES == null ) {
-			BUILT_IN_SPECIES = new LinkedHashSet();
-			for ( Map.Entry<String, Class> e : AbstractGamlAdditions.getBuiltInSpeciesClasses()
-				.entrySet() ) {
-				String name = e.getKey();
-				if ( !WORLD_SPECIES.equals(name) ) {
-					// String clazz = e.getValue().getName();
-					BUILT_IN_SPECIES.add((SpeciesDescription) DescriptionFactory.create(SPECIES,
-						world, NAME, name));
-				}
-			}
-		}
 		// We then reattach the previous built-in species to the new world
-		for ( SpeciesDescription sd : BUILT_IN_SPECIES ) {
+		for ( SpeciesDescription sd : AbstractGamlAdditions.BUILT_IN_SPECIES.values() ) {
 			sd.setSuperDescription(world);
 			world.addChild(sd);
 		}

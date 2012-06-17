@@ -19,10 +19,11 @@
 package msi.gaml.factories;
 
 import static msi.gama.precompiler.ISymbolKind.*;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind.Variable;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -48,7 +49,13 @@ public class SpeciesFactory extends SymbolFactory {
 		String name = facets.getLabel(IKeyword.NAME);
 		addSpeciesNameAsType(name);
 		return new SpeciesDescription(keyword, sd, facets, cp, source, md);
+	}
 
+	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
+		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills) {
+		addSpeciesNameAsType(name);
+		return new SpeciesDescription(name, clazz, superDesc, helper, skills,
+			getMetaDescriptionFor(null, IKeyword.SPECIES));
 	}
 
 	@Override

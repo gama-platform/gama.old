@@ -19,8 +19,8 @@
 package msi.gaml.factories;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gaml.compilation.SyntheticStatement;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -35,9 +35,8 @@ public class DescriptionFactory {
 	public synchronized static IDescription create(final ISymbolFactory factory,
 		final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final Facets facets) {
-		// facets.putAsLabel(IKeyword.KEYWORD, keyword);
-		ISyntacticElement element = new SyntheticStatement(keyword, facets);
-		return factory.createDescription(element, superDesc, children);
+		return factory.createDescription(new SyntheticStatement(keyword, facets), superDesc,
+			children);
 	}
 
 	public synchronized static IDescription create(final String keyword,
@@ -84,6 +83,12 @@ public class DescriptionFactory {
 
 	public static void setModelFactory(final ISymbolFactory iSymbolFactory) {
 		modelFactory = (ModelFactory) iSymbolFactory;
+	}
+
+	public static SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
+		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills) {
+		return modelFactory.getSpeciesFactory().createSpeciesDescription(name, clazz, superDesc,
+			helper, skills);
 	}
 
 }
