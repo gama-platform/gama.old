@@ -22,6 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.*;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -41,6 +42,11 @@ public class VariableDescription extends SymbolDescription {
 	private IVarExpression varExpr = null;
 	private IType type = null, contentType = null;
 	private final boolean _isGlobal, _isFunction, _isNotModifiable, _isParameter, _isUpdatable;
+	private IVarGetter get;
+	private IVarGetter init;
+	private IVarSetter set;
+
+	// private IFieldGetter field; // TODO only for fields. Should be moved to a subclass
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
@@ -79,12 +85,26 @@ public class VariableDescription extends SymbolDescription {
 				facets.put(entry.getKey(), entry.getValue());
 			}
 		}
+		if ( get == null ) {
+			get = v2.get;
+		}
+		if ( set == null ) {
+			set = v2.set;
+		}
+		if ( init == null ) {
+			init = v2.init;
+		}
+		// if ( field == null ) {
+		// field = v2.field;
+		// }
 	}
 
 	@Override
 	public VariableDescription copy() {
-		return new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(),
-			meta);
+		VariableDescription vd =
+			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(), meta);
+		vd.addHelpers(get, init, set);
+		return vd;
 	}
 
 	@Override
@@ -203,6 +223,24 @@ public class VariableDescription extends SymbolDescription {
 		String title = isParameter() ? "Parameter " : isNotModifiable() ? "Constant " : "Variable ";
 		return title + "<b>" + getName() + "</b>";
 		// TODO add type, etc...
+	}
+
+	public void addHelpers(final IVarGetter get, final IVarGetter init, final IVarSetter set) {
+		this.get = get;
+		this.set = set;
+		this.init = init;
+	}
+
+	public IVarGetter getGetter() {
+		return get;
+	}
+
+	public IVarGetter getIniter() {
+		return init;
+	}
+
+	public IVarSetter getSetter() {
+		return set;
 	}
 
 }
