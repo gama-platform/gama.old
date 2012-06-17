@@ -95,7 +95,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(50);
 		sb.append("Action <b>").append(getName()).append("</b><br>");
 		return sb.toString();
 
@@ -103,7 +103,7 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
 		sb.append("Defined in ").append(statement.getDescription().getSpeciesContext().getTitle())
