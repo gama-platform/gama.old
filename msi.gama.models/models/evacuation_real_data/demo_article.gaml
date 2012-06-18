@@ -26,7 +26,7 @@ global {
 	topology road_graph_topology;
 	density_window_builder window_builder;
 	
-	list nearest_roads_to_shelters <- [] of: road;
+	list nearest_roads_to_shelters <- [] type: list of: road;
 	
 	rgb shelter_color <- rgb('blue') const: true;
 	rgb road_color <- rgb('black') const: true;
@@ -101,10 +101,6 @@ global {
 		create density_window_builder returns: builders;
 		set window_builder value: builders at 0;
 	}	 
-	
-	reflex when: (time = 20) {
-		do halt;
-	}
 }
 
 environment bounds: shape_file_bounds;
@@ -162,7 +158,7 @@ entities {
 			}
 			
 			if !(empty (to_be_captured_pedestrian)) {
-				capture target: to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
+				capture to_be_captured_pedestrian as: captured_pedestrian returns: c_pedestrian;
 				
 				loop cp over: c_pedestrian {
 					let road_source_to_previous_location type: geometry value: ( shape split_at (cp.previous_location) ) first_with ( geometry(each).points contains (cp.previous_location) ) ;
@@ -185,12 +181,13 @@ entities {
 		}
 		
 		reflex release_captured_pedestrian when: (macro_patch != nil) {
+			
 			let to_be_released_pedestrian type: list of: captured_pedestrian value: (members) where ( (captured_pedestrian(each).released_time) <= time );
 			
-			if condition: !(empty (to_be_released_pedestrian)) {
+			if !(empty (to_be_released_pedestrian)) {
 				loop rp over: to_be_released_pedestrian {
 					let r_position type: point value: rp.released_location;
-					release target: rp returns: r_pedestrian;
+					release rp in: world as: pedestrian returns: r_pedestrian;
 					set pedestrian(first (list (r_pedestrian))).last_road value: self;
 					set pedestrian(first (list (r_pedestrian))).location value: r_position;
 				}
@@ -230,9 +227,7 @@ entities {
 			}
 			 
 			if (window_viewer = nil) {
-				do write {
-					arg message value: name + ' with window_viewer = NULL!';
-				}
+				write name + ' with window_viewer = NULL!';
 				
 				return pedestrian_max_speed;
 			}
@@ -269,7 +264,8 @@ entities {
 		}
 		
  		aspect base {
- 			draw shape: geometry color: pedestrian_color;
+// 			draw shape: geometry color: pedestrian_color;
+ 			draw shape: circle size: 20 color: pedestrian_color;
  		}
 	}
 	
@@ -422,6 +418,8 @@ experiment pure_ABM_experiment type: gui {
 		monitor average_local_density value: (sum (list(pedestrian) collect (each.local_density))) / (length(pedestrian));
 		monitor average_step_duration value: average_duration;
 
+		monitor all_pedestrians value: length(world.members of_generic_species pedestrian);
+
 		display pedestrians_average_speed {
 			chart pa_speed_diagram type: series {
 				data pedestrians_average_speed value: pedestrians_average_speed color: rgb('green');
@@ -462,6 +460,8 @@ experiment Hybrid_experiment type: gui {
 		monitor roads_WITH_macro_patch value: length( (list(road) where (each.macro_patch != nil)) );
 		monitor roads_WITHOUT_macro_patch value: length( (list(road) where (each.macro_patch = nil)) );
 		monitor nearest_roads value: length(nearest_roads_to_shelters);
+		
+		monitor all_pedestrians value: length(world.agents of_generic_species pedestrian);
 		
 		display pedestrians_average_speed {
 			chart pa_speed_diagram type: series {
