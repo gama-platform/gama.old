@@ -26,6 +26,7 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
+import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
@@ -174,14 +175,19 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public ISkill getSkillFor(final Class clazz) {
-		return skills.get(clazz);
+
+		ISkill skill = skills.get(clazz);
+		return skill;
 	}
 
 	private void buildSharedSkills() {
-		for ( final Class c : skills.keySet() ) {
+		for ( Class c : skills.keySet() ) {
 			if ( Skill.class.isAssignableFrom(c) ) {
 				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-					skills.put(c, control);
+					while (c != AbstractArchitecture.class) {
+						skills.put(c, control);
+						c = c.getSuperclass();
+					}
 				} else {
 					skills.put(c, AbstractGamlAdditions.getSkillInstanceFor(c));
 				}

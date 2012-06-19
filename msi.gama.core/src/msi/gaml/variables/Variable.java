@@ -97,6 +97,9 @@ public class Variable extends Symbol implements IVariable {
 		getter = var.getGetter();
 		if ( getter != null ) {
 			gSkill = species.getSkillFor(getter.getSkillClass());
+			// if ( gSkill == null && getName().equals("states") ) {
+			// GuiUtils.debug("");
+			// }
 		}
 		initer = var.getIniter();
 		setter = var.getSetter();
