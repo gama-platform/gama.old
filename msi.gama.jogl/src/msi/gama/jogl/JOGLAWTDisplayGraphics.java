@@ -343,12 +343,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
-					new GamaPoint(stepX, -image.getWidth())).getInnerGeometry();
+					new GamaPoint(stepX, image.getWidth())).getInnerGeometry();
 			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0,0);
 		}
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = -(i / (double) image.getHeight()) * image.getHeight();;
+			stepY = (i / (double) image.getHeight()) * image.getHeight();;
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();

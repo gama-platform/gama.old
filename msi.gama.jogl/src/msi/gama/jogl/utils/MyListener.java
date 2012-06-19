@@ -44,7 +44,7 @@ public class MyListener implements KeyListener, MouseListener,
 	public Camera myCamera;
 	private JOGLAWTGLRenderer myRenderer;
 
-	//To handle mouse event
+	//To handle mouse event	
 	private int lastx, lasty;
 	
 	public boolean isArcBallEnable=false;
