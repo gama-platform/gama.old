@@ -48,20 +48,24 @@ public class MyListener implements KeyListener, MouseListener,
 	private int lastx, lasty;
 	
 	public boolean isArcBallEnable=false;
+	
+	private boolean isMacOS = false;
 
 	public MyListener(Camera camera) {
 		myCamera = camera;
+		detectMacOS();
 	}
 
 	public MyListener(Camera camera, JOGLAWTGLRenderer renderer){
 		myCamera = camera;
 		myRenderer = renderer;
+		detectMacOS();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
 		// TODO Auto-generated method stub
-		if (mouseEvent.isControlDown() && myCamera.isModelCentered) {
+		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
 			if (SwingUtilities.isRightMouseButton(mouseEvent)) {
 				myRenderer.reset();
 			}
@@ -87,8 +91,7 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mousePressed(MouseEvent mouseEvent) {
 		
-		//FIXME: Need to use mouseEvent.isControlDown() for windows and Linux
-		if (mouseEvent.isMetaDown() && myCamera.isModelCentered) {
+		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
 			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 				myRenderer.startDrag(mouseEvent.getPoint());
 			}
@@ -107,8 +110,7 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mouseDragged(MouseEvent mouseEvent) {
 
-		//FIXME: Need to use mouseEvent.isControlDown() for windows and Linux
-		if (mouseEvent.isMetaDown() && myCamera.isModelCentered) {
+		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
 			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 				myRenderer.drag(mouseEvent.getPoint());
 			}
@@ -230,6 +232,24 @@ public class MyListener implements KeyListener, MouseListener,
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	// add for check Meta Button pressed in MAC Os or Ctrl in Window OS
+	private boolean checkCtrlKeyDown(MouseEvent mouseEvent){
+		boolean specicalKeyDown = false;
+		if(isMacOS)
+			specicalKeyDown = mouseEvent.isMetaDown();
+		else
+			specicalKeyDown = mouseEvent.isControlDown();
+		return specicalKeyDown;
+	}
+	
+	private boolean detectMacOS(){
+		String os = System.getProperty("os.name");
+		if("Mac OS X".equals(os)){
+			isMacOS = true;
+		}
+		return isMacOS;
 	}
 
 }

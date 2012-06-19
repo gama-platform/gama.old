@@ -240,6 +240,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				camera.getXPos(), camera.getYPos(), camera.getZPos(),
 				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 
 				0.0, 1.0, 0.0);
+		arcBall.setBounds(width, height);
 	}
 
 	@Override
@@ -502,7 +503,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
     
     //FIXME: Need to set the width and height of the displaysurface.
-    private ArcBall arcBall = new ArcBall(480.0f, 640.0f); 
+    private ArcBall arcBall = new ArcBall(width, height); 
 	
 	// add function to capture mouse event of ArcBall model
 	public void drag(Point mousePoint){
