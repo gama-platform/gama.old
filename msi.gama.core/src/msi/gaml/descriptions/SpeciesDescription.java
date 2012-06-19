@@ -187,7 +187,7 @@ public class SpeciesDescription extends SymbolDescription {
 				if ( IArchitecture.class.isAssignableFrom(clazz) && control != null ) {
 					while (clazz != AbstractArchitecture.class) {
 						skills.put(clazz, control);
-						clazz = c.getSuperclass();
+						clazz = clazz.getSuperclass();
 					}
 				} else {
 					skills.put(clazz, AbstractGamlAdditions.getSkillInstanceFor(c));
