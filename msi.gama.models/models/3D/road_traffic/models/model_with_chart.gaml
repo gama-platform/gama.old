@@ -1,9 +1,9 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- '../includes/building.shp' parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- '../includes/road.shp' parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- '../includes/bounds.shp' parameter: 'Shapefile for the bounds:' category: 'GIS' ; 
+	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
+	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
+	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ; 
 	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
