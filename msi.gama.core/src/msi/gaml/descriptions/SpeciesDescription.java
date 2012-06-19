@@ -182,17 +182,18 @@ public class SpeciesDescription extends SymbolDescription {
 
 	private void buildSharedSkills() {
 		for ( Class c : skills.keySet() ) {
-			if ( Skill.class.isAssignableFrom(c) ) {
-				if ( IArchitecture.class.isAssignableFrom(c) && control != null ) {
-					while (c != AbstractArchitecture.class) {
-						skills.put(c, control);
-						c = c.getSuperclass();
+			Class clazz = c;
+			if ( Skill.class.isAssignableFrom(clazz) ) {
+				if ( IArchitecture.class.isAssignableFrom(clazz) && control != null ) {
+					while (clazz != AbstractArchitecture.class) {
+						skills.put(clazz, control);
+						clazz = c.getSuperclass();
 					}
 				} else {
-					skills.put(c, AbstractGamlAdditions.getSkillInstanceFor(c));
+					skills.put(clazz, AbstractGamlAdditions.getSkillInstanceFor(c));
 				}
 			} else {
-				skills.put(c, null);
+				skills.put(clazz, null);
 			}
 		}
 	}
