@@ -53,9 +53,8 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 		this.right = right;
 		Facets facets = new Facets();
 		facets.putAsLabel(IKeyword.ACTION, name); // TODO A vérifier
-		IDescription cd =
-			DescriptionFactory.create(IKeyword.DO, /* sd */context.getSpeciesContext(),
-				IKeyword.ACTION, name);
+		IDescription sd = context.getSpeciesDescription(left.getType().getSpeciesName());
+		IDescription cd = DescriptionFactory.create(IKeyword.DO, sd, IKeyword.ACTION, name);
 		statement = new DoStatement(cd);
 		type = statement.getReturnType();
 		contentType = statement.getReturnContentType();
