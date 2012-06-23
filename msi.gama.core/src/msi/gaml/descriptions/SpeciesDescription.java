@@ -181,7 +181,9 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	private void buildSharedSkills() {
-		for ( Class c : skills.keySet() ) {
+		// Necessary in order to prevent concurrentModificationExceptions
+		Set<Class> classes = new HashSet(skills.keySet());
+		for ( Class c : classes ) {
 			Class clazz = c;
 			if ( Skill.class.isAssignableFrom(clazz) ) {
 				if ( IArchitecture.class.isAssignableFrom(clazz) && control != null ) {
