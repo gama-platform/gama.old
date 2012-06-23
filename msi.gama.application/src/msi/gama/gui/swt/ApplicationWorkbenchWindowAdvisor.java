@@ -19,6 +19,7 @@
 package msi.gama.gui.swt;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.runtime.GAMA;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.*;
@@ -48,7 +49,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowStatusLine(true);
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(false);
-		configurer.setTitle("GAMA 1.4");
+		configurer.setTitle(GAMA.VERSION);
 		configurer
 			.configureEditorAreaDropListener(new EditorAreaDropAdapter(configurer.getWindow()));
 
