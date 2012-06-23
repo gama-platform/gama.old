@@ -34,12 +34,15 @@ import msi.gaml.expressions.*;
  */
 public class GAMA {
 
+	public final static String VERSION = "GAMA 1.5";
+
 	public final static String PAUSED = "STOPPED";
 	public final static String RUNNING = "RUNNING";
 	public final static String NOTREADY = "NOTREADY";
 	public final static String NONE = "NONE";
 	public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
+
 	private static volatile IExperiment currentExperiment = null;
 	private static IExpressionFactory expressionFactory = null;
 	public static ISimulationStateProvider state = null;
