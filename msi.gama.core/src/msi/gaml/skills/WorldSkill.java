@@ -57,6 +57,8 @@ import org.eclipse.core.runtime.Platform;
 		" is another choice. Much faster than the previous ones, but with short sequences; and " +
 		IKeyword.JAVA + " invokes the standard Java generator")),
 	@var(name = IKeyword.STEP, type = IType.FLOAT_STR, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
+	@var(name = WorldSkill.MACHINE_TIME, type = IType.FLOAT_STR, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
+
 	@var(name = WorldSkill.DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
 	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
@@ -68,6 +70,7 @@ public class WorldSkill extends GeometricSkill {
 
 	public static final String CYCLE = "cycle";
 	public static final String DURATION = "duration";
+	public static final String MACHINE_TIME = "machine_time";
 	public static final String TOTAL_DURATION = "total_duration";
 	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String MODEL_PATH = "model_path";
@@ -103,6 +106,16 @@ public class WorldSkill extends GeometricSkill {
 	@getter(AVERAGE_DURATION)
 	public String getAverageDuration(final IAgent agent) {
 		return Double.toString(SimulationClock.getAverageDuration());
+	}
+
+	@getter(MACHINE_TIME)
+	public Double getMachineTime(final IAgent agent) {
+		return (double) System.currentTimeMillis();
+	}
+
+	@setter(MACHINE_TIME)
+	public void setMachineTime(final IAgent agent, final Double t) throws GamaRuntimeException {
+		// NOTHING
 	}
 
 	@getter(IKeyword.TIME)

@@ -364,10 +364,10 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 	@Override
 	public void initializeMatrices() {
 
-		GuiUtils.debug("1) Initializing the adjacency and predecessors matrices");
+		// GuiUtils.debug("1) Initializing the adjacency and predecessors matrices");
 		initMatrices();
 		sortFinderData();
-		GuiUtils.debug("2) Initializing the distances in the adjacency matrix...");
+		// GuiUtils.debug("2) Initializing the distances in the adjacency matrix...");
 		ILocation to, from;
 		// int roads = 0;
 		int p2, length;
