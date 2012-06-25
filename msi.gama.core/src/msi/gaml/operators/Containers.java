@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -53,7 +53,8 @@ public class Containers {
 
 	@operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		special_cases = {"if it is a species, first returns the first element of the list of the agents in the species"})	
+		deprecated ="Try to use first one a species, please use it one a population instead (list(species_name) instead of species_name)"
+		)	
 	public static IAgent getFirst(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -63,7 +64,8 @@ public class Containers {
 
 	@operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		special_cases = {"if it is a species, last returns the last element of the list of the agents in the species"})		
+		deprecated = "Try to use last one a species, please use it one a population instead (list(species_name) instead of species_name)"
+		)		
 	public static IAgent getLast(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
 		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
@@ -74,8 +76,7 @@ public class Containers {
 
 	
 	@operator(value = "length")
-	@doc(
-		special_cases = {"if it is a species, length returns the number of elements in the list of the agents in the species"})		
+	@doc(deprecated = "Try to use length one a species, please use it one a population instead (list(species_name) instead of species_name)")		
 	public static Integer getLength(final IScope scope, final ISpecies s)
 		throws GamaRuntimeException {
 		if ( s == null ) { return 0; }
@@ -138,7 +139,7 @@ public class Containers {
 	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static IList asSet(final IContainer l) {
 		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
-		// utilisŽ ˆ la place ˆ vŽrifier
+		// utilisï¿½ ï¿½ la place ï¿½ vï¿½rifier
 
 		if ( l == null ) { return null; }
 		final LinkedHashSet list = new LinkedHashSet(l.length());
