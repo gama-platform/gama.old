@@ -10,7 +10,7 @@ global {
 	file shape_file_name <- file('../gis/nha2.shp') parameter: 'Shapefile to load:' category: 'GIS specific';
 	int square_meters_per_people <- 200 parameter: 'Occupancy of people (in m2):' category: 'GIS specific';
 	int dimensions;
-	action initialize_people {
+	action initialize_people { 
 		create space from: shape_file_name with: [surface :: read('AREA')];
 		set all_places  <- shuffle(space as list);
 		set number_of_people <- density_of_people * sum (all_places collect ((each as space).capacity)); 
@@ -29,7 +29,7 @@ entities {
 		const green type: int <- color as list at 1;  
 		const blue type: int <- color as list at 2; 
 		space current_building <- nil;
-		list my_neighbours -> {(self neighbours_at (people as list::neighbours_distance)) of_species people}; 
+		list my_neighbours -> {people at_distance neighbours_distance}; 
 		action move_to_new_place {  
 			set current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
 			ask current_building {
@@ -41,7 +41,7 @@ entities {
 				ask current_building { 
 					do remove_one one_people: myself;
 				}
-			}
+			} 
 			do move_to_new_place;
 		}
 		aspect simple {
