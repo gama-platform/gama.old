@@ -1008,16 +1008,12 @@ public abstract class Spatial {
 			if ( g == null ) { return p.getLocation(); }
 			if ( p == null ) { return g.getLocation(); }
 
-			return getFarthestPoint(p, g);
-		}
-
-		private static ILocation getFarthestPoint(final GamaPoint pt, final IShape geom) {
-			Coordinate[] cg = geom.getInnerGeometry().getCoordinates();
-			if ( cg.length == 0 ) { return pt; }
+			Coordinate[] cg = g.getInnerGeometry().getCoordinates();
+			if ( cg.length == 0 ) { return p; }
 			Coordinate pt_max = cg[0];
-			double dist_max = pt.distance(pt_max);
+			double dist_max = p.distance(pt_max);
 			for ( int i = 1; i < cg.length; i++ ) {
-				double dist = pt.distance(cg[i]);
+				double dist = p.distance(cg[i]);
 				if ( dist > dist_max ) {
 					pt_max = cg[i];
 					dist_max = dist;
@@ -1082,7 +1078,7 @@ public abstract class Spatial {
 		@operator(value = "neighbours_at", content_type = IType.AGENT)
 		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) -> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
-			"agent_closest_to" })
+			"agent_closest_to","at_distance" })
 		public static IList opNeighboursAt(final IScope scope, final IShape agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
@@ -1104,22 +1100,23 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(value = "A list of agents among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)", examples = { "[ag1, ag2, ag3] at_distance 20 -> return the agents of the list located at a distance <= 20 from the caller agent (in the same order)." }, see = {
+			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
+			"inside", "overlapping" })
 		public static IList opAtDistance(final IScope scope, final IList list, final Double distance) {
 			if ( list.isEmpty() ) { return GamaList.EMPTY_LIST; }
 			IAgent agent = scope.getAgentScope();
-			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
-				agent.getLocation(), distance, In.list(scope, list)); }
-			return agent.getTopology().getNeighboursOf(agent, distance, In.list(scope, list));
-
-			// return agent.getTopology()
-			// .getAgentsIn(
-			// Cast.asGeometry(scope,
-			// GamaGeometryType.buildCircle(distance, agent.getLocation())),
-			// In.list(scope, list), false);
-			// return agent.getTopology().getNeighboursOf(agent, distance, In.list(scope, list));
+			ITopology t = agent.getTopology();
+			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
+				In.list(scope, list)); }
+			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.list(scope, list),
+				false);
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(special_cases = "If the left operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)", examples = { "species1 at_distance 20 -> return the agents of species1 located at a distance <= 20 from the caller agent." }, see = {
+			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
+			"inside", "overlapping" })
 		public static IList opAtDistance(final IScope scope, final ISpecies species,
 			final Double distance) {
 			IAgent agent = scope.getAgentScope();
@@ -1127,14 +1124,8 @@ public abstract class Spatial {
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
 			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
 				agent.getLocation(), distance, In.population(pop)); }
-			return agent.getTopology().getNeighboursOf(agent, distance, In.population(pop));
-
-			// return agent.getTopology()
-			// .getAgentsIn(
-			// Cast.asGeometry(scope,
-			// GamaGeometryType.buildCircle(distance, agent.getLocation())),
-			// In.population(pop), false);
-			// return agent.getTopology().getNeighboursOf(agent, distance, In.population(pop));
+			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
+				In.population(pop), false);
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
@@ -1150,14 +1141,12 @@ public abstract class Spatial {
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator." })
+		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)." }, examples = { "species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator." })
 		public static IList<IAgent> opInside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
-			// CHANGE
 			ITopology t = pop.getTopology();
-			// ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.population(pop), true);
 		}
@@ -1180,17 +1169,7 @@ public abstract class Spatial {
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return new GamaList(); }
-			// CHANGE
 			ITopology t = pop.getTopology();
-			// IList<IAgent> temp =
-			// t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop),
-			// false);
-			// for ( IAgent a : temp ) {
-			// if ( a.dead() ) {
-			// GuiUtils.debug("Dead agent inside");
-			// }
-			// }
-			// ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.population(pop), false);
 		}
@@ -1258,12 +1237,24 @@ public abstract class Spatial {
 		@operator(value = "agents_overlapping", content_type = IType.AGENT)
 		@doc(value = "A list of agents overlapping the operand (casted as a geometry).", examples = { "agents_overlapping(self) -> return the agents that overlap the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
-			"inside", "overlapping" })
+			"inside", "overlapping", "at_distance" })
 		public static IList<IAgent> opOverlappingAgents(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getAgentScope().getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
 				false);
+		}
+
+		@operator(value = "agents_at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@doc(value = "A list of agents situated at a distance <= the right argument.", comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'", examples = { "agents_at_distance(20) -> all the agents (excluding the caller) which distance to the caller is <= 20" }, see = {
+			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
+			"inside", "overlapping", "at_distance" })
+		public static IList opAgentsAtDistance(final IScope scope, final Double distance) {
+			IAgent agent = scope.getAgentScope();
+			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
+				agent.getLocation(), distance, Different.with()); }
+			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
+				Different.with(), false);
 		}
 
 	}
