@@ -51,9 +51,9 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 public abstract class Spatial {
 
 	/**
-	 * The class Common.
+	 * The class Spatial.
 	 * 
-	 * @author drogoul
+	 * @author Alexis Drogoul, Patrick Taillandier
 	 * @since 29 nov. 2011
 	 * 
 	 */
@@ -173,13 +173,14 @@ public abstract class Spatial {
 
 		@operator({ "link" })
 		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
-			"if the operand is null, link returns a point {0,0}",
+			"if the operand is nil, link returns a point {0,0}",
 			"if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species" }, comment = "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.", examples = { "link (geom1::geom2)  -> returns a link geometry between geom1 and geom2." }, see = {
 			"around", "circle", "cone", "line", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
 		public static IShape opLink(final IScope scope, final GamaPair points)
 			throws GamaRuntimeException {
-			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
+			if ( points == null || points.first() == null && points.last() == null ) { return new GamaShape(
+				new GamaPoint(0, 0)); }
 			return GamaGeometryType.pairToGeometry(scope, points);
 		}
 
@@ -1075,10 +1076,10 @@ public abstract class Spatial {
 		// / cell neighbours_at 4 will "correctly" use the topology of cell (and not the topology of
 		// the agent that calls this expression)
 
-		@operator(value = "neighbours_at", content_type = IType.AGENT)
+		@operator(value = "neighbours_at")
 		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) -> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
-			"agent_closest_to","at_distance" })
+			"agent_closest_to", "at_distance" })
 		public static IList opNeighboursAt(final IScope scope, final IShape agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
@@ -1090,7 +1091,7 @@ public abstract class Spatial {
 			return t.getNeighboursOf(agent, distance, Different.with());
 		}
 
-		@operator(value = "neighbours_at", content_type = IType.AGENT)
+		@operator(value = "neighbours_at")
 		// no doc, because same same as before but optimized for "point".
 		public static IList opNeighboursAt(final IScope scope, final GamaPoint agent,
 			final Double distance) throws GamaRuntimeException {
