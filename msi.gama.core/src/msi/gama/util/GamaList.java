@@ -562,7 +562,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return (E) min;
 		}
 		if ( allPoint ) {
-			ILocation min = new GamaPoint(Double.MIN_VALUE, Double.MIN_VALUE);
+			ILocation min = new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE);
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				ILocation o = Cast.asPoint(scope, get(i));
 				if ( o.compareTo(min) < 0 ) {
