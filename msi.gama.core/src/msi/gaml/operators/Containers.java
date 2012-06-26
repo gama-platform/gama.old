@@ -53,7 +53,7 @@ public class Containers {
 
 	@operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		deprecated ="Try to use first one a species, please use it one a population instead (list(species_name) instead of species_name)"
+		deprecated ="The use of first on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)"
 		)	
 	public static IAgent getFirst(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
@@ -64,7 +64,7 @@ public class Containers {
 
 	@operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
-		deprecated = "Try to use last one a species, please use it one a population instead (list(species_name) instead of species_name)"
+		deprecated = "The use of last on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)"
 		)		
 	public static IAgent getLast(final IScope scope, final ISpecies s) throws GamaRuntimeException {
 		if ( s == null ) { return null; }
@@ -76,14 +76,15 @@ public class Containers {
 
 	
 	@operator(value = "length")
-	@doc(deprecated = "Try to use length one a species, please use it one a population instead (list(species_name) instead of species_name)")		
+	@doc(deprecated = "The use of length on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")		
 	public static Integer getLength(final IScope scope, final ISpecies s)
 		throws GamaRuntimeException {
 		if ( s == null ) { return 0; }
 		return scope.getAgentScope().getPopulationFor(s).size();
 	}
 
-	@operator(value = { "at", "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")				
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
@@ -96,6 +97,7 @@ public class Containers {
 	// return null;}
 
 	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(deprecated = "The use of grid_at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")				
 	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();
@@ -107,7 +109,8 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = { "at", "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")			
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final Integer val)
 		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
@@ -137,6 +140,12 @@ public class Containers {
 	};
 
 	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(
+		value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)",
+		comment = "the order of elements may not be repected",
+		special_cases = {"if the operand is nil, remove_duplicates returns nil"},
+		examples = {"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]"})	
+	// TODO finish doc for other kinds of Container
 	public static IList asSet(final IContainer l) {
 		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
 		// utilis� � la place � v�rifier
@@ -150,6 +159,15 @@ public class Containers {
 	}
 
 	@operator(value = "contains_all", can_be_const = true)
+	@doc(
+		value = "true if the left operand contains all the elements of the right operand, false otherwise",
+		comment = "the definition of contains depends on the container",
+		special_cases = {"if the right operand is nil or empty, contains_all returns true"},
+		examples = {"[1,2,3,4,5,6] contains_all [2,4] 		--: 	true ",
+					"[1,2,3,4,5,6] contains_all [2,8] 		--: 	false",
+					"[1::2, 3::4, 5::6] contains_all [1,3] 	--: 	true ",
+					"[1::2, 3::4, 5::6] contains_all [2,4] 	--: 	false"},
+		see = {"contains", "contains_any"})		
 	public static Boolean opContainsAll(final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty() ) { return true; }
@@ -160,6 +178,15 @@ public class Containers {
 	}
 
 	@operator(value = "contains_any", can_be_const = true)
+	@doc(
+		value = "true if the left operand contains one of the elements of the right operand, false otherwise",
+		comment = "the definition of contains depends on the container",
+		special_cases = {"if the right operand is nil or empty, contains_any returns false"},
+		examples = {"[1,2,3,4,5,6] contains_any [2,4] 		--: 	true ",
+					"[1,2,3,4,5,6] contains_any [2,8] 		--: 	true",
+					"[1::2, 3::4, 5::6] contains_any [1,3] 	--: 	true ",
+					"[1::2, 3::4, 5::6] contains_any [2,4] 	--: 	false"},
+		see = {"contains", "contains_all"})	
 	public static Boolean opContainsAny(final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty() ) { return false; }
@@ -185,6 +212,11 @@ public class Containers {
 		return source.contains(o);
 	}
 
+	@operator(value = "index_of", can_be_const = true)
+	public static Integer opIndexOf(final IList l1, final Object o) {
+		return l1.indexOf(o);
+	}	
+	
 	@operator(value = "index_of", can_be_const = true)
 	public static Object opIndexOf(final GamaMap m, final Object o) {
 		for ( Map.Entry<Object, Object> k : m.entrySet() ) {
@@ -213,19 +245,6 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = "index_of", can_be_const = true)
-	public static Integer opIndexOf(final IList l1, final Object o) {
-		return l1.indexOf(o);
-	}
-
-	@operator(value = "inter", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	public static IList opInter(final IScope scope, final IContainer l1, final IContainer l) {
-		IList list = asSet(l1);
-		if ( l == null ) { return list; }
-		list.retainAll(asSet(l));
-		return list;
-	}
-
 	@operator(value = "last_index_of", can_be_const = true)
 	public static Object opLastIndexOf(final GamaMap m, final Object o) {
 		return opIndexOf(m, o);
@@ -236,6 +255,14 @@ public class Containers {
 		return l1.lastIndexOf(o);
 	}
 
+	@operator(value = "inter", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	public static IList opInter(final IScope scope, final IContainer l1, final IContainer l) {
+		IList list = asSet(l1);
+		if ( l == null ) { return list; }
+		list.retainAll(asSet(l));
+		return list;
+	}	
+	
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	public static IList opMinus(final IList l1, final IList l) {
 		if ( l == null || l.isEmpty() ) { return l1; }
