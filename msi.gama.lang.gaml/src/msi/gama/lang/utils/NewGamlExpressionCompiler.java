@@ -392,7 +392,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			return null;
 		}
 		// if the operator is an action call, we must verify and compile the arguments apart
-		if ( IExpressionCompiler.FUNCTIONS.contains(op) ) {
+		if ( isOnlyFunction(op) ) {
 			SpeciesDescription sd =
 				getContext().getSpeciesDescription(left.getContentType().getSpeciesName());
 			if ( sd == null ) {
@@ -415,7 +415,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			return factory.createBinaryExpr(op, left, right, context);
 		}
 		// if the operator is an iterator, we must initialize "each"
-		if ( IExpressionCompiler.ITERATORS.contains(op) ) {
+		if ( ITERATORS.contains(op) ) {
 			IType t = left.getContentType();
 			each_expr = new EachExpression(EACH, t, t);
 		}
@@ -424,6 +424,10 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		// and return the binary expression
 		return factory.createBinaryExpr(op, left, right, context);
 
+	}
+
+	private boolean isOnlyFunction(final String op) {
+		return FUNCTIONS.contains(op) && BINARIES.get(op).size() == 1;
 	}
 
 	// KEEP
