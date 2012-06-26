@@ -142,9 +142,12 @@ public class Containers {
 	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(
 		value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)",
-		comment = "the order of elements may not be repected",
-		special_cases = {"if the operand is nil, remove_duplicates returns nil"},
-		examples = {"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]"})	
+		special_cases = {"if the operand is nil, remove_duplicates returns nil",
+						 "if the operand is a graph, remove_duplicates returns the set of nodes",
+						 "if the operand is a map, remove_duplicates returns the set of values without duplicate",
+						 "if the operand is a matrix, remove_duplicates returns a matrix withtout duplicated row"},
+		examples = {"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]",
+					"remove_duplicates([1::3,2::4,3::3,5::7]) --: [3,4,7]"})	
 	// TODO finish doc for other kinds of Container
 	public static IList asSet(final IContainer l) {
 		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
@@ -198,6 +201,12 @@ public class Containers {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(
+		value = "returns a copy of a sublist of the left operand between a begin index (x of the right operand point) and a end index (y of the right operand point",
+		comment = "copy_between can only be used on list (and string)",
+		special_cases = {"if the right operand is nil or empty, copy_between returns a copy of the left operand",
+						 "if the begin index is higher than the end index, copy_between returns a new empty list"},
+		examples = {"[1,2,3,4,5,6,7] copy_between {0,3} 	--:		 [1,2,3]"})		
 	public static IList opCopy(final IList l1, final GamaPoint p) {
 		if ( p == null ) { return new GamaList(l1); }
 		final int beginIndex = p.x < 0 ? 0 : (int) p.x;
@@ -206,18 +215,36 @@ public class Containers {
 		return new GamaList(l1.subList(beginIndex, endIndex));
 	}
 
-	@operator(value = "in", can_be_const = true)
+	@operator(value = "in", can_be_const = true)	
+	@doc(
+		value = "true if the right operand contains the left operand, false otherwise",
+		comment = "the definition of in depends on the container",
+		special_cases = {"if the right operand is nil or empty, in returns false"},
+		examples = {"2 in [1,2,3,4,5,6] : true",
+					"7 in [1,2,3,4,5,6] : false",
+					"3 in [1::2, 3::4, 5::6] : true",
+					"6 in [1::2, 3::4, 5::6] : false"},
+		see = {"contains"})	
 	public static Boolean opIn(final Object o, final IContainer source) throws GamaRuntimeException {
 		if ( source == null ) { return false; }
 		return source.contains(o);
 	}
 
 	@operator(value = "index_of", can_be_const = true)
+	@doc(
+		value = "the index of the first occurence of the right operand in the left operand container",
+		comment = "index_of is only defined for list, map and matrix. The definition of index_of and the type of the index depend on the container",
+		special_cases = {"if the left operand is a list, index_of returns the index as an integer"},
+		examples = {"[1,2,3,4,5,6] index_of 4 	--: 	3"},
+		see = {"at"})	
 	public static Integer opIndexOf(final IList l1, final Object o) {
 		return l1.indexOf(o);
 	}	
 	
 	@operator(value = "index_of", can_be_const = true)
+	@doc(
+		special_cases = {"if the left operand is a map, index_of returns the index as a pair"},
+		examples = {"[1::2, 3::4, 5::6] index_of 4 		--: 	3::4"})	
 	public static Object opIndexOf(final GamaMap m, final Object o) {
 		for ( Map.Entry<Object, Object> k : m.entrySet() ) {
 			if ( k.getValue().equals(o) ) { return k; }
@@ -226,6 +253,9 @@ public class Containers {
 	}
 
 	@operator(value = "index_of", can_be_const = true)
+	@doc(
+		special_cases = {"if the left operand is a matrix, index_of returns the index as a point"},
+		examples = {"matrix([[1,2,3],[4,5,6]]) index_of 4  	--: 	{1.0;0.0}"})
 	public static ILocation opIndexOf(final IMatrix m, final Object o) {
 		for ( int i = 0; i < m.getRows(); i++ ) {
 			for ( int j = 0; j < m.getCols(); j++ ) {
