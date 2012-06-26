@@ -28,6 +28,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.types.IType;
 import org.joda.time.*;
 import org.joda.time.chrono.*;
 import org.joda.time.field.PreciseDurationField;
@@ -104,7 +105,7 @@ public class Strings {
 		return opIn(pattern, target);
 	}
 
-	@operator(value = "contains_any", can_be_const = true)
+	@operator(value = "contains_any", can_be_const = true, expected_content_type = { IType.STRING })
 	public static Boolean opContainsAny(final String target, final List l) {
 		for ( Object o : l ) {
 			if ( o instanceof String && opContains(target, (String) o) ) { return true; }
@@ -112,7 +113,7 @@ public class Strings {
 		return false;
 	}
 
-	@operator(value = "contains_all", can_be_const = true)
+	@operator(value = "contains_all", can_be_const = true, expected_content_type = { IType.STRING })
 	public static Boolean opContainsAll(final String target, final List l) {
 		for ( Object o : l ) {
 			if ( !(o instanceof String && opContains(target, (String) o)) ) { return false; }
@@ -266,7 +267,7 @@ public class Strings {
 		return s.length();
 	}
 
-	@operator(value = { "at", "@" }, can_be_const = true)
+	@operator(value = { "at" /* , "@" */}, can_be_const = true)
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
