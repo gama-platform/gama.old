@@ -265,8 +265,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static void registerFunction(final String string, final IType species) {
 		registerNewFunction(string);
-		IOperator newFunct = BINARIES.get(string).get(FUNCTION_SIG).copy();
-		BINARIES.get(string).put(new TypePair(species, Types.get(IType.MAP)), newFunct);
+
+		// FIXED : Important memory leak happening here.
+		// IOperator newFunct = BINARIES.get(string).get(FUNCTION_SIG).copy();
+		// BINARIES.get(string).put(new TypePair(species, Types.get(IType.MAP)), newFunct);
 	}
 
 	public static List<IDescription> getAdditions(final Class clazz) {
