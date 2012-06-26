@@ -235,8 +235,9 @@ public class Containers {
 		value = "the index of the first occurence of the right operand in the left operand container",
 		comment = "index_of is only defined for list, map and matrix. The definition of index_of and the type of the index depend on the container",
 		special_cases = {"if the left operand is a list, index_of returns the index as an integer"},
-		examples = {"[1,2,3,4,5,6] index_of 4 	--: 	3"},
-		see = {"at"})	
+		examples = {"[1,2,3,4,5,6] index_of 4 	--: 	3",
+					"[4,2,3,4,5,4] index_of 4  	--: 	0"},
+		see = {"at", "last_index_of"})	
 	public static Integer opIndexOf(final IList l1, final Object o) {
 		return l1.indexOf(o);
 	}	
@@ -257,8 +258,8 @@ public class Containers {
 		special_cases = {"if the left operand is a matrix, index_of returns the index as a point"},
 		examples = {"matrix([[1,2,3],[4,5,6]]) index_of 4  	--: 	{1.0;0.0}"})
 	public static ILocation opIndexOf(final IMatrix m, final Object o) {
-		for ( int i = 0; i < m.getRows(); i++ ) {
-			for ( int j = 0; j < m.getCols(); j++ ) {
+		for ( int i = 0; i < m.getCols(); i++ ) {
+			for ( int j = 0; j < m.getRows(); j++ ) {
 				if ( m.get(i, j).equals(o) ) { return new GamaPoint(i, j); }
 			}
 		}
@@ -266,9 +267,24 @@ public class Containers {
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
+	@doc(
+		value = "the index of the last occurence of the right operand in the left operand container",
+		comment = "last_index_of is only defined for list, map and matrix. The definition of last_index_of and the type of the index depend on the container",
+		special_cases = {"if the left operand is a list, last_index_of returns the index as an integer"},
+		examples = {"[1,2,3,4,5,6] last_index_of 4  	--: 	3",
+					"[4,2,3,4,5,4] last_index_of 4  	--: 	5"},
+		see = {"at", "last_index_of"})		
+	public static Integer opLastIndexOf(final List l1, final Object o) {
+		return l1.lastIndexOf(o);
+	}	
+	
+	@operator(value = "last_index_of", can_be_const = true)
+	@doc(
+		special_cases = {"if the left operand is a matrix, last_index_of returns the index as a point"},
+		examples = {"matrix([[1,2,3],[4,5,4]]) last_index_of 4  	--: 	{1.0;2.0}"})	
 	public static ILocation opLastIndexOf(final IMatrix m, final Object o) {
-		for ( int i = m.getRows() - 1; i > -1; i-- ) {
-			for ( int j = m.getCols() - 1; j > -1; j-- ) {
+		for ( int i = m.getCols() - 1; i > -1; i-- ) {
+			for ( int j = m.getRows() - 1; j > -1; j-- ) {
 				if ( m.get(i, j).equals(o) ) { return new GamaPoint(i, j); }
 			}
 		}
@@ -276,14 +292,13 @@ public class Containers {
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
+	@doc(
+		special_cases = {"if the left operand is a map, last_index_of returns the index as a pair"},
+		examples = {"[1::2, 3::4, 5::4] last_index_of 4  	--:  	5::4"})		
 	public static Object opLastIndexOf(final GamaMap m, final Object o) {
 		return opIndexOf(m, o);
 	}
 
-	@operator(value = "last_index_of", can_be_const = true)
-	public static Integer opLastIndexOf(final List l1, final Object o) {
-		return l1.lastIndexOf(o);
-	}
 
 	@operator(value = "inter", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	public static IList opInter(final IScope scope, final IContainer l1, final IContainer l) {
