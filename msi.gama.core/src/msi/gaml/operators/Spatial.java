@@ -138,7 +138,7 @@ public abstract class Spatial {
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
 
-		@operator({ "polygon" })
+		@operator(value = "polygon", expected_content_type = { IType.POINT })
 		@doc(value = "A polygon geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
 			"" + "if the operand is composed of a single point, returns a point geometry",
@@ -157,7 +157,7 @@ public abstract class Spatial {
 			return GamaGeometryType.buildPolygon(points);
 		}
 
-		@operator({ "line", "polyline" })
+		@operator(value = { "line", "polyline" }, expected_content_type = { IType.POINT })
 		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
 			"if the operand is nil, returns the point geometry {0,0}",
 			"if the operand is composed of a single point, returns a point geometry." }, examples = { "polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points." }, see = {
