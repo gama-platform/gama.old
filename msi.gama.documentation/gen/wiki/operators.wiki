@@ -1,70 +1,33 @@
 #summary Operators(Modeling Guide)
  	
-=  Table of Contents  =
+= <font color="blue"> Table of Contents </font>=
 
+<wiki:toc max_depth="3" />
+<br/>
 
-= Definition =
+= <font color="blue"> Definition </font> =
 
 
 An operator performs a function on one, two, or three operands. An operator that only requires one operand is called a unary operator. An operator that requires two operands is a binary operator. And finally, a ternary operator is one that requires three operands. The GAML programming language has only one ternary operator, ?:, which is a short-hand if-else statement.
 
 
-= Operators =
+= <font color="blue"> Operators </font> =
 
     
 == - == 
 
   * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Integer
-  * Possible use: 
     * Left operand: msi.gama.util.GamaColor
     * Right operand: msi.gama.util.GamaColor  
     * Result Type: msi.gama.util.GamaColor
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.metamodel.shape.IShape
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
   * Possible use: 
     * Operand: java.lang.Integer
     * Result Type: java.lang.Integer
   * Possible use: 
-    * Left operand: msi.gama.util.matrix.IMatrix<T>
-    * Right operand: msi.gama.util.matrix.IMatrix<T>  
-    * Result Type: msi.gama.util.matrix.IMatrix
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: msi.gama.util.GamaColor
-    * Right operand: msi.gama.util.GamaColor  
-    * Result Type: msi.gama.util.GamaColor
-  * Possible use: 
-    * Left operand: msi.gama.util.IList
-    * Right operand: msi.gama.util.IList  
-    * Result Type: msi.gama.util.GamaList
-  * Possible use: 
-    * Operand: java.lang.Double
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Double
@@ -72,6 +35,18 @@ An operator performs a function on one, two, or three operands. An operator that
     * Left operand: msi.gama.metamodel.shape.IShape
     * Right operand: msi.gama.metamodel.shape.IShape  
     * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
   * Possible use: 
     * Left operand: msi.gama.metamodel.shape.IShape
     * Right operand: msi.gama.metamodel.shape.IShape  
@@ -81,19 +56,48 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.util.IList  
     * Result Type: msi.gama.util.IList
   * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.util.matrix.IMatrix<T>
+    * Right operand: msi.gama.util.matrix.IMatrix<T>  
+    * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
     * Left operand: msi.gama.metamodel.shape.IShape
     * Right operand: msi.gama.metamodel.shape.IShape  
     * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
     * if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species
-    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries
     * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries
+    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance
+    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries
   * Comment: 
   * See also: 
   {{{  
    geom1 - speciesA -> a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)
-   geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)
    geom1 - geom2 -> a geometry corresponding to difference between geom1 and geom2
+   shape - 5 -> returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
+   geom1 - [geom2, geom3, geom4] -> a geometry corresponding to geom1 - (geom2 + geom3 + geom4)
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -147,24 +151,24 @@ An operator performs a function on one, two, or three operands. An operator that
 == != == 
 
   * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Object
     * Right operand: java.lang.Object  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -194,10 +198,6 @@ An operator performs a function on one, two, or three operands. An operator that
 == / == 
 
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
     * Left operand: msi.gama.util.GamaColor
     * Right operand: msi.gama.util.GamaColor  
     * Result Type: msi.gama.util.GamaColor
@@ -206,16 +206,20 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Double
   * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Double
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
   * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Double
   * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
@@ -253,20 +257,20 @@ An operator performs a function on one, two, or three operands. An operator that
 == ^ == 
 
   * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
     * Result Type: java.lang.Integer
   * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -283,43 +287,45 @@ An operator performs a function on one, two, or three operands. An operator that
   * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Integer
-  * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Double
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
     * Result Type: java.lang.Double
   * Possible use: 
     * Left operand: msi.gama.util.GamaColor
     * Right operand: msi.gama.util.GamaColor  
     * Result Type: msi.gama.util.GamaColor
   * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Double
+  * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Double
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.metamodel.shape.IShape
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
   * Special cases:
+    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient
   * Comment: 
   * See also: 
   {{{  
+   shape * 2 -> returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -333,61 +339,45 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Double
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.metamodel.shape.IShape
-  * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
     * Result Type: java.lang.Integer
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.String
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
   * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Double
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.String
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.metamodel.shape.IShape
-  * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.metamodel.shape.IShape
+    * Left operand: msi.gama.util.GamaColor
+    * Right operand: msi.gama.util.GamaColor  
+    * Result Type: msi.gama.util.GamaColor
   * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Double
   * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
+  * Possible use: 
     * Left operand: msi.gama.util.IList
     * Right operand: msi.gama.util.IList  
-    * Result Type: msi.gama.util.GamaList
-  * Possible use: 
-    * Left operand: msi.gama.util.GamaColor
-    * Right operand: msi.gama.util.GamaColor  
-    * Result Type: msi.gama.util.GamaColor
+    * Result Type: msi.gama.util.IList
   * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
     * Right operand: msi.gama.metamodel.shape.GamaPoint  
     * Result Type: msi.gama.metamodel.shape.ILocation
   * Possible use: 
-    * Left operand: msi.gama.util.GamaColor
-    * Right operand: msi.gama.util.GamaColor  
-    * Result Type: msi.gama.util.GamaColor
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
-    * Result Type: msi.gama.metamodel.shape.ILocation
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.metamodel.shape.IShape
   * Possible use: 
     * Left operand: msi.gama.util.matrix.IMatrix<T>
     * Right operand: msi.gama.util.matrix.IMatrix<T>  
@@ -395,12 +385,32 @@ An operator performs a function on one, two, or three operands. An operator that
   * Possible use: 
     * Left operand: msi.gama.util.IList
     * Right operand: msi.gama.util.IList  
-    * Result Type: msi.gama.util.GamaList
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
   * Special cases:
+    * if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters
+    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance
     * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries
   * Comment: 
   * See also: 
   {{{  
+   shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment
+   shape + 5 -> returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5
    geom1 + geom2 -> a geometry corresponding to union between geom1 and geom2
  }}} 
 
@@ -415,24 +425,24 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
     * Right operand: msi.gama.metamodel.shape.GamaPoint  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -447,28 +457,28 @@ An operator performs a function on one, two, or three operands. An operator that
 == <= == 
 
   * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.String
     * Right operand: java.lang.String  
     * Result Type: java.lang.Boolean
   * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
     * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -483,6 +493,18 @@ An operator performs a function on one, two, or three operands. An operator that
 == <-> == 
 
   * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
+    * Result Type: msi.gama.metamodel.shape.ILocation
+  * Possible use: 
     * Left operand: msi.gama.metamodel.shape.IShape
     * Right operand: msi.gama.metamodel.shape.IShape  
     * Result Type: java.lang.Boolean
@@ -490,22 +512,17 @@ An operator performs a function on one, two, or three operands. An operator that
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: msi.gama.metamodel.shape.ILocation
-  * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
-    * Result Type: msi.gama.metamodel.shape.ILocation
   * Special cases:
+    * if one of the operand is null, returns true.
+    * if one operand is a point, returns false if the point is included in the geometry.
   * Comment: 
-  * See also: 
+  * See also: [#intersects intersects] [#crosses crosses] [#overlaps overlaps] [#partially_overlaps partially_overlaps] [#touches touches] 
   {{{  
+   polyline([{10,10},{20,20}]) disjoint_from polyline([{15,15},{25,25}]) -> false.
+   polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{15,15},{15,25},{25,25},{25,15}]) -> false.
+   polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({15,15}) -> false.
+   polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({25,25}) -> true.
+   polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}]) -> true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -515,12 +532,12 @@ An operator performs a function on one, two, or three operands. An operator that
 == = == 
 
   * Possible use: 
-    * Left operand: java.lang.Object
-    * Right operand: java.lang.Object  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Object
+    * Right operand: java.lang.Object  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -539,8 +556,8 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: java.lang.Integer
-    * Right operand: java.lang.Integer  
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.String
@@ -551,12 +568,12 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
     * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.Integer
+    * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -571,24 +588,24 @@ An operator performs a function on one, two, or three operands. An operator that
 == >= == 
 
   * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
+    * Left operand: msi.gama.metamodel.shape.GamaPoint
+    * Right operand: msi.gama.metamodel.shape.GamaPoint  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Double
     * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.GamaPoint
-    * Right operand: msi.gama.metamodel.shape.GamaPoint  
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Boolean
   * Possible use: 
     * Left operand: java.lang.Integer
@@ -607,11 +624,11 @@ An operator performs a function on one, two, or three operands. An operator that
 == abs == 
 
   * Possible use: 
-    * Operand: java.lang.Double
-    * Result Type: java.lang.Double
-  * Possible use: 
     * Operand: java.lang.Integer
     * Result Type: java.lang.Integer
+  * Possible use: 
+    * Operand: java.lang.Double
+    * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
   * See also: 
@@ -626,7 +643,7 @@ An operator performs a function on one, two, or three operands. An operator that
 
   * Left operand: msi.gama.util.IList
   * Right operand: msi.gama.util.IList  
-  * Result Type: msi.gama.util.GamaList
+  * Result Type: msi.gama.util.IList
   * Special cases:
   * Comment: 
   * See also: 
@@ -640,10 +657,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == acos == 
 
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -664,7 +681,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
-   suquare(5) add_point {10,10} -> returns a hexagon
+   square(5) add_point {10,10} -> returns a hexagon
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -690,9 +707,10 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: java.lang.Object
   * Result Type: msi.gama.metamodel.agent.IAgent
   * Special cases:
-  * Comment: 
-  * See also: 
+  * Comment: the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agents_inside agents_inside] [#agents_overlapping agents_overlapping] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] 
   {{{  
+   agent_closest_to(self) -> return the closest agent to the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -714,14 +732,30 @@ An operator performs a function on one, two, or three operands. An operator that
 
   	
     
+== agents_at_distance == 
+
+  * Operand: java.lang.Double
+  * Result Type: msi.gama.util.IList
+  * Special cases:
+  * Comment: Equivalent to neighbours_at with a left-hand argument equal to 'self'
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agent_closest_to agent_closest_to] [#agents_inside agents_inside] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] [#at_distance at_distance] 
+  {{{  
+   agents_at_distance(20) -> all the agents (excluding the caller) which distance to the caller is <= 20
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
 == agents_inside == 
 
   * Operand: java.lang.Object
   * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
   * Special cases:
   * Comment: 
-  * See also: 
+  * See also: [#agent_closest_to agent_closest_to] [#agents_overlapping agents_overlapping] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] 
   {{{  
+   agents_inside(self) -> return the agents that are covered by the shape of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -734,8 +768,9 @@ An operator performs a function on one, two, or three operands. An operator that
   * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
   * Special cases:
   * Comment: 
-  * See also: 
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agent_closest_to agent_closest_to] [#agents_inside agents_inside] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] [#at_distance at_distance] 
   {{{  
+   agents_overlapping(self) -> return the agents that overlap the shape of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -777,20 +812,6 @@ An operator performs a function on one, two, or three operands. An operator that
 
   	
     
-== any == 
-
-  * Operand: msi.gama.util.IContainer<KeyType,ValueType>
-  * Result Type: ValueType
-  * Special cases:
-  * Comment: 
-  * See also: 
-  {{{  
- }}} 
-
-[#Table_of_Contents Top of the page] 
-
-  	
-    
 == any_location_in == 
 
   * Operand: msi.gama.metamodel.shape.IShape
@@ -814,7 +835,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns a circle geometry of radius right-operand if the left-operand is nil
   * Comment: 
-  * See also: [#circle, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle circle, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  * See also: [#circle circle] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    10 around circle(5) -> returns a the ring geometry between 5 and 10.
  }}} 
@@ -847,6 +868,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   self as_grid {10, 5} -> returns matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -890,10 +912,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == as_edge_graph == 
 
   * Possible use: 
-    * Operand: msi.gama.util.IContainer
+    * Operand: msi.gama.util.GamaMap
     * Result Type: msi.gama.util.graph.IGraph
   * Possible use: 
-    * Operand: msi.gama.util.GamaMap
+    * Operand: msi.gama.util.IContainer
     * Result Type: msi.gama.util.graph.IGraph
   * Special cases:
   * Comment: 
@@ -910,6 +932,22 @@ An operator performs a function on one, two, or three operands. An operator that
   * Left operand: msi.gama.metamodel.shape.IShape
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: msi.gama.util.matrix.IMatrix
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+   self as_grid {10, 5} -> returns a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== as_int == 
+
+  * Left operand: java.lang.String
+  * Right operand: java.lang.String  
+  * Result Type: java.lang.Integer
   * Special cases:
   * Comment: 
   * See also: 
@@ -987,10 +1025,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == asin == 
 
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -1005,10 +1043,6 @@ An operator performs a function on one, two, or three operands. An operator that
 == at == 
 
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.String
-  * Possible use: 
     * Left operand: msi.gaml.species.ISpecies
     * Right operand: msi.gaml.species.ISpecies  
     * Result Type: msi.gama.metamodel.agent.IAgent
@@ -1020,10 +1054,44 @@ An operator performs a function on one, two, or three operands. An operator that
     * Left operand: msi.gama.util.IContainer<KeyType,ValueType>
     * Right operand: msi.gama.util.IContainer<KeyType,ValueType>  
     * Result Type: ValueType
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.String
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list or a matrix, at returns the element at the index specified by the right operand
+    * if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil
+    * if it is a file, at returns the element of the file content at the index specified by the right operand
+    * if it is a population, at returns the agent at the index specified by the right operand
+    * if it is a graph, if the right operand is a node, at returns the in and out edges corresponding to that node; if it is an edge, at returns the pair node_out::node_in.
+  * Comment: The first element of the container is located at the index 0. In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException.The at operator behavior depends on the nature of the operand
+  * See also: [#contains_all, contains_any contains_all, contains_any] 
   {{{  
+   [1, 2, 3] at 2	--:    2 
+   [{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== at_distance == 
+
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.util.IList
+    * Right operand: msi.gama.util.IList  
+    * Result Type: msi.gama.util.IList
+  * Special cases:
+    * If the left operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)
+  * Comment: 
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agent_closest_to agent_closest_to] [#agents_inside agents_inside] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agent_closest_to agent_closest_to] [#agents_inside agents_inside] [#closest_to closest_to] [#inside inside] [#overlapping overlapping] 
+  {{{  
+   species1 at_distance 20 -> return the agents of species1 located at a distance <= 20 from the caller agent.
+   [ag1, ag2, ag3] at_distance 20 -> return the agents of the list located at a distance <= 20 from the caller agent (in the same order).
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1039,6 +1107,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   self at_location {10, 20} -> returns the geometry resulting from a translation to the location {10, 20} of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1048,10 +1117,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == atan == 
 
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -1113,7 +1182,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns a point if the operand is lower or equal to 0.
   * Comment: the centre of the circle is by default the location of the current agent in which has been called this operator.
-  * See also: [#around, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle around, cone, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  * See also: [#around around] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    circle(10) -> returns a geometry as a circle of radius 10.
  }}} 
@@ -1127,9 +1196,10 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.metamodel.shape.IShape
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-  * Comment: 
+  * Comment: The cleaning corresponds to a buffer with a distance of 0.0
   * See also: 
   {{{  
+   cleaning(self) -> returns the geometry resulting from the cleaning of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1155,17 +1225,22 @@ An operator performs a function on one, two, or three operands. An operator that
 == closest_to == 
 
   * Possible use: 
-    * Left operand: msi.gaml.species.ISpecies
-    * Right operand: msi.gaml.species.ISpecies  
-    * Result Type: msi.gama.metamodel.agent.IAgent
-  * Possible use: 
     * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
     * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
     * Result Type: java.lang.Object
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.metamodel.agent.IAgent
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if the left-operand is a species, return an agent of the specified species.
+  * Comment: the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#inside inside] [#overlapping overlapping] [#agents_overlapping agents_overlapping] [#agents_inside agents_inside] [#agent_closest_to agent_closest_to] 
   {{{  
+   [ag1, ag2, ag3] closest_to(self) -> return the closest agent among ag1, ag2 and ag3 to the agent applying the operator.
+   neighbours_at
+   neighbours_of
+   species1 closest_to(self) -> return the closest agent of species species1 to the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1175,7 +1250,7 @@ An operator performs a function on one, two, or three operands. An operator that
 == collate == 
 
   * Operand: msi.gama.util.IList
-  * Result Type: msi.gama.util.GamaList
+  * Result Type: msi.gama.util.IList
   * Special cases:
   * Comment: 
   * See also: 
@@ -1237,7 +1312,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns nil if the operand is nil.
   * Comment: the centre of the cone is by default the location of the current agent in which has been called this operator.
-  * See also: [#around, circle, line, link, norm, point, polygon, polyline, rectangle, square, triangle around, circle, line, link, norm, point, polygon, polyline, rectangle, square, triangle] 
+  * See also: [#around around] [#circle circle] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45.
  }}} 
@@ -1271,9 +1346,16 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.util.IContainer<KeyType,ValueType>  
     * Result Type: boolean
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list or a matrix, contains returns true if the list or matrix contains the right operand
+    * if it is a map, contains returns true if the operand is a key of the map
+    * if it is a file, contains returns true it the operand is contained in the file content
+    * if it is a population, contains returns true if the operand is an agent of the population, false otherwise
+    * if it is a graph, contains returns true if the operand is a node or an edge of the graph, false otherwise
+  * Comment: the contains operator behavior depends on the nature of the operand
+  * See also: [#contains_all, contains_any contains_all, contains_any] 
   {{{  
+   [1, 2, 3] contains 2	--:   true
+   [{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1303,12 +1385,12 @@ An operator performs a function on one, two, or three operands. An operator that
 == contains_any == 
 
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Left operand: msi.gama.util.IContainer
     * Right operand: msi.gama.util.IContainer  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -1363,6 +1445,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   convex_hull(self) -> returns the convex hull of the geometry of the agent applying the operator
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1406,10 +1489,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == cos == 
 
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -1442,9 +1525,14 @@ An operator performs a function on one, two, or three operands. An operator that
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: java.lang.Boolean
   * Special cases:
+    * if one of the operand is null, returns false.
+    * if one operand is a point, returns false.
   * Comment: 
-  * See also: 
+  * See also: [#<-> <->] [#disjoint_from disjoint_from] [#intersects intersects] [#overlaps overlaps] [#partially_overlaps partially_overlaps] [#touches touches] 
   {{{  
+   polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}]) -> true.
+   polyline([{10,10},{20,20}]) crosses geometry({15,15}) -> false
+   polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}]) -> true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1535,12 +1623,12 @@ An operator performs a function on one, two, or three operands. An operator that
 == div == 
 
   * Possible use: 
-    * Left operand: java.lang.Double
-    * Right operand: java.lang.Double  
-    * Result Type: java.lang.Integer
-  * Possible use: 
     * Left operand: java.lang.Integer
     * Right operand: java.lang.Integer  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.Double
+    * Right operand: java.lang.Double  
     * Result Type: java.lang.Integer
   * Possible use: 
     * Left operand: java.lang.Integer
@@ -1563,15 +1651,25 @@ An operator performs a function on one, two, or three operands. An operator that
 == empty == 
 
   * Possible use: 
-    * Operand: java.lang.String
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Operand: msi.gama.util.IContainer<KeyType,ValueType>
     * Result Type: boolean
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.Boolean
   * Special cases:
-  * Comment: 
+    * if it is a list, empty returns true if there is no element in the list, and false otherwise
+    * if it is a map, empty returns true if the map contains no key-value mappings, and false otherwise
+    * if it is a file, empty returns true if the content of the file (that is also a container) is empty, and false otherwise
+    * if it is a population, empty returns true if there is no agent in the population, and false otherwise
+    * if it is a graph, empty returns true if it contains no vertex and no edge, and false otherwise
+    * if it is a matrix of int, float or object, it will return true if all elements are respectively 0, 0.0 or null, and false otherwise
+    * if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise
+    * if it is a string, empty returns true if the string does not contain any character, and false otherwise
+  * Comment: the empty operator behavior depends on the nature of the operand
   * See also: 
   {{{  
+   empty ([]) 	--: 	true;
+   empty ('abced') 	--: 	false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1714,18 +1812,30 @@ An operator performs a function on one, two, or three operands. An operator that
 == first == 
 
   * Possible use: 
-    * Operand: msi.gaml.species.ISpecies
-    * Result Type: msi.gama.metamodel.agent.IAgent
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: ValueType
   * Possible use: 
     * Operand: java.lang.String
     * Result Type: java.lang.String
   * Possible use: 
-    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
-    * Result Type: ValueType
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.metamodel.agent.IAgent
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list, first returns the first element of the list, or nil if the list is empty
+    * if it is a map, first returns nil (the map do not keep track of the order of elements)
+    * if it is a file, first returns the first element of the content of the file (that is also a container)
+    * if it is a population, first returns the first agent of the population
+    * if it is a graph, first returns the first element in the list of vertexes
+    * if it is a matrix, first returns the element at {0,0} in the matrix
+    * for a matrix of int or float, it will return 0 if the matrix is empty
+    * for a matrix of object or geometry, it will return null if the matrix is empty
+    * if it is a string, first returns a string composed of its first character
+  * Comment: the first operator behavior depends on the nature of the operand
+  * See also: [#last last] 
   {{{  
+   first ([1, 2, 3]) 		--:   1
+   first ({10,12})     	--:   10.
+   first ('abce')      	--:   'a'
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1986,12 +2096,12 @@ An operator performs a function on one, two, or three operands. An operator that
 == in == 
 
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.Boolean
-  * Possible use: 
     * Left operand: java.lang.Object
     * Right operand: java.lang.Object  
+    * Result Type: java.lang.Boolean
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
     * Result Type: java.lang.Boolean
   * Special cases:
   * Comment: 
@@ -2021,21 +2131,21 @@ An operator performs a function on one, two, or three operands. An operator that
 == index_of == 
 
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
-    * Result Type: java.lang.Integer
-  * Possible use: 
     * Left operand: msi.gama.util.matrix.IMatrix
     * Right operand: msi.gama.util.matrix.IMatrix  
     * Result Type: msi.gama.metamodel.shape.ILocation
   * Possible use: 
-    * Left operand: msi.gama.util.GamaMap
-    * Right operand: msi.gama.util.GamaMap  
-    * Result Type: java.lang.Object
-  * Possible use: 
     * Left operand: msi.gama.util.IList
     * Right operand: msi.gama.util.IList  
     * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
+    * Result Type: java.lang.Integer
+  * Possible use: 
+    * Left operand: msi.gama.util.GamaMap
+    * Right operand: msi.gama.util.GamaMap  
+    * Result Type: java.lang.Object
   * Special cases:
   * Comment: 
   * See also: 
@@ -2049,17 +2159,20 @@ An operator performs a function on one, two, or three operands. An operator that
 == inside == 
 
   * Possible use: 
-    * Left operand: msi.gaml.species.ISpecies
-    * Right operand: msi.gaml.species.ISpecies  
-    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
-  * Possible use: 
     * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
     * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
     * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Possible use: 
+    * Left operand: msi.gaml.species.ISpecies
+    * Right operand: msi.gaml.species.ISpecies  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
   * Special cases:
+    * if the left-operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance).
   * Comment: 
-  * See also: 
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#closest_to closest_to] [#overlapping overlapping] [#agents_overlapping agents_overlapping] [#agents_inside agents_inside] [#agent_closest_to agent_closest_to] 
   {{{  
+   [ag1, ag2, ag3] inside(self) -> return the agents among ag1, ag2 and ag3 that are covered by the shape of the agent applying the operator.
+   species1 inside(self) -> return the agents of species species1 that are covered by the shape of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2113,9 +2226,11 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.metamodel.shape.IShape  
     * Result Type: java.lang.Boolean
   * Special cases:
+    * if one of the operand is null, returns false.
   * Comment: 
-  * See also: 
+  * See also: [#<-> <->] [#disjoint_from disjoint_from] [#crosses crosses] [#overlaps overlaps] [#partially_overlaps partially_overlaps] [#touches touches] 
   {{{  
+   square(5) intersects {10,10} -> false.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2210,18 +2325,30 @@ An operator performs a function on one, two, or three operands. An operator that
 == last == 
 
   * Possible use: 
-    * Operand: java.lang.String
-    * Result Type: java.lang.String
-  * Possible use: 
     * Operand: msi.gaml.species.ISpecies
     * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
   * Possible use: 
     * Operand: msi.gama.util.IContainer<KeyType,ValueType>
     * Result Type: ValueType
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty
+    * if it is a list, last returns the last element of the list, or nil if the list is empty
+    * if it is a map, last returns nil (the map do not keep track of the order of elements)
+    * if it is a file, last returns the last element of the content of the file (that is also a container)
+    * if it is a population, last returns the last agent of the population
+    * if it is a graph, last returns the last element in the list of vertexes
+    * if it is a matrix, last returns the element at {length-1,length-1} in the matrix
+    * for a matrix of int or float, it will return 0 if the matrix is empty
+    * for a matrix of object or geometry, it will return null if the matrix is empty
+  * Comment: the last operator behavior depends on the nature of the operand
+  * See also: [#first first] 
   {{{  
+   last ('abce') 		--:   'e'
+   last ({10,12}) 	--:   12
+   last ([1, 2, 3]) 	--:   3.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2231,8 +2358,8 @@ An operator performs a function on one, two, or three operands. An operator that
 == last_index_of == 
 
   * Possible use: 
-    * Left operand: java.lang.String
-    * Right operand: java.lang.String  
+    * Left operand: java.util.List
+    * Right operand: java.util.List  
     * Result Type: java.lang.Integer
   * Possible use: 
     * Left operand: msi.gama.util.matrix.IMatrix
@@ -2243,8 +2370,8 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.util.GamaMap  
     * Result Type: java.lang.Object
   * Possible use: 
-    * Left operand: java.util.List
-    * Right operand: java.util.List  
+    * Left operand: java.lang.String
+    * Right operand: java.lang.String  
     * Result Type: java.lang.Integer
   * Special cases:
   * Comment: 
@@ -2274,18 +2401,25 @@ An operator performs a function on one, two, or three operands. An operator that
 == length == 
 
   * Possible use: 
-    * Operand: java.lang.String
+    * Operand: msi.gaml.species.ISpecies
     * Result Type: java.lang.Integer
   * Possible use: 
     * Operand: msi.gama.util.IContainer<KeyType,ValueType>
     * Result Type: int
   * Possible use: 
-    * Operand: msi.gaml.species.ISpecies
+    * Operand: java.lang.String
     * Result Type: java.lang.Integer
   * Special cases:
-  * Comment: 
+    * if it is a list or a map, length returns the number of elements in the list or map
+    * if it is a population, length returns number of agents of the population
+    * if it is a graph, last returns the number of vertexes or of edges (depending on the way it was created)
+    * if it is a matrix, length returns the number of cells
+    * if it is a string, length returns the number of characters
+  * Comment: the length operator behavior depends on the nature of the operand
   * See also: 
   {{{  
+   length ([12,13])	--: 	2
+   length ('I am an agent') 		--: 	13
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2297,9 +2431,10 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-    * if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry.
+    * if the operand is nil, returns the point geometry {0,0}
+    * if the operand is composed of a single point, returns a point geometry.
   * Comment: 
-  * See also: [#around, circle, cone, link, norm, point, polygone, rectangle, square, triangle around, circle, cone, link, norm, point, polygone, rectangle, square, triangle] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#link link] [#norm norm] [#point point] [#polygone polygone] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    polyline([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polyline geometry composed of the 4 points.
  }}} 
@@ -2313,9 +2448,10 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.GamaPair
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-    * if the operand is null, link returns a point {0,0}; if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species
+    * if the operand is nil, link returns a point {0,0}
+    * if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species
   * Comment: The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.
-  * See also: [#around, circle, cone, line, norm, point, polygon, polyline, rectangle, square, triangle around, circle, cone, line, norm, point, polygon, polyline, rectangle, square, triangle] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#line line] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    link (geom1::geom2)  -> returns a link geometry between geom1 and geom2.
  }}} 
@@ -2345,10 +2481,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == ln == 
 
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -2503,11 +2639,11 @@ An operator performs a function on one, two, or three operands. An operator that
 == map == 
 
   * Possible use: 
-    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
-    * Result Type: java.util.Map
-  * Possible use: 
     * Operand: java.lang.Object
     * Result Type: msi.gama.util.GamaMap
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: java.util.Map
   * Special cases:
   * Comment: 
   * See also: 
@@ -2532,8 +2668,8 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
-   perception_geom masked_by obstacle_species -> returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species.
    perception_geom masked_by obstacle_list -> returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.
+   perception_geom masked_by obstacle_species -> returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2563,9 +2699,19 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IContainer<KeyType,ValueType>
   * Result Type: ValueType
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list of int of float, max returns the maximum of all the elements
+    * if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )
+    * if it is a list of other type: max transforms all elements into float and returns the maximum of them
+    * if it is a map, max returns the maximum among the list of all elements value
+    * if it is a file, max returns the maximum of the content of the file (that is also a container)
+    * if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)
+    * if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)
+    * if it is a matrix of geometry, max returns the maximum of the list of the geometries
+  * Comment: the max operator behavior depends on the nature of the operand
+  * See also: [#min min] 
   {{{  
+   max ([100, 23.2, 34.5]) 	--: 	100.0
+   max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2638,9 +2784,18 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IContainer<KeyType,ValueType>
   * Result Type: ValueType
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list of int or float: min returns the minimum of all the elements
+    * if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )
+    * if it is a list of other types: min transforms all elements into float and returns the minimum of them
+    * if it is a map, min returns the minimum among the list of all elements value
+    * if it is a file, min returns the minimum of the content of the file (that is also a container)
+    * if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)
+    * if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)
+    * if it is a matrix of geometry, min returns the minimum of the list of the geometries
+  * Comment: the min operator behavior depends on the nature of the operand
+  * See also: [#max max] 
   {{{  
+   min ([100, 23.2, 34.5]) 	--: 	23.2
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2682,9 +2837,18 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IContainer<KeyType,ValueType>
   * Result Type: java.lang.Object
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list of int or float: mul returns the product of all the elements
+    * if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)
+    * if it is a list of other types: mul transforms all elements into float and multiplies them
+    * if it is a map, mul returns the product of the value of all elements
+    * if it is a file, mul returns the product of the content of the file (that is also a container)
+    * if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)
+    * if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)
+    * if it is a matrix of geometry, mul returns the product of the list of the geometries
+  * Comment: the mul operator behavior depends on the nature of the operand
+  * See also: [#sum sum] 
   {{{  
+   mul ([100, 23.2, 34.5]) 	--:		80040.0
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2694,17 +2858,18 @@ An operator performs a function on one, two, or three operands. An operator that
 == neighbours_at == 
 
   * Possible use: 
-    * Left operand: msi.gama.metamodel.shape.IShape
-    * Right operand: msi.gama.metamodel.shape.IShape  
-    * Result Type: msi.gama.util.IList
-  * Possible use: 
     * Left operand: msi.gama.metamodel.shape.GamaPoint
     * Right operand: msi.gama.metamodel.shape.GamaPoint  
     * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.metamodel.shape.IShape
+    * Right operand: msi.gama.metamodel.shape.IShape  
+    * Result Type: msi.gama.util.IList
   * Special cases:
-  * Comment: 
-  * See also: 
+  * Comment: The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.
+  * See also: [#neighbours_of neighbours_of] [#closest_to closest_to] [#overlapping overlapping] [#agents_overlapping agents_overlapping] [#agents_inside agents_inside] [#agent_closest_to agent_closest_to] [#at_distance at_distance] 
   {{{  
+   (self neighbours_at (10)) -> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2718,17 +2883,20 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.metamodel.topology.ITopology  
     * Result Type: msi.gama.util.IList
   * Possible use: 
-    * Left operand: msi.gama.util.graph.IGraph
-    * Right operand: msi.gama.util.graph.IGraph  
-    * Result Type: msi.gama.util.IList
-  * Possible use: 
     * Left operand: msi.gama.metamodel.topology.ITopology
     * Right operand: msi.gama.metamodel.topology.ITopology  
     * Result Type: msi.gama.util.IList
+  * Possible use: 
+    * Left operand: msi.gama.util.graph.IGraph
+    * Right operand: msi.gama.util.graph.IGraph  
+    * Result Type: msi.gama.util.IList
   * Special cases:
+    * a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.
   * Comment: 
-  * See also: 
+  * See also: [#neighbours_at neighbours_at] [#closest_to closest_to] [#overlapping overlapping] [#agents_overlapping agents_overlapping] [#agents_inside agents_inside] [#agent_closest_to agent_closest_to] 
   {{{  
+   topology(self) neighbours_of self -> returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
+   topology(self) neighbours_of self::10-> returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2795,14 +2963,31 @@ An operator performs a function on one, two, or three operands. An operator that
     
 == one_of == 
 
-  * Operand: msi.gaml.species.ISpecies
-  * Result Type: msi.gama.metamodel.agent.IAgent
+  * Possible use: 
+    * Operand: msi.gama.util.IContainer<KeyType,ValueType>
+    * Result Type: ValueType
+  * Possible use: 
+    * Operand: msi.gaml.species.ISpecies
+    * Result Type: msi.gama.metamodel.agent.IAgent
   * Special cases:
+    * if the operand is empty, one_of returns nil
+    * if it is a list or a matrix, one_of returns one of the elements of the list or of the matrix
+    * if it is a map, one_of returns one of the values of the map
+    * if it is a graph, one_of returns one of the nodes of the graph
+    * if it is a file, one_of returns one of the elements of the content of the file (that is also a container)
+    * if it is a population, one_of returns one of the agents of the population
     * if the list is empty, returns nil 
     * If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)
-  * Comment: 
+  * Comment: the one_of operator behavior depends on the nature of the operand
   * See also: 
   {{{  
+   any ([1,2,3]) 		--: 	1, 2, or 3
+   one_of ([1,2,3]) 	--:	 	1, 2, or 3
+   one_of ([2::3, 4::5, 6::7]) 	--: 	3, 5 or 7
+   // The species bug has previously been defined
+   one_of (bug) 		--:		 bug3
+   let mat3 type:matrix value: matrix([["c11","c12","c13"],["c21","c22","c23"]])
+   one_of(mat3) 		--: 	 "c11","c12","c13", "c21","c22" or "c23"
    one_of (bug) -> bug3     // The species `bug` has previously be defined
  }}} 
 
@@ -2843,17 +3028,20 @@ An operator performs a function on one, two, or three operands. An operator that
 == overlapping == 
 
   * Possible use: 
-    * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
-    * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
-    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
-  * Possible use: 
     * Left operand: msi.gaml.species.ISpecies
     * Right operand: msi.gaml.species.ISpecies  
     * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
+  * Possible use: 
+    * Left operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>
+    * Right operand: msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>  
+    * Result Type: msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>
   * Special cases:
+    * if the left-operand is a species, return agents of the specified species.
   * Comment: 
-  * See also: 
+  * See also: [#neighbours_at neighbours_at] [#neighbours_of neighbours_of] [#agent_closest_to agent_closest_to] [#agents_inside agents_inside] [#closest_to closest_to] [#inside inside] [#agents_overlapping agents_overlapping] 
   {{{  
+   species1 overlapping(self) -> return the agents of species species1 that overlap the shape of the agent applying the operator.
+   [ag1, ag2, ag3] overlapping(self) -> return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2866,9 +3054,20 @@ An operator performs a function on one, two, or three operands. An operator that
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: java.lang.Boolean
   * Special cases:
+    * if one of the operand is null, returns false.
+    * if one operand is a point, returns true if the point is included in the geometry
   * Comment: 
-  * See also: 
+  * See also: [#<-> <->] [#disjoint_from disjoint_from] [#crosses crosses] [#intersects intersects] [#partially_overlaps partially_overlaps] [#touches touches] 
   {{{  
+   polyline([{10,10},{20,20}]) overlaps polyline([{15,15},{25,25}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({25,25}) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps geometry({15,15}) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2895,9 +3094,19 @@ An operator performs a function on one, two, or three operands. An operator that
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: java.lang.Boolean
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if one of the operand is null, returns false.
+  * Comment: if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).
+  * See also: [#<-> <->] [#disjoint_from disjoint_from] [#crosses crosses] [#overlaps overlaps] [#intersects intersects] [#touches touches] 
   {{{  
+   polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({25,25}) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps geometry({15,15}) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) -> false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3005,9 +3214,11 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-    * if the operand is nil, returns the point geometry {0,0}; if the operand is composed of a single point, returns a point geometry; if the operand is composed of 2 points, returns a polyline geometry.
+    * if the operand is nil, returns the point geometry {0,0}
+    * if the operand is composed of a single point, returns a point geometry
+    * if the operand is composed of 2 points, returns a polyline geometry.
   * Comment: 
-  * See also: [#around, circle, cone, line, link, norm, point, polyline, rectangle, square, triangle around, circle, cone, line, link, norm, point, polyline, rectangle, square, triangle] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polyline polyline] [#rectangle rectangle] [#square square] [#triangle triangle] 
   {{{  
    polygon([{0,0}, {0,10}, {10,10}, {10,0}]) -> returns a polygon geometry composed of the 4 points.
  }}} 
@@ -3048,10 +3259,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == read == 
 
   * Possible use: 
-    * Operand: java.lang.String
+    * Operand: msi.gama.util.file.IGamaFile
     * Result Type: java.lang.Object
   * Possible use: 
-    * Operand: msi.gama.util.file.IGamaFile
+    * Operand: java.lang.String
     * Result Type: java.lang.Object
   * Special cases:
   * Comment: 
@@ -3070,7 +3281,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns nil if the operand is nil.
   * Comment: the centre of the rectangle is by default the location of the current agent in which has been called this operator.
-  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, square, triangle around, circle, cone, line, link, norm, point, polygon, polyline, square, triangle] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#square square] [#triangle triangle] 
   {{{  
    rectangle({10, 5}) -> returns a geometry as a rectangle with width = 10 and heigh = 5.
  }}} 
@@ -3111,15 +3322,26 @@ An operator performs a function on one, two, or three operands. An operator that
 == reverse == 
 
   * Possible use: 
-    * Operand: java.lang.String
-    * Result Type: java.lang.String
-  * Possible use: 
     * Operand: msi.gama.util.IContainer<KeyType,ValueType>
     * Result Type: msi.gama.util.IContainer<KeyType,ValueType>
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
   * Special cases:
-  * Comment: 
+    * if it is a list, reverse returns a copy of the operand list with elements in the reversed order
+    * if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)
+    * if it is a file, reverse returns a copy of the file with a reversed content
+    * if it is a population, reverse returns a copy of the population with elements in the reversed order
+    * if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed
+    * if it is a matrix, reverse returns a new matrix containing the transpose of the operand.
+    * if it is a string, reverse returns a new string with caracters in the reversed order
+  * Comment: the reverse operator behavior depends on the nature of the operand
   * See also: 
   {{{  
+   reverse ({10,13}) 					--: 	{13, 10}
+   reverse ([10,12,14]) 				--: 	[14, 12, 10]
+   reverse ([k1::44, k2::32, k3::12]) --: 	[12::k3,  32::k2, 44::k1]
+   reverse ('abcd') 		--: 	'dcba';
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3208,9 +3430,10 @@ An operator performs a function on one, two, or three operands. An operator that
     * Right operand: msi.gama.metamodel.shape.IShape  
     * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-  * Comment: 
-  * See also: 
+  * Comment: the right-hand operand can be a float or a int
+  * See also: [#transformed_by transformed_by] [#translated_by translated_by] 
   {{{  
+   self rotated_by 45 -> returns the geometry resulting from a 45 degres rotation to the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3220,10 +3443,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == round == 
 
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Integer
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Integer
   * Special cases:
   * Comment: 
@@ -3296,26 +3519,26 @@ An operator performs a function on one, two, or three operands. An operator that
 == shuffle == 
 
   * Possible use: 
-    * Operand: msi.gama.util.IList
-    * Result Type: msi.gama.util.IList
-  * Possible use: 
     * Operand: msi.gaml.species.ISpecies
     * Result Type: msi.gama.util.IList
   * Possible use: 
-    * Operand: java.lang.String
-    * Result Type: java.lang.String
+    * Operand: msi.gama.util.IList
+    * Result Type: msi.gama.util.IList
   * Possible use: 
     * Operand: msi.gama.util.matrix.IMatrix
     * Result Type: msi.gama.util.matrix.IMatrix
+  * Possible use: 
+    * Operand: java.lang.String
+    * Result Type: java.lang.String
   * Special cases:
     * if the operand is empty, returns an empty list (or string, matrix)
   * Comment: 
   * See also: [#reverse reverse] 
   {{{  
-   shuffle ([12, 13, 14]) -> [14,12,13];
    shuffle (bug) ->  shuffle the list of all agents of the `bug` species
-   shuffle ('abc') -> 'bac'
+   shuffle ([12, 13, 14]) -> [14,12,13];
    shuffle ([["c11","c12","c13"],["c21","c22","c23"]]) -> [["c12","c21","c11"],["c13","c22","c23"]]
+   shuffle ('abc') -> 'bac'
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3360,9 +3583,10 @@ An operator performs a function on one, two, or three operands. An operator that
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
-  * Comment: 
+  * Comment: The algorithm used for the simplification is Douglas-Peucker
   * See also: 
   {{{  
+   self simplification 0.1 -> returns the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3395,6 +3619,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   skeletonize(self) -> returns the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3405,7 +3630,7 @@ An operator performs a function on one, two, or three operands. An operator that
 
   * Left operand: msi.gama.util.IContainer
   * Right operand: msi.gama.util.IContainer  
-  * Result Type: msi.gama.util.GamaList
+  * Result Type: msi.gama.util.IList
   * Special cases:
   * Comment: 
   * See also: 
@@ -3481,7 +3706,7 @@ An operator performs a function on one, two, or three operands. An operator that
 
   * Left operand: java.lang.String
   * Right operand: java.lang.String  
-  * Result Type: msi.gama.util.GamaList
+  * Result Type: msi.gama.util.IList
   * Special cases:
   * Comment: 
   * See also: 
@@ -3495,10 +3720,10 @@ An operator performs a function on one, two, or three operands. An operator that
 == sqrt == 
 
   * Possible use: 
-    * Operand: java.lang.Integer
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Possible use: 
-    * Operand: java.lang.Double
+    * Operand: java.lang.Integer
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -3517,7 +3742,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns nil if the operand is nil.
   * Comment: the centre of the square is by default the location of the current agent in which has been called this operator.
-  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, triangle around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, triangle] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#triangle triangle] 
   {{{  
    square(10) -> returns a geometry as a square of side size 10.
  }}} 
@@ -3575,9 +3800,19 @@ An operator performs a function on one, two, or three operands. An operator that
   * Operand: msi.gama.util.IContainer<KeyType,ValueType>
   * Result Type: java.lang.Object
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if it is a list of int or float: sum returns the sum of all the elements
+    * if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)
+    * if it is a list of other types: sum transforms all elements into float and sums them
+    * if it is a map, sum returns the sum of the value of all elements
+    * if it is a file, sum returns the sum of the content of the file (that is also a container)
+    * if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)
+    * if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)
+    * if it is a matrix of geometry, sum returns the sum of the list of the geometries
+  * Comment: the sum operator behavior depends on the nature of the operand
+  * See also: [#mul mul] 
   {{{  
+   sum ([12,10, 3]) 	--: 	25.0
+   sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0} 
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3591,6 +3826,24 @@ An operator performs a function on one, two, or three operands. An operator that
     * Result Type: java.lang.Double
   * Possible use: 
     * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Special cases:
+  * Comment: 
+  * See also: 
+  {{{  
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+
+  	
+    
+== tanh == 
+
+  * Possible use: 
+    * Operand: java.lang.Integer
+    * Result Type: java.lang.Double
+  * Possible use: 
+    * Operand: java.lang.Double
     * Result Type: java.lang.Double
   * Special cases:
   * Comment: 
@@ -3694,9 +3947,21 @@ An operator performs a function on one, two, or three operands. An operator that
   * Right operand: msi.gama.metamodel.shape.IShape  
   * Result Type: java.lang.Boolean
   * Special cases:
-  * Comment: 
-  * See also: 
+    * if one of the operand is null, returns false.
+  * Comment: returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.
+  * See also: [#<-> <->] [#disjoint_from disjoint_from] [#crosses crosses] [#overlaps overlaps] [#partially_overlaps partially_overlaps] [#intersects intersects] 
   {{{  
+   polyline([{10,10},{20,20}]) touches geometry({15,15}) -> false
+   polyline([{10,10},{20,20}]) touches geometry({10,10}) -> true
+   geometry({15,15}) touches geometry({15,15}) -> false
+   polyline([{10,10},{20,20}]) touches polyline([{10,10},{5,5}]) -> true
+   polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) -> false
+   polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{15,15},{15,25},{25,25},{25,15}]) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}]) -> true
+   polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({15,15}) -> false
+   polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({10,15}) -> true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3726,8 +3991,9 @@ An operator performs a function on one, two, or three operands. An operator that
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
   * Comment: 
-  * See also: 
+  * See also: [#rotated_by rotated_by] [#translated_by translated_by] 
   {{{  
+   self transformed_by {45, 20} -> returns the geometry resulting from 45� rotation and 10m translation of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3741,8 +4007,9 @@ An operator performs a function on one, two, or three operands. An operator that
   * Result Type: msi.gama.metamodel.shape.IShape
   * Special cases:
   * Comment: 
-  * See also: 
+  * See also: [#rotated_by rotated_by] [#transformed_by transformed_by] 
   {{{  
+   self translated_by 45 -> returns the geometry resulting from a 10m translation to the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3756,7 +4023,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:
     * returns nil if the operand is nil.
   * Comment: the centre of the triangle is by default the location of the current agent in which has been called this operator.
-  * See also: [#around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, square around, circle, cone, line, link, norm, point, polygon, polyline, rectangle, square] 
+  * See also: [#around around] [#circle circle] [#cone cone] [#line line] [#link link] [#norm norm] [#point point] [#polygon polygon] [#polyline polyline] [#rectangle rectangle] [#square square] 
   {{{  
    triangle(5) -> returns a geometry as a triangle with side_size = 5.
  }}} 
@@ -3773,6 +4040,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   triangulate(self) -> returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3824,7 +4092,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Possible use: 
     * Left operand: msi.gama.util.IList
     * Right operand: msi.gama.util.IList  
-    * Result Type: msi.gama.util.GamaList
+    * Result Type: msi.gama.util.IList
   * Possible use: 
     * Operand: msi.gama.util.GamaList
     * Result Type: msi.gama.metamodel.shape.IShape
@@ -3833,7 +4101,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
-   union(species1)  -> retutns the geometry resulting from the union of all of the geometries of agents of species species1.
+   union(species1)  -> returns the geometry resulting from the union of all of the geometries of agents of species species1.
    union([geom1, geom2, geom3]) -> a geometry corresponding to union between geom1, geom2 and geom3
  }}} 
 
@@ -4007,6 +4275,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Comment: 
   * See also: 
   {{{  
+   solid(self) -> returns the geometry corresponding to the geometry of the agent applying the operator without its holes.
  }}} 
 
 [#Table_of_Contents Top of the page] 
