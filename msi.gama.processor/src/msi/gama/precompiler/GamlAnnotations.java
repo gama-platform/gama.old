@@ -598,6 +598,14 @@ public final class GamlAnnotations {
 		short content_type() default ITypeProvider.NONE;
 
 		/**
+		 * @return if the argument is a container, return the types expected for its contents.
+		 *         Should be an array of IType.XXX.
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		short[] expected_content_type() default ITypeProvider.NONE;
+
+		/**
 		 * @return the respective priority of the operator w.r.t. to the others. Priorities are
 		 *         classified in several categories, and specified using one of the constants
 		 *         declared in IPriority
