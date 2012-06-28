@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -49,7 +49,10 @@ public class Stats {
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })
-	@doc(value = "the mean of all the elements of the operand", comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = { "if the container contains points, the result will be a point" }, examples = { "mean ([4.5, 3.5, 5.5, 7.0]) -> 5.125 " }, see = { "sum" })
+	@doc(value = "the mean of all the elements of the operand", 
+		comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = { "if the container contains points, the result will be a point" }, 
+		examples = { "mean ([4.5, 3.5, 5.5, 7.0]) -> 5.125 " }, 
+		see = { "sum" })
 	public static Object getMean(final IScope scope, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l.length() == 0 ) { return Double.valueOf(0d); }
@@ -62,7 +65,11 @@ public class Stats {
 	// Penser a faire ces calculs sur les points, egalement (et les entiers ?)
 
 	@operator(value = "median", expected_content_type = { IType.INT, IType.FLOAT })
-	@doc(value = "the median of all the elements of the operand.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = { "" }, examples = { "median ([4.5, 3.5, 5.5, 7.0]) -> 5.0" }, see = { "mean" })
+	@doc(value = "the median of all the elements of the operand.", 
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", 
+		special_cases = { "" }, 
+		examples = { "median ([4.5, 3.5, 5.5, 7.0]) -> 5.0" }, 
+		see = { "mean" })
 	public static Double opMedian(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getMedian();
@@ -77,16 +84,22 @@ public class Stats {
 	// }
 
 	@operator(value = "standard_deviation", expected_content_type = { IType.INT, IType.FLOAT })
-	@doc(value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = { "" }, examples = { "standard_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.2930100540985752" }, see = {
-		"mean", "mean_deviation" })
+	@doc(value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.", 
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", 
+		special_cases = { "" }, 
+		examples = { "standard_deviation ([4.5, 3.5, 5.5, 7.0]) -> 1.2930100540985752" }, 
+		see = {"mean", "mean_deviation" })
 	public static Double opStDev(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getStandardDeviation();
 	}
 
 	@operator(value = "geometric_mean", expected_content_type = { IType.INT, IType.FLOAT })
-	@doc(value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = { "" }, examples = { "geometric_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.962326343467649" }, see = {
-		"mean", "median", "harmonic_mean" })
+	@doc(value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.", 
+		comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", 
+		special_cases = { "" }, 
+		examples = { "geometric_mean ([4.5, 3.5, 5.5, 7.0]) -> 4.962326343467649" }, 
+		see = {"mean", "median", "harmonic_mean" })
 	public static Double opGeomMean(final IScope scope, final GamaList values) {
 		DataSet d = from(values);
 		return d.getGeometricMean();
@@ -117,7 +130,10 @@ public class Stats {
 	}
 
 	@operator(value = { "frequency_of" }, priority = IPriority.ITERATOR, iterator = true)
-	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { "[ag1, ag2, ag3, ag4] frequency_of each.size; will return the different sizes as keys and the number of agents of this size as values" }, see = "as_map")
+	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", 
+		comment = "", 
+		examples = { "[ag1, ag2, ag3, ag4] frequency_of each.size 	--:   will return the different sizes as keys and the number of agents of this size as values" }, 
+		see = "as_map")
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
