@@ -55,13 +55,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
 	private double currentAlpha = 1;
-	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5, curHeight = 5,
-		offsetX = 0, offsetY = 0;
+	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5,
+			curHeight = 5, offsetX = 0, offsetY = 0;
 
 	// OpenGL member
 	private final GL myGl;
 	private final GLU myGlu;
-	
+
 	// Handle opengl primitive.
 	public MyGraphics graphicsGLUtils;
 
@@ -81,51 +81,54 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public float envWidth, envHeight, maxEnvDim;
 
 	// All the geometry of the same layer are drawn in the same z plan.
-	public float currentZvalue=0.0f;
+	public float currentZvalue = 0.0f;
 
 	// OpenGL list ID
 	private int listID = -1;
 	public boolean isListCreated = false;
-	
-	
-	
-	//FIXME: This need to be remove. Only here to return the bounds of a geometry.
+
+	// use to do the triangulation only once per timestep.
+	public boolean isPolygonTriangulated = false;
+
+	// FIXME: This need to be remove. Only here to return the bounds of a
+	// geometry.
 	private final PointTransformation pt = new PointTransformation() {
-	
+
 		@Override
 		public void transform(final Coordinate c, final Point2D p) {
-		
-				}
-			};
+
+		}
+	};
 	private final ShapeWriter sw = new ShapeWriter(pt);
 
-	
 	/**
 	 * The environment property are given from the display surface.
 	 * 
-	 * @param GL gl
-	 * @param GLU glu
+	 * @param GL
+	 *            gl
+	 * @param GLU
+	 *            glu
 	 * @param float env_width
 	 * @param float env_height
 	 */
-	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender,
-		final float env_width, final float env_height) {
-		
+	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu,
+			final JOGLAWTGLRenderer gLRender, final float env_width,
+			final float env_height) {
+
 		myGl = gl;
 		myGlu = glu;
 		myGLRender = gLRender;
 		graphicsGLUtils = new MyGraphics(myGl, myGlu, myGLRender);
-		
-		
-		//Initialize the current environment data.
+
+		// Initialize the current environment data.
 		envWidth = env_width;
 		envHeight = env_height;
 
-		if ( envWidth > envHeight ) {
+		if (envWidth > envHeight) {
 			maxEnvDim = envWidth;
 		} else {
 			maxEnvDim = envHeight;
-		}	
+		}
 	}
 
 	/**
@@ -159,7 +162,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public void setOpacity(final double alpha) {
 		// 1 means opaque ; 0 means transparent
-		if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
+		if (IntervalSize.isZeroWidth(alpha, currentAlpha)) {
+			return;
+		}
 		currentAlpha = alpha;
 	}
 
@@ -318,41 +323,43 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
-		final Integer angle) {
-		
-		//Check if the geometry has a z elevation value
+	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
+			final boolean fill, final Integer angle) {
+
+		// Check if the geometry has a z elevation value
 		float elevation;
-		if (geometry.getUserData() !=null){
+		if (geometry.getUserData() != null) {
 			elevation = new Float(geometry.getUserData().toString());
-			this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle,elevation);
+			this.AddJTSGeometryInJTSGeometries(geometry, currentZvalue, color,
+					fill, false, angle, elevation);
+		} else {
+			this.AddJTSGeometryInJTSGeometries(geometry, currentZvalue, color,
+					fill, false, angle, 0);
 		}
-		else{
-			this.AddJTSGeometryInJTSGeometries(geometry,currentZvalue, color, fill, false, angle,0);
-		}
-		//FIXME: Need to remove the use of sw.
+		// FIXME: Need to remove the use of sw.
 		return sw.toShape(geometry).getBounds2D();
 	}
 
 	@Override
 	public void drawGrid(final BufferedImage image, final Color lineColor,
-		final java.awt.Point point) {
+			final java.awt.Point point) {
 
 		double stepX, stepY;
-		for ( int i = 0; i <= image.getWidth(); i++ ) {
+		for (int i = 0; i <= image.getWidth(); i++) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
-			Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
+			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, image.getWidth())).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0,0);
+			this.AddJTSGeometryInJTSGeometries(g, currentZvalue, lineColor,
+					true, false, 0, 0);
 		}
 
-		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = (i / (double) image.getHeight()) * image.getHeight();;
-			Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(0, stepY),
+		for (int i = 0; i <= image.getHeight(); i++) {
+			stepY = (i / (double) image.getHeight()) * image.getHeight();
+			;
+			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,currentZvalue, lineColor, true, false, 0,0);
+			this.AddJTSGeometryInJTSGeometries(g, currentZvalue, lineColor,
+					true, false, 0, 0);
 		}
 
 	}
@@ -367,29 +374,35 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
-		final boolean smooth, final String name) {
-	
-		/* FIXME Dirty way to check that img represent the environment. 
-		
-			if(image represent the environment){
-			   drawImage with the size of the envirnoment
-			   }
-			 else{
-			 drawImage with the size of the agent (curWidth and curHeight)
-			}
-	
-         WARNING1: problem if an agent reach the 0,0 position it will be displayed wit the size of the enviroment
-         WARNING2: if the environment is represented with a png and is not located at 0,0 (e.g boids environment is sky.png) how to know if this image is the enviroment?
+			final boolean smooth, final String name) {
+
+		/*
+		 * FIXME Dirty way to check that img represent the environment.
+		 * 
+		 * if(image represent the environment){ drawImage with the size of the
+		 * envirnoment } else{ drawImage with the size of the agent (curWidth
+		 * and curHeight) }
+		 * 
+		 * WARNING1: problem if an agent reach the 0,0 position it will be
+		 * displayed wit the size of the enviroment WARNING2: if the environment
+		 * is represented with a png and is not located at 0,0 (e.g boids
+		 * environment is sky.png) how to know if this image is the enviroment?
 		 */
 
-		//System.out.println("drawImage" + "curX" + curX + "curY" +curY
-		//+"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight() + name);
-		
-		if ( curX == 0 && curY == 0 || (name.equals("GridDisplay") == true || name.equals("QuadTreeDisplay"))) {
-			AddImageInImages(img, curX, curY, currentZvalue,this.envWidth, this.envHeight, name, angle);
+		// System.out.println("drawImage" + "curX" + curX + "curY" +curY
+		// +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight() +
+		// name);
+
+		if (curX == 0
+				&& curY == 0
+				|| (name.equals("GridDisplay") == true || name
+						.equals("QuadTreeDisplay"))) {
+			AddImageInImages(img, curX, curY, currentZvalue, this.envWidth,
+					this.envHeight, name, angle);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			AddImageInImages(img, curX, curY,currentZvalue, curWidth, curHeight, name, angle);	
+			AddImageInImages(img, curX, curY, currentZvalue, curWidth,
+					curHeight, name, angle);
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
 
@@ -397,7 +410,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final String name) {
+	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
+			final String name) {
 		return drawImage(img, angle, true, name);
 	}
 
@@ -424,23 +438,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawCircle(final Color c, final boolean fill,
+			final Integer angle) {
 		// FIXME : Need to check if the circle is at the right place.
-		Geometry g =
-				GamaGeometryType.buildCircle((double) curWidth / 2,
-				new GamaPoint(curX + (double) curWidth / 2, curY + (double) curWidth / 2))
-				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, 0,0);
+		Geometry g = GamaGeometryType.buildCircle(
+				(double) curWidth / 2,
+				new GamaPoint(curX + (double) curWidth / 2, curY
+						+ (double) curWidth / 2)).getInnerGeometry();
+		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false, 0,
+				0);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
 
 	@Override
-	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawTriangle(final Color c, final boolean fill,
+			final Integer angle) {
 		// FIXME: check if size is curWidth or curWidth/2
-		Geometry g =
-			GamaGeometryType.buildTriangle(curWidth, new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle,0);
+		Geometry g = GamaGeometryType.buildTriangle(curWidth,
+				new GamaPoint(curX, curY)).getInnerGeometry();
+		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false,
+				angle, 0);
 		Rectangle2D r = null;
 		return r;
 	}
@@ -456,11 +474,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            double
 	 */
 	@Override
-	public Rectangle2D drawLine(final Color c, final double toX, final double toY) {
-		Geometry g =
-			GamaGeometryType.buildLine(new GamaPoint(curX, curY), new GamaPoint(toX, toY))
-				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, true, false, 0,0);
+	public Rectangle2D drawLine(final Color c, final double toX,
+			final double toY) {
+		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY),
+				new GamaPoint(toX, toY)).getInnerGeometry();
+		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, true, false, 0,
+				0);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
 	}
@@ -476,11 +495,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final Color c, final boolean fill, final Integer angle) {
-		Geometry g =
-			GamaGeometryType.buildRectangle(curWidth, curHeight, new GamaPoint(curX, curY))
-				.getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,currentZvalue, c, fill, false, angle,0);
+	public Rectangle2D drawRectangle(final Color c, final boolean fill,
+			final Integer angle) {
+		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
+				new GamaPoint(curX, curY)).getInnerGeometry();
+		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false,
+				angle, 0);
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 	}
@@ -496,7 +516,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle) {
+	public Rectangle2D drawString(final String string, final Color stringColor,
+			final Integer angle) {
 		AddStringInStrings(string, curX, -curY, 0.0f);
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
@@ -521,8 +542,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// ///////////////Add method ////////////////////////////
 
 	/**
-	 * Add geometry and its associated parameter in the list of JTSGeometry that are
-	 * drawn by Opengl
+	 * Add geometry and its associated parameter in the list of JTSGeometry that
+	 * are drawn by Opengl
 	 * 
 	 * @param geometry
 	 * @param color
@@ -531,17 +552,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param angle
 	 * @param elevation
 	 */
-	private void AddJTSGeometryInJTSGeometries(final Geometry geometry, final float z,final Color color,
-		final boolean fill, final boolean isTextured, final Integer angle,final float elevation) {
+	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,
+			final float z, final Color color, final boolean fill,
+			final boolean isTextured, final Integer angle, final float elevation) {
 
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
-		curJTSGeometry.z=z;
+		curJTSGeometry.z = z;
 		curJTSGeometry.color = color;
 		curJTSGeometry.fill = fill;
 		curJTSGeometry.isTextured = isTextured;
 		curJTSGeometry.angle = angle;
-		curJTSGeometry.elevation= elevation;
+		curJTSGeometry.elevation = elevation;
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
@@ -558,18 +580,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param name
 	 * @param angle
 	 */
-	private void AddImageInImages(final BufferedImage img, final int curX, final int curY,final float z,
-		final float widthInModel, final float heightInModel, final String name, final Integer angle) {
+	private void AddImageInImages(final BufferedImage img, final int curX,
+			final int curY, final float z, final float widthInModel,
+			final float heightInModel, final String name, final Integer angle) {
 
 		final MyImage curImage = new MyImage();
 
 		curImage.image = img;
 		curImage.x = curX;
 		curImage.y = curY;
-		curImage.z= z;
+		curImage.z = z;
 		curImage.width = widthInModel;
 		curImage.height = heightInModel;
-		if ( angle == null ) {
+		if (angle == null) {
 			curImage.angle = 0;
 		} else {
 			curImage.angle = angle;
@@ -577,11 +600,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		curImage.name = name;
 
-		// For grid display and quadtree display the image is recomputed every iteration
-		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
+		// For grid display and quadtree display the image is recomputed every
+		// iteration
+		if (curImage.name.equals("GridDisplay") == true
+				|| curImage.name.equals("QuadTreeDisplay")) {
 			myGLRender.InitTexture(img, name);
-		} else {//For texture coming from a file there is no need to redraw it.
-			if ( !IsTextureExist(name) ) {
+		} else {// For texture coming from a file there is no need to redraw it.
+			if (!IsTextureExist(name)) {
 				myGLRender.InitTexture(img, name);
 			}
 		}
@@ -591,29 +616,32 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	/**
 	 * Check that the texture "name" has not already be created.
+	 * 
 	 * @param name
 	 * @return
 	 */
 	private boolean IsTextureExist(final String name) {
-		
+
 		Iterator<MyTexture> it = myGLRender.myTextures.iterator();
 		while (it.hasNext()) {
 			MyTexture curTexture = it.next();
-			if ( name.equals(curTexture.ImageName) == true ) { return true; }
+			if (name.equals(curTexture.ImageName) == true) {
+				return true;
+			}
 		}
 		return false;
 	}
 
 	/**
-	 * Add string and its postion in the list of String that are
-	 * drawn by Opengl
+	 * Add string and its postion in the list of String that are drawn by Opengl
 	 * 
 	 * @param string
 	 * @param x
 	 * @param y
 	 * @param z
 	 */
-	private void AddStringInStrings(final String string, final float x, final float y, final float z) {
+	private void AddStringInStrings(final String string, final float x,
+			final float y, final float z) {
 
 		final MyString curString = new MyString();
 		curString.string = string;
@@ -627,45 +655,62 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// /////////////// Draw Method ////////////////////
 
 	/**
-	 * Once the list of JTSGeometries has been created, OpenGL display call this method every framerate.
-	 * FIXME: Need to be optimize with the use of Vertex Array or even VBO
+	 * Once the list of JTSGeometries has been created, OpenGL display call this
+	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
+	 * Array or even VBO
 	 * 
 	 */
 	public void DrawMyJTSGeometries() {
 
-		boolean drawAsList = false;
-		//	System.out.println("isListCreated="+isListCreated);
-		if ( drawAsList ) {
-			if ( !isListCreated ) {
-				System.out.println("Create" + this.myJTSGeometries.size() + "list");
+		boolean useDisplayList = false;
+		boolean useVertexArray = false;
+		// System.out.println("isListCreated="+isListCreated);
+		if (useDisplayList) {
+			if (!isListCreated) {
+				System.out.println("Create" + this.myJTSGeometries.size()
+						+ "list");
 				graphicsGLUtils.buildDisplayLists(this.myJTSGeometries);
-				System.out.println("Create" + this.myJTSGeometries.size() + "list ok");
+				System.out.println("Create" + this.myJTSGeometries.size()
+						+ "list ok");
 				isListCreated = true;
 			} else {
-				//System.out.println("Call" + this.myJTSGeometries.size() + "list");
+				// System.out.println("Call" + this.myJTSGeometries.size() +
+				// "list");
 				graphicsGLUtils.DrawDisplayList(this.myJTSGeometries.size());
 			}
 		} else {
 
-			Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
-			while (it.hasNext()) {
-				MyJTSGeometry curGeometry = it.next();
-				graphicsGLUtils.DrawJTSGeometry(curGeometry);
+			if (!useVertexArray) {
+				Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
+				while (it.hasNext()) {
+					MyJTSGeometry curGeometry = it.next();
+					graphicsGLUtils.DrawJTSGeometry(curGeometry);
+				}
+			}
+			// use vertex array
+			else {
+				if (!isPolygonTriangulated) {
+					graphicsGLUtils.buildVertexArray(this.myJTSGeometries);
+					isPolygonTriangulated = true;
+				} else {
+					graphicsGLUtils.drawVertexArray();
+				}
 			}
 		}
 
 	}
 
 	/**
-	 * Once the list of Images has been created, OpenGL display call this method every framerate.
-	 * FIXME: Need to be optimize with the use of Vertex Array or even VBO
+	 * Once the list of Images has been created, OpenGL display call this method
+	 * every framerate. FIXME: Need to be optimize with the use of Vertex Array
+	 * or even VBO
 	 * 
 	 */
 	public void DrawMyImages() {
 
 		boolean drawImageAsList = false;
-		if ( drawImageAsList ) {
-			if ( !isListCreated ) {
+		if (drawImageAsList) {
+			if (!isListCreated) {
 				graphicsGLUtils.buildImageDisplayLists(this.myImages);
 				isListCreated = true;
 			} else {
@@ -682,7 +727,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	/**
-	 * Once the list of String has been created, OpenGL display call this method every framerate.
+	 * Once the list of String has been created, OpenGL display call this method
+	 * every framerate.
 	 * 
 	 */
 	public void DrawMyStrings() {
@@ -690,20 +736,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Iterator<MyString> it = this.myStrings.iterator();
 		while (it.hasNext()) {
 			MyString curString = it.next();
-			graphicsGLUtils.DrawString(curString.string, curString.x, curString.y, 0.0f);
+			graphicsGLUtils.DrawString(curString.string, curString.x,
+					curString.y, 0.0f);
 		}
 	}
-	
+
 	public void DrawEnvironmentBounds() {
 
 		// Draw Width and height value
-		this.graphicsGLUtils.DrawString(String.valueOf(this.envWidth), this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
-		this.graphicsGLUtils.DrawString(String.valueOf(this.envHeight), this.envWidth * 1.01f, -(this.envHeight / 2),
-			0.0f);
+		this.graphicsGLUtils.DrawString(String.valueOf(this.envWidth),
+				this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
+		this.graphicsGLUtils.DrawString(String.valueOf(this.envHeight),
+				this.envWidth * 1.01f, -(this.envHeight / 2), 0.0f);
 
 		// Draw environment rectangle
-		Geometry g =
-			GamaGeometryType.buildRectangle(envWidth, envHeight,
+		Geometry g = GamaGeometryType.buildRectangle(envWidth, envHeight,
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(0, 0, 255);
@@ -715,7 +762,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		graphicsGLUtils.DrawJTSGeometry(curGeometry);
 	}
 
-/////////////////Clean method /////////////////////////
+	// ///////////////Clean method /////////////////////////
 
 	/**
 	 * Call every new iteration when updateDisplay() is called
@@ -723,14 +770,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void CleanGeometries() {
 		// FIXME : check that display list is used.
 		graphicsGLUtils.DeleteDisplayLists(this.myJTSGeometries.size());
+		graphicsGLUtils.DeleteVertexArray();
 		this.myJTSGeometries.clear();
 	}
 
 	/**
-	 *  Call every new iteration when updateDisplay() is called
-	 *  Remove only the texture that has to be redrawn.
-	 *  Keep all the texture coming form a file.
-	 *  FIXME: Only work for png and jpg/jpeg file.
+	 * Call every new iteration when updateDisplay() is called Remove only the
+	 * texture that has to be redrawn. Keep all the texture coming form a file.
+	 * FIXME: Only work for png and jpg/jpeg file.
 	 */
 	public void CleanImages() {
 		this.myImages.clear();
@@ -738,9 +785,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		while (it.hasNext()) {
 			MyTexture curtexture = it.next();
 			// If the texture is coming from a file keep it
-			if ( curtexture.ImageName.indexOf(".png") != -1 ||
-				curtexture.ImageName.indexOf(".jpg") != -1 ||
-				curtexture.ImageName.indexOf(".jpeg") != -1 ) {
+			if (curtexture.ImageName.indexOf(".png") != -1
+					|| curtexture.ImageName.indexOf(".jpg") != -1
+					|| curtexture.ImageName.indexOf(".jpeg") != -1) {
 
 			}// Else remove to recreate a new texture (e.g for GridDisplay).
 			else {
@@ -759,7 +806,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	public void draw(final GL gl) {
 
-		if ( listID == -1 ) {
+		if (listID == -1) {
 			createDisplayList(gl);
 		}
 		gl.glCallList(listID);
@@ -777,7 +824,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		gl.glPopMatrix();
 		gl.glEndList();
 	}
-	
 
 	@Override
 	public int[] getHighlightColor() {
@@ -785,26 +831,28 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void setHighlightColor(final int[] rgb) {}
+	public void setHighlightColor(final int[] rgb) {
+	}
 
 	@Override
-	public void highlight(final Rectangle2D r) {}
+	public void highlight(final Rectangle2D r) {
+	}
 
-	
 	/**
 	 * Each new step the Z value of the first layer is set to 0.
 	 */
 	@Override
 	public void initLayers() {
-		currentZvalue=0.0f;
+		currentZvalue = 0.0f;
 	}
 
 	/**
-	 * Set the value z of the current Layer. If no value is define is defined set it to 0.
+	 * Set the value z of the current Layer. If no value is define is defined
+	 * set it to 0.
 	 */
 	@Override
 	public void newLayer(double elevation) {
-		currentZvalue=(float) (maxEnvDim*elevation);
+		currentZvalue = (float) (maxEnvDim * elevation);
 	}
 
 }
