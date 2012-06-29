@@ -669,14 +669,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			if (!isListCreated) {
 				System.out.println("Create" + this.myJTSGeometries.size()
 						+ "list");
-				graphicsGLUtils.buildDisplayLists(this.myJTSGeometries);
+				graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSGeometries);
 				System.out.println("Create" + this.myJTSGeometries.size()
 						+ "list ok");
 				isListCreated = true;
 			} else {
 				// System.out.println("Call" + this.myJTSGeometries.size() +
 				// "list");
-				graphicsGLUtils.DrawDisplayList(this.myJTSGeometries.size());
+				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
 			}
 		} else {
 
@@ -684,16 +684,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 				while (it.hasNext()) {
 					MyJTSGeometry curGeometry = it.next();
-					graphicsGLUtils.DrawJTSGeometry(curGeometry);
+					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 				}
 			}
 			// use vertex array
 			else {
 				if (!isPolygonTriangulated) {
-					graphicsGLUtils.buildVertexArray(this.myJTSGeometries);
+					graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
 					isPolygonTriangulated = true;
 				} else {
-					graphicsGLUtils.drawVertexArray();
+					graphicsGLUtils.vertexArrayHandler.drawVertexArray();
 				}
 			}
 		}
@@ -711,10 +711,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		boolean drawImageAsList = false;
 		if (drawImageAsList) {
 			if (!isListCreated) {
-				graphicsGLUtils.buildImageDisplayLists(this.myImages);
+				graphicsGLUtils.displayListHandler.buildImageDisplayLists(this.myImages);
 				isListCreated = true;
 			} else {
-				graphicsGLUtils.DrawImageDisplayList(this.myImages.size());
+				graphicsGLUtils.displayListHandler.DrawImageDisplayList(this.myImages.size());
 			}
 
 		} else {
@@ -759,7 +759,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curGeometry.color = c;
 		curGeometry.fill = true;
 		curGeometry.isTextured = false;
-		graphicsGLUtils.DrawJTSGeometry(curGeometry);
+		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
 	// ///////////////Clean method /////////////////////////
@@ -769,8 +769,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void CleanGeometries() {
 		// FIXME : check that display list is used.
-		graphicsGLUtils.DeleteDisplayLists(this.myJTSGeometries.size());
-		graphicsGLUtils.DeleteVertexArray();
+		graphicsGLUtils.displayListHandler.DeleteDisplayLists(this.myJTSGeometries.size());
+		graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();
 		this.myJTSGeometries.clear();
 	}
 
