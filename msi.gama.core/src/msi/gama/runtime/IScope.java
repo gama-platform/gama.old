@@ -88,6 +88,8 @@ public interface IScope {
 
 	public abstract boolean hasArg(String string);
 
+	public abstract boolean hasVar(String string);
+
 	public abstract Object getAgentVarValue(IAgent agent, String name) throws GamaRuntimeException;
 
 	public abstract Object getAgentVarValue(String name) throws GamaRuntimeException;

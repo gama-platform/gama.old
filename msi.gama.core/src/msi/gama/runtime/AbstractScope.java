@@ -178,6 +178,11 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
+	public final boolean hasVar(final String varName) {
+		return getVarIndex(varName) != -1;
+	}
+
+	@Override
 	public final IAgent getAgentScope() {
 		return agentsPointer == 0 ? getWorldScope() : agentsStack[agentsPointer - 1];
 	}
