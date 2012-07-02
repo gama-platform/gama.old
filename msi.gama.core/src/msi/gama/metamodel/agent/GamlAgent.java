@@ -154,7 +154,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return s;
 	}
 
-	@action(name = "error")
+	@action(name = IKeyword.ERROR)
 	@args(names = { "message" })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		String error = (String) scope.getArg("message", IType.STRING);
