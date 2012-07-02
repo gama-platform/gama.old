@@ -29,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -86,6 +86,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	@Override
 	public IType getReturnType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		if ( executer == null ) { return Types.NO_TYPE; }
 		return executer.getReturnType();
 	}
 
