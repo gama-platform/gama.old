@@ -86,7 +86,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	float textureTop, textureBottom, textureLeft, textureRight;	
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
-	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
+	//private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
 
 	// Lighting
 	private static boolean isLightOn;
@@ -153,7 +153,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		// Diffuse light comes from a particular location. Diffuse's value in
 		// RGBA
-		float diffuseMean=0.1f;
+		float diffuseMean=0.5f;
 		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (in front of the screen at width
 		// position).
@@ -163,12 +163,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		float specularMean=1.0f;
         float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
 
-		gl.glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbientValue, 0);
-		gl.glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuseValue, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightSpecularValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		//gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightSpecularValue, 0);
 		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
 		gl.glEnable(GL_LIGHT1); // Enable Light-1
 		gl.glDisable(GL_LIGHTING); // But disable lighting
+
 		isLightOn = true;
 
 		// enable color tracking
@@ -176,7 +177,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// set material properties which will be assigned by glColor
 		//gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
-		float[] rgba = {0.3f, 0.5f, 1f,1f};
+		float[] rgba = {0.3f, 0.5f, 1.0f,1f};
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
@@ -193,7 +194,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glDisable(GL_DEPTH_TEST);
 		//FIXME : should be turn on only if need (if we draw image)
 		//problem when true with glutBitmapString
-		blendingEnabled = false;
+		blendingEnabled = true;
 
 		camera.UpdateCamera(gl, width, height);
 
@@ -288,13 +289,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// hdviet added 02/06/2012
 		gl.glPushMatrix();
 		gl.glMultMatrixf(matrix,0);
-				
-		
-
-		
-		//float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
-		//myGLDrawer.Draw3DCube(gl, envMaxDim/2);
-	
+					
 		
 		//Display the model center on 0,0,0
 		if(camera.isModelCentered){
@@ -306,7 +301,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
-		//myGLDrawer.DrawTexturedQuad(gl,width/4);
+		//myGLDrawer.DrawColorTriangle(gl, 0.0f, 0.0f, 0.0f, 1.0f, width/4);
+		//myGLDrawer.DrawTexturedQuadWithNormal(gl,width/4);
 		//myGLDrawer.DrawTexture(gl, width / 4);
 		
 		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
@@ -443,52 +439,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.myTextures.add(curTexture);
 	}
 	
-	
-	public void LoadTextureFromFile(String textureFileName){
-		
-		// Load textures from image
-		try {
-			// Use URL so that can read from JAR and disk file.
-			BufferedImage image = ImageUtils.getInstance().getImageFromFile(
-					textureFileName);
-
-			// Create a OpenGL Texture object from (URL, mipmap, file suffix)
-			textures[0] = TextureIO.newTexture(image, false);
-			// Nearest filter is least compute-intensive
-			// Use nearer filter if image is larger than the original texture
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			// Use nearer filter if image is smaller than the original texture
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-			textures[1] = TextureIO.newTexture(image, false);
-			// Linear filter is more compute-intensive
-			// Use linear filter if image is larger than the original texture
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			// Use linear filter if image is smaller than the original texture
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-			textures[2] = TextureIO.newTexture(image, true); // mipmap is true
-			// Use mipmap filter is the image is smaller than the texture
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-					GL_LINEAR_MIPMAP_NEAREST);
-
-			// Get the top and bottom coordinates of the textures. Image flips
-			// vertically.
-			TextureCoords textureCoords;
-			textureCoords = textures[0].getImageTexCoords();
-			textureTop = textureCoords.top();
-			textureBottom = textureCoords.bottom();
-			textureLeft = textureCoords.left();
-			textureRight = textureCoords.right();
-
-		} catch (GLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
 
 	// hdviet 27/05/2012
 	// add new listener for ArcBall

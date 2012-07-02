@@ -35,7 +35,7 @@ public class MyGLToyDrawer {
 	float textureTop, textureBottom, textureLeft, textureRight;
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
-	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/branches/GAMA_CURRENT/msi.gama.jogl/src/textures/bird2.png";
+	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
 
 	
 	// Display list 
@@ -83,16 +83,16 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawColorTriangle(GL gl, float x, float y, float z, float size) {
+	public void DrawColorTriangle(GL gl, float x, float y, float z, float alpha,float size) {
 		// ----- Render a triangle -----
 		gl.glTranslatef(x, y, z); // translate left and into the screen
 		gl.glBegin(GL_TRIANGLES); // draw using triangles
 		gl.glNormal3f(0.0f, 0.0f, -1.0f);
-		gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+		gl.glColor4f(1.0f, 0.0f, 0.0f,alpha); // Red
 		gl.glVertex3f(0.0f, size, 0.0f);
-		gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		gl.glColor4f(0.0f, 1.0f, 0.0f,alpha); // Green
 		gl.glVertex3f(-size, -size, 0.0f);
-		gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		gl.glColor4f(0.0f, 0.0f, 1.0f,alpha); // Blue
 		gl.glVertex3f(size, -size, 0.0f);
 		gl.glEnd();
 	}

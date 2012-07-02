@@ -54,7 +54,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
-	private double currentAlpha = 1;
+	public float currentAlpha = 1;
 	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5,
 			curHeight = 5, offsetX = 0, offsetY = 0;
 
@@ -165,7 +165,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		if (IntervalSize.isZeroWidth(alpha, currentAlpha)) {
 			return;
 		}
-		currentAlpha = alpha;
+		currentAlpha = (float) alpha;
 	}
 
 	/**
@@ -559,6 +559,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
 		curJTSGeometry.z = z;
+		curJTSGeometry.alpha= this.currentAlpha;
 		curJTSGeometry.color = color;
 		curJTSGeometry.fill = fill;
 		curJTSGeometry.isTextured = isTextured;

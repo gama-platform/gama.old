@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import javax.vecmath.Vector3f;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.IList;
 
@@ -53,9 +54,6 @@ public class BasicOpenGlDrawer {
 	double tempPolygon[][];
 	double temp[];
 
-
-	float alpha = 1.0f;
-
 	//use glut tesselation or JTS tesselation
 	boolean useTessellation = true;
 
@@ -67,7 +65,7 @@ public class BasicOpenGlDrawer {
 		myGLRender = gLRender;
 		tessCallback = new TessellCallBack(myGl, myGlu);
 		tobj = glu.gluNewTess();
-
+		
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
@@ -81,37 +79,39 @@ public class BasicOpenGlDrawer {
      */
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
+
+		
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z, geometry.color,
-						geometry.fill, geometry.angle, geometry.elevation);
+						geometry.alpha,geometry.fill, geometry.angle, geometry.elevation);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.elevation > 0) {
 					DrawPolyhedre((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.elevation, geometry.angle);
+							geometry.alpha,geometry.elevation, geometry.angle);
 				} else {
 					DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.fill, geometry.isTextured, geometry.angle);
+							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
-				DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, geometry.color);
+				DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, geometry.color,geometry.alpha);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
-				DrawLineString((LineString) geometry.geometry, geometry.z, 1.2f, geometry.color);
+				DrawLineString((LineString) geometry.geometry, geometry.z, 1.2f, geometry.color,geometry.alpha);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
-				DrawPoint((Point) geometry.geometry, geometry.z, 10, 10, geometry.color);
+				DrawPoint((Point) geometry.geometry, geometry.z, 10, 10, geometry.color,geometry.alpha);
 			}
 		}
 	}
 
-	public void DrawMultiPolygon(MultiPolygon polygons, float z, Color c,
+	public void DrawMultiPolygon(MultiPolygon polygons, float z, Color c,float alpha,
 			boolean fill, Integer angle, float elevation) {
 
 		numGeometries = polygons.getNumGeometries();
@@ -125,14 +125,14 @@ public class BasicOpenGlDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if (elevation > 0) {
-				DrawPolyhedre(curPolygon, z, c, elevation, angle);
+				DrawPolyhedre(curPolygon, z, c, alpha,elevation, angle);
 			} else {
-				DrawPolygon(curPolygon, z, c, fill, false, angle);
+				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle);
 			}
 		}
 	}
 
-	public void DrawPolygon(Polygon p, float z, Color c, boolean fill,
+	public void DrawPolygon(Polygon p, float z, Color c, float alpha, boolean fill,
 			boolean isTextured, Integer angle) {
 
 		// FIXME: Angle rotation is not implemented yet
@@ -284,13 +284,13 @@ public class BasicOpenGlDrawer {
 		myGl.glEnd();
 	}
 
-	public void DrawPolyhedre(Polygon p, float z, Color c, float z_offset,
+	public void DrawPolyhedre(Polygon p, float z, Color c,float alpha, float z_offset,
 			Integer angle) {
 
-		DrawPolygon(p, z, c, true, false, angle);
-		DrawPolygon(p, z + z_offset, c, true, false, angle);
+		DrawPolygon(p, z, c, alpha,true, false, angle);
+		DrawPolygon(p, z + z_offset, c,alpha, true, false, angle);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, z + z_offset);
+		DrawFaces(p, c, alpha,z + z_offset);
 
 	}
 	
@@ -327,7 +327,7 @@ public class BasicOpenGlDrawer {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
-		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
+		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
@@ -350,7 +350,7 @@ public class BasicOpenGlDrawer {
 	 * @param c: color
 	 * @param height: height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float height) {
+	public void DrawFaces(Polygon p, Color c, float alpha, float height) {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 
@@ -422,7 +422,7 @@ public class BasicOpenGlDrawer {
 
 	}
 
-	public void DrawMultiLineString(MultiLineString lines, float z, Color c) {
+	public void DrawMultiLineString(MultiLineString lines, float z, Color c,float alpha) {
 
 		// get the number of line in the multiline.
 		numGeometries = lines.getNumGeometries();
@@ -449,7 +449,7 @@ public class BasicOpenGlDrawer {
 		}
 	}
 
-	public void DrawLineString(LineString line, float z, float size, Color c) {
+	public void DrawLineString(LineString line, float z, float size, Color c, float alpha) {
 
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
@@ -467,7 +467,7 @@ public class BasicOpenGlDrawer {
 	}
 
 	public void DrawPoint(Point point, float z, int numPoints, float radius,
-			Color c) {
+			Color c,float alpha) {
 
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
