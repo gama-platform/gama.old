@@ -361,16 +361,16 @@ public class GamaQuadTree implements ISpatialIndex {
 			boolean retVal = false;
 
 			if ( ne.bounds.intersects(env) ) {
-				retVal = retVal || ne.add(env, o);
+				retVal = ne.add(env, o);
 			}
 			if ( nw.bounds.intersects(env) ) {
-				retVal = retVal || nw.add(env, o);
+				retVal =  nw.add(env, o)||retVal;
 			}
 			if ( se.bounds.intersects(env) ) {
-				retVal = retVal || se.add(env, o);
+				retVal = se.add(env, o)|| retVal ;
 			}
 			if ( sw.bounds.intersects(env) ) {
-				retVal = retVal || sw.add(env, o);
+				retVal = sw.add(env, o) || retVal;
 			}
 
 			if ( retVal ) { return true; }
