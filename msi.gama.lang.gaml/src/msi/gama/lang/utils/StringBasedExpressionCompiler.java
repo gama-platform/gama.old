@@ -130,25 +130,23 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 				return isSpeciesName(castingString) ? factory.createBinaryExpr(operator, expr1,
 					factory
 						.createExpr(new StringBasedExpressionDescription(castingString), context),
-					context) : factory.createUnaryExpr(castingString, expr1, context);
+					context, false) : factory.createUnaryExpr(castingString, expr1, context);
 			} else if ( IKeyword.IS.equals(operator) && isTypeName(words.get(opIndex + 1)) ) {
 				return factory.createBinaryExpr(operator, expr1,
-					factory.createConst(words.get(opIndex + 1), Types.get(IType.STRING)), context);
-			} else if ( IExpressionCompiler.FUNCTIONS.contains(operator) ) {
+					factory.createConst(words.get(opIndex + 1), Types.get(IType.STRING)), context,
+					false);
+			} else {
 				SpeciesDescription sd =
 					getContext().getSpeciesDescription(expr1.getContentType().getSpeciesName());
-				if ( sd == null ) {
-					context.flagError("the left side of " + operator + " is not an agent");
-					return null;
+				if ( sd != null ) {
+					StatementDescription cd = sd.getAction(operator);
+					if ( cd != null ) {
+						IExpression right =
+							compileArguments(cd, words.subList(opIndex + 2, words.size() - 1));
+						return factory.createBinaryExpr(operator, expr1, right, context, true);
+					}
 				}
-				StatementDescription cd = sd.getAction(operator);
-				if ( cd == null ) {
-					context.flagError(operator + " is not available for agents of species " +
-						sd.getName());
-					return null;
-				}
-				expr2 = compileArguments(cd, words.subList(opIndex + 2, words.size() - 1));
-			} else {
+
 				// In case the operator is an iterator, we assign the content type of
 				// the first expression to "each"
 				if ( IExpressionCompiler.ITERATORS.contains(operator) ) {
@@ -157,7 +155,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 				}
 				expr2 = compileExpr(words.subList(opIndex + 1, words.size()));
 			}
-			return factory.createBinaryExpr(operator, expr1, expr2, context);
+			return factory.createBinaryExpr(operator, expr1, expr2, context, false);
 		}
 
 		// Otherwise, we consider the first word of the sequence
@@ -185,7 +183,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 			final IExpression expr1 = compileExpr(words.subList(opIndex + 1, words.size()));
 			final IExpression expr2 =
 				factory.createExpr(new StringBasedExpressionDescription(firstWord), context);
-			return factory.createBinaryExpr(IKeyword.AS, expr1, expr2, context);
+			return factory.createBinaryExpr(IKeyword.AS, expr1, expr2, context, false);
 		}
 
 		context.flagError("malformed expression : " + words);
@@ -295,7 +293,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 			context.flagError("Unknown variable :" + var + " in " + contextDesc.getName());
 			return null;
 		}
-		return factory.createBinaryExpr(IKeyword._DOT, target, expr, context);
+		return factory.createBinaryExpr(IKeyword._DOT, target, expr, context, false);
 
 	}
 
@@ -410,7 +408,7 @@ public class StringBasedExpressionCompiler implements IExpressionCompiler<IExpre
 			begin = end + 1;
 			end = begin;
 		}
-		return factory.createBinaryExpr(INTERNAL_POINT, exprX, exprY, context);
+		return factory.createBinaryExpr(INTERNAL_POINT, exprX, exprY, context, false);
 	}
 
 	private IExpression getWorldExpr() {

@@ -257,7 +257,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 		Map<TypePair, IOperator> existing = BINARIES.get(string);
 		if ( !existing.containsKey(FUNCTION_SIG) ) {
-			IExpressionCompiler.FUNCTIONS.add(string);
+			// IExpressionCompiler.FUNCTIONS.add(string);
 			IOperator newFunct = new PrimitiveOperator(string);
 			existing.put(FUNCTION_SIG, newFunct);
 		}

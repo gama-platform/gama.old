@@ -264,8 +264,12 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 		}
 		getActions().put(actionName, ce);
-		AbstractGamlAdditions.registerFunction(actionName, getSpeciesContext().getSpeciesContext()
-			.getType());
+		// Change (june 2012) : removed the necessity to register actions as binary operators. They
+		// are now searched directly in the species description and not in the global registry of
+		// operators.
+		// AbstractGamlAdditions.registerFunction(actionName,
+		// getSpeciesContext().getSpeciesContext()
+		// .getType());
 	}
 
 	private void addAspect(final StatementDescription ce) {

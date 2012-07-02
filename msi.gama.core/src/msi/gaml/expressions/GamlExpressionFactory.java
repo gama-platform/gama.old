@@ -166,7 +166,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createBinaryExpr(final String op, final IExpression l, final IExpression r,
-		final IDescription context /* useful as a workaround for primitive operators */) {
+		final IDescription context /* useful as a workaround for primitive operators */,
+		final boolean isAction) {
+		if ( isAction ) { return new PrimitiveOperator(op).init(op, l, r, context); }
 		IExpression left = l;
 		IExpression right = r;
 		if ( left == null ) { return null; }

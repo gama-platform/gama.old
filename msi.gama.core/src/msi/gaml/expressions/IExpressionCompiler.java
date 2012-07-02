@@ -39,7 +39,7 @@ public interface IExpressionCompiler<T> {
 		IKeyword.HIS, IKeyword.ITS, IKeyword.HER);
 	public static final Map<String, Map<IType, IOperator>> UNARIES = new HashMap();
 	public static final Map<String, Map<TypePair, IOperator>> BINARIES = new HashMap();
-	public static final Set<String> FUNCTIONS = new HashSet();
+	// public static final Set<String> FUNCTIONS = new HashSet();
 	public static final Set<String> ITERATORS = new HashSet();
 	public static final Map<String, Short> BINARY_PRIORITIES = new HashMap();
 

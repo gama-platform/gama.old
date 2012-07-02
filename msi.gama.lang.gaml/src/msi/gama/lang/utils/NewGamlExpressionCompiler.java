@@ -166,8 +166,8 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		public IExpression caseTernExp(final TernExp object) {
 			IExpression ifFalse = compile(object.getIfFalse());
 			IExpression alt =
-				factory.createBinaryExpr(":", compile(object.getRight()), ifFalse, context);
-			return factory.createBinaryExpr("?", compile(object.getLeft()), alt, context);
+				factory.createBinaryExpr(":", compile(object.getRight()), ifFalse, context, false);
+			return factory.createBinaryExpr("?", compile(object.getLeft()), alt, context, false);
 		}
 
 		@Override
@@ -360,12 +360,13 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 				IExpression myself = desc.getVarExpr(MYSELF);
 				IDescription species = getSpeciesContext(myself.getType().getSpeciesName());
 				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
-				return factory.createBinaryExpr(_DOT, myself, var, desc);
+				return factory.createBinaryExpr(_DOT, myself, var, desc, false);
 			}
 			// Otherwise, we ignore 'my' since it refers to 'self'
 			return compile(e);
 		}
-		if ( isSpeciesName(op) ) { return factory.createBinaryExpr(AS, expr, species(op), context); }
+		if ( isSpeciesName(op) ) { return factory.createBinaryExpr(AS, expr, species(op), context,
+			false); }
 		return factory.createUnaryExpr(op, expr, context);
 	}
 
@@ -376,7 +377,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		if ( AS.equals(op) ) {
 			String species = EGaml.getKeyOf(e2);
 			if ( isSpeciesName(species) ) { return factory.createBinaryExpr(op, left,
-				species(species), context); }
+				species(species), context, false); }
 			// allows expression such as 'agent as dead'. Should we allow them ?
 			return factory.createUnaryExpr(species, left, context);
 		}
@@ -385,35 +386,52 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			String type = EGaml.getKeyOf(e2);
 			if ( isTypeName(type) ) { return factory.createBinaryExpr(op, left,
 				factory.createConst(type, Types.get(IType.STRING), Types.get(IType.STRING)),
-				context); }
+				context, false); }
 			getContext().flagError(
 				"'is' must be followed by a type name. " + type + " is not a type name.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
 			return null;
 		}
-		// if the operator is an action call, we must verify and compile the arguments apart
-		if ( isOnlyFunction(op) ) {
-			SpeciesDescription sd =
-				getContext().getSpeciesDescription(left.getContentType().getSpeciesName());
-			if ( sd == null ) {
-				context.flagError("the left side of " + op + " is not an agent",
-					IGamlIssue.NOT_AN_AGENT, e1);
-				return null;
-			}
+
+		// we verify and compile apart the calls to actions as operators
+		SpeciesDescription sd = getContext().getSpeciesDescription(left.getType().getSpeciesName());
+		if ( sd != null ) {
 			StatementDescription cd = sd.getAction(op);
-			if ( cd == null ) {
-				context.flagError(op + " is not available for agents of species " + sd.getName(),
-					IGamlIssue.UNKNOWN_ACTION, e1, op, sd.getName());
+			if ( cd != null ) {
+				if ( !(e2 instanceof Array) ) {
+					context.flagError(
+						"Arguments to actions must be provided as an array of pairs arg::value",
+						IGamlIssue.UNKNOWN_ARGUMENT, e2);
+					return null;
+				}
+				IExpression right = compileArguments(cd, ((Array) e2).getExprs());
+				return factory.createBinaryExpr(op, left, right, context, true);
 			}
-			if ( !(e2 instanceof Array) ) {
-				context.flagError(
-					"Arguments to actions must be provided as an array of pairs arg::value",
-					IGamlIssue.UNKNOWN_ARGUMENT, e2);
-				return null;
-			}
-			IExpression right = compileArguments(cd, ((Array) e2).getExprs());
-			return factory.createBinaryExpr(op, left, right, context);
 		}
+
+		// // if the operator is an action call, we must verify and compile the arguments apart
+		// if ( isOnlyFunction(op) ) {
+		// SpeciesDescription sd =
+		// getContext().getSpeciesDescription(left.getContentType().getSpeciesName());
+		// if ( sd == null ) {
+		// context.flagError("the left side of " + op + " is not an agent",
+		// IGamlIssue.NOT_AN_AGENT, e1);
+		// return null;
+		// }
+		// StatementDescription cd = sd.getAction(op);
+		// if ( cd == null ) {
+		// context.flagError(op + " is not available for agents of species " + sd.getName(),
+		// IGamlIssue.UNKNOWN_ACTION, e1, op, sd.getName());
+		// }
+		// if ( !(e2 instanceof Array) ) {
+		// context.flagError(
+		// "Arguments to actions must be provided as an array of pairs arg::value",
+		// IGamlIssue.UNKNOWN_ARGUMENT, e2);
+		// return null;
+		// }
+		// IExpression right = compileArguments(cd, ((Array) e2).getExprs());
+		// return factory.createBinaryExpr(op, left, right, context);
+		// }
 		// if the operator is an iterator, we must initialize "each"
 		if ( ITERATORS.contains(op) ) {
 			IType t = left.getContentType();
@@ -422,13 +440,14 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
 		// and return the binary expression
-		return factory.createBinaryExpr(op, left, right, context);
+		return factory.createBinaryExpr(op, left, right, context, false);
 
 	}
 
-	private boolean isOnlyFunction(final String op) {
-		return FUNCTIONS.contains(op) && BINARIES.get(op).size() == 1;
-	}
+	//
+	// private boolean isOnlyFunction(final String op) {
+	// return FUNCTIONS.contains(op) && BINARIES.get(op).size() == 1;
+	// }
 
 	// KEEP
 	private IExpression binary(final String op, final Expression e1, final Expression right) {
@@ -475,7 +494,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 				IGamlIssue.UNKNOWN_VAR, leftExpr, var, contextDesc.getName());
 		}
 		EGaml.setGamlDescription(fieldExpr, expr);
-		return factory.createBinaryExpr(_DOT, target, expr, context);
+		return factory.createBinaryExpr(_DOT, target, expr, context, false);
 
 	}
 

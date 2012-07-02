@@ -56,7 +56,7 @@ public interface IExpressionFactory {
 		int scope, IDescription definitionDescription);
 
 	public IExpression createBinaryExpr(String string, IExpression compile, IExpression ifFalse,
-		IDescription context);
+		IDescription context, boolean isAction);
 
 	public IExpression createList(final List<? extends IExpression> elements);
 
