@@ -18,8 +18,8 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 public class SpeciesConstantExpression extends ConstantExpression {
@@ -32,10 +32,13 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
-		if ( pop != null ) { return pop.getSpecies(); }
 
-		return null;
+		ISpecies s = scope.getSimulationScope().getModel().getSpecies((String) value);
+		return s;
+		// IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
+		// if ( pop != null ) { return pop.getSpecies(); }
+
+		// return null;
 	}
 
 	@Override
