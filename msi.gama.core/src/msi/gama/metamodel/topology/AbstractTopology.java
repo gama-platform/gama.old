@@ -313,6 +313,7 @@ public abstract class AbstractTopology implements ITopology {
 	 *      msi.gama.environment.IAgentFilter, boolean)
 	 */
 	// @Override
+	// @Override
 	public IList<IAgent> getAgentsInOld(final IShape source, final IAgentFilter f,
 		final boolean covered) {
 		GamaList<IAgent> result = new GamaList();
@@ -335,10 +336,11 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
+	// @Override
 	@Override
 	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
 		final boolean covered) {
-		if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
+		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
 		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
 		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
