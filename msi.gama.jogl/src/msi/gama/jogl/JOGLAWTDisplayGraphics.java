@@ -591,6 +591,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.x = curX;
 		curImage.y = curY;
 		curImage.z = z;
+		curImage.alpha = this.currentAlpha;
 		curImage.width = widthInModel;
 		curImage.height = heightInModel;
 		if (angle == null) {

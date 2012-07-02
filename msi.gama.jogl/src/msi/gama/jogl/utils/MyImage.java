@@ -13,6 +13,7 @@ public class MyImage {
 	public float x;
 	public float y;
 	public float z;
+	public float alpha;
 	public float width;
 	public float height;
 	public Integer angle = 0;

@@ -367,7 +367,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					t.bind();
 		
 					// Reset opengl color. Set the transparency of the image to 1 (opaque).
-					gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					gl.glColor4f(1.0f, 1.0f, 1.0f, img.alpha);
 					TextureCoords textureCoords;
 					textureCoords = t.getImageTexCoords();
 					textureTop = textureCoords.top();
