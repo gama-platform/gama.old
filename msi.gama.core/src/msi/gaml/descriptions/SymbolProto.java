@@ -172,7 +172,7 @@ public class SymbolProto {
 			if ( f == null ) {
 				continue;
 			}
-			if ( f.isLabel && facets.containsKey(facetName) ) {
+			if ( f.isLabel && facets.containsKey(facetName) && facets.get(facetName) != null ) {
 				facets.put(facetName, facets.get(facetName).compileAsLabel());
 				if ( f.types.get(0).equals(IType.LABEL) ) {
 					if ( f.values != null && f.values.length != 0 ) {
