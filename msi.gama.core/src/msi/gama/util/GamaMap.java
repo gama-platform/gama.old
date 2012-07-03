@@ -186,18 +186,20 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 
 	@Override
 	public Object first() {
-		// TODO Impossible operation... Exception ?
-		// if ( size() == 0 ) { return null; }
-		// return get(0);
-		return null;
+		Iterator<Map.Entry<Object, Object>> it = entrySet().iterator();
+		Map.Entry entry = it.hasNext() ? it.next() : null;
+		return entry == null ? new GamaPair(null, null) : new GamaPair(entry.getKey(),
+			entry.getValue());
 	}
 
 	@Override
 	public Object last() {
-		// TODO Impossible operation (unless we keep a track of the first and last ?)
-		// if ( size() == 0 ) { return null; }
-		// return get(size() - 1);
-		return null;
+		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
+		Collections.reverse(list);
+		Iterator<Map.Entry<Object, Object>> it = list.iterator();
+		Map.Entry entry = it.hasNext() ? it.next() : null;
+		return entry == null ? new GamaPair(null, null) : new GamaPair(entry.getKey(),
+			entry.getValue());
 	}
 
 	@Override
@@ -368,9 +370,13 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return false;
 	}
 
+	/**
+	 * Returns an iterator that iterates on the list of GamaPair
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator iterator() {
-		return values().iterator();
+		return listValue(null).iterator();
 	}
 
 	/*
