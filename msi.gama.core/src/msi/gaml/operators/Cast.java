@@ -227,11 +227,7 @@ public class Cast {
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 		throws GamaRuntimeException {
 		if ( string == null || string.isEmpty() ) { return 0; }
-		try {
-			return Integer.parseInt(string, radix);
-		} catch (NumberFormatException e) {
-			throw new GamaRuntimeException(e);
-		}
+		return GamaIntegerType.staticCast(scope, string, radix);
 	}
 
 	@operator(value = IType.LIST_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
