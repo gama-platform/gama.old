@@ -34,7 +34,7 @@ import msi.gaml.types.*;
 @vars({ @var(name = GamaMap.KEYS, type = IType.LIST_STR),
 	@var(name = GamaMap.VALUES, type = IType.LIST_STR),
 	@var(name = GamaMap.PAIRS, type = IType.LIST_STR, of = IType.PAIR_STR) })
-public class GamaMap extends HashMap implements IContainer {
+public class GamaMap extends LinkedHashMap implements IContainer {
 
 	public static final String KEYS = "keys";
 
