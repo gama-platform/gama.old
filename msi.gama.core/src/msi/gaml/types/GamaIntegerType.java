@@ -47,15 +47,23 @@ public class GamaIntegerType extends GamaType<Integer> {
 		if ( obj instanceof Color ) { return ((Color) obj).getRGB(); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).getIndex(); }
 		if ( obj instanceof String ) {
-			String n = (String) obj;
-
+			String n = new String(obj.toString());
+			// removing whitespaces
+			n = n.replaceAll("\\p{Zs}", "");
 			try {
 				// If the string contains an hexadecimal number, parse it with a radix of 16.
 				if ( n.startsWith("#") ) { return Integer.parseInt(n.substring(1), 16); }
-				// Otherwise use by default a "natural" radix of 10 (which can be bypassed with the
-				// as_int operator)
-				return Integer.parseInt(n, 10);
+				// Otherwise use by default a "natural" radix of 10 (can be bypassed with the
+				// as_int operator, which will put the radix in the param argument)
+				int radix = 10;
+				if ( param instanceof Integer ) {
+					radix = (Integer) param;
+				}
+				return Integer.parseInt(n, radix);
 			} catch (NumberFormatException e) {
+				// for ( Character c : n.toCharArray() ) {
+				// System.out.printf("U+%04x ", (int) c);
+				// }
 				throw new GamaRuntimeException(e);
 			}
 		}
