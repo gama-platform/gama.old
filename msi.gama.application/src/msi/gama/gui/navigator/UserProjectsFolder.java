@@ -18,49 +18,27 @@
  */
 package msi.gama.gui.navigator;
 
-import java.io.IOException;
-import java.net.URL;
-import org.eclipse.core.runtime.FileLocator;
+import java.util.*;
+import org.eclipse.core.resources.*;
 
-public abstract class VirtualFolder {
+public class UserProjectsFolder extends VirtualFolder {
 
-	private Object rootElement;
-	private final String name;
-	private String builtInModelsPath;
+	public UserProjectsFolder(final String name) {
+		super(name);
+	}
 
-	public String getBuiltInModelsPath() {
-		if ( builtInModelsPath == null ) {
-			try {
-				builtInModelsPath =
-					FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"))
-						.getPath();
-			} catch (IOException e) {
-				e.printStackTrace();
+	@Override
+	public Object[] getChildren() {
+		List<IProject> totalList =
+			Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+		List<IProject> resultList = new ArrayList();
+		// We only add the projects whose path does not begin with the built-in models path
+		for ( IProject project : totalList ) {
+			String projectPath = project.getLocation().toString();
+			if ( !projectPath.startsWith(getBuiltInModelsPath()) ) {
+				resultList.add(project);
 			}
 		}
-		return builtInModelsPath;
+		return resultList.toArray();
 	}
-
-	public void setBuiltInModelsPath(final String builtInModelsPath) {
-		this.builtInModelsPath = builtInModelsPath;
-	}
-
-	public VirtualFolder(final String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Object getRootElement() {
-		return rootElement;
-	}
-
-	public void setRootElement(final Object rootElement) {
-		this.rootElement = rootElement;
-	}
-
-	public abstract Object[] getChildren();
-
 }

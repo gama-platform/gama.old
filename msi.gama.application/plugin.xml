@@ -840,13 +840,13 @@
                               value="msi.gama.gui.navigator.FileBean">
                         </instanceof>
                         <instanceof
-                              value="msi.gama.gui.navigator.VirtualProjectFolder">
+                              value="msi.gama.gui.navigator.UserProjectsFolder">
                         </instanceof>
                         <instanceof
                               value="msi.gama.gui.navigator.VirtualSharedModelsFolder">
                         </instanceof>
                         <instanceof
-                              value="msi.gama.gui.navigator.VirtualModelsFolder">
+                              value="msi.gama.gui.navigator.ModelsLibraryFolder">
                         </instanceof>
                      </or>
                   </iterate>
@@ -1559,7 +1559,7 @@
             providesSaveables="false">
          <triggerPoints>
             <instanceof
-                  value="msi.gama.gui.navigator.VirtualProjectFolder">
+                  value="msi.gama.gui.navigator.UserProjectsFolder">
             </instanceof>
          </triggerPoints>
       </navigatorContent>
@@ -1573,7 +1573,7 @@
             providesSaveables="false">
          <triggerPoints>
             <instanceof
-                  value="msi.gama.gui.navigator.VirtualModelsFolder">
+                  value="msi.gama.gui.navigator.ModelsLibraryFolder">
             </instanceof>
          </triggerPoints>
       </navigatorContent>

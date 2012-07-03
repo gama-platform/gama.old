@@ -35,10 +35,10 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 
 	@Override
 	public String getText(final Object element) {
-		if ( element instanceof VirtualProjectFolder ) { return ((VirtualProjectFolder) element)
-			.getName() + " ( " + ((VirtualProjectFolder) element).getChildren().length + " )"; }
-		if ( element instanceof VirtualModelsFolder ) { return ((VirtualModelsFolder) element)
-			.getName() + " ( " + ((VirtualModelsFolder) element).getChildren().length + " )"; }
+		if ( element instanceof UserProjectsFolder ) { return ((UserProjectsFolder) element)
+			.getName() + " ( " + ((UserProjectsFolder) element).getChildren().length + " )"; }
+		if ( element instanceof ModelsLibraryFolder ) { return ((ModelsLibraryFolder) element)
+			.getName() + " ( " + ((ModelsLibraryFolder) element).getChildren().length + " )"; }
 		if ( element instanceof VirtualSharedModelsFolder ) { return ((VirtualSharedModelsFolder) element)
 			.getName() + " ( " + ((VirtualSharedModelsFolder) element).getChildren().length + " )"; }
 		if ( element instanceof FileBean ) {
@@ -59,10 +59,10 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 		if ( element instanceof VirtualSharedModelsFolder ) {
 			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_library.png");
 			image = desc.createImage();
-		} else if ( element instanceof VirtualProjectFolder ) {
+		} else if ( element instanceof UserProjectsFolder ) {
 			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_workspace.png");
 			image = desc.createImage();
-		} else if ( element instanceof VirtualModelsFolder ) {
+		} else if ( element instanceof ModelsLibraryFolder ) {
 			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_samples.png");
 			image = desc.createImage();
 		} else if ( element instanceof FileBean ) {

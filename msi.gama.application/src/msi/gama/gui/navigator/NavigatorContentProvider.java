@@ -40,14 +40,14 @@ public class NavigatorContentProvider implements ITreeContentProvider, IResource
 
 	@Override
 	public Object[] getChildren(final Object parentElement) {
-		if ( parentElement instanceof VirtualModelsFolder ) {
-			VirtualModelsFolder parent = (VirtualModelsFolder) parentElement;
+		if ( parentElement instanceof ModelsLibraryFolder ) {
+			ModelsLibraryFolder parent = (ModelsLibraryFolder) parentElement;
 			return parent.getChildren();
 		} else if ( parentElement instanceof VirtualSharedModelsFolder ) {
 			VirtualSharedModelsFolder parent = (VirtualSharedModelsFolder) parentElement;
 			return parent.getChildren();
-		} else if ( parentElement instanceof VirtualProjectFolder ) {
-			VirtualProjectFolder parent = (VirtualProjectFolder) parentElement;
+		} else if ( parentElement instanceof UserProjectsFolder ) {
+			UserProjectsFolder parent = (UserProjectsFolder) parentElement;
 			return parent.getChildren();
 		} else if ( parentElement instanceof FileBean ) {
 			FileBean parent = (FileBean) parentElement;

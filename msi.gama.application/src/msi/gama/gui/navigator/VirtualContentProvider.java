@@ -67,9 +67,9 @@ public class VirtualContentProvider implements ITreeContentProvider {
 	 */
 	private void initializeVirtualFolders(final Object parentElement) {
 		this.virtualFolder = new VirtualFolder[3];
-		this.virtualFolder[0] = new VirtualProjectFolder("User models");
+		this.virtualFolder[0] = new UserProjectsFolder("User models");
 		this.virtualFolder[0].setRootElement(parentElement);
-		this.virtualFolder[1] = new VirtualModelsFolder("Models library");
+		this.virtualFolder[1] = new ModelsLibraryFolder("Models library");
 		this.virtualFolder[1].setRootElement(parentElement);
 		this.virtualFolder[2] = new VirtualSharedModelsFolder("Shared models");
 		this.virtualFolder[2].setRootElement(parentElement);
