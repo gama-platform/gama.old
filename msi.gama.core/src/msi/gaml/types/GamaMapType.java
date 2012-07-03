@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.metamodel.agent.AbstractAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -49,7 +49,7 @@ public class GamaMapType extends GamaType<Map> {
 
 	@Override
 	public IType defaultContentType() {
-		return Types.get(NONE);
+		return Types.get(PAIR);
 	}
 
 }
