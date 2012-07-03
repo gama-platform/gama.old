@@ -31,7 +31,7 @@ import msi.gaml.types.*;
  */
 public class ListExpression extends AbstractExpression {
 
-	private final IExpression[] elements;
+	final IExpression[] elements;
 	private final Object[] values;
 	private boolean isConst, computed;
 
