@@ -86,10 +86,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// OpenGL list ID
 	private int listID = -1;
 	public boolean isListCreated = false;
+	
+	public boolean useDisplayList;
+	
 
 	// use to do the triangulation only once per timestep.
 	public boolean isPolygonTriangulated = false;
 
+	public boolean useVertexArray;
 	// FIXME: This need to be remove. Only here to return the bounds of a
 	// geometry.
 	private final PointTransformation pt = new PointTransformation() {
@@ -664,8 +668,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void DrawMyJTSGeometries() {
 
-		boolean useDisplayList = false;
-		boolean useVertexArray = false;
+		useDisplayList = false;
+		useVertexArray = false;
 		// System.out.println("isListCreated="+isListCreated);
 		if (useDisplayList) {
 			if (!isListCreated) {
@@ -676,8 +680,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 						+ "list ok");
 				isListCreated = true;
 			} else {
-				// System.out.println("Call" + this.myJTSGeometries.size() +
-				// "list");
+				//System.out.println("Call" + this.myJTSGeometries.size() +
+				 //"list");
 				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
 			}
 		} else {
@@ -767,12 +771,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// ///////////////Clean method /////////////////////////
 
 	/**
-	 * Call every new iteration when updateDisplay() is called
+	 * Call  when updateDisplay() is called
 	 */
 	public void CleanGeometries() {
-		// FIXME : check that display list is used.
-		graphicsGLUtils.displayListHandler.DeleteDisplayLists(this.myJTSGeometries.size());
-		graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();
+		if(useDisplayList){
+			graphicsGLUtils.displayListHandler.DeleteDisplayLists(this.myJTSGeometries.size());
+		}
+		if(useVertexArray){
+			graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();	
+		}
 		this.myJTSGeometries.clear();
 	}
 
