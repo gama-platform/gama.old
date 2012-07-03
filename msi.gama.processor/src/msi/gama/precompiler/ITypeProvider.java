@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -62,4 +62,11 @@ public interface ITypeProvider {
 	 * The type or content type are provided by both operands (which must match).
 	 */
 	static final short BOTH = -21;
+	/*
+	 * The content type is provided by the content type of the first element of the child (if the
+	 * child is a container) -- EXPERIMENTAL RIGHT NOW (and probably limited to the matrix and
+	 * as_matrix operators)
+	 * e.g. : matrix ([[4, 5, 6],[1, 2, 4]]) should get int as a content type.
+	 */
+	static final short FIRST_ELEMENT_CONTENT_TYPE = -22;
 }
