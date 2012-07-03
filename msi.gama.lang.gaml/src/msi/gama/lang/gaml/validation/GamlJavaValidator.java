@@ -25,6 +25,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.*;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
@@ -93,10 +94,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			}
 			return;
 		}
-		if ( e.isWarning() ) {
-			warning(e.toString(), object, null, 0, e.getCode(), e.getData());
-		} else {
-			error(e.toString(), object, null, 0, e.getCode(), e.getData());
+		if ( !Arrays.contains(e.getData(), null) ) {
+			if ( e.isWarning() ) {
+				warning(e.toString(), object, null, 0, e.getCode(), e.getData());
+			} else {
+				error(e.toString(), object, null, 0, e.getCode(), e.getData());
+			}
 		}
 	}
 
