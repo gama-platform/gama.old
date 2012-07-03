@@ -235,7 +235,7 @@ public class Facets {
 
 	public void dispose() {
 		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null ) {
+			if ( facets[i] != null && facets[i].value != null ) {
 				facets[i].value.dispose();
 			}
 		}
