@@ -18,6 +18,7 @@
  */
 package msi.gaml.factories;
 
+import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -41,5 +42,15 @@ public class ExperimentFactory extends SpeciesFactory {
 	protected ExperimentDescription buildDescription(final ISyntacticElement se, final String kw,
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
 		return new ExperimentDescription(kw, sd, cp, se, md);
+	}
+
+	@Override
+	protected void privateValidateChildren(final IDescription sd) {
+		for ( IDescription s : sd.getChildren() ) {
+			if ( s.getFacets().equals(KEYWORD, PARAMETER) ) {
+				validateDescription(s);
+			}
+		}
+		super.privateValidateChildren(sd);
 	}
 }
