@@ -111,11 +111,22 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	public void computeContentType() {
 		short t = contentTypeProvider;
-		contentType =
-			t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child.getContentType()
-				: t >= 0 ? Types.get(t) : type.id() == IType.LIST || type.id() == IType.MATRIX ||
-					type.id() == IType.CONTAINER ? child.getContentType() : type.isSpeciesType()
-					? type : type.defaultContentType();
+		if ( t == FIRST_ELEMENT_CONTENT_TYPE ) {
+			if ( child instanceof ListExpression ) {
+				IExpression[] array = ((ListExpression) child).elements;
+				if ( array.length == 0 ) {
+					contentType = Types.NO_TYPE;
+				} else {
+					contentType = ((ListExpression) child).elements[0].getContentType();
+				}
+			}
+		} else {
+			contentType =
+				t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child
+					.getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
+					type.id() == IType.MATRIX || type.id() == IType.CONTAINER ? child
+					.getContentType() : type.isSpeciesType() ? type : type.defaultContentType();
+		}
 	}
 
 	@Override
