@@ -46,7 +46,7 @@ public class Files {
 	public static final String READ = "read";
 	public static final String WRITE = "write";
 
-	@operator(value = IKeyword.FILE)
+	@operator(value = IKeyword.FILE, can_be_const = true)
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
 		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
@@ -56,31 +56,31 @@ public class Files {
 		throw new GamaRuntimeException("Unknown file type: " + s);
 	}
 
-	@operator(value = IMAGE)
+	@operator(value = IMAGE, can_be_const = true)
 	public static IGamaFile imageFile(final IScope scope, final String s)
 		throws GamaRuntimeException {
 		return new GamaImageFile(scope, s);
 	}
 
-	@operator(value = TEXT)
+	@operator(value = TEXT, can_be_const = true)
 	public static IGamaFile textFile(final IScope scope, final String s)
 		throws GamaRuntimeException {
 		return new GamaTextFile(scope, s);
 	}
 
-	@operator(value = PROPERTIES)
+	@operator(value = PROPERTIES, can_be_const = true)
 	public static IGamaFile propertyFile(final IScope scope, final String s)
 		throws GamaRuntimeException {
 		return new GamaPropertyFile(scope, s);
 	}
 
-	@operator(value = SHAPE)
+	@operator(value = SHAPE, can_be_const = true)
 	public static IGamaFile shapeFile(final IScope scope, final String s)
 		throws GamaRuntimeException {
 		return new GamaShapeFile(scope, s);
 	}
 
-	@operator(value = FOLDER)
+	@operator(value = FOLDER, can_be_const = true)
 	public static IGamaFile folderFile(final IScope scope, final String s)
 		throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s);
