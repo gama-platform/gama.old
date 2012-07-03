@@ -44,10 +44,10 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	}
 
 	@Override
-	public Object executeOn(final IScope stack) throws GamaRuntimeException {
+	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
 		try {
-			result = privateExecuteIn(stack);
+			result = privateExecuteIn(scope);
 		} catch (GamaRuntimeException e) {
 			e.addContext(this);
 			if ( e.isWarning() ) {
@@ -59,7 +59,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		return result;
 	}
 
-	protected abstract Object privateExecuteIn(IScope stack) throws GamaRuntimeException;
+	protected abstract Object privateExecuteIn(IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {}
