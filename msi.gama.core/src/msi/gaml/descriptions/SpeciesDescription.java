@@ -174,8 +174,12 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public ISkill getSkillFor(final Class clazz) {
-
 		ISkill skill = skills.get(clazz);
+		if ( skill == null && clazz != null ) {
+			for ( Map.Entry<Class, ISkill> entry : skills.entrySet() ) {
+				if ( clazz.isAssignableFrom(entry.getKey()) ) { return entry.getValue(); }
+			}
+		}
 		return skill;
 	}
 
