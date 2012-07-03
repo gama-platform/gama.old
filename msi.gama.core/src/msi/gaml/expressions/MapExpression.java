@@ -52,7 +52,8 @@ public class MapExpression extends AbstractExpression {
 		values = new GamaMap(keys.length);
 		setName(pairs.toString());
 		type = Types.get(IType.MAP);
-		determineContentType();
+		contentType = Types.get(IType.PAIR);
+		// determineContentType();
 	}
 
 	private void determineContentType() {
