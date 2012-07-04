@@ -131,12 +131,17 @@ public class StatementDescription extends SymbolDescription {
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
 		final IType contentType) {
+		String varName = facets.getLabel(facetName);
+		if ( facetName.equals(IKeyword.VAR) ) {
+			// Case of loops
+			return (IVarExpression) addTemp(varName, type, contentType);
+		}
+
 		IDescription sup = getSuperDescription();
 		if ( !(sup instanceof StatementDescription) ) {
 			flagError("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
-		String varName = facets.getLabel(facetName);
 		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType);
 	}
 
