@@ -19,10 +19,8 @@
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
+import java.awt.image.*;
+import java.io.*;
 import java.util.List;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
@@ -32,8 +30,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
@@ -58,12 +55,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void initialize(final double w, final double h, final IDisplayOutput output) {
 		outputChanged(w, h, output);
-//Hack Nico		
+		// Hack Nico
 		if ( displayGraphics == null ) {
-			displayGraphics = GuiUtils.newGraphics((int)w, (int)h);
+			displayGraphics = GuiUtils.newGraphics((int) w, (int) h);
 		}
-		
+
 	}
+
 	/**
 	 * Save this surface into an image passed as a parameter
 	 * @param scope
@@ -78,7 +76,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			e1.printStackTrace();
 			return;
 		}
-		
+
 		String file = snapshotFolder + "/" + snapshotFileName + SimulationClock.getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
@@ -100,7 +98,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			}
 		}
 	}
-
 
 	@Override
 	public ILayerManager getManager() {
@@ -171,7 +168,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
-		displayGraphics.setGraphics(g2); 
+		displayGraphics.setGraphics(g2);
 	}
 
 	private void paint() {
@@ -310,7 +307,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
 	 */
 	@Override
-	public void setAutoSave(final boolean autosave) {}
+	public void setAutoSave(final boolean autosave, final int x, final int y) {}
 
 	@Override
 	public void setSnapshotFileName(final String file) {
@@ -324,6 +321,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void snapshot() {
 		save(GAMA.getDefaultScope(), buffImage);
 	}
+
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
 	 */
@@ -391,9 +389,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void setHighlightColor(final int[] rgb) {}
-	
+
 	/**
-	 * This method does nothing for Image display 
+	 * This method does nothing for Image display
 	 */
 	@Override
 	public void toggleView() {

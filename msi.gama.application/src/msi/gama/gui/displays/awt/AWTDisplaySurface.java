@@ -46,6 +46,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private boolean autosave = false;
 	private String snapshotFileName;
+	private Point snapshotDimension;
 	public static String snapshotFolder = "snapshots";
 	protected ILayerManager manager;
 	boolean paused;
@@ -545,8 +546,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setAutoSave(boolean)
 	 */
 	@Override
-	public void setAutoSave(final boolean autosave) {
+	public void setAutoSave(final boolean autosave, final int x, final int y) {
 		this.autosave = autosave;
+		snapshotDimension = new Point(x, y);
 	}
 
 	@Override
@@ -559,7 +561,17 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		save(GAMA.getDefaultScope(), buffImage);
+		if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
+			save(GAMA.getDefaultScope(), buffImage);
+			return;
+		}
+		BufferedImage newImage =
+			ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+		IGraphics tempGraphics = new AWTDisplayGraphics(newImage);
+		tempGraphics.fill(bgColor, 1);
+		manager.drawLayersOn(tempGraphics);
+		save(GAMA.getDefaultScope(), newImage);
+		newImage.flush();
 	}
 
 	/**
