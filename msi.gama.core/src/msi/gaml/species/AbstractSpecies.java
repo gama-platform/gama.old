@@ -43,22 +43,22 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected boolean isGrid;
 
-	protected Map<String, ISpecies> microSpecies;
+	protected final Map<String, ISpecies> microSpecies = new HashMap<String, ISpecies>();
 
 	// TODO remove -> not necessary: this.getMacroSpecies().getMicroSpecies().remove(this);
-	private IList<ISpecies> peerSpecies;
+	// private IList<ISpecies> peerSpecies;
 
 	private IScope ownStack;
 
-	private Map<String, IVariable> variables;
+	private final Map<String, IVariable> variables = new HashMap<String, IVariable>();
 
-	private Map<String, AspectStatement> aspects;
+	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
 
-	private Map<String, ActionStatement> actions;
+	private final Map<String, ActionStatement> actions = new HashMap<String, ActionStatement>();
 
-	private Map<String, UserCommandStatement> userCommands;
+	private final Map<String, UserCommandStatement> userCommands = new LinkedHashMap();
 
-	private IList<IStatement> behaviors;
+	private final IList<IStatement> behaviors = new GamaList<IStatement>();
 
 	protected ISpecies macroSpecies;
 
@@ -205,13 +205,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public IList<ISpecies> getPeersSpecies() {
 		if ( macroSpecies == null ) { return GamaList.EMPTY_LIST; }
-
-		if ( peerSpecies == null ) {
-			peerSpecies = new GamaList<ISpecies>(macroSpecies.getMicroSpecies());
-			peerSpecies.remove(this);
-		}
-
-		return peerSpecies;
+		IList<ISpecies> result = new GamaList(macroSpecies.getMicroSpecies());
+		result.remove(this);
+		return result;
 	}
 
 	@Override
@@ -282,17 +278,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			((ISpecies) other).getName()); }
 
 		return false;
-	}
-
-	@Override
-	protected void initFields() {
-		super.initFields();
-		microSpecies = new HashMap<String, ISpecies>();
-		variables = new HashMap<String, IVariable>();
-		actions = new HashMap<String, ActionStatement>();
-		aspects = new HashMap<String, AspectStatement>();
-		userCommands = new LinkedHashMap();
-		behaviors = new GamaList<IStatement>();
 	}
 
 	@Override
@@ -418,13 +403,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			v.dispose();
 		}
 		variables.clear();
-		variables = null;
 
 		for ( AspectStatement ac : aspects.values() ) {
 			ac.dispose();
 		}
 		aspects.clear();
-		aspects = null;
 
 		for ( ActionStatement ac : actions.values() ) {
 			ac.dispose();
@@ -435,13 +418,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			c.dispose();
 		}
 		behaviors.clear();
-		behaviors = null;
 
 		macroSpecies = null;
 
 		// TODO dispose micro_species first???
 		microSpecies.clear();
-		microSpecies = null;
 	}
 
 	protected void setOwnScope(final IScope ownStack) {
