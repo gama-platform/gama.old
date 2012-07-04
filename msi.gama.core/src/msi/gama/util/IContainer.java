@@ -232,7 +232,6 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 			"if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed",
 			"if it is a matrix, reverse returns a new matrix containing the transpose of the operand."},
 		examples = {
-			"reverse ({10,13}) 					--: 	{13, 10}",
 			"reverse ([10,12,14]) 				--: 	[14, 12, 10]",
 			"reverse ([k1::44, k2::32, k3::12]) --: 	[12::k3,  32::k2, 44::k1]"})
 	public IContainer<KeyType, ValueType> reverse() throws GamaRuntimeException;
