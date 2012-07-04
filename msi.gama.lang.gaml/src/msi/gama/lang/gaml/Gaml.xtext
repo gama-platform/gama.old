@@ -17,7 +17,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 /**
  * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
  */ 
-	BuiltIn:  ('write'|'warn'|'error'|'match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return');
+	BuiltIn:  ('write'|'warn'|'error'|'match'|'match_one'|'match_between'|'capture'|'release'|'ask'|'switch'|'create'|'add'|'remove'|'put'|'save'|'set'|'return' );
 
 /**
  * Statements (i.e. commands in the GAML descriptions).
@@ -35,7 +35,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	FunctionGamlFacetRef:  (ref='function' ':'| ref = '->');
 	FacetExpr:    FunctionFacetExpr | DefinitionFacetExpr | (key=GamlFacetRef expr=Expression);
 	DefinitionFacetExpr: ReturnsFacetExpr | NameFacetExpr | ActionFacetExpr;
-	NameFacetExpr: ('name:') name=(ID|STRING|BuiltIn);
+	NameFacetExpr: 'name:' name=(ID|STRING|BuiltIn);
 	ReturnsFacetExpr : 'returns:' name=ID;
 	ActionFacetExpr: 'action:' name=(ID|STRING|BuiltIn);
 	FunctionFacetExpr: key= FunctionGamlFacetRef '{' expr=Expression '}'; // Introduce "closures" ? 
