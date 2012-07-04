@@ -158,7 +158,7 @@ public interface IKeyword {
 	public static final String KEY = "key";
 	public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
-	public static final String LEAVE_GROUP = "leave_group";
+	public static final String LEGEND = "legend";
 	public static final String LET = "let";
 	public static final String LINE = "line";
 	public static final String LINES = "lines";
