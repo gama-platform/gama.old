@@ -51,6 +51,7 @@ public interface IDisplaySurface {
 	void zoomOut();
 
 	void zoomFit();
+
 	/**
 	 * Switch between 2D and 3D view (Onlye with Opengl view)
 	 */
@@ -76,7 +77,7 @@ public interface IDisplaySurface {
 
 	void setSynchronized(boolean checked);
 
-	void setAutoSave(boolean autosave);
+	void setAutoSave(boolean autosave, int x, int y);
 
 	void setSnapshotFileName(String string);
 
@@ -143,7 +144,5 @@ public interface IDisplaySurface {
 	int[] getHighlightColor();
 
 	void setHighlightColor(int[] rgb);
-
-	
 
 }

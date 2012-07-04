@@ -24,6 +24,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -38,7 +39,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * The Class LayerDisplayOutput.
@@ -52,7 +53,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
 		LayeredDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.AUTOSAVE, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
@@ -65,6 +66,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	String snapshotFileName;
 	private boolean autosave = false;
 	private String displayType = JAVA2D;
+	private ILocation imageDimension = new GamaPoint(-1, -1);
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -88,7 +90,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
-			autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
+			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
+				autosave = true;
+				imageDimension = Cast.asPoint(getOwnScope(), auto.value(getOwnScope()));
+			} else {
+				autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
+			}
 		}
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
@@ -148,7 +155,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
-		surface.setAutoSave(autosave);
+		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 	}
 
 	public void setSurface(final IDisplaySurface sur) {
