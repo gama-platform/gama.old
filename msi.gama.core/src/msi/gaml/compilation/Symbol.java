@@ -41,12 +41,9 @@ public abstract class Symbol implements ISymbol {
 		return description;
 	}
 
-	public Symbol(final IDescription description) {
-		this.description = description;
-		initFields();
+	public Symbol(final IDescription desc) {
+		description = desc;
 	}
-
-	protected void initFields() {}
 
 	@Override
 	public IExpression getFacet(final String key) {
