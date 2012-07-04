@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -31,12 +32,13 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
+import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
@@ -73,6 +75,28 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
 public class ChartLayerStatement extends AbstractLayerStatement {
 
+	public class DataDeclarationSequence extends AbstractStatementSequence {
+
+		public DataDeclarationSequence(final IDescription desc) {
+			super(desc);
+		}
+
+		// We create the variable in which the datas will be accumulated
+		@Override
+		public void enterScope(final IScope scope) {
+			super.enterScope(scope);
+			scope.addVarWithValue(ChartDataStatement.DATAS, new ArrayList());
+		}
+
+		// We save the datas once the computation is finished
+		@Override
+		public void leaveScope(final IScope scope) {
+			datas = (List<ChartData>) scope.getVarValue(ChartDataStatement.DATAS);
+			super.leaveScope(scope);
+		}
+
+	}
+
 	private static final int SERIES_CHART = 0;
 	private static final int HISTOGRAM_CHART = 1;
 	private static final int PIE_CHART = 2;
@@ -88,10 +112,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private Dataset dataset;
 	private boolean exploded;
 	String xAxisName = "time";
-	List<ChartDataStatement> datas;
+	List<ChartData> datas;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
 	ChartDataStatement timeSeriesXData = null;
+	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(null);
 
 	public JFreeChart getChart() {
 		return chart;
@@ -107,12 +132,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		datas = new GamaList();
-		for ( ISymbol s : commands ) {
-			if ( s instanceof ChartDataStatement ) {
-				datas.add((ChartDataStatement) s);
-			}
-		}
+		dataDeclaration.setChildren(commands);
+		// datas = new GamaList();
+		// for ( ISymbol s : commands ) {
+		// if ( s instanceof ChartDataStatement ) {
+		// datas.add((ChartDataStatement) s);
+		// }
+		// }
 	}
 
 	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamaRuntimeException {
@@ -123,10 +149,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 			timeSeriesXData =
 				(ChartDataStatement) DescriptionFactory.getModelFactory().compileDescription(
-					DescriptionFactory.create(IKeyword.DATA, description, IKeyword.NAME,
+					DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
 						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
-			timeSeriesXData.prepare(scope);
-			datas.add(0, timeSeriesXData);
+
+			datas.add(0, timeSeriesXData.createData(scope));
 
 		}
 		domainAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
@@ -137,7 +163,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		for ( int i = 0; i < datas.size(); i++ ) {
-			ChartDataStatement e = datas.get(i);
+			ChartData e = datas.get(i);
 			final String legend = e.getName();
 			if ( i != 0 ) { // the first data is the domain
 				dataset = new DefaultTableXYDataset();
@@ -160,9 +186,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	private void createData(final IScope scope) throws GamaRuntimeException {
-		for ( ChartDataStatement e : datas ) {
-			e.prepare(scope);
-		}
+		// Normally initialize the datas
+		dataDeclaration.executeOn(scope);
 		switch (type) {
 			case SERIES_CHART: {
 				createSeries(scope, true);
@@ -186,8 +211,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		int i = 0;
 		dataset = new DefaultPieDataset();
 		final PiePlot plot = (PiePlot) chart.getPlot();
-		for ( final ChartDataStatement e : datas ) {
-			final String legend = (String) e.getFacet(IKeyword.NAME).value(scope);
+		for ( final ChartData e : datas ) {
+			final String legend = e.getName();
 			((DefaultPieDataset) dataset).insertValue(i, legend, null);
 			history.append(legend);
 			history.append(',');
@@ -213,7 +238,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private void createBars(final IScope scope) {
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		dataset = new DefaultCategoryDataset();
-		for ( final ChartDataStatement e : datas ) {
+		for ( final ChartData e : datas ) {
 			String legend = e.getName();
 			((DefaultCategoryDataset) dataset).addValue(0, legend, legend);
 			history.append(legend);
@@ -353,7 +378,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				return;
 		}
 
-		for ( final ChartDataStatement d : datas ) {
+		for ( final ChartData d : datas ) {
 			lastValues.put(d.getName(), d.getValue(scope));
 		}
 		for ( final Map.Entry<String, Double> d : lastValues.entrySet() ) {

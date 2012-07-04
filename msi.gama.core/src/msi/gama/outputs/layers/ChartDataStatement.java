@@ -18,8 +18,7 @@
  */
 package msi.gama.outputs.layers;
 
-import java.awt.Color;
-import java.util.*;
+import java.util.ArrayList;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -29,41 +28,83 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import org.jfree.chart.renderer.xy.*;
 
-@symbol(name = IKeyword.DATA, kind = ISymbolKind.LAYER, with_sequence = false)
+@symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.CHART)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+	@facet(name = IKeyword.LEGEND, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK,
-		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.NAME)
-public class ChartDataStatement extends Symbol {
+		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
+public class ChartDataStatement extends AbstractStatement {
 
-	GamaColor color;
-	IExpression value;
-	AbstractXYItemRenderer renderer;
+	public static class ChartData {
+
+		String name;
+		GamaColor color;
+		IExpression value;
+		AbstractXYItemRenderer renderer;
+
+		public AbstractXYItemRenderer getRenderer() {
+			return renderer;
+		}
+
+		public void setRenderer(final AbstractXYItemRenderer renderer) {
+			this.renderer = renderer;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(final String name) {
+			this.name = name;
+		}
+
+		public GamaColor getColor() {
+			return color;
+		}
+
+		public void setColor(final GamaColor color) {
+			this.color = color;
+		}
+
+		public IExpression getValue() {
+			return value;
+		}
+
+		public double getValue(final IScope scope) throws GamaRuntimeException {
+			return Cast.asFloat(scope, value.value(scope));
+		}
+
+		public void setValue(final IExpression value) {
+			this.value = value;
+		}
+
+	}
+
+	public static final String DATAS = "chart_datas";
+	protected int dataNumber = 0;
 
 	public ChartDataStatement(final IDescription desc) {
 		super(desc);
-		computeRenderer();
 	}
 
-	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {}
-
-	public List<? extends ISymbol> getChildren() {
-		return Collections.EMPTY_LIST;
-	}
-
-	void computeRenderer() {
+	/**
+	 * @throws GamaRuntimeException
+	 * @param scope
+	 */
+	public ChartData createData(final IScope scope) throws GamaRuntimeException {
+		ChartData data = new ChartData();
 		String style = getLiteral(IKeyword.STYLE);
 		if ( style == null ) {
 			style = IKeyword.LINE;
@@ -82,31 +123,31 @@ public class ChartDataStatement extends Symbol {
 		} else if ( style.equals(IKeyword.STEP) ) {
 			r = new XYStepRenderer();
 		}
-		renderer = r;
-	}
+		data.renderer = r;
 
-	public Color getColor() {
-		return color;
-	}
-
-	public double getValue(final IScope scope) throws GamaRuntimeException {
-		return Cast.asFloat(scope, value.value(scope));
-	}
-
-	public AbstractXYItemRenderer getRenderer() {
-		return renderer;
+		data.name =
+			Cast.asString(
+				scope,
+				getFacetValue(scope, IKeyword.NAME,
+					getFacetValue(scope, IKeyword.LEGEND, "data" + dataNumber++)));
+		data.color =
+			Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
+		data.value = getFacet(IKeyword.VALUE);
+		return data;
 	}
 
 	/**
-	 * @throws GamaRuntimeException
-	 * @param scope
+	 * Data statements rely on the fact that a variable called "chart_datas" is available in the
+	 * scope. If not, it will not do anything.
+	 * This variable is normally created by the ChartLayerStatement.
+	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
 	 */
-	public void prepare(final IScope scope) throws GamaRuntimeException {
-		name = Cast.asString(scope, getFacetValue(scope, IKeyword.NAME));
-		color =
-			Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
-		value = getFacet(IKeyword.VALUE);
 
+	@Override
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		ChartData data = createData(scope);
+		((ArrayList) scope.getVarValue(DATAS)).add(data);
+		return data;
 	}
 
 }
