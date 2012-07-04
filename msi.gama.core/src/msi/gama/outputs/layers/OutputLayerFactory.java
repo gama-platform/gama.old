@@ -34,7 +34,8 @@ import msi.gaml.species.ISpecies;
  * 
  * @author drogoul
  */
-@factory(handles = { ISymbolKind.LAYER })
+@factory(handles = { ISymbolKind.LAYER }, uses = { ISymbolKind.SINGLE_STATEMENT,
+	ISymbolKind.SEQUENCE_STATEMENT })
 public class OutputLayerFactory extends SymbolFactory {
 
 	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d, 0d);
