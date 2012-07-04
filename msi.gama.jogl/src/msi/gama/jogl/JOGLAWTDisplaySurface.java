@@ -18,7 +18,6 @@
  */
 package msi.gama.jogl;
 
-import static javax.media.opengl.GL.GL_POLYGON;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -29,11 +28,9 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
-import javax.media.opengl.*;
 import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.displays.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.*;
@@ -47,7 +44,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
-import com.sun.opengl.util.FPSAnimator;
 import com.vividsolutions.jts.geom.Envelope;
 
 public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -83,19 +79,18 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	// Event Listener
 	public MyListener myListener;
-	
+
 	public JOGLAWTGLRenderer myGLRender;
 
-	//Use to toggle the 3D view.
+	// Use to toggle the 3D view.
 	public boolean ThreeD = false;
-	
-	
+
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
 
 		myGLRender = new JOGLAWTGLRenderer(this);
-		
+
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
@@ -396,7 +391,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
 			((JOGLAWTDisplayGraphics) openGLGraphics).isListCreated = false;
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
-			
+
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
@@ -505,17 +500,17 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void zoomIn() {	
-		float incrementalZoomStep=(float) myGLRender.camera.zPos/10;
-		myGLRender.camera.zPos -=incrementalZoomStep;
-		myGLRender.camera.zLPos -=incrementalZoomStep;
+	public void zoomIn() {
+		float incrementalZoomStep = (float) myGLRender.camera.zPos / 10;
+		myGLRender.camera.zPos -= incrementalZoomStep;
+		myGLRender.camera.zLPos -= incrementalZoomStep;
 	}
 
 	@Override
-	public void zoomOut() {				
-		float incrementalZoomStep=(float) myGLRender.camera.zPos/10;
-		myGLRender.camera.zPos +=incrementalZoomStep;
-		myGLRender.camera.zLPos +=incrementalZoomStep;
+	public void zoomOut() {
+		float incrementalZoomStep = (float) myGLRender.camera.zPos / 10;
+		myGLRender.camera.zPos += incrementalZoomStep;
+		myGLRender.camera.zLPos += incrementalZoomStep;
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -545,26 +540,24 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void zoomFit() {
 		if ( ThreeD ) {
 			myGLRender.camera.Initialize3DCamera(envWidth, envHeight);
-			if(myGLRender.camera.isModelCentered){
+			if ( myGLRender.camera.isModelCentered ) {
 				myGLRender.reset();
 			}
-			
+
 		} else {
 			myGLRender.camera.InitializeCamera(envWidth, envHeight);
-			if(myGLRender.camera.isModelCentered){
+			if ( myGLRender.camera.isModelCentered ) {
 				myGLRender.reset();
 			}
 		}
 
 	}
-	
+
 	@Override
 	public void toggleView() {
-	    ThreeD=!ThreeD;
-	    zoomFit();
+		ThreeD = !ThreeD;
+		zoomFit();
 	}
-	
-	
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
@@ -630,7 +623,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void setAutoSave(final boolean autosave) {
+	public void setAutoSave(final boolean autosave, final int x, final int y) {
 		this.autosave = autosave;
 	}
 
@@ -671,7 +664,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		return origin.y;
 	}
 
-	
 	@Override
 	public int[] getHighlightColor() {
 		if ( openGLGraphics == null ) { return null; }
