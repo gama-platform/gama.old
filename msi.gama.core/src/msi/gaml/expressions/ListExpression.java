@@ -62,6 +62,10 @@ public class ListExpression extends AbstractExpression {
 		isConst();
 	}
 
+	public IExpression[] getElements() {
+		return elements;
+	}
+
 	@Override
 	public GamaList value(final IScope scope) throws GamaRuntimeException {
 		if ( isConst && computed ) { return new GamaList(values); }
