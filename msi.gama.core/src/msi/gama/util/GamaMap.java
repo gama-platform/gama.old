@@ -46,6 +46,14 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	private static final GamaMap.ToMatrixProcedure toMatrixProcedure = new ToMatrixProcedure();
 	private static final GamaMap.ToReverseProcedure toReverseProcedure = new ToReverseProcedure();
 
+	public static GamaMap with(final IList keys, final IList values) {
+		GamaMap result = new GamaMap(keys.size());
+		for ( int i = 0, n = keys.size(); i < n; i++ ) {
+			result.put(keys.get(i), values.get(i));
+		}
+		return result;
+	}
+
 	public GamaMap() {
 		// instances++;
 		// OutputManager.debug("Maps created " + instances);
