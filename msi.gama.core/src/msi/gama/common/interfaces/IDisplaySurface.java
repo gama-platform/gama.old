@@ -40,6 +40,8 @@ public interface IDisplaySurface {
 
 	void updateDisplay();
 
+	void forceUpdateDisplay(); // toggling off synchronization
+
 	int[] computeBoundsFrom(int width, int height);
 
 	boolean resizeImage(int width, int height);
