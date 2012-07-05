@@ -177,7 +177,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			}
 			final IProjectDescription description = tempDescription;
-
 			final IProject proj = workspace.getRoot().getProject(project.toString());
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
