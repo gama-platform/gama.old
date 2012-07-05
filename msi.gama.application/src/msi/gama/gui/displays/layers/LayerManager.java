@@ -32,10 +32,13 @@ import msi.gama.util.*;
  */
 public class LayerManager implements ILayerManager {
 
+	// public final ILayer[] layers = new ILayer[20];
+	// public final boolean[] enabled = new boolean[20];
 	public final IList<ILayer> enabledLayers = new GamaList();
 	final IList<ILayer> disabledLayers = new GamaList();
 	final IDisplaySurface surface;
 	final PauseLayer pd = new PauseLayer(0d, 0d, null, null);
+	int count = 0;
 
 	public LayerManager(final IDisplaySurface surface) {
 		this.surface = surface;
@@ -65,6 +68,7 @@ public class LayerManager implements ILayerManager {
 			enabledLayers.remove(found);
 		}
 		Collections.sort(enabledLayers);
+		// GuiUtils.debug("Enabled layers (ordered):" + enabledLayers);
 		return found;
 	}
 
@@ -83,6 +87,7 @@ public class LayerManager implements ILayerManager {
 		enabledLayers.add(found);
 		disabledLayers.remove(found);
 		Collections.sort(enabledLayers);
+		// GuiUtils.debug("Enabled layers (ordered):" + enabledLayers);
 	}
 
 	@Override
@@ -169,6 +174,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public boolean addItem(final ILayer obj) {
+		obj.setOrder(count++);
 		enabledLayers.add(obj);
 		Collections.sort(enabledLayers);
 		return true;
@@ -177,11 +183,11 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void updateItemValues() {}
 
-	public static ILayer createDisplay(final ILayerStatement layer, final double env_width,	
-		final double env_height, final IGraphics dg) {	
-		
+	public static ILayer createDisplay(final ILayerStatement layer, final double env_width,
+		final double env_height, final IGraphics dg) {
+
 		switch (layer.getType()) {
-			
+
 			case ILayerStatement.GRID: {
 				return new GridLayer(env_width, env_height, layer, dg);
 			}

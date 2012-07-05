@@ -54,7 +54,9 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	void updateEnvDimensions(double env_width, double env_height);
 
-	// Integer getOrder();
+	void setOrder(Integer i);
+
+	Integer getOrder();
 
 	// void setOrder(Integer order);
 	// Image getMenuImage();

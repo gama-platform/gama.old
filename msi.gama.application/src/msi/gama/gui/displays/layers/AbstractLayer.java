@@ -67,10 +67,12 @@ public abstract class AbstractLayer implements ILayer {
 	// @Override
 	// public void initMenuItems(final IDisplaySurface surface) {}
 
+	@Override
 	public void setOrder(final Integer o) {
 		order = o;
 	}
 
+	@Override
 	public Integer getOrder() {
 		return order;
 	}
