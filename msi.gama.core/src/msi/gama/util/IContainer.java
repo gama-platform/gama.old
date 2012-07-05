@@ -86,7 +86,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 			"if it is a graph, first returns the first element in the list of vertexes",
 			"if it is a matrix, first returns the element at {0,0} in the matrix",
 			"for a matrix of int or float, it will return 0 if the matrix is empty",
-		"for a matrix of object or geometry, it will return null if the matrix is empty"},
+			"for a matrix of object or geometry, it will return null if the matrix is empty"},
 		examples = {"first ([1, 2, 3]) 		--:   1",
 					"first ({10,12})     	--:   10."},
 		see = {"last"})		

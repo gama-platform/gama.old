@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,11 +19,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class XMLWriter {
 
@@ -66,16 +77,23 @@ public class XMLWriter {
 			operatorsElt.appendChild(writeOperator(doc, entry.getKey(), entry.getValue()));			
 		}
 		root.appendChild(operatorsElt);
+		
 //		for ( Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet() ) {
 //			writeActionAddition(sb, entry.getKey(), entry.getValue());
 //		}
-//		for ( Map.Entry<String, String> entry : props.filterFirst(SKILL_PREFIX).entrySet() ) {
-//			writeSkill(sb, entry.getKey(), entry.getValue());
-//		}
-//		for ( Map.Entry<String, String> entry : props.filterFirst(SPECIES_PREFIX).entrySet() ) {
-//			writeSpecies(sb, entry.getKey(), entry.getValue());
-//		}
-//
+		
+		org.w3c.dom.Element skillsElt = doc.createElement("skills");
+		for ( Map.Entry<String, String> entry : props.filterFirst(JavaWriter.SKILL_PREFIX).entrySet() ) {
+			skillsElt.appendChild(writeSkill(doc, entry.getKey(), entry.getValue()));
+		}
+		root.appendChild(skillsElt);
+		
+		org.w3c.dom.Element speciessElt = doc.createElement("speciess");
+		for ( Map.Entry<String, String> entry : props.filterFirst(JavaWriter.SPECIES_PREFIX).entrySet() ) {
+			speciessElt.appendChild(writeSpecies(doc, entry.getKey(), entry.getValue()));
+		}
+		root.appendChild(speciessElt);
+		
 //		writeFooter(sb);
 	
 		// //////////////////////
@@ -105,6 +123,130 @@ public class XMLWriter {
 	
 	}
 
+
+	private Node writeSpecies(Document doc, String key, String value) {
+		org.w3c.dom.Element speciesElt = doc.createElement("species");
+		
+		String[] segments = key.split("\\$");
+		String name = segments[0];
+		String clazz = segments[1];
+		
+		speciesElt.setAttribute("id", name);
+		speciesElt.setAttribute("name", name);
+		
+		return speciesElt;
+	}
+
+	private Node writeSkill(Document doc, String key, String value) {	
+		org.w3c.dom.Element skillElt = doc.createElement("skill");
+		
+		String[] segments = key.split("\\$");
+		String name = segments[0];
+		// TODO : an "id" of the skill class
+		String clazz = segments[1];
+		// String clazz = new JavaWriter().toClassObject(segments[1]);
+		
+		// TODO : id should be precised
+		skillElt.setAttribute("id", name);
+		skillElt.setAttribute("name", name);
+
+		// get extends
+		skillElt.setAttribute("class", clazz);
+//		skillElt.setAttribute("extends", ((TypeElement) e).getSuperclass().toString());
+//
+//		if ( e.getAnnotation(doc.class) != null ) {
+//			org.w3c.dom.Element docElt = doc.createElement("description");
+//			docElt.setTextContent(e.getAnnotation(doc.class).value());
+//			skillElt.appendChild(docElt);
+//		} else {
+//			mes.printMessage(Kind.ERROR, "The skill __" + e.getAnnotation(skill.class).name() +
+//				"__ is not described. Add a @doc block");
+//		}
+
+		// Parsing of vars
+//		if ( e.getAnnotation(vars.class) != null ) {
+//			org.w3c.dom.Element varsElt = doc.createElement("vars");
+//			for ( var v : e.getAnnotation(vars.class).value() ) {
+//				org.w3c.dom.Element varElt = doc.createElement("var");
+//				varElt.setAttribute("name", v.name());
+//				varElt.setAttribute("type", v.type());
+//				varElt.setAttribute("constant", "" + v.constant());
+//				// FIXME For the moment, very simple parsing of the doc attached (only the text
+//				// is grabbed).
+//				if ( v.doc().length > 0 ) {
+//					varElt.setAttribute("doc", v.doc()[0].value());
+//				}
+//				String dependsOn = new String();
+//				for ( String dependElement : v.depends_on() ) {
+//					dependsOn = ("".equals(dependsOn) ? "" : dependsOn + ",") + dependElement;
+//				}
+//				varElt.setAttribute("depends_on", dependsOn);
+//				varsElt.appendChild(varElt);
+//			}
+//			skillElt.appendChild(varsElt);
+//		}
+
+		// Parsing of actions
+		org.w3c.dom.Element actionsElt = doc.createElement("actions");
+
+//		for ( Element eltMethod : e.getEnclosedElements() ) {
+//			if ( eltMethod.getAnnotation(action.class) != null ) {
+//				org.w3c.dom.Element actionElt = doc.createElement("action");
+//				actionElt.setAttribute("name", eltMethod.getAnnotation(action.class).name());
+//				actionElt.setAttribute("returnType", ((ExecutableElement) eltMethod)
+//					.getReturnType().toString());
+//
+//				if ( eltMethod.getAnnotation(args.class) != null ) {
+//					org.w3c.dom.Element argsElt = doc.createElement("args");
+//					for ( String argAction : eltMethod.getAnnotation(args.class).names() ) {
+//						org.w3c.dom.Element argElt = doc.createElement("arg");
+//						argElt.setAttribute("name", argAction);
+//						argsElt.appendChild(argElt);
+//					}
+//					actionElt.appendChild(argsElt);
+//				}
+//				actionsElt.appendChild(actionElt);
+//			}
+//		}
+
+		// if(actionsElt.getElementsByTagName("action").getLength() != 0){
+		skillElt.appendChild(actionsElt);
+		// }
+
+
+		// Skills now have only one name
+
+		// // Addition of other skills for alternative names of the species
+		// for ( int i = 1; i < e.getAnnotation(skill.class).name().length; i++ ) {
+		// org.w3c.dom.Element skillAlt = doc.createElement("skill");
+		// skillAlt.setAttribute("id", e.getAnnotation(skill.class).name()[i]);
+		// skillAlt.setAttribute("name", e.getAnnotation(skill.class).name()[i]);
+		// skillAlt.setAttribute("alternativeNameOfSkill", id);
+		// skills.appendChild(skillAlt);
+		// }
+		return skillElt;
+	}
+	// check the inheritance between Skills
+//	NodeList nlSkill = skills.getElementsByTagName("skill");
+//	for ( int i = 0; i < nlSkill.getLength(); i++ ) {
+//		org.w3c.dom.Element elt = (org.w3c.dom.Element) nlSkill.item(i);
+//		if ( elt.hasAttribute("extends") ) {
+//			if ( BASIC_SKILL.equals(elt.getAttribute("extends")) ) {
+//				elt.setAttribute("extends", "");
+//			} else {
+//				for ( int j = 0; j < nlSkill.getLength(); j++ ) {
+//					org.w3c.dom.Element testedElt = (org.w3c.dom.Element) nlSkill.item(j);
+//					if ( testedElt.getAttribute("class").equals(elt.getAttribute("extends")) ) {
+//						elt.setAttribute("extends", testedElt.getAttribute("name"));
+//					}
+//				}
+//			}
+//		}
+//	}
+
+
+	
+	// TODO To polish
 	private Node writeOperator(Document doc, String key, String value) {
 		// TODO : Look for an already parsed operator with the same name
 			org.w3c.dom.Element operator = doc.createElement("operator");

@@ -151,7 +151,7 @@ public class GamlDocProcessor {
 	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set,
 		final Document doc) {
 		org.w3c.dom.Element operators = doc.createElement("operators");
-
+		
 		for ( ExecutableElement e : set ) {
 			nbrOperators++;
 			List<? extends VariableElement> args = e.getParameters();
@@ -448,7 +448,7 @@ public class GamlDocProcessor {
 
 	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends Element> setSpecies,
 		final Document doc) {
-		org.w3c.dom.Element species = doc.createElement("species");
+		org.w3c.dom.Element species = doc.createElement("speciess");
 
 		for ( Element e : setSpecies ) {
 			org.w3c.dom.Element spec = doc.createElement("species");
