@@ -319,6 +319,14 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 	}
 
+	@Override
+	public void forceUpdateDisplay() {
+		boolean old = synchronous;
+		setSynchronized(false);
+		updateDisplay();
+		setSynchronized(old);
+	}
+
 	private final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 	private final Runnable displayBlock = new Runnable() {
 

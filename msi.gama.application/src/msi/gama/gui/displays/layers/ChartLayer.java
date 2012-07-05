@@ -58,7 +58,7 @@ public class ChartLayer extends AbstractLayer {
 				SWTChartEditor editor = new SWTChartEditor(SwtGui.getDisplay(), getChart());
 				// TODO Revoir cet éditeur, très laid !
 				editor.open();
-				container.updateDisplay();
+				container.forceUpdateDisplay();
 			}
 
 		});

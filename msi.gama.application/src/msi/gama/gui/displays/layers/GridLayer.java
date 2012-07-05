@@ -19,19 +19,16 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
-import weka.classifiers.bayes.net.GUI;
 
 public class GridLayer extends ImageLayer {
 
@@ -61,7 +58,7 @@ public class GridLayer extends ImageLayer {
 			@Override
 			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
 				turnGridOn = newValue;
-				container.updateDisplay();
+				container.forceUpdateDisplay();
 			}
 		});
 	}
@@ -80,13 +77,13 @@ public class GridLayer extends ImageLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(image, null, false,"GridDisplay");
+		dg.drawImage(image, null, false, "GridDisplay");
 		if ( turnGridOn ) {
 			lineColor = ((GridLayerStatement) definition).getLineColor();
 			if ( lineColor == null ) {
 				lineColor = Color.black;
 			}
-			dg.drawGrid(image,lineColor,size);		
+			dg.drawGrid(image, lineColor, size);
 		}
 	}
 

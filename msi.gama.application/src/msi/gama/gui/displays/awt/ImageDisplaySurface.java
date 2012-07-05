@@ -159,6 +159,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		}
 	}
 
+	@Override
+	public void forceUpdateDisplay() {
+		updateDisplay();
+	}
+
 	private void drawAllDisplays() {
 		if ( displayGraphics == null ) { return; }
 		displayGraphics.fill(bgColor, 1);

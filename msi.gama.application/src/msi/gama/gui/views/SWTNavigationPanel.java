@@ -150,7 +150,7 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 		int x = (int) (mouseX * (double) surface.getImageWidth() / getSize().x);
 		int y = (int) (mouseY * (double) surface.getImageHeight() / getSize().y);
 		surface.setOrigin(-(x - surface.getWidth() / 2), -(y - surface.getHeight() / 2));
-		surface.updateDisplay();
+		surface.forceUpdateDisplay();
 	}
 
 	public void updateSquare(final int mouseX, final int mouseY) {

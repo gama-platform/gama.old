@@ -159,7 +159,7 @@
          </property>
          <property
                name="aboutText"
-               value="* GAMA - V1.4.5&#x0A;* Generic Agent-based Modelling Architecture&#x0A;&#x0A;* (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;* (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;&#x0A;Visit http://code.google.com/p/gama-platform/">
+               value="* GAMA - V1.5&#x0A;* Generic Agent-based Modelling Architecture&#x0A;&#x0A;* (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;* (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;&#x0A;Visit http://code.google.com/p/gama-platform/">
          </property>
          <property
                name="windowImages"

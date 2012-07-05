@@ -20,7 +20,7 @@ package msi.gama.gui.displays.layers;
 
 import java.awt.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -51,7 +51,7 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final IExpression newValue) {
 					((TextLayerStatement) definition).setTextExpr(newValue);
-					container.updateDisplay();
+					container.forceUpdateDisplay();
 				}
 			}, Types.get(IType.STRING));
 		EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
@@ -60,7 +60,7 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final Color newValue) {
 					((TextLayerStatement) definition).setColor(newValue);
-					container.updateDisplay();
+					container.forceUpdateDisplay();
 				}
 			});
 		EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFontName(), true,
@@ -69,7 +69,7 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final String newValue) {
 					((TextLayerStatement) definition).setFont(newValue);
-					container.updateDisplay();
+					container.forceUpdateDisplay();
 				}
 			});
 	}

@@ -90,7 +90,7 @@ public abstract class AbstractLayer implements ILayer {
 
 					container.getManager().enableLayer(AbstractLayer.this, newValue);
 					if ( container.isPaused() ) {
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}
 			});
@@ -101,7 +101,7 @@ public abstract class AbstractLayer implements ILayer {
 				public void valueModified(final Double newValue) {
 					setOpacity(1d - newValue);
 					if ( container.isPaused() ) {
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}
 
@@ -113,7 +113,7 @@ public abstract class AbstractLayer implements ILayer {
 				public void valueModified(final GamaPoint newValue) {
 					setPosition(newValue);
 					if ( container.isPaused() ) {
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}
 
@@ -125,7 +125,7 @@ public abstract class AbstractLayer implements ILayer {
 				public void valueModified(final GamaPoint newValue) {
 					setExtent(newValue);
 					if ( container.isPaused() ) {
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}
 
@@ -137,7 +137,7 @@ public abstract class AbstractLayer implements ILayer {
 				public void valueModified(final Double newValue) {
 					setElevation(newValue);
 					if ( container.isPaused() ) {
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}
 
@@ -172,7 +172,7 @@ public abstract class AbstractLayer implements ILayer {
 	public void setExtent(final GamaPoint p) {
 		definition.getBox().setExtent(p);
 	}
-	
+
 	public void setElevation(final Double elevation) {
 		definition.setElevation(elevation);
 	}

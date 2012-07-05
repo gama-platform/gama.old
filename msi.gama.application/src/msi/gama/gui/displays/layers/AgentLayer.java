@@ -62,7 +62,7 @@ public class AgentLayer extends AbstractLayer {
 					public void valueModified(final IExpression newValue)
 						throws GamaRuntimeException {
 						((AgentLayerStatement) definition).setAgentsExpr(newValue);
-						container.updateDisplay();
+						container.forceUpdateDisplay();
 					}
 				}, Types.get(IType.LIST));
 		}
