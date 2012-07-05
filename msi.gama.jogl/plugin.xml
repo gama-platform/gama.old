@@ -9,17 +9,4 @@
          </implementation>
          
     </extension>
-<!--    <extension
-          point="org.eclipse.ui.views">
-           <view 
-            allowMultiple="true"
-           category="msi.gama.gui.category.gama"
-            class="msi.gama.jogl.GLView"
-            id="msi.gama.jogl.GLView"
-            name="GL"
-            restorable="true">
-  		</view>
-    </extension>-->
-    
-
 </plugin>

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Jogl
 Bundle-SymbolicName: msi.gama.jogl;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: msi.gama.jogl.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui,
@@ -20,4 +19,5 @@ Import-Package: com.vividsolutions.jts.awt,
  org.jfree.chart
 Export-Package: 
  msi.gama.jogl,
- msi.gama.jogl.utils
+ msi.gama.jogl.utils,
+ msi.gama.jogl.utils.myarcball
