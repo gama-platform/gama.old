@@ -33,10 +33,13 @@ public class ModelsLibraryFolder extends VirtualFolder {
 		List<IProject> totalList =
 			Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		List<IProject> resultList = new ArrayList();
-		// We only add the projects whose path begins with the built-in models path
+		// We only add the projects whose path contains the built-in models path
+		String modelsPath = getBuiltInModelsPath();
+		// System.out.println("Location to library : " + getBuiltInModelsPath());
 		for ( IProject project : totalList ) {
-			String projectPath = project.getLocation().toString();
-			if ( projectPath.startsWith(getBuiltInModelsPath()) ) {
+			String projectPath = "/" + project.getLocation().toString();
+			// System.out.println("Location to project : " + projectPath);
+			if ( projectPath.contains(modelsPath) ) {
 				resultList.add(project);
 			}
 		}
