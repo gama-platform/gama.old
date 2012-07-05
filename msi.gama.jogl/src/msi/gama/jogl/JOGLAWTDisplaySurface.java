@@ -377,6 +377,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	}
 
+	@Override
+	public void forceUpdateDisplay() {
+		updateDisplay();
+	}
+
 	private final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 
 	private final Runnable openGLUpdateDisplayBlock = new Runnable() {
