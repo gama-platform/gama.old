@@ -32,12 +32,17 @@ public abstract class VirtualFolder {
 		if ( builtInModelsPath == null ) {
 			try {
 				builtInModelsPath =
-					FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models")).getPath();
+					FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"))
+						.getPath();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		return builtInModelsPath;
+	}
+
+	public void setBuiltInModelsPath(final String builtInModelsPath) {
+		this.builtInModelsPath = builtInModelsPath;
 	}
 
 	public VirtualFolder(final String name) {

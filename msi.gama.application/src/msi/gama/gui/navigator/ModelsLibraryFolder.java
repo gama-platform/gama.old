@@ -28,21 +28,33 @@ public class ModelsLibraryFolder extends VirtualFolder {
 		super(name);
 	}
 
-	@Override
-	public Object[] getChildren() {
-		List<IProject> totalList =
-			Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		List<IProject> resultList = new ArrayList();
-		// We only add the projects whose path contains the built-in models path
-		String modelsPath = getBuiltInModelsPath();
-		// System.out.println("Location to library : " + getBuiltInModelsPath());
-		for ( IProject project : totalList ) {
-			String projectPath = "/" + project.getLocation().toString();
-			// System.out.println("Location to project : " + projectPath);
-			if ( projectPath.contains(modelsPath) ) {
-				resultList.add(project);
-			}
-		}
-		return resultList.toArray();
-	}
+//	@Override
+//	public Object[] getChildren() {
+//		List<IProject> totalList =
+//			Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+//		List<IProject> resultList = new ArrayList();
+//		// We only add the projects whose path begins with the built-in models path
+//		for ( IProject project : totalList ) {
+//			String projectPath = project.getLocation().toString();
+//			if ( projectPath.startsWith(getBuiltInModelsPath()) ) {
+//				resultList.add(project);
+//			}
+//		}
+//		return resultList.toArray();
+	 @Override
+     public Object[] getChildren() {
+             List<IProject> totalList =
+                     Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+             List<IProject> resultList = new ArrayList();
+             // We only add the projects whose path begins with the built-in models path
+             System.out.println("Location to library : " + getBuiltInModelsPath());
+             for ( IProject project : totalList ) {
+                     String projectPath = project.getLocation().toString();
+                     System.out.println("Location to project : " + projectPath);
+                     if ( projectPath.startsWith(getBuiltInModelsPath()) ) {
+                             resultList.add(project);
+                     }
+             }
+             return resultList.toArray();
+	 }
 }

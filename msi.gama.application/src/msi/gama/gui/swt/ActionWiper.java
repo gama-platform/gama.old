@@ -19,6 +19,7 @@
 package msi.gama.gui.swt;
 
 import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.GAMA;
 import org.eclipse.ui.*;
 
 public class ActionWiper implements IStartup, IPerspectiveListener, IPartListener {
@@ -32,8 +33,8 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 
 	@Override
 	public void partActivated(final IWorkbenchPart part) {
-		// if ( !(part instanceof IEditorPart) ) { return; }
-		// GuiUtils.openModelingPerspective();
+		if ( !(part instanceof IEditorPart) ) { return; }
+		GuiUtils.openModelingPerspective();
 	}
 
 	@Override
@@ -70,9 +71,9 @@ public class ActionWiper implements IStartup, IPerspectiveListener, IPartListene
 	public void perspectiveActivated(final IWorkbenchPage page,
 		final IPerspectiveDescriptor perspective) {
 		wipeActions(page);
-		// if ( GAMA.getFrontmostSimulation() == null ) {
-		// GuiUtils.informStatus("No simulation");
-		// }
+		if ( GAMA.getFrontmostSimulation() == null ) {
+			GuiUtils.informStatus("No simulation");
+		}
 	}
 
 	@Override
