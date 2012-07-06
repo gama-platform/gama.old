@@ -8,7 +8,6 @@ import com.sun.opengl.util.texture.*;
 public class MyImage {
 	
 	public BufferedImage image;
-	//texture that will be blind to the opengl context.
 	public int textureId;
 	public float x;
 	public float y;
@@ -18,5 +17,4 @@ public class MyImage {
 	public float height;
 	public Integer angle = 0;
 	public String name;
-
 }

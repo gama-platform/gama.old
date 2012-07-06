@@ -20,11 +20,14 @@ import javax.media.opengl.glu.GLUtessellator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.GLUT;
 
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
 import javax.vecmath.Vector3f;
 
@@ -56,6 +59,13 @@ public class BasicOpenGlDrawer {
 
 	//use glut tesselation or JTS tesselation
 	boolean useTessellation = true;
+	
+	
+	
+	//Use for JTS triangulation
+	IList<IShape> triangles;
+	Iterator<IShape> it;
+	//public static GeometryFactory factory = new GeometryFactory();
 
 	public BasicOpenGlDrawer(final GL gl, final GLU glu,
 			final JOGLAWTGLRenderer gLRender) {
@@ -69,7 +79,9 @@ public class BasicOpenGlDrawer {
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
+		
+		//FIXME: Need to understand why when using erroCallback there is a out of memory problem.
+		//myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
 
 	}
 
@@ -170,15 +182,13 @@ public class BasicOpenGlDrawer {
 			}
 			// use JTS triangulation
 			else {
-
-				IList<IShape> triangles = GeometryUtils.triangulation(p);
-
-				Iterator<IShape> it = triangles.iterator();
+				
+				triangles = GeometryUtils.triangulation(p);
+				it = triangles.iterator();
 
 				while (it.hasNext()) {
-					IShape curShape = it.next();
-					DrawShape(curShape);
-				}
+					DrawShape(it.next(),true);
+				}				
 			}
 
 			myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
@@ -518,37 +528,39 @@ public class BasicOpenGlDrawer {
 
 	}
 	
-	public void DrawShape(IShape shape) {
+	public void DrawShape(IShape shape,boolean showTriangulation) {
 
 		Polygon polygon = (Polygon) shape.getInnerGeometry();
 
-		myGl.glBegin(GL_TRIANGLES); // draw using triangles
-		myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), -polygon
-				.getExteriorRing().getPointN(0).getY(), 0.0f);
-		myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(), -polygon
-				.getExteriorRing().getPointN(1).getY(), 0.0f);
-		myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(), -polygon
-				.getExteriorRing().getPointN(2).getY(), 0.0f);
-		myGl.glEnd();
-
-		/*
-		 * myGl.glBegin(GL.GL_LINES); // draw using triangles
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-		 * -polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-		 * -polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
-		 * 
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-		 * -polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-		 * -polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
-		 * 
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-		 * -polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
-		 * myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-		 * -polygon.getExteriorRing().getPointN(0).getY(), 0.0f); myGl.glEnd();
-		 */
-
+		if(showTriangulation){
+			myGl.glBegin(GL.GL_LINES); // draw using triangles
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+			 -polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+			 -polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
+			 
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+			 -polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+			 -polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
+			  
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+			 -polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
+			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+			 -polygon.getExteriorRing().getPointN(0).getY(), 0.0f); 
+			 myGl.glEnd();			
+		}
+		else{
+			myGl.glBegin(GL_TRIANGLES); // draw using triangles
+			myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), -polygon
+					.getExteriorRing().getPointN(0).getY(), 0.0f);
+			myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(), -polygon
+					.getExteriorRing().getPointN(1).getY(), 0.0f);
+			myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(), -polygon
+					.getExteriorRing().getPointN(2).getY(), 0.0f);
+			myGl.glEnd();
+			
+		}
 	}
 
 	/*

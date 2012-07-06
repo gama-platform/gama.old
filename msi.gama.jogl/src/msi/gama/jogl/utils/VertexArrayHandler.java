@@ -180,14 +180,18 @@ public class VertexArrayHandler {
 		myGl.glEnableClientState(GL.GL_COLOR_ARRAY);
 
 		//Triangle vertexArray
-		myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferTriangle);
-		myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferTriangle);
-		myGl.glDrawArrays(GL.GL_TRIANGLES, 0, totalNumVertsTriangle);
+		if(vertexBufferTriangle.hasRemaining()){
+			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferTriangle);
+			myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferTriangle);
+			myGl.glDrawArrays(GL.GL_TRIANGLES, 0, totalNumVertsTriangle);
+		}
 		
 		//Line vertex Array
-		myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferLine);
-		myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferLine);
-		myGl.glDrawArrays(GL.GL_LINES, 0, totalNumVertsLine);
+		if(vertexBufferLine.hasRemaining()){
+			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferLine);
+			myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferLine);
+			myGl.glDrawArrays(GL.GL_LINES, 0, totalNumVertsLine);
+		}
 
 		myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
 		myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
