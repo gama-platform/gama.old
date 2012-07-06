@@ -315,7 +315,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {	
+	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, angle);
 	}
@@ -461,21 +461,22 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void drawGrid(final BufferedImage image, final Color lineColor, final Point size) {
-		// FIXME: This method is implemented in GridDisplay as displayGrid() for the use of OPengl
-		// We need to add drawGrid in the IGraphics.
-		double stepx = size.x / (double) image.getWidth();
-		for ( int i = 1, end = image.getWidth(); i <= end; i++ ) {
-			double step = i * stepx;
+	public void drawGrid(final BufferedImage image, final Color lineColor, final Point displaySize) {
+		// The image contains the dimensions of the grid.
+		double stepx = (double) displaySize.x / (double) image.getWidth();
+		for ( double step = 0.0, end = displaySize.x; step < end + 1; step += stepx ) {
 			this.setDrawingCoordinates(step, 0);
-			this.drawLine(lineColor, step, size.y);
+			this.drawLine(lineColor, step, displaySize.y);
 		}
-		double stepy = size.y / (double) image.getHeight();
-		for ( int i = 1, end = image.getHeight(); i <= end; i++ ) {
-			double step = i * stepy;
-			this.setDrawingCoordinates(0, step);
-			this.drawLine(lineColor, size.x, step);
+		setDrawingCoordinates(displaySize.x - 1, 0);
+		drawLine(lineColor, displaySize.x - 1, displaySize.y - 1);
+		double stepy = (double) displaySize.y / (double) image.getHeight();
+		for ( double step = 0.0, end = displaySize.y; step < end + 1; step += stepy ) {
+			setDrawingCoordinates(0, step);
+			drawLine(lineColor, displaySize.x, step);
 		}
+		setDrawingCoordinates(0, displaySize.y - 1);
+		drawLine(lineColor, displaySize.x - 1, displaySize.y - 1);
 
 	}
 
@@ -504,5 +505,5 @@ public class AWTDisplayGraphics implements IGraphics {
 	public void initLayers() {}
 
 	@Override
-	public void newLayer(double elevation) {}
+	public void newLayer(final double elevation) {}
 }
