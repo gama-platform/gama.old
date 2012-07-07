@@ -39,19 +39,23 @@ public class GamaRuntimeException extends RuntimeException {
 	protected final List<String> context = new ArrayList();
 
 	public GamaRuntimeException(final Throwable ex) {
-		super(ERROR + ex.toString(), ex);
+		super(ex.toString(), ex);
+		addContext(ex.toString());
+		for ( StackTraceElement element : ex.getStackTrace() ) {
+			addContext(element.toString());
+		}
 		cycle = computeCycle();
 
 	}
 
 	public GamaRuntimeException(final String s, final boolean warning) {
-		super((warning ? WARNING : ERROR) + s);
+		super(/* (warning ? WARNING : ERROR) + */s);
 		cycle = computeCycle();
 		isWarning = warning;
 	}
 
 	public GamaRuntimeException(final String s) {
-		super(ERROR + s);
+		super(/* (warning ? WARNING : ERROR) + */s);
 		cycle = computeCycle();
 	}
 
@@ -86,6 +90,14 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public List<String> getContextAsList() {
 		return context;
+	}
+
+	@Override
+	public String toString() {
+		String s = getClass().getName();
+		String message = getLocalizedMessage();
+		return message != null ? message : s;
+
 	}
 
 }
