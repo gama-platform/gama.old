@@ -37,9 +37,9 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
 		if ( param == null || !(param instanceof ILocation) ) {
-
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
 			if ( obj instanceof String ) { return from((String) obj, null); }
+			return with(obj);
 		}
 
 		if ( param != null && (((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0) ) { throw new GamaRuntimeException(

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -48,7 +48,7 @@ public class Cast {
 	public static Boolean isA(final IScope scope, final IExpression a, final IExpression b)
 		throws GamaRuntimeException {
 		// TODO Verify this method. And see if the treatment of species and types cannot be
-		// unified�
+		// unified
 		IType type = asType(scope, b);
 		if ( a == null ) { return type == Types.NO_TYPE; }
 		if ( type.isSpeciesType() ) {
@@ -213,6 +213,23 @@ public class Cast {
 	}
 
 	@operator(IType.GEOM_STR)
+	@doc(
+		value = "casts the operand into a geometry",
+		special_cases = {
+			"if the operand is a point, returns a corresponding geometry point",
+			"if the operand is a agent, returns its geometry",
+			"if the operand is a population, returns the union of each agent geometry",
+			"if the operand is a pair of two agents or geometries, returns the link between the geometry of each element of the operand",
+			"if the operans is a graph, returns the corresponding multi-points geometry",
+			"if the operand is a container of points, if first and the last points are the same, returns the polygon built from these points",
+			"if the operand is a container, returns the union of the geometry of each element",
+			"otherwise, returns nil"},
+		examples = {
+			"geometry({23, 4.0}) 					--: Point",
+			"geometry(a_graph)						--: MultiPoint",
+			"geometry(node1)						--: Point",
+			"geometry([{0,0},{1,4},{4,8},{0,0}])	--: Polygon	"}
+	)
 	public static IShape asGeometry(final IScope scope, final Object s) throws GamaRuntimeException {
 		return GamaGeometryType.staticCast(scope, s, null);
 	}
@@ -239,10 +256,10 @@ public class Cast {
 			"if the left operand does not represent an integer in the specified radix, as_int throws an exception "},
 		examples = {
 			"'20' as_int 10 	--: 20;",
-			"'20' as_int 8 	--: 16;",
+			"'20' as_int 8 		--: 16;",
 			"'20' as_int 16 	--: 32",
-			"'1F' as_int 16	--: 31",
-			"'hello' as_int 32 --: 18306744"},
+			"'1F' as_int 16		--: 31",
+			"'hello' as_int 32 	--: 18306744"},
 		see = {"int"})
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 		throws GamaRuntimeException {
@@ -284,17 +301,36 @@ public class Cast {
 	}
 
 	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(
+		value ="casts the operand into a matrix",
+		special_cases = {
+			"if the operand is a file, returns its content casted as a matrix",
+			"if the operand is a map, returns a 2-columns matrix with keyx in the first one and value in the second one;",
+			"if the operand is a list, returns a 1-row matrix. Notice that each element of the list should be a single element or lists with the same length;",
+			"if the operand is a graph, returns nil;",
+			"otherwise, returns a 1x1 matrix with the operand at the (0,0) position."},
+		see="as_matrix")
 	public static IMatrix asMatrix(final IScope scope, final Object val)
 		throws GamaRuntimeException { 
 		return asMatrix(scope, val, null);
 	}
 
 	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
+	@doc()
 	public static IMatrix asMatrix(final IScope scope, final IList val) throws GamaRuntimeException {
 		return asMatrix(scope, val, null);
 	}
 
 	@operator(value = "as_matrix", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@doc(
+		value = "casts the left operand into a matrix with right operand as preferrenced size",
+		comment = 
+			"This operator is very useful to cast a file containing raster data into a matrix." +
+			"Note that both components of the right operand point should be positive, otherwise an exception is raised." +
+			"The operator as_matrix creates a matrix of preferred size. It fills in it with elements of the left operand until the matrix is full " +
+			"If the size is to short, some elements will be omitted. Matrix remaining elements will be filled in by nil.",
+		special_cases ={"if the right operand is nil, as_matrix is equivalent to the matrix operator"},
+		see = {"matrix"})
 	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
 		throws GamaRuntimeException {
 		return (IMatrix) Types.get(IType.MATRIX).cast(scope, val, size);
