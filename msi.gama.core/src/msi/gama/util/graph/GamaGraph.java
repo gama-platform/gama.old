@@ -49,7 +49,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public static int Djikstra = 3;
 	public static int ASTar = 4;
 
-	protected int optimizerType = 1;
+	protected int optimizerType = 3;
 	private FloydWarshallShortestPaths optimizer;
 	protected boolean verbose;
 
