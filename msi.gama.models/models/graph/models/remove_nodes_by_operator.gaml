@@ -1,11 +1,11 @@
 /**
- *  loadgraphfromfile
+ *  remove_node
  *  Author: Samuel Thiriot
- *  Description: Shows how to generate a scale-free graph using a Barabasi-Albert scale-free generator. 
+ *  Description: Use of remove_node_from operator. 
  * Nothing "moves" into this first model.
  */
 
-model loadgraphfromfile
+model remove_node
   
 global {
 	
@@ -16,7 +16,7 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	var mongraphe type:graph;
+	graph my_graph;
 	
 	init {
 		
@@ -24,18 +24,14 @@ global {
 		  * The actual generation of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		set mongraphe <- generate_watts_strogatz( [
+		set my_graph <- generate_watts_strogatz( [
 				"edges_specy"::edgeSpecy,
 				"vertices_specy"::nodeSpecy,
 				"size"::net_size,
 				"p"::net_prewire,
 				"k"::net_neighboors
-			] );
-			  
+			] );	  
 	 }
-	 
-	
-	  
 }
 
 environment {
@@ -55,8 +51,8 @@ entities {
 			draw shape: circle size:3 color: color ;
 		} 
 		 		
-		reflex when : flip(0.1) {
-			set mongraphe <- remove_node_from(self, mongraphe);
+		reflex removing_node when : flip(0.1) {
+			set my_graph <- remove_node_from(self, my_graph);
 		}
 		
 	}
@@ -74,26 +70,23 @@ entities {
 		
 	}
 }
-
-output {
-	
-	/*
-	 * This first display is the classical GAMA display: 
-	 * agents are represented according to their aspects (shapes)
-	 * and location. This provides a spatialized view of the network.
-	 * 
-	 */
-	display test_display refresh_every: 1 {
-		species nodeSpecy aspect: base ; 
-		species edgeSpecy aspect: base ;
+experiment remove_node type: gui {
+	output {
+		/*
+		 * This first display is the classical GAMA display: 
+		 * agents are represented according to their aspects (shapes)
+		 * and location. This provides a spatialized view of the network.
+		 * 
+		 */
+		display test_display refresh_every: 1 {
+			species nodeSpecy aspect: base ; 
+			species edgeSpecy aspect: base ;
+		}
+		
+		/*
+		 * This display provides another look on the network,
+		 * without spatiality.
+		 */
+		graphdisplay graph graph: my_graph lowquality:true ;
 	}
-	
-	/*
-	 * This display provides another look on the network,
-	 * without spatiality.
-	 */
-	graphdisplay monNom2 graph: mongraphe lowquality:true {
-		 
-	}
-	
 }
