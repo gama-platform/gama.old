@@ -97,7 +97,7 @@ experiment evolution_geometry type: gui {
 	parameter 'Size max of the initiale side of an agent:' var:max_side_size category: 'Population'; 
 	parameter 'Size background side:' var: background_size_side category: 'Population' ;
 	output {
-		display space_display refresh_every: 1 type: opengl{
+		display space_display refresh_every: 1{
 			species background;
 			species people ;
 		}

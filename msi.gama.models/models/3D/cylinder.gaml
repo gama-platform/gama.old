@@ -1,13 +1,13 @@
 model circle   
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 200 ;
 	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 690 ;
 	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 2000 ; 
 	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
-	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
-	int size_of_agents <- 20;
+	float speed_of_agents parameter: 'Speed of Agents' min: 1.0  <- 10.0 ; 
+	int size_of_agents <- 10;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
 	init { 
@@ -16,10 +16,6 @@ global {
 		}
 	}  
 } 
- 
- 
- 
-
 
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
  
@@ -32,6 +28,7 @@ entities {
 		const speed type: float <- speed_of_agents;   
 		int heading <- rnd(359);
 		geometry shape <- circle (size) ;
+		int z <- rnd(100);
 		
 		reflex go_to_center {
 			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
@@ -48,14 +45,14 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color z:100;
-			//draw geometry: circle(20) at_location self.location color : self.color z:100;
+			draw shape: geometry color: color z:z;
 		}
 	}
 }
-
-output {
-	display Circle refresh_every: 1 type: opengl {
-		species cells;
+experiment cylinder type: gui {
+	output {
+		display Circle refresh_every: 1 type: opengl {
+			species cells;
+		}
 	}
 }

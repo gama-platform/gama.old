@@ -1,18 +1,18 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- file('../includes/building.shp') parameter: 'Shapefile for the buildings:' category: 'GIS' ;
-	file shape_file_roads <- file('../includes/road.shp') parameter: 'Shapefile for the roads:' category: 'GIS' ;
-	file shape_file_bounds <- file('../includes/bounds.shp') parameter: 'Shapefile for the bounds:' category: 'GIS' ; 
-	int nb_people <- 100 parameter: 'Number of people agents' category: 'People' ;
+	file shape_file_buildings <- file('../includes/building.shp');
+	file shape_file_roads <- file('../includes/road.shp');
+	file shape_file_bounds <- file('../includes/bounds.shp');
+	int nb_people <- 100;
 	int day_time update: time mod 144 ;
-	int min_work_start <- 36 parameter: 'Earliest hour to start work' category: 'People' ;
-	int max_work_start <- 60 parameter: 'Latest hour to start work' category: 'People' ;
-	int min_work_end <- 84 parameter: 'Earliest hour to end work' category: 'People' ; 
-	int max_work_end <- 132 parameter: 'Latest hour to end work' category: 'People' ;
-	float min_speed <- 50 parameter: 'minimal speed' category: 'People' ;
-	float max_speed <- 100 parameter: 'maximal speed' category: 'People' ;
-	float destroy <- 0.02 parameter: 'Value of destruction when a people agent takes a road' category: 'Road' ;
+	int min_work_start <- 36;
+	int max_work_start <- 60;
+	int min_work_end <- 84; 
+	int max_work_end <- 132; 
+	float min_speed <- 50.0;
+	float max_speed <- 100.0; 
+	float destroy <- 0.02;
 	graph the_graph;
 	
 	init {
@@ -46,17 +46,16 @@ entities {
 	species building {
 		string type; 
 		rgb color <- rgb('gray')  ; 
-		//Add an arbitrary elevation for building
 		aspect base {
-			draw shape: geometry color: color z:100; 
+			draw geometry: shape color: color z: 100 ;
 		}
 	}
 	species road  {
-		float destruction_coeff <- 1 ;
+		float destruction_coeff <- 1.0 ;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
-		rgb color <- [min([255, colorValue]),max ([0, 255 - colorValue]),0]  update: [min([255, colorValue]),max ([0, 255 - colorValue]),0] ;
+		rgb color <- rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0])  update: rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0]) ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw geometry: shape color: color ;
 		}
 	}
 	species people skills: [moving]{
@@ -81,7 +80,7 @@ entities {
 			let segments type: list of: geometry <- path_followed.segments;
 			loop line over: segments {
 				let dist type: float <- line.perimeter;
-				let ag type: road <- path_followed agent_from_geometry line; 
+				let ag type: road <- road(path_followed agent_from_geometry line); 
 				ask road(ag) {
 					set destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
 				}
@@ -97,12 +96,25 @@ entities {
 }
 environment bounds: shape_file_bounds ;
 
-
-output {
-	display city_display type:opengl refresh_every: 1 {
-		species building aspect:base z:0;
-		species road aspect: base z:0.5;
-		species people aspect: base z:1;
+experiment road_traffic type: gui {
+	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;
+	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
+	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	parameter 'Number of people agents' var: nb_people category: 'People' ;
+	parameter 'Earliest hour to start work' var: min_work_start category: 'People' ;
+	parameter 'Latest hour to start work' var: max_work_start category: 'People' ;
+	parameter 'Earliest hour to end work' var: min_work_end category: 'People' ;
+	parameter 'Latest hour to end work' var: max_work_end category: 'People' ;
+	parameter 'minimal speed' var: min_speed category: 'People' ;
+	parameter 'maximal speed' var: max_speed category: 'People' ;
+	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
+	
+	output {
+		display city_display refresh_every: 1 type: opengl{
+			species building aspect:base z:0;
+			species road aspect: base z:0.5;
+			species people aspect: base z:1;
+		}
 	}
 }
 
