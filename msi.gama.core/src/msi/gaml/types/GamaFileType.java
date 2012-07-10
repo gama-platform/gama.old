@@ -20,6 +20,8 @@ package msi.gaml.types;
 
 import java.io.File;
 import java.util.*;
+
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -70,6 +72,14 @@ public class GamaFileType extends GamaType<IGamaFile> {
 	}
 
 	@operator(value = "is_text")
+	@doc(
+		value =	"the operator tests whether the operand represents the name of a supported text file",
+		comment = "cf. file type definition for supported (espacially image) file extensions.",
+		examples = {"is_text(\"../includes/Stupid_Cell.Data\")    --:  true;",
+					"is_text(\"../includes/test.png\")            --:  false;", 
+					"is_text(\"../includes/test.properties\")     --:  false;",
+					"is_text(\"../includes/test.shp\")            --:  false;"},
+		see = {"text", "is_properties", "is_shape", "is_image"})	
 	public static Boolean isTextFile(final String f) {
 		final String fn = f.toLowerCase();
 		for ( final String s : textSuffixes ) {
@@ -79,16 +89,40 @@ public class GamaFileType extends GamaType<IGamaFile> {
 	}
 
 	@operator(value = "is_properties")
+	@doc(
+		value ="the operator tests whether the operand represents the name of a supported properties file",
+		comment = "cf. file type definition for supported (espacially image) file extensions.",
+		examples = {"is_properties(\"../includes/Stupid_Cell.Data\")    --:  false;",
+					"is_properties(\"../includes/test.png\")            --:  false;", 
+					"is_properties(\"../includes/test.properties\")     --:  true;",
+					"is_properties(\"../includes/test.shp\")            --:  false;"},
+		see = {"properties", "is_text", "is_shape", "is_image"})		
 	public static Boolean isProperties(final String f) {
 		return f.toLowerCase().contains(propertiesSuffix);
 	}
 
 	@operator(value = "is_shape")
+	@doc(
+		value ="the operator tests whether the operand represents the name of a supported shapefile",
+		comment = "cf. file type definition for supported (espacially image) file extensions.",
+		examples = {"is_shape(\"../includes/Stupid_Cell.Data\")    --:  false;",
+					"is_shape(\"../includes/test.png\")            --:  false;", 
+					"is_shape(\"../includes/test.properties\")     --:  false;",
+					"is_shape(\"../includes/test.shp\")            --:  true;"},
+		see = {"image", "is_text", "is_properties", "is_image"})	
 	public static Boolean isShape(final String f) {
 		return f.toLowerCase().contains(shpSuffix);
 	}
 
 	@operator(value = "is_image")
+	@doc(
+		value ="the operator tests whether the operand represents the name of a supported image file",
+		comment = "cf. file type definition for supported (espacially image) file extensions.",
+		examples = {"is_image(\"../includes/Stupid_Cell.Data\")    --:  false;",
+					"is_image(\"../includes/test.png\")            --:  true;", 
+					"is_image(\"../includes/test.properties\")     --:  false;",
+					"is_image(\"../includes/test.shp\")            --:  false;"},
+		see = {"image", "is_text", "is_properties", "is_shape"})
 	public static Boolean isImageFile(final String f) {
 		final String fn = f.toLowerCase();
 		for ( final String s : imageSuffixes ) {

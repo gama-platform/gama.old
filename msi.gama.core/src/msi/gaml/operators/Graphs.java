@@ -150,34 +150,85 @@ public class Graphs {
 	 */
 
 	@operator(value = "contains_vertex")
+	@doc(
+		value = "returns true if the graph(left-hand operand) contains the given vertex (righ-hand operand), false otherwise",
+		special_cases = "if the left-hand operand is nil, returns false",
+		examples = {"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
+					"graphFromMap contains_vertex {1,5}  --: true"},
+		see = {"contains_edge"})
 	public static Boolean containsVertex(final GamaGraph graph, final Object vertex) {
+		if (graph == null) throw new GamaRuntimeException("In the contains_vertex operator, the graph should not be null!");				
 		return graph.containsVertex(vertex);
 	}
 
 	@operator(value = "contains_edge")
+	@doc(
+		value = "returns true if the graph(left-hand operand) contains the given edge (righ-hand operand), false otherwise",
+		special_cases = "if the left-hand operand is nil, returns false",
+		examples = {"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
+					"graphFromMap contains_edge link({1,5}::{12,45})  --: true"},
+		see = {"contains_vertex"})	
 	public static Boolean containsEdge(final IGraph graph, final Object edge) {
+		if (graph == null) throw new GamaRuntimeException("In the contains_edge operator, the graph should not be null!");				
 		return graph.containsEdge(edge);
 	}
 
 	@operator(value = "contains_edge")
+	@doc( 
+		special_cases = "if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph",
+		examples = {
+			"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
+			"graphEpidemio contains_edge (node(0)::node(3));   --:   true"})
 	public static Boolean containsEdge(final IGraph graph, final GamaPair edge) {
+		if (graph == null) throw new GamaRuntimeException("In the contains_edge operator, the graph should not be null!");		
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
 	@operator(value = "source_of", type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(
+		value = "returns the source of the edge (right-hand operand) contained in the graph given in left-hand operand.",
+		special_cases = "if the lef-hand operand (the graph) is nil, throws an Exception",
+		examples = {
+			"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
+			"graphEpidemio source_of(edge(3)) 				--:  node1",
+			"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",		   	
+			"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}"},
+		see = "target_of")
 	public static Object sourceOf(final IGraph graph, final Object edge) {
+		if (graph == null) throw new GamaRuntimeException("In the source_of operator, the graph should not be null!");				
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeSource(edge); }
 		return null;
 	}
 
 	@operator(value = "target_of", type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@doc(
+		value = "returns the target of the edge (right-hand operand) contained in the graph given in left-hand operand.",
+		special_cases = "if the lef-hand operand (the graph) is nil, returns nil",
+		examples = {
+			"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
+			"graphEpidemio source_of(edge(3)) 				--:  node1",
+			"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",		   	
+			"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}"},
+		see = "source_of")	
 	public static Object targetOf(final IGraph graph, final Object edge) {
+		if (graph == null) throw new GamaRuntimeException("In the target_of operator, the graph should not be null!");		
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
 
 	@operator(value = "weight_of")
+	@doc(
+		value = "returns the weight of the given edge (right-hand operand) contained in the graph given in right-hand operand.",
+		comment = "In a localized graph, an edge has a weight by default (the distance between both vertices).",
+		special_cases = {
+			"if the left-operand (the graph) is nil, returns nil",
+			"if the right-hand operand is not an edge of the given graph, weight_of checks whether it is a node of the graph and tries to return its weight",
+			"if the right-hand operand is neither a node, nor an edge, returns 1."},
+		examples = {
+			"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
+			"graphFromMap source_of(link({1,5}::{12,45}))  --: 41.48493702538308"})
 	public static Double weightOf(final IGraph graph, final Object edge) {
+		if (graph == null) throw new GamaRuntimeException("In the weight_of operator, the graph should not be null!");
 		if ( graph.containsEdge(edge) ) {
 			return graph.getEdgeWeight(edge);
 		} else if ( graph.containsVertex(edge) ) { return graph.getVertexWeight(edge); }
@@ -185,13 +236,25 @@ public class Graphs {
 	}
 
 	@operator(value = "in_edges_of")
+	@doc(
+		value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.",
+		examples = {"graphEpidemio in_edges_of (node(3))   --:  [edge2,edge3]",
+					"graphFromMap in_edges_of node({12,45})  --:  [LineString]"},
+		see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
+		if (graph == null) throw new GamaRuntimeException("In the in_edges_of operator, the graph should not be null!");
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
 		return new GamaList();
 	}
 
 	@operator(value = "out_edges_of")
+	@doc(
+		value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.",
+		examples = {"graphEpidemio out_edges_of (node(3))   --:   []",
+					"graphFromMap out_edges_of {12,45}      --: [LineString]"	},
+		see = "in_edges_of")
 	public static IList outEdgesOf(final IGraph graph, final Object vertex) {
+		if (graph == null) throw new GamaRuntimeException("In the out_edges_of operator, the graph should not be null!");		
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.outgoingEdgesOf(vertex)); }
 		return new GamaList();
 	}
@@ -223,6 +286,11 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_edge_graph")
+	@doc(
+		value = "creates a graph from the list/map of edges given as operand",
+		special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices",
+		examples = {"as_edge_graph([{1,5},{12,45},{34,56}])  --:  build a graph with these three vertices and reflexive links on each vertices"},
+		see = {" as_intersection_graph, as_distance_graph"})
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 		return new GamaSpatialGraph(edges, true, false, null);
 	}
@@ -234,6 +302,9 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_edge_graph")
+	@doc(
+		special_cases = "if the operand is a map, the graph will be built by creating edges from pairs of the map",
+		examples = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])  --:  build a graph with these three vertices and two edges")	
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 		return GamaGraphType.from(edges, true);
@@ -271,11 +342,19 @@ public class Graphs {
 	// }
 
 	@operator(value = "directed")
+	@doc(
+		value = "the operand graph becomes a directed graph.",
+		comment = "the operator alters the operand graph, it does not create a new one.",
+		see = {"undirected"})
 	public static IGraph asDirectedGraph(final IGraph g) {
 		return GamaGraphType.asDirectedGraph(g);
 	}
 
 	@operator(value = "undirected")
+	@doc(
+		value = "the operand graph becomes an undirected graph.",
+		comment = "the operator alters the operand graph, it does not create a new one.",
+		see = {"directed"})	
 	public static IGraph asUndirectedGraph(final IGraph g) {
 		return GamaGraphType.asUndirectedGraph(g);
 	}

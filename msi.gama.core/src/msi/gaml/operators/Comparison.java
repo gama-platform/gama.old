@@ -25,10 +25,10 @@ import msi.gama.precompiler.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
- * Written by drogoul Modified on 10 déc. 2010
+ * Written by drogoul Modified on 10 dec. 2010
  * 
  * @todo Description
- * 
+ *
  */
 public class Comparison {
 
@@ -162,12 +162,20 @@ public class Comparison {
 	}
 
 	@operator(value = { "=" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		value = "true if both operands are equal, false otherwise",
+		examples = {"3 = 3    	--: true", "4.5 = 4.7  	--:  false"},
+		see = {"!="})	
 	public static Boolean equal(final Double a, final Double b) {
 		return a == null ? b == null : IntervalSize.isZeroWidth(a, b);
 		// return !(a < b) && !(a > b);
 	}
 
 	@operator(value = { "!=", "<>" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		value = "true if both operands are different, false otherwise",
+		examples = {"4.5 = 4.7  	--:  false"},
+		see = {"="})		
 	public static Boolean different(final Double a, final Double b) {
 		if ( a == null ) { return b != null; }
 		if ( b == null ) { return false; }
@@ -190,6 +198,7 @@ public class Comparison {
 	}
 
 	@operator(value = { "!=", "<>" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(examples = {"3 != 3    	--: false"})	
 	public static Boolean different(final Integer a, final Integer b) {
 		if ( a == null ) { return b != null; }
 		if ( b == null ) { return false; }
@@ -197,6 +206,9 @@ public class Comparison {
 	}
 
 	@operator(value = LTE, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if the operands are strings, a lexicographic comparison is performed"},
+		examples = {"abc <= aeb  --: true"})	
 	public static Boolean lessOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -204,6 +216,10 @@ public class Comparison {
 	}
 
 	@operator(value = GTE, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if the operands are strings, a lexicographic comparison is performed"},
+		examples = {"abc >= aeb  --: false",
+					"abc >= abc  --: true"})
 	public static Boolean greaterOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -211,6 +227,9 @@ public class Comparison {
 	}
 
 	@operator(value = LT, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if the operands are strings, a lexicographic comparison is performed"},
+		examples = {"abc < aeb  --: true"})	
 	public static Boolean less(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -218,6 +237,9 @@ public class Comparison {
 	}
 
 	@operator(value = GT, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if the operands are strings, a lexicographic comparison is performed"},
+		examples = {"abc > aeb  --: false"})		
 	public static Boolean greater(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -225,34 +247,49 @@ public class Comparison {
 	}
 
 	@operator(value = { "=" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		comment = "this operator will return true if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.",
+		examples = {"3.0 = 3  	--:  true","[2,3] = [2,3] --: true"})
 	public static Boolean equal(final Object a, final Object b) {
 		return a == null ? b == null : a.equals(b);
 	}
 
 	@operator(value = { "!=", "<>" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		comment = " this operator will return false if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.",
+		examples = {"[2,3] != [2,3] --: false", "[2,4] != [2,3] --: true"})
 	public static Boolean different(final Object a, final Object b) {
 		return a == null ? b != null : !a.equals(b);
 	}
 
 	@operator(value = LT, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one."},
+		examples = {"{5,7} < {4,6}  --: false", "{5,7} < {4,8}  --: false"})	
 	public static Boolean less(final GamaPoint p1, final GamaPoint p) {
 		return p1.x < p.x && p1.y < p.y;
 	}
 
 	@operator(value = GT, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if both operands are points, returns true if only if left component (x) of the left operand if greater than x of the right one and if the right component (y) of the left operand is greater than y of the right one."},
+		examples = {"{5,7} > {4,6}  --: true", "{5,7} > {4,8}  --: false"})	
 	public static Boolean greater(final GamaPoint p1, final GamaPoint p) {
 		return p1.x > p.x && p1.y > p.y;
 	}
 
 	@operator(value = LTE, priority = IPriority.COMPARATOR, can_be_const = true)
+	@doc(
+		special_cases = {"if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one."},
+		examples = {"{5,7} <= {4,6}  --: false", "{5,7} <= {4,8}  --: false"})	
 	public static Boolean lessOrEqual(final GamaPoint p1, final GamaPoint p) {
 		return p1.x <= p.x && p1.y <= p.y;
 	}
 
 	@operator(value = GTE, priority = IPriority.COMPARATOR, can_be_const = true)
 	@doc(
-		special_cases = {"if both operands are points, returns true if only if left component (x) of the left operand if greater or equal than than x of the right one and if the right component (y) of the left operand is greater or equal than y of the right one."},
-		examples = {"{5,7} >= {4,6}  --: true","{5,7} >= {4,8}  --: false"})
+		special_cases = {"if both operands are points, returns true if only if left component (x) of the left operand if greater than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one."},
+		examples = {"{5,7} >= {4,6}  --: true", "{5,7} >= {4,8}  --: false"})
 	public static Boolean greaterOrEqual(final GamaPoint p1, final GamaPoint p) {
 		return p1.x >= p.x && p1.y >= p.y;
 	}
