@@ -144,17 +144,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamaRuntimeException {
 		final XYPlot plot = (XYPlot) chart.getPlot();
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-		if ( isTimeSeries && timeSeriesXData == null ) {
-			// set the range axis to display integers only...
+		if ( isTimeSeries ) {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-			timeSeriesXData =
-				(ChartDataStatement) DescriptionFactory.getModelFactory().compileDescription(
-					DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
-						IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
-
-			datas.add(0, timeSeriesXData.createData(scope));
-
+			if ( timeSeriesXData == null ) {
+				timeSeriesXData =
+					(ChartDataStatement) DescriptionFactory.getModelFactory().compileDescription(
+						DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
+							IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
+			}
+			if ( !datas.contains(timeSeriesXData) ) {
+				datas.add(0, timeSeriesXData.createData(scope));
+			}
 		}
+
 		domainAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
 		domainAxis.setLabel(datas.get(0).getName());
 		final LegendTitle ll = chart.getLegend();
