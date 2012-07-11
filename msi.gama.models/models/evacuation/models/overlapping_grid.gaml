@@ -14,21 +14,21 @@ global {
 		 * 723 / 5 ÷ 144
 		 * 545 / 5 ÷ 109
 		 */
-		let grid_dimension type: point value: {144, 109};
-		let env_grid type: matrix value: shape as_grid grid_dimension;
+		let grid_dimension type: point <- {144, 109};
+		let env_grid type: matrix <- shape as_grid grid_dimension;
 		
-		let i type: int value: 0;
-		let j type: int value: 0;
+		let i type: int <- 0;
+		let j type: int <- 0;
 		loop times: grid_dimension.x {
-			set j value: 0;
+			set j <- 0;
 			
 			loop times: grid_dimension.y {
 				create density_grid with: [ shape :: ( env_grid at ({i, j}) ) ];
 				
-				set j value: j + 1;
+				set j <- j + 1;
 			}
 			
-			set i value: i + 1;
+			set i <- i + 1;
 		}
 	}
 }
@@ -43,8 +43,8 @@ entities {
 		
 		init {
 			if !(empty(road overlapping self)) {
-				set color value: rgb('blue');
-			} else { set color value: rgb('white'); }
+				set color <- rgb('blue');
+			} else { set color <- rgb('white'); }
 		}
 		
 		aspect base {
