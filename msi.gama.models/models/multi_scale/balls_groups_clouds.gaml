@@ -212,7 +212,7 @@ entities {
 		
 		species ball_in_group parent: ball topology: topology((world).shape)  {
 			
-			float my_age <- 1 value: my_age + 0.01;
+			float my_age <- 1.0 value: my_age + 0.01;
 			 
 			state follow_nearest_ball initial: true { }
 			
@@ -346,7 +346,7 @@ entities {
 				}
 			}
 			 
-			species ball_in_cloud parent: ball_in_group topology: (world.shape) control: fsm {
+			species ball_in_cloud parent: ball_in_group topology: (world.shape) as topology control: fsm {
 				
 				action move {
 					arg with_heading type: float;
@@ -406,7 +406,7 @@ entities {
 		
 		reflex disaggregate when: (empty(list(group))) {
 			loop m over: members {
-				ask (m) as: group_delegation {
+				ask group_delegation(m) as: group_delegation {
 					migrate ball_in_cloud target: ball_in_group;
 				}
 			}
@@ -423,8 +423,6 @@ entities {
 		aspect default {
 			draw shape: geometry color: color  empty: true;
 			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color style: bold at: {location.x - 65, location.y};
-//			draw shape: geometry color: rgb('black') empty: true;
-//			draw text: name + ' with composing groups: ' + (string(members)) size: 15 at: {location.x - 20, location.y};
 		}
 	}
 	

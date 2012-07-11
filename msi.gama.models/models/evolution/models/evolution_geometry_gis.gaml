@@ -85,7 +85,7 @@ species background {
 experiment evolution_geometry type: gui {
 	parameter 'Path of shapefile to load for the initial agent:' var: shape_file_name_init  category: 'GIS specific' ;
 	parameter 'Path of shapefile to load for the background:' var: shape_file_name_background category: 'GIS specific';
-	parameter 'Size (area) from which an agent dies:' var: dying_size min: 100  category: 'Population'; 
+	parameter 'Size (area) from which an agent dies:' var: dying_size min: 100.0  category: 'Population'; 
 	parameter 'Min size (area) for crossover:' var:crossover_size category: 'Population';
 	parameter 'Minimum size (area) of a agent produced by a crossover:' var:minimum_size category: 'Population';
 	parameter 'Number of steps without crossing-over for an agent:' var:time_wthout_co category: 'Population';
