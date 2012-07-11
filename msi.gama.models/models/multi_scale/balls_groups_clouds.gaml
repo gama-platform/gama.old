@@ -1,32 +1,32 @@
 model balls_groups_clouds
 
 global { 
-	const environment_bounds type: point init: {500, 500}; 
-	const inner_bounds_x type: int init: (int((environment_bounds.x) / 20))  ;
-	const inner_bounds_y type: int init: (int((environment_bounds.y) / 20))  ;
-	var xmin type: int init: inner_bounds_x ;
-	var ymin type: int init: inner_bounds_y ;       
-	var xmax type: int init: int((environment_bounds.x) - inner_bounds_x) ;
-	var ymax type: int init: int((environment_bounds.y) - inner_bounds_y) ;
-	var MAX_DISTANCE type: float init: environment_bounds.x + environment_bounds.y  ;
-	var ball_color type: rgb init: rgb('green'); 
-	var chaos_ball_color type: rgb init: rgb('red');
-	var ball_size type: float init: float(3);  
-	var ball_speed type: float init: float(1);
-	var chaos_ball_speed type: float init: 8 * ball_speed;  
-	var ball_number type: int init: 200 min: 2 max: 1000;  
-	const ball_shape type: geometry init: circle (ball_size) ;
-	var ball_separation type: float init: 6 * ball_size; 
+	const environment_bounds type: point <- {500, 500}; 
+	const inner_bounds_x type: int <- (int((environment_bounds.x) / 20))  ;
+	const inner_bounds_y type: int <- (int((environment_bounds.y) / 20))  ;
+	var xmin type: int <- inner_bounds_x ;
+	var ymin type: int <- inner_bounds_y ;       
+	var xmax type: int <- int((environment_bounds.x) - inner_bounds_x) ;
+	var ymax type: int <- int((environment_bounds.y) - inner_bounds_y) ;
+	var MAX_DISTANCE type: float <- environment_bounds.x + environment_bounds.y  ;
+	var ball_color type: rgb <- rgb('green'); 
+	var chaos_ball_color type: rgb <- rgb('red');
+	var ball_size type: float <- float(3);  
+	var ball_speed type: float <- float(1);
+	var chaos_ball_speed type: float <- 8 * ball_speed;  
+	var ball_number type: int <- 200 min: 2 max: 1000;  
+	const ball_shape type: geometry <- circle (ball_size) ;
+	var ball_separation type: float <- 6 * ball_size; 
 	var create_group type: bool parameter: 'Create groups?' <- true; 
 	var create_cloud type: bool parameter: 'Create clouds?' <- true; 
-	var group_creation_distance type: int init: int(ball_separation + 1);
-	var min_group_member type: int init: 3;
-	var group_base_speed type: int init: (int(ball_speed * 1.5));
-	var base_perception_range type: int init: int (environment_bounds.x / 100) min: 1 ;  
-	var creation_frequency type: int init: 3;
-	var update_frequency type: int init: 3;
-	var merge_frequency type: int init: 3;
-	var merge_possibility type: float init: 0.3;
+	var group_creation_distance type: int <- int(ball_separation + 1);
+	var min_group_member type: int <- 3;
+	var group_base_speed type: int <- (int(ball_speed * 1.5));
+	var base_perception_range type: int <- int (environment_bounds.x / 100) min: 1 ;  
+	var creation_frequency type: int <- 3;
+	var update_frequency type: int <- 3;
+	var merge_frequency type: int <- 3;
+	var merge_possibility type: float <- 0.3;
 	
 	int cloud_creation_distance <- 30 const: true;
 	int min_cloud_member <- 3 const: true;
@@ -80,9 +80,9 @@ entities {
 	species base skills: [moving] ;
 	
 	species ball parent: base control: fsm {
-		//var shape type: geometry init: ball_shape at_location location ;
-		var speed type: float init: ball_speed ; 
-		var color type: rgb init: ball_color ;
+		//var shape type: geometry <- ball_shape at_location location ;
+		var speed type: float <- ball_speed ; 
+		var color type: rgb <- ball_color ;
 		var beginning_chaos_time type: int ; 
 		var time_in_chaos_state type: int ;
 		
@@ -170,9 +170,9 @@ entities {
 	}
 	
 	species group parent: base {
-		var color type: rgb init: rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
+		var color type: rgb <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
-		var shape type: geometry init: polygon ( (list (ball_in_group)) ) buffer  10 ;
+		var shape type: geometry <- polygon ( (list (ball_in_group)) ) buffer  10 ;
 		
 		var speed type: float value: float(group_base_speed) ;
 		var perception_range type: float value: float(base_perception_range + (rnd(5))) ;
@@ -212,7 +212,7 @@ entities {
 		
 		species ball_in_group parent: ball topology: topology((world).shape)  {
 			
-			float my_age init: 1 value: my_age + 0.01;
+			float my_age <- 1 value: my_age + 0.01;
 			 
 			state follow_nearest_ball initial: true { }
 			

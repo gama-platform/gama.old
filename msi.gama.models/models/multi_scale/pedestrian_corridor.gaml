@@ -32,13 +32,14 @@ global {
 	const new_pedestrian_y_distance type: int init: int(environment_size / new_pedestrian_rate);
 	
 	var pedestrians type: list of: pedestrian init: [] value: list (pedestrian);
-	
+	float start_time <- machine_time;
 	init {
 		create species: corridor number: 1;
 		 
 		create species: corridor_wall number: 2 returns: corridor_walls;
 		set (corridor_walls at 0).shape value: corridor_wall_0_shape;
 		set (corridor_walls at 1).shape value: corridor_wall_1_shape;
+		
 	}
 	
 	reflex generate_pedestrians when: (time mod new_pedestian_generate_frequency) = 0 {
@@ -123,7 +124,7 @@ entities {
 		}
 	}
 	
-	species corridor skills: situated {
+	species corridor  {
 		const shape type: geometry init: corridor_shape;
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
@@ -164,7 +165,7 @@ entities {
 		}
 	}
 	
-	species corridor_wall skills: situated {
+	species corridor_wall {
 		init {
 			create species: corridor_wall_info_drawer number: 1 with: [target :: self];
 		}
@@ -174,7 +175,7 @@ entities {
 		}
 	}
 	
-	species corridor_info_drawer skills: situated {
+	species corridor_info_drawer {
 		var target type: corridor;
 		
 		aspect default {
@@ -183,7 +184,7 @@ entities {
 		}
 	}
 	
-	species corridor_wall_info_drawer skills: situated {
+	species corridor_wall_info_drawer {
 		var target type: corridor_wall;
 		
 		init {
@@ -212,7 +213,7 @@ experiment default_expr type: gui{
 
 		display Execution_Time refresh_every: 25 {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: duration color: (rgb ('green'));
+				data simulation_step_length_in_mili_second value: machine_time - start_time color: (rgb ('green'));
 			}
 		}
 	 	

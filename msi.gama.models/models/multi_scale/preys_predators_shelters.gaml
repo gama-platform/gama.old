@@ -2,9 +2,9 @@ model preys_predators_shelters
 
 global { 
 	var prey_color type: rgb init: rgb ('green') const: true;
-	var prey_perception type: float init: 3;
+	var prey_perception type: float init: 3.0;
 	var prey_size type: float init: 2.0 const: true;
-	var prey_speed type: float init: 1;
+	var prey_speed type: float init: 1.0;
 	var prey_flee_color type: rgb init: rgb ('orange');
 	var prey_invisible_speed type: float init: 3 * 	prey_speed;
 	var prey_invisible_color type: rgb init: rgb ('black');  
@@ -13,9 +13,9 @@ global {
 	var number_of_prey type: int min: 1 max: 1000 init: 100;
 	
 	var predator_color type: rgb init: rgb ('red') const: true;
-	var predator_perception type: float init: 3;
+	var predator_perception type: float init: 3.0;
 	var predator_size type: float init: 4.0;
-	var predator_speed type: float init: 1;
+	var predator_speed type: float init: 1.0;
 	var number_of_predator type: int min: 1 max: 100 init: 30; 
 	
 	var predator_in_shelter_color type: rgb init: rgb ('yellow') const: true;
@@ -40,7 +40,7 @@ entities {
 		var shape type: geometry init: circle (prey_size);
 		var color type: rgb init: prey_color;
 		var nearby_predators type: list of: predator value: (agents_overlapping (shape + prey_perception)) of_species predator;
-		var invisible_time type: int min: 1 init: time;
+		var invisible_time type: int min: 1 init: int(time);
 
 		var nearest_shelter type: shelter init: nil;		
 
@@ -95,9 +95,9 @@ entities {
 		aspect default {
 			draw shape: geometry color: predator_color;
 		} 
-	}
+	} 
 	
-	species shelter skills: [situated, moving]  frequency: 2 {
+	species shelter skills: [moving]  frequency: 2 {
 		var shape type: geometry init: (circle (50.0)) at_location {250, 250};
 		var chased_preys type: list of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
@@ -123,7 +123,7 @@ entities {
 		
 		
 		species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {
-			var in_shelter_time type: int init: time;
+			var in_shelter_time type: int init: int(time);
 			state in_shelter {
 				do wander speed: shelter_speed;
 			}
