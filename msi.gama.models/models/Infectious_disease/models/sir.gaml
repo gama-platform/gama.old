@@ -7,8 +7,8 @@
 model si
 
 global { 
-    int number_S <- 990 parameter: 'Number of Susceptible';  // The number of susceptible
-    int number_I <- 10 parameter: 'Number of Infected';	// The number of infected
+    int number_S <- 495 parameter: 'Number of Susceptible';  // The number of susceptible
+    int number_I <- 5 parameter: 'Number of Infected';	// The number of infected
     int number_R <- 0 parameter: 'Number of Removed';	// The number of removed
     float survivalProbability <- 1/(70*365) parameter: 'Survival Probability'; // The survival probability
 	float beta <- 0.05 parameter: 'Beta (S->I)'; 	// The parameter Beta
@@ -41,8 +41,8 @@ global {
    }       
 }
 
-environment width: 100 height: 100 {
-	grid sir_grid width: 100 height: 100 {
+environment width: 50 height: 50 {
+	grid sir_grid width: 50 height: 50 {
 		rgb color <- rgb('black');
 		list neighbours of: sir_grid <- (self neighbours_at neighbours_size) of_species sir_grid;       
     }
