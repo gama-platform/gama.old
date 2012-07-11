@@ -425,9 +425,6 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = point[0];
 		int imageHeight = point[1];
-		System.out.println("x : " + x + " y : " + y);
-		
-		System.out.println("imageWidth : " + imageWidth + " imageHeight : " + imageHeight);
 		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
 			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
 			bWidth = newImage.getWidth();
