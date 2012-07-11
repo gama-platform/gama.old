@@ -18,7 +18,7 @@
  */
 package msi.gaml.expressions;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -64,6 +64,18 @@ public class ListExpression extends AbstractExpression {
 
 	public IExpression[] getElements() {
 		return elements;
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		ListExpression copy = new ListExpression(Arrays.asList(elements));
+		for ( int i = 0; i < elements.length; i++ ) {
+			IExpression exp = elements[i];
+			if ( exp != null ) {
+				copy.elements[i] = exp.resolveAgainst(scope);
+			}
+		}
+		return copy;
 	}
 
 	@Override

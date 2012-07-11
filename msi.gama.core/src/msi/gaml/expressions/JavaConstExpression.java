@@ -105,4 +105,9 @@ public class JavaConstExpression extends JavaExpression {
 	@Override
 	public void unsetTarget(final Notifier oldTarget) {}
 
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
+
 }

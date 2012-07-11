@@ -132,7 +132,8 @@ public class ChartDataStatement extends AbstractStatement {
 					getFacetValue(scope, IKeyword.LEGEND, "data" + dataNumber++)));
 		data.color =
 			Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR, Cast.asColor(scope, "black")));
-		data.value = getFacet(IKeyword.VALUE);
+		// in order to "detach" the expression from the current definition scope
+		data.value = getFacet(IKeyword.VALUE).resolveAgainst(scope);
 		return data;
 	}
 

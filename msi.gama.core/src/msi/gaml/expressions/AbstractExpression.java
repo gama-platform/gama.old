@@ -18,6 +18,7 @@
  */
 package msi.gaml.expressions;
 
+import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -79,6 +80,11 @@ public abstract class AbstractExpression implements IExpression {
 	@Override
 	public void unsetTarget(final Notifier object) {
 
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
 	}
 
 }

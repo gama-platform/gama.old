@@ -48,6 +48,11 @@ public class TypeFieldExpression implements IExpression {
 	}
 
 	@Override
+	public TypeFieldExpression resolveAgainst(final IScope scope) {
+		return copyWith(left.resolveAgainst(scope));
+	}
+
+	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		Object parameter = left.value(scope);
 		if ( parameter instanceof IValue ) { return getter.run((IValue) parameter); }

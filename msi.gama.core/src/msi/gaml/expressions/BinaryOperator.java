@@ -181,6 +181,14 @@ public class BinaryOperator extends AbstractBinaryOperator {
 	}
 
 	@Override
+	public IOperator resolveAgainst(final IScope scope) {
+		BinaryOperator copy = (BinaryOperator) copy();
+		copy.left = left.resolveAgainst(scope);
+		copy.right = right.resolveAgainst(scope);
+		return copy;
+	}
+
+	@Override
 	public String getTitle() {
 		StringBuilder sb = new StringBuilder(50);
 		sb.append("Binary operator <b>").append(getName()).append("</b><br>");

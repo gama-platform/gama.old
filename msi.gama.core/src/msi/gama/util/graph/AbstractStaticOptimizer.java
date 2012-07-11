@@ -18,6 +18,7 @@
 package msi.gama.util.graph;
 
 import java.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
 
@@ -184,6 +185,9 @@ public abstract class AbstractStaticOptimizer<V, E> implements PathFinder<V, E> 
 		// Output.debug("Asking all roads between " + first + " and " + last);
 		while (first != last) {
 			last = pred[first][last];
+			if ( path.contains(last) ) {
+				GuiUtils.debug("Loop ! Between " + first + " and " + last);
+			}
 			path.add(last);
 			// Output.debug("Adding segment " + last + ";" + previous);
 			// Output.debug("First location : " + intersections.get(last)

@@ -56,6 +56,16 @@ public class MapExpression extends AbstractExpression {
 		// determineContentType();
 	}
 
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		GamaMap result = new GamaMap(keys.length);
+		for ( int i = 0; i < keys.length; i++ ) {
+			result.put(keys[i].resolveAgainst(scope), vals[i].resolveAgainst(scope));
+		}
+		MapExpression copy = new MapExpression(getElements());
+		return copy;
+	}
+
 	private void determineContentType() {
 		IType previousType = Types.get(IType.NONE);
 		contentType = previousType;
@@ -123,7 +133,6 @@ public class MapExpression extends AbstractExpression {
 			result.put(keys[i], vals[i]);
 		}
 		return result;
-
 	}
 
 	public static GamaMap fromBinaryPairs(final List<BinaryOperator> pairs) {

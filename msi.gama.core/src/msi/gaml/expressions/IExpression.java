@@ -38,4 +38,10 @@ public interface IExpression extends IGamlDescription {
 
 	public abstract String literalValue();
 
+	/*
+	 * Returns an expression where all the temp variables belonging to the scope passed in parameter
+	 * are replaced by constants representing their value
+	 */
+	public abstract IExpression resolveAgainst(IScope scope);
+
 }

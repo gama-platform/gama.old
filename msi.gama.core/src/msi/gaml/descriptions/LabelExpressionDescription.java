@@ -128,6 +128,11 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		@Override
 		public void unsetTarget(final Notifier oldTarget) {}
 
+		@Override
+		public IExpression resolveAgainst(final IScope scope) {
+			return this;
+		}
+
 	}
 
 	public LabelExpressionDescription(final String label) {

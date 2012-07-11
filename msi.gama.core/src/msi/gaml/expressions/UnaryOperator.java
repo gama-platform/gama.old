@@ -157,4 +157,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return null;
 	}
 
+	@Override
+	public IOperator resolveAgainst(final IScope scope) {
+		UnaryOperator copy = copy();
+		copy.child = child.resolveAgainst(scope);
+		return copy;
+	}
+
 }

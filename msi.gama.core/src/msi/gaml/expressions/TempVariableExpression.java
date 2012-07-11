@@ -18,7 +18,7 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
@@ -54,5 +54,10 @@ public class TempVariableExpression extends VariableExpression {
 		IDescription desc = getDefinitionDescription();
 		return "Temporary variable <b>" + name + "</b> of type " + type.toString() +
 			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return GAMA.getExpressionFactory().createConst(value(scope), type, contentType);
 	}
 }
