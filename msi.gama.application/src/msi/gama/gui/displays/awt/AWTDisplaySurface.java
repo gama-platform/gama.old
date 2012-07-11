@@ -283,12 +283,25 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		bgColor = c;
 	}
 
-	@Override
+	/*@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		// we take the smallest dimension as a guide
 		int[] dim = new int[2];
 		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
 		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
+		return dim;
+	}*/
+	
+	@Override
+	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+		int[] dim = new int[2];
+		if (widthHeightConstraint < 1) {
+			dim[1] = Math.min(vheight, (int) (vwidth * widthHeightConstraint));
+			dim[0] = Math.min(vwidth, (int) (dim[1] / widthHeightConstraint));
+		} else {
+			dim[0] = Math.min(vwidth, (int) (vheight / widthHeightConstraint));
+			dim[1] = Math.min(vheight, (int) (dim[0] * widthHeightConstraint));
+		}
 		return dim;
 	}
 
@@ -412,6 +425,9 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = point[0];
 		int imageHeight = point[1];
+		System.out.println("x : " + x + " y : " + y);
+		
+		System.out.println("imageWidth : " + imageWidth + " imageHeight : " + imageHeight);
 		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
 			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
 			bWidth = newImage.getWidth();
