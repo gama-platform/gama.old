@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="Hybrid">
+<global>	
+
+    <!-- Parameters of the time in a day and the toursit season -->
+	<var type="float" name="TimeInitial" parameter="Time in the day:" init="8.5" min="0" max="24"/>
+	<var type="int" name="TouristSeason" parameter="Be tourist season?: true1, false0:" init="1"/>
+	<var type="float" name="rate" parameter="Rate of fox in the population:" init="0.9" min="0" max="1"/>
+	<var type="float" name="Percent" value="100"/>
+	
+	<!-- declare gis data for the invironment -->
+	<var type="string" name="shape_file_road" 		init="'../gis/roadlines.shp'"/>
+	<var type="string" name="shape_file_rives" init="'../gis/rivers.shp'" parameter="true"/>
+	<var type="string" name="shape_file_beach" init="'../gis/Beacha.shp'"/>
+	<var type="string" name="shape_file_roadwidth" init="'../gis/roads.shp'"/>
+	<var type="string" name="shape_file_building" init="'../gis/buildr.shp'"/>
+	<var type="string" name="shape_file_bounds" init="'../gis/bounds.shp'"/>
+	<var type="string" name="shape_file_ward" init="'../gis/wards.shp'"/>
+	<var type="string" name="shape_file_zone" init="'../gis/zone.shp'"/>
+	
+	<!-- global speed of pedestrian in each sources -->
+	<var type="float" name="pedestrian_speed" init="15"/>
+	
+	<!-- The radius of the observer of one agent  -->
+	<var type="int" name="sensing" init="20"/>
+	<!-- Declare list road in the road networks-->
+	<var type="list" name="roads" value="(list road)"/>
+	<var type="list" of="build" name="builds" value="(list build)"/>
+	<var type="list" of="zone" name="zones" value="(list zone)"/>
+	
+	<!-- The list colors of wards and zones -->
+	<var type="list" name="ward_colors" init="['black','magenta', 'blue', 'orange', 'gray','yellow','gray', 'red','magenta']" const="true"/>
+	<var type="list" name="zone_colors" init="['magenta','blue','yellow']" const="true"/>	
+	
+	<!-- The number of agents and average time to escape -->
+	<var name="agents_reach_target" type="int" init="0" />
+	<var name="average_reaching_target_time" type="float" init="0.0" />
+  	
+  	<!-- Create the initial agent numbers -->
+	<var type="int" name="Number_in" init="0"/>
+	<var type="int" name="Number_out" init="0"/>
+	<var type="int" name="NumberInBeach" init="0"/>
+	<var type="int" name="Number_Sheep" init="0"/>
+	<var type="int" name="Number_Fox" init="0"/>
+	
+	 
+	<init>
+		
+		<create species="road" from="shape_file_road" return="the_roads"/>
+		<create species="beach" from="shape_file_beach"/>
+		<create species="ward" from="shape_file_ward" with="[id :: read 'ID', wardname :: read 'Name', population :: read 'Population']"/>
+		<create species="build" from="shape_file_building" with="[st :: read 'STAGE', x :: read 'X', y :: read 'Y']"/>
+		<create species="roadwidth" from="shape_file_roadwidth"/>
+		<create species="river" from="shape_file_rives"/>
+		<create species="zone" from="shape_file_zone" with="[id :: read 'ID']"/>
+		<create species="des" from="(list build) where (each.st &gt;3)"/>
+		<!-- Creat fox and sheep agents -->
+		<reflex name="creat_fox_sheep" >
+		
+			<loop over="(list ward)" var="wa">
+				<create species="fox" number="int((wa.population/Percent)*rate)">
+					<set name="location" value="self place_in[agent:: one_of ( (list ward) where (each.wardname=wa.wardname))]"/>
+				</create>
+				<create species="sheep" number="int((wa.population/Percent)*(1-rate))">
+					<set name="location" value="self place_in[agent:: one_of ( (list ward) where (each.wardname=wa.wardname))]"/>
+				</create>
+			</loop>
+			<do action="write">
+				<arg name="message" value="'foxs:'+ string(length(list fox))+'sheeps:'+ string(length(list sheep))+ 'total:' +string(length(list fox)+length(list sheep))"/>
+			</do>		
+		</reflex>	
+		
+	
+		<do action="compute_graph">
+				<arg name="network" value="the_roads"/>
+				<arg name="name" value="'road_network'"/>
+		</do>
+	</init>
+	
+
+	<reflex name="burg" when="time%10=0">
+		<do action="write">
+			<!-- 
+			<arg name="message" value="string(time)+';'+ string(average_reaching_target_time)+';'+string(agents_reach_target)"/>
+			 -->
+			 <arg name="message" value="string(agents_reach_target)"/>	 
+		</do>
+	</reflex>
+
+		
+</global>	
+<!-- declare environment --> 
+<environment bounds="shape_file_bounds"/>  
+<entities>
+	 	<!-- ROAD -->
+ 		<species name="road" skills="situated">
+			<aspect name="base">
+				<draw shape="geometry" color="'yellow'"/>
+			</aspect>	
+		</species>
+		<!-- DESTINATION -->
+		<species name="des" skills="situated">
+			<var type="int" name="st"/>
+			<aspect name="base">
+				<draw shape="geometry" color="'magenta'"/>
+			</aspect>	
+		</species>
+		
+		<!-- ZONE -->
+		<species name="zone" skills="situated">
+			<var type="int" name="id"/>
+			<var name="color" type="rgb" init="rgb (zone_colors at (int(self.id-1)))"/>
+		
+			<aspect name="base">
+				<draw shape="geometry" color="color"/>
+			</aspect>
+			
+			<reflex name="set_zone" when="time &lt; 3">
+			<loop over="builds" var="bui">
+				<if condition="self overlaps [agent :: bui]">
+					<set name="bui.in_zone" value="self.id"/>
+				</if>	
+			</loop>
+			</reflex>
+		</species>
+		
+		<!-- WARD -->
+		<species name="ward" skills="situated">
+			<var type="int" name="id"/>
+			<var type="int" name="population"/>
+			<var type="string" name="wardname"/>
+			<var name="color" type="rgb" init="rgb (ward_colors at (int(self.id)))"/>
+			
+			<aspect name="base">
+				<draw shape="geometry" color="color"/>
+				<if condition="time &lt;5">
+					<draw text="(string (self.wardname)) " at="self.location" color="rgb 'red'" size="100" />
+				</if>
+			</aspect>	
+		</species>
+		
+		<!-- ROADWIDTH -->
+		<species name="roadwidth" skills="situated">
+			<aspect name="base">
+				<draw shape="geometry" color="'yellow'"/>
+			</aspect>	
+		</species>
+		
+		<!-- BUILD -->
+		<species name="build" skills="situated">
+			<var type="int"   name="st"/>
+			<var type="float" name="x"/>
+			<var type="float" name="y"/>
+			<var type="int"   name="in_zone"/>
+			<var type="rgb"   name="color" init="'yellow'"/>
+			<var type="int"  name="target" init="0"/>
+			 
+			<reflex name="Setup_build_color" when="time &lt;3">
+				<if condition="self.in_zone =1">
+					<set name="color" value="'orange'"/>
+					<else>
+						<if condition="self.in_zone=2">
+						<set name="color" value="'gray'"/>
+						</if>
+					</else>
+				</if>
+			</reflex>
+						 
+			<aspect name="base">
+				<draw shape="geometry" color="color"/>
+			</aspect>
+		</species>
+		
+		<!-- BEACH -->
+		<species name="beach" skills="situated">
+			<aspect name="base">
+				<draw shape="geometry" color="'green'"/>	
+			</aspect>	
+		</species>
+		
+		<!-- RIVER -->
+		<species name="river" skills="situated">
+			<aspect name="base">
+				<draw shape="geometry" color="'blue'"/>
+					
+			</aspect>	
+		</species>
+		
+		<!-- BOUND -->
+		<species name="bound" skills="situated">
+			<aspect name="base">
+				<draw shape="geometry" color="'gray'"/>
+			</aspect>
+		</species>
+		
+		<!-- FOX -->
+		<species name="fox" skills="moving, situated">
+			<var type="rgb" name="color" init="'red'"/>
+			<var type="int" name="capacity" init="20"/>
+		 	<var name="the_target" type="point" init="nil"/>
+		 	<var type="des" name="the_de" init="nil" />
+		   	<var type="int" name="born_step" />
+			<var name="temp" type="des" value="one_of(list des)"/>
+<!-- reflex move -->		
+			<reflex name="move">
+			 	<if condition="!(the_target=nil)">
+					<do action="goto">
+			            <arg name="target" value="the_target"/>
+				        <arg name="graph_name" value="'road_network'"/> 
+				        <arg name="speed" value="20"/>    
+		       		</do>
+		       	</if>
+		       	<if condition="the_target=nil">
+					<do action="choose_target"/>
+				</if> 
+				<if condition="(location=the_target)">
+					<do action="should_die"/>
+				</if>   
+         	</reflex>	
+         	
+         	<action name="should_die">
+				<do action="update_reaching_target_time" />
+				<set var="agents_reach_target" value="agents_reach_target + 1" />
+				<do action="die"/>
+			 </action>
+         
+         	<action name="update_reaching_target_time">
+         		<set var="average_reaching_target_time" value="( (agents_reach_target * average_reaching_target_time) + (time - born_step) ) / (agents_reach_target + 1)" />
+         	</action>
+         	
+<!-- Action: choose a target for a fox -->
+         	<action name="choose_target">
+         		<let name="distance" type="float" value="2000"/>
+         		<let name="dist" type="float" value="(temp.location distance_to self.location)"/>
+         		<loop over="list des"  var="de">
+         			<set name="dist" value="(de.location distance_to self.location)"/>
+         			<if condition="dist &lt; distance">
+         				<set name="temp" value="de"/>
+         				<set name="distance" value="dist"/>
+         			</if>
+         		</loop>
+         		<set name="the_de" value="temp"/> 
+         		<set name="the_target" value="the_de.location"/>
+         	</action>
+         	
+			<aspect name="base">
+				<draw shape="circle" color="color" size="38"/>
+     		</aspect>
+		</species>
+		
+<!-- SHEEP -->
+		<species name="sheep" skills="moving, situated">
+		 	<var type="rgb" name="color" init="rgb 'green'"/>
+		 	<var type="fox" name="current_fox" init="one_of ( (self neighbours_at sensing) of_species fox )"/>
+		 	<var type="float" name="radius" init="10"/>
+		 	<var type="bool" name="test" init="false"/>
+		 	<var type="int" name="born_step" />
+		 	<action name="find_fox">
+		 		<if condition="(current_fox != nil) and !(current_fox in (self neighbours_at sensing))">
+		 			<set var="current_fox" value="nil" />
+		 		</if>
+		 		<if condition="current_fox = nil">
+		 			<set var="current_fox" value="one_of ( (self neighbours_at sensing) of_species fox)" />
+		 		</if>
+		 	</action>
+<!-- Follow Fox -->		 	
+		 	<reflex name="follow_fox" when="current_fox != nil">
+			 	<do action="goto">
+			 		<arg name="target" value="current_fox" />
+			 		<arg name="speed" value="18"/>
+			 	</do>
+			 </reflex>
+<!-- Random walk -->
+			 <reflex name="random_walk" when="current_fox = nil" >
+			 	<do action="find_fox"/>
+			 	<if condition="current_fox = nil">
+				 	<do action="wander">
+				 		<arg name="speed" value="pedestrian_speed"/>
+				 	</do>
+				 </if>
+			 </reflex>
+<!-- Should die --> 
+			 <reflex name="should_die">
+			 	<let var="reach_target" type="list" value="(list des) where ( ((each.location distance_to self.location) &lt; radius ))" />
+			 	<if condition="!(empty reach_target)">
+					<do action="update_reaching_target_time" />
+					<set var="agents_reach_target" value="agents_reach_target + 1" />
+					<do action="die"/>
+			 	</if>
+			
+			 </reflex>
+<!-- actions --> 
+         	<action name="update_reaching_target_time">
+         		<set var="average_reaching_target_time" value="( (agents_reach_target * average_reaching_target_time) + (time - born_step) ) / (agents_reach_target + 1)" />
+         	</action>
+			 
+			<aspect name="base">
+				<draw shape="circle"  color="'green'" size="38"/>
+     		</aspect>
+		</species>			
+</entities>
+		 <!-- OUTPUT -->
+ <output>
+    <display name="Pedestrian_road_network">
+      	<species name="road" 	aspect="base" transparency="0.1"/>
+      	<species name="roadwidth" aspect="base" transparency="0.1"/>
+      	<species name="build" 	aspect="base" transparency="0.1"/>
+      	<species name="des" 	aspect="base" transparency="0.1"/> 
+      	<species name="beach" 	aspect="base" transparency="0.9"/>
+      	<species name="zone" 	aspect="base" transparency="0.9"/>
+      	<species name="river" 	aspect="base" transparency="0.5"/>
+		<species name="ward"  	aspect="base" transparency="0.9"/>
+		<species name="fox" 	aspect="base" transparency="0.1" />
+		<species name="sheep" 	aspect="base" transparency="0.1" />
+    </display>
+    
+    <display name="Number_of_Agents_Reach_Targets" refresh_every="1">
+		<chart type="series" name="Number_of_Agents_Reach_Targets" background="rgb 'lightGray'">
+			<data name="Number of Agents Reach Targets" value="agents_reach_target" style="line" color="rgb 'green'"/>
+		</chart>
+	</display>
+		
+	<display name="Average time reaching targets of agents" refresh_every="1">
+		<chart type="series" name="Number_of_Agents_Reach_Targets" background="rgb 'lightGray'">
+			<data name="Average time reaching targets of agents" value="average_reaching_target_time" style="line" color="rgb 'red'"/>
+		</chart>
+	</display> 	
+</output>
+</model>
+
