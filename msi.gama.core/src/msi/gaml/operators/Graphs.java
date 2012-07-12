@@ -122,12 +122,13 @@ public class Graphs {
 
 	}
 
-	@operator(value = IType.PATH_STR)
-	public static IPath toPath(final IScope scope, final Object object) {
-		return GamaPathType.staticCast(scope, object, null);
-	}
-
 	@operator(value = "agent_from_geometry")
+	@doc(
+		value = "returns the agent corresponding to given geometry (right-hand operand) in the given path (left-hand operand).",
+		special_cases = "if the left-hand operand is nil, returns nil",
+		examples = {
+			"let line type: geometry <- one_of(path_followed.segments);",	
+			"let ag type: road <- road(path_followed agent_from_geometry line);"})
 	public static IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if ( path == null ) { return null; }
 		return (IAgent) path.getRealObject(geom);
@@ -260,13 +261,26 @@ public class Graphs {
 	}
 
 	@operator(value = "neighbours_of")
+	@doc(
+		value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)",
+		examples = {
+			"graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",
+			"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]"},
+		see = {"predecessors_of", "successors_of"})
 	public static IList neighboursOf(final IGraph graph, final Object vertex) {
+		if (graph == null) throw new GamaRuntimeException("In the neighbours_of operator, the graph should not be null!");				
 		if ( graph.containsVertex(vertex) ) { return new GamaList(
 			org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
 		return new GamaList();
 	}
 
 	@operator(value = "predecessors_of")
+	@doc(
+		value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)",
+		examples = {
+			"graphEpidemio predecessors_of (node(3)) 		--: [node0,node2]",
+			"graphFromMap predecessors_of node({12,45}) 	--:	[{1.0;5.0}]"},
+		see = {"neighbours_of", "successors_of"})	
 	public static IList predecessorsOf(final IGraph graph, final Object vertex) {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(
 			org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
@@ -274,6 +288,12 @@ public class Graphs {
 	}
 
 	@operator(value = "successors_of")
+	@doc(
+		value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)",
+		examples = {
+			"graphEpidemio successors_of (node(3)) 		--: []",
+			"graphFromMap successors_of node({12,45}) 	--: [{34.0;56.0}]"},
+		see = {"predecessors_of", "neighbours_of"})		
 	public static IList successorsOf(final IGraph graph, final Object vertex) {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(
 			org.jgrapht.Graphs.successorListOf(graph, vertex)); }
@@ -285,7 +305,7 @@ public class Graphs {
 	// return new GamaGraph(edges, true, false);
 	// }
 
-	@operator(value = "as_edge_graph")
+	@operator(value = "as_edge_graph") 
 	@doc(
 		value = "creates a graph from the list/map of edges given as operand",
 		special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices",
@@ -316,6 +336,12 @@ public class Graphs {
 	// }
 
 	@operator(value = "as_intersection_graph")
+	@doc(
+		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).",
+		comment = "as_intersection_graph is more efficient for a list of geometries (but less accurate) than as_distance_graph.",
+		examples = "list(ant) as_intersection_graph 0.5;",
+		see = {"as_distance_graph", "as_edge_graph"}
+	)
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
 		final Double tolerance) {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance));
@@ -326,6 +352,12 @@ public class Graphs {
 	}
 
 	@operator(value = "as_distance_graph")
+	@doc(
+		value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",	
+		comment ="as_distance_graph is more efficient for a list of points than as_intersection_graph.",
+		examples = "list(ant) as_distance_graph 3.0;",
+		see = {"as_intersection_graph", "as_edge_graph"}
+	)
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance) {
 		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance));
