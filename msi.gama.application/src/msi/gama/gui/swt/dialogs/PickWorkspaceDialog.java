@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.Preferences;
+import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -49,8 +50,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/*
 	 * This are our preferences we will be using as the IPreferenceStore is not available yet
 	 */
-	private static Preferences preferences = Preferences
-		.userNodeForPackage(PickWorkspaceDialog.class);
+	private static Preferences preferences = Preferences.userRoot().node("gama");
 
 	/* Various dialog messages */
 	private static final String strMsg =
@@ -69,8 +69,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/* Max number of entries in the history box */
 	private static final int maxHistory = 20;
 
-	private final boolean switchWorkspace;
-
 	/* Whatever the user picks ends up on this variable */
 	private String selectedWorkspaceRootLocation;
 
@@ -80,9 +78,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @param switchWorkspace true if we're using this dialog as a switch workspace dialog
 	 * @param wizardImage Image to show
 	 */
-	public PickWorkspaceDialog(final boolean switchWorkspace, final Image wizardImage) {
+	public PickWorkspaceDialog(final Image wizardImage) {
 		super(Display.getDefault().getActiveShell());
-		this.switchWorkspace = switchWorkspace;
 		if ( wizardImage != null ) {
 			setTitleImage(wizardImage);
 		}
@@ -91,11 +88,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
-		if ( switchWorkspace ) {
-			newShell.setText("Switch Workspace");
-		} else {
-			newShell.setText("Workspace Selection");
-		}
+		newShell.setText("Choose a workspace");
 	}
 
 	/** Returns whether the user selected "remember workspace" in the preferences */
@@ -389,7 +382,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		String str = workspacePathCombo.getText();
-
+		GuiUtils.debug("Directory to create " + str);
 		if ( str.length() == 0 ) {
 			setMessage(strError, IMessageProvider.ERROR);
 			return;
@@ -400,7 +393,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
 		}
-
+		GuiUtils.debug("Directory to create (after check " + str);
 		/* Save it so we can show it in combo later */
 		lastUsedWorkspaces.remove(str);
 
@@ -434,6 +427,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Now create it */
 		boolean ok = checkAndCreateWorkspaceRoot(str);
 		if ( !ok ) {
+			GuiUtils.debug("Problem creating " + str);
 			setMessage("The workspace could not be created, please check the error log");
 			return;
 		}
@@ -442,6 +436,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		selectedWorkspaceRootLocation = str;
 
 		/* And on our preferences as well */
+		GuiUtils.debug("Writing " + str + " in the preferences");
 		preferences.put(keyWorkspaceRootDir, str);
 
 		super.okPressed();
@@ -474,6 +469,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
 					} catch (Exception err) {
+						GuiUtils
+							.debug("Error creating directories, please check folder permissions");
 						return "Error creating directories, please check folder permissions";
 					}
 				}
@@ -482,9 +479,15 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			}
 		}
 
-		if ( !f.canRead() ) { return "The selected directory is not readable"; }
+		if ( !f.canRead() ) {
+			GuiUtils.debug("The selected directory is not readable");
+			return "The selected directory is not readable";
+		}
 
-		if ( !f.isDirectory() ) { return "The selected path is not a directory"; }
+		if ( !f.isDirectory() ) {
+			GuiUtils.debug("The selected path is not a directory");
+			return "The selected path is not a directory";
+		}
 
 		File wsTest = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 		if ( fromDialog ) {
@@ -503,13 +506,19 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
 					} catch (Exception err) {
+						GuiUtils
+							.debug("Error creating directories, please check folder permissions");
 						return "Error creating directories, please check folder permissions";
 					}
 				} else {
+					GuiUtils.debug("Please select a directory for your workspace");
 					return "Please select a directory for your workspace";
 				}
 
-				if ( !wsTest.exists() ) { return "The selected directory does not exist"; }
+				if ( !wsTest.exists() ) {
+					GuiUtils.debug("The selected directory does not exist");
+					return "The selected directory does not exist";
+				}
 
 				return null;
 			}
@@ -530,10 +539,16 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	public static boolean checkAndCreateWorkspaceRoot(final String wsRoot) {
 		try {
 			File fRoot = new File(wsRoot);
-			if ( !fRoot.exists() ) { return false; }
+			if ( !fRoot.exists() ) {
+				GuiUtils.debug("Folder " + wsRoot + " does not exist");
+				return false;
+			}
 
 			File dotFile = new File(wsRoot + File.separator + PickWorkspaceDialog.WS_IDENTIFIER);
-			if ( !dotFile.exists() && !dotFile.createNewFile() ) { return false; }
+			if ( !dotFile.exists() && !dotFile.createNewFile() ) {
+				GuiUtils.debug("File " + dotFile.getAbsolutePath() + " does not exist");
+				return false;
+			}
 
 			return true;
 		} catch (Exception err) {

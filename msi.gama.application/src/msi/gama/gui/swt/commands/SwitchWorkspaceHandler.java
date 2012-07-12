@@ -33,7 +33,7 @@ public class SwitchWorkspaceHandler extends AbstractHandler {
 
 		ImageDescriptor imgDesc = SwtGui.getImageDescriptor("icons/launcher_icons/splash-icon.png");
 		Image myImage = imgDesc.createImage();
-		PickWorkspaceDialog pwd = new PickWorkspaceDialog(true, myImage);
+		PickWorkspaceDialog pwd = new PickWorkspaceDialog(myImage);
 		int pick = pwd.open();
 		if ( pick == Window.CANCEL ) { return null; }
 

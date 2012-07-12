@@ -80,7 +80,7 @@ public class Application implements IApplication {
 			// } else
 			/* If we don't remember the workspace, show the dialog */
 			if ( !remember ) {
-				PickWorkspaceDialog pwd = new PickWorkspaceDialog(false, myImage);
+				PickWorkspaceDialog pwd = new PickWorkspaceDialog(myImage);
 				int pick = pwd.open();
 
 				/*
