@@ -88,7 +88,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			if ( !e.isWarning() ) {
 				EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
-					error("Fix import error first: " + e.toString(), imp, null, "ERROR",
+					warning("Fix import error first: " + e.toString(), imp, null, "ERROR",
 						(String[]) null);
 				}
 			}
