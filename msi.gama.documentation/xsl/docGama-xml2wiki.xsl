@@ -5,28 +5,83 @@
 <xsl:variable name="html_doc" select="''"/>
 <xsl:variable name="html_iterator" select="0"/>
 
-
-
 <xsl:template match="/">
- 	<xsl:text>#summary Operators(Modeling Guide)
- 	</xsl:text>
+ 	<xsl:text>#summary Operators(Modeling Guide)</xsl:text>
 <BR />
-<xsl:text>
-= </xsl:text> <font color="blue"> Table of Contents </font> =
 
-<wiki:toc max_depth="3" />
-<br/>
-= <font color="blue">Definition</font> =
 
-<xsl:text>
-An operator performs a function on one, two, or three operands. An operator that only requires one operand is called a unary operator. An operator that requires two operands is a binary operator. And finally, a ternary operator is one that requires three operands. The GAML programming language has only one ternary operator, ?:, which is a short-hand if-else statement.
-</xsl:text>
 
-= <font color="blue">Operators</font> =
+= &lt;font color="blue"&gt; Table of Contents &lt;/font&gt; =
+
+&lt;wiki:toc max_depth="3" /&gt;
+
+= &lt;font color="blue"&gt; Definition &lt;/font&gt; =
+
+An operator performs a function on one, two, or three operands. An operator that only requires one operand is called a unary operator. An operator that requires two operands is a binary operator. And finally, a ternary operator is one that requires three operands. The GAML programming language has only one ternary operator, ? :, which is a short-hand if-else statement.
+
+Unary operators are written using aprefix parenthesized notation. Prefix notation means that the operator appears before its operand. Note that unary expressions should always been parenthesized:
+
+{{{
+unary_operator (operand)
+}}}
+
+Most of binary operators can use two notations:
+  * the fonctional notation, which used a parenthesized notation around the operands (this notation cannot be used with arithmetic and relational operators such as: +, -, /, *, ^, =, !=, &lt;, &gt;, &gt;=, &lt;=... )
+  * the infix notation, which means that the operator appears between its operands
+
+{{{
+binary_operator(op1, op2)
+
+Or 
+
+op1 binary_operator op2    
+}}}
+
+The ternary operator is also infix; each component of the operator appears between operands:
+
+{{{
+op1 ? op2 : op3
+}}}
+
+In addition to performing operations, operators are functional, i.e. they return a value. The return value and its type depend on the operator and the type of its operands. For example, the arithmetic operators, which perform basic arithmetic operations such as addition and subtraction, return numbers - the result of the arithmetic operation.
+
+Moreover, operators are strictly functional, i.e. they have no side effects on their operands. For instance, the shuffle operator, which randomizes the positions of elements in a list, does not modify its list operand but returns a new shuffled list.
+
+[#Table_of_Contents Top of the page]
+
+
+
+
+= &lt;font color="blue"&gt; Operators by categories &lt;/font&gt; =
+<xsl:call-template name="buildOperatorsByCategories"/>
+
+= &lt;font color="blue"&gt; Operators &lt;/font&gt; =
 <xsl:call-template name="buildOperators"/>
     
 </xsl:template>
+
+
  
+<xsl:template name="buildOperatorsByCategories">
+<xsl:for-each select="doc/operatorsCategories/category">
+<xsl:sort select="@id"/>
+
+<xsl:variable name="categoryGlobal" select="@id"></xsl:variable> 
+== <xsl:value-of select="@id"/> ==
+<xsl:text>  * </xsl:text>
+<xsl:for-each select="/doc/operators/operator"> 
+<xsl:sort select="@name" />
+
+<xsl:variable name="catItem" select="@category"/>
+
+<xsl:if test="$catItem = $categoryGlobal "> 
+	<xsl:text>[#</xsl:text> <xsl:value-of select="@name"/> <xsl:text> </xsl:text> <xsl:value-of select="@name"/> <xsl:text>], </xsl:text> 
+</xsl:if>
+
+</xsl:for-each>    	
+
+</xsl:for-each>
+</xsl:template>
     
  <xsl:template name="buildOperators"> 
     <xsl:for-each select="doc/operators/operator">
@@ -37,7 +92,7 @@ An operator performs a function on one, two, or three operands. An operator that
   * Special cases:<xsl:for-each select="documentation/specialCases/case">
     * <xsl:value-of select="@item"/> </xsl:for-each>
   * Comment: <xsl:value-of select="documentation/comment"/>
-  * See also: <xsl:for-each select="documentation/seeAlso/see">[#<xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/>] </xsl:for-each>
+  * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[#</xsl:text><xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/><xsl:text>]</xsl:text> </xsl:for-each>
   {{{  
 <xsl:for-each select="documentation/examples/example" >
    <xsl:text>   </xsl:text><xsl:value-of select="@code"/><xsl:text>
@@ -50,6 +105,22 @@ An operator performs a function on one, two, or three operands. An operator that
  </xsl:template>   
  
 <xsl:template name="buildOperands">
+  * Possible use: <xsl:for-each select="combinaisonIO/operands"> <xsl:sort select="count(operand)"/> <xsl:call-template name="buildOperand"/> </xsl:for-each>
+</xsl:template> 
+ 
+<xsl:template name="buildOperand">
+	<xsl:choose>
+	<xsl:when test="count(operand) = 1">
+    * OP(<xsl:value-of select="operand/@type"/>) --->  <xsl:value-of select="@returnType"/> 
+	</xsl:when>
+	<xsl:otherwise>
+    * <xsl:value-of select="operand[@position=0]/@type"/> <xsl:text> OP </xsl:text> <xsl:value-of select="operand[@position=1]/@type"/> --->  <xsl:value-of select="@returnType"/>	
+	</xsl:otherwise>
+	</xsl:choose>
+</xsl:template> 
+
+ 
+<!-- <xsl:template name="buildOperands">
 <xsl:choose>
 <xsl:when test="count(combinaisonIO/operands) = 1">
 	<xsl:for-each select="combinaisonIO/operands"> <xsl:call-template name="buildOperand"/>	</xsl:for-each>
@@ -60,9 +131,9 @@ An operator performs a function on one, two, or three operands. An operator that
 	</xsl:for-each>
 </xsl:otherwise>
 </xsl:choose>
-</xsl:template> 
+</xsl:template>  --> 
  
-<xsl:template name="buildOperand">
+<!-- <xsl:template name="buildOperand">
 	<xsl:choose>
 	<xsl:when test="count(operand) = 1">
   * Operand: <xsl:value-of select="operand/@type"/>
@@ -89,7 +160,8 @@ An operator performs a function on one, two, or three operands. An operator that
 	</xsl:otherwise>
 	</xsl:choose>
 </xsl:template>
-
+ -->
+ 
 </xsl:stylesheet>
 
 

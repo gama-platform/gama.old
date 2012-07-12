@@ -50,6 +50,7 @@ public class GamlDocProcessor {
 
 	ProcessingEnvironment processingEnv;
 	Messager mes;
+	HashMap<String,String> properNameTypeMap;
 
 	boolean firstParsing;
 
@@ -67,6 +68,7 @@ public class GamlDocProcessor {
 		nbrOperatorsDoc = 0;
 		nbrSkills = 0;
 		nbrSymbols = 0;
+		properNameTypeMap = initProperNameTypeMap();
 	}
 
 	public void processDocXML(final RoundEnvironment env, final Writer out) {
@@ -76,7 +78,7 @@ public class GamlDocProcessor {
 		try {
 			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			System.err.println("Impossible de cr�er un DocumentBuilder.");
+			System.err.println("Impossible to create a DocumentBuilder.");
 			System.exit(1);
 		}
 
@@ -85,6 +87,12 @@ public class GamlDocProcessor {
 		// Set<? extends Element> setRoot = env.getRootElements();
 		org.w3c.dom.Element root = doc.createElement("doc");
 
+		// ////////////////////////////////////////////////
+		// /// Parsing of Operators Categories
+		Set<? extends ExecutableElement> setOperatorsCategories =
+			(Set<? extends ExecutableElement>) env.getElementsAnnotatedWith(operator.class);
+		root.appendChild(this.processDocXMLOperatorsCategories(setOperatorsCategories, doc));		
+		
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
 		Set<? extends ExecutableElement> setOperators =
@@ -148,6 +156,32 @@ public class GamlDocProcessor {
 		return null;
 	}
 
+	private org.w3c.dom.Element processDocXMLOperatorsCategories(final Set<? extends ExecutableElement> set,
+			final Document doc) {
+		org.w3c.dom.Element operatorsCategories = doc.createElement("operatorsCategories");
+		for ( ExecutableElement e : set ) {
+			
+			String categoryName = e.getEnclosingElement().getSimpleName().toString();
+			
+			NodeList nL = operatorsCategories.getElementsByTagName("category");
+			int i = 0;
+			boolean found = false;
+			while (!found && i < nL.getLength()) {
+				org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
+				if ( categoryName.equals(elt.getAttribute("id")) ) { found = true; }
+				i++;
+			}
+			
+			if(!found) {
+				org.w3c.dom.Element category;				
+				category = doc.createElement("category");
+				category.setAttribute("id", categoryName);
+				operatorsCategories.appendChild(category);
+			}
+		}
+		return operatorsCategories;
+	}
+	
 	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set,
 		final Document doc) {
 		org.w3c.dom.Element operators = doc.createElement("operators");
@@ -206,14 +240,14 @@ public class GamlDocProcessor {
 			}
 
 			org.w3c.dom.Element operands = doc.createElement("operands");
-			operands.setAttribute("returnType", e.getReturnType().toString());
+			operands.setAttribute("returnType", getProperType(e.getReturnType().toString()));
 			operands.setAttribute("contentType", "" +
-				e.getAnnotation(operator.class).content_type());
+					e.getAnnotation(operator.class).content_type());
 			operands.setAttribute("type", "" + e.getAnnotation(operator.class).type());
 
 			if ( !isStatic ) {
 				org.w3c.dom.Element operand = doc.createElement("operand");
-				operand.setAttribute("type", e.getEnclosingElement().asType().toString());
+				operand.setAttribute("type", getProperType(e.getEnclosingElement().asType().toString()));
 				operand.setAttribute("position", "" + arity);
 				arity++;
 				operand.setAttribute("name", e.getEnclosingElement().asType().toString()
@@ -224,7 +258,7 @@ public class GamlDocProcessor {
 				int first_index = args.get(0).asType().toString().contains("IScope") ? 1 : 0;
 				for ( int i = first_index; i <= args.size() - 1; i++ ) {
 					org.w3c.dom.Element operand = doc.createElement("operand");
-					operand.setAttribute("type", args.get(i).asType().toString());
+					operand.setAttribute("type", getProperType(args.get(i).asType().toString()));
 					operand.setAttribute("position", "" + arity);
 					arity++;
 					operand.setAttribute("name", args.get(i).getSimpleName().toString());
@@ -502,4 +536,38 @@ public class GamlDocProcessor {
 		return cmdsElt;
 	}
 
+	private HashMap<String,String> initProperNameTypeMap(){
+		HashMap<String,String> hm = new HashMap<String,String>();
+		hm.put("msi.gama.metamodel.shape.IShape","shape");
+		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
+		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
+		hm.put("java.lang.Integer", "int");
+		hm.put("java.lang.Double", "float");
+		hm.put("msi.gama.util.GamaColor","rgb");
+		hm.put("msi.gama.util.IList", "list");
+		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
+		hm.put("msi.gama.metamodel.shape.ILocation", "point");
+		hm.put("java.lang.Object", "any");
+		hm.put("msi.gama.util.GamaPair","pair");
+		hm.put("java.lang.Boolean", "bool");
+		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
+		hm.put("java.lang.String", "string");
+		hm.put("msi.gama.util.graph.IGraph", "graph");
+		hm.put("msi.gama.metamodel.topology.ITopology", "topology");
+		hm.put("msi.gama.util.IPath", "path");
+		hm.put("msi.gama.util.GamaMap", "map");
+		hm.put("msi.gaml.expressions.IExpression", "any expression");
+		hm.put("msi.gaml.species.ISpecies", "species");
+		hm.put("msi.gama.util.IContainer", "container");		
+		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list of points");
+		return hm;
+	}
+	private String getProperType(String rawName){
+		if(properNameTypeMap.containsKey(rawName)){
+			return properNameTypeMap.get(rawName);
+		} else {
+			return rawName;
+		}
+	}
 }
