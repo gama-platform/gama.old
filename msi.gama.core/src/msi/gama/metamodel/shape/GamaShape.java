@@ -110,7 +110,11 @@ public class GamaShape implements IShape {
 		if ( isPoint ) { return getLocation().toGaml() + " as geometry"; }
 		if ( isMultiple() ) { return getGeometries().toGaml() + " as geometry"; }
 		GamaList<GamaShape> holes = getHoles();
-		String result = "polygon (" + new GamaList(getPoints()).toGaml() + ")";
+		String result = "";
+		if (getInnerGeometry() instanceof LineString)
+			result = "polyline (" + new GamaList(getPoints()).toGaml() + ")";
+		else
+			result = "polygon (" + new GamaList(getPoints()).toGaml() + ")";
 		if ( holes.isEmpty() ) { return result; }
 		for ( GamaShape g : holes ) {
 			result = "(" + result + ") - (" + g.toGaml() + ")";
