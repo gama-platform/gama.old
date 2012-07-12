@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -37,8 +38,9 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.COLOR, type = IType.COLOR_STR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR),
+@vars({
+	@var(name = IKeyword.COLOR, type = IType.COLOR_STR),
+	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR, doc = @doc(deprecated = "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
 	@var(name = IKeyword.GRID_X, type = IType.INT_STR, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT_STR, constant = true) })
 @skill(name = GridSkill.SKILL_NAME)
@@ -51,6 +53,7 @@ public class GridSkill extends GeometricSkill {
 	}
 
 	@getter("agents")
+	@Deprecated
 	public final List<IAgent> getAgents(final IAgent agent) {
 		return agent.getTopology().getAgentsIn(agent.getGeometry(), Different.with(), false);
 

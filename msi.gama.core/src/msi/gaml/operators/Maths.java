@@ -30,15 +30,21 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class Maths {
 
-	// public static void main(final String[] args) {
-	// GUI.debug("Various arithmetic tests");
-	// GUI.debug("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
-	// GUI.debug("NaN to int:" + (int) Double.NaN);
-	// GUI.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
-	// GUI.debug("(int) (1.0/0):" + (int) (1.0 / 0));
-	// GUI.debug("(int) (1.0/0d):" + (int) (1 / 0d));
-	// GUI.debug("(int) (1/0):" + 1 / 0);
-	// }
+	public static void main(final String[] args) {
+		java.lang.System.out.println("Various arithmetic tests");
+		java.lang.System.out.println("3.0 = 3" + (3d == 3));
+		java.lang.System.out.println("3.0 != 3" + (3d != 3));
+		java.lang.System.out.println("floor and ceil 2.7 " + floor(2.7) + " and " + ceil(2.7));
+		java.lang.System.out.println("floor and ceil -2.7 " + floor(-2.7) + " and " + ceil(-2.7));
+		java.lang.System.out.println("floor and ceil -2 " + floor(-2) + " and " + ceil(-2));
+		java.lang.System.out.println("floor and ceil 3 " + floor(3) + " and " + ceil(3));
+		// java.lang.System.out.println("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
+		// java.lang.System.out.println("NaN to int:" + (int) Double.NaN);
+		// GuiUtils.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
+		// GuiUtils.debug("(int) (1.0/0):" + (int) (1.0 / 0));
+		// GuiUtils.debug("(int) (1.0/0d):" + (int) (1 / 0d));
+		// GuiUtils.debug("(int) (1/0):" + 1 / 0);
+	}
 
 	/**
 	 * The Class Units.
@@ -552,13 +558,14 @@ public class Maths {
 			"floor(-4.7) 	--:  -5.0"},
 		see = {"ceil", "round"})
 	public static final double floor(final double d) {
-		int i;
-		if ( d >= 0 ) {
-			i = (int) d;
-		} else {
-			i = -((int) -d) - 1;
-		}
-		return i;
+		return Math.floor(d);
+		// int i;
+		// if ( d >= 0 ) {
+		// i = (int) d;
+		// } else {
+		// i = -((int) -d) - 1;
+		// }
+		// return i;
 	}
 
 	@operator(value = "ceil", can_be_const = true)
@@ -571,14 +578,16 @@ public class Maths {
 			"ceil(-4.7) 	--:  -4.0"},
 		see = {"floor", "round"})
 	public static final double ceil(final double d) {
-		int i;
-		if ( d >= 0 ) {
-			i = -((int) -d) + 1;
-		} else {
-			i = (int) d;
-		}
-		return i;
-	}
+		return Math.ceil(d);
+		/*
+		 * int i;
+		 * if ( d >= 0 ) {
+		 * i = -((int) -d) + 1;
+		 * } else {
+		 * i = (int) d;
+		 * }
+		 * return i;
+		 */}
 
 	@operator(value = "mod", priority = IPriority.PRODUCT, can_be_const = true)
 	@doc(
