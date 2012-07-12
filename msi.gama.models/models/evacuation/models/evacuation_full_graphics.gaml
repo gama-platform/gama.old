@@ -306,12 +306,12 @@ entities {
 				
 				do action: goto target: point2 on: road_graph_topology; 
 	
-				let lines1 type: list of: geometry <- (inside_road_geom split_at location);
+				let lines1 type: list of: geometry <- list(inside_road_geom split_at location);
 				set the_road.extremity1 <- lines1  first_with (geometry(each).points contains point1);
 				set inside_road_geom <- lines1 first_with (!(geometry(each).points contains point1));
 				set location <- point2;
 				do action: goto target: point1 on: road_graph_topology; 
-				let lines2 type: list of: geometry <- (inside_road_geom split_at location);
+				let lines2 type: list of: geometry <- list(inside_road_geom split_at location);
 				
 				set the_road.extremity2 <-  lines2 first_with (geometry(each).points contains point2);
 				set inside_road_geom <- lines2 first_with (!(geometry(each).points contains point2));

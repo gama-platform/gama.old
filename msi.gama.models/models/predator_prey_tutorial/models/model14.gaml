@@ -121,9 +121,10 @@ entities {
 		const energy_reproduce type: float <- predator_energy_reproduce ;
 		const my_icon type: string <- '../includes/data/wolf.png' ;
 		const speed type: float <- predator_speed;
+		list reachable_preys of: prey update: prey at_distance predator_range;
 		
-		reflex eat when: !(empty ((self neighbours_at predator_range) of_species prey)) {
-			ask one_of ((self neighbours_at predator_range) of_species prey) {
+		reflex eat when: !(empty (reachable_preys)) {
+			ask one_of (reachable_preys) {
 				do die ;
 			}
 			set energy <- energy + energy_transfert ;

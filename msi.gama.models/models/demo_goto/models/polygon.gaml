@@ -18,7 +18,7 @@ global {
 				set shape <- trig;
 			}
 		}
-		let skeletons type: list of: geometry <- skeletonize(the_object);
+		let skeletons type: list of: geometry <- list(skeletonize(the_object));
 		let skeletons_split type: list of: geometry <- split_lines(skeletons);
 		loop sk over: skeletons_split {
 			create skeleton {
