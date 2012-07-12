@@ -49,7 +49,7 @@ entities {
 		} 
 		reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
 			let nb_offsprings type: int <- 1 + rnd(nb_max_offsprings -1);
-			create species: species(self) number: nb_offsprings {
+			create species(self) number: nb_offsprings {
 				set myCell <- myself.myCell ;
 				set location <- myCell.location ;
 				set energy <- myself.energy / nb_offsprings ;
