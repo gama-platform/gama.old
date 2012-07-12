@@ -89,6 +89,19 @@ public class Cast {
 		return GamaContainerType.staticCast(scope, val, null);
 	}
 
+	@operator(value = IType.PATH_STR)
+	@doc(
+		value = "casting of the operand to a path",
+		special_cases = {
+			"if the operand is a path, returns itself",
+			"if the operand is a list, casts the list into a list of point and returns the path (in the current topology) through these points.",
+			"otherwise, returns nil"},
+		examples = "path([{2,5}, {4,7}, {2,1}])   --:  [polyline ([{2.0,5.0},{4.0,7.0}]),polyline ([{4.0,7.0},{2.0,1.0}])]",
+		see = "graph")
+	public static IPath toPath(final IScope scope, final Object object) {
+		return GamaPathType.staticCast(scope, object, null);
+	}	
+	
 	@operator(value = IType.GRAPH_STR, content_type = ITypeProvider.CHILD_CONTENT_TYPE, priority = IPriority.CAST)
 	@doc(value = "casting of the operand to a graph.", special_cases = {
 		"if the operand is a graph, returns the graph itself",
