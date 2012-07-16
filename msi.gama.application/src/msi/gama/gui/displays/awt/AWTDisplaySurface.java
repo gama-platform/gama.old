@@ -423,8 +423,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean resizeImage(final int x, final int y) {
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = point[0];
-		int imageHeight = point[1];
+		int imageWidth = Math.max(1,point[0]);
+		int imageHeight = Math.max(1, point[1]);
 		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
 			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
 			bWidth = newImage.getWidth();
@@ -470,7 +470,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	public void setZoom(final double factor, final Point c) {
-		if ( resizeImage((int) Math.round(bWidth * factor), (int) Math.round(bHeight * factor)) ) {
+		if ( resizeImage(Math.max(1, (int) Math.round(bWidth * factor)), Math.max(1,(int) Math.round(bHeight * factor))) ) {
 			int imagePX =
 				c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
 			int imagePY =
