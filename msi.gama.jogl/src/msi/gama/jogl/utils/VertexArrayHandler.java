@@ -220,7 +220,7 @@ public class VertexArrayHandler {
 		for (int j = 0; j < numGeometries; j++) {
 			Polygon curPolygon = (Polygon) curGeometry.geometry.getGeometryN(j);
 			MyTriangulatedGeometry curTriangulatedGeometry= new MyTriangulatedGeometry();			
-			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(curPolygon);
+			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(curPolygon, true);
 			curTriangulatedGeometry.z=z;
 			curTriangulatedGeometry.color= c;
 			curTriangulatedGeometry.alpha=alpha;
@@ -237,7 +237,7 @@ public class VertexArrayHandler {
 			boolean isTextured, Integer angle){
 		
 		MyTriangulatedGeometry curTriangulatedGeometry= new MyTriangulatedGeometry();
-		curTriangulatedGeometry.triangles = GeometryUtils.triangulation(polygon);
+		curTriangulatedGeometry.triangles = GeometryUtils.triangulation(polygon, true);
 		curTriangulatedGeometry.z=z;
 		curTriangulatedGeometry.color= c;
 		curTriangulatedGeometry.alpha=alpha;

@@ -183,7 +183,7 @@ public class BasicOpenGlDrawer {
 			// use JTS triangulation
 			else {
 				
-				triangles = GeometryUtils.triangulation(p);
+				triangles = GeometryUtils.triangulation(p, true);
 				it = triangles.iterator();
 
 				while (it.hasNext()) {

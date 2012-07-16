@@ -637,7 +637,7 @@ public abstract class Spatial {
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", examples = { "triangulate(self) -> returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
 		public static GamaList<IShape> primTriangulate(final IShape g) {
-			return GeometryUtils.triangulation(g.getInnerGeometry());
+			return GeometryUtils.triangulation(g.getInnerGeometry(), true);
 		}
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)

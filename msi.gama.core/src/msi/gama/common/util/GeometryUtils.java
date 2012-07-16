@@ -25,6 +25,9 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
 /**
@@ -40,6 +43,7 @@ public class GeometryUtils {
 	// PackedCoordinateSequenceFactory.DOUBLE, 2);
 
 	public static GeometryFactory factory = new GeometryFactory();
+	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
 
 	// TODO : see the possibility to use new LiteCoordinateSequenceFactory()
 
@@ -213,36 +217,54 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static GamaList<IShape> triangulation(final Geometry geom) {
+	public static GamaList<IShape> triangulation(final Geometry geom, boolean optimized) {
 		GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(triangulation(gc.getGeometryN(i)));
+				geoms.addAll(triangulation(gc.getGeometryN(i), optimized));
 			}
 		} else if ( geom instanceof Polygon ) {
 			Polygon polygon = (Polygon) geom;
-			ConformingDelaunayTriangulationBuilder dtb =
-				new ConformingDelaunayTriangulationBuilder();
-			dtb.setSites(polygon);
-			// dtb.setClipEnvelope(polygon.getEnvelopeInternal());
-			dtb.setConstraints(polygon);
-			dtb.setTolerance(0.01);
-			GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
-			// GeometryCollection tri = (GeometryCollection)
-			// dtb.getDiagram(BasicTransfomartions.geomFactory);
-
-			int nb = tri.getNumGeometries();
-			for ( int i = 0; i < nb; i++ ) {
-				Geometry gg = tri.getGeometryN(i);
-				// try {
-				if ( gg.isValid() && gg.intersection(geom).getArea() > 0.001 ) {
-					geoms.add(new GamaShape(gg));
-					// }
-					// } catch (AssertionFailedException e) {
-					// if ( gg.isValid() && gg.intersection(geom.buffer(0.0001)).getArea() > 1.0 ) {
-					// geoms.add((Polygon) gg);
-					// }
+			if (optimized) {
+				double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+				polygon = (Polygon) DouglasPeuckerSimplifier.simplify(geom, sizeTol);
+				ConformingDelaunayTriangulationBuilder dtb =
+					new ConformingDelaunayTriangulationBuilder();
+				dtb.setSites(polygon);
+				// dtb.setClipEnvelope(polygon.getEnvelopeInternal());
+				dtb.setConstraints(polygon);
+				dtb.setTolerance(sizeTol);
+				GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+				// GeometryCollection tri = (GeometryCollection)
+				// dtb.getDiagram(BasicTransfomartions.geomFactory);
+				PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
+				int nb = tri.getNumGeometries();
+				for ( int i = 0; i < nb; i++ ) {
+					Geometry gg = tri.getGeometryN(i);
+					// try {
+					if ( (pg.covers(gg))) {/*gg.intersection(geom).getArea() > 0.001 */ //gg.relate(geom, "****1****")) {
+						geoms.add(new GamaShape(gg));
+						// }
+						// } catch (AssertionFailedException e) {
+						// if ( gg.isValid() && gg.intersection(geom.buffer(0.0001)).getArea() > 1.0 ) {
+						// geoms.add((Polygon) gg);
+						// }
+					}
+				}
+			} else {
+				ConformingDelaunayTriangulationBuilder dtb =
+					new ConformingDelaunayTriangulationBuilder();
+				dtb.setSites(polygon);
+				dtb.setConstraints(polygon);
+				dtb.setTolerance(0.01);
+				GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+				int nb = tri.getNumGeometries();
+				for ( int i = 0; i < nb; i++ ) {
+					Geometry gg = tri.getGeometryN(i);
+					if ( gg.intersection(geom).getArea() > 0.001) {
+						geoms.add(new GamaShape(gg));
+					}
 				}
 			}
 		}
@@ -251,7 +273,7 @@ public class GeometryUtils {
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		IList<LineString> network = new GamaList<LineString>();
-		IList polys = new GamaList(GeometryUtils.triangulation(geom));
+		IList polys = new GamaList(GeometryUtils.triangulation(geom, true));
 		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
 		Collection<GamaShape> nodes = graph.vertexSet();
