@@ -187,7 +187,7 @@ public class Containers {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(value = "returns a copy of a sublist of the left operand between a begin index (x of the right operand point) and a end index (y of the right operand point", comment = "copy_between can only be used on list (and string)", special_cases = {
+	@doc(value = "returns a copy of a sublist of the left operand between a begin index (x of the right operand point) and a end index (y of the right operand point", special_cases = {
 		"if the right operand is nil or empty, copy_between returns a copy of the left operand",
 		"if the begin index is higher than the end index, copy_between returns a new empty list" }, examples = { "[1,2,3,4,5,6,7] copy_between {0,3} 	--:		 [1,2,3]" })
 	public static IList opCopy(final IList l1, final GamaPoint p) {
@@ -208,7 +208,7 @@ public class Containers {
 	}
 
 	@operator(value = "index_of", can_be_const = true)
-	@doc(value = "the index of the first occurence of the right operand in the left operand container", comment = "index_of is only defined for list, map and matrix. The definition of index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, index_of returns the index as an integer" }, examples = {
+	@doc(value = "the index of the first occurence of the right operand in the left operand container", comment = "The definition of index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, index_of returns the index as an integer" }, examples = {
 		"[1,2,3,4,5,6] index_of 4 	--: 	3", "[4,2,3,4,5,4] index_of 4  	--: 	0" }, see = { "at",
 		"last_index_of" })
 	public static Integer opIndexOf(final IList l1, final Object o) {
@@ -236,7 +236,7 @@ public class Containers {
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
-	@doc(value = "the index of the last occurence of the right operand in the left operand container", comment = "last_index_of is only defined for list, map and matrix. The definition of last_index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, last_index_of returns the index as an integer" }, examples = {
+	@doc(value = "the index of the last occurence of the right operand in the left operand container", comment = "The definition of last_index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, last_index_of returns the index as an integer" }, examples = {
 		"[1,2,3,4,5,6] last_index_of 4  	--: 	3", "[4,2,3,4,5,4] last_index_of 4  	--: 	5" }, see = {
 		"at", "last_index_of" })
 	public static Integer opLastIndexOf(final List l1, final Object o) {
@@ -276,8 +276,8 @@ public class Containers {
 	}
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", comment = IKeyword.MINUS +
-		" is only defined with a list as left operand", special_cases = { "if the right operand is empty or nil, " +
+	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", 
+	comment = "The behavior of the operator depends on the type of the operands.", special_cases = { "if the right operand is empty or nil, " +
 		IKeyword.MINUS + " returns the left operand" }, examples = {
 		"[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]", "[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" +
 		IKeyword.PLUS })

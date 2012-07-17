@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
@@ -42,17 +43,29 @@ import org.codehaus.janino.ScriptEvaluator;
 public class System {
 
 	@operator(value = "dead")
+	@doc(value = "true if the agent is dead, false otherwise.",
+		examples = "dead(agent_A) 	--: 	true or false" )
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a.dead();
 	}
 
 	@operator(value = "every")
+	@doc(
+		value = "true every operand time step, false otherwise",
+		comment = "the value of the every operator depends deeply on the time step. It can be used to do something not every step.",
+		examples = {
+			"reflex text_every {",
+			"	if every(2) {write \"the time step is even\";}",
+			"		else {write \"the time step is odd\";}"})
 	public static Boolean opEvery(final IScope scope, final Integer period) {
 		final int time = SimulationClock.getCycle();
 		return period > 0 && time >= period && time % period == 0;
 	}
 
 	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.RIGHT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.ADDRESSING)
+	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.",
+			special_cases = "if the agent is nil or dead, throws an exception",
+			examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) { throw new GamaRuntimeWarning("Cannot evaluate " + s.toGaml() +
@@ -63,12 +76,22 @@ public class System {
 	}
 
 	@operator(value = "copy", type = ITypeProvider.CHILD_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@doc(value = "returns a copy of the operand.")
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
 		if ( o instanceof IValue ) { return ((IValue) o).copy(); }
 		return o;
 	}
 
 	@operator(value = "user_input")
+	@doc(
+		value = "asks the user for some values (not defined as parameters)",
+		comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). " +
+				"The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
+		examples = {
+			"init {",
+            "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
+            "	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
+			"}"})
 	public static Map<String, Object> userInput(final IScope scope,
 		final Map<String, Object> initialValues) {
 		if ( initialValues.isEmpty() ) { return initialValues; }
@@ -78,6 +101,7 @@ public class System {
 	}
 
 	@operator(value = "eval_gaml", can_be_const = false)
+	@doc(value = "evaluates the given GAML string.", examples = "eval_gaml(\"2+3\")    --:   5", see = "eval_java")
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
 		IAgent agent = scope.getAgentScope();
 		IDescription d = agent.getSpecies().getDescription();
@@ -97,6 +121,7 @@ public class System {
 	}
 
 	@operator(value = "eval_java", can_be_const = false)
+	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = {"eval_gaml", "evaluate_with"})	
 	public static Object opEvalJava(final IScope scope, final String code) {
 		try {
 			ScriptEvaluator se = new ScriptEvaluator();
@@ -117,6 +142,8 @@ public class System {
 	private static final String[] gamaDefaultImports = new String[] {};
 
 	@operator(value = "evaluate_with", can_be_const = false)
+	@doc(value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)",
+		 see = {"eval_gaml","eval_java"})
 	public static Object opEvalJava(final IScope scope, final String code,
 		final IExpression parameters) {
 		try {

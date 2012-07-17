@@ -392,6 +392,11 @@ public class Graphs {
 	}
 
 	@operator(value = "with_weights")
+	@doc(
+		value = "returns the graph (left-hand operand) with weight given in the map (right-hand operand).",
+		comment = "this operand re-initializes the path finder",
+		special_cases = "if the left-hand operand is a map, the map should contains pairs such as: vertex/edge::double",
+		examples = "graph_from_edges (list(ant) as_map each::one_of (list(ant))) with_weights (list(ant) as_map each::each.food)")
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final GamaMap weights) {
 		// a map of vertex/edge::double to provide weights
 		// Example : graph_from_edges (list ant as_map each::one_of (list ant)) with_weights (list
@@ -403,6 +408,8 @@ public class Graphs {
 	}
 
 	@operator(value = "with_weights")
+	@doc(special_cases = "if the right-hand operand is a list, affects the n elements of the list to the n first edges. " +
+			"Note that the ordering of edges may change overtime, which can create some problems...")
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final IList weights) {
 		// Simply a list of double... and, by default, for edges.However, the ordering of edges may
 		// change overtime, which can create a problem somewhere...
@@ -418,30 +425,57 @@ public class Graphs {
 	}
 	
 	@operator(value = "set_verbose")
+	@doc(
+		value = "sets the verbose attributes of the graph (left-hand operand) to the given boolean value (right-hand operand).",
+		comment = "When verbose of a graph is true, it will display the shortest path computation level with static optimizer. " +
+				"This operator is useful to monitor the computation of ",
+		examples = "set graphEpidemio <- graphEpidemio set_verbose false;",
+		see = "with_optimizer_type")
 	public static IGraph setVerbose(final IScope scope, final IGraph graph, final Boolean verbose) {
 		graph.setVerbose(verbose);
 		return graph;
 	}
 	
 	@operator(value = "with_optimizer_type")
+	@doc(
+		value = "changes the shortest path computation method of the griven graph",
+		comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. " +
+				"Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, " +
+				"a static method will be used, i.e. all the shortest are previously computed.",
+		examples = "set graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+		see = "set_verbose")
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
 		graph.setOptimizerType(optimizerType);
 		return graph;
 	}
 
 	@operator(value = "remove_node_from")
+	@doc(
+		value = "removes a node from a graph.",
+		comment = "all the edges containing this node are also removed.",
+		examples = "node(0) remove_node_from graphEpidemio;    --: 	returns the graph without node(0)")
 	public static IGraph removeEdgeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
 		return g;
 	}
 
 	@operator(value = "rewire_p")
+	@doc(
+		value = "Rewires a graph (in the Watts-Strogatz meaning)",
+		deprecated = "Does not work now",
+		examples = "set graphEpidemio <- graphEpidemio rewire_p 0.2;",		
+		see = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Double probability) {
 		GraphAlgorithmsHandmade.rewireGraphProbability(g, probability);
 		return g;
 	}
 	
 	@operator(value = "rewire_n")
+	@doc(
+		value = "rewires the given count of edges.",
+		comment = "If there are too many edges, all the edges will be rewired.",
+		examples = "set graphEpidemio <- graphEpidemio rewire_n 10;",
+		see = "rewire_p")	
 	public static IGraph rewireGraph(final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
 		return g;

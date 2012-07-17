@@ -22,6 +22,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -63,24 +64,47 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	public abstract ILocation getDimensions();
 
 	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST)
+	@doc(
+		value = "returns a list of the rows of the matrix, with each row as a list of elements",
+		examples = {
+			"rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])   --: ", 
+            " 		[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]"},
+        see = "columns_list")
 	public abstract IList<IList<T>> getRowsList();
 
 	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST)
+	@doc(
+		value = "returns a list of the columns of the matrix, with each column as a list of elements",
+		examples = {
+			"columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])  --: ",
+            "	  [[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]"},
+		see = "rows_list")
 	public abstract IList<IList<T>> getColumnsList();
 
 	@operator(value = "row_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@doc(
+		value = "returns the row at a num_line (rigth-hand operand)",
+		examples = {"matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2  --:  [\"el13\",\"el23\",\"el33\"]"},
+		see =  {"column_at", "columns_list"})
 	public abstract IList<T> getRow(Integer num_line);
 
 	@operator(value = "column_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@doc(
+		value = "returns the column at a num_col (rigth-hand operand)",
+		examples = {"matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2  --:  [\"el31\",\"el32\",\"el33\"]"},
+		see =  {"row_at", "rows_list"})	
 	public abstract List<T> getColumn(Integer num_line);
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@doc(deprecated = "The sum of matrices is not yet implemented")
 	public abstract IMatrix plus(IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.TIMES, priority = IPriority.PRODUCT, can_be_const = true)
+	@doc(deprecated = "The difference of matrices is not yet implemented")
 	public abstract IMatrix times(IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@doc(deprecated = "The product of matrices is not yet implemented")
 	public abstract IMatrix minus(IMatrix other) throws GamaRuntimeException;
 
 	public abstract T get(final int col, final int row);

@@ -197,7 +197,6 @@ public class Random {
 	@operator(value = "flip")
 	@doc(
 		value = "true or false given the probability represented by the operand",
-		comment = "",
 		special_cases = {"flip 0 always returns false, flip 1 true"},
 		examples = {"flip (0.66666) -> 2/3 chances to return true."},
 		see = {"rnd"})

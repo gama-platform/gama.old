@@ -53,8 +53,8 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 			"if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node",
 			"if it is a graph and if the right operand is an edge, at returns the pair node_out::node_in of the edge",
 			"if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph"},
-		examples = {"[1, 2, 3] at 2	--:    2 ",
-					"[{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true"},
+		examples = {"[1, 2, 3] at 2					--:    3 ",
+					"[{1,2}, {3,4}, {5,6}] at 0 	--: {1.0;2.0}"},
 		see = {"contains_all, contains_any"})	
 	public ValueType get(KeyType index) throws GamaRuntimeException;
 
