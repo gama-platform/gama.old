@@ -19,8 +19,10 @@
 package msi.gama.util;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
@@ -132,12 +134,12 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	// @operator(value = "map", can_be_const = true)
 	public GamaMap mapValue(final IScope scope) {
 		return this;
 	}
 
 	@Override
+	@operator(value = { IKeyword.AT }, can_be_const = true, type = IType.NONE)
 	public Object get(final Object index) {
 		return super.get(index);
 	}
