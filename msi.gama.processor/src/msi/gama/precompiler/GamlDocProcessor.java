@@ -545,6 +545,16 @@ public class GamlDocProcessor {
 		hm.put("java.lang.Double", "float");
 		hm.put("msi.gama.util.GamaColor","rgb");
 		hm.put("msi.gama.util.IList", "list");
+		hm.put("msi.gama.util.GamaList", "list");
+		hm.put("java.util.List", "list");
+		hm.put("java.util.List<T>", "list");
+		hm.put("msi.gama.util.IList<T>", "list");
+		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list of lists");		
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list of shapes");
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list of points");
+		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list of agents");	
+		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.agent.IAgent>", "list of agents");
+		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list of shapes");
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
 		hm.put("msi.gama.metamodel.shape.ILocation", "point");
 		hm.put("java.lang.Object", "any");
@@ -560,7 +570,7 @@ public class GamlDocProcessor {
 		hm.put("msi.gaml.species.ISpecies", "species");
 		hm.put("msi.gama.util.IContainer", "container");		
 		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list of points");
+		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container");
 		return hm;
 	}
 	private String getProperType(String rawName){
