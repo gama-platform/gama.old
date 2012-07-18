@@ -1447,6 +1447,10 @@ public abstract class Spatial {
 
 	public static abstract class ThreeD {
 		@operator(value = { "add_z" } )
+		@doc(value = "add_z", 
+		comment = "Return a geometry with a z value", 
+		examples = { "set shape <- shape add_z rnd(100);" }, 
+		see = { "add_z_pt" })
 		public static IShape opAddZGeom(final IShape g, final Double z) {
 			Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) {
@@ -1456,6 +1460,12 @@ public abstract class Spatial {
 		}
 		
 		@operator(value = { "add_z_pt" } )
+		@doc(value = "add_z_pt", 
+		comment = "Return a geometry with a z value", 
+		examples = { "loop i from: 0 to: length(shape.points) - 1{" +
+				"set shape <- shape add_z_pt {i,valZ};" +
+				"}" }, 
+		see = { "add_z" })
 		public static IShape opAddZPoint(final IShape geom, final GamaPoint data) {
 			geom.getInnerGeometry().getCoordinates()[(int) data.x].z = data.y;
 			return geom;
