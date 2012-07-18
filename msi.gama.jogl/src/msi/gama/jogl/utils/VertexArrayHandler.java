@@ -82,7 +82,7 @@ public class VertexArrayHandler {
 				if (curGeometry.geometry.getGeometryType() == "MultiPolygon") {
 					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry,
 							curGeometry.z, curGeometry.color,
-							curGeometry.alpha,curGeometry.fill, curGeometry.angle, curGeometry.elevation);
+							curGeometry.alpha,curGeometry.fill, curGeometry.angle, curGeometry.height);
 				}
 				
 				else if (curGeometry.geometry.getGeometryType() == "Polygon") {

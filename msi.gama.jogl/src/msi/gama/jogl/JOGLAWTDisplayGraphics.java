@@ -81,7 +81,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public float envWidth, envHeight, maxEnvDim;
 
 	// All the geometry of the same layer are drawn in the same z plan.
-	public float currentZvalue = 0.0f;
+	public float currentZLayer = 0.0f;
 
 	// OpenGL list ID
 	private int listID = -1;
@@ -325,19 +325,22 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            boolean
 	 * @param angle
 	 *            Integer
+	 * @param z float            
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
 
-		// Check if the geometry has a z elevation value
-		float elevation;
+		
+		
+		// Check if the geometry has a height value (3D Shape or Volume)
+		float height;
 		if (geometry.getUserData() != null) {
-			elevation = new Float(geometry.getUserData().toString());
-			this.AddJTSGeometryInJTSGeometries(geometry, currentZvalue, color,
-					fill, false, angle, elevation);
+			height = new Float(geometry.getUserData().toString());
+			this.AddJTSGeometryInJTSGeometries(geometry, currentZLayer, color,
+					fill, false, angle, height);
 		} else {
-			this.AddJTSGeometryInJTSGeometries(geometry, currentZvalue, color,
+			this.AddJTSGeometryInJTSGeometries(geometry, currentZLayer, color,
 					fill, false, angle, 0);
 		}
 		// FIXME: Need to remove the use of sw.
@@ -353,7 +356,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, image.getWidth())).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g, currentZvalue, lineColor,
+			this.AddJTSGeometryInJTSGeometries(g, currentZLayer, lineColor,
 					true, false, 0, 0);
 		}
 
@@ -362,7 +365,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			;
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g, currentZvalue, lineColor,
+			this.AddJTSGeometryInJTSGeometries(g, currentZLayer, lineColor,
 					true, false, 0, 0);
 		}
 
@@ -401,11 +404,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				&& curY == 0
 				|| (name.equals("GridDisplay") == true || name
 						.equals("QuadTreeDisplay"))) {
-			AddImageInImages(img, curX, curY, currentZvalue, this.envWidth,
+			AddImageInImages(img, curX, curY, currentZLayer, this.envWidth,
 					this.envHeight, name, angle);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			AddImageInImages(img, curX, curY, currentZvalue, curWidth,
+			AddImageInImages(img, curX, curY, currentZLayer, curWidth,
 					curHeight, name, angle);
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
@@ -449,7 +452,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				(double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false, 0,
 				0);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -461,7 +464,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g = GamaGeometryType.buildTriangle(curWidth,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false,
 				angle, 0);
 		Rectangle2D r = null;
 		return r;
@@ -482,7 +485,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final double toY) {
 		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY),
 				new GamaPoint(toX, toY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, true, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, true, false, 0,
 				0);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
@@ -503,7 +506,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final Integer angle) {
 		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZvalue, c, fill, false,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false,
 				angle, 0);
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
@@ -554,21 +557,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param fill
 	 * @param isTextured
 	 * @param angle
-	 * @param elevation
+	 * @param height
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,
-			final float z, final Color color, final boolean fill,
-			final boolean isTextured, final Integer angle, final float elevation) {
+			final float z_layer, final Color color, final boolean fill,
+			final boolean isTextured, final Integer angle, final float height) {
 
 		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
 		curJTSGeometry.geometry = geometry;
-		curJTSGeometry.z = z;
+		curJTSGeometry.z = z_layer;
 		curJTSGeometry.alpha= this.currentAlpha;
 		curJTSGeometry.color = color;
 		curJTSGeometry.fill = fill;
 		curJTSGeometry.isTextured = isTextured;
 		curJTSGeometry.angle = angle;
-		curJTSGeometry.elevation = elevation;
+		curJTSGeometry.height = height;
 		this.myJTSGeometries.add(curJTSGeometry);
 	}
 
@@ -852,7 +855,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public void initLayers() {
-		currentZvalue = 0.0f;
+		currentZLayer = 0.0f;
 	}
 
 	/**
@@ -860,8 +863,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * set it to 0.
 	 */
 	@Override
-	public void newLayer(double elevation) {
-		currentZvalue = (float) (maxEnvDim * elevation);
+	public void newLayer(double zLayerValue) {
+		currentZLayer = (float) (maxEnvDim * zLayerValue);
 	}
 
 }

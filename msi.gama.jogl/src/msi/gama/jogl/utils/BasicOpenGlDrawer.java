@@ -97,13 +97,13 @@ public class BasicOpenGlDrawer {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z, geometry.color,
-						geometry.alpha,geometry.fill, geometry.angle, geometry.elevation);
+						geometry.alpha,geometry.fill, geometry.angle, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
-				if (geometry.elevation > 0) {
+				if (geometry.height > 0) {
 					DrawPolyhedre((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.elevation, geometry.angle);
+							geometry.alpha,geometry.height, geometry.angle);
 				} else {
 					DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle);
@@ -124,7 +124,7 @@ public class BasicOpenGlDrawer {
 	}
 
 	public void DrawMultiPolygon(MultiPolygon polygons, float z, Color c,float alpha,
-			boolean fill, Integer angle, float elevation) {
+			boolean fill, Integer angle, float height) {
 
 		numGeometries = polygons.getNumGeometries();
 
@@ -136,8 +136,8 @@ public class BasicOpenGlDrawer {
 					alpha);
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
-			if (elevation > 0) {
-				DrawPolyhedre(curPolygon, z, c, alpha,elevation, angle);
+			if (height > 0) {
+				DrawPolyhedre(curPolygon, z, c, alpha,height, angle);
 			} else {
 				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle);
 			}
@@ -153,6 +153,8 @@ public class BasicOpenGlDrawer {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
+			
+			//FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
 
 			// System.out.println("Draw Polygon with Tessellation :"+numExtPoints);
@@ -170,7 +172,14 @@ public class BasicOpenGlDrawer {
 							.getPointN(j).getX());
 					tempPolygon[j][1] = -(float) (p.getExteriorRing()
 							.getPointN(j).getY());
-					tempPolygon[j][2] = z;
+					
+					
+					if(String.valueOf(p.getExteriorRing().getPointN(j).getCoordinate().z).equals("NaN") == true){
+						tempPolygon[j][2] = z;
+					}
+					else{
+						tempPolygon[j][2] = z+p.getExteriorRing().getPointN(j).getCoordinate().z;
+					}
 				}
 
 				for (int j = 0; j < numExtPoints; j++) {
@@ -187,10 +196,10 @@ public class BasicOpenGlDrawer {
 				it = triangles.iterator();
 
 				while (it.hasNext()) {
-					DrawShape(it.next(),true);
-				}				
+					DrawShape(it.next(),false);
+				}
 			}
-
+	
 			myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 			DrawPolygonContour(p, c, z);
 
@@ -282,25 +291,46 @@ public class BasicOpenGlDrawer {
 		// Draw contour
 		myGl.glBegin(GL.GL_LINES);
 		numExtPoints = p.getExteriorRing().getNumPoints();
-		for (int j = 0; j < numExtPoints - 1; j++) {
-			myGl.glLineWidth(1.0f);
-			myGl.glVertex3f(
-					(float) ((p.getExteriorRing().getPointN(j).getX())),
-					-(float) ((p.getExteriorRing().getPointN(j).getY())), z);
-			myGl.glVertex3f(
-					(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
-					-(float) ((p.getExteriorRing().getPointN(j + 1).getY())), z);
+		
+		//If polygon has no z value
+		if(String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == true){
+			for (int j = 0; j < numExtPoints - 1; j++) {
+				myGl.glLineWidth(1.0f);
+				myGl.glVertex3f(
+						(float) ((p.getExteriorRing().getPointN(j).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j).getY())), z);
+				myGl.glVertex3f(
+						(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j + 1).getY())), z);
+			}
 		}
+		
+		//If the polygon has a z value.
+		else{
+			for (int j = 0; j < numExtPoints - 1; j++) {
+				myGl.glLineWidth(1.0f);
+				myGl.glVertex3f(
+						(float) ((p.getExteriorRing().getPointN(j).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j).getY())),
+						z+(float)p.getExteriorRing().getPointN(j).getCoordinate().z);
+				myGl.glVertex3f(
+						(float) ((p.getExteriorRing().getPointN(j + 1).getX())),
+						-(float) ((p.getExteriorRing().getPointN(j + 1).getY())), 
+						z+(float) p.getExteriorRing().getPointN(j+1).getCoordinate().z);
+			}
+		}
+		
+		
 		myGl.glEnd();
 	}
 
-	public void DrawPolyhedre(Polygon p, float z, Color c,float alpha, float z_offset,
+	public void DrawPolyhedre(Polygon p, float z, Color c,float alpha, float height,
 			Integer angle) {
 
 		DrawPolygon(p, z, c, alpha,true, false, angle);
-		DrawPolygon(p, z + z_offset, c,alpha, true, false, angle);
+		DrawPolygon(p, z + height, c,alpha, true, false, angle);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha,z + z_offset);
+		DrawFaces(p, c, alpha,z + height);
 
 	}
 	
@@ -531,8 +561,11 @@ public class BasicOpenGlDrawer {
 	public void DrawShape(IShape shape,boolean showTriangulation) {
 
 		Polygon polygon = (Polygon) shape.getInnerGeometry();
+		
 
 		if(showTriangulation){
+			
+			if(String.valueOf(polygon.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == true){			
 			myGl.glBegin(GL.GL_LINES); // draw using triangles
 			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
 			 -polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
@@ -548,9 +581,37 @@ public class BasicOpenGlDrawer {
 			 -polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
 			 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
 			 -polygon.getExteriorRing().getPointN(0).getY(), 0.0f); 
-			 myGl.glEnd();			
+			 myGl.glEnd();
+			}
+			else{
+				myGl.glBegin(GL.GL_LINES); // draw using triangles
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+				 -polygon.getExteriorRing().getPointN(0).getY(), 
+				 polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+				 -polygon.getExteriorRing().getPointN(1).getY(), 
+				 polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				 
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
+				 -polygon.getExteriorRing().getPointN(1).getY(), 
+				 polygon.getExteriorRing().getPointN(1).getCoordinate().z);
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+				 -polygon.getExteriorRing().getPointN(2).getY(), 
+				 polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+				  
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
+				 -polygon.getExteriorRing().getPointN(2).getY(), 
+				 polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+				 myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
+				 -polygon.getExteriorRing().getPointN(0).getY(), 
+				 polygon.getExteriorRing().getPointN(0).getCoordinate().z); 
+				 myGl.glEnd();
+				
+			}
 		}
 		else{
+			if(String.valueOf(polygon.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == true){			
+				
 			myGl.glBegin(GL_TRIANGLES); // draw using triangles
 			myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), -polygon
 					.getExteriorRing().getPointN(0).getY(), 0.0f);
@@ -559,6 +620,20 @@ public class BasicOpenGlDrawer {
 			myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(), -polygon
 					.getExteriorRing().getPointN(2).getY(), 0.0f);
 			myGl.glEnd();
+			}
+			else{
+				myGl.glBegin(GL_TRIANGLES); // draw using triangles
+				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), -polygon
+						.getExteriorRing().getPointN(0).getY(), 
+						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(), -polygon
+						.getExteriorRing().getPointN(1).getY(), 
+						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
+				myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(), -polygon
+						.getExteriorRing().getPointN(2).getY(), 
+						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+				myGl.glEnd();	
+			}
 			
 		}
 	}
