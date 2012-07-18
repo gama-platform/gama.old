@@ -55,7 +55,7 @@ public interface IDisplaySurface {
 	void zoomFit();
 
 	/**
-	 * Switch between 2D and 3D view (Onlye with Opengl view)
+	 * Switch between 2D and 3D view (Only with Opengl view)
 	 */
 	void toggleView();
 

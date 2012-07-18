@@ -1443,5 +1443,25 @@ public abstract class Spatial {
 		}
 
 	}
+	
+
+	public static abstract class ThreeD {
+		@operator(value = { "add_z" } )
+		public static IShape opAddZGeom(final IShape g, final Double z) {
+			Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
+			for (int i = 0; i < coordinates.length; i++) {
+				coordinates[i].z = z;
+			}
+			return g;
+		}
+		
+		@operator(value = { "add_z_pt" } )
+		public static IShape opAddZPoint(final IShape geom, final GamaPoint data) {
+			geom.getInnerGeometry().getCoordinates()[(int) data.x].z = data.y;
+			return geom;
+		}
+	}
+	
+	
 
 }

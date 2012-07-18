@@ -228,7 +228,27 @@ public class GeometryUtils {
 			Polygon polygon = (Polygon) geom;
 			if (optimized) {
 				double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
-				polygon = (Polygon) DouglasPeuckerSimplifier.simplify(geom, sizeTol);
+				Geometry g2 = DouglasPeuckerSimplifier.simplify(geom, sizeTol);
+				if (g2 instanceof Polygon) {
+					polygon = (Polygon) g2;
+				} else if (g2 instanceof MultiPolygon) {
+				/*	System.out.println("MultiPolygon");
+					MultiPolygon mp = (MultiPolygon) g2;
+					double areaMax = 0;
+					for (int i = 0; i < mp.getNumGeometries(); i++) {
+						Geometry g3 = mp.getGeometryN(i);
+						double area = g3.getArea();
+						if (area > areaMax) {
+							areaMax = area;
+							polygon = (Polygon) g3;
+						}
+					}*/
+					MultiPolygon mp = (MultiPolygon) g2;
+					for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
+						geoms.addAll(triangulation(mp.getGeometryN(i), optimized));
+					}
+				} 
+				
 				ConformingDelaunayTriangulationBuilder dtb =
 					new ConformingDelaunayTriangulationBuilder();
 				dtb.setSites(polygon);

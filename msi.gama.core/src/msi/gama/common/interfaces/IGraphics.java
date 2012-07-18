@@ -165,6 +165,7 @@ public interface IGraphics {
 	 * @param color Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param z float
 	 */
 	public abstract Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 		final boolean fill, final Integer angle);
@@ -219,8 +220,8 @@ public interface IGraphics {
 
 	/*
 	 * For IGraphics implementations that support the notion of layers in a way or another...
-	 * Indicates that the painting of a new layer is about to begin.
+	 * Sets the z value of the new created layer.
 	 */
-	public abstract void newLayer(double elevation);
+	public abstract void newLayer(double zLayerValue);
 
 }
