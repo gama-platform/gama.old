@@ -67,7 +67,7 @@ public class PhysicalWorldAgent extends GamlAgent {
 	private PolygonShape[] GamaPolyToPolyPhysic1(final IAgent geom) {
 
 		System.out.println("Ici");
-		IList<IShape> triangles = GeometryUtils.triangulation(geom.getInnerGeometry(), true);
+		IList<IShape> triangles = GeometryUtils.triangulation(geom.getInnerGeometry());
 		PolygonShape trianglesShapes[] = new PolygonShape[triangles.size()];
 		int i = 0;
 		for ( IShape tr : triangles ) {
