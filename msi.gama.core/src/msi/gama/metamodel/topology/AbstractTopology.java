@@ -345,6 +345,7 @@ public abstract class AbstractTopology implements ITopology {
 		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
 		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 		GamaList<IAgent> result = new GamaList(shapes.size());
+		System.out.println("shapes : " + shapes);
 		for ( IShape sh : shapes ) {
 			IAgent ag = sh.getAgent();
 			if ( ag != null && !ag.dead() ) {

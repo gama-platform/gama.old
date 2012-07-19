@@ -24,11 +24,17 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
+import msi.gaml.types.GamaGeometryType;
+
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulator;
+import com.vividsolutions.jts.triangulate.ConstraintVertex;
+import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
+import com.vividsolutions.jts.triangulate.Segment;
 
 /**
  * The class GamaGeometryUtils.
@@ -216,84 +222,69 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
+	
+	public static GamaList<IShape> triangulation(final GamaList<IShape> lines) {
+		GamaList<IShape> geoms = new GamaList<IShape>();
+		ConformingDelaunayTriangulationBuilder dtb =
+				new ConformingDelaunayTriangulationBuilder();
+			
+			Geometry points = GamaGeometryType.geometriesToGeometry(lines).getInnerGeometry();
+			double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
+			
+			dtb.setSites(points);
+			dtb.setConstraints(points);
+			dtb.setTolerance(sizeTol);
+			GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+			int nb = tri.getNumGeometries();
+			for ( int i = 0; i < nb; i++ ) {
+				Geometry gg = tri.getGeometryN(i);
+				geoms.add(new GamaShape(gg));
+			}
+			return geoms;
+	}
 
-	public static GamaList<IShape> triangulation(final Geometry geom, boolean optimized) {
+	public static GamaList<IShape> triangulation(final Geometry geom) {
 		GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(triangulation(gc.getGeometryN(i), optimized));
+				geoms.addAll(triangulation(gc.getGeometryN(i)));
 			}
 		} else if ( geom instanceof Polygon ) {
 			Polygon polygon = (Polygon) geom;
-			if (optimized) {
-				double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
-				Geometry g2 = DouglasPeuckerSimplifier.simplify(geom, sizeTol);
-				if (g2 instanceof Polygon) {
-					polygon = (Polygon) g2;
-				} else if (g2 instanceof MultiPolygon) {
-				/*	System.out.println("MultiPolygon");
-					MultiPolygon mp = (MultiPolygon) g2;
-					double areaMax = 0;
-					for (int i = 0; i < mp.getNumGeometries(); i++) {
-						Geometry g3 = mp.getGeometryN(i);
-						double area = g3.getArea();
-						if (area > areaMax) {
-							areaMax = area;
-							polygon = (Polygon) g3;
-						}
-					}*/
-					MultiPolygon mp = (MultiPolygon) g2;
-					for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
-						geoms.addAll(triangulation(mp.getGeometryN(i), optimized));
-					}
-				} 
-				
-				ConformingDelaunayTriangulationBuilder dtb =
-					new ConformingDelaunayTriangulationBuilder();
-				dtb.setSites(polygon);
-				// dtb.setClipEnvelope(polygon.getEnvelopeInternal());
-				dtb.setConstraints(polygon);
-				dtb.setTolerance(sizeTol);
-				GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
-				// GeometryCollection tri = (GeometryCollection)
-				// dtb.getDiagram(BasicTransfomartions.geomFactory);
-				PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
-				int nb = tri.getNumGeometries();
-				for ( int i = 0; i < nb; i++ ) {
-					Geometry gg = tri.getGeometryN(i);
-					// try {
-					if ( (pg.covers(gg))) {/*gg.intersection(geom).getArea() > 0.001 */ //gg.relate(geom, "****1****")) {
-						geoms.add(new GamaShape(gg));
-						// }
-						// } catch (AssertionFailedException e) {
-						// if ( gg.isValid() && gg.intersection(geom.buffer(0.0001)).getArea() > 1.0 ) {
-						// geoms.add((Polygon) gg);
-						// }
-					}
-				}
-			} else {
-				ConformingDelaunayTriangulationBuilder dtb =
-					new ConformingDelaunayTriangulationBuilder();
-				dtb.setSites(polygon);
-				dtb.setConstraints(polygon);
-				dtb.setTolerance(0.01);
-				GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
-				int nb = tri.getNumGeometries();
-				for ( int i = 0; i < nb; i++ ) {
-					Geometry gg = tri.getGeometryN(i);
-					if ( gg.intersection(geom).getArea() > 0.001) {
-						geoms.add(new GamaShape(gg));
-					}
+			double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+			ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+			dtb.setSites(polygon);
+			dtb.setConstraints(polygon);
+			dtb.setTolerance(sizeTol);
+			         
+			GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+			PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
+			int nb = tri.getNumGeometries();
+			for ( int i = 0; i < nb; i++ ) {
+				Geometry gg = tri.getGeometryN(i);
+				if ( (pg.covers(gg))) {
+					geoms.add(new GamaShape(gg));
 				}
 			}
 		}
 		return geoms;
 	}
+	
+	public class contraintVertexFactory3D implements ConstraintVertexFactory {
+
+		@Override
+		public ConstraintVertex createVertex(Coordinate p, Segment constraintSeg) {
+			Coordinate c = new Coordinate(p);
+			c.z = p.z;
+			return new ConstraintVertex(c);
+		}
+		
+	}
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		IList<LineString> network = new GamaList<LineString>();
-		IList polys = new GamaList(GeometryUtils.triangulation(geom, true));
+		IList polys = new GamaList(GeometryUtils.triangulation(geom));
 		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
 		Collection<GamaShape> nodes = graph.vertexSet();
