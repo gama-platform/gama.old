@@ -671,7 +671,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void DrawMyJTSGeometries() {
 
-		useDisplayList = false;
+		useDisplayList = true;
 		useVertexArray = false;
 		// System.out.println("isListCreated="+isListCreated);
 		if (useDisplayList) {
@@ -688,7 +688,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
 			}
 		} else {
-
+ 
 			if (!useVertexArray) {
 				Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 				while (it.hasNext()) {

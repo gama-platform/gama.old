@@ -6,6 +6,7 @@ import static javax.media.opengl.GL.GL_QUADS;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import java.awt.Color;
+import java.awt.List;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -20,6 +21,8 @@ import javax.media.opengl.glu.GLUtessellator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.GLUT;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -27,13 +30,16 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 
 import javax.vecmath.Vector3f;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 
 public class BasicOpenGlDrawer {
@@ -58,7 +64,7 @@ public class BasicOpenGlDrawer {
 	double temp[];
 
 	//use glut tesselation or JTS tesselation
-	boolean useTessellation = true;
+	boolean useTessellation = false;
 	
 	
 	
@@ -188,20 +194,69 @@ public class BasicOpenGlDrawer {
 
 				myGlu.gluTessEndContour(tobj);
 				myGlu.gluTessEndPolygon(tobj);
+				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
+				DrawPolygonContour(p, c, z);
 			}
 			// use JTS triangulation
 			else {
+				double sizeTol = Math.sqrt(p.getArea()) / 100.0;
+				Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
+				if (g2 instanceof Polygon) {
+					p = (Polygon) g2;
+				} 
 				
-				triangles = GeometryUtils.triangulation(p, true);
-				it = triangles.iterator();
-
-				while (it.hasNext()) {
-					DrawShape(it.next(),false);
+				
+				if (p.getNumPoints() > 4) {
+					triangles = GeometryUtils.triangulation(p);
+				
+					GamaList<Geometry> segments = new GamaList<Geometry>();
+					for (int i = 0; i < p.getNumPoints()- 1; i++) {
+						Coordinate[] cs = new Coordinate[2];
+						cs[0] = p.getCoordinates()[i];
+						cs[1] = p.getCoordinates()[i+1];
+						segments.add(GeometryUtils.factory.createLineString(cs));
+					}
+					for (IShape tri : triangles){
+						for (int i = 0; i < tri.getInnerGeometry().getNumPoints(); i++) {
+							Coordinate coord = tri.getInnerGeometry().getCoordinates()[i];
+							if ((coord.z + "").equals("NaN")) {
+								Point pt = GeometryUtils.factory.createPoint(coord);
+								double distMin = Double.MAX_VALUE;
+								Geometry closestSeg = null;
+								for (Geometry seg : segments) {
+									double dist = seg.distance(pt);
+									if (dist < distMin) {
+										distMin = dist;
+										closestSeg = seg;
+									}
+								}
+								Point pt1 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[0]);
+								Point pt2 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[1]);
+								
+								double dist1 = pt.distance(pt1);
+								double dist2 = pt.distance(pt2);
+								coord.z = (1 - (dist1 / closestSeg.getLength())) * closestSeg.getCoordinates()[0].z + (1 - (dist2 / closestSeg.getLength())) * closestSeg.getCoordinates()[1].z;
+									
+							}
+							DrawShape(tri,false);
+					
+						}
+					}
+				} else {
+					triangles = new GamaList<IShape>();
+					if (p != null && p.isValid() && p.getNumPoints() == 4)
+						triangles.add(new GamaShape(p));
 				}
+				for (IShape tri : triangles){
+					DrawShape(tri,false);
+					
+				}
+				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
+				
+				DrawPolygonContour(p, c, z);
 			}
 	
-			myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-			DrawPolygonContour(p, c, z);
+			
 
 		}
 		// fill = false. Draw only the contour of the polygon.
