@@ -87,13 +87,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private int listID = -1;
 	public boolean isListCreated = false;
 	
-	public boolean useDisplayList;
+	public boolean useDisplayList=false;
 	
 
 	// use to do the triangulation only once per timestep.
 	public boolean isPolygonTriangulated = false;
 
-	public boolean useVertexArray;
+	public boolean useVertexArray=false;
 	// FIXME: This need to be remove. Only here to return the bounds of a
 	// geometry.
 	private final PointTransformation pt = new PointTransformation() {
@@ -671,8 +671,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void DrawMyJTSGeometries() {
 
-		useDisplayList = true;
-		useVertexArray = false;
+
 		// System.out.println("isListCreated="+isListCreated);
 		if (useDisplayList) {
 			if (!isListCreated) {
