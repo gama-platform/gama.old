@@ -242,10 +242,9 @@ public class BasicOpenGlDrawer {
 					
 						}
 					}
-				} else {
+				} else if (p.getNumPoints() == 4) {
 					triangles = new GamaList<IShape>();
-					if (p != null && p.isValid() && p.getNumPoints() == 4)
-						triangles.add(new GamaShape(p));
+					triangles.add(new GamaShape(p));
 				}
 				for (IShape tri : triangles){
 					DrawShape(tri,false);
@@ -346,7 +345,8 @@ public class BasicOpenGlDrawer {
 		// Draw contour
 		myGl.glBegin(GL.GL_LINES);
 		numExtPoints = p.getExteriorRing().getNumPoints();
-		
+		if (p.isEmpty())
+			return;
 		//If polygon has no z value
 		if(String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == true){
 			for (int j = 0; j < numExtPoints - 1; j++) {
