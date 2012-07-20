@@ -150,10 +150,14 @@ public class BasicOpenGlDrawer {
 		}
 	}
 
-	public void DrawPolygon(Polygon p, float z, Color c, float alpha, boolean fill,
+	public void DrawPolygon(Polygon p, float z_layer, Color c, float alpha, boolean fill,
 			boolean isTextured, Integer angle) {
 
 		// FIXME: Angle rotation is not implemented yet
+		
+		
+		//Set z_layer
+		myGl.glTranslatef(0.0f, 0.0f, z_layer);
 
 		if (fill == true) {
 			myGl.glColor4f((float) c.getRed() / 255,
@@ -181,10 +185,10 @@ public class BasicOpenGlDrawer {
 					
 					
 					if(String.valueOf(p.getExteriorRing().getPointN(j).getCoordinate().z).equals("NaN") == true){
-						tempPolygon[j][2] = z;
+						tempPolygon[j][2] = 0.0f;
 					}
 					else{
-						tempPolygon[j][2] = z+p.getExteriorRing().getPointN(j).getCoordinate().z;
+						tempPolygon[j][2] = 0.0f+p.getExteriorRing().getPointN(j).getCoordinate().z;
 					}
 				}
 
@@ -195,17 +199,18 @@ public class BasicOpenGlDrawer {
 				myGlu.gluTessEndContour(tobj);
 				myGlu.gluTessEndPolygon(tobj);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-				DrawPolygonContour(p, c, z);
+				DrawPolygonContour(p, c, 0.0f);
 			}
-			// use JTS triangulation
+			// use JTS triangulation on simplified geometry (DouglasPeucker)
+			//FIXME: not working with a z_layer value!!!!
 			else {
 				double sizeTol = Math.sqrt(p.getArea()) / 100.0;
 				Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
 				if (g2 instanceof Polygon) {
 					p = (Polygon) g2;
-				} 
-				
-				
+				} 			
+				//Workaround to compute the z value of each triangle as triangulation
+				// create new point during the triangulation that are set with z=NaN
 				if (p.getNumPoints() > 4) {
 					triangles = GeometryUtils.triangulation(p);
 				
@@ -235,11 +240,10 @@ public class BasicOpenGlDrawer {
 								
 								double dist1 = pt.distance(pt1);
 								double dist2 = pt.distance(pt2);
+                                //FIXME: Work only for geometry
 								coord.z = (1 - (dist1 / closestSeg.getLength())) * closestSeg.getCoordinates()[0].z + (1 - (dist2 / closestSeg.getLength())) * closestSeg.getCoordinates()[1].z;
-									
-							}
-							DrawShape(tri,false);
-					
+								DrawShape(tri,false);	
+							}		
 						}
 					}
 				} else if (p.getNumPoints() == 4) {
@@ -252,7 +256,7 @@ public class BasicOpenGlDrawer {
 				}
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				
-				DrawPolygonContour(p, c, z);
+				DrawPolygonContour(p, c, 0.0f);
 			}
 	
 			
@@ -263,7 +267,7 @@ public class BasicOpenGlDrawer {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
-			DrawPolygonContour(p, c, z);
+			DrawPolygonContour(p, c, 0.0f);
 		}
 
 		// FIXME: Need to check that the polygon is a quad
@@ -288,21 +292,21 @@ public class BasicOpenGlDrawer {
 				myGl.glTexCoord2f(myGLRender.textureLeft,
 						myGLRender.textureBottom);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), z); 
+						.getExteriorRing().getPointN(0).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureRight,
 						myGLRender.textureBottom);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), z); 
+						.getExteriorRing().getPointN(1).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureRight,
 						myGLRender.textureTop);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), z); 
+						.getExteriorRing().getPointN(2).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), z); 
+						.getExteriorRing().getPointN(3).getY(), 0.0f); 
 
 				myGl.glEnd();
 				myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
@@ -317,27 +321,29 @@ public class BasicOpenGlDrawer {
 				myGl.glTexCoord2f(myGLRender.textureLeft,
 						myGLRender.textureBottom);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), z); 
+						.getExteriorRing().getPointN(0).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureRight,
 						myGLRender.textureBottom);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), z); 
+						.getExteriorRing().getPointN(1).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureRight,
 						myGLRender.textureTop);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), z); 
+						.getExteriorRing().getPointN(2).getY(), 0.0f); 
 				
 				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
 				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), z); 
+						.getExteriorRing().getPointN(3).getY(), 0.0f); 
 				myGl.glEnd();
 			}
 
 			myGl.glDisable(GL.GL_TEXTURE_2D);
 
 		}
+		
+		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
 
 	}
 
