@@ -502,8 +502,14 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
+	/**
+	 * Not use in Java2D
+	 */
 	public void initLayers() {}
 
 	@Override
-	public void newLayer(final double elevation) {}
+	/**
+	 * Not use in Java2D
+	 */
+	public void newLayer(final double zLayerValue) {}
 }
