@@ -43,7 +43,6 @@ public class DisplayListHandler {
 	 * @param size
 	 */
 	public void buildDisplayLists(ArrayList<MyJTSGeometry> myJTSGeometries) {
-
 		// Build n lists, and returns handle for the first list
 		firstList = myGl.glGenLists(myJTSGeometries.size());
 		listId = firstList;
@@ -58,15 +57,16 @@ public class DisplayListHandler {
 	}
 
 	public void DrawDisplayList(int nbDisplayList) {
-		for (int i = 0; i <= nbDisplayList; i++) {
+		for (int i = 1; i <= nbDisplayList; i++) {
 			myGl.glColor3f((float) Math.random(), (float) Math.random(),
 					(float) Math.random());
-			myGl.glCallList(i);
+			myGl.glCallList(i+ firstList-1);
 		}
 	}
 
 	public void DeleteDisplayLists(int nbDisplayList) {
 		myGl.glDeleteLists(firstList, nbDisplayList);
+		listId=1;
 	}
 
 	

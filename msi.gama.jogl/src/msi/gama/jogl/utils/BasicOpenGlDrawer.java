@@ -112,7 +112,7 @@ public class BasicOpenGlDrawer {
 							geometry.alpha,geometry.height, geometry.angle);
 				} else {
 					DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle);
+							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -145,13 +145,13 @@ public class BasicOpenGlDrawer {
 			if (height > 0) {
 				DrawPolyhedre(curPolygon, z, c, alpha,height, angle);
 			} else {
-				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle);
+				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle,true);
 			}
 		}
 	}
 
 	public void DrawPolygon(Polygon p, float z_layer, Color c, float alpha, boolean fill,
-			boolean isTextured, Integer angle) {
+			boolean isTextured, Integer angle, boolean drawPolygonContour) {
 
 		// FIXME: Angle rotation is not implemented yet
 		
@@ -255,8 +255,9 @@ public class BasicOpenGlDrawer {
 					
 				}
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-				
+				if(drawPolygonContour ==true){
 				DrawPolygonContour(p, c, 0.0f);
+				}
 			}
 	
 			
@@ -388,8 +389,8 @@ public class BasicOpenGlDrawer {
 	public void DrawPolyhedre(Polygon p, float z, Color c,float alpha, float height,
 			Integer angle) {
 
-		DrawPolygon(p, z, c, alpha,true, false, angle);
-		DrawPolygon(p, z + height, c,alpha, true, false, angle);
+		DrawPolygon(p, z, c, alpha,true, false, angle,false);
+		DrawPolygon(p, z + height, c,alpha, true, false, angle,false);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha,z + height);
 
@@ -454,6 +455,13 @@ public class BasicOpenGlDrawer {
 	public void DrawFaces(Polygon p, Color c, float alpha, float height) {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
+		float elevation=0.0f;
+		
+		//FIXME: Only works if the base is in the XY axes.
+		if(String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == false){
+			elevation = (float) (p.getExteriorRing().getPointN(0).getCoordinate().z);
+		}
+
 
 		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 
@@ -483,19 +491,19 @@ public class BasicOpenGlDrawer {
 			// FIXME; change double to float in Vertex
 			vertices[0].x = (float) p.getExteriorRing().getPointN(j).getX();
 			vertices[0].y = -(float) p.getExteriorRing().getPointN(j).getY();
-			vertices[0].z = height;
+			vertices[0].z = elevation+height;
 
 			vertices[1].x = (float) p.getExteriorRing().getPointN(k).getX();
 			vertices[1].y = -(float) p.getExteriorRing().getPointN(k).getY();
-			vertices[1].z = height;
+			vertices[1].z = elevation+height;
 
 			vertices[2].x = (float) p.getExteriorRing().getPointN(k).getX();
 			vertices[2].y = -(float) p.getExteriorRing().getPointN(k).getY();
-			vertices[2].z = 0;
+			vertices[2].z = elevation;
 
 			vertices[3].x = (float) p.getExteriorRing().getPointN(j).getX();
 			vertices[3].y = -(float) p.getExteriorRing().getPointN(j).getY();
-			vertices[3].z = 0;
+			vertices[3].z = elevation;
 
 			// Compute the normal of the quad
 			Vector3f normal = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -538,6 +546,11 @@ public class BasicOpenGlDrawer {
 			LineString l = (LineString) lines.getGeometryN(i);
 			int numPoints = l.getNumPoints();
 
+            //Add z value			
+			if(String.valueOf(l.getPointN(i).getCoordinate().z).equals("NaN") == false){
+				z =  z + (float) l.getPointN(i).getCoordinate().z;
+			}
+			
 			// myGl.glLineWidth(size);
 			myGl.glBegin(GL.GL_LINES);
 			for (int j = 0; j < numPoints - 1; j++) {
@@ -556,6 +569,12 @@ public class BasicOpenGlDrawer {
 				(float) c.getBlue() / 255, alpha);
 		int numPoints = line.getNumPoints();
 		myGl.glLineWidth(size);
+		
+		//Add z value			
+		if(String.valueOf(line.getCoordinate().z).equals("NaN") == false){
+			z =  z + (float) line.getCoordinate().z;
+		}
+		
 		myGl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
 			myGl.glVertex3f((float) ((line.getPointN(j).getX())),
