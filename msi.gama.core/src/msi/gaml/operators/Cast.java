@@ -45,6 +45,12 @@ import msi.gaml.types.*;
 public class Cast {
 
 	@operator(value = { IKeyword.IS }, priority = IPriority.COMPARATOR)
+	@doc(
+		value = "returns true is the left operand is of the right operand type, false otherwise",
+		examples = {
+			"0 is int 			--: 	true",
+			"an_agent is node 	--: 	true",
+			"1 is float 		--: 	false"})
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b)
 		throws GamaRuntimeException {
 		IType type = asType(scope, b);

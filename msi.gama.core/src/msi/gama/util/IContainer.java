@@ -47,7 +47,6 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 				"The at operator behavior depends on the nature of the operand",
 		special_cases = {		
 			"if it is a list or a matrix, at returns the element at the index specified by the right operand",
-			"if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil",
 			"if it is a file, at returns the element of the file content at the index specified by the right operand",
 			"if it is a population, at returns the agent at the index specified by the right operand",
 			"if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node",

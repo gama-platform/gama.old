@@ -4,6 +4,7 @@
 <xsl:variable name="html_menu" select="''"/>
 <xsl:variable name="html_doc" select="''"/>
 <xsl:variable name="html_iterator" select="0"/>
+<xsl:variable name="emptyStr" select="''"/>
 
 <xsl:template match="/">
  	<xsl:text>#summary Operators(Modeling Guide)</xsl:text>
@@ -89,18 +90,26 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
     
 == <xsl:value-of select="@name" /> == 
 <xsl:call-template name="buildOperands"/>
+	<xsl:variable name="commentStr" select="documentation/comment"/>
+  * Result: <xsl:value-of select="documentation/result"/>
+  <xsl:if test="documentation/comment[text()]">  
+  * Comment: <xsl:value-of select="documentation/comment"/> 
+  </xsl:if>
+  <xsl:if test="documentation/specialCases[node()]">
   * Special cases:<xsl:for-each select="documentation/specialCases/case">
     * <xsl:value-of select="@item"/> </xsl:for-each>
-  * Comment: <xsl:value-of select="documentation/comment"/>
-  * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[#</xsl:text><xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/><xsl:text>]</xsl:text> </xsl:for-each>
+  </xsl:if>  
+  <xsl:if test="documentation/seeAlso[node()]">    
+  * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[#</xsl:text><xsl:value-of select="@id"/><xsl:text> </xsl:text><xsl:value-of select="@id"/><xsl:text>]</xsl:text><xsl:text>, </xsl:text> </xsl:for-each>
+  </xsl:if>
+  <xsl:if test="documentation/examples[node()]">
   {{{  
-<xsl:for-each select="documentation/examples/example" >
-   <xsl:text>   </xsl:text><xsl:value-of select="@code"/><xsl:text>
-</xsl:text>
-</xsl:for-each> }}} 
-
+  <xsl:for-each select="documentation/examples/example" >
+  <xsl:text>   </xsl:text><xsl:value-of select="@code"/><xsl:text>
+  </xsl:text>
+  </xsl:for-each> }}} 
+  </xsl:if>
 [#Table_of_Contents Top of the page] 
-
   	</xsl:for-each>
  </xsl:template>   
  

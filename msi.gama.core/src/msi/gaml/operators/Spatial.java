@@ -806,6 +806,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "distance_to")
+		@doc()
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static Double opDistanceTo(final IScope scope, final GamaPoint source,
 			final GamaPoint target) {
@@ -823,6 +824,7 @@ public abstract class Spatial {
 		}
 
 		@operator("path_to")
+		@doc()
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static IPath opPathTo(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
@@ -958,6 +960,7 @@ public abstract class Spatial {
 		}
 
 		@operator("intersects")
+		@doc()
 		// no documentation because same same as before but optimized for points.
 		public static Boolean opIntersects(final IShape g1, final GamaPoint p) {
 			if ( g1 == null || p == null ) { return false; }
@@ -1098,6 +1101,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "neighbours_at")
+		@doc()
 		// no doc, because same same as before but optimized for "point".
 		public static IList opNeighboursAt(final IScope scope, final GamaPoint agent,
 			final Double distance) throws GamaRuntimeException {

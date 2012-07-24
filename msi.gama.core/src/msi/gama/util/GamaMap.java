@@ -21,6 +21,7 @@ package msi.gama.util;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -140,6 +141,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 
 	@Override
 	@operator(value = { IKeyword.AT }, can_be_const = true, type = IType.NONE)
+	@doc(special_cases = "if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil")
 	public Object get(final Object index) {
 		return super.get(index);
 	}
