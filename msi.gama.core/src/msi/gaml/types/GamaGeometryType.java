@@ -166,7 +166,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		Geometry geom =
 			GeometryUtils.getFactory().createPoint(
 				location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
-		return new GamaShape(geom.buffer(radius));
+		Geometry g= geom.buffer(radius);
+		Coordinate[] coordinates = g.getCoordinates();
+		for (int i = 0; i < coordinates.length; i++) {
+			coordinates[i].z = ((GamaPoint) location).z;
+		}
+		return new GamaShape(g);
 	}
 
 	public static GamaShape geometriesToGeometry(final IContainer<?, ? extends IShape> ags)

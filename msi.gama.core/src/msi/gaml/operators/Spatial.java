@@ -77,7 +77,11 @@ public abstract class Spatial {
 		}
 
 		@operator("cone")
-		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
+		@doc(value = "A cone geometry which min and max angles are given by the operands.", 
+		     special_cases = { "returns nil if the operand is nil." }, 
+		     comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", 
+		     examples = { "cone({0, 45}) -> returns a geometry as a cone with min angle is 0 and max angle is 45." }, 
+		     see = {
 			"around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
 		public static IShape opCone(final IScope scope, final GamaPoint p) {
@@ -164,13 +168,14 @@ public abstract class Spatial {
 			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 			"triangle" })
 		public static IShape opPolyline(final IList<GamaPoint> points) {
+	
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
 			if ( points.size() == 2 ) { return GamaGeometryType.buildLine(points.get(0),
 				points.get(1)); }
 			return GamaGeometryType.buildPolyline(points);
 		}
-
+ 
 		@operator({ "link" })
 		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
 			"if the operand is nil, link returns a point {0,0}",
@@ -1458,11 +1463,14 @@ public abstract class Spatial {
 	public static abstract class ThreeD {
 		@operator(value = { "add_z" } )
 		@doc(value = "add_z", 
-		comment = "Return a geometry with a z value", 
+		comment = "Return a geometry with a z value" +
+				"The add_z operator set the z value of the whole shape." +
+				"For each point of the cell the same z value is set.", 
 		examples = { "set shape <- shape add_z rnd(100);" }, 
 		see = { "add_z_pt" })
 		public static IShape opAddZGeom(final IShape g, final Double z) {
 			Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
+			((GamaPoint) g.getLocation()).z = z;
 			for (int i = 0; i < coordinates.length; i++) {
 				coordinates[i].z = z;
 			}

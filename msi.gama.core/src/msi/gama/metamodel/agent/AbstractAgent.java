@@ -295,15 +295,17 @@ public abstract class AbstractAgent implements IAgent {
 		}
 		ITopology topology = population.getTopology();
 		ILocation newGeomLocation = newGeometry.getLocation().copy();
+		
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
 		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy());
 		topology.normalizeLocation(newGeomLocation, false);
+		
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
 			newLocalGeom.setLocation(newGeomLocation);
 		}
-
+		
 		newLocalGeom.setAgent(this);
 		geometry = newLocalGeom;
 
@@ -312,7 +314,7 @@ public abstract class AbstractAgent implements IAgent {
 		// update micro-agents' locations accordingly
 		for ( IPopulation p : microPopulations.values() ) {
 			p.hostChangesShape();
-		}
+		}	
 	}
 
 	@Override

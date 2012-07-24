@@ -36,15 +36,23 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 	}
+	
+	public GamaPoint(final double xx, final double yy,final double zz) {
+		x = xx;
+		y = yy;
+		z = zz;
+	}
 
 	public GamaPoint(final Coordinate coord) {
 		x = coord.x;
 		y = coord.y;
+		z = coord.z;
 	}
 
 	public GamaPoint(final ILocation point) {
 		x = point.getX();
 		y = point.getY();
+		z = point.getZ();
 	}
 
 	@Override
@@ -61,6 +69,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setLocation(final ILocation al) {
 		x = al.getX();
 		y = al.getY();
+		z = al.getZ();
 	}
 
 	@Override
@@ -90,9 +99,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 	}
+	
+	public void setLocation(final double xx, final double yy, final double zz) {
+		x = xx;
+		y = yy;
+		z = zz;
+	}
 
 	@Override
 	public String toString() {
+		if (!(z + "") .equals("NaN"))
+			return "location[" + x + ";" + y +  ";" + z + "]";
 		return "location[" + x + ";" + y + "]";
 	}
 
@@ -138,6 +155,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public String stringValue() {
+		if (!(z + "") .equals("NaN"))
+			return "{" + x + ";" + y + ";" + z + "}";
 		return "{" + x + ";" + y + "}";
 	}
 
@@ -154,7 +173,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public Coordinate toCoordinate() {
-		return new Coordinate(x, y);
+		return new Coordinate(x, y, z);
 	}
 
 	@getter( "x")
@@ -169,7 +188,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public GamaPoint copy() {
-		return new GamaPoint(x, y);
+		return new GamaPoint(x, y, z);
 	}
 
 	@Override
@@ -263,7 +282,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void setInnerGeometry(final Geometry point) {
 		Coordinate p = point.getCoordinate();
-		setLocation(p.x, p.y);
+		setLocation(p.x, p.y, p.z);
 	}
 
 	/**
@@ -271,5 +290,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void dispose() {}
+
+	@Override
+	public double getZ() {
+		return super.z;
+	}
 
 }

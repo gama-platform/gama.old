@@ -170,7 +170,7 @@ public abstract class AbstractTopology implements ITopology {
 			yy = /* !isTorus ? */nullIfOutside ? nil : envMaxY /* : yy % envHeight */;
 		}
 		if ( yy == nil ) { return null; }
-		point.setLocation(xx, yy);
+		point.setLocation(xx, yy, point.getZ());
 		if ( environment.getGeometry().covers(point) ) { return point; }
 		return null;
 	}
@@ -345,7 +345,6 @@ public abstract class AbstractTopology implements ITopology {
 		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
 		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 		GamaList<IAgent> result = new GamaList(shapes.size());
-		System.out.println("shapes : " + shapes);
 		for ( IShape sh : shapes ) {
 			IAgent ag = sh.getAgent();
 			if ( ag != null && !ag.dead() ) {

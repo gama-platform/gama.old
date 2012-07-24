@@ -411,13 +411,13 @@ public class GamaShape implements IShape {
 		if ( location == null ) {
 			location = new GamaPoint(c);
 		} else {
-			location.setLocation(c.x, c.y);
+			location.setLocation(c.x, c.y, c.z);
 		}
 	}
 
 	@Override
 	public void dispose() {
-		// if ( getInnerGeometry() != null ) {
+		// if ( getInnerGeometry() != null ) { 
 		// setInnerGeometry((Geometry) null);
 		// }
 		// IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
@@ -458,7 +458,9 @@ public class GamaShape implements IShape {
 
 	@Override
 	public GamaShape copy() {
-		return new GamaShape((Geometry) geometry.clone());
+		GamaShape g = new GamaShape((Geometry) geometry.clone());
+		g.setLocation(location.copy());
+		return g;
 	}
 
 	/**

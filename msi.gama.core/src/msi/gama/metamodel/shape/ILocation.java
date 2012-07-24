@@ -41,10 +41,15 @@ public interface ILocation extends IShape, Comparable {
 
 	@getter( IKeyword.Y)
 	public abstract double getY();
+	
 
 	// public abstract boolean equals(final Coordinate o);
+	public abstract double getZ(); 
+
 
 	public abstract void setLocation(final double xx, final double yy);
+
+	public abstract void setLocation(final double xx, final double yy, final double zz);
 
 	public abstract void add(ILocation p);
 
