@@ -862,8 +862,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * set it to 0.
 	 */
 	@Override
-	public void newLayer(double zLayerValue) {
+	public void newLayer(double zLayerValue,Boolean refresh) {
 		currentZLayer = (float) (maxEnvDim * zLayerValue);
+		System.out.println("refresh: " + refresh);
 	}
 
 }
