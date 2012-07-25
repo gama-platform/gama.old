@@ -52,7 +52,9 @@ public interface ILayerStatement extends INamed {
 	public abstract Double getTransparency();
 	
 	public abstract Double getElevation();
-
+	
+	public abstract Boolean getRefresh();
+	
 	public abstract Rectangle2D.Double getBoundingBox();
 
 	public abstract IDisplayLayerBox getBox();
@@ -61,6 +63,8 @@ public interface ILayerStatement extends INamed {
 	
 	public abstract void setElevation(Double elevation);
 
+	public abstract void setRefresh(Boolean refresh);
+	
 	public abstract void setOpacity(Double opacity);
 
 }

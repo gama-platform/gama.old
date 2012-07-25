@@ -221,7 +221,8 @@ public interface IGraphics {
 	/*
 	 * For IGraphics implementations that support the notion of layers in a way or another...
 	 * Sets the z value of the new created layer.
+	 * Set wether or not the current layer is static(will bve drawn only once) or dynamic.
 	 */
-	public abstract void newLayer(double zLayerValue);
+	public abstract void newLayer(double zLayerValue,Boolean refresh);
 
 }

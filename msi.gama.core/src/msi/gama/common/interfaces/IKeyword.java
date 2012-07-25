@@ -219,6 +219,7 @@ public interface IKeyword {
 	public static final String REACTIVE_TABU = "reactive_tabu";
 	public static final String READABLE = "readable";
 	public static final String REFLEX = "reflex";
+	public static final String REFRESH = "refresh";
 	public static final String REFRESH_EVERY = "refresh_every";
 	public static final String REGISTER = "register";
 	public static final String RELEASE = "release";

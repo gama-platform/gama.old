@@ -49,7 +49,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
 public class GridLayerStatement extends AbstractLayerStatement {
 
 	public GridLayerStatement(/* final ISymbol context, */final IDescription desc)
