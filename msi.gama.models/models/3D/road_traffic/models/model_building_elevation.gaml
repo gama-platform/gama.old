@@ -111,9 +111,9 @@ experiment road_traffic type: gui {
 	
 	output {
 		display city_display refresh_every: 1 type: opengl{
-			species road aspect: base ;
+			species road aspect: base refresh:false ;
 			species people aspect: base ;
-			species building aspect:base ;
+			species building aspect:base refresh:false;
 		}
 	}
 }
