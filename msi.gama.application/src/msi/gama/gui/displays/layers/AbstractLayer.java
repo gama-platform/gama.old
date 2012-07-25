@@ -47,6 +47,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	protected AbstractLayer(final double env_width, final double env_height,
 		final ILayerStatement layer, final IGraphics dg) {
+
 		definition = layer;
 		if ( definition != null ) {
 			// model.setPhysicalLayer(this);
@@ -155,7 +156,7 @@ public abstract class AbstractLayer implements ILayer {
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
 		if ( definition != null ) {
-			g.newLayer(definition.getElevation());
+			g.newLayer(definition.getElevation(),definition.getRefresh());
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBoundingBox(), g);
 		}
