@@ -199,7 +199,9 @@ public class BasicOpenGlDrawer {
 				myGlu.gluTessEndContour(tobj);
 				myGlu.gluTessEndPolygon(tobj);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-				DrawPolygonContour(p, c, 0.0f);
+				if(drawPolygonContour ==true){
+					DrawPolygonContour(p, c, 0.0f);
+				}
 			}
 			// use JTS triangulation on simplified geometry (DouglasPeucker)
 			//FIXME: not working with a z_layer value!!!!

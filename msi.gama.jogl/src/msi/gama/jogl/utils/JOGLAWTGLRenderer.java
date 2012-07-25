@@ -334,6 +334,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
 		}
 		
+		//Draw Static Geometry
+		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries.isEmpty()){
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSStaticGeometries();
+		}
+		
 		//Draw String
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myStrings.isEmpty()){
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyStrings();

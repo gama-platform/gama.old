@@ -70,6 +70,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// List of all the JTS gemoetry present in the model
 	public ArrayList<MyJTSGeometry> myJTSGeometries = new ArrayList<MyJTSGeometry>();
+	
+	// List JTS gemoetry that are drawn only.
+	public ArrayList<MyJTSGeometry> myJTSStaticGeometries = new ArrayList<MyJTSGeometry>();
 
 	// each Image is stored in a list
 	public ArrayList<MyImage> myImages = new ArrayList<MyImage>();
@@ -82,10 +85,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// All the geometry of the same layer are drawn in the same z plan.
 	public float currentZLayer = 0.0f;
+	
+	//Is the layer static data or dynamic geometry that has to be redrawn every iteration
+	public boolean currentLayerIsStatic= false;
 
 	// OpenGL list ID
 	private int listID = -1;
 	public boolean isListCreated = false;
+	
+	public boolean isStaticListCreated = false;
 	
 	public boolean useDisplayList=false;
 	
@@ -330,9 +338,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
 			final boolean fill, final Integer angle) {
-
-		
-		
 		// Check if the geometry has a height value (3D Shape or Volume)
 		float height;
 		if (geometry.getUserData() != null) {
@@ -572,9 +577,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curJTSGeometry.isTextured = isTextured;
 		curJTSGeometry.angle = angle;
 		curJTSGeometry.height = height;
+		
+		//Add the geometry either in the static list or in the dynamic one.
+		if(currentLayerIsStatic == true){
+			//only once (if isStaticListCreated =false)	
+			if(this.isStaticListCreated == false){
+				this.myJTSStaticGeometries.add(curJTSGeometry);
+			}
+		}
+		else{
 		this.myJTSGeometries.add(curJTSGeometry);
+		}
 	}
-
+	
 	/**
 	 * Add image and its associated parameter in the list of Image that are
 	 * drawn by Opengl
@@ -674,6 +689,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		// System.out.println("isListCreated="+isListCreated);
 		if (useDisplayList) {
+			//System.out.println("Geometries are build with displayList");
 			if (!isListCreated) {
 				System.out.println("Create" + this.myJTSGeometries.size()
 						+ "list");
@@ -689,6 +705,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		} else {
  
 			if (!useVertexArray) {
+				//System.out.println("Geometries are build with basicDrawer ");
 				Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 				while (it.hasNext()) {
 					MyJTSGeometry curGeometry = it.next();
@@ -706,6 +723,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			}
 		}
 
+	}
+	
+	/**
+	 * Once the list of JTSGeometries has been created, OpenGL display call this
+	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
+	 * Array or even VBO
+	 * 
+	 */
+	public void DrawMyJTSStaticGeometries() {
+	
+			if (!isStaticListCreated) {
+				System.out.println("Create" + this.myJTSStaticGeometries.size()
+						+ "list static");
+				graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSStaticGeometries);
+				isStaticListCreated = true;
+			} else {
+				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSStaticGeometries.size());
+			}
 	}
 
 	/**
@@ -783,6 +818,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();	
 		}
 		this.myJTSGeometries.clear();
+		
 	}
 
 	/**
@@ -860,11 +896,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	/**
 	 * Set the value z of the current Layer. If no value is define is defined
 	 * set it to 0.
+	 * Set the type of the layer weither it's a static layer (refresh:false) or 
+	 * a dynamic layer (by default or refresh:true)
 	 */
 	@Override
 	public void newLayer(double zLayerValue,Boolean refresh) {
 		currentZLayer = (float) (maxEnvDim * zLayerValue);
-		System.out.println("refresh: " + refresh);
+		//If refresh: false -> draw static geometry -> currentLayerIsStatic=true
+		if(refresh != null){
+		currentLayerIsStatic=!refresh;
+		}
+		else{
+		currentLayerIsStatic=false;
+		}
 	}
 
 }
