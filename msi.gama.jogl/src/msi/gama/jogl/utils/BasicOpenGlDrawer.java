@@ -64,7 +64,7 @@ public class BasicOpenGlDrawer {
 	double temp[];
 
 	//use glut tesselation or JTS tesselation
-	boolean useTessellation = false;
+	boolean useTessellation = true	;
 	
 	
 	
@@ -97,8 +97,6 @@ public class BasicOpenGlDrawer {
      */
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
 
-
-		
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
@@ -109,18 +107,22 @@ public class BasicOpenGlDrawer {
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					DrawPolyhedre((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.height, geometry.angle);
+							geometry.alpha,geometry.height, geometry.angle,true);
 				} else {
 					DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
-				DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, geometry.color,geometry.alpha);
+				DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, geometry.color,geometry.alpha,geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
+				if (geometry.height > 0) {
+				DrawPlan((LineString) geometry.geometry,geometry.z,geometry.color,geometry.alpha,geometry.height,0,true);
+				}else{
 				DrawLineString((LineString) geometry.geometry, geometry.z, 1.2f, geometry.color,geometry.alpha);
+				}
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
@@ -143,7 +145,7 @@ public class BasicOpenGlDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if (height > 0) {
-				DrawPolyhedre(curPolygon, z, c, alpha,height, angle);
+				DrawPolyhedre(curPolygon, z, c, alpha,height, angle,true);
 			} else {
 				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle,true);
 			}
@@ -154,8 +156,7 @@ public class BasicOpenGlDrawer {
 			boolean isTextured, Integer angle, boolean drawPolygonContour) {
 
 		// FIXME: Angle rotation is not implemented yet
-		
-		
+
 		//Set z_layer
 		myGl.glTranslatef(0.0f, 0.0f, z_layer);
 
@@ -389,14 +390,15 @@ public class BasicOpenGlDrawer {
 	}
 
 	public void DrawPolyhedre(Polygon p, float z, Color c,float alpha, float height,
-			Integer angle) {
+			Integer angle,boolean drawPolygonContour) {
 
-		DrawPolygon(p, z, c, alpha,true, false, angle,false);
-		DrawPolygon(p, z + height, c,alpha, true, false, angle,false);
+		DrawPolygon(p, z, c, alpha,true, false, angle,drawPolygonContour);
+		DrawPolygon(p, z + height, c,alpha, true, false, angle,drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha,z + height);
+		DrawFaces(p, c, alpha,z + height,drawPolygonContour);
 
 	}
+	
 	
 	/**
 	 * Draw a tesselated circle polygon and its contour as a line.
@@ -454,7 +456,7 @@ public class BasicOpenGlDrawer {
 	 * @param c: color
 	 * @param height: height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float alpha, float height) {
+	public void DrawFaces(Polygon p, Color c, float alpha, float height,boolean drawPolygonContour ) {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		float elevation=0.0f;
@@ -527,41 +529,56 @@ public class BasicOpenGlDrawer {
 			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
 			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
 			myGl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
-
+			
 			myGl.glEnd();
+			
+            if(drawPolygonContour==true){
+            	myGl.glColor4f(0.0f, 0.0f,0.0f,alpha);
+            	
+            	myGl.glBegin(GL.GL_LINES);
+            	
+            	myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+    			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+    			
+    			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+    			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+    			
+    			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+    			myGl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+    			
+    			myGl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+    			myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+
+            	myGl.glEnd();
+            	
+            	myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+        				(float) c.getBlue() / 255, alpha);
+			}
 		}
 
 	}
 
-	public void DrawMultiLineString(MultiLineString lines, float z, Color c,float alpha) {
+	public void DrawMultiLineString(MultiLineString lines, float z, Color c,float alpha,float height) {
 
 		// get the number of line in the multiline.
 		numGeometries = lines.getNumGeometries();
-
+		
+		//FIXME: Why setting the color here?
+		myGl.glColor4f((float) c.getRed() / 255,
+				(float) c.getGreen() / 255, (float) c.getBlue() / 255,
+				alpha);
+		
 		// for each line of a multiline, get each point coordinates.
 		for (int i = 0; i < numGeometries; i++) {
 
-			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);
-
+			
 			LineString l = (LineString) lines.getGeometryN(i);
-			int numPoints = l.getNumPoints();
-
-            //Add z value			
-			if(String.valueOf(l.getPointN(i).getCoordinate().z).equals("NaN") == false){
-				z =  z + (float) l.getPointN(i).getCoordinate().z;
+			if (height > 0) {
+				DrawPlan(l,z,c,alpha,height,0,true);
+			} else {
+				DrawLineString(l, z, 1.2f, c, alpha);
 			}
 			
-			// myGl.glLineWidth(size);
-			myGl.glBegin(GL.GL_LINES);
-			for (int j = 0; j < numPoints - 1; j++) {
-				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), z);
-				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), z);
-			}
-			myGl.glEnd();
 		}
 	}
 
@@ -587,6 +604,70 @@ public class BasicOpenGlDrawer {
 		myGl.glEnd();
 
 	}
+	
+	public void DrawPlan(LineString l, float z, Color c,float alpha, float height,
+			Integer angle,boolean drawPolygonContour) {
+
+		DrawLineString(l, z, 1.2f, c,alpha);
+		DrawLineString(l, z+height, 1.2f, c,alpha);
+		
+		
+		//Draw a quad 
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
+		int numPoints = l.getNumPoints();
+		
+		//Add z value			
+		if(String.valueOf(l.getCoordinate().z).equals("NaN") == false){
+			z =  z + (float) l.getCoordinate().z;
+		}
+		
+		for (int j = 0; j < numPoints - 1; j++) {
+		myGl.glBegin(GL.GL_QUADS);
+		myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+				-(float) ((l.getPointN(j).getY())), z);
+		myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+				-(float) ((l.getPointN(j + 1).getY())), z);
+		
+		myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+				-(float) ((l.getPointN(j + 1).getY())), z+height);
+		
+		myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+				-(float) ((l.getPointN(j).getY())), z+height);
+		
+		myGl.glEnd();
+		}
+		
+		if(drawPolygonContour == true){
+			myGl.glColor4f(0.0f, 0.0f,0.0f,alpha);
+			for (int j = 0; j < numPoints - 1; j++) {
+				myGl.glBegin(GL.GL_LINES);
+				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+						-(float) ((l.getPointN(j).getY())), z);
+				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+						-(float) ((l.getPointN(j + 1).getY())), z);
+				
+				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+						-(float) ((l.getPointN(j + 1).getY())), z);
+				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+						-(float) ((l.getPointN(j + 1).getY())), z+height);
+				
+				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
+						-(float) ((l.getPointN(j + 1).getY())), z+height);
+				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+						-(float) ((l.getPointN(j).getY())), z+height);
+				
+				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+						-(float) ((l.getPointN(j).getY())), z+height);
+				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
+						-(float) ((l.getPointN(j).getY())), z);
+				
+				myGl.glEnd();
+				}
+			myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+					(float) c.getBlue() / 255, alpha);
+		}
+	}
 
 	public void DrawPoint(Point point, float z, int numPoints, float radius,
 			Color c,float alpha) {
@@ -596,6 +677,11 @@ public class BasicOpenGlDrawer {
 
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
+		//FIXME: Does not work for Point.
+		//Add z value			
+		if(String.valueOf(point.getCoordinate().z).equals("NaN") == false){
+			z =  z + (float) point.getCoordinate().z;
+		}
 
 		float angle;
 		double tempPolygon[][] = new double[100][3];

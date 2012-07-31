@@ -68,10 +68,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
 
-	// List of all the JTS gemoetry present in the model
+	// List of all the dynamic  JTS geometry.
 	public ArrayList<MyJTSGeometry> myJTSGeometries = new ArrayList<MyJTSGeometry>();
 	
-	// List JTS gemoetry that are drawn only.
+	// List of all the static JTS geometry.
 	public ArrayList<MyJTSGeometry> myJTSStaticGeometries = new ArrayList<MyJTSGeometry>();
 
 	// each Image is stored in a list
@@ -738,6 +738,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 						+ "list static");
 				graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSStaticGeometries);
 				isStaticListCreated = true;
+				System.out.println("Create" + this.myJTSStaticGeometries.size()
+						+ "list static ok");
 			} else {
 				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSStaticGeometries.size());
 			}
