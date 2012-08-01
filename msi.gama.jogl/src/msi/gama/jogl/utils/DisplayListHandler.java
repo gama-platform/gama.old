@@ -57,7 +57,7 @@ public class DisplayListHandler {
 	}
 
 	public void DrawDisplayList(int nbDisplayList) {
-		System.out.println("draw" + nbDisplayList+ "list");
+		//System.out.println("draw" + nbDisplayList+ "list");
 		for (int i = 1; i <= nbDisplayList; i++) {
 			myGl.glColor3f((float) Math.random(), (float) Math.random(),
 					(float) Math.random());

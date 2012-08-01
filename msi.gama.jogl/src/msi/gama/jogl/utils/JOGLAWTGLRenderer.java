@@ -83,7 +83,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public ArrayList<MyTexture> myTextures = new ArrayList<MyTexture>();
 	
 	
-	float textureTop, textureBottom, textureLeft, textureRight;	
+	public float textureTop;
+	public float textureBottom;
+	public float textureLeft;
+	public float textureRight;	
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
 	//private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
