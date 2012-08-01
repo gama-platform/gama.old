@@ -27,9 +27,8 @@ global {
 		}
 		
 		
-		
 		//3D primitive shape
-		create myCylinder number:1{
+		create mySphere number:1{
 			set location <- {2,6};
 		}
 		create myPlan number:1 {
@@ -53,14 +52,16 @@ global {
  
 environment width: width_and_height_of_environment height: width_and_height_of_environment/2;  
  
-  
+ 
+ 
 entities { 
 	
 	species myPoint{
 		const color type: rgb <- [0, 175,100] as rgb;
-		geometry shape <- point([1,1]) ;
+		geometry shape <- geometry (point([1,1])) ;
 		aspect 2D {
 			draw geometry: shape color: color  ;
+			draw text: "Point2D" size: 1 color: rgb('black');
 		}		
 	}
 	
@@ -69,7 +70,7 @@ entities {
 		geometry shape <- line ([{5,3},{7,1}]) ;		
 		aspect 2D {
 			draw geometry: shape color: color  ;
-			draw text: "line" size: 2 color: rgb('black'); 
+			draw text: "Line" size: 1 color: rgb('black'); 
 		}
 	}
 	
@@ -78,7 +79,7 @@ entities {
 		geometry shape <- polyline([{9,3},{9,2},{11,2},{11,1}]) ;		
 		aspect 2D {
 			draw geometry: shape color: color  ;
-			draw text: "multiline" size: 2 color: rgb('black'); 
+			draw text: "Multiline" size: 1 color: rgb('black'); 
 		}
 	}
 		
@@ -87,7 +88,7 @@ entities {
 		geometry shape <- rectangle({2, 2})  ;		
 		aspect 2D {
 			draw geometry: shape color: color  ;
-			draw text: "square" size: 2 color: rgb('black'); 
+			draw text: "Square" size: 1 color: rgb('black'); 
 		}
 	}	
 		
@@ -96,17 +97,17 @@ entities {
 		geometry shape <- polygon([{17,1.5}, {17.5,1}, {18.5,1}, {19,1.5},{19,2.5},{18.5,3},{17.5,3},{17,2.5}]) ;		
 		aspect 2D {
 			draw geometry: shape color: color  ;
-			draw text: "polygon" size: 2 color: rgb('black');
+			draw text: "Polygon" size: 1 color: rgb('black');
 		}
 	}
 	
 	
-	species myCylinder{
+	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
-		geometry shape <- point([1,1]) ;
+		geometry shape <- geometry (point([1,1])) ;
 		aspect 3D {
 			draw geometry: shape color: color z:2 ;
-			draw text: "cylinder" size: 2 color: rgb('black');
+			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
 	}
 	
@@ -115,7 +116,7 @@ entities {
 		geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
 		aspect 3D {
 			draw geometry: shape color: color z:2 ;
-			draw text: "plan" size: 2 color: rgb('black');
+			draw text: "Plan" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -124,7 +125,7 @@ entities {
 		geometry shape <- polyline([{9,7},{9,6},{11,6},{11,5}]) ;		
 		aspect 3D {
 			draw geometry: shape color: color z:2 ;
-			draw text: "multiplan" size: 2 color: rgb('black');
+			draw text: "Multiplan" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -142,7 +143,7 @@ entities {
 		geometry shape <- rectangle({2, 2})  ;		
 		aspect 3D {
 			draw geometry: shape color: color z:2 ;
-			draw text: "cube" size: 2 color: rgb('black');
+			draw text: "Cube" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -151,7 +152,7 @@ entities {
 		geometry shape <- polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) ;		
 		aspect 3D {
 			draw geometry: shape color: color z:2;
-			draw text: "polyhedron" size: 2 color: rgb('black');
+			draw text: "Polyhedron" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -160,21 +161,20 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Circle refresh_every: 1  type:opengl {
+		display Circle refresh_every: 1 type:opengl  {
 			
-			//species myPoint aspect:2D;
+			species myPoint aspect:2D;
 			species myLine aspect:2D;
 			species myMultiLine aspect:2D;
 			species mySquare aspect:2D;
 			species myPolygon aspect:2D;
 			
-			//species myCylinder aspect:3D;
+			species mySphere aspect:3D;
 			species myPlan aspect:3D;
 			species myMultiPlan aspect:3D;
 			species myCube aspect:3D; 
 			species myPolyhedron aspect:3D;
-			
-			
+	
 		}
 	}
 }
