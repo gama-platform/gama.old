@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 
@@ -68,7 +69,12 @@ public class BasicOpenGlDrawer {
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
-				myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, 10, geometry.color,geometry.alpha);
+				if (geometry.height > 0) {
+					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, geometry.color,geometry.alpha);
+				}else{
+					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, geometry.color,geometry.alpha);
+				}
+				
 			}
 		}
 	}

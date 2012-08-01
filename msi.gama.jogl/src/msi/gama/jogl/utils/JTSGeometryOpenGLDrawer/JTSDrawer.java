@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.vecmath.Vector3f;
 
@@ -615,6 +616,26 @@ public class JTSDrawer {
 			myGl.glVertex3f(xEnd, yEnd, z);
 		}
 		myGl.glEnd();
+
+	}
+	
+	
+	public void DrawSphere(Point point, float z, float radius,
+			Color c,float alpha) {
+
+		myGl.glTranslated(point.getCoordinate().x, -point.getCoordinate().y, z);
+		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
+				(float) c.getBlue() / 255, alpha);
+
+		GLUquadric quad = myGlu.gluNewQuadric();
+		myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+        myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+        myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+        final int slices = 16;
+        final int stacks = 16;
+        myGlu.gluSphere(quad, radius, slices, stacks);
+        myGlu.gluDeleteQuadric(quad);
+        myGl.glTranslated(-point.getCoordinate().x, point.getCoordinate().y, -z);
 
 	}
 	
