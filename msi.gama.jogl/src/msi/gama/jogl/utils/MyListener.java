@@ -14,10 +14,7 @@ import static java.awt.event.KeyEvent.VK_P;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_S;
 import static java.awt.event.KeyEvent.VK_UP;
-import static java.awt.event.KeyEvent.VK_V;
-import static java.awt.event.KeyEvent.VK_Z;
 
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -25,14 +22,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.IOException;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
+
+
 import javax.swing.SwingUtilities;
 
 import msi.gama.jogl.utils.Camera.Camera;
-import msi.gama.jogl.utils.myarcball.*;
 
 
 public class MyListener implements KeyListener, MouseListener,

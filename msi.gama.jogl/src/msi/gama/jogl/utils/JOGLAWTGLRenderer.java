@@ -41,25 +41,23 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
+
 
 import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
+
 
 import com.sun.opengl.util.FPSAnimator;
 
 import com.sun.opengl.util.texture.*;
 
-
-import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
-import msi.gama.jogl.utils.myarcball.ArcBall;
-import msi.gama.jogl.utils.myarcball.Matrix4f;
-import msi.gama.jogl.utils.myarcball.Quat4f;
+import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
+import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
+import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
