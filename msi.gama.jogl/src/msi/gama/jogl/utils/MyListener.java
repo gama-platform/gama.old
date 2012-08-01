@@ -31,6 +31,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.swing.SwingUtilities;
 
+import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.myarcball.*;
 
 

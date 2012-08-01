@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import javax.vecmath.Vector3f;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.TessellCallBack;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.IList;
 

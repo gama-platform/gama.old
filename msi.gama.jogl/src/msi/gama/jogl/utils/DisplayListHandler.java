@@ -8,6 +8,9 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
+import msi.gama.jogl.utils.GraphicDataType.MyImage;
+import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
+
 
 public class DisplayListHandler {
 

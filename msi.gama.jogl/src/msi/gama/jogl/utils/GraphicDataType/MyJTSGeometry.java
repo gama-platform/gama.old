@@ -1,16 +1,13 @@
-package msi.gama.jogl.utils;
+package msi.gama.jogl.utils.GraphicDataType;
 
 import java.awt.Color;
-
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.IList;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 
-public class MyTriangulatedGeometry {
+public class MyJTSGeometry {
 	
-	public IList<IShape> triangles;
+	public Geometry geometry;
 	
 	public float z;
 	
@@ -26,5 +23,7 @@ public class MyTriangulatedGeometry {
 	
 	public Integer angle =0;
 
-	public float elevation=0;
+	public float height=0;
+	
+	public float altitude;
 }

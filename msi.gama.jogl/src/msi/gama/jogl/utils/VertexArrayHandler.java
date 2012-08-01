@@ -9,6 +9,9 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
+import msi.gama.jogl.utils.GraphicDataType.MyLine;
+import msi.gama.jogl.utils.GraphicDataType.MyTriangulatedGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.IList;
 

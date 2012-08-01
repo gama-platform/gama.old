@@ -1,4 +1,4 @@
-package msi.gama.jogl.utils;
+package msi.gama.jogl.utils.GraphicDataType;
 
 import java.awt.Color;
 

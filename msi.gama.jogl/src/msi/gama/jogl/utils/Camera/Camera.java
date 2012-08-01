@@ -1,4 +1,4 @@
-package msi.gama.jogl.utils;
+package msi.gama.jogl.utils.Camera;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;

@@ -13,7 +13,6 @@ import javax.vecmath.Vector3f;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.TessellCallBack;
 import msi.gama.jogl.utils.Vertex;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;

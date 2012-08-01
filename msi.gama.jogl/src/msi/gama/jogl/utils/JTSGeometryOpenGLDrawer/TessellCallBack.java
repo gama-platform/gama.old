@@ -1,4 +1,4 @@
-package msi.gama.jogl.utils;
+package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
