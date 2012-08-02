@@ -170,7 +170,7 @@ public class Maths {
 	@operator(value = "abs", can_be_const = true)
 	@doc(
 		value = "the absolute value of the operand (so a positive int or float depending on the type of the operand).",
-		examples = "abs (200 * -1 + 0.5) → 200.5")
+		examples = "abs (200 * -1 + 0.5) --: 200.5")
 	public static Double abs(final Double rv) {
 		return rv < 0 ? -rv : rv;
 	}
@@ -184,7 +184,7 @@ public class Maths {
 	@operator(value = "acos", can_be_const = true)
 	@doc(
 		value = "the arccos of the operand (which has to be expressed in decimal degrees).",
-		examples = "acos (90) → 0",
+		examples = "acos (90) 	--: 	0",
 		see = {"asin", "atan"})
 	public static Double acos(final Double rv) {
 		return Math.acos(rv) * toDeg;
@@ -199,7 +199,7 @@ public class Maths {
 	@operator(value = "asin", can_be_const = true)
 	@doc(
 		value = "the arcsin of the operand (which has to be expressed in decimal degrees).",
-		examples = "acos (90) → 1",
+		examples = "acos (90) --: 1",
 		see = {"acos", "atan"})
 	public static Double asin(final Double rv) {
 		return Math.asin(rv) * toDeg;
@@ -214,7 +214,7 @@ public class Maths {
 	@operator(value = "atan", can_be_const = true)
 	@doc(
 		value = "the arctan of the operand (which has to be expressed in decimal degrees).",
-		examples = "atan (45) → 1",
+		examples = "atan (45) --: 1",
 		see = {"acos", "asin"})	
 	public static Double atan(final Double rv) {
 		return Math.atan(rv) * toDeg;
@@ -247,7 +247,7 @@ public class Maths {
 	@doc(
 		value = "the cosinus of the operand (in decimal degrees).",
 		special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.",
-		examples = "cos (0) → 1",
+		examples = "cos (0) --: 1",
 		see = {"sin", "tan"})		
 	public static Double cos(final Double rv) {
 		return cosTable[(int) rv.doubleValue()];
@@ -263,7 +263,7 @@ public class Maths {
 	@doc(
 		value = "the sinus of the operand (in decimal degrees).",
 		special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.",
-		examples = "cos (0) → 0",
+		examples = "cos (0) --: 0",
 		see = {"cos", "tan"})		
 	public static Double sin(final Double rv) {
 		return sinTable[rv.intValue()];
@@ -398,7 +398,7 @@ public class Maths {
 	@doc(
 		value = "the trigonometic tangent of the operand (in decimal degrees).",
 		special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.",
-		examples = "cos (180) → 0",
+		examples = "cos (180) --: 0",
 		see = {"cos", "sin"})		
 	public static Double tan(final Double v) {
 		return tanTable[v.intValue()];
@@ -481,7 +481,7 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
-	@doc(examples = "1.0 + 1 → 2.0")
+	@doc(examples = "1.0 + 1 --: 2.0")
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
@@ -508,7 +508,7 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
-	@doc(examples = "1.0 - 1 → 0.0")
+	@doc(examples = "1.0 - 1 --: 0.0")
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}

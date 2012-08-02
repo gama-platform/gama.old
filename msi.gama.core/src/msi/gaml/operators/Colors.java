@@ -35,7 +35,7 @@ public class Colors {
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the sum of the two operands, component by component",
-		examples = {"rgb([255, 128, 32]) + rgb('red') 	:--  	rgb([255,128,32])"})	
+		examples = {"rgb([255, 128, 32]) + rgb('red') 	--:  	rgb([255,128,32])"})	
 	public static GamaColor add(final GamaColor c1, final GamaColor c2) {
 		return new GamaColor(c1.getRed() + c2.getRed(), c1.getGreen() + c2.getGreen(),
 			c1.getBlue() + c2.getBlue());
@@ -44,7 +44,7 @@ public class Colors {
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the sum of each component of the color with the right operand",
-		examples = {"rgb([255, 128, 32]) + 3 	:--  	rgb([255,131,35])"})	
+		examples = {"rgb([255, 128, 32]) + 3 	--:  	rgb([255,131,35])"})	
 	public static GamaColor add(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() + i, c.getGreen() + i, c.getBlue() + i);
 	}
@@ -53,7 +53,7 @@ public class Colors {
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the substraction of each component of the color with the right operand",
-		examples = {"rgb([255, 128, 32]) - 3 	:--  	rgb([252,125,29])"})	
+		examples = {"rgb([255, 128, 32]) - 3 	--:  	rgb([252,125,29])"})	
 	public static GamaColor substract(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() - i, c.getGreen() - i, c.getBlue() - i);
 	}
@@ -61,7 +61,7 @@ public class Colors {
 	@operator(value = IKeyword.MULTIPLY, priority = IPriority.PRODUCT, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the product of each component of the color with the right operand",
-		examples = {"rgb([255, 128, 32]) * 2 	:--  	rgb([255,255,64])"})
+		examples = {"rgb([255, 128, 32]) * 2 	--:  	rgb([255,255,64])"})
 	public static GamaColor multiply(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() * i, c.getGreen() * i, c.getBlue() * i);
 	}
@@ -69,7 +69,7 @@ public class Colors {
 	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the division of each component of the color by the right operand",
-		examples = {"rgb([255, 128, 32]) / 2 	:--  	rgb([127,64,16])"})
+		examples = {"rgb([255, 128, 32]) / 2 	--:  	rgb([127,64,16])"})
 	public static GamaColor divide(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() / i, c.getGreen() / i, c.getBlue() / i);
 	}
@@ -77,7 +77,7 @@ public class Colors {
 	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the division of each component of the color by the right operand. The result on each component is then truncated.",
-		examples = {"rgb([255, 128, 32]) / 2.5 	:--  	rgb([102,51,13])"})
+		examples = {"rgb([255, 128, 32]) / 2.5 	--:  	rgb([102,51,13])"})
 	public static GamaColor divide(final GamaColor c, final Double i) {
 		return new GamaColor(Maths.round(c.getRed() / i), Maths.round(c.getGreen() / i),
 			Maths.round(c.getBlue() / i));
@@ -86,7 +86,7 @@ public class Colors {
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
 	@doc(
 		value = "a new color resulting from the substraction of the two operands, component by component",
-		examples = {"rgb([255, 128, 32]) - rgb('red')   	:--  	rgb([0,128,32])"})	
+		examples = {"rgb([255, 128, 32]) - rgb('red')   	--:  	rgb([0,128,32])"})	
 	public static GamaColor substract(final GamaColor c1, final GamaColor c) {
 		return new GamaColor(c1.getRed() - c.getRed(), c1.getGreen() - c.getGreen(), c1.getBlue() -
 			c.getBlue());

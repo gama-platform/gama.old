@@ -100,11 +100,11 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	public abstract IMatrix plus(IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.TIMES, priority = IPriority.PRODUCT, can_be_const = true)
-	@doc(deprecated = "The difference of matrices is not yet implemented")
+	@doc(deprecated = "The product of matrices is not yet implemented")
 	public abstract IMatrix times(IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
-	@doc(deprecated = "The product of matrices is not yet implemented")
+	@doc(deprecated = "The difference of matrices is not yet implemented")
 	public abstract IMatrix minus(IMatrix other) throws GamaRuntimeException;
 
 	public abstract T get(final int col, final int row);

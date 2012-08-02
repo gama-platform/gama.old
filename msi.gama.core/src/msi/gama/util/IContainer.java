@@ -67,7 +67,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 			"if it is a file, contains returns true it the operand is contained in the file content",
 			"if it is a population, contains returns true if the operand is an agent of the population, false otherwise",
 			"if it is a graph, contains returns true if the operand is a node or an edge of the graph, false otherwise"},
-		examples = {"[1, 2, 3] contains 2	--:   true",
+		examples = {"[1, 2, 3] contains 2			--:   true",
 					"[{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true"},
 		see = {"contains_all, contains_any"})	
 	public boolean contains(Object o) throws GamaRuntimeException;
@@ -139,7 +139,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 			"if it is a matrix of geometry, max returns the maximum of the list of the geometries",
 			"if it is a matrix of another type, max returns the maximum of the elements transformed into float"},
 		see = {"min"},
-		examples = {"max ([100, 23.2, 34.5]) 	--: 	100.0",
+		examples = {"max ([100, 23.2, 34.5]) 			--: 	100.0",
 				"max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}"})
 	public ValueType max(IScope scope) throws GamaRuntimeException;
 

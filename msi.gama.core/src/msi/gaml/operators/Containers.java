@@ -92,7 +92,11 @@ public class Containers {
 	// return null;}
 
 	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(deprecated = "The use of grid_at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	@doc(
+		value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand",
+		comment = "If the left-hand operand is a point of floats, it is used as a point of ints.",
+		special_cases = {"if the left-hand operand is not a grid cell species, returns nil"}, 
+		examples = {"grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
 	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();

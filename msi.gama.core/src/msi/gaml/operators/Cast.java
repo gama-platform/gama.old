@@ -48,7 +48,7 @@ public class Cast {
 	@doc(
 		value = "returns true is the left operand is of the right operand type, false otherwise",
 		examples = {
-			"0 is int 			--: 	true",
+			"0 is int 		--: 	true",
 			"an_agent is node 	--: 	true",
 			"1 is float 		--: 	false"})
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b)
@@ -142,11 +142,12 @@ public class Cast {
 	@doc(value = "casting of the operand to an agent (if a species name is used, casting to an instance of species name).", special_cases = {
 		"if the operand is a point, returns the closest agent (resp. closest instance of species name) to that point (computed in the topology of the calling agent);",
 		"if the operand is an agent, returns the agent (resp. tries to cast this agent to species name and returns nil if the agent is instance of another species);",
-		"if the operand is an int, returns the agent (resp. instance of species name) with this unique index;" }, examples = {
-		"species node {}", "node(0) 			--: node0", "node(3.78) 		--: null",
-		"node(true) 		--: null", "node({23, 4.0} 	--: node2", "node(5::34) 		--: null",
+		"if the operand is an int, returns the agent (resp. instance of species name) with this unique index;" }, 
+		examples = {
+		"species node {}", "node(0) 	--: node0", "node(3.78) 		--: null",
+		"node(true) 		--: null", "node({23, 4.0} 		--: node2", "node(5::34) 		--: null",
 		"node(green) 		--: null", "node([1,5,9,3]) 	--: null", "node(node1)		--: node1",
-		"node('4')			--: null" }, see = { "of_species", "species" })
+		"node('4')		--: null" }, see = { "of_species", "species" })
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
@@ -204,11 +205,11 @@ public class Cast {
 		"if the operand is a boolean, returns black for true and white for false;",
 		"if the operand is an integer value, the decimal integer is translated into a hexadecimal value: OxRRGGBB. "
 			+ "The red (resp. green, blue) component of the color take the value RR (resp. GG, BB) translated in decimal." }, examples = {
-		"rgb(3.78) 			--: rgb([0,0,3])", "rgb(true) 			--: rgb([0,0,0]) //black ",
+		"rgb(3.78) 		--: rgb([0,0,3])", "rgb(true) 		--: rgb([0,0,0]) //black ",
 		"rgb({23, 4.0} 		--: rgb([0,0,0]) //black ", "rgb(5::34) 		--: rgb([0,0,0]) //black ",
-		"rgb(green) 		--: rgb([0,255,0]) //green ", "rgb([1,5,9,3]) 	--: rgb([1,5,9])",
-		"rgb(node1)			--: rgb([0,0,1])", "rgb('4')			--: rgb([0,0,4])",
-		"rgb('4.7')			--:  // Exception " })
+		"rgb(green) 		--: rgb([0,255,0]) //green ", "rgb([1,5,9,3]) 			--: rgb([1,5,9])",
+		"rgb(node1)		--: rgb([0,0,1])", "rgb('4')		--: rgb([0,0,4])",
+		"rgb('4.7')		--:  // Exception " })
 	public static GamaColor asColor(final IScope scope, final Object val)
 		throws GamaRuntimeException {
 		return GamaColorType.staticCast(scope, val, null);
@@ -261,7 +262,7 @@ public class Cast {
 	@doc(value = "parses the string argument as a signed integer in the radix specified by the second argument.", special_cases = {
 		"if the left operand is nil or empty, as_int returns 0",
 		"if the left operand does not represent an integer in the specified radix, as_int throws an exception " }, examples = {
-		"'20' as_int 10 	--: 20;", "'20' as_int 8 		--: 16;", "'20' as_int 16 	--: 32",
+		"'20' as_int 10 		--: 20;", "'20' as_int 8 		--: 16;", "'20' as_int 16 		--: 32",
 		"'1F' as_int 16		--: 31", "'hello' as_int 32 	--: 18306744" }, see = { "int" })
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 		throws GamaRuntimeException {
@@ -342,8 +343,8 @@ public class Cast {
 		"if the operand is a list, returns a pair with the two first element of the list used to built the pair",
 		"if the operand is a link, returns a pair source_link::destination_link",
 		"Otherwise, returns the pair string(operand)::operand." }, examples = {
-		"pair(true) 							--: true::true", "pair({23, 4.0} 						--: 23.0::4.0",
-		"pair([1,5,9,3]) 						--: 1::5", "pair([[3,7],[2,6,9],0]) 				--: [3,7]::[2,6,9]",
+		"pair(true) 			--: true::true", "pair({23, 4.0} 			--: 23.0::4.0",
+		"pair([1,5,9,3]) 		--: 1::5", "pair([[3,7],[2,6,9],0]) 	--: [3,7]::[2,6,9]",
 		"pair(['a'::345, 'b'::13, 'c'::12])  	--: [b,c,a]::[13,12,345]" })
 	public static GamaPair asPair(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null);
@@ -358,11 +359,11 @@ public class Cast {
 		"if the operand is a map, returns the point with values associated respectively with keys \"x\" and \"y\"",
 		"if the operand is a pair, returns a point with the two elements of the pair (casted to float)",
 		"otherwise, returns a point {val,val} where val is the float value of the operand" }, examples = {
-		"point(0) 								--: {0.0;0.0}", "point(true) 							--: {1.0;1.0}",
-		"point(5::34) 							--: {5.0;34.0}", "point([1,5,9,3]) 						--: {1.0;5.0}",
-		"point([[3,7],[2,6,9],0]) 				--:{0.0;0.0}",
-		"point(['a'::345, 'y'::13, 'c'::12])  	--:  {0.0;13.0}",
-		"point(node1)							--: {64.06165572529225;18.401233796267537}   // centroid of node1 shape" })
+		"point(0) 			--: {0.0;0.0}", "point(true) 		--: {1.0;1.0}",
+		"point(5::34) 		--: {5.0;34.0}", "point([1,5,9,3]) 	--: {1.0;5.0}",
+		"point([[3,7],[2,6,9],0]) 	--:{0.0;0.0}",
+		"point(['a'::345, 'y'::13, 'c'::12]) 	--:  {0.0;13.0}",
+		"point(node1)				--: {64.06165572529225;18.401233796267537}   // centroid of node1 shape" })
 	public static ILocation asPoint(final IScope scope, final Object val) {
 		return GamaPointType.staticCast(scope, val, null);
 	}
@@ -397,18 +398,18 @@ public class Cast {
 
 	@operator(value = "to_gaml")
 	@doc(value = "represents the gaml way to write an expression in gaml, depending on its type", examples = {
-		"to_gaml(0) 							--: 0",
-		"to_gaml(3.78) 							--: 3.78",
-		"to_gaml(true) 							--: true",
-		"to_gaml({23, 4.0}) 					--: {23.0,4.0}",
-		"to_gaml(5::34) 						--: (5)::(34)",
-		"to_gaml(green) 						--: rgb (-16711936)",
-		"to_gaml('hello')						--: 'hello'",
-		"to_gaml([1,5,9,3]) 					--: [1,5,9,3]",
-		"to_gaml(['a'::345, 'b'::13, 'c'::12])  --:  ([('b')::(13),('c')::(12),('a')::(345)] as map )",
+		"to_gaml(0) 			--: 0",
+		"to_gaml(3.78) 			--: 3.78",
+		"to_gaml(true) 			--: true",
+		"to_gaml({23, 4.0}) 		--: {23.0,4.0}",
+		"to_gaml(5::34) 			--: (5)::(34)",
+		"to_gaml(green) 			--: rgb (-16711936)",
+		"to_gaml('hello')		--: 'hello'",
+		"to_gaml([1,5,9,3]) 		--: [1,5,9,3]",
+		"to_gaml(['a'::345, 'b'::13, 'c'::12])  		--:  ([('b')::(13),('c')::(12),('a')::(345)] as map )",
 		"to_gaml([[3,5,7,9],[2,4,6,8]])			--: [3,2,5,4,7,6,9,8] as matrix",
-		"to_gaml(a_graph)						--: ([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",
-		"to_gaml(node1)							--: 1 as node" }, see = { "to_java" })
+		"to_gaml(a_graph)			--: ([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",
+		"to_gaml(node1)				--: 1 as node" }, see = { "to_java" })
 	public static String toGaml(final Object val) {
 		return StringUtils.toGaml(val);
 	}
