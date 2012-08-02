@@ -84,6 +84,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	// Use to toggle the 3D view.
 	public boolean ThreeD = false;
+	
+
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
@@ -94,7 +96,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
-		System.out.println("env_width:" + env_width + "env_height" + env_height);
+		System.out.println("DisplaySurface Initialization. env_width:" + env_width + "env_height" + env_height);
 
 		this.setLayout(new BorderLayout());
 		this.add(myGLRender.canvas, BorderLayout.CENTER);
@@ -132,7 +134,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 				previousPanelSize = getSize();
 			}
 		});
-
 	}
 
 	public void save(final IScope scope, final RenderedImage image) {

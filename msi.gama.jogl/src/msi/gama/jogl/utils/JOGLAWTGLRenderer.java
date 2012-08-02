@@ -45,8 +45,13 @@ import javax.media.opengl.GLEventListener;
 
 import javax.media.opengl.glu.GLU;
 
+import utils.GLUtil;
+
+
+import Picking.Picker;
 
 import com.sun.opengl.util.FPSAnimator;
+import com.sun.opengl.util.GLUT;
 
 import com.sun.opengl.util.texture.*;
 
@@ -100,22 +105,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public JOGLAWTDisplaySurface displaySurface;
 	
-		public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
+	//True: Better rendering with lighting but not working yet with texture.
+	boolean goodRendering = false;
+	
+	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
 		camera = new Camera();
 		
 		myGLDrawer= new MyGLToyDrawer();
-
+	
 		canvas = new GLCanvas();
-		//myListener = new MyListener(camera);
+		
 		myListener = new MyListener(camera, this);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(myListener);
 		canvas.addMouseListener(myListener);
 		canvas.addMouseMotionListener(myListener);
 		canvas.addMouseWheelListener(myListener);
-	
-		
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
@@ -124,6 +130,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		// Get the OpenGL graphics context
@@ -136,9 +143,27 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
 		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
 				this, displaySurface.envWidth, displaySurface.envHeight);
+		
+		if(goodRendering){
+		
+		// Enable VSync
+				gl.setSwapInterval(4);
+
+				gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+				//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+				gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
+				GLUtil.enableSmooth(gl);
+				GLUtil.enableBlend(gl);
+				GLUtil.enableColorMaterial(gl);
+				GLUtil.enableDepthTest(gl);
+				GLUtil.enableLighting(gl);
+				GLUtil.createDiffuseLight(gl, 0);
+		}
+		else{
 
 		// Set background color (in RGBA). Alpha of 0 for total transparency
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
@@ -174,12 +199,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glEnable(GL_LIGHT1); // Enable Light-1
 		gl.glDisable(GL_LIGHTING); // But disable lighting
 
-		isLightOn = true;
+		isLightOn = false;
 
 		// enable color tracking
-		gl.glEnable(GL_COLOR_MATERIAL);
+	    gl.glEnable(GL_COLOR_MATERIAL);
 		// set material properties which will be assigned by glColor
-		//gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
 		float[] rgba = {0.3f, 0.5f, 1.0f,1f};
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
@@ -198,9 +223,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glDisable(GL_DEPTH_TEST);
 		//FIXME : should be turn on only if need (if we draw image)
 		//problem when true with glutBitmapString
-		blendingEnabled = true;
+		blendingEnabled = false;
+		}
 
-		camera.UpdateCamera(gl, width, height);
+		camera.UpdateCamera(gl, glu, width, height);
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
 	    //myGLDrawer.LoadTextureFromImage(gl);
@@ -214,12 +240,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
         LastRot.setIdentity(); // Reset Rotation
         ThisRot.setIdentity(); // Reset Rotation
         ThisRot.get(matrix);
-
 	}
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3,
 			int arg4) {
+
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 
@@ -246,10 +272,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				camera.getXLPos(), camera.getYLPos(), camera.getZLPos(), 
 				0.0, 1.0, 0.0);
 		arcBall.setBounds(width, height);
+
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		
 		// hdviet added 28/05/2012
 		synchronized(matrixLock) {
             ThisRot.get(matrix);
@@ -272,22 +300,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Reset the view (x, y, z axes back to normal)
 		gl.glLoadIdentity();
 
-		camera.UpdateCamera(gl, width, height);
+		camera.UpdateCamera(gl, glu, width, height);
 
-		if (isLightOn) {
-			gl.glEnable(GL_LIGHTING);
-
-		} else {
-			gl.glDisable(GL_LIGHTING);
-		}
-
-		// Blending control
-		if (blendingEnabled) {
-			gl.glEnable(GL_BLEND); // Turn blending on
-			gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
-		} else {
-			gl.glDisable(GL_BLEND); // Turn blending off
-			gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
+		if(!goodRendering){
+			if (isLightOn) {
+				gl.glEnable(GL_LIGHTING);
+	
+			} else {
+				gl.glDisable(GL_LIGHTING);
+			}
+	
+			// Blending control
+			if (blendingEnabled) {
+				gl.glEnable(GL_BLEND); // Turn blending on
+				gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
+			} else {
+				gl.glDisable(GL_BLEND); // Turn blending off
+				gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
+			}
 		}
 		
 		// hdviet added 02/06/2012
@@ -299,8 +329,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if(camera.isModelCentered){
 			gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
 		}
-		
+		 
 		this.DrawModel();
+
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
@@ -312,7 +343,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
 	    //myGLDrawer.DrawTexturedDisplayList(gl,width);
 		gl.glPopMatrix(); 
-
 	}
 
 	@Override
@@ -487,5 +517,5 @@ public class JOGLAWTGLRenderer implements GLEventListener {
             LastRot.setIdentity();			// Reset Rotation
             ThisRot.setIdentity();			// Reset Rotation
         }
-	}
+	}	
 }

@@ -236,9 +236,8 @@ public class Camera {
 		this.zLPos = zLPos;
 	}
 
-	public void UpdateCamera(GL gl, int width, int height) {
+	public void UpdateCamera(GL gl, GLU glu, int width, int height) {
 
-		GLU glu = new GLU();
 		if (height == 0) {
 			height = 1; // prevent divide by zero
 		}

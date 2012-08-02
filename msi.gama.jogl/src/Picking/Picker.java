@@ -40,6 +40,7 @@ public class Picker implements MouseListener {
 	@Override
 	public void mousePressed(final MouseEvent e) {
 		isPressed = true;
+		System.out.println(e.getX() + " " +  e.getY());
 		mousePosition.x = e.getX();
 		mousePosition.y = e.getY();
 	}
