@@ -29,6 +29,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
+import java.util.*;
+
 public class JTSDrawer {
 	
 	// OpenGL member
@@ -89,7 +91,7 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if (height > 0) {
-				DrawPolyhedre(curPolygon, z, c, alpha,height, angle,true);
+				DrawPolyhedre(curPolygon, z, c, alpha, height, angle,false);
 			} else {
 				DrawPolygon(curPolygon, z, c,alpha, fill, false, angle,true);
 			}
@@ -336,7 +338,7 @@ public class JTSDrawer {
 		DrawPolygon(p, z, c, alpha,true, false, angle,drawPolygonContour);
 		DrawPolygon(p, z + height, c,alpha, true, false, angle,drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha,z + height,drawPolygonContour);
+		DrawFaces(p, c, alpha,z + height,drawPolygonContour,false);
 
 	}
 	
@@ -347,7 +349,7 @@ public class JTSDrawer {
 	 * @param c: color
 	 * @param height: height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float alpha, float height,boolean drawPolygonContour ) {
+	public void DrawFaces(Polygon p, Color c, float alpha, float height,boolean drawPolygonContour , boolean drawNormal) {
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		float elevation=0.0f;
@@ -364,21 +366,7 @@ public class JTSDrawer {
 
 			int k = (j + 1) % curPolyGonNumPoints;
 
-			myGl.glBegin(GL.GL_QUADS);
-			if (j == 3) {
-				myGl.glNormal3f(0.0f, 0.0f, 1.0f);
-			}
-			if (j == 0) {
-				myGl.glNormal3f(-1.0f, 0.0f, 0.0f);
-			}
-			if (j == 1) {
-				myGl.glNormal3f(0.0f, 0.0f, -1.0f);
-			}
-
-			if (j == 2) {
-				myGl.glNormal3f(1.0f, 0.0f, 0.0f);
-			}
-
+			//Build the 4 vertices of the face.
 			Vertex[] vertices = new Vertex[4];
 			for (int i = 0; i < 4; i++) {
 				vertices[i] = new Vertex();
@@ -400,22 +388,13 @@ public class JTSDrawer {
 			vertices[3].y = -(float) p.getExteriorRing().getPointN(j).getY();
 			vertices[3].z = elevation;
 
-			// Compute the normal of the quad
-			Vector3f normal = new Vector3f(0.0f, 0.0f, 0.0f);
-
-			for (int i = 0; i < 4; i++) {
-				int i1 = (i + 1) % 4;
-				normal.x += (vertices[i].y - vertices[i1].y)
-						* (vertices[i].z + vertices[i1].z);
-				normal.y += (vertices[i].z - vertices[i1].z)
-						* (vertices[i].x + vertices[i1].x);
-				normal.z += (vertices[i].x - vertices[i1].x)
-						* (vertices[i].y + vertices[i1].y);
-			}
-			normal.normalize(normal);
-			// FIXME: The normal is not well computed.
-			// myGl.glNormal3f((float)normal.x, (float)normal.y,
-			// (float)normal.z);
+			// Compute the normal of the quad (for the moment only give 3 point of the quad, to be enhance for non plan polygon)
+			float [] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
+			
+			myGl.glBegin(GL.GL_QUADS);
+			
+			myGl.glNormal3fv(normal,0);
+			
 			myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
 			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
 			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
@@ -423,7 +402,8 @@ public class JTSDrawer {
 			
 			myGl.glEnd();
 			
-            if(drawPolygonContour==true){
+
+            if(drawPolygonContour == true){
             	myGl.glColor4f(0.0f, 0.0f,0.0f,alpha);
             	
             	myGl.glBegin(GL.GL_LINES);
@@ -445,12 +425,17 @@ public class JTSDrawer {
             	myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
         				(float) c.getBlue() / 255, alpha);
 			}
+            
+            if (drawNormal == true){
+				myGl.glBegin(GL.GL_LINES);
+				myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+				myGl.glVertex3f(vertices[0].x+normal[0]*2, vertices[0].y+normal[1]*2, vertices[0].z+normal[2]*2);		
+				myGl.glEnd();
+			}
 		}
 
 	}
-	
-	
-	
+
 	public void DrawMultiLineString(MultiLineString lines, float z, Color c,float alpha,float height) {
 
 		// get the number of line in the multiline.
@@ -735,5 +720,56 @@ public class JTSDrawer {
 		}
 		return vertices;
 	}
+	
+	// Calculate the normal, from three points on a surface
+    protected float [] CalculateNormal(Vertex pointA, Vertex pointB, Vertex pointC)
+    {
+       // Step 1
+       // build two vectors, one pointing from A to B, the other pointing from
+       // A to C
+       float [] vector1 = new float[3];
+       float [] vector2 = new float[3];
+       
+      
+          vector1[0] = pointB.x - pointA.x;
+          vector2[0] = pointC.x - pointA.x;
+          
+          vector1[1] = pointB.y - pointA.y;
+          vector2[1] = pointC.y - pointA.y;
+          
+          vector1[2] = pointB.z - pointA.z;
+          vector2[2] = pointC.z - pointA.z;
+       
+       
+       // Step 2
+       // do the cross product of these two vectors to find the normal
+       // of the surface
+       
+       float [] normal = new float[3];
+       normal[0] = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
+       normal[1] = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
+       normal[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
+       
+       // Step 3
+       // "normalise" the normal (make sure it has length of one)
+       
+       float total = 0.0f;
+       for (int i = 0; i < 3; i++)
+       {
+          total += (normal[i] * normal[i]);
+       }
+       float length = (float)Math.sqrt(total);
+       
+       for (int i = 0; i < 3; i++)
+       {
+          normal[i] /= length;
+       }
+             
+       // done
+       return normal;
+    }
+	
+	
+
 
 }

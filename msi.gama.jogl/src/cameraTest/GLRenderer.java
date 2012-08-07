@@ -39,7 +39,7 @@ public class GLRenderer implements GLEventListener {
 		GLUtil.enableColorMaterial(gl);
 		GLUtil.enableDepthTest(gl);
 		GLUtil.enableLighting(gl);
-		GLUtil.createDiffuseLight(gl, 0);
+		GLUtil.createDiffuseLight(gl, 0,100);
 	}
 
 	@Override

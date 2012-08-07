@@ -106,7 +106,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public JOGLAWTDisplaySurface displaySurface;
 	
 	//True: Better rendering with lighting but not working yet with texture.
-	boolean goodRendering = false;
+	boolean goodRendering = true;
 	
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
@@ -157,7 +157,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				GLUtil.enableColorMaterial(gl);
 				GLUtil.enableDepthTest(gl);
 				GLUtil.enableLighting(gl);
-				GLUtil.createDiffuseLight(gl, 0);
+				GLUtil.createDiffuseLight(gl,0,(float)displaySurface.envWidth);
 		}
 		else{
 

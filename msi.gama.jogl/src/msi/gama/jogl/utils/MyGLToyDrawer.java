@@ -95,6 +95,7 @@ public class MyGLToyDrawer {
 		gl.glColor4f(0.0f, 0.0f, 1.0f,alpha); // Blue
 		gl.glVertex3f(size, -size, 0.0f);
 		gl.glEnd();
+		gl.glTranslatef(-x, -y, -z); // retranslate right and into the screen
 	}
 	
 	

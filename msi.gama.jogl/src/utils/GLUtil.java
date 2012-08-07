@@ -11,6 +11,8 @@
  */
 package utils;
 
+import static javax.media.opengl.GL.GL_TRIANGLES;
+
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.IntBuffer;
@@ -108,9 +110,10 @@ public class GLUtil {
      * @param position
      * @param n_ofLight
      */
-    public static void createDiffuseLight(GL gl, int n_ofLight) {
+    public static void createDiffuseLight(GL gl, int n_ofLight, float pos) {
         float colors[] = {1, 1, 1, 1};
-        float position[] = {100, 100, 100, 1};
+        float position[] = {pos, pos, pos, 1};
+        
         switch (n_ofLight) {
             case 0: {
                 gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
@@ -162,9 +165,24 @@ public class GLUtil {
             break;
             default:
                 System.out.println("Error:openGL has avialable only 8 lights, the first id light0.");
-        }
-
+        }        
     }//end of create Diffuse Light
+    
+    
+	public static void DrawColorTriangle(GL gl, float x, float y, float z, float alpha,float size) {
+		// ----- Render a triangle -----
+		gl.glTranslatef(x, y, z); // translate left and into the screen
+		gl.glBegin(GL_TRIANGLES); // draw using triangles
+		gl.glNormal3f(0.0f, 0.0f, -1.0f);
+		gl.glColor4f(1.0f, 0.0f, 0.0f,alpha); // Red
+		gl.glVertex3f(0.0f, size, 0.0f);
+		gl.glColor4f(0.0f, 1.0f, 0.0f,alpha); // Green
+		gl.glVertex3f(-size, -size, 0.0f);
+		gl.glColor4f(0.0f, 0.0f, 1.0f,alpha); // Blue
+		gl.glVertex3f(size, -size, 0.0f);
+		gl.glEnd();
+		gl.glTranslatef(-x, -y, -z); // retranslate right and into the screen
+	}
 
     /**
      *
