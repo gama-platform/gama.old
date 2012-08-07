@@ -522,7 +522,7 @@ public class GLUtil {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.5f;
+		float ambientMean=0.1f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		// Diffuse light comes from a particular location. Diffuse's value in
 		// RGBA

@@ -104,6 +104,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private static boolean blendingEnabled; // blending on/off
 
 	public JOGLAWTDisplaySurface displaySurface;
+	
+	//picking
+	double angle = 0;
+	int index = -1;
 		
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
@@ -123,6 +127,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
+
 	}
 
 	@Override
@@ -284,6 +289,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		 
 		this.DrawModel();
 
+		//this.DrawPickableObject();
+
+		
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
@@ -469,5 +477,69 @@ public class JOGLAWTGLRenderer implements GLEventListener {
             LastRot.setIdentity();			// Reset Rotation
             ThisRot.setIdentity();			// Reset Rotation
         }
-	}	
+	}
+	
+	private void drawObjects(final GL gl) {
+		gl.glPushMatrix();
+		GLUT glut = new GLUT();
+		gl.glInitNames();
+		gl.glPushName(0);
+
+		for ( int i = 0; i < 6; i++ ) {
+
+			gl.glPushMatrix();
+
+			gl.glLoadName(i);
+			gl.glTranslated(-i * 2 + 5, 0, 0);
+			gl.glRotated(angle, i % 2 == 0 ? 1 : -1, i + 1, 0);
+			if ( index == i ) {
+				gl.glColor3f(1, 0, 0);
+			} else {
+				gl.glColor3f(1, 1, 1);
+			}
+
+			switch (i) {
+				case 0:
+					glut.glutSolidCone(1, 1, 30, 30);
+					break;
+				case 1:
+					glut.glutSolidCube(1);
+					break;
+				case 2:
+					glut.glutSolidTorus(.2, 1, 30, 100);
+					break;
+				case 3:
+					glut.glutSolidTeapot(1);
+					break;
+				case 4:
+					glut.glutSolidRhombicDodecahedron();
+					break;
+				case 5:
+					glut.glutSolidSphere(1, 30, 30);
+					break;
+			}
+
+			gl.glPopMatrix();
+
+		}
+		gl.glPopName();
+		angle += 1;
+		gl.glPopMatrix();
+	}
+	
+	public void DrawPickableObject(){
+		if ( myListener.beginPicking(gl) ) {
+			drawObjects(gl);
+			index = myListener.endPicking(gl);
+		}
+
+		drawObjects(gl);
+
+		if ( index != -1 ) {
+			gl.glColor3d(1, 1, 1);
+			GLUT glut = new GLUT();
+			gl.glWindowPos2d(2, 5);
+			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Object " + index + " was selected.");
+		}
+	}
 }
