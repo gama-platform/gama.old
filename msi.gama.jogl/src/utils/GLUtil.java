@@ -11,6 +11,10 @@
  */
 package utils;
 
+import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_LEQUAL;
+import static javax.media.opengl.GL.GL_LIGHT1;
+import static javax.media.opengl.GL.GL_POSITION;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
 import java.awt.image.BufferedImage;
@@ -475,7 +479,10 @@ public class GLUtil {
     }
 
     public static void enableDepthTest(GL gl) {
-        gl.glEnable(GL.GL_DEPTH_TEST);
+    	// the depth buffer & enable the depth testing
+		gl.glClearDepth(1.0f);
+		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
+		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
     }
 
     public static void enableLighting(GL gl) {
@@ -507,6 +514,34 @@ public class GLUtil {
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
         gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, 0);
 
+    }
+    
+    public static void InitializeLighting(GL gl, float pos){
+    	
+    	// Set up the lighting for Light-1
+		// Ambient light does not come from a particular direction. Need some
+		// ambient
+		// light to light up the scene. Ambient's value in RGBA
+		float ambientMean=0.5f;
+		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
+		// Diffuse light comes from a particular location. Diffuse's value in
+		// RGBA
+		float diffuseMean=0.5f;
+		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+		// Diffuse light location xyz (in front of the screen at width
+		// position).
+		float lightDiffusePosition[] = { pos, pos, pos, 1.0f };
+		
+		//Specular light
+		float specularMean=0.1f;
+        float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
+
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
+		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
+		gl.glEnable(GL_LIGHT1); // Enable Light-1
+    	
     }
 
     public static void setPointSize(GL gl, float size, boolean smooth) {

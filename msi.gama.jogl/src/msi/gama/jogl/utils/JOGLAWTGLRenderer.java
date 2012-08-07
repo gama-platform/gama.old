@@ -104,10 +104,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private static boolean blendingEnabled; // blending on/off
 
 	public JOGLAWTDisplaySurface displaySurface;
-	
-	//True: Better rendering with lighting but not working yet with texture.
-	boolean goodRendering = true;
-	
+		
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
 		camera = new Camera();
@@ -144,62 +141,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
 				this, displaySurface.envWidth, displaySurface.envHeight);
 		
-		if(goodRendering){
 		
-		// Enable VSync
-				gl.setSwapInterval(4);
-
-				gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-				//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-				gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
-				GLUtil.enableSmooth(gl);
-				GLUtil.enableBlend(gl);
-				GLUtil.enableColorMaterial(gl);
-				GLUtil.enableDepthTest(gl);
-				GLUtil.enableLighting(gl);
-				GLUtil.createDiffuseLight(gl,0,(float)displaySurface.envWidth);
-		}
-		else{
-
 		// Set background color (in RGBA). Alpha of 0 for total transparency
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		// the depth buffer & enable the depth testing
-		gl.glClearDepth(1.0f);
-		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
-		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
+		
+		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
+		GLUtil.enableSmooth(gl);
+		
 		// We want the best perspective correction to be done
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		// Enable smooth shading, which blends colors nicely, and smoothes out
-		// lighting.
-		gl.glShadeModel(GL_SMOOTH);
-
-		// Set up the lighting for Light-1
-		// Ambient light does not come from a particular direction. Need some
-		// ambient
-		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=1.0f;
-		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
-		// Diffuse light comes from a particular location. Diffuse's value in
-		// RGBA
-		float diffuseMean=0.5f;
-		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		// Diffuse light location xyz (in front of the screen at width
-		// position).
-		float lightDiffusePosition[] = { 0.0f, 0.0f, width, 1.0f };
 		
-		//Specular light
-		float specularMean=1.0f;
-        float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
-
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
-		//gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightSpecularValue, 0);
-		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
-		gl.glEnable(GL_LIGHT1); // Enable Light-1
-		gl.glDisable(GL_LIGHTING); // But disable lighting
-
-		isLightOn = false;
+		GLUtil.enableDepthTest(gl);
+		
+		GLUtil.InitializeLighting(gl, width);
 
 		// enable color tracking
 	    gl.glEnable(GL_COLOR_MATERIAL);
@@ -224,8 +178,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		//FIXME : should be turn on only if need (if we draw image)
 		//problem when true with glutBitmapString
 		blendingEnabled = false;
-		}
-
+		isLightOn = true;
+		
 		camera.UpdateCamera(gl, glu, width, height);
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
@@ -301,24 +255,22 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glLoadIdentity();
 
 		camera.UpdateCamera(gl, glu, width, height);
-
-		if(!goodRendering){
-			if (isLightOn) {
-				gl.glEnable(GL_LIGHTING);
 	
-			} else {
-				gl.glDisable(GL_LIGHTING);
-			}
-	
-			// Blending control
-			if (blendingEnabled) {
-				gl.glEnable(GL_BLEND); // Turn blending on
-				gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
-			} else {
-				gl.glDisable(GL_BLEND); // Turn blending off
-				gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
-			}
+		if (isLightOn) {
+			gl.glEnable(GL_LIGHTING);
+		} else {
+			gl.glDisable(GL_LIGHTING);
 		}
+
+		// Blending control
+		if (blendingEnabled) {
+			gl.glEnable(GL_BLEND); // Turn blending on
+			gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
+		} else {
+			gl.glDisable(GL_BLEND); // Turn blending off
+			gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
+		}
+		
 		
 		// hdviet added 02/06/2012
 		gl.glPushMatrix();
