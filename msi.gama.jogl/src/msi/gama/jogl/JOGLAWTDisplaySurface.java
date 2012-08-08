@@ -85,6 +85,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Use to toggle the 3D view.
 	public boolean ThreeD = false;
 	
+	//Use to toggle the Picking mode
+	public boolean Picking= false;
+	
 
 
 	@Override
@@ -563,6 +566,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void toggleView() {
 		ThreeD = !ThreeD;
 		zoomFit();
+	}
+	
+	@Override
+	public void togglePicking() {
+		Picking = !Picking;
 	}
 
 	@Override
