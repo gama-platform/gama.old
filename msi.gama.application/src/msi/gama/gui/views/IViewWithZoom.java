@@ -12,7 +12,17 @@ public interface IViewWithZoom {
 	public void zoomToFit();
 	public void zoomIn();
 	public void zoomOut();
+	
+	/**
+	 * Switch between the 2D view and the 3D View
+	 */
 	public void toggleView();
+	
+	
+	/**
+	 * Switch between Picking or rendering only mode.
+	 */
+	public void togglePicking();
 	
 	public void snapshot();
 	

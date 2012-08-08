@@ -402,5 +402,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void toggleView() {
 		System.out.println("toggle view is only available for Opengl Display");
 	}
+	
+	/**
+	 * This method does nothing for JAVA2D display
+	 */
+	@Override
+	public void togglePicking() {
+		System.out.println("toggle picking is only available for Opengl Display");
+	}
 
 }
