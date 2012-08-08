@@ -688,41 +688,65 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * Array or even VBO
 	 * 
 	 */
-	public void DrawMyJTSGeometries() {
+	public void DrawMyJTSGeometries(boolean picking) {
 
-
-		// System.out.println("isListCreated="+isListCreated);
-		if (useDisplayList) {
-			//System.out.println("Geometries are build with displayList");
-			if (!isListCreated) {
-				System.out.println("Create" + this.myJTSGeometries.size()
-						+ "list");
-				graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSGeometries);
-				System.out.println("Create" + this.myJTSGeometries.size()
-						+ "list ok");
-				isListCreated = true;
-			} else {
-				//System.out.println("Call" + this.myJTSGeometries.size() +
-				 //"list");
-				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
-			}
-		} else {
- 
-			if (!useVertexArray) {
-				//System.out.println("Geometries are build with basicDrawer ");
-				Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
-				while (it.hasNext()) {
-					MyJTSGeometry curGeometry = it.next();
-					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
+		if(picking){
+			myGl.glPushMatrix();
+			myGl.glInitNames();
+			myGl.glPushName(0);
+			int i=0;
+			Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
+			while (it.hasNext()) {
+				myGl.glPushMatrix();
+        		myGl.glLoadName(i);  		
+				MyJTSGeometry curGeometry = it.next();
+				if(myGLRender.index ==i){
+					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry, Color.red);
+        		}
+				else{
+					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);	
 				}
+				
+				myGl.glPopMatrix();
+				i++;
 			}
-			// use vertex array
-			else {
-				if (!isPolygonTriangulated) {
-					graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
-					isPolygonTriangulated = true;
+			myGl.glPopName();
+			myGl.glPopMatrix();
+		}
+		else{
+			// System.out.println("isListCreated="+isListCreated);
+			if (useDisplayList) {
+				//System.out.println("Geometries are build with displayList");
+				if (!isListCreated) {
+					System.out.println("Create" + this.myJTSGeometries.size()
+							+ "list");
+					graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSGeometries);
+					System.out.println("Create" + this.myJTSGeometries.size()
+							+ "list ok");
+					isListCreated = true;
 				} else {
-					graphicsGLUtils.vertexArrayHandler.drawVertexArray();
+					//System.out.println("Call" + this.myJTSGeometries.size() +
+					 //"list");
+					graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
+				}
+			} else {
+	 
+				if (!useVertexArray) {
+					//System.out.println("Geometries are build with basicDrawer ");
+					Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
+					while (it.hasNext()) {
+						MyJTSGeometry curGeometry = it.next();
+						graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
+					}
+				}
+				// use vertex array
+				else {
+					if (!isPolygonTriangulated) {
+						graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
+						isPolygonTriangulated = true;
+					} else {
+						graphicsGLUtils.vertexArrayHandler.drawVertexArray();
+					}
 				}
 			}
 		}
@@ -735,8 +759,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * Array or even VBO
 	 * 
 	 */
-	public void DrawMyJTSStaticGeometries() {
-	
+	public void DrawMyJTSStaticGeometries(boolean picking) {
+		if (picking){
+			
+		}
+		else{
 			if (!isStaticListCreated) {
 				System.out.println("Create" + this.myJTSStaticGeometries.size()
 						+ "list static");
@@ -747,6 +774,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			} else {
 				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSStaticGeometries.size());
 			}
+		}
 	}
 
 	/**

@@ -59,6 +59,7 @@ import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
+import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
@@ -107,7 +108,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	//picking
 	double angle = 0;
-	int index = -1;
+	//index of the picked object
+	public int index = -1;
 		
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
@@ -281,17 +283,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPushMatrix();
 		gl.glMultMatrixf(matrix,0);
 					
-		
-		//Display the model center on 0,0,0
-		if(camera.isModelCentered){
-			gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
+		if(displaySurface.Picking){
+			this.DrawPickableObject();
 		}
-		 
-		this.DrawModel();
+		else{
+			//Display the model center on 0,0,0
+			if(camera.isModelCentered){
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
+			}
+			//FIXME: Need to simplify , give a boolean to DrawModel to know if it's in Picking mode.
+			this.DrawModel();	
+		}
 
-		//this.DrawPickableObject();
 
-		
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);
 		
@@ -325,12 +329,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		//Draw Geometry
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries.isEmpty()){
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(false);
 		}
 		
 		//Draw Static Geometry
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries.isEmpty()){
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSStaticGeometries();
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSStaticGeometries(false);
 		}
 		
 		//Draw String
@@ -479,6 +483,22 @@ public class JOGLAWTGLRenderer implements GLEventListener {
         }
 	}
 	
+	public void DrawPickableObject(){
+		if ( myListener.beginPicking(gl) ) {
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(true);
+			index = myListener.endPicking(gl);
+		}
+
+
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(true);
+		if ( index != -1 ) {
+			gl.glColor3d(0, 0, 0);
+			gl.glWindowPos2d(2, 5);
+			GLUT glut = new GLUT();
+			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Object " + index + " was selected.");
+		}
+	}
+	
 	private void drawObjects(final GL gl) {
 		gl.glPushMatrix();
 		GLUT glut = new GLUT();
@@ -525,21 +545,5 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPopName();
 		angle += 1;
 		gl.glPopMatrix();
-	}
-	
-	public void DrawPickableObject(){
-		if ( myListener.beginPicking(gl) ) {
-			drawObjects(gl);
-			index = myListener.endPicking(gl);
-		}
-
-		drawObjects(gl);
-
-		if ( index != -1 ) {
-			gl.glColor3d(1, 1, 1);
-			GLUT glut = new GLUT();
-			gl.glWindowPos2d(2, 5);
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Object " + index + " was selected.");
-		}
 	}
 }

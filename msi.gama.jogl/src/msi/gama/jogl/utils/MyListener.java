@@ -289,7 +289,6 @@ public class MyListener implements KeyListener, MouseListener,
 
 		int width = viewport[2]; // get width and
 		int height = viewport[3]; // height from viewport
-		System.out.println("width: "+ width + "height" + height);
 
 		// 3. Prepare openGL for rendering in select mode
 		gl.glRenderMode(GL.GL_SELECT);
