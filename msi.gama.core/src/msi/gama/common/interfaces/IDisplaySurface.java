@@ -58,6 +58,11 @@ public interface IDisplaySurface {
 	 * Switch between 2D and 3D view (Only with Opengl view)
 	 */
 	void toggleView();
+	
+	/**
+	 * Activate the picking mode
+	 */
+	void togglePicking();
 
 	ILayerManager getManager();
 
