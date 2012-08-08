@@ -81,9 +81,8 @@ public class MyListener implements KeyListener, MouseListener,
 				myRenderer.reset();
 			}
 		} else {
-			myCamera.PrintParam();
-			System.out.println( "x:" + mouseEvent.getX() + 
-								" y:" + mouseEvent.getY());
+			//myCamera.PrintParam();
+			//System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
 		}
 	}
 
@@ -270,7 +269,7 @@ public class MyListener implements KeyListener, MouseListener,
 	//Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * First pass perare select buffer for select mode by clearing it,
+	 * First pass pepare select buffer for select mode by clearing it,
 	 * prepare openGL to select mode and tell it where should draw
 	 * object by using gluPickMatrix() method
 	 * @return if returned value is true that mean the picking is enabled
@@ -278,9 +277,11 @@ public class MyListener implements KeyListener, MouseListener,
 	public boolean beginPicking(final GL gl) {
 		if ( !isPressed ) { return false; }
 		GLU glu = new GLU();
+		
 		// 1. Selecting buffer
 		selectBuffer.clear(); // prepare buffer for new objects
 		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer to openGL
+			
 		// Pass below is very similar to refresh method in GLrenderer
 		// 2. Take the viewport attributes,
 		int viewport[] = new int[4];
@@ -288,22 +289,23 @@ public class MyListener implements KeyListener, MouseListener,
 
 		int width = viewport[2]; // get width and
 		int height = viewport[3]; // height from viewport
+		System.out.println("width: "+ width + "height" + height);
 
 		// 3. Prepare openGL for rendering in select mode
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		gl.glPushMatrix();
 		gl.glRenderMode(GL.GL_SELECT);
+
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glPushMatrix();	
 		gl.glLoadIdentity();
 		// gluPickMatrix method restrict the area where openGL will drawing objects
 		// glu.gluPickMatrix(
 		// mousePosition.x, height - mousePosition.y,
 		// beam size x, beam size y,
 		// viewport, 0);
-		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 2, 2, viewport, 0);
+		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 4, 4, viewport, 0);
 
-		float h = width / (float) height;
-		glu.gluPerspective(45.0f, h, 1.0, 20.0);
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		
+		this.myCamera.UpdateCamera(gl, glu, width, height);
 		// 4. After this pass you must draw Objects
 
 		return true;
