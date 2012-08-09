@@ -167,7 +167,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
-		float[] rgba = {0.3f, 0.5f, 1.0f,1f};
+		float[] rgba = {0.2f, 0.2f, 0.2f,1f};
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);

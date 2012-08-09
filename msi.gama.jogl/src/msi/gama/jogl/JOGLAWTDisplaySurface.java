@@ -570,7 +570,17 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	@Override
 	public void togglePicking() {
+		
+		if(Picking==false){
+		    ThreeD=false;
+			zoomFit();
+		}
+		//FIXME: need to change the status of the button
+		if (ThreeD==true){
+			ThreeD=false;
+		}
 		Picking = !Picking;
+		
 	}
 
 	@Override

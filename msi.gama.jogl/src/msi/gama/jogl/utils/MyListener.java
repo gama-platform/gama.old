@@ -100,19 +100,26 @@ public class MyListener implements KeyListener, MouseListener,
 
 	@Override
 	public void mousePressed(MouseEvent mouseEvent) {
+		//Arcball
 		
 		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
-			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
-				myRenderer.startDrag(mouseEvent.getPoint());
-			}
-		} else{
-			lastx = mouseEvent.getX();
-			lasty = mouseEvent.getY();
-		}
+				//Arcball is not working with picking.
+				if(!myRenderer.displaySurface.Picking){
+					if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+						myRenderer.startDrag(mouseEvent.getPoint());
+					}
+				}
+			} else{
+				lastx = mouseEvent.getX();
+				lasty = mouseEvent.getY();
+			}	
 		
+		//Picking mode
+		if(myRenderer.displaySurface.Picking){		
 		isPressed = true;
 		mousePosition.x = mouseEvent.getX();
 		mousePosition.y = mouseEvent.getY();
+		}
 	}
 
 	@Override
@@ -124,9 +131,13 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mouseDragged(MouseEvent mouseEvent) {
 
+		
+		
 		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
-			if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
-				myRenderer.drag(mouseEvent.getPoint());
+			if(!myRenderer.displaySurface.Picking){
+				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+					myRenderer.drag(mouseEvent.getPoint());
+				}
 			}
 		} else {
 			int diffx = mouseEvent.getX() - lastx; // check the difference between the
@@ -137,6 +148,7 @@ public class MyListener implements KeyListener, MouseListener,
 												// position
 			lastx = mouseEvent.getX(); // set lastx to the current x position
 			lasty = mouseEvent.getY(); // set lasty to the current y position
+			
 
 			double speed = 0.035;
 

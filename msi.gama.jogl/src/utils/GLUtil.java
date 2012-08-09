@@ -516,31 +516,39 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, float pos){
+    public static void InitializeLighting(GL gl, float widthEnv){
     	
     	// Set up the lighting for Light-1
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.1f;
+		float ambientMean=0.2f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
-		// Diffuse light comes from a particular location. Diffuse's value in
-		// RGBA
-		float diffuseMean=0.5f;
-		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		// Diffuse light location xyz (in front of the screen at width
-		// position).
-		float lightDiffusePosition[] = { pos, pos, pos, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
+		// Diffuse light 
+		float[] lightDiffuseValue0 = { 0.2f, 0.2f, 0.2f, 1.0f };
+		// Diffuse light location xyz (directed light)
+		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);
+		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
+		
+		// Diffuse light 
+		float[] lightDiffuseValue = { 0.5f, 0.5f, 0.5f, 1.0f };
+		// Diffuse light location xyz (positioned light)
+		float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
+		
+
 		//Specular light
 		float specularMean=0.1f;
         float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
-
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
-		gl.glLightfv(GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
-		gl.glEnable(GL_LIGHT1); // Enable Light-1
+		
+		gl.glEnable(GL.GL_LIGHT0); // Enable Light-0
+		gl.glEnable(GL.GL_LIGHT1); // Enable Light-1
     	
     }
 
