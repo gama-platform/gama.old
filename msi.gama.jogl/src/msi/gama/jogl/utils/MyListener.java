@@ -293,18 +293,32 @@ public class MyListener implements KeyListener, MouseListener,
 		// 3. Prepare openGL for rendering in select mode
 		gl.glRenderMode(GL.GL_SELECT);
 
+		/*
+		 * The application must redefine the viewing volume so that it renders only a small 
+		 * area around the place where the mouse was clicked. In order to do that it is 
+		 * necessary to set the matrix mode to GL_PROJECTION. Afterwards, the application 
+		 * should push the current matrix to save the normal rendering mode settings. 
+		 * Next initialise the matrix
+		 */
+		
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPushMatrix();	
 		gl.glLoadIdentity();
-		// gluPickMatrix method restrict the area where openGL will drawing objects
-		// glu.gluPickMatrix(
-		// mousePosition.x, height - mousePosition.y,
-		// beam size x, beam size y,
-		// viewport, 0);
+		
+		/*
+		 * Define the viewing volume so that rendering is done only in a small area around 
+		 * the cursor. gluPickMatrix method restrict the area where openGL will drawing objects
+		 * 
+		 * OpenGL has a different origin for its window coordinates than the operation system. 
+		 * The second parameter provides for the conversion between the two systems, i.e. it 
+		 * transforms the origin from the upper left corner, into the bottom left corner
+		 */
 		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 4, 4, viewport, 0);
 
 		
 		this.myCamera.UpdateCamera(gl, glu, width, height);
+		//FIXME: Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
 
 		return true;

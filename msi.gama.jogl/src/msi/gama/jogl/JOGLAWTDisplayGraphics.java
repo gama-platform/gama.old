@@ -761,7 +761,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void DrawMyJTSStaticGeometries(boolean picking) {
 		if (picking){
-			
+			//TODO
 		}
 		else{
 			if (!isStaticListCreated) {

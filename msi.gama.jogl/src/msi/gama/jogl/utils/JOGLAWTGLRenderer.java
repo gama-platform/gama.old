@@ -284,6 +284,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMultMatrixf(matrix,0);
 					
 		if(displaySurface.Picking){
+			//Display the model center on 0,0,0
+			if(camera.isModelCentered){
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
+			}
 			this.DrawPickableObject();
 		}
 		else{
@@ -343,6 +347,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		
 		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+
 		
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
 				.DrawXYZAxis(envMaxDim / 10);
@@ -485,7 +490,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public void DrawPickableObject(){
 		if ( myListener.beginPicking(gl) ) {
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(true);
+			//Need to to do a translation before to draw object and retranslate after.
+			//FIXME: need also to apply the arcball matrix to make it work in 3D
+			if(camera.isModelCentered){
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); 
+				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(true);
+				gl.glTranslatef(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, -((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
+			}
+			else{
+				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(true);			
+			}
 			index = myListener.endPicking(gl);
 		}
 

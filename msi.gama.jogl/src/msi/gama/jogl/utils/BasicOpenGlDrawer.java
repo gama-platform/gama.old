@@ -72,7 +72,7 @@ public class BasicOpenGlDrawer {
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, geometry.color,geometry.alpha);
+					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, geometry.height, geometry.color,geometry.alpha);
 				}else{
 					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, geometry.color,geometry.alpha);
 				}
@@ -117,9 +117,9 @@ public class BasicOpenGlDrawer {
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, c,geometry.alpha);
+					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, geometry.height, c,geometry.alpha);
 				}else{
-					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, c,geometry.alpha);
+					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, geometry.height, c,geometry.alpha);
 				}
 				
 			}
