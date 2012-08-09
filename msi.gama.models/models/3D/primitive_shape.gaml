@@ -106,7 +106,7 @@ entities {
 		const color type: rgb <- [0, 175,100] as rgb;
 		geometry shape <- geometry (point([1,1])) ;
 		aspect 3D {
-			draw geometry: shape color: color z:2 ;
+			draw geometry: shape color: color z:0.1 ;
 			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
 	}
@@ -147,6 +147,7 @@ entities {
 		}
 	}
 	
+
 	species myPolyhedron{
 		const color type: rgb <- [255, 73,0] as rgb;
 		geometry shape <- polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) ;		
@@ -156,7 +157,6 @@ entities {
 		}
 	}
 	
-
 
 }
 experiment display  type: gui {
