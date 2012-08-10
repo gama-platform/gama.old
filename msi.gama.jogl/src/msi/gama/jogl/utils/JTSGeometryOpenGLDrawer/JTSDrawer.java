@@ -123,6 +123,8 @@ public class JTSDrawer {
 				myGlu.gluTessBeginContour(tobj);
 
 				tempPolygon = new double[numExtPoints][3];
+				
+				if(p.isSimple()){
 				// Convert vertices as a list of double for gluTessVertex
 				for (int j = 0; j < numExtPoints; j++) {
 					tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
@@ -148,6 +150,10 @@ public class JTSDrawer {
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if(drawPolygonContour ==true){
 					DrawPolygonContour(p, c, 0.0f);
+				}
+				}
+				else{
+					System.out.println("the geometry is not simple!!!!");
 				}
 			}
 			// use JTS triangulation on simplified geometry (DouglasPeucker)

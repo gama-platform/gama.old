@@ -830,12 +830,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g = GamaGeometryType.buildRectangle(envWidth, envHeight,
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
-		Color c = new Color(0, 0, 255);
+		Color c = new Color(225, 225, 225);
 		MyJTSGeometry curGeometry = new MyJTSGeometry();
 		curGeometry.geometry = g;
 		curGeometry.color = c;
 		curGeometry.fill = true;
 		curGeometry.isTextured = false;
+		curGeometry.alpha=1.0f;
+		//To avoid overlapping with object at z=0
+		curGeometry.z=-0.01f;
 		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 

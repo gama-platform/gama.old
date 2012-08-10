@@ -277,7 +277,7 @@ public class Camera {
 		this.setzPos(maxDim*1.5);
 		this.setzLPos(0.0f);
 		}
-		this.PrintParam();
+		//this.PrintParam();
 	}
 	
 	
@@ -305,7 +305,7 @@ public class Camera {
 		
 		
 		
-		this.PrintParam();
+		//this.PrintParam();
 	}
 
 	public void PrintParam() {
