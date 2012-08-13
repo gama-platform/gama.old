@@ -147,5 +147,27 @@ public class MyGraphics {
 		// myGl.glEnable(GL_BLEND);
 
 	}
+	
+	void DrawTorus(float innerRadius, float outterRadius,int sides, int rings){
+		GLUT glut= new GLUT();
+		glut.glutSolidTorus(innerRadius,outterRadius,sides,rings);
+	}
+	
+	void DrawArcBall(){
+		
+		DrawXYZAxis(1.0f);
+		
+		myGl.glColor3f(0.0f, 0.0f, 1.0f);
+		DrawTorus(0.02f,1.0f,50,50);
+		
+		myGl.glRotatef(90,0.0f, 1.0f, 0.0f);
+		myGl.glColor3f(1.0f, 0.0f, 0.0f);
+		DrawTorus(0.02f,1.0f,50,50);
+		myGl.glRotatef(90,0.0f, -1.0f, 0.0f);
+		
+		myGl.glRotatef(90,1.0f, 0.0f, 0.0f);
+		myGl.glColor3f(0.0f, 1.0f, 0.0f);
+		DrawTorus(0.02f,1.0f,50,50);
+	}
 
 }

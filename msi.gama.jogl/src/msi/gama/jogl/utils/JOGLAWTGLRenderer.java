@@ -295,9 +295,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth/2, ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight/2, 0.0f); // translate right and into the screen
 			}
 			//FIXME: Need to simplify , give a boolean to DrawModel to know if it's in Picking mode.
-			this.DrawModel();	
+			this.DrawModel();
+			
 		}
 
+
+		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.DrawArcBall();
 
 		//myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		//myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);

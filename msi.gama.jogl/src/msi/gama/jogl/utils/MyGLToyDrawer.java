@@ -23,6 +23,7 @@ import javax.media.opengl.glu.GLUquadric;
 
 import msi.gama.common.util.ImageUtils;
 
+import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;
 import com.sun.opengl.util.texture.TextureIO;
@@ -733,5 +734,7 @@ public class MyGLToyDrawer {
 		gl.glColor3fv(topColors[4], 0);
 		gl.glCallList(topDList); // draw the top
 	}
+	
+
 
 }
