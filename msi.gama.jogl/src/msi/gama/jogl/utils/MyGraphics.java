@@ -143,7 +143,10 @@ public class MyGraphics {
 		myGl.glDisable(GL_BLEND);
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		myGl.glRasterPos3f(x, y, z);
+		myGl.glScalef(8.0f, 8.0f, 8.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
+		//glut.glutBitmapString(GLUT.BITMAP_8_BY_13, string);
+		myGl.glScalef(0.125f, 0.125f, 0.125f);
 		// myGl.glEnable(GL_BLEND);
 
 	}
@@ -158,16 +161,16 @@ public class MyGraphics {
 		DrawXYZAxis(1.0f);
 		
 		myGl.glColor3f(0.0f, 0.0f, 1.0f);
-		DrawTorus(0.02f,1.0f,50,50);
+		DrawTorus(0.02f,1.0f,100,100);
 		
 		myGl.glRotatef(90,0.0f, 1.0f, 0.0f);
 		myGl.glColor3f(1.0f, 0.0f, 0.0f);
-		DrawTorus(0.02f,1.0f,50,50);
+		DrawTorus(0.02f,1.0f,100,100);
 		myGl.glRotatef(90,0.0f, -1.0f, 0.0f);
 		
 		myGl.glRotatef(90,1.0f, 0.0f, 0.0f);
 		myGl.glColor3f(0.0f, 1.0f, 0.0f);
-		DrawTorus(0.02f,1.0f,50,50);
+		DrawTorus(0.02f,1.0f,100,100);
 	}
 
 }

@@ -818,13 +818,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 	}
 
-	public void DrawEnvironmentBounds() {
+	public void DrawEnvironmentBounds(boolean drawData) {
 
+		if(drawData){
 		// Draw Width and height value
 		this.graphicsGLUtils.DrawString(String.valueOf(this.envWidth),
 				this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
 		this.graphicsGLUtils.DrawString(String.valueOf(this.envHeight),
 				this.envWidth * 1.01f, -(this.envHeight / 2), 0.0f);
+		}
 
 		// Draw environment rectangle
 		Geometry g = GamaGeometryType.buildRectangle(envWidth, envHeight,

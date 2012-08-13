@@ -325,7 +325,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	
 	public void DrawModel() {
-		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds();
+		((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 		
 		//Draw Image
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
@@ -348,6 +348,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyStrings();
 		}
 		
+		boolean drawAxes= true;
+		if(drawAxes){
 		float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 
 		
@@ -355,6 +357,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				.DrawXYZAxis(envMaxDim / 10);
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.DrawZValue(
 				-envMaxDim / 10, (float) camera.zPos);
+		}
 		
 	}
 

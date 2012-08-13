@@ -52,7 +52,7 @@ public class BasicOpenGlDrawer {
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.height, geometry.angle,false);
+							geometry.alpha,geometry.height, geometry.angle,true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
@@ -97,7 +97,7 @@ public class BasicOpenGlDrawer {
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z, c,
-							geometry.alpha,geometry.height, geometry.angle,false);
+							geometry.alpha,geometry.height, geometry.angle,true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, c,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
