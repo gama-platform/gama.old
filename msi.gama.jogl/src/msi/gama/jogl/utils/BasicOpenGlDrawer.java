@@ -46,36 +46,34 @@ public class BasicOpenGlDrawer {
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
-				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z, geometry.color,
-						geometry.alpha,geometry.fill, geometry.angle, geometry.height);
+				myJTSDrawer.DrawMultiPolygon(geometry);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.height, geometry.angle,true);
+					myJTSDrawer.DrawPolyhedre(geometry,true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
-				myJTSDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, geometry.color,geometry.alpha,geometry.height);
+				myJTSDrawer.DrawMultiLineString(geometry);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawPlan((LineString) geometry.geometry,geometry.z,geometry.color,geometry.alpha,geometry.height,0,true);
+					myJTSDrawer.DrawPlan(geometry,true);
 				}else{
-					myJTSDrawer.DrawLineString((LineString) geometry.geometry, geometry.z, 1.2f, geometry.color,geometry.alpha);
+					myJTSDrawer.DrawLineString(geometry, 1.2f);
 				}
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, geometry.height, geometry.color,geometry.alpha);
+					myJTSDrawer.DrawSphere(geometry);
 				}else{
-					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000, geometry.color,geometry.alpha);
+					myJTSDrawer.DrawPoint(geometry, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000);
 				}
 				
 			}
@@ -94,36 +92,34 @@ public class BasicOpenGlDrawer {
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
-				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z, c,
-						geometry.alpha,geometry.fill, geometry.angle, geometry.height);
+				myJTSDrawer.DrawMultiPolygon(geometry);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z, c,
-							geometry.alpha,geometry.height, geometry.angle,true);
+					myJTSDrawer.DrawPolyhedre(geometry,true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, c,
 							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
-				myJTSDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z, c,geometry.alpha,geometry.height);
+				myJTSDrawer.DrawMultiLineString(geometry);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawPlan((LineString) geometry.geometry,geometry.z,c,geometry.alpha,geometry.height,0,true);
+					myJTSDrawer.DrawPlan(geometry,true);
 				}else{
-					myJTSDrawer.DrawLineString((LineString) geometry.geometry, geometry.z, 1.2f, c,geometry.alpha);
+					myJTSDrawer.DrawLineString(geometry,1.2f);
 				}
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry, geometry.z, geometry.height, c,geometry.alpha);
+					myJTSDrawer.DrawSphere(geometry);
 				}else{
-					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z, 10, geometry.height, c,geometry.alpha);
+					myJTSDrawer.DrawPoint(geometry, 10, geometry.height);
 				}
 				
 			}

@@ -19,7 +19,7 @@ public class MyJTSGeometry {
 
 	public String type;
 	
-	public Boolean fill;
+	public Boolean fill=true;
 	
 	public Boolean isTextured = false;
 	
