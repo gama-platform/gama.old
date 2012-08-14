@@ -41,6 +41,7 @@ public class BasicOpenGlDrawer {
      * @param geometry
      */
 	public void DrawJTSGeometry(MyJTSGeometry geometry) {
+		myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
 
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
@@ -79,6 +80,7 @@ public class BasicOpenGlDrawer {
 				
 			}
 		}
+		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 	}
 	
     /**
@@ -87,6 +89,8 @@ public class BasicOpenGlDrawer {
      */
 	public void DrawJTSGeometry(MyJTSGeometry geometry, Color c) {
 
+		myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
+		
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
@@ -124,6 +128,8 @@ public class BasicOpenGlDrawer {
 				
 			}
 		}
+		
+		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 	}
 	
 }

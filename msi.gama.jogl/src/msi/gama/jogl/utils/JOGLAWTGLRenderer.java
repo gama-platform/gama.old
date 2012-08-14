@@ -363,6 +363,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void DrawTexture(MyImage img) {
 
+		gl.glTranslated(img.offSet.x, -img.offSet.y, 0.0f);
 		if (this.myTextures.size() > 0) {
 			
 			Iterator<MyTexture> it = this.myTextures.iterator();
@@ -438,6 +439,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				}
 			}
 		}
+		gl.glTranslated(-img.offSet.x, img.offSet.y, 0.0f);
 	}
 
 	public void InitTexture(BufferedImage image,String name) {
