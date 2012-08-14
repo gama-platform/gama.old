@@ -53,8 +53,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre(geometry,true);
 				} else {
-					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, geometry.color,
-							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
+					myJTSDrawer.DrawPolygon(geometry, geometry.z,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -74,8 +73,7 @@ public class BasicOpenGlDrawer {
 					myJTSDrawer.DrawSphere(geometry);
 				}else{
 					myJTSDrawer.DrawPoint(geometry, 10, ((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim/1000);
-				}
-				
+				}	
 			}
 		}
 		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
@@ -99,8 +97,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre(geometry,true);
 				} else {
-					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z, c,
-							geometry.alpha,geometry.fill, geometry.isTextured, geometry.angle,true);
+					myJTSDrawer.DrawPolygon(geometry, geometry.z,true);
 				}
 			}
 			else if (geometry.geometry.getGeometryType() == "MultiLineString") {

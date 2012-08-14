@@ -10,7 +10,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
-import javax.vecmath.Vector3f;
+
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -30,7 +30,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
-import java.util.*;
 
 public class JTSDrawer {
 	
@@ -94,223 +93,18 @@ public class JTSDrawer {
 			if (geometry.height > 0) {
 				DrawPolyhedre(geometry,false);
 			} else {
-				DrawPolygon(curPolygon, geometry.z, geometry.color,geometry.alpha, geometry.fill, false, geometry.angle,true);
+				DrawPolygon(geometry, geometry.z,true);
 			}
 		}
 	}
-	
-
-	public void DrawPolygon(Polygon p, float z_layer, Color c, float alpha, boolean fill,
-			boolean isTextured, Integer angle, boolean drawPolygonContour) {
+		
+	public void DrawPolygon(MyJTSGeometry geometry, float z_layer,boolean drawPolygonContour) {
 
 		// FIXME: Angle rotation is not implemented yet
 
 		//Set z_layer
 		myGl.glTranslatef(0.0f, 0.0f, z_layer);
-
-		if (fill == true) {
-			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);
-			
-			//FIXME:This does not draw the whole. p.getInteriorRingN(n)
-			numExtPoints = p.getExteriorRing().getNumPoints();
-
-			// System.out.println("Draw Polygon with Tessellation :"+numExtPoints);
-
-			myGl.glNormal3f(0.0f, 0.0f, 1.0f);
-
-			if (useTessellation) {
-				myGlu.gluTessBeginPolygon(tobj, null);
-				myGlu.gluTessBeginContour(tobj);
-
-				tempPolygon = new double[numExtPoints][3];
-				
-				if(p.isSimple()){
-				// Convert vertices as a list of double for gluTessVertex
-				for (int j = 0; j < numExtPoints; j++) {
-					tempPolygon[j][0] = (float) (float) (p.getExteriorRing()
-							.getPointN(j).getX());
-					tempPolygon[j][1] = -(float) (p.getExteriorRing()
-							.getPointN(j).getY());
-					
-					
-					if(String.valueOf(p.getExteriorRing().getPointN(j).getCoordinate().z).equals("NaN") == true){
-						tempPolygon[j][2] = 0.0f;
-					}
-					else{
-						tempPolygon[j][2] = 0.0f+p.getExteriorRing().getPointN(j).getCoordinate().z;
-					}
-				}
-
-				for (int j = 0; j < numExtPoints; j++) {
-					myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
-				}
-
-				myGlu.gluTessEndContour(tobj);
-				myGlu.gluTessEndPolygon(tobj);
-				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-				if(drawPolygonContour ==true){
-					DrawPolygonContour(p, c, 0.0f);
-				}
-				}
-				else{
-					System.out.println("the geometry is not simple!!!!");
-				}
-			}
-			// use JTS triangulation on simplified geometry (DouglasPeucker)
-			//FIXME: not working with a z_layer value!!!!
-			else {
-				double sizeTol = Math.sqrt(p.getArea()) / 100.0;
-				Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
-				if (g2 instanceof Polygon) {
-					p = (Polygon) g2;
-				} 			
-				//Workaround to compute the z value of each triangle as triangulation
-				// create new point during the triangulation that are set with z=NaN
-				if (p.getNumPoints() > 4) {
-					triangles = GeometryUtils.triangulation(p);
-				
-					GamaList<Geometry> segments = new GamaList<Geometry>();
-					for (int i = 0; i < p.getNumPoints()- 1; i++) {
-						Coordinate[] cs = new Coordinate[2];
-						cs[0] = p.getCoordinates()[i];
-						cs[1] = p.getCoordinates()[i+1];
-						segments.add(GeometryUtils.factory.createLineString(cs));
-					}
-					for (IShape tri : triangles){
-						for (int i = 0; i < tri.getInnerGeometry().getNumPoints(); i++) {
-							Coordinate coord = tri.getInnerGeometry().getCoordinates()[i];
-							if ((coord.z + "").equals("NaN")) {
-								Point pt = GeometryUtils.factory.createPoint(coord);
-								double distMin = Double.MAX_VALUE;
-								Geometry closestSeg = null;
-								for (Geometry seg : segments) {
-									double dist = seg.distance(pt);
-									if (dist < distMin) {
-										distMin = dist;
-										closestSeg = seg;
-									}
-								}
-								Point pt1 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[0]);
-								Point pt2 = GeometryUtils.factory.createPoint(closestSeg.getCoordinates()[1]);
-								
-								double dist1 = pt.distance(pt1);
-								double dist2 = pt.distance(pt2);
-                                //FIXME: Work only for geometry
-								coord.z = (1 - (dist1 / closestSeg.getLength())) * closestSeg.getCoordinates()[0].z + (1 - (dist2 / closestSeg.getLength())) * closestSeg.getCoordinates()[1].z;
-								DrawShape(tri,false);	
-							}		
-						}
-					}
-				} else if (p.getNumPoints() == 4) {
-					triangles = new GamaList<IShape>();
-					triangles.add(new GamaShape(p));
-				}
-				for (IShape tri : triangles){
-					DrawShape(tri,false);
-					
-				}
-				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
-				if(drawPolygonContour ==true){
-				DrawPolygonContour(p, c, 0.0f);
-				}
-			}
-		}
-		// fill = false. Draw only the contour of the polygon.
-		else {
-			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);
-			DrawPolygonContour(p, c, 0.0f);
-		}
-
-		// FIXME: Need to check that the polygon is a quad
-		if (isTextured) {
-			myGl.glEnable(GL.GL_TEXTURE_2D);
-			// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL context's state.
-			myGLRender.textures[2].enable();
-			// Binds this texture to the current GL context.
-			myGLRender.textures[2].bind();
-
-			if (angle != 0) {
-				myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
-						.getCentroid().getY(), 0.0f);
-				// FIXME:Check counterwise or not, and do we rotate around the
-				// center or around a point.
-				myGl.glRotatef(-angle, 0.0f, 0.0f, 1.0f);
-				myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
-						.getCentroid().getY(), 0.0f);
-				myGl.glBegin(GL_QUADS);
-
-				// Front Face
-				myGl.glTexCoord2f(myGLRender.textureLeft,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), 0.0f); 
-
-				myGl.glEnd();
-				myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
-						.getCentroid().getY(), 0.0f);
-				myGl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-				myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
-						.getCentroid().getY(), 0.0f);
-			} else {
-				myGl.glBegin(GL_QUADS);
-
-				// Front Face
-				myGl.glTexCoord2f(myGLRender.textureLeft,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), 0.0f); 
-				myGl.glEnd();
-			}
-
-			myGl.glDisable(GL.GL_TEXTURE_2D);
-
-		}
-		
-		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
-
-	}
-	
-	
-	
-	public void DrawPolygon(MyJTSGeometry geometry, boolean drawPolygonContour) {
-
-		// FIXME: Angle rotation is not implemented yet
-        Polygon p = (Polygon) geometry.geometry;
-		
-		//Set z_layer
-		myGl.glTranslatef(0.0f, 0.0f, geometry.z);
+		Polygon p = (Polygon) geometry.geometry;
 
 		if (geometry.fill == true) {
 			myGl.glColor4f((float) geometry.color.getRed() / 255,
@@ -502,11 +296,11 @@ public class JTSDrawer {
 
 		}
 		
-		myGl.glTranslatef(0.0f, 0.0f, -geometry.z);
+		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
 
 	}
 	
-
+	
 	public void DrawPolygonContour(Polygon p, Color c, float z) {
 		// Draw contour
 		myGl.glBegin(GL.GL_LINES);
@@ -549,8 +343,8 @@ public class JTSDrawer {
 	public void DrawPolyhedre(MyJTSGeometry geometry,boolean drawPolygonContour) {
   
 		Polygon p = (Polygon) geometry.geometry;
-		DrawPolygon(p, geometry.z, geometry.color, geometry.alpha,true, false, geometry.angle,drawPolygonContour);
-		DrawPolygon(p, geometry.z + geometry.height, geometry.color,geometry.alpha, true, false, geometry.angle,drawPolygonContour);
+		DrawPolygon(geometry, geometry.z,drawPolygonContour);
+		DrawPolygon(geometry, geometry.z + geometry.height,drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, geometry.color, geometry.alpha,geometry.z + geometry.height,drawPolygonContour,false);
 
