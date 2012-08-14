@@ -225,79 +225,84 @@ public class JTSDrawer {
 
 		// FIXME: Need to check that the polygon is a quad
 		if (geometry.isTextured) {
-			myGl.glEnable(GL.GL_TEXTURE_2D);
-			// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL context's state.
-			myGLRender.textures[2].enable();
-			// Binds this texture to the current GL context.
-			myGLRender.textures[2].bind();
-
-			if (geometry.angle != 0) {
-				myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
-						.getCentroid().getY(), 0.0f);
-				// FIXME:Check counterwise or not, and do we rotate around the
-				// center or around a point.
-				myGl.glRotatef(-geometry.angle, 0.0f, 0.0f, 1.0f);
-				myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
-						.getCentroid().getY(), 0.0f);
-				myGl.glBegin(GL_QUADS);
-
-				// Front Face
-				myGl.glTexCoord2f(myGLRender.textureLeft,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), 0.0f); 
-
-				myGl.glEnd();
-				myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
-						.getCentroid().getY(), 0.0f);
-				myGl.glRotatef(geometry.angle, 0.0f, 0.0f, 1.0f);
-				myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
-						.getCentroid().getY(), 0.0f);
-			} else {
-				myGl.glBegin(GL_QUADS);
-
-				// Front Face
-				myGl.glTexCoord2f(myGLRender.textureLeft,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
-						.getExteriorRing().getPointN(0).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureBottom);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
-						.getExteriorRing().getPointN(1).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureRight,
-						myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
-						.getExteriorRing().getPointN(2).getY(), 0.0f); 
-				
-				myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-				myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
-						.getExteriorRing().getPointN(3).getY(), 0.0f); 
-				myGl.glEnd();
-			}
-
-			myGl.glDisable(GL.GL_TEXTURE_2D);
-
+			DrawTexturedPolygon(geometry);
 		}
 		
 		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
 
+	}
+	
+	
+	public void DrawTexturedPolygon(MyJTSGeometry geometry){
+		myGl.glEnable(GL.GL_TEXTURE_2D);
+		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL context's state.
+		myGLRender.textures[2].enable();
+		// Binds this texture to the current GL context.
+		myGLRender.textures[2].bind();
+
+		Polygon p = (Polygon) geometry.geometry;
+		
+		if (geometry.angle != 0) {
+			myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
+					.getCentroid().getY(), 0.0f);
+			// FIXME:Check counterwise or not, and do we rotate around the
+			// center or around a point.
+			myGl.glRotatef(-geometry.angle, 0.0f, 0.0f, 1.0f);
+			myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
+					.getCentroid().getY(), 0.0f);
+			myGl.glBegin(GL_QUADS);
+
+			// Front Face
+			myGl.glTexCoord2f(myGLRender.textureLeft,
+					myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
+					.getExteriorRing().getPointN(0).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureRight,
+					myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
+					.getExteriorRing().getPointN(1).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureRight,
+					myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
+					.getExteriorRing().getPointN(2).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
+					.getExteriorRing().getPointN(3).getY(), 0.0f); 
+
+			myGl.glEnd();
+			myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
+					.getCentroid().getY(), 0.0f);
+			myGl.glRotatef(geometry.angle, 0.0f, 0.0f, 1.0f);
+			myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
+					.getCentroid().getY(), 0.0f);
+		} else {
+			myGl.glBegin(GL_QUADS);
+
+			// Front Face
+			myGl.glTexCoord2f(myGLRender.textureLeft,
+					myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
+					.getExteriorRing().getPointN(0).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureRight,
+					myGLRender.textureBottom);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
+					.getExteriorRing().getPointN(1).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureRight,
+					myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
+					.getExteriorRing().getPointN(2).getY(), 0.0f); 
+			
+			myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+			myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
+					.getExteriorRing().getPointN(3).getY(), 0.0f); 
+			myGl.glEnd();
+		}
+		myGl.glDisable(GL.GL_TEXTURE_2D);
 	}
 	
 	
@@ -458,9 +463,6 @@ public class JTSDrawer {
 		
 		// for each line of a multiline, get each point coordinates.
 		for (int i = 0; i < numGeometries; i++) {
-
-			
-			LineString l = (LineString) lines.getGeometryN(i);
 			if (geometry.height > 0) {
 				DrawPlan(geometry,true);
 			} else {
