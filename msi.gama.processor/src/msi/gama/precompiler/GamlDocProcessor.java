@@ -535,7 +535,7 @@ public class GamlDocProcessor {
 					// TODO : check several types
 					facetElt.setAttribute("type", f.type()[0]);
 					// FIXME Very simple documentation parsing as only the text is grabbed.
-					facetElt.setAttribute("optionl", "" + f.optional());
+					facetElt.setAttribute("optional", "" + f.optional());
 					if ( f.doc().length > 0 ) {
 						facetElt.setAttribute("doc", f.doc()[0].value());
 					}

@@ -20,9 +20,25 @@ public class xmlTOwiki {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		System.out.println("Debut Tranformation");
-		createWiki("files/doc.xml","xsl/docGama-xml2wiki.xsl","gen/wiki/operators.wiki");		
-		System.out.println("Fin Transformation");
+		System.out.println("Beginning of the tranformation");
+		//
+		System.out.println("Creation of the wiki page for Operators.");
+		createWiki("files/doc.xml","xsl/docGama-Operators-xml2wiki.xsl","gen/wiki/OperatorsDev.wiki");
+		System.out.println("Done");	
+		//
+		System.out.println("Creation of the wiki page for Statements.");		
+		createWiki("files/doc.xml","xsl/docGama-Statements-xml2wiki.xsl","gen/wiki/StatementsDev.wiki");	
+		System.out.println("Done");		
+		//
+		System.out.println("Creation of the wiki page for Skills.");		
+		createWiki("files/doc.xml","xsl/docGama-Skills-xml2wiki.xsl","gen/wiki/SkillsDev.wiki");	
+		System.out.println("Done");			
+		//
+		System.out.println("Creation of the wiki page for Built-in Species.");		
+		createWiki("files/doc.xml","xsl/docGama-Species-xml2wiki.xsl","gen/wiki/SpeciesDev.wiki");	
+		System.out.println("Done");	
+		//
+		System.out.println("End of the transformation");
 	}
 
 

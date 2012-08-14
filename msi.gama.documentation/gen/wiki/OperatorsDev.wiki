@@ -45,11 +45,11 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 = <font color="blue"> Operators by categories </font> =
 	
 == Casting operators ==
-  * [#agent agent], [#as as], [#as_int as_int], [#bool bool], [#container container], [#float float], [#geometry geometry], [#graph graph], [#int int], [#is is], [#list list], [#map map], [#matrix matrix], [#pair pair], [#path path], [#point point], [#rgb rgb], [#species species], [#species_of species_of], [#string string], [#to_gaml to_gaml], [#to_java to_java], [#topology topology], [#unknown unknown], 
+  * [#agent agent], [#as as], [#as_int as_int], [#bool bool], [#container container], [#float float], [#geometry geometry], [#graph graph], [#int int], [#is is], [#list list], [#matrix matrix], [#pair pair], [#path path], [#point point], [#rgb rgb], [#species species], [#species_of species_of], [#string string], [#to_gaml to_gaml], [#to_java to_java], [#topology topology], [#unknown unknown], 
 == Comparison operators ==
   * [#!= !=], [#< <], [#<= <=], [#<> <>], [#= =], [#> >], [#>= >=], 
 == Containers-related operators ==
-  * [#- -], [#:: ::], [#accumulate accumulate], [#among among], [#any any], [#as_map as_map], [#as_matrix as_matrix], [#at at], [#collate collate], [#collect collect], [#contains contains], [#contains_all contains_all], [#count count], [#first first], [#first_with first_with], [#grid_at grid_at], [#group_by group_by], [#in in], [#index_of index_of], [#inter inter], [#last_with last_with], [#max max], [#max_of max_of], [#min min], [#min_of min_of], [#mul mul], [#of_generic_species of_generic_species], [#of_species of_species], [#one_of one_of], [#product product], [#remove_duplicates remove_duplicates], [#reverse reverse], [#select select], [#sort sort], [#sort_by sort_by], [#sum sum], [#where where], [#with_max_of with_max_of], [#with_min_of with_min_of], 
+  * [#:: ::], [#accumulate accumulate], [#among among], [#as_map as_map], [#as_matrix as_matrix], [#at at], [#collate collate], [#collect collect], [#contains_all contains_all], [#contains_any contains_any], [#count count], [#empty empty], [#first_with first_with], [#grid_at grid_at], [#group_by group_by], [#in in], [#index_of index_of], [#inter inter], [#last last], [#last_index_of last_index_of], [#last_with last_with], [#map map], [#max max], [#max_of max_of], [#min min], [#min_of min_of], [#mul mul], [#of_generic_species of_generic_species], [#of_species of_species], [#product product], [#remove_duplicates remove_duplicates], [#select select], [#sort sort], [#sort_by sort_by], [#sum sum], [#where where], [#with_max_of with_max_of], [#with_min_of with_min_of], 
 == Files-related operators ==
   * [#file file], [#folder folder], [#get get], [#image image], [#is_image is_image], [#is_properties is_properties], [#is_shape is_shape], [#is_text is_text], [#new_folder new_folder], [#properties properties], [#read read], [#shapefile shapefile], [#text text], [#write write], 
 == Graphs-related operators ==
@@ -57,17 +57,17 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 == Logical operators ==
   * [#: :], [#! !], [#? ?], [#and and], [#not not], [#or or], 
 == Mathematics operators ==
-  * [#/ /], [#^ ^], [#* *], [#** **], [#+ +], [#abs abs], [#acos acos], [#asin asin], [#atan atan], [#ceil ceil], [#cos cos], [#div div], [#even even], [#exp exp], [#fact fact], [#floor floor], [#ln ln], [#mod mod], [#round round], [#sin sin], [#sqrt sqrt], [#tan tan], [#tanh tanh], [#with_precision with_precision], 
+  * [#- -], [#^ ^], [#* *], [#** **], [#abs abs], [#acos acos], [#asin asin], [#atan atan], [#ceil ceil], [#cos cos], [#div div], [#even even], [#exp exp], [#fact fact], [#floor floor], [#ln ln], [#mod mod], [#round round], [#sin sin], [#sqrt sqrt], [#tan tan], [#tanh tanh], [#with_precision with_precision], 
 == Matrix-related operators ==
   * [#column_at column_at], [#columns_list columns_list], [#row_at row_at], [#rows_list rows_list], 
 == Random operators ==
-  * [#binomial binomial], [#flip flip], [#gauss gauss], [#poisson poisson], [#rnd rnd], [#shuffle shuffle], [#TGauss TGauss], [#truncated_gauss truncated_gauss], 
+  * [#any any], [#binomial binomial], [#flip flip], [#gauss gauss], [#one_of one_of], [#poisson poisson], [#rnd rnd], [#shuffle shuffle], [#TGauss TGauss], [#truncated_gauss truncated_gauss], 
 == Spatial operators ==
-  * [#<--: <--:], [#add_point add_point], [#agent_closest_to agent_closest_to], [#agents_at_distance agents_at_distance], [#agents_inside agents_inside], [#agents_overlapping agents_overlapping], [#any_location_in any_location_in], [#any_point_in any_point_in], [#around around], [#as_4_grid as_4_grid], [#as_grid as_grid], [#at_distance at_distance], [#at_location at_location], [#buffer buffer], [#circle circle], [#clean clean], [#closest_points_with closest_points_with], [#closest_to closest_to], [#cone cone], [#convex_hull convex_hull], [#crosses crosses], [#direction_between direction_between], [#direction_to direction_to], [#disjoint_from disjoint_from], [#distance_between distance_between], [#distance_to distance_to], [#enlarged_by enlarged_by], [#farthest_point_to farthest_point_to], [#inside inside], [#intersection intersection], [#intersects intersects], [#line line], [#link link], [#masked_by masked_by], [#neighbours_at neighbours_at], [#neighbours_of neighbours_of], [#norm norm], [#overlapping overlapping], [#overlaps overlaps], [#partially_overlaps partially_overlaps], [#path_between path_between], [#path_to path_to], [#points_at points_at], [#polygon polygon], [#polyline polyline], [#rectangle rectangle], [#reduced_by reduced_by], [#rotated_by rotated_by], [#scaled_by scaled_by], [#simple_clustering_by_distance simple_clustering_by_distance], [#simple_clustering_by_envelope_distance simple_clustering_by_envelope_distance], [#simplification simplification], [#skeletonize skeletonize], [#solid solid], [#split_at split_at], [#split_lines split_lines], [#square square], [#touches touches], [#towards towards], [#transformed_by transformed_by], [#translated_by translated_by], [#translated_to translated_to], [#triangle triangle], [#triangulate triangulate], [#union union], [#without_holes without_holes], 
+  * [#/ /], [#<--: <--:], [#add_point add_point], [#add_z add_z], [#add_z_pt add_z_pt], [#agent_closest_to agent_closest_to], [#agents_at_distance agents_at_distance], [#agents_inside agents_inside], [#agents_overlapping agents_overlapping], [#any_location_in any_location_in], [#any_point_in any_point_in], [#around around], [#as_4_grid as_4_grid], [#as_grid as_grid], [#at_distance at_distance], [#at_location at_location], [#buffer buffer], [#circle circle], [#clean clean], [#closest_points_with closest_points_with], [#closest_to closest_to], [#cone cone], [#convex_hull convex_hull], [#crosses crosses], [#direction_between direction_between], [#direction_to direction_to], [#disjoint_from disjoint_from], [#distance_between distance_between], [#distance_to distance_to], [#enlarged_by enlarged_by], [#farthest_point_to farthest_point_to], [#inside inside], [#intersection intersection], [#intersects intersects], [#line line], [#link link], [#masked_by masked_by], [#neighbours_at neighbours_at], [#neighbours_of neighbours_of], [#norm norm], [#overlapping overlapping], [#overlaps overlaps], [#partially_overlaps partially_overlaps], [#path_between path_between], [#path_to path_to], [#points_at points_at], [#polygon polygon], [#polyline polyline], [#rectangle rectangle], [#reduced_by reduced_by], [#rotated_by rotated_by], [#scaled_by scaled_by], [#simple_clustering_by_distance simple_clustering_by_distance], [#simple_clustering_by_envelope_distance simple_clustering_by_envelope_distance], [#simplification simplification], [#skeletonize skeletonize], [#solid solid], [#split_at split_at], [#split_lines split_lines], [#square square], [#touches touches], [#towards towards], [#transformed_by transformed_by], [#translated_by translated_by], [#translated_to translated_to], [#triangle triangle], [#triangulate triangulate], [#union union], [#without_holes without_holes], 
 == Statistical operators ==
   * [#frequency_of frequency_of], [#geometric_mean geometric_mean], [#harmonic_mean harmonic_mean], [#mean mean], [#mean_deviation mean_deviation], [#median median], [#standard_deviation standard_deviation], [#variance variance], 
 == Strings-related operators ==
-  * [#as_date as_date], [#as_time as_time], [#contains_any contains_any], [#copy_between copy_between], [#empty empty], [#is_number is_number], [#last last], [#last_index_of last_index_of], [#length length], [#split_with split_with], [#tokenize tokenize], 
+  * [#+ +], [#as_date as_date], [#as_time as_time], [#contains contains], [#copy_between copy_between], [#first first], [#is_number is_number], [#length length], [#reverse reverse], [#split_with split_with], [#tokenize tokenize], 
 == System ==
   * [#. .], [#copy copy], [#dead dead], [#eval_gaml eval_gaml], [#evaluate_with evaluate_with], [#every every], [#of of], [#user_input user_input], 
 
@@ -77,55 +77,55 @@ Moreover, operators are strictly functional, i.e. they have no side effects on t
 == - == 
   	
   * Possible use: 
-    * OP(int) --->  int
     * OP(float) --->  float
-    * list OP any --->  list
-    * int OP int --->  int
-    * point OP point --->  point
-    * shape OP list of shapes --->  shape
-    * rgb OP rgb --->  rgb
-    * list OP list --->  list
-    * shape OP float --->  shape
+    * OP(int) --->  int
     * float OP int --->  float
     * shape OP species --->  shape
+    * shape OP float --->  shape
+    * shape OP shape --->  shape
+    * point OP float --->  point
+    * list OP list --->  list
+    * list OP any --->  list
+    * shape OP list of shapes --->  shape
     * rgb OP int --->  rgb
     * float OP float --->  float
+    * rgb OP rgb --->  rgb
+    * int OP int --->  int
+    * point OP point --->  point
     * point OP int --->  point
-    * shape OP shape --->  shape
-    * int OP float --->  float
-    * point OP float --->  point 
-  * Result: the difference of the two operandsa new color resulting from the substraction of the two operands, component by componentreturns a new list in which all the elements of the right operand have been removed from the left onea new color resulting from the substraction of each component of the color with the right operand  
+    * int OP float --->  float 
+  * Result: returns a new list in which all the elements of the right operand have been removed from the left onea new color resulting from the substraction of each component of the color with the right operanda new color resulting from the substraction of the two operands, component by componentthe difference of the two operands  
   * Comment: The behavior of the operator depends on the type of the operands.
   * Special cases:
-    * if the right operand is an object of any type (except list), - returns a copie of the left operand without this object
-    * if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.
-    * if both operands are points, returns their difference.
-    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries
-    * if the right operand is empty or nil, - returns the left operand
-    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance
-    * when it is used as an unary operator, - returns the opposite or the operand.
     * if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species
+    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance
     * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries
-    * if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.    
+    * when it is used as an unary operator, - returns the opposite or the operand.
+    * if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.
+    * if the right operand is empty or nil, - returns the left operand
+    * if the right operand is an object of any type (except list), - returns a copie of the left operand without this object
+    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries
+    * if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.
+    * if both operands are points, returns their difference.    
   * See also: [#+ +], 
   
 {{{
-[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]
-[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]
-1 - 1 	--:	 0
-{1, 2} - {4, 5} 	--:	 {-3.0;-3.0}
-geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)
-rgb([255, 128, 32]) - rgb('red')   	--:  	rgb([0,128,32])
-[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]
-[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]
-shape - 5 --: returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
-- (-56) 	--:	 56
 1.0 - 1 --: 0.0
 geom1 - speciesA --: a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)
-rgb([255, 128, 32]) - 3 	--:  	rgb([252,125,29])
-{1, 2} - 4 	--:	 {-3.0;-2.0}
+shape - 5 --: returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
 geom1 - geom2 --: a geometry corresponding to difference between geom1 and geom2
+- (-56) 	--:	 56
 {1, 2} - 4.5 	--:	 {-3.5, -2.5}
+[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]
+[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]
+[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]
+[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]
+geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)
+rgb([255, 128, 32]) - 3 	--:  	rgb([252,125,29])
+rgb([255, 128, 32]) - rgb('red')   	--:  	rgb([0,128,32])
+1 - 1 	--:	 0
+{1, 2} - {4, 5} 	--:	 {-3.0;-3.0}
+{1, 2} - 4 	--:	 {-3.0;-2.0}
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -200,15 +200,15 @@ set color value:(food > 5) ? 'red' : ((food >= 2)? 'blue' : 'green');
 == / == 
   	
   * Possible use: 
-    * rgb OP int --->  rgb
+    * point OP float --->  point
+    * int OP float --->  float
     * int OP int --->  float
+    * rgb OP int --->  rgb
+    * rgb OP float --->  rgb
     * point OP int --->  point
     * float OP int --->  float
-    * float OP float --->  float
-    * int OP float --->  float
-    * rgb OP float --->  rgb
-    * point OP float --->  point 
-  * Result: a new color resulting from the division of each component of the color by the right operanda float, equal to the division of the left-hand operand by the rigth-hand operand.a new color resulting from the division of each component of the color by the right operand. The result on each component is then truncated.
+    * float OP float --->  float 
+  * Result: a float, equal to the division of the left-hand operand by the rigth-hand operand.a new color resulting from the division of each component of the color by the right operanda new color resulting from the division of each component of the color by the right operand. The result on each component is then truncated.
   * Special cases:
     * if the right-hand operand is equal to zero, raises a "Division by zero" exception
     * if the left-hand operator is a point and the right-hand a number, returns a point with coordinates divided by the number    
@@ -216,8 +216,8 @@ set color value:(food > 5) ? 'red' : ((food >= 2)? 'blue' : 'green');
   
 {{{
 rgb([255, 128, 32]) / 2 	--:  	rgb([127,64,16])
-{2,5} / 4	--:  {0.5;1.25}
 rgb([255, 128, 32]) / 2.5 	--:  	rgb([102,51,13])
+{2,5} / 4	--:  {0.5;1.25}
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -241,8 +241,8 @@ agent.location 		--: 	returns the location of the agent
 == ^ == 
   	
   * Possible use: 
-    * int OP int --->  int
     * float OP float --->  float
+    * int OP int --->  int
     * float OP int --->  float
     * int OP float --->  float 
   * Result: the left-hand operand raised to the power of the right-hand operand.
@@ -260,27 +260,27 @@ agent.location 		--: 	returns the location of the agent
 == `*` == 
   	
   * Possible use: 
-    * rgb OP int --->  rgb
+    * float OP int --->  float
     * point OP float --->  point
-    * int OP int --->  int
-    * point OP point --->  float
-    * shape OP float --->  shape
-    * point OP int --->  point
-    * float OP float --->  float
     * int OP float --->  float
-    * float OP int --->  float 
+    * rgb OP int --->  rgb
+    * shape OP float --->  shape
+    * point OP point --->  float
+    * point OP int --->  point
+    * int OP int --->  int
+    * float OP float --->  float 
   * Result: a new color resulting from the product of each component of the color with the right operandthe product of the two operands
   * Special cases:
-    * if both operands are int, returns the product as an int
-    * if both operands are points, returns their scalar product
     * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient
-    * if the left-hand operator is a point and the right-hand a number, returns a point with coordinates multiplied by the number    
+    * if both operands are points, returns their scalar product
+    * if the left-hand operator is a point and the right-hand a number, returns a point with coordinates multiplied by the number
+    * if both operands are int, returns the product as an int    
   * See also: [#/ /], 
   
 {{{
 rgb([255, 128, 32]) * 2 	--:  	rgb([255,255,64])
-{2,5} * {4.5, 5} 	--:  34.0
 shape * 2 --: returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2
+{2,5} * {4.5, 5} 	--:  34.0
 {2,5} * 4 	--: {8.0; 20.0}
  }}} 
 
@@ -297,52 +297,52 @@ shape * 2 --: returns a geometry corresponding to the geometry of the agent appl
 == + == 
   	
   * Possible use: 
-    * int OP float --->  float
-    * shape OP shape --->  shape
-    * float OP float --->  float
-    * shape OP map --->  shape
-    * point OP point --->  point
-    * int OP int --->  int
-    * point OP int --->  point
-    * point OP float --->  point
-    * list OP list --->  list
-    * rgb OP int --->  rgb
-    * shape OP float --->  shape
-    * float OP int --->  float
     * string OP any --->  string
-    * list OP any --->  list
+    * int OP int --->  int
     * rgb OP rgb --->  rgb
-    * string OP string --->  string 
-  * Result: the sum, union or concatenation of the two operands.returns a new list containing all the elements of both operandsa new color resulting from the sum of each component of the color with the right operanda new color resulting from the sum of the two operands, component by component  
+    * string OP string --->  string
+    * int OP float --->  float
+    * list OP list --->  list
+    * shape OP shape --->  shape
+    * point OP point --->  point
+    * list OP any --->  list
+    * shape OP float --->  shape
+    * point OP int --->  point
+    * rgb OP int --->  rgb
+    * float OP float --->  float
+    * float OP int --->  float
+    * shape OP map --->  shape
+    * point OP float --->  point 
+  * Result: the sum, union or concatenation of the two operands.a new color resulting from the sum of the two operands, component by componentreturns a new list containing all the elements of both operandsa new color resulting from the sum of each component of the color with the right operand  
   * Comment: + is only defined with a list as left operand
   * Special cases:
-    * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries
-    * if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters
-    * if both operands are points, returns their sum.
     * if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.
-    * if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.
+    * if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string
     * if the right operand is nil, + returns the left operand
-    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance
+    * if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries
+    * if both operands are points, returns their sum.
     * if the right operand is an object of any type (except list), + returns a copie of the left operand with this object
-    * if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string    
+    * if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance
+    * if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters
+    * if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.    
   * See also: [#- -], [#- -], 
   
 {{{
-geom1 + geom2 --: a geometry corresponding to union between geom1 and geom2
-shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment
-{1, 2} + {4, 5} 	--:	 {5.0;7.0}
+"hello " + 12 	--: 	"hello 12"
 1 + 1 	--:	 2
-{1, 2} + 4 	--:	 {5.0;6.0}
-{1, 2} + 4.5 	--:	 {5.5, 6.5}
+rgb([255, 128, 32]) + rgb('red') 	--:  	rgb([255,128,32])
 [1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]
 [1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]
-rgb([255, 128, 32]) + 3 	--:  	rgb([255,131,35])
-shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5
-1.0 + 1 --: 2.0
-"hello " + 12 	--: 	"hello 12"
+geom1 + geom2 --: a geometry corresponding to union between geom1 and geom2
+{1, 2} + {4, 5} 	--:	 {5.0;7.0}
 [1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]
 [1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]
-rgb([255, 128, 32]) + rgb('red') 	--:  	rgb([255,128,32])
+shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5
+{1, 2} + 4 	--:	 {5.0;6.0}
+rgb([255, 128, 32]) + 3 	--:  	rgb([255,131,35])
+1.0 + 1 --: 2.0
+shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment
+{1, 2} + 4.5 	--:	 {5.5, 6.5}
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -351,26 +351,26 @@ rgb([255, 128, 32]) + rgb('red') 	--:  	rgb([255,128,32])
 == < == 
   	
   * Possible use: 
-    * int OP int --->  bool
-    * string OP string --->  bool
-    * point OP point --->  bool
-    * float OP float --->  bool
+    * int OP float --->  bool
     * float OP int --->  bool
-    * int OP float --->  bool 
+    * int OP int --->  bool
+    * float OP float --->  bool
+    * point OP point --->  bool
+    * string OP string --->  bool 
   * Result: true if the left-hand operand is less than the right-hand operand, false otherwise.
   * Special cases:
     * if one of the operands is nil, returns false
-    * if the operands are strings, a lexicographic comparison is performed
     * if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.
+    * if the operands are strings, a lexicographic comparison is performed
   
 {{{
+3 < 2.5  --: false
+3.5 < 7  --: true
 3 < 7  --:  true
-abc < aeb  --: true
+3.5 < 7.6  --: true
 {5,7} < {4,6}  --: false
 {5,7} < {4,8}  --: false
-3.5 < 7.6  --: true
-3.5 < 7  --: true
-3 < 2.5  --: false
+abc < aeb  --: true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -387,25 +387,25 @@ abc < aeb  --: true
   	
   * Possible use: 
     * int OP int --->  bool
-    * string OP string --->  bool
-    * float OP float --->  bool
-    * int OP float --->  bool
     * float OP int --->  bool
-    * point OP point --->  bool 
+    * float OP float --->  bool
+    * point OP point --->  bool
+    * string OP string --->  bool
+    * int OP float --->  bool 
   * Result: true if the left-hand operand is less or equal than the right-hand operand, false otherwise.
   * Special cases:
     * if one of the operands is nil, returns false
-    * if the operands are strings, a lexicographic comparison is performed
     * if both operands are points, returns true if only if left component (x) of the left operand if less than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.
+    * if the operands are strings, a lexicographic comparison is performed
   
 {{{
 3 <= 7  --:  true
-abc <= aeb  --: true
-3.5 <= 3.5  --: true
-3 <= 2.5  --: false
 7.0 <= 7  --: true
+3.5 <= 3.5  --: true
 {5,7} <= {4,6}  --: false
 {5,7} <= {4,8}  --: false
+abc <= aeb  --: true
+3 <= 2.5  --: false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -441,11 +441,11 @@ abc <= aeb  --: true
   	
   * Possible use: 
     * string OP string --->  bool
+    * float OP int --->  bool
     * int OP float --->  bool
-    * point OP point --->  bool
     * float OP float --->  bool
-    * int OP int --->  bool
-    * float OP int --->  bool 
+    * point OP point --->  bool
+    * int OP int --->  bool 
   * Result: true if the left-hand operand is greater than the right-hand operand, false otherwise.
   * Special cases:
     * if the operands are strings, a lexicographic comparison is performed
@@ -454,12 +454,12 @@ abc <= aeb  --: true
   
 {{{
 abc > aeb  --: false
+3.5 > 7  --: false
 3 > 2.5  --: true
+3.5 > 7.6  --: false
 {5,7} > {4,6}  --: true
 {5,7} > {4,8}  --: false
-3.5 > 7.6  --: false
 3 > 7  --:  false
-3.5 > 7  --: false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -469,26 +469,26 @@ abc > aeb  --: false
   	
   * Possible use: 
     * float OP float --->  bool
+    * int OP float --->  bool
     * int OP int --->  bool
-    * point OP point --->  bool
-    * string OP string --->  bool
     * float OP int --->  bool
-    * int OP float --->  bool 
+    * string OP string --->  bool
+    * point OP point --->  bool 
   * Result: true if the left-hand operand is greater or equal than the right-hand operand, false otherwise.
   * Special cases:
     * if one of the operands is nil, returns false
-    * if both operands are points, returns true if only if left component (x) of the left operand if greater than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.
     * if the operands are strings, a lexicographic comparison is performed
+    * if both operands are points, returns true if only if left component (x) of the left operand if greater than or equal to x of the right one and if the right component (y) of the left operand is greater than or equal to y of the right one.
   
 {{{
 3.5 >= 3.5  --: true
+3 >= 2.5  --: true
 3 >= 7  --:  false
-{5,7} >= {4,6}  --: true
-{5,7} >= {4,8}  --: false
+3.5 >= 7  --: false
 abc >= aeb  --: false
 abc >= abc  --: true
-3.5 >= 7  --: false
-3 >= 2.5  --: true
+{5,7} >= {4,6}  --: true
+{5,7} >= {4,8}  --: false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -497,8 +497,8 @@ abc >= abc  --: true
 == abs == 
   	
   * Possible use: 
-    * OP(float) --->  float
-    * OP(int) --->  int 
+    * OP(int) --->  int
+    * OP(float) --->  float 
   * Result: the absolute value of the operand (so a positive int or float depending on the type of the operand).
   
 {{{
@@ -529,8 +529,8 @@ abs (200 * -1 + 0.5) --: 200.5
 == acos == 
   	
   * Possible use: 
-    * OP(float) --->  float
-    * OP(int) --->  float 
+    * OP(int) --->  float
+    * OP(float) --->  float 
   * Result: the arccos of the operand (which has to be expressed in decimal degrees).    
   * See also: [#asin asin], [#atan atan], 
   
@@ -549,6 +549,36 @@ acos (90) 	--: 	0
   
 {{{
 square(5) add_point {10,10} --: returns a hexagon
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+  	
+    
+== add_z == 
+  	
+  * Possible use: 
+    * shape OP float --->  shape 
+  * Result: add_z  
+  * Comment: Return a geometry with a z valueThe add_z operator set the z value of the whole shape.For each point of the cell the same z value is set.    
+  * See also: [#add_z_pt add_z_pt], 
+  
+{{{
+set shape <- shape add_z rnd(100);
+ }}} 
+
+[#Table_of_Contents Top of the page] 
+  	
+    
+== add_z_pt == 
+  	
+  * Possible use: 
+    * shape OP point --->  shape 
+  * Result: add_z_pt  
+  * Comment: Return a geometry with a z value    
+  * See also: [#add_z add_z], 
+  
+{{{
+loop i from: 0 to: length(shape.points) - 1{set shape <- shape add_z_pt {i,valZ};}
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -658,19 +688,19 @@ agents_overlapping(self) --: return the agents that overlap the shape of the age
 == among == 
   	
   * Possible use: 
-    * int OP map --->  map
-    * int OP container --->  list 
+    * int OP container --->  list
+    * int OP map --->  map 
   * Result: a list of length the value of the left-hand operand, containing random elements from the right-hand operand
   * Special cases:
-    * if the right-hand operand is a map, among returns a map of right-hand operand element instead of a list
     * if the right-hand operand is empty or nil, among returns a new empty list
     * if the left-hand operand is greater than the length of the right-hand operand, among returns the right-hand operand.
+    * if the right-hand operand is a map, among returns a map of right-hand operand element instead of a list
   
 {{{
-2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]
 3 among [1,2,4,3,5,7,6,8] 		--: 	[1,2,8]
 3 among g2 					--: 	[node6,node11,node7]
 3 among list(node)    			--:  	[node1,node11,node4]
+2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -909,8 +939,8 @@ as_time(22324234) 	--: 09:10:34
 == asin == 
   	
   * Possible use: 
-    * OP(float) --->  float
-    * OP(int) --->  float 
+    * OP(int) --->  float
+    * OP(float) --->  float 
   * Result: the arcsin of the operand (which has to be expressed in decimal degrees).    
   * See also: [#acos acos], [#atan atan], 
   
@@ -924,25 +954,25 @@ acos (90) --: 1
 == at == 
   	
   * Possible use: 
-    * map OP any --->  any
+    * container OP KeyType --->  ValueType
     * string OP int --->  string
-    * container OP KeyType --->  ValueType 
+    * map OP any --->  any 
   * Result: the element at the right operand index of the container  
   * Comment: The first element of the container is located at the index 0. In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException.The at operator behavior depends on the nature of the operand
   * Special cases:
-    * if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil
     * if it is a list or a matrix, at returns the element at the index specified by the right operand
     * if it is a file, at returns the element of the file content at the index specified by the right operand
     * if it is a population, at returns the agent at the index specified by the right operand
     * if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node
     * if it is a graph and if the right operand is an edge, at returns the pair node_out::node_in of the edge
-    * if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph    
+    * if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph
+    * if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil    
   * See also: [#contains_all, contains_any contains_all, contains_any], 
   
 {{{
-'abcdef' at 0 	--: 'a';
 [1, 2, 3] at 2					--:    3 
 [{1,2}, {3,4}, {5,6}] at 0 	--: {1.0;2.0}
+'abcdef' at 0 	--: 'a';
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -982,8 +1012,8 @@ self at_location {10, 20} --: returns the geometry resulting from a translation 
 == atan == 
   	
   * Possible use: 
-    * OP(int) --->  float
-    * OP(float) --->  float 
+    * OP(float) --->  float
+    * OP(int) --->  float 
   * Result: the arctan of the operand (which has to be expressed in decimal degrees).    
   * See also: [#acos acos], [#asin asin], 
   
@@ -1226,23 +1256,23 @@ cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle
 == contains == 
   	
   * Possible use: 
-    * container OP any --->  boolean
-    * string OP string --->  bool 
+    * string OP string --->  bool
+    * container OP any --->  boolean 
   * Result: true, if the container contains the right operand, false otherwise  
   * Comment: the contains operator behavior depends on the nature of the operand
   * Special cases:
+    * if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;
     * if it is a list or a matrix, contains returns true if the list or matrix contains the right operand
     * if it is a map, contains returns true if the operand is a key of the map
     * if it is a file, contains returns true it the operand is contained in the file content
     * if it is a population, contains returns true if the operand is an agent of the population, false otherwise
-    * if it is a graph, contains returns true if the operand is a node or an edge of the graph, false otherwise
-    * if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;    
+    * if it is a graph, contains returns true if the operand is a node or an edge of the graph, false otherwise    
   * See also: [#contains_all, contains_any contains_all, contains_any], 
   
 {{{
+'abcded' contains 'bc' 	--:  true
 [1, 2, 3] contains 2			--:   true
 [{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true
-'abcded' contains 'bc' 	--:  true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1273,8 +1303,8 @@ cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle
 == contains_any == 
   	
   * Possible use: 
-    * string OP list --->  bool
-    * container OP container --->  bool 
+    * container OP container --->  bool
+    * string OP list --->  bool 
   * Result: true if the left operand contains one of the elements of the right operand, false otherwise  
   * Comment: the definition of contains depends on the container
   * Special cases:
@@ -1282,11 +1312,11 @@ cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle
   * See also: [#contains contains], [#contains_all contains_all], 
   
 {{{
-"abcabcabc" contains_any ["ca","xy"] 	--: 	true
 [1,2,3,4,5,6] contains_any [2,4] 		--: 	true 
 [1,2,3,4,5,6] contains_any [2,8] 		--: 	true
 [1::2, 3::4, 5::6] contains_any [1,3] 	--: 	true 
 [1::2, 3::4, 5::6] contains_any [2,4] 	--: 	false
+"abcabcabc" contains_any ["ca","xy"] 	--: 	true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1295,19 +1325,19 @@ cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle
 == contains_edge == 
   	
   * Possible use: 
-    * graph OP any --->  bool
-    * graph OP pair --->  bool 
+    * graph OP pair --->  bool
+    * graph OP any --->  bool 
   * Result: returns true if the graph(left-hand operand) contains the given edge (righ-hand operand), false otherwise
   * Special cases:
-    * if the left-hand operand is nil, returns false
-    * if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph    
+    * if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph
+    * if the left-hand operand is nil, returns false    
   * See also: [#contains_vertex contains_vertex], 
   
 {{{
-let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
-graphFromMap contains_edge link({1,5}::{12,45})  --: true
 let graphEpidemio type: graph <- generate_barabasi_albert( ["edges_specy"::edge,"vertices_specy"::node,"size"::3,"m"::5] );
 graphEpidemio contains_edge (node(0)::node(3));   --:   true
+let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
+graphFromMap contains_edge link({1,5}::{12,45})  --: true
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1507,8 +1537,8 @@ my_topology distance_between [ag1, ag2, ag3] --: the distance between ag1, ag2 a
 == distance_to == 
   	
   * Possible use: 
-    * shape OP shape --->  float
-    * point OP point --->  float 
+    * point OP point --->  float
+    * shape OP shape --->  float 
   * Result: A distance between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.    
   * See also: [#towards towards], [#direction_to direction_to], [#distance_between distance_between], [#direction_between direction_between], [#path_between path_between], [#path_to path_to], 
   
@@ -1522,10 +1552,10 @@ ag1 distance_to ag2 --: the distance between ag1 and ag2 considering the topolog
 == div == 
   	
   * Possible use: 
-    * int OP int --->  int
-    * int OP float --->  int
     * float OP int --->  int
-    * float OP float --->  int 
+    * float OP float --->  int
+    * int OP int --->  int
+    * int OP float --->  int 
   * Result: an int, equal to the truncation of the division of the left-hand operand by the rigth-hand operand.
   * Special cases:
     * if the right-hand operand is equal to zero, raises an exception.    
@@ -1542,12 +1572,11 @@ ag1 distance_to ag2 --: the distance between ag1 and ag2 considering the topolog
 == empty == 
   	
   * Possible use: 
-    * OP(string) --->  bool
-    * OP(container) --->  boolean 
+    * OP(container) --->  boolean
+    * OP(string) --->  bool 
   * Result: true if the operand is empty, false otherwise.  
   * Comment: the empty operator behavior depends on the nature of the operand
   * Special cases:
-    * if it is a string, empty returns true if the string does not contain any character, and false otherwise
     * if it is a list, empty returns true if there is no element in the list, and false otherwise
     * if it is a map, empty returns true if the map contains no key-value mappings, and false otherwise
     * if it is a file, empty returns true if the content of the file (that is also a container) is empty, and false otherwise
@@ -1555,10 +1584,11 @@ ag1 distance_to ag2 --: the distance between ag1 and ag2 considering the topolog
     * if it is a graph, empty returns true if it contains no vertex and no edge, and false otherwise
     * if it is a matrix of int, float or object, it will return true if all elements are respectively 0, 0.0 or null, and false otherwise
     * if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise
+    * if it is a string, empty returns true if the string does not contain any character, and false otherwise
   
 {{{
-empty ('abced') 	--: 	false
 empty ([]) 	--: 	true;
+empty ('abced') 	--: 	false
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -1694,11 +1724,12 @@ let fileT type: file value: file("../includes/Stupid_Cell.Data");
 == first == 
   	
   * Possible use: 
-    * OP(container) --->  ValueType
-    * OP(string) --->  string 
+    * OP(string) --->  string
+    * OP(container) --->  ValueType 
   * Result: the first element of the operand  
   * Comment: the first operator behavior depends on the nature of the operand
   * Special cases:
+    * if it is a string, first returns a string composed of its first character
     * if it is a list, first returns the first element of the list, or nil if the list is empty
     * if it is a map, first returns nil (the map do not keep track of the order of elements)
     * if it is a file, first returns the first element of the content of the file (that is also a container)
@@ -1706,14 +1737,13 @@ let fileT type: file value: file("../includes/Stupid_Cell.Data");
     * if it is a graph, first returns the first element in the list of vertexes
     * if it is a matrix, first returns the element at {0,0} in the matrix
     * for a matrix of int or float, it will return 0 if the matrix is empty
-    * for a matrix of object or geometry, it will return null if the matrix is empty
-    * if it is a string, first returns a string composed of its first character    
+    * for a matrix of object or geometry, it will return null if the matrix is empty    
   * See also: [#last last], 
   
 {{{
+first ('abce')      	--:   'a'
 first ([1, 2, 3]) 		--:   1
 first ({10,12})     	--:   10.
-first ('abce')      	--:   'a'
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2077,23 +2107,23 @@ graphFromMap in_edges_of node({12,45})  --:  [LineString]
 == index_of == 
   	
   * Possible use: 
-    * map OP any --->  any
     * list OP any --->  int
+    * map OP any --->  any
     * string OP string --->  int
     * matrix OP any --->  point 
   * Result: the index of the first occurence of the right operand in the left operand container  
   * Comment: The definition of index_of and the type of the index depend on the container
   * Special cases:
-    * if the left operand is a map, index_of returns the index as a pair
     * if the left operand is a list, index_of returns the index as an integer
+    * if the left operand is a map, index_of returns the index as a pair
     * if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string
     * if the left operand is a matrix, index_of returns the index as a point    
   * See also: [#at at], [#last_index_of last_index_of], 
   
 {{{
-[1::2, 3::4, 5::6] index_of 4 		--: 	3::4
 [1,2,3,4,5,6] index_of 4 	--: 	3
 [4,2,3,4,5,4] index_of 4  	--: 	0
+[1::2, 3::4, 5::6] index_of 4 		--: 	3::4
  "abcabcabc" index_of "ca" 	--: 	2
 matrix([[1,2,3],[4,5,6]]) index_of 4  	--: 	{1.0;0.0}
  }}} 
@@ -2306,12 +2336,11 @@ is_text("../includes/test.shp")            --:  false;
 == last == 
   	
   * Possible use: 
-    * OP(string) --->  string
-    * OP(container) --->  ValueType 
+    * OP(container) --->  ValueType
+    * OP(string) --->  string 
   * Result: the last element of the operand  
   * Comment: the last operator behavior depends on the nature of the operand
   * Special cases:
-    * if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty
     * if it is a list, last returns the last element of the list, or nil if the list is empty
     * if it is a map, last returns nil (the map do not keep track of the order of elements)
     * if it is a file, last returns the last element of the content of the file (that is also a container)
@@ -2319,13 +2348,14 @@ is_text("../includes/test.shp")            --:  false;
     * if it is a graph, last returns the last element in the list of vertexes
     * if it is a matrix, last returns the element at {length-1,length-1} in the matrix
     * for a matrix of int or float, it will return 0 if the matrix is empty
-    * for a matrix of object or geometry, it will return null if the matrix is empty    
+    * for a matrix of object or geometry, it will return null if the matrix is empty
+    * if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty    
   * See also: [#first first], 
   
 {{{
-last ('abce') 		--:   'e'
 last ({10,12}) 	--:   12
 last ([1, 2, 3]) 	--:   3.
+last ('abce') 		--:   'e'
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2334,25 +2364,25 @@ last ([1, 2, 3]) 	--:   3.
 == last_index_of == 
   	
   * Possible use: 
-    * string OP string --->  int
-    * matrix OP any --->  point
+    * map OP any --->  any
     * list OP any --->  int
-    * map OP any --->  any 
+    * matrix OP any --->  point
+    * string OP string --->  int 
   * Result: the index of the last occurence of the right operand in the left operand container  
   * Comment: The definition of last_index_of and the type of the index depend on the container
   * Special cases:
-    * if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string
-    * if the left operand is a matrix, last_index_of returns the index as a point
+    * if the left operand is a map, last_index_of returns the index as a pair
     * if the left operand is a list, last_index_of returns the index as an integer
-    * if the left operand is a map, last_index_of returns the index as a pair    
+    * if the left operand is a matrix, last_index_of returns the index as a point
+    * if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string    
   * See also: [#at at], [#last_index_of last_index_of], 
   
 {{{
-"abcabcabc" last_index_of "ca" 	--: 	5
-matrix([[1,2,3],[4,5,4]]) last_index_of 4  	--: 	{1.0;2.0}
+[1::2, 3::4, 5::4] last_index_of 4  	--:  	5::4
 [1,2,3,4,5,6] last_index_of 4  	--: 	3
 [4,2,3,4,5,4] last_index_of 4  	--: 	5
-[1::2, 3::4, 5::4] last_index_of 4  	--:  	5::4
+matrix([[1,2,3],[4,5,4]]) last_index_of 4  	--: 	{1.0;2.0}
+"abcabcabc" last_index_of "ca" 	--: 	5
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2686,8 +2716,8 @@ let my_graph type: graph <- load_graph_from_tlp( [
 == map == 
   	
   * Possible use: 
-    * OP(any) --->  map
-    * OP(container) --->  map 
+    * OP(container) --->  map
+    * OP(any) --->  map 
   * Result: casting of the operand to a map.
   * Special cases:
     * if the operand is a color RRGGBB, returns a map with the three elements: "r"::RR, "g"::GG, "b"::BB;
@@ -2705,13 +2735,13 @@ let my_graph type: graph <- load_graph_from_tlp( [
 == masked_by == 
   	
   * Possible use: 
-    * shape OP species --->  shape
-    * shape OP list of agents --->  shape 
+    * shape OP list of agents --->  shape
+    * shape OP species --->  shape 
   * Result: A geometry representing the part of the right operand visible from the point of view of the agent using the operator while considering the obstacles defined by the left operand
   
 {{{
-perception_geom masked_by obstacle_species --: returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species.
 perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.
+perception_geom masked_by obstacle_species --: returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -2917,8 +2947,8 @@ mul ([100, 23.2, 34.5]) 	--:		80040.0
 == neighbours_at == 
   	
   * Possible use: 
-    * point OP float --->  list
-    * shape OP float --->  list 
+    * shape OP float --->  list
+    * point OP float --->  list 
   * Result: a list, containing all the agents located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).  
   * Comment: The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.    
   * See also: [#neighbours_of neighbours_of], [#closest_to closest_to], [#overlapping overlapping], [#agents_overlapping agents_overlapping], [#agents_inside agents_inside], [#agent_closest_to agent_closest_to], [#at_distance at_distance], 
@@ -2934,18 +2964,18 @@ mul ([100, 23.2, 34.5]) 	--:		80040.0
   	
   * Possible use: 
     * topology OP pair --->  list
-    * topology OP agent --->  list
-    * graph OP any --->  list 
-  * Result: a list, containing all the agents located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)
+    * graph OP any --->  list
+    * topology OP agent --->  list 
+  * Result: returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)a list, containing all the agents located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.
   * Special cases:
     * a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.    
-  * See also: [#neighbours_at neighbours_at], [#closest_to closest_to], [#overlapping overlapping], [#agents_overlapping agents_overlapping], [#agents_inside agents_inside], [#agent_closest_to agent_closest_to], [#predecessors_of predecessors_of], [#successors_of successors_of], 
+  * See also: [#predecessors_of predecessors_of], [#successors_of successors_of], [#neighbours_at neighbours_at], [#closest_to closest_to], [#overlapping overlapping], [#agents_overlapping agents_overlapping], [#agents_inside agents_inside], [#agent_closest_to agent_closest_to], 
   
 {{{
 topology(self) neighbours_of self::10--: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
-topology(self) neighbours_of self --: returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
 graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]
 graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]
+topology(self) neighbours_of self --: returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3035,21 +3065,22 @@ norm({3,4})   --:	  5.0
 == one_of == 
   	
   * Possible use: 
-    * OP(container) --->  ValueType
-    * OP(species) --->  agent 
-  * Result: one of the values stored in this container using GAMA.getRandom()a random element from the list  
+    * OP(species) --->  agent
+    * OP(container) --->  ValueType 
+  * Result: a random element from the listone of the values stored in this container using GAMA.getRandom()  
   * Comment: the one_of operator behavior depends on the nature of the operand
   * Special cases:
+    * if the list is empty, returns nil 
+    * If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)
     * if the operand is empty, one_of returns nil
     * if it is a list or a matrix, one_of returns one of the elements of the list or of the matrix
     * if it is a map, one_of returns one of the values of the map
     * if it is a graph, one_of returns one of the nodes of the graph
     * if it is a file, one_of returns one of the elements of the content of the file (that is also a container)
     * if it is a population, one_of returns one of the agents of the population
-    * if the list is empty, returns nil 
-    * If the operand is a species, the operand is casted to a list before the expression is evaluated. Therefore, if foo is the name of a species, any(foo) will return a random agent from this species (see list)
   
 {{{
+one_of (bug) --: bug3     // The species `bug` has previously be defined
 any ([1,2,3]) 		--: 	1, 2, or 3
 one_of ([1,2,3]) 	--:	 	1, 2, or 3
 one_of ([2::3, 4::5, 6::7]) 	--: 	3, 5 or 7
@@ -3057,7 +3088,6 @@ one_of ([2::3, 4::5, 6::7]) 	--: 	3, 5 or 7
 one_of (bug) 		--:		 bug3
 let mat3 type:matrix value: matrix([["c11","c12","c13"],["c21","c22","c23"]])
 one_of(mat3) 		--: 	 "c11","c12","c13", "c21","c22" or "c23"
-one_of (bug) --: bug3     // The species `bug` has previously be defined
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3216,8 +3246,8 @@ my_topology path_between [ag1, ag2] --: A path between ag1 and ag2
 == path_to == 
   	
   * Possible use: 
-    * shape OP shape --->  path
-    * point OP point --->  path 
+    * point OP point --->  path
+    * shape OP shape --->  path 
   * Result: A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.    
   * See also: [#towards towards], [#direction_to direction_to], [#distance_between distance_between], [#direction_between direction_between], [#path_between path_between], [#distance_to distance_to], 
   
@@ -3351,8 +3381,8 @@ let fileT type: file value: properties("../includes/testProperties.properties");
 == read == 
   	
   * Possible use: 
-    * OP(string) --->  any
-    * OP(file) --->  any 
+    * OP(file) --->  any
+    * OP(string) --->  any 
   * Result: marks the file so that only read operations are allowed.  
   * Comment: A file is created by default in read-only mode. The operator write can change the mode.    
   * See also: [#file file], [#write write], 
@@ -3424,23 +3454,23 @@ node(0) remove_node_from graphEpidemio;    --: 	returns the graph without node(0
 == reverse == 
   	
   * Possible use: 
-    * OP(container) --->  container
-    * OP(string) --->  string 
+    * OP(string) --->  string
+    * OP(container) --->  container 
   * Result: the operand elements in the reversed order in a copy of the operand.  
   * Comment: the reverse operator behavior depends on the nature of the operand
   * Special cases:
+    * if it is a string, reverse returns a new string with caracters in the reversed order
     * if it is a list, reverse returns a copy of the operand list with elements in the reversed order
     * if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)
     * if it is a file, reverse returns a copy of the file with a reversed content
     * if it is a population, reverse returns a copy of the population with elements in the reversed order
     * if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed
     * if it is a matrix, reverse returns a new matrix containing the transpose of the operand.
-    * if it is a string, reverse returns a new string with caracters in the reversed order
   
 {{{
+reverse ('abcd') 		--: 	'dcba';
 reverse ([10,12,14]) 				--: 	[14, 12, 10]
 reverse ([k1::44, k2::32, k3::12]) --: 	[12::k3,  32::k2, 44::k1]
-reverse ('abcd') 		--: 	'dcba';
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3516,8 +3546,8 @@ rnd (1000) / 1000 --: a float between 0 and 1 with a precision of 0.001
 == rotated_by == 
   	
   * Possible use: 
-    * shape OP int --->  shape
-    * shape OP float --->  shape 
+    * shape OP float --->  shape
+    * shape OP int --->  shape 
   * Result: A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)  
   * Comment: the right-hand operand can be a float or a int    
   * See also: [#transformed_by transformed_by], [#translated_by translated_by], 
@@ -3532,8 +3562,8 @@ self rotated_by 45 --: returns the geometry resulting from a 45 degres rotation 
 == round == 
   	
   * Possible use: 
-    * OP(int) --->  int
-    * OP(float) --->  int 
+    * OP(float) --->  int
+    * OP(int) --->  int 
   * Result: the rounded value of the operand.
   * Special cases:
     * if the operand is an int, round returns it    
@@ -3627,9 +3657,9 @@ let fileT type: file value: shapefile("../includes/testProperties.shp");
   	
   * Possible use: 
     * OP(matrix) --->  matrix
+    * OP(string) --->  string
     * OP(species) --->  list
-    * OP(list) --->  list
-    * OP(string) --->  string 
+    * OP(list) --->  list 
   * Result: The elements of the operand in random order.
   * Special cases:
     * if the operand is empty, returns an empty list (or string, matrix)    
@@ -3637,9 +3667,9 @@ let fileT type: file value: shapefile("../includes/testProperties.shp");
   
 {{{
 shuffle ([["c11","c12","c13"],["c21","c22","c23"]]) --: [["c12","c21","c11"],["c13","c22","c23"]]
+shuffle ('abc') --: 'bac'
 shuffle (bug) --:  shuffle the list of all agents of the `bug` species
 shuffle ([12, 13, 14]) --: [14,12,13];
-shuffle ('abc') --: 'bac'
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -3692,8 +3722,8 @@ self simplification 0.1 --: returns the geometry resulting from the application 
 == sin == 
   	
   * Possible use: 
-    * OP(int) --->  float
-    * OP(float) --->  float 
+    * OP(float) --->  float
+    * OP(int) --->  float 
   * Result: the sinus of the operand (in decimal degrees).
   * Special cases:
     * the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.    
@@ -3846,8 +3876,8 @@ split_lines([line([{0,10}, {20,10}], line([{0,10}, {20,10}]]) --: returns a list
 == sqrt == 
   	
   * Possible use: 
-    * OP(float) --->  float
-    * OP(int) --->  float 
+    * OP(int) --->  float
+    * OP(float) --->  float 
   * Result: returns the square root of the operand.
   * Special cases:
     * if the operand is negative, an exception is raised
@@ -3960,8 +3990,8 @@ sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0}
 == tan == 
   	
   * Possible use: 
-    * OP(int) --->  float
-    * OP(float) --->  float 
+    * OP(float) --->  float
+    * OP(int) --->  float 
   * Result: the trigonometic tangent of the operand (in decimal degrees).
   * Special cases:
     * the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.    
@@ -4195,9 +4225,9 @@ triangle(5) --: returns a geometry as a triangle with side_size = 5.
 == triangulate == 
   	
   * Possible use: 
-    * OP(list of shapes) --->  list of shapes
-    * OP(shape) --->  list of shapes 
-  * Result: A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometriesA list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)
+    * OP(shape) --->  list of shapes
+    * OP(list of shapes) --->  list of shapes 
+  * Result: A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries
   
 {{{
 triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.
@@ -4210,18 +4240,18 @@ triangulate(self) --: returns the list of geometries (triangles) corresponding t
 == truncated_gauss == 
   	
   * Possible use: 
-    * OP(list) --->  float
-    * OP(point) --->  float 
+    * OP(point) --->  float
+    * OP(list) --->  float 
   * Result: A random value from a normally distributed random variable in the interval ]mean - standardDeviation; mean + standardDeviation[.
   * Special cases:
+    * when the operand is a point, it is read as {mean, standardDeviation}
     * if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]
-    * when truncated_gauss is called with a list of only one element mean, it will always return 0.0
-    * when the operand is a point, it is read as {mean, standardDeviation}    
+    * when truncated_gauss is called with a list of only one element mean, it will always return 0.0    
   * See also: [#gauss gauss], 
   
 {{{
-truncated_gauss ([0.5, 0.0])  --:  0.5 (always)
 truncated_gauss ({0, 0.3})  --:  an float between -0.3 and 0.3
+truncated_gauss ([0.5, 0.0])  --:  0.5 (always)
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -4239,23 +4269,25 @@ truncated_gauss ({0, 0.3})  --:  an float between -0.3 and 0.3
     
 == union == 
   	
+ Same signification as [#+ +] operator.
+  	
   * Possible use: 
-    * OP(species) --->  shape
     * OP(list) --->  shape
+    * OP(species) --->  shape
     * list OP list --->  list 
   * Result: The geometry resulting from the union of all geometries of agents of the operand-speciesreturns a new list containing all the elements of both operands without duplicated elements. Elements of this new list are sorted.  
   * Comment: union is only defined with a list as left operand
   * Special cases:
-    * if the right operand is nil, union returns a copy of the left operand
-    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries    
+    * if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries
+    * if the right operand is nil, union returns a copy of the left operand    
   * See also: [#inter inter], [#+ +], 
   
 {{{
+union([geom1, geom2, geom3]) --: a geometry corresponding to union between geom1, geom2 and geom3
 union(species1)  --: returns the geometry resulting from the union of all of the geometries of agents of species species1.
 [1,2,3,4,5,6] union [2,4,9] 		--: 	[1,2,3,4,5,6,9]
 [1,2,3,4,5,6] union [0,8] 			--: 	[0,1,2,3,4,5,6,8]
 [1,3,2,4,5,6,8,5,6] union [0,8] 	--: 	[0,1,2,3,4,5,6,8]
-union([geom1, geom2, geom3]) --: a geometry corresponding to union between geom1, geom2 and geom3
  }}} 
 
 [#Table_of_Contents Top of the page] 
@@ -4323,8 +4355,8 @@ graphFromMap source_of(link({1,5}::{12,45}))  --: 41.48493702538308
 == where == 
   	
   * Possible use: 
-    * container OP any expression --->  list
-    * map OP any expression --->  map 
+    * map OP any expression --->  map
+    * container OP any expression --->  list 
   * Result: a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true.   
   * Comment: in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. 
   * Special cases:
