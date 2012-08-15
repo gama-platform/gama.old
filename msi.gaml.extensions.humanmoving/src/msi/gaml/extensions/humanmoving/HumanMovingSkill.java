@@ -16,6 +16,7 @@ import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.ExecutionStatus;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -34,6 +35,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * randomly and avoid the others 2. approach : with this skill, the agent move more and more near
  * his goal and avoid the others Created by LE Van Minh - April 2010 Updated at 14:00 May 29, 2010
  */
+@skill(name = "humanmoving")
 public class HumanMovingSkill extends MovingSkill {
 	
 	private double MIN_DISTANCE = 1;
