@@ -36,7 +36,7 @@ public class MyGLToyDrawer {
 	float textureTop, textureBottom, textureLeft, textureRight;
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
-	private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
+	
 
 	
 	// Display list 
@@ -365,7 +365,7 @@ public class MyGLToyDrawer {
 	//textured shape
 	
 	
-	public void LoadTextureFromImage(GL gl) {
+	public void LoadTextureFromImage(GL gl, String textureFileName) {
 
 		// Load textures from image
 		try {
@@ -436,6 +436,27 @@ public class MyGLToyDrawer {
 		gl.glVertex3f(-width, width, width); // top-left of the texture and quad
 		
 		gl.glEnd();
+		
+	}
+	
+	
+	public void DrawTexturedSphere(GL gl,GLU glu){
+		
+		// Apply texture.
+		textures[currTextureFilter].enable();
+		textures[currTextureFilter].bind();
+
+        // Draw sphere (possible styles: FILL, LINE, POINT).
+        GLUquadric earth = glu.gluNewQuadric();
+        glu.gluQuadricTexture(earth, true);
+        glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+        glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+        glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+        final float radius = 6.378f;
+        final int slices = 16;
+        final int stacks = 16;
+        glu.gluSphere(earth, radius, slices, stacks);
+        glu.gluDeleteQuadric(earth);
 		
 	}
 	

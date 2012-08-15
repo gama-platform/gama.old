@@ -32,6 +32,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -44,6 +45,7 @@ import javax.media.opengl.GLEventListener;
 
 
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUquadric;
 
 import utils.GLUtil;
 
@@ -89,13 +91,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public ArrayList<MyTexture> myTextures = new ArrayList<MyTexture>();
 	
 	
+	/** The earth texture. */
+    private Texture earthTexture;
+	
+	
 	public float textureTop;
 	public float textureBottom;
 	public float textureLeft;
 	public float textureRight;	
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
-	//private String textureFileName = "/Users/macbookpro/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png";
+
 
 	// Lighting
 	private static boolean isLightOn;
@@ -159,18 +165,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		GLUtil.enableDepthTest(gl);
 		
-		GLUtil.InitializeLighting(gl, width);
-
-		// enable color tracking
-	    gl.glEnable(GL_COLOR_MATERIAL);
-		// set material properties which will be assigned by glColor
-		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		
-		float[] rgba = {0.2f, 0.2f, 0.2f,1f};
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
-        gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
+		
+		GLUtil.InitializeLighting(gl,glu,width);     
 
 		// Blending control
 		// Full Brightness with specific alpha (1 for opaque, 0 for transparent)
@@ -189,9 +186,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera.UpdateCamera(gl, glu, width, height);
 
 		// FIXME: This is only done for testing the mapping and displaylist feature.
-	    //myGLDrawer.LoadTextureFromImage(gl);
-	    //LoadTextureFromFile(textureFileName);
+	    //	myGLDrawer.LoadTextureFromImage(gl,"/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/earth.jpg");
 		//myGLDrawer.buildDisplayLists(gl, width / 4);
+		
+		
+		 // Load earth texture.
+       /* try {
+            InputStream stream = getClass().getResourceAsStream("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/textures/arnoi.png");
+            TextureData data = TextureIO.newTextureData(stream, false, "png");
+            earthTexture = TextureIO.newTexture(data);
+        }
+        catch (IOException exc) {
+            exc.printStackTrace();
+            System.exit(1);
+        }*/
 
 		System.out.println("openGL init ok");
 
@@ -299,6 +307,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			
 		}
 
+		//GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth); 
+		
+		//GLUtil.DrawLight(gl,glu);
+        // myGLDrawer.DrawTexturedSphere(gl, glu);
 
 		//((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.DrawArcBall();
 
@@ -307,7 +319,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 		//myGLDrawer.DrawColorTriangle(gl, 0.0f, 0.0f, 0.0f, 1.0f, width/4);
-		//myGLDrawer.DrawTexturedQuadWithNormal(gl,width/4);
+		//myGLDrawer.DrawTexturedQuadWithNormal(gl,width/100);
 		//myGLDrawer.DrawTexture(gl, width / 4);
 		
 		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer

@@ -580,17 +580,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,
 			final float z_layer, final Color color, final boolean fill,
 			final boolean isTextured, final Integer angle, final float height, GamaPoint offSet) {
-
-		MyJTSGeometry curJTSGeometry = new MyJTSGeometry();
-		curJTSGeometry.geometry = geometry;
-		curJTSGeometry.z = z_layer;
-		curJTSGeometry.alpha= this.currentAlpha;
-		curJTSGeometry.color = color;
-		curJTSGeometry.fill = fill;
-		curJTSGeometry.isTextured = isTextured;
-		curJTSGeometry.angle = angle;
-		curJTSGeometry.height = height;
-		curJTSGeometry.offSet = offSet;
+		MyJTSGeometry curJTSGeometry;
+		if(angle!=null){
+		  curJTSGeometry  = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,isTextured,angle,height,offSet);
+		}
+		else{
+	      curJTSGeometry = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,isTextured,0,height,offSet);	
+		}
 		
 		//Add the geometry either in the static list or in the dynamic one.
 		if(currentLayerIsStatic == true){
@@ -711,8 +707,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				myGl.glPushMatrix();
         		myGl.glLoadName(i);  		
 				MyJTSGeometry curGeometry = it.next();
+				
 				if(myGLRender.index ==i){
-					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry, Color.red);
+					MyJTSGeometry pickedGeometry = (MyJTSGeometry) curGeometry.clone();	
+					pickedGeometry.color=Color.red;
+					graphicsGLUtils.basicDrawer.DrawJTSGeometry(pickedGeometry);
         		}
 				else{
 					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);	
@@ -844,15 +843,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(225, 225, 225);
-		MyJTSGeometry curGeometry = new MyJTSGeometry();
-		curGeometry.geometry = g;
-		curGeometry.color = c;
-		curGeometry.fill = true;
-		curGeometry.isTextured = false;
-		curGeometry.alpha=1.0f;
-		//To avoid overlapping with object at z=0
-		curGeometry.z=-0.01f;
-		curGeometry.offSet= offSet;
+		MyJTSGeometry curGeometry = new MyJTSGeometry(g,-0.01f,c,1.0f,true,false,0,0.0f,offSet);
 		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
