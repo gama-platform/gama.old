@@ -2,7 +2,7 @@ model circle
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
-	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 60 ;
+	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 690 ;
 	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 ; 
 	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
@@ -13,8 +13,11 @@ global {
 	init { 
 		create cells number: number_of_agents { 
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
+			//set shape <- shape add_z rnd(width_and_height_of_environment);
 			let valZ type: float <- rnd(2000);
-			set shape <- shape add_z valZ;
+			loop i from: 0 to: length(shape.points) - 1{ 
+				set shape <- shape add_z_pt {i,valZ};
+			}
 		} 
 	}  
 } 

@@ -4,6 +4,8 @@ global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 20 ;
 	const global_color type: rgb <- [255, 200,0] as rgb;
+	
+	file mntImageRaster <- file('Gama.png') ;
 
 	init { 
 		
@@ -182,11 +184,11 @@ experiment display  type: gui {
 			species mySquare aspect:2D position: {20,20};
 			species myPolygon aspect:2D position: {20,20};
 			
-			species mySphere aspect:3D position: {20,20};
+			/*species mySphere aspect:3D position: {20,20};
 			species myPlan aspect:3D position: {20,20} ;
 			species myMultiPlan aspect:3D position: {20,20};
 			species myCube aspect:3D position: {20,20}; 
-			species myPolyhedron aspect:3D position: {20,20};
+			species myPolyhedron aspect:3D position: {20,20};*/
 			
 			
 			

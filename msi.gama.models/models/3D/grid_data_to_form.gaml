@@ -55,9 +55,9 @@ experiment grid type:gui {
 		display objects_display type:opengl{
 			species cell aspect: base transparency: 0.5 refresh:false position: {0,0};
 			species cell aspect: colored transparency: 0.5 refresh:false position: {30,0};
-			species cell aspect: elevation transparency: 0.5 refresh:false position: {60,0};
+			species cell aspect: elevation transparency: 0.5 refresh:false position: {0,30};
 			//FIXME: Does not work if size is not in the last plasce because it changes the shape.
-			species cell aspect: size transparency: 0.5 refresh:false position:{90,0};
+			species cell aspect: size transparency: 0.5 refresh:false position:{30,30};
 		}
 	}
 }

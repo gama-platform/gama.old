@@ -328,7 +328,7 @@ experiment without_flocks type: gui {
 		
 		display Sky2 type:opengl refresh_every: 1 {
 			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2;
+			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.2;
 			species obstacle ;
 		}
