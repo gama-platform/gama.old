@@ -246,6 +246,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		
+		//System.out.println("display");
 		// hdviet added 28/05/2012
 		synchronized(matrixLock) {
             ThisRot.get(matrix);

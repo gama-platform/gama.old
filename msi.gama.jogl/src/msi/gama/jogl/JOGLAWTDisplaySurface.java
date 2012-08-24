@@ -176,6 +176,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void setPaused(final boolean flag) {
+		
+		if(flag == true){
+	      myGLRender.animator.stop();	
+		}
+		else{
+		  myGLRender.animator.start();	
+		}
 		paused = flag;
 		updateDisplay();
 	}

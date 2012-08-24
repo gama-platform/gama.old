@@ -52,7 +52,7 @@ public class JTSDrawer {
 	double temp[];
 
 	//use glut tesselation or JTS tesselation
-	boolean useTessellation = false	;
+	boolean useTessellation = true	;
 	
 	//Use for JTS triangulation
 	IList<IShape> triangles;

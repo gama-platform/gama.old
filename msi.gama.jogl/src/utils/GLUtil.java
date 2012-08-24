@@ -11,7 +11,10 @@
  */
 package utils;
 
+import static javax.media.opengl.GL.GL_AMBIENT_AND_DIFFUSE;
+import static javax.media.opengl.GL.GL_COLOR_MATERIAL;
 import static javax.media.opengl.GL.GL_DEPTH_TEST;
+import static javax.media.opengl.GL.GL_FRONT;
 import static javax.media.opengl.GL.GL_LEQUAL;
 import static javax.media.opengl.GL.GL_LIGHT1;
 import static javax.media.opengl.GL.GL_POSITION;
@@ -26,10 +29,14 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+import msi.gama.jogl.utils.MyGLToyDrawer;
+
 public class GLUtil {
 
     public static final int fogMode[] = {GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR};
 
+    
+    private static float lightDiffusePosition[] = new float[4];
     /**
      *
      * @param gl
@@ -516,7 +523,7 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, float widthEnv){
+    public static void InitializeLighting(GL gl, GLU glu,float widthEnv){
     	
     	// Set up the lighting for Light-1
 		// Ambient light does not come from a particular direction. Need some
@@ -526,31 +533,92 @@ public class GLUtil {
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
-		// Diffuse light 
+		// Diffuse light 0
 		float[] lightDiffuseValue0 = { 0.2f, 0.2f, 0.2f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
 		
-		// Diffuse light 
-		float[] lightDiffuseValue = { 0.5f, 0.5f, 0.5f, 1.0f };
+		// Diffuse light 1
+		float diffuseMean=0.5f;
+		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (positioned light)
-		float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
+		//float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
+		
+		lightDiffusePosition[0] =  4.0f*widthEnv;
+		lightDiffusePosition[1] = 8.0f*widthEnv;
+		lightDiffusePosition[2] = widthEnv;
+		lightDiffusePosition[3] = 1.0f;
+		
+		/*lightDiffusePosition[0] = 0.0f;
+		lightDiffusePosition[1] = 0.0f;
+		lightDiffusePosition[2] = widthEnv/2;
+		lightDiffusePosition[3] = 1.0f;*/
+
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
 		
 
-		//Specular light
+		//Specular light 1
 		float specularMean=0.1f;
         float[] lightSpecularValue = {specularMean, specularMean, specularMean, 1f};
 		
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecularValue, 0);
 		
-		gl.glEnable(GL.GL_LIGHT0); // Enable Light-0
+		//gl.glEnable(GL.GL_LIGHT0); // Enable Light-0
 		gl.glEnable(GL.GL_LIGHT1); // Enable Light-1
-    	
+		
+		// enable color tracking
+	    gl.glEnable(GL_COLOR_MATERIAL);
+		// set material properties which will be assigned by glColor
+		gl.glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+		
+		float[] rgba = {0.2f, 0.2f, 0.2f,1f};
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_DIFFUSE, rgba, 0);
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
+        gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
     }
+    
+    
+
+    public static void DrawLight(GL gl, GLU glu){
+    	gl.glTranslated(lightDiffusePosition[0], -lightDiffusePosition[1], lightDiffusePosition[2]);
+    	gl.glColor4f(1.0f, 1.0f,0.0f, 1.0f);
+		GLUquadric quad = glu.gluNewQuadric();
+		glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
+        glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
+        glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
+        final int slices = 16;
+        final int stacks = 16;
+        glu.gluSphere(quad, 1.0f, slices, stacks);
+        glu.gluDeleteQuadric(quad);
+        gl.glTranslated(-lightDiffusePosition[0], lightDiffusePosition[1], -lightDiffusePosition[2]);
+    }
+    
+    public static void InitializeLighting2(GL gl){
+   	 // Prepare light parameters.
+       float SHINE_ALL_DIRECTIONS = 1;
+       float[] lightPos = {0, 0, -10, SHINE_ALL_DIRECTIONS};
+       float[] lightColorAmbient = {0.5f, 0.5f, 0.5f, 1f};
+       float[] lightColorSpecular = {0.8f, 0.8f, 0.8f, 1f};
+
+       // Set light parameters.
+       gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPos, 0);
+       gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightColorAmbient, 0);
+       gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightColorSpecular, 0);
+
+       // Enable lighting in GL.
+       gl.glEnable(GL.GL_LIGHT1);
+       gl.glEnable(GL.GL_LIGHTING);
+
+       // Set material properties.
+       float[] rgba = {1f, 1f, 1f};
+       gl.glMaterialfv(GL.GL_FRONT, GL.GL_AMBIENT, rgba, 0);
+       gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, rgba, 0);
+       gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
+   }
 
     public static void setPointSize(GL gl, float size, boolean smooth) {
         gl.glPointSize(size);
@@ -569,6 +637,8 @@ public class GLUtil {
             gl.glDisable(GL.GL_LINE_SMOOTH);
         }
     }
+    
+
 
     /**
      * Set the shade model: type == 1 equals GL_SMOOTH and type == 2 equals GL_FLAT
