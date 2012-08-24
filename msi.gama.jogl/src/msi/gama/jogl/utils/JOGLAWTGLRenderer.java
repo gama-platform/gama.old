@@ -338,7 +338,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	
 	public void DrawModel() {
-		((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
+		//	((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 		
 		//Draw Image
 		if(!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty()){
