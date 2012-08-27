@@ -20,8 +20,10 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLException;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+import javax.xml.xpath.XPathExpressionException;
 
 import msi.gama.common.util.ImageUtils;
+import msi.gama.jogl.utils.collada.ColladaReaderXPath;
 
 import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
@@ -754,6 +756,18 @@ public class MyGLToyDrawer {
 		gl.glCallList(boxDList); // draw the box
 		gl.glColor3fv(topColors[4], 0);
 		gl.glCallList(topDList); // draw the top
+	}
+	
+	
+	public void DrawColladaObject(String filename){
+		
+		ColladaReaderXPath myColladaReader = new ColladaReaderXPath(filename);
+		try {
+			ColladaReaderXPath.GetObjectVertex();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 
