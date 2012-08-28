@@ -19,7 +19,6 @@
 
 package msi.gama.jogl;
 
-import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -35,7 +34,7 @@ import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
-import com.sun.opengl.util.GLUT;
+
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
@@ -693,6 +692,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * Once the list of JTSGeometries has been created, OpenGL display call this
 	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
 	 * Array or even VBO
+	 * @param picking
 	 * 
 	 */
 	public void DrawMyJTSGeometries(boolean picking) {

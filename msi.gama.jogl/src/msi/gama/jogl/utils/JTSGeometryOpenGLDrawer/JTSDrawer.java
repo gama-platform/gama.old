@@ -105,7 +105,7 @@ public class JTSDrawer {
 
 		//Set z_layer
 		myGl.glTranslatef(0.0f, 0.0f, z_layer);
-
+		
 		if (fill == true) {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
@@ -306,10 +306,12 @@ public class JTSDrawer {
 		numExtPoints = p.getExteriorRing().getNumPoints();
 		if (p.isEmpty())
 			return;
+		
 		//If polygon has no z value
+		myGl.glLineWidth(1.0f);
 		if(String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z).equals("NaN") == true){
 			for (int j = 0; j < numExtPoints - 1; j++) {
-				myGl.glLineWidth(1.0f);
+				
 				myGl.glVertex3f(
 						(float) ((p.getExteriorRing().getPointN(j).getX())),
 						-(float) ((p.getExteriorRing().getPointN(j).getY())), z);
@@ -322,7 +324,6 @@ public class JTSDrawer {
 		//If the polygon has a z value.
 		else{
 			for (int j = 0; j < numExtPoints - 1; j++) {
-				myGl.glLineWidth(1.0f);
 				myGl.glVertex3f(
 						(float) ((p.getExteriorRing().getPointN(j).getX())),
 						-(float) ((p.getExteriorRing().getPointN(j).getY())),

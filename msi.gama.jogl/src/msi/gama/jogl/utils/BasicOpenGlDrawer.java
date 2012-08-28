@@ -44,7 +44,6 @@ public class BasicOpenGlDrawer {
 		myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
 
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
-
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z, geometry.color,
 						geometry.alpha,geometry.fill, geometry.angle, geometry.height);
