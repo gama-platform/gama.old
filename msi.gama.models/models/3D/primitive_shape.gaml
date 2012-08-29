@@ -2,10 +2,10 @@ model circle
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 20 ;
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 25 ;
 	const global_color type: rgb <- [255, 200,0] as rgb;
 	
-	file mntImageRaster <- file('Gama.png') ;
+	file imageRaster <- file('Gama.png') ;
 
 	init { 
 		
@@ -27,6 +27,10 @@ global {
 		
 		create myPolygon number:1 {
 			set location <- {18,2};
+		}
+		
+		create myTexture number:1 {
+			set location <- {22,2};
 		}
 		
 		
@@ -104,7 +108,14 @@ entities {
 		}
 	}
 	
+	species myTexture{
+		
+		aspect image{
+    		draw image: imageRaster.path size: 2.25;
+    	}
+	}
 	
+	//3D Object
 	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
 		geometry shape <- geometry (point([1,1])) ;
@@ -131,16 +142,7 @@ entities {
 			draw text: "Multiplan" size: 1 color: rgb('black');
 		}
 	}
-	
-	species myCircle{
-		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
-		const size type: float <- float(2);
-		geometry shape <- circle(size)  ;
-		aspect 2D {
-			draw geometry: shape color: global_color  ;
-		}
-	}
-	
+		
 	species myCube{
 		const color type: rgb <- [255, 131,0] as rgb;
 		geometry shape <- rectangle({2, 2})  ;		
@@ -160,17 +162,26 @@ entities {
 		}
 	}
 	
+	species my3DObject{
+		
+		aspect file{
+    		//draw file: imageRaster.path size: 2.25;
+    	}
+	}
 
 }
 experiment display  type: gui {
 	output {
 		display Display refresh_every: 1 type:opengl   {
 			
+			//image name: 'Background' file: imageRaster.path;
+			
 			species myPoint aspect:2D ;
 			species myLine aspect:2D;
 			species myMultiLine aspect:2D;
 			species mySquare aspect:2D;
 			species myPolygon aspect:2D;
+			species myTexture aspect:image;
 			
 			species mySphere aspect:3D;
 			species myPlan aspect:3D ;
@@ -178,7 +189,7 @@ experiment display  type: gui {
 			species myCube aspect:3D ; 
 			species myPolyhedron aspect:3D ;
 			
-			species myPoint aspect:2D position: {20,20};
+			/*species myPoint aspect:2D position: {20,20};
 			species myLine aspect:2D position: {20,20};
 			species myMultiLine aspect:2D position: {20,20};
 			species mySquare aspect:2D position: {20,20};

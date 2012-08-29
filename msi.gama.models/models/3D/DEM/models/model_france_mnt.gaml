@@ -3,9 +3,9 @@ model tutorial_gis_city_traffic
 global {
     
     
-    file shape_file_river <- file('../includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+    file shape_file_river <- file(project_path + 'DEM/includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
 	
-    file mntImageRaster <- file('../includes/France/france_mnt_gray_scale_100.png') ;
+    file mntImageRaster <- file(project_path + 'DEM/includes/France/france_mnt_gray_scale_100.png') ;
     int nb_rows <- 100;
     int nb_lines <- 100;
 	

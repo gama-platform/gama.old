@@ -1,5 +1,7 @@
 model tutorial_gis_city_traffic
 
+
+
 global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	file shape_file_roads <- file('../includes/road.shp');
@@ -14,6 +16,12 @@ global {
 	float max_speed <- 100.0; 
 	float destroy <- 0.02;
 	graph the_graph;
+	
+	
+	set model_path <-('/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/models');
+	set workspace_path <- ('/Users/Arno/Projects/Gama/MyWorkSpace/getaway');
+	set project_path <- ('/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic');
+	
 	
 	init {
 		create building from: shape_file_buildings with: [type::read ('NATURE')] {       

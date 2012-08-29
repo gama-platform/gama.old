@@ -1,15 +1,18 @@
 model tutorial_gis_city_traffic
 
 global {
+     
+        
+    file shape_file_river <- file(project_path +'DEM/includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+    file mntImageRaster <- file(project_path + 'DEM/includes/Mekong_River/DEM_VMD_grey_scale_resize.png') ;
     
-    
-    file shape_file_river <- file('../includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
-	
-    file mntImageRaster <- file('../includes/Mekong_River/DEM_VMD_grey_scale_resize.png') ;
     int nb_rows <- 106;
     int nb_lines <- 112;
-	
+    
 	init {
+		write model_path;
+		write project_path;
+		
 		let mat type: matrix <-	mntImageRaster as_matrix {nb_rows, nb_lines};
 		ask cell as list {	
 			set color <- mntImageRaster at {grid_x,grid_y} ;

@@ -1,8 +1,8 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_river <- file('../includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
-	file shape_file_district <- file('../includes/Mekong_River/district.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+	file shape_file_river <- file(project_path + 'DEM/includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+	file shape_file_district <- file(project_path + 'DEM/includes/Mekong_River/district.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
 	
 	init {
 		create river from: shape_file_river  {        

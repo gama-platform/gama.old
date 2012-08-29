@@ -1,11 +1,13 @@
 model tutorial_gis_city_traffic
 
-global {
-	file shape_file_river <- file('../includes/Rhone/affluent_bdcarthage.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+/* This model is not working with the svn version of Gama as I don't have the permission to commit the shape file */
 
-    file shape_file_chenal <- file('../includes/Rhone/chenal.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+global {
+	file shape_file_river <- file(project_path + 'DEM/includes/Rhone/affluent_bdcarthage.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+
+    file shape_file_chenal <- file(project_path + 'DEM/includes/Rhone/chenal.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
     
-    file shape_file_building <- file('../includes/BAT/BAT.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
+    file shape_file_building <- file(project_path + 'DEM/includes/BAT/BAT.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
     
     
 	graph the_graph;
