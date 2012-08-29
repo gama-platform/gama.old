@@ -30,8 +30,10 @@ import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -43,6 +45,8 @@ import javax.media.opengl.GLEventListener;
 
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
+
+import org.geotools.data.shapefile.ShapefileDataStore;
 
 import utils.GLUtil;
 
@@ -58,6 +62,7 @@ import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
+import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
 import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
@@ -111,12 +116,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Use multiple view port
 	private boolean multipleViewPort = false;
+	
+	//Handle Shape file
+	private ShapeFileReader myShapeFileReader;
+
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 		// Initialize the user camera
 		camera = new Camera();
 
 		myGLDrawer = new MyGLToyDrawer();
+		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
 
 		canvas = new GLCanvas();
 
@@ -303,6 +313,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glViewport(0, 0, width, height); // Reset The Current
 													// Viewport
 				this.DrawModel();
+				//DrawShapeFile();
 			} else {
 
 				// Set The Viewport To The Top Left
@@ -398,6 +409,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 		}
 
+	}
+	
+	public void DrawShapeFile(){
+		
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.basicDrawer.
+		DrawSimpleFeatureCollection(myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store));
+		return;
 	}
 
 	public void DrawTexture(MyImage img) {

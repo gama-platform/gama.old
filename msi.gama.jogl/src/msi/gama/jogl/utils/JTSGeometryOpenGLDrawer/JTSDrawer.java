@@ -12,6 +12,10 @@ import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.vecmath.Vector3f;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.opengis.feature.simple.SimpleFeature;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Vertex;
@@ -75,6 +79,9 @@ public class JTSDrawer {
 		//myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
 		
 	}
+	
+	
+
 	
 	
 	public void DrawMultiPolygon(MultiPolygon polygons, float z, Color c,float alpha,
