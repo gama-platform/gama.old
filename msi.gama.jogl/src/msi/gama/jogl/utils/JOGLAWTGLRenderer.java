@@ -126,7 +126,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera = new Camera();
 
 		myGLDrawer = new MyGLToyDrawer();
-		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
+		
+		
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Evacuation.Obstacle.shp");
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Mekong/DONGTHAP_district.shp");	
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
+		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
 
 		canvas = new GLCanvas();
 
@@ -289,52 +294,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPushMatrix();
 		gl.glMultMatrixf(matrix, 0);
 
-		if (displaySurface.Picking) {
-			// Display the model center on 0,0,0
-			if (camera.isModelCentered) {
-				gl.glTranslatef(
-						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
-						0.0f); // translate right and into the screen
-			}
-			this.DrawPickableObject();
-		} else {
-			// Display the model center on 0,0,0
-			if (camera.isModelCentered) {
-				gl.glTranslatef(
-						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
-						0.0f); // translate right and into the screen
-			}
-			// FIXME: Need to simplify , give a boolean to DrawModel to know
-			// if it's in Picking mode.
-			if (!multipleViewPort) {
-
-				gl.glViewport(0, 0, width, height); // Reset The Current
-													// Viewport
-				this.DrawModel();
-				//DrawShapeFile();
-			} else {
-
-				// Set The Viewport To The Top Left
-				gl.glViewport(0, height / 2, width / 2, height / 2);
-				this.DrawModel();
-
-				// Set The Viewport To The Top Right. It Will Take Up Half The
-				// Screen Width And Height
-				gl.glViewport(width / 2, height / 2, width / 2, height / 2);
-				this.DrawModel();
-
-				// Set The Viewport To The Bottom Right
-				gl.glViewport(width / 2, 0, width / 2, height / 2);
-				this.DrawModel();
-
-				// Set The Viewport To The Bottom Left
-				gl.glViewport(0, 0, width / 2, height / 2);
-				this.DrawModel();
-			}
-
-		}
+        this.DrawScene();
+        
+        //this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
@@ -367,6 +329,55 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// init(arg0);
 	}
 
+	
+	public void DrawScene(){
+		if (displaySurface.Picking) {
+			// Display the model center on 0,0,0
+			if (camera.isModelCentered) {
+				gl.glTranslatef(
+						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
+						0.0f); // translate right and into the screen
+			}
+			this.DrawPickableObject();
+		} else {
+			// Display the model center on 0,0,0
+			if (camera.isModelCentered) {
+				gl.glTranslatef(
+						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
+						0.0f); // translate right and into the screen
+			}
+			// FIXME: Need to simplify , give a boolean to DrawModel to know
+			// if it's in Picking mode.
+			if (!multipleViewPort) {
+
+				gl.glViewport(0, 0, width, height); // Reset The Current
+													// Viewport
+				this.DrawModel();
+			} else {
+
+				// Set The Viewport To The Top Left
+				gl.glViewport(0, height / 2, width / 2, height / 2);
+				this.DrawModel();
+
+				// Set The Viewport To The Top Right. It Will Take Up Half The
+				// Screen Width And Height
+				gl.glViewport(width / 2, height / 2, width / 2, height / 2);
+				this.DrawModel();
+
+				// Set The Viewport To The Bottom Right
+				gl.glViewport(width / 2, 0, width / 2, height / 2);
+				this.DrawModel();
+
+				// Set The Viewport To The Bottom Left
+				gl.glViewport(0, 0, width / 2, height / 2);
+				this.DrawModel();
+			}
+
+		}
+	}
+	
 	public void DrawModel() {
 		// ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
@@ -413,6 +424,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public void DrawShapeFile(){
 		
+		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.basicDrawer.
 		DrawSimpleFeatureCollection(myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store));
 		return;

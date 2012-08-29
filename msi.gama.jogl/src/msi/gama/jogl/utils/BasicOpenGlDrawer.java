@@ -165,6 +165,10 @@ public class BasicOpenGlDrawer {
 	}
 	
 	public void DrawSimpleFeatureCollection(SimpleFeatureCollection collection) {
+		
+		System.out.println("center:" + collection.getBounds().centre().x + "," + collection.getBounds().centre().y);
+		myGl.glTranslated(-collection.getBounds().centre().x, +collection.getBounds().centre().y, 0.0f);
+		
 
 		// Iterate throught all the collection
 		SimpleFeatureIterator iterator = collection.features();
@@ -202,6 +206,8 @@ public class BasicOpenGlDrawer {
 						color, 1.0f);
 			}
 		}
+		
+		myGl.glTranslated(collection.getBounds().centre().x, -collection.getBounds().centre().y, 0.0f);
 
 	}
 
