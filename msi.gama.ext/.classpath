@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="jdom-2.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="janino.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="commons-compiler-jdk.jar"/>
@@ -38,5 +36,8 @@
 	<classpathentry exported="true" kind="lib" path="gs-core-1.1.1.jar" sourcepath="sources/gs-core-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-ui-1.1.1.jar" sourcepath="sources/gs-ui-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-swing-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
+	<classpathentry exported="true" kind="lib" path="janino.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="jme-collada.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

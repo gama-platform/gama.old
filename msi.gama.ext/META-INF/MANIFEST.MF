@@ -40,9 +40,15 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  gs-ui-1.1.1.jar,
  gt-swing-2.7.3.jar,
  janino.jar,
- jdom-2.0.1.jar
+ jdom-2.0.1.jar,
+ jme-collada.jar
 Bundle-Vendor: MSI
-Export-Package: com.keypoint,
+Export-Package: com.jmex.model.collada,
+ com.jmex.model.collada.schema,
+ com.jmex.xml,
+ com.jmex.xml.types,
+ com.jmex.xml.xml,
+ com.keypoint,
  com.sun.media.jai.iterator,
  com.sun.media.jai.mlib,
  com.sun.media.jai.opimage,
