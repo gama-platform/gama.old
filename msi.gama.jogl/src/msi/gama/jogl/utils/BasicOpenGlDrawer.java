@@ -15,6 +15,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.jogl.JOGLAWTDisplayGraphics;
+import msi.gama.jogl.utils.GraphicDataType.MyCollection;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
@@ -164,17 +165,18 @@ public class BasicOpenGlDrawer {
 		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 	}
 	
-	public void DrawSimpleFeatureCollection(SimpleFeatureCollection collection) {
+	public void DrawSimpleFeatureCollection(MyCollection collection) {
 		
-		System.out.println("center:" + collection.getBounds().centre().x + "," + collection.getBounds().centre().y);
-		myGl.glTranslated(-collection.getBounds().centre().x, +collection.getBounds().centre().y, 0.0f);
+		myGl.glTranslated(-collection.collection.getBounds().centre().x, +collection.collection.getBounds().centre().y, 0.0f);
 		
 
 		// Iterate throught all the collection
-		SimpleFeatureIterator iterator = collection.features();
+		SimpleFeatureIterator iterator = collection.collection.features();
 
-		Color color = new Color((int) Math.random() * 255,
-				(int) Math.random() * 255, (int) Math.random() * 255);
+		/*Color color = new Color((int) Math.random() * 255,
+				(int) Math.random() * 255, (int) Math.random() * 255);*/
+		
+		Color color= Color.red;
 
 		while (iterator.hasNext()) {
 
@@ -207,7 +209,7 @@ public class BasicOpenGlDrawer {
 			}
 		}
 		
-		myGl.glTranslated(collection.getBounds().centre().x, -collection.getBounds().centre().y, 0.0f);
+		myGl.glTranslated(collection.collection.getBounds().centre().x, -collection.collection.getBounds().centre().y, 0.0f);
 
 	}
 

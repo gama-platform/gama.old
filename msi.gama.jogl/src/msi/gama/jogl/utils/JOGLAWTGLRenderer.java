@@ -27,6 +27,7 @@ import static javax.media.opengl.GL.GL_TEXTURE_2D;
 import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
 import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -47,6 +48,7 @@ import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 
 import utils.GLUtil;
 
@@ -119,6 +121,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	//Handle Shape file
 	private ShapeFileReader myShapeFileReader;
+	private boolean updateEnvDim=false;
 
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
@@ -130,8 +133,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Evacuation.Obstacle.shp");
 		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Mekong/DONGTHAP_district.shp");	
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
-		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
+		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
 
 		canvas = new GLCanvas();
 
@@ -215,6 +218,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		LastRot.setIdentity(); // Reset Rotation
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
+		
+		
+		
+		//FIXME: Need to be place somewhere (triggered by a button in Gama)
+		SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
 	}
 
 	@Override
@@ -294,9 +303,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPushMatrix();
 		gl.glMultMatrixf(matrix, 0);
 
-        this.DrawScene();
+        //this.DrawScene();
         
-        //this.DrawShapeFile();
+        this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
@@ -422,11 +431,28 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 	
+	
+	/**
+	 * Draw a given shapefile 
+	 **/
 	public void DrawShapeFile(){
 		
-		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils.basicDrawer.
-		DrawSimpleFeatureCollection(myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store));
+		SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawCollection();
+			
+		//Adjust the size of the display surface according to the bound of the shapefile.
+		displaySurface.envHeight=(float) myCollection.getBounds().getHeight();
+		displaySurface.envWidth=(float) myCollection.getBounds().getWidth();
+		if(!updateEnvDim){
+			displaySurface.zoomFit();
+			updateEnvDim=true;
+		}
+		
+	
+		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
+				.DrawXYZAxis((float) myCollection.getBounds().getHeight()/10);
+
+		
 		return;
 	}
 

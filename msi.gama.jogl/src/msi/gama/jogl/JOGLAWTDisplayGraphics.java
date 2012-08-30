@@ -27,12 +27,15 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.*;
+import msi.gama.jogl.utils.GraphicDataType.MyCollection;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.GraphicDataType.MyString;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.types.GamaGeometryType;
+
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
 
 import com.vividsolutions.jts.awt.*;
@@ -80,6 +83,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	// each Image is stored in a list
 	public ArrayList<MyImage> myImages = new ArrayList<MyImage>();
+	
+	// each Collection is stored in a list
+	public ArrayList<MyCollection> myCollections = new ArrayList<MyCollection>();
 
 	// List of all the String
 	public ArrayList<MyString> myStrings = new ArrayList<MyString>();
@@ -649,6 +655,23 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	/**
+	 * Add collection and its associated parameter in the list of Image that are
+	 * drawn by Opengl
+	 * 
+	 * @param collection
+	 * @param color
+	 */
+	public void AddCollectionInCollections(final SimpleFeatureCollection collection, final Color color) {
+
+		final MyCollection curCol = new MyCollection();
+
+		curCol.collection = collection;
+		curCol.color = color;
+
+		this.myCollections.add(curCol);
+	}
+	
+	/**
 	 * Check that the texture "name" has not already be created.
 	 * 
 	 * @param name
@@ -847,6 +870,31 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
+	
+	
+	public void DrawCollection(){
+		
+		//FIXME : need to be done for a list of collection
+		boolean drawCollectionAsList = true;
+		if (drawCollectionAsList) {
+			if (!isListCreated) {
+				graphicsGLUtils.displayListHandler.buildCollectionDisplayLists(myCollections);
+				isListCreated = true;
+			} else {
+				graphicsGLUtils.displayListHandler.DrawCollectionDisplayList(myCollections.size());
+			}
+
+		} else {
+			
+			Iterator<MyCollection> it = this.myCollections.iterator();
+			while (it.hasNext()) {
+				MyCollection curCol = it.next();
+				graphicsGLUtils.basicDrawer.DrawSimpleFeatureCollection(curCol);
+			}		
+		}
+		
+	}
+	
 	// ///////////////Clean method /////////////////////////
 
 	/**
@@ -883,6 +931,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				it.remove();
 			}
 		}
+	}
+	
+	public void CleanCollections(){
+		
 	}
 
 	/**

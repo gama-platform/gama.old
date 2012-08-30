@@ -8,6 +8,9 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+
+import msi.gama.jogl.utils.GraphicDataType.MyCollection;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 
@@ -76,7 +79,7 @@ public class DisplayListHandler {
 	
 
 	/**
-	 * Create the display list for each JTS geometries (one list per geometry)
+	 * Create the display list for each Image
 	 * 
 	 * @param myJTSGeometries
 	 * @param size
@@ -103,4 +106,32 @@ public class DisplayListHandler {
 		}
 	}
 
+	/**
+	 * Create the display list for a Collection
+	 * 
+	 * @param myJTSGeometries
+	 * @param size
+	 */
+	public void buildCollectionDisplayLists(ArrayList<MyCollection> myCollections) {
+	
+		// Build n lists, and returns handle for the first list
+		firstList = myGl.glGenLists(myCollections.size());
+		listId = firstList;
+		Iterator<MyCollection> it = myCollections.iterator();
+
+		while (it.hasNext()) {
+			MyCollection curCol = it.next();
+			myGl.glNewList(listId, GL_COMPILE);
+			basicDrawer.DrawSimpleFeatureCollection(curCol);
+			myGl.glEndList();
+			listId = listId + 1;
+		}		
+	}
+
+	public void DrawCollectionDisplayList(int nbDisplayList) {
+		for (int i = 0; i <= nbDisplayList; i++) {
+			myGl.glCallList(i);
+		}
+	}
+	
 }
