@@ -61,6 +61,9 @@ public class JTSDrawer {
 	// Use for JTS triangulation
 	IList<IShape> triangles;
 	Iterator<IShape> it;
+	
+	//USe to inverse y composaant
+	public int yFlag;
 
 	public JTSDrawer(final GL gl, final GLU glu,
 			final JOGLAWTGLRenderer gLRender) {
@@ -74,6 +77,8 @@ public class JTSDrawer {
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		
+        yFlag=-1;
 
 		// FIXME: When using erroCallback there is a out of memory problem.
 		// myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);//
@@ -158,7 +163,7 @@ public class JTSDrawer {
 		for (int j = 0; j < numExtPoints; j++) {
 			tempPolygon[j][0] = (float) (float) (p.getExteriorRing().getPointN(
 					j).getX());
-			tempPolygon[j][1] = -(float) (p.getExteriorRing().getPointN(j)
+			tempPolygon[j][1] = yFlag*(float) (p.getExteriorRing().getPointN(j)
 					.getY());
 
 			if (String.valueOf(
@@ -245,7 +250,7 @@ public class JTSDrawer {
 		myGLRender.textures[2].bind();
 
 		if (angle != 0) {
-			myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
+			myGl.glTranslatef((float) p.getCentroid().getX(), yFlag*(float) p
 					.getCentroid().getY(), 0.0f);
 			// FIXME:Check counterwise or not, and do we rotate around the
 			// center or around a point.
@@ -258,7 +263,7 @@ public class JTSDrawer {
 			myGl.glTranslatef((float) p.getCentroid().getX(), -(float) p
 					.getCentroid().getY(), 0.0f);
 			myGl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-			myGl.glTranslatef(-(float) p.getCentroid().getX(), +(float) p
+			myGl.glTranslatef(-(float) p.getCentroid().getX(), -yFlag*(float) p
 					.getCentroid().getY(), 0.0f);
 		} else {
 			DrawTexturedQuad(p);
@@ -271,19 +276,19 @@ public class JTSDrawer {
 		myGl.glBegin(GL_QUADS);
 
 		myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
-		myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), -p
+		myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag*p
 				.getExteriorRing().getPointN(0).getY(), 0.0f);
 
 		myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
-		myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), -p
+		myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag*p
 				.getExteriorRing().getPointN(1).getY(), 0.0f);
 
 		myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
-		myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), -p
+		myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag*p
 				.getExteriorRing().getPointN(2).getY(), 0.0f);
 
 		myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
-		myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), -p
+		myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag*p
 				.getExteriorRing().getPointN(3).getY(), 0.0f);
 
 		myGl.glEnd();
@@ -320,12 +325,12 @@ public class JTSDrawer {
 	
 	void SetLine(Point src, Point dest, float z,boolean hasZValue){
 		if (hasZValue == false) {
-		  myGl.glVertex3d( ((src.getX())),- ((src.getY())), z);
-		  myGl.glVertex3d(((dest.getX())),-((dest.getY())), z);
+		  myGl.glVertex3d( ((src.getX())),yFlag* ((src.getY())), z);
+		  myGl.glVertex3d(((dest.getX())),yFlag*((dest.getY())), z);
 		}
 		else{
-			myGl.glVertex3d( ((src.getX())),- ((src.getY())), z+src.getCoordinate().z);
-			myGl.glVertex3d(((dest.getX())),-((dest.getY())), z+dest.getCoordinate().z);
+			myGl.glVertex3d( ((src.getX())),yFlag* ((src.getY())), z+src.getCoordinate().z);
+			myGl.glVertex3d(((dest.getX())),yFlag*((dest.getY())), z+dest.getCoordinate().z);
 		}
 	}
 
@@ -376,19 +381,19 @@ public class JTSDrawer {
 			}
 			// FIXME; change double to float in Vertex
 			vertices[0].x = (float) p.getExteriorRing().getPointN(j).getX();
-			vertices[0].y = -(float) p.getExteriorRing().getPointN(j).getY();
+			vertices[0].y = yFlag*(float) p.getExteriorRing().getPointN(j).getY();
 			vertices[0].z = elevation + height;
 
 			vertices[1].x = (float) p.getExteriorRing().getPointN(k).getX();
-			vertices[1].y = -(float) p.getExteriorRing().getPointN(k).getY();
+			vertices[1].y = yFlag*(float) p.getExteriorRing().getPointN(k).getY();
 			vertices[1].z = elevation + height;
 
 			vertices[2].x = (float) p.getExteriorRing().getPointN(k).getX();
-			vertices[2].y = -(float) p.getExteriorRing().getPointN(k).getY();
+			vertices[2].y = yFlag*(float) p.getExteriorRing().getPointN(k).getY();
 			vertices[2].z = elevation;
 
 			vertices[3].x = (float) p.getExteriorRing().getPointN(j).getX();
-			vertices[3].y = -(float) p.getExteriorRing().getPointN(j).getY();
+			vertices[3].y = yFlag*(float) p.getExteriorRing().getPointN(j).getY();
 			vertices[3].z = elevation;
 
 			// Compute the normal of the quad (for the moment only give 3 point
@@ -481,9 +486,9 @@ public class JTSDrawer {
 		myGl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
 			myGl.glVertex3f((float) ((line.getPointN(j).getX())),
-					-(float) ((line.getPointN(j).getY())), z);
+					yFlag*(float) ((line.getPointN(j).getY())), z);
 			myGl.glVertex3f((float) ((line.getPointN(j + 1).getX())),
-					-(float) ((line.getPointN(j + 1).getY())), z);
+					yFlag*(float) ((line.getPointN(j + 1).getY())), z);
 		}
 		myGl.glEnd();
 
@@ -508,15 +513,15 @@ public class JTSDrawer {
 		for (int j = 0; j < numPoints - 1; j++) {
 			myGl.glBegin(GL.GL_QUADS);
 			myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-					-(float) ((l.getPointN(j).getY())), z);
+					yFlag*(float) ((l.getPointN(j).getY())), z);
 			myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-					-(float) ((l.getPointN(j + 1).getY())), z);
+					yFlag*(float) ((l.getPointN(j + 1).getY())), z);
 
 			myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-					-(float) ((l.getPointN(j + 1).getY())), z + height);
+					yFlag*(float) ((l.getPointN(j + 1).getY())), z + height);
 
 			myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-					-(float) ((l.getPointN(j).getY())), z + height);
+					yFlag*(float) ((l.getPointN(j).getY())), z + height);
 
 			myGl.glEnd();
 		}
@@ -526,24 +531,24 @@ public class JTSDrawer {
 			for (int j = 0; j < numPoints - 1; j++) {
 				myGl.glBegin(GL.GL_LINES);
 				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), z);
+						yFlag*(float) ((l.getPointN(j).getY())), z);
 				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), z);
+						yFlag*(float) ((l.getPointN(j + 1).getY())), z);
 
 				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), z);
+						yFlag*(float) ((l.getPointN(j + 1).getY())), z);
 				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), z + height);
+						yFlag*(float) ((l.getPointN(j + 1).getY())), z + height);
 
 				myGl.glVertex3f((float) ((l.getPointN(j + 1).getX())),
-						-(float) ((l.getPointN(j + 1).getY())), z + height);
+						yFlag*(float) ((l.getPointN(j + 1).getY())), z + height);
 				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), z + height);
+						yFlag*(float) ((l.getPointN(j).getY())), z + height);
 
 				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), z + height);
+						yFlag*(float) ((l.getPointN(j).getY())), z + height);
 				myGl.glVertex3f((float) ((l.getPointN(j).getX())),
-						-(float) ((l.getPointN(j).getY())), z);
+						yFlag*(float) ((l.getPointN(j).getY())), z);
 
 				myGl.glEnd();
 			}
@@ -574,7 +579,7 @@ public class JTSDrawer {
 
 			tempPolygon[k][0] = (float) (point.getCoordinate().x + (Math
 					.cos(angle)) * radius);
-			tempPolygon[k][1] = -(float) (point.getCoordinate().y + (Math
+			tempPolygon[k][1] = yFlag*(float) (point.getCoordinate().y + (Math
 					.sin(angle)) * radius);
 			tempPolygon[k][2] = z;
 		}
@@ -596,12 +601,12 @@ public class JTSDrawer {
 			angle = (float) (k * 2 * Math.PI / numPoints);
 			xBegin = (float) (point.getCoordinate().x + (Math.cos(angle))
 					* radius);
-			yBegin = -(float) (point.getCoordinate().y + (Math.sin(angle))
+			yBegin = yFlag*(float) (point.getCoordinate().y + (Math.sin(angle))
 					* radius);
 			angle = (float) ((k + 1) * 2 * Math.PI / numPoints);
 			xEnd = (float) (point.getCoordinate().x + (Math.cos(angle))
 					* radius);
-			yEnd = -(float) (point.getCoordinate().y + (Math.sin(angle))
+			yEnd = yFlag*(float) (point.getCoordinate().y + (Math.sin(angle))
 					* radius);
 			myGl.glVertex3f(xBegin, yBegin, z);
 			myGl.glVertex3f(xEnd, yEnd, z);
@@ -613,7 +618,7 @@ public class JTSDrawer {
 	public void DrawSphere(Point point, float z, float radius, Color c,
 			float alpha) {
 
-		myGl.glTranslated(point.getCoordinate().x, -point.getCoordinate().y, z);
+		myGl.glTranslated(point.getCoordinate().x, yFlag*point.getCoordinate().y, z);
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 
@@ -625,7 +630,7 @@ public class JTSDrawer {
 		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-		myGl.glTranslated(-point.getCoordinate().x, point.getCoordinate().y, -z);
+		myGl.glTranslated(-point.getCoordinate().x, -yFlag*point.getCoordinate().y, -z);
 
 	}
 
@@ -640,47 +645,47 @@ public class JTSDrawer {
 					.equals("NaN") == true) {
 				myGl.glBegin(GL.GL_LINES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
 
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
 
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
 				myGl.glEnd();
 			} else {
 				myGl.glBegin(GL.GL_LINES); // draw using triangles
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(),
 						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(),
 						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
 
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(),
 						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(),
 						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
 
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(),
 						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(),
 						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
 				myGl.glEnd();
 
@@ -692,25 +697,25 @@ public class JTSDrawer {
 
 				myGl.glBegin(GL_TRIANGLES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(), 0.0f);
 				myGl.glEnd();
 			} else {
 				myGl.glBegin(GL_TRIANGLES); // draw using triangles
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(0).getX(),
-						-polygon.getExteriorRing().getPointN(0).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(0).getY(),
 						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(1).getX(),
-						-polygon.getExteriorRing().getPointN(1).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(1).getY(),
 						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
 				myGl.glVertex3d(
 						polygon.getExteriorRing().getPointN(2).getX(),
-						-polygon.getExteriorRing().getPointN(2).getY(),
+						yFlag*polygon.getExteriorRing().getPointN(2).getY(),
 						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
 				myGl.glEnd();
 			}
@@ -728,8 +733,8 @@ public class JTSDrawer {
 		for (int i = 0; i < 3; i++) {
 			vertices[i * 3] = (float) polygon.getExteriorRing().getPointN(0)
 					.getX();
-			vertices[i * 3 + 1] = (float) -polygon.getExteriorRing()
-					.getPointN(0).getY();
+			vertices[i * 3 + 1] = (float) (yFlag*polygon.getExteriorRing()
+					.getPointN(0).getY());
 			vertices[i * 3 + 2] = 0.0f;
 		}
 		return vertices;

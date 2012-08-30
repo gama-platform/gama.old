@@ -24,20 +24,37 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+
+import org.eclipse.swt.SWT;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.swing.data.JFileDataStoreChooser;
+//import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.FileDialog;
+
+import utils.FileBrowser;
+
+
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.*;
+import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -577,6 +594,19 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	@Override
 	public void togglePicking() {
+		
+		
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/ilotAgricole/ilot031_2009.shp");
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Evacuation.Obstacle.shp");
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Mekong/DONGTHAP_district.shp");	
+		//myGLRender.myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
+		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
+		
+		//this.new FileBrowser();
+		
+		//SimpleFeatureCollection myCollection =  myGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(myGLRender.myShapeFileReader.store);
+		//((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
+
 		
 		if(Picking==false){
 		    ThreeD=false;

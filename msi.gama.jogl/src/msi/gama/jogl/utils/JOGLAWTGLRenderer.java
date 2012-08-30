@@ -120,7 +120,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean multipleViewPort = false;
 	
 	//Handle Shape file
-	private ShapeFileReader myShapeFileReader;
+	public ShapeFileReader myShapeFileReader;
 	private boolean updateEnvDim=false;
 
 
@@ -131,10 +131,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		myGLDrawer = new MyGLToyDrawer();
 		
 		
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Evacuation.Obstacle.shp");
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Mekong/DONGTHAP_district.shp");	
-		myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
 
 		canvas = new GLCanvas();
 
@@ -222,8 +218,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		
 		//FIXME: Need to be place somewhere (triggered by a button in Gama)
-		SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
+		
 	}
 
 	@Override
@@ -305,7 +300,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
         this.DrawScene();
         
-        //this.DrawShapeFile();
+        this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
@@ -437,20 +432,26 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 **/
 	public void DrawShapeFile(){
 		
-		SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
+		
+		
+		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myCollections
+				.isEmpty()) {
+			SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawCollection();
-			
 		//Adjust the size of the display surface according to the bound of the shapefile.
-		displaySurface.envHeight=(float) myCollection.getBounds().getHeight();
-		displaySurface.envWidth=(float) myCollection.getBounds().getWidth();
-		if(!updateEnvDim){
-			displaySurface.zoomFit();
-			updateEnvDim=true;
+				displaySurface.envHeight=(float) myCollection.getBounds().getHeight();
+				displaySurface.envWidth=(float) myCollection.getBounds().getWidth();
+				if(!updateEnvDim){
+					displaySurface.zoomFit();
+					updateEnvDim=true;
+				}
 		}
+			
+		
 		
 	
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
-				.DrawXYZAxis((float) myCollection.getBounds().getHeight()/10);
+		/*((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
+				.DrawXYZAxis((float) myCollection.getBounds().getHeight()/10);*/
 
 		
 		return;

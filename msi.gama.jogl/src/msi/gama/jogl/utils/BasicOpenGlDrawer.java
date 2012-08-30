@@ -31,7 +31,7 @@ public class BasicOpenGlDrawer {
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
 
-	private JTSDrawer myJTSDrawer;
+	public JTSDrawer myJTSDrawer;
 	
 
 	public BasicOpenGlDrawer(final GL gl, final GLU glu,
@@ -167,7 +167,10 @@ public class BasicOpenGlDrawer {
 	
 	public void DrawSimpleFeatureCollection(MyCollection collection) {
 		
-		myGl.glTranslated(-collection.collection.getBounds().centre().x, +collection.collection.getBounds().centre().y, 0.0f);
+		//Draw Shape file so need to inverse the y composante.
+		myJTSDrawer.yFlag=1;
+		
+		myGl.glTranslated(-collection.collection.getBounds().centre().x, -collection.collection.getBounds().centre().y, 0.0f);
 		
 
 		// Iterate throught all the collection
@@ -209,8 +212,10 @@ public class BasicOpenGlDrawer {
 			}
 		}
 		
-		myGl.glTranslated(collection.collection.getBounds().centre().x, -collection.collection.getBounds().centre().y, 0.0f);
+		myGl.glTranslated(collection.collection.getBounds().centre().x, +collection.collection.getBounds().centre().y, 0.0f);
 
+		myJTSDrawer.yFlag=-1;
+		
 	}
 
 }
