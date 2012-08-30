@@ -303,9 +303,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPushMatrix();
 		gl.glMultMatrixf(matrix, 0);
 
-        //this.DrawScene();
+        this.DrawScene();
         
-        this.DrawShapeFile();
+        //this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
