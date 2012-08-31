@@ -48,6 +48,7 @@ public class MyJTSGeometry implements Cloneable{
 	
 	public MyJTSGeometry(Geometry geometry,float z,Color color,float alpha,Boolean fill, Boolean isTextured,int angle,float height,GamaPoint offSet ){
 		this.geometry = geometry;
+		this.z=z;
 		this.color = color;
 		this.alpha = alpha;
 		this.type = "";

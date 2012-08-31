@@ -37,9 +37,11 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.swing.data.JFileDataStoreChooser;
 //import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
 
+import utils.FileBrowse;
 import utils.FileBrowser;
 
 
@@ -104,6 +106,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	//Use to toggle the Picking mode
 	public boolean Picking= false;
+	
+	//Use to draw .shp file
+	final String[] shapeFileName = new String[1];
 	
 
 
@@ -595,20 +600,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void togglePicking() {
 		
-		
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/ilotAgricole/ilot031_2009.shp");
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Evacuation.Obstacle.shp");
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/SimpleGamaGIS/Mekong/DONGTHAP_district.shp");	
-		//myGLRender.myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/includes/building.shp");
-		//myShapeFileReader = new ShapeFileReader("/Users/Arno/Projects/GIS/France/FRA_adm/FRA_adm0.shp");
-		
-		//this.new FileBrowser();
-		
-		//SimpleFeatureCollection myCollection =  myGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(myGLRender.myShapeFileReader.store);
-		//((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
-
-		
-		if(Picking==false){
+       if(Picking==false){
 		    ThreeD=false;
 			zoomFit();
 		}
@@ -617,6 +609,48 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			ThreeD=false;
 		}
 		Picking = !Picking;
+		
+	}
+	
+	/**
+	 * Add a simpel feature collection  from a .Shp file.
+	 */
+	@Override
+	public void addShapeFile() {
+		new Thread(new Runnable() {
+		      public void run() {
+		            Display.getDefault().asyncExec(new Runnable() {
+		               public void run() {
+		            	   
+		            	   Shell shell = new Shell(Display.getDefault());
+		            	   FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+
+		            	   dialog.setText("Browse for a .shp file");
+
+		            	   dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
+		            	   
+		            	   dialog.setFilterExtensions(new String[] {"*.shp"});
+
+		            	   if (dialog.open() != null) {
+
+		            	       String path = dialog.getFilterPath();
+
+		            	       String[] names = dialog.getFileNames();
+
+		            	       for (int i = 0; i < names.length; i++) {
+		            	           shapeFileName[i]=path + "/" + names[i]; 
+		            	           System.out.println(shapeFileName[i]);
+		            	       }
+
+		            	   }
+		            	   
+		            	   myGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
+		                   SimpleFeatureCollection myCollection =  myGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(myGLRender.myShapeFileReader.store);
+		           		   ((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
+		               }
+		            });
+		      }
+		   }).start();
 		
 	}
 
@@ -737,5 +771,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			openGLGraphics.setHighlightColor(rgb);
 		}
 	}
+
+	
 
 }

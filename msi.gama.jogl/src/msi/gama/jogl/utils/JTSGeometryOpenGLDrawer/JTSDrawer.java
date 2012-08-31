@@ -56,7 +56,7 @@ public class JTSDrawer {
 	double temp[];
 
 	// use glut tesselation or JTS tesselation
-	boolean useTessellation = true;
+	boolean useTessellation = false;
 
 	// Use for JTS triangulation
 	IList<IShape> triangles;
@@ -185,10 +185,13 @@ public class JTSDrawer {
 	}
 
 	void DrawTriangulatedPolygon(Polygon p) {
-		double sizeTol = Math.sqrt(p.getArea()) / 100.0;
-		Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
-		if (g2 instanceof Polygon) {
-			p = (Polygon) g2;
+		boolean simplifyGeometry= false;
+		if(simplifyGeometry){
+			double sizeTol = Math.sqrt(p.getArea()) / 100.0;
+			Geometry g2 = DouglasPeuckerSimplifier.simplify(p, sizeTol);
+			if (g2 instanceof Polygon) {
+				p = (Polygon) g2;
+			}
 		}
 		// Workaround to compute the z value of each triangle as triangulation
 		// create new point during the triangulation that are set with z=NaN

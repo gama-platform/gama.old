@@ -300,7 +300,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
         this.DrawScene();
         
-        this.DrawShapeFile();
+        //this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
@@ -432,11 +432,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 **/
 	public void DrawShapeFile(){
 		
-		
-		
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myCollections
 				.isEmpty()) {
-			SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
+		SimpleFeatureCollection myCollection =  myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
 		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawCollection();
 		//Adjust the size of the display surface according to the bound of the shapefile.
 				displaySurface.envHeight=(float) myCollection.getBounds().getHeight();
@@ -445,15 +443,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					displaySurface.zoomFit();
 					updateEnvDim=true;
 				}
-		}
-			
-		
-		
-	
-		/*((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
-				.DrawXYZAxis((float) myCollection.getBounds().getHeight()/10);*/
-
-		
+		}	
 		return;
 	}
 

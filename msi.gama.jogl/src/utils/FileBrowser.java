@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.*;
 
 public class FileBrowser {
 
-	Shell shell;
+  Shell shell;
   Text text;
 
   public FileBrowser(Display display) {
@@ -26,6 +26,8 @@ public class FileBrowser {
   }
   display.dispose();
   }
+  
+  
   private void init() {
   shell.setText("File Browser");
   shell.setLayout(new GridLayout(2, true));
