@@ -56,7 +56,7 @@ public class JTSDrawer {
 	double temp[];
 
 	// use glut tesselation or JTS tesselation
-	boolean useTessellation = false;
+	boolean useTessellation = true;
 
 	// Use for JTS triangulation
 	IList<IShape> triangles;
@@ -120,6 +120,9 @@ public class JTSDrawer {
 
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
+			
+			
+	
 
 			if (useTessellation) {
 				DrawTesselatedPolygon(p);
@@ -298,10 +301,10 @@ public class JTSDrawer {
 	}
 
 	public void DrawPolygonContour(Polygon p, Color c, float z) {
-		// Draw contour
-		myGl.glBegin(GL.GL_LINES);
+		//Draw Exterior ring
 		myGl.glLineWidth(1.0f);
 		
+		myGl.glBegin(GL.GL_LINES);
 		numExtPoints = p.getExteriorRing().getNumPoints();
 		
 		if (p.isEmpty())
@@ -321,8 +324,26 @@ public class JTSDrawer {
 				SetLine(p.getExteriorRing().getPointN(j),p.getExteriorRing().getPointN(j+1),z,true);
 			}
 		}
-
 		myGl.glEnd();
+		
+		//Draw Interior ring
+		for (int i= 0; i<p.getNumInteriorRing();i++){
+			
+			int numPoints = p.getInteriorRingN(i).getNumPoints();
+			myGl.glBegin(GL.GL_LINES);
+			if (String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z)
+					.equals("NaN") == true) {
+				for (int j = 0; j < numPoints - 1; j++) {
+					SetLine(p.getInteriorRingN(i).getPointN(j),p.getInteriorRingN(i).getPointN(j+1),z,false);
+				}
+			}
+			else {
+				for (int j = 0; j < numPoints - 1; j++) {
+					SetLine(p.getInteriorRingN(i).getPointN(j),p.getInteriorRingN(i).getPointN(j+1),z,true);
+				}
+			}
+			myGl.glEnd();
+		}	
 	}
 	
 	

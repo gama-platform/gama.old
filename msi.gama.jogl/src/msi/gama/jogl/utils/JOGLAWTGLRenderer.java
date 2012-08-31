@@ -300,7 +300,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
         this.DrawScene();
         
-        //this.DrawShapeFile();
+        this.DrawShapeFile();
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);

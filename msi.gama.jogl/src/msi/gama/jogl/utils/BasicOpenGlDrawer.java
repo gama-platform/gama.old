@@ -182,10 +182,13 @@ public class BasicOpenGlDrawer {
 		Color color= Color.red;
 
 		while (iterator.hasNext()) {
-
+            
+			
 			SimpleFeature feature = (SimpleFeature) iterator.next();
 
 			Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
+			
+			System.out.println(sourceGeometry.getGeometryType());
 
 			if (sourceGeometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry,
