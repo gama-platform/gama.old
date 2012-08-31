@@ -159,6 +159,9 @@ public class JTSDrawer {
 	void DrawTesselatedPolygon(Polygon p) {
 
 		myGlu.gluTessBeginPolygon(tobj, null);
+		
+		
+		//Exterior contour
 		myGlu.gluTessBeginContour(tobj);
 
 		tempPolygon = new double[numExtPoints][3];
@@ -184,6 +187,37 @@ public class JTSDrawer {
 		}
 
 		myGlu.gluTessEndContour(tobj);
+		
+		
+		//interior contour
+		
+        for (int i= 0; i<p.getNumInteriorRing();i++){
+        	myGlu.gluTessBeginContour(tobj);	
+			int numIntPoints = p.getInteriorRingN(i).getNumPoints();
+			tempPolygon = new double[numIntPoints][3];
+			// Convert vertices as a list of double for gluTessVertex
+			for (int j = 0; j < numIntPoints; j++) {
+				tempPolygon[j][0] = (float) (float) (p.getInteriorRingN(i).getPointN(
+						j).getX());
+				tempPolygon[j][1] = yFlag*(float) (p.getInteriorRingN(i).getPointN(j)
+						.getY());
+
+				if (String.valueOf(
+						p.getInteriorRingN(i).getPointN(j).getCoordinate().z).equals(
+						"NaN") == true) {
+					tempPolygon[j][2] = 0.0f;
+				} else {
+					tempPolygon[j][2] = 0.0f + p.getInteriorRingN(i).getPointN(j)
+							.getCoordinate().z;
+				}
+			}
+
+			for (int j = 0; j < numIntPoints; j++) {
+				myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
+			}
+			myGlu.gluTessEndContour(tobj);
+		}
+		
 		myGlu.gluTessEndPolygon(tobj);
 	}
 
@@ -329,16 +363,16 @@ public class JTSDrawer {
 		//Draw Interior ring
 		for (int i= 0; i<p.getNumInteriorRing();i++){
 			
-			int numPoints = p.getInteriorRingN(i).getNumPoints();
+			int numIntPoints = p.getInteriorRingN(i).getNumPoints();
 			myGl.glBegin(GL.GL_LINES);
 			if (String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z)
 					.equals("NaN") == true) {
-				for (int j = 0; j < numPoints - 1; j++) {
+				for (int j = 0; j < numIntPoints - 1; j++) {
 					SetLine(p.getInteriorRingN(i).getPointN(j),p.getInteriorRingN(i).getPointN(j+1),z,false);
 				}
 			}
 			else {
-				for (int j = 0; j < numPoints - 1; j++) {
+				for (int j = 0; j < numIntPoints - 1; j++) {
 					SetLine(p.getInteriorRingN(i).getPointN(j),p.getInteriorRingN(i).getPointN(j+1),z,true);
 				}
 			}
