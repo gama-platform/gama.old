@@ -86,7 +86,7 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawMultiPolygon(MultiPolygon polygons, float z, Color c,
+	public void DrawMultiPolygon(MultiPolygon polygons, float z_layer, Color c,
 			float alpha, boolean fill, Integer angle, float height) {
 
 		numGeometries = polygons.getNumGeometries();
@@ -95,9 +95,9 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if (height > 0) {
-				DrawPolyhedre(curPolygon, z, c, alpha, height, angle, false);
+				DrawPolyhedre(curPolygon, z_layer, c, alpha, height, angle, false);
 			} else {
-				DrawPolygon(curPolygon, z, c, alpha, fill, false, angle, true);
+				DrawPolygon(curPolygon, z_layer, c, alpha, fill, false, angle, true);
 			}
 		}
 	}
@@ -399,7 +399,7 @@ public class JTSDrawer {
 		DrawPolygon(p, z + height, c, alpha, true, false, angle,
 				drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha, z + height, drawPolygonContour, false);
+		DrawFaces(p, c, alpha, z, height, drawPolygonContour, false);
 
 	}
 
@@ -413,13 +413,16 @@ public class JTSDrawer {
 	 * @param height
 	 *            : height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float alpha, float height,
+	public void DrawFaces(Polygon p, Color c, float alpha, float z_layer,float height,
 			boolean drawPolygonContour, boolean drawNormal) {
+		
+		// Set z_layer
+	    myGl.glTranslatef(0.0f, 0.0f, z_layer);
+	    
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 		float elevation = 0.0f;
 
-		// FIXME: Only works if the base is in the XY axes.
 		if (String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z)
 				.equals("NaN") == false) {
 			elevation = (float) (p.getExteriorRing().getPointN(0)
@@ -502,6 +505,8 @@ public class JTSDrawer {
 				myGl.glEnd();
 			}
 		}
+		
+		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
 
 	}
 

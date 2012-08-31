@@ -84,22 +84,22 @@ public class VertexArrayHandler {
 				
 				if (curGeometry.geometry.getGeometryType() == "MultiPolygon") {
 					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry,
-							curGeometry.z, curGeometry.color,
+							curGeometry.z_layer, curGeometry.color,
 							curGeometry.alpha,curGeometry.fill, curGeometry.angle, curGeometry.height);
 				}
 				
 				else if (curGeometry.geometry.getGeometryType() == "Polygon") {
 					buildPolygonVertexArray((Polygon) curGeometry.geometry,
-							curGeometry.z, curGeometry.color,
+							curGeometry.z_layer, curGeometry.color,
 							curGeometry.alpha,curGeometry.fill, curGeometry.isTextured, curGeometry.angle);
 				}
 				
 				else if (curGeometry.geometry.getGeometryType() == "MultiLineString") {
-					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry,curGeometry.z, curGeometry.color,curGeometry.alpha);
+					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry,curGeometry.z_layer, curGeometry.color,curGeometry.alpha);
 				}
 				
 				else if (curGeometry.geometry.getGeometryType() == "LineString") {
-					buildLineStringVertexArray((LineString)curGeometry.geometry,curGeometry.z, curGeometry.color,curGeometry.alpha);
+					buildLineStringVertexArray((LineString)curGeometry.geometry,curGeometry.z_layer, curGeometry.color,curGeometry.alpha);
 
 				}		
 			}	

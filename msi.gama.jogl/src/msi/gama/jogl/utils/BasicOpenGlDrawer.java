@@ -55,48 +55,48 @@ public class BasicOpenGlDrawer {
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
-						geometry.z, geometry.color, geometry.alpha,
+						geometry.z_layer, geometry.color, geometry.alpha,
 						geometry.fill, geometry.angle, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
-							geometry.z, geometry.color, geometry.alpha,
+							geometry.z_layer, geometry.color, geometry.alpha,
 							geometry.height, geometry.angle, true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
-							geometry.z, geometry.color, geometry.alpha,
+							geometry.z_layer, geometry.color, geometry.alpha,
 							geometry.fill, geometry.isTextured, geometry.angle,
 							true);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
-						(MultiLineString) geometry.geometry, geometry.z,
+						(MultiLineString) geometry.geometry, geometry.z_layer,
 						geometry.color, geometry.alpha, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPlan((LineString) geometry.geometry,
-							geometry.z, geometry.color, geometry.alpha,
+							geometry.z_layer, geometry.color, geometry.alpha,
 							geometry.height, 0, true);
 				} else {
 					myJTSDrawer.DrawLineString((LineString) geometry.geometry,
-							geometry.z, 1.2f, geometry.color, geometry.alpha);
+							geometry.z_layer, 1.2f, geometry.color, geometry.alpha);
 				}
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawSphere((Point) geometry.geometry,
-							geometry.z, geometry.height, geometry.color,
+							geometry.z_layer, geometry.height, geometry.color,
 							geometry.alpha);
 				} else {
 					myJTSDrawer
 							.DrawPoint(
 									(Point) geometry.geometry,
-									geometry.z,
+									geometry.z_layer,
 									10,
 									((JOGLAWTDisplayGraphics) myGLRender.displaySurface.openGLGraphics).maxEnvDim / 1000,
 									geometry.color, geometry.alpha);
@@ -119,44 +119,44 @@ public class BasicOpenGlDrawer {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
-						geometry.z, c, geometry.alpha, geometry.fill,
+						geometry.z_layer, c, geometry.alpha, geometry.fill,
 						geometry.angle, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
-							geometry.z, c, geometry.alpha, geometry.height,
+							geometry.z_layer, c, geometry.alpha, geometry.height,
 							geometry.angle, true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
-							geometry.z, c, geometry.alpha, geometry.fill,
+							geometry.z_layer, c, geometry.alpha, geometry.fill,
 							geometry.isTextured, geometry.angle, true);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
-						(MultiLineString) geometry.geometry, geometry.z, c,
+						(MultiLineString) geometry.geometry, geometry.z_layer, c,
 						geometry.alpha, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPlan((LineString) geometry.geometry,
-							geometry.z, c, geometry.alpha, geometry.height, 0,
+							geometry.z_layer, c, geometry.alpha, geometry.height, 0,
 							true);
 				} else {
 					myJTSDrawer.DrawLineString((LineString) geometry.geometry,
-							geometry.z, 1.2f, c, geometry.alpha);
+							geometry.z_layer, 1.2f, c, geometry.alpha);
 				}
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawSphere((Point) geometry.geometry,
-							geometry.z, geometry.height, c, geometry.alpha);
+							geometry.z_layer, geometry.height, c, geometry.alpha);
 				} else {
 					myJTSDrawer.DrawPoint((Point) geometry.geometry,
-							geometry.z, 10, geometry.height, c, geometry.alpha);
+							geometry.z_layer, 10, geometry.height, c, geometry.alpha);
 				}
 
 			}
