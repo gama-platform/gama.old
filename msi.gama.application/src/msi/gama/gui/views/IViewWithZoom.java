@@ -33,4 +33,9 @@ public interface IViewWithZoom {
 	 */
 	public void setSynchronized(boolean synchro);
 	
+	/**
+	 * Enable to load a .Shp file and display it
+	 */
+	public void addShapeFile();
+	
 }

@@ -411,4 +411,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
 
+	/**
+	 * This method does nothing for JAVA2D display
+	 */
+	@Override
+	public void addShapeFile() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

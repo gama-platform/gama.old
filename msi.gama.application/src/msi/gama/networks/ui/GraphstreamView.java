@@ -545,4 +545,13 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
 
+	/**
+	 * This method does nothing for Graphstream display
+	 */
+	@Override
+	public void addShapeFile() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

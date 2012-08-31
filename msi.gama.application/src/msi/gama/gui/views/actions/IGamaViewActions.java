@@ -30,5 +30,6 @@ public interface IGamaViewActions {
 	public final static int HIGHLIGHT_COLOR = 14;
 	public final static int CAMERA = 15;
 	public final static int PICKING = 16;
+	public final static int SHAPEFILE = 17;
 
 }
