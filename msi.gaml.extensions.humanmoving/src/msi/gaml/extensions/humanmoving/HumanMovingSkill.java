@@ -3,16 +3,13 @@ package msi.gaml.extensions.humanmoving;
 import java.util.Random;
 import java.util.Vector;
 
-
-import msi.gama.precompiler.GamlAnnotations.vars;
-
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -22,14 +19,16 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.factories.ModelFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.MovingSkill;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygonal;
+import com.vividsolutions.jts.geom.prep.PreparedPolygon;
 
-@vars( {} )
+//@vars( {} )
 /*
  * This class present the human moving skills. 1. wanderingAndAvoid: with this skill, the agent move
  * randomly and avoid the others 2. approach : with this skill, the agent move more and more near
@@ -398,7 +397,129 @@ public class HumanMovingSkill extends MovingSkill {
 		//return CommandStatus.running;
 	}
 	
-	
+// Version 1.5
+	/**
+	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that implements this
+	 * interface.
+	 * 
+	 * @param args the args speed (meter/sec) : the speed with which the agent wants to move
+	 *            distance (meter) : the distance the agent want to cover in one step amplitude (in
+	 *            degrees) : 360 or 0 means completely random move, while other values, combined
+	 *            with the heading of the agent, define the angle in which the agent will choose a
+	 *            new place. if the agent displace inside a specific geometry, the geometry (or an
+	 *            agent with a geometry) has to be specified
+	 * @return the prim CommandStatus
+	 */
+	@action(name = "blindWander2", args = {
+    		@arg(name = "speed",type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+    		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
+    		@arg(name = "background", type = IType.AGENT_STR, optional = true),
+    		@arg(name = "target", type = IType.AGENT_STR, optional = true)
+    })
+	public GamaPoint primMoveRandomlyBlindSimple(final IScope scope) throws GamaRuntimeException  {
+		
+		IAgent agent = (IAgent) getCurrentAgent(scope);
+		if ( agent.getAttribute("target") == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		}
+		boolean isInBackgroundAgent = false;
+		Object background = scope.getArg("background", IType.NONE);
+		IAgent backgroundAgent = null;
+		if ( background == null ) {
+			isInBackgroundAgent = false;
+		} else {
+			isInBackgroundAgent = true;
+			backgroundAgent = Cast.asAgent(scope, background);
+		}
+
+		//*****
+		final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
+		if ( s != null ) {
+			setSpeed(agent,s);
+		}
+		Double agentSize = scope.hasArg("agent_size") ? Cast.asFloat(scope,scope.getArg("agent_size", IType.FLOAT)) : null;
+		if ( agentSize == null ) {
+			agentSize = new Double(0);
+		}
+
+		final double maxDist = computeDistance(scope, agent);
+		double detectingRange = maxDist;
+		IAgent obj = (IAgent)agent.getAttribute("target");
+		ILocation target =obj.getLocation();//computeTarget(scope, agent);
+		if ( target == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+			return null;
+		}
+		//GamaPoint targetPoint = (GamaPoint) target;
+		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
+		GamaList<IAgent> neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
+		neighbours.remove(backgroundAgent);
+	//*****
+		boolean isFoundNextPoint = false;
+		GamaPoint nextPoint = null;
+				
+		GamaPoint candidatePoint[] = new GamaPoint[8];		
+		double sqrt2 = Math.sqrt(2);
+		
+		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+		candidatePoint[6] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+		candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+		candidatePoint[0] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		
+		int index = (new Random()).nextInt(8);
+		boolean freeSpace;		
+		PreparedPolygon backgdGeom = null;
+		if (isInBackgroundAgent) {
+			backgdGeom = new PreparedPolygon((Polygonal) backgroundAgent.getGeometry().getInnerGeometry());
+		}
+		for(int i=0; i<9; i++){
+			
+			GamaPoint point = candidatePoint[(i+index)%8];
+			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			//System.out.println("point : " + point+" candidat numero "+i);
+			
+			if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
+				//System.out.println("le point n'est pas dans le background");
+				continue;
+			}
+			//System.out.println("le point est dans le background !");
+			
+			PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
+		    freeSpace = true;
+			for (IAgent ag : neighbours) {
+				if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
+					freeSpace = false;
+					break;
+				}
+			}
+			//************************
+			//System.out.println("passedList avant d'ajouter le point" +passedList);
+			//*************************
+			if (freeSpace) {
+				isFoundNextPoint = true;
+				nextPoint = candidatePoint[(i+index)%8];
+				//body.getAgent().setVal("heading", GamaMath.checkHeading((i+index)%8));
+				break;
+			}
+		}
+		if (  !isFoundNextPoint ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		} 
+		if ( nextPoint != null ) {
+			agent.setLocation(nextPoint);
+		}
+		scope.setStatus(ExecutionStatus.success);
+		return (GamaPoint) agent.getLocation();
+		
+		
+	}
+//  end of version 1.5
 	
 	/**
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that implements this
@@ -565,7 +686,149 @@ public class HumanMovingSkill extends MovingSkill {
           return (GamaPoint) targetAgent.getLocation();
 	}
 	
+	@action(name = "blindStraightWander2", args = {
+    		@arg(name = "speed",type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+    		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
+    		@arg(name = "background", type = IType.AGENT_STR, optional = true),
+    		@arg(name = "direction", type = IType.INT_STR, optional = true),
+    		@arg(name = "target", type = IType.AGENT_STR, optional = true)
+    		})
+	public GamaPoint primMoveStraightBlindSimple(final IScope scope) throws GamaRuntimeException  {
+		//*****************************************************
+		IAgent agent = (IAgent) getCurrentAgent(scope);
+		if ( agent.getAttribute("target") == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		}
+		boolean isInBackgroundAgent = false;
+		Object background = scope.getArg("background", IType.NONE);
+		IAgent backgroundAgent = null;
+		if ( background == null ) {
+			isInBackgroundAgent = false;
+		} else {
+			isInBackgroundAgent = true;
+			backgroundAgent = Cast.asAgent(scope, background);
+		}
+
+		//*****
+		final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
+		if ( s != null ) {
+			setSpeed(agent,s);
+		}
+		Double agentSize = scope.hasArg("agent_size") ? Cast.asFloat(scope,scope.getArg("agent_size", IType.FLOAT)) : null;
+		if ( agentSize == null ) {
+			agentSize = new Double(0);
+		}
+
+		final double maxDist = computeDistance(scope, agent);
+		double detectingRange = maxDist;
+		IAgent obj = (IAgent)agent.getAttribute("target");
+		ILocation target =obj.getLocation();//computeTarget(scope, agent);
+		if ( target == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+			return null;
+		}
+		//GamaPoint targetPoint = (GamaPoint) target;
+		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
+		GamaList<IAgent> neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
+		neighbours.remove(backgroundAgent);
+	//*****
+		boolean isFoundNextPoint = false;
+		GamaPoint nextPoint = null;
+				
+		GamaPoint candidatePoint[] = new GamaPoint[8];		
+		double sqrt2 = Math.sqrt(2);
+		
+		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+		candidatePoint[6] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+		candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+		candidatePoint[0] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		
+		//********************************************************************************************		
+		boolean freeSpace;		
+		PreparedPolygon backgdGeom = null;
+		if (isInBackgroundAgent) {
+			backgdGeom = new PreparedPolygon((Polygonal) backgroundAgent.getGeometry().getInnerGeometry());
+		}
+		int count = 0;
+		boolean[] ok = new boolean[8];
+		for(int i=0; i<8; i++){
+			ok[i] = false;
+			GamaPoint point = candidatePoint[i];
+			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			//System.out.println("point : " + point+" candidat numero "+i);
+			
+			if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
+				//System.out.println("le point n'est pas dans le background");
+				continue;
+			}
+			//System.out.println("le point est dans le background !");
+			
+			PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
+		    freeSpace = true;
+			for (IAgent ag : neighbours) {
+				if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
+					freeSpace = false;
+					break;
+				}
+			}
+		
+			if (freeSpace) {
+				count++;
+				ok[i] = true;
+			}	
+	}
 	
+	int direction = (Integer) agent.getAttribute("direction");
+	if(ok[(direction)%8] && ok[(1+direction)%8] && ok[(7+direction)%8] ){
+		int tmp = (new Random()).nextInt(7);
+		switch(tmp){
+		case 0: 
+			nextPoint = candidatePoint[(1+direction)%8]; 
+			agent.setAttribute("direction", (1+direction)%8);
+			break;
+		case 1:	
+			nextPoint = candidatePoint[(7+direction)%8]; 
+			agent.setAttribute("direction", (7+direction)%8);
+			break;
+		default: 
+			nextPoint = candidatePoint[(direction)%8]; 
+			agent.setAttribute("direction",(direction)%8);
+			break;
+		}
+		isFoundNextPoint = true;
+	
+	}else{
+		
+		int tmp = (new Random()).nextInt(2);
+		int index = -1;
+		if (tmp > 0) index = 1;
+				
+		for(int i=0; i<8; i++){
+					if ( ok[(8+i*index+direction)%8] ) {
+						isFoundNextPoint = true;
+						nextPoint = candidatePoint[(8+i*index+direction)%8];
+						agent.setAttribute("direction",(8+i*index+direction)%8);
+						break;
+						}
+		}
+	}
+
+		if ( !isFoundNextPoint ) {
+			 scope.setStatus(ExecutionStatus.failure);
+             return (GamaPoint) agent.getLocation();
+		}
+		
+		if ( nextPoint != null ) {
+			agent.setLocation(nextPoint);
+		}
+		  scope.setStatus(ExecutionStatus.running);
+          return (GamaPoint) agent.getLocation();
+	}
 	/**
 	 * nmhung 1 Prim: move randomly in smokes or blackness. Has to be redefined for every class that implements this
 	 * interface.
@@ -858,7 +1121,296 @@ public class HumanMovingSkill extends MovingSkill {
          return (GamaPoint) agent.getLocation();
 	}
 	
+	//************
+	@action(name = "blindWallTracking2", args = {
+    		@arg(name = "speed",type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+    		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
+    		@arg(name = "background",type = IType.AGENT_STR, optional = true),
+    		@arg(name = "passedList", type = IType.LIST_STR, optional = true),
+    		@arg(name = "target", type = IType.AGENT_STR, optional = true)
+    })
+	public GamaPoint primMoveWallTrackingBlindSimple(final IScope scope) throws GamaRuntimeException  {
+
+		IAgent agent = (IAgent) getCurrentAgent(scope);
+		if ( agent.getAttribute("target") == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		}
+		boolean isInBackgroundAgent = false;
+		Object background = scope.getArg("background", IType.NONE);
+		IAgent backgroundAgent = null;
+		if ( background == null ) {
+			isInBackgroundAgent = false;
+		} else {
+			isInBackgroundAgent = true;
+			backgroundAgent = Cast.asAgent(scope, background);
+		}
+
+		//*****
+		final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
+		if ( s != null ) {
+			setSpeed(agent,s);
+		}
+		Double agentSize = scope.hasArg("agent_size") ? Cast.asFloat(scope,scope.getArg("agent_size", IType.FLOAT)) : null;
+		if ( agentSize == null ) {
+			agentSize = new Double(0);
+		}
+		IAgent obj = (IAgent)agent.getAttribute("target");
+		ILocation target = obj.getLocation();//computeTarget(scope, agent);
+		if ( target == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+			return null;
+		}
+		int direction = 0;
+		GamaList<GamaPoint> passedList =  (GamaList<GamaPoint>) agent.getAttribute("passedList");//args.listValue("passedList");
+		
+				
+		if(passedList == null){
+			passedList = new GamaList<GamaPoint>();
+		}else{	
+		//	System.out.println("longueur de passedList : "+passedList.length());
+			if (passedList.length() == 5)
+				passedList = new GamaList<GamaPoint>();
+		}
+		
+		final double maxDist = getSpeed(agent) * SimulationClock.getStep();//timeStep;
+		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
+		GamaPoint targetPoint = (GamaPoint) target.getLocation();
+		
+		double distanceToTarget = Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) + 
+				(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));
+		
+		double tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
+		double tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+			
+		if(tmpx > startingPoint.x){
+			if(tmpy > startingPoint.y)
+				direction = 3;
+			else if(tmpy < startingPoint.y)
+				direction = 1;
+			else
+				direction = 2;
+		}else if(tmpx < startingPoint.x){
+			if(tmpy > startingPoint.y)
+				direction = 5;
+			else if(tmpy < startingPoint.y)
+				direction = 7;
+			else
+				direction = 6;
+		}else{
+			if(tmpy > startingPoint.y)
+				direction = 4;
+			else 
+				direction = 0;
+		}						
+		
+		double detectingRange = agentSize + maxDist;
+		GamaList<IAgent> neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
+		neighbours.remove(backgroundAgent);		
+		
+		boolean isFoundNextPoint = false;
+		GamaPoint nextPoint = null;
+				
+		GamaPoint candidatePoint[] = new GamaPoint[8];		
+		double sqrt2 = Math.sqrt(2);
+		
+		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+		candidatePoint[6] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+		candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+		candidatePoint[0] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		
+		int count = 0;
+		boolean[] ok = new boolean[8];
+		boolean freeSpace;		
+		PreparedPolygon backgdGeom = null;
+		if (isInBackgroundAgent) {
+			backgdGeom = new PreparedPolygon((Polygonal) backgroundAgent.getGeometry().getInnerGeometry());
+		}
+		for(int i=0; i<8; i++){
+			ok[i] = false;
+			GamaPoint point = candidatePoint[i];
+			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			//System.out.println("point : " + point+" candidat numero "+i);
+			
+			if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
+				//System.out.println("le point n'est pas dans le background");
+				continue;
+			}
+			//System.out.println("le point est dans le background !");
+			
+			PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
+		    freeSpace = true;
+			for (IAgent ag : neighbours) {
+				if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
+					freeSpace = false;
+					break;
+				}
+			}
+		
+			if (freeSpace) {
+				count++;
+				ok[i] = true;
+			}
+		}
+		
+		if((count == 8)||(ok[(direction)%8] && ok[(1+direction)%8] && ok[(7+direction)%8])){
+			nextPoint = candidatePoint[(direction)%8]; //break;
+			isFoundNextPoint = true;
+		
+		} else {			
+			for(int i=0; i<5; i++){
+				if ( (ok[(i+direction)%8]) && (!ok[(i+1+direction)%8])) {
+						isFoundNextPoint = true;
+						nextPoint = candidatePoint[(i+direction)%8];
+						break;
+				}
+				if ( (!ok[(i+direction)%8]) && ok[(i+1+direction)%8]) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(i+1+direction)%8];
+					break;
+				}
+				if ( ok[(8-i+direction)%8] && (!ok[(7-i+direction)%8])) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(8-i+direction)%8];
+					break;
+				}
+				if ( (!ok[(8-i+direction)%8]) && ok[(7-i+direction)%8]) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(7-i+direction)%8];
+					break;
+				}
+			}
+		}
+		//System.out.println("voici le next point" + nextPoint);
+		if (isInLoop(passedList)) {
+			while ((direction < 7) && (direction >=0)) {
+				direction++;
+				if (ok[direction]) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[direction%8];
+					break;
+				}
+				
+			}
+		}
+		/*
+		if(!isNotRepeat(nextPoint, passedList)){
+			tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
+			tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+			/*
+			if(passedList != null){
+				if(passedList.size()>4){
+					GamaPoint pp0 = passedList.get(0);
+					GamaPoint pp2 = passedList.get(3);
+					double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
+					tmpx = startingPoint.x + maxDist*(pp0.x - pp2.x)/ds;
+					tmpy = startingPoint.y + maxDist*(pp0.y - pp2.y)/ds;
+				}
+			}*
+					
+			if(tmpx > startingPoint.x){
+				if(tmpy > startingPoint.y)
+					direction = 3;
+				else if(tmpy < startingPoint.y)
+					direction = 1;
+				else
+					direction = 2;
+			}else if(tmpx < startingPoint.x){
+				if(tmpy > startingPoint.y)
+					direction = 5;
+				else if(tmpy < startingPoint.y)
+					direction = 7;
+				else
+					direction = 6;
+			}else{
+				if(tmpy > startingPoint.y)
+					direction = 4;
+				else 
+					direction = 0;
+			}
+			
+			for(int i=0; i<8; i++){
+				ok[i] = false;
+				GamaPoint point = candidatePoint[i];
+				Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+				//System.out.println("point : " + point+" candidat numero "+i);
+				
+				if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
+					System.out.println("le point n'est pas dans le background");
+					continue;
+				}
+				System.out.println("le point est dans le background !");
+				
+				PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
+			    freeSpace = true;
+				for (IAgent ag : neighbours) {
+					if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
+						freeSpace = false;
+						break;
+					}
+				}
+			
+				if (freeSpace) {
+					count++;
+					ok[i] = true;
+				}
+		}
+		
+		if((count == 8)||(ok[(direction)%8] && ok[(1+direction)%8] && ok[(7+direction)%8] && (ok[(2+direction)%8] || ok[(6+direction)%8]))){
+			int tmp = (new Random()).nextInt(15);
+			switch(tmp){
+			case 1: nextPoint = candidatePoint[(1+direction)%8]; break;
+			case 2:	nextPoint = candidatePoint[(7+direction)%8]; break;
+			default: nextPoint = candidatePoint[(direction)%8]; break;
+			}
+			isFoundNextPoint = true;
+		
+		}else{
+			
+			for(int i=0; i<5; i++){
+				if ( (ok[(i+direction)%8]) && (!ok[(i+1+direction)%8])) {
+						isFoundNextPoint = true;
+						nextPoint = candidatePoint[(i+direction)%8];
+						break;
+				}
+				if ( (!ok[(i+direction)%8]) && ok[(i+1+direction)%8]) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(i+1+direction)%8];
+					break;
+				}
+				if ( ok[(8-i+direction)%8] && (!ok[(7-i+direction)%8])) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(8-i+direction)%8];
+					break;
+				}
+				if ( (!ok[(8-i+direction)%8]) && ok[(7-i+direction)%8]) {
+					isFoundNextPoint = true;
+					nextPoint = candidatePoint[(7-i+direction)%8];
+					break;
+				}
+			}
+		}
+		}
+		*/
+
+		if ( !isFoundNextPoint ) {
+			 scope.setStatus(ExecutionStatus.failure);
+             return (GamaPoint) agent.getLocation();
+		}
 	
+		if ( nextPoint != null ) {			
+			agent.setLocation(nextPoint);
+			passedList.add(nextPoint);
+			agent.setAttribute("passedList", passedList);
+		}
+		 scope.setStatus(ExecutionStatus.running);
+         return (GamaPoint) agent.getLocation();
+	}
+	//*************
 	private boolean isNotRepeat(GamaPoint startingPoint, GamaList<GamaPoint> passedList){
 				
 		if((startingPoint != null) && (passedList != null)){
@@ -1059,35 +1611,53 @@ public class HumanMovingSkill extends MovingSkill {
 	@action(name = "approachAvoidPassedPosition", args = {
     		@arg(name = "speed",type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
     		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-    		@arg(name = "background",type = IType.AGENT_STR, optional = true),
+    		@arg(name = "background", type = IType.AGENT_STR, optional = true),
     		@arg(name = "target", type = IType.AGENT_STR, optional = true),
     		@arg(name = "passedList", type = IType.LIST_STR, optional = true),
     })
 	public GamaPoint primMoveToTargetAndAvoidPassedPosition(final IScope scope) throws GamaRuntimeException  {
 
-		final Object target = scope.getArg("target",IType.AGENT);
-		IAgent targetAgent = (IAgent) target;
-		IAgent agent = (IAgent) getCurrentAgent(scope);
-		//final Object target = args.value("target");
-		if ( target == null ) {
-			scope.setStatus(ExecutionStatus.failure);
-            return (GamaPoint) targetAgent.getLocation();
-		}
-		//if ( targetAgent.getBody().getGeometry().contains(body.getGeometry()) ) { return CommandStatus.success; }
 		
-		final Object background = scope.getArg("background",IType.AGENT);
-		boolean isInBackgroundAgent;
+		IAgent test = scope.getAgentScope();
+		Object target = test.getAgent().getAttribute("");
+		IAgent targetAgent = (IAgent) target; 
+		
+		IAgent agent = (IAgent) getCurrentAgent(scope);
+		
+		//final Object target = args.value("target");
+		if ( agent.getAttribute("goal") == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		}
+	//	final Object background = agent.getAgent().getAttribute("metro");
+	//	IAgent back = (IAgent)background;
+		//if ( targetAgent.getBody().getGeometry().contains(body.getGeometry()) ) { return CommandStatus.success; }
+		/*final Object background = scope.getVarValue("background");
+		Object vitesse = scope.getVarValue("speed");
+		Object agent_size = scope.getVarValue("agent_size");
+		Object backg = scope.getVarValue("goal");
+		
+		Object age1 = scope.getArg("background",IType.SPECIES);
+		GamlAgent age3 = (GamlAgent)scope.getArg("background",IType.AGENT);
+		Object age4 = scope.getArg("vitesse",IType.FLOAT);
+		
+			Double fl = scope.getFloatArg("speed");
+		//	IAgent ia = scope.getAgentVarValue(agent, "background");
+	//	float flo = (Float)age4;
+		GamlSpecies agg = (GamlSpecies) background;IAgent c= agg.;
+		boolean boul = agg.containMicroSpecies(agent.getSpecies());
+		IAgent iagg = agent.getAgent();*/
+		boolean isInBackgroundAgent = false;
+		Object background = scope.getArg("background", IType.NONE);
 		IAgent backgroundAgent = null;
-
 		if ( background == null ) {
 			isInBackgroundAgent = false;
 		} else {
 			isInBackgroundAgent = true;
-			backgroundAgent = (IAgent) background;
+			backgroundAgent = Cast.asAgent(scope, background);
 		}
 
-		 final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
-			//final Double s = args.floatValue("speed");
+		final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
 			if ( s != null ) {
 				setSpeed(agent,s);
 			}
@@ -1109,29 +1679,37 @@ public class HumanMovingSkill extends MovingSkill {
 		double detectingRange = agentSize + maxDist;
 		//double epsilon = maxDist/3;
 
-		if ( targetAgent.getInnerGeometry().contains(targetAgent.getInnerGeometry()) ) { 
+		/*if ( targetAgent.getInnerGeometry().contains(targetAgent.getInnerGeometry()) ) { 
 		scope.setStatus(ExecutionStatus.running);
         return (GamaPoint) agent.getLocation(); 
-        }
+        }*/
 
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
-
+		IAgent metro = null;
 		GamaPoint targetPoint = (GamaPoint) targetAgent.getLocation();
 		// OutputManager.debug("Target " + targetPoint.x + " : " + targetPoint.y);
 		//OutputManager.debug("Detecting range : "+ detectingRange);
 		GamaList<IAgent> neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
-		if ( isInBackgroundAgent ) {
-			neighbours.remove(backgroundAgent);
-		}
+		//if (neighbours.contains())
+		//neighbours.remove("metro0");
+		//if ( isInBackgroundAgent ) {
+		//;//	neighbours.remove(backgroundAgent);
+		//}
 		//neighbours.remove(body);
-		 for ( int i = 0; i < neighbours.size(); i++ ) {
+		/* for ( int i = 0; i < neighbours.size(); i++ ) {
              IAgent entity = neighbours.get(i);
              if ( entity.getSpeciesName().equals(targetAgent.getSpeciesName()) ) {
                      neighbours.remove(i);
              }
+           
+             if (entity.getSpeciesName().equals("metro")) {
+            	 metro = neighbours.get(i);
+            	 neighbours.remove(i);
+             }
 
 		 }
-		
+		*/
+		neighbours.remove(backgroundAgent);
 		/**
 		for ( int i = 0; i < neighbours.size(); i++ ) {
 			try {
@@ -1167,13 +1745,13 @@ public class HumanMovingSkill extends MovingSkill {
 		double distanceToTarget = Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) + 
 				(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));
 		
-		double tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
-		double tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+		double tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget; //cos(alpha)
+		double tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget; //sin(alpha)
 		candidatePoint[0] = new GamaPoint(tmpx,tmpy);
 		
 		double sqrt2 = Math.sqrt(2);
 		
-		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2); 
 		candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
 		candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
 		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
@@ -1183,11 +1761,15 @@ public class HumanMovingSkill extends MovingSkill {
 		candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
 		
 		boolean isFreeZone = true;
+		/*****/
 		
+		//boolean bool = metro.contains(agent);
+		/****/
 		for(int i=0; i<9; i++){
-				Geometry point = GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
+				Geometry point = GeometryUtils.getFactory().createPoint(candidatePoint[i]).buffer(agentSize);
 				if ( isInBackgroundAgent ) {
-					if ( //!isExteriorOfAgents(neighbours, point) ||
+					String ss= point.toString();
+					if ( !isExteriorOfAgents(neighbours, point) ||
 							!backgroundAgent.getInnerGeometry().contains(point) ) {
 						isFreeZone = false;
 						break;
@@ -1285,8 +1867,8 @@ public class HumanMovingSkill extends MovingSkill {
 			if(!isPassedPoint){
 				Geometry point = GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate()).buffer(agentSize);
 				if ( isInBackgroundAgent ) {
-					if ( isExteriorOfAgents(neighbours, point) &&
-						backgroundAgent.getInnerGeometry().contains(point) ) {
+					if ( isExteriorOfAgents(neighbours, point) /*&&
+						backgroundAgent.getInnerGeometry().contains(point)*/ ) {
 						isFoundNextPoint = true;
 						nextPoint = candidatePoint[i];
 						break;
@@ -1401,6 +1983,234 @@ public class HumanMovingSkill extends MovingSkill {
 	
 	
 	
+	protected double computeDistance(final IScope scope, final IAgent agent)
+			throws GamaRuntimeException {
+			// We do not change the speed of the agent anymore. Only the current primitive is affected
+			Double s =
+				scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
+			// 20/1/2012 Change : The speed of the agent is multiplied by the timestep in order to
+			// obtain the maximal distance it can cover in one step.
+			return s * SimulationClock.getStep()/* getTimeStep(scope) */;
+		}
+
+	
+	/**
+	 * nmhung 2 Prim: move to the nearest named object (can be an agent or a GIS object) of a type and avoid the passed postions .
+	 * 
+	 * @param args the args, contain at least a parameter called "target". Another parameter can be
+	 *            "speed". if the agent displace inside a specific geometry, several other
+	 *            parameters have to be added: either the name of a precomputed graph "graph_name",
+	 *            a agent, or a geometry. In case where no graph is available, the choice of the
+	 *            discretisation method can be made between a triangulation and a square
+	 *            discretisation through the boolean "triangulation". At least for the square
+	 *            discretisation, a square size has to be chosen "square_size".
+	 * 
+	 * @return the success, failure, running state of the action
+	 */
+	@action(name = "approachAvoidPassedPosition2", args = {
+    		@arg(name = "speed",type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+    		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
+    		@arg(name = "background", type = IType.AGENT_STR, optional = true),
+    		@arg(name = "target", type = IType.AGENT_STR, optional = true),
+    		@arg(name = "passedList", type = IType.LIST_STR, optional = true),
+    })
+	public GamaPoint primMoveToTargetAndAvoidPassedPositionSimple(final IScope scope) throws GamaRuntimeException  {
+		
+		IAgent agent = (IAgent) getCurrentAgent(scope);
+		if ( agent.getAttribute("target") == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		}
+		boolean isInBackgroundAgent = false;
+		Object background = scope.getArg("background", IType.NONE);
+		IAgent backgroundAgent = null;
+		if ( background == null ) {
+			isInBackgroundAgent = false;
+		} else {
+			isInBackgroundAgent = true;
+			backgroundAgent = Cast.asAgent(scope, background);
+		}
+
+		final Double s = scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed",IType.FLOAT)): null;
+			if ( s != null ) {
+				setSpeed(agent,s);
+			}
+		Double agentSize = scope.hasArg("agent_size") ? Cast.asFloat(scope,scope.getArg("agent_size", IType.FLOAT)) : null;
+		if ( agentSize == null ) {
+			agentSize = new Double(0);
+		}
+
+		final double maxDist = computeDistance(scope, agent);
+		double detectingRange = maxDist;
+		IAgent obj = (IAgent)agent.getAttribute("target");
+		ILocation target =obj.getLocation();//computeTarget(scope, agent);
+		if ( target == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+			return null;
+		}
+		GamaPoint targetPoint = (GamaPoint) target;
+		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
+		GamaList<IAgent> neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
+		neighbours.remove(backgroundAgent);
+		GamaPoint candidatePoint[] = new GamaPoint[9];
+		double distanceToTarget = Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) + 
+				(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));//Math.sqrt(Math.pow((targetPoint.y - startingPoint.y), 2)  + Math.pow((targetPoint.x - startingPoint.x), 2));
+		
+		double tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
+		double tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+		candidatePoint[0] = new GamaPoint(tmpx,tmpy);
+		
+		double sqrt2 = Math.sqrt(2);
+		
+		candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+		candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+		candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+		candidatePoint[6] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+		candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+		candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+		
+		// modification of candidates point
+		 
+		//////
+		PreparedPolygon backgdGeom = null;
+		if (isInBackgroundAgent) {
+			backgdGeom = new PreparedPolygon((Polygonal) backgroundAgent.getGeometry().getInnerGeometry());
+		}
+		GamaPoint newLocation = null;
+	//	System.out.println("**************************************\nlocation : " + startingPoint +  "  target : " + target);
+		//******
+		 GamaList<GamaPoint> passedList =  ((GamaList<GamaPoint>) agent.getAttribute("passedList"));//agent.getAttribute("passedList"));
+
+		//****
+		boolean freeSpace = false;
+		int i = -1;
+		while (i < 8){
+			i++;
+				GamaPoint point = candidatePoint[i];
+				Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			//	System.out.println("point : " + point+" candidat numero "+i);
+				
+				if (backgdGeom != null && ! backgdGeom.contains(geomCand)) {
+				//	System.out.println("le point n'est pas dans le background");
+					continue;
+				}
+				//System.out.println("le point est dans le background !");
+				
+				PreparedPolygon geomCandOpt = new PreparedPolygon((Polygonal)geomCand);
+			    freeSpace = true;
+				for (IAgent ag : neighbours) {
+					if (! geomCandOpt.disjoint(ag.getInnerGeometry())) {
+						freeSpace = false;
+						break;
+					}
+				}
+				//************************
+				//*************************
+				if (freeSpace) {
+			//		System.out.println("le place est libre !");
+					if (passedList == null) 
+						passedList = new GamaList<GamaPoint>();
+					if ((alreadyVisited(passedList))) {
+				//		System.out.println("on a une boucle "+passedList);
+						agent.setAttribute("changeDirection", true);
+						
+					//	System.out.println("changement de l'attribut en true puis break");
+						/*i = -1;
+						//********************
+						obj = (IAgent)agent.getAttribute("target");
+						target =obj.getLocation();//computeTarget(scope, agent);
+						if ( target == null ) {
+							scope.setStatus(ExecutionStatus.failure);
+							return null;
+						}
+						targetPoint = (GamaPoint) target;
+						startingPoint = (GamaPoint) agent.getLocation();
+						neighbours = (GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange, Different.with());
+						neighbours.remove(backgroundAgent);
+						candidatePoint = new GamaPoint[9];
+						distanceToTarget = Math.sqrt((targetPoint.y - startingPoint.y) * (targetPoint.y - startingPoint.y) + 
+								(targetPoint.x - startingPoint.x) * (targetPoint.x - startingPoint.x));//Math.sqrt(Math.pow((targetPoint.y - startingPoint.y), 2)  + Math.pow((targetPoint.x - startingPoint.x), 2));
+						
+						tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
+						tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+						candidatePoint[0] = new GamaPoint(tmpx,tmpy);
+						
+						sqrt2 = Math.sqrt(2);
+						
+						candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+						candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+						candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+						candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+						candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+						candidatePoint[6] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+						candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+						candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+						*///************************
+						/*GamaPoint pp0 = passedList.get(0);
+						GamaPoint pp2 = passedList.get(3);
+						double ds = Math.sqrt((pp0.y - pp2.y) * (pp0.y - pp2.y) + (pp0.x - pp2.x) * (pp0.x - pp2.x));
+						tmpx = startingPoint.x + maxDist*(targetPoint.x - startingPoint.x)/distanceToTarget;
+						tmpy = startingPoint.y + maxDist*(targetPoint.y - startingPoint.y)/distanceToTarget;
+						candidatePoint[0] = new GamaPoint(tmpx,tmpy);
+						// loop
+						candidatePoint[1] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+						candidatePoint[8] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+						candidatePoint[2] = new GamaPoint(startingPoint.x + maxDist, startingPoint.y);
+						candidatePoint[7] = new GamaPoint(startingPoint.x - maxDist, startingPoint.y );
+						candidatePoint[4] = new GamaPoint(startingPoint.x, startingPoint.y + maxDist);
+						candidatePoint[6] = new GamaPoint(startingPoint.x, startingPoint.y - maxDist);
+						candidatePoint[3] = new GamaPoint(startingPoint.x + maxDist/sqrt2, startingPoint.y - maxDist/sqrt2);
+						candidatePoint[5] = new GamaPoint(startingPoint.x - maxDist/sqrt2, startingPoint.y + maxDist/sqrt2);
+							
+						///////
+						i =0;*/
+						passedList = new GamaList<GamaPoint>();
+						agent.setAttribute("passedList", passedList);
+						break;
+					} else {
+							if ((passedList.length() == 4)) {
+								passedList = new GamaList<GamaPoint>();
+							}
+							GamaPoint gm= new GamaPoint(i,0);//
+							passedList.add(gm);
+						//	System.out.println("stockage dans la passedlist "+passedList+" longueur "+passedList.length());
+							agent.setAttribute("passedList", passedList);
+						
+					}
+					newLocation = point;
+					break;
+				}
+			
+		}
+		
+		if ( newLocation == null ) {
+			scope.setStatus(ExecutionStatus.failure);
+            return (GamaPoint) agent.getLocation();
+		} 
+        agent.setLocation(newLocation);
+		scope.setStatus(ExecutionStatus.success);
+		return (GamaPoint) agent.getLocation();
+	}
+	private boolean alreadyVisited(GamaList<GamaPoint> list) {
+		if (list.length() == 4) {
+			;
+			if ((list.get(0).getX() == list.get(2).getX()) && (list.get(1).getX() == list.get(3).getX()) && list.get(0).getX() != list.get(1).getX()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean isInLoop(GamaList<GamaPoint> list) {
+		if (list.length() == 4) {
+			;
+			if ((list.get(0).getX() == list.get(2).getX()) && (list.get(1).getX() == list.get(3).getX()) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * LvMinh 3
@@ -1455,5 +2265,10 @@ public class HumanMovingSkill extends MovingSkill {
 		}
 		return true;
 	}
+	
+	/**
+	 * 
+	 */
+	
 
 }
