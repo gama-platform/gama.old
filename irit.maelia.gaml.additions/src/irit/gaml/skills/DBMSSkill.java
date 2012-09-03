@@ -28,7 +28,7 @@ import msi.gaml.types.IType;
 @skill(name = "MAELIADBMS")
 public class DBMSSkill extends Skill {
 
-	static final boolean DEBUG = true; // Change DEBUG = false for release version
+	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	/*
 	 * for test only

@@ -430,6 +430,7 @@ public class SqlConnection {
 			 
 			     return dbGeometry;			 }
 			
+			
 			public Geometry read(ResultSet rs, int index) throws IOException
 			{
 				return new WKBAttributeIO().read(rs, index);
