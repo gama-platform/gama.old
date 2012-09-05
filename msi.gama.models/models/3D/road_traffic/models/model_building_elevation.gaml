@@ -115,6 +115,7 @@ experiment road_traffic type: gui {
 			species people aspect: base ;
 			species building aspect:base ;
 		}
+		save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
 	}
 }
 

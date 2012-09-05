@@ -9,7 +9,6 @@ model testmodel
 global {
 	/** Insert the global definitions, variables and actions here */
 	file shape_file_metro <- file(project_path + 'model_evacuation_fire/includes/metro.shp');
-	file shape_file_instruction <- file(project_path + 'model_evacuation_fire/includes/instruction-generated.shp');
 	int reachToGoal <- 0;
 	int died <-0;
 	int max_fire_duration <- 30 parameter: 'the maximum duration of fire';
@@ -56,13 +55,58 @@ global {
 				set indice <- indice + 1;
 			}
 		 }
-		 
-		create instruction from: shape_file_instruction; 
-		loop instr over: instruction as list{
-			set instr.direction <- list(principalGoal) with_min_of (each distance_to instr);
+		let list_instruction_location <-[{24,42},{64,42},{80,120},{80,186},{315,47},{315,105},{317,184}];
+		 loop loc over: list_instruction_location {
+		 	create instruction number:1 {
+				set location <- loc;
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+		 }
+		/* Creation agents which represent goals */		
+		loop i from: 0 to: 7 {
+			create instruction number:1 {
+				set location <- point(20::65+15.5*i);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+			create instruction number:1 {
+				set location <- point(50::65+15.5*i);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
 		}
-		 
-
+		loop i from: 0 to: 2 {
+			create instruction number:1 {
+				set location <- point(20::192+15.5*i);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+			create instruction number:1 {
+				set location <- point(50::192+15.5*i);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+		}
+		loop i from: 0 to: 11 {
+			let list_oordonne <- [70,100,135,165,200,230];
+			loop ord over: list_oordonne {
+				create instruction number:1 {
+					set location <- point(103.5 + (17.5*i)::ord);
+					set direction <- list(principalGoal) with_min_of (each distance_to self);
+					// optimisation of agents
+					if (direction.name = "exit7") {
+						set direction <- one_of(principalGoal);
+					}
+				}
+			}
+			
+		}
+		loop i from: 0 to: 5 {
+			create instruction number:1 {
+				set location <- point(20 + 30*i::252);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+			create instruction number:1 {
+				set location <- point(200 + 30*i::252);
+				set direction <- list(principalGoal) with_min_of (each distance_to self);
+			}
+		}
 		/* Creation agents which represent fire */
 		/**create fire number:3 {
 			set location <- point(180::150);
@@ -115,7 +159,7 @@ global {
 				}
 			}
 			
-			save species: instruction to: (project_path + 'model_evacuation_fire/includes/instruction-generated.shp') type: "shp" ;
+		save species: instruction to: (project_path + 'model_evacuation_fire/includes/instruction-generated.shp') type: "shp" ;
 	}
 }
 
