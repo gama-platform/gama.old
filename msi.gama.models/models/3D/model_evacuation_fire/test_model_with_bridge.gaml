@@ -8,6 +8,7 @@ model testmodel
 
 global {
 	/** Insert the global definitions, variables and actions here */
+	file shape_file_bound <- file(project_path + 'model_evacuation_fire/includes/big_bound.shp');
 	file shape_file_metro <- file(project_path + 'model_evacuation_fire/includes/metro.shp');
 	file shape_file_instruction <- file(project_path + 'model_evacuation_fire/includes/instruction-generated.shp');
 	int reachToGoal <- 0;
@@ -43,7 +44,17 @@ global {
 		do halt;
 	} 
 	init {
-		create metro from: shape_file_metro;
+		//create metro from: shape_file_metro;
+		
+		
+		let geom <- geometry(shape_file_metro);
+		let listes_locations <- [{200.0, 250.0}, {400.0, 500.0}, {600.0, 750.0}]; // une liste connue de points (must be contained in the environment)
+		loop loc over: listes_locations {
+		        create species: metro number: 1  with: [shape::geom] {
+		                set shape <- shape at_location loc;
+		                set shape <- shape add_z (100+rnd(500));
+		}}
+		
 		set the_metro <- first(metro as list);
 		
 		 let list_goal_location <-[{40,2},{130,2},{255,2},{2,120},{2,248},{375,70},{375,145},{375,248}];
@@ -60,6 +71,18 @@ global {
 		create instruction from: shape_file_instruction; 
 		loop instr over: instruction as list{
 			set instr.direction <- list(principalGoal) with_min_of (each distance_to instr);
+		}
+		
+		create bridge number: 1{
+			let metro_list <- (metro as list);
+			set src <- metro_list at 0;
+			set dest <- metro_list at 1;
+		}
+		
+		create bridge number: 1{
+			let metro_list <- (metro as list);
+			set src <- metro_list at 1;
+			set dest <- metro_list at 2;
 		}
 		 
 
@@ -115,11 +138,10 @@ global {
 				}
 			}
 			
-
 	}
 }
 
-environment bounds: shape_file_metro;
+environment bounds: shape_file_bound;
 
 entities {
 	/** Insert here the definition of the species of agents */
@@ -143,6 +165,15 @@ entities {
 		principalGoal direction;
 		aspect base {
         	draw geometry: rectangle({11,2}) color: color ;
+     	}
+	}
+	
+	species bridge{
+		rgb color <- rgb('blue');
+		metro src;
+		metro dest;
+		aspect base {
+        	draw geometry: line([src.location, dest.location]) color: color ;
      	}
 	}
 	
@@ -390,6 +421,7 @@ experiment testmodel type: gui {
 			species metro aspect: base ;
 			species principalGoal aspect: base ;
 			species instruction aspect: base ;
+			species bridge aspect:base;
 			//species fire aspect: base ;
 			//species smoke aspect: base ;
 			species people aspect: base ;			
@@ -419,6 +451,7 @@ experiment testmodel3D type: gui {
 			species metro aspect: base ;
 			species principalGoal aspect: base ;
 			species instruction aspect: base ;
+			species bridge aspect:base;
 			species fire aspect: base ;
 			species smoke aspect: base ;
 			species people aspect: base ;			

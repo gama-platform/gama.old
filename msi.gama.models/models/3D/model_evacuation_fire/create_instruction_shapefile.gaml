@@ -8,6 +8,7 @@ model testmodel
 
 global {
 	/** Insert the global definitions, variables and actions here */
+	file shape_file_bound <- file(project_path + 'model_evacuation_fire/includes/big_bound.shp');
 	file shape_file_metro <- file(project_path + 'model_evacuation_fire/includes/metro.shp');
 	int reachToGoal <- 0;
 	int died <-0;
@@ -163,7 +164,7 @@ global {
 	}
 }
 
-environment bounds: shape_file_metro;
+environment bounds: shape_file_bound;
 
 entities {
 	/** Insert here the definition of the species of agents */
