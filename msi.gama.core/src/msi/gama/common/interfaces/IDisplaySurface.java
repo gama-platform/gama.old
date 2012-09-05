@@ -152,4 +152,6 @@ public interface IDisplaySurface {
 
 	void setHighlightColor(int[] rgb);
 
+	void addShapeFile();
+
 }
