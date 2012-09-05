@@ -1,7 +1,7 @@
 model circle   
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 ;
 	int radius_of_circle parameter: 'Radius of Circle' min: 10 <- 60 ;
 	int repulsion_strength parameter: 'Strength of Repulsion' min: 1 <- 5 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 ; 

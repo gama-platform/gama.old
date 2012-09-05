@@ -55,7 +55,7 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ; 
 		aspect base {
-			draw geometry: shape color: color z: 100 ;
+			draw geometry: shape color: color  z:100 ;
 		}
 	}
 	species road  {
@@ -116,12 +116,13 @@ experiment road_traffic type: gui {
 	parameter 'minimal speed' var: min_speed category: 'People' ;
 	parameter 'maximal speed' var: max_speed category: 'People' ;
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
+
 	
 	output {
 		display city_display refresh_every: 1 type: opengl{
 			species road aspect: base z:0;
-			species building aspect:base z:0.5 transparency: 0.5;
-			species people aspect: base z:1;
+			species building aspect:base z:0.25 transparency: 0.5;
+			species people aspect: base z:0.5;
 		}
 	}
 }

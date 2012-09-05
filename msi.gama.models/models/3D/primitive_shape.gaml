@@ -189,6 +189,22 @@ experiment display  type: gui {
 			species myCube aspect:3D ; 
 			species myPolyhedron aspect:3D ;
 			
+			
+			
+			
+			species myPoint aspect:2D z:0.5;
+			species myLine aspect:2D z:0.5;
+			species myMultiLine aspect:2D z:0.5;
+			species mySquare aspect:2D z:0.5;
+			species myPolygon aspect:2D z:0.5;
+			species myTexture aspect:image z:0.5;
+			
+			species mySphere aspect:3D z:0.5;
+			species myPlan aspect:3D z:0.5;
+			species myMultiPlan aspect:3D z:0.5;
+			species myCube aspect:3D z:0.5; 
+			species myPolyhedron aspect:3D z:0.5;
+			
 			/*species myPoint aspect:2D position: {20,20};
 			species myLine aspect:2D position: {20,20};
 			species myMultiLine aspect:2D position: {20,20};
