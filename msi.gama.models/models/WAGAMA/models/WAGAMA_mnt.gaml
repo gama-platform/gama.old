@@ -108,7 +108,7 @@ experiment display  type: gui {
 	output {
 	display city_display type:opengl  refresh_every: 1 {
 		
-		species node aspect: network refresh:false ;	
+		species node aspect: network  ;	
 		species node aspect: circle ;
 		species cell aspect: base transparency: 0.5 refresh:false;	
 		//image name: 'Background' file: mntImageRaster.path;
