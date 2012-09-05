@@ -426,7 +426,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanGeometries();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
-			((JOGLAWTDisplayGraphics) openGLGraphics).isListCreated = false;
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
 
 			drawDisplaysWithoutRepaintingGL();
@@ -645,7 +644,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		            	   
 		            	   myGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
 		                   SimpleFeatureCollection myCollection =  myGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(myGLRender.myShapeFileReader.store);
-		           		   ((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, Color.red);
+		                   Color color = new Color((int)(Math.random()*255),(int)(Math.random()*255),(int) (Math.random()*255));
+		                   ((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, color);
+		                   //FIXME: Need to reinitialise th displaylist
+		                   
 		               }
 		            });
 		      }

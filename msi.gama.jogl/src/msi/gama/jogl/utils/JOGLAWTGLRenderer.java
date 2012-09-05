@@ -65,6 +65,7 @@ import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
+import msi.gama.jogl.utils.collada.ColladaReader;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
 import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
@@ -288,9 +289,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Blending control
 		if (blendingEnabled) {
 			gl.glEnable(GL_BLEND); // Turn blending on	
-			//FIXME: This has been comment (09/12) to have the depth testing when image are drawn but need to know why it was initially disabled?
+			//FIXME: This has been comment (09/12 r4989) to have the depth testing when image are drawn but need to know why it was initially disabled?
 			//Imply strange rendering when using picture (e.g boids)
-			//gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
+			gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 		} else {
 			gl.glDisable(GL_BLEND); // Turn blending off
 			gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
@@ -307,6 +308,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPolygonOffset(1, 1);   
         this.DrawScene();
         this.DrawShapeFile();
+        this.DrawCollada();
         gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
@@ -392,7 +394,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void DrawModel() {
 		
 		
-		 //((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
+		 ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
 		// Draw Image
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages
@@ -453,6 +455,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					updateEnvDim=true;
 				}
 		}	
+		return;
+	}
+	
+	public void DrawCollada(){
+		
+		//ColladaReader myColReader = new ColladaReader();
 		return;
 	}
 

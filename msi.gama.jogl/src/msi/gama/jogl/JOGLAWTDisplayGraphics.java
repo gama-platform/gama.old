@@ -105,7 +105,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 	public boolean isStaticListCreated = false;
 	
+	public boolean isListShapeCreated = false;
+		
 	public boolean useDisplayList=false;
+	
+	private boolean drawCollectionAsList=false;
 	
 
 	// use to do the triangulation only once per timestep.
@@ -122,6 +126,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 	};
 	private final ShapeWriter sw = new ShapeWriter(pt);
+	
 
 	/**
 	 * The environment property are given from the display surface.
@@ -875,11 +880,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void DrawCollection(){
 		
 		//FIXME : need to be done for a list of collection
-		boolean drawCollectionAsList = true;
+		drawCollectionAsList = true;
 		if (drawCollectionAsList) {
-			if (!isListCreated) {
+			if (!isListShapeCreated) {
 				graphicsGLUtils.displayListHandler.buildCollectionDisplayLists(myCollections);
-				isListCreated = true;
+				isListShapeCreated = true;
 			} else {
 				graphicsGLUtils.displayListHandler.DrawCollectionDisplayList(myCollections.size());
 			}
@@ -908,6 +913,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();	
 		}
 		this.myJTSGeometries.clear();
+		isListCreated = false;
 		
 	}
 
@@ -934,7 +940,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 	
 	public void CleanCollections(){
-		
+		if(drawCollectionAsList){
+			graphicsGLUtils.displayListHandler.DeleteCollectionDisplayLists(this.myCollections.size());
+		}
+		this.myCollections.clear();
 	}
 
 	/**

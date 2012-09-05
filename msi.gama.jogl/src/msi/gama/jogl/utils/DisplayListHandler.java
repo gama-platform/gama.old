@@ -31,6 +31,9 @@ public class DisplayListHandler {
 	// Display List Id
 	private int listId;
 	private int firstList;
+	
+	private int listShapeId;
+	private int firstShapeList;
 
 
 	public DisplayListHandler(final GL gl, final GLU glu,
@@ -115,16 +118,17 @@ public class DisplayListHandler {
 	public void buildCollectionDisplayLists(ArrayList<MyCollection> myCollections) {
 	
 		// Build n lists, and returns handle for the first list
-		firstList = myGl.glGenLists(myCollections.size());
-		listId = firstList;
+		firstShapeList = myGl.glGenLists(myCollections.size());
+		listShapeId = firstShapeList;
 		Iterator<MyCollection> it = myCollections.iterator();
 
+		System.out.println("in build list " + myCollections.size());
 		while (it.hasNext()) {
 			MyCollection curCol = it.next();
-			myGl.glNewList(listId, GL_COMPILE);
+			myGl.glNewList(listShapeId, GL_COMPILE);
 			basicDrawer.DrawSimpleFeatureCollection(curCol);
 			myGl.glEndList();
-			listId = listId + 1;
+			listShapeId = listShapeId + 1;
 		}		
 	}
 
@@ -132,6 +136,12 @@ public class DisplayListHandler {
 		for (int i = 0; i <= nbDisplayList; i++) {
 			myGl.glCallList(i);
 		}
+	}
+	
+	
+	public void DeleteCollectionDisplayLists(int nbDisplayList) {
+		myGl.glDeleteLists(firstShapeList, nbDisplayList);
+		listShapeId=1;
 	}
 	
 }

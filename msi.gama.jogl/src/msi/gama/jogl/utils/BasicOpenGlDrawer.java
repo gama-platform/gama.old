@@ -176,10 +176,9 @@ public class BasicOpenGlDrawer {
 		// Iterate throught all the collection
 		SimpleFeatureIterator iterator = collection.collection.features();
 
-		/*Color color = new Color((int) Math.random() * 255,
-				(int) Math.random() * 255, (int) Math.random() * 255);*/
 		
-		Color color= Color.red;
+		
+		//Color color= Color.red;
 
 		while (iterator.hasNext()) {
             
@@ -187,31 +186,29 @@ public class BasicOpenGlDrawer {
 			SimpleFeature feature = (SimpleFeature) iterator.next();
 
 			Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
-			
-			System.out.println(sourceGeometry.getGeometryType());
 
 			if (sourceGeometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry,
-						0.0f, color, 1.0f, true, 0, 0.0f);
+						0.0f, collection.color, 1.0f, true, 0, 0.0f);
 			}
 
 			else if (sourceGeometry.getGeometryType() == "Polygon") {
-				myJTSDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0f, color,
+				myJTSDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0f, collection.color,
 						1.0f, true, false, 0, true);
 			} else if (sourceGeometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
-						(MultiLineString) sourceGeometry, 0.0f, color, 1.0f,
+						(MultiLineString) sourceGeometry, 0.0f, collection.color, 1.0f,
 						0.0f);
 			}
 
 			else if (sourceGeometry.getGeometryType() == "LineString") {
 				myJTSDrawer.DrawLineString((LineString) sourceGeometry, 0.0f,
-						1.0f, color, 1.0f);
+						1.0f, collection.color, 1.0f);
 			}
 
 			else if (sourceGeometry.getGeometryType() == "Point") {
 				myJTSDrawer.DrawPoint((Point) sourceGeometry, 0.0f, 10, 10,
-						color, 1.0f);
+						collection.color, 1.0f);
 			}
 		}
 		
