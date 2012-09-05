@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
 
-import utils.FileBrowse;
 import utils.FileBrowser;
 
 

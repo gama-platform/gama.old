@@ -18,7 +18,7 @@ import msi.gama.jogl.JOGLAWTDisplayGraphics;
 import msi.gama.jogl.utils.GraphicDataType.MyCollection;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
-import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
+
 
 import java.awt.Color;
 
