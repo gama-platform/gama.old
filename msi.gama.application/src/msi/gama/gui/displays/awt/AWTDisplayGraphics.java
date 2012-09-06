@@ -361,9 +361,10 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param string String
 	 * @param stringColor Color
 	 * @param angle Integer
+	 * @param z float (has no effect in 2D)
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle) {
+	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle, final float z) {
 		setDrawingColor(stringColor);
 		AffineTransform saved = g2.getTransform();
 		if ( angle != null ) {

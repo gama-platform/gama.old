@@ -86,7 +86,7 @@ public class TextLayer extends AbstractLayer {
 			font = new Font(f, Font.PLAIN, s);
 		}
 		g.setFont(font);
-		g.drawString(text, color, null);
+		g.drawString(text, color, null,0.0f);
 	}
 
 	@Override
