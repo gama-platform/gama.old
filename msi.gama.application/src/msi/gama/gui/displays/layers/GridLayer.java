@@ -77,7 +77,7 @@ public class GridLayer extends ImageLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(image, null, false, "GridDisplay");
+		dg.drawImage(image, null, false, "GridDisplay",0.0f);
 		if ( turnGridOn ) {
 			lineColor = ((GridLayerStatement) definition).getLineColor();
 			if ( lineColor == null ) {
