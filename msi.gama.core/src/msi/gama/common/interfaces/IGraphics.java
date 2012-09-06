@@ -112,9 +112,10 @@ public interface IGraphics {
 	 * @param img Image
 	 * @param angle Integer
 	 * @param String name
+	 * @param z float
 	 */
 	public abstract Rectangle2D drawImage(final BufferedImage img, final Integer angle,
-		final String name);
+		final String name,float z);
 
 	/**
 	 * Method drawCircle.
@@ -194,7 +195,7 @@ public interface IGraphics {
 	 * @param name
 	 * @return
 	 */
-	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth, String name);
+	Rectangle2D drawImage(BufferedImage img, Integer angle, boolean smooth, String name, float z);
 
 	/**
 	 * Draw grid as line

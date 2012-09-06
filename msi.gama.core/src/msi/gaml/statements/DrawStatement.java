@@ -308,6 +308,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			IAgent agent = scope.getAgentScope();
+			
 			ILocation from = null;
 			if ( location == null ) {
 				from = scale(agent.getLocation(), g);
@@ -371,11 +372,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				// g2d.dispose();
 
-				Rectangle2D result = g.drawImage(workImage, angle, true, img);
+				Rectangle2D result = g.drawImage(workImage, angle, true, img,(float) agent.getLocation().getZ());
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(image, angle, true, img);
+			return g.drawImage(image, angle, true, img,(float) agent.getLocation().getZ());
 		}
 
 	}

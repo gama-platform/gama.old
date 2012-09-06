@@ -64,6 +64,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public double getY() {
 		return y;
 	}
+	
+	@Override
+	public double getZ() {
+		return super.z;
+	}
 
 	@Override
 	public void setLocation(final ILocation al) {
@@ -291,9 +296,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void dispose() {}
 
-	@Override
-	public double getZ() {
-		return super.z;
-	}
+	
 
 }
