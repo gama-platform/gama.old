@@ -155,9 +155,10 @@ public interface IGraphics {
 	 * @param string String
 	 * @param stringColor Color
 	 * @param angle Integer
+	 * @param z float
 	 */
 	public abstract Rectangle2D drawString(final String string, final Color stringColor,
-		final Integer angle);
+		final Integer angle, final float z);
 
 	/**
 	 * Method drawGeometry.

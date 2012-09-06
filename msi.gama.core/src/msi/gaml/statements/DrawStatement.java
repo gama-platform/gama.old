@@ -40,6 +40,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.types.IType;
 
+import java.lang.System;
+
 // A command that is used to draw shapes, figures, text on the display
 
 @symbol(name = IKeyword.DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
@@ -282,8 +284,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			g.setDrawingCoordinates(x, y);
 			int toX = Maths.round(target.getX());
 			int toY = Maths.round(target.getY());
-			// TODO Size ??
+			// TODO Size ??	
 			return g.drawLine(c, toX, toY);
+			
 		}
 	}
 
@@ -447,7 +450,16 @@ public class DrawStatement extends AbstractStatementSequence {
 			Font f = new Font(fName, fStyle, displaySize);
 			g.setFont(f);
 			g.setDrawingCoordinates(x, y);
-			return g.drawString(info, c, angle); // ??
+
+			//Get the z composante of the agent.
+			//FIXME: (Added by Arno 09/12) Why not changing the method scale in order to make it return a 3D point instead of a 2D point.
+			if (String.valueOf(agent.getLocation().getZ()).equals("NaN") == true){
+				return g.drawString(info, c, angle,0.0f);
+			}
+			else{
+				return g.drawString(info, c, angle,(float)agent.getLocation().getZ());
+			}
+
 		}
 	}
 

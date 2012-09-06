@@ -33,7 +33,9 @@ import com.vividsolutions.jts.geom.Coordinate;
  * 
  */
 @vars({ @var(name = IKeyword.X, type = IType.FLOAT_STR),
-	@var(name = IKeyword.Y, type = IType.FLOAT_STR) })
+	@var(name = IKeyword.Y, type = IType.FLOAT_STR),
+	@var(name = IKeyword.Z, type = IType.FLOAT_STR)
+})
 public interface ILocation extends IShape, Comparable {
 
 	@getter( IKeyword.X)
@@ -44,6 +46,7 @@ public interface ILocation extends IShape, Comparable {
 	
 
 	// public abstract boolean equals(final Coordinate o);
+	@getter(IKeyword.Z)
 	public abstract double getZ(); 
 
 
