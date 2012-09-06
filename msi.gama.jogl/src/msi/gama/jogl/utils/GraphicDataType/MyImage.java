@@ -20,5 +20,5 @@ public class MyImage {
 	public float height;
 	public Integer angle = 0;
 	public String name;
-	public GamaPoint offSet = new GamaPoint(0,0);
+	public GamaPoint offSet = new GamaPoint(0,0,0);
 }

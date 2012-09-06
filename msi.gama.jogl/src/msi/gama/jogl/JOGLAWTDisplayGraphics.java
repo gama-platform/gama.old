@@ -403,7 +403,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
-			final boolean smooth, final String name) {
+			final boolean smooth, final String name,final float z) {
 
 		/*
 		 * FIXME Dirty way to check that img represent the environment.
@@ -422,17 +422,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight() +
 		// name);
 
-		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
+		GamaPoint offSet = new GamaPoint(offsetX,offsetY,currentZLayer);
 		
 		if (curX == 0
 				&& curY == 0
 				|| (name.equals("GridDisplay") == true || name
 						.equals("QuadTreeDisplay"))) {
-			AddImageInImages(img, curX, curY, currentZLayer, this.envWidth,
+			AddImageInImages(img, curX, curY, z, this.envWidth,
 					this.envHeight, name, angle,offSet);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			AddImageInImages(img, curX, curY, currentZLayer, curWidth,
+			AddImageInImages(img, curX, curY, z, curWidth,
 					curHeight, name, angle,offSet);
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
@@ -442,8 +442,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
-			final String name) {
-		return drawImage(img, angle, true, name);
+			final String name,final float z) {
+		return drawImage(img, angle, true, name,z);
 	}
 
 	/**
@@ -632,7 +632,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.image = img;
 		curImage.x = curX;
 		curImage.y = curY;
-		curImage.z = z;
+
+		if (String.valueOf(z).equals("NaN") == true) {
+		  curImage.z = 0;
+		}
+		else{
+	      curImage.z = z;
+		}
 		curImage.alpha = this.currentAlpha;
 		curImage.width = widthInModel;
 		curImage.height = heightInModel;

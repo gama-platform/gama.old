@@ -291,7 +291,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL_BLEND); // Turn blending on	
 			//FIXME: This has been comment (09/12 r4989) to have the depth testing when image are drawn but need to know why it was initially disabled?
 			//Imply strange rendering when using picture (e.g boids)
-			gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
+			//gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 		} else {
 			gl.glDisable(GL_BLEND); // Turn blending off
 			gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
@@ -394,7 +394,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void DrawModel() {
 		
 		
-		 ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
+		 //((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
 		
 
@@ -468,7 +468,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void DrawTexture(MyImage img) {
 
-		gl.glTranslated(img.offSet.x, -img.offSet.y, 0.0f);
+		gl.glTranslated(img.offSet.x, -img.offSet.y, img.offSet.z);
 		if (this.myTextures.size() > 0) {
 
 			Iterator<MyTexture> it = this.myTextures.iterator();
@@ -547,7 +547,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				}
 			}
 		}
-		gl.glTranslated(-img.offSet.x, img.offSet.y, 0.0f);
+		gl.glTranslated(-img.offSet.x, img.offSet.y, -img.offSet.z);
 	}
 
 	public void InitTexture(BufferedImage image, String name) {
