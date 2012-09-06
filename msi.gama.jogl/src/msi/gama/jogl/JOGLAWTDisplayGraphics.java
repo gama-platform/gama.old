@@ -552,8 +552,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor,
-			final Integer angle) {
-		AddStringInStrings(string, curX, -curY, 0.0f);
+			final Integer angle,final float z) {
+		AddStringInStrings(string, curX, -curY, z);
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
 		return r;
@@ -852,7 +852,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		while (it.hasNext()) {
 			MyString curString = it.next();
 			graphicsGLUtils.DrawString(curString.string, curString.x,
-					curString.y, 0.0f);
+					curString.y, curString.z);
 		}
 	}
 

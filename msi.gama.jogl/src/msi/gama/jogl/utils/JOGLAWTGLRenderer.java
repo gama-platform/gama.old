@@ -396,13 +396,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		 ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
-		// Draw Image
-		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages
-				.isEmpty()) {
-			blendingEnabled = true;
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-					.DrawMyImages();
-		}
+		
 
 		// Draw Geometry
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries
@@ -417,6 +411,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
 					.DrawMyJTSStaticGeometries(false);
 		}
+		
+		// Draw Image
+				if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages
+						.isEmpty()) {
+					blendingEnabled = true;
+					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
+							.DrawMyImages();
+				}
 
 		// Draw String
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myStrings
