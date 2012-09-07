@@ -776,7 +776,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			} else {
 	 
 				if (!useVertexArray) {
-					//System.out.println("Geometries are build with basicDrawer ");
+					//System.out.println(this.myJTSGeometries.size() + " geometries are build with basicDrawer ");
 					Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 					while (it.hasNext()) {
 						MyJTSGeometry curGeometry = it.next();

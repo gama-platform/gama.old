@@ -45,6 +45,9 @@ public class JTSDrawer {
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
+	
+	
+	JTSVisitor visitor;
 
 	// FIXME: Is it better to declare an objet polygon here than in
 	// DrawMultiPolygon??
@@ -77,6 +80,8 @@ public class JTSDrawer {
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
+		
+		visitor = new JTSVisitor(myGl);
 
 		yFlag = -1;
 
@@ -111,7 +116,9 @@ public class JTSDrawer {
 		// FIXME: Angle rotation is not implemented yet
 
 		// Set z_layer
+		if(z_layer!=0){
 		myGl.glTranslatef(0.0f, 0.0f, z_layer);
+		}
 
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -127,7 +134,7 @@ public class JTSDrawer {
 				DrawTesselatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
-					DrawPolygonContour(p, c, 0.0f);
+					DrawPolygonContour(p);
 				}
 			}
 			// use JTS triangulation on simplified geometry (DouglasPeucker)
@@ -136,7 +143,7 @@ public class JTSDrawer {
 				DrawTriangulatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
-					DrawPolygonContour(p, c, 0.0f);
+					DrawPolygonContour(p);
 				}
 			}
 		}
@@ -145,14 +152,16 @@ public class JTSDrawer {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
-			DrawPolygonContour(p, c, 0.0f);
+			DrawPolygonContour(p);
 		}
 
 		// FIXME: Need to check that the polygon is a quad
 		if (isTextured) {
 			DrawTexturedPolygon(p, angle);
 		}
+		if(z_layer!=0){
 		myGl.glTranslatef(0.0f, 0.0f, -z_layer);
+		}
 	}
 
 	void DrawTesselatedPolygon(Polygon p) {
@@ -331,65 +340,30 @@ public class JTSDrawer {
 		myGl.glEnd();
 	}
 
-	public void DrawPolygonContour(Polygon p, Color c, float z) {
+	public void DrawPolygonContour(Polygon p) {
+		
 		// Draw Exterior ring
 		myGl.glLineWidth(1.0f);
 
 		myGl.glBegin(GL.GL_LINES);
-		numExtPoints = p.getExteriorRing().getNumPoints();
-
-		if (p.isEmpty())
-			return;
-
-		// If polygon has no z value
-
-		if (String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z)
-				.equals("NaN") == true) {
-			for (int j = 0; j < numExtPoints - 1; j++) {
-				SetLine(p.getExteriorRing().getPointN(j), p.getExteriorRing()
-						.getPointN(j + 1), z, false);
-			}
-		}
-		// If the polygon has a z value.
-		else {
-			for (int j = 0; j < numExtPoints - 1; j++) {
-				SetLine(p.getExteriorRing().getPointN(j), p.getExteriorRing()
-						.getPointN(j + 1), z, true);
-			}
-		}
+		p.getExteriorRing().apply(visitor);
 		myGl.glEnd();
 
 		// Draw Interior ring
 		for (int i = 0; i < p.getNumInteriorRing(); i++) {
-
-			int numIntPoints = p.getInteriorRingN(i).getNumPoints();
 			myGl.glBegin(GL.GL_LINES);
-			if (String.valueOf(
-					p.getExteriorRing().getPointN(0).getCoordinate().z).equals(
-					"NaN") == true) {
-				for (int j = 0; j < numIntPoints - 1; j++) {
-					SetLine(p.getInteriorRingN(i).getPointN(j), p
-							.getInteriorRingN(i).getPointN(j + 1), z, false);
-				}
-			} else {
-				for (int j = 0; j < numIntPoints - 1; j++) {
-					SetLine(p.getInteriorRingN(i).getPointN(j), p
-							.getInteriorRingN(i).getPointN(j + 1), z, true);
-				}
-			}
+			p.getInteriorRingN(i).apply(visitor);
 			myGl.glEnd();
 		}
 	}
 
 	void SetLine(Point src, Point dest, float z, boolean hasZValue) {
 		if (hasZValue == false) {
-			myGl.glVertex3d(((src.getX())), yFlag * ((src.getY())), z);
-			myGl.glVertex3d(((dest.getX())), yFlag * ((dest.getY())), z);
+			myGl.glVertex3f((float)src.getX(), (float)(yFlag * src.getY()), z);
+			myGl.glVertex3f((float)dest.getX(), (float)(yFlag * dest.getY()), z);
 		} else {
-			myGl.glVertex3d(((src.getX())), yFlag * ((src.getY())),
-					z + src.getCoordinate().z);
-			myGl.glVertex3d(((dest.getX())), yFlag * ((dest.getY())),
-					z + dest.getCoordinate().z);
+			myGl.glVertex3f((float)src.getX(), (float)(yFlag * src.getY()), (float)(z + src.getCoordinate().z));
+			myGl.glVertex3f((float)dest.getX(), (float)(yFlag * dest.getY()),(float)(z + dest.getCoordinate().z));
 		}
 	}
 
