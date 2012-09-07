@@ -51,41 +51,61 @@ global {
 		
 		let metroGeom <- geometry(shape_file_metro);
 		
-		let listes_locations <- [{200.0, 150.0}, {500.0, 500.0}, {800.0, 850.0}]; // une liste connue de points (must be contained in the environment)
+		let listes_locations <- [{200.0, 150.0}, {500.0, 500.0}]; // une liste connue de points (must be contained in the environment)
 		loop loc over: listes_locations {
 			
-			    //Z value of a metro station
-			    let z <- 100+rnd(500);
+			    //Z value of a metro station 
+		
+	    	    let z <- rnd(100);
 			    
 		        create species: metro number: 1  with: [shape::metroGeom] {
 		          	set shape <- shape at_location loc;
 		          	set shape <- shape add_z (z);
-		        }
-		        
-		         create species: exit number: 1{
-	        			set shape <- shape at_location {loc.x-(metroGeom.width/2.3),loc.y -(metroGeom.height/2)};
+		          	
+		          	create species: myExit number: 1{
+	        			//set location <- any_location_in (myself.shape);//{loc.x-(metroGeom.width/2.3),loc.y -(metroGeom.height/2)};
+		        		set shape <- shape at_location {loc.x-(metroGeom.width/2),loc.y -(metroGeom.height/2)};
 		        		set shape <- shape add_z (z);
 		        		set name <- "exit1";
+		        		add self to: myself.exits;
+			        }
+		        	create species: myExit number: 1{
+		        		set shape <- shape at_location {loc.x-(metroGeom.width/2),loc.y +(metroGeom.height/2)};
+		        		set shape <- shape add_z (z);
+		        		set name <- "exit2";
+		        		add self to: myself.exits;
+		        	}
+		        	create species: myExit number: 1{
+		        		set shape <- shape at_location {loc.x+(metroGeom.width/2),loc.y -(metroGeom.height/2)};
+		        		set shape <- shape add_z (z);
+		        		set name <- "exit3";
+		        		add self to: myself.exits;
+		        	}
+		        	create species: myExit number: 1{
+		        		set shape <- shape at_location {loc.x+(metroGeom.width/2),loc.y +(metroGeom.height/2)};
+		        		set shape <- shape add_z (z);
+		        		set name <- "exit4";
+		        		add self to: myself.exits;
+		        	} 
 		        }
-	        	create species: exit number: 1{
-	        		set shape <- shape at_location {loc.x-(metroGeom.width/2),loc.y +(metroGeom.height/2)};
-	        		set shape <- shape add_z (z);
-	        		set name <- "exit2";
-	        	}
-	        	create species: exit number: 1{
-	        		set shape <- shape at_location {loc.x+(metroGeom.width/2),loc.y -(metroGeom.height/2)};
-	        		set shape <- shape add_z (z);
-	        		set name <- "exit3";
-	        	}
-	        	create species: exit number: 1{
-	        		set shape <- shape at_location {loc.x+(metroGeom.width/2),loc.y +(metroGeom.height/2)};
-	        		set shape <- shape add_z (z);
-	        		set name <- "exit4";
-	        	} 
-		        
-		        
- 	
 		}
+		
+		
+		
+		let metros <- (metro as list);
+		
+			loop i from: 0 to: 3{
+				create stair number: 1{
+				set name <- "stair"+i;
+				set src <- (metros at 0).exits at i;
+				set dest <- (metros at 1).exits at i;
+			    }
+		    }
+		    
+		   
+
+
+		
 		
 		set the_metro <- first(metro as list);
 		
@@ -167,7 +187,7 @@ entities {
 	/** Insert here the definition of the species of agents */
 	species metro {
 		rgb color <- rgb('yellow');
-		list exits of: exit;
+		list exits of: myExit;
 		aspect base {
          draw geometry: shape color: color ;
       }
@@ -183,7 +203,7 @@ entities {
      	}
 	}
 	
-	species exit{
+	species myExit{
 		rgb color <- rgb('red');
 		string name;
 		geometry shape <- rectangle({10,5});
@@ -202,6 +222,18 @@ entities {
 		principalGoal direction;
 		aspect base {
         	draw geometry: rectangle({11,2}) color: color ;
+     	}
+	}
+	
+	species stair{
+		rgb color <- rgb('blue');
+		string name;
+		myExit src;
+		
+		myExit dest;
+		
+		aspect base {
+        	draw geometry: line([src.location, dest.location]) color: color ;
      	}
 	}
 	
@@ -451,7 +483,7 @@ experiment testmodel type: gui {
 			species metro aspect: base ;
 			species principalGoal aspect: base ;
 			species instruction aspect: base ;
-			species bridge aspect:base;
+			species stair aspect:base;
 			//species fire aspect: base ;
 			//species smoke aspect: base ;
 			species people aspect: base ;			
@@ -479,7 +511,8 @@ experiment testmodel3D type: gui {
 		output {
 		display objects_display refresh_every: 4 type:opengl {
 			species metro aspect: base ;
-			species exit aspect: image ;
+			species myExit aspect: image ;
+			species stair aspect: base;
 			species principalGoal aspect: base ;
 			species instruction aspect: base ;
 			species fire aspect: base ;
