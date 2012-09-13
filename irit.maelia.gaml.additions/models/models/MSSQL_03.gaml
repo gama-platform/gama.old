@@ -20,48 +20,48 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex insert {
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
-				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (100, 'Zara', 'Ali', 18)";
  			}
  			do action: executeUpdateDB{ 
-				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (101, 'Mahnaz', 'Fatma', 25)";
  			}
  			do action: executeUpdateDB{ 
-				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (102, 'Zaid', 'Khan', 30)";
  			}	
  			do action: executeUpdateDB{ 
-				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES(103, 'Sumit', 'Mittal', 28)";
  			}					

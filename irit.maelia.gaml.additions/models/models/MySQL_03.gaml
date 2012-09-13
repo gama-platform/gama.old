@@ -8,7 +8,7 @@
  *   03: Test executeUpdate with INSERT statement
  */
 
-model SQLConnection_03
+model MySQL_03
 
 /* Insert your model definition here */
 
@@ -20,48 +20,48 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex insert{
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (100, 'Zara', 'Ali', 18)";
  			}
  			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (101, 'Mahnaz', 'Fatma', 25)";
  			}
  			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (102, 'Zaid', 'Khan', 30)";
  			}	
  			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES(103, 'Sumit', 'Mittal', 28)";
  			}					

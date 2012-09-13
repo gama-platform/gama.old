@@ -15,7 +15,7 @@ import msi.gama.util.GamaList;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 /*
-* SQLSkill: The MAELIASQL skill is defined in this class. MAELIASQL supports the action
+* SQLSkill: The MAELIASQL skill is defined in this class. MAELIASQL supports the method
 * - helloWorld: print "Hello world on output screen as a test of skill.
 * - connectTest: make a connection to DBMS as test connection.
 * - connectDB: make a connection to DBMS.
@@ -25,10 +25,12 @@ import msi.gaml.types.IType;
 * 
 * @author TRUONG Minh Thai 20-Jun-2012
 * Modified:
+*   10-Sep-2012: change MAELIASQL Skill to SQLSKILL
 *     
-* Last Modified: 20-Jun-2012
+* Last Modified: 10-Sep-2012
 */
-@skill(name = "MAELIASQL")
+//@skill(name = "MAELIASQL")
+@skill(name = "SQLSKILL")
 public class SQLSkill extends Skill {
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
@@ -46,26 +48,27 @@ public class SQLSkill extends Skill {
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 * arg vendorName value: vendorName; //MySQL/MSSQL
+	 * arg dbtype value: vendorName; //MySQL/MSSQL
 	 * arg url value: urlvalue;
 	 * arg port value: portvaluse;
-	 * arg dbName value: dbnamevalue;
-	 * arg usrName value: usrnamevalue;
-	 * arg password value: pwvaluse;
+	 * arg database value: dbnamevalue;
+	 * arg user value: usrnamevalue;
+	 * arg passwd value: pwvaluse;
 	 * }
 	 */
 	@action(name="connectDB")
-	@args(names = { "vendorName", "url", "port", "dbName", "usrName", "password" })
+	@args(names = { "dbtype", "url", "port", "database", "user", "passwd" })
 	public  Object connectDB(final IScope scope) throws GamaRuntimeException
 	{
 		Connection conn;
 		SqlConnection sqlConn=new SqlConnection(
-				(String) scope.getArg("vendorName", IType.STRING),
-				(String) scope.getArg("url", IType.STRING),
-				(String) scope.getArg("port", IType.STRING),
-				(String) scope.getArg("dbName", IType.STRING),
-				(String) scope.getArg("usrName", IType.STRING),
-				(String) scope.getArg("password", IType.STRING));
+									(String) scope.getArg("dbtype", IType.STRING),
+									(String) scope.getArg("url", IType.STRING),
+									(String) scope.getArg("port", IType.STRING),
+									(String) scope.getArg("database", IType.STRING),
+									(String) scope.getArg("user", IType.STRING),
+									(String) scope.getArg("passwd", IType.STRING)
+								);
 
 		try {	
 			conn = sqlConn.connectDB();
@@ -74,7 +77,7 @@ public class SQLSkill extends Skill {
 			throw new GamaRuntimeException("SQLSkill.connectDB:" + e.toString());
 		} 
 		if ( DEBUG ) {
-			GuiUtils.informConsole(sqlConn.getVendor() + " Server at address " + sqlConn.getURL() + " is connected");
+			System.out.println(sqlConn.getVendor() + " Server at address " + sqlConn.getURL() + " is connected");
 		}
 		return conn;
 
@@ -95,18 +98,19 @@ public class SQLSkill extends Skill {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name="selectDB")
-	@args(names = { "vendorName", "url", "port", "dbName", "usrName", "password", "selectComm" })
+	@args(names = { "dbtype", "url", "port", "database", "user", "passwd", "select" })
 	//public GamaList<GamaList<Object>> selectDB(final IScope scope) throws GamaRuntimeException
 	public GamaList<Object> selectDB(final IScope scope) throws GamaRuntimeException
 	{
-		String selectComm=(String) scope.getArg("selectComm", IType.STRING);
+		String selectComm=(String) scope.getArg("select", IType.STRING);
 		SqlConnection sqlConn=new SqlConnection(
-				(String) scope.getArg("vendorName", IType.STRING),
-				(String) scope.getArg("url", IType.STRING),
-				(String) scope.getArg("port", IType.STRING),
-				(String) scope.getArg("dbName", IType.STRING),
-				(String) scope.getArg("usrName", IType.STRING),
-				(String) scope.getArg("password", IType.STRING));
+									(String) scope.getArg("dbtype", IType.STRING),
+									(String) scope.getArg("url", IType.STRING),
+									(String) scope.getArg("port", IType.STRING),
+									(String) scope.getArg("database", IType.STRING),
+									(String) scope.getArg("user", IType.STRING),
+									(String) scope.getArg("passwd", IType.STRING)
+								);
 		
 		//GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 		GamaList<Object> repRequest = new GamaList<Object>();
@@ -124,30 +128,74 @@ public class SQLSkill extends Skill {
 		return repRequest;
 
 	}
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do action: selectDB {
+	 * arg url value: urlvalue;
+	 * arg port value: portvaluse;
+	 * arg dbName value: dbnamevalue;
+	 * arg usrName value: usrnamevalue;
+	 * arg password value: pwvaluse;
+	 * arg selectComm value: selectStatement;
+	 * }
+	 * 
+	 * @return GamaList<GamaList<Object>>
+	 */
+	@action(name="select")
+	@args(names = { "params"})
+	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+	{
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		SqlConnection sqlcon=new SqlConnection(
+										(String) params.get("dbtype"),
+				                        (String)params.get("url"),
+				                        (String) params.get("port"),
+				                        (String) params.get("database"),
+				                        (String) params.get("user"),
+				                        (String)params.get("passwd")
+				                       );
+	
+		GamaList<Object> repRequest = new GamaList<Object>();
+		try{
+			  repRequest= sqlcon.selectDB((String) params.get("select"));
+			//repRequest = sqlConn.selectDB(selectComm);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GamaRuntimeException("SQLSkill.selectDB: " + e.toString());
+		}
+		if ( DEBUG ) {
+			GuiUtils.informConsole((String) params.get("select") + " was run");
+		}
+
+		return repRequest;
+
+	}
 
 	/*
 	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 * 
 	 * @syntax: do action: connectDB {
-	 * arg vendorName value: vendorvalue;
+	 * arg dbtype value: vendorvalue;
 	 * arg url value: urlvalue;
 	 * arg port value: portvalue;
-	 * arg dbName value: dbnamevalue;
-	 * arg usrName value: usrnamevalue;
-	 * arg password value: pwvaluse;
+	 * arg database value: dbnamevalue;
+	 * arg user value: usrnamevalue;
+	 * arg passwd value: pwvaluse;
 	 * arg updateComm value: updateStatement;
 	 * }
 	 */
 	@action(name="executeUpdateDB")
-	@args(names = { "vendorName", "url", "port", "dbName", "usrName", "password", "updateComm" })
+	@args(names = { "dbtype", "url", "port", "database", "user", "passwd", "updateComm" })
 	public int executeUpdateDB(final IScope scope) throws GamaRuntimeException {
 		SqlConnection sqlConn=new SqlConnection(
-				(String) scope.getArg("vendorName", IType.STRING),
+				(String) scope.getArg("dbtype", IType.STRING),
 				(String) scope.getArg("url", IType.STRING),
 				(String) scope.getArg("port", IType.STRING),
-				(String) scope.getArg("dbName", IType.STRING),
-				(String) scope.getArg("usrName", IType.STRING),
-				(String) scope.getArg("password", IType.STRING));
+				(String) scope.getArg("database", IType.STRING),
+				(String) scope.getArg("user", IType.STRING),
+				(String) scope.getArg("passwd", IType.STRING));
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		int n = 0;
 		try {

@@ -21,35 +21,41 @@ global {
 	init {
 		create species: toto number: 1 ;
 	}
-}  
+}   
+
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex select{
 			do action: helloWorld;			 
 			// Select with no WHERE con dictions
 			do action: selectDB{ 
- 				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
- 				arg selectComm value: "SELECT * FROM Registration";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
+ 				arg select value: "SELECT * FROM Registration";
  			}
+ 
  			// get result from Select From Where statement
- 			let t value: self.selectDB[ 						
- 						vendorName:: "MSSQL",
- 						url:: "193.49.54.112", 
- 						port:: "1433",
- 						dbName:: "STUDENTS",
- 						usrName:: "sa",
- 						password:: "tmt",
- 						selectComm::"SELECT id, first, last, age FROM Registration WHERE id>101 and id<=103"
+ 			let t value: self selectDB[ 						
+ 						dbtype:: "MSSQL",
+ 						url :: "localhost", 
+ 						port :: "1433",
+ 						database :: "STUDENTS",
+ 						user:: "sa",
+ 						passwd:: "tmt",
+ 						select::"SELECT id, first, last, age FROM Registration WHERE id>101 and id<=103"
  			];
 			set listRes value: t;	
+			// listRes(0): List of column name
+			// listRes(1): List of column name type 	
+			// listRes(2): List of Record -> List of List type
 			do action: write with: [message::t];
 		}
-	} 
-}      
+	}
+}
+    

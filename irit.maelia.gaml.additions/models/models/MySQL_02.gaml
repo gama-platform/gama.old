@@ -8,7 +8,7 @@
 
  */
 
-model SQLConnection_02
+model MySQL_02
 
 /* Insert your model definition here */
 
@@ -20,18 +20,18 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex createTable{
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "CREATE TABLE REGISTRATION " +
                    "(id INTEGER not NULL, " +
                    " first VARCHAR(255), " + 

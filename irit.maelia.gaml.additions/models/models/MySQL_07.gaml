@@ -12,7 +12,7 @@
  *   07: Test executeUpdate with DROP TABLE statement
  */
 
-model SQLConnection_07
+model MySQL_07
 
 /* Insert your model definition here */
 
@@ -24,19 +24,19 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex dropTable {
 			do action: helloWorld;			 
 			// 
 			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "DROP TABLE REGISTRATION ";
  			}
 		}

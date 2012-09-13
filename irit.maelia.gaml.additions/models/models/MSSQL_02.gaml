@@ -20,18 +20,17 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
-		var listRes type: list init:[];
-		//var obj type: obj;
-		reflex {
+	species toto skills: [SQLSKILL] {  
+		var listRes type: list init:[]; 
+		reflex createTable{
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
-				arg vendorName value: "MSSQL";
-				arg url value: "193.49.54.112";
-				arg port value: "1433";
-				arg dbName value: "STUDENTS";
-				arg usrName value: "sa";
-				arg password value: "tmt";
+				arg dbtype value: "MSSQL";
+				arg url value: "localhost";// IP address or computer name
+				arg port value: "1433"; 
+				arg database value: "Students";
+				arg user value: "sa";
+				arg passwd value: "tmt";
  				arg updateComm value: "CREATE TABLE REGISTRATION " +
                    "(id INTEGER not NULL, " +
                    " first VARCHAR(255), " + 

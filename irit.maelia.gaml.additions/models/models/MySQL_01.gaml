@@ -6,7 +6,7 @@
  *   01: Test executeUpdate with CREATE DATABASE statement
  */
 
-model SQLConnection_01
+model MySQL_01
   
 global {
 
@@ -15,18 +15,18 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex createDatabase {
 			do action: helloWorld;			 
 			do action: executeUpdateDB{
-				arg vendorName value: "MySQL"; 
+				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "CREATE DATABASE STUDENTS"; 
  			}
 		}

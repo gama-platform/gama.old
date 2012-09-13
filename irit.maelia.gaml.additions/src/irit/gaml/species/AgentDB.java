@@ -38,23 +38,23 @@ public class AgentDB extends GamlAgent {
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 * arg vendorName value: vendorName; //MySQL/MSSQL
+	 * arg dbtype value: vendorName; //MySQL/MSSQL
 	 * arg url value: urlvalue;
 	 * arg port value: portvaluse;
-	 * arg dbName value: dbnamevalue;
-	 * arg usrName value: usrnamevalue;
-	 * arg password value: pwvaluse;
+	 * arg database value: dbnamevalue;
+	 * arg user value: usrnamevalue;
+	 * arg passwd value: pwvaluse;
 	 * }
 	 */
 	@action(name="connectDB")
-	@args(names = { "vendorName", "url", "port", "dbName", "usrName", "password" })
+	@args(names = { "dbtype", "url", "port", "database", "user", "passwd" })
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
-		String vendorName = (String) scope.getArg("vendorName", IType.STRING);
+		String vendorName = (String) scope.getArg("dbtype", IType.STRING);
 		String url = (String) scope.getArg("url", IType.STRING);
 		String port = (String) scope.getArg("port", IType.STRING);
-		String dbName = (String) scope.getArg("dbName", IType.STRING);
-		String usrName = (String) scope.getArg("usrName", IType.STRING);
-		String password = (String) scope.getArg("password", IType.STRING);
+		String dbName = (String) scope.getArg("database", IType.STRING);
+		String usrName = (String) scope.getArg("user", IType.STRING);
+		String password = (String) scope.getArg("passwd", IType.STRING);
 		String mySQLDriver = new String("com.mysql.jdbc.Driver");
 		String msSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		try {
@@ -73,7 +73,7 @@ public class AgentDB extends GamlAgent {
 				// stat = conn.createStatement();
 			} else {
 				throw new GamaRuntimeException("SQLConnection.connectSQL: The " + vendorName +
-					"is not supported!");
+					" is not supported!");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,9 +134,9 @@ public class AgentDB extends GamlAgent {
 	 */
 
 	@action(name="selectDB")
-	@args(names = { "selectComm" })
+	@args(names = { "select" })
 	public GamaList<GamaList<Object>> selectDB(final IScope scope) throws GamaRuntimeException {
-		String selectComm = (String) scope.getArg("selectComm", IType.STRING);
+		String selectComm = (String) scope.getArg("select", IType.STRING);
 
 		ResultSet rs;
 		GamaList<Object> rowList = new GamaList<Object>();

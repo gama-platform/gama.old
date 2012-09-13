@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="bin/"/>
-	<classpathentry exported="true" kind="lib" path="lib/sqljdbc4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml"/>
 	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.17.jar"/>
 	<classpathentry kind="lib" path="lib/gt-data-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-swing-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-shapefile-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-sample-data-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-render-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coverage-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jdbc-sqlserver-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-feature-pregeneralized-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jdbc-db2-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jdbc-teradata-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jdbc-spatialite-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jdbc-mysql-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-metadata-2.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt2-mysql.jar"/>
-	<classpathentry kind="lib" path="lib/main-2.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/gt-jdbc-2.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-jdbc-mysql-2.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-jdbc-sqlserver-2.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.commons.dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-jdbc-teradata-2.7.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

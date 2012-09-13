@@ -11,8 +11,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.data.teradata.WKBAttributeIO;
+//import org.geotools.data.teradata.WKBAttributeIO;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
@@ -27,7 +28,7 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
 /*
- * SQLConnection:   supports the action
+ * SQLConnection:   supports the method
  * 
  *
  * - connectDB: make a connection to DBMS.
@@ -38,7 +39,7 @@ import msi.gaml.types.IType;
  * @author TRUONG Minh Thai 17-Feb-2012
  * Modified:
  *     20-Jun-2012: Change the Skill class to class library for Skill and Agent class 
- * Last Modified: 05-Mar-2012
+ * Last Modified: 05-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -47,7 +48,7 @@ public class SqlConnection {
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-		String factoryConectionDriver="com.mysql.jdbc.Driver";
+		//String factoryConectionDriver="com.mysql.jdbc.Driver";
 
 		//Connection conn=null;
 		String vender="MySQL";
@@ -108,8 +109,9 @@ public class SqlConnection {
 								";databaseName=" + dbName + ";user=" + userName + ";password=" + password +
 								";");
 					} else {
-						throw new ClassNotFoundException("SQLConnection.connectSQL: The " + vender +
-							"is not supported!");
+						throw new ClassNotFoundException("SQLConnection.connectSQL: The " 
+					                                       + vender
+					                                       + " is not supported!");
 					}
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
@@ -153,6 +155,11 @@ public class SqlConnection {
 				result.add(getColumnName(rsmd));
 				result.add(getColumnTypeName(rsmd));
 				result.add(repRequest);
+				if (DEBUG){
+					System.out.println("column name:" + result.get(0) );
+					System.out.println("column type:" + result.get(1) );
+					System.out.println("data:" + result.get(2) );
+				}
 				rs.close();
 				conn.close();
 			} catch (SQLException e) {
@@ -431,13 +438,60 @@ public class SqlConnection {
 			     return dbGeometry;			 }
 			
 			
-			public Geometry read(ResultSet rs, int index) throws IOException
-			{
-				return new WKBAttributeIO().read(rs, index);
-			}
+//			public Geometry read(ResultSet rs, int index) throws IOException
+//			{
+//				return new WKBAttributeIO().read(rs, index);
+//			}
 			public String getURL(){ return url; }
 			public String getVendor(){ return vender; }
 			public String getUser(){ return userName;}
 			
 
+		public static Envelope getBounds( GamaList<Object> gamaList)throws IOException {
+				   	Envelope envelope;
+					//get Column name
+					GamaList<Object> colNames=(GamaList<Object>) gamaList.get(0);
+					//get Column type
+					GamaList<Object> colTypes=(GamaList<Object>) gamaList.get(1);
+					int index=colTypes.indexOf("GEOMETRY");
+					if (index<0) return null;
+					else {
+						//Get ResultSet 
+						GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) gamaList.get(2);
+						int n=initValue.length();
+						//int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
+			            if (n<0) return null;
+			            else {
+			            	GamaList<Object> rowList = initValue.get(0);
+			            	Geometry geo= (Geometry) rowList.get(index);
+			            	envelope=geo.getEnvelopeInternal();
+			            	double maxX=envelope.getMaxX();
+			            	double maxY=envelope.getMaxY();
+			            	double minX=envelope.getMinX();
+			            	double minY=envelope.getMinY();
+			            	
+
+							for (int i=1; i<n && i<Integer.MAX_VALUE; i++)
+							{
+								
+								rowList = initValue.get(i);
+								geo= (Geometry) rowList.get(index);
+								envelope=geo.getEnvelopeInternal();
+				            	double maxX1=envelope.getMaxX();
+				            	double maxY1=envelope.getMaxY();
+				            	double minX1=envelope.getMinX();
+				            	double minY1=envelope.getMinY();
+
+								maxX= maxX>maxX1 ? maxX : maxX1 ;
+								maxY= maxY>maxY1 ? maxY : maxY1 ;
+								minX= minX<minX1 ? minX : minX1 ;
+								minY= minY<minY1 ? minY : minY1 ;
+								envelope.init(minX,maxX, minY, maxY);
+								
+							}
+							return envelope;
+			            }
+					}
+
+			   }
 }

@@ -6,7 +6,7 @@
  * 		Test of the species.DBInterrogator 
  */
 
-model TestDBInterrogator
+model TestDBInterrogator 
   
 global {
 	var DB type: string parameter: 'DataBase' init:'../includes/meteo.db';

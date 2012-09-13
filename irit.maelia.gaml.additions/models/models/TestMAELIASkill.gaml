@@ -14,7 +14,7 @@ global {
 	init {
 		create species: toto number: 1 ;
 	}
-} 
+}  
 entities { 
 	species toto skills: [MAELIA] {
 		var listRes type: list init:[];
@@ -25,6 +25,6 @@ entities {
 			let t value: self.maeliaInterrogateDB[request::'SELECT * FROM points;', DBName::DB];
 			set listRes value: t;	
 			do action: write with: [message::t];
-		}
+		} 
 	}
 }

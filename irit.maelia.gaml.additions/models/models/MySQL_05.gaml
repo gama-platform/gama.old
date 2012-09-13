@@ -10,7 +10,7 @@
  *   05: Test executeUpdate with DELETE statement
  */
 
-model SQLConnection_05
+model MySQL_05
 
 /* Insert your model definition here */
 
@@ -22,18 +22,18 @@ global {
 	}
 }  
 entities {  
-	species toto skills: [MAELIADBMS] {  
+	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex {
+		reflex delete {
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
- 				arg vendorName value: "MySQL";
+ 				arg dbtype value: "MySQL"; 
  				arg url value: "127.0.0.1";  
  				arg port value: "3306";
- 				arg dbName value: "STUDENTS";
- 				arg usrName value: "root";
- 				arg password value: "";
+ 				arg database value: "students";
+ 				arg user value: "root";
+ 				arg passwd value: "root";
  				arg updateComm value: "DELETE FROM Registration " +
                    					   "WHERE id = 101";
  			}
