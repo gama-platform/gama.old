@@ -4,37 +4,34 @@
  *  Description: 
  */
 
-model GAMA_SQLSKILL_SELECT_01
+model GAMA_SQLSKILL_SELECT_02
 
 /* Insert your model definition here */
 
   
 global {
     var numAgent type:int;
-	var SQL type:map init: ['url'::'tmthai','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
-		"select"::	"Select ID_4,Name_4,geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254"];
+	var BOUNDS type:map init: ['url'::'tmthai','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
+								"select"::	"select geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254"];
+	var PARAMS type:map init: ['url'::'tmthai','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt'];
+	var LOCATIONS type:string init: "select ID_4, Name_4, geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254";
 	init {
 		create species: toto number: 1  
 		{ 
-			let  t value: self select[params::SQL]; //select data with parameter is a map type
-
-			set listRes value: t; 
-			set numAgent value: length(listRes at 2);  
+			let t value: list(self select [params:: PARAMS, select:: LOCATIONS]); //select data with parameter is a map type
+			set numAgent value: length(list(t at 2));  
 			do write message: "number of Agent" + numAgent;
-
-		}	
-		ask (toto at 0) {
-			create species:vnm_adm1 from: listRes with:[ id:: 0, custom_name:: 1, geo::2]{ set shape value: geo; }
+			create species:vnm_adm1 from: t with:[ id:: "id_4", custom_name:: "name_4", geo::"geo"]{ set shape value: geo; }
 		}
 		 
 	}
   
 }   
-environment bounds: SQL ;
+environment bounds: BOUNDS ;
 entities {   
 	species toto skills: [SQLSKILL]
 	 {  
-		var listRes type: list of: list init:[]; 
+		//Nothing
 	 } 
 	
 	species vnm_adm1 {

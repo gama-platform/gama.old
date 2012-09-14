@@ -26,7 +26,9 @@ import msi.gaml.types.IType;
 * @author TRUONG Minh Thai 20-Jun-2012
 * Modified:
 *   10-Sep-2012: change MAELIASQL Skill to SQLSKILL
-*     
+*   13-sep-2012:
+*       1. Change the input name of selectDB
+*       2. Add action: select  
 * Last Modified: 10-Sep-2012
 */
 //@skill(name = "MAELIASQL")
@@ -53,7 +55,7 @@ public class SQLSkill extends Skill {
 	 * arg port value: portvaluse;
 	 * arg database value: dbnamevalue;
 	 * arg user value: usrnamevalue;
-	 * arg passwd value: pwvaluse;
+	 * arg passwd value: password valuse;
 	 * }
 	 */
 	@action(name="connectDB")
@@ -87,12 +89,12 @@ public class SQLSkill extends Skill {
 	 * Make a connection to BDMS and execute the select statement
 	 * 
 	 * @syntax do action: selectDB {
+	 * arg dbtype value: vendorName; //MySQL/MSSQL
 	 * arg url value: urlvalue;
 	 * arg port value: portvaluse;
-	 * arg dbName value: dbnamevalue;
-	 * arg usrName value: usrnamevalue;
-	 * arg password value: pwvaluse;
-	 * arg selectComm value: selectStatement;
+	 * arg database value: dbnamevalue;
+	 * arg user value: usrnamevalue;
+	 * arg passwd value: password valuse;
 	 * }
 	 * 
 	 * @return GamaList<GamaList<Object>>
@@ -128,26 +130,33 @@ public class SQLSkill extends Skill {
 		return repRequest;
 
 	}
+	
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 * 
-	 * @syntax do action: selectDB {
-	 * arg url value: urlvalue;
-	 * arg port value: portvaluse;
-	 * arg dbName value: dbnamevalue;
-	 * arg usrName value: usrnamevalue;
-	 * arg password value: pwvaluse;
-	 * arg selectComm value: selectStatement;
-	 * }
+	 * @syntax do action: 
+	 * 	selectDB {
+	 * 		arg params value:[
+	 * 					 "dbtype":"MSSQL", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password",
+	 *                   "select": "select string"
+	 *                  ],
+	 *  	arg select value: "select string"
+	 *   }
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name="select")
-	@args(names = { "params"})
+	@args(names = { "params", "select"})
 	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
 	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		SqlConnection sqlcon=new SqlConnection(
+		String selectComm=(String) scope.getArg("select", IType.STRING);
+		SqlConnection sqlConn=new SqlConnection(
 										(String) params.get("dbtype"),
 				                        (String)params.get("url"),
 				                        (String) params.get("port"),
@@ -158,15 +167,15 @@ public class SQLSkill extends Skill {
 	
 		GamaList<Object> repRequest = new GamaList<Object>();
 		try{
-			  repRequest= sqlcon.selectDB((String) params.get("select"));
-			//repRequest = sqlConn.selectDB(selectComm);
+			  //repRequest= sqlcon.selectDB((String) params.get("select"));
+			  repRequest = sqlConn.selectDB(selectComm);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.selectDB: " + e.toString());
+			throw new GamaRuntimeException("SQLSkill.select: " + e.toString());
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole((String) params.get("select") + " was run");
+			GuiUtils.informConsole(selectComm + " was run");
 		}
 
 		return repRequest;
@@ -176,14 +185,14 @@ public class SQLSkill extends Skill {
 	/*
 	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 * 
-	 * @syntax: do action: connectDB {
-	 * arg dbtype value: vendorvalue;
-	 * arg url value: urlvalue;
-	 * arg port value: portvalue;
-	 * arg database value: dbnamevalue;
-	 * arg user value: usrnamevalue;
-	 * arg passwd value: pwvaluse;
-	 * arg updateComm value: updateStatement;
+	 * @syntax: do action: executeUpdateDB {
+	 * 							arg dbtype value: vendorvalue;
+	 * 							arg url value: urlvalue;
+	 * 							arg port value: portvalue;
+	 * 							arg database value: dbnamevalue;
+	 * 							arg user value: usrnamevalue;
+	 * 							arg passwd value: pwvaluse;
+	 * 							arg updateComm value: updateStatement;
 	 * }
 	 */
 	@action(name="executeUpdateDB")
@@ -197,6 +206,51 @@ public class SQLSkill extends Skill {
 				(String) scope.getArg("user", IType.STRING),
 				(String) scope.getArg("passwd", IType.STRING));
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+		int n = 0;
+		try {
+			n = sqlConn.executeUpdateDB(updateComm);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GamaRuntimeException("SQLSkill.exexuteUpdateDB:" + e.toString());
+		}
+
+		if ( DEBUG ) {
+			GuiUtils.informConsole(updateComm + " was run");
+		}
+
+		return n;
+
+	}
+	/*
+	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
+	 * 
+	 * @syntax: do action: executeUpdate {
+	 * arg params value:[
+	 * 					 "dbtype":"MSSQL", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password",
+	 *                  ],
+	 *  	arg select value: "select string"
+	 *   }
+	 *   
+	 *   */
+	@action(name="executeUpdate")
+	@args(names = { "params", "updateComm"})
+	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+		SqlConnection sqlConn=new SqlConnection(
+										(String) params.get("dbtype"),
+				                        (String) params.get("url"),
+				                        (String) params.get("port"),
+				                        (String) params.get("database"),
+				                        (String) params.get("user"),
+				                        (String) params.get("passwd")
+				                       );
 		int n = 0;
 		try {
 			n = sqlConn.executeUpdateDB(updateComm);

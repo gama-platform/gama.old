@@ -329,7 +329,7 @@ public class SqlConnection {
 				 int numberOfColumns = rsmd.getColumnCount();
 				 GamaList<Object>  columnType = new GamaList<Object>();
 				 for (int i=1; i<=numberOfColumns; i++){
-						 columnType.add(rsmd.getColumnName(i));
+						 columnType.add(rsmd.getColumnName(i).toUpperCase());
 				}		
 				 return columnType;				
 			}
