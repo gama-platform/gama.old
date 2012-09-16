@@ -24,25 +24,17 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
-import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.swing.data.JFileDataStoreChooser;
-//import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
-
-import utils.FileBrowser;
-
 
 
 import msi.gama.common.interfaces.*;
@@ -55,13 +47,13 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.IOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurface {
@@ -730,6 +722,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void snapshot() {
+		buffImage =  this.myGLRender.getScreenShot();
 		save(GAMA.getDefaultScope(), buffImage);
 	}
 

@@ -56,6 +56,7 @@ import Picking.Picker;
 
 import com.sun.opengl.util.FPSAnimator;
 import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.Screenshot;
 
 import com.sun.opengl.util.texture.*;
 
@@ -686,5 +687,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glPopName();
 		angle += 1;
 		gl.glPopMatrix();
+	}
+		
+	public BufferedImage getScreenShot(){
+		this.context.makeCurrent();
+		BufferedImage img =  Screenshot.readToBufferedImage(width,height);
+		this.context.release();
+		return img;
 	}
 }
