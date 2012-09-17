@@ -18,6 +18,12 @@
  */
 package msi.gaml.operators;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -28,6 +34,10 @@ import msi.gama.util.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.uncommons.maths.statistics.DataSet;
+
+import rcaller.*;
+import rcaller.exception.RCallerExecutionException;
+import rcaller.exception.RCallerParseException;
 
 /**
  * Written by drogoul Modified on 15 janv. 2011
@@ -148,6 +158,142 @@ public class Stats {
 			}
 		}
 		return result;
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@operator(value = "corR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
+		throws GamaRuntimeException {
+		if ( l1.length() == 0 || l2.length() == 0 ) { 
+			return Double.valueOf(0d); 
+		}
+		
+		if ( l1.length() != l2.length()) { 
+			return Double.valueOf(0d);
+		}
+		
+		
+		RCaller caller = new RCaller();
+		caller.setRscriptExecutable("D:\\Program Files\\R\\R-2.11.1\\bin\\Rscript.exe");
+		
+		double[] vectorX = new double[l1.length()];
+		double[] vectorY = new double[l2.length()];
+		
+        int i = 0; 
+		for (Object o : l1){
+			vectorX[i++] = Double.parseDouble(o.toString());
+        }
+		
+		i = 0;
+		for (Object o : l2){
+			vectorY[i++] = Double.parseDouble(o.toString());
+        }
+        
+		caller.addDoubleArray("vectorX", vectorX);
+		caller.addDoubleArray("vectorY", vectorY);
+		
+		caller.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
+		
+        caller.runAndReturnResult("corCoef");
+        
+        double[] results;;
+        try
+        {
+        	results = caller.getParser().getAsDoubleArray("corCoef");
+        }
+        catch(Exception ex)
+        {
+        	return 0.0;
+        }
+        
+        return results[0];
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	public static Object getMeanR(final IScope scope, final IContainer l)
+		throws GamaRuntimeException {
+		if ( l.length() == 0 ) { 
+			return Double.valueOf(0d); 
+		}
+			
+		RCaller caller = new RCaller();
+		caller.setRscriptExecutable("D:\\Program Files\\R\\R-2.11.1\\bin\\Rscript.exe");
+		
+		            
+        double[] data = new double[l.length()];
+        int i = 0; 
+		for ( Object o : l ){
+			data[i++] = Double.parseDouble(o.toString());
+        }
+        
+		caller.addDoubleArray("data", data);
+        caller.addRCode("mean<-mean(data)");
+        caller.runAndReturnResult("mean");
+            
+        double[] results;
+        results = caller.getParser().getAsDoubleArray("mean");
+        return results[0];
+	}
+	
+	@operator(value = "R_compute", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile) throws GamaRuntimeException {
+	        try {
+	                // Call R
+	                RCaller r = new RCaller();
+	                r.setRscriptExecutable("D:\\Program Files\\R\\R-2.11.1\\bin\\Rscript.exe");
+	                
+	                RCode c = new RCode();
+	                GamaList R_statements = new GamaList<String>();
+	                FileReader fr = new FileReader(RFile); 
+	                BufferedReader br = new BufferedReader(fr); 
+	                String statement; 
+	                while((statement = br.readLine()) != null) { 
+	                	c.addRCode(statement);
+	                	R_statements.add(statement);
+                        java.lang.System.out.println(statement);
+	                } 
+	                fr.close(); 
+	                
+	                
+	                r.setRCode(c);
+	                GamaMap result = new GamaMap();
+	                
+	                String var = computeVariable(R_statements.get(R_statements.length() - 1).toString());
+	                r.runAndReturnResult(var);
+	                for (String name : r.getParser().getNames()) {
+	                	Object[] results = null;
+			            results = r.getParser().getAsStringArray(name);
+			            for(int i = 0; i < results.length; i++)
+			            {
+			              	java.lang.System.out.println(results[i]);
+			            }
+			          	result.put(name, new GamaList(results));
+	                }
+	                return result;
+	                
+	        } catch (RCallerParseException e) {
+                // Syntax error
+                throw new GamaRuntimeException(e);
+	        } catch (RCallerExecutionException e) {
+	            // Runtime error in R
+	            throw new GamaRuntimeException(e);
+	        } catch(FileNotFoundException e)
+	        {
+	        	// File Not found error:
+	        	throw new GamaRuntimeException(e);
+	        } catch(IOException e)
+	        {
+	        	// Cannot read file error:
+	        	throw new GamaRuntimeException(e);
+	        }
+	}
+	
+	private static String computeVariable(final String string) {
+        String[] tokens = string.split("<-");
+        return tokens[0];
 	}
 
 }
