@@ -318,8 +318,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// GLUtil.DrawLight(gl,glu);
 		// myGLDrawer.DrawTexturedSphere(gl, glu);
 
-		// ((JOGLAWTDisplayGraphics)
-		// displaySurface.openGLGraphics).graphicsGLUtils.DrawArcBall();
+		//((JOGLAWTDisplayGraphics)
+		//displaySurface.openGLGraphics).graphicsGLUtils.DrawArcBall();
 
 		// myGLDrawer.Draw3DOpenGLHelloWorldShape(gl, width/4);
 		// myGLDrawer.DrawSphere(gl, glu,0.0f,0.0f,0.0f,width/4);

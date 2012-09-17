@@ -49,8 +49,6 @@ public class MyListener implements KeyListener, MouseListener,
 	//To handle mouse event	
 	private int lastx, lasty;
 	
-	public boolean isArcBallEnable=false;
-	
 	private boolean isMacOS = false;
 	
 	//picking
@@ -76,7 +74,7 @@ public class MyListener implements KeyListener, MouseListener,
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
 		// TODO Auto-generated method stub
-		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
+		if ( isArcBallOn(mouseEvent) && myCamera.isModelCentered) {
 			if (SwingUtilities.isRightMouseButton(mouseEvent)) {
 				myRenderer.reset();
 			}
@@ -102,7 +100,7 @@ public class MyListener implements KeyListener, MouseListener,
 	public void mousePressed(MouseEvent mouseEvent) {
 		//Arcball
 		
-		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
+		if ( (isArcBallOn(mouseEvent)) && myCamera.isModelCentered) {
 				//Arcball is not working with picking.
 				if(!myRenderer.displaySurface.Picking){
 					if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
@@ -133,7 +131,7 @@ public class MyListener implements KeyListener, MouseListener,
 
 		
 		
-		if ( checkCtrlKeyDown(mouseEvent) && myCamera.isModelCentered) {
+		if ( isArcBallOn(mouseEvent) && myCamera.isModelCentered) {
 			if(!myRenderer.displaySurface.Picking){
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 					myRenderer.drag(mouseEvent.getPoint());
@@ -276,6 +274,22 @@ public class MyListener implements KeyListener, MouseListener,
 			isMacOS = true;
 		}
 		return isMacOS;
+	}
+	
+	private boolean isArcBallOn(MouseEvent mouseEvent){
+			
+		if(checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.Arcball ==true){
+			if(mouseEvent.isShiftDown()==false){
+				return true;
+			}
+			
+			else{
+				return false;
+			}
+		}
+		else{
+			return false;
+		}
 	}
 	
 	//Picking method

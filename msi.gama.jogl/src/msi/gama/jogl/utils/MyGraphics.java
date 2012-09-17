@@ -156,21 +156,22 @@ public class MyGraphics {
 		glut.glutSolidTorus(innerRadius,outterRadius,sides,rings);
 	}
 	
-	void DrawArcBall(){
+	public void DrawArcBall(){
 		
-		DrawXYZAxis(1.0f);
-		
+		//DrawXYZAxis(1.0f);
+		float innerRadius= 0.075f;
+		float outterRadius= 1.0f;
 		myGl.glColor3f(0.0f, 0.0f, 1.0f);
-		DrawTorus(0.02f,1.0f,100,100);
+		DrawTorus(innerRadius,outterRadius,100,100);
 		
 		myGl.glRotatef(90,0.0f, 1.0f, 0.0f);
 		myGl.glColor3f(1.0f, 0.0f, 0.0f);
-		DrawTorus(0.02f,1.0f,100,100);
+		DrawTorus(innerRadius,outterRadius,100,100);
 		myGl.glRotatef(90,0.0f, -1.0f, 0.0f);
 		
 		myGl.glRotatef(90,1.0f, 0.0f, 0.0f);
 		myGl.glColor3f(0.0f, 1.0f, 0.0f);
-		DrawTorus(0.02f,1.0f,100,100);
+		DrawTorus(innerRadius,outterRadius,100,100);
 	}
 
 }

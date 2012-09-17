@@ -98,6 +98,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	//Use to toggle the Picking mode
 	public boolean Picking= false;
 	
+	//Use to toggle the Arcball view
+	public boolean Arcball= false;
+	
 	//Use to draw .shp file
 	final String[] shapeFileName = new String[1];
 	
@@ -600,6 +603,14 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		}
 		Picking = !Picking;
 		
+	}
+	
+	@Override
+	public void toggleArcball() {
+		Arcball = !Arcball;
+	/*	if(Arcball == true){
+		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
+		}*/
 	}
 	
 	/**
