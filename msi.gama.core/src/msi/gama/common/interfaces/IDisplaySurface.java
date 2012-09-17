@@ -63,6 +63,11 @@ public interface IDisplaySurface {
 	 * Activate the picking mode
 	 */
 	void togglePicking();
+	
+	/**
+	 * Activate arcball view (Only with Opengl view)
+	 */
+	void toggleArcball();
 
 	ILayerManager getManager();
 
