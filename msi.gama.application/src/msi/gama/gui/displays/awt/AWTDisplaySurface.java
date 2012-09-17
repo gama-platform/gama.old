@@ -658,6 +658,14 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void togglePicking() {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
+	
+	/**
+	 * This method does nothing for JAVA2D display
+	 */
+	@Override
+	public void toggleArcball() {
+		System.out.println("arcball is only available for Opengl Display");
+	}
 
 	/**
 	 * This method does nothing for JAVA2D display
