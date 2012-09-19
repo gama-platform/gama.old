@@ -1,4 +1,4 @@
-model circle   
+model sphere   
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 200 ;
@@ -13,7 +13,7 @@ global {
 	init { 
 		create cells number: number_of_agents { 
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
-			set shape <- shape add_z rnd(50);
+			set shape <- shape add_z rnd(500);
 		}
 
 	}  
@@ -29,8 +29,9 @@ entities {
 		const range type: float <- float(range_of_agents); 
 		const speed type: float <- speed_of_agents;   
 		int heading <- rnd(359);
-		geometry shape <- geometry (point([2,2])) ;
+		//geometry shape <- geometry (point(self.location)) ;
 		int z <- size_of_agents;
+		
 		
 		reflex go_to_center {
 			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
@@ -46,15 +47,25 @@ entities {
 			}
 		}
 		
-		aspect default {
-			draw shape: geometry color: color z:z ;
+		aspect sphere {
+			draw geometry: geometry (point(self.location)) z:z;
+		}
+		
+		//FIXME: Bug when using this aspect
+		aspect sphere2 {
+			draw shape: geometry color: color z:z; 
+		}
+		
+		//FIXME: Bug when using this aspect
+		aspect sphere3 {
+			draw geometry: shape color: color z:z; 
 		}
 	}
 }
 experiment sphere type: gui {
 	output {
 		display Circle refresh_every: 1 type: opengl {
-			species cells;
+			species cells aspect:sphere;
 		}
 	}
 }

@@ -1,15 +1,13 @@
-model circle   
+model cube   
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 10 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
-	int size_of_agents parameter: 'size' min: 1 <- 500;
+	int size_of_agents parameter: 'size' min: 1 <- 50;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
 
 	init { 
-		create cube number: number_of_agents { 
-			set location <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
-		} 
+		create cube number: number_of_agents; 
 	}  
 } 
  
@@ -29,7 +27,6 @@ entities {
 
 		}
 
-		
 		aspect default {
 			draw geometry: shape color: color z:size_of_agents ;
 		}

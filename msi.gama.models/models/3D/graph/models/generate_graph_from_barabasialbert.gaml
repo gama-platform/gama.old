@@ -45,7 +45,7 @@ entities {
 	 * initialized with default x,y random locations.
 	 */
 	species nodeSpecy  {
-		rgb color <- [rnd(100),rnd(100) ,rnd(100)] as rgb;
+		rgb color <- [rnd(255),rnd(255) ,rnd(255)] as rgb;
 		geometry shape <- geometry (point([location.x,location.y])) ;  
 		aspect base {
 			draw shape: geometry color: color z:0.5 ; 

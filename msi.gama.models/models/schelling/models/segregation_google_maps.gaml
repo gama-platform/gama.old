@@ -51,11 +51,11 @@ entities {
 
 experiment schelling type: gui {	
 	output {
-		display Segregation {
+		display Segregation type:opengl{
 			image name: 'bg' file: bitmap_file_name ;
-			species people transparency: 0.5 aspect: geom;
+			species people transparency: 0.5 aspect: geom z:0.001;
 		}	
-		display Charts {
+		/*display Charts {
 			chart name: 'Proportion of happiness' type: pie background: rgb('lightGray') style: exploded position: {0,0} size: {1.0,0.5}{
 				data Unhappy value: number_of_people - sum_happy_people ;
 				data Happy value: sum_happy_people ;
@@ -64,6 +64,6 @@ experiment schelling type: gui {
 				data happy color: rgb('blue') value:  (sum_happy_people / number_of_people) * 100 style: spline ;
 				data similarity color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
-		}
+		}*/
 	}
 }

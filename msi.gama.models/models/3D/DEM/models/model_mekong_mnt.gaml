@@ -1,4 +1,4 @@
-model tutorial_gis_city_traffic
+	model tutorial_gis_city_traffic
 
 global {
      
