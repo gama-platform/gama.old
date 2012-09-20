@@ -2,13 +2,13 @@ model move
 
 global {
 	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
-	file image1 <- file('images/simple_graph.png') ;
-	file image2 <- file('images/simple_graph_colored.png') ;
-	file image3 <- file('images/simple_graph_clustered.png') ;
+	file image1 <- file('images/Vietnam_multi_level/Province_Level.png') ;
+	file image2 <- file('images/Vietnam_multi_level/Country_Level.png') ;
+	file image3 <- file('images/Vietnam_multi_level/World_Level.png') ;
 	
-	string label1 <-"Simple graph";
-	string label2 <-"Simple graph colored";
-	string label3 <-"Simple graph clustered";
+	string label1 <-"Province Level";
+	string label2 <-"Country Level";
+	string label3 <-"World Level";
 	
 	int nb_layer<-0;
 	list images of: file;
