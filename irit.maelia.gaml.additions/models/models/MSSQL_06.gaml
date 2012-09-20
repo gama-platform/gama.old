@@ -31,8 +31,8 @@ entities {
 			do action: helloWorld;			 
 			// Select with no WHERE con dictions
 			do action: selectDB{ 
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";
@@ -42,8 +42,8 @@ entities {
  
  			// get result from Select From Where statement
  			let t value: self selectDB[ 						
- 						dbtype:: "MSSQL",
- 						url :: "localhost", 
+ 						dbtype::"SQLSERVER",
+ 						host :: "localhost", 
  						port :: "1433",
  						database :: "STUDENTS",
  						user:: "sa",

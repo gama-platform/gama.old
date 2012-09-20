@@ -8,19 +8,19 @@ model GAMA_SQLSKILL_SELECTDB_02
 
 /* Insert your model definition here */
 
-  
+   
 global {
     var numAgent type:int;
 	var rec type: list;
-	var BOUNDS type:map init: ['url'::'tmthai','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
+	var BOUNDS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
 		"select"::	"select  geom.STAsBinary() as geo from VNM_ADM4 where id_2=38254"];
 
 	init {
 		create species: toto number: 1  
 		{
 			set listRes value: list(self selectDB[ 
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "SQLSERVER",
+ 				host :: "localhost",  
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",
@@ -48,8 +48,8 @@ global {
 			
 			//Create ligtTrap agents
 			set listRes value: list(self selectDB[ 
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "sqlserver",
+ 				host :: "localhost",  
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",

@@ -11,14 +11,14 @@ global {
 	}
 }
 entities {
-	species toto skills: [SQLSKILL ] {
+	species toto skills: [SQLSKILL ] { 
 		var listRes type: list init: [ ];
 		//var obj type: obj;
 		reflex conn {
 			do action: helloWorld;
 			do action: connectDB {
-				arg dbtype value: "MSSQL";//MSSQL = SQLServer; MySQL = MySQL 
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value: "SQLSERVER";//SQLSERVER = SQLServer; MySQL = MySQL 
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; // MSSQL = 1433; MySQL = 3306 
 				arg database value: "";
 				arg user value: "sa";

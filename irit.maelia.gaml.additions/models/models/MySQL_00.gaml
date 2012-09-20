@@ -19,15 +19,15 @@ entities {
 	
 			do action: connectDB {
 				arg dbtype value: "MySQL"; 
-				arg url value: "127.0.0.1";
+				arg host value: "127.0.0.1";
 				arg port value: "3306";
 				arg database value: "";
 				arg user value: "root";
 				arg passwd value: "root";
 			}
 			do action: connectDB {
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";
+				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";
 				arg port value: "1433";
 				arg database value: "BPH";
 				arg user value: "sa";
@@ -35,7 +35,7 @@ entities {
 			}
 			do action: connectDB {
 				arg dbtype value: "ORACLE"; // Not support
-				arg url value: "127.0.0.1";
+				arg host value: "127.0.0.1";
 				arg port value: "1433";
 				arg database value: "";
 				arg user value: "root";

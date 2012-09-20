@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/org.apache.commons.dbcp.jar"/>
 	<classpathentry kind="lib" path="lib/sqljdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-jdbc-teradata-2.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-swing-2.7.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

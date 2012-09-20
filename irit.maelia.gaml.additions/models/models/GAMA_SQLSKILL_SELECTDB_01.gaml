@@ -13,19 +13,19 @@ global {
 	var SHAPE_ADMINISTRATIF_DISTRICT type: string init: '../includes/vnm_adm4.shp' parameter: 'Administrative boudaries - Vietnam:' category: 'ADMINISTRATIF REGIONS' ;
     var numAgent type:int;
 	var rec type: list;
-	var SQL type:map init: ['url'::'localhost','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
+	var SQL type:map init: ['host'::'localhost','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
 		"select"::	"Select geom.STAsBinary() as geo from VNM_ADM4 where id_1=3296"];
 
 	init {
 		create species: toto number: 1  
 		{
 			let  t value: self selectDB[ 
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "SQLSERVER",
+ 				host :: "localhost",   
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",
- 				passwd:: "tmt",
+ 				passwd:: "tmt", 
  
  				//select::		"select  id_4,Name_4,geom.STAsBinary() as geo from VNM_ADM4"
  				//select::		"select  id_4,Name_4,geom.STAsBinary() as geo from VNM_ADM4 where id_1=3289"

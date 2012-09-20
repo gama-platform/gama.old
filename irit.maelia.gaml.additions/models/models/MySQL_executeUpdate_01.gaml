@@ -9,7 +9,7 @@
 model MySQL_executeUpdate
   
 global {
-	var PARAMS type:map init: ['url'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'','user'::'root','passwd'::'root'];
+	var PARAMS type:map init: ['host'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'','user'::'root','passwd'::'root'];
 
 	init {
 		create species: toto number: 1 ;

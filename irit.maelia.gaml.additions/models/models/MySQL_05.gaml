@@ -29,7 +29,7 @@ entities {
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
  				arg dbtype value: "MySQL"; 
- 				arg url value: "127.0.0.1";  
+ 				arg host value: "127.0.0.1";  
  				arg port value: "3306";
  				arg database value: "students";
  				arg user value: "root";

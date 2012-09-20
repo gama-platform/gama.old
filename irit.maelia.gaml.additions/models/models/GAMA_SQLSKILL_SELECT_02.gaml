@@ -10,20 +10,9 @@ model GAMA_SQLSKILL_SELECT_02
 
 global {
 
-	var PARAMS type:map init: ['url'::'tmthai',
-	                           'dbtype'::'MSSQL',
-	                           'port'::'1433',
-	                           'database'::'BPH',
-	                           'user'::'sa',
-	                           'passwd'::'tmt'];
-	                           
-	var BOUNDS type:map init: ['url'::'tmthai',
-	                           'dbtype'::'MSSQL',
-	                           'port'::'1433',
-	                           'database'::'BPH',
-	                           'user'::'sa',
-	                           'passwd'::'tmt',
-	                           "select"::	"select  geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254"];
+	var BOUNDS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
+								"select"::	"select geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254"];
+	var PARAMS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt'];
 	var LOCATIONS  type:string init: "select  id_4 as id,Name_4 as name,geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254";
 	var LIGHTTRAPS type:string init: "select  id,ID_LT,ID_2,geom.STAsBinary() as geo from LightTrap_adm4 where id_2=38253 or id_2=38254";
 	var GRIDS      type:string init: "select  id,ID_2,geom.STAsBinary() as geo from vnm_grid2 where id_2=38253 or id_2=38254";
@@ -36,18 +25,12 @@ global {
        ask (toto at 0)	
 		{
  			//Create location agents
- 			//let t value: list(self select [params::PARAMS, select::LOCATIONS]); 
- 			//create species:locations from: t with:[ id:: "id", custom_name:: "name", geo::"geo"]{ set shape value: geo; }
  			create species:locations from: list(self select [params::PARAMS, select::LOCATIONS]) with:[ id:: "id", custom_name:: "name", geo::"geo"]{ set shape value: geo; }
 			
 			//Create light trap agents
-			//set t value: list(self select [params::PARAMS, select::LIGHTTRAPS]); 
-			//create species:lightTraps from: t with:[ id:: "id", id_lt:: "id_lt", id_2:: "id_2", geo:: "geo"]{ set shape value: geo; }
 			create species:lightTraps from: list(self select [params::PARAMS, select::LIGHTTRAPS]) with:[ id:: "id", id_lt:: "id_lt", id_2:: "id_2", geo:: "geo"]{ set shape value: geo; }
 
 			//Create grid agents
-			//set t value: list(self select [params::PARAMS, select::GRIDS]); 
-			//create species:myGrids from: t with:[ id:: "id", id_2:: "id_2", geo:: "geo"]{ set shape value: geo; }
 			create species:myGrids from: list(self select [params::PARAMS, select::GRIDS]) with:[ id:: "id", id_2:: "id_2", geo:: "geo"]{ set shape value: geo; }
 		}	
 	}

@@ -9,9 +9,9 @@ model GAMA_SQLSKILL_SELECTDB_02
 /* Insert your model definition here */
 
   
-global {
+global { 
     var numAgent type:int;
-	var BOUNDS type:map init: ['url'::'tmthai','dbtype'::'MSSQL','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
+	var BOUNDS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
 		"select"::	"select  geom.STAsBinary() as geo from VNM_ADM4 where id_2=38253 or id_2=38254"];
 	
 
@@ -19,8 +19,8 @@ global {
 		create species: toto number: 1  
 		{
 			set listRes value: list(self selectDB[  
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "SQLSERVER",
+ 				host :: "localhost",  
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",
@@ -46,8 +46,8 @@ global {
 			create species:locations from: listRes with:[ id:: "id_4", custom_name:: "name_4", geo::"geo"]{ set shape value: geo; }
 			
 		set listRes value: list(self selectDB[ 
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "SQLSERVER",
+ 				host :: "localhost",  
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",
@@ -60,8 +60,8 @@ global {
  
  				
   			set listRes value: list(self selectDB[ 
- 				dbtype:: "MSSQL",
- 				url :: "localhost",  
+ 				dbtype:: "SQLSERVER",
+ 				host :: "localhost",  
  				port:: "1433", 
  				database:: "BPH",  
  				user:: "sa",

@@ -38,13 +38,15 @@ import msi.gaml.types.IType;
  * 
  * @author TRUONG Minh Thai 17-Feb-2012
  * Modified:
- *     20-Jun-2012: Change the Skill class to class library for Skill and Agent class 
- * Last Modified: 05-Sep-2012
+ *     20-Jun-2012: Change the Skill class to class library for Skill and Agent class
+ *     19-Sep-2012: Change const MSSQL to SQLSERVER for SQL Server 
+ * Last Modified: 19-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
 		static final String MYSQL ="MySQL";
-		static final String MSSQL ="MsSQL";
+		//static final String MSSQL ="MsSQL";
+		static final String MSSQL ="SQLSERVER";
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
@@ -165,19 +167,19 @@ public class SqlConnection {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			}
 
 			if ( DEBUG ) {
@@ -202,19 +204,19 @@ public class SqlConnection {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
 			}
 
 			if ( DEBUG ) {

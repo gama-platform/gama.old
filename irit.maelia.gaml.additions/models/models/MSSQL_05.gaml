@@ -28,8 +28,8 @@ entities {
 		reflex delete{
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
- 				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+ 				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";

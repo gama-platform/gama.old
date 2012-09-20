@@ -5,9 +5,9 @@
  *   00: Test DBMS Connection
  *   01: Test executeUpdate with CREATE DATABASE statement
  *   02: Test executeUpdate with CREATE TABLE statement
- *   03: Test executeUpdate with INSERT statement
+ *   03: Test executeUpdate with INSERT statement 
  */
-
+ 
 model MSSQL_03
 
 /* Insert your model definition here */
@@ -26,8 +26,8 @@ entities {
 		reflex insert {
 			do action: helloWorld;			 
 			do action: executeUpdateDB{ 
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";
@@ -36,8 +36,8 @@ entities {
                    "VALUES (100, 'Zara', 'Ali', 18)";
  			}
  			do action: executeUpdateDB{ 
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";
@@ -46,8 +46,8 @@ entities {
                    "VALUES (101, 'Mahnaz', 'Fatma', 25)";
  			}
  			do action: executeUpdateDB{ 
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value: "SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";
@@ -56,8 +56,8 @@ entities {
                    "VALUES (102, 'Zaid', 'Khan', 30)";
  			}	
  			do action: executeUpdateDB{ 
-				arg dbtype value: "MSSQL";
-				arg url value: "localhost";// IP address or computer name
+				arg dbtype value:"SQLSERVER";
+				arg host value: "localhost";// IP address or computer name
 				arg port value: "1433"; 
 				arg database value: "Students";
 				arg user value: "sa";
