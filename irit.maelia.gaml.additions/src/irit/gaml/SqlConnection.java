@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,34 +41,36 @@ import msi.gaml.types.IType;
  * Modified:
  *     20-Jun-2012: Change the Skill class to class library for Skill and Agent class
  *     19-Sep-2012: Change const MSSQL to SQLSERVER for SQL Server 
- * Last Modified: 19-Sep-2012
+ *     20-Sep-2012: Add SQLITE to all methods
+ *                     
+ * Last Modified: 20-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
-		static final String MYSQL ="MySQL";
+		public static final String MYSQL ="MySQL";
 		//static final String MSSQL ="MsSQL";
-		static final String MSSQL ="SQLSERVER";
+		public static final String MSSQL ="sqlserver";
+		public static final String SQLITE="sqlite";
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-
-		//String factoryConectionDriver="com.mysql.jdbc.Driver";
+		static final String SQLITEDriver = new String("org.sqlite.JDBC");
 
 		//Connection conn=null;
 		String vender="MySQL";
 		String url="127.0.0.1";
 		String port="3306";
 		String dbName="";
-		String userName="root";
-		String password="root";
+		String userName="";
+		String password="";
 		
 		public SqlConnection(String dbName)
 		{
 			this.dbName=dbName;
 		}
-		public SqlConnection(String venderName,String url)
+		public SqlConnection(String venderName,String database)
 		{
 			this.vender=venderName;
-			this.url=url;
+			this.dbName=database;
 		}
 			
 		public SqlConnection(String venderName,String url,String port,
@@ -110,7 +113,14 @@ public class SqlConnection {
 							DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port +
 								";databaseName=" + dbName + ";user=" + userName + ";password=" + password +
 								";");
-					} else {
+					} else if ( vender.equalsIgnoreCase(SQLITE) ) {
+						Class.forName(SQLITEDriver).newInstance();
+						conn =
+							DriverManager.getConnection("jdbc:sqlite:" + dbName);
+						if (DEBUG){
+							System.out.println("SQLlite:"+conn.toString());
+						}
+					}  else {
 						throw new ClassNotFoundException("SQLConnection.connectSQL: The " 
 					                                       + vender
 					                                       + " is not supported!");
@@ -149,18 +159,28 @@ public class SqlConnection {
 			Connection conn=null;
 			try {
 				conn=connectDB();
-				rs = conn.createStatement().executeQuery(selectComm);
+				if (DEBUG){
+					System.out.println("Select Command:"+ selectComm);
+				}
+				Statement st = conn.createStatement(); 
+				rs = st.executeQuery(selectComm);
 				ResultSetMetaData rsmd = rs.getMetaData();
-				repRequest=resultSet2GamaList(rs);
+				if (DEBUG){
+					System.out.println("MetaData:"+rsmd.toString());
+				}
+				//repRequest=resultSet2GamaList(rs);
 				
 				//result.add(rsmd);
 				result.add(getColumnName(rsmd));
 				result.add(getColumnTypeName(rsmd));
+				
+				repRequest=resultSet2GamaList(rs);
 				result.add(repRequest);
+				
 				if (DEBUG){
-					System.out.println("column name:" + result.get(0) );
-					System.out.println("column type:" + result.get(1) );
-					System.out.println("data:" + result.get(2) );
+					System.out.println("list of column name:" + result.get(0) );
+					System.out.println("list of column type:" + result.get(1) );
+					System.out.println("list of data:" + result.get(2) );
 				}
 				rs.close();
 				conn.close();
@@ -199,7 +219,15 @@ public class SqlConnection {
 			int n = 0;
 			try {
 				conn = connectDB();
-				n = conn.createStatement().executeUpdate(updateComm);
+				if (DEBUG) {
+					System.out.println("Update Command:" +updateComm);
+				}
+				Statement st = conn.createStatement(); 
+				n = st.executeUpdate(updateComm);
+				if (DEBUG) {
+					System.out.println("Updated records :" +n);
+				}
+
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

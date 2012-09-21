@@ -6,10 +6,10 @@
  *   01: Test executeUpdate with CREATE DATABASE statement
  */
 
-model MySQL_selectNUpdate
+model MSSQL_selectNUpdate
   
 global {
-	var PARAMS type:map init: ['host'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'','user'::'root','passwd'::'root'];
+	var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','port'::'1433','database'::'','user'::'sa','passwd'::'tmt'];
 
 	init {
 		create species: toto number: 1 ;
@@ -20,7 +20,6 @@ global {
  				arg updateComm value: "CREATE DATABASE STUDENTS"; 
  			}
  			write "STUDENTS database was created";
- 			//set PARAMS value:['url'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'Students','user'::'root','passwd'::'root'] ;
 			remove key: "database" from: PARAMS;
 			put "STUDENTS" key:"database" in: PARAMS;
 			do action: executeUpdate{ 
@@ -79,8 +78,8 @@ entities {
  			do action: write with: [message::t];
  		}
         reflex drop {    
- 			//set PARAMS value:['url'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'','user'::'root','passwd'::'root'] ;
- 			
+ 			remove key: "database" from: PARAMS;
+			put "" key:"database" in: PARAMS;
  			do action: executeUpdate{
 				arg params value: PARAMS; 
  				arg updateComm value: "DROP DATABASE STUDENTS"; 

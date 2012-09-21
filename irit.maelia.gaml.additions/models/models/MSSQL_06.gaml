@@ -26,7 +26,7 @@ global {
 entities {  
 	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
-		//var obj type: obj;
+		//var obj type: obj; 
 		reflex select{
 			do action: helloWorld;			 
 			// Select with no WHERE con dictions

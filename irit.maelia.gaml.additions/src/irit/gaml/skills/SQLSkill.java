@@ -52,7 +52,7 @@ public class SQLSkill extends Skill {
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 * arg dbtype value: vendorName; //MySQL/SQLSERVER
+	 * arg dbtype value: vendorName; //MySQL/sqlserver/sqlite
 	 * arg url value: urlvalue;
 	 * arg port value: portvaluse;
 	 * arg database value: dbnamevalue;
@@ -65,33 +65,38 @@ public class SQLSkill extends Skill {
 	public  Object connectDB(final IScope scope) throws GamaRuntimeException
 	{
 		Connection conn;
-		SqlConnection sqlConn=new SqlConnection(
-									(String) scope.getArg("dbtype", IType.STRING),
-									(String) scope.getArg("host", IType.STRING),
-									(String) scope.getArg("port", IType.STRING),
-									(String) scope.getArg("database", IType.STRING),
-									(String) scope.getArg("user", IType.STRING),
-									(String) scope.getArg("passwd", IType.STRING)
-								);
+		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
+		String host= (String) scope.getArg("host", IType.STRING);
+		String port = (String) scope.getArg("port", IType.STRING);
+		String database = (String) scope.getArg("database", IType.STRING);
+		String user = (String) scope.getArg("user", IType.STRING);
+		String passwd = (String) scope.getArg("passwd", IType.STRING);
 
+		SqlConnection sqlConn;
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
 		try {	
 			conn = sqlConn.connectDB();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
 		} 
-		if ( DEBUG ) {
-			System.out.println(sqlConn.getVendor() + " Server at address " + sqlConn.getURL() + " is connected");
-		}
 		return conn;
-
 	}
 	
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 * 
 	 * @syntax do action: selectDB {
-	 * arg dbtype value: vendorName; //MySQL/SQLSERVER
+	 * arg dbtype value: vendorName; //MySQL/sqlserver/sqlite
 	 * arg url value: urlvalue;
 	 * arg port value: portvaluse;
 	 * arg database value: dbnamevalue;
@@ -107,15 +112,26 @@ public class SQLSkill extends Skill {
 	public GamaList<Object> selectDB(final IScope scope) throws GamaRuntimeException
 	{
 		String selectComm=(String) scope.getArg("select", IType.STRING);
-		SqlConnection sqlConn=new SqlConnection(
-									(String) scope.getArg("dbtype", IType.STRING),
-									(String) scope.getArg("host", IType.STRING),
-									(String) scope.getArg("port", IType.STRING),
-									(String) scope.getArg("database", IType.STRING),
-									(String) scope.getArg("user", IType.STRING),
-									(String) scope.getArg("passwd", IType.STRING)
-								);
+		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
+		String host= (String) scope.getArg("host", IType.STRING);
+		String port = (String) scope.getArg("port", IType.STRING);
+		String database = (String) scope.getArg("database", IType.STRING);
+		String user = (String) scope.getArg("user", IType.STRING);
+		String passwd = (String) scope.getArg("passwd", IType.STRING);
+
+		SqlConnection sqlConn;
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
 		
+		//Select data
 		//GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 		GamaList<Object> repRequest = new GamaList<Object>();
 		try{
@@ -157,17 +173,27 @@ public class SQLSkill extends Skill {
 	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
 	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		String selectComm=(String) scope.getArg("select", IType.STRING);
-		SqlConnection sqlConn=new SqlConnection(
-										(String) params.get("dbtype"),
-				                        (String)params.get("host"),
-				                        (String) params.get("port"),
-				                        (String) params.get("database"),
-				                        (String) params.get("user"),
-				                        (String)params.get("passwd")
-				                       );
-	
+		String selectComm = (String) scope.getArg("select", IType.STRING);
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn;
 		GamaList<Object> repRequest = new GamaList<Object>();
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
+		
+		// get data
 		try{
 			  //repRequest= sqlcon.selectDB((String) params.get("select"));
 			  repRequest = sqlConn.selectDB(selectComm);
@@ -200,14 +226,24 @@ public class SQLSkill extends Skill {
 	@action(name="executeUpdateDB")
 	@args(names = { "dbtype", "host", "port", "database", "user", "passwd", "updateComm" })
 	public int executeUpdateDB(final IScope scope) throws GamaRuntimeException {
-		SqlConnection sqlConn=new SqlConnection(
-				(String) scope.getArg("dbtype", IType.STRING),
-				(String) scope.getArg("host", IType.STRING),
-				(String) scope.getArg("port", IType.STRING),
-				(String) scope.getArg("database", IType.STRING),
-				(String) scope.getArg("user", IType.STRING),
-				(String) scope.getArg("passwd", IType.STRING));
+		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
+		String host= (String) scope.getArg("host", IType.STRING);
+		String port = (String) scope.getArg("port", IType.STRING);
+		String database = (String) scope.getArg("database", IType.STRING);
+		String user = (String) scope.getArg("user", IType.STRING);
+		String passwd = (String) scope.getArg("passwd", IType.STRING);
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+		SqlConnection sqlConn;
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
 		int n = 0;
 		try {
 			n = sqlConn.executeUpdateDB(updateComm);
@@ -245,14 +281,23 @@ public class SQLSkill extends Skill {
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-		SqlConnection sqlConn=new SqlConnection(
-										(String) params.get("dbtype"),
-				                        (String) params.get("host"),
-				                        (String) params.get("port"),
-				                        (String) params.get("database"),
-				                        (String) params.get("user"),
-				                        (String) params.get("passwd")
-				                       );
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn;
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			System.out.println("database sqlite:"+DBRelativeLocation);
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
 		int n = 0;
 		try {
 			n = sqlConn.executeUpdateDB(updateComm);
