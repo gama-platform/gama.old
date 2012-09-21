@@ -4,6 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="msi/gaml/compilation/GamlCompilCallback.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml"/>
-	<classpathentry kind="lib" path="/msi.gama.ext/RCaller-2.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
