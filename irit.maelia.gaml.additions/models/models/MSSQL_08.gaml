@@ -19,7 +19,7 @@ model MSSQL_08
 
   
 global {
-
+var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'','port'::'1433','user'::'sa','passwd'::'tmt'];
 	init {
 		create species: toto number: 1 ;
 	}
@@ -31,13 +31,8 @@ entities {
 		reflex dropDatabase {
 			do action: helloWorld;			 
 			// 
-			do action: executeUpdateDB{ 
- 				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "";
-				arg user value: "sa";
-				arg passwd value: "tmt";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "DROP DATABASE STUDENTS";
  			}
 		}

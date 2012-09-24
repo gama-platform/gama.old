@@ -17,7 +17,7 @@ model MSSQL_06
 
   
 global {
-
+var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'Students','port'::'1433','user'::'sa','passwd'::'tmt'];
 	init {
 		create species: toto number: 1 ;
 	}
@@ -29,25 +29,9 @@ entities {
 		//var obj type: obj; 
 		reflex select{
 			do action: helloWorld;			 
-			// Select with no WHERE con dictions
-			do action: selectDB{ 
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
- 				arg select value: "SELECT * FROM Registration";
- 			}
- 
  			// get result from Select From Where statement
- 			let t value: self selectDB[ 						
- 						dbtype::"SQLSERVER",
- 						host :: "localhost", 
- 						port :: "1433",
- 						database :: "STUDENTS",
- 						user:: "sa",
- 						passwd:: "tmt",
+ 			let t value: self select[
+				        params:: PARAMS,
  						select::"SELECT ID,FIRST,LAST,AGE FROM Registration where id>100"
  			];
 			set listRes value: list(t);	

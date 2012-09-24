@@ -1,6 +1,9 @@
 package irit.gaml.species;
 
+import irit.gaml.SqlConnection;
+
 import java.sql.*;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -14,181 +17,231 @@ import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
 
 /*
+ * @Author TRUONG Minh Thai 
+ * @Supervisors:
+ *     Christophe Sibertin-BLANC
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ * 
  * species: The AgentDB is defined in this class. AgentDB supports the action
- * - connectDB: make a connection to DBMS.
- * - selectDB: executeQuery to select data from DBMS via current connection.
- * - executeUpdateDB: run executeUpdate to update/insert/delete/drop/create data on DBMS via current
+ * - isConnected: return true/false
+ * - close: close current connection
+ * - connect: make a connection to DBMS.
+ * - select: executeQuery to select data from DBMS via current connection.
+ * - executeUpdate: run executeUpdate to update/insert/delete/drop/create data on DBMS via current
  * connection.
  * 
- * @author TRUONG Minh Thai 22-Feb-2012
- * Last Modified: 05-Mar-2012
+ * created date: 22-Feb-2012
+ * Modified:
+ *   24-Sep-2012: 
+ *      Add methods:
+ *      - boolean isconnected()
+ *      - select(String select)
+ *      - executeUpdate(String updateComm)
+ *      - getParameter: return connection Parameter;
+ *      Delete method: selectDB, executeUpdateDB
+ *      
+ * Last Modified: 24-Sep-2012
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
 
 	private Connection conn = null;
+	private boolean isConnection=false;
+	private java.util.Map params=null;
 	// private Statement stat;
-	static final boolean DEBUG = true; // Change DEBUG = false for release version
+	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	public AgentDB(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
 		super(sim, s);
 	}
-
+	
+	@action(name="isConnected")
+	@args(names = {})
+	public  boolean isConnected(final IScope scope) throws GamaRuntimeException
+	{
+		
+		return isConnection;
+		
+	}
+	
+	@action(name="close")
+	@args(names = {})
+	public  Object close(final IScope scope) throws GamaRuntimeException
+	{
+		try {
+			conn.close();
+			isConnection=false;
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			throw new GamaRuntimeException("AgentDB.close error:"+ e.toString() );
+		}
+		return null;
+		
+	}
 	/*
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 * arg dbtype value: vendorName; //MySQL/MSSQL
-	 * arg url value: urlvalue;
-	 * arg port value: portvaluse;
-	 * arg database value: dbnamevalue;
-	 * arg user value: usrnamevalue;
-	 * arg passwd value: pwvaluse;
+	 *			arg params value:[
+	 * 					 "dbtype":"SQLSERVER", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password"
+	 *                  ];
 	 * }
 	 */
-	@action(name="connectDB")
-	@args(names = { "dbtype", "url", "port", "database", "user", "passwd" })
+	@action(name="connect")
+	@args(names = { "params" })
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
-		String vendorName = (String) scope.getArg("dbtype", IType.STRING);
-		String url = (String) scope.getArg("url", IType.STRING);
-		String port = (String) scope.getArg("port", IType.STRING);
-		String dbName = (String) scope.getArg("database", IType.STRING);
-		String usrName = (String) scope.getArg("user", IType.STRING);
-		String password = (String) scope.getArg("passwd", IType.STRING);
-		String mySQLDriver = new String("com.mysql.jdbc.Driver");
-		String msSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		try {
-			if ( vendorName.equalsIgnoreCase("MySQL") ) {
-				Class.forName(mySQLDriver).newInstance();
-				conn =
-					DriverManager.getConnection("jdbc:mysql://" + url + ":" + port + "/" + dbName,
-						usrName, password);
-				// stat = conn.createStatement();
-			} else if ( vendorName.equalsIgnoreCase("MSSQL") ) {
-				Class.forName(msSQLDriver).newInstance();
-				conn =
-					DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port +
-						";databaseName=" + dbName + ";user=" + usrName + ";password=" + password +
-						";");
-				// stat = conn.createStatement();
-			} else {
-				throw new GamaRuntimeException("SQLConnection.connectSQL: The " + vendorName +
-					" is not supported!");
-			}
-		} catch (SQLException e) {
+		
+		//java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		params = (java.util.Map) scope.getArg("params", IType.MAP);
+		
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn;
+		if (isConnection){
+			throw new GamaRuntimeException("AgentDB.connection error: a connection is already opened" );
+		}
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
+		try {	
+			conn = sqlConn.connectDB();
+			isConnection=true;
+		}  catch (SQLException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.connectDB:" + e.toString());
+			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.connectDB:" + e.toString());
+			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
 		} catch (InstantiationException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.connectDB:" + e.toString());
+			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.connectDB:" + e.toString());
-		}
-
-		if ( DEBUG ) {
-			GuiUtils.informConsole(vendorName + " Server at address " + url + " is connected");
+			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
 		}
 		return null;
-
 	}
-
+	
 	/*
-	 * Close the current connection
+	 * Make a connection to BDMS
 	 * 
-	 * @syntax: do action: closeDB;
-	 */
-	@action(name="closeDB")
-	@args(names = {})
-	public Object closeDB(final IScope scope) throws GamaRuntimeException {
-
-		try {
-			// stat.close();
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.connectDB:" + e.toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
-		}
-		if ( DEBUG ) {
-			GuiUtils.informConsole("The connection to DBMS is close");
-		}
-		return null;
-
-	}
-
-	/*
-	 * Execute the select statement
-	 * 
-	 * @syntax do action: selectDB {
-	 * arg selectComm value: selectStatement;
+	 * @syntax: do action: connectDB {
+	 *			arg params value:[
+	 * 					 "dbtype":"SQLSERVER", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password",
+	 *                  ];
 	 * }
+	 */
+	@action(name="testConnection")
+	@args(names = { "params" })
+	public  boolean testConnection(final IScope scope) throws GamaRuntimeException
+	{
+		Connection conn;
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn;
+
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
+		try {	
+			conn = sqlConn.connectDB();
+			conn.close();
+		} catch (Exception e) {
+			//e.printStackTrace();
+			//throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
+			return false;
+		} 
+		return true;
+	}
+	
+
+
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do action: 
+	 * 	select {
+	 *  	arg select value: "select string"
+	 *   }
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
-
-	@action(name="selectDB")
-	@args(names = { "select" })
-	public GamaList<GamaList<Object>> selectDB(final IScope scope) throws GamaRuntimeException {
+	@action(name="select")
+	@args(names = {"select"})
+	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+	{
 		String selectComm = (String) scope.getArg("select", IType.STRING);
-
-		ResultSet rs;
-		GamaList<Object> rowList = new GamaList<Object>();
-		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
-
-		try {
-			rs = conn.createStatement().executeQuery(selectComm);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int nbCol = rsmd.getColumnCount();
-
-			while (rs.next()) {
-				rowList = new GamaList<Object>();
-				for ( int i = 1; i <= nbCol; i++ ) {
-					rowList.add(rs.getObject(i));
-				}
-				repRequest.add(rowList);
-			}
-			rs.close();
-			// conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		GamaList<Object> repRequest = new GamaList<Object>();
+		// get data
+		try{
+			  repRequest = new SqlConnection().selectDB(conn, selectComm);
+		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
 		}
-
 		if ( DEBUG ) {
 			GuiUtils.informConsole(selectComm + " was run");
 		}
+
 		return repRequest;
 
 	}
 
-	/*
-	 * executeUpdate executes the statements (update/insert/delete/create/drop)
-	 * 
-	 * @syntax: do action: executeUpdateDB {
-	 * arg updateComm value: updateStatement;
-	 * }
-	 */
 
-	@action(name="executeUpdateDB")
-	@args(names = { "updateComm" })
-	public int executeUpdateDB(final IScope scope) throws GamaRuntimeException {
+	/*
+	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
+	 * 
+	 * @syntax: do action: executeUpdate {
+	 * arg params value:[
+	 *  	arg updateComm value: "update string"
+	 *   }
+	 *   
+	 *   */
+	@action(name="executeUpdate")
+	@args(names = {"updateComm"})
+	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		int n = 0;
 		try {
-			// conn = connectMySQL(vendorName,url,port,dbName,usrName,password);
-			n = conn.createStatement().executeUpdate(updateComm);
-		} catch (SQLException e) {
+			n = new SqlConnection().executeUpdateDB(conn, updateComm);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB:" + e.toString());
+			throw new GamaRuntimeException("AgentDB.exexuteUpdate:" + e.toString());
 		}
 
 		if ( DEBUG ) {
@@ -198,5 +251,20 @@ public class AgentDB extends GamlAgent {
 		return n;
 
 	}
+	@action(name="getParameter")
+	@args(names = {})
+	public Object getParamater(final IScope scope) throws GamaRuntimeException {
+		return params;
+	}
+//	@action(name="setParameter")
+//	@args(names = { "params" })
+//	public  Object setParameter(final IScope scope) throws GamaRuntimeException
+//	{
+//		Connection conn;
+//		params = (java.util.Map) scope.getArg("params", IType.MAP);
+//		return null;
+//	}
+		
+
 
 }

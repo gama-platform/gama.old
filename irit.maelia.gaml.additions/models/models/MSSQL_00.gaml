@@ -6,6 +6,8 @@
  */
 model MSSQL_00
 global {
+		var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'','port'::'1433','user'::'sa','passwd'::'tmt'];
+	
 	init {
 		create species: toto number: 1;
 	}
@@ -16,14 +18,11 @@ entities {
 		//var obj type: obj;
 		reflex conn {
 			do action: helloWorld;
-			do action: connectDB {
-				arg dbtype value: "SQLSERVER";//SQLSERVER = SQLServer; MySQL = MySQL 
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; // MSSQL = 1433; MySQL = 3306 
-				arg database value: "";
-				arg user value: "sa";
-				arg passwd value: "tmt";
-			}
+			if (self testConnection[ params::PARAMS]){
+				do action: write with: [message::"Connection is OK"] ;
+			}else{
+				do action: write with: [message::"Connection is false"] ;
+			}		
 		}
 	}
 }      

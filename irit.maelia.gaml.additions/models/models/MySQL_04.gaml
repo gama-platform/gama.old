@@ -15,7 +15,7 @@ model MySQL_04
 
   
 global {
-
+			var PARAMS type:map init: ['host'::'localhost','dbtype'::'MySQL','database'::'Students','port'::'3306','user'::'root','passwd'::'root'];
 	init {
 		create species: toto number: 1 ;
 	}
@@ -26,16 +26,11 @@ entities {
 		//var obj type: obj;
 		reflex update {
 			do action: helloWorld;			 
-			do action: executeUpdateDB{ 
- 				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
- 				arg updateComm value: "UPDATE Registration " +
+			do action: executeUpdate{
+				arg params value: PARAMS;
+  				arg updateComm value: "UPDATE Registration " +
                    "SET age = 30 WHERE id in (100, 101)";
  			}
 		}
 	} 
-}      
+}  

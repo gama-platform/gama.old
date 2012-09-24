@@ -14,25 +14,19 @@ model MySQL_02
 
   
 global {
-
+			var PARAMS type:map init: ['host'::'localhost','dbtype'::'MySQL','database'::'Students','port'::'3306','user'::'root','passwd'::'root'];
 	init {
 		create species: toto number: 1 ;
 	}
 }  
 entities {  
 	species toto skills: [SQLSKILL] {  
-		var listRes type: list init:[];
-		//var obj type: obj;
+		var listRes type: list init:[]; 
 		reflex createTable{
 			do action: helloWorld;			 
-			do action: executeUpdateDB{ 
-				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
- 				arg updateComm value: "CREATE TABLE REGISTRATION " +
+			do action: executeUpdate{
+				arg params value: PARAMS;
+				arg updateComm value: "CREATE TABLE REGISTRATION " +
                    "(id INTEGER not NULL, " +
                    " first VARCHAR(255), " + 
                    " last VARCHAR(255), " + 

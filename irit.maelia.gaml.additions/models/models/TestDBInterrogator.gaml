@@ -20,10 +20,11 @@ global {
 		
 		create species: inheritantAgent number: 1{
 			do action: activate with: [DBName::DB];					
-			let t value: self.maeliaInterrogateDB[request::"SELECT id_point, temp_min FROM points WHERE month='1' AND day='14';"];
+			let t value: self maeliaInterrogateDB[request::"SELECT id_point, temp_min FROM points WHERE month='1' AND day='14';"];
 			set listRes value: t;			
+			do action: write with: [message:: t];
 		}
-	}
+	} 
 } 
 
 entities { 
@@ -32,7 +33,7 @@ entities {
 		
 		init {		
 			ask target: list(DBInterrogator) {
-				let t value: self.maeliaInterrogateDB[request::"SELECT id_point, temp_min FROM points WHERE month='1' AND day='14';"];
+				let t value: self maeliaInterrogateDB[request::"SELECT id_point, temp_min FROM points WHERE month='1' AND day='14';"];
 				set myself.listRes value: t;					 
 			}		
 		}

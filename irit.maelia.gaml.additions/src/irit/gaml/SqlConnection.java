@@ -29,21 +29,30 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
 /*
- * SQLConnection:   supports the method
+ * @Author TRUONG Minh Thai 
+ * @Supervisors:
+ *     Christophe Sibertin-BLANC
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
  * 
- *
+ * 
+ * SQLConnection:   supports the method
  * - connectDB: make a connection to DBMS.
  * - selectDB: connect to DBMS and run executeQuery to select data from DBMS.
  * - executeUpdateDB: connect to DBMS and run executeUpdate to update/insert/delete/drop/create data
  * on DBMS.
  * 
- * @author TRUONG Minh Thai 17-Feb-2012
+ * Created date: 17-Feb-2012
  * Modified:
  *     20-Jun-2012: Change the Skill class to class library for Skill and Agent class
  *     19-Sep-2012: Change const MSSQL to SQLSERVER for SQL Server 
  *     20-Sep-2012: Add SQLITE to all methods
+ *     24-Sep-2012: Add methods
+ *                    - SqlConnection()
+ *                    - select(Connection conn, String select)
+ *                    - executeUpdate(Connection conn, String updateConn)
  *                     
- * Last Modified: 20-Sep-2012
+ * Last Modified: 24-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -56,12 +65,12 @@ public class SqlConnection {
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
 
 		//Connection conn=null;
-		String vender="MySQL";
-		String url="127.0.0.1";
-		String port="3306";
-		String dbName="";
-		String userName="";
-		String password="";
+		static String vender="";
+		static String url="";
+		static String port="";
+		static String dbName="";
+		static String userName="";
+		static String password="";
 		
 		public SqlConnection(String dbName)
 		{
@@ -72,7 +81,10 @@ public class SqlConnection {
 			this.vender=venderName;
 			this.dbName=database;
 		}
-			
+		public SqlConnection()
+		{
+		}
+
 		public SqlConnection(String venderName,String url,String port,
 				String dbName, String userName,String password)
 		{
@@ -208,6 +220,48 @@ public class SqlConnection {
 			//return repRequest;
 			return result;
 		}
+		/*
+		 * Make a connection to BDMS and execute the select statement
+		 * 
+		 * @return GamaList<GamaList<Object>>
+		 */
+		//public GamaList<GamaList<Object>> selectDB(String selectComm) 
+		public GamaList<Object> selectDB(Connection conn, String selectComm) 
+		{
+			ResultSet rs;
+			GamaList<Object> result=new GamaList<Object>();
+			//GamaList<Object> rowList = new GamaList<Object>();
+			GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+			try {
+				Statement st = conn.createStatement(); 
+				rs = st.executeQuery(selectComm);
+				ResultSetMetaData rsmd = rs.getMetaData();
+				if (DEBUG){
+					System.out.println("MetaData:"+rsmd.toString());
+				}
+				//repRequest=resultSet2GamaList(rs);
+				
+				//result.add(rsmd);
+				result.add(getColumnName(rsmd));
+				result.add(getColumnTypeName(rsmd));
+				
+				repRequest=resultSet2GamaList(rs);
+				result.add(repRequest);
+				
+				if (DEBUG){
+					System.out.println("list of column name:" + result.get(0) );
+					System.out.println("list of column type:" + result.get(1) );
+					System.out.println("list of data:" + result.get(2) );
+				}
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			}
+			//return repRequest;
+			return result;
+		}
 
 		/*
 		 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
@@ -232,19 +286,19 @@ public class SqlConnection {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
 			}
 
 			if ( DEBUG ) {
@@ -255,6 +309,33 @@ public class SqlConnection {
 
 		}
 
+		/*
+		 *  execute the update statement with current connection(update/insert/delete/create/drop)
+		 * 
+		 */
+
+		public int executeUpdateDB(Connection conn, String updateComm) throws GamaRuntimeException {
+			int n = 0;
+			try {
+				if (DEBUG) {
+					System.out.println("Update Command:" +updateComm);
+				}
+				Statement st = conn.createStatement(); 
+				n = st.executeUpdate(updateComm);
+				if (DEBUG) {
+					System.out.println("Updated records :" +n);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			}
+			if ( DEBUG ) {
+				GuiUtils.informConsole(updateComm + " was run");
+			}
+
+			return n;
+		}
 		
 		
 		
@@ -263,16 +344,17 @@ public class SqlConnection {
 			ResultSetMetaData rsmd=rs.getMetaData();
 			return resultSet2GamaList(rsmd,rs);
 		}
-			/*
-		     * Convert RecordSet to GamaList
-		     * 
-		     * @param byte []
-		     * 
-		     * @return Geometry
-		     * 
-		     * @throws ParseException
-		 	 */
-			GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs)
+		
+		/*
+		 * @Method:resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs)
+	     * @Description: Convert RecordSet to GamaList
+	     * 
+	     * @param ResultSetMetaData,ResultSet
+	     * 
+	     * @return GamaList<GamaList<Object>>
+	     * 
+	 	 */
+		GamaList<GamaList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs)
 			{
 				// convert Geometry in SQL to Geometry type in GeoTool
 				
@@ -300,6 +382,7 @@ public class SqlConnection {
 								}
 								else //(vender.equalsIgnoreCase(MSSQL))
 									rowList.add(read(rs.getBytes(j)));
+								    //rowList.add(InputStream2Geometry( (InputStream) rs.getObject(j)));
 							}
 							else
 								rowList.add(rs.getObject(j));
@@ -319,7 +402,8 @@ public class SqlConnection {
 	
 
 			/*
-		     * Get columns id of field with geometry type
+		     * @Meththo: getGeometryColumns(ResultSetMetaData rsmd)
+		     * @Description: Get columns id of field with geometry type
 		     * 
 		     * @param ResultSetMetaData
 		     * 
@@ -353,6 +437,17 @@ public class SqlConnection {
 				}		
 				 return geoColumn;
 			}
+
+			/*
+		     * @Method: getColumnName
+		     * @Description: Get columns name
+		     * 
+		     * @param ResultSetMetaData
+		     * 
+		     * @return GamaList<String>
+		     * 
+		     * @throws SQLException
+		 	 */
 			
 			GamaList<Object> getColumnName(ResultSetMetaData rsmd) throws SQLException
 			{
@@ -363,6 +458,17 @@ public class SqlConnection {
 				}		
 				 return columnType;				
 			}
+
+			/*
+		     * @Method: getColumnTypeName
+		     * @Description: Get columns type name
+		     * 
+		     * @param ResultSetMetaData
+		     * 
+		     * @return GamaList<String>
+		     * 
+		     * @throws SQLException
+		 	 */
 			
 			GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException
 			{
@@ -378,14 +484,21 @@ public class SqlConnection {
 							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 ) )
 						 columnType.add("GEOMETRY");
 					 else
-						 columnType.add(rsmd.getColumnTypeName(i));
+						 columnType.add(rsmd.getColumnTypeName(i).toUpperCase());
 				}		
 				 return columnType;				
 			}
 			
 			/*
-			 *  Convert Binary to Geometry
-			 */
+		     * @Method: read(byte [] b)
+		     * @Description: Convert Binary to Geometry (sqlserver case)
+		     * 
+		     * @param byte [] b
+		     * 
+		     * @return Geometry
+		     * 
+		     * @throws IOException, ParseException
+		 	 */
 			static Geometry read(byte [] b) throws IOException, ParseException
 			{
 				//WKBAttributeIO wkb=new WKBAttributeIO();
@@ -395,8 +508,8 @@ public class SqlConnection {
 				//return GisUtils.fromGISToAbsolute(geom);
 			}
 			 /*
-		     * Convert binary to Geometry
-		     * 
+		     * @Method: Binary2Geometry(byte [] geometryAsBytes )
+		     * @description: Convert binary to Geometry 
 		     * @param byte []
 		     * 
 		     * @return Geometry
@@ -412,6 +525,17 @@ public class SqlConnection {
 				
 				 return geom;
 			}
+
+			/*
+		     * @Method: InputStream2Geometry(InputStream inputStream)
+		     * @Description: Convert Binary to Geometry (MySQL case)
+		     * 
+		     * @param InputStream inputStream
+		     * 
+		     * @return Geometry
+		     * 
+		     * @throws Exception
+		 	 */
 			
 			public static Geometry InputStream2Geometry(InputStream inputStream) throws Exception {
 				 
@@ -476,6 +600,16 @@ public class SqlConnection {
 			public String getVendor(){ return vender; }
 			public String getUser(){ return userName;}
 			
+			/*
+		     * @Method: getBounds( GamaList<Object> gamaList)
+		     * @Description: Get Envelope of a set of geometry
+		     * 
+		     * @param GamaList<Object> gamaList: gamalist is a set of geometry type
+		     * 
+		     * @return Envelope: Envelope/boundary of the geometry set.
+		     * 
+		     * @throws Exception
+		 	 */
 
 		public static Envelope getBounds( GamaList<Object> gamaList)throws IOException {
 				   	Envelope envelope;

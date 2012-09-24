@@ -1,17 +1,17 @@
 /**
- *  MidiPyrenees
+ *  AgentDB_MidiPyrenees
  *  Author: Truong Minh Thai
  *  Description: 
  */
 
-model MidiPyrenees
+model AgentDB_MidiPyrenees
 
 /* Insert your model definition here */
 
   
 global {
 	var BOUNDS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt',
-								"select"::	"select geom.STAsBinary() as geo from FRA_ADM2"];
+								"select"::	"select geom.STAsBinary() as geo from FRA_ADM2 WHERE ID_1=1004"];
 	//							"select"::	"select geom.STAsBinary() as geo from FRA_ADM2"];
 
 	var PARAMS type:map init: ['host'::'tmthai','dbtype'::'SQLSERVER','port'::'1433','database'::'BPH','user'::'sa','passwd'::'tmt'];
@@ -26,7 +26,8 @@ global {
 	init {
 		create species: toto number: 1  
 		{ 
-			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: "id_2", name_2:: "name_2", geo::"geo"]{ set shape value: geo; }
+			do action: connect with: [params::PARAMS];			
+			create species:locations from: list(self select [select:: LOCATIONS]) with:[ id:: "id_2", name_2:: "name_2", geo::"geo"]{ set shape value: geo; }
 		}
 		 
 	}
@@ -34,10 +35,9 @@ global {
 }   
 environment bounds: BOUNDS ;
 entities {   
-	species toto skills: [SQLSKILL]
-	 {  
-		//Nothing
-	 } 
+	species toto parent: AgentDB {
+		var listRes type: list init:[];		
+	}
 	
 	species locations {
 		var id type: int;

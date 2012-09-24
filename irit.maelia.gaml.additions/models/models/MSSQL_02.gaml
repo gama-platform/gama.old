@@ -14,6 +14,7 @@ model MSSQL_02
 
   
 global {
+		var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'Students','port'::'1433','user'::'sa','passwd'::'tmt'];
 
 	init {
 		create species: toto number: 1 ;
@@ -24,14 +25,9 @@ entities {
 		var listRes type: list init:[]; 
 		reflex createTable{
 			do action: helloWorld;			 
-			do action: executeUpdateDB{ 
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
- 				arg updateComm value: "CREATE TABLE REGISTRATION " +
+			do action: executeUpdate{
+				arg params value: PARAMS;
+				arg updateComm value: "CREATE TABLE REGISTRATION " +
                    "(id INTEGER not NULL, " +
                    " first VARCHAR(255), " + 
                    " last VARCHAR(255), " + 

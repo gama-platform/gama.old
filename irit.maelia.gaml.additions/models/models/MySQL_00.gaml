@@ -6,6 +6,10 @@
  */
 model MySQL_00
 global {
+			var SQLSERVER type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'','port'::'1433','user'::'sa','passwd'::'tmt'];
+			var MySQL type:map init: ['host'::'localhost','dbtype'::'MySQL','database'::'','port'::'3306','user'::'root','passwd'::'root'];
+			var SQLITE type:map init: ['dbtype'::'sqlite','database'::'../includes/meteo.db'];
+			var ORACLE type:map init: ['host'::'localhost','dbtype'::'Oracle','database'::'','port'::'1433','user'::'sa','passwd'::'tmt'];
 	init {
 		create species: toto number: 1;
 	}
@@ -16,31 +20,10 @@ entities {
 		//var obj type: obj;
 		reflex testConnection{
 			do action: helloWorld;
-	
-			do action: connectDB {
-				arg dbtype value: "MySQL"; 
-				arg host value: "127.0.0.1";
-				arg port value: "3306";
-				arg database value: "";
-				arg user value: "root";
-				arg passwd value: "root";
-			}
-			do action: connectDB {
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";
-				arg port value: "1433";
-				arg database value: "BPH";
-				arg user value: "sa";
-				arg passwd value: "tmt";
-			}
-			do action: connectDB {
-				arg dbtype value: "ORACLE"; // Not support
-				arg host value: "127.0.0.1";
-				arg port value: "1433";
-				arg database value: "";
-				arg user value: "root";
-				arg passwd value: "";
-			}
+			do action: write with: [message::"Connection to SQLSERVER is "+ self testConnection[ params::SQLSERVER]];
+			do action: write with: [message::"Connection to MySQL is "+self testConnection[ params::MySQL]];
+			do action: write with: [message::"Connection to SQLITE is "+self testConnection[ params::SQLITE]];
+			do action: write with: [message::"Connection to ORACLE is "+self testConnection[ params::ORACLE]];
 		}
 	}
 }      

@@ -14,6 +14,7 @@ model MSSQL_03
 
   
 global {
+var PARAMS type:map init: ['host'::'localhost','dbtype'::'sqlserver','database'::'Students','port'::'1433','user'::'sa','passwd'::'tmt'];
 
 	init {
 		create species: toto number: 1 ;
@@ -25,43 +26,23 @@ entities {
 		//var obj type: obj;
 		reflex insert {
 			do action: helloWorld;			 
-			do action: executeUpdateDB{ 
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (100, 'Zara', 'Ali', 18)";
  			}
- 			do action: executeUpdateDB{ 
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (101, 'Mahnaz', 'Fatma', 25)";
  			}
- 			do action: executeUpdateDB{ 
-				arg dbtype value: "SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
+ 			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (102, 'Zaid', 'Khan', 30)";
  			}	
- 			do action: executeUpdateDB{ 
-				arg dbtype value:"SQLSERVER";
-				arg host value: "localhost";// IP address or computer name
-				arg port value: "1433"; 
-				arg database value: "Students";
-				arg user value: "sa";
-				arg passwd value: "tmt";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES(103, 'Sumit', 'Mittal', 28)";
  			}					

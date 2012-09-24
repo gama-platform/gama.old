@@ -14,6 +14,7 @@ model MySQL_03
 
   
 global {
+			var PARAMS type:map init: ['host'::'localhost','dbtype'::'MySQL','database'::'Students','port'::'3306','user'::'root','passwd'::'root'];
 
 	init {
 		create species: toto number: 1 ;
@@ -23,48 +24,28 @@ entities {
 	species toto skills: [SQLSKILL] {  
 		var listRes type: list init:[];
 		//var obj type: obj;
-		reflex insert{
+		reflex insert {
 			do action: helloWorld;			 
-			do action: executeUpdateDB{ 
- 				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (100, 'Zara', 'Ali', 18)";
  			}
- 			do action: executeUpdateDB{ 
- 				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (101, 'Mahnaz', 'Fatma', 25)";
  			}
- 			do action: executeUpdateDB{ 
- 				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
+ 			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES (102, 'Zaid', 'Khan', 30)";
  			}	
- 			do action: executeUpdateDB{ 
- 				arg dbtype value: "MySQL"; 
- 				arg host value: "127.0.0.1";  
- 				arg port value: "3306";
- 				arg database value: "students";
- 				arg user value: "root";
- 				arg passwd value: "root";
+			do action: executeUpdate{
+				arg params value: PARAMS;
  				arg updateComm value: "INSERT INTO Registration " +
                    "VALUES(103, 'Sumit', 'Mittal', 28)";
  			}					
 		}
 	} 
-}      
+}            

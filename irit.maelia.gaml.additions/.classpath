@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml"/>
-	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.17.jar"/>
 	<classpathentry kind="lib" path="lib/gt-data-2.7.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-jdbc-2.7.4.jar"/>
@@ -14,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/sqljdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-jdbc-teradata-2.7.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-swing-2.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-spatialite-3.7.2-1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

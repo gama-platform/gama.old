@@ -9,7 +9,7 @@
 model SQLite_selectNUpdate
   
 global {
-	var PARAMS type:map init: ['host'::'','dbtype'::'sqlite','port'::'','database'::'../includes/meteo.db','user'::'','passwd'::''];
+	var PARAMS type:map init: ['dbtype'::'sqlite','database'::'../includes/meteo.db'];
 
 	init {
 		create species: toto number: 1 ;
@@ -69,9 +69,7 @@ entities {
             let t value: self select[params :: PARAMS, select:: "select * from registration"];
  			do action: write with: [message::t];
  		}
-        reflex drop {    
- 			//set PARAMS value:['url'::'localhost','dbtype'::'MySQL','port'::'3306','database'::'','user'::'root','passwd'::'root'] ;
- 			
+        reflex drop {     			
  			do action: executeUpdate{
 				arg params value: PARAMS; 
  				arg updateComm value: "DROP TABLE REGISTRATION"; 
