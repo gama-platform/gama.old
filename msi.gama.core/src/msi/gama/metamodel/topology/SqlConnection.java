@@ -51,8 +51,11 @@ import msi.gaml.types.IType;
  *                    - SqlConnection()
  *                    - select(Connection conn, String select)
  *                    - executeUpdate(Connection conn, String updateConn)
- *                     
- * Last Modified: 24-Sep-2012
+ *    25-Sep-2012:  
+ *        Add case: geometry of SQLITE into methods:
+ *    			- List<Integer> getGeometryColumns(ResultSetMetaData rsmd)
+ *              - GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd)       
+ * Last Modified: 25-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -380,7 +383,7 @@ public class SqlConnection {
 								if (vender.equalsIgnoreCase(MYSQL)){
 									rowList.add(InputStream2Geometry(rs.getBinaryStream(j)));
 								}
-								else //(vender.equalsIgnoreCase(MSSQL))
+								else //for (vender.equalsIgnoreCase(MSSQL)/(vender.equalsIgnoreCase(SQLITE))
 									rowList.add(read(rs.getBytes(j)));
 								    //rowList.add(InputStream2Geometry( (InputStream) rs.getObject(j)));
 							}
@@ -428,11 +431,14 @@ public class SqlConnection {
 					
 					 /* for Geometry 
 					 - in MySQL Type: -2/-4   - TypeName: UNKNOWN   - size: 2147483647
-					 - In MSSQL Type: -3   - TypeName: geometry  - size: 2147483647
+					 - In MSSQL Type: -3   - TypeName: geometry     - size: 2147483647
+					 - In SQLITE Type: 2004   - TypeName: BLOB      - size: 2147483647
 					 */
 					 // Search column with Geometry type
-					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-4 ) || (vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2 ) || 
-							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 ) )
+					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-4 ) || 
+							 (vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2 ) || 
+							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 )||
+							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004) )
 						 geoColumn.add(i);
 				}		
 				 return geoColumn;
@@ -480,8 +486,9 @@ public class SqlConnection {
 					 - In MSSQL Type: -3   - TypeName: geometry  - size: 2147483647
 					 */
 					 // Search column with Geometry type
-					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2 ) || 
-							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 ) )
+					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2) || 
+							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3)||
+							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004) )
 						 columnType.add("GEOMETRY");
 					 else
 						 columnType.add(rsmd.getColumnTypeName(i).toUpperCase());

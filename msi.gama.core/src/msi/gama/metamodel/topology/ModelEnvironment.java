@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -112,11 +111,11 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// for tracing nly
 		//if (debug) System.out.println("Bounds:" +bounds.toString());
 		if ( DEBUG ) {
-			GuiUtils.informConsole("2_store :" +store.toString());
-			GuiUtils.informConsole("2_name of store:" +name);
-			GuiUtils.informConsole("2_FeatureSource :" +source.toString());
-			GuiUtils.informConsole("2_Envelop:" +env.toString());
-			GuiUtils.informConsole("2_store.getSchema().getCoordinateReferenceSystem():" +store.getSchema().getCoordinateReferenceSystem());
+			System.out.println("2_store :" +store.toString());
+			System.out.println("2_name of store:" +name);
+			System.out.println("2_FeatureSource :" +source.toString());
+			System.out.println("2_Envelop:" +env.toString());
+			System.out.println("2_store.getSchema().getCoordinateReferenceSystem():" +store.getSchema().getCoordinateReferenceSystem());
 		}
 
 		//--------------------------------------------------------------------------------------------- end
@@ -133,10 +132,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			// 10-sep-2012: for create agen from:list
 			// for tracing 
 			if ( DEBUG ) {
-				GuiUtils.informConsole("2.1_latitude :" +latitude);
-				GuiUtils.informConsole("2.1_longitude:" +longitude);
-				GuiUtils.informConsole("2.1_transformCRSNew :" +transformCRSNew.toString());
-				GuiUtils.informConsole("2.1_transformCRS:" + ( transformCRS == null ));
+				System.out.println("2.1_latitude :" +latitude);
+				System.out.println("2.1_longitude:" +longitude);
+				System.out.println("2.1_transformCRSNew :" +transformCRSNew.toString());
+				System.out.println("2.1_transformCRS:" + ( transformCRS == null ));
 			}
 
 			//--------------------------------------------------------------------------------------------- end
@@ -260,14 +259,38 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		else if (bounds instanceof Map)
 		{
 			Map params= (Map) bounds;
-			//GuiUtils.informConsole("1.2.1_url:" +params.get("url"));
-			//GuiUtils.informConsole("1.2.2_venderName:" +params.get("venderName"));
-			//GuiUtils.informConsole("1.2.3_usrName:" +params.get("usrName"));
-			SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
-						(String)params.get("host"),(String) params.get("port"),
-						(String) params.get("database"),(String) params.get("user"),
-						(String)params.get("passwd"));
-			GamaList<Object> gamaList= sqlcon.selectDB((String) params.get("select"));
+			//System.out.println("1.2.1_url:" +params.get("url"));
+			//System.out.println("1.2.2_venderName:" +params.get("venderName"));
+			//System.out.println("1.2.3_usrName:" +params.get("usrName"));
+		
+			String dbtype = (String) params.get("dbtype");
+			String host = (String)params.get("host");
+			String port = (String)params.get("port");
+			String database = (String) params.get("database");
+			String user = (String) params.get("user");
+			String passwd = (String)params.get("passwd");
+			SqlConnection sqlConn;
+
+			// create connection
+			if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+				String DBRelativeLocation =
+						scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+				//sqlConn=new SqlConnection(dbtype,database);
+				sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+			}else{
+				sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+			}
+			
+			
+			
+//			SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
+//						(String)params.get("host"),(String) params.get("port"),
+//						(String) params.get("database"),(String) params.get("user"),
+//						(String)params.get("passwd"));
+			
+			
+			GamaList<Object> gamaList= sqlConn.selectDB((String) params.get("select"));
 			
 			try {
 				Envelope boundsEnv=SqlConnection.getBounds(gamaList);
@@ -278,7 +301,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
 				if (DEBUG){
-					System.out.println("SQL_Bound:"+boundsEnv.toString());
+					System.out.println("ModelEnvironment.bounds.map:"+boundsEnv.toString());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
