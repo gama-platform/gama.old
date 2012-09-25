@@ -22,6 +22,9 @@ global {
 			do action: write with: [message::"isConected: " + self isConnected[]];
 			do action: write with: [message::"Connection parameters: " + self getParameter[]];	
 			
+			//remove command below for correct running.
+			do action: connect with: [params::SQLITE];	//error on this command. must close current connection before open new	
+			
 			do action: close;	
 			do action: write with: [message::"isConected: " + self isConnected[]];
 			
@@ -40,6 +43,7 @@ entities {
 	species inheritantAgent parent: AgentDB {
 		var listRes type: list init:[];		
 		reflex testConnection{
+			do action: write with: [message::"Current Time "+ self timeStamp[]];
 			do action: write with: [message::"Connection to SQLSERVER is "+ self testConnection[ params::SQLSERVER]];
 			do action: write with: [message::"Connection to MySQL is "+self testConnection[ params::MySQL]];
 			do action: write with: [message::"Connection to SQLITE is "+self testConnection[ params::SQLITE]];

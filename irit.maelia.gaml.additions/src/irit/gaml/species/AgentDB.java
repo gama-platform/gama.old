@@ -1,9 +1,9 @@
 package irit.gaml.species;
 
-import irit.gaml.SqlConnection;
+
 
 import java.sql.*;
-
+import msi.gama.metamodel.topology.SqlConnection;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -40,8 +40,8 @@ import msi.gaml.types.IType;
  *      - executeUpdate(String updateComm)
  *      - getParameter: return connection Parameter;
  *      Delete method: selectDB, executeUpdateDB
- *      
- * Last Modified: 24-Sep-2012
+ *   25-Sep-2012: Add methods: timeStamp, helloWorld    
+ * Last Modified: 25-Sep-2012
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
@@ -78,6 +78,22 @@ public class AgentDB extends GamlAgent {
 		}
 		return null;
 		
+	}
+	
+	@action(name="helloWorld")
+	@args(names = {})
+	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
+		GuiUtils.informConsole("Hello World");
+		return null;
+	}
+
+	//Get current time of system
+	//added from MaeliaSkill
+	@action(name = "timeStamp")
+	@args(names = {})
+	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
+			Long timeStamp = System.currentTimeMillis();
+			return timeStamp;
 	}
 	/*
 	 * Make a connection to BDMS

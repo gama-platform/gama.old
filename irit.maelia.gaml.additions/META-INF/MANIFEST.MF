@@ -9,10 +9,7 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.0.0"
 Export-Package: 
  irit.gaml.skills,
- irit.gaml.species,
- org.ibex.nestedvm,
- org.ibex.nestedvm.util,
- org.sqlite
+ irit.gaml.species
 Bundle-ClassPath: lib/sqlitejdbc-v056.jar,
  lib/mysql-connector-java-5.0.8-bin.jar,
  lib/sqljdbc4.jar,

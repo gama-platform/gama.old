@@ -20,6 +20,7 @@ entities {
 		//var obj type: obj;
 		reflex testConnection{
 			do action: helloWorld;
+			do action: write with: [message::"Current Time "+ self timeStamp[]];
 			do action: write with: [message::"Connection to SQLSERVER is "+ self testConnection[ params::SQLSERVER]];
 			do action: write with: [message::"Connection to MySQL is "+self testConnection[ params::MySQL]];
 			do action: write with: [message::"Connection to SQLITE is "+self testConnection[ params::SQLITE]];

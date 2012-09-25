@@ -1,10 +1,8 @@
 package irit.gaml.skills;
 
-import irit.gaml.SqlConnection;
+import msi.gama.metamodel.topology.SqlConnection;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -37,8 +35,10 @@ import msi.gaml.types.IType;
 *                Change paramater name url to host
 *   24-Sep-2012: move method connectDB, SelectDB and executeUpdateDB
 *                add method testConnection 
-*   24-Sep-2012: add sqlite to SQLSKILL
-* Last Modified: 20-Sep-2012
+*                add sqlite driver to SQLSKILL
+*   25-Sep-2012: add timeStamp
+*   
+* Last Modified: 25-Sep-2012
 */
 
 @skill(name = "SQLSKILL")
@@ -54,7 +54,14 @@ public class SQLSkill extends Skill {
 		GuiUtils.informConsole("Hello World");
 		return null;
 	}
-
+    //Get current time of system
+	//added from MaeliaSkill
+	@action(name = "timeStamp")
+	@args(names = {})
+	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
+		Long timeStamp = System.currentTimeMillis();
+		return timeStamp;
+	}
 	/*
 	 * Make a connection to BDMS
 	 * 
@@ -104,7 +111,7 @@ public class SQLSkill extends Skill {
 	 * 
 	 * @syntax: do action: connectDB {
 	 *			arg params value:[
-	 * 					 "dbtype":"SQLSERVER", 
+	 * 					 "dbtype":"SQLSERVER", //MySQL/sqlserver/sqlite
 	 *                   "url":"host address",
 	 *                   "port":"port number",
 	 *                   "database":"database name",
