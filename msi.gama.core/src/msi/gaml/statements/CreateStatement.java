@@ -84,12 +84,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final String returnString;
 	// private final double sizeSquare = -1;
 	// private final String typeDiscretisation = "";
-
+	
+	private static final boolean DEBUG=false;
+	
 	private AbstractStatementSequence sequence;
 
 	/** allows to project geometries in a new projection */
 	private MathTransform transformCRS = null;
-
+	
 	public CreateStatement(final IDescription desc) {
 		super(desc);
 		returnString = getLiteral(IKeyword.RETURNS);
@@ -195,6 +197,18 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		if ( from != null ) {
 			IType type = from.getType();
+			//begin ---------------------------------------------------------------------------------------------
+			//Thai.truongminh@gmail.com 
+			// 04-sep-2012: for create agen from:list
+			// from: alist with: attribute1:: num1, attribute2: num2...;
+			if (type.id()==IType.LIST)	
+			{
+				final List<Map<String, Object>> initialValues = gamaList2ListMap(scope,(GamaList<Object>) from.value(scope));
+				createAgents(scope, agents, thePopulation, initialValues,initialValues.size() );
+			} 
+			else
+			//--------------------------------------------------------------------------------------------- end
+			
 			if ( type.id() == IType.STRING || type.id() == IType.FILE ) {
 				FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
 				final List<Map<String, Object>> initialValues = new GamaList();
@@ -362,4 +376,145 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// TODO Auto-generated method stub
 	}
 
+	
+	/*
+	 * thai.truongminh@gmail.com
+	 * Method: GamaList2ListMap
+	 * Description: 
+	 * created date : 03-09-2012
+	 * Modified date: 
+	 *    04-09-2012
+	 *    13-09-2012: change columnTypeName - colType
+	 * 
+	 */		
+	private void computeInits(final IScope scope, final Map<String, Object> values, GamaList<Object> rowList, GamaList<Object> colType)
+				throws GamaRuntimeException {
+				if ( init == null ) { return; }
+				for ( Facet f : init.entrySet() ) {
+					if ( f != null ) {
+						IExpression valueExpr = f.getValue().getExpression();
+						int val = new Integer(valueExpr.value(scope).toString());
+						
+						if (((String)colType.get(val)).equalsIgnoreCase("GEOMETRY"))
+						{
+							Geometry geom=(Geometry) rowList.get(val);
+							
+							
+							if ( transformCRS != null ) {
+								try {
+									geom = JTS.transform(geom, transformCRS);									
+									
+								} catch (MismatchedDimensionException e) {
+									e.printStackTrace();
+								} catch (TransformException e) {
+									e.printStackTrace();
+								}
+							}
+							geom = GisUtils.fromGISToAbsolute(geom);
+							
+							values.put(f.getKey(), new GamaShape(geom));
+						}	
+						else
+						   values.put(f.getKey(), rowList.get(val));
+						
+					}
+				}
+			}	
+
+		/*
+		 * thai.truongminh@gmail.com
+		 * Method: GamaList2ListMap
+		 * Description: 
+		 * created date : 13-09-2012
+		 * 
+		 */		
+	 private void computeInits(final IScope scope, final Map<String, Object> values, GamaList<Object> rowList,GamaList<Object> colTypes, GamaList<Object> colNames)
+					throws GamaRuntimeException 
+			{
+					if ( init == null ) { return; }
+					for ( Facet f : init.entrySet() ) {
+						if ( f != null ) {
+							IExpression valueExpr = f.getValue().getExpression();
+							//get parameter
+							String columnName = valueExpr.value(scope).toString().toUpperCase();
+							// get column number of parameter 
+							int val = colNames.indexOf(columnName);
+							if (DEBUG){
+								System.out.println("Create.computeInit.collist"+colNames);
+								System.out.println("Create.computeInit.colType"+colTypes);
+								System.out.println("Create.computeInit.colName"+columnName);
+								System.out.println("Create.computeInit.colIndex"+val);
+							}
+							if (((String)colTypes.get(val)).equalsIgnoreCase("GEOMETRY"))
+							{
+								Geometry geom=(Geometry) rowList.get(val);
+								
+								
+								if ( transformCRS != null ) {
+									try {
+										geom = JTS.transform(geom, transformCRS);									
+										
+									} catch (MismatchedDimensionException e) {
+										e.printStackTrace();
+									} catch (TransformException e) {
+										e.printStackTrace();
+									}
+								}
+								geom = GisUtils.fromGISToAbsolute(geom);
+								if (DEBUG){
+									System.out.println("Create.computeInit.geometry"+geom);
+								}
+								values.put(f.getKey(), new GamaShape(geom));
+							}	
+							else
+							   values.put(f.getKey(), rowList.get(val));
+							
+						}
+					}
+				}	
+
+
+	/*
+	 * thai.truongminh@gmail.com
+	 * Method: GamaList2ListMap
+	 * Description: transform GamaList of data to List of Map in Java. this function repair initial data
+	 *              for creating agents.
+	 * created date : 04-09-2012
+	 * Modified date:
+	 */
+	private List<Map<String, Object>> gamaList2ListMap(final IScope scope, GamaList<Object> gamaList) throws GamaRuntimeException 
+	{
+		//Get List from Gama
+		//GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) from.value(scope);
+		//GamaList<Object> gamaList= (GamaList<Object>) from.value(scope);
+		
+		//get Metadata
+		//ResultSetMetaData rsmd=(ResultSetMetaData) gamaList.get(0);
+		
+		//get Column name
+		GamaList<Object> colNames=(GamaList<Object>) gamaList.get(0);
+		//get Column type
+		GamaList<Object> colTypes=(GamaList<Object>) gamaList.get(1);
+		//Get ResultSet 
+		GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) gamaList.get(2);
+		
+		//set initialValues to generate species
+		final List<Map<String, Object>> initialValues = new GamaList();
+		int n=initValue.length();
+		//int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
+		int index=0;
+		for (int i=0; i<n && i<Integer.MAX_VALUE; i++)
+		{
+			index++;
+			GamaList<Object> rowList = initValue.get(i);
+			Map<String, Object> map = new GamaMap();
+			//computeInits(scope, map,rowList,colTypes);
+			computeInits(scope, map,rowList,colTypes,colNames);
+			initialValues.add(map);
+		}
+		//createAgents(scope, agents, thePopulation, initialValues, index);
+		return initialValues;
+	} 
+	
+	
 }

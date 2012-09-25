@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.*;
 import com.vividsolutions.jts.geom.*;
 
 public class GisUtils {
-
+	static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static SimpleFeature gisReader;
 
 	public static void setCurrentGisReader(final SimpleFeature fact) {
@@ -111,11 +111,18 @@ public class GisUtils {
 		CoordinateReferenceSystem crs = null;
 		try {
 			crs = CRS.parseWKT(prjreader.getCoodinateSystem().toWKT());
+			//begin ---------------------------------------------------------------------------------------------
+			//Thai.truongminh@gmail.com 
+			// 18-sep-2012: for create agen from:list
+			// for tracing nly
 
+			if (DEBUG)
+				GuiUtils.informConsole("GisUtil.CRS="+crs.toString());
+			//--------------------------------------------------------------------------------------------- end
 		} catch (FactoryException e2) {
 			e2.printStackTrace();
 		}
-		ProjectedCRS projectd = CRS.getProjectedCRS(crs);
+		ProjectedCRS projectd = CRS.getProjectedCRS(crs);		
 		if ( projectd == null ) {
 			System.out.println("NOT PROJECTED");
 			try {

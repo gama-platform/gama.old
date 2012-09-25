@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -63,6 +64,8 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	private ISpatialIndex quadTree;
 
+	static final boolean DEBUG = false; // Change DEBUG = false for release version
+	
 	public ModelEnvironment(final IDescription desc) {
 		super(desc);
 		boundsExp = getFacet(IKeyword.BOUNDS);
@@ -102,17 +105,48 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// CoordinateReferenceSystem crs = source.getFeatures()
 		// .getSchema().getCoordinateReferenceSystem();
 		Envelope env = source.getBounds();
+
+		//begin ---------------------------------------------------------------------------------------------
+		//Thai.truongminh@gmail.com 
+		// 10-sep-2012: for create agen from:list
+		// for tracing nly
+		//if (debug) System.out.println("Bounds:" +bounds.toString());
+		if ( DEBUG ) {
+			GuiUtils.informConsole("2_store :" +store.toString());
+			GuiUtils.informConsole("2_name of store:" +name);
+			GuiUtils.informConsole("2_FeatureSource :" +source.toString());
+			GuiUtils.informConsole("2_Envelop:" +env.toString());
+			GuiUtils.informConsole("2_store.getSchema().getCoordinateReferenceSystem():" +store.getSchema().getCoordinateReferenceSystem());
+		}
+
+		//--------------------------------------------------------------------------------------------- end
+		
 		if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 			ShpFiles shpf = new ShpFiles(shpFile);
 			double latitude = env.centre().x;
 			double longitude = env.centre().y;
+			
 			MathTransform transformCRSNew = GisUtils.getTransformCRS(shpf, latitude, longitude);
+			
+			//begin ---------------------------------------------------------------------------------------------
+			//Thai.truongminh@gmail.com 
+			// 10-sep-2012: for create agen from:list
+			// for tracing 
+			if ( DEBUG ) {
+				GuiUtils.informConsole("2.1_latitude :" +latitude);
+				GuiUtils.informConsole("2.1_longitude:" +longitude);
+				GuiUtils.informConsole("2.1_transformCRSNew :" +transformCRSNew.toString());
+				GuiUtils.informConsole("2.1_transformCRS:" + ( transformCRS == null ));
+			}
+
+			//--------------------------------------------------------------------------------------------- end
 			if ( transformCRS == null ) {
 				transformCRS = transformCRSNew;
 			}
 			if ( transformCRSNew != null && transformCRS != null ) {
 				env = JTS.transform(env, transformCRS);
 			}
+			
 
 		}
 		store.dispose();
@@ -125,6 +159,18 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		Object bounds = boundsExp == null ? null : boundsExp.value(scope);
+		//begin ---------------------------------------------------------------------------------------------
+		//Thai.truongminh@gmail.com 
+		// 10-sep-2012: for create agen from:list
+		// for tracing nly
+		//if (debug) System.out.println("Bounds:" +bounds.toString());
+		//if ( DEBUG ) {
+		//	GuiUtils.informConsole("1_Bounds:" +bounds.toString());
+		//}
+
+		
+		
+		
 		double xMin = 0d, yMin = 0d;
 		MathTransform transformCRS = null;
 		if ( bounds instanceof Number ) {
@@ -167,7 +213,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			}
 			if ( boundsEnv != null ) {
 				xMin = boundsEnv.getMinX();
-				yMin = boundsEnv.getMinY();
+				yMin = boundsEnv.getMinY(); 
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
 			}
@@ -204,7 +250,46 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					throw new GamaRuntimeException(e);
 				}
 			}
-		} else {
+			
+		}
+		//begin ---------------------------------------------------------------------------------------------
+		//Thai.truongminh@gmail.com 
+		// Created date:11-sep-2012: Process for SQL - MAP type
+		// 
+		
+		else if (bounds instanceof Map)
+		{
+			Map params= (Map) bounds;
+			//GuiUtils.informConsole("1.2.1_url:" +params.get("url"));
+			//GuiUtils.informConsole("1.2.2_venderName:" +params.get("venderName"));
+			//GuiUtils.informConsole("1.2.3_usrName:" +params.get("usrName"));
+			SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
+						(String)params.get("host"),(String) params.get("port"),
+						(String) params.get("database"),(String) params.get("user"),
+						(String)params.get("passwd"));
+			GamaList<Object> gamaList= sqlcon.selectDB((String) params.get("select"));
+			
+			try {
+				Envelope boundsEnv=SqlConnection.getBounds(gamaList);
+				//transformCRS = (MathTransform) result.get("transformCRS");
+				transformCRS=null;
+				xMin = boundsEnv.getMinX();
+				yMin = boundsEnv.getMinY();
+				width = boundsEnv.getWidth();
+				height = boundsEnv.getHeight();
+				if (DEBUG){
+					System.out.println("SQL_Bound:"+boundsEnv.toString());
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException(e);
+			}
+		}
+		//--------------------------------------------------------------------------------------------- end		
+	
+		
+		else {
 			width = widthExp == null ? width : Cast.asFloat(scope, widthExp.value(scope));
 			height = heightExp == null ? height : Cast.asFloat(scope, heightExp.value(scope));
 
@@ -213,7 +298,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 		initializeSpatialIndex();
 
-	}
+	} 
 
 	/**
 	 * Initializes the global spatial index.
@@ -246,5 +331,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		if ( quadTree == null ) { return; }
 		quadTree.drawOn(g2, width, height);
 	}
+	
+
 
 }
