@@ -202,14 +202,14 @@ public class VertexArrayHandler {
 
 	public void DeleteVertexArray() {
 		
-		vertexBufferTriangle.clear();
-		colorBufferTriangle.clear();
+		if(vertexBufferTriangle != null) vertexBufferTriangle.clear();
+		if(colorBufferTriangle != null) colorBufferTriangle.clear();
 
-		vertexBufferLine.clear();
-		colorBufferLine.clear();
+		if(vertexBufferLine != null)vertexBufferLine.clear();
+		if(colorBufferLine != null) colorBufferLine.clear();
 		
-		triangulatedGeometries.clear();
-		lines.clear();
+		if(triangulatedGeometries != null) triangulatedGeometries.clear();
+		if(lines != null) lines.clear();
 		
 	}
 	

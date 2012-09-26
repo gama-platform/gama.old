@@ -785,6 +785,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				}
 				// use vertex array
 				else {
+					//triangulate all the geometries
 					if (!isPolygonTriangulated) {
 						graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
 						isPolygonTriangulated = true;

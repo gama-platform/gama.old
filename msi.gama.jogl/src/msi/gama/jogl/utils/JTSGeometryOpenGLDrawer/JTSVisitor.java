@@ -17,6 +17,7 @@ public class JTSVisitor implements CoordinateSequenceFilter{
 	@Override
 	public void filter(CoordinateSequence seq, int i) {
 		// TODO Auto-generated method stub
+
 		if (String.valueOf(seq.getCoordinate(i).z).equals("NaN") == true) {
 		  myGl.glVertex3f((float)seq.getX(i%seq.size()), (float)(-seq.getY(i%seq.size())), 0.0f);
 		  myGl.glVertex3f((float)seq.getX((i+1)%seq.size()), (float)(-seq.getY((i+1)%seq.size())), 0.0f);
