@@ -1,7 +1,7 @@
 model cube   
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 10 ;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1600 ; 
 	int size_of_agents parameter: 'size' min: 1 <- 50;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};

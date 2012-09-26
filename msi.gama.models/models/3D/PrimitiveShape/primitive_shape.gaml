@@ -188,11 +188,9 @@ experiment display  type: gui {
 			species myMultiPlan aspect:3D;
 			species myCube aspect:3D ; 
 			species myPolyhedron aspect:3D ;
+				
 			
-			
-			
-			
-			species myPoint aspect:2D z:0.5;
+			/*species myPoint aspect:2D z:0.5;
 			species myLine aspect:2D z:0.5;
 			species myMultiLine aspect:2D z:0.5;
 			species mySquare aspect:2D z:0.5;
@@ -203,23 +201,8 @@ experiment display  type: gui {
 			species myPlan aspect:3D z:0.5;
 			species myMultiPlan aspect:3D z:0.5;
 			species myCube aspect:3D z:0.5; 
-			species myPolyhedron aspect:3D z:0.5;
-			
-			/*species myPoint aspect:2D position: {20,20};
-			species myLine aspect:2D position: {20,20};
-			species myMultiLine aspect:2D position: {20,20};
-			species mySquare aspect:2D position: {20,20};
-			species myPolygon aspect:2D position: {20,20};
-			
-			/*species mySphere aspect:3D position: {20,20};
-			species myPlan aspect:3D position: {20,20} ;
-			species myMultiPlan aspect:3D position: {20,20};
-			species myCube aspect:3D position: {20,20}; 
-			species myPolyhedron aspect:3D position: {20,20};*/
-			
-			
-			
-				
+			species myPolyhedron aspect:3D z:0.5;*/
+						
 		}
 	}
 }
