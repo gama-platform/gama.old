@@ -422,7 +422,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
-
+			/*boolean snapshot = true;
+			if(snapshot == true){
+				snapshot();
+			}*/
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);

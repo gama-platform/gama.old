@@ -534,7 +534,7 @@ public class GLUtil {
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0
-		float[] lightDiffuseValue0 = { 0.2f, 0.2f, 0.2f, 1.0f };
+		float[] lightDiffuseValue0 = { 0.5f, 0.5f, 0.5f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);

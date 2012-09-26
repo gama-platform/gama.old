@@ -692,8 +692,8 @@ public class JTSDrawer {
 		myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
 		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-		final int slices = 16;
-		final int stacks = 16;
+		final int slices = 32;
+		final int stacks = 32;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
 		myGl.glTranslated(-point.getCoordinate().x,

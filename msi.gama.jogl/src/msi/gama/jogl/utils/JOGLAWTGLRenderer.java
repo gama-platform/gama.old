@@ -178,6 +178,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtil.enableDepthTest(gl);
 
 		GLUtil.InitializeLighting(gl, glu, width);
+		
+		boolean fog=false;
+		if(fog==true){
+	    float[] color = new float[ 3 ];
+		color[0]=0.5f;
+		color[1]=0.5f;
+		color[2]=0.5f;
+		GLUtil.enableFog(gl, color, 0.0f, width, GL.GL_LINEAR, GL.GL_NICEST, 0.1f);
+		}
 
 		// Blending control
 		// Full Brightness with specific alpha (1 for opaque, 0 for transparent)
