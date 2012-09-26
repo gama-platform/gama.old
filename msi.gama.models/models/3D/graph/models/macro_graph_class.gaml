@@ -1,11 +1,10 @@
 /**
- *  generate_graph_barabasi_albert
- *  Author: Samuel Thiriot
+ *  macro_graph
+ *  Author: Arnaud Grignard
  *  Description: Shows how to generate a scale-free graph using a Barabasi-Albert scale-free generator. 
- * Nothing "moves" into this first model.
  */
 
-model generate_graph_barabasi_albert
+model macro_graph
  
 global {
 	
@@ -14,8 +13,11 @@ global {
 	 */  
 	graph my_graph ;
 	
-	int nb_Class <-10;
+
 	int colorFactor <-25;
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 ;
+	int nbClass parameter: 'Number of class' min: 1 max:10 <- 10 ;
+	int nodeSize parameter: 'Noide size' min: 1 <- 1 ;
 	
 	init {
 		
@@ -26,27 +28,25 @@ global {
 		 set my_graph <- generate_barabasi_albert( [
 				"edges_specy"::edgeSpecy,
 				"vertices_specy"::nodeSpecy,
-				"size"::500,
-				"m"::2
+				"size"::nbAgent,
+				"m"::1
 			] );
 		
 		ask edgeSpecy as list{
 			set color <- [rnd(100),rnd(100) ,rnd(100)] as rgb;
 		}	
 		
-		let i<-0;
-		create nodeMacroSpecy number: nb_Class{
-			set location <- {i*10,0};
-			set aggregatedAttribute <-i;
-			set i<-i+1;		
+		ask nodeSpecy as list{
+			do initClass;		
 		}
 		
 		let i<-0;
-		ask nodeSpecy as list{
-			do initClass;
-			set i<-i+1;			
+		create nodeMacroSpecy number: nbClass{
+			set location <- {i*10,0};
+			set class <-i;
+			set i<-i+1;	
 		}
-
+		
 	 }
 	  
 }
@@ -67,18 +67,18 @@ entities {
 		geometry shape <- geometry (point([location.x,location.y])) ;  
 				
 		action initClass{
-			set class <- rnd(nb_Class);
+			set class <- rnd(nbClass);
 			set color <-rgb([class*colorFactor, class*colorFactor, class*colorFactor]);
 		}
 		
 		//Update randomly the value of each attribute of the node 
 		reflex shuffleClass{			
-			set class <- rnd(nb_Class);
+			set class <- rnd(nbClass);
 			set color <-rgb([class*colorFactor, class*colorFactor, class*colorFactor]);
 		}
 						
 		aspect base {
-			draw shape: geometry color: color z:0.5 ; 
+			draw shape: geometry color: color z:nodeSize ; 
 		}  		
 	}
 	
@@ -98,31 +98,31 @@ entities {
 	
 	species nodeMacroSpecy{
 		rgb color;
-		int aggregatedAttribute;
+		int class;
 		int nbAggregatedNodes;
 		//geometry shape <- circle (10) ;
 		
 		reflex updatemyNodes{
-			write self.name + " update attribute  " + self.aggregatedAttribute;
+			
 			set nbAggregatedNodes<-0;
 			
 			ask nodeSpecy as list{
 
-			  if	(class = myself.aggregatedAttribute) {
+			  if	(class = myself.class) {
 				set myself.nbAggregatedNodes <- myself.nbAggregatedNodes+1;
 			  }	
 		    }
 		    set shape <- circle (nbAggregatedNodes/10) ;
-		    set color <- rgb([nbAggregatedNodes*colorFactor, nbAggregatedNodes*colorFactor, nbAggregatedNodes*colorFactor]);
+		    set color <- rgb([class*colorFactor, class*colorFactor, class*colorFactor]);
 		    
 		} 
-		write "nbAggregatedNodes" + nbAggregatedNodes;
+		write  " Class  " + self.class + ": "+ nbAggregatedNodes ;
 		
 		
 		
 		aspect base{
 			draw shape: geometry color: color z:nbAggregatedNodes/10;
-			draw text : 'attribute' + aggregatedAttribute ;
+			draw text : 'attribute' + class ;
 		}
 	}
 }

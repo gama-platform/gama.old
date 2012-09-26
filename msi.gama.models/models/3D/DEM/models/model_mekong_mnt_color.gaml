@@ -53,7 +53,7 @@ experiment display  type: gui {
 	output {
 	display city_display  type: opengl refresh_every: 1 {
 		species cell aspect: base refresh:false;
-		image name: 'Background' file: mntImageRaster.path;
+		//image name: 'Background' file: mntImageRaster.path;
 	}
 }
 }
