@@ -1,7 +1,7 @@
 model move   
 
 global {
-	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
+	int layerSize parameter: 'Layer size' min: 10 <- 100 ;
 	
 	file image1 <- file('images/Vietnam_multi_level/Province_Level.png') ;
 	file image2 <- file('images/Vietnam_multi_level/Country_Level.png') ;
@@ -27,10 +27,17 @@ global {
 		add label3 to: labels; 
 		 
 		create ImageAgent number:3{
-			set location <-{0,0};
+			set location <-{layerSize/2,layerSize/2};
 			set image<-images at nb_layer;
 			set label<-labels at nb_layer;
 			set shape <- shape add_z(layerSize*nb_layer);
+			
+			create 	3DAgent number: 10 {
+				add self to:myself.my3DAgents;
+				set parent<-myself;
+				set shape <- shape add_z (layerSize*nb_layer);
+			}
+			
 			set nb_layer <- nb_layer+1;			
 		}
 		
@@ -44,11 +51,24 @@ environment;
 entities { 
 	species ImageAgent skills: [moving]{
 	  file image;
-	  string label;		
+	  string label;
+	  list my3DAgents of:3DAgent;		
 	  aspect image{
 		draw image:image.path  size : layerSize;
 		draw text:label;
 	  }
+	}
+	
+	species 3DAgent skills: [moving] {  
+		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
+		const size type: float <- float(rnd(layerSize/100));
+		geometry shape <- square (rnd(5)+1) ;
+		
+		
+		ImageAgent parent;
+		aspect default {
+			draw geometry: shape color: color z:rnd(5) ;
+		}
 	}
 }
 experiment display  type: gui {
@@ -64,6 +84,7 @@ experiment display  type: gui {
 	output {
 		display Display refresh_every: 1 type:opengl{
 			species ImageAgent aspect:image;
+			species 3DAgent aspect:default;
 		}
 	}
 }
