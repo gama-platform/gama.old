@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoét Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -194,7 +194,7 @@ public class Graphs {
 			"graphEpidemio source_of(edge(3)) 				--:  node1",
 			"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",		   	
 			"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}"},
-		see = "target_of")
+		see = {"target_of"})
 	public static Object sourceOf(final IGraph graph, final Object edge) {
 		if (graph == null) throw new GamaRuntimeException("In the source_of operator, the graph should not be null!");				
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeSource(edge); }
@@ -239,8 +239,7 @@ public class Graphs {
 	@operator(value = "in_edges_of")
 	@doc(
 		value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.",
-		examples = {"graphEpidemio in_edges_of (node(3))   --:  [edge2,edge3]",
-					"graphFromMap in_edges_of node({12,45})  --:  [LineString]"},
+		examples = {"graphFromMap in_edges_of node({12,45})  --:  [LineString]"},
 		see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
 		if (graph == null) throw new GamaRuntimeException("In the in_edges_of operator, the graph should not be null!");
@@ -252,9 +251,8 @@ public class Graphs {
 	@operator(value = "in_degree_of")
 	@doc(
 		value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.",
-		examples = {"graphEpidemio in_degree_of (node(3))   --:  2",
-					"graphFromMap in_edges_of node({12,45})  --:  [LineString]"},
-		see = "out_degree_of,dregree_of")
+		examples = {"graphEpidemio in_degree_of (node(3))   --:  2"},
+		see = {"out_degree_of", "degree_of"})
 	public static int inDregreeOf(final IGraph graph, final Object vertex) {
 		if (graph == null) throw new GamaRuntimeException("In the in_degree_of operator, the graph should not be null!");
 		if ( graph.containsVertex(vertex) ) { return graph.inDegreeOf(vertex); }
@@ -276,7 +274,7 @@ public class Graphs {
 	@doc(
 		value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = {"graphEpidemio out_degree_of (node(3))"},
-		see = "in_degree_of, degree_of")
+		see = {"in_degree_of", "degree_of"})
 	public static int outDregreeOf(final IGraph graph, final Object vertex) {
 		if (graph == null) throw new GamaRuntimeException("In the in_degree_of operator, the graph should not be null!");
 		if ( graph.containsVertex(vertex) ) { return graph.outDegreeOf(vertex); }
@@ -287,7 +285,7 @@ public class Graphs {
 	@doc(
 		value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.",
 		examples = {"graphEpidemio degree_of (node(3))"},
-		see = "in_degree_of, out_degree_of")
+		see = {"in_degree_of", "out_degree_of"})
 	public static int dregreeOf(final IGraph graph, final Object vertex) {
 		if (graph == null) throw new GamaRuntimeException("In the in_degree_of operator, the graph should not be null!");
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }
@@ -344,7 +342,7 @@ public class Graphs {
 		value = "creates a graph from the list/map of edges given as operand",
 		special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices",
 		examples = {"as_edge_graph([{1,5},{12,45},{34,56}])  --:  build a graph with these three vertices and reflexive links on each vertices"},
-		see = {" as_intersection_graph, as_distance_graph"})
+		see = {"as_intersection_graph", "as_distance_graph"})
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 		return new GamaSpatialGraph(edges, true, false, null);
 	}
