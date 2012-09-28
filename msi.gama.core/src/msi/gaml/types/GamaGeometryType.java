@@ -140,7 +140,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coordinates[2] = new Coordinate(x + side_size / sqrt2, y + side_size / sqrt2);
 		coordinates[3] = (Coordinate) coordinates[0].clone();
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		return new GamaShape(GeometryUtils.getFactory().createPolygon(geom, null));
+		Geometry g = GeometryUtils.getFactory().createPolygon(geom, null);
+		if (location != null) {
+			Coordinate[] coords = g.getCoordinates();
+			for (int i = 0; i < coords.length; i++) {
+				coords[i].z = ((GamaPoint) location).z;
+			}
+		}
+		return new GamaShape(g);
 	}
 
 	public static IShape buildSquare(final double side_size, final ILocation location) {
@@ -159,7 +166,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coordinates[3] = new Coordinate(x - width / 2.0, y - height / 2.0);
 		coordinates[4] = (Coordinate) coordinates[0].clone();
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		return new GamaShape(GeometryUtils.getFactory().createPolygon(geom, null));
+		Geometry g = GeometryUtils.getFactory().createPolygon(geom, null);
+		if (location != null) {
+			Coordinate[] coords = g.getCoordinates();
+			for (int i = 0; i < coords.length; i++) {
+				coords[i].z = ((GamaPoint) location).z;
+			}
+		}
+		return new GamaShape(g);
 	}
 
 	public static IShape buildCircle(final double radius, final ILocation location) {
@@ -167,9 +181,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 			GeometryUtils.getFactory().createPoint(
 				location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
 		Geometry g= geom.buffer(radius);
-		Coordinate[] coordinates = g.getCoordinates();
-		for (int i = 0; i < coordinates.length; i++) {
-			coordinates[i].z = ((GamaPoint) location).z;
+		if (location != null) {
+			Coordinate[] coordinates = g.getCoordinates();
+			for (int i = 0; i < coordinates.length; i++) {
+				coordinates[i].z = ((GamaPoint) location).z;
+			}
 		}
 		return new GamaShape(g);
 	}
