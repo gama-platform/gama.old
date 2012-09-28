@@ -2,8 +2,8 @@ model Grid
 // proposed by Arnaud Grignard
 
 global {
-	int width <- 25;
-	int height <-25;
+	int width parameter : "width" min 1<- 25;
+	int height parameter : "height" min 1 <-25;
 	
 	init {    
 		
@@ -61,10 +61,10 @@ experiment grid type:gui {
 	output {
 		display objects_display type:opengl{
 			species cell aspect: base transparency: 0.5 refresh:false position: {0,0};
-			species cell aspect: colored transparency: 0.5 refresh:true position: {30,0};
-			species cell aspect: elevation transparency: 0.5 refresh:true position: {0,30};
+			species cell aspect: colored transparency: 0.5 refresh:true position: {width*1.1,0};
+			species cell aspect: elevation transparency: 0.5 refresh:true position: {0,height*1.1};
 			//FIXME: Does not work if size is not in the last plasce because it changes the shape.
-			species cell aspect: size transparency: 0.5 refresh:true position:{30,30};
+			species cell aspect: size transparency: 0.5 refresh:true position:{width*1.1,height*1.1};
 		}
 	}
 }
