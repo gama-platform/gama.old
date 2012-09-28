@@ -2,8 +2,8 @@ model Grid
 // proposed by Arnaud Grignard
 
 global {
-	int width parameter : "width" min 1<- 25;
-	int height parameter : "height" min 1 <-25;
+	int width parameter : "width" min 1<- 20;
+	int height parameter : "height" min 1 <-20;
 	
 	init {    
 		
