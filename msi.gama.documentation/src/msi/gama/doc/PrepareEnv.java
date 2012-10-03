@@ -19,6 +19,8 @@ public class PrepareEnv {
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
 		new File(Constants.XML2WIKI_FOLDER).mkdirs();
 		new File(Constants.WIKI2WIKI_FOLDER).mkdirs();
+		new File(Constants.HTML2XML_FOLDER).mkdirs();
+		new File(Constants.PDF_FOLDER).mkdirs();
 //		createCleanFolder(Constants.XML2WIKI_FOLDER);
 //		createCleanFolder(Constants.WIKI2WIKI_FOLDER);
 		

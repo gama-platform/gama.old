@@ -33,7 +33,9 @@ class Parser:
 
     # some common strings
     punct_pattern = re.escape(u'''"\'}]|:,.)?!''')
-    schema_pattern = ur'\w+'
+    # Ben modif
+    #schema_pattern = ur'\w+'    
+    schema_pattern = ur'(http|https|ftp|ftps)'
 
     # some common rules
     word_rule = ur'(?:(?<![%(u)s%(l)s])|^)(?:[%(u)s][%(l)s]+){2,}(?:(?![%(u)s%(l)s])|$)' % {
@@ -44,8 +46,8 @@ class Parser:
     url_rule = ur'%(url_guard)s(%(schema)s)\:([^\s\<\\%(punct)s*]|([%(punct)s][^\s\<%(punct)s]))+' % {
         'url_guard': u'(^|(?<!\w))',
         # Ben Modif 
-        # 'schema': schema_pattern,
-        'schema': ur'[a-zA-Z_]+',
+        'schema': schema_pattern,
+        # 'schema': ur'[a-zA-Z_]+',
         'punct': punct_pattern,
     }
 
@@ -56,7 +58,8 @@ class Parser:
 
     # the big, fat, ugly one ;)
     # BEN: much more ugly: remove the line (?P<emph>_) and (?P<dl>%(dl_rule)s) [after P<ol>]
-    #      add: (?P<ent_symbolic>%(pair_rule)s)
+    #     add: (?P<ent_symbolic>%(pair_rule)s)
+    #     modified: (?P<heading>^\s*(?P<hmarker>=+)\s.*\s(?P=hmarker)\s*$)
     formatting_rules = ur"""(?P<ent_numeric>&#(\d{1,5}|x[0-9a-fA-F]+);)
 (?:(?P<asterisk>\\\*)
 (?P<underscore>\\_)
@@ -80,7 +83,7 @@ class Parser:
 (?P<indent>^\s+)
 (?P<tableZ>\|\| $)
 (?P<table>(?:\|\|)+(?:<[^>]*?>)?(?!\|? $))
-(?P<heading>^\s*(?P<hmarker>=+)\s.*\s(?P=hmarker)\s*$)
+(?P<heading>^\s*(?P<hmarker>=+).*(?P=hmarker)\s*$)
 (?P<pair>%(pair_rule)s)
 (?P<word>%(word_rule)s)
 (?P<bracket>\[[^\s\]]+(\s[^\]]+)?\])

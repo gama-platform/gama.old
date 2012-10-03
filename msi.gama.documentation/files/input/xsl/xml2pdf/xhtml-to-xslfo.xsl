@@ -186,10 +186,10 @@
               page-height="11in" page-width="8.5in"
               margin-right="72pt" margin-left="72pt" 
               margin-bottom="36pt" margin-top="36pt">
-              <fo:region-before region-name="rb-left" 
-                extent="25pt"/>
               <fo:region-body margin-top="50pt" 
                 margin-bottom="50pt"/>
+              <fo:region-before region-name="rb-left" 
+                extent="25pt"/>                
               <fo:region-after region-name="ra-left" 
                 extent="25pt"/>
             </fo:simple-page-master>
@@ -198,10 +198,10 @@
               page-height="11in" page-width="8.5in"
               margin-right="72pt" margin-left="72pt" 
               margin-bottom="36pt" margin-top="36pt">
-              <fo:region-before region-name="rb-right" 
-                extent="25pt"/>
               <fo:region-body margin-top="50pt" 
                 margin-bottom="50pt"/>
+              <fo:region-before region-name="rb-right" 
+                extent="25pt"/>                
               <fo:region-after region-name="ra-right" 
                 extent="25pt"/>
             </fo:simple-page-master>
@@ -226,10 +226,10 @@
               page-height="29.7cm" page-width="21cm"
               margin-right="72pt" margin-left="72pt" 
               margin-bottom="36pt" margin-top="36pt">
-              <fo:region-before region-name="rb-left" 
-                extent="3cm"/>
               <fo:region-body margin-top="1.5cm" 
                 margin-bottom="1.5cm"/>
+              <fo:region-before region-name="rb-left" 
+                extent="3cm"/>
               <fo:region-after region-name="ra-left" 
                 extent="1cm"/>
             </fo:simple-page-master>
@@ -238,10 +238,10 @@
               page-height="29.7cm" page-width="21cm"
               margin-right="72pt" margin-left="72pt" 
               margin-bottom="36pt" margin-top="36pt">
-              <fo:region-before region-name="rb-right" 
-                extent="3cm"/>
               <fo:region-body margin-top="1.5cm" 
                 margin-bottom="1.5cm"/>
+              <fo:region-before region-name="rb-right" 
+                extent="3cm"/>                
               <fo:region-after region-name="ra-right" 
                 extent="1cm"/>
             </fo:simple-page-master>
@@ -298,15 +298,15 @@
                 <fo:table-row>
                   <fo:table-cell>
                     <fo:block text-align="start">
-                      developerWorks loves you!
+                      GAMA Documentation
                     </fo:block>
                   </fo:table-cell>
-                  <fo:table-cell>
+<!--                   <fo:table-cell>
                     <fo:block text-align="end" font-weight="bold" 
                       font-family="monospace">
                       ibm.com/developerWorks
                     </fo:block>
-                  </fo:table-cell>
+                  </fo:table-cell> -->
                 </fo:table-row>
               </fo:table-body>
             </fo:table>
@@ -344,6 +344,11 @@
               <fo:table-body>
                 <fo:table-row>
                   <fo:table-cell>
+                    <fo:block text-align="start">
+                      GAMA Documentation
+                    </fo:block>
+                  </fo:table-cell>
+<!--                   <fo:table-cell>
                     <fo:block text-align="start" font-weight="bold" 
                       font-family="monospace">
                       ibm.com/developerWorks
@@ -353,7 +358,7 @@
                     <fo:block text-align="end">
                       developerWorks loves you!
                     </fo:block>
-                  </fo:table-cell>
+                  </fo:table-cell> -->
                 </fo:table-row>
               </fo:table-body>
             </fo:table>
@@ -497,15 +502,15 @@
     =============================================== -->
         
     <fo:flow flow-name="xsl-region-body">
-      <xsl:apply-templates select="/html/head/title"/>
-      <fo:block space-after="12pt" line-height="17pt" 
+      <xsl:apply-templates select="/html/head/title"/>  
+ 	  <fo:block space-after="12pt" line-height="17pt" 
         font-size="14pt" text-align="center">
-        developerWorks loves you!
+		Provided by the GAMA development team
       </fo:block>
       <fo:block space-after="24pt" line-height="17pt" 
         font-size="14pt" text-align="center" font-weight="bold" 
         font-family="monospace">
-        ibm.com/developerWorks
+		http://code.google.com/p/gama-platform/
       </fo:block>
           
   <!-- ============================================
@@ -778,12 +783,9 @@
     =============================================== -->
 
   <xsl:template match="h1">
-    <fo:block break-before="page">
-      <fo:leader leader-pattern="rule"/>
-    </fo:block>
     <fo:block font-size="28pt" line-height="32pt"
       keep-with-next="always"
-      space-after="22pt" font-family="serif">
+      space-after="16pt" space-before="18pt" font-family="serif">
       <xsl:attribute name="id">
         <xsl:choose>
           <xsl:when test="@id">
@@ -803,13 +805,40 @@
   </xsl:template>
 
   <!-- ============================================
+    <chapter> is in a slightly smaller font than an <h1>,
+    and it doesn't have a page break or a line.
+    =============================================== -->
+
+  <xsl:template match="chapter">
+    <fo:block break-before="page">
+      <fo:leader leader-pattern="rule"/>
+    </fo:block>  
+    <fo:block font-size="36pt" line-height="40pt"
+      keep-with-next="always" space-after="18pt"
+      font-family="serif">
+      <xsl:attribute name="id">
+        <xsl:choose>
+          <xsl:when test="@id">
+            <xsl:value-of select="@id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="generate-id()"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+       <xsl:value-of select="@name"/>         
+     </fo:block>
+     <xsl:apply-templates select="*|text()"/>       
+  </xsl:template>
+
+  <!-- ============================================
     <h2> is in a slightly smaller font than an <h1>,
     and it doesn't have a page break or a line.
     =============================================== -->
 
   <xsl:template match="h2">
     <fo:block font-size="24pt" line-height="28pt"
-      keep-with-next="always" space-after="18pt"
+      keep-with-next="always" space-after="12pt" space-before="12pt"
       font-family="serif">
       <xsl:attribute name="id">
         <xsl:choose>
@@ -831,7 +860,7 @@
 
   <xsl:template match="h3">
     <fo:block font-size="21pt" line-height="24pt"
-      keep-with-next="always" space-after="14pt"
+      keep-with-next="always" space-after="12pt" space-before="12pt"
       font-family="serif">
       <xsl:attribute name="id">
         <xsl:choose>
@@ -855,7 +884,7 @@
 
   <xsl:template match="h4">
     <fo:block font-size="18pt" line-height="21pt"
-      keep-with-next="always" space-after="12pt"
+      keep-with-next="always" space-after="12pt" space-before="12pt"
       font-family="serif">
       <xsl:attribute name="id">
         <xsl:choose>
@@ -878,7 +907,7 @@
 
   <xsl:template match="h5">
     <fo:block font-size="16pt" line-height="19pt"
-      keep-with-next="always" space-after="12pt"
+      keep-with-next="always" space-after="12pt" space-before="12pt"
       font-family="serif" text-decoration="underline">
       <xsl:attribute name="id">
         <xsl:choose>
@@ -901,7 +930,7 @@
 
   <xsl:template match="h6">
     <fo:block font-size="14pt" line-height="17pt"
-      keep-with-next="always" space-after="12pt"
+      keep-with-next="always" space-after="12pt" space-before="12pt"
       font-family="serif" font-style="italic"
       text-decoration="underline">
       <xsl:attribute name="id">
@@ -1113,11 +1142,13 @@
     Preformatted text is rendered in a monospaced
     font.  We also have to set the wrap-option
     and white-space-collapse properties.  
+    Ben modif: 
+      white-space-collapse="false" wrap-option="no-wrap"
     =============================================== -->
 
   <xsl:template match="pre">
-    <fo:block font-family="monospace"
-      white-space-collapse="false" wrap-option="no-wrap">
+    <fo:block font-family="monospace" font-size="10pt" space-after="12pt"
+    linefeed-treatment="preserve">
       <xsl:apply-templates select="*|text()"/>
     </fo:block>
   </xsl:template>
@@ -1471,10 +1502,10 @@
 
   <xsl:template match="ul/li">
     <fo:list-item>
-      <fo:list-item-label end-indent="label-end()">
+      <fo:list-item-label start-indent="0.5cm" end-indent="1cm"><!-- end-indent="label-end()" -->
         <fo:block>&#x2022;</fo:block>
       </fo:list-item-label>
-      <fo:list-item-body start-indent="body-start()">
+      <fo:list-item-body start-indent="1cm"> <!-- start-indent="body-start()" -->
         <fo:block>
           <xsl:apply-templates select="*|text()"/>
         </fo:block>
@@ -1516,36 +1547,51 @@
       line-height="21pt" font-size="18pt" text-align="start">
       Table of Contents
     </fo:block>
-    <fo:block line-height="11pt" font-size="8pt" 
+<!--     <fo:block line-height="11pt" font-size="8pt" 
       space-after="6pt">
       If you're viewing this document online, you can 
       click any of the topics below to link directly to 
       that section.
-    </fo:block>
-    <xsl:for-each select="/html/body//h1 |
-                          /html/body//h2 | 
-                          /html/body//h3 |
-                          /html/body//h4">
+    </fo:block> -->
+    <xsl:for-each select="
+    					/html/body//chapter |
+    					/html/body//h1 |
+                        /html/body//h2 | 
+                        /html/body//h3 |
+                        /html/body//h4">
       <fo:block text-align-last="justify" line-height="17pt"
         font-size="14pt" space-after="3pt" text-align="start"
         text-indent="-1cm">
         <xsl:attribute name="start-indent">
           <xsl:choose>
-            <xsl:when test="name() = 'h1'">
+          	<xsl:when test="name() = 'chapter'">
               <xsl:text>1cm</xsl:text>
-            </xsl:when>
-            <xsl:when test="name() = 'h2'">
+            </xsl:when> 
+            <xsl:when test="name() = 'h1'">
               <xsl:text>1.5cm</xsl:text>
             </xsl:when>
-            <xsl:when test="name() = 'h3'">
+            <xsl:when test="name() = 'h2'">
               <xsl:text>2cm</xsl:text>
             </xsl:when>
-            <xsl:when test="name() = 'h4'">
+            <xsl:when test="name() = 'h3'">
               <xsl:text>2.5cm</xsl:text>
+            </xsl:when>
+            <xsl:when test="name() = 'h4'">
+              <xsl:text>3cm</xsl:text>
             </xsl:when>
           </xsl:choose>
         </xsl:attribute>
-        <fo:basic-link color="blue">
+        <xsl:attribute name="font-weight">
+		  <xsl:choose>
+          	<xsl:when test="name() = 'chapter'">
+              <xsl:text>bold</xsl:text>
+            </xsl:when> 
+            <xsl:otherwise>
+            	<xsl:text>normal</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>        
+        </xsl:attribute>
+        <fo:basic-link color="black">
           <xsl:attribute name="internal-destination">
             <xsl:choose>
               <xsl:when test="@id">
@@ -1560,11 +1606,18 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
-          <xsl:apply-templates select="*|text()"/>
-        </fo:basic-link>
+          <xsl:choose>
+          	<xsl:when test="name() = 'chapter'">
+              <xsl:apply-templates select="@name"/>   
+            </xsl:when> 
+            <xsl:otherwise>
+      		    <xsl:apply-templates select="text()"/>            
+            </xsl:otherwise>
+          </xsl:choose>
+        </fo:basic-link>     
         <fo:leader leader-pattern="dots"
           leader-pattern-width="5pt"/>
-        <fo:page-number-citation>
+         <fo:page-number-citation>
           <xsl:attribute name="ref-id">
             <xsl:choose>
               <xsl:when test="@id">

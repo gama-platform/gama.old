@@ -107,8 +107,8 @@ public class WikiCleaner {
        	Document docTOC = (Document) builder.build(Constants.TOC_FILE);	
        	
        	for(Element e : docTOC.getRootElement().getChildren()){
-       		String fileToClean = Constants.SVN_FOLDER + File.separator + e.getAttributeValue("file");
-       		String destFile = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file");
+       		String fileToClean = Constants.SVN_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
+       		String destFile = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
        		cleanFile(fileToClean, destFile);
        	}
 	}

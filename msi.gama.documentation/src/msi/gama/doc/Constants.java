@@ -18,9 +18,12 @@ public class Constants {
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2wiki";
 	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc.xml";
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
+	public static String XSL_XML2PDF_FILE = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf" + File.separator + "xhtml-to-xslfo.xsl";
 	
 	public static String DOCGAMA_FILE = "gaml"+ File.separator + "docGAMA.xml";
 	public static String DOCGAMA_GLOBAL_FILE = JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
+	public static String DOCGAMA_FINAL = HTML2XML_FOLDER + File.separator + "docGamaFinal.xml";
+	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv15.pdf";
 	
 	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
 }
