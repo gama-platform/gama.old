@@ -1218,7 +1218,7 @@ class Formatter(FormatterBase):
     # Tables #############################################################
 
     _allowed_table_attrs = {
-        'table': ['class', 'id', 'style'],
+        'table': ['class', 'id', 'style', 'border'],
         'row': ['class', 'id', 'style'],
         '': ['colspan', 'rowspan', 'class', 'id', 'style'],
     }
@@ -1291,15 +1291,19 @@ class Formatter(FormatterBase):
             # Open table
             if not attrs:
                 attrs = {}
+                # Ben modif
+                attrs['border'] = '1'       
             else:
                 attrs = self._checkTableAttr(attrs, 'table')
             result.append(self._open('table', newline=1, attr=attrs,
                                      allowed_attrs=self._allowed_table_attrs['table'],
                                      **kw))
-            result.append(self._open('tbody', newline=1))
+            # Ben modif
+           # result.append(self._open('tbody', newline=1))
         else:
             # Close tbody, table, and then div
-            result.append(self._close('tbody'))
+            # Ben modif
+            # result.append(self._close('tbody'))
             result.append(self._close('table'))
             result.append(self._close('div'))
 

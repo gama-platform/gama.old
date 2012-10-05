@@ -35,7 +35,7 @@ class Parser:
     punct_pattern = re.escape(u'''"\'}]|:,.)?!''')
     # Ben modif
     #schema_pattern = ur'\w+'    
-    schema_pattern = ur'(http|https|ftp|ftps)'
+    schema_pattern = ur'(http|https|ftp|ftps|file)'
 
     # some common rules
     word_rule = ur'(?:(?<![%(u)s%(l)s])|^)(?:[%(u)s][%(l)s]+){2,}(?:(?![%(u)s%(l)s])|$)' % {
@@ -65,6 +65,7 @@ class Parser:
 (?P<underscore>\\_)
 (?P<newline>\\n)
 (?P<bold>\*)
+(?P<emph>_[a-zA-Z0-9]+_)
 (?P<u>__)
 (?P<sup>\^.*?\^)
 (?P<sub>,,[^,]{1,40},,)
@@ -197,8 +198,12 @@ class Parser:
 
     def _emph_repl(self, word):
         """Handle emphasis."""
-        self.is_em = not self.is_em
-        return self.formatter.emphasis(self.is_em)
+#        self.is_em = not self.is_em
+#        return self.formatter.emphasis(self.is_em)
+        return self.formatter.emphasis(1) + \
+            self.formatter.text(word[1:-1]) + \
+            self.formatter.emphasis(0)
+
 
     def _sup_repl(self, word):
         """Handle superscript."""

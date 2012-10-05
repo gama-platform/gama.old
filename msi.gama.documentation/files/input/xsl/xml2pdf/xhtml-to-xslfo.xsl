@@ -805,7 +805,34 @@
   </xsl:template>
 
   <!-- ============================================
-    <chapter> is in a slightly smaller font than an <h1>,
+    <chapter> is in a slightly bigger font than an <h1>,
+    and it doesn't have a page break or a line.
+    =============================================== -->
+
+  <xsl:template match="part">
+    <fo:block break-before="page">
+      <fo:leader leader-pattern="rule"/>
+    </fo:block>  
+    <fo:block font-size="36pt" line-height="40pt"
+      keep-with-next="always" space-after="18pt"
+      font-family="serif" break-after="page">
+      <xsl:attribute name="id">
+        <xsl:choose>
+          <xsl:when test="@id">
+            <xsl:value-of select="@id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="generate-id()"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+       <xsl:value-of select="@name"/>         
+     </fo:block>
+     <xsl:apply-templates select="*|text()"/>       
+  </xsl:template>
+
+  <!-- ============================================
+    <chapter> is in a slightly bigger font than an <h1>,
     and it doesn't have a page break or a line.
     =============================================== -->
 
@@ -1148,7 +1175,7 @@
 
   <xsl:template match="pre">
     <fo:block font-family="monospace" font-size="10pt" space-after="12pt"
-    linefeed-treatment="preserve">
+    linefeed-treatment="preserve" background-color="#EEEEEE">
       <xsl:apply-templates select="*|text()"/>
     </fo:block>
   </xsl:template>
@@ -1232,21 +1259,10 @@
     =============================================== -->
 
   <xsl:template match="table">
-    <fo:table table-layout="fixed">
-      <xsl:choose>
-        <xsl:when test="@cols">
-         <xsl:call-template name="build-columns">
-           <xsl:with-param name="cols" 
-             select="concat(@cols, ' ')"/>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:otherwise>
-          <fo:table-column column-width="200pt"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <fo:table-body>
-        <xsl:apply-templates select="*"/>
-      </fo:table-body>
+   <fo:table table-layout="auto">
+	    <fo:table-body>
+	        <xsl:apply-templates select="*"/>
+	    </fo:table-body>
     </fo:table>
   </xsl:template>
 
@@ -1470,7 +1486,7 @@
             <xsl:text>0pt</xsl:text>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:text>12pt</xsl:text>
+            <xsl:text>12pt</xsl:text> <!-- 12pt -->
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
@@ -1502,10 +1518,10 @@
 
   <xsl:template match="ul/li">
     <fo:list-item>
-      <fo:list-item-label start-indent="0.5cm" end-indent="1cm"><!-- end-indent="label-end()" -->
+      <fo:list-item-label end-indent="label-end()"><!-- end-indent="label-end()" -->
         <fo:block>&#x2022;</fo:block>
       </fo:list-item-label>
-      <fo:list-item-body start-indent="1cm"> <!-- start-indent="body-start()" -->
+      <fo:list-item-body start-indent="body-start()"> <!-- start-indent="body-start()" -->
         <fo:block>
           <xsl:apply-templates select="*|text()"/>
         </fo:block>
@@ -1554,16 +1570,20 @@
       that section.
     </fo:block> -->
     <xsl:for-each select="
+    					/html/body//part |
     					/html/body//chapter |
     					/html/body//h1 |
                         /html/body//h2 | 
                         /html/body//h3 |
                         /html/body//h4">
       <fo:block text-align-last="justify" line-height="17pt"
-        font-size="14pt" space-after="3pt" text-align="start"
+        space-after="3pt" text-align="start"
         text-indent="-1cm">
         <xsl:attribute name="start-indent">
           <xsl:choose>
+          	<xsl:when test="name() = 'part'">
+              <xsl:text>1cm</xsl:text>
+            </xsl:when>           
           	<xsl:when test="name() = 'chapter'">
               <xsl:text>1cm</xsl:text>
             </xsl:when> 
@@ -1581,8 +1601,28 @@
             </xsl:when>
           </xsl:choose>
         </xsl:attribute>
+        <xsl:attribute name="space-before">
+		  <xsl:choose>
+		    <xsl:when test="name() = 'part'">
+              <xsl:text>10pt</xsl:text>
+            </xsl:when> 
+          </xsl:choose>        
+        </xsl:attribute>         
+        <xsl:attribute name="font-size">
+		  <xsl:choose>
+		    <xsl:when test="name() = 'part'">
+              <xsl:text>18pt</xsl:text>
+            </xsl:when> 
+            <xsl:otherwise>
+            	<xsl:text>14pt</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>        
+        </xsl:attribute>        
         <xsl:attribute name="font-weight">
 		  <xsl:choose>
+		    <xsl:when test="name() = 'part'">
+              <xsl:text>bold</xsl:text>
+            </xsl:when> 
           	<xsl:when test="name() = 'chapter'">
               <xsl:text>bold</xsl:text>
             </xsl:when> 
@@ -1607,6 +1647,9 @@
             </xsl:choose>
           </xsl:attribute>
           <xsl:choose>
+          	<xsl:when test="name() = 'part'">
+              <xsl:apply-templates select="@name"/>   
+            </xsl:when>           
           	<xsl:when test="name() = 'chapter'">
               <xsl:apply-templates select="@name"/>   
             </xsl:when> 

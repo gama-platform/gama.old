@@ -19,12 +19,6 @@ import net.htmlparser.jericho.Renderer;
 import net.htmlparser.jericho.Segment;
 import net.htmlparser.jericho.Source;
 
-//import org.jdom2.Document;
-//import org.jdom2.JDOMException;
-//import org.jdom2.input.SAXBuilder;
-//
-//import net.htmlparser.jericho.*;
-
 public class WikiCleaner {
 
 	public static void cleanFolder(String repName){
@@ -107,9 +101,11 @@ public class WikiCleaner {
        	Document docTOC = (Document) builder.build(Constants.TOC_FILE);	
        	
        	for(Element e : docTOC.getRootElement().getChildren()){
-       		String fileToClean = Constants.SVN_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
-       		String destFile = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
-       		cleanFile(fileToClean, destFile);
+       		if("chapter".equals(e.getName())){
+	       		String fileToClean = Constants.SVN_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
+	       		String destFile = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".wiki";
+	       		cleanFile(fileToClean, destFile);
+       		}
        	}
 	}
 	

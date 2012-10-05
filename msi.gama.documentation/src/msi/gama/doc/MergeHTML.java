@@ -30,31 +30,43 @@ public class MergeHTML {
       	Element bodyEltRes = null;
       	
        	for(Element e : docTOC.getRootElement().getChildren()){
-       		String fileToMerge = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".html";
-       		Document docToMerge = (Document) builder.build(fileToMerge);	 
-  
-    		Element chapElt = new Element("chapter");
-    		chapElt.setAttribute(new Attribute("name", e.getAttributeValue("name")));
-    		chapElt.setAttribute(new Attribute("fileName", e.getAttributeValue("file")));
-       		
-    		Element divMainEltElement = null;
-    		for(Element elt : docToMerge.getRootElement().getChild("body").getChildren()) {
-    			if("main".equals(elt.getAttributeValue("id"))) {
-    				divMainEltElement = elt; 
-    			}
-    		}
-
-    		for(Element eltInMain : divMainEltElement.getChildren()) {
-    			chapElt.addContent(eltInMain.clone());
-    		}		
-    		
-       		if(docRes == null){
-       			docRes = (Document) builder.build(fileToMerge);
-       			bodyEltRes = docRes.getRootElement().getChild("body");
-    			bodyEltRes.removeContent();
-    		}
-    		bodyEltRes.addContent(chapElt);
-    		
+       		if("part".equals(e.getName())){
+       			if(docRes != null){
+    	    		Element partElt = new Element("part");
+    	    		partElt.setAttribute(new Attribute("name", e.getAttributeValue("name")));	
+    	    		bodyEltRes.addContent(partElt);
+       			}
+       		}
+       		else {
+	       		String fileToMerge = Constants.WIKI2WIKI_FOLDER + File.separator + e.getAttributeValue("file") + ".html";
+	       		Document docToMerge = (Document) builder.build(fileToMerge);	 
+	  
+	    		Element chapElt = new Element("chapter");
+	    		chapElt.setAttribute(new Attribute("name", e.getAttributeValue("name")));
+	    		chapElt.setAttribute(new Attribute("fileName", e.getAttributeValue("file")));
+	       		
+	    		Element divMainEltElement = null;
+	    		for(Element elt : docToMerge.getRootElement().getChild("body").getChildren()) {
+	    			if("main".equals(elt.getAttributeValue("id"))) {
+	    				divMainEltElement = elt; 
+	    			}
+	    		}
+	
+	    		for(Element eltInMain : divMainEltElement.getChildren()) {
+	    			chapElt.addContent(eltInMain.clone());
+	    		}		
+	    		
+	       		if(docRes == null){
+	       			docRes = (Document) builder.build(fileToMerge);
+	       			String docTitle = docTOC.getRootElement().getAttributeValue("title");
+	       			docRes.getRootElement().getChild("head").getChild("title").removeContent();
+	       			docRes.getRootElement().getChild("head").getChild("title").addContent(docTitle);
+	       			
+	       			bodyEltRes = docRes.getRootElement().getChild("body");
+	    			bodyEltRes.removeContent();
+	    		}
+	    		bodyEltRes.addContent(chapElt);
+       		}
        	}
        	
         XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
