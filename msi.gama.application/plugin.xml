@@ -386,6 +386,11 @@
                   label="Find and Replace"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.window.preferences"
+                  label="Preferences"
+                  style="push">
+            </command>
          </menu>
          <menu
                id="simulationMenu"
@@ -1602,5 +1607,13 @@
                class="msi.gama.gui.displays.awt.ImageDisplaySurface"
                keyword="image">
          </implementation>
+      </extension>
+      <extension
+            point="org.eclipse.ui.preferencePages">
+         <page
+               class="msi.gama.gui.swt.preferencepage.RScriptPreferencePage"
+               id="msi.gama.application.RScriptPrferencePage"
+               name="Config RScript&apos;s path">
+         </page>
       </extension>
 </plugin>
