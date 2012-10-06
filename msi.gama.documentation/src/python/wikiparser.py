@@ -51,7 +51,7 @@ class Parser:
         'punct': punct_pattern,
     }
 
-    ol_rule = ur"^\s+#\s*"
+    ol_rule = ur"^\s+#"
     # Ben modif 
     # dl_rule = ur"^\s+.*?::\s"
     pair_rule = ur"(\w|\")*\:\:\s*\w+"
@@ -60,12 +60,14 @@ class Parser:
     # BEN: much more ugly: remove the line (?P<emph>_) and (?P<dl>%(dl_rule)s) [after P<ol>]
     #     add: (?P<ent_symbolic>%(pair_rule)s)
     #     modified: (?P<heading>^\s*(?P<hmarker>=+)\s.*\s(?P=hmarker)\s*$)
+    #               (?P<li>^\s+\*\s*)
+    #               ol_rule = ur"^\s+#\s*"
     formatting_rules = ur"""(?P<ent_numeric>&#(\d{1,5}|x[0-9a-fA-F]+);)
 (?:(?P<asterisk>\\\*)
 (?P<underscore>\\_)
 (?P<newline>\\n)
 (?P<bold>\*)
-(?P<emph>_[a-zA-Z0-9]+_)
+(?P<emph>\W_[a-zA-Z0-9_]+_)
 (?P<u>__)
 (?P<sup>\^.*?\^)
 (?P<sub>,,[^,]{1,40},,)
@@ -79,7 +81,7 @@ class Parser:
 (?P<anchor>^\#[^\s\#]+\s$)
 (?P<comment>^\#.*$))
 (?P<ol>%(ol_rule)s)
-(?P<li>^\s+\*\s*)
+(?P<li>^\s+\*)
 (?P<li_none>^\s+\.\s*)
 (?P<indent>^\s+)
 (?P<tableZ>\|\| $)
@@ -200,8 +202,9 @@ class Parser:
         """Handle emphasis."""
 #        self.is_em = not self.is_em
 #        return self.formatter.emphasis(self.is_em)
-        return self.formatter.emphasis(1) + \
-            self.formatter.text(word[1:-1]) + \
+        return word[0] + \
+            self.formatter.emphasis(1) + \
+            self.formatter.text(word[2:-1]) + \
             self.formatter.emphasis(0)
 
 

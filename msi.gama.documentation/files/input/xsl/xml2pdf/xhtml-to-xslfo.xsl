@@ -435,10 +435,11 @@
           </xsl:choose>
           <xsl:apply-templates select="*|text()"/>
         </fo:basic-link>
-        <xsl:if test="starts-with(@href, '#')">
+<!-- Ben Modif --> 
+<!--        <xsl:if test="starts-with(@href, '#')">
           <xsl:text> on page </xsl:text>
           <fo:page-number-citation ref-id="{substring(@href, 2)}"/>
-        </xsl:if>
+        </xsl:if>  -->
       </xsl:when>
     </xsl:choose>
   </xsl:template>
@@ -813,9 +814,12 @@
     <fo:block break-before="page">
       <fo:leader leader-pattern="rule"/>
     </fo:block>  
-    <fo:block font-size="36pt" line-height="40pt"
-      keep-with-next="always" space-after="18pt"
-      font-family="serif" break-after="page">
+    <fo:block font-size="50pt" line-height="40pt"
+      keep-with-next="always" 
+      space-before="3in" space-after="18pt"
+      font-family="serif" break-after="page"
+      text-align="center"
+      >
       <xsl:attribute name="id">
         <xsl:choose>
           <xsl:when test="@id">
@@ -854,7 +858,7 @@
         </xsl:choose>
       </xsl:attribute>
        <xsl:value-of select="@name"/>         
-     </fo:block>
+     </fo:block> 
      <xsl:apply-templates select="*|text()"/>       
   </xsl:template>
 
@@ -1006,9 +1010,9 @@
     =============================================== -->
 
   <xsl:template match="img">
-    <fo:block space-after="12pt">
-      <fo:external-graphic src="{@src}">
-        <xsl:if test="@width">
+    <fo:block space-after="12pt" space-before="12pt" text-align="center">
+      <fo:external-graphic src="{@src}" content-height="auto" content-width="6in">
+ <!--        <xsl:if test="@width">
           <xsl:attribute name="width">
             <xsl:choose>
               <xsl:when test="contains(@width, 'px')">
@@ -1031,7 +1035,7 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
-        </xsl:if>
+        </xsl:if> -->
       </fo:external-graphic>
     </fo:block>
   </xsl:template>
@@ -1478,7 +1482,7 @@
     =============================================== -->
 
   <xsl:template match="ul">
-    <fo:list-block provisional-distance-between-starts="1cm"
+    <fo:list-block provisional-distance-between-starts="0.5cm"
       provisional-label-separation="0.5cm">
       <xsl:attribute name="space-after">
         <xsl:choose>
@@ -1494,10 +1498,10 @@
         <xsl:variable name="ancestors">
           <xsl:choose>
             <xsl:when test="count(ancestor::ol) or count(ancestor::ul)">
-              <xsl:value-of select="1 + 
+              <xsl:value-of select="1.4 + 
                                     (count(ancestor::ol) + 
                                      count(ancestor::ul)) * 
-                                    1.25"/>
+                                    0.3"/>
             </xsl:when>
             <xsl:otherwise>
               <xsl:text>1</xsl:text>
@@ -1518,10 +1522,10 @@
 
   <xsl:template match="ul/li">
     <fo:list-item>
-      <fo:list-item-label end-indent="label-end()"><!-- end-indent="label-end()" -->
+      <fo:list-item-label start-indent="body-start() - 35pt" end-indent="label-end()"><!--  start-indent="body-start() - 40pt"  end-indent="label-end()" -->
         <fo:block>&#x2022;</fo:block>
       </fo:list-item-label>
-      <fo:list-item-body start-indent="body-start()"> <!-- start-indent="body-start()" -->
+      <fo:list-item-body start-indent="body-start() - 20pt"> <!-- start-indent="body-start()  - 27pt" -->
         <fo:block>
           <xsl:apply-templates select="*|text()"/>
         </fo:block>

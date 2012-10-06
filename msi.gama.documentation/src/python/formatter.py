@@ -679,10 +679,17 @@ class Formatter(FormatterBase):
                 pagename = 'index'
 
             # FIXME:
-            url = wikiutil.quoteWikinameURL(pagename + ".html")
+            # Ben modif
+            # url = wikiutil.quoteWikinameURL(pagename + ".html")
+            # Add anchor
+            # if anchor:
+            #    url = "%s#%s" % (url, wikiutil.url_quote_plus(anchor))
+            ####
             # Add anchor
             if anchor:
-                url = "%s#%s" % (url, wikiutil.url_quote_plus(anchor))
+                url = "%s#%s" % (wikiutil.quoteWikinameURL(pagename + ".html"), wikiutil.url_quote_plus(anchor))
+            else:
+                url = "#%s" % (wikiutil.quoteWikinameURL(pagename))
 
             attrs['href'] = url
 
