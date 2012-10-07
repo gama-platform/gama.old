@@ -17,7 +17,7 @@
 
 /* $Id: ExampleXML2PDF.java 679326 2008-07-24 09:35:34Z vhennebert $ */
 
-package msi.gama.doc;
+package java2.testLibs;
 
 //Java
 import java.io.File;
@@ -41,22 +41,32 @@ import org.apache.fop.apps.MimeConstants;
  * This class demonstrates the conversion of an XML file to PDF using
  * JAXP (XSLT) and FOP (XSL-FO).
  */
-public class XmlToPdf {
+public class ExampleXML2PDF {
 
-	public static void xmlToPdf(){
+    /**
+     * Main method.
+     * @param args command-line arguments
+     */
+    public static void main(String[] args) {
         try {
             System.out.println("FOP ExampleXML2PDF\n");
             System.out.println("Preparing...");
 
             // Setup directories
-//            File baseDir = new File("files");
-//            File outDir = new File(baseDir, "out");
-//            outDir.mkdirs();
+            File baseDir = new File("files");
+            File outDir = new File(baseDir, "out");
+            outDir.mkdirs();
 
             // Setup input and output files
-            File xmlfile = new File(Constants.DOCGAMA_FINAL);
-            File xsltfile = new File(Constants.XSL_XML2PDF_FILE);
-            File pdffile = new File(Constants.DOCGAMA_PDF);
+//            File xmlfile = new File(baseDir, "xml/xml/projectteam.xml");
+//            File xsltfile = new File(baseDir, "xml/xslt/projectteam2fo.xsl");
+//            File pdffile = new File(outDir, "ResultXML2PDF.pdf");
+            // File xmlfile = new File(baseDir, "xml/xml/Operators15.html");
+            // File xmlfile = new File(baseDir, "HTMLGamaDoc/Operators15.html");
+            File xmlfile = new File(baseDir, "Exercice2.xml");
+            // File xsltfile = new File(baseDir, "xml/xslt/GAMAdoc2fo.xsl");
+            File xsltfile = new File(baseDir, "xml/xslt/xhtml-to-xslfo-renome.xsl");
+            File pdffile = new File(outDir, "docGAMA.pdf");
 
 
             System.out.println("Input: XML (" + xmlfile + ")");
@@ -102,14 +112,6 @@ public class XmlToPdf {
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
-        }		
-	}
-	
-    /**
-     * Main method.
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-    	xmlToPdf();
+        }
     }
 }

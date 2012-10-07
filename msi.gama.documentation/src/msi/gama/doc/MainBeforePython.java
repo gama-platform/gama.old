@@ -1,5 +1,9 @@
 package msi.gama.doc;
 
+import msi.gama.doc.util.PrepareEnv;
+import msi.gama.doc.util.SVNUtils;
+import msi.gama.doc.util.WikiCleaner;
+
 public class MainBeforePython {
 
 	/**
@@ -11,12 +15,6 @@ public class MainBeforePython {
 		System.out.print("Preparation of the folders................");
 		PrepareEnv.prepareDocumentation();
 		System.out.println("DONE");
-		System.out.print("Merge all the docGAMA.xml files................");		
-		UnifyDoc.unify();
-		System.out.println("DONE");
-		System.out.print("Transform the docGAMA.xml file into Wiki Files................");		
-		XmlToWiki.createAllWikis();
-		System.out.println("DONE");		
 		
 		System.out.print("Checkout Wiki Files from GAMA SVN................");		
 		SVNUtils.checkoutSVNGamaDoc();		
@@ -25,6 +23,10 @@ public class MainBeforePython {
 		System.out.print("Select and clean some wiki files................");
 		WikiCleaner.selectWikiFiles();
 		System.out.println("DONE");			
+		
+		System.out.println("");
+		System.out.println("This is the end of the step 1. ");
+		System.out.println("Please run the python file 'statwiki.py' in the python folder with arguments: --build --d=files/gen/wiki2wiki ");
 	}
 
 }
