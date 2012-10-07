@@ -1,15 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 
 # -*- coding: iso-8859-1 -*-
 """
     StatWiki - Static Wiki based on MoinMoin
 
-    @copyright: 2007 by José Fonseca, 2009 by Arkadiusz Wahlig
+    @copyright: 2007 by Jose Fonseca, 2009 by Arkadiusz Wahlig
     @license: GNU GPL, see COPYING for details.
 """
 
 
 __version__ = '0.85.5'
 __date__ = '20.03.2009'
+
 
 
 import sys, os
