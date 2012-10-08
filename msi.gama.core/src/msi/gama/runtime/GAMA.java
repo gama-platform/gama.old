@@ -70,6 +70,7 @@ public class GAMA {
 				if ( !verifyClose() ) { return; }
 				closeCurrentExperiment();
 			} else {
+				if ( !verifyClose() ) { return; }				
 				closeCurrentExperiment();
 			}
 		}
