@@ -43,12 +43,17 @@ public void createFieldEditors() {
 
   @Override
   public void init(IWorkbench workbench) {
-//	  PlatformUI.getPreferenceStore().putValue("RScript", "C:\\Program Files\\R\\R-2.15.1\\bin");
 	  if(preferences.get("RScript", null)==null)
 	  {
-		  preferences.put("RScript", "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe");
+		  String os = System.getProperty("os.name");
+			if("Mac OS X".equals(os)){
+				preferences.put("RScript", "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript");
+			}
+			if("Windows".equals(os)){
+				preferences.put("RScript", "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe");
+			}	
 	  }
-//	  setPreferenceStore(PlatformUI.getPreferenceStore());
+
     setDescription("A preference page to config RScript path");
   }
 } 
