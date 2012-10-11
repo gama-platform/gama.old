@@ -7,8 +7,8 @@
 model RoadTrafficSimple 
   
 global {  
-	file shape_file_roads parameter: 'Shapefile for the roads:' category: 'GIS' <- '../includes/RoadCircleLanes.shp' ;
-	file shape_file_bounds parameter: 'Shapefile for the bounds:' category: 'GIS' <- '../includes/BoundsLaneRoad.shp' ;
+	file shape_file_roads  <- file('../includes/RoadCircleLanes.shp') ;
+	file shape_file_bounds <- file('../includes/BoundsLaneRoad.shp') ;
 	
 	graph the_graph;  
 	list roadsList of: road ; 
@@ -23,7 +23,8 @@ global {
 		}
 		set the_graph <- as_edge_graph(list(road));
 	}   
-	reflex when: time mod 20 = 0 and time < 400{
+	
+	reflex createPeople when: time mod 20 = 0 and time < 400{
 		set roadsList <- (road as list);  
 		create people number: 1 { 
 			set speed <-  (2 + 2 * length(people as list)) ;
@@ -52,7 +53,7 @@ entities {
 	}
 	species road_display  {
 		aspect base {    
-			draw shape: shape color: 'black' ;
+			draw shape: geometry color: rgb('black') ;
 		} 
 	}
 	species people skills: [driving]{ 
@@ -77,13 +78,21 @@ entities {
 		}
 	}
 }
+
 environment bounds: shape_file_bounds ;
-output {
-	display city_display refresh_every: 1 {
-		species road_display aspect: base ;
-		species people aspect: base;
+
+experiment Simple type: gui {
+	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
+	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	
+	output {
+		display city_display refresh_every: 1 {
+			species road_display aspect: base ;
+			species people aspect: base;
+		}
 	}
 }
+
 
 
 
