@@ -181,6 +181,10 @@ public class Stats {
 			String RPath = Preferences.userRoot().node("gama")
 					.get("RScript", null);
 			caller.setRscriptExecutable("\"" + RPath + "\"");
+			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			{
+				caller.setRscriptExecutable(RPath);
+			}
 			caller.cleanRCode();
 			double[] vectorX = new double[l1.length()];
 			double[] vectorY = new double[l2.length()];
@@ -205,16 +209,11 @@ public class Stats {
 			results = caller.getParser().getAsDoubleArray("corCoef");
 
 			caller.cleanRCode();
-		} catch (RCallerExecutionException ex) {
-			GuiUtils.error("RCallerExecutionException \n" + ex.getMessage());
-			return null;
 		} catch (Exception ex) {
-			GuiUtils.error("Cannot find RScript, config in the preferences\n"
-					+ ex.getMessage());
-			return null;
-		} finally {
-			caller = null;
-		}
+//			GuiUtils.error("RCallerExecutionException \n" + ex.getMessage());
+			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
+
+		} 
 		return results[0];
 	}
 
@@ -235,6 +234,10 @@ public class Stats {
 					.get("RScript", null);
 			caller.setRscriptExecutable("\"" + RPath + "\"");
 
+			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			{
+				caller.setRscriptExecutable(RPath);
+			}
 			double[] data = new double[l.length()];
 			int i = 0;
 			for (Object o : l) {
@@ -247,7 +250,7 @@ public class Stats {
 
 			results = caller.getParser().getAsDoubleArray("mean");
 		} catch (Exception ex) {
-			return null;
+			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
 		}
 		return results[0];
 	}
@@ -262,6 +265,10 @@ public class Stats {
 			String RPath = Preferences.userRoot().node("gama")
 					.get("RScript", null);
 			caller.setRscriptExecutable("\"" + RPath + "\"");
+			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			{
+				caller.setRscriptExecutable(RPath);
+			}
 			RCode c = new RCode();
 			GamaList R_statements = new GamaList<String>();
 			FileReader fr = new FileReader(RFile);
@@ -291,9 +298,11 @@ public class Stats {
 			return result;
 
 		} catch (Exception ex) {
-			GuiUtils.error("Cannot find RScript, config in the preferences\n"
-					+ ex.getMessage());
-			return null;
+
+			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
+//			GuiUtils.error("Cannot find RScript, config in the preferences\n"
+//					+ ex.getMessage());
+//			return null;
 		}
 	}
 	
