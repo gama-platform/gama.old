@@ -58,7 +58,7 @@ public class BasicOpenGlDrawer {
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
 						geometry.z_layer, geometry.color, geometry.alpha,
-						geometry.fill, geometry.angle, geometry.height);
+						geometry.fill, geometry.border, geometry.angle, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
@@ -69,7 +69,7 @@ public class BasicOpenGlDrawer {
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.fill, geometry.isTextured, geometry.angle,
+							geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
 							true);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -123,7 +123,7 @@ public class BasicOpenGlDrawer {
 
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
-						geometry.z_layer, c, geometry.alpha, geometry.fill,
+						geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
 						geometry.angle, geometry.height);
 			}
 
@@ -134,7 +134,7 @@ public class BasicOpenGlDrawer {
 							geometry.angle, true);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
-							geometry.z_layer, c, geometry.alpha, geometry.fill,
+							geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
 							geometry.isTextured, geometry.angle, true);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
@@ -193,12 +193,12 @@ public class BasicOpenGlDrawer {
 
 			if (sourceGeometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry,
-						0.0f, collection.color, 1.0f, true, 0, 0.0f);
+						0.0f, collection.color, 1.0f, true, null, 0, 0.0f);
 			}
 
 			else if (sourceGeometry.getGeometryType() == "Polygon") {
 				myJTSDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0f, collection.color,
-						1.0f, true, false, 0, true);
+						1.0f, true, null, false, 0, true);
 			} else if (sourceGeometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
 						(MultiLineString) sourceGeometry, 0.0f, collection.color, 1.0f,

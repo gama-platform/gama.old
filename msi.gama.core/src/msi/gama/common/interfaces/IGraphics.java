@@ -123,7 +123,7 @@ public interface IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 */
-	public abstract Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle);
+	public abstract Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle);
 
 	/**
 	 * Method drawTriangle.
@@ -131,7 +131,7 @@ public interface IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 */
-	public abstract Rectangle2D drawTriangle(final Color c, final boolean fill, final Integer angle);
+	public abstract Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle);
 
 	/**
 	 * Method drawLine.
@@ -148,7 +148,7 @@ public interface IGraphics {
 	 * @param angle Integer
 	 */
 	public abstract Rectangle2D drawRectangle(final Color color, final boolean fill,
-		final Integer angle);
+		final Color border, final Integer angle);
 
 	/**
 	 * @return
@@ -170,7 +170,7 @@ public interface IGraphics {
 	 * @param z float
 	 */
 	public abstract Rectangle2D drawGeometry(final Geometry geometry, final Color color,
-		final boolean fill, final Integer angle);
+		final boolean fill, final Color border, final Integer angle);
 
 	public abstract void setDrawingOffset(final int x, final int y);
 

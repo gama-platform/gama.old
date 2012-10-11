@@ -97,6 +97,7 @@ public interface IKeyword {
 	public static final String EDGE = "edge";
 	public static final String ELSE = "else";
 	public static final String EMPTY = "empty";
+	public static final String BORDER = "border";
 	public static final String ENABLE = "enable";
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";

@@ -22,6 +22,8 @@ public class MyJTSGeometry implements Cloneable{
 	
 	public Boolean fill=true;
 	
+	public Color border;
+	
 	public Boolean isTextured;
 	
 	public int angle;
@@ -39,6 +41,7 @@ public class MyJTSGeometry implements Cloneable{
 		this.alpha = alpha;
 		this.type = type;
 		this.fill = true;
+		this.border = Color.black;
 		this.isTextured = false;
 		this.angle = 0;
 		this.height = 0;
@@ -46,13 +49,14 @@ public class MyJTSGeometry implements Cloneable{
 		this.offSet = new GamaPoint(0,0); 
 	}
 	
-	public MyJTSGeometry(Geometry geometry,float z_layer,Color color,float alpha,Boolean fill, Boolean isTextured,int angle,float height,GamaPoint offSet ){
+	public MyJTSGeometry(Geometry geometry,float z_layer,Color color,float alpha,Boolean fill, Color border,Boolean isTextured,int angle,float height,GamaPoint offSet ){
 		this.geometry = geometry;
 		this.z_layer=z_layer;
 		this.color = color;
 		this.alpha = alpha;
 		this.type = "";
 		this.fill = fill;
+		this.border = border;
 		this.isTextured = false;
 		this.angle = angle;
 		this.height = height;

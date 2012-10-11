@@ -529,19 +529,19 @@ public class GLUtil {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.5f;
+		float ambientMean=1f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0
-		float[] lightDiffuseValue0 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		float[] lightDiffuseValue0 = { 1f, 1f, 1f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
 		
 		// Diffuse light 1
-		float diffuseMean=0.5f;
+		float diffuseMean=1f;
 		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (positioned light)
 		//float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
@@ -601,7 +601,7 @@ public class GLUtil {
    	 // Prepare light parameters.
        float SHINE_ALL_DIRECTIONS = 1;
        float[] lightPos = {0, 0, -10, SHINE_ALL_DIRECTIONS};
-       float[] lightColorAmbient = {0.5f, 0.5f, 0.5f, 1f};
+       float[] lightColorAmbient = {1f, 1f, 1f, 1f};
        float[] lightColorSpecular = {0.8f, 0.8f, 0.8f, 1f};
 
        // Set light parameters.

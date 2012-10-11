@@ -20,7 +20,7 @@ package msi.gaml.statements;
 
 import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
+//import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -63,11 +63,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 		ExecutionStatus statusBeforeSkipped = success;
 		for ( int i = 0; i < commands.length; i++ ) {
 			lastResult = commands[i].executeOn(scope);
-			try {
-				GuiUtils.stopIfCancelled();
-			} catch (InterruptedException e) {
-				scope.setStatus(interrupt);
-			}
+//			try {
+//				GuiUtils.stopIfCancelled();
+//			} catch (InterruptedException e) {
+//				scope.setStatus(interrupt);
+//			}
 			ExecutionStatus status = scope.getStatus();
 			if ( status != skipped ) {
 				if ( status == interrupt ) {

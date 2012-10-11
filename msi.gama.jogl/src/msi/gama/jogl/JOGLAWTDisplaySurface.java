@@ -68,7 +68,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	double widthHeightConstraint = 1.0;
 	private PopupMenu agentsMenu = new PopupMenu();
 	public IGraphics openGLGraphics;
-	private Color bgColor = Color.black;
+	private Color bgColor = Color.black; // black
 	protected double zoomIncrement = 0.1;
 	protected double zoomFactor = 1.0 + zoomIncrement;
 	protected BufferedImage buffImage;

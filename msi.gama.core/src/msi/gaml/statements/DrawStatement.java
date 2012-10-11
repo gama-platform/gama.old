@@ -53,6 +53,7 @@ import java.lang.System;
 	@facet(name = IKeyword.TEXT, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.IMAGE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.EMPTY, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.BORDER, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.AT, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.POINT_STR, optional = true),
@@ -64,11 +65,11 @@ import java.lang.System;
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
 combinations = {
-	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.COLOR, IKeyword.Z }),
+	@combination({ IType.GEOM_STR, IKeyword.EMPTY, IKeyword.BORDER, IKeyword.COLOR, IKeyword.Z }),
 	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.AT, IKeyword.EMPTY,
-		IKeyword.ROTATE,IKeyword.Z}),
-	@combination({ IKeyword.TO, IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY }),
-	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY, IKeyword.ROTATE }),
+		IKeyword.BORDER, IKeyword.ROTATE,IKeyword.Z}),
+	@combination({ IKeyword.TO, IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY, IKeyword.BORDER }),
+	@combination({ IKeyword.SHAPE, IKeyword.COLOR, IKeyword.SIZE, IKeyword.EMPTY, IKeyword.BORDER, IKeyword.ROTATE }),
 	@combination({ IKeyword.TEXT, IKeyword.SIZE, IKeyword.COLOR, IKeyword.AT, IKeyword.ROTATE }),
 	@combination({ IKeyword.IMAGE, IKeyword.SIZE, IKeyword.AT, IKeyword.SCALE, IKeyword.ROTATE,
 		IKeyword.COLOR }) }, omissible = IKeyword.SHAPE)
@@ -110,9 +111,10 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, location, color, rotate, elevation;
+		IExpression size, location, color, border, rotate, elevation;
 
 		Color constantColor = null;
+		Color constantBorder = null;
 		ILocation constantSize = null;
 		Integer constantRotate = null;
 
@@ -130,6 +132,14 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( color != null && color.isConst() ) {
 				constantColor = Cast.asColor(scope, color.value(scope));
 			}
+
+			
+			border = getFacet(IKeyword.BORDER);
+			if ( border != null && border.isConst() ) {
+				constantBorder = Cast.asColor(scope, border.value(scope));
+			}
+
+			
 			rotate = getFacet(IKeyword.ROTATE);
 			if ( rotate != null && rotate.isConst() ) {
 				constantRotate = Cast.asInt(scope, rotate.value(scope));
@@ -180,8 +190,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			} else {
 				constantEmpty = null;
 			}
-			toExpr = getFacet(IKeyword.TO);
-
+			toExpr = getFacet(IKeyword.TO);			
 		}
 
 		@Override
@@ -218,6 +227,23 @@ public class DrawStatement extends AbstractStatementSequence {
 				c = constantColor;
 			}
 
+			Color b;
+			if ( constantBorder == null ) {
+				if ( border != null ) {
+					b = Cast.asColor(scope, border.value(scope));
+				} else {
+					Object o = scope.getAgentVarValue(agent, IKeyword.BORDER);
+					if ( o != null ) {
+						b = Cast.asColor(scope, o);
+					} else {
+						b = Color.black;
+					}
+				}
+			} else {
+				b = constantBorder;
+			}			
+			
+			
 			int objectSize =
 				constantSize == null ? Maths
 					.round(scale(Cast.asFloat(scope, size.value(scope)), g)) : Maths.round(scale(
@@ -236,11 +262,11 @@ public class DrawStatement extends AbstractStatementSequence {
 			boolean isEmpty =
 				constantEmpty == null ? empty == null ? false : Cast.asBool(scope,
 					empty.value(scope)) : constantEmpty;
-			return draw(scope, shapeIndex, from, objectSize, c, isEmpty, g);
+			return draw(scope, shapeIndex, from, objectSize, c, isEmpty, b, g);
 		}
 
 		private Rectangle2D draw(final IScope scope, final Integer shapeIndex, final ILocation at,
-			final int displaySize, final Color c, final boolean isEmpty, final IGraphics g)
+			final int displaySize, final Color c, final boolean isEmpty, final Color border, final IGraphics g)
 			throws GamaRuntimeException {
 			int x = Maths.round(at.getX()) - (displaySize >> 1);
 			int y = Maths.round(at.getY()) - (displaySize >> 1);
@@ -255,23 +281,23 @@ public class DrawStatement extends AbstractStatementSequence {
 					if(elevation != null){
 						geom.getInnerGeometry().setUserData(elevation.value(scope));	
 					}
-					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, getRotation(scope));
+					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, border, getRotation(scope));
 				}
 				case 0: {
 						if(elevation != null){
 							scope.getAgentScope().getGeometry().getInnerGeometry().setUserData(elevation.value(scope));						
 					     }
 					return g.drawGeometry(scope.getAgentScope().getInnerGeometry(), c, !isEmpty,
-						getRotation(scope));
+							border, getRotation(scope));
 				}
 				case 1: {
-					return g.drawRectangle(c, !isEmpty, getRotation(scope));
+					return g.drawRectangle(c, !isEmpty, border, getRotation(scope));
 				}
 				case 2: {
-					return g.drawCircle(c, !isEmpty, null);
+					return g.drawCircle(c, !isEmpty, border, null);
 				}
 				case 3: {
-					return g.drawTriangle(c, !isEmpty, getRotation(scope));
+					return g.drawTriangle(c, !isEmpty, border, getRotation(scope));
 				}
 			}
 			return null;

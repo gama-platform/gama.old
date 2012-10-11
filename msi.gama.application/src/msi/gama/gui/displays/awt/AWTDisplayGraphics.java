@@ -318,13 +318,13 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
-		return drawShape(c, oval, fill, angle);
+		return drawShape(c, oval, fill, border, angle);
 	}
 
 	@Override
-	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Integer angle) {
+	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -332,7 +332,7 @@ public class AWTDisplayGraphics implements IGraphics {
 		p0.lineTo(curX + curWidth / 2.0, curY);
 		p0.lineTo(curX + curWidth, curY + curWidth);
 		p0.closePath();
-		return drawShape(c, p0, fill, angle);
+		return drawShape(c, p0, fill, border, angle);
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawLine(final Color c, final double toX, final double toY) {
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
-		return drawShape(c, line, false, null);
+		return drawShape(c, line, false, null, null);
 	}
 
 	/**
@@ -354,9 +354,9 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Integer angle) {
+	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Color border, final Integer angle) {
 		rect.setFrame(curX, curY, curWidth, curHeight);
-		return drawShape(color, rect, fill, angle);
+		return drawShape(color, rect, fill, border, angle);
 	}
 
 	/**
@@ -388,11 +388,12 @@ public class AWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
-		final Integer angle) {
+		final Color border, final Integer angle) {
 		boolean f =
 			geometry instanceof LineString || geometry instanceof MultiLineString ? false : fill;
-
-		return drawShape(color, sw.toShape(geometry), f, angle);
+//		boolean b =
+//			geometry instanceof LineString || geometry instanceof MultiLineString ? false : border;
+		return drawShape(color, sw.toShape(geometry), f, border, angle);
 	}
 
 	/**
@@ -403,7 +404,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
-		final Integer angle) {
+		final Color border, final Integer angle) {
 		try {
 			Rectangle2D r = s.getBounds2D();
 
@@ -418,8 +419,14 @@ public class AWTDisplayGraphics implements IGraphics {
 			setDrawingColor(c);
 			if ( fill ) {
 				g2.fill(s);
-				// g3.setColor(Color.black);
-				setDrawingColor(Color.black);
+				setDrawingColor(border);	
+//				if(!border){
+//					// g3.setColor(Color.black);
+//					setDrawingColor(c);					
+//				}else{
+//					setDrawingColor(Color.black);		
+//				}
+
 			}
 			g2.draw(s);
 			// g3.dispose();

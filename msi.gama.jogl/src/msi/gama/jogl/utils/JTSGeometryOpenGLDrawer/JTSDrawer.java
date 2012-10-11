@@ -92,7 +92,7 @@ public class JTSDrawer {
 	}
 
 	public void DrawMultiPolygon(MultiPolygon polygons, float z_layer, Color c,
-			float alpha, boolean fill, Integer angle, float height) {
+			float alpha, boolean fill, Color border, Integer angle, float height) {
 
 		numGeometries = polygons.getNumGeometries();
 		// for each polygon of a multipolygon, get each point coordinates.
@@ -103,14 +103,14 @@ public class JTSDrawer {
 				DrawPolyhedre(curPolygon, z_layer, c, alpha, height, angle,
 						false);
 			} else {
-				DrawPolygon(curPolygon, z_layer, c, alpha, fill, false, angle,
+				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle,
 						true);
 			}
 		}
 	}
 
 	public void DrawPolygon(Polygon p, float z_layer, Color c, float alpha,
-			boolean fill, boolean isTextured, Integer angle,
+			boolean fill, Color border, boolean isTextured, Integer angle,
 			boolean drawPolygonContour) {
 
 		// FIXME: Angle rotation is not implemented yet
@@ -125,8 +125,8 @@ public class JTSDrawer {
 		if (fill == true) {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);
-
+					alpha);			
+			
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
 
@@ -134,7 +134,7 @@ public class JTSDrawer {
 				DrawTesselatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
-					DrawPolygonContour(p);
+					DrawPolygonContour(p, border);
 				}
 			}
 			// use JTS triangulation on simplified geometry (DouglasPeucker)
@@ -143,7 +143,7 @@ public class JTSDrawer {
 				DrawTriangulatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
-					DrawPolygonContour(p);
+					DrawPolygonContour(p, border);
 				}
 			}
 		}
@@ -152,7 +152,7 @@ public class JTSDrawer {
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
 					alpha);
-			DrawPolygonContour(p);
+			DrawPolygonContour(p, border);
 		}
 
 		// FIXME: Need to check that the polygon is a quad
@@ -340,18 +340,22 @@ public class JTSDrawer {
 		myGl.glEnd();
 	}
 
-	public void DrawPolygonContour(Polygon p) {
+	public void DrawPolygonContour(Polygon p, Color border) {
 		
 		// Draw Exterior ring
 		myGl.glLineWidth(1.0f);
 
 		myGl.glBegin(GL.GL_LINES);
+		myGl.glColor4f((float) border.getRed() / 255,
+				(float) border.getGreen() / 255, (float) border.getBlue() / 255, 1.0f);				
 		p.getExteriorRing().apply(visitor);
 		myGl.glEnd();
 
 		// Draw Interior ring
 		for (int i = 0; i < p.getNumInteriorRing(); i++) {
 			myGl.glBegin(GL.GL_LINES);
+			myGl.glColor4f((float) border.getRed() / 255,
+					(float) border.getGreen() / 255, (float) border.getBlue() / 255, 1.0f);				
 			p.getInteriorRingN(i).apply(visitor);
 			myGl.glEnd();
 		}
@@ -370,8 +374,8 @@ public class JTSDrawer {
 	public void DrawPolyhedre(Polygon p, float z, Color c, float alpha,
 			float height, Integer angle, boolean drawPolygonContour) {
 
-		DrawPolygon(p, z, c, alpha, true, false, angle, drawPolygonContour);
-		DrawPolygon(p, z + height, c, alpha, true, false, angle,
+		DrawPolygon(p, z, c, alpha, true, null, false, angle, drawPolygonContour);
+		DrawPolygon(p, z + height, c, alpha, true, null, false, angle,
 				drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha, z, height, drawPolygonContour, false);

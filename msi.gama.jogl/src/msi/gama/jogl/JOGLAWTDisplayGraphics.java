@@ -352,7 +352,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final Geometry geometry, final Color color,
-			final boolean fill, final Integer angle) {
+			final boolean fill, final Color border, final Integer angle) {
 		// Check if the geometry has a height value (3D Shape or Volume)
 
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
@@ -360,10 +360,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		if (geometry.getUserData() != null) {
 			height = new Float(geometry.getUserData().toString());
 			this.AddJTSGeometryInJTSGeometries(geometry, currentZLayer, color,
-					fill, false, angle, height,offSet);
+					fill, border, false, angle, height,offSet);
 		} else {
 			this.AddJTSGeometryInJTSGeometries(geometry, currentZLayer, color,
-					fill, false, angle, 0,offSet);
+					fill, border, false, angle, 0,offSet);
 		}
 		// FIXME: Need to remove the use of sw.
 		return sw.toShape(geometry).getBounds2D();
@@ -379,7 +379,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, image.getWidth())).getInnerGeometry();
 			this.AddJTSGeometryInJTSGeometries(g, currentZLayer, lineColor,
-					true, false, 0, 0,offSet);
+					true, null, false, 0, 0,offSet);
 		}
 
 		for (int i = 0; i <= image.getHeight(); i++) {
@@ -388,7 +388,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
 			this.AddJTSGeometryInJTSGeometries(g, currentZLayer, lineColor,
-					true, false, 0, 0,offSet);
+					true, null, false, 0, 0,offSet);
 		}
 
 	}
@@ -470,14 +470,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
-			final Integer angle) {
+			final Color border, final Integer angle) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		// FIXME : Need to check if the circle is at the right place.
 		Geometry g = GamaGeometryType.buildCircle(
 				(double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false, 0,
 				0,offSet);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -485,12 +485,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	@Override
 	public Rectangle2D drawTriangle(final Color c, final boolean fill,
-			final Integer angle) {
+			final Color border, final Integer angle) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g = GamaGeometryType.buildTriangle(curWidth,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false,
 				angle, 0,offSet);
 		Rectangle2D r = null;
 		return r;
@@ -512,7 +512,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY),
 				new GamaPoint(toX, toY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, true, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, true, null, false, 0,
 				0,offSet);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
@@ -530,11 +530,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawRectangle(final Color c, final boolean fill,
-			final Integer angle) {
+			final Color border, final Integer angle) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, false,
+		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false,
 				angle, 0,offSet);
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
@@ -588,14 +588,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param height
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,
-			final float z_layer, final Color color, final boolean fill,
+			final float z_layer, final Color color, final boolean fill, final Color border, 
 			final boolean isTextured, final Integer angle, final float height, GamaPoint offSet) {
 		MyJTSGeometry curJTSGeometry;
 		if(angle!=null){
-		  curJTSGeometry  = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,isTextured,angle,height,offSet);
+		  curJTSGeometry  = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,border,isTextured,angle,height,offSet);
 		}
 		else{
-	      curJTSGeometry = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,isTextured,0,height,offSet);	
+	      curJTSGeometry = new MyJTSGeometry(geometry,z_layer,color,this.currentAlpha,fill,border,isTextured,0,height,offSet);	
 		}
 		
 		//Add the geometry either in the static list or in the dynamic one.
@@ -878,7 +878,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(225, 225, 225);
-		MyJTSGeometry curGeometry = new MyJTSGeometry(g,-0.01f,c,1.0f,true,false,0,0.0f,offSet);
+		MyJTSGeometry curGeometry = new MyJTSGeometry(g,-0.01f,c,1.0f,true,null,false,0,0.0f,offSet);
 		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
