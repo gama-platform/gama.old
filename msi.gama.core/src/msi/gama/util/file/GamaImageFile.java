@@ -81,6 +81,27 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return (IMatrix) buffer;
 	}
 
+	public int getWidth () {
+		BufferedImage colorImage = null;
+		try {
+			colorImage = ImageIO.read(getFile());
+		} catch (final Exception e) {
+			throw new GamaRuntimeException(e);
+		}
+		return colorImage.getWidth();
+		
+	}
+	
+	public int getHeight () {
+		BufferedImage colorImage = null;
+		try {
+			colorImage = ImageIO.read(getFile());
+		} catch (final Exception e) {
+			throw new GamaRuntimeException(e);
+		}
+		return colorImage.getHeight();
+		
+	}
 	private IMatrix matrixValueFromImage(final ILocation preferredSize) throws GamaRuntimeException {
 		BufferedImage colorImage = null;
 		try {

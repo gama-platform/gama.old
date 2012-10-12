@@ -33,10 +33,12 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
@@ -92,6 +94,52 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			new Envelope(xllcorner, xllcorner + cellSize * nbCols, yllcorner, yllcorner + cellSize *
 				nbRows);
 		in.close();
+		return boundsEnv;
+	}
+	
+	public Envelope loadImageFile(final String boundsStr) throws IOException {
+		
+		GamaImageFile imageFile = new GamaImageFile(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+		int nbCols = imageFile.getWidth();
+		int nbRows = imageFile.getHeight();
+		String extension = imageFile.getExtension();
+		String geodataFile = imageFile.getPath().replaceAll(extension, "");
+		if (extension.equals("jpg")) {
+			geodataFile = geodataFile + "jgw";
+		} else if (extension.equals("png")) {
+			geodataFile = geodataFile + "pgw";
+		} else if (extension.equals("tiff")) {
+			geodataFile = geodataFile + "tfw";
+		}
+		
+		File infodata = new File(geodataFile);
+		double cellSizeX = 1;
+		double cellSizeY = 1;
+		double xllcorner = 0;
+		double yllcorner = 0;
+		if (infodata.exists()) {
+			InputStream ips = new FileInputStream(geodataFile);
+			InputStreamReader ipsr = new InputStreamReader(ips);
+			BufferedReader in = new BufferedReader(ipsr);
+			String[] cellSizeXStr = in.readLine().split(" ");
+			cellSizeX = Double.valueOf(cellSizeXStr[cellSizeXStr.length - 1]);
+			in.readLine();
+			in.readLine();
+			String[] cellSizeYStr = in.readLine().split(" ");
+			cellSizeY = Double.valueOf(cellSizeYStr[cellSizeYStr.length - 1]);
+			String[] xllcornerStr = in.readLine().split(" ");
+			xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
+			String[] yllcornerStr = in.readLine().split(" ");
+			yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+			in.close();
+		}
+		double x1 = xllcorner;
+		double x2 = xllcorner + cellSizeX * nbCols;
+		double y1 = yllcorner;
+		double y2 = yllcorner + cellSizeY * nbRows;
+		
+		Envelope boundsEnv =
+			new Envelope(Math.min(x1, x2), Math.max(x1,x2),Math.min(y1, y2), Math.max(y1,y2) );
 		return boundsEnv;
 	}
 
@@ -224,7 +272,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				boundsStr = ((GamaFile) bounds).getPath();
 			}
 
-			if ( boundsStr.toLowerCase().endsWith(".shp") ) {
+			if ( GamaFileType.isShape(boundsStr.toLowerCase() )) {
 				try {
 					Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
 					Envelope boundsEnv = (Envelope) result.get("envelope");
@@ -240,6 +288,17 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			} else if ( boundsStr.toLowerCase().endsWith(".asc") ) {
 				try {
 					Envelope boundsEnv = loadAscFile(boundsStr);
+					xMin = boundsEnv.getMinX();
+					yMin = boundsEnv.getMinY();
+					width = boundsEnv.getWidth();
+					height = boundsEnv.getHeight();
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new GamaRuntimeException(e);
+				}
+			} else if ( GamaFileType.isImageFile(boundsStr.toLowerCase())) {
+				try {
+					Envelope boundsEnv = loadImageFile(boundsStr);
 					xMin = boundsEnv.getMinX();
 					yMin = boundsEnv.getMinY();
 					width = boundsEnv.getWidth();
