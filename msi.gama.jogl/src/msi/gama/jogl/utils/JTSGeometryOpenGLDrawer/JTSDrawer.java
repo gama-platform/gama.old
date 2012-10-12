@@ -93,7 +93,7 @@ public class JTSDrawer {
 
 	public void DrawMultiPolygon(MultiPolygon polygons, float z_layer, Color c,
 			float alpha, boolean fill, Color border, Integer angle, float height) {
-
+		
 		numGeometries = polygons.getNumGeometries();
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (int i = 0; i < numGeometries; i++) {
@@ -101,7 +101,7 @@ public class JTSDrawer {
 
 			if (height > 0) {
 				DrawPolyhedre(curPolygon, z_layer, c, alpha, height, angle,
-						false);
+						false, border);
 			} else {
 				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle,
 						true);
@@ -123,9 +123,10 @@ public class JTSDrawer {
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 
 		if (fill == true) {
+			
 			myGl.glColor4f((float) c.getRed() / 255,
 					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);			
+					alpha);	
 			
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
@@ -372,10 +373,10 @@ public class JTSDrawer {
 	}
 
 	public void DrawPolyhedre(Polygon p, float z, Color c, float alpha,
-			float height, Integer angle, boolean drawPolygonContour) {
+			float height, Integer angle, boolean drawPolygonContour, Color border) {
 
-		DrawPolygon(p, z, c, alpha, true, null, false, angle, drawPolygonContour);
-		DrawPolygon(p, z + height, c, alpha, true, null, false, angle,
+		DrawPolygon(p, z, c, alpha, true, border, false, angle, drawPolygonContour);
+		DrawPolygon(p, z + height, c, alpha, true, border, false, angle,
 				drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha, z, height, drawPolygonContour, false);

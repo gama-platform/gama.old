@@ -53,9 +53,9 @@ public class BasicOpenGlDrawer {
 		if(geometry.offSet.x !=0 || geometry.offSet.y != 0 ){
 		  myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
 		}
-
+		
 		for (int i = 0; i < geometry.geometry.getNumGeometries(); i++) {
-			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
+			if (geometry.geometry.getGeometryType() == "MultiPolygon") {				
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
 						geometry.z_layer, geometry.color, geometry.alpha,
 						geometry.fill, geometry.border, geometry.angle, geometry.height);
@@ -65,7 +65,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.height, geometry.angle, true);
+							geometry.height, geometry.angle, true, geometry.border);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
@@ -131,7 +131,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, c, geometry.alpha, geometry.height,
-							geometry.angle, true);
+							geometry.angle, true, geometry.border);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
