@@ -5,6 +5,7 @@ import java.util.prefs.*;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -25,7 +26,9 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 		// PlatformUI.getPreferenceStore().putValue("RScript", dfe.getStringValue());
 		preferences.put("RScript", ffe.getStringValue());
 		// Stats.RPath= dfe.getStringValue();
+		System.out.println("isValid : " + this.isValid());
 		super.performApply();
+		
 	}
 
 	@Override
@@ -34,48 +37,75 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 		return super.performOk();
 	}
 
-	FileFieldEditor ffe;
+	FileFieldEditorValid ffe;
+	
+	class FileFieldEditorValid extends FileFieldEditor {
 
+		public FileFieldEditorValid() {
+			super();
+		}
+
+		public FileFieldEditorValid(String name, String labelText, boolean enforceAbsolute,
+			Composite parent) {
+			super(name, labelText, enforceAbsolute, parent);
+		}
+
+		public FileFieldEditorValid(String name, String labelText, boolean enforceAbsolute,
+			int validationStrategy, Composite parent) {
+			super(name, labelText, enforceAbsolute, validationStrategy, parent);
+		}
+
+		public FileFieldEditorValid(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+		}
+
+		@Override
+		public boolean isValid() {
+			return true;
+		}
+		
+	}
+	
 	public void createFieldEditors() {
-		ffe = new FileFieldEditor("RScript", "&Rscript preference:", getFieldEditorParent());
+		ffe = new FileFieldEditorValid("RScript", "&Rscript preference:", getFieldEditorParent());
 		ffe.setStringValue(preferences.get("RScript", null));
 		addField(ffe);
 
+	}
+	
+	
+
+	@Override
+	protected void performDefaults() {
+		String defaultPath = defaultPath();
+		ffe.setStringValue(defaultPath);
+		super.performDefaults();
+	}
+	
+	public String defaultPath() {
+		String os = System.getProperty("os.name");
+		String osbit = System.getProperty("os.arch");
+		if ( os.startsWith("Mac") ) {
+			if ( osbit.endsWith("64") )
+				return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript";
+			return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript";
+		} else if ( os.startsWith("Linux") ) {
+			return "usr/bin/RScript";
+		}
+		if ( os.startsWith("Windows") ) {
+			if ( osbit.endsWith("64") ) 
+				return "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe";
+			return "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe";
+		}
+		return "";
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 		if ( preferences.get("RScript", null) == null ) {
-			String os = System.getProperty("os.name");
-			String osbit = System.getProperty("os.arch");
-			if ( os.startsWith("Mac") ) {
-				preferences
-					.put("RScript",
-						"/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript");
-				if ( osbit.endsWith("64") ) {
-					preferences
-						.put("RScript",
-							"/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript");
-				}
-			} else if ( os.startsWith("Linux") ) {
-				preferences.put("RScript", "usr/bin/RScript");
-
-				// if(osbit.startsWith("64"))
-				// {
-				// preferences.put("RScript",
-				// "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript");
-				// }
-			}
-			if ( os.startsWith("Windows") ) {
-				System.out.println(osbit);
-				preferences.put("RScript", "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe");
-				if ( osbit.endsWith("64") ) {
-					preferences.put("RScript",
-						"C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe");
-				}
-			}
+			String defaultPath = defaultPath();
+			preferences.put("RScript", defaultPath);
 		}
-
 		setDescription("A preference page to config RScript path");
 	}
 }
