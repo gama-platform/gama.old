@@ -489,7 +489,7 @@ public class GLUtil {
     	// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
-		gl.glDepthFunc(GL_LEQUAL); // the type of depth test to do
+		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
     }
 
     public static void enableLighting(GL gl) {

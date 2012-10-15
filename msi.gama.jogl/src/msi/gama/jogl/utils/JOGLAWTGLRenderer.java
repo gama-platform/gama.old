@@ -196,10 +196,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		gl.glEnable(GL_BLEND);
-		gl.glDisable(GL_DEPTH_TEST);
+		//gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
-		blendingEnabled = false;
+		blendingEnabled = true;
 		isLightOn = true;
 
 		camera.UpdateCamera(gl, glu, width, height);
