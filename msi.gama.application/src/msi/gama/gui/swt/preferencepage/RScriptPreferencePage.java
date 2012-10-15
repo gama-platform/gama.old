@@ -1,14 +1,11 @@
 package msi.gama.gui.swt.preferencepage;
 
-import msi.gaml.operators.Stats;
 import java.util.prefs.*;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 
 public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 	IWorkbenchPreferencePage {
@@ -22,11 +19,7 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 
 	@Override
 	protected void performApply() {
-		// TODO Auto-generated method stub
-		// PlatformUI.getPreferenceStore().putValue("RScript", dfe.getStringValue());
 		preferences.put("RScript", ffe.getStringValue());
-		// Stats.RPath= dfe.getStringValue();
-		System.out.println("isValid : " + this.isValid());
 		super.performApply();
 		
 	}
