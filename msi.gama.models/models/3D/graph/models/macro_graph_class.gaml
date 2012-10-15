@@ -1,7 +1,7 @@
 /**
  *  macro_graph
  *  Author: Arnaud Grignard
- *  Description: Shows how to generate a scale-free graph using a Barabasi-Albert scale-free generator. 
+ *  Description: Display the number of node according to the class the belong.
  */
 
 model macro_graph
@@ -55,11 +55,6 @@ environment;
 
 entities {
 
-	/*
-	 * The specy which will describe nodes. 
-	 * Note that these agents will be implicitely
-	 * initialized with default x,y random locations.
-	 */
 	species nodeSpecy  {
 		
 		int class;
@@ -86,8 +81,7 @@ entities {
 	 * The specy which will describe edges. 
 	 */
 	species edgeSpecy  { 
-		rgb color;// <- rgb('blue') ; 
-		
+		rgb color;
 		aspect base {
 			draw color: color ;
 			
@@ -100,7 +94,6 @@ entities {
 		rgb color;
 		int class;
 		int nbAggregatedNodes;
-		//geometry shape <- circle (10) ;
 		
 		reflex updatemyNodes{
 			
@@ -122,22 +115,15 @@ entities {
 		
 		aspect base{
 			draw shape: geometry color: color z:nbAggregatedNodes/10;
-			draw text : 'attribute' + class ;
+			draw text : 'class' + class ;
 		}
 	}
 }
 experiment generate_graph type: gui {
 	output {	
-		/*
-		 * This first display is the classical GAMA display: 
-		 * agents are represented according to their aspects (shapes)
-		 * and location. This provides a spatialized view of the network.
-		 * 
-		 */
 		display test_display type:opengl {
 			species nodeSpecy aspect: base ; 
-			species edgeSpecy aspect: base ;
-			
+			species edgeSpecy aspect: base ;		
 			species nodeMacroSpecy aspect:base z:0.2;	
 		}		
 	}		
