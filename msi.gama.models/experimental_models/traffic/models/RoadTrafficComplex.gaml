@@ -86,10 +86,10 @@ entities {
 			draw shape: circle color: color size: 20 ;
 		}
 	}
-}
+} 
 environment bounds: shape_file_bounds ;
 
-experiment Complexe type: gui {
+experiment Complex type: gui {
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
 	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
 	
