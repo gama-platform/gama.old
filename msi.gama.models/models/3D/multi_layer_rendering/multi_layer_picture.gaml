@@ -3,7 +3,7 @@ model move
 global {
 	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
 	file folder <- folder('images/graph/');
-	file folder <- folder('/Users/macbookpro/Desktop/cover');
+
 
 	int nb_layer<-0;
 
@@ -28,11 +28,7 @@ environment;
 entities { 
 	species ImageAgent skills: [moving]{
 	  file image;
-	  string label;
-	  
-	  /*reflex move_Z{
-	  	set shape <- shape add_z(layerSize*rnd(nb_layer));	
-	  }*/	
+	  string label;	
 	  
 	  reflex changeImage{
 	  	let filename<- one_of (folder);
