@@ -1,4 +1,10 @@
-model circle   
+/**
+ *  primitive_shape
+ *  Author: Arnaud Grignard
+ *  Description: Display the basic 3D shape in an opengl display
+ */
+
+model primitive_shape   
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
@@ -190,7 +196,7 @@ experiment display  type: gui {
 			species myPolyhedron aspect:3D ;
 				
 			
-			/*species myPoint aspect:2D z:0.5;
+			species myPoint aspect:2D z:0.5;
 			species myLine aspect:2D z:0.5;
 			species myMultiLine aspect:2D z:0.5;
 			species mySquare aspect:2D z:0.5;
@@ -201,7 +207,7 @@ experiment display  type: gui {
 			species myPlan aspect:3D z:0.5;
 			species myMultiPlan aspect:3D z:0.5;
 			species myCube aspect:3D z:0.5; 
-			species myPolyhedron aspect:3D z:0.5;*/
+			species myPolyhedron aspect:3D z:0.5;
 						
 		}
 	}

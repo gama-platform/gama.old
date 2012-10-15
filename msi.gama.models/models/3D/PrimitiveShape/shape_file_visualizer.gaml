@@ -1,3 +1,10 @@
+/**
+ *  shape_visualization
+ *  Author: Arnaud Grignard
+ *  Description: Visualize a .Shp file in an opengl display
+ */
+
+
 model shape_visualization
 
 global {

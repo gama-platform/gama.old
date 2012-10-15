@@ -1,4 +1,10 @@
-model move   
+/**
+ *  one_agent_n_aspect
+ *  Author: Arnaud Grignard
+ *  Description: Create one agent with different aspect. Each agent wander at each step of the simulation.
+ */
+
+model one_agent_n_aspect   
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
@@ -37,7 +43,6 @@ entities {
 			draw image: imageRaster.path size: 1;
 		}
 		do wander;
-		write string(self.heading);
 	}
 }
 experiment display  type: gui {
