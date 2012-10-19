@@ -3,7 +3,7 @@ model GlobalParam
  * 
  */
 global {
-geometry env;
+geometry envRain;
 float rain_Rate <-100.0;
 }
 

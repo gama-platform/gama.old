@@ -1,18 +1,11 @@
 model Rain_Agent
 
-
-
-/*Need to define in a global file
-geometry env;
-float rain_Rate <-100.0;
- */
- 
-
 import "global_Param.gaml"
 	
 global{
-	
-	
+geometry envRain;
+float rain_Rate <-100.0;
+float speedRain <-1.0;	
 }	
 	
 	
@@ -20,22 +13,22 @@ entities {
 	species Rain skills : [ moving ] {
 				
 		float z;	
-		geometry shape <- circle (10) ;
+		geometry shape <- circle (envRain.width/1000) ;
 		
 		reflex augmente {
-			set z value : z - 10 ;
+			set z value : z - (envRain.width/20)*speedRain ;
 			set shape <- shape add_z z ;
 			if ( z <= 0 ) {
 				if ( rnd ( 100 ) < rain_Rate ) {
-					create Pluie number : 1 {
-						set location <- { rnd ( env.width ) , rnd (env.height ) } ;
+					create Rain number : 1 {
+						set location <- { rnd ( envRain.width ) , rnd (envRain.height ) } ;
 						set shape <- shape add_z z ;
-						set z <-1000.0;			
+						set z <-envRain.width/2;			
 					}
 				}
 				do die ;
 			} else {
-				do wander speed : 0.1 ;
+				do wander speed : 10 ;
 			}
 		}
 		
