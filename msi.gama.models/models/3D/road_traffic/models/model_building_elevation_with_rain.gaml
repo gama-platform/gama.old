@@ -1,6 +1,9 @@
 model tutorial_gis_city_traffic
 
 
+import "../../PrimitiveAgent/rain_agent.gaml"
+
+
 
 global {
 	file shape_file_buildings <- file('../includes/building.shp');
@@ -18,6 +21,16 @@ global {
 	graph the_graph;
 	
 	init {
+		
+		
+		//rain creation
+		set envRain <-geometry(shape_file_bounds); 
+		create Rain number:1000{		
+			set location <- { rnd ( envRain.width ) , rnd (envRain.height ) } ;
+			set z <-rnd(envRain.width/2);
+			set shape <- shape add_z z ;	
+		}
+		
 		create building from: shape_file_buildings with: [type::read ('NATURE')] {       
 			if type='Industrial' {
 				set color <- rgb('blue') ;
@@ -116,6 +129,7 @@ experiment road_traffic type: gui {
 			species road aspect: base refresh:false ;
 			species people aspect: base ;
 			species building aspect:base ;
+			species Rain aspect:circle;
 		}
 		save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
 	}
