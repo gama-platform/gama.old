@@ -35,6 +35,7 @@ import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulator;
 import com.vividsolutions.jts.triangulate.ConstraintVertex;
 import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
 import com.vividsolutions.jts.triangulate.Segment;
+import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
  * The class GamaGeometryUtils.
@@ -94,7 +95,11 @@ public class GeometryUtils {
 			Coordinate coord2 = new Coordinate(x, yMax);
 			Coordinate[] coords = { coord1, coord2 };
 			Geometry line = getFactory().createLineString(coords);
-			line = line.intersection(geom);
+			 try {
+				 line = line.intersection(geom);
+			 } catch (TopologyException e) {
+				 line = line.intersection(geom.buffer(0.1));
+			 }
 			return pointInGeom(line, rand);
 		}
 		if ( geom instanceof GeometryCollection ) { return pointInGeom(
@@ -195,11 +200,11 @@ public class GeometryUtils {
 					y += size;
 					try {
 						Geometry g = null;
-						// try {
-						g = square.intersection(geom);
-						// } catch (AssertionFailedException e) {
-						// g = square.intersection(geom.buffer(0.01));
-						// }
+						 try {
+							 g = square.intersection(geom);
+						 } catch (AssertionFailedException e) {
+							 g = square.intersection(geom.buffer(0.01));
+						 }
 						// geoms.add(g);
 						if ( complex ) {
 							geoms.add(g);
