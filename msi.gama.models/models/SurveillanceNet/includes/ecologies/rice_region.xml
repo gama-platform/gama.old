@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="RiceRegionLandUse">
+
+	<global>
+		<var type="string" name="SHAPE_LAND_USE" init="'../gis/ecologies/Rice_Winter_Spring_WGS84_Dong_Thap.shp'"
+			parameter="Land Use File:" category="RICE_REGION" />
+		
+	</global>
+
+	<environment>
+		<!-- Insert the grid or gis environment(s) in which the agents will be located -->
+	</environment>
+
+	<entities>
+		<species name="rice_region" skills="situated, visible">
+			<var type="string" name="id"/>
+			<var type="string" name="name"/>
+			<var type="rgb" name="color" init="'white'"/>
+			
+			<init>
+				<set name="color" value="'green'" />
+			</init>
+		</species>
+		
+	</entities>
+
+	<output>
+		<!-- Insert here the definition of the different outputs shown during the simulations -->
+	</output>
+
+</model>

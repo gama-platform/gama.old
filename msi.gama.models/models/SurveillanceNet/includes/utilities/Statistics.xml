@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="Statistics">
+
+	<global>
+		<var type="string" name="output" init="''"/>
+		<var type="StatisticalAgent" name="the_StatisticalAgent"/>
+		<init>
+			<create species="StatisticalAgent" number="1">
+			</create>
+			
+			<!-- 
+			<ask target="StatisticalAgent">
+				<set name="n" value="10"/>	 
+		 		<loop from="1" to="10" var="i">
+					<set name="X at i" value = "i"/>
+					<set name="Y at i" value = "10"/>
+				</loop>	
+		 		<do action="SingleLinearRegresion" />
+		 		<set name="output" value="output +'[X2:' + (string (b0)) + '][Y2:' + (string (b1)) + ']'"/>
+			</ask>
+			-->			
+			
+		</init>
+		<reflex>
+			
+			
+		</reflex>
+		
+	</global>
+
+	<environment>
+		<grid name="stupid_grid" width="100" height="100" torus="true"/>
+		
+	</environment>
+
+	<entities>
+		<species name="StatisticalAgent" skills="situated">
+			<var type="float" name = "coefficience_b0" init="0"/>
+			<var type="float" name = "coefficience_b1" init="0"/>
+			<var type="int" name = "n" init="0"/>
+			<matrix name="X" size="1000"/>
+			<matrix name="Y" size="1000"/>
+			<matrix name="XY" size="1000"/>
+			<matrix name="X_Square" size="1000"/>
+						
+			<action name="SingleLinearRegresion">
+				<let type="float" name="mean_X" value="0"/>
+				<let type="float" name="mean_Y" value="0"/>
+				<let type="float" name="sum_X" value="0"/>
+				<let type="float" name="sum_Y" value="0"/>
+				<let type="float" name="sum_XY" value="0"/>
+				<let type="float" name="sum_X_Square" value="0"/>
+				
+				<if condition="n != 0">
+					<loop from="1" to="n" var="i">
+						<set name="XY at i" value="(float (X at i)) * (float (Y at i))"/>
+						<set name="X_Square at i" value="(float (X at i)) ^ 2"/>
+						<set name="sum_X" value="sum_X + (float (X at i))"/>
+						<set name="sum_Y" value="sum_Y + (float (Y at i))"/>
+						<set name="sum_XY" value="sum_XY + (float (XY at i))"/>
+						<set name="sum_X_Square" value="sum_X_Square + (float (X_Square at i))"/>
+					</loop>
+					<set name="mean_X" value="sum_X/(float n)"/>
+					<set name="mean_Y" value="sum_Y/(float n)"/>
+					
+					<set name="coefficience_b1" value="mean_X"/>
+					
+					<set name="coefficience_b0" value="mean_Y"/>
+					<!-- 
+					<set name="coefficience_b1" value="(sum_XY - ((sum_X * sum_Y) / n)) / (sum_X_Square - ((sum_X ^ 2) / n))"/>
+					<set name="coefficience_b0" value="mean_Y - (coefficience_b1 * mean_X)"/>
+					 -->
+					
+					<else>
+						<set name="coefficience_b1" value="0"/>
+						<set name="coefficience_b0" value="0"/>
+					</else>
+				</if>
+			</action>
+		</species>
+
+	</entities>
+
+	<output>
+		<monitor name="Number of light_traps" value="output" refresh_every="1"/>
+		<file name="Output" type="string" data="output" />
+		
+		
+	</output>
+
+</model>

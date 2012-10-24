@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="Geographics">
+
+	<global>
+		
+	</global>
+
+	<environment>
+		<!-- Insert the grid or gis environment(s) in which the agents will be located -->
+	</environment>
+
+	<entities>
+		<species name="GeographicalFunction" skills="situated">
+			<var type="float" name="R" init="6371"/>
+			<var type="float" name="dLon" init="0"/> 
+			<var type="float" name="dLat" init="0"/>
+			<var type="float" name="a" value="0"/>
+			<var type="float" name= "c" value="0"/>
+			
+			
+			<action name="calculate_distance">
+				<arg type="float" name="lonParam1"/>
+				<arg type="float" name="latParam1"/>
+				<arg type="float" name="lonParam2"/>
+				<arg type="float" name="latParam2"/>
+				
+				<set name="dLon" value="lonParam2 - lonParam1"/> 
+				<set name="dLat" value="latParam2 - latParam1"/>
+				<set name="a" value="sin(dLat/2) * sin(dLat/2) + cos(latParam1) * cos(latParam2) *  sin(dLon/2) * sin(dLon/2)"/>
+				
+				<return value="R * c"/>
+			</action>
+		</species>
+		
+	</entities>
+
+	<output>
+		<!-- Insert here the definition of the different outputs shown during the simulations -->
+	</output>
+
+</model>
