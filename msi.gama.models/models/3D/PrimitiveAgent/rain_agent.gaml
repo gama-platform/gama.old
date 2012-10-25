@@ -1,11 +1,10 @@
 model Rain_Agent
 
-import "global_Param.gaml"
 	
 global{
 geometry envRain;
-float rain_Rate <-100.0;
-float speedRain <-1.0;	
+int rain_Rate parameter: 'Amount of rain' <- 100 min: 1 max: 200 category: 'Rain' ;
+int speedRain parameter: 'Rain speed' <- 1 min: 1 max: 100 category: 'Rain' ;
 }	
 	
 	
@@ -14,9 +13,10 @@ entities {
 				
 		float z;	
 		geometry shape <- circle (envRain.width/1000) ;
+		geometry shape <- geometry (point([1,1]));
 		
 		reflex augmente {
-			set z value : z - (envRain.width/20)*speedRain ;
+			set z value : z - speedRain * envRain.width/100 ;
 			set shape <- shape add_z z ;
 			if ( z <= 0 ) {
 				if ( rnd ( 100 ) < rain_Rate ) {
@@ -28,7 +28,7 @@ entities {
 				}
 				do die ;
 			} else {
-				do wander speed : 10 ;
+				//do wander speed : envRain.width/100 ;
 			}
 		}
 		
@@ -37,7 +37,7 @@ entities {
 		}
 			
 		aspect sphere {
-			draw geometry: shape color: rgb('blue') z:z ;
+			draw geometry: shape color: rgb('blue') z:envRain.width/1000 ;
 		}
 	}
 	}

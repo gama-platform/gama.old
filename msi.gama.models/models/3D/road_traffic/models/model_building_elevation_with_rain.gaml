@@ -25,7 +25,7 @@ global {
 		
 		//rain creation
 		set envRain <-geometry(shape_file_bounds); 
-		create Rain number:1000{		
+		create Rain number:5000{		
 			set location <- { rnd ( envRain.width ) , rnd (envRain.height ) } ;
 			set z <-rnd(envRain.width/2);
 			set shape <- shape add_z z ;	
