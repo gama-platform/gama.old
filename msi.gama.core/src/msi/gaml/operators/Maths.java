@@ -711,6 +711,19 @@ public class Maths {
 		y = (y + a / y) * 0.5;
 		return y;
 	}
+	
+	public static double hypot(final double x1, final double x2, final double y1, final double y2,final double z1, final double z2) {
+		final double dx = x2 - x1;
+		final double dy = y2 - y1;
+		final double dz = z2 - z1;
+		double a = dx * dx + dy * dy + dz * dz;
+		final long x = Double.doubleToLongBits(a) >> 32;
+		double y = Double.longBitsToDouble(x + 1072632448 << 31);
+		// repeat the following line for more precision
+		y = (y + a / y) * 0.5;
+		y = (y + a / y) * 0.5;
+		return y;
+	}
 
 	/**
 	 * Rad to index.
