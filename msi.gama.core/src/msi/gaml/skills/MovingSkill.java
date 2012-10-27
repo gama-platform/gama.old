@@ -20,6 +20,7 @@ package msi.gaml.skills;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -195,6 +196,41 @@ public class MovingSkill extends GeometricSkill {
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		return pathFollowed;
 	}
+
+	@action(name = "wander_3D", args = {
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "amplitude", type = IType.INT_STR, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
+			@arg(name = "bounds", type = { IType.AGENT_STR, IType.GEOM_STR }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(returns = "the path followed by the agent", examples = { "do action: wander{ \n arg speed value: speed - 10; \n arg amplitude value: 120;\n arg bounds value: agentA;}" }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
+		@args(names = { IKeyword.SPEED, "amplitude", "bounds" })
+		public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
+			IAgent agent = getCurrentAgent(scope);
+			IPath pathFollowed = null;
+			ILocation location = agent.getLocation();
+			int heading = computeHeadingFromAmplitude(scope, agent);
+			double dist = computeDistance(scope, agent);
+
+			ILocation loc = getTopology(agent).getDestination(location, heading, dist, true);
+			
+
+			if ( loc == null ) {
+				agent.setHeading(heading - 180);
+				// pathFollowed = null;
+			} else {
+				Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
+				if ( bounds != null ) {
+					IShape geom = GamaGeometryType.staticCast(scope, bounds, null);
+					if ( geom != null && geom.getInnerGeometry() != null ) {
+						loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
+					}
+				}
+				((GamaPoint) loc).z = Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
+				
+				// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
+				agent.setLocation(loc);
+			}
+			scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+			return pathFollowed;
+		}
 
 	/**
 	 * @throws GamaRuntimeException Prim: move . Move in the direction specified by the heading

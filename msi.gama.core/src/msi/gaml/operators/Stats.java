@@ -70,7 +70,9 @@ public class Stats {
 		if ( l.length() == 0 ) { return Double.valueOf(0d); }
 		Object s = l.sum(null);
 		if ( s instanceof Number ) { return ((Number) s).doubleValue() / l.length(); }
-		if ( s instanceof ILocation ) { return Points.divide((GamaPoint) s, l.length()); }
+		
+		if ( s instanceof ILocation ) {
+			return Points.divide((GamaPoint) s, l.length()); }
 		return Cast.asFloat(scope, s) / l.length();
 	}
 

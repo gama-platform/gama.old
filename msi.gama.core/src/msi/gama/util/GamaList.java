@@ -370,7 +370,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return sum;
 		}
 		if ( allPoint ) {
-			ILocation sum = new GamaPoint(0, 0);
+			ILocation sum = new GamaPoint(0, 0,0);
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				ILocation o = Cast.asPoint(scope, get(i));
 				if ( o != null ) {

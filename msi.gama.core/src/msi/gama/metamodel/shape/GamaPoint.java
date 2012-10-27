@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaPoint extends Coordinate implements ILocation {
 
-	private boolean hasZ;
+	public boolean hasZ;
 	
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
