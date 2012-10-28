@@ -971,6 +971,22 @@ public abstract class Spatial {
 			if ( g1 == null || p == null ) { return false; }
 			return pl.intersects(p, g1.getInnerGeometry());
 		}
+		@operator("covers")
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covers square(2) --: true." }, see = {
+			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		public static Boolean opCovers(final IShape g1, final IShape g2) {
+			if ( g1 == null || g2 == null ) { return false; }
+			return g1.getInnerGeometry().covers(g2.getInnerGeometry());
+		}
+		@operator("covered_by")
+		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is covered by the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covered_by square(2) --: false." }, see = {
+			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		public static Boolean opCoveredBy(final IShape g1, final IShape g2) {
+			if ( g1 == null || g2 == null ) { return false; }
+			return g1.getInnerGeometry().coveredBy(g2.getInnerGeometry());
+		}
+
+		
 	}
 
 	public static abstract class Punctal {
