@@ -31,6 +31,7 @@ import org.graphstream.stream.file.FileSourceTLP;
 import org.graphstream.stream.file.dgs.OldFileSourceDGS;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
@@ -490,7 +491,7 @@ public class Graphs {
 		g.removeVertex(node);
 		return g;
 	}
-
+	
 	@operator(value = "rewire_p")
 	@doc(
 		value = "Rewires a graph (in the Watts-Strogatz meaning)",
@@ -510,6 +511,17 @@ public class Graphs {
 		see = "rewire_p")	
 	public static IGraph rewireGraph(final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
+		return g;
+	}
+	
+	@operator(value = "add_edge")
+	@doc(
+		value = "add an edge between source vertex and the target vertex",
+		comment = "If the edge alrzdy exists the graph is unchanged",
+		examples = "set graph <- graph add_edge (source::target);",
+		see = "")	
+	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
+		g.addEdge(nodes.first(), nodes.last());
 		return g;
 	}
 	
