@@ -133,7 +133,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs
 						.append(',')
 						.append(e)
-						.append(':').append(typeJava(attributes.get(attributes.get(e))));
+						.append(':').append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
 				}
 			}
 			String featureTypeName = agents.get(0).getSpeciesName();

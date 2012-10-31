@@ -545,7 +545,7 @@ public class MovingSkill extends GeometricSkill {
 					double newY = pto.y + ratio * (pt.y - pto.y);
 					currentLocation.setLocation(newX, newY);
 					IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
-					IAgent a = line.getAgent();
+					IAgent a = path.getRealObject(line).getAgent();
 					if ( a != null ) {
 						agents.put(gl, a);
 					}
@@ -554,7 +554,8 @@ public class MovingSkill extends GeometricSkill {
 					break;
 				} else if ( distance > dist ) {
 					IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
-					IAgent a = line.getAgent();
+					IAgent a = path.getRealObject(line).getAgent();
+					
 					if ( a != null ) {
 						agents.put(gl, a);
 					}
@@ -567,7 +568,8 @@ public class MovingSkill extends GeometricSkill {
 					indexSegment++;
 				} else {
 					IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
-					IAgent a = line.getAgent();
+					IAgent a = path.getRealObject(line).getAgent();
+					
 					if ( a != null ) {
 						agents.put(gl, a);
 					}
@@ -596,8 +598,9 @@ public class MovingSkill extends GeometricSkill {
 		path.setSource(currentLocation.copy());
 		if ( segments.isEmpty() ) { return null; }
 		IPath followedPath =
-			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments);
+			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments, false);
 		followedPath.setRealObjects(agents);
+		
 		agent.setLocation(currentLocation);
 		return followedPath;
 	}

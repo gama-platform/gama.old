@@ -43,12 +43,22 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	GamaList<IShape> segments;
 	Map<IShape, IShape> realObjects;
 	IShape source, target;
-	final ITopology topology;
+	ITopology topology;
 
 	// GamaMap segmentsInGraph;
 
 	public GamaPath(final ITopology t, final IShape start, final IShape target,
 		final IList<IShape> edges) {
+		init(t, start, target,edges, true); 
+	}
+
+	public GamaPath(final ITopology t, final IShape start, final IShape target,
+			final IList<IShape> edges,boolean modify_edges) {
+		init(t, start, target,edges, modify_edges); 
+	}
+	
+	public void init (final ITopology t, final IShape start, final IShape target,
+			final IList<IShape> edges,boolean modify_edges) {
 		source = start;
 		this.target = target;
 		topology = t;
@@ -74,25 +84,29 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			}
 			GamaSpatialGraph graph = getGraph();
 			for ( IShape edge : edges ) {
-				IAgent ag = edge.getAgent();
-				Geometry geom = edge.getInnerGeometry();
-				Coordinate c0 = geom.getCoordinates()[0];
-				Coordinate c1 = geom.getCoordinates()[geom.getNumPoints() - 1];
-				IShape edge2 = null;
-				if ( pt.distance(c0) > pt.distance(c1) ) {
-					geom = geom.reverse();
-					edge2 = new GamaShape(geom);
-					pt = c0;
+				if (modify_edges) {
+					IAgent ag = edge.getAgent();
+					Geometry geom = edge.getInnerGeometry();
+					Coordinate c0 = geom.getCoordinates()[0];
+					Coordinate c1 = geom.getCoordinates()[geom.getNumPoints() - 1];
+					IShape edge2 = null;
+					if ( pt.distance(c0) > pt.distance(c1) ) {
+						geom = geom.reverse();
+						edge2 = new GamaShape(geom);
+						pt = c0;
+					} else {
+						edge2 = edge;
+						pt = c1;
+					}
+					if ( ag != null && graph != null && graph.isAgentEdge() ) {
+						realObjects.put(edge2, ag);
+					} else {
+						realObjects.put(edge2, edge);
+					}
+					segments.add(edge2);
 				} else {
-					edge2 = edge;
-					pt = c1;
+					segments.add(edge);
 				}
-				if ( ag != null && graph != null && graph.isAgentEdge() ) {
-					realObjects.put(edge2, ag);
-				} else {
-					realObjects.put(edge2, edge);
-				}
-				segments.add(edge2);
 				// segmentsInGraph.put(agents, agents);
 			}
 		}

@@ -116,7 +116,8 @@ public class GraphTopology extends AbstractTopology {
 			nodeS = s2;
 		}
 		c.start();
-		IList edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+		
 		c.stop();
 		//System.out.println("Temps calcule: " + c.getMilliSec());
 		if ( edges.isEmpty() ) { return null; }
