@@ -175,7 +175,7 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "amplitude", type = IType.INT_STR, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = "bounds", type = { IType.AGENT_STR, IType.GEOM_STR }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander speed: speed - 10 amplitude: 120 bounds: agentA;"  }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
-	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
+	public IPath primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		ILocation location = agent.getLocation();
 		int heading = computeHeadingFromAmplitude(scope, agent);
@@ -198,13 +198,14 @@ public class MovingSkill extends GeometricSkill {
 			agent.setLocation(loc);
 		}
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		return null;
 	}
 
 	@action(name = "wander_3D", args = {
 			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 			@arg(name = "amplitude", type = IType.INT_STR, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 			@arg(name = "bounds", type = { IType.AGENT_STR, IType.GEOM_STR }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
-		public void primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
+		public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
 			IAgent agent = getCurrentAgent(scope);
 			ILocation location = agent.getLocation();
 			int heading = computeHeadingFromAmplitude(scope, agent);
@@ -230,24 +231,15 @@ public class MovingSkill extends GeometricSkill {
 				agent.setLocation(loc);
 			}
 			scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+			return null;
 		}
 
-	/**
-	 * @throws GamaRuntimeException Prim: move . Move in the direction specified by the heading
-	 *             parameter (if none is specified, keep the same heading), by the distance
-	 *             specified in the args (if none is provided, computes a distance with the current
-	 *             speed). A bounds (geometry, agent, list of agents, list of geometries, species)
-	 *             can be specified
-	 * 
-	 * @param args the args
-	 * @return the past followed
-	 */
-
+	
 	@action(name = "move", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = IKeyword.HEADING, type = IType.INT_STR, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = "bounds", type = "localized entity or geometry", optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do move speed: speed - 10 heading: heading + rnd (30) bounds: agentA;" }, value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
-	public void primMoveForward(final IScope scope) throws GamaRuntimeException {
+	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		ILocation location = agent.getLocation();
 		double dist = computeDistance(scope, agent);
@@ -269,6 +261,7 @@ public class MovingSkill extends GeometricSkill {
 			agent.setLocation(loc);
 		}
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		return null;
 	}
 
 	@action(name = "follow", args = {
