@@ -18,6 +18,8 @@
  */
 package msi.gaml.skills;
 
+import java.util.Map;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.RandomUtils;
@@ -163,6 +165,11 @@ public class MovingSkill extends GeometricSkill {
 		if ( topo == null ) { return agent.getTopology(); }
 		return topo;
 	}
+	
+	protected Map computeWeigths(final IScope scope)
+			throws GamaRuntimeException {
+			return (scope.hasArg("weigths") ?  (Map) scope.getArg("weigths", IType.MAP) : null);
+		}
 
 	@action(name = "wander", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
@@ -267,16 +274,17 @@ public class MovingSkill extends GeometricSkill {
 	@action(name = "follow", args = {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "path", type = IType.PATH_STR, optional = true, doc = @doc("a path to be followed.")),
+		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")),
 		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)"))}, doc = @doc(value = "moves the agent along a given path passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		double dist = computeDistance(scope, agent);
-		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
-		
-		GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
+		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.BOOL);
+		GamaMap weigths = (GamaMap) computeWeigths(scope);
+		GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.PATH) : null;
 		if ( path != null && !path.getEdgeList().isEmpty() ) {
 			if ( returnPath != null && returnPath ) {
-				IPath pathFollowed = moveToNextLocAlongPath(agent, path, dist);
+				IPath pathFollowed = moveToNextLocAlongPath(agent, path, dist,weigths);
 				if ( pathFollowed == null ) {
 					scope.setStatus(ExecutionStatus.failure);
 					return null;
@@ -284,7 +292,7 @@ public class MovingSkill extends GeometricSkill {
 				scope.setStatus(ExecutionStatus.success);
 				return pathFollowed;
 			}
-			moveToNextLocAlongPathSimplified(agent, path, dist);
+			moveToNextLocAlongPathSimplified(agent, path, dist,weigths);
 			scope.setStatus(ExecutionStatus.success);
 			return null;
 		}
@@ -296,7 +304,8 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = "target", type = "point or agent", optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "on", type = { IType.LIST_STR, IType.AGENT_STR, IType.GRAPH_STR, IType.GEOM_STR }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) ,
-		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)"))}, 
+		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving."))}, 
 		doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do goto target: one_of (list (species (self))) speed: speed * 2 on: road_network;" }))
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
@@ -323,8 +332,9 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+		GamaMap weigths = (GamaMap) computeWeigths(scope);
 		if ( returnPath != null && returnPath ) {
-			IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist);
+			IPath pathFollowed = moveToNextLocAlongPath(agent, path, maxDist,weigths);
 			if ( pathFollowed == null ) {
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
@@ -332,7 +342,7 @@ public class MovingSkill extends GeometricSkill {
 			scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
-		moveToNextLocAlongPathSimplified(agent, path, maxDist);
+		moveToNextLocAlongPathSimplified(agent, path, maxDist,weigths);
 		scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
@@ -422,7 +432,7 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	private IPath moveToNextLocAlongPathSimplified(final IAgent agent, final IPath path,
-		final double d) {
+		final double d, final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
@@ -438,9 +448,13 @@ public class MovingSkill extends GeometricSkill {
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-
-			double weight = computeWeigth(graph, path, line);
-
+			double weight;
+			if (weigths == null) {
+				weight = computeWeigth(graph, path, line);
+			} else {
+				Double w = (Double) weigths.get(path.getRealObject(line));
+				weight = w == null ? computeWeigth(graph, path, line) : w;
+			}
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -498,7 +512,7 @@ public class MovingSkill extends GeometricSkill {
 			line.getGeometry().getPerimeter();
 	}
 	
-	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d) {
+	private IPath moveToNextLocAlongPath(final IAgent agent, final IPath path, final double d, final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
@@ -519,7 +533,13 @@ public class MovingSkill extends GeometricSkill {
 			// perimeter (see model traffic_tutorial)
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 
-			double weight = computeWeigth(graph, path, line);
+			double weight;
+			if (weigths == null) {
+				weight = computeWeigth(graph, path, line);
+			} else {
+				Double w = (Double) weigths.get(path.getRealObject(line));
+				weight = w == null ? computeWeigth(graph, path, line) : w;
+			}
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {

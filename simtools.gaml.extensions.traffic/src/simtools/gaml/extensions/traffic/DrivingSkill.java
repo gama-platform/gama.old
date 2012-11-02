@@ -106,6 +106,7 @@ public class DrivingSkill extends MovingSkill {
 			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 			@arg(name = "path", type = IType.PATH_STR, optional = true, doc = @doc("a path to be followed.")),
 			@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+			@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")),
 			@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
 			@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
 			@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)"))},
@@ -116,6 +117,7 @@ public class DrivingSkill extends MovingSkill {
 			final double tolerance = computeTolerance(scope, agent);
 			final double livingSpace = computeLivingSpace(scope, agent);
 			Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+			GamaMap weigths = (GamaMap) computeWeigths(scope);
 			final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 			String laneAttributes = computeLanesNumber(scope, agent);
 			if ( laneAttributes == null || "".equals(laneAttributes) ) {
@@ -135,7 +137,7 @@ public class DrivingSkill extends MovingSkill {
 			GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 			if ( path != null && !path.getEdgeList().isEmpty() ) {
 				if ( returnPath != null && returnPath ) {
-					IPath pathFollowed = moveToNextLocAlongPathTraffic(agent, path, maxDist, livingSpace, tolerance,
+					IPath pathFollowed = moveToNextLocAlongPathTraffic(agent, path, maxDist,weigths, livingSpace, tolerance,
 							laneAttributes, obsSpecies);
 					if ( pathFollowed == null ) {
 						scope.setStatus(ExecutionStatus.failure);
@@ -144,7 +146,7 @@ public class DrivingSkill extends MovingSkill {
 					scope.setStatus(ExecutionStatus.success);
 					return pathFollowed;
 				}
-				moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist, livingSpace, tolerance,
+				moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist,weigths, livingSpace, tolerance,
 						laneAttributes, obsSpecies);
 				scope.setStatus(ExecutionStatus.success);
 				return null;
@@ -158,6 +160,7 @@ public class DrivingSkill extends MovingSkill {
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "on", type = { IType.LIST_STR, IType.AGENT_STR, IType.GRAPH_STR, IType.GEOM_STR }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) ,
 		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")),
 		@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
 		@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
 		@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)"))}, 
@@ -195,9 +198,10 @@ public class DrivingSkill extends MovingSkill {
 			return null;
 		}
 		Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+		GamaMap weigths = (GamaMap) computeWeigths(scope);
 		if ( returnPath != null && returnPath ) {
 			IPath pathFollowed =
-				moveToNextLocAlongPathTraffic(agent, path, maxDist, livingSpace, tolerance,
+				moveToNextLocAlongPathTraffic(agent, path, maxDist,weigths, livingSpace, tolerance,
 					laneAttributes, obsSpecies);
 			if ( pathFollowed == null ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -206,7 +210,7 @@ public class DrivingSkill extends MovingSkill {
 			scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
-		moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist, livingSpace, tolerance,
+		moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist,weigths, livingSpace, tolerance,
 			laneAttributes, obsSpecies);
 		scope.setStatus(ExecutionStatus.success);
 		return null;
@@ -278,7 +282,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private void moveToNextLocAlongPathSimplifiedTraffic(final IAgent agent, final IPath path,
-		final double _distance, final double livingSpace, final double tolerance,
+		final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
@@ -299,9 +303,13 @@ public class DrivingSkill extends MovingSkill {
 			// current edge
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 			// weight is 1 by default, otherwise is the distributed edge's weight by length unity
-			double weight =
-				graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) /
-					line.getGeometry().getPerimeter();
+			double weight;
+			if (weigths == null) {
+				weight = computeWeigth(graph, path, line);
+			} else {
+				Double w = (Double) weigths.get(path.getRealObject(line));
+				weight = w == null ? computeWeigth(graph, path, line) : w;
+			}
 			//
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				// pt is the next target
@@ -369,7 +377,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private IPath moveToNextLocAlongPathTraffic(final IAgent agent, final IPath path,
-		final double _distance, final double livingSpace, final double tolerance,
+		final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
@@ -390,7 +398,13 @@ public class DrivingSkill extends MovingSkill {
 			int nbLanes = computeNbLanes(lineAg, laneAttributes);
 			GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 
-			double weight = computeWeigth(graph, path, line);
+			double weight;
+			if (weigths == null) {
+				weight = computeWeigth(graph, path, line);
+			} else {
+				Double w = (Double) weigths.get(path.getRealObject(line));
+				weight = w == null ? computeWeigth(graph, path, line) : w;
+			}
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {
