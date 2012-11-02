@@ -63,7 +63,7 @@ entities {
 		point source <- nil;
 		road currentRoad <- nil;
 		reflex move when: target != nil {
-			do gotoTraffic target: target on: the_graph speed: speed ; 
+			do goto_driving target: target on: the_graph speed: speed ; 
 			switch target { 
 				match location {
 					set currentRoad value: (roadsList select (each != currentRoad)) with_min_of (each distance_to self);

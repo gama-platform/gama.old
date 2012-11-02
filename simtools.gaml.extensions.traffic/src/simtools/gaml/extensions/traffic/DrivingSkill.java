@@ -8,7 +8,8 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -20,13 +21,14 @@ import msi.gama.util.*;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
+
 import com.vividsolutions.jts.geom.*;
 
-@vars({ @var(name = "living_space", type = IType.FLOAT_STR, init = "1.0"),
-	@var(name = "lanes_attribute", type = IType.STRING_STR),
-	@var(name = "tolerance", type = IType.FLOAT_STR, init = "0.1"),
-	@var(name = "obstacle_species", type = IType.LIST_STR, init = "[]"),
-	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0") })
+@vars({ @var(name = "living_space", type = IType.FLOAT_STR, init = "1.0", doc = @doc("the min distance between the agent and an obstacle (in meter)")),
+	@var(name = "lanes_attribute", type = IType.STRING_STR, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes")),
+	@var(name = "tolerance", type = IType.FLOAT_STR, init = "0.1", doc = @doc("the tolerance distance used for the computation (in meter)")),
+	@var(name = "obstacle_species", type = IType.LIST_STR, init = "[]", doc = @doc("the list of species that are considered as obstacles")),
+	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")) })
 @skill(name = "driving")
 public class DrivingSkill extends MovingSkill {
 
@@ -99,10 +101,67 @@ public class DrivingSkill extends MovingSkill {
 		throws GamaRuntimeException {
 		return scope.hasArg(LIVING_SPACE) ? scope.getFloatArg(LIVING_SPACE) : getLivingSpace(agent);
 	}
+	
+	@action(name = "follow_driving", args = {
+			@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+			@arg(name = "path", type = IType.PATH_STR, optional = true, doc = @doc("a path to be followed.")),
+			@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+			@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+			@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
+			@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)"))},
+			doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
+		public IPath primFollow(final IScope scope) throws GamaRuntimeException {
+			IAgent agent = getCurrentAgent(scope);
+			final double maxDist = computeDistance(scope, agent);
+			final double tolerance = computeTolerance(scope, agent);
+			final double livingSpace = computeLivingSpace(scope, agent);
+			Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
+			final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
+			String laneAttributes = computeLanesNumber(scope, agent);
+			if ( laneAttributes == null || "".equals(laneAttributes) ) {
+				laneAttributes = "lanes_number";
+			}
 
-	@action(name = "gotoTraffic")
-	@args(names = { "target", IKeyword.SPEED, "on", "return_path", LIVING_SPACE, TOLERANCE,
-		LANES_ATTRIBUTE })
+			final ILocation goal = computeTarget(scope, agent);
+			if ( goal == null ) {
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
+			}
+			final ITopology topo = computeTopology(scope, agent);
+			if ( topo == null ) {
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
+			}
+			GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
+			if ( path != null && !path.getEdgeList().isEmpty() ) {
+				if ( returnPath != null && returnPath ) {
+					IPath pathFollowed = moveToNextLocAlongPathTraffic(agent, path, maxDist, livingSpace, tolerance,
+							laneAttributes, obsSpecies);
+					if ( pathFollowed == null ) {
+						scope.setStatus(ExecutionStatus.failure);
+						return null;
+					}
+					scope.setStatus(ExecutionStatus.success);
+					return pathFollowed;
+				}
+				moveToNextLocAlongPathSimplifiedTraffic(agent, path, maxDist, livingSpace, tolerance,
+						laneAttributes, obsSpecies);
+				scope.setStatus(ExecutionStatus.success);
+				return null;
+			}
+			scope.setStatus(ExecutionStatus.failure);
+			return null;
+		}
+
+	@action(name = "goto_driving", args = {
+		@arg(name = "target", type = "point or agent", optional = false, doc = @doc("the location or entity towards which to move.")),
+		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "on", type = { IType.LIST_STR, IType.AGENT_STR, IType.GRAPH_STR, IType.GEOM_STR }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) ,
+		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+		@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+		@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
+		@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)"))}, 
+		doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { "do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;" }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy();

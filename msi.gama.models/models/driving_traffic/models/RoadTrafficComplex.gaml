@@ -58,7 +58,7 @@ entities {
 		float evadeDist <- 300.0;
 		reflex move when: normalMove{
 			set previousLoc <- copy(location);
-			do gotoTraffic target: target on: the_graph speed: speed ; 
+			do goto_driving target: target on: the_graph speed: speed ; 
 			switch location { 
 				match target {
 					set target <- any_location_in (one_of(roadsList));
@@ -72,7 +72,7 @@ entities {
 		}
 		reflex EvadeMove when: !(normalMove){
 			set previousLoc <- copy(location);
-			do gotoTraffic target: targetBis on: the_graph speed: speed ; 
+			do goto_driving target: targetBis on: the_graph speed: speed ; 
 			switch location { 
 				match targetBis {
 					set normalMove <- true;

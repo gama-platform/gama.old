@@ -131,7 +131,7 @@ entities {
 		
 		reflex move when: the_target != nil and normalMove{
 			set previousLoc <- copy(location);
-			do gotoTraffic target: the_target on: the_graph speed: speed ; 
+			do goto_driving target: the_target on: the_graph speed: speed ; 
 			switch location { 
 				match the_target {
 					set the_target <- nil;
@@ -145,7 +145,7 @@ entities {
 		}
 		reflex EvadeMove when: !(normalMove){
 			set previousLoc <- copy(location);
-			do gotoTraffic target: targetBis on: the_graph speed: speed ; 
+			do goto_driving target: targetBis on: the_graph speed: speed ; 
 			switch location { 
 				match targetBis {
 					set normalMove <- true;
