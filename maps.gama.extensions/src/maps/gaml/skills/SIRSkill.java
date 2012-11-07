@@ -12,8 +12,28 @@ import msi.gaml.types.IType;
 @skill(name = "SIR")
 public class SIRSkill extends Skill{
 
+	@action(name = "RK4SI")
+	@args(names = { "S", "I", "R", "beta", "gamma", "N", "h" })
+	public GamaList<Double> kr4SI(final IScope scope) throws GamaRuntimeException {
+		
+	    double sInit = (Double) scope.getArg("S", IType.FLOAT);
+	    double iInit = (Double) scope.getArg("I", IType.FLOAT);
+	    
+	    GamaList<Double> SIinit = new GamaList<Double>();
+	    SIinit.add(sInit);
+	    SIinit.add(iInit);
+	    
+	    double beta = (Double) scope.getArg("beta", IType.FLOAT);
+	    double gamma = (Double) scope.getArg("gamma", IType.FLOAT);
+	    
+	    double N = (Double) scope.getArg("N", IType.FLOAT);
+	    double h = (Double) scope.getArg("h", IType.FLOAT);
+	
+	    return rungeKuta4(SIinit, new SI(beta, gamma, N), h);
+	}
+	
 	@action(name = "RK4SIR")
-	@args(names = { "S", "I", "R", "alpha", "beta", "n", "h" })
+	@args(names = { "S", "I", "R", "alpha", "beta", "N", "h" })
 	public GamaList<Double> kr4SIR(final IScope scope) throws GamaRuntimeException {
 		
 	    double sInit = (Double) scope.getArg("S", IType.FLOAT);
@@ -28,24 +48,24 @@ public class SIRSkill extends Skill{
 	    double alpha = (Double) scope.getArg("alpha", IType.FLOAT);
 	    double beta = (Double) scope.getArg("beta", IType.FLOAT);
 
-	    double n = (Double) scope.getArg("n", IType.FLOAT);
+	    double N = (Double) scope.getArg("N", IType.FLOAT);
 	    double h = (Double) scope.getArg("h", IType.FLOAT);
 	
-	    return rungeKuta4(SIRinit, alpha, beta, 0.0, 0.0, 0.0, 0.0, n, h);
+	    return rungeKuta4(SIRinit, new SIRS(alpha, beta, 0.0, 0.0, 0.0, 0.0, N), h);
 	}
 	
 	@action(name = "RK4SIRS")
-	@args(names = { "S", "I", "R", "alpha", "beta", "gamma", "b", "d1", "d2", "n", "h" })
+	@args(names = { "S", "I", "R", "alpha", "beta", "gamma", "b", "d1", "d2", "N", "h" })
 	public GamaList<Double> kr4SIRS(final IScope scope) throws GamaRuntimeException {
 		
 	    double sInit = (Double) scope.getArg("S", IType.FLOAT);
 	    double iInit = (Double) scope.getArg("I", IType.FLOAT);
 	    double rInit = (Double) scope.getArg("R", IType.FLOAT);
 	    
-	    GamaList<Double> SIRinit = new GamaList<Double>();
-	    SIRinit.add(sInit);
-	    SIRinit.add(iInit);
-	    SIRinit.add(rInit);
+	    GamaList<Double> SIRSinit = new GamaList<Double>();
+	    SIRSinit.add(sInit);
+	    SIRSinit.add(iInit);
+	    SIRSinit.add(rInit);
 	    
 	    double alpha = (Double) scope.getArg("alpha", IType.FLOAT);
 	    double beta = (Double) scope.getArg("beta", IType.FLOAT);
@@ -55,53 +75,68 @@ public class SIRSkill extends Skill{
 	    double d1 = (Double) scope.getArg("d1", IType.FLOAT);
 	    double d2 = (Double) scope.getArg("d2", IType.FLOAT);
 
-	    double n = (Double) scope.getArg("n", IType.FLOAT);
+	    double N = (Double) scope.getArg("N", IType.FLOAT);
 	    double h = (Double) scope.getArg("h", IType.FLOAT);
 	
-	    return rungeKuta4(SIRinit, alpha, beta, gamma, b, d1, d2, n, h);
+	    return rungeKuta4(SIRSinit, new SIRS(alpha, beta, gamma, b, d1, d2, N), h);
 	}
+
+	@action(name = "RK4SEIR")
+	@args(names = { "S", "E", "I", "R", "alpha", "beta", "a", "b", "d", "N", "h" })
+	public GamaList<Double> kr4SEIR(final IScope scope) throws GamaRuntimeException {
+		
+	    double sInit = (Double) scope.getArg("S", IType.FLOAT);
+	    double eInit = (Double) scope.getArg("E", IType.FLOAT);	    
+	    double iInit = (Double) scope.getArg("I", IType.FLOAT);
+	    double rInit = (Double) scope.getArg("R", IType.FLOAT);
+	    
+	    GamaList<Double> SEIRinit = new GamaList<Double>();
+	    SEIRinit.add(sInit);
+	    SEIRinit.add(eInit);
+	    SEIRinit.add(iInit);
+	    SEIRinit.add(rInit);
+	    
+	    double alpha = (Double) scope.getArg("alpha", IType.FLOAT);
+	    double beta = (Double) scope.getArg("beta", IType.FLOAT);
 	
-	GamaList<Double> SIR(final GamaList<Double> sir, double alpha ,double beta, double gamma, double b, double d1, double d2, double n) {
+	    double a = (Double) scope.getArg("a", IType.FLOAT);	    
+	    double b = (Double) scope.getArg("b", IType.FLOAT);
+	    double d = (Double) scope.getArg("d", IType.FLOAT);
 
-		double ds = (- beta * sir.get(0) * sir.get(1) / n) + (gamma * sir.get(2)) + (b * n)  - (d1 * sir.get(0));
-		double di = (beta * sir.get(0) * sir.get(1) / n) - (alpha * sir.get(1)) - (d2 * sir.get(1));
-		double dr = (alpha * sir.get(1)) - (gamma * sir.get(2)) - (d1 * sir.get(2));
-		
-		GamaList<Double> sirReturn = new GamaList<Double>();
-		sirReturn.add(ds);
-		sirReturn.add(di);
-		sirReturn.add(dr);
-		
-		return sirReturn;
-	}
+	    double N = (Double) scope.getArg("N", IType.FLOAT);
+	    double h = (Double) scope.getArg("h", IType.FLOAT);
 	
-	GamaList<Double> rungeKuta4(GamaList<Double> init, double alpha, double beta, double gamma, double b, double d1, double d2, double n, double h) {
-		// GamaList<Double> temp = init.clone();
-		GamaList<Double> sir = new GamaList<Double>();
-		GamaList<Double> Q1 = SIR(init,alpha,beta, gamma, b, d1, d2,n);
+	    return rungeKuta4(SEIRinit, new SEIR(alpha, beta, a, b, d, N), h);
+	}	
+	
+	
+	GamaList<Double> rungeKuta4(GamaList<Double> init, SystemEDP edp, double h) {
+		GamaList<Double> edp_temp = new GamaList<Double>();
+		GamaList<Double> Q1 = edp.compute(init);
+		int numEq = edp.getNumberEquation();
 		
-		for(int i = 0; i <= 2; i++){
-			sir.add(init.get(i) + (h / 2.0) * Q1.get(i));
+		for(int i = 0; i <= numEq-1; i++){
+			edp_temp.add(init.get(i) + (h / 2.0) * Q1.get(i));
 		}
 	
-		GamaList<Double> Q2 = SIR(sir, alpha, beta,gamma, b, d1, d2, n);
+		GamaList<Double> Q2 = edp.compute(edp_temp);
 
-		for(int i = 0; i <= 2; i++){
-			sir.set(i, init.get(i) + (h / 2.0) * Q2.get(i));
+		for(int i = 0; i <= numEq-1; i++){
+			edp_temp.set(i, init.get(i) + (h / 2.0) * Q2.get(i));
 		}
 
-		GamaList<Double> Q3 = SIR(sir, alpha, beta,gamma, b, d1, d2, n);
+		GamaList<Double> Q3 = edp.compute(edp_temp);
 		
-		for(int i = 0; i <= 2; i++){
-			sir.set(i, init.get(i) + h * Q3.get(i));
+		for(int i = 0; i <= numEq-1; i++){
+			edp_temp.set(i, init.get(i) + h * Q3.get(i));
 		}
 
-		GamaList<Double> Q4 = SIR(sir, alpha, beta,gamma, b, d1, d2, n);
+		GamaList<Double> Q4 = edp.compute(edp_temp);
 
-		for(int i = 0; i <= 2; i++){
-			sir.set(i, init.get(i) + (h / 6.0) * (Q1.get(i) + 2.0 * Q2.get(i) + 2.0 * Q3.get(i) + Q4.get(i)));
+		for(int i = 0; i <= numEq-1; i++){
+			edp_temp.set(i, init.get(i) + (h / 6.0) * (Q1.get(i) + 2.0 * Q2.get(i) + 2.0 * Q3.get(i) + Q4.get(i)));
 		}
 
-		return sir;
+		return edp_temp;
 	}
 }
