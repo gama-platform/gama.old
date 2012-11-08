@@ -34,6 +34,8 @@ import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	protected final Map<V, _Vertex<V>> vertexMap;
@@ -55,13 +57,15 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
+	private GamaMap verticesBuilt; //only used for optimization purpose of spatial graph building.
+
 	public GamaGraph(final boolean directed) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
 		edgeBased = false; // TODO ? (Sam)
 		vertexRelation = null;
-
+		verticesBuilt = new GamaMap();
 	}
 
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
@@ -70,6 +74,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		edgeMap = new GamaMap();
 		edgeBased = byEdge;
 		vertexRelation = null;
+		verticesBuilt = new GamaMap();
 		if ( byEdge ) {
 			buildByEdge(vertices);
 		} else {
@@ -84,6 +89,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		edgeMap = new GamaMap();
 		edgeBased = byEdge;
 		vertexRelation = rel;
+
+		verticesBuilt = new GamaMap();
 		if ( byEdge ) {
 			buildByEdge(vertices);
 		} else {
@@ -867,6 +874,16 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 				l.receiveEvent(event);
 			}
 		}
+	}
+	
+	public void addBuiltVertex(IShape vertex) {
+		verticesBuilt.put(vertex.getLocation().hashCode(), vertex);
+	}
+	public boolean containsBuiltVertex(IShape vertex) {
+		return verticesBuilt.contains(vertex.getLocation().hashCode());
+	}
+	public IShape getBuiltVertex(Coordinate vertex) {
+		return (IShape) verticesBuilt.get(vertex.hashCode());
 	}
 
 }

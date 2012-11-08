@@ -101,10 +101,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	// return o != null && IntervalSize.isZeroWidth(x, o.x) && IntervalSize.isZeroWidth(y, o.y);
 	// }
 
-	@Override
+	/*@Override
 	public int hashCode() {
 		return (int) (x * y + x);
-	}
+	}*/
 
 	@Override
 	public void setLocation(final double xx, final double yy) {

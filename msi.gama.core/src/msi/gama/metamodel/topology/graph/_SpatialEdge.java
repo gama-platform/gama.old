@@ -66,13 +66,21 @@ public class _SpatialEdge extends _Edge<IShape> {
 	}
 
 	private Object findVertexWithCoordinates(final Coordinate c) {
-		for ( Object vertex : graph.vertexSet() ) {
+		IShape vertex = graph.getBuiltVertex(c);
+		if (vertex != null) {
+			return vertex;
+		}
+		vertex = new GamaPoint(c);
+		graph.addVertex(vertex);
+		graph.addBuiltVertex(vertex);
+		return vertex;
+		/*for ( Object vertex : graph.vertexSet() ) {
 			// _SpatialVertex internal = getVertex(vertex);
 			if ( vertex instanceof IShape && ((IShape) vertex).getLocation().equals(c) ) { return vertex; }
 		}
 		IShape vertex = new GamaPoint(c);
 		graph.addVertex(vertex);
-		return vertex;
+		return vertex;*/
 	}
 
 	@Override
