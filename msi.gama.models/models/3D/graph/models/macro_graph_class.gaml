@@ -3,44 +3,39 @@
  *  Author: Arnaud Grignard
  *  Description: Display the number of node according to the class the belong.
  */
+ 
+ 
+/* Different way to compute the linkage
+	single_linkage
+	average_linkage
+	complete_linkage
+	houssedorf
+*/
+
+
+/*  dendrogramme */
 
 model macro_graph
  
 global {
 	
-	/*
-	 * The variable that will store the graph
-	 */  
 	graph my_graph ;
 	
 	graph macroGraph;
 	
-
-	int colorFactor <-25;
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 ;
-	int nbClass parameter: 'Number of class' min: 1 max:10 <- 10 ;
-	int nodeSize parameter: 'Noide size' min: 1 <- 1 ;
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
+	int nbClass parameter: 'Number of class' min: 1 max:100 <- 10 category: 'Model';
+	int threshold parameter: 'Threshold' min: 1 <- 4 category: 'Model';
 	
-	int threshold parameter: 'Threshold' min: 1 <- 4 ;
-	
-	
-	matrix interactionMatrix <-matrix([[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
-       [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
-       [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]);
-	
-
-	
+	int colorFactor parameter: 'color factor' min:1 <-25 category: 'Aspect';
+	int nodeSize parameter: 'Node size' min: 1 <- 2 category: 'Aspect';
+	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
+		
+    matrix interactionMatrix;	
 	list macroNodes of: macroNode;
 	
-	
 	init {
-		
-		 
-		 
-		 /*
-		  * The actual generation of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
+
 		 set my_graph <- generate_barabasi_albert( [
 				"edges_specy"::edge,
 				"vertices_specy"::node,
@@ -54,8 +49,7 @@ global {
 		
 		ask node as list{
 			set class <- rnd(nbClass-1)+1;
-			set color <-rgb([class*colorFactor, class*colorFactor, class*colorFactor]);	
-			//set color <-rgb([rnd(class*colorFactor), rnd(class*colorFactor), rnd(class*colorFactor)]);		
+			set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);		
 		}
 		
 		let i<-1;
@@ -68,8 +62,6 @@ global {
 		
 		set macroGraph <- graph(macroNodes);
 		
-
-		
 		//FIXME: If this is call at the beginning of the init block there is some null value in the matrix.
 		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
 		
@@ -77,36 +69,30 @@ global {
 	 
 	 
 	 
-	 reflex updateMacroEdge{
+	reflex updateMacroEdge{
 	 	
-	 	//remove all the existing edges.
 	 	ask macroEdge as list{
 	 		do die;
 	 	}
 	 	
 	 	loop i from: 0 to: nbClass-1{
-              loop j from: 0 to: nbClass-1{
-                let tmp <- interactionMatrix  at {i,j};
-
-                if(i!=j){
-                	if (int(tmp)>threshold){
-	                	write string(i+1) + " and " + string(j+1) + "have linked than" + threshold + "times";
-	                	create macroEdge{
-	                	  set src <- macroNodes at (i);
-					      set dest <- macroNodes at (j);
-					     /*  loop while: (macroGraph contains_edge (src::dest)) {
-					      	set src <- macroNodes at i;
-					        set dest <- macroNodes at j;
-					      }*/	
-					      set macroGraph <- macroGraph add_edge (src::dest);
-	                	}	
-                   }
-                }      
-              }
-           }
-	 }
+	      loop j from: 0 to: nbClass-1{
+	        let tmp <- interactionMatrix  at {i,j};
+	        if(i!=j){
+	          if (int(tmp)>threshold){
+	            write string(i+1) + "<->" + string(j+1) + " average linkage: " + int(tmp);
+	            create macroEdge{
+	              set src <- macroNodes at (i);
+			      set dest <- macroNodes at (j);	
+			      set macroGraph <- macroGraph add_edge (src::dest);
+	            }	
+	          }
+	        }      
+	      }
+	    }
+  	}
 	 
-	 //Reinitialize the matrix with 0,0 at each iteration
+	 
 	 reflex initMatrix{
 		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
 	 }
@@ -124,8 +110,7 @@ entities {
 						
 		reflex shuffleClass{			
 			set class <- rnd(nbClass-1)+1;
-			set color <-rgb([class*colorFactor, class*colorFactor, class*colorFactor]);	
-			//set color <-rgb([rnd(class*colorFactor), rnd(class*colorFactor), rnd(class*colorFactor)]);
+			set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);	
 		}
 						
 		aspect base {
@@ -133,21 +118,15 @@ entities {
 		}  		
 	}
 	
-	/*
-	 * The specy which will describe edges. 
-	 */
+
 	species edge  { 
 		rgb color;
 		
 		reflex updateInteractionMatrix{													
 				let src type:node<- my_graph source_of(self);
 				let dest type:node <- my_graph target_of(self);	
-				//write string(src.class) + "<->" + string(dest.class);
-				
 				let tmp <- interactionMatrix  at {src.class-1,dest.class-1};
-				//write "+1 in matrix " + string(src.class) + string(dest.class) + "=" + tmp;
-				let tmp2 <-int(tmp)+1;
-				put tmp2 at: {src.class-1,dest.class-1} in: interactionMatrix;
+				put (int(tmp)+1) at: {src.class-1,dest.class-1} in: interactionMatrix;
 		} 
 		
 		aspect base {
@@ -167,23 +146,24 @@ entities {
 			ask node as list{
 			  if	(class = myself.class) {
 				set myself.nbAggregatedNodes <- myself.nbAggregatedNodes+1;
-				//set myself.color <-color;
+				set myself.color <-color;
 			  }	 
 		    }
-		    set shape <- circle (nbAggregatedNodes/10) ;
-		    set color <-rgb([class*colorFactor, class*colorFactor, class*colorFactor]);	
+		    set shape <- circle ((nbAggregatedNodes/10)*macroNodeSize) ;
+		    
 		} 
 		
-
+        //set location <- {cos((float(class)/float(nbClass))*6.32),sin((float(class)/float(nbClass))*6.32)};
+        
 		aspect base{
-			draw shape: geometry color: color z:nbAggregatedNodes/10;
+			draw shape: geometry color: color z:(nbAggregatedNodes/10)*macroNodeSize;
 			draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
 		}
 	}
 	
 	
 	species macroEdge  { 
-		rgb color <- rgb("blue");
+		rgb color <- rgb("black");
 		node src;
 		node dest;
 		
@@ -198,8 +178,8 @@ experiment generate_graph type: gui {
 		display test_display type:opengl {
 			species node aspect: base ; 
 			species edge aspect: base ;		
-			species macroNode aspect:base  position: {110,0};
-			species macroEdge aspect:base  position: {110,0};	
+			species macroNode aspect:base  position: {100,0};
+			species macroEdge aspect:base  position: {100,0};	
 		}		
 	}		
 }
