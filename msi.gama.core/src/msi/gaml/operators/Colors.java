@@ -18,11 +18,15 @@
  */
 package msi.gaml.operators;
 
+import java.awt.Color;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
+
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
@@ -90,6 +94,19 @@ public class Colors {
 	public static GamaColor substract(final GamaColor c1, final GamaColor c) {
 		return new GamaColor(c1.getRed() - c.getRed(), c1.getGreen() - c.getGreen(), c1.getBlue() -
 			c.getBlue());
+	}
+	
+		
+	@operator(value = "hsb_to_rgb")
+	@doc(
+		value = "Converts hsb value to rgb color",
+		comment = "h=hue, s=saturation, b=brightness. h,s and b components should be floating-point values between 0.0 and 1.0.",
+		examples = "set color <- color hsb_to_rgb ([60,0.5,0]);" +
+				"Hue value Red=[0.0,1.0,1.0], Yellow=[0.16,1.0,1.0], Green=[0.33,1.0,1.0], Cyan=[0.5,1.0,1.0], Blue=[0.66,1.0,1.0], Magenta=[0.83,1.0,1.0]",
+		see = "")	
+	public static GamaColor hsbToRgb(final GamaColor c, final GamaList<Double> list) {
+        Color c1 = Color.getHSBColor(list.get(0).floatValue(), list.get(1).floatValue(),list.get(2).floatValue());
+        return new GamaColor(c1.getRed(), c1.getGreen(), c1.getBlue());
 	}
 
 }

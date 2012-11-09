@@ -517,7 +517,7 @@ public class Graphs {
 	@operator(value = "add_edge")
 	@doc(
 		value = "add an edge between source vertex and the target vertex",
-		comment = "If the edge alrzdy exists the graph is unchanged",
+		comment = "If the edge already exists the graph is unchanged",
 		examples = "set graph <- graph add_edge (source::target);",
 		see = "")	
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
