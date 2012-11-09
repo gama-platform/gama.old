@@ -49,7 +49,9 @@ global {
 		
 		ask node as list{
 			set class <- rnd(nbClass-1)+1;
-			set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);		
+			set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);	
+			
+			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);	
 		}
 		
 		let i<-1;
@@ -110,7 +112,8 @@ entities {
 						
 		reflex shuffleClass{			
 			set class <- rnd(nbClass-1)+1;
-			set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);	
+			//set color <-rgb([(class/nbClass)*255, (class/nbClass)*255, (class/nbClass)*255]);	
+			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
 		}
 						
 		aspect base {
