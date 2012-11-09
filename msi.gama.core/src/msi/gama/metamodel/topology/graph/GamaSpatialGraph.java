@@ -215,5 +215,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public void reInitPathFinder() {
 		pathFinder = null;
 	}
+	
+	
 
 }

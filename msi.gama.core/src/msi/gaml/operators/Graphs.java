@@ -412,6 +412,7 @@ public class Graphs {
 		comment = "the operator alters the operand graph, it does not create a new one.",
 		see = {"undirected"})
 	public static IGraph asDirectedGraph(final IGraph g) {
+		g.incVersion();
 		return GamaGraphType.asDirectedGraph(g);
 	}
 
@@ -421,6 +422,7 @@ public class Graphs {
 		comment = "the operator alters the operand graph, it does not create a new one.",
 		see = {"directed"})	
 	public static IGraph asUndirectedGraph(final IGraph g) {
+		g.incVersion();
 		return GamaGraphType.asUndirectedGraph(g);
 	}
 
@@ -435,6 +437,8 @@ public class Graphs {
 		// Example : graph_from_edges (list ant as_map each::one_of (list ant)) with_weights (list
 		// ant as_map each::each.food)
 		graph.setWeights(weights);
+		graph.incVersion();
+		java.lang.System.out.println("version : " + graph.getVersion());
 		if (graph instanceof GamaSpatialGraph) 
 			((GamaSpatialGraph) graph).reInitPathFinder();
 		return graph;
@@ -452,6 +456,7 @@ public class Graphs {
 		for ( int i = 0; i < n; i++ ) {
 			graph.setEdgeWeight(edges.get(i), Cast.asFloat(scope, weights.get(i)));
 		}
+		graph.incVersion();
 		if (graph instanceof GamaSpatialGraph) 
 			((GamaSpatialGraph) graph).reInitPathFinder();
 		return graph;
@@ -489,6 +494,8 @@ public class Graphs {
 		examples = "node(0) remove_node_from graphEpidemio;    --: 	returns the graph without node(0)")
 	public static IGraph removeEdgeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
+		g.incVersion();
+		
 		return g;
 	}
 	
@@ -500,6 +507,7 @@ public class Graphs {
 		see = "rewire_p")
 	public static IGraph rewireGraph(final IGraph g, final Double probability) {
 		GraphAlgorithmsHandmade.rewireGraphProbability(g, probability);
+		g.incVersion();
 		return g;
 	}
 	
@@ -511,6 +519,7 @@ public class Graphs {
 		see = "rewire_p")	
 	public static IGraph rewireGraph(final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(g, count);
+		g.incVersion();
 		return g;
 	}
 	
@@ -522,6 +531,7 @@ public class Graphs {
 		see = "")	
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
+		g.incVersion();
 		return g;
 	}
 	

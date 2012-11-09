@@ -7,6 +7,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -191,7 +192,15 @@ public class DrivingSkill extends MovingSkill {
 		if ( path == null || !path.getTopology().equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(source, goal);
-		}
+		} else {
+			
+			if (topo != null && topo instanceof GraphTopology) {
+				
+				if  (((GraphTopology) topo).getPlaces() != (path.getGraph()) || ((GraphTopology) topo).getPlaces().getVersion() != (path.getGraphVersion())) {
+					path = topo.pathBetween(source, goal);
+				}
+			}
+		}	
 
 		if ( path == null ) {
 			scope.setStatus(ExecutionStatus.failure);

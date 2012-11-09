@@ -44,6 +44,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	Map<IShape, IShape> realObjects;
 	IShape source, target;
 	ITopology topology;
+	int graphVersion;
 
 	// GamaMap segmentsInGraph;
 
@@ -65,6 +66,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		segments = new GamaList<IShape>();
 		// segmentsInGraph = new HashMap();
 		realObjects = new HashMap();
+		graphVersion = 0;
 
 		Geometry firstLine =
 			edges == null || edges.isEmpty() ? null : edges.get(0).getInnerGeometry();
@@ -83,6 +85,8 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				pt = start.euclidianDistanceTo(pt0) < target.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
 			GamaSpatialGraph graph = getGraph();
+			if (graph != null)
+				graphVersion = graph.getVersion();
 			for ( IShape edge : edges ) {
 				if (modify_edges) {
 					IAgent ag = edge.getAgent();
@@ -423,6 +427,10 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	@Override
 	public void setTarget(final IShape target) {
 		this.target = target;
+	}
+	
+	public int getGraphVersion() {
+		return graphVersion;
 	}
 
 }

@@ -83,6 +83,12 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public abstract Boolean isVerbose();
 
 	public abstract void setVerbose(final Boolean isVerbose);
+	
+	public int getVersion() ;
+
+	public void setVersion(int version);
+	
+	public void incVersion();
 
 	
 }

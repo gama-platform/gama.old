@@ -58,6 +58,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
 	private GamaMap verticesBuilt; //only used for optimization purpose of spatial graph building.
+	private int version;
 
 	public GamaGraph(final boolean directed) {
 		this.directed = directed;
@@ -66,6 +67,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		edgeBased = false; // TODO ? (Sam)
 		vertexRelation = null;
 		verticesBuilt = new GamaMap();
+		version = 1;
 	}
 
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
@@ -80,6 +82,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		} else {
 			buildByVertices(vertices);
 		}
+		version = 1;
 	}
 
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed,
@@ -96,6 +99,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		} else {
 			buildByVertices(vertices);
 		}
+		version = 1;
 	}
 
 	@Override
@@ -886,4 +890,16 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return (IShape) verticesBuilt.get(vertex.hashCode());
 	}
 
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+	public void incVersion() {
+		version++;
+	}
+
+	
 }

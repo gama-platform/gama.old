@@ -98,5 +98,7 @@ public interface IPath extends IShape {
 	public void setSource(IShape source);
 
 	public void setTarget(IShape target);
+	
+	public int getGraphVersion();
 
 }
