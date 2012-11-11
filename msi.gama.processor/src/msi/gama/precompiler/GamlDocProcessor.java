@@ -20,10 +20,14 @@ package msi.gama.precompiler;
 
 import java.io.*;
 import java.util.*;
+
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.element.Element;
+import javax.tools.JavaFileManager.Location;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -40,6 +44,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+
 import org.w3c.dom.*;
 
 @SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
@@ -259,7 +264,18 @@ public class GamlDocProcessor {
 				operands.setAttribute("contentType", "" +
 						e.getAnnotation(operator.class).content_type());
 				operands.setAttribute("type", "" + e.getAnnotation(operator.class).type());
-	
+				
+				// To specify where we can find the source code of the class defining the operator
+				String pkgName = "" + ((TypeElement)e.getEnclosingElement()).getQualifiedName();
+				// Now we have to deal with Spatial operators, that are defined in inner classes
+				if(pkgName.contains("Spatial")){
+					// We do not take into account what is after 'Spatial'
+					pkgName = pkgName.split("Spatial")[0] + "Spatial";   
+				}
+				pkgName = pkgName.replace('.', '/');				
+				pkgName = pkgName + ".java";
+				operands.setAttribute("class", pkgName);
+		        
 				if ( !isStatic ) {
 					org.w3c.dom.Element operand = doc.createElement("operand");
 					operand.setAttribute("type", getProperType(e.getEnclosingElement().asType().toString()));

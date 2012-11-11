@@ -132,7 +132,7 @@ public class GamaProcessor extends AbstractProcessor {
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
 				// new XMLWriter(processingEnv).write(createWriter("doc.xml"), gp);				
 				 if ( docProc.firstParsing ) {
-					 docProc.processDocXML(env, createWriter("doc.xml"));
+					 docProc.processDocXML(env, createWriter("docGAMA.xml"));
 					 docProc.firstParsing = false;
 				 } else {
 				 	processingEnv.getMessager().printMessage(Kind.NOTE,
