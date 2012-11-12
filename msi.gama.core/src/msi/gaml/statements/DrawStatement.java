@@ -39,7 +39,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.*;
 import msi.gaml.types.IType;
-
 import java.lang.System;
 
 // A command that is used to draw shapes, figures, text on the display
@@ -268,10 +267,22 @@ public class DrawStatement extends AbstractStatementSequence {
 		private Rectangle2D draw(final IScope scope, final Integer shapeIndex, final ILocation at,
 			final int displaySize, final Color c, final boolean isEmpty, final Color border, final IGraphics g)
 			throws GamaRuntimeException {
-			int x = Maths.round(at.getX()) - (displaySize >> 1);
-			int y = Maths.round(at.getY()) - (displaySize >> 1);
-			g.setDrawingCoordinates(x, y);
-			g.setDrawingDimensions(displaySize, displaySize);
+			
+            //FIXME: Could be better to call g instanceof AWTDisplayGraphics or JOGLAWTDisplayGraphics
+			
+		    if (String.valueOf(g.getGraphicsType()).equals("opengl") == true) {
+		    	double x = at.getX();
+				double y = at.getY();
+				g.setDrawingCoordinates(x, y);
+			}
+		    else{
+		    	
+				int x = Maths.round(at.getX()) - (displaySize >> 1);
+				int y = Maths.round(at.getY()) - (displaySize >> 1);
+				g.setDrawingCoordinates(x, y);
+		    }
+			
+		    g.setDrawingDimensions(displaySize, displaySize);
 			switch (shapeIndex) {
 				case -1: {
 					IShape geom = Cast.asGeometry(scope, shape.value(scope));
@@ -291,13 +302,55 @@ public class DrawStatement extends AbstractStatementSequence {
 							border, getRotation(scope));
 				}
 				case 1: {
-					return g.drawRectangle(c, !isEmpty, border, getRotation(scope));
+					//Check if the shape has a z value (e.g: draw shape: square z:1;)
+					IShape geom = Cast.asGeometry(scope, shape.value(scope));
+					
+					if ( geom == null ) {
+						geom = scope.getAgentScope().getGeometry();	
+					}
+
+					if(elevation != null){
+						float height = new Float(elevation.value(scope).toString());
+						return g.drawRectangle(c, !isEmpty, border, getRotation(scope),height);
+					}
+					else{
+						return g.drawRectangle(c, !isEmpty, border, getRotation(scope),0);	
+					}
 				}
 				case 2: {
-					return g.drawCircle(c, !isEmpty, border, null);
+					
+					//Check if the shape has a z value (e.g: draw shape: square z:1;)
+					IShape geom = Cast.asGeometry(scope, shape.value(scope));
+					
+					if ( geom == null ) {
+						geom = scope.getAgentScope().getGeometry();	
+					}
+
+					if(elevation != null){
+						float height = new Float(elevation.value(scope).toString());
+						return g.drawCircle(c, !isEmpty, border, null,height);
+					}
+					else{
+						return g.drawCircle(c, !isEmpty, border, null,0.0f);	
+					}				
 				}
 				case 3: {
-					return g.drawTriangle(c, !isEmpty, border, getRotation(scope));
+					
+					//Check if the shape has a z value (e.g: draw shape: square z:1;)
+					IShape geom = Cast.asGeometry(scope, shape.value(scope));
+					
+					if ( geom == null ) {
+						geom = scope.getAgentScope().getGeometry();	
+					}
+
+					if(elevation != null){
+						float height = new Float(elevation.value(scope).toString());
+						return g.drawTriangle(c, !isEmpty, border, getRotation(scope),height);
+					}
+					else{
+						return g.drawTriangle(c, !isEmpty, border, getRotation(scope),0.0f);	
+					}
+					
 				}
 			}
 			return null;
