@@ -61,8 +61,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
 	public float currentAlpha = 1;
-	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5,
+	private int displayWidth, displayHeight, curWidth = 5,
 			curHeight = 5, offsetX = 0, offsetY = 0;
+	private double curX = 0, curY = 0;
 	
 
 	// OpenGL member
@@ -292,8 +293,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public void setDrawingCoordinates(final double x, final double y) {
-		curX = (int) x + offsetX;
-		curY = (int) y + offsetY;
+		curX =  x + offsetX;
+		curY =  y + offsetY;
 	}
 
 	/**
@@ -472,9 +473,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
 			final Color border, final Integer angle,final float height) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
-		// FIXME : Need to check if the circle is at the right place.
-		Geometry g = GamaGeometryType.buildCircle(
-				(double) curWidth / 2,
+
+		Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
 		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false, 0,
@@ -559,7 +559,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor,
 			final Integer angle,final float z) {
-		AddStringInStrings(string, curX, -curY, z);
+		AddStringInStrings(string, (float)curX, -(float)curY, z);
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
 		return r;
@@ -629,15 +629,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param name
 	 * @param angle
 	 */
-	private void AddImageInImages(final BufferedImage img, final int curX,
-			final int curY, final float z, final float widthInModel,
+	private void AddImageInImages(final BufferedImage img, final double curX,
+			final double curY, final float z, final float widthInModel,
 			final float heightInModel, final String name, final Integer angle, final GamaPoint offSet) {
 
 		final MyImage curImage = new MyImage();
 
 		curImage.image = img;
-		curImage.x = curX;
-		curImage.y = curY;
+		curImage.x = (float)curX;
+		curImage.y = (float)curY;
 
 		if (String.valueOf(z).equals("NaN") == true) {
 		  curImage.z = 0;
@@ -1027,6 +1027,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		else{
 		currentLayerIsStatic=false;
 		}
+	}
+	
+	@Override
+	public String getGraphicsType() {	
+		return "opengl";
 	}
 
 }

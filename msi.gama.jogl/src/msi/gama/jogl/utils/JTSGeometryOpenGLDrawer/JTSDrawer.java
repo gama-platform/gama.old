@@ -86,8 +86,8 @@ public class JTSDrawer {
 		yFlag = -1;
 
 		// FIXME: When using erroCallback there is a out of memory problem.
-		// myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);//
-		// errorCallback)
+		//myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);//
+		 //errorCallback)
 
 	}
 
