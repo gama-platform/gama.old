@@ -122,16 +122,20 @@ public interface IGraphics {
 	 * @param c Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param height: height of the circle if using opengl and defining a z value
+	 *                (e.g: draw shape: circle  z:1;)
 	 */
-	public abstract Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle);
+	public abstract Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle,final float height);
 
 	/**
 	 * Method drawTriangle.
 	 * @param c Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param height: height of the triangle if using opengl and defining a z value
+	 *                (e.g: draw shape: trinagle  z:1;)
 	 */
-	public abstract Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle);
+	public abstract Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle,final float height);
 
 	/**
 	 * Method drawLine.
@@ -146,9 +150,11 @@ public interface IGraphics {
 	 * @param color Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param height: height of the rectangle if using opengl and defining a z value
+	 *                (e.g: draw shape: square  size:2 color: global_color z:2;)
 	 */
 	public abstract Rectangle2D drawRectangle(final Color color, final boolean fill,
-		final Color border, final Integer angle);
+		final Color border, final Integer angle, final float height);
 
 	/**
 	 * @return
