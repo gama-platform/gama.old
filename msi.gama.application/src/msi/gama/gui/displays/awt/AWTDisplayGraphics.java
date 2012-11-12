@@ -532,4 +532,11 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * Not use in Java2D
 	 */
 	public void newLayer(final double zLayerValue, Boolean refresh) {}
+
+	
+	@Override
+	public String getGraphicsType() {
+		
+		return "java2D";
+	}
 }
