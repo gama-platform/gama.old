@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 public interface IGraphics {
-
+	
 	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
 
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
@@ -232,5 +232,12 @@ public interface IGraphics {
 	 * Set wether or not the current layer is static(will bve drawn only once) or dynamic.
 	 */
 	public abstract void newLayer(double zLayerValue,Boolean refresh);
+	
+	
+	/*
+	 * Return the type of the IGraphics (e.g Java2D or OpenGl)
+	 * 
+	 */
+	public abstract String getGraphicsType();
 
 }
