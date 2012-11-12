@@ -316,15 +316,23 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param c Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle) {
+	public Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, border, angle);
 	}
 
+	/**
+	 * Method drawTriangle.
+	 * @param c Color
+	 * @param fill boolean
+	 * @param angle Integer
+	 * @param height height of the rectangle but only used in opengl display
+	 */
 	@Override
-	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle) {
+	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -352,9 +360,10 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param color Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Color border, final Integer angle) {
+	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Color border, final Integer angle, final float height) {
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return drawShape(color, rect, fill, border, angle);
 	}
