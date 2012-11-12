@@ -356,9 +356,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// Check if the geometry has a height value (3D Shape or Volume)
 
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
-		float height;
+
 		if (geometry.getUserData() != null) {
-			height = new Float(geometry.getUserData().toString());
+			float height = new Float(geometry.getUserData().toString());
 			this.AddJTSGeometryInJTSGeometries(geometry, currentZLayer, color,
 					fill, border, false, angle, height,offSet);
 		} else {
@@ -470,7 +470,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawCircle(final Color c, final boolean fill,
-			final Color border, final Integer angle) {
+			final Color border, final Integer angle,final float height) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		// FIXME : Need to check if the circle is at the right place.
 		Geometry g = GamaGeometryType.buildCircle(
@@ -478,20 +478,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
 		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false, 0,
-				0,offSet);
+				height,offSet);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
 	}
 
 	@Override
 	public Rectangle2D drawTriangle(final Color c, final boolean fill,
-			final Color border, final Integer angle) {
+			final Color border, final Integer angle, final float height) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g = GamaGeometryType.buildTriangle(curWidth,
 				new GamaPoint(curX, curY)).getInnerGeometry();
 		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false,
-				angle, 0,offSet);
+				angle, height,offSet);
 		Rectangle2D r = null;
 		return r;
 	}
@@ -527,15 +527,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            boolean
 	 * @param angle
 	 *            Integer
+	 * @param height
+	 *            height of the rectangle if using opengl and defining a z value
+	 *             (e.g: draw shape: square  size:2 color: global_color z:2;)
 	 */
 	@Override
 	public Rectangle2D drawRectangle(final Color c, final boolean fill,
-			final Color border, final Integer angle) {
+			final Color border, final Integer angle, final float height) {
+		
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
 				new GamaPoint(curX, curY)).getInnerGeometry();
+
 		this.AddJTSGeometryInJTSGeometries(g, currentZLayer, c, fill, border, false,
-				angle, 0,offSet);
+				angle, height,offSet);
+
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return rect.getBounds2D();
 	}
@@ -545,7 +551,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * 
 	 * @param string
 	 *            String
-	 * @param stringColor
+	 * @param stringColor	
 	 *            Color
 	 * @param angle
 	 *            Integer

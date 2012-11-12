@@ -65,7 +65,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.height, geometry.angle, true, geometry.border);
+							geometry.height, geometry.angle, false, geometry.border);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,

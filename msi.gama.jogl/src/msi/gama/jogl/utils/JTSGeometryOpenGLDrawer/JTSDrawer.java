@@ -685,11 +685,19 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawSphere(Point point, float z, float radius, Color c,
+	public void DrawSphere(Point point, float z_layer, float radius, Color c,
 			float alpha) {
 
-		myGl.glTranslated(point.getCoordinate().x,
-				yFlag * point.getCoordinate().y, z);
+		if (String.valueOf(point.getCoordinate().z).equals("NaN") == true){
+			myGl.glTranslated(point.getCoordinate().x,
+					yFlag * point.getCoordinate().y, z_layer);
+		}
+		else{
+			myGl.glTranslated(point.getCoordinate().x,
+					yFlag * point.getCoordinate().y, z_layer + point.getCoordinate().z);
+		}
+		
+		
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
 
@@ -697,12 +705,19 @@ public class JTSDrawer {
 		myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
 		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 		myGlu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-		final int slices = 32;
-		final int stacks = 32;
+		final int slices = 16;
+		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-		myGl.glTranslated(-point.getCoordinate().x,
-				-yFlag * point.getCoordinate().y, -z);
+        if (String.valueOf(point.getCoordinate().z).equals("NaN") == true){
+        	myGl.glTranslated(-point.getCoordinate().x,
+    				-yFlag * point.getCoordinate().y, -z_layer);	
+		}
+        else{
+        	myGl.glTranslated(-point.getCoordinate().x,
+    				-yFlag * point.getCoordinate().y, -(z_layer + point.getCoordinate().z));	
+        }
+		
 
 	}
 

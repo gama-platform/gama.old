@@ -735,7 +735,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void snapshot() {
+	public void snapshot() {	
 		buffImage =  this.myGLRender.getScreenShot();
 		save(GAMA.getDefaultScope(), buffImage);
 	}
