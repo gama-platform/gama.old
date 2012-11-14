@@ -268,7 +268,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			final int displaySize, final Color c, final boolean isEmpty, final Color border, final IGraphics g)
 			throws GamaRuntimeException {
 			
+			
             //FIXME: Could be better to call g instanceof AWTDisplayGraphics or JOGLAWTDisplayGraphics
+			// or better modify the method setDrawingCoordinates
 			
 		    if (String.valueOf(g.getGraphicsType()).equals("opengl") == true) {
 		    	double x = at.getX();
@@ -292,13 +294,13 @@ public class DrawStatement extends AbstractStatementSequence {
 					if(elevation != null){
 						geom.getInnerGeometry().setUserData(elevation.value(scope));	
 					}
-					return g.drawGeometry(geom.getInnerGeometry(), c, !isEmpty, border, getRotation(scope));
+					return g.drawGeometry(scope,geom.getInnerGeometry(), c, !isEmpty, border, getRotation(scope));
 				}
 				case 0: {
 						if(elevation != null){
 							scope.getAgentScope().getGeometry().getInnerGeometry().setUserData(elevation.value(scope));						
 					     }
-					return g.drawGeometry(scope.getAgentScope().getInnerGeometry(), c, !isEmpty,
+					return g.drawGeometry(scope,scope.getAgentScope().getInnerGeometry(), c, !isEmpty,
 							border, getRotation(scope));
 				}
 				case 1: {
@@ -311,10 +313,10 @@ public class DrawStatement extends AbstractStatementSequence {
 
 					if(elevation != null){
 						float height = new Float(elevation.value(scope).toString());
-						return g.drawRectangle(c, !isEmpty, border, getRotation(scope),height);
+						return g.drawRectangle(scope, c, !isEmpty, border, getRotation(scope),height);
 					}
 					else{
-						return g.drawRectangle(c, !isEmpty, border, getRotation(scope),0);	
+						return g.drawRectangle(scope, c, !isEmpty, border, getRotation(scope),0);	
 					}
 				}
 				case 2: {
@@ -328,10 +330,10 @@ public class DrawStatement extends AbstractStatementSequence {
 
 					if(elevation != null){
 						float height = new Float(elevation.value(scope).toString());
-						return g.drawCircle(c, !isEmpty, border, null,height);
+						return g.drawCircle(scope, c, !isEmpty, border, null,height);
 					}
 					else{
-						return g.drawCircle(c, !isEmpty, border, null,0.0f);	
+						return g.drawCircle(scope, c, !isEmpty, border, null,0.0f);	
 					}				
 				}
 				case 3: {
@@ -345,10 +347,10 @@ public class DrawStatement extends AbstractStatementSequence {
 
 					if(elevation != null){
 						float height = new Float(elevation.value(scope).toString());
-						return g.drawTriangle(c, !isEmpty, border, getRotation(scope),height);
+						return g.drawTriangle(scope, c, !isEmpty, border, getRotation(scope),height);
 					}
 					else{
-						return g.drawTriangle(c, !isEmpty, border, getRotation(scope),0.0f);	
+						return g.drawTriangle(scope, c, !isEmpty, border, getRotation(scope),0.0f);	
 					}
 					
 				}
@@ -451,11 +453,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				// g2d.dispose();
 
-				Rectangle2D result = g.drawImage(workImage, angle, true, img,(float) agent.getLocation().getZ());
+				Rectangle2D result = g.drawImage(scope,workImage, angle, true, img,(float) agent.getLocation().getZ());
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(image, angle, true, img,(float) agent.getLocation().getZ());
+			return g.drawImage(scope,image, angle, true, img,(float) agent.getLocation().getZ());
 		}
 
 	}

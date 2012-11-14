@@ -48,7 +48,7 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
 			}
 			Rectangle2D r =
-				((IGraphics) scope.getContext()).drawGeometry(agent.getGeometry()
+				((IGraphics) scope.getContext()).drawGeometry(scope,agent.getGeometry()
 					.getInnerGeometry(), c == null ? Color.YELLOW : c, true, Color.black, 0);
 			// GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
 			// agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +

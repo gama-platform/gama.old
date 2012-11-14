@@ -54,6 +54,7 @@ public class GAMA {
 	}
 
 	public static void newExperiment(final String id, final IModel model) {
+		
 		final IExperiment newExperiment = model.getExperiment(id);
 		if ( newExperiment == currentExperiment && currentExperiment != null ) {
 			currentExperiment.reload();
