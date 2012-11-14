@@ -26,6 +26,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -275,7 +276,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param z float (has no effet in java 2D)
 	 */
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle,
+	public Rectangle2D drawImage(final IScope scope,final BufferedImage img, final Integer angle,
 		final boolean smooth, final String name, final float z) {
 		AffineTransform saved = g2.getTransform();
 		// RenderingHints hints = g2.getRenderingHints();
@@ -293,8 +294,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final Integer angle, final String name,final float z) {
-		return drawImage(img, angle, true, name,z);
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle, final String name,final float z) {
+		return drawImage(scope, img, angle, true, name,z);
 	}
 
 	/**
@@ -319,7 +320,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawCircle(final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, border, angle);
 	}
@@ -332,7 +333,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawTriangle(final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -363,7 +364,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final Color color, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill, final Color border, final Integer angle, final float height) {
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return drawShape(color, rect, fill, border, angle);
 	}
@@ -396,7 +397,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final Geometry geometry, final Color color, final boolean fill,
+	public Rectangle2D drawGeometry(final IScope scope,final Geometry geometry, final Color color, final boolean fill,
 		final Color border, final Integer angle) {
 		boolean f =
 			geometry instanceof LineString || geometry instanceof MultiLineString ? false : fill;

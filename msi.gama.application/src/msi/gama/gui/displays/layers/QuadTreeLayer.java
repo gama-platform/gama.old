@@ -37,7 +37,7 @@ public class QuadTreeLayer extends AbstractLayer {
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
 		if ( disposed ) { return; }
-		dg.drawImage(((QuadTreeLayerStatement) definition).getSupportImage(), null, false,"QuadTreeDisplay",0.0f);
+		dg.drawImage(null, ((QuadTreeLayerStatement) definition).getSupportImage(), null, false,"QuadTreeDisplay",0.0f);
 	}
 
 	@Override

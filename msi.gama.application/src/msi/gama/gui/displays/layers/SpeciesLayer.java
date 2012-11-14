@@ -192,7 +192,7 @@ public class SpeciesLayer extends AgentLayer {
 		g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale() * 2),
 			(int) (gridAgentStorage.numCols * g.getYScale()));
 		g.setOpacity(layer.getTransparency());
-		g.drawImage(supportImage, null, false, "SpeciesDisplay",0.0f);
+		g.drawImage(scope, supportImage, null, false, "SpeciesDisplay",0.0f);
 
 		// System.out.println("xScale = " + g.getXScale() + "; yScale = " + g.getYScale());
 

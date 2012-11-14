@@ -80,7 +80,7 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(image, null, imageFileName,0.0f);
+		dg.drawImage(null, image, null, imageFileName,0.0f);
 	}
 
 	@Override

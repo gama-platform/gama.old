@@ -40,7 +40,7 @@ public class GisLayer extends AbstractLayer {
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
 		for ( Geometry geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
 			if ( geom != null ) {
-				g.drawGeometry(geom, color, true, Color.black, null);
+				//g.drawGeometry(geom, color, true, Color.black, null);
 			}
 		}
 	}
