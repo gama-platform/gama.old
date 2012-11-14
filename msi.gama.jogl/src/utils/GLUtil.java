@@ -529,12 +529,12 @@ public class GLUtil {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=1f;
+		float ambientMean=0.6f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0
-		float[] lightDiffuseValue0 = { 1f, 1f, 1f, 1.0f };
+		float[] lightDiffuseValue0 = { 0.5f, 0.5f, 0.5f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);

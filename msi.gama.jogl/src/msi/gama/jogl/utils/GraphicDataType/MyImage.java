@@ -1,16 +1,19 @@
 package msi.gama.jogl.utils.GraphicDataType;
 
-import java.awt.Color;
+
 import java.awt.image.BufferedImage;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 
-import com.sun.opengl.util.texture.*;
+
+
 
 
 public class MyImage {
 	
 	public BufferedImage image;
+	public IAgent agent;
 	public int textureId;
 	public float x;
 	public float y;

@@ -115,8 +115,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// picking
 	double angle = 0;
-	// index of the picked object
-	public int index = -1;
+	
 
 	// Use multiple view port
 	private boolean multipleViewPort = false;
@@ -377,31 +376,31 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 				gl.glViewport(0, 0, width, height); // Reset The Current
 													// Viewport
-				this.DrawModel();
+				this.DrawModel(false);
 			} else {
 
 				// Set The Viewport To The Top Left
 				gl.glViewport(0, height / 2, width / 2, height / 2);
-				this.DrawModel();
+				this.DrawModel(false);
 
 				// Set The Viewport To The Top Right. It Will Take Up Half The
 				// Screen Width And Height
 				gl.glViewport(width / 2, height / 2, width / 2, height / 2);
-				this.DrawModel();
+				this.DrawModel(false);
 
 				// Set The Viewport To The Bottom Right
 				gl.glViewport(width / 2, 0, width / 2, height / 2);
-				this.DrawModel();
+				this.DrawModel(false);
 
 				// Set The Viewport To The Bottom Left
 				gl.glViewport(0, 0, width / 2, height / 2);
-				this.DrawModel();
+				this.DrawModel(false);
 			}
 
 		}
 	}
 	
-	public void DrawModel() {
+	public void DrawModel(boolean picking) {
 		
 		
 		 //((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
@@ -412,14 +411,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries
 				.isEmpty()) {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-					.DrawMyJTSGeometries(false);
+					.DrawMyJTSGeometries(picking);
 		}
 
 		// Draw Static Geometry
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries
 				.isEmpty()) {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-					.DrawMyJTSStaticGeometries(false);
+					.DrawMyJTSStaticGeometries(picking);
 		}
 		
 		// Draw Image
@@ -427,16 +426,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 						.isEmpty()) {
 					blendingEnabled = true;
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-							.DrawMyImages();
+							.DrawMyImages(picking);
 				}
 
+				
+		//FIXME: When picking = true produes a glitch when clicking on obejt
+		if(!picking){		
 		// Draw String
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myStrings
 				.isEmpty()) {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
 					.DrawMyStrings();
 		}
-
+		
+		
 		boolean drawAxes = true;
 		if (drawAxes) {
 			float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
@@ -446,6 +449,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
 					.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 		}
+		}
+		
+		
 
 	}
 	
@@ -626,76 +632,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
 						0.0f);
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-						.DrawMyJTSGeometries(true);
+				DrawModel(true);
+		
 				gl.glTranslatef(
 						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
 						0.0f); // translate right and into the screen
 			} else {
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-						.DrawMyJTSGeometries(true);
+				DrawModel(true);
 			}
-			index = myListener.endPicking(gl);
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).pickedObjectIndex = myListener.endPicking(gl);
 		}
 
-		((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-				.DrawMyJTSGeometries(true);
-		if (index != -1) {
-			gl.glColor3d(0, 0, 0);
-			gl.glWindowPos2d(2, 5);
-			GLUT glut = new GLUT();
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Object " + index
-					+ " was selected.");
-		}
-	}
+		DrawModel(true);
 
-	private void drawObjects(final GL gl) {
-		gl.glPushMatrix();
-		GLUT glut = new GLUT();
-		gl.glInitNames();
-		gl.glPushName(0);
-
-		for (int i = 0; i < 6; i++) {
-
-			gl.glPushMatrix();
-
-			gl.glLoadName(i);
-			gl.glTranslated(-i * 2 + 5, 0, 0);
-			gl.glRotated(angle, i % 2 == 0 ? 1 : -1, i + 1, 0);
-			if (index == i) {
-				gl.glColor3f(1, 0, 0);
-			} else {
-				gl.glColor3f(1, 1, 1);
-			}
-
-			switch (i) {
-			case 0:
-				glut.glutSolidCone(1, 1, 30, 30);
-				break;
-			case 1:
-				glut.glutSolidCube(1);
-				break;
-			case 2:
-				glut.glutSolidTorus(.2, 1, 30, 100);
-				break;
-			case 3:
-				glut.glutSolidTeapot(1);
-				break;
-			case 4:
-				glut.glutSolidRhombicDodecahedron();
-				break;
-			case 5:
-				glut.glutSolidSphere(1, 30, 30);
-				break;
-			}
-
-			gl.glPopMatrix();
-
-		}
-		gl.glPopName();
-		angle += 1;
-		gl.glPopMatrix();
 	}
 		
 	public BufferedImage getScreenShot(){

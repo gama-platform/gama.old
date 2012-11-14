@@ -76,7 +76,7 @@ public class Picker implements MouseListener {
 		// mousePosition.x, height - mousePosition.y,
 		// beam size x, beam size y,
 		// viewport, 0);
-		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 2, 2, viewport, 0);
+		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 1, 1, viewport, 0);
 
 		float h = width / (float) height;
 		glu.gluPerspective(45.0f, h, 1.0, 20.0);
@@ -106,7 +106,7 @@ public class Picker implements MouseListener {
 
 		// 7. Seach the select buffer to find the nearest object
 
-		// code below derive which ocjects is nearest from monitor
+		// code below derive which objects is nearest from monitor
 		//
 		if ( howManyObjects > 0 ) {
 			// simple searching algorithm

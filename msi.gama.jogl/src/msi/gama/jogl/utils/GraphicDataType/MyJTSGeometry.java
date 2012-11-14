@@ -2,6 +2,7 @@ package msi.gama.jogl.utils.GraphicDataType;
 
 import java.awt.Color;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -11,6 +12,8 @@ public class MyJTSGeometry implements Cloneable{
 	
 	
 	public Geometry geometry;
+	
+	public IAgent agent;
 	
 	public float z_layer;
 	
@@ -34,8 +37,9 @@ public class MyJTSGeometry implements Cloneable{
 	
 	public GamaPoint offSet;
 	
-	public MyJTSGeometry(Geometry geometry,float z_layer,Color color,float alpha,String type){
+	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,Color color,float alpha,String type){
 		this.geometry = geometry;
+		this.agent = agent;
 		this.z_layer=z_layer;
 		this.color = color;
 		this.alpha = alpha;
@@ -49,8 +53,9 @@ public class MyJTSGeometry implements Cloneable{
 		this.offSet = new GamaPoint(0,0); 
 	}
 	
-	public MyJTSGeometry(Geometry geometry,float z_layer,Color color,float alpha,Boolean fill, Color border,Boolean isTextured,int angle,float height,GamaPoint offSet ){
+	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,Color color,float alpha,Boolean fill, Color border,Boolean isTextured,int angle,float height,GamaPoint offSet ){
 		this.geometry = geometry;
+		this.agent = agent;
 		this.z_layer=z_layer;
 		this.color = color;
 		this.alpha = alpha;
