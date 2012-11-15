@@ -44,7 +44,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		z = zz;
-		hasZ = true;
+		hasZ = !(z + "") .equals("NaN");
 	}
 
 	public GamaPoint(final Coordinate coord) {
@@ -117,7 +117,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		z = zz;
-		hasZ = true;
+		hasZ = !(z + "") .equals("NaN");
 	}
 
 	@Override
