@@ -998,6 +998,22 @@ public abstract class Spatial {
 			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
 		}
+		
+		@operator(value = { "points_exterior_ring" })
+		@doc(value = "A list of points of the exterior ring of the operand-geometry distant from each other to the float right-operand .", examples = { " square(5) points_exterior_ring(2) --: a list of points belonging to the exterior ring of the square distant from each other of 2." }, see = {
+			"closest_points_with", "farthest_point_to", "points_at" })
+		
+		public static GamaList primLocExteriorRing(IShape geom, Double distance) {
+            GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+            if (geom.getInnerGeometry() instanceof GeometryCollection)
+            {
+                    for (int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++) {
+                            locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry().getGeometryN(i), distance));
+                    }
+            } else 
+                    locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry(), distance));
+            return locs;
+    }
 
 		@operator(value = { "points_at" }, content_type = IType.POINT)
 		@doc(value = "A list of left-operand number of points located at a the right-operand distance to the agent location.", examples = { "3 points_at(20.0) --: returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location" }, see = {

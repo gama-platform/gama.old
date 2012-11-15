@@ -29,9 +29,7 @@ import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulator;
 import com.vividsolutions.jts.triangulate.ConstraintVertex;
 import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
 import com.vividsolutions.jts.triangulate.Segment;
@@ -401,5 +399,57 @@ public class GeometryUtils {
 
 		return POLYGON;
 	}
-
+	
+	public static GamaList<GamaPoint> locExteriorRing(Geometry geom, Double distance) {
+		GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+		if (geom instanceof Point)
+		{
+			locs.add(new GamaPoint(geom.getCoordinate()));
+		}
+		else if (geom instanceof LineString)
+		{
+			double dist_cur = 0;
+			int nbSp = geom.getNumPoints();
+			Coordinate[] coordsSimp = geom.getCoordinates();
+			boolean same = false;
+			double x_t = 0,y_t=0,x_s=0,y_s=0;
+			for ( int i = 0; i < nbSp-1; i++ ) {
+				if (!same) {
+					Coordinate s = coordsSimp[i];
+					Coordinate t = coordsSimp[i+1];
+					x_t = t.x;
+					y_t = t.y;
+					x_s = s.x;
+					y_s = s.y;
+				} else {
+					i = i-1;
+				}
+				double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
+				if ( dist_cur < dist ) {
+					double ratio = dist_cur / dist;
+					x_s = x_s + ratio * (x_t - x_s);
+					y_s = y_s + ratio * (y_t - y_s);
+					locs.add(new GamaPoint(x_s,y_s));
+					dist_cur = distance;
+					same=true;
+				} else if ( dist_cur > dist ) {
+					dist_cur = dist_cur - dist;
+					same=false;
+				} else {
+					locs.add(new GamaPoint(x_t,y_t));
+					dist_cur = distance;
+					same=false;
+				}
+			}
+		}
+		else if (geom instanceof Polygon)
+		{
+			Polygon poly = (Polygon)geom;
+			locs.addAll(locExteriorRing(poly.getExteriorRing(), distance));
+			for (int i = 0; i < poly.getNumInteriorRing(); i++) {
+				locs.addAll(locExteriorRing(poly.getInteriorRingN(i), distance));
+			}
+		}
+		return locs;
+	}
 }

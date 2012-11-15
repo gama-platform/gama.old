@@ -341,6 +341,7 @@ public abstract class AbstractTopology implements ITopology {
 	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
 		final boolean covered) {
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
+		if (source == null)  { return GamaList.EMPTY_LIST; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
 		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
 		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
