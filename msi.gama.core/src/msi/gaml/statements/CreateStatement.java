@@ -82,6 +82,9 @@ import com.vividsolutions.jts.geom.Geometry;
  * macro-species.
  * The newly created agent(s) will take the macro-agent of invoking agent's macro-agent as its/their
  * macro-agent.
+ * 
+ * Creation of agents from CSV files: create toto from: "toto.csv" header: true with:[att1::read("NAME"), att2::read("TYPE")];  
+ * or, without header: create toto from: "toto.csv"with:[att1::read(0), att2::read(1)]; //with the read(int), the index of the column.  
  */
 @symbol(name = IKeyword.CREATE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
