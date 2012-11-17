@@ -40,15 +40,15 @@ import msi.gaml.operators.Files;
 public class GamaFileType extends GamaType<IGamaFile> {
 
 	/** Constant field textSuffixes. */
-	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data",
+	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data",".csv",
 		".text", ".tsv", ".asc");
 
-	private static final String csvSuffix = ".csv";
+	//private static final String csvSuffix = ".csv";
 	private static final String shpSuffix = ".shp";
 	// To be used later, to load geometries ?
 	private static final String propertiesSuffix = ".properties";
 	/** Constant field imageSuffixes. */
-	private static final List<String> imageSuffixes = Arrays.asList(".pgm", ".tif", ".csv", ".tiff",
+	private static final List<String> imageSuffixes = Arrays.asList(".pgm", ".tif",  ".tiff",
 		".jpg", ".jpeg", ".png", ".gif", ".pict", ".bmp");
 
 	/** Constant field pgmSuffix. */
@@ -90,7 +90,7 @@ public class GamaFileType extends GamaType<IGamaFile> {
 		return false;
 	}
 
-	@operator(value = "is_csv")
+	/*@operator(value = "is_csv")
 	@doc(
 		value =	"the operator tests whether the operand represents the name of a supported csv file",
 		comment = "cf. file type definition for supported (espacially image) file extensions.",
@@ -101,7 +101,7 @@ public class GamaFileType extends GamaType<IGamaFile> {
 		see = {"is_text", "is_properties", "is_shape", "is_image"})	
 	public static Boolean isCSVFile(final String f) {
 		return f.toLowerCase().contains(csvSuffix);
-	}
+	}*/
 
 	@operator(value = "is_properties")
 	@doc(

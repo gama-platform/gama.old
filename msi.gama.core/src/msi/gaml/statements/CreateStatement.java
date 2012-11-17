@@ -246,7 +246,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 							.getPath();
 					if (GamaFileType.isShape(fileStr)) {
 						createAgentsFromGIS(scope,agents, thePopulation, numberOfAgents);
-					} else if (GamaFileType.isCSVFile(fileStr)) {
+					} else if (GamaFileType.isTextFile(fileStr)) {
 						createAgentsFromCSV(scope,agents, thePopulation, numberOfAgents, fileStr, headerExp == null ? false : Cast.asBool(scope, headerExp.value(scope)));
 					}
 				} catch (GamaRuntimeException e) {

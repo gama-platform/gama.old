@@ -69,8 +69,10 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 
 	public static IMatrix from(final String string, final ILocation preferredSize)
 		throws GamaRuntimeException {
+		
 		try {
-			final BufferedReader in = new BufferedReader(new StringReader(string));
+			StringReader sr = new StringReader(string);
+			final BufferedReader in = new BufferedReader(sr);
 			final GamaList<String[]> allLines = new GamaList();
 			String[] splitStr;
 			String str;
@@ -84,6 +86,7 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 				}
 				str = in.readLine();
 			}
+			sr.close();
 			in.close();
 			int columnSize, lineSize;
 			if ( preferredSize == null ) {

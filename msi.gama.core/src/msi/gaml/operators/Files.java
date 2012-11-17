@@ -68,7 +68,7 @@ public class Files {
 		see = {"folder", "new_folder"})
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
-		if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
+		//if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
