@@ -66,9 +66,12 @@ public class BatchExecutor {
 		return coreThreadSize;
 	}
 	
-	public static double submitExperiment(final String path, final String inpDir, final String outDir){
+	public static double submitExperiment(final String path, 
+											final String inpDir, 
+												final String outDir,
+												final int numberCore){
 		String newOutDir = BatchExecutor.mkDir(outDir);
-		BatchExecutor batchExecutor = new BatchExecutor();
+		BatchExecutor batchExecutor = new BatchExecutor(numberCore);
 		List<String> listInputs = BatchExecutor.listDir(inpDir);
 		
 		double beginTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
@@ -198,7 +201,7 @@ public class BatchExecutor {
 		String inpDir = "/Users/langthang/Desktop/MonGAMA/eclipse/input";
 		String outDir = "/Users/langthang/Desktop/MonGAMA/eclipse/output";
 		//String outDir = "out";
-		BatchExecutor.submitExperiment(path, inpDir, outDir);
+		BatchExecutor.submitExperiment(path, inpDir, outDir, 4);
 		
 	}
 
