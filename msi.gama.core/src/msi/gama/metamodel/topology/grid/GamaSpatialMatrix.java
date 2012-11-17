@@ -92,8 +92,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	private ISpecies cellSpecies;
 	private IAgentFilter cellFilter;
 
-	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
-		final boolean usesVN, final boolean isTorus) throws GamaRuntimeException {
+	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,final boolean isTorus,
+		final boolean usesVN) throws GamaRuntimeException {
 		super(cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
