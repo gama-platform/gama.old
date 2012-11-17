@@ -18,6 +18,8 @@
  */
 package msi.gama.metamodel.topology.continuous;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -126,4 +128,11 @@ public class ContinuousTopology extends AbstractTopology {
 		return g1.euclidianDistanceTo(g2);
 	}
 
+	@Override
+	public boolean isTorus() {
+		// TODO Auto-generated method stub
+		return isTorus;
+	}
+
+	
 }

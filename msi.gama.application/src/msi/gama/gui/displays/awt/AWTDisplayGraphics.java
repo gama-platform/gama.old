@@ -397,13 +397,17 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final IScope scope,final Geometry geometry, final Color color, final boolean fill,
+	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color, final boolean fill,
 		final Color border, final Integer angle) {
+		Geometry geom = null;
+		if (scope.getAgentScope().getTopology().isTorus()) {
+			geom = scope.getAgentScope().getTopology().returnToroidalGeom(geometry);
+		} else {
+			geom = geometry;
+		}
 		boolean f =
-			geometry instanceof LineString || geometry instanceof MultiLineString ? false : fill;
-//		boolean b =
-//			geometry instanceof LineString || geometry instanceof MultiLineString ? false : border;
-		return drawShape(color, sw.toShape(geometry), f, border, angle);
+			geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
+		return drawShape(color, sw.toShape(geom), f, border, angle);
 	}
 
 	/**

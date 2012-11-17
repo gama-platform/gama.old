@@ -18,6 +18,12 @@
  */
 package msi.gama.metamodel.topology;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -27,9 +33,14 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
+import msi.gaml.operators.Spatial.Creation;
+import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.*;
+
+import com.jmex.model.collada.ColladaImporter;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 public abstract class AbstractTopology implements ITopology {
 
@@ -40,7 +51,13 @@ public abstract class AbstractTopology implements ITopology {
 	protected double environmentWidth, environmentHeight;
 	protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
 	protected double[] steps;
-	protected Boolean isTorus = false; 
+	protected Boolean isTorus = false;
+	
+	// VARIABLES USED IN TORUS ENVIRONMENT 
+	protected GamaList<Geometry> virtual_environments;
+	protected double[] adjustedXVector;
+	protected double[] adjustedYVector;
+	
 	
 	public AbstractTopology(final IScope scope, final IShape env, final Boolean isTorus) {
 		environment = env;
@@ -49,8 +66,202 @@ public abstract class AbstractTopology implements ITopology {
 		spatialIndex =
 			scope.getSimulationScope().getModel().getModelEnvironment().getSpatialIndex();
 		this.isTorus = isTorus;
+		if (isTorus()){
+			createVirtualEnvironments();
+		}
 	}
+	
+	@Override
+	public Geometry returnToroidalGeom(Geometry geom){
+		List<Geometry> geoms = new GamaList<Geometry>();
+		int cnt = 0;
+		geoms.add(geom.intersection(this.getEnvironment().getGeometry().getInnerGeometry()));
+		for (Geometry geomEnv :virtual_environments) {
+			Geometry inter;
+			try {
+				inter = geomEnv.intersection(geom);
+			} catch (TopologyException e) {
+				inter = geomEnv.buffer(0.1).intersection(geom.buffer(0.1));
+			}
+			if (!inter.isEmpty()) {
+				AffineTransformation at = new AffineTransformation();
+				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
+				geoms.add(at.transform(inter));
+			}
+			cnt++;
+		}
+		return GeometryUtils.factory.buildGeometry(geoms);
+	}
+	
+	protected void createVirtualEnvironments()
+	{
+		virtual_environments = new GamaList<Geometry>();
+		adjustedXVector = new double[8];
+		adjustedYVector = new double[8];
+		Envelope environmentEnvelope = environment.getEnvelope();
 
+		// shape host has not yet been initialized
+		if ( environmentEnvelope == null ) {
+			steps = new double[] {};
+			return;
+		}
+		environmentWidth = environmentEnvelope.getWidth();
+		environmentHeight = environmentEnvelope.getHeight();
+		environmentMinX = environmentEnvelope.getMinX();
+		environmentMinY = environmentEnvelope.getMinY();
+		environmentMaxX = environmentEnvelope.getMaxX();
+		environmentMaxY = environmentEnvelope.getMaxY();
+		
+		
+		double width, height, minX, minY, maxX, maxY;
+		width = environmentWidth;
+		height = environmentHeight;
+		
+		// NORTH virtual environment
+		minX = environmentMinX;
+		minY = environmentMinY - environmentHeight;
+		maxX = environmentMaxX;
+		maxY = environmentMaxY - environmentHeight;
+		adjustedXVector[0] = 0.0;
+		adjustedYVector[0] = environmentHeight;
+		
+		Coordinate[] coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		Geometry g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// NORTH-WEST virtual environment
+		minX = environmentMinX - environmentWidth;
+		minY = environmentMinY - environmentHeight;
+		maxX = environmentMaxX - environmentWidth;
+		maxY = environmentMaxY - environmentHeight;
+		adjustedXVector[1] = environmentWidth;
+		adjustedYVector[1] = environmentHeight;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// WEST virtual environment
+		minX = environmentMinX - environmentWidth;
+		minY = environmentMinY;
+		maxX = environmentMaxX - environmentWidth;
+		maxY = environmentMaxY;
+		adjustedXVector[2] = environmentWidth;
+		adjustedYVector[2] = 0.0;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// SOUTH-WEST virtual environment
+		minX = environmentMinX - environmentWidth;
+		minY = environmentMinY + environmentHeight;
+		maxX = environmentMaxX - environmentWidth;
+		maxY = environmentMaxY + environmentHeight;
+		adjustedXVector[3] = environmentWidth;
+		adjustedYVector[3] = - environmentHeight;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// SOUTH virtual environment
+		minX = environmentMinX;
+		minY = environmentMinY + environmentHeight;
+		maxX = environmentMaxX;
+		maxY = environmentMaxY + environmentHeight;
+		adjustedXVector[4] = 0.0;
+		adjustedYVector[4] = - environmentHeight;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// SOUTH-EAST virtual environment
+		minX = environmentMinX + environmentWidth;
+		minY = environmentMinY + environmentHeight;
+		maxX = environmentMaxX + environmentWidth;
+		maxY = environmentMaxY + environmentHeight;
+		adjustedXVector[5] = - environmentWidth;
+		adjustedYVector[5] = - environmentHeight;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// EAST virtual environment
+		minX = environmentMinX + environmentWidth;
+		minY = environmentMinY;
+		maxX = environmentMaxX + environmentWidth;
+		maxY = environmentMaxY;
+		adjustedXVector[6] = - environmentWidth;
+		adjustedYVector[6] = 0.0;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+		
+		// NORTH-EAST virtual environment
+		minX = environmentMinX + environmentWidth;
+		minY = environmentMinY - environmentHeight;
+		maxX = environmentMaxX + environmentWidth;
+		maxY = environmentMaxY - environmentHeight;
+		adjustedXVector[7] = - environmentWidth;
+		adjustedYVector[7] = environmentHeight;
+		
+		coordinates = new Coordinate[5];
+		coordinates[0] = new Coordinate(minX, minY);
+		coordinates[1] = new Coordinate(maxX, minY);
+		coordinates[2] = new Coordinate(maxX, maxY);
+		coordinates[3] = new Coordinate(minX, maxY);
+		coordinates[4] = (Coordinate) coordinates[0].clone();
+		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
+		g = GeometryUtils.getFactory().createPolygon(geom, null);
+		virtual_environments.add(g);
+	}
+	
 	protected boolean canCreateAgents() {
 		return false;
 	}
@@ -156,23 +367,26 @@ public abstract class AbstractTopology implements ITopology {
 		// See if rounding errors of double do not interfere with the computation.
 		// In which case, the use of Maths.approxEquals(value1, value2, tolerance) could help.
 
-		if ( envWidth == 0.0 ) {
-			xx = xx != envMinX ? nullIfOutside ? nil : envMinX : xx;
-		} else if ( xx < envMinX /* && xx > hostMinX - precision */) {
-			xx = /* !isTorus ? */nullIfOutside ? nil : envMinX /* : xx % envWidth + envWidth */;
-		} else if ( xx >= envMaxX /*- precision*/) {
-			xx = /* !isTorus ? */nullIfOutside ? nil : envMaxX /* : xx % envWidth */;
-		}
-		if ( xx == nil ) { return null; }
-		if ( envHeight == 0.0 ) {
-			yy = yy != envMinY ? nullIfOutside ? nil : envMinY : yy;
-		} else if ( yy < envMinY/* && yy > hostMinY - precision */) {
-			yy = /* !isTorus ? */nullIfOutside ? nil : envMinY /* : yy % envHeight + envHeight */;
-		} else if ( yy >= envMaxY /*- precision*/) {
-			yy = /* !isTorus ? */nullIfOutside ? nil : envMaxY /* : yy % envHeight */;
-		}
-		if ( yy == nil ) { return null; }
-		point.setLocation(xx, yy, point.getZ());
+//		if ( envWidth == 0.0 ) {
+//			xx = xx != envMinX ? nullIfOutside ? nil : envMinX : xx;
+//		} else if ( xx < envMinX /* && xx > hostMinX - precision */) {
+//			xx = /* !isTorus ? */nullIfOutside ? nil : envMinX /* : xx % envWidth + envWidth */;
+//		} else if ( xx >= envMaxX /*- precision*/) {
+//			xx = /* !isTorus ? */nullIfOutside ? nil : envMaxX /* : xx % envWidth */;
+//		}
+//		if ( xx == nil ) { return null; }
+//		if ( envHeight == 0.0 ) {
+//			yy = yy != envMinY ? nullIfOutside ? nil : envMinY : yy;
+//		} else if ( yy < envMinY/* && yy > hostMinY - precision */) {
+//			yy = /* !isTorus ? */nullIfOutside ? nil : envMinY /* : yy % envHeight + envHeight */;
+//		} else if ( yy >= envMaxY /*- precision*/) {
+//			yy = /* !isTorus ? */nullIfOutside ? nil : envMaxY /* : yy % envHeight */;
+//		}
+//		if ( yy == nil ) { return null; }
+//		point.setLocation(xx, yy, point.getZ());
+		
+		
+		
 		if ( environment.getGeometry().covers(point) ) { return point; }
 		return null;
 	}
@@ -359,5 +573,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		return result;
 	}
+	
+	
 
 }

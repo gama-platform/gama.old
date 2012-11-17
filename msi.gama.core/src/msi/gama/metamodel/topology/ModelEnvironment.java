@@ -60,8 +60,9 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BOUNDS, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.BOUNDS)
 public class ModelEnvironment extends Symbol implements IEnvironment {
 
-	final IExpression boundsExp, widthExp, heightExp;
+	final IExpression boundsExp, widthExp, heightExp, torusExp;
 	private double width = 100d, height = 100d;
+	private boolean isTorus = false;
 
 	private ISpatialIndex quadTree;
 
@@ -72,6 +73,8 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		boundsExp = getFacet(IKeyword.BOUNDS);
 		widthExp = getFacet(IKeyword.WIDTH);
 		heightExp = getFacet(IKeyword.HEIGHT);
+		torusExp = getFacet(IKeyword.TORUS);
+		
 	}
 
 	public Envelope loadAscFile(final String boundsStr) throws IOException {
@@ -205,6 +208,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
+		Boolean torus = (Boolean) (torusExp == null ? null : torusExp.value(scope));
+		if (torus != null) isTorus =torus;
+		
 		Object bounds = boundsExp == null ? null : boundsExp.value(scope);
 		//begin ---------------------------------------------------------------------------------------------
 		//Thai.truongminh@gmail.com 
@@ -390,6 +396,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		quadTree = new GamaQuadTree(e);
 	}
 
+	
 	@Override
 	public ISpatialIndex getSpatialIndex() {
 		return quadTree;
@@ -413,7 +420,13 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		if ( quadTree == null ) { return; }
 		quadTree.drawOn(g2, width, height);
 	}
+
+	public boolean isTorus() {
+		return isTorus;
+	}
 	
 
 
 }
+
+

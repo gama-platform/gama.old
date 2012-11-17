@@ -296,7 +296,9 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 			topology = new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN);
 		} else {
-			topology = new ContinuousTopology(scope, this.getHost(), false );
+			IExpression exp = species.getFacet(IKeyword.TORUS);
+			 boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+			topology = new ContinuousTopology(scope, this.getHost(),this.getHost().isTorus() );
 		}
 	}
 

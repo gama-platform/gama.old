@@ -40,5 +40,7 @@ public interface IEnvironment {
 	public abstract ISpatialIndex getSpatialIndex();
 
 	public void displaySpatialIndexOn(Graphics2D g2, int width, int height);
+	
+	public boolean isTorus() ;
 
 }

@@ -273,5 +273,9 @@ public class GraphTopology extends AbstractTopology {
 		return result;
 	}
 	
-	
+	@Override
+	public boolean isTorus() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -30,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Written by drogoul Modified on 4 juil. 2011
@@ -53,6 +54,7 @@ public interface ITopology extends IValue {
 		final ILocation previousLoc, final Envelope previousEnv);
 
 	public abstract void removeAgent(final IAgent agent);
+	public abstract Geometry returnToroidalGeom(final Geometry geom);
 
 	public abstract IAgent getAgentClosestTo(final IShape source, IAgentFilter filter);
 
@@ -66,6 +68,8 @@ public interface ITopology extends IValue {
 
 	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
 		boolean covered);
+	
+	public abstract boolean isTorus();
 
 	/**
 	 * @throws GamaRuntimeException

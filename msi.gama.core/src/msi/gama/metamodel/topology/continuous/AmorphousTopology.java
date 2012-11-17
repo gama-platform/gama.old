@@ -29,12 +29,13 @@ import msi.gama.util.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * The class ExpandableTopology.
  * 
  * @author drogoul
- * @since 2 déc. 2011
+ * @since 2 déc. 2011  
  * 
  */
 public class AmorphousTopology implements ITopology {
@@ -281,6 +282,18 @@ public class AmorphousTopology implements ITopology {
 	public IPath pathBetween(final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source, target));
+	}
+
+	@Override
+	public Geometry returnToroidalGeom(Geometry geom) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isTorus() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -613,4 +613,8 @@ public abstract class AbstractAgent implements IAgent {
 	public IAgent duplicate() {
 		return this;
 	}
+	
+	public boolean isTorus() {
+		return false;
+	}
 }

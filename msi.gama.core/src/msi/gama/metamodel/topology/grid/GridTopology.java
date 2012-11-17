@@ -208,5 +208,11 @@ public class GridTopology extends AbstractTopology {
 		final IAgentFilter filter) throws GamaRuntimeException {
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
 	}
+	
+	@Override
+	public boolean isTorus() {
+		// TODO Auto-generated method stub
+		return isTorus;
+	}
 
 }

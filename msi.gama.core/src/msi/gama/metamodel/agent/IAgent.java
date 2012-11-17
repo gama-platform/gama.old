@@ -59,6 +59,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract ISpecies getSpecies();
 
 	public IPopulation getPopulation();
+	 
+	public boolean isTorus();
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
