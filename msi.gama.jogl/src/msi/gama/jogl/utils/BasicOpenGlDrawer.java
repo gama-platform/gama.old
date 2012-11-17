@@ -73,12 +73,14 @@ public class BasicOpenGlDrawer {
 							true);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
+				
 				myJTSDrawer.DrawMultiLineString(
 						(MultiLineString) geometry.geometry, geometry.z_layer,
 						geometry.color, geometry.alpha, geometry.height);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "LineString") {
+				
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPlan((LineString) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,

@@ -47,33 +47,35 @@ public class MyListener implements KeyListener, MouseListener,
 	private JOGLAWTGLRenderer myRenderer;
 
 	//To handle mouse event	
-	private int lastx, lasty;
+	int lastxPressed;
+	int lastyPressed;
 	
 	private boolean isMacOS = false;
 	
 	//picking
-	public boolean isPressed = false;
-	private final Point mousePosition;
+	public boolean isPickedPressed = false;
+	public final Point mousePosition;
 	private final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
+	
+	//ROI Drawing
+	public boolean enableROIDrawing=false;
 
 	public MyListener(Camera camera) {
 		myCamera = camera;
-		detectMacOS();
-		
-		mousePosition = new Point();
+		detectMacOS();	
+		mousePosition = new Point(0,0);
 	}
 
 	public MyListener(Camera camera, JOGLAWTGLRenderer renderer){
 		myCamera = camera;
 		myRenderer = renderer;
 		detectMacOS();
-		
-		mousePosition = new Point();
+		mousePosition = new Point(0,0);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
-		// TODO Auto-generated method stub
+		
 		if ( isArcBallOn(mouseEvent) && myCamera.isModelCentered) {
 			if (SwingUtilities.isRightMouseButton(mouseEvent)) {
 				myRenderer.reset();
@@ -100,29 +102,42 @@ public class MyListener implements KeyListener, MouseListener,
 	public void mousePressed(MouseEvent mouseEvent) {
 		//Arcball
 		
-		if ( (isArcBallOn(mouseEvent)) && myCamera.isModelCentered) {
-				//Arcball is not working with picking.
-				if(!myRenderer.displaySurface.Picking){
-					if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
-						myRenderer.startDrag(mouseEvent.getPoint());
-					}
+	
+		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.SelectRectangle) {
+			//Arcball is not working with picking.
+			if(!myRenderer.displaySurface.Picking){
+				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+					myRenderer.startDrag(mouseEvent.getPoint());
 				}
-			} else{
-				lastx = mouseEvent.getX();
-				lasty = mouseEvent.getY();
-			}	
+			}
+			
+			enableROIDrawing =true;
+		} 
+		
+		lastxPressed = mouseEvent.getX();
+		lastyPressed = mouseEvent.getY();
+			
 		
 		//Picking mode
-		if(myRenderer.displaySurface.Picking){		
-		isPressed = true;
-		mousePosition.x = mouseEvent.getX();
-		mousePosition.y = mouseEvent.getY();
+		if(myRenderer.displaySurface.Picking){
+			//Activate Picking when press and right click and if in Picking mode
+			if(SwingUtilities.isRightMouseButton(mouseEvent)){
+				isPickedPressed = true;	
+			}
+			mousePosition.x = mouseEvent.getX();
+			mousePosition.y = mouseEvent.getY();
+			
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
+		
+		if (myRenderer.displaySurface.SelectRectangle){
+			enableROIDrawing = false;
+		}
+		
 
 	}
 
@@ -131,21 +146,23 @@ public class MyListener implements KeyListener, MouseListener,
 
 		
 		
-		if ( isArcBallOn(mouseEvent) && myCamera.isModelCentered) {
+		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.SelectRectangle){
 			if(!myRenderer.displaySurface.Picking){
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 					myRenderer.drag(mouseEvent.getPoint());
+					mousePosition.x = mouseEvent.getX();
+					mousePosition.y = mouseEvent.getY();
 				}
 			}
 		} else {
-			int diffx = mouseEvent.getX() - lastx; // check the difference between the
+			int diffx = mouseEvent.getX() - lastxPressed; // check the difference between the
 												// current x and the last x
 												// position
-			int diffy = mouseEvent.getY() - lasty; // check the difference between the
+			int diffy = mouseEvent.getY() - lastyPressed; // check the difference between the
 												// current y and the last y
 												// position
-			lastx = mouseEvent.getX(); // set lastx to the current x position
-			lasty = mouseEvent.getY(); // set lasty to the current y position
+			lastxPressed = mouseEvent.getX(); // set lastx to the current x position
+			lastyPressed = mouseEvent.getY(); // set lastyPressed to the current y position
 			
 
 			double speed = 0.035;
@@ -301,7 +318,7 @@ public class MyListener implements KeyListener, MouseListener,
 	 * @return if returned value is true that mean the picking is enabled
 	 */
 	public boolean beginPicking(final GL gl) {
-		if ( !isPressed ) { return false; }
+		if ( !isPickedPressed ) { return false; }
 		GLU glu = new GLU();
 		
 		// 1. Selecting buffer
@@ -356,8 +373,8 @@ public class MyListener implements KeyListener, MouseListener,
 	 * @return name of selected object
 	 */
 	public int endPicking(final GL gl) {
-		if ( !isPressed ) { return -1; }
-		isPressed = false;// no further iterations
+		if ( !isPickedPressed ) { return -1; }
+		isPickedPressed = false;// no further iterations
 		int selectedIndex;
 
 		// 5. When you back to Render mode gl.glRenderMode() methods return number of hits

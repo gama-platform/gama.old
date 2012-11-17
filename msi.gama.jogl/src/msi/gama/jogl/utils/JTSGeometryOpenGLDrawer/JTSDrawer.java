@@ -522,7 +522,9 @@ public class JTSDrawer {
 
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 				(float) c.getBlue() / 255, alpha);
-		int numPoints = line.getNumPoints();
+		
+		int numPoints  = line.getNumPoints();
+		
 		myGl.glLineWidth(size);
 
 		// Add z value (if the whole line as a z value (add_z)
@@ -535,7 +537,7 @@ public class JTSDrawer {
 		// set thanks to add_z_pt but if
 		myGl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
-
+			
 			if (String.valueOf(line.getPointN(j).getCoordinate().z).equals(
 					"NaN") == true) {
 				myGl.glVertex3f((float) ((line.getPointN(j).getX())), yFlag
@@ -553,7 +555,7 @@ public class JTSDrawer {
 			} else {
 				myGl.glVertex3f((float) ((line.getPointN(j + 1).getX())), yFlag
 						* (float) ((line.getPointN(j + 1).getY())), z
-						+ (float) line.getPointN(j = 1).getCoordinate().z);
+						+ (float) line.getPointN(j + 1).getCoordinate().z);
 			}
 
 		}

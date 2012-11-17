@@ -87,9 +87,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
-	// Event Listener
-	public MyListener myListener;
-
 	public JOGLAWTGLRenderer myGLRender;
 
 	// Use to toggle the 3D view.
@@ -100,6 +97,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	//Use to toggle the Arcball view
 	public boolean Arcball= false;
+	
+	//Use to toggle the selectRectangle tool
+	public boolean SelectRectangle= false;
 	
 	//Use to draw .shp file
 	final String[] shapeFileName = new String[1];
@@ -359,27 +359,47 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		return dim;
 	}
 
-	private void selectAgents(final int x, final int y) {
+	/*public void selectAgents(final int x, final int y) {
 		agentsMenu.removeAll();
 		agentsMenu.setLabel("Layers");
 		int xc = x - origin.x;
 		int yc = y - origin.y;
-		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
-		for ( ILayer display : displays ) {
-			java.awt.Menu m = new java.awt.Menu(display.getName());
-			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
+		
+		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		for ( ILayer layer : layers ) {
+			java.awt.Menu m = new java.awt.Menu(layer.getName());
+			Set<IAgent> agents = layer.collectAgentsAt(xc, yc);
 			if ( !agents.isEmpty() ) {
 				m.addSeparator();
 
 				for ( IAgent agent : agents ) {
 					SelectedAgent sa = new SelectedAgent();
 					sa.macro = agent;
-					sa.buildMenuItems(m, display);
+					sa.buildMenuItems(m, layer);
 				}
 			}
 			agentsMenu.add(m);
 		}
 		agentsMenu.show(this, x, y);
+	}*/
+	
+	public void selectAgents(final int x, final int y,final IAgent agent, final int layerId) {
+
+		agentsMenu.removeAll();
+		agentsMenu.setLabel("Layers");
+
+		java.awt.Menu m = new java.awt.Menu(manager.getItems().get(layerId).getName());
+		SelectedAgent sa = new SelectedAgent();
+		sa.macro = agent;
+		sa.buildMenuItems(m, manager.getItems().get(layerId));
+			
+		agentsMenu.add(m);
+	    agentsMenu.show(this, myGLRender.myListener.mousePosition.x, myGLRender.myListener.mousePosition.y);
+
+    }
+	
+	public void showAgentMonitor(IAgent agent){
+		
 	}
 
 	@Override
@@ -611,6 +631,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void toggleArcball() {
 		Arcball = !Arcball;
+	/*	if(Arcball == true){
+		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
+		}*/
+	}
+	
+	@Override
+	public void toggleSelectRectangle() {
+    SelectRectangle = !SelectRectangle;
+		
 	/*	if(Arcball == true){
 		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
 		}*/

@@ -375,6 +375,26 @@ public class MyGLToyDrawer {
         glu.gluDeleteQuadric(earth);
 	}
 	
+	
+	public void DrawROI(GL gl, float x1, float y1, float x2, float y2){
+		
+		gl.glBegin(GL.GL_LINES);
+		
+		gl.glVertex3f(x1, -y1 ,0.0f);
+		gl.glVertex3f(x2, -y1 ,0.0f);
+		
+		gl.glVertex3f(x2, -y1 ,0.0f);
+		gl.glVertex3f(x2, -y2 ,0.0f);
+		
+	    gl.glVertex3f(x2, -y2 ,0.0f);
+		gl.glVertex3f(x1, -y2 ,0.0f);
+		
+		gl.glVertex3f(x1, -y2 ,0.0f);
+		gl.glVertex3f(x1, -y1 ,0.0f);
+		
+		gl.glEnd();
+		
+	}
 	//textured shape
 	
 	

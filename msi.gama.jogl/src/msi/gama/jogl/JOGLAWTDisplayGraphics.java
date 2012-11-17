@@ -34,7 +34,9 @@ import msi.gama.jogl.utils.GraphicDataType.MyString;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.types.GamaGeometryType;
 
@@ -45,6 +47,7 @@ import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
+
 
 /**
  * 
@@ -104,6 +107,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 	//Is the layer static data or dynamic geometry that has to be redrawn every iteration
 	public boolean currentLayerIsStatic= false;
+	
+	public int currentLayerId = 0;
 
 	// OpenGL list ID
 	private int listID = -1;
@@ -136,6 +141,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	//Picked (to trigg when a new object has been picked)
 	 int currentPicked = -1;
      public int pickedObjectIndex = -1;
+     
 	
 
 	/**
@@ -367,14 +373,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final boolean fill, final Color border, final Integer angle) {
 		// Check if the geometry has a height value (3D Shape or Volume)
 
+		System.out.println("drawGeometry" + geometry.getGeometryType());
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 
 		if (geometry.getUserData() != null) {
 			float height = new Float(geometry.getUserData().toString());
-			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, color,
+			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
 					fill, border, false, angle, height,offSet);
 		} else {
-			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, color,
+			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
 					fill, border, false, angle, 0,offSet);
 		}
 		// FIXME: Need to remove the use of sw.
@@ -390,7 +397,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(stepX, 0),
 					new GamaPoint(stepX, image.getWidth())).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,null, currentZLayer, lineColor,
+			this.AddJTSGeometryInJTSGeometries(g,null, currentZLayer,currentLayerId, lineColor,
 					true, null, false, 0, 0,offSet);
 		}
 
@@ -399,7 +406,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			;
 			Geometry g = GamaGeometryType.buildLine(new GamaPoint(0, stepY),
 					new GamaPoint(image.getHeight(), stepY)).getInnerGeometry();
-			this.AddJTSGeometryInJTSGeometries(g,null, currentZLayer, lineColor,
+			this.AddJTSGeometryInJTSGeometries(g,null, currentZLayer,currentLayerId, lineColor,
 					true, null, false, 0, 0,offSet);
 		}
 
@@ -488,7 +495,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2,
 				new GamaPoint(curX + (double) curWidth / 2, curY
 						+ (double) curWidth / 2)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, scope.getAgentScope(), currentZLayer, c, fill, border, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g, scope.getAgentScope(), currentZLayer,currentLayerId, c, fill, border, false, 0,
 				height,offSet);
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return oval.getBounds2D();
@@ -501,7 +508,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// FIXME: check if size is curWidth or curWidth/2
 		Geometry g = GamaGeometryType.buildTriangle(curWidth,
 				new GamaPoint(curX, curY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g, scope.getAgentScope(),currentZLayer, c, fill, border, false,
+		this.AddJTSGeometryInJTSGeometries(g, scope.getAgentScope(),currentZLayer,currentLayerId, c, fill, border, false,
 				angle, height,offSet);
 		Rectangle2D r = null;
 		return r;
@@ -523,7 +530,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY),
 				new GamaPoint(toX, toY)).getInnerGeometry();
-		this.AddJTSGeometryInJTSGeometries(g,null, currentZLayer, c, true, null, false, 0,
+		this.AddJTSGeometryInJTSGeometries(g,null,currentZLayer, currentLayerId, c, true, null, false, 0,
 				0,offSet);
 		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
 		return line.getBounds2D();
@@ -550,7 +557,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight,
 				new GamaPoint(curX, curY)).getInnerGeometry();
 
-		this.AddJTSGeometryInJTSGeometries(g,scope.getAgentScope(),  currentZLayer, c, fill, border, false,
+		this.AddJTSGeometryInJTSGeometries(g,scope.getAgentScope(),  currentZLayer,currentLayerId, c, fill, border, false,
 				angle, height,offSet);
 
 		rect.setFrame(curX, curY, curWidth, curHeight);
@@ -605,14 +612,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param height
 	 */
 	private void AddJTSGeometryInJTSGeometries(final Geometry geometry,final IAgent agent,
-			final float z_layer, final Color color, final boolean fill, final Color border, 
+			final float z_layer, final int currentLayerId,final Color color, final boolean fill, final Color border, 
 			final boolean isTextured, final Integer angle, final float height, GamaPoint offSet) {
 		MyJTSGeometry curJTSGeometry;
 		if(angle!=null){
-		  curJTSGeometry  = new MyJTSGeometry(geometry,agent,z_layer,color,this.currentAlpha,fill,border,isTextured,angle,height,offSet);
+		  curJTSGeometry  = new MyJTSGeometry(geometry,agent,z_layer,currentLayerId,color,this.currentAlpha,fill,border,isTextured,angle,height,offSet);
 		}
 		else{
-	      curJTSGeometry = new MyJTSGeometry(geometry,agent,z_layer,color,this.currentAlpha,fill,border,isTextured,0,height,offSet);	
+	      curJTSGeometry = new MyJTSGeometry(geometry,agent,z_layer,currentLayerId,color,this.currentAlpha,fill,border,isTextured,0,height,offSet);	
 		}
 		
 		//Add the geometry either in the static list or in the dynamic one.
@@ -764,20 +771,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					MyJTSGeometry pickedGeometry = (MyJTSGeometry) curGeometry.clone();	
 					pickedGeometry.color=Color.red;
 					if(pickedGeometry.agent != null){
-	
-					    myGl.glColor3d(0, 0, 0);
-					    myGl.glWindowPos2d(2, 5);
-						//
-						glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, pickedGeometry.agent.getSpeciesName() + pickedGeometry.agent.getIndex());
-					    currentPicked=i;
-
-					    if(currentPicked !=  i){
-					      //Call Agent window inspector
-					    }   
 					}
 					else{
-						System.out.println("Picking null agent" );	
+						throw new GamaRuntimeException("Picking null agent" );	
 					}
+					
+					if(pickedGeometry.agent != null && currentPicked !=  i){
+					    	myGLRender.displaySurface.selectAgents(0,0,pickedGeometry.agent,pickedGeometry.layerId-1);
+					    currentPicked=i;
+					}
+					
+					
 					graphicsGLUtils.basicDrawer.DrawJTSGeometry(pickedGeometry);
         		}
 				else{
@@ -955,7 +959,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				new GamaPoint(envWidth / 2, envHeight / 2)).getInnerGeometry();
 
 		Color c = new Color(225, 225, 225);
-		MyJTSGeometry curGeometry = new MyJTSGeometry(g,null,-0.01f,c,1.0f,true,null,false,0,0.0f,offSet);
+		MyJTSGeometry curGeometry = new MyJTSGeometry(g,null,-0.01f,-1,c,1.0f,true,null,false,0,0.0f,offSet);
 		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
@@ -1077,6 +1081,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public void initLayers() {
+		currentLayerId=0;
 		currentZLayer = 0.0f;
 	}
 
@@ -1089,7 +1094,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public void newLayer(double zLayerValue,Boolean refresh) {
 		currentZLayer = (float) (maxEnvDim * zLayerValue);
-		
 
 		//If refresh: false -> draw static geometry -> currentLayerIsStatic=true
 		if(refresh != null){
@@ -1098,6 +1102,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		else{
 		currentLayerIsStatic=false;
 		}
+		currentLayerId++;
 	}
 	
 	@Override

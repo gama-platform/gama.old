@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -123,6 +124,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	//Handle Shape file
 	public ShapeFileReader myShapeFileReader;
 	private boolean updateEnvDim=false;
+	
+
 
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
@@ -130,8 +133,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera = new Camera();
 
 		myGLDrawer = new MyGLToyDrawer();
-		
-		
 
 		canvas = new GLCanvas();
 
@@ -319,6 +320,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
         this.DrawShapeFile();
         this.DrawCollada();
         gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+        
 
 		// GLUtil.InitializeLighting(gl,glu,((JOGLAWTDisplayGraphics)
 		// displaySurface.openGLGraphics).envWidth);
@@ -342,6 +344,76 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// the GLRenderer
 		// myGLDrawer.DrawTexturedDisplayList(gl,width);
 		gl.glPopMatrix();
+		
+		
+		/*if(this.displaySurface.SelectRectangle){
+        	if(myListener.enableROIDrawing){
+        	
+        	
+        	
+        		//int x = myListener.lastxPressed, y = myListener.lastyPressed;
+        		Point windowPressedPoint = new Point(myListener.lastxPressed, myListener.lastyPressed);
+        		Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
+        		
+        		Point windowmousePositionPoint = new Point(myListener.mousePosition.x, myListener.mousePosition.y);
+        		Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
+        		
+        		System.out.println("From"  + realPressedPoint.x +"," + realPressedPoint.y);
+        		System.out.println("To"  + realmousePositionPoint.x +"," + realmousePositionPoint.y);
+        		
+        		
+        		 //System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
+        		
+        		if (camera.isModelCentered) {
+    				gl.glTranslatef(
+    						-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+    						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2,
+    						0.0f); // translate right and into the screen
+    			}
+            
+            myGLDrawer.DrawROI(gl, realPressedPoint.x - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,-(realPressedPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2), 
+            		realmousePositionPoint.x - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,-(realmousePositionPoint.y- ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2));
+        	      	
+        	}
+        }*/
+	}
+	
+	public Point GetRealWorldPointFromWindowPoint(Point windowPoint){
+		
+		
+		int viewport[] = new int[4];
+    	double mvmatrix[] = new double[16];
+        double projmatrix[] = new double[16];
+        int realy = 0;// GL y coord pos
+        double wcoord[] = new double[4];// wx, wy, wz;// returned xyz coords
+        
+
+          int x = windowPoint.x, y = windowPoint.y;
+         
+              gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+              gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+              gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+              /* note viewport[3] is height of window in pixels */
+              realy = viewport[3] - (int) y - 1;
+
+              
+              FloatBuffer floatBuffer = FloatBuffer.allocate(1);
+              gl.glReadPixels( x, (int)realy, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT,floatBuffer);
+              float z = floatBuffer.get(0);
+
+              glu.gluUnProject((double) x, (double) realy, z, //
+                  mvmatrix, 0,
+                  projmatrix, 0,
+                  viewport, 0, 
+                  wcoord, 0);
+              /*System.out.println("World coords at z=" + z + "are (" //
+                                 + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
+                                 + ")");*/
+
+        gl.glFlush();
+		
+		Point realWorldPoint = new Point((int)wcoord[0],(int)wcoord[1]);
+		return realWorldPoint;
 	}
 
 	@Override
@@ -594,24 +666,27 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// add function to capture mouse event of ArcBall model
 	public void drag(Point mousePoint) {
-		Quat4f ThisQuat = new Quat4f();
-
-		arcBall.drag(mousePoint, ThisQuat); // Update End Vector And Get
-											// Rotation As Quaternion
-		synchronized (matrixLock) {
-			ThisRot.setRotation(ThisQuat); // Convert Quaternion Into Matrix3fT
-			ThisRot.mul(ThisRot, LastRot); // Accumulate Last Rotation Into This
-											// One
-		}
+	
+			Quat4f ThisQuat = new Quat4f();
+	
+			arcBall.drag(mousePoint, ThisQuat); // Update End Vector And Get
+												// Rotation As Quaternion
+			synchronized (matrixLock) {
+				ThisRot.setRotation(ThisQuat); // Convert Quaternion Into Matrix3fT
+				ThisRot.mul(ThisRot, LastRot); // Accumulate Last Rotation Into This
+												// One
+			}
 	}
 
-	public void startDrag(Point mousePoint) {
-		synchronized (matrixLock) {
-			LastRot.set(ThisRot); // Set Last Static Rotation To Last Dynamic
-									// One
-		}
-		arcBall.click(mousePoint); // Update Start Vector And Prepare For
-									// Dragging
+	public void startDrag(Point mousePoint){
+        //ArcBall
+			synchronized (matrixLock) {
+				LastRot.set(ThisRot); // Set Last Static Rotation To Last Dynamic
+										// One
+			}
+			arcBall.click(mousePoint); // Update Start Vector And Prepare For
+										// Dragging
+
 	}
 
 	public void reset() {
