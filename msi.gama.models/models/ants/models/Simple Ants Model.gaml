@@ -12,6 +12,34 @@ global {
 	init {
 		create ant number: ants_number with: [ location :: center ];
 	} 
+	
+	action press
+	{
+		arg location type: point;
+  		arg selected_agents type: list;
+  		write("press " + location.x + " " + location.y + " "+selected_agents );
+	}
+	action release
+	{
+		arg location type: String;
+  		arg selected_agents type: list;
+  	
+		write("release");
+	}
+	action click
+	{
+		arg location type: String;
+  		arg selected_agents type: list;
+  	
+		write("click");
+	}
+	action click2
+	{
+		arg location type: String;
+  		arg selected_agents type: list;
+  	
+		write("click2");
+	}
 
 } 
 environment width: gridsize height: gridsize {
@@ -63,15 +91,24 @@ entities {
 		}
 	}
 }
-experiment Simple type: gui {
+experiment Simple type:gui {
 	parameter 'Evaporation Rate:' var: evaporation_rate;
 	parameter 'Diffusion Rate:' var: diffusion_rate;
 	output { 
-		display Ants refresh_every: 2 { 
+		display Ants refresh_every: 2 type:opengl { 
 			grid ant_grid;
 			species ant aspect: default;
 			text tt value: string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			event mouse_down action:press;
+			event mouse_up action:release;
 		}  
+		/*
+		display Ants22 refresh_every: 2 { 
+			grid ant_grid;
+			text tt value: string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			event mouse_down action:press;
+			event mouse_up action:click2;
+		}  */  
 	}
 }
 

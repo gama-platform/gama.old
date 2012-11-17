@@ -102,6 +102,7 @@ public interface IKeyword {
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
+	public static final String EVENT = "event";
 	public static final String ERROR = "error";
 	public static final String EXHAUSTIVE = "exhaustive";
 	public static final String EXISTS = "exists";
@@ -183,6 +184,9 @@ public interface IKeyword {
 	public final static String MINUS = "-";
 	public static final String MODEL = "model";
 	public static final String MONITOR = "monitor";
+	public static final String MOUSE_DOWN = "mouse_down";
+	public static final String MOUSE_UP = "mouse_up";
+	public static final String MOUSE_CLICKED = "mouse_click";
 	public static final String MOVING_SKILL = "moving";
 	public final static String MULTIPLY = "*";
 	public static final String MY = "my";
@@ -196,6 +200,7 @@ public interface IKeyword {
 	public static final String OPEN_EXP = "(";
 	public static final String OPEN_LIST = "[";
 	public static final String OPEN_POINT = "{";
+	public static final String OTHER_EVENTS = "other_events";
 	public static final String OUTPUT = "output";
 	public static final String OVER = "over";
 	public static final String PARAM = "param";
@@ -312,5 +317,6 @@ public interface IKeyword {
 	public static final String Z = "z";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
 		REACTIVE_TABU, EXHAUSTIVE };
+	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN};
 	public static final String USER_INIT = "user_init";
 }

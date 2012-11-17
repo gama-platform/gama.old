@@ -436,4 +436,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		
 	}
 
+	@Override
+	public ILayerManager getLayerManager() {
+		// TODO Auto-generated method stub
+		return manager;
+	}
+
 }

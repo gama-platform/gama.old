@@ -212,6 +212,9 @@ public class LayerManager implements ILayerManager {
 			case ILayerStatement.QUADTREE: {
 				return new QuadTreeLayer(env_width, env_height, layer, dg);
 			}
+			case ILayerStatement.EVENT: {
+				return new EventLayer(env_width, env_height, layer, dg);
+			}
 			default:
 				return null;
 		}

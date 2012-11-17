@@ -36,7 +36,7 @@ experiment road_traffic type: gui {
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
 	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
 	output {
-		display city_display refresh_every: 1 {
+		display city_display refresh_every: 1 type:opengl {
 			species building aspect: base ;
 			species road aspect: base ;
 		}

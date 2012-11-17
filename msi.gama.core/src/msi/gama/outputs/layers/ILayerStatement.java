@@ -41,6 +41,7 @@ public interface ILayerStatement extends INamed {
 	public final static short GIS = 6;
 	public final static short CHART = 7;
 	public final static short QUADTREE = 8;
+	public final static short EVENT = 9;
 
 	public abstract void prepare(final IDisplayOutput out, final IScope sim)
 		throws GamaRuntimeException;

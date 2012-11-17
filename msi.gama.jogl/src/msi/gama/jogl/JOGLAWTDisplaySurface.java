@@ -90,7 +90,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public JOGLAWTGLRenderer myGLRender;
 
 	// Use to toggle the 3D view.
-	public boolean ThreeD = false;
+	public boolean ThreeD = false; //true; //false;
 	
 	//Use to toggle the Picking mode
 	public boolean Picking= false;
@@ -109,7 +109,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
-
 		myGLRender = new JOGLAWTGLRenderer(this);
 
 		envWidth = (float) env_width;
@@ -513,6 +512,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public BufferedImage getImage() {
+		buffImage =  this.myGLRender.getScreenShot();
+		System.out.println("OLLLLLLLLLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEE");
 		return buffImage;
 	}
 
@@ -807,6 +808,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		if ( openGLGraphics != null ) {
 			openGLGraphics.setHighlightColor(rgb);
 		}
+	}
+
+	@Override
+	public ILayerManager getLayerManager() {
+		// TODO Auto-generated method stub
+		
+		return this.manager;
 	}
 
 	

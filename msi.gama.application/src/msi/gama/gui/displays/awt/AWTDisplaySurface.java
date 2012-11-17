@@ -59,7 +59,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	protected double zoomFactor = 1.0 + zoomIncrement;
 	protected BufferedImage buffImage;
 	protected int bWidth, bHeight;
-	Point origin = new Point(0, 0);
+	protected Point origin = new Point(0, 0);
+	
 	protected Point mousePosition;
 	Dimension previousPanelSize;
 	protected boolean navigationImageEnabled = true;
@@ -681,6 +682,13 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void addShapeFile() {
 		// TODO Auto-generated method stub
-		
+	}
+	public Point getOrigin() {
+		return origin;
+	}
+
+	public ILayerManager getLayerManager()
+	{
+		return this.manager;
 	}
 }
