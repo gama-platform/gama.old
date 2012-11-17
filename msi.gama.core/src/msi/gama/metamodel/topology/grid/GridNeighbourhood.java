@@ -19,7 +19,6 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -35,7 +34,7 @@ public abstract class GridNeighbourhood {
 
 	IShape[] agents;
 	int xSize, ySize;
-	// boolean isTorus;
+	boolean isTorus;
 
 	protected int[][] neighbours;
 	// i : index of agents; j : index of neighbours
@@ -44,24 +43,18 @@ public abstract class GridNeighbourhood {
 
 	// i : index of agents; j : index of the neighbours by distance
 
-	public GridNeighbourhood(final IShape[] agents, final int xSize, final int ySize/*
-																						 * ,
-																						 * final
-																						 * boolean
-																						 * isTorus
-																						 */) {
+	public GridNeighbourhood(final IShape[] agents, final int xSize, final int ySize, final boolean isTorus) {
 		this.agents = agents;
 		this.xSize = xSize;
 		this.ySize = ySize;
 		neighbours = new int[agents.length][0];
 		// neighboursIndexes = new ArrayList[agents.length];
 		neighboursIndexes = new int[agents.length][];
-		// this.isTorus = isTorus;
+		this.isTorus = isTorus;
 	}
 
 	final int getPlaceIndexAt(final int xx, final int yy) {
-		// if ( isTorus ) { return (yy < 0 ? yy + xSize : yy) % ySize * xSize +
-		// (xx < 0 ? xx + xSize : xx) % xSize; }
+		if ( isTorus ) { return (yy < 0 ? yy + xSize : yy) % ySize * xSize + (xx < 0 ? xx + xSize : xx) % xSize; }
 		if ( xx < 0 || xx >= xSize || yy < 0 || yy >= ySize ) { return -1; }
 		return yy * xSize + xx;
 	}

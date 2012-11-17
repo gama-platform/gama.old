@@ -291,12 +291,12 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 			exp = species.getFacet(IKeyword.HEIGHT);
 			int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
 			exp = species.getFacet(IKeyword.TORUS);
-			// boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+			 boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
-			topology = new GridTopology(scope, this.getHost(), rows, columns, /* isTorus, */usesVN);
+			topology = new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN);
 		} else {
-			topology = new ContinuousTopology(scope, this.getHost()/* , false */);
+			topology = new ContinuousTopology(scope, this.getHost(), false );
 		}
 	}
 

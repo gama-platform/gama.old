@@ -67,7 +67,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	}
 
 	public static ITopology from(final IScope scope, final IShape obj) {
-		return new ContinuousTopology(scope, obj);
+		return new ContinuousTopology(scope, obj, false);
 	}
 
 	/**

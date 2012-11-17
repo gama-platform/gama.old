@@ -33,7 +33,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class GridTopology extends AbstractTopology {
 
 	public GridTopology(final IScope scope, final GamaSpatialMatrix matrix) {
-		super(scope, matrix.environmentFrame);
+		super(scope, matrix.environmentFrame, false);
 		places = matrix;
 	}
 
@@ -57,10 +57,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows,
-		final int columns, /* final boolean isTorus, */final boolean usesVN)
-		throws GamaRuntimeException {
-		super(scope, environment/* , isTorus */);
-		places = new GamaSpatialMatrix(environment, rows, columns,/* , isTorus, */usesVN);
+		final int columns, final boolean isTorus,final boolean usesVN)
+		throws GamaRuntimeException { 
+		super(scope, environment, isTorus);
+		places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN);
 	}
 
 	@Override
@@ -99,6 +99,7 @@ public class GridTopology extends AbstractTopology {
 		return IKeyword.TOPOLOGY + " (" + places.toGaml() + ")";
 	}
 
+	
 	/**
 	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.AbstractTopology#_copy()
@@ -107,6 +108,7 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy() throws GamaRuntimeException {
 		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(),
 			((GamaSpatialMatrix) places).getCols(),
+			((GamaSpatialMatrix) places).isTorus,
 			((GamaSpatialMatrix) places).neighbourhood.isVN());
 	}
 

@@ -80,7 +80,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	double cellWidth, cellHeight;
 	public int[] supportImagePixels;
 	protected Boolean usesVN = null;
-	// protected Boolean isTorus = null; // TODO Deactivated for the moment
+	protected Boolean isTorus = null; // TODO Deactivated for the moment
 	protected GridDiffuser diffuser;
 	public GridNeighbourhood neighbourhood;
 	public static final short DIFFUSION = 0;
@@ -93,7 +93,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	private IAgentFilter cellFilter;
 
 	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
-		final boolean usesVN) throws GamaRuntimeException {
+		final boolean usesVN, final boolean isTorus) throws GamaRuntimeException {
 		super(cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -103,7 +103,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		int size = numRows * numCols;
 		createMatrix(size);
 		supportImagePixels = new int[size];
-		// this.isTorus = isTorus;
+		this.isTorus = isTorus;
 		this.usesVN = usesVN;
 		GRID_NUMBER++;
 		actualNumberOfCells = 0;
@@ -156,8 +156,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	public GridNeighbourhood getNeighbourhood() {
 		if ( neighbourhood == null ) {
 			neighbourhood =
-				usesVN ? new GridVonNeumannNeighbourhood(matrix, numCols, numRows/* , isTorus */)
-					: new GridMooreNeighbourhood(matrix, numCols, numRows/* , isTorus */);
+				usesVN ? new GridVonNeumannNeighbourhood(matrix, numCols, numRows , isTorus )
+					: new GridMooreNeighbourhood(matrix, numCols, numRows , isTorus );
 		}
 		return neighbourhood;
 	}
@@ -185,8 +185,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	public final int getPlaceIndexAt(final int xx, final int yy) {
-		// if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols +
-		// (xx < 0 ? xx + numCols : xx) % numCols; }
+		 if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols + (xx < 0 ? xx + numCols : xx) % numCols; }
 		if ( xx < 0 || xx >= numCols || yy < 0 || yy >= numRows ) {
 			;
 			return -1;
@@ -328,7 +327,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	@Override
 	public IMatrix copy() throws GamaRuntimeException {
 		GamaSpatialMatrix result =
-			new GamaSpatialMatrix(environmentFrame, numCols, numRows/* , isTorus */, usesVN);
+			new GamaSpatialMatrix(environmentFrame, numCols, numRows , isTorus, usesVN);
 		java.lang.System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
 		return result;
 	}

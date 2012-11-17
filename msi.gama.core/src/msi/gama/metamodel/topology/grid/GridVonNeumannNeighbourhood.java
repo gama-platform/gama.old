@@ -29,9 +29,8 @@ import msi.gama.metamodel.shape.IShape;
  */
 public class GridVonNeumannNeighbourhood extends GridNeighbourhood {
 
-	public GridVonNeumannNeighbourhood(final IShape[] agents, final int xSize, final int ySize
-	/* ,final boolean isTorus */) {
-		super(agents, xSize, ySize/* , isTorus */);
+	public GridVonNeumannNeighbourhood(final IShape[] agents, final int xSize, final int ySize ,final boolean isTorus) {
+		super(agents, xSize, ySize , isTorus);
 	}
 
 	@Override

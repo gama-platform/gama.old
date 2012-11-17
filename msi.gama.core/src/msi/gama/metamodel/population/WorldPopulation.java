@@ -29,7 +29,7 @@ public class WorldPopulation extends GamlPopulation {
 			IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
 			modelEnv.initializeFor(scope);
 			world.initializeLocationAndGeomtry(scope);
-			topology = new ContinuousTopology(scope, world.getGeometry());
+			topology = new ContinuousTopology(scope, world.getGeometry(), false);
 		}
 		return agents;
 	}

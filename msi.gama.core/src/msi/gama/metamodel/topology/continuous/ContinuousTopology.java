@@ -40,8 +40,8 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @param directMacro
 	 * @param torus
 	 */
-	public ContinuousTopology(final IScope scope, final IShape environment/* , final boolean torus */) {
-		super(scope, environment/* , torus */);
+	public ContinuousTopology(final IScope scope, final IShape environment , final boolean torus ) {
+		super(scope, environment , torus );
 		places = GamaList.with(environment);
 	}
 
@@ -66,7 +66,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 */
 	@Override
 	protected ITopology _copy() {
-		return new ContinuousTopology(scope, environment/* , isTorus */);
+		return new ContinuousTopology(scope, environment , isTorus);
 	}
 
 	/**

@@ -52,7 +52,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @param torus
 	 */
 	public GraphTopology(final IScope scope, final IShape env, final GamaSpatialGraph graph) {
-		super(scope, env);
+		super(scope, env, false);
 		places = graph;
 	}
 

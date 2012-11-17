@@ -29,13 +29,8 @@ import msi.gama.metamodel.shape.IShape;
  */
 public class GridMooreNeighbourhood extends GridNeighbourhood {
 
-	public GridMooreNeighbourhood(final IShape[] agents, final int xSize, final int ySize/*
-																							 * ,
-																							 * final
-																							 * boolean
-																							 * isTorus
-																							 */) {
-		super(agents, xSize, ySize/* , isTorus */);
+	public GridMooreNeighbourhood(final IShape[] agents, final int xSize, final int ySize, final boolean isTorus) {
+		super(agents, xSize, ySize , isTorus);
 	}
 
 	@Override

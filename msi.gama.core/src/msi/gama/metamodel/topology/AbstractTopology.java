@@ -40,13 +40,15 @@ public abstract class AbstractTopology implements ITopology {
 	protected double environmentWidth, environmentHeight;
 	protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
 	protected double[] steps;
-
-	public AbstractTopology(final IScope scope, final IShape env) {
+	protected Boolean isTorus = false; 
+	
+	public AbstractTopology(final IScope scope, final IShape env, final Boolean isTorus) {
 		environment = env;
 		this.scope = scope;
 		setEnvironmentBounds();
 		spatialIndex =
 			scope.getSimulationScope().getModel().getModelEnvironment().getSpatialIndex();
+		this.isTorus = isTorus;
 	}
 
 	protected boolean canCreateAgents() {
