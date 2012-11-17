@@ -62,4 +62,8 @@ public class GamaGisGeometry extends GamaShape {
 		if ( gisAttributes.contains(s) ) { return gisAttributes.get(s); }
 		throw new GamaRuntimeException("Attribute " + s + " not found");
 	}
+	public Object getAttribute(final Integer index) throws GamaRuntimeException {
+		if ( gisAttributes.size() < index ) { return gisAttributes.get(gisAttributes.getKeys().get(index)); }
+		throw new GamaRuntimeException("Attribute at index " + index + " not found");
+	}
 }

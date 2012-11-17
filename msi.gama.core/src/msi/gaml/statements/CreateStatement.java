@@ -18,8 +18,14 @@
  */
 package msi.gaml.statements;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,25 +35,37 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gama.util.file.GamaFile;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Facets.Facet;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaFileType;
+import msi.gaml.types.GamaMatrixType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.*;
-import org.geotools.feature.*;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShpFiles;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
-import org.opengis.feature.simple.*;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.*;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -74,6 +92,7 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true),
 	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
 	@facet(name = IKeyword.SIZE, type = { IType.FLOAT_STR }, optional = true),
+	@facet(name = IKeyword.HEADER, type = { IType.BOOL_STR }, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.STRING_STR }, optional = true) }, omissible = IKeyword.SPECIES)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
@@ -81,6 +100,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final IExpression from;
 	private final IExpression number;
 	private final IExpression speciesExpr;
+
+	private final IExpression headerExp;
 	private final String returnString;
 	// private final double sizeSquare = -1;
 	// private final String typeDiscretisation = "";
@@ -98,6 +119,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		from = getFacet(IKeyword.FROM);
 		number = getFacet(IKeyword.NUMBER);
 		speciesExpr = getFacet(IKeyword.SPECIES);
+		headerExp = getFacet(IKeyword.HEADER);
 		setName("create");
 	}
 
@@ -107,6 +129,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		from = null;
 		number = null;
 		speciesExpr = null;
+		headerExp = null;
 	}
 
 	@Override
@@ -210,40 +233,23 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			//--------------------------------------------------------------------------------------------- end
 			
 			if ( type.id() == IType.STRING || type.id() == IType.FILE ) {
-				FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
-				final List<Map<String, Object>> initialValues = new GamaList();
-				if ( it3 != null ) {
-					int index = 0;
-					int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
-					while (it3.hasNext() && index <= max) {
-						index++;
-						SimpleFeature fact = it3.next();
-						GisUtils.setCurrentGisReader(fact);
-						Geometry geom = (Geometry) fact.getDefaultGeometry();
-
-						// if a transform function is defined, computation of the
-						// geometry coordinates in the new projection
-						if ( transformCRS != null ) {
-							try {
-								geom = JTS.transform(geom, transformCRS);
-							} catch (MismatchedDimensionException e) {
-								e.printStackTrace();
-							} catch (TransformException e) {
-								e.printStackTrace();
-							}
-						}
-
-						geom = GisUtils.fromGISToAbsolute(geom);
-
-						Map<String, Object> map = new GamaMap();
-						computeInits(scope, map);
-						map.put(IKeyword.SHAPE, new GamaShape(geom));
-						initialValues.add(map);
+				
+				String fileStr = "";
+				try {
+					Object file = from.value(scope);
+					fileStr =
+						file instanceof String ? scope.getSimulationScope().getModel()
+							.getRelativeFilePath(Cast.asString(scope, file), true) : ((GamaFile) file)
+							.getPath();
+					if (GamaFileType.isShape(fileStr)) {
+						createAgentsFromGIS(scope,agents, thePopulation, numberOfAgents);
+					} else if (GamaFileType.isCSVFile(fileStr)) {
+						createAgentsFromCSV(scope,agents, thePopulation, numberOfAgents, fileStr, headerExp == null ? false : Cast.asBool(scope, headerExp.value(scope)));
 					}
-					it3.close();
-					createAgents(scope, agents, thePopulation, initialValues, index);
-					GisUtils.setCurrentGisReader(null);
+				} catch (GamaRuntimeException e) {
+					e.printStackTrace();
 				}
+				
 			}
 
 		}
@@ -266,6 +272,100 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		return agents;
 	}
 
+	
+	private void createAgentsFromCSV(IScope scope, GamaList<IAgent> agents,
+			IPopulation thePopulation, int numberOfAgents, String fileStr, boolean header) {
+		File file = new File(fileStr);
+		if (!file.exists() || !file.isFile())
+			return;
+		int index = 0;
+		final List<Map<String, Object>> initialValues = new GamaList();
+		try {
+			final BufferedReader in = new BufferedReader(new FileReader(fileStr));
+			final GamaList<String[]> allLines = new GamaList();
+			String[] splitStr;
+			String str;
+			int columns = 0;
+			str = in.readLine();
+			while (str != null) {
+				splitStr = GamaMatrixType.csvPattern.split(str, -1);
+				allLines.add(splitStr);
+				if ( splitStr.length > columns ) {
+					columns = splitStr.length;
+				}
+				str = in.readLine();
+			}
+			in.close();
+			int max = number == null ? allLines.size() : Math.min(allLines.size(),numberOfAgents);
+			int startIndex = header ? 1 : 0;
+			List<String> headers = new GamaList<String>();
+			if (header) {
+				splitStr = allLines.get(0);
+				for ( int j = 0; j < splitStr.length; j++ ) {
+					headers.add(splitStr[j]);
+				}
+			}
+			for ( int i = startIndex; i < max; i++ ) {
+				GamaMap map = new GamaMap();
+				index++;
+				splitStr = allLines.get(i);
+				for ( int j = 0; j < splitStr.length; j++ ) {
+					
+					if (header) {
+						map.put(headers.get(j), splitStr[j]);
+					} else {
+						map.put(String.valueOf(j), splitStr[j]);
+					}
+				}
+				Files.setCurrentCSVAgents(map);
+				Map<String, Object> mapF = new GamaMap();
+				computeInits(scope, mapF);
+				initialValues.add(mapF);
+			}
+			createAgents(scope, agents, thePopulation, initialValues, index);
+			Files.setCurrentCSVAgents(null);
+		} catch (final IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
+	private void createAgentsFromGIS(final IScope scope, final GamaList<IAgent> agents, IPopulation thePopulation, final int numberOfAgents) {
+		FeatureIterator<SimpleFeature> it3 = getFeatureIterator(scope);
+		final List<Map<String, Object>> initialValues = new GamaList();
+		if ( it3 != null ) {
+			int index = 0;
+			int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
+			while (it3.hasNext() && index <= max) {
+				index++;
+				SimpleFeature fact = it3.next();
+				GisUtils.setCurrentGisReader(fact);
+				Geometry geom = (Geometry) fact.getDefaultGeometry();
+
+				// if a transform function is defined, computation of the
+				// geometry coordinates in the new projection
+				if ( transformCRS != null ) {
+					try {
+						geom = JTS.transform(geom, transformCRS);
+					} catch (MismatchedDimensionException e) {
+						e.printStackTrace();
+					} catch (TransformException e) {
+						e.printStackTrace();
+					}
+				}
+
+				geom = GisUtils.fromGISToAbsolute(geom);
+
+				Map<String, Object> map = new GamaMap();
+				computeInits(scope, map);
+				map.put(IKeyword.SHAPE, new GamaShape(geom));
+				initialValues.add(map);
+			}
+			it3.close();
+			createAgents(scope, agents, thePopulation, initialValues, index);
+			GisUtils.setCurrentGisReader(null);
+		}
+	}
 	/**
 	 * @throws GamaRuntimeException
 	 * @param population

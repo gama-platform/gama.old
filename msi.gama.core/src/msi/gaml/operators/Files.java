@@ -19,16 +19,25 @@
 package msi.gaml.operators;
 
 import java.io.File;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.*;
+import msi.gama.util.GamaMap;
+import msi.gama.util.file.GamaFolderFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.GamaPropertyFile;
+import msi.gama.util.file.GamaShapeFile;
+import msi.gama.util.file.GamaTextFile;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.types.GamaFileType;
+
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -46,7 +55,8 @@ public class Files {
 	public static final String SHAPE = "shapefile";
 	public static final String READ = "read";
 	public static final String WRITE = "write";
-
+	private static GamaMap currentCSVAgents= null;
+	
 	@operator(value = IKeyword.FILE, can_be_const = true)
 	@doc(
 		value= "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.",
@@ -58,6 +68,7 @@ public class Files {
 		see = {"folder", "new_folder"})
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		if ( GamaFileType.isImageFile(s) ) { return imageFile(scope, s); }
+		if ( GamaFileType.isCSVFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isTextFile(s) ) { return textFile(scope, s); }
 		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
@@ -171,18 +182,52 @@ public class Files {
 //			see = {""})		
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the geometry of the agent, if it has been created from a GIS file.
-		IShape g = scope.getAgentScope().getGeometry();
-		if ( g instanceof GamaGisGeometry ) { return ((GamaGisGeometry) g).getAttribute(s); }
-		// Otherwise, we may be in a process of creating agents, which requires directly reading the
-		// feature. Both processes will be unified later.
-		SimpleFeature gisReader = GisUtils.getCurrentGisReader();
-		if ( gisReader != null ) {
-			Object result = gisReader.getAttribute(s);
-			if ( result == null ) { throw new GamaRuntimeException("Attribute " + s +
-				" not found in shapefile " + gisReader.getDescriptor().getLocalName()); }
-			return result;
+		if (currentCSVAgents == null) {
+			IShape g = scope.getAgentScope().getGeometry();
+			if ( g instanceof GamaGisGeometry ) { return ((GamaGisGeometry) g).getAttribute(s); }
+			// Otherwise, we may be in a process of creating agents, which requires directly reading the
+			// feature. Both processes will be unified later.
+			SimpleFeature gisReader = GisUtils.getCurrentGisReader();
+			if ( gisReader != null ) {
+				Object result = gisReader.getAttribute(s);
+				if ( result == null ) { throw new GamaRuntimeException("Attribute " + s +
+					" not found in shapefile " + gisReader.getDescriptor().getLocalName()); }
+				return result;
+			}
+			return null;
 		}
-		return null;
+		return currentCSVAgents.get(s);
+		
+	}
+	
+	@operator(value = READ)
+//	@doc(
+//			value = "",
+//			comment = "",
+//			special_cases = "",
+//			examples = {""},
+//			see = {""})		
+	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
+		// First try to read in the geometry of the agent, if it has been created from a GIS file.
+		if (currentCSVAgents == null) {
+			IShape g = scope.getAgentScope().getGeometry();
+		
+			if ( g instanceof GamaGisGeometry ) { return ((GamaGisGeometry) g).getAttribute(index); }
+			// Otherwise, we may be in a process of creating agents, which requires directly reading the
+			// feature. Both processes will be unified later.
+			SimpleFeature gisReader = GisUtils.getCurrentGisReader();
+			if ( gisReader != null ) {
+				Object result = gisReader.getAttribute(index);
+				if ( result == null ) { throw new GamaRuntimeException("Attribute at index " + index +
+					" not found in shapefile " + gisReader.getDescriptor().getLocalName()); }
+				return result;
+			}
+			return null;
+		}
+		if (index >= currentCSVAgents.size())
+			return null;
+		
+		return currentCSVAgents.getPairs().get(index).value;
 	}
 
 	@operator(value = "get")
@@ -217,5 +262,17 @@ public class Files {
 		return new GamaFolderFile(scope, folder);
 
 	}
+
+	public static GamaMap getCurrentCSVAgents() {
+		return currentCSVAgents;
+	}
+
+	public static void setCurrentCSVAgents(GamaMap currentCSVAgents) {
+		Files.currentCSVAgents = currentCSVAgents;
+	}
+
+	
+
+	
 
 }

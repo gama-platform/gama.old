@@ -32,6 +32,7 @@ import msi.gama.util.matrix.*;
 	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaType<IMatrix> {
 
+	
 	@Override
 	public IMatrix cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
@@ -64,7 +65,7 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 	}
 
 	// Simplified pattern : only ';', ',', tab and white space are accepted
-	private static Pattern csvPattern = Pattern.compile(";|,|\t|\\s");
+	public static Pattern csvPattern = Pattern.compile(";|,|\t|\\s");
 
 	public static IMatrix from(final String string, final ILocation preferredSize)
 		throws GamaRuntimeException {
