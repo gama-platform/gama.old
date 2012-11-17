@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.util.GamaList;
 
@@ -33,8 +34,16 @@ public class WaterLevel {
 	 * author: Philippe Caillou
 	 */
 	@operator(value = { "water_level_for" })
+	@doc(special_cases = { "if the left operand is a polyline and the right operand a float for the area, returrns the y coordinate of the water (water level)" }, examples = { "waterlevel <- my_river_polyline water_level_for my_area_value" })
 	public static Double opWaterLevel(final IShape shape, final Double val) {
 		if ( shape == null || val == null) { return null; }
 		return WaterLevelUtils.heigth(new GamaList<Coordinate>(shape.getInnerGeometry().getCoordinates()), val);
+	}
+	
+	@operator(value = { "water_area_for" })
+	@doc(special_cases = { "if the left operand is a polyline and the right operand a float for the water y coordinate, returrns the area of the water (water flow area)" }, examples = { "waterarea <- my_river_polyline water_area_for my_height_value" })
+	public static Double opWaterArea(final IShape shape, final Double val) {
+		if ( shape == null || val == null) { return null; }
+		return WaterLevelUtils.area(new GamaList<Coordinate>(shape.getInnerGeometry().getCoordinates()), val);
 	}
 }

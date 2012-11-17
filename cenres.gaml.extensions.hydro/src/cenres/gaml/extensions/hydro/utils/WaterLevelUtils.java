@@ -226,8 +226,52 @@ public class WaterLevelUtils {
 		if (!trouve)
 			throw new GamaRuntimeException("no possible water level, pb...");
 		return res;
+	}
+	
+	public static double area(final List<Coordinate> points, double targetheight)  {
+		int nbtrap=points.size()-1;
+		
+		double[] nexttrapsurf=new double[nbtrap];
+		double[] trapwidth=new double[nbtrap];
+		double[] leftheight=new double[nbtrap+1];
+		
+		double currentsurface=0;
+
+		
+		
+		List<Coordinate> sortedpointsx = new ArrayList<Coordinate>();
+		sortedpointsx.addAll(points);
+		Collections.sort(sortedpointsx, new XCoordinatesComparator()); //min to max
+				
+		for (int i=0; i<nbtrap+1; i++)
+		{
+			leftheight[i]=targetheight-sortedpointsx.get(i).y;			
+		}
+		for (int i=0; i<nbtrap; i++)
+		{
+				trapwidth[i]=sortedpointsx.get(i+1).x-sortedpointsx.get(i).x;			
+				if ((leftheight[i]<=0)&(leftheight[i+1]>0))
+				{					
+					trapwidth[i]=(sortedpointsx.get(i+1).x-sortedpointsx.get(i).x)*(targetheight-sortedpointsx.get(i+1).y)/(sortedpointsx.get(i).y-sortedpointsx.get(i+1).y);
+					leftheight[i]=0;
+				}
+				if ((leftheight[i]>0)&(leftheight[i+1]<=0))
+				{					
+					trapwidth[i]=(sortedpointsx.get(i+1).x-sortedpointsx.get(i).x)*(targetheight-sortedpointsx.get(i).y)/(sortedpointsx.get(i+1).y-sortedpointsx.get(i).y);
+					leftheight[i+1]=0;
+				}
+			if ((leftheight[i]<=0)&(leftheight[i+1]<=0))
+			{					
+				trapwidth[i]=0;
+			}
+			nexttrapsurf[i]=trapwidth[i]*(leftheight[i]+leftheight[i+1])/2;			
+			currentsurface=currentsurface+trapwidth[i]*(leftheight[i]+leftheight[i+1])/2;
+		}
+		return currentsurface;
 
 		
 	}
+
+
 
 }
