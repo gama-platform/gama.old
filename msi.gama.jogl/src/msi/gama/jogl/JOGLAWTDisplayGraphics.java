@@ -373,7 +373,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final boolean fill, final Color border, final Integer angle) {
 		// Check if the geometry has a height value (3D Shape or Volume)
 
-		System.out.println("drawGeometry" + geometry.getGeometryType());
+		
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 
 		if (geometry.getUserData() != null) {
