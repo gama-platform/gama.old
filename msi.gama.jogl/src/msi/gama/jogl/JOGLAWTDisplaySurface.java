@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.gui.displays.layers.EventLayer;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.*;
