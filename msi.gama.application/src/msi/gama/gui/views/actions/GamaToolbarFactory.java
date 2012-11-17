@@ -57,6 +57,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new ShapeFileItem(view);
 			case ARCBALL:
 				return new ArcBallItem(view);
+			case SELECT_RECTANGLE:
+				return new SelectRectangleItem(view);
 
 		}
 		return null;

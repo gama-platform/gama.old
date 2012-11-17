@@ -404,7 +404,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 	
 	/**
-	 * This method does nothing for JAVA2D display
+	 * This method does nothing for Image display
 	 */
 	@Override
 	public void togglePicking() {
@@ -418,9 +418,17 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void toggleArcball() {
 		System.out.println("arcball is only available for Opengl Display");
 	}
+	
+	/**
+	 * This method does nothing for Image display
+	 */
+	@Override
+	public void toggleSelectRectangle() {
+		System.out.println("select rectangle tool is only available for Opengl Display");
+	}
 
 	/**
-	 * This method does nothing for JAVA2D display
+	 * This method does nothing for Image display
 	 */
 	@Override
 	public void addShapeFile() {

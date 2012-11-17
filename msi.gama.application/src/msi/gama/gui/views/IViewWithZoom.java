@@ -29,6 +29,11 @@ public interface IViewWithZoom {
 	 */
 	public void toggleArcball();
 	
+	/**
+	 * Activate the arcball View
+	 */
+	public void toggleSelectRectangle();
+	
 	public void snapshot();
 	
 	/**
