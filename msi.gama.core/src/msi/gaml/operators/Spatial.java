@@ -326,6 +326,7 @@ public abstract class Spatial {
 			return g;
 		}
 
+
 		@operator("masked_by")
 		@doc(value = "A geometry representing the part of the right operand visible from the point of view of the agent using the operator while considering the obstacles defined by the left operand", examples = { "perception_geom masked_by obstacle_species --: returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species." })
 		public static IShape opMaskedBy(final IScope scope, final IShape source,
@@ -334,7 +335,19 @@ public abstract class Spatial {
 			ILocation location = a.getLocation();
 			ITopology t = a.getTopology();
 			IList<IAgent> obstacles = t.getAgentsIn(source, Different.with(), false);
-			return maskedBy(source, obstacles, location);
+			return maskedBy(source, obstacles, location, null);
+		}
+
+		@operator("masked_by")
+		@doc(examples = { "perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list." })
+		public static IShape opMaskedBy(final IScope scope, final IShape source,
+			final GamaMap parameters) {
+			IAgent a = scope.getAgentScope();
+			
+			GamaList<IAgent> obstacles = (GamaList<IAgent>) parameters.get("obstacles");
+			Double precision = (Double) parameters.get("pecision");
+			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return maskedBy(source, obstacles, location, precision);
 		}
 
 		@operator("masked_by")
@@ -343,11 +356,12 @@ public abstract class Spatial {
 			final GamaList<IAgent> obstacles) {
 			IAgent a = scope.getAgentScope();
 			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return maskedBy(source, obstacles, location);
+			return maskedBy(source, obstacles, location, null);
 		}
 
 		private static IShape maskedBy(final IShape source, final IList<IAgent> obstacles,
-			final ILocation location) {
+			final ILocation location, Double precision) {
+			if (precision == null) {precision = 120.0;}
 			Geometry visiblePercept =
 				GeometryUtils.getFactory().createGeometry(source.getInnerGeometry());
 			if ( obstacles != null && !obstacles.isEmpty() ) {
@@ -356,10 +370,6 @@ public abstract class Spatial {
 				Geometry locG =
 					GeometryUtils.getFactory().createPoint(location.toCoordinate()).buffer(0.01)
 						.getEnvelope();
-
-				// PRECISION VALUE DEFINED BY DEFAULT.... MAYBE WE HAVE TO GIVE
-				// THE MODELER THE POSSIBILITY TO MODIFY THIS VALUE?
-				double precision = 120;
 
 				IList<Geometry> geoms = new GamaList<Geometry>();
 				Coordinate prec = new Coordinate(location.getX() + percep_dist, location.getY());
@@ -515,16 +525,19 @@ public abstract class Spatial {
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
+
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters" }, examples = { "shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment" })
 		public static IShape opBuffer(final IShape g, final GamaMap parameters) {
 			Double distance = (Double) parameters.get("distance");
 			Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
 			Integer endCapStyle = (Integer) parameters.get("endCapStyle");
-
+			if (endCapStyle == null)
+				return new GamaShape(g.getInnerGeometry().buffer(distance, quadrantSegments));
 			return new GamaShape(g.getInnerGeometry().buffer(distance, quadrantSegments,
 				endCapStyle));
 		}
+
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
