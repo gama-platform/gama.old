@@ -614,6 +614,7 @@ public abstract class AbstractAgent implements IAgent {
 		return this;
 	}
 	
+	
 	public boolean isTorus() {
 		return false;
 	}
