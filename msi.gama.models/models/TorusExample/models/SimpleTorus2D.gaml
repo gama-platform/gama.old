@@ -1,6 +1,6 @@
 /**
  *  SimpleTorus2D
- *  Author: Truong Xuan Viet
+ *  Author: Patrick Taillandier, Truong Xuan Viet
  *  Description: 
  */
 
@@ -18,8 +18,8 @@ environment width: 20 height: 20 torus: true {
 
 entities {
     species GeometryObject skills: [moving] {
-    	var shape type: geometry init: polygon([{1,2}, {2,1},{2,-1},{-1,-1},{-1, 1}, {1,2}]); 
-    	//var shape type: geometry init: circle (1);// at_location {1,1}; 
+    	//var shape type: geometry init: polygon([{1,2}, {2,1},{2,-1},{-1,-1},{-1, 1}, {1,2}]); 
+    	var shape type: geometry init: circle (1);// at_location {1,1}; 
     	
         reflex basic_move {
         	do wander speed: 3;
