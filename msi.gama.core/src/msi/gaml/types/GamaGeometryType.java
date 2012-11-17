@@ -99,6 +99,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			Coordinate p = points.get(i);
 			cs.setOrdinate(i, 0, p.x);
 			cs.setOrdinate(i, 1, p.y);
+			cs.setOrdinate(i, 2, p.z);
 		}
 		cs = CoordinateSequences.ensureValidRing(fact, cs);
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(cs);
