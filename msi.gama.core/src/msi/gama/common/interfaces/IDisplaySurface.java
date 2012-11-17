@@ -19,6 +19,7 @@
 package msi.gama.common.interfaces;
 
 import java.awt.Color;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
@@ -165,5 +166,7 @@ public interface IDisplaySurface {
 	void addShapeFile();
 	
 	public ILayerManager getLayerManager();
+	
+	public void addMouseEventListener(MouseListener e);
 
 }

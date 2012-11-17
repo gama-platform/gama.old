@@ -691,4 +691,12 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	{
 		return this.manager;
 	}
+
+	@Override
+	public void addMouseEventListener(MouseListener e) {
+		// TODO Auto-generated method stub
+		this.addMouseListener(e);
+	}
+	
+
 }

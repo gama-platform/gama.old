@@ -48,6 +48,7 @@ public class CustomisedEventListener implements MouseListener {
 	
 	public Point getMouseLocation(Point initialLoc)
 	{
+		
 		double x  = initialLoc.x - parent.getDisplay().getOriginX();
 		double y  = initialLoc.y - parent.getDisplay().getOriginY();
 		return new Point((int)( x / parent.getDisplayWidth() * parent.getEnvironmentSize().getX()),(int)(  
@@ -113,6 +114,9 @@ public class CustomisedEventListener implements MouseListener {
 	private void sendEvent(MouseEvent arg0)
 	{
 		Point pp = getMouseLocation(arg0.getPoint());
+		if(pp.getX()< 0 || pp.getY() < 0 || pp.getX() >= parent.getEnvironmentSize().getX() || pp.getY() >= parent.getEnvironmentSize().getY())
+			 return;
+		
 		Arguments args = new Arguments();
 		ArrayList<IAgent> agentset = parent.selectAgent(arg0.getX(), arg0.getY());
 		args.put("location", GAMA.getExpressionFactory().createConst(new GamaPoint(pp.x,pp.y), Types.get(IType.POINT)) ); //GAMA.compileExpression("point(["+pp.x +","+pp.y +"])", currentScope.getWorldScope()));

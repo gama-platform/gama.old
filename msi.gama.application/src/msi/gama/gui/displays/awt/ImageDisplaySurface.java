@@ -19,6 +19,7 @@
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.*;
 import java.io.*;
 import java.util.List;
@@ -440,6 +441,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public ILayerManager getLayerManager() {
 		// TODO Auto-generated method stub
 		return manager;
+	}
+	
+	public void addMouseEventListener(MouseListener e)
+	{
 	}
 
 }

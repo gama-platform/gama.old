@@ -66,6 +66,8 @@ public class EventLayer extends AgentLayer {
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
 		this.myStatement = (EventLayerStatement)this.definition;
+		
+		
 		IScope scope = GAMA.getDefaultScope();
 		
 		IExpression eventType = this.myStatement.getFacet(IKeyword.NAME);
@@ -74,8 +76,7 @@ public class EventLayer extends AgentLayer {
 		String currentMouseEvent = Cast.asString(scope,eventType.value(scope)) ;
 		String currentAction = Cast.asString(scope,actionName.value(scope)) ;
 		this.display = container;
-	
-		((JPanel)container).addMouseListener(new CustomisedEventListener(this,currentMouseEvent,currentAction ));
+		(container).addMouseEventListener(new CustomisedEventListener(this,currentMouseEvent,currentAction ));
 		
 	}
 	

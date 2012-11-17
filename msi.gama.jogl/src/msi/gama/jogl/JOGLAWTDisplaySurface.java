@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
+import msi.gama.gui.displays.layers.EventLayer;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.*;
@@ -115,7 +116,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		envHeight = (float) env_height;
 
 		System.out.println("DisplaySurface Init. env_width:" + env_width + " env_height:" + env_height);
-
 		this.setLayout(new BorderLayout());
 		this.add(myGLRender.canvas, BorderLayout.CENTER);
 
@@ -513,7 +513,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public BufferedImage getImage() {
 		buffImage =  this.myGLRender.getScreenShot();
-		System.out.println("OLLLLLLLLLLLLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEE");
 		return buffImage;
 	}
 
@@ -815,6 +814,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		// TODO Auto-generated method stub
 		
 		return this.manager;
+	}
+
+	@Override
+	public void addMouseEventListener(MouseListener e) {
+		myGLRender.canvas.addMouseListener(e);
+		// TODO Auto-generated method stub
+		
 	}
 
 	
