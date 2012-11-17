@@ -68,6 +68,11 @@ public interface IDisplaySurface {
 	 * Activate arcball view (Only with Opengl view)
 	 */
 	void toggleArcball();
+	
+	/**
+	 * Activate select rectangle tool (Only with Opengl view)
+	 */
+	void toggleSelectRectangle();
 
 	ILayerManager getManager();
 

@@ -120,7 +120,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 		for ( ILocation p : points ) {
 			coordinates.add((Coordinate) p);
-		}
+		}	
 		return new GamaShape(GeometryUtils.getFactory().createLineString(
 			coordinates.toArray(new Coordinate[0])));
 	}
