@@ -1,4 +1,4 @@
-package maps.gaml.skills;
+package maps.gaml.edpSystem;
 
 import msi.gama.util.GamaList;
 
@@ -9,5 +9,5 @@ public abstract class SystemEDP {
 		return numberEquation;
 	}
 	
-	abstract GamaList<Double> compute(final GamaList<Double> variables);
+	abstract public GamaList<Double> compute(final GamaList<Double> variables);
 }

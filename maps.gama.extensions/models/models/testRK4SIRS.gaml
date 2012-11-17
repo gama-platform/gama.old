@@ -1,10 +1,10 @@
 /**
- *  micmactestRK4
+ *  testRK4SIRS
  *  Author: bgaudou
  *  Description: 
  */
 
-model micmactestRK4
+model testRK4SIRS
 
 global {
 
@@ -25,13 +25,15 @@ global {
 }
 
 entities {
-	species node skills: [SIR]{
+	species node skills: [EDP]{
 		float I <- float(iInit); 
 		float S <- N - I; 
 		float R <- 0.0; 
 	
 		reflex go {
-			let temp type: list of: float <- list(self RK4SIRS [S::S, I::I, R::R,alpha::alpha, beta::beta, gamma::gamma,b::b, d1::d1, d2::d2, N::N, h::hKR4]); 
+			let temp type: list of: float <- list(self RK4SIRS [
+				S::S, I::I, R::R,alpha::alpha, beta::beta, gamma::gamma,b::b, d1::d1, d2::d2, N::N, h::hKR4
+			]); 
 		  set S value: (temp at 0);
 		  set I value: (temp at 1);
 		  set R value: (temp at 2);
@@ -39,7 +41,7 @@ entities {
 	}
 }
 
-experiment testRK4 type: gui {
+experiment testRK4SIRS type: gui {
 	parameter 'Alpha:' var: alpha category: 'SIR' ;
 	parameter 'Beta:' var: beta category: 'SIR' ;	
 	parameter 'Gamma:' var: gamma category: 'SIR' ;	
@@ -49,6 +51,8 @@ experiment testRK4 type: gui {
 	parameter 'deathI' var: d2 category: 'demography';
 	
 	parameter 'Population par noeud:' var: N category: 'Population'; 
+
+	parameter 'h of RK4' var: hKR4 category: 'Discretization';	
 	
 	output {
 		display SIR refresh_every: 1 {

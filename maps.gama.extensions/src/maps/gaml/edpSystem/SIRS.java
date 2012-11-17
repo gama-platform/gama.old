@@ -1,5 +1,6 @@
-package maps.gaml.skills;
+package maps.gaml.edpSystem;
 
+import maps.gaml.edpSystem.SystemEDP;
 import msi.gama.util.GamaList;
 
 public class SIRS extends SystemEDP {
@@ -23,7 +24,7 @@ public class SIRS extends SystemEDP {
 		N = _n;
 	}
 	
-	GamaList<Double> compute(final GamaList<Double> sirs) {
+	public GamaList<Double> compute(final GamaList<Double> sirs) {
 
 		double ds = (- beta * sirs.get(0) * sirs.get(1) / N) + (gamma * sirs.get(2)) + (b * N)  - (d1 * sirs.get(0));
 		double di = (beta * sirs.get(0) * sirs.get(1) / N) - (alpha * sirs.get(1)) - (d2 * sirs.get(1));

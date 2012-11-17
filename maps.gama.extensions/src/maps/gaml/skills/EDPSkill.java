@@ -1,19 +1,32 @@
 package maps.gaml.skills;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import maps.gaml.edpSystem.SEIR;
+import maps.gaml.edpSystem.SI;
+import maps.gaml.edpSystem.SIRS;
+import maps.gaml.edpSystem.SystemEDP;
+import maps.gaml.edpSystem.UserEDPSystem;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@skill(name = "SIR")
-public class SIRSkill extends Skill{
+@doc("The EDP skill is intended to define the set of actions for an agent to integrate EDP Systems")
+@skill(name = "EDP")
+public class EDPSkill extends Skill{
+	
+	// TODO : Mettre un attribut SystemEDP
 
 	@action(name = "RK4SI")
-	@args(names = { "S", "I", "R", "beta", "gamma", "N", "h" })
+	@args(names = { "S", "I", "beta", "nu", "N", "h" })
 	public GamaList<Double> kr4SI(final IScope scope) throws GamaRuntimeException {
 		
 	    double sInit = (Double) scope.getArg("S", IType.FLOAT);
@@ -24,12 +37,12 @@ public class SIRSkill extends Skill{
 	    SIinit.add(iInit);
 	    
 	    double beta = (Double) scope.getArg("beta", IType.FLOAT);
-	    double gamma = (Double) scope.getArg("gamma", IType.FLOAT);
+	    double nu = (Double) scope.getArg("nu", IType.FLOAT);
 	    
 	    double N = (Double) scope.getArg("N", IType.FLOAT);
 	    double h = (Double) scope.getArg("h", IType.FLOAT);
 	
-	    return rungeKuta4(SIinit, new SI(beta, gamma, N), h);
+	    return rungeKuta4(SIinit, new SI(beta, nu, N), h);
 	}
 	
 	@action(name = "RK4SIR")
@@ -109,6 +122,107 @@ public class SIRSkill extends Skill{
 	    return rungeKuta4(SEIRinit, new SEIR(alpha, beta, a, b, d, N), h);
 	}	
 	
+//	@action(name = "RK4")
+//	@args(names = {"equations", "var", "value", "param", "h" })
+//	public GamaList<Double> kr4User(final IScope scope) throws GamaRuntimeException {
+//		GamaList<String> equations = new GamaList<String>();
+//		GamaList<String> varName = new GamaList<String>();	
+//		GamaList<Double> initVal = new GamaList<Double>();
+//		GamaMap param = new GamaMap(); 	
+//		double h = 0.0;
+//		
+//		equations = (GamaList<String>) scope.getArg("equations", IType.LIST);
+//		varName = (GamaList<String>) scope.getArg("var", IType.LIST);		
+//		initVal = (GamaList<Double>) scope.getArg("value", IType.LIST);
+//		param = (GamaMap) scope.getArg("param", IType.MAP);
+//		h = (Double) scope.getArg("h", IType.FLOAT);		
+//		
+//		return rungeKuta4(initVal, new UserEDPSystem(equations, varName, param),h);
+//	}
+	
+	@action(name = "RK4")
+	@args(names = {"equations", "value", "param", "h" })
+	public GamaList<Double> kr4User(final IScope scope) throws GamaRuntimeException {
+		GamaList<String> equations = new GamaList<String>();
+		GamaList<String> varName = new GamaList<String>();	
+		GamaList<Double> initVal = new GamaList<Double>();
+		GamaMap param = new GamaMap(); 	
+		double h = 0.0;
+				
+		HashMap<String,String> equationsVar = (HashMap<String,String>) scope.getArg("equations", IType.MAP);
+		initVal = (GamaList<Double>) scope.getArg("value", IType.LIST);
+		param = (GamaMap) scope.getArg("param", IType.MAP);
+		h = (Double) scope.getArg("h", IType.FLOAT);	
+		
+		for(Entry<String, String> entry : equationsVar.entrySet()) {
+		    varName.add(entry.getKey());
+		   equations.add(entry.getValue());
+		}	
+		
+		GamaList<Double> intermVal = initVal.clone();
+		UserEDPSystem systEDP = new UserEDPSystem(equations, varName, param);		
+		
+		return rungeKuta4(initVal, systEDP,h);
+	}
+	
+//	@action(name = "RK4iterated")
+//	@args(names = {"equations", "var", "value", "param", "h", "nbSteps" })
+//	public GamaList<Double> kr4UserIterated(final IScope scope) throws GamaRuntimeException {
+//		GamaList<String> equations = new GamaList<String>();
+//		GamaList<String> varName = new GamaList<String>();	
+//		GamaList<Double> initVal = new GamaList<Double>();
+//		GamaMap param = new GamaMap(); 	
+//		double h = 0.0;
+//		int nbSteps = 0;
+//				
+//		equations = (GamaList<String>) scope.getArg("equations", IType.LIST);
+//		varName = (GamaList<String>) scope.getArg("var", IType.LIST);		
+//		initVal = (GamaList<Double>) scope.getArg("value", IType.LIST);
+//		param = (GamaMap) scope.getArg("param", IType.MAP);
+//		h = (Double) scope.getArg("h", IType.FLOAT);	
+//		nbSteps = (Integer) scope.getArg("nbSteps", IType.INT);
+//		
+//		GamaList<Double> intermVal = initVal.clone();
+//		
+//		for(int i =0; i<nbSteps;i++){
+//			intermVal = rungeKuta4(intermVal, new UserEDPSystem(equations, varName, param), h);
+//		}
+//		
+//		return intermVal;
+//	}
+
+	
+	@action(name = "RK4iterated")
+	@args(names = {"equations", "value", "param", "h", "nbSteps" })
+	public GamaList<Double> kr4UserIterated(final IScope scope) throws GamaRuntimeException {
+		GamaList<String> equations = new GamaList<String>();
+		GamaList<String> varName = new GamaList<String>();	
+		GamaList<Double> initVal = new GamaList<Double>();
+		GamaMap param = new GamaMap(); 	
+		double h = 0.0;
+		int nbSteps = 0;
+				
+		HashMap<String,String> equationsVar = (HashMap<String,String>) scope.getArg("equations", IType.MAP);
+		varName = (GamaList<String>) scope.getArg("var", IType.LIST);		
+		initVal = (GamaList<Double>) scope.getArg("value", IType.LIST);
+		param = (GamaMap) scope.getArg("param", IType.MAP);
+		h = (Double) scope.getArg("h", IType.FLOAT);	
+		nbSteps = (Integer) scope.getArg("nbSteps", IType.INT);
+		
+		for(Entry<String, String> entry : equationsVar.entrySet()) {
+		    varName.add(entry.getKey());
+		   equations.add(entry.getValue());
+		}	
+		
+		GamaList<Double> intermVal = initVal.clone();
+		UserEDPSystem systEDP = new UserEDPSystem(equations, varName, param);
+		
+		for(int i =0; i<nbSteps;i++){
+			intermVal = rungeKuta4(intermVal, systEDP, h);
+		}
+		
+		return intermVal;
+	}	
 	
 	GamaList<Double> rungeKuta4(GamaList<Double> init, SystemEDP edp, double h) {
 		GamaList<Double> edp_temp = new GamaList<Double>();
