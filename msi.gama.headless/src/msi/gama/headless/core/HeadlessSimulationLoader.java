@@ -93,9 +93,8 @@ public class HeadlessSimulationLoader {
 				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
 			if ( r.getErrors().isEmpty() ) {
 				System.out.println("No errors in syntactic tree");
-				String modelPath =
-					new Path(r.getURI().toPlatformString(false)).toFile().getAbsolutePath();
-
+		
+				String modelPath =	new Path(r.getURI().toFileString()).toFile().getAbsolutePath();
 				ModelStructure ms =
 					new ModelStructure("", modelPath, new ArrayList(elements.values()));
 				lastModel = DescriptionFactory.getModelFactory().compile(ms);
