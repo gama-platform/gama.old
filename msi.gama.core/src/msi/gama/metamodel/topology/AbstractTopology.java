@@ -20,28 +20,33 @@ package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPath;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.IPath;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.Spatial.Creation;
-import msi.gaml.statements.CreateStatement;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-import com.jmex.model.collada.ColladaImporter;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 public abstract class AbstractTopology implements ITopology {
@@ -56,7 +61,6 @@ public abstract class AbstractTopology implements ITopology {
 	protected Boolean isTorus = false;
 	
 	// VARIABLES USED IN TORUS ENVIRONMENT 
-	protected GamaList<Geometry> virtual_environments;
 	protected double[] adjustedXVector;
 	protected double[] adjustedYVector;
 	
@@ -76,48 +80,35 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Geometry returnToroidalGeom(Geometry geom){
 		List<Geometry> geoms = new GamaList<Geometry>();
-		int cnt = 0;
-		if (geom.coveredBy(getEnvironment().getGeometry().getInnerGeometry()))
-			return geom;
-		geoms.add(geom.intersection(this.getEnvironment().getGeometry().getInnerGeometry()));
-		for (Geometry geomEnv :virtual_environments) {
-			Geometry inter;
-			try {
-				inter = geomEnv.intersection(geom);
-			} catch (TopologyException e) {
-				inter = geomEnv.buffer(0.1).intersection(geom.buffer(0.1));
-			}
-			if (!inter.isEmpty()) {
-				AffineTransformation at = new AffineTransformation();
-				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
-				geoms.add(at.transform(inter));
-			}
-			cnt++;
+		geoms.add(geom);
+		for (int cnt=0; cnt < 8; cnt++) {
+			AffineTransformation at = new AffineTransformation();
+			at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
+			geoms.add(at.transform(geom));
 		}
 		return GeometryUtils.factory.buildGeometry(geoms);
 	}
 	
-	public Geometry returnToroidalGeomPoint(GamaPoint loc){
-		int cnt = 0;
+	public Geometry returnToroidalGeom(GamaPoint loc){
+		List<Geometry> geoms = new GamaList<Geometry>();
 		Point pt = GeometryUtils.factory.createPoint(loc);
 		if (loc.intersects(getEnvironment().getGeometry())) {
-			return pt;
+			geoms.add(pt);
 		} 
-		for (Geometry geomEnv :virtual_environments) {
-			if (pt.intersects(geomEnv)) {
-				AffineTransformation at = new AffineTransformation();
-				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
-				return at.transform(pt);
-			}
-			cnt++;
+		for (int cnt=0; cnt < 8; cnt++) {
+			AffineTransformation at = new AffineTransformation();
+			at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
+				geoms.add(at.transform(pt));
 		}
-		return pt;
+		return GeometryUtils.factory.buildGeometry(geoms);
 	}
+	
+	
 	
 	
 	public Geometry returnToroidalGeom(IShape shape){
 		if (shape.isPoint()) {
-			return returnToroidalGeomPoint((GamaPoint) shape);
+			return returnToroidalGeom((GamaPoint) shape);
 		}
 		return returnToroidalGeom(shape.getInnerGeometry());
 	}
@@ -132,7 +123,6 @@ public abstract class AbstractTopology implements ITopology {
 	
 	protected void createVirtualEnvironments()
 	{
-		virtual_environments = new GamaList<Geometry>();
 		adjustedXVector = new double[8];
 		adjustedYVector = new double[8];
 		Envelope environmentEnvelope = environment.getEnvelope();
@@ -149,152 +139,38 @@ public abstract class AbstractTopology implements ITopology {
 		environmentMaxX = environmentEnvelope.getMaxX();
 		environmentMaxY = environmentEnvelope.getMaxY();
 		
-		
-		double  minX, minY, maxX, maxY;
-		
 		// NORTH virtual environment
-		minX = environmentMinX;
-		minY = environmentMinY - environmentHeight;
-		maxX = environmentMaxX;
-		maxY = environmentMaxY - environmentHeight;
 		adjustedXVector[0] = 0.0;
 		adjustedYVector[0] = environmentHeight;
 		
-		Coordinate[] coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		LinearRing geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		Geometry g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// NORTH-WEST virtual environment
-		minX = environmentMinX - environmentWidth;
-		minY = environmentMinY - environmentHeight;
-		maxX = environmentMaxX - environmentWidth;
-		maxY = environmentMaxY - environmentHeight;
 		adjustedXVector[1] = environmentWidth;
 		adjustedYVector[1] = environmentHeight;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// WEST virtual environment
-		minX = environmentMinX - environmentWidth;
-		minY = environmentMinY;
-		maxX = environmentMaxX - environmentWidth;
-		maxY = environmentMaxY;
 		adjustedXVector[2] = environmentWidth;
 		adjustedYVector[2] = 0.0;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// SOUTH-WEST virtual environment
-		minX = environmentMinX - environmentWidth;
-		minY = environmentMinY + environmentHeight;
-		maxX = environmentMaxX - environmentWidth;
-		maxY = environmentMaxY + environmentHeight;
 		adjustedXVector[3] = environmentWidth;
 		adjustedYVector[3] = - environmentHeight;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// SOUTH virtual environment
-		minX = environmentMinX;
-		minY = environmentMinY + environmentHeight;
-		maxX = environmentMaxX;
-		maxY = environmentMaxY + environmentHeight;
 		adjustedXVector[4] = 0.0;
 		adjustedYVector[4] = - environmentHeight;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// SOUTH-EAST virtual environment
-		minX = environmentMinX + environmentWidth;
-		minY = environmentMinY + environmentHeight;
-		maxX = environmentMaxX + environmentWidth;
-		maxY = environmentMaxY + environmentHeight;
 		adjustedXVector[5] = - environmentWidth;
 		adjustedYVector[5] = - environmentHeight;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// EAST virtual environment
-		minX = environmentMinX + environmentWidth;
-		minY = environmentMinY;
-		maxX = environmentMaxX + environmentWidth;
-		maxY = environmentMaxY;
 		adjustedXVector[6] = - environmentWidth;
 		adjustedYVector[6] = 0.0;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
-		
 		// NORTH-EAST virtual environment
-		minX = environmentMinX + environmentWidth;
-		minY = environmentMinY - environmentHeight;
-		maxX = environmentMaxX + environmentWidth;
-		maxY = environmentMaxY - environmentHeight;
 		adjustedXVector[7] = - environmentWidth;
 		adjustedYVector[7] = environmentHeight;
 		
-		coordinates = new Coordinate[5];
-		coordinates[0] = new Coordinate(minX, minY);
-		coordinates[1] = new Coordinate(maxX, minY);
-		coordinates[2] = new Coordinate(maxX, maxY);
-		coordinates[3] = new Coordinate(minX, maxY);
-		coordinates[4] = (Coordinate) coordinates[0].clone();
-		geom = GeometryUtils.getFactory().createLinearRing(coordinates);
-		g = GeometryUtils.getFactory().createPolygon(geom, null);
-		virtual_environments.add(g);
 	}
 	
 	protected boolean canCreateAgents() {
