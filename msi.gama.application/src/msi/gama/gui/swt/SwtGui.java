@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.swt;
 
+import msi.gama.gui.views.HeadlessParam;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,6 +29,7 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
+import msi.gama.hpc.gui.HeadlessChart;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -82,7 +84,8 @@ public class SwtGui implements IGui {
 	private Error error = null;
 	private Views views = null;
 	private static ConsoleView console = null;
-	private static HeadlessParam headless = null;
+	private static HeadlessParam headlessParam = null;
+	private static HeadlessChart headlessChart = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png")
@@ -750,7 +753,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public final boolean openHeadlessPerspective() {
-//		System.out.println("HeadlessPerspective");
+		// System.out.println("HeadlessPerspective");
 		return openPerspective(PERSPECTIVE_HEADLESS_ID);
 	}
 
@@ -777,7 +780,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public final boolean openSimulationPerspective() {
-		
+
 		return openPerspective(PERSPECTIVE_SIMULATION_ID);
 	}
 
@@ -793,9 +796,8 @@ public class SwtGui implements IGui {
 	public void togglePerspective() {
 		if ( isSimulationPerspective() ) {
 			openModelingPerspective();
-		}
-		else if ( isModelingPerspective() ) {
-			openHeadlessPerspective();
+//		} else if ( isModelingPerspective() ) {
+//			openHeadlessPerspective();
 		} else {
 			openSimulationPerspective();
 		}
@@ -961,6 +963,12 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void showHeadlessParamView() {
-		headless = (HeadlessParam) showView(HeadlessParam.ID, null);
+		headlessParam = (HeadlessParam) showView(HeadlessParam.ID, null);
+	}
+
+	@Override
+	public void showHeadlessChartView() {
+		headlessChart = (HeadlessChart) showView(HeadlessChart.ID, null);
+//		headlessChart.showChart();
 	}
 }
