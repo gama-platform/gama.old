@@ -108,6 +108,7 @@ public interface IKeyword {
 	public static final String EXISTS = "exists";
 	public static final String EXPERIMENT = "experiment";
 	public static final String EXPLODED = "exploded";
+	public static final String EXPORT = "export";
 	public static final String EXTENSION = "extension";
 	public static final String FALSE = "false";
 	public static final String FILE = "file";
@@ -115,6 +116,7 @@ public interface IKeyword {
 	public static final String FOCUS = "focus";
 	public static final String FONT = "font";
 	public static final String FOOTER = "footer";
+	public static final String FRAMERATE = "framerate";
 	public static final String FREQUENCY = "frequency";
 	public static final String FROM = "from";
 	public static final String FSM = "fsm";
@@ -189,6 +191,7 @@ public interface IKeyword {
 	public static final String MOUSE_CLICKED = "mouse_click";
 	public static final String MOVING_SKILL = "moving";
 	public final static String MULTIPLY = "*";
+	public final static String MULTICORE = "multicore";
 	public static final String MY = "my";
 	public static final String MYSELF = "myself";
 	public static final String NAME = "name";

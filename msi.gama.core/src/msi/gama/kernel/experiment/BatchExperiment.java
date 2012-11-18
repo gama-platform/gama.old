@@ -53,6 +53,7 @@ import org.jfree.data.statistics.Statistics;
 	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.REPEAT, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.UNTIL, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.MULTICORE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
 		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.MODEL)
@@ -74,14 +75,19 @@ public class BatchExperiment extends AbstractExperiment {
 	private IScheduledAction haltAction;
 	private final Semaphore innerLoopSemaphore = new Semaphore(1, false);
 	private/* volatile */int runNumber, innerLoopIndex;
+	private boolean multicore;
 
 	public BatchExperiment(final IDescription description) throws GamaRuntimeException {
 		super(description);
 		IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
 			keep_seed = Cast.asBool(getExperimentScope(), expr.value(getExperimentScope()));
+			}
+		IExpression multi = getFacet(IKeyword.MULTICORE);
+		if ( expr != null && expr.isConst() ) {
+			this.multicore = Cast.asBool(getExperimentScope(), multi.value(getExperimentScope()));
 		}
-
+		
 		stopCondition = getFacet(IKeyword.UNTIL);
 		if ( stopCondition != null ) {
 			haltAction = new ScheduledAction() {
@@ -98,6 +104,11 @@ public class BatchExperiment extends AbstractExperiment {
 			innerLoopRepeat = Cast.asInt(getExperimentScope(), expr.value(getExperimentScope()));
 		}
 		exploAlgo = new ExhaustiveSearch(null);
+		
+		
+		
+		
+		
 	}
 
 	@Override
