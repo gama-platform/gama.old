@@ -87,7 +87,7 @@ public class HeadlessSimulationLoader {
 
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
-		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:" + fileName), true);
+		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
 			Map<URI, ISyntacticElement> elements =
 				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
