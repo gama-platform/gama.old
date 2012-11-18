@@ -19,6 +19,7 @@
 package msi.gama.metamodel.agent;
 
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.simulation.ISimulation;
@@ -46,6 +47,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract void schedule() throws GamaRuntimeException;
 
+	public abstract Map<String,Object> getAttributes();
+	
 	public abstract Object getAttribute(final String name);
 
 	public abstract void setAttribute(final String name, final Object val);

@@ -178,6 +178,12 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
+	public final synchronized Map<String,Object> getAttributes() {
+		return attributes;
+	}
+	
+	
+	@Override
 	public final synchronized Object getAttribute(final String name) {
 		return attributes.get(name);
 	}

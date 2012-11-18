@@ -39,7 +39,7 @@ public class SpeciesDescription extends SymbolDescription {
 	private Map<String, StatementDescription> aspects;
 	private Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
-	protected final IList<String> sortedVariableNames = new GamaList();
+	protected IList<String> sortedVariableNames = new GamaList();
 	protected final IList<String> updatableVariableNames = new GamaList();
 	protected final Map<Class, ISkill> skills = new HashMap();
 	/**
@@ -389,6 +389,7 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 		}
 
+		sortedVariableNames.clear();
 		for ( int i = 0; i < result.size(); i++ ) {
 			VariableDescription v = result.get(i);
 			String s = v.getName();
