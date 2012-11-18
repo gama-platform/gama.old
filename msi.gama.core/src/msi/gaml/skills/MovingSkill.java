@@ -211,8 +211,8 @@ public class MovingSkill extends GeometricSkill {
 			ILocation location = agent.getLocation();
 			int heading = computeHeadingFromAmplitude(scope, agent);
 			double dist = computeDistance(scope, agent);
-
-			ILocation loc = getTopology(agent).getDestination(location, heading, dist, true);
+			ITopology topo = getTopology(agent);
+			ILocation loc = topo.getDestination(location, heading, dist, true);
 			
 
 			if ( loc == null ) {
@@ -227,7 +227,6 @@ public class MovingSkill extends GeometricSkill {
 					}
 				}
 				((GamaPoint) loc).z = Math.max(0, ((GamaPoint) location).z + dist * (2 * RandomUtils.getDefault().next() - 1));
-				
 				// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
 				agent.setLocation(loc);
 			}

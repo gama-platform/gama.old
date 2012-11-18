@@ -92,9 +92,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Geometry returnToroidalGeom(GamaPoint loc){
 		List<Geometry> geoms = new GamaList<Geometry>();
 		Point pt = GeometryUtils.factory.createPoint(loc);
-		if (loc.intersects(getEnvironment().getGeometry())) {
-			geoms.add(pt);
-		} 
+		geoms.add(pt);
 		for (int cnt=0; cnt < 8; cnt++) {
 			AffineTransformation at = new AffineTransformation();
 			at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
@@ -264,17 +262,18 @@ public abstract class AbstractTopology implements ITopology {
 		// geometries.
 
 		// TODO Take into account the fact that some topologies may consider invalid locations.
+		if ( environment.getGeometry().covers(point) ) { return point; }
+		
 
-		double nil = Double.MAX_VALUE;
-		double xx = point.getX();
-		double yy = point.getY();
-		double envMinX = this.environmentMinX;
-		double envMinY = this.environmentMinY;
-		double envMaxX = this.environmentMaxX;
-		double envMaxY = this.environmentMaxY;
-		double envWidth = this.environmentWidth;
-		double envHeight = this.environmentHeight;
-
+		if (isTorus()) {
+			Point pt = GeometryUtils.factory.createPoint(point.toCoordinate());
+			for (int cnt=0; cnt < 8; cnt++) {
+				AffineTransformation at = new AffineTransformation();
+				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
+				GamaPoint newPt = new GamaPoint(at.transform(pt).getCoordinate());
+				if ( environment.getGeometry().covers(newPt) ) { return newPt; }
+			}
+		}
 		// See if rounding errors of double do not interfere with the computation.
 		// In which case, the use of Maths.approxEquals(value1, value2, tolerance) could help.
 
@@ -298,7 +297,7 @@ public abstract class AbstractTopology implements ITopology {
 		
 		
 		
-		if ( environment.getGeometry().covers(point) ) { return point; }
+		
 		return null;
 	}
 
