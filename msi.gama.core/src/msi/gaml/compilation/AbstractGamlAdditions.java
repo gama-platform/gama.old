@@ -61,6 +61,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _type(final String keyword, final IType typeInstance, final int id,
 		final int varKind, final Class ... wraps) {
 		Types.initType(keyword, typeInstance, (short) id, varKind, wraps);
+		ISymbolFactory f = DescriptionFactory.getModelFactory();
+		if (f != null) f.addNewKeywordToSymbolProto(keyword, varKind);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,

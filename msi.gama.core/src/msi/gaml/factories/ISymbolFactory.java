@@ -68,4 +68,6 @@ public interface ISymbolFactory {
 
 	public abstract boolean handles(String keyword);
 
+	public abstract void addNewKeywordToSymbolProto(String s, int kind);
+
 }
