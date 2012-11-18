@@ -83,11 +83,12 @@ public class BatchExperiment extends AbstractExperiment {
 		if ( expr != null && expr.isConst() ) {
 			keep_seed = Cast.asBool(getExperimentScope(), expr.value(getExperimentScope()));
 			}
+		/*
 		IExpression multi = getFacet(IKeyword.MULTICORE);
 		if ( expr != null && expr.isConst() ) {
 			this.multicore = Cast.asBool(getExperimentScope(), multi.value(getExperimentScope()));
 		}
-		
+		*/
 		stopCondition = getFacet(IKeyword.UNTIL);
 		if ( stopCondition != null ) {
 			haltAction = new ScheduledAction() {
@@ -104,11 +105,6 @@ public class BatchExperiment extends AbstractExperiment {
 			innerLoopRepeat = Cast.asInt(getExperimentScope(), expr.value(getExperimentScope()));
 		}
 		exploAlgo = new ExhaustiveSearch(null);
-		
-		
-		
-		
-		
 	}
 
 	@Override
