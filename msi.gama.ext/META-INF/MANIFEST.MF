@@ -45,7 +45,8 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  RCaller-2.0.7.jar,
  mysql-connector-java-5.1.17.jar,
  sqlite-jdbc-spatialite-3.7.2-1.jar,
- sqljdbc4.jar
+ sqljdbc4.jar,
+ postgresql-8.4-701.jdbc3.jar
 Bundle-Vendor: MSI
 Export-Package: com.jmex.model.collada,
  com.jmex.model.collada.schema,
@@ -464,6 +465,7 @@ Export-Package: com.jmex.model.collada,
  org.opengis.style,
  org.opengis.temporal,
  org.opengis.util,
+ org.postgresql,
  org.sqlite,
  org.tigris.subversion.javahl,
  org.tmatesoft.svn.core,
