@@ -1,30 +1,24 @@
 package msi.gama.hpc.runtime;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Calendar;
-import java.util.Observable;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import msi.gama.hpc.common.HPCExperiment;
 
 public class MulticoreFactory  {
 
 	/**
 	 * @param args
 	 */
-	int coreThreadSize = 4;
-	ExecutorService executorService;
+	int coreThreadSize = 1;
+	static ExecutorService executorService;
+	static String path;
+	
+	static List<Future<MulticoreTask>> futures = new ArrayList<Future<MulticoreTask>>();
 
 	public MulticoreFactory() {
 		coreThreadSize = getSatisfiedThreads();
@@ -48,6 +42,14 @@ public class MulticoreFactory  {
 				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(this.coreThreadSize, true),
 				new ThreadPoolExecutor.CallerRunsPolicy());
 	}
+	
+	public static String getPath() {
+		return path;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
 
 	public int getCoreThreadSize() {
 		return coreThreadSize;
@@ -62,96 +64,15 @@ public class MulticoreFactory  {
 		System.out.println("cpus :" + cpus);
 		int maxThreads = cpus;
 		maxThreads = (maxThreads > 0 ? maxThreads : 1);
-		if ( coreThreadSize >= maxThreads )
-			coreThreadSize = maxThreads - 1;
-		return coreThreadSize;
+		return maxThreads;
 	}
-
-	public static double submitExperiment(final String path, final String inpDir,
-		final String outDir, final int numberCore) {
-		String newOutDir = MulticoreFactory.mkDir(outDir);
-		MulticoreFactory batchExecutor = new MulticoreFactory(numberCore);
-		List<String> listInputs = MulticoreFactory.listDir(inpDir);
-
-		double beginTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
-
-		for ( String inputFile : listInputs )
-			batchExecutor.submit(path, inputFile, newOutDir);
-		batchExecutor.shutdown();
-		
-		double endTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
-		return (endTime - beginTime);
+	
+	public static Future<MulticoreTask> submit(MulticoreTask task) {
+		return executorService.submit(task, task);
 	}
-
-		public void submit(final String path, final String inputFile, final String outDir) {
-		executorService.submit(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					// if it's a file, process it
-					launchCommandLineGama(path, inputFile, outDir);
-					
-				} catch (Exception ex) {
-					// error management logic
-				}
-			}
-		});
-	}
-
-	public void launchCommandLineGama(String path, String inpFile, String outDir) {
-		outDir = outDir + File.separator + getDirName(inpFile);
-		System.out.println("inpFile " + inpFile);
-		System.out.println("newOutDir " + outDir);
-		String os = System.getProperty("os.name");
-
-		List<String> commands;
-		if ( os.startsWith("Windows") ) {
-			commands =
-				new ArrayList<String>((Arrays.asList("cmd.exe", "/C", "start gamaHeadless.bat " +
-					inpFile + " " + outDir)));
-		} else {
-
-			commands =
-				new ArrayList<String>((Arrays.asList("sh", "gamaHeadless.sh", inpFile, outDir)));
-		}
-
-		try {
-			ProcessBuilder pb = new ProcessBuilder();
-			pb.directory(new File(path));
-			pb.command(commands);
-			Process process = pb.start();
-		//	process.
-			InputStream is = process.getInputStream();
-			InputStream err = process.getErrorStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-
-			String line;
-			System.out.printf("Output of running %s is:\n", Arrays.toString(commands.toArray()));
-			while ((line = br.readLine()) != null) {
-				System.out.println(line);
-			}
-
-			InputStreamReader isrerr = new InputStreamReader(err);
-			BufferedReader brerr = new BufferedReader(isrerr);
-
-			System.out.printf("Error of running %s is:\n", Arrays.toString(commands.toArray()));
-			while ((line = brerr.readLine()) != null) {
-				System.out.println(line);
-			}
-
-	//		process.
-			process.destroy();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	
 	// wait for all of the executor threads to finish
-	public void shutdown() {
+	public static void shutdown() {
 		executorService.shutdown();
 		try {
 			if ( !executorService.awaitTermination(60, TimeUnit.SECONDS) ) {
@@ -167,59 +88,31 @@ public class MulticoreFactory  {
 			Thread.currentThread().interrupt();
 		}
 	}
-
-	private static String mkDir(String dir) {
-		File file = new File(dir);
-		if ( !file.exists() )
-			file.mkdir();
-		return file.getAbsolutePath();
-	}
-
-	private static String getDirName(final String fileName) {
-		File file = new File(fileName);
-		String name = null;
-		String s = file.getName();
-		int i = s.lastIndexOf('.');
-		if ( i > 0 && i < s.length() - 1 ) {
-			name = s.substring(0, i);
-		}
-		return name;
-	}
-
-	private static ArrayList<String> listDir(String dir) {
-		ArrayList<String> listFileNames = new ArrayList<String>();
-
-		FilenameFilter textFilter = new FilenameFilter() {
-
-			public boolean accept(File dir, String name) {
-				String lowercaseName = name.toLowerCase();
-				if ( lowercaseName.endsWith(".xml") ) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		};
-
-		File dirFile = new File(dir);
-		File[] listFiles = dirFile.listFiles(textFilter);
-		for ( File file : listFiles )
-			listFileNames.add(file.getAbsolutePath());
-		return listFileNames;
-	}
 	
 	
 	public static void submitOneExperiment(MulticoreRuntime mr)
 	{
+		MulticoreTask task = new MulticoreTask(mr, MulticoreFactory.getPath(), mr.getInputPath(), mr.getOutputPath());
 		
-		mr.start();
+		task.startObservator();
+		futures.add(MulticoreFactory.submit(task));
 		
-	 	//// HELP NHAN...... 
-		mr.stop();
+		for(Future<MulticoreTask> oneFuture : futures){
+			try {
+				MulticoreTask oneTask = oneFuture.get();
+				System.out.println("task " + oneTask.getName()  + "finished");
+				oneTask.stopObservator();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
+		MulticoreFactory.shutdown();
 	}
-	
-
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -227,7 +120,7 @@ public class MulticoreFactory  {
 		String inpDir = "/Users/langthang/Desktop/MonGAMA/eclipse/input";
 		String outDir = "/Users/langthang/Desktop/MonGAMA/eclipse/output";
 		// String outDir = "out";
-		MulticoreFactory.submitExperiment(path, inpDir, outDir, 4);
+		//MulticoreFactory.submitExperiment(path, inpDir, outDir, 4);
 
 	}
 
