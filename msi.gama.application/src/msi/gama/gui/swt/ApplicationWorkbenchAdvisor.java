@@ -237,4 +237,15 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		}
 	}
+
+//	@Override
+//	public void postStartup() {
+//		try {
+//			IWorkbenchPage page =
+//				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+////			page.openEditor(new MyEditorInput("TutoGEF"), MyGraphicalEditor.ID, false);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

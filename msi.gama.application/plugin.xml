@@ -114,6 +114,15 @@
             name="User Control"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.HeadlessParam"
+            icon="icons/view_monitors.png"
+            id="msi.gama.application.view.HeadlessParam"
+            name="HeadlessParam"
+            restorable="true">
+      </view>
    </extension>
 
    <extension
@@ -240,6 +249,29 @@
                relative="msi.gama.gui.view.GamaNavigator"
                showTitle="true"
                visible="false">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="msi.gama.application.perspectives.HeadlessPerspective">
+         <view
+               closeable="false"
+               id="msi.gama.gui.view.GamaNavigator"
+               minimized="false"
+               moveable="true"
+               ratio="0.17f"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false"
+               visible="true">
+         </view>
+         <view
+               id="msi.gama.application.view.HeadlessParam"
+               minimized="false"
+               relationship="right"
+               relative="msi.gama.gui.view.GamaNavigator"
+               showTitle="true"
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
@@ -532,6 +564,11 @@
                      label="SVN repositories view "
                      style="push">
                </command>
+               <command
+                     commandId="msi.gama.application.commands.ShowHideHeadlessParamView"
+                     label="Headless Param view "
+                     style="push">
+               </command>
             </menu>
             <command
                   commandId="org.eclipse.ui.window.resetPerspective"
@@ -632,10 +669,13 @@
                         variable="activeWorkbenchWindow.activePerspective">
                      <or>
                         <equals
-                              value="msi.gama.application.perspectives.SimulationPerspective">
+                              value="msi.gama.application.perspectives.ModelingPerspective">
                         </equals>
                         <equals
-                              value="msi.gama.application.perspectives.ModelingPerspective">
+                              value="msi.gama.application.perspectives.HeadlessPerspective">
+                        </equals>
+                        <equals
+                              value="msi.gama.application.perspectives.SimulationPerspective">
                         </equals>
                      </or>
                   </with>
@@ -1111,6 +1151,10 @@
             class="msi.gama.gui.swt.commands.RunModel"
             commandId="msi.gama.application.commands.RunModel">
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.ShowHideHeadlessParamViewHandler"
+            commandId="msi.gama.application.commands.ShowHideHeadlessParamView">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">
@@ -1186,20 +1230,29 @@
    <extension
          point="org.eclipse.core.expressions.definitions">
       <definition
-            id="isInSimulationPerspective">
-         <with
-               variable="activeWorkbenchWindow.activePerspective">
-            <equals
-                  value="msi.gama.application.perspectives.SimulationPerspective">
-            </equals>
-         </with>
-      </definition>
-      <definition
             id="isInModelingPerspective">
             <with
                variable="activeWorkbenchWindow.activePerspective">
             <equals
                   value="msi.gama.application.perspectives.ModelingPerspective">
+            </equals>
+         </with>
+      </definition>
+      <definition
+            id="isInHeadlessPerspective">
+         <with
+               variable="activeWorkbenchWindow.activePerspective">
+            <equals
+                  value="msi.gama.application.perspectives.HeadlessPerspective">
+            </equals>
+         </with>
+      </definition>
+      <definition
+            id="isInSimulationPerspective">
+         <with
+               variable="activeWorkbenchWindow.activePerspective">
+            <equals
+                  value="msi.gama.application.perspectives.SimulationPerspective">
             </equals>
          </with>
       </definition>
@@ -1413,6 +1466,10 @@
             defaultHandler="msi.gama.gui.navigator.commands.CheckoutProjectHandler"
             id="msi.gama.application.commands.CheckoutProject"
             name="Checkout Project From Repository">
+      </command>
+      <command
+            id="msi.gama.application.commands.ShowHideHeadlessParamView"
+            name="Show Headless Param View">
       </command>
    </extension>
  <extension
