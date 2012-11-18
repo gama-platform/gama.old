@@ -60,14 +60,14 @@ import msi.gaml.types.IType;
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
 		public static final String MYSQL ="MySQL";
+		public static final String POSTGRES="postgres";
 		//static final String MSSQL ="MsSQL";
 		public static final String MSSQL ="sqlserver";
 		public static final String SQLITE="sqlite";
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
-
-		//Connection conn=null;
+		static final String POSTGRESDriver= new String("org.postgresql.Driver");
 		static String vender="";
 		static String url="";
 		static String port="";
@@ -135,6 +135,12 @@ public class SqlConnection {
 						if (DEBUG){
 							System.out.println("SQLlite:"+conn.toString());
 						}
+					} else if ( vender.equalsIgnoreCase(POSTGRES) ) {
+						//Class.forName(POSTGRESDriver).newInstance();
+						Class.forName("org.postgresql.Driver");
+						//System.out.println("Postgres:OK");
+						conn =
+							DriverManager.getConnection("jdbc:postgresql://"+url+":"+port+"/"+ dbName + "?user="+ userName + "&password=" + password);
 					}  else {
 						throw new ClassNotFoundException("SQLConnection.connectSQL: The " 
 					                                       + vender
