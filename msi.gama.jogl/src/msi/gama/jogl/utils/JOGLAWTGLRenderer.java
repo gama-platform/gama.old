@@ -125,6 +125,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public ShapeFileReader myShapeFileReader;
 	private boolean updateEnvDim=false;
 	
+	//Arcball
+	private ArcBall arcBall;
+	
 
 
 
@@ -164,6 +167,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
 		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
 				this, displaySurface.envWidth, displaySurface.envHeight);
+		
+
+		arcBall = new ArcBall(width, height);
 
 		// Set background color (in RGBA). Alpha of 0 for total transparency
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
@@ -522,9 +528,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 		}
 		}
-		
-		
-
 	}
 	
 	
@@ -660,9 +663,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private Matrix4f ThisRot = new Matrix4f();
 	private final Object matrixLock = new Object();
 	private float[] matrix = new float[16];
-
-	// FIXME: Need to set the width and height of the displaysurface.
-	private ArcBall arcBall = new ArcBall(width, height);
 
 	// add function to capture mouse event of ArcBall model
 	public void drag(Point mousePoint) {
