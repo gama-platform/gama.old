@@ -17,8 +17,7 @@ public class ConversationType extends GamaType<Conversation> {
 	public Conversation cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
-		if ( obj instanceof Message ) { return new Conversation(
-			FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
+//		if ( obj instanceof Message ) { return new Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
 		return null;
 	}
 

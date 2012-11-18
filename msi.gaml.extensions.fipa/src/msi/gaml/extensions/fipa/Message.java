@@ -17,6 +17,7 @@
 package msi.gaml.extensions.fipa;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -40,7 +41,7 @@ import msi.gaml.types.IType;
 	@var(name = Message.CONVERSATION, type = IType.AGENT_STR, species = "conversation"),
 	@var(name = Message.PROTOCOL, type = IType.STRING_STR, depends_on = Message.CONVERSATION),
 	@var(name = Message.TIMESTAMP, type = IType.STRING_STR) })
-public class Message {
+public class Message implements IValue {
 
 	public final static String CONVERSATION = "current_conversation";
 	public final static String CONTENT = "content";
@@ -278,6 +279,28 @@ public class Message {
 	@Override
 	public String toString() {
 		return "Proxy on " + data;
+	}
+
+	@Override
+	public String toGaml() {
+		return null;
+	}
+
+	@Override
+	public IType type() {
+		return null;
+	}
+
+	@Override
+	public String stringValue() throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IValue copy() throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

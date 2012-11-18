@@ -164,4 +164,5 @@ public interface FIPAConstants {
 
 	/** Conversation requires Agent interaction. */
 	public static final int AGENT_ACTION_REQ = -3;
+	
 }

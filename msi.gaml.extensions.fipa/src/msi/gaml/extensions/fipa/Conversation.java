@@ -19,6 +19,7 @@ package msi.gaml.extensions.fipa;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -81,7 +82,7 @@ public class Conversation extends GamaList<Message> {
 	 *             the given protocol and belongs to the given Agent.
 	 * 
 	 * @param sim the sim
-	 * @param p the p
+	 * @param p the protocol id
 	 * @param message the message
 	 * 
 	 * @return The appropriate instance of Conversation for the protocol given
@@ -121,6 +122,14 @@ public class Conversation extends GamaList<Message> {
 		final List<IAgent> members = new GamaList<IAgent>();
 		members.addAll(message.getReceivers());
 		members.add(initiator);
+		
+		// add the (newly created) conversation to agent
+		for (IAgent m : members) {
+			List<Conversation> conversations = (List<Conversation>) m.getAttribute("conversations");
+			conversations.add(this);
+		}
+		
+		
 		// for ( final IAgent agent : members ) {
 		// final CommunicatingSkill c =
 		// (CommunicatingSkill) ((IGamlAgent) agent).getSpecies().getAgentManager()

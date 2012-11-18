@@ -43,8 +43,34 @@ public class MessageBroker {
 	 * @throws GamlException the gaml exception
 	 */
 	public List<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
+		final List<Message> messagesForA = messagesToDeliver.get(a);
+		if (messagesForA == null) { return Collections.EMPTY_LIST; }
+		
+		List<Message> successfulDeliveries = new GamaList<Message>();
+		List<Message> failedDeliveries = new GamaList<Message>();
+		
+		for (Message m : messagesForA) {
+			Conversation conv = m.getConversation();
+			try {
+				conv.addMessage(m);
+			} catch (GamaRuntimeException e) {
+				failedDeliveries.add(m);
+				failureMessageInReplyTo(m);
+				conv.end();
+			} finally {
+				if (!failedDeliveries.contains(m)) {
+					successfulDeliveries.add(m);
+				}
+			}
+		}
+ 		
+		messagesToDeliver.remove(a);
+		return successfulDeliveries;
+		
+		/*
 		final List<Message> result = messagesToDeliver.get(a);
 		if ( result == null ) { return Collections.EMPTY_LIST; }
+		List<Message> msgOfA = messagesToDeliver.get(a);
 		for ( Message m : messagesToDeliver.get(a) ) {
 			Message message = m;
 			Conversation conv = m.getConversation();
@@ -62,6 +88,7 @@ public class MessageBroker {
 		}
 		messagesToDeliver.remove(a);
 		return result;
+		*/
 	}
 
 	/**

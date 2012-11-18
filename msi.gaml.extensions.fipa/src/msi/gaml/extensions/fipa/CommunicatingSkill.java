@@ -20,7 +20,9 @@ import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -56,6 +58,7 @@ import msi.gaml.types.*;
 	@var(name = "subscribes", type = IType.LIST_STR, of = Message.SPECIES_NAME) })
 // @uses( { Message.class, Conversation.class })
 public class CommunicatingSkill extends Skill {
+	
 
 	/** The protocol indexes. */
 	private static Map<String, Integer> protocolIndexes = new HashMap();
@@ -94,9 +97,16 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "send")
-	@args(names = { Message.SPECIES_NAME, "receivers", "content", "performative", "protocol",
-		"conversation" })
+	@action(name = "send",
+		args = {
+			@arg(name = Message.SPECIES_NAME, type = IType.STRING_STR, optional = false, doc = @doc("to be described")),
+			@arg(name = "receivers", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
+			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
+			@arg(name = "performative", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
+			@arg(name = "protocol", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
+			@arg(name = "conversation", type = Conversation.TYPE_NAME, optional = true, doc = @doc("to be described"))			
+		}
+	)
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final Message m =
 			(Message) Types.get(Message.SPECIES_NAME).cast(scope,
@@ -129,9 +139,11 @@ public class CommunicatingSkill extends Skill {
 		}
 
 		Conversation conv = message.getConversation();
-		if ( conv == null ) {
-			conv = (Conversation) Types.get(ConversationType.CONV_ID).cast(scope, message, null);
-		}
+		
+//		if ( conv == null ) {
+//			conv = (Conversation) Types.get(ConversationType.CONV_ID).cast(scope, message, null);
+//		}
+		
 		if ( conv != null ) { // The message belongs to a conversation
 			message.setConversation(conv);
 			MessageBroker.getInstance().scheduleForDelivery(message);
@@ -154,11 +166,18 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@getter("conversations")
 	public List getConversations(final IAgent agent) throws GamaRuntimeException {
-		// TODO Understand why the scope is not available there.
-		List<Conversation> conversations =
-			(List<Conversation>) agent.getDirectVarValue(agent.getSimulation().getExecutionScope(),
-				"conversations");
+		List<Conversation> conversations = (List<Conversation>) agent.getAttribute("conversations");
+		if (conversations == null) {
+			conversations = new GamaList<Conversation>();
+			agent.setAttribute("conversations", conversations);
+		}
 		return conversations;
+		
+		// TODO Understand why the scope is not available there.
+//		List<Conversation> conversations =
+//			(List<Conversation>) agent.getDirectVarValue(agent.getSimulation().getExecutionScope(),
+//				"conversations");
+//		return conversations;
 	}
 
 	/**
@@ -520,6 +539,13 @@ public class CommunicatingSkill extends Skill {
 	@getter("messages")
 	public List getMessages(final IAgent agent) {
 		List<Message> result = (List) agent.getAttribute("inBox");
+		
+		if (result == null) {
+			result = new GamaList<Message>();
+			agent.setAttribute("inBox", result);
+		}
+		
+		
 		List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
 		result.addAll(received);
 		for ( Iterator<Message> it = result.iterator(); it.hasNext(); ) {
