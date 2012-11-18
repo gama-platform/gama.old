@@ -17,20 +17,27 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
+
+import msi.gama.kernel.simulation.ISchedulerListener;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.compilation.ScheduledAction;
 
 /**
  * The Class MessageBroker.
  * 
  * @author drogoul
  */
-public class MessageBroker {
+public class MessageBroker implements ISchedulerListener {
 
 	/** The messages to deliver. */
-
-	private final Map<IAgent, List<Message>> messagesToDeliver = new HashMap();
+	private final Map<IAgent, List<Message>> messagesToDeliver = new HashMap<IAgent, List<Message>>();
+	
+	/** Centralized storage of Conversations and Messages to facilitate Garbage Collection */
+	private Map<IAgent, ConversationsMessages> conversationsMessages = new HashMap<IAgent, ConversationsMessages>();
 
 	/** The instance. */
 	private static MessageBroker instance;
@@ -66,29 +73,6 @@ public class MessageBroker {
  		
 		messagesToDeliver.remove(a);
 		return successfulDeliveries;
-		
-		/*
-		final List<Message> result = messagesToDeliver.get(a);
-		if ( result == null ) { return Collections.EMPTY_LIST; }
-		List<Message> msgOfA = messagesToDeliver.get(a);
-		for ( Message m : messagesToDeliver.get(a) ) {
-			Message message = m;
-			Conversation conv = m.getConversation();
-			try {
-				conv.addMessage(m);
-			} catch (GamaRuntimeException e) {
-				result.remove(m);
-				message = failureMessageInReplyTo(m);
-				conv.end();
-			} finally {
-				result.add(message);
-			}
-
-			// Pas sur que ça produise le même résultat qu'avant...
-		}
-		messagesToDeliver.remove(a);
-		return result;
-		*/
 	}
 
 	/**
@@ -148,6 +132,7 @@ public class MessageBroker {
 		m.setConversation(conv);
 		scheduleForDelivery(m);
 	}
+	
 
 	/**
 	 * Gets the single instance of MessageBroker.
@@ -159,6 +144,15 @@ public class MessageBroker {
 	public static MessageBroker getInstance() {
 		if ( instance == null ) {
 			instance = new MessageBroker();
+
+			GAMA.getFrontmostSimulation().getScheduler().insertEndAction(new ScheduledAction() {
+
+				@Override
+				public void execute(IScope scope) throws GamaRuntimeException {
+					instance.manageConversationsAndMessages();
+				}
+			});
+			GAMA.getFrontmostSimulation().getScheduler().addListener(instance);
 		}
 		return instance;
 		// TODO Il faudrait pouvoir en g√©rer plusieurs (par simulation)
@@ -166,5 +160,104 @@ public class MessageBroker {
 
 	public void dispose() {
 		messagesToDeliver.clear();
+	}
+	
+	public List<Message> getMessagesFor(IAgent agent) {
+		if (!conversationsMessages.containsKey(agent)) {
+			ConversationsMessages cm = new ConversationsMessages();
+			conversationsMessages.put(agent,  cm);
+			return cm.messages;
+		}
+		
+		return conversationsMessages.get(agent).messages;
+	}
+	
+	public List<Conversation> getConversationsFor(IAgent agent) {
+		if (!conversationsMessages.containsKey(agent)) {
+			ConversationsMessages cm = new ConversationsMessages();
+			conversationsMessages.put(agent,  cm);
+			return cm.conversations;
+		}
+		
+		return conversationsMessages.get(agent).conversations;
+	}
+	
+	public void addConversation(Conversation c) {
+		List<IAgent> members = new GamaList<IAgent>();
+		members.add(c.getIntitiator());
+		for (IAgent m : (GamaList<IAgent>) c.getParticipants()) {
+			members.add(m);
+		}
+		
+		for (IAgent m : members) {
+			addConversation(m, c);
+		}
+	}
+	
+	private void addConversation(IAgent a, Conversation c) {
+		ConversationsMessages cm = new ConversationsMessages();
+		cm.conversations.add(c);
+		conversationsMessages.put(a, cm);
+	}
+	
+	/**
+	 * @throws GamaRuntimeException Removes the already ended conversations.
+	 */
+	public void manageConversationsAndMessages() throws GamaRuntimeException {
+		
+		// remove ended conversations
+		List<Conversation> conversations;
+		List<Conversation> endedConversations = new GamaList<Conversation>();
+		for (IAgent a : conversationsMessages.keySet()) {
+			
+			if (a.dead()) {
+				ConversationsMessages cm = conversationsMessages.get(a);
+				cm.conversations.clear();
+				cm.messages.clear();
+				cm.conversations = null;
+				cm.messages = null;
+				conversationsMessages.remove(a);
+			}
+			
+			conversations = conversationsMessages.get(a).conversations;
+			endedConversations.clear();
+			
+			for (Conversation c : conversations) {
+				if (c.isEnded()) {
+					endedConversations.add(c);
+				}
+			}
+
+			for ( final Conversation endedConv : endedConversations ) {
+				endedConv.dispose();
+			}
+			conversations.removeAll(endedConversations);
+		}
+	}
+
+	class ConversationsMessages {
+		List<Conversation> conversations;
+		List<Message> messages;
+		
+		ConversationsMessages() {
+			this.conversations = new GamaList<Conversation>();
+			this.messages = new GamaList<Message>();
+		}
+	}
+
+	@Override
+	public void schedulerDisposed() {
+		messagesToDeliver.clear();
+		
+		ConversationsMessages cm;
+		for (IAgent a : conversationsMessages.keySet()) {
+			cm = conversationsMessages.get(a);
+			cm.conversations.clear();
+			cm.conversations = null;
+			cm.messages.clear();
+			cm.messages = null;
+		}
+		conversationsMessages.clear();
+		instance = null;
 	}
 }

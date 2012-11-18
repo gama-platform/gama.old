@@ -1,14 +1,18 @@
 package msi.gaml.extensions.fipa;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.types.*;
 
-@type(name = Message.SPECIES_NAME, id = MessageType.MESSAGE_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = MessageType.MESSAGE_STR, id = MessageType.MESSAGE_ID, wraps = { Message.class }, kind = ISymbolKind.Variable.REGULAR)
 public class MessageType extends GamaType<Message> {
 
+	public static final String MESSAGE_STR = "message";
 	public final static short MESSAGE_ID = 99;
 
 	public MessageType() {}
@@ -16,10 +20,7 @@ public class MessageType extends GamaType<Message> {
 	@Override
 	public Message cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		if ( obj instanceof Conversation ) { return ((Conversation) obj).last(); }
-		if ( obj instanceof Message ) { return (Message) obj; }
-		// ???
-		return null;
+		return staticCast(scope, obj, param);
 	}
 
 	@Override
@@ -37,4 +38,18 @@ public class MessageType extends GamaType<Message> {
 		return true;
 	}
 
+	
+	@operator(value = MessageType.MESSAGE_STR, can_be_const = true)
+	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = { "" })
+	public static Message asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
+		return MessageType.staticCast(scope, val, null);
+	}
+
+
+	private static Message staticCast(IScope scope, Object val, Object object) {
+		if ( val instanceof Conversation ) { return ((Conversation) val).last(); }
+		if ( val instanceof Message ) { return (Message) val; }
+		// ???
+		return null;
+	}
 }

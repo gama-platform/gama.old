@@ -35,12 +35,15 @@ public abstract class AbstractScheduler implements IScheduler {
 
 	private IAgent world;
 
+	private List<ISchedulerListener> listeners; 
+
 	protected AbstractScheduler(final ISimulation sim) {
 		simulation = sim;
 		paused = true;
 		beginActions = new GamaList();
 		endActions = new GamaList();
 		agentsToInit = new GamaList();
+		listeners = new GamaList<ISchedulerListener>();
 		SimulationClock.reset();
 	}
 
@@ -53,6 +56,16 @@ public abstract class AbstractScheduler implements IScheduler {
 		endActions.clear();
 		endActionsNumber = 0;
 		agentsToInit.clear();
+		
+		for (ISchedulerListener l : listeners) {
+			l.schedulerDisposed();
+		}
+		listeners.clear();
+	}
+
+	@Override
+	public void addListener(ISchedulerListener l) {
+		listeners.add(l);
 	}
 
 	@Override

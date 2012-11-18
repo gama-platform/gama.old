@@ -16,6 +16,8 @@
  */
 package msi.gaml.extensions.fipa;
 
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
@@ -24,8 +26,10 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The Class MessageProxy.
@@ -38,7 +42,7 @@ import msi.gaml.types.IType;
 	@var(name = Message.PERFORMATIVE, type = IType.STRING_STR),
 	@var(name = Message.CONTENT, type = IType.LIST_STR),
 	@var(name = Message.UNREAD, type = IType.BOOL_STR, init = IKeyword.TRUE),
-	@var(name = Message.CONVERSATION, type = IType.AGENT_STR, species = "conversation"),
+	@var(name = Message.CONVERSATION, type = ConversationType.CONVERSATION_STR),
 	@var(name = Message.PROTOCOL, type = IType.STRING_STR, depends_on = Message.CONVERSATION),
 	@var(name = Message.TIMESTAMP, type = IType.STRING_STR) })
 public class Message implements IValue {
@@ -57,8 +61,6 @@ public class Message implements IValue {
 
 	/** The unread. */
 	private boolean unread = true;
-
-	public static final String SPECIES_NAME = "message";
 
 	/**
 	 * @throws GamaRuntimeException Instantiates a new message proxy.
@@ -283,24 +285,23 @@ public class Message implements IValue {
 
 	@Override
 	public String toGaml() {
-		return null;
+		return "message GAML to be implemented";
 	}
 
 	@Override
 	public IType type() {
-		return null;
+		return Types.get(MessageType.MESSAGE_ID);
 	}
 
 	@Override
 	public String stringValue() throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return null;
+		return "message[sender: " + data.getSender() + "; receivers: [to be filled]" + data.getReceivers() + "]" ;
 	}
 
 	@Override
 	public IValue copy() throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

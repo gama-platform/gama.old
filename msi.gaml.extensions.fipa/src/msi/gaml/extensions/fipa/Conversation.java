@@ -16,15 +16,19 @@
  */
 package msi.gaml.extensions.fipa;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * This class represents the notion of a Conversation which is comprised of several Messages, the
@@ -35,17 +39,16 @@ import msi.gaml.types.IType;
  * protocol models are defined in the corresponding sub-classes.
  */
 
-@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST_STR, of = Message.SPECIES_NAME),
+@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST_STR, of = MessageType.MESSAGE_STR),
 	@var(name = Conversation.PROTOCOL, type = IType.STRING_STR),
 	@var(name = Conversation.INITIATOR, type = IType.AGENT_STR),
-	@var(name = Conversation.PARTICIPANTS, type = IType.LIST_STR),
+	@var(name = Conversation.PARTICIPANTS, type = IType.LIST_STR, of = IType.AGENT_STR),
 	@var(name = Conversation.ENDED, type = IType.BOOL_STR, init = "false") })
 public class Conversation extends GamaList<Message> {
 
 	/** The protocol. */
 	private FIPAProtocol protocol;
 
-	public final static String TYPE_NAME = "conversation";
 	public final static String PROTOCOL = "protocol";
 	public final static String INITIATOR = "initiator";
 	public final static String PARTICIPANTS = "participants";
@@ -128,6 +131,8 @@ public class Conversation extends GamaList<Message> {
 			List<Conversation> conversations = (List<Conversation>) m.getAttribute("conversations");
 			conversations.add(this);
 		}
+		
+		MessageBroker.getInstance().addConversation(this);
 		
 		
 		// for ( final IAgent agent : members ) {
@@ -337,5 +342,21 @@ public class Conversation extends GamaList<Message> {
 		noProtocolNodeParticipantMap.clear();
 		participants.clear();
 		initiator = null;
+	}
+
+	@Override
+	public String toGaml() {
+		return "message GAML to be implemented";
+	}
+
+	@Override
+	public IType type() {
+		return Types.get(ConversationType.CONV_ID);
+	}
+
+	@Override
+	public String stringValue() throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " + this.getParticipants() ;
 	}
 }

@@ -54,5 +54,7 @@ public interface IScheduler extends IStepable {
 	public abstract void dispose();
 
 	public abstract boolean isUserHold();
+	
+	public abstract void addListener(ISchedulerListener l);
 
 }
