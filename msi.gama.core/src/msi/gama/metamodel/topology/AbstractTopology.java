@@ -543,13 +543,31 @@ public abstract class AbstractTopology implements ITopology {
 		final boolean covered) {
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if (source == null)  { return GamaList.EMPTY_LIST; }
-		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
-		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
-		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
-		GamaList<IAgent> result = new GamaList(shapes.size());
-		for ( IShape sh : shapes ) {
-			IAgent ag = sh.getAgent();
+			if (!isTorus()) {
+				Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
+				IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
+				PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
+				GamaList<IAgent> result = new GamaList(shapes.size());
+				for ( IShape sh : shapes ) {
+					IAgent ag = sh.getAgent();
+					if ( ag != null && !ag.dead() ) {
+						Geometry geom = ag.getInnerGeometry();
+						if ( covered ? pg.covers(geom) : pg.intersects(geom) ) {
+							result.add(ag);
+						}
+					}
+				}
+				return result;
+		}
+		Geometry sourceTo = returnToroidalGeom(source); 
+		PreparedGeometry pg = pgFact.create(sourceTo);
+		Map<Geometry, IAgent> agentsMap = getAgents(f);
+		GamaList<IAgent> result = new GamaList();
+		for ( Geometry sh : agentsMap.keySet() ) {
+			IAgent ag = agentsMap.get(sh);
 			if ( ag != null && !ag.dead() ) {
+				if (source.getAgent() != null && ag == source.getAgent())
+					continue;
 				Geometry geom = ag.getInnerGeometry();
 				if ( covered ? pg.covers(geom) : pg.intersects(geom) ) {
 					result.add(ag);
@@ -557,6 +575,7 @@ public abstract class AbstractTopology implements ITopology {
 			}
 		}
 		return result;
+		
 	}
 	
 	

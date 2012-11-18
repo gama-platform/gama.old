@@ -372,20 +372,25 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final IScope scope,final Geometry geometry, final Color color,
 			final boolean fill, final Color border, final Integer angle) {
 		// Check if the geometry has a height value (3D Shape or Volume)
-
+		Geometry geom = null;
+		if (scope.getAgentScope().getTopology().isTorus()) {
+			geom = scope.getAgentScope().getTopology().returnToroidalGeom(geometry);
+		} else {
+			geom = geometry;
+		}
 		
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 
-		if (geometry.getUserData() != null) {
-			float height = new Float(geometry.getUserData().toString());
-			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
+		if (geom.getUserData() != null) {
+			float height = new Float(geom.getUserData().toString());
+			this.AddJTSGeometryInJTSGeometries(geom,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
 					fill, border, false, angle, height,offSet);
 		} else {
-			this.AddJTSGeometryInJTSGeometries(geometry,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
+			this.AddJTSGeometryInJTSGeometries(geom,scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
 					fill, border, false, angle, 0,offSet);
 		}
 		// FIXME: Need to remove the use of sw.
-		return sw.toShape(geometry).getBounds2D();
+		return sw.toShape(geom).getBounds2D();
 	}
 
 	@Override
