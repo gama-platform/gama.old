@@ -93,6 +93,11 @@ public class ContinuousTopology extends AbstractTopology {
 		// faire une DistanceOp().getNearestPoints()
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
+		if (isTorus) {
+			source = normalizeLocation(source,false);
+			target = normalizeLocation(target,false);
+		}
+			
 		// TODO for the moment, the direction to unreachable places can be determined
 		// if ( !isValidLocation(source) ) {
 		// ; // Necessary ?
@@ -116,6 +121,8 @@ public class ContinuousTopology extends AbstractTopology {
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidGeometry(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
+		if (isTorus)
+			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
 		return g1.euclidianDistanceTo(g2);
 	}
 
@@ -125,6 +132,8 @@ public class ContinuousTopology extends AbstractTopology {
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidLocation(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
+		if (isTorus)
+			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
 		return g1.euclidianDistanceTo(g2);
 	}
 
