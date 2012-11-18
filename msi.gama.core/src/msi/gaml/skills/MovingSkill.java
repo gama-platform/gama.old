@@ -246,7 +246,7 @@ public class MovingSkill extends GeometricSkill {
 		int heading = computeHeading(scope, agent);
 
 		ILocation loc = getTopology(agent).getDestination(location, heading, dist, true);
-		if ( loc == null ) {
+		if ( loc == null) {
 			agent.setHeading(heading - 180);
 			// pathFollowed = null;
 		} else {

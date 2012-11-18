@@ -254,6 +254,7 @@ public abstract class AbstractTopology implements ITopology {
 		return environment;
 	}
 
+	
 	@Override
 	public ILocation normalizeLocation(final ILocation point, final boolean nullIfOutside) {
 		/* localized for a bit more efficiency */
@@ -267,11 +268,13 @@ public abstract class AbstractTopology implements ITopology {
 
 		if (isTorus()) {
 			Point pt = GeometryUtils.factory.createPoint(point.toCoordinate());
+			
 			for (int cnt=0; cnt < 8; cnt++) {
 				AffineTransformation at = new AffineTransformation();
 				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
 				GamaPoint newPt = new GamaPoint(at.transform(pt).getCoordinate());
-				if ( environment.getGeometry().covers(newPt) ) { return newPt; }
+				if ( environment.getGeometry().covers(newPt) ) { 
+					return newPt; }
 			}
 		}
 		// See if rounding errors of double do not interfere with the computation.
