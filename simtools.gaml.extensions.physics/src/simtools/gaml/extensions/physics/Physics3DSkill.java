@@ -8,18 +8,20 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = "physical_world", type = IType.AGENT_STR),
+@vars({ @var(name = "physical_3D_world", type = IType.AGENT_STR),
 	@var(name = "density", type = IType.FLOAT_STR, init = "1.0"),
+	@var(name = "mass", type = IType.FLOAT_STR, init = "1.0"),
 	@var(name = "velocity", type = IType.POINT_STR, init = "{0.0, 0.0}"),
+	@var(name = "collisionBound", type = IType.MAP_STR),
 	@var(name = "motor", type = IType.POINT_STR, init = "{0.0, 0.0}") })
-@skill(name = "physical")
-public class PhysicsSkill extends Skill {
+@skill(name = "physical3D")
+public class Physics3DSkill extends Skill {
 
-	@setter("physical_world")
+	@setter("physical_3D_world")
 	public void setWorldAgent(final IAgent _agent, final IAgent _world) {
 		if ( _world == null ) { return; }
 
-		PhysicalWorldAgent pwa = (PhysicalWorldAgent) _world;
+		Physical3DWorldAgent pwa = (Physical3DWorldAgent) _world;
 		pwa.registerAgent(_agent);
 	}
 
@@ -28,7 +30,7 @@ public class PhysicsSkill extends Skill {
 	 * @args({ "physics_world" })
 	 *         public Object primGoToPhysics(final IScope scope) throws GamaRuntimeException {
 	 *         final IAgent agent = getCurrentAgent(scope);
-	 *         PhysicalWorldAgent world = (PhysicalWorldAgent)scope.getArg("physics_world",
+	 *         Physical3DWorldAgent world = (Physical3DWorldAgent)scope.getArg("physics_world",
 	 *         IType.AGENT);
 	 *         System.out.println("World agent : " + world);
 	 *         Body body= world.getBody(agent);
