@@ -84,8 +84,8 @@ public class Physical3DWorldAgent extends GamlAgent {
 		CollisionShape shape = null;;
 
 		Vector3f position = new Vector3f((float)(float)geom.getLocation().getX(), (float)geom.getLocation().getY(),(float)geom.getLocation().getZ());
-		GamaPoint velocity = (GamaPoint) geom.getAttribute("velocity");
-		Vector3f _velocity = new Vector3f((float)velocity.x, (float)velocity.y, (float)0.0);
+		GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null,  geom.getAttribute("velocity"));
+		Vector3f _velocity = new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 		
 		Double  mass = (Double) geom.getAttribute("mass");
 		
@@ -121,8 +121,6 @@ public class Physical3DWorldAgent extends GamlAgent {
 				
 				shape = new BoxShape(new Vector3f((float)x, (float)y, (float)z));
 
-				//shape = new SphereShape(5);	
-//			        rootNode.attachChild(physicsSphere);
 			}
 		}
 		return _world.addCollisionObject(shape, mass.floatValue(), position, _velocity);

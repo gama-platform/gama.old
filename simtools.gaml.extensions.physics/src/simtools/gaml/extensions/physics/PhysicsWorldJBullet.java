@@ -102,7 +102,7 @@ public class PhysicsWorldJBullet {
 		startTransform.setIdentity();
 		startTransform.origin.set(position);
 		boolean isDynamic = (mass != 0f);
-		Vector3f localInertia = velocity;
+		Vector3f localInertia = new Vector3f(0, 0, 0);
 		if (isDynamic) {
 			shape.calculateLocalInertia(mass, localInertia);
 		}
@@ -114,8 +114,9 @@ public class PhysicsWorldJBullet {
 		RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(
 				mass, myMotionState, shape, localInertia);
 		RigidBody body = new RigidBody(rbInfo);
-
-		//body.setLinearVelocity(velocity);
+		System.out.println(velocity);
+		body.setLinearVelocity(velocity);
+//		body.setLinearVelocity(new Vector3f(10, 0, 0));
 		dynamicsWorld.addRigidBody(body);
 
 		return body;
