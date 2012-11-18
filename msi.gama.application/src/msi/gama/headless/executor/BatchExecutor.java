@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Calendar;
+import java.util.Observable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class BatchExecutor {
+public class BatchExecutor  {
 
 	/**
 	 * @param args
@@ -75,7 +76,7 @@ public class BatchExecutor {
 		for ( String inputFile : listInputs )
 			batchExecutor.submit(path, inputFile, newOutDir);
 		batchExecutor.shutdown();
-
+		
 		double endTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
 		return (endTime - beginTime);
 	}
@@ -117,7 +118,7 @@ public class BatchExecutor {
 			pb.directory(new File(path));
 			pb.command(commands);
 			Process process = pb.start();
-
+		//	process.
 			InputStream is = process.getInputStream();
 			InputStream err = process.getErrorStream();
 			InputStreamReader isr = new InputStreamReader(is);
@@ -137,6 +138,7 @@ public class BatchExecutor {
 				System.out.println(line);
 			}
 
+	//		process.
 			process.destroy();
 
 		} catch (IOException e) {
