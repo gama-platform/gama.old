@@ -141,6 +141,18 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
+		
+		@operator("hexagon")
+		@doc(value = "A hexagon geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon(10) --: returns a geometry as a hexagon of side size 10." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"rectangle", "triangle" })
+		public static IShape opHexagon(final IScope scope, final Double side_size) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( side_size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(side_size, location);
+		}
 
 		@operator(value = "polygon", expected_content_type = { IType.POINT })
 		@doc(value = "A polygon geometry from the given list of points.", special_cases = {
@@ -663,6 +675,13 @@ public abstract class Spatial {
 		public static GamaList<IShape> primTriangulate(final GamaList<IShape> ls) {
 			return GeometryUtils.triangulation(ls);
 		}
+		
+		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
+		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
+		public static GamaList<IShape> primHexagon(final IShape ls, final GamaPoint param) {
+			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
+		}
+
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { "self as_grid {10, 5} --: returns a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator." })

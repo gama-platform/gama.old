@@ -170,6 +170,31 @@ public class GeometryUtils {
 		}
 		return pts;
 	}
+	
+	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
+		double height = geom.getEnvelope().getHeight();
+		double width = geom.getEnvelope().getWidth();
+		double xmin = geom.getEnvelope().getMinX();
+		double ymin = geom.getEnvelope().getMinY();
+		double val = Math.cos(Math.toRadians(30));
+		double size = width/ (2 * val * nbColumns);
+		GamaList<IShape> geoms = new GamaList<IShape>();
+		for(int l=0;l<nbColumns;l++){// Remarquer le "+2" car la grille est constituŽe de 2 sous grilles (les lignes impaires sont dŽcallŽes)
+			for(int c=0;c<nbRows+1;c = c+2){
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * l, ymin + (c * 1.5) * size); 
+				if (geom.covers(poly))
+					geoms.add(poly);
+			}
+		}
+		for(int l=0;l<nbColumns;l++){// Remarquer le "+2" car la grille est constituŽe de 2 sous grilles (les lignes impaires sont dŽcallŽes)
+			for(int c=0;c<nbRows+1;c = c+2){
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * (l+0.5), ymin + ((c +1) * 1.5) * size); 
+				if (geom.covers(poly))
+					geoms.add(poly);
+			}
+		}
+		return geoms;
+	}
 
 	public static List<Geometry> discretisation(final Geometry geom, final double size,
 		final boolean complex) {

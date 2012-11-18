@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.*;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -175,6 +176,26 @@ public class GamaGeometryType extends GamaType<IShape> {
 			}
 		}
 		return new GamaShape(g);
+	}
+	
+	public static IShape buildHexagon(final double size, final double x, final double y) {
+		return buildHexagon(size, new GamaPoint(x, y) );
+	}
+	public static IShape buildHexagon(final double size, final ILocation location) {
+		double x = location.getX();
+		double y = location.getY();
+		double h=size/2;
+		double width= size*(Math.sqrt(3)/2.0);
+		Coordinate[] coords = new Coordinate[7];
+		coords[0] = new GamaPoint(x, y + h);
+		coords[1] = new GamaPoint(x+width,y);
+		coords[2] = new GamaPoint(x + 2 * width, y + h);
+		coords[3] = new GamaPoint(x + 2 * width, y+ 1.5  * size);
+		coords[4] = new GamaPoint(x + width, y + 2 * size);
+		coords[5] = new GamaPoint(x, y+ 1.5  * size);
+		coords[6] = new GamaPoint(coords[0]);
+		return new GamaShape(GeometryUtils.factory.createPolygon(GeometryUtils.factory.createLinearRing(coords), null));
+		
 	}
 
 	public static IShape buildCircle(final double radius, final ILocation location) {
