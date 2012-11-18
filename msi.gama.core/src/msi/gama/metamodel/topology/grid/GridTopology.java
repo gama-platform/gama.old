@@ -57,10 +57,13 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows,
-		final int columns, final boolean isTorus,final boolean usesVN)
+		final int columns, final boolean isTorus,final boolean usesVN, final boolean isHexagon)
 		throws GamaRuntimeException { 
 		super(scope, environment, isTorus);
-		places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN);
+		if (isHexagon)
+			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN, isHexagon);
+		else 
+			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN);
 	}
 
 	@Override
@@ -109,7 +112,8 @@ public class GridTopology extends AbstractTopology {
 		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(),
 			((GamaSpatialMatrix) places).getCols(),
 			((GamaSpatialMatrix) places).isTorus,
-			((GamaSpatialMatrix) places).neighbourhood.isVN());
+			((GamaSpatialMatrix) places).neighbourhood.isVN(),
+			((GamaSpatialMatrix) places).isHexagon);
 	}
 
 	@Override

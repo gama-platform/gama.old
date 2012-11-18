@@ -20,6 +20,7 @@ package msi.gama.metamodel.topology.grid;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -80,7 +81,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	double cellWidth, cellHeight;
 	public int[] supportImagePixels;
 	protected Boolean usesVN = null;
-	protected Boolean isTorus = null; // TODO Deactivated for the moment
+	protected Boolean isTorus = null;
+
+	protected Boolean isHexagon = null;
 	protected GridDiffuser diffuser;
 	public GridNeighbourhood neighbourhood;
 	public static final short DIFFUSION = 0;
@@ -109,13 +112,75 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		actualNumberOfCells = 0;
 		firstCell = -1;
 		lastCell = -1;
+		this.isHexagon = false;
 		createCells(false);
 	}
+	
+	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,final boolean isTorus,boolean usesVN,
+			final boolean isHexagon) throws GamaRuntimeException {
+			super(cols, rows);
+			environmentFrame = environment.getGeometry();
+			bounds = environmentFrame.getEnvelope();
+			cellWidth = bounds.getWidth() / cols;
+			cellHeight = bounds.getHeight() / rows;
+			precision = bounds.getWidth() / 1000;
+			int size = numRows * numCols;
+			createMatrix(size);
+			supportImagePixels = new int[size];
+			this.isTorus = isTorus;
+			this.usesVN = false;
+			this.isHexagon = isHexagon;
+			GRID_NUMBER++;
+			actualNumberOfCells = 0;
+			firstCell = -1;
+			lastCell = -1;
+			createHexagons(false);
+		}
 
 	protected void createMatrix(final int size) {
 		matrix = new IShape[size];
 	}
-
+	public void createHexagons(final boolean partialCells) {
+		double width = environmentFrame.getEnvelope().getWidth();
+		double xmin = environmentFrame.getEnvelope().getMinX();
+		double ymin = environmentFrame.getEnvelope().getMinY();
+		double val = Math.cos(Math.toRadians(30));
+		double size = width/ (2 * val * numCols);
+		GamaList<IShape> geoms = new GamaList<IShape>();
+		int i = 0;
+		for(int l=0;l<numCols;l++){
+			for(int c=0;c<numRows+1;c = c+2){
+				i = l + (numCols * c);
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * l, ymin + (c * 1.5) * size); 
+				if (environmentFrame.covers(poly)) {
+					  if ( firstCell == -1 ) {
+							firstCell = i;
+						}
+						matrix[i] = poly;
+						actualNumberOfCells++;
+						lastCell = i;
+					}
+				}
+		}
+		for(int l=0;l<numCols;l++){
+			for(int c=0;c<numRows+1;c = c+2){
+				i = l + (numCols * (c + 1));
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * (l+0.5), ymin + ((c +1) * 1.5) * size); 
+				if (environmentFrame.covers(poly)) {
+					if (environmentFrame.covers(poly)) {
+						  if ( firstCell == -1 ) {
+								firstCell = i;
+							}
+							matrix[i] = poly;
+							actualNumberOfCells++;
+							lastCell = i;
+						}
+					}
+				
+			}
+		}
+		
+	}
 	public void createCells(final boolean partialCells) throws GamaRuntimeException {
 		// Geometry g = environmentFrame.getInnerGeometry();
 		boolean isRectangle = environmentFrame.getInnerGeometry().isRectangle();

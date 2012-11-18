@@ -106,7 +106,7 @@ public abstract class AbstractTopology implements ITopology {
 	
 	public Geometry returnToroidalGeom(IShape shape){
 		if (shape.isPoint()) {
-			return returnToroidalGeom((GamaPoint) shape);
+			return returnToroidalGeom((GamaPoint) shape.getLocation());
 		}
 		return returnToroidalGeom(shape.getInnerGeometry());
 	}
