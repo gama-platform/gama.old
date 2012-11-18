@@ -21,11 +21,13 @@ package msi.gama.metamodel.topology;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -75,6 +77,8 @@ public abstract class AbstractTopology implements ITopology {
 	public Geometry returnToroidalGeom(Geometry geom){
 		List<Geometry> geoms = new GamaList<Geometry>();
 		int cnt = 0;
+		if (geom.coveredBy(getEnvironment().getGeometry().getInnerGeometry()))
+			return geom;
 		geoms.add(geom.intersection(this.getEnvironment().getGeometry().getInnerGeometry()));
 		for (Geometry geomEnv :virtual_environments) {
 			Geometry inter;
@@ -91,6 +95,39 @@ public abstract class AbstractTopology implements ITopology {
 			cnt++;
 		}
 		return GeometryUtils.factory.buildGeometry(geoms);
+	}
+	
+	public Geometry returnToroidalGeomPoint(GamaPoint loc){
+		int cnt = 0;
+		Point pt = GeometryUtils.factory.createPoint(loc);
+		if (loc.intersects(getEnvironment().getGeometry())) {
+			return pt;
+		} 
+		for (Geometry geomEnv :virtual_environments) {
+			if (pt.intersects(geomEnv)) {
+				AffineTransformation at = new AffineTransformation();
+				at.translate( adjustedXVector[cnt], adjustedYVector[cnt]);
+				return at.transform(pt);
+			}
+			cnt++;
+		}
+		return pt;
+	}
+	
+	
+	public Geometry returnToroidalGeom(IShape shape){
+		if (shape.isPoint()) {
+			return returnToroidalGeomPoint((GamaPoint) shape);
+		}
+		return returnToroidalGeom(shape.getInnerGeometry());
+	}
+	
+	public Map<Geometry, IAgent> toroidalGeoms(Collection shps){
+		Map<Geometry, IAgent> geoms = new GamaMap();
+		for (IAgent ag : scope.getWorldScope().getAgents()) {
+			geoms.put(returnToroidalGeom(ag.getGeometry().getInnerGeometry()), ag);
+		}
+		return geoms;
 	}
 	
 	protected void createVirtualEnvironments()
@@ -113,9 +150,7 @@ public abstract class AbstractTopology implements ITopology {
 		environmentMaxY = environmentEnvelope.getMaxY();
 		
 		
-		double width, height, minX, minY, maxX, maxY;
-		width = environmentWidth;
-		height = environmentHeight;
+		double  minX, minY, maxX, maxY;
 		
 		// NORTH virtual environment
 		minX = environmentMinX;
@@ -437,24 +472,64 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		IAgent result = null;
-		for ( int i = 0; i < steps.length; i++ ) {
-			IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
-			if ( min_neighbour != null ) {
-				result = min_neighbour.getAgent();
-				break;
+		if (!isTorus()) {
+			for ( int i = 0; i < steps.length; i++ ) {
+				IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
+				if ( min_neighbour != null ) {
+					result = min_neighbour.getAgent();
+					break;
+				}
+			}
+		} else {
+			Geometry g0 = returnToroidalGeom(source.getGeometry());
+			Map<Geometry, IAgent> agents = getAgents(filter);
+			double distMin = Double.MAX_VALUE;
+			for (Geometry g1 : agents.keySet()) {
+				IAgent ag = agents.get(g1);
+				if (source.getAgent() != null && ag == source.getAgent())
+					continue;
+				double dist = g0.distance(g1);
+				if (dist < distMin) {
+					distMin = dist;
+					result = ag; 
+				}
 			}
 		}
 		return result;
+	}
+	
+	public Map<Geometry, IAgent> getAgents(final IAgentFilter filter){
+		Collection shps;
+		if (filter != null) 
+			shps = filter.getShapes();
+		else shps = scope.getWorldScope().getAgents();
+		return toroidalGeoms(shps);
 	}
 
 	@Override
 	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
 		IAgent result = null;
-		for ( int i = 0; i < steps.length; i++ ) {
-			IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
-			if ( min_neighbour != null ) {
-				result = min_neighbour.getAgent();
-				break;
+		if (!isTorus()) {
+			for ( int i = 0; i < steps.length; i++ ) {
+				IShape min_neighbour = spatialIndex.firstAtDistance(source, steps[i], filter);
+				if ( min_neighbour != null ) {
+					result = min_neighbour.getAgent();
+					break;
+				}
+			}
+		} else {
+			Map<Geometry, IAgent> agents = getAgents(filter);
+			double distMin = Double.MAX_VALUE;
+			Geometry g0 = returnToroidalGeom(source);	
+			for (Geometry g1 : agents.keySet()) {
+				IAgent ag = agents.get(g1);
+				if (source.getAgent() != null && ag == source.getAgent())
+					continue;
+				double dist = g0.distance(g1);
+				if (dist < distMin) {
+					distMin = dist;
+					result = ag; 
+				}
 			}
 		}
 		return result;
@@ -463,12 +538,28 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public IList<IAgent> getNeighboursOf(final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
-		IList<IAgent> agents = new GamaList(shapes.size());
-		for ( IShape s : shapes ) {
-			IAgent a = s.getAgent();
-			if ( a != null && !a.dead() ) {
-				agents.add(a);
+		IList<IAgent> agents;
+		if (!isTorus()) {
+			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+			agents = new GamaList(shapes.size());
+			for ( IShape s : shapes ) {
+				IAgent a = s.getAgent();
+				if ( a != null && !a.dead() ) {
+					agents.add(a);
+				}
+			}
+		} else {
+			Geometry g0 = returnToroidalGeom(source.getGeometry());
+			agents = new GamaList<IAgent>();
+			Map<Geometry, IAgent> agentsMap = getAgents(filter);
+			for (Geometry g1 : agentsMap.keySet()) {
+				IAgent ag = agentsMap.get(g1);
+				if (source.getAgent() != null && ag == source.getAgent())
+					continue;
+				double dist = g0.distance(g1);
+				if (dist <= distance) {
+					agents.add(ag);
+				}
 			}
 		}
 		return agents;
@@ -477,12 +568,28 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
-		IList<IAgent> agents = new GamaList(shapes.size());
-		for ( IShape s : shapes ) {
-			IAgent a = s.getAgent();
-			if ( a != null && !a.dead() ) {
-				agents.add(a);
+		IList<IAgent> agents;
+		if (!isTorus()) {
+			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+			agents = new GamaList(shapes.size());
+			for ( IShape s : shapes ) {
+				IAgent a = s.getAgent();
+				if ( a != null && !a.dead() ) {
+					agents.add(a);
+				}
+			}
+		} else {
+			Geometry g0 = returnToroidalGeom(source);
+			agents = new GamaList<IAgent>();
+			Map<Geometry, IAgent> agentsMap = getAgents(filter);
+			for (Geometry g1 : agentsMap.keySet()) {
+				IAgent ag = agentsMap.get(g1);
+				if (source.getAgent() != null && ag == source.getAgent())
+					continue;
+				double dist =g0.distance(g1);
+				if (dist <= distance) {
+					agents.add(ag);
+				}
 			}
 		}
 		return agents;

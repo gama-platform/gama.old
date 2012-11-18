@@ -116,6 +116,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		agentsToInit.clear();
 		for ( int i = 0, n = toInit.length; i < n; i++ ) {
 			GuiUtils.stopIfCancelled();
+			System.out.println("scope : " + scope);
 			// GUI.debug("Executing the init section of " + toInit[i]);
 			IAgent a = toInit[i];
 			if ( !a.dead() ) {

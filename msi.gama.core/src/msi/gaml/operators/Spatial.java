@@ -1060,6 +1060,8 @@ public abstract class Spatial {
 				DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
 			return GamaList.with(new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
+		
+		
 
 		@operator("farthest_point_to")
 		@doc(value = "the farthest point of the left-operand to the left-point.", examples = { "geom farthest_point_to(pt) --: the closest point of geom to pt" }, see = {
@@ -1170,6 +1172,8 @@ public abstract class Spatial {
 			ITopology t = agent.getTopology();
 			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
 				In.list(scope, list)); }
+			if (t.isTorus()){ return t.getNeighboursOf(agent, distance,
+					In.list(scope, list)); }
 			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.list(scope, list),
 				false);
 		}
@@ -1185,6 +1189,8 @@ public abstract class Spatial {
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
 			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
 				agent.getLocation(), distance, In.population(pop)); }
+			if ( agent.getTopology().isTorus()){ return agent.getTopology().getNeighboursOf(
+					agent, distance, In.population(pop)); }
 			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
 				In.population(pop), false);
 		}

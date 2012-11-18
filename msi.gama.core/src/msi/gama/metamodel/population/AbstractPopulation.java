@@ -212,6 +212,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		dispose();
 		computeTopology(scope);
+		System.out.println("topology : " + topology);
 		if ( topology != null ) {
 			topology.initialize(this);
 		}
@@ -294,6 +295,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 			 boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
+			System.out.println("this.getHost() : " + this.getHost());
 			topology = new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN);
 		} else {
 			IExpression exp = species.getFacet(IKeyword.TORUS);

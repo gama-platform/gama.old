@@ -56,6 +56,7 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 		if ( expr == null ) {
 			super.computeTopology(scope);
 		} else {
+			System.out.println("host : " + host);
 			topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), null);
 		}
 	}
