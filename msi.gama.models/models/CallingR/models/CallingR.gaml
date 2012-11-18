@@ -1,6 +1,6 @@
 /**
  *  CallingR
- *  Author: Truong Xuna Viet
+ *  Author: Truong Xuan Viet
  *  Description: First sample for R calling in GAMA
 
  */
@@ -23,7 +23,7 @@ global {
 		write meanR(X); // -> 2.0
 		/* Copying the RCode.txt file into your folder, re-change the path, *.txt file must be ANSI text file */
 		
-		write R_compute("C:/RCode.txt"); // -> [a::[0.981980506061966]]
+		write R_compute("C:/RCode.txt"); // -> result,[0.981980506061966];
 	}
 }
 
