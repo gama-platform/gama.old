@@ -22,7 +22,9 @@ import java.util.*;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 
 /**
  * The class GamaGeometryUtils.
@@ -272,6 +274,93 @@ public class WaterLevelUtils {
 		
 	}
 
+	public static GamaList<GamaList<GamaPoint>> areaPolylines(final List<Coordinate> points, double targetheight)  {
+		int nbtrap=points.size()-1;
+		
+		double[] nexttrapsurf=new double[nbtrap];
+		double[] trapwidth=new double[nbtrap];
+		double[] leftheight=new double[nbtrap+1];
+		
+		double currentsurface=0;
+		boolean inthewater=false;
+
+		GamaPoint currentstartpoint=new GamaPoint(0,0);
+		GamaList<GamaList<GamaPoint>> listoflist=new GamaList<GamaList<GamaPoint>>();
+		GamaList<GamaPoint> currentlist=new GamaList<GamaPoint>();
+		
+		List<Coordinate> sortedpointsx = new ArrayList<Coordinate>();
+		sortedpointsx.addAll(points);
+		Collections.sort(sortedpointsx, new XCoordinatesComparator()); //min to max
+				
+		for (int i=0; i<nbtrap+1; i++)
+		{
+			leftheight[i]=targetheight-sortedpointsx.get(i).y;			
+		}
+		for (int i=0; i<nbtrap; i++)
+		{
+			if ((leftheight[i]>0)&(leftheight[i+1]>0))
+			{
+				if (!inthewater)
+				{
+					currentlist=new GamaList<GamaPoint>();
+					currentstartpoint=new GamaPoint(sortedpointsx.get(i).x,targetheight);
+					currentlist.add(new GamaPoint(sortedpointsx.get(i).x,targetheight));
+					currentlist.add(new GamaPoint(sortedpointsx.get(i).x,sortedpointsx.get(i).y));
+				}
+				inthewater=true;
+
+				currentlist.add(new GamaPoint(sortedpointsx.get(i+1).x,sortedpointsx.get(i+1).y));
+				trapwidth[i]=sortedpointsx.get(i+1).x-sortedpointsx.get(i).x;							
+			}
+				if ((leftheight[i]<=0)&(leftheight[i+1]>0))
+				{					
+					trapwidth[i]=(sortedpointsx.get(i+1).x-sortedpointsx.get(i).x)*(targetheight-sortedpointsx.get(i+1).y)/(sortedpointsx.get(i).y-sortedpointsx.get(i+1).y);
+					leftheight[i]=0;
+					if (!inthewater)
+					{
+						currentlist=new GamaList<GamaPoint>();
+						currentstartpoint=new GamaPoint(sortedpointsx.get(i).x+trapwidth[i],targetheight);
+						currentlist.add(new GamaPoint(sortedpointsx.get(i).x+trapwidth[i],targetheight));
+						inthewater=true;
+					}
+					currentlist.add(new GamaPoint(sortedpointsx.get(i+1).x+trapwidth[i],sortedpointsx.get(i+1).y));
+				}
+				if ((leftheight[i]>0)&(leftheight[i+1]<=0))
+				{					
+					trapwidth[i]=(sortedpointsx.get(i+1).x-sortedpointsx.get(i).x)*(targetheight-sortedpointsx.get(i).y)/(sortedpointsx.get(i+1).y-sortedpointsx.get(i).y);
+					leftheight[i+1]=0;
+					if (inthewater)
+					{
+						currentlist.add(new GamaPoint(sortedpointsx.get(i).x+trapwidth[i],targetheight));
+						currentlist.add(currentstartpoint);
+						listoflist.add(currentlist);
+						inthewater=false;
+					}
+				}
+			if ((leftheight[i]<=0)&(leftheight[i+1]<=0))
+			{					
+				trapwidth[i]=0;
+				if (inthewater)
+				{
+					currentlist.add(new GamaPoint(sortedpointsx.get(i).x,targetheight));
+					currentlist.add(currentstartpoint);
+					listoflist.add(currentlist);
+					inthewater=false;
+				}
+			}
+			nexttrapsurf[i]=trapwidth[i]*(leftheight[i]+leftheight[i+1])/2;			
+			currentsurface=currentsurface+trapwidth[i]*(leftheight[i]+leftheight[i+1])/2;
+		}
+		if (inthewater)
+		{
+			currentlist.add(currentstartpoint);
+			listoflist.add(currentlist);
+			inthewater=false;
+		}
+		return listoflist;
+
+		
+	}
 
 
 }

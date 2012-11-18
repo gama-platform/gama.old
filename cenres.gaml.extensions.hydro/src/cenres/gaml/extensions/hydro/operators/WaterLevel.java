@@ -23,6 +23,7 @@ import cenres.gaml.extensions.hydro.utils.WaterLevelUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -45,5 +46,11 @@ public class WaterLevel {
 	public static Double opWaterArea(final IShape shape, final Double val) {
 		if ( shape == null || val == null) { return null; }
 		return WaterLevelUtils.area(new GamaList<Coordinate>(shape.getInnerGeometry().getCoordinates()), val);
+	}
+	@operator(value = { "water_polylines_for" })
+	@doc(special_cases = { "if the left operand is a polyline and the right operand a float for the water y coordinate, returrns the shapes of the river sections (list of list of points)" }, examples = { "waterarea <- my_river_polyline water_area_for my_height_value" })
+	public static GamaList<GamaList<GamaPoint>> opWaterPolylines(final IShape shape, final Double val) {
+		if ( shape == null || val == null) { return null; }
+		return WaterLevelUtils.areaPolylines(new GamaList<Coordinate>(shape.getInnerGeometry().getCoordinates()), val);
 	}
 }
