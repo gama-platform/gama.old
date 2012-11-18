@@ -14,12 +14,23 @@ public class MulticoreFactory  {
 	/**
 	 * @param args
 	 */
-	int coreThreadSize = 1;
+	static int coreThreadSize = 1;
 	static ExecutorService executorService;
 	static String path;
 	
 	static List<Future<MulticoreTask>> futures = new ArrayList<Future<MulticoreTask>>();
 
+	public static void configure()
+	{
+		coreThreadSize = getSatisfiedThreads();
+		executorService =
+			new ThreadPoolExecutor(
+				coreThreadSize, // core thread pool size
+				coreThreadSize, // maximum thread pool size
+				1, // time to wait before resizing pool
+				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(coreThreadSize, true),
+				new ThreadPoolExecutor.CallerRunsPolicy());
+	}
 	public MulticoreFactory() {
 		coreThreadSize = getSatisfiedThreads();
 		executorService =
@@ -47,8 +58,8 @@ public class MulticoreFactory  {
 		return path;
 	}
 	
-	public void setPath(String path) {
-		this.path = path;
+	public static void setPath(String path) {
+		MulticoreFactory.path = path;
 	}
 
 	public int getCoreThreadSize() {
@@ -59,7 +70,7 @@ public class MulticoreFactory  {
 		this.coreThreadSize = coreThreadSize;
 	}
 
-	private int getSatisfiedThreads() {
+	private static int getSatisfiedThreads() {
 		int cpus = Runtime.getRuntime().availableProcessors();
 		System.out.println("cpus :" + cpus);
 		int maxThreads = cpus;

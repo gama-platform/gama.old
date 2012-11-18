@@ -44,7 +44,7 @@ public class MulticoreTask implements Runnable {
 	}
 	
 	public void launchCommandLineGama(String path, String inpFile, String outDir) {
-		outDir = outDir + File.separator + getDirName(inpFile);
+		//outDir = outDir + File.separator + getDirName(inpFile);
 		System.out.println("inpFile " + inpFile);
 		System.out.println("newOutDir " + outDir);
 		String os = System.getProperty("os.name");

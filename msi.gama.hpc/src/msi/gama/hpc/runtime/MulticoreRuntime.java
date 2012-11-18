@@ -21,6 +21,22 @@ public class MulticoreRuntime extends Observable {
 	
 	
 	
+	public String getInputPath() {
+		return inputPath;
+	}
+
+	public void setInputPath(String inputPath) {
+		this.inputPath = inputPath;
+	}
+
+	public String getOutputPath() {
+		return outputPath;
+	}
+
+	public void setOutputPath(String outputPath) {
+		this.outputPath = outputPath;
+	}
+
 	MulticoreRuntime(HPCExperiment exp, String in, String out)
 	{
 		this.experiment = exp;
@@ -52,6 +68,7 @@ public class MulticoreRuntime extends Observable {
 		this.computeDuration= Calendar.getInstance().getTimeInMillis() - computeDuration;
 		this.notifyListener();
 	}
+	
 	void setComputeDuration(long cd)
 	{
 		this.computeDuration=cd;
@@ -72,10 +89,12 @@ public class MulticoreRuntime extends Observable {
 	{
 		return state;
 	}
+	
 	public long getComputeDuration()
 	{
 		return this.computeDuration;
 	}
+	
 	public HPCExperiment getExperiment()
 	{
 		return this.experiment;
