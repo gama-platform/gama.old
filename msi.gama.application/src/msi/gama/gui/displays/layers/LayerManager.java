@@ -183,7 +183,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void updateItemValues() {}
 
-	public static ILayer createDisplay(final ILayerStatement layer, final double env_width,
+	public static ILayer createLayer(final ILayerStatement layer, final double env_width,
 		final double env_height, final IGraphics dg) {
 		switch (layer.getType()) {
 
