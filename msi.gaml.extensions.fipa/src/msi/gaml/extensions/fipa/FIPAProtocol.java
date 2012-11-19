@@ -147,6 +147,8 @@ abstract public class FIPAProtocol {
 	 * @return the index
 	 */
 	abstract public int getIndex();
+	
+	abstract public String getName();
 
 	/**
 	 * Checks for protocol.
@@ -182,7 +184,7 @@ abstract public class FIPAProtocol {
 	 * 
 	 * @throws ProtocolErrorException the protocol error exception
 	 */
-	protected ProtocolNode getNode(final ProtocolNode currentNode, final int performative,
+	protected ProtocolNode getNode(final Message message, final ProtocolNode currentNode, final int performative,
 		final boolean senderIsInitiator) throws ProtocolErrorException {
 		if ( currentNode == null ) { return getRootNode(performative); }
 		final List<ProtocolNode> followingNodes = currentNode.getFollowingNodes();
@@ -197,8 +199,8 @@ abstract public class FIPAProtocol {
 			}
 		}
 
-		if ( potentialMatchingNodes.isEmpty() ) { throw new ProtocolErrorException(
-			"Unexpected message received of type : " + performative); }
+		if ( potentialMatchingNodes.isEmpty() ) { throw new ProtocolErrorException("Protocol : " + this.getName() +
+			". Unexpected message received of performative : " + message.getPerformativeName()); }
 
 		ProtocolNode matchingNode = null;
 		for ( final ProtocolNode potentialMatchingNode : potentialMatchingNodes ) {

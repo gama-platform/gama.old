@@ -65,6 +65,7 @@ public class MessageBroker implements ISchedulerListener {
 				failedDeliveries.add(m);
 				failureMessageInReplyTo(m);
 				conv.end();
+				throw e;
 			} finally {
 				if (!failedDeliveries.contains(m)) {
 					successfulDeliveries.add(m);

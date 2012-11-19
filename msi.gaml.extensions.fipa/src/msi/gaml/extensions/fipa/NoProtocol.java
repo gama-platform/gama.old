@@ -45,4 +45,9 @@ public class NoProtocol extends FIPAProtocol {
 	public boolean hasProtocol() {
 		return false;
 	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.NO_PROTOCOL_STR;
+	}
 }

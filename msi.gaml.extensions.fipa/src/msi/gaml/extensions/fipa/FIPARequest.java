@@ -60,4 +60,9 @@ public class FIPARequest extends FIPAProtocol {
 	public int getIndex() {
 		return FIPAConstants.Protocols.FIPA_REQUEST;
 	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_REQUEST_STR;
+	}
 }

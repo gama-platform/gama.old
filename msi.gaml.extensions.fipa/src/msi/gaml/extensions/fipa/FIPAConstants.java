@@ -126,30 +126,39 @@ public interface FIPAConstants {
 
 		/** Constant field FIPA_BROKERING. */
 		public static final int FIPA_BROKERING = 0;
+		public static final String FIPA_BROKERING_STR = "fipa-brokering";
 
 		/** Constant field FIPA_CONTRACT_NET. */
 		public static final int FIPA_CONTRACT_NET = 1;
+		public static final String FIPA_CONTRACT_NET_STR = "fipa-contract-net";
 
 		/** Constant field FIPA_ITERATED_CONTRACT_NET. */
 		public static final int FIPA_ITERATED_CONTRACT_NET = 2;
+		public static final String FIPA_ITERATED_CONTRACT_NET_STR = "contract";
 
 		/** Constant field FIPA_PROPOSE. */
 		public static final int FIPA_PROPOSE = 3;
+		public static final String FIPA_PROPOSE_STR = "fipa-propose";
 
 		/** Constant field FIPA_QUERY. */
 		public static final int FIPA_QUERY = 4;
+		public static final String FIPA_QUERY_STR = "fipa-query";
 
 		/** Constant field FIPA_REQUEST. */
 		public static final int FIPA_REQUEST = 5;
+		public static final String FIPA_REQUEST_STR = "fipa-request";
 
 		/** Constant field FIPA_REQUEST_WHEN. */
 		public static final int FIPA_REQUEST_WHEN = 6;
+		public static final String FIPA_REQUEST_WHEN_STR = "fipa-request-when";
 
 		/** Constant field FIPA_SUBSCRIBE. */
 		public static final int FIPA_SUBSCRIBE = 7;
+		public static final String FIPA_SUBSCRIBE_STR = "fipa-subcribe";
 
 		/** Constant field NO_PROTOCOL. */
 		public static final int NO_PROTOCOL = 8;
+		public static final String NO_PROTOCOL_STR = "fipa-subcribe";
 	}
 
 	// TODO UCdetector: Remove unused code:

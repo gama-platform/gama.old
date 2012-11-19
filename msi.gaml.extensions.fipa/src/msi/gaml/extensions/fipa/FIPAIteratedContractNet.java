@@ -73,4 +73,9 @@ public class FIPAIteratedContractNet extends FIPAProtocol {
 	public int getIndex() {
 		return FIPAConstants.Protocols.FIPA_ITERATED_CONTRACT_NET;
 	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_ITERATED_CONTRACT_NET_STR;
+	}
 }

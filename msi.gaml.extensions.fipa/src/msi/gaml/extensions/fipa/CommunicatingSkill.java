@@ -173,18 +173,7 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@getter("conversations")
 	public List getConversations(final IAgent agent) throws GamaRuntimeException {
-		
-		// TODO retrieve the conversations by through the MessageBroker
 		return MessageBroker.getInstance().getConversationsFor(agent);
-		
-		/*
-		List<Conversation> conversations = (List<Conversation>) agent.getAttribute("conversations");
-		if (conversations == null) {
-			conversations = new GamaList<Conversation>();
-			agent.setAttribute("conversations", conversations);
-		}
-		return conversations;
-		*/
 	}
 
 	/**

@@ -73,4 +73,9 @@ public class FIPAContractNet extends FIPAProtocol {
 		return FIPAConstants.Protocols.FIPA_CONTRACT_NET;
 	}
 
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_CONTRACT_NET_STR;
+	}
+
 }

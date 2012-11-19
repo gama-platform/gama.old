@@ -174,11 +174,11 @@ public class Conversation extends GamaList<Message> {
 				for ( final IAgent receiver : msgReceivers ) {
 					if ( protocolNodeParticipantMap.containsKey(receiver) ) {
 						currentNode = protocolNodeParticipantMap.remove(receiver);
-						protocolNodeParticipantMap.put(receiver, protocol.getNode(currentNode,
+						protocolNodeParticipantMap.put(receiver, protocol.getNode(message, currentNode,
 							message.getPerformative(), senderIsInitiator));
 					} else {
 						currentNode =
-							protocol.getNode(null, message.getPerformative(), senderIsInitiator);
+							protocol.getNode(message, null, message.getPerformative(), senderIsInitiator);
 
 						if ( currentNode != null ) {
 							protocolNodeParticipantMap.put(receiver, currentNode);
@@ -189,11 +189,11 @@ public class Conversation extends GamaList<Message> {
 				if ( protocolNodeParticipantMap.containsKey(message.getSender()) ) {
 					currentNode = protocolNodeParticipantMap.remove(message.getSender());
 					protocolNodeParticipantMap
-						.put(message.getSender(), protocol.getNode(currentNode,
+						.put(message.getSender(), protocol.getNode(message, currentNode,
 							message.getPerformative(), senderIsInitiator));
 				} else {
 					currentNode =
-						protocol.getNode(null, message.getPerformative(), senderIsInitiator);
+						protocol.getNode(message, null, message.getPerformative(), senderIsInitiator);
 
 					if ( currentNode != null ) {
 						protocolNodeParticipantMap.put(message.getSender(), currentNode);

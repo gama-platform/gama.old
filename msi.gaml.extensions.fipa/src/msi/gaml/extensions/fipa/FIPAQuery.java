@@ -18,7 +18,6 @@ package msi.gaml.extensions.fipa;
 
 import static msi.gaml.extensions.fipa.FIPAConstants.*;
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
-import static msi.gaml.extensions.fipa.FIPAConstants.Protocols.FIPA_QUERY;
 
 /**
  * Implementation of the FIPA Query interaction protocol. Reference :
@@ -56,6 +55,11 @@ public class FIPAQuery extends FIPAProtocol {
 	 */
 	@Override
 	public int getIndex() {
-		return FIPA_QUERY;
+		return FIPAConstants.Protocols.FIPA_QUERY;
+	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_QUERY_STR;
 	}
 }

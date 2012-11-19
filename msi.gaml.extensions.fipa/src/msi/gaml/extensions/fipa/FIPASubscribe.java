@@ -18,7 +18,6 @@ package msi.gaml.extensions.fipa;
 
 import static msi.gaml.extensions.fipa.FIPAConstants.*;
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
-import static msi.gaml.extensions.fipa.FIPAConstants.Protocols.FIPA_SUBSCRIBE;
 
 /**
  * Implementation of the FIPA Subscribe interaction protocol. Reference :
@@ -58,6 +57,11 @@ public class FIPASubscribe extends FIPAProtocol {
 	 */
 	@Override
 	public int getIndex() {
-		return FIPA_SUBSCRIBE;
+		return FIPAConstants.Protocols.FIPA_SUBSCRIBE;
+	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_SUBSCRIBE_STR;
 	}
 }

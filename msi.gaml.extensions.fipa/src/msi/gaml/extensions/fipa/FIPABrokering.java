@@ -72,4 +72,10 @@ public class FIPABrokering extends FIPAProtocol {
 	public int getIndex() {
 		return FIPAConstants.Protocols.FIPA_BROKERING;
 	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return FIPAConstants.Protocols.FIPA_BROKERING_STR;
+	}
 }

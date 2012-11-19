@@ -23,7 +23,6 @@ package msi.gaml.extensions.fipa;
 
 import static msi.gaml.extensions.fipa.FIPAConstants.*;
 import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
-import static msi.gaml.extensions.fipa.FIPAConstants.Protocols.FIPA_REQUEST_WHEN;
 
 /**
  * The Class FIPARequestWhen.
@@ -57,6 +56,11 @@ public class FIPARequestWhen extends FIPAProtocol {
 	 */
 	@Override
 	public int getIndex() {
-		return FIPA_REQUEST_WHEN;
+		return FIPAConstants.Protocols.FIPA_REQUEST_WHEN;
+	}
+
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_REQUEST_WHEN_STR;
 	}
 }

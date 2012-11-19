@@ -54,4 +54,9 @@ public class FIPAPropose extends FIPAProtocol {
 		return FIPAConstants.Protocols.FIPA_PROPOSE;
 	}
 
+	@Override
+	public String getName() {
+		return FIPAConstants.Protocols.FIPA_PROPOSE_STR;
+	}
+
 }
