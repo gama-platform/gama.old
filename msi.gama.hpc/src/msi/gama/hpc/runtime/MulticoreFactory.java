@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -17,8 +18,6 @@ public class MulticoreFactory  {
 	static int coreThreadSize = 1;
 	static ExecutorService executorService;
 	static String path;
-	
-	static List<Future<MulticoreTask>> futures = new ArrayList<Future<MulticoreTask>>();
 
 	public static void configure()
 	{
@@ -29,28 +28,6 @@ public class MulticoreFactory  {
 				coreThreadSize, // maximum thread pool size
 				1, // time to wait before resizing pool
 				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(coreThreadSize, true),
-				new ThreadPoolExecutor.CallerRunsPolicy());
-	}
-	public MulticoreFactory() {
-		coreThreadSize = getSatisfiedThreads();
-		executorService =
-			new ThreadPoolExecutor(
-				coreThreadSize, // core thread pool size
-				coreThreadSize, // maximum thread pool size
-				1, // time to wait before resizing pool
-				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(coreThreadSize, true),
-				new ThreadPoolExecutor.CallerRunsPolicy());
-	}
-
-	public MulticoreFactory(int coreThreadSize) {
-		this.setCoreThreadSize(coreThreadSize);
-		this.coreThreadSize = getSatisfiedThreads();
-		executorService =
-			new ThreadPoolExecutor(
-				this.coreThreadSize, // core thread pool size
-				this.coreThreadSize, // maximum thread pool size
-				1, // time to wait before resizing pool
-				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(this.coreThreadSize, true),
 				new ThreadPoolExecutor.CallerRunsPolicy());
 	}
 	
@@ -103,36 +80,10 @@ public class MulticoreFactory  {
 	
 	public static void submitOneExperiment(MulticoreRuntime mr)
 	{
+		System.out.println("one more task called");
+		executorService = Executors.newCachedThreadPool();
 		MulticoreTask task = new MulticoreTask(mr, MulticoreFactory.getPath(), mr.getInputPath(), mr.getOutputPath());
-		
-		task.startObservator();
-		futures.add(MulticoreFactory.submit(task));
-		
-		for(Future<MulticoreTask> oneFuture : futures){
-			try {
-				MulticoreTask oneTask = oneFuture.get();
-				System.out.println("task " + oneTask.getName()  + "finished");
-				oneTask.stopObservator();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		MulticoreFactory.shutdown();
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String path = "/Users/langthang/Desktop/MonGAMA/eclipse";
-		String inpDir = "/Users/langthang/Desktop/MonGAMA/eclipse/input";
-		String outDir = "/Users/langthang/Desktop/MonGAMA/eclipse/output";
-		// String outDir = "out";
-		//MulticoreFactory.submitExperiment(path, inpDir, outDir, 4);
-
+		MulticoreFactory.submit(task);
 	}
 
 }
