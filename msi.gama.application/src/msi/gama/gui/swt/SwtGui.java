@@ -18,8 +18,6 @@
  */
 package msi.gama.gui.swt;
 
-import msi.gama.gui.views.HeadlessChart;
-import msi.gama.gui.views.HeadlessParam;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -85,8 +83,6 @@ public class SwtGui implements IGui {
 	private Error error = null;
 	private Views views = null;
 	private static ConsoleView console = null;
-	private static HeadlessParam headlessParam = null;
-	private static HeadlessChart headlessChart = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png")
@@ -641,10 +637,7 @@ public class SwtGui implements IGui {
 	public static final String PERSPECTIVE_MODELING_ID =
 		"msi.gama.application.perspectives.ModelingPerspective";
 
-	public static final String PERSPECTIVE_HEADLESS_ID =
-		"msi.gama.application.perspectives.HeadlessPerspective";
-
-	/** The Constants perspective ids */
+		/** The Constants perspective ids */
 	public static final String PERSPECTIVE_SIMULATION_ID =
 		"msi.gama.application.perspectives.SimulationPerspective";
 
@@ -733,18 +726,13 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public boolean isHeadlessPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_HEADLESS_ID);
-	}
-
-	@Override
 	public boolean isModelingPerspective() {
 		return getCurrentPerspective().getId().equals(PERSPECTIVE_MODELING_ID);
 	}
 
 	@Override
 	public boolean isSimulationPerspective() {
-		return getCurrentPerspective().getId().equals(PERSPECTIVE_SIMULATION_ID);
+		return getCurrentPerspective().getId().equals( PERSPECTIVE_SIMULATION_ID);
 	}
 
 	@Override
@@ -752,13 +740,8 @@ public class SwtGui implements IGui {
 		return openPerspective(PERSPECTIVE_MODELING_ID);
 	}
 
-	@Override
-	public final boolean openHeadlessPerspective() {
-		// System.out.println("HeadlessPerspective");
-		return openPerspective(PERSPECTIVE_HEADLESS_ID);
-	}
 
-	private final boolean openPerspective(final String perspectiveId) {
+	public final boolean openPerspective(final String perspectiveId) {
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
@@ -782,7 +765,8 @@ public class SwtGui implements IGui {
 	@Override
 	public final boolean openSimulationPerspective() {
 
-		return openPerspective(PERSPECTIVE_SIMULATION_ID);
+		 boolean toto  = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID  );
+			return openPerspective( PERSPECTIVE_SIMULATION_ID);
 	}
 
 	@Override
@@ -831,8 +815,13 @@ public class SwtGui implements IGui {
 		return new AWTDisplayGraphics(width, height);
 	}
 
+	
+	
 	static final Map<String, Class> displayClasses = new HashMap();
-
+	
+	
+	
+	
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
@@ -962,14 +951,4 @@ public class SwtGui implements IGui {
 		highlightedAgent = a;
 	}
 
-	@Override
-	public void showHeadlessParamView() {
-		headlessParam = (HeadlessParam) showView(HeadlessParam.ID, null);
-	}
-
-	@Override
-	public void showHeadlessChartView() {
-		headlessChart = (HeadlessChart) showView(HeadlessChart.ID, null);
-//		headlessChart.showChart();
-	}
 }
