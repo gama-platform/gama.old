@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class MulticoreTask implements Runnable {
@@ -40,7 +41,10 @@ public class MulticoreTask implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		mr.start();
+		System.out.println("start at " + Calendar.getInstance().getTimeInMillis());
 		launchCommandLineGama(path, inpFile, outDir);
+		System.out.println("stop at " + Calendar.getInstance().getTimeInMillis());
+		mr.stop();
 	}
 	
 	public void launchCommandLineGama(String path, String inpFile, String outDir) {
@@ -110,17 +114,6 @@ public class MulticoreTask implements Runnable {
 
 	public void setMr(MulticoreRuntime mr) {
 		this.mr = mr;
-	}
-	
-	private static String getDirName(final String fileName) {
-		File file = new File(fileName);
-		String name = null;
-		String s = file.getName();
-		int i = s.lastIndexOf('.');
-		if ( i > 0 && i < s.length() - 1 ) {
-			name = s.substring(0, i);
-		}
-		return name;
 	}
 
 }
