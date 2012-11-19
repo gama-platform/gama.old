@@ -42,6 +42,7 @@ public class GuiUtils {
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String SPECIES_VIEW_ID = "msi.gama.application.view.SpeciesInspectView";
 	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
+	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String DYNAMIC_VIEW_ID =
 		"msi.gama.application.view.DynamicAgentInspectView";
@@ -227,6 +228,12 @@ public class GuiUtils {
 	public static void showHeadlessParamView() {
 		if ( gui != null ) {
 			gui.showHeadlessParamView();
+		}
+	}
+
+	public static void showHeadlessChartView() {
+		if ( gui != null ) {
+			gui.showHeadlessChartView();
 		}
 	}
 
