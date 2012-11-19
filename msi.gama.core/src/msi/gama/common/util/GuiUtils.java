@@ -41,8 +41,6 @@ public class GuiUtils {
 
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String SPECIES_VIEW_ID = "msi.gama.application.view.SpeciesInspectView";
-	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
-	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String DYNAMIC_VIEW_ID =
 		"msi.gama.application.view.DynamicAgentInspectView";
@@ -51,6 +49,8 @@ public class GuiUtils {
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
+	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
+	
 	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
 	public static final int[] defaultHighlight = new int[] { 0, 200, 200 };
 	private static boolean headlessMode = false;
@@ -225,18 +225,6 @@ public class GuiUtils {
 		}
 	}
 
-	public static void showHeadlessParamView() {
-		if ( gui != null ) {
-			gui.showHeadlessParamView();
-		}
-	}
-
-	public static void showHeadlessChartView() {
-		if ( gui != null ) {
-			gui.showHeadlessChartView();
-		}
-	}
-
 	public static void hideMonitorView() {
 
 		if ( gui != null ) {
@@ -271,21 +259,7 @@ public class GuiUtils {
 	// return null;
 	// }
 
-	/**
-	 * @return
-	 */
-	public static boolean isHeadlessPerspective() {
-		return gui == null ? false : gui.isHeadlessPerspective();
-	}
-
-	/**
-	 * 
-	 */
-	public static void openHeadlessPerspective() {
-		if ( gui != null ) {
-			gui.openHeadlessPerspective();
-		}
-	}
+	
 	/**
 	 * @return
 	 */

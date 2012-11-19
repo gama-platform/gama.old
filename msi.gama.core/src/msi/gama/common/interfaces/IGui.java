@@ -77,7 +77,6 @@ public interface IGui {
 	void prepareFor(boolean isGui);
 
 	void showConsoleView();
-	void showHeadlessParamView();
 	void hideMonitorView();
 
 	void setWorkbenchWindowTitle(String string);
@@ -122,8 +121,5 @@ public interface IGui {
 
 	void setHighlightedAgent(IAgent a);
 
-	boolean isHeadlessPerspective();
-
-	boolean openHeadlessPerspective();
 
 }

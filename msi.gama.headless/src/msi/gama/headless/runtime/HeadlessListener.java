@@ -267,23 +267,4 @@ public class HeadlessListener implements IGui {
 		// FIXME HACK
 		return null;
 	}
-
-	@Override
-	public boolean isHeadlessPerspective() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean openHeadlessPerspective() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void showHeadlessParamView() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
