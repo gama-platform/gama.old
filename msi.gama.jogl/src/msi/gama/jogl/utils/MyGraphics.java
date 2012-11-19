@@ -63,17 +63,16 @@ public class MyGraphics {
 
 	float alpha = 1.0f;
 
-	public MyGraphics(final GL gl, final GLU glu,
-			final JOGLAWTGLRenderer gLRender) {
+	public MyGraphics( final JOGLAWTGLRenderer gLRender) {
 
-		myGl = gl;
-		myGlu = glu;
+		myGl = gLRender.gl;
+		myGlu = gLRender.glu;
 		myGLRender = gLRender;
-		basicDrawer= new BasicOpenGlDrawer(myGl, myGlu, myGLRender);
+		basicDrawer= new BasicOpenGlDrawer(myGLRender);
 		displayListHandler = new DisplayListHandler(myGl, myGlu, myGLRender);
 		vertexArrayHandler =  new VertexArrayHandler(myGl, myGlu, myGLRender);
 		tessCallback = new TessellCallBack(myGl, myGlu);
-		tobj = glu.gluNewTess();
+		tobj = myGlu.gluNewTess();
 
 		glut = new GLUT();
 

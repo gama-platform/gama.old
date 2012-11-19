@@ -87,8 +87,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
-	public JOGLAWTGLRenderer myGLRender;
-
 	// Use to toggle the 3D view.
 	public boolean ThreeD = false; //true; //false;
 	
@@ -104,19 +102,23 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	//Use to draw .shp file
 	final String[] shapeFileName = new String[1];
 	
+	//private (return the renderer of the openGLGraphics) 
+	private JOGLAWTGLRenderer openGLGraphicsGLRender;
+	
 
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
-		myGLRender = new JOGLAWTGLRenderer(this);
+		System.out.println("JOGLAWTDisplaySurface() initialize");
+		
 
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
 		System.out.println("DisplaySurface Init. env_width:" + env_width + " env_height:" + env_height);
 		this.setLayout(new BorderLayout());
-		this.add(myGLRender.canvas, BorderLayout.CENTER);
+		
 
 		// /////
 		outputChanged(env_width, env_height, layerDisplayOutput);
@@ -126,7 +128,17 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 
-		myGLRender.animator.start();
+		
+		//new way
+		openGLGraphics = new JOGLAWTDisplayGraphics(this);
+		
+		openGLGraphicsGLRender = ((JOGLAWTDisplayGraphics)openGLGraphics).myGLRender;
+		
+		this.add(openGLGraphicsGLRender.canvas, BorderLayout.CENTER);
+		
+		//myGLRender = new JOGLAWTGLRenderer(this);
+		//myGLRender.animator.start();
+		
 		zoomFit();
 
 		addComponentListener(new ComponentAdapter() {
@@ -192,10 +204,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void setPaused(final boolean flag) {
 		
 		if(flag == true){
-	      myGLRender.animator.stop();	
+	      openGLGraphicsGLRender.animator.stop();	
 		}
 		else{
-		  myGLRender.animator.start();	
+		  openGLGraphicsGLRender.animator.start();	
 		}
 		paused = flag;
 		updateDisplay();
@@ -332,7 +344,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
 				// IDisplay d =
-				manager.addLayer(LayerManager.createDisplay((ILayerStatement) layer, env_width,
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width,
 					env_height, openGLGraphics));
 				// d.initMenuItems(this);
 			}
@@ -392,7 +404,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
 			
 		agentsMenu.add(m);
-	    agentsMenu.show(this, myGLRender.myListener.mousePosition.x, myGLRender.myListener.mousePosition.y);
+	    agentsMenu.show(this, openGLGraphicsGLRender.myListener.mousePosition.x, openGLGraphicsGLRender.myListener.mousePosition.y);
 
     }
 	
@@ -511,7 +523,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public BufferedImage getImage() {
-		buffImage =  this.myGLRender.getScreenShot();
+		buffImage =  openGLGraphicsGLRender.getScreenShot();
 		return buffImage;
 	}
 
@@ -554,16 +566,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomIn() {
-		float incrementalZoomStep = (float) myGLRender.camera.zPos / 10;
-		myGLRender.camera.zPos -= incrementalZoomStep;
-		myGLRender.camera.zLPos -= incrementalZoomStep;
+		float incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		openGLGraphicsGLRender.camera.zPos -= incrementalZoomStep;
+		openGLGraphicsGLRender.camera.zLPos -= incrementalZoomStep;
 	}
 
 	@Override
 	public void zoomOut() {
-		float incrementalZoomStep = (float) myGLRender.camera.zPos / 10;
-		myGLRender.camera.zPos += incrementalZoomStep;
-		myGLRender.camera.zLPos += incrementalZoomStep;
+		float incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		openGLGraphicsGLRender.camera.zPos += incrementalZoomStep;
+		openGLGraphicsGLRender.camera.zLPos += incrementalZoomStep;
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -591,19 +603,21 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomFit() {
-		if ( ThreeD ) {
-			myGLRender.camera.Initialize3DCamera(envWidth, envHeight);
-			if ( myGLRender.camera.isModelCentered ) {
-				myGLRender.reset();
-			}
-
-		} else {
-			myGLRender.camera.InitializeCamera(envWidth, envHeight);
-			if ( myGLRender.camera.isModelCentered ) {
-				myGLRender.reset();
+		System.out.println("zoomFit()");
+		if(openGLGraphicsGLRender!=null){
+			if ( ThreeD ) {
+				openGLGraphicsGLRender.camera.Initialize3DCamera(envWidth, envHeight);
+				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
+					openGLGraphicsGLRender.reset();
+				}
+	
+			} else {
+				openGLGraphicsGLRender.camera.InitializeCamera(envWidth, envHeight);
+				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
+					openGLGraphicsGLRender.reset();
+				}
 			}
 		}
-
 	}
 
 	@Override
@@ -676,8 +690,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 		            	   }
 		            	   
-		            	   myGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
-		                   SimpleFeatureCollection myCollection =  myGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(myGLRender.myShapeFileReader.store);
+		            	   openGLGraphicsGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
+		                   SimpleFeatureCollection myCollection =  openGLGraphicsGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(openGLGraphicsGLRender.myShapeFileReader.store);
 		                   Color color = new Color((int)(Math.random()*255),(int)(Math.random()*255),(int) (Math.random()*255));
 		                   ((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, color);
 		                   //FIXME: Need to reinitialise th displaylist
@@ -764,7 +778,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void snapshot() {	
-		buffImage =  this.myGLRender.getScreenShot();
+		buffImage =  openGLGraphicsGLRender.getScreenShot();
 		save(GAMA.getDefaultScope(), buffImage);
 	}
 
@@ -817,7 +831,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void addMouseEventListener(MouseListener e) {
-		myGLRender.canvas.addMouseListener(e);
+		openGLGraphicsGLRender.canvas.addMouseListener(e);
 		// TODO Auto-generated method stub
 		
 	}

@@ -68,14 +68,13 @@ public class JTSDrawer {
 	// USe to inverse y composaant
 	public int yFlag;
 
-	public JTSDrawer(final GL gl, final GLU glu,
-			final JOGLAWTGLRenderer gLRender) {
+	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
-		myGl = gl;
-		myGlu = glu;
+		myGl = gLRender.gl;
+		myGlu = gLRender.glu;
 		myGLRender = gLRender;
 		tessCallback = new TessellCallBack(myGl, myGlu);
-		tobj = glu.gluNewTess();
+		tobj = myGlu.gluNewTess();
 
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);

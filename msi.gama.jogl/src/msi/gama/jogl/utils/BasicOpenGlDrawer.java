@@ -26,7 +26,7 @@ public class BasicOpenGlDrawer {
 
 	// OpenGL member
 	private GL myGl;
-	private GLU myGlu;
+
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
@@ -34,13 +34,11 @@ public class BasicOpenGlDrawer {
 	public JTSDrawer myJTSDrawer;
 	
 
-	public BasicOpenGlDrawer(final GL gl, final GLU glu,
-			final JOGLAWTGLRenderer gLRender) {
+	public BasicOpenGlDrawer(final JOGLAWTGLRenderer gLRender) {
 
-		myGl = gl;
-		myGlu = glu;
+		myGl = gLRender.gl;
 		myGLRender = gLRender;
-		myJTSDrawer = new JTSDrawer(myGl, myGlu, myGLRender);
+		myJTSDrawer = new JTSDrawer(myGLRender);
 		
 	}
 

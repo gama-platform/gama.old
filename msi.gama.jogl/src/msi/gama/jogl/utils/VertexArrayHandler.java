@@ -58,7 +58,7 @@ public class VertexArrayHandler {
 		myGl = gl;
 		myGlu = glu;
 		myGLRender = gLRender;
-		basicDrawer= new BasicOpenGlDrawer(myGl, myGlu, myGLRender);
+		basicDrawer= new BasicOpenGlDrawer(myGLRender);
 	}
 	
 	

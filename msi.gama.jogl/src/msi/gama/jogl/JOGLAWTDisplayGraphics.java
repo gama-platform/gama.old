@@ -72,14 +72,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			curHeight = 5, offsetX = 0, offsetY = 0;
 	private double curX = 0, curY = 0;
 	
-
-	// OpenGL member
-	private final GL myGl;
-	private final GLU myGlu;
-	private final GLUT glut; 
-
+	
 	// Handle opengl primitive.
-	public MyGraphics graphicsGLUtils;
+	
+	public GLUT glut;
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
@@ -154,26 +150,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 * @param float env_width
 	 * @param float env_height
 	 */
-	public JOGLAWTDisplayGraphics(final GL gl, final GLU glu,
-			final JOGLAWTGLRenderer gLRender, final float env_width,
-			final float env_height) {
-
-		myGl = gl;
-		myGlu = glu;
-		myGLRender = gLRender;
-		graphicsGLUtils = new MyGraphics(myGl, myGlu, myGLRender);
+	public JOGLAWTDisplayGraphics( final JOGLAWTDisplaySurface displaySurface) {
+		System.out.println("JOGLAWTDisplayGraphics()");
 		
 		glut = new GLUT();
 
 		// Initialize the current environment data.
-		envWidth = env_width;
-		envHeight = env_height;
+		envWidth = displaySurface.envWidth;
+		envHeight = displaySurface.envHeight;
 
 		if (envWidth > envHeight) {
 			maxEnvDim = envWidth;
 		} else {
 			maxEnvDim = envHeight;
 		}
+		
+		myGLRender = new JOGLAWTGLRenderer(displaySurface);
+		
+		myGLRender.animator.start();
 	}
 
 	/**
@@ -762,14 +756,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public void DrawMyJTSGeometries(boolean picking) {
 
 		if(picking){
-			myGl.glPushMatrix();
-			myGl.glInitNames();
-			myGl.glPushName(0);
+			myGLRender.gl.glPushMatrix();
+			myGLRender.gl.glInitNames();
+			myGLRender.gl.glPushName(0);
 			int i=0;
 			Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 			while (it.hasNext()) {
-				myGl.glPushMatrix();
-        		myGl.glLoadName(i);  		
+				myGLRender.gl.glPushMatrix();
+        		myGLRender.gl.glLoadName(i);  		
 				MyJTSGeometry curGeometry = it.next();
 				
 				if(pickedObjectIndex ==i){
@@ -787,17 +781,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					}
 					
 					
-					graphicsGLUtils.basicDrawer.DrawJTSGeometry(pickedGeometry);
+					myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(pickedGeometry);
         		}
 				else{
-					graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);	
+					myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);	
 				}
 				
-				myGl.glPopMatrix();
+				myGLRender.gl.glPopMatrix();
 				i++;
 			}
-			myGl.glPopName();
-			myGl.glPopMatrix();
+			myGLRender.gl.glPopName();
+			myGLRender.gl.glPopMatrix();
 		}
 		else{
 			// System.out.println("isListCreated="+isListCreated);
@@ -806,14 +800,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				if (!isListCreated) {
 					System.out.println("Create" + this.myJTSGeometries.size()
 							+ "list");
-					graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSGeometries);
+					myGLRender.graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSGeometries);
 					System.out.println("Create" + this.myJTSGeometries.size()
 							+ "list ok");
 					isListCreated = true;
 				} else {
 					//System.out.println("Call" + this.myJTSGeometries.size() +
 					 //"list");
-					graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
+					myGLRender.graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSGeometries.size());
 				}
 			} else {
 	 
@@ -822,17 +816,17 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					Iterator<MyJTSGeometry> it = this.myJTSGeometries.iterator();
 					while (it.hasNext()) {
 						MyJTSGeometry curGeometry = it.next();
-						graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
+						myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 					}
 				}
 				// use vertex array
 				else {
 					//triangulate all the geometries
 					if (!isPolygonTriangulated) {
-						graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
+						myGLRender.graphicsGLUtils.vertexArrayHandler.buildVertexArray(this.myJTSGeometries);
 						isPolygonTriangulated = true;
 					} else {
-						graphicsGLUtils.vertexArrayHandler.drawVertexArray();
+						myGLRender.graphicsGLUtils.vertexArrayHandler.drawVertexArray();
 					}
 				}
 			}
@@ -854,12 +848,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			if (!isStaticListCreated) {
 				System.out.println("Create" + this.myJTSStaticGeometries.size()
 						+ "list static");
-				graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSStaticGeometries);
+				myGLRender.graphicsGLUtils.displayListHandler.buildDisplayLists(this.myJTSStaticGeometries);
 				isStaticListCreated = true;
 				System.out.println("Create" + this.myJTSStaticGeometries.size()
 						+ "list static ok");
 			} else {
-				graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSStaticGeometries.size());
+				myGLRender.graphicsGLUtils.displayListHandler.DrawDisplayList(this.myJTSStaticGeometries.size());
 			}
 		}
 	}
@@ -874,23 +868,23 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	    if(picking){
 	    	
-			myGl.glPushMatrix();
-			myGl.glInitNames();
-			myGl.glPushName(0);
+			myGLRender.gl.glPushMatrix();
+			myGLRender.gl.glInitNames();
+			myGLRender.gl.glPushName(0);
 			int i=0;
 									
 		    Iterator<MyImage> it = this.myImages.iterator();
 			while (it.hasNext()) {
-				myGl.glPushMatrix();
-        		myGl.glLoadName(i);
+				myGLRender.gl.glPushMatrix();
+        		myGLRender.gl.glLoadName(i);
         		
         		MyImage curImage = it.next();
 				
 				if(pickedObjectIndex ==i){
 					if(curImage.agent != null){
 	
-					    myGl.glColor3d(0, 0, 0);
-					    myGl.glWindowPos2d(2, 5);
+					    myGLRender.gl.glColor3d(0, 0, 0);
+					    myGLRender.gl.glWindowPos2d(2, 5);
 						glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, curImage.agent.getSpeciesName() + curImage.agent.getIndex());
 					    currentPicked=i;
 
@@ -907,21 +901,21 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 					myGLRender.DrawTexture(curImage);	
 				}
 				
-				myGl.glPopMatrix();
+				myGLRender.gl.glPopMatrix();
 				i++;
 			}
-			myGl.glPopName();
-			myGl.glPopMatrix();	
+			myGLRender.gl.glPopName();
+			myGLRender.gl.glPopMatrix();	
 	    	
 	    }
 	    else{
 		boolean drawImageAsList = false;
 		if (drawImageAsList) {
 			if (!isListCreated) {
-				graphicsGLUtils.displayListHandler.buildImageDisplayLists(this.myImages);
+				myGLRender.graphicsGLUtils.displayListHandler.buildImageDisplayLists(this.myImages);
 				isListCreated = true;
 			} else {
-				graphicsGLUtils.displayListHandler.DrawImageDisplayList(this.myImages.size());
+				myGLRender.graphicsGLUtils.displayListHandler.DrawImageDisplayList(this.myImages.size());
 			}
 
 		} else {
@@ -944,7 +938,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		Iterator<MyString> it = this.myStrings.iterator();
 		while (it.hasNext()) {
 			MyString curString = it.next();
-			graphicsGLUtils.DrawString(curString.string, curString.x,
+			myGLRender.graphicsGLUtils.DrawString(curString.string, curString.x,
 					curString.y, curString.z);
 		}
 	}
@@ -953,9 +947,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		GamaPoint offSet = new GamaPoint(0,0);
 		if(drawData){
 		// Draw Width and height value
-		this.graphicsGLUtils.DrawString(String.valueOf(this.envWidth),
+		this.myGLRender.graphicsGLUtils.DrawString(String.valueOf(this.envWidth),
 				this.envWidth / 2, this.envHeight * 0.01f, 0.0f);
-		this.graphicsGLUtils.DrawString(String.valueOf(this.envHeight),
+		this.myGLRender.graphicsGLUtils.DrawString(String.valueOf(this.envHeight),
 				this.envWidth * 1.01f, -(this.envHeight / 2), 0.0f);
 		}
 
@@ -965,7 +959,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		Color c = new Color(225, 225, 225);
 		MyJTSGeometry curGeometry = new MyJTSGeometry(g,null,-0.01f,-1,c,1.0f,true,null,false,0,0.0f,offSet);
-		graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
+		myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
 	
@@ -976,10 +970,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		drawCollectionAsList = true;
 		if (drawCollectionAsList) {
 			if (!isListShapeCreated) {
-				graphicsGLUtils.displayListHandler.buildCollectionDisplayLists(myCollections);
+				myGLRender.graphicsGLUtils.displayListHandler.buildCollectionDisplayLists(myCollections);
 				isListShapeCreated = true;
 			} else {
-				graphicsGLUtils.displayListHandler.DrawCollectionDisplayList(myCollections.size());
+				myGLRender.graphicsGLUtils.displayListHandler.DrawCollectionDisplayList(myCollections.size());
 			}
 
 		} else {
@@ -987,7 +981,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			Iterator<MyCollection> it = this.myCollections.iterator();
 			while (it.hasNext()) {
 				MyCollection curCol = it.next();
-				graphicsGLUtils.basicDrawer.DrawSimpleFeatureCollection(curCol);
+				myGLRender.graphicsGLUtils.basicDrawer.DrawSimpleFeatureCollection(curCol);
 			}		
 		}
 		
@@ -1000,10 +994,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	public void CleanGeometries() {
 		if(useDisplayList){
-			graphicsGLUtils.displayListHandler.DeleteDisplayLists(this.myJTSGeometries.size());
+			myGLRender.graphicsGLUtils.displayListHandler.DeleteDisplayLists(this.myJTSGeometries.size());
 		}
 		if(useVertexArray){
-			graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();	
+			myGLRender.graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();	
 		}
 		this.myJTSGeometries.clear();
 		isListCreated = false;
@@ -1034,7 +1028,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 	public void CleanCollections(){
 		if(drawCollectionAsList){
-			graphicsGLUtils.displayListHandler.DeleteCollectionDisplayLists(this.myCollections.size());
+			myGLRender.graphicsGLUtils.displayListHandler.DeleteCollectionDisplayLists(this.myCollections.size());
 		}
 		this.myCollections.clear();
 	}

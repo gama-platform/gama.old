@@ -76,19 +76,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// ///OpenGL member//////
 	private static final int REFRESH_FPS = 30;
-	private GLU glu;
-	private GL gl;
+	public GLU glu;
+	public GL gl;
 	public final FPSAnimator animator;
 	public GLContext context;
 	public GLCanvas canvas;
 
 	public boolean opengl = true;
+	
+	public boolean isInitialized = false;
 	// Event Listener
 	public MyListener myListener;
 
 	private int width, height;
 	// Camera
 	public Camera camera;
+	
+	public MyGraphics graphicsGLUtils;
 
 	// Use to test and siaply basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
@@ -132,10 +136,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
+		System.out.println("JOGLAWTGLRenderer()");
 		// Initialize the user camera
 		camera = new Camera();
 
-		myGLDrawer = new MyGLToyDrawer();
+		
 
 		canvas = new GLCanvas();
 
@@ -154,21 +159,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-
+		System.out.println("JOGLAWTGLRenderer init()");
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 		// GL Utilities
 		glu = new GLU();
+		
+		myGLDrawer = new MyGLToyDrawer();
 
 		context = drawable.getContext();
 
 		// Initialize the IGraphics (FIXME: Should we initialize it here??)
-		displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
-				this, displaySurface.envWidth, displaySurface.envHeight);
+		//displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
+			//	this, displaySurface.envWidth, displaySurface.envHeight);
 		
-
+        System.out.println(width + "," + height);
+        
 		arcBall = new ArcBall(width, height);
 
 		// Set background color (in RGBA). Alpha of 0 for total transparency
@@ -224,6 +232,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		 * { exc.printStackTrace(); System.exit(1); }
 		 */
 
+		graphicsGLUtils = new MyGraphics(this);
+		
+		isInitialized =true;
 		System.out.println("openGL init ok");
 
 		// hdviet added 28j/05/2012
@@ -522,9 +533,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if (drawAxes) {
 			float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
 					.DrawXYZAxis(envMaxDim / 10);
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).graphicsGLUtils
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
 					.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 		}
 		}
