@@ -63,5 +63,7 @@ public interface ILocation extends IShape, Comparable {
 
 	@Override
 	public ILocation copy();
+	
+	public boolean hasZ();
 
 }

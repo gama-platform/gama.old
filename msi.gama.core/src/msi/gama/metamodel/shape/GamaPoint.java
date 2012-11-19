@@ -73,7 +73,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	
 	@Override
 	public double getZ() {
-		return super.z;
+		hasZ = !(z + "") .equals("NaN");
+		if (hasZ)
+			return super.z;
+		return 0.0;
 	}
 
 	@Override
@@ -308,6 +311,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void dispose() {}
+
+	@Override
+	public boolean hasZ() {
+		return hasZ;
+	}
 
 	
 
