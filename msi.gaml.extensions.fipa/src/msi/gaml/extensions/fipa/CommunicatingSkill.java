@@ -237,7 +237,7 @@ public class CommunicatingSkill extends Skill {
 		args = {
 			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
 			@arg(name = "performative", type = IType.STRING_STR, optional = false, doc = @doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
+			@arg(name = "content", type = IType.LIST_STR, optional = true, doc = @doc("to be documented"))
 		}
 	)
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
@@ -588,14 +588,15 @@ public class CommunicatingSkill extends Skill {
 	 * @return the messages
 	 */
 	@getter("messages")
-	public List getMessages(final IAgent agent) {
-		List<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
+	public IList<Message> getMessages(final IAgent agent) {
+		IList<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
 		
 		List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
 		result.addAll(received);
 		for ( Iterator<Message> it = result.iterator(); it.hasNext(); ) {
 			Message m = it.next();
-			if ( !m.isUnread() || m.getConversation().isEnded() ) {
+//			if ( !m.isUnread() || m.getConversation().isEnded() ) {
+			if ( !m.isUnread() ) {
 				it.remove();
 			}
 		}
@@ -609,7 +610,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the accept proposal msgs
 	 */
 	@getter("accept_proposals")
-	public List getAcceptProposalMsgs(final IAgent agent) {
+	public IList<Message> getAcceptProposalMsgs(final IAgent agent) {
 		return filter(agent, ACCEPT_PROPOSAL);
 	}
 
@@ -619,7 +620,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the agree msgs
 	 */
 	@getter("agrees")
-	public List getAgreeMsgs(final IAgent agent) {
+	public IList<Message> getAgreeMsgs(final IAgent agent) {
 		return filter(agent, AGREE);
 	}
 
@@ -629,7 +630,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the cancel msgs
 	 */
 	@getter("cancels")
-	public List getCancelMsgs(final IAgent agent) {
+	public IList<Message> getCancelMsgs(final IAgent agent) {
 		return filter(agent, CANCEL);
 	}
 
@@ -639,8 +640,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the cfp msgs
 	 */
 	@getter("cfps")
-	public List getCfpMsgs(final IAgent agent) {
-		final List cfps = filter(agent, CFP);
+	public IList<Message> getCfpMsgs(final IAgent agent) {
+		final IList cfps = filter(agent, CFP);
 		return cfps;
 	}
 
@@ -650,7 +651,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the failure msgs
 	 */
 	@getter("failures")
-	public List getFailureMsgs(final IAgent agent) {
+	public IList<Message> getFailureMsgs(final IAgent agent) {
 		return filter(agent, FAILURE);
 	}
 
@@ -660,8 +661,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the inform msgs
 	 */
 	@getter("informs")
-	public List getInformMsgs(final IAgent agent) {
-		final List informs = filter(agent, INFORM);
+	public IList<Message> getInformMsgs(final IAgent agent) {
+		final IList informs = filter(agent, INFORM);
 		return informs;
 	}
 
@@ -671,7 +672,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the propose msgs
 	 */
 	@getter("proposes")
-	public List getProposeMsgs(final IAgent agent) {
+	public IList<Message> getProposeMsgs(final IAgent agent) {
 		return filter(agent, PROPOSE);
 	}
 
@@ -681,7 +682,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the query msgs
 	 */
 	@getter("queries")
-	public List getQueryMsgs(final IAgent agent) {
+	public IList<Message> getQueryMsgs(final IAgent agent) {
 		return filter(agent, QUERY);
 	}
 
@@ -691,7 +692,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the refuses msgs
 	 */
 	@getter("refuses")
-	public List getRefusesMsgs(final IAgent agent) {
+	public IList<Message> getRefusesMsgs(final IAgent agent) {
 		return filter(agent, REFUSE);
 	}
 
@@ -701,7 +702,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the reject proposal msgs
 	 */
 	@getter("reject_proposals")
-	public List getRejectProposalMsgs(final IAgent agent) {
+	public IList<Message> getRejectProposalMsgs(final IAgent agent) {
 		return filter(agent, REJECT_PROPOSAL);
 	}
 
@@ -711,8 +712,8 @@ public class CommunicatingSkill extends Skill {
 	 * @return the request msgs
 	 */
 	@getter("requests")
-	public List getRequestMsgs(final IAgent agent) {
-		final List requests = filter(agent, REQUEST);
+	public IList<Message> getRequestMsgs(final IAgent agent) {
+		final IList requests = filter(agent, REQUEST);
 		return requests;
 	}
 
@@ -722,7 +723,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the request when msgs
 	 */
 	@getter("requestWhens")
-	public List getRequestWhenMsgs(final IAgent agent) {
+	public IList<Message> getRequestWhenMsgs(final IAgent agent) {
 		return filter(agent, REQUEST_WHEN);
 	}
 
@@ -732,7 +733,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the subscribe msgs
 	 */
 	@getter("subscribes")
-	public List getSubscribeMsgs(final IAgent agent) {
+	public IList<Message> getSubscribeMsgs(final IAgent agent) {
 		return filter(agent, SUBSCRIBE);
 	}
 
@@ -757,9 +758,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @return the gama list< i message>
 	 */
-	private List<Message> filter(final IAgent agent, final int performative) {
+	private IList<Message> filter(final IAgent agent, final int performative) {
 		List<Message> inBox = getMessages(agent);
-		if ( inBox.isEmpty() ) { return Collections.EMPTY_LIST; }
+		if ( inBox.isEmpty() ) { return GamaList.EMPTY_LIST; }
 		final GamaList<Message> result = new GamaList();
 		for ( final Message m : inBox ) {
 			final boolean unread = m.isUnread();

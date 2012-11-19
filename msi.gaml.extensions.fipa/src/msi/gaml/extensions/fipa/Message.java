@@ -296,7 +296,7 @@ public class Message implements IValue {
 	@Override
 	public String stringValue() throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return "message[sender: " + data.getSender() + "; receivers: [to be filled]" + data.getReceivers() + "]" ;
+		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() + "; performative: " + (data.getPerformativeName()) + "; content: " + data.getContent() + "; content" + "]" ;
 	}
 
 	@Override

@@ -113,13 +113,6 @@ public class Conversation extends GamaList<Message> {
 				" has no receivers.");
 		}
 
-		/*
-		 * List<BasicEntity> receivers = message.getReceivers(); // @ANVD : verify the number of
-		 * participants with the protocolModel. for (BasicEntity participant : receivers) {
-		 * protocolNodeParticipantMap.put(participant, null); // @ANVD : is all the 'null' elements
-		 * OK? }
-		 */
-
 		// TODO A REVOIR COMPLETEMENT
 
 		final List<IAgent> members = new GamaList<IAgent>();
@@ -133,18 +126,6 @@ public class Conversation extends GamaList<Message> {
 		}
 		
 		MessageBroker.getInstance().addConversation(this);
-		
-		
-		// for ( final IAgent agent : members ) {
-		// final CommunicatingSkill c =
-		// (CommunicatingSkill) ((IGamlAgent) agent).getSpecies().getAgentManager()
-		// .getSharedSkill(CommunicatingSkill.class);
-		// if ( c != null ) {
-		// c.addConversation(this);
-		//
-		// // Attention: COMMUNICATING SKILL ARE NOW SHARED !!!
-		// }
-		// }
 	}
 
 	/**
@@ -305,6 +286,14 @@ public class Conversation extends GamaList<Message> {
 	@getter( ENDED)
 	public boolean isEnded() {
 		return ended || areAllNodeEnded();
+	}
+	
+	public boolean areMessagesRead() {
+		for (Message m : messages) {
+			if (m.isUnread()) return false;
+		}
+		
+		return true;
 	}
 
 	/**

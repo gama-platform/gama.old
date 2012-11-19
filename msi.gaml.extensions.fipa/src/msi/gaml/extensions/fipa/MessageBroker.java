@@ -24,6 +24,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.ScheduledAction;
 
 /**
@@ -49,12 +50,12 @@ public class MessageBroker implements ISchedulerListener {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	public List<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
+	public IList<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
-		if (messagesForA == null) { return Collections.EMPTY_LIST; }
+		if (messagesForA == null) { return GamaList.EMPTY_LIST; }
 		
-		List<Message> successfulDeliveries = new GamaList<Message>();
-		List<Message> failedDeliveries = new GamaList<Message>();
+		IList<Message> successfulDeliveries = new GamaList<Message>();
+		IList<Message> failedDeliveries = new GamaList<Message>();
 		
 		for (Message m : messagesForA) {
 			Conversation conv = m.getConversation();
@@ -162,7 +163,7 @@ public class MessageBroker implements ISchedulerListener {
 		messagesToDeliver.clear();
 	}
 	
-	public List<Message> getMessagesFor(IAgent agent) {
+	public IList<Message> getMessagesFor(IAgent agent) {
 		if (!conversationsMessages.containsKey(agent)) {
 			ConversationsMessages cm = new ConversationsMessages();
 			conversationsMessages.put(agent,  cm);
@@ -223,7 +224,7 @@ public class MessageBroker implements ISchedulerListener {
 			endedConversations.clear();
 			
 			for (Conversation c : conversations) {
-				if (c.isEnded()) {
+				if (c.isEnded() && c.areMessagesRead()) {
 					endedConversations.add(c);
 				}
 			}
@@ -236,8 +237,8 @@ public class MessageBroker implements ISchedulerListener {
 	}
 
 	class ConversationsMessages {
-		List<Conversation> conversations;
-		List<Message> messages;
+		IList<Conversation> conversations;
+		IList<Message> messages;
 		
 		ConversationsMessages() {
 			this.conversations = new GamaList<Conversation>();
