@@ -8,5 +8,7 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/BaseX.jar"/>
+	<classpathentry kind="lib" path="lib/expression4j.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
