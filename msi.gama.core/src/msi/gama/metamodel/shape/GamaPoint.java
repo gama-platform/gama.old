@@ -33,32 +33,33 @@ import com.vividsolutions.jts.geom.*;
 public class GamaPoint extends Coordinate implements ILocation {
 
 	public boolean hasZ;
-	
+
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
 		y = yy;
 		hasZ = false;
 	}
-	
-	public GamaPoint(final double xx, final double yy,final double zz) {
+
+	public GamaPoint(final double xx, final double yy, final double zz) {
 		x = xx;
 		y = yy;
-		z = zz;
-		hasZ = !Double.isNaN(z);
+		hasZ = !Double.isNaN(zz);
+		if (hasZ) z = zz;
 	}
 
 	public GamaPoint(final Coordinate coord) {
 		x = coord.x;
 		y = coord.y;
-		z = coord.z;
-		hasZ = !Double.isNaN(z);
+		hasZ = !Double.isNaN(coord.z);
+		if (hasZ) z = coord.z;
 	}
 
 	public GamaPoint(final ILocation point) {
 		x = point.getX();
 		y = point.getY();
-		z = point.getZ();
-		hasZ = !Double.isNaN(z);
+		double zz = point.getZ();
+		hasZ = !Double.isNaN(zz);
+		if (hasZ) z = zz;
 	}
 
 	@Override
@@ -70,13 +71,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public double getY() {
 		return y;
 	}
-	
+
 	@Override
 	public double getZ() {
-		hasZ = !Double.isNaN(z);
-		if (hasZ)
-			return super.z;
-		return 0.0;
+		return z;
 	}
 
 	@Override
@@ -104,10 +102,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 	// return o != null && IntervalSize.isZeroWidth(x, o.x) && IntervalSize.isZeroWidth(y, o.y);
 	// }
 
-	/*@Override
-	public int hashCode() {
-		return (int) (x * y + x);
-	}*/
+	/*
+	 * @Override
+	 * public int hashCode() {
+	 * return (int) (x * y + x);
+	 * }
+	 */
 
 	@Override
 	public void setLocation(final double xx, final double yy) {
@@ -115,25 +115,25 @@ public class GamaPoint extends Coordinate implements ILocation {
 		y = yy;
 		hasZ = false;
 	}
-	
+
+	@Override
 	public void setLocation(final double xx, final double yy, final double zz) {
 		x = xx;
 		y = yy;
-		z = zz;
-		hasZ = !Double.isNaN(z);
+		hasZ = !Double.isNaN(zz);
+		if (hasZ) z = zz;
 	}
 
 	@Override
 	public String toString() {
-		if (hasZ)
-			return "location[" + x + ";" + y +  ";" + z + "]";
+		if ( hasZ ) { return "location[" + x + ";" + y + ";" + z + "]"; }
 		return "location[" + x + ";" + y + "]";
 	}
 
 	@Override
 	public String toGaml() {
 		String zStr = hasZ ? "," + z : "";
-		return "{" + x + "," + y+ zStr + "}";
+		return "{" + x + "," + y + zStr + "}";
 	}
 
 	//
@@ -174,7 +174,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public String stringValue() {
 		String zStr = hasZ ? "," + z : "";
-		return "{" + x + "," + y+ zStr + "}";
+		return "{" + x + "," + y + zStr + "}";
 	}
 
 	@Override
@@ -186,8 +186,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
 		y = y + loc.getY();
-		if (hasZ && !Double.isNaN(loc.getZ()))
-			z = z + loc.getZ();
+		if (hasZ) {
+			double zz = loc.getZ();
+			if (!Double.isNaN(zz)){
+				z = z +zz;
+			}
+		}
 	}
 
 	@Override
@@ -195,12 +199,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new Coordinate(x, y, z);
 	}
 
-	@getter( "x")
+	@getter("x")
 	public Double first() {
 		return x;
 	}
 
-	@getter( "y")
+	@getter("y")
 	public Double last() {
 		return y;
 	}
@@ -261,8 +265,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		if (hasZ && ((GamaPoint)p).hasZ)
-			return Maths.hypot(x, p.getX(), y, p.getY(),z, p.getZ());
+		if ( hasZ && ((GamaPoint) p).hasZ ) { return Maths.hypot(x, p.getX(), y, p.getY(), z,
+			p.getZ()); }
 		return Maths.hypot(x, p.getX(), y, p.getY());
 	}
 
@@ -311,12 +315,5 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void dispose() {}
-
-	@Override
-	public boolean hasZ() {
-		return hasZ;
-	}
-
-	
 
 }
