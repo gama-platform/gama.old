@@ -5764,6 +5764,7 @@ rule__PrimaryExpression__Group_3_2__2
     }
 :
 	rule__PrimaryExpression__Group_3_2__2__Impl
+	rule__PrimaryExpression__Group_3_2__3
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -5786,6 +5787,99 @@ finally {
 }
 
 
+rule__PrimaryExpression__Group_3_2__3
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+	rule__PrimaryExpression__Group_3_2__3__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__PrimaryExpression__Group_3_2__3__Impl
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getPrimaryExpressionAccess().getGroup_3_2_3()); }
+(rule__PrimaryExpression__Group_3_2_3__0)?
+{ after(grammarAccess.getPrimaryExpressionAccess().getGroup_3_2_3()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+
+
+
+
+
+
+
+
+rule__PrimaryExpression__Group_3_2_3__0
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+	rule__PrimaryExpression__Group_3_2_3__0__Impl
+	rule__PrimaryExpression__Group_3_2_3__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__PrimaryExpression__Group_3_2_3__0__Impl
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getPrimaryExpressionAccess().getCommaKeyword_3_2_3_0()); }
+
+	',' 
+
+{ after(grammarAccess.getPrimaryExpressionAccess().getCommaKeyword_3_2_3_0()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__PrimaryExpression__Group_3_2_3__1
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+	rule__PrimaryExpression__Group_3_2_3__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__PrimaryExpression__Group_3_2_3__1__Impl
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getPrimaryExpressionAccess().getZAssignment_3_2_3_1()); }
+(rule__PrimaryExpression__ZAssignment_3_2_3_1)
+{ after(grammarAccess.getPrimaryExpressionAccess().getZAssignment_3_2_3_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
 
 
 
@@ -7530,6 +7624,21 @@ rule__PrimaryExpression__RightAssignment_3_2_2
 (
 { before(grammarAccess.getPrimaryExpressionAccess().getRightExpressionParserRuleCall_3_2_2_0()); }
 	ruleExpression{ after(grammarAccess.getPrimaryExpressionAccess().getRightExpressionParserRuleCall_3_2_2_0()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__PrimaryExpression__ZAssignment_3_2_3_1
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getPrimaryExpressionAccess().getZExpressionParserRuleCall_3_2_3_1_0()); }
+	ruleExpression{ after(grammarAccess.getPrimaryExpressionAccess().getZExpressionParserRuleCall_3_2_3_1_0()); }
 )
 
 ;
