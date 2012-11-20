@@ -212,7 +212,6 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		dispose();
 		computeTopology(scope);
-		System.out.println("topology : " + topology);
 		if ( topology != null ) {
 			topology.initialize(this);
 		}
@@ -416,7 +415,6 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 
 	protected void fireAgentRemoved(final IAgent agent) {
 		if ( !hasListeners() ) { return; }
-		System.out.println("agent removed " + agent);
 		try {
 			for ( IPopulationListener l : listeners ) {
 				l.notifyAgentRemoved(this, agent);

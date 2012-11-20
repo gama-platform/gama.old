@@ -172,26 +172,38 @@ public class GeometryUtils {
 	}
 	
 	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
-		double width = geom.getEnvelope().getWidth();
+		double widthEnv = geom.getEnvelope().getWidth();
+		double heightEnv = geom.getEnvelope().getHeight();
 		double xmin = geom.getEnvelope().getMinX();
 		double ymin = geom.getEnvelope().getMinY();
-		double val = Math.cos(Math.toRadians(30));
-		double size = width/ (2 * val * nbColumns);
+		double widthHex = widthEnv/ (nbColumns * 0.75 + 0.25);
+		double heightHex = heightEnv/ nbRows;
 		GamaList<IShape> geoms = new GamaList<IShape>();
-		for(int l=0;l<nbColumns;l++){
-			for(int c=0;c<nbRows+1;c = c+2){
-				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * l, ymin + (c * 1.5) * size); 
+		xmin += widthHex/2.0;
+		ymin += heightHex/2.0;
+		for(int l=0;l<nbRows;l++){
+			for(int c=0;c<nbColumns;c = c +2){
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex* 0.75 ,ymin + l * heightHex)); 
+				//GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size, ymin + 2* size*val * l); 
 				if (geom.covers(poly))
 					geoms.add(poly);
 			}
 		}
-		for(int l=0;l<nbColumns;l++){
-			for(int c=0;c<nbRows+1;c = c+2){
-				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + 2* size*val * (l+0.5), ymin + ((c +1) * 1.5) * size); 
+		for(int l=0;l<nbRows;l++){
+			for(int c=1;c<nbColumns;c = c +2){
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex* 0.75 ,ymin + (l+0.5) * heightHex)); 
+				//GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size, ymin + 2* size*val * l); 
 				if (geom.covers(poly))
 					geoms.add(poly);
 			}
 		}
+		/*for(int l=0;l<nbColumns;l++){
+			for(int c=0;c<nbRows;c = c+2){
+				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size,  xmin + ((c +1) * 1.5) * size, ymin + 2* size*val * (l+0.5)); 
+				if (geom.covers(poly))
+					geoms.add(poly);
+			}
+		}*/
 		return geoms;
 	}
 

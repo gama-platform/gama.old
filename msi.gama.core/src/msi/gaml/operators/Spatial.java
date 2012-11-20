@@ -143,15 +143,17 @@ public abstract class Spatial {
 		}
 		
 		@operator("hexagon")
-		@doc(value = "A hexagon geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon(10) --: returns a geometry as a hexagon of side size 10." }, see = {
+		@doc(value = "A hexagon geometry which the given with and height", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon({10,5}) --: returns a geometry as a hexagon of width of 10 and height of 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "triangle" })
-		public static IShape opHexagon(final IScope scope, final Double side_size) {
+		public static IShape opHexagon(final IScope scope, final GamaPoint size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ( side_size <= 0 ) { return new GamaShape(location); }
-			return GamaGeometryType.buildHexagon(side_size, location);
+			final Double width = size.x;
+			final Double height = size.y;
+			if ( width <= 0 || height <= 0) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(width, height,location);
 		}
 
 		@operator(value = "polygon", expected_content_type = { IType.POINT })

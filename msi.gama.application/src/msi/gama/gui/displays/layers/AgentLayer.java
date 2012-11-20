@@ -53,7 +53,10 @@ public class AgentLayer extends AbstractLayer {
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		IExpression expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
+		//IExpression expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
+		IExpression expr = null;
+		if (definition instanceof AgentLayerStatement)
+			expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 		if ( expr != null ) {
 			EditorFactory.createExpression(compo, "Agents:", expr.toGaml(),
 				new EditorListener<IExpression>() {
@@ -75,7 +78,9 @@ public class AgentLayer extends AbstractLayer {
 
 		shapes.clear();
 		// performance issue
-		String aspectName = ((AgentLayerStatement) definition).getAspectName();
+		String aspectName = IKeyword.DEFAULT ;
+		if (definition instanceof AgentLayerStatement)
+			aspectName = ((AgentLayerStatement) definition).getAspectName();
 		IScope scope = GAMA.obtainNewScope();
 		if ( scope != null ) {
 			scope.setContext(g);
@@ -107,7 +112,9 @@ public class AgentLayer extends AbstractLayer {
 
 	public Set<IAgent> getAgentsToDisplay() {
 		// return agents;
-		return ((AgentLayerStatement) definition).getAgentsToDisplay();
+		if (definition instanceof AgentLayerStatement)
+			return ((AgentLayerStatement) definition).getAgentsToDisplay();
+		return ((GridLayerStatement) definition).getAgentsToDisplay();
 	}
 
 	@Override

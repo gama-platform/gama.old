@@ -48,11 +48,11 @@ public class GridSkill extends GeometricSkill {
 
 	public static final String SKILL_NAME = "grid";
 
-	private final GamaSpatialMatrix getGrid(final IAgent agent) {
+	protected final GamaSpatialMatrix getGrid(final IAgent agent) {
 		return (GamaSpatialMatrix) agent.getPopulation().getTopology().getPlaces();
 	}
 
-	@getter("agents")
+	@getter("agents") 
 	@Deprecated
 	public final List<IAgent> getAgents(final IAgent agent) {
 		return agent.getTopology().getAgentsIn(agent.getGeometry(), Different.with(), false);
@@ -62,11 +62,15 @@ public class GridSkill extends GeometricSkill {
 
 	@getter("grid_x")
 	public final int getX(final IAgent agent) {
+		if (getGrid(agent).getIsHexagon())
+			return getGrid(agent).getX(agent.getGeometry());
 		return getGrid(agent).getX(agent.getLocation().getX());
 	}
 
 	@getter("grid_y")
 	public final int getY(final IAgent agent) {
+		if (getGrid(agent).getIsHexagon())
+			return getGrid(agent).getY(agent.getGeometry());
 		return getGrid(agent).getY(agent.getLocation().getY());
 	}
 
@@ -74,7 +78,7 @@ public class GridSkill extends GeometricSkill {
 	public final void setX(final IAgent agent, final Integer i) {
 
 	}
-
+ 
 	@setter("grid_y")
 	public final void setY(final IAgent agent, final Integer i) {
 
@@ -86,12 +90,16 @@ public class GridSkill extends GeometricSkill {
 	}
 
 	@getter("color")
-	public final GamaColor getColor(final IAgent agent) {
+	public GamaColor getColor(final IAgent agent) {
+		if (getGrid(agent).getIsHexagon())
+			return (GamaColor) agent.getAttribute(IKeyword.COLOR);
 		return getGrid(agent).getColor(agent.getLocation());
 	}
 
 	@setter("color")
-	public final void setColor(final IAgent agent, final GamaColor color) {
+	public void setColor(final IAgent agent, final GamaColor color) {
+		if (getGrid(agent).getIsHexagon())
+			agent.setAttribute(IKeyword.COLOR, color);
 		getGrid(agent).setColor(agent.getLocation(), color);
 	}
 

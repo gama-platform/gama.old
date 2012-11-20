@@ -53,7 +53,7 @@ public abstract class GridNeighbourhood {
 		this.isTorus = isTorus;
 	}
 
-	final int getPlaceIndexAt(final int xx, final int yy) {
+	int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isTorus ) { return (yy < 0 ? yy + xSize : yy) % ySize * xSize + (xx < 0 ? xx + xSize : xx) % xSize; }
 		if ( xx < 0 || xx >= xSize || yy < 0 || yy >= ySize ) { return -1; }
 		return yy * xSize + xx;

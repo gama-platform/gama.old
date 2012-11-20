@@ -19,7 +19,11 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
+import java.util.HashSet;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.IDisplayOutput;
@@ -61,13 +65,15 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	GamaSpatialMatrix grid;
 	IExpression lineColor;
 	GamaColor currentColor, constantColor;
+	HashSet<IAgent> agents;
+	private IExpression setOfAgents;
 
+	HashSet<IAgent> agentsForLayer;
 	// BufferedImage supportImage;
 
 	@Override
 	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
 		super.prepare(out, sim);
-
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {
 			constantColor = Cast.asColor(sim, lineColor.value(sim));
@@ -80,6 +86,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			"not a grid environment for: " + getName()); }
 
 		grid = (GamaSpatialMatrix) gridPop.getTopology().getPlaces();
+		agents = new HashSet<IAgent>();
+		agents.addAll(computeAgents());
 		// if ( supportImage != null ) {
 		// supportImage.flush();
 		// }
@@ -92,6 +100,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public short getType() {
+		if (grid.getIsHexagon())
+				return ILayerStatement.AGENTS;
 		return ILayerStatement.GRID;
 	}
 
@@ -103,12 +113,52 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		return currentColor != null;
 	}
 
+	public boolean agentsHaveChanged() {
+		return false;
+	}
 	@Override
 	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
 		super.compute(sim, cycle);
+		if (grid.getIsHexagon()) {
+			synchronized (agents) {
+				if ( cycle == 0l || agentsHaveChanged() ) {
+					agents.clear();
+					agents.addAll(computeAgents());
+				}
+				agentsForLayer = (HashSet<IAgent>) agents.clone();
+			}
+		} else {
+			if ( lineColor == null || constantColor != null ) { return; }
+			currentColor = Cast.asColor(sim, lineColor.value(sim));
+		}
+	}
+	
+	public synchronized HashSet<IAgent> getAgentsToDisplay() {
+		return agentsForLayer;
+	}
 
-		if ( lineColor == null || constantColor != null ) { return; }
-		currentColor = Cast.asColor(sim, lineColor.value(sim));
+	
+	
+	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {
+		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
+		// composants qui vont être affichés.
+		return grid.getAgents();
+	}
+	
+	public void setAspect(final String currentAspect) {
+		
+	}
+
+	public String getAspectName() {
+		return IKeyword.DEFAULT ;
+	}
+
+	public void setAgentsExpr(final IExpression setOfAgents) {
+		this.setOfAgents = setOfAgents;
+	}
+
+	IExpression getAgentsExpr() {
+		return setOfAgents;
 	}
 
 }

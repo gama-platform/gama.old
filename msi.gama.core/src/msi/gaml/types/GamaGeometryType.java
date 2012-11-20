@@ -187,12 +187,27 @@ public class GamaGeometryType extends GamaType<IShape> {
 		double h=size/2;
 		double width= size*(Math.sqrt(3)/2.0);
 		Coordinate[] coords = new Coordinate[7];
-		coords[0] = new GamaPoint(x, y + h);
-		coords[1] = new GamaPoint(x+width,y);
-		coords[2] = new GamaPoint(x + 2 * width, y + h);
-		coords[3] = new GamaPoint(x + 2 * width, y+ 1.5  * size);
-		coords[4] = new GamaPoint(x + width, y + 2 * size);
-		coords[5] = new GamaPoint(x, y+ 1.5  * size);
+		coords[0] = new GamaPoint(x, y +width);
+		coords[1] = new GamaPoint(x+h,y);
+		coords[2] = new GamaPoint(x + 1.5 * size , y);
+		coords[3] = new GamaPoint(x + 2 * size, y+ width);
+		coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
+		coords[5] = new GamaPoint(x+h, y+ 2  * width);
+		coords[6] = new GamaPoint(coords[0]);
+		return new GamaShape(GeometryUtils.factory.createPolygon(GeometryUtils.factory.createLinearRing(coords), null));
+		
+	}
+	
+	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {
+		double x = location.getX();
+		double y = location.getY();
+		Coordinate[] coords = new Coordinate[7];
+		coords[0] = new GamaPoint(x-sizeX/2.0, y);
+		coords[1] = new GamaPoint(x-sizeX/4,y+sizeY/2);
+		coords[2] = new GamaPoint(x+sizeX/4,y+sizeY/2);
+		coords[3] = new GamaPoint(x + sizeX/2  , y);
+		coords[4] = new GamaPoint(x +sizeX/4, y-sizeY/2);
+		coords[5] = new GamaPoint(x -sizeX/4, y-sizeY/2);
 		coords[6] = new GamaPoint(coords[0]);
 		return new GamaShape(GeometryUtils.factory.createPolygon(GeometryUtils.factory.createLinearRing(coords), null));
 		

@@ -33,6 +33,10 @@ public class GridVonNeumannNeighbourhood extends GridNeighbourhood {
 		super(agents, xSize, ySize , isTorus);
 	}
 
+	 private boolean returnNull = false;
+	  private static final int[] singleExtent = { 1 };
+	  private int sizeX;
+	  private int sizeY;
 	@Override
 	protected List<Integer> getNeighboursAtRadius(final int placeIndex, final int radius) {
 		int y = placeIndex / xSize;

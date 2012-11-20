@@ -340,11 +340,12 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			int index = 0;
 			int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
 			while (it3.hasNext() && index <= max) {
-				index++;
 				SimpleFeature fact = it3.next();
-				GisUtils.setCurrentGisReader(fact);
 				Geometry geom = (Geometry) fact.getDefaultGeometry();
-
+				if (geom == null) continue;
+				index++;
+				GisUtils.setCurrentGisReader(fact);
+				
 				// if a transform function is defined, computation of the
 				// geometry coordinates in the new projection
 				if ( transformCRS != null ) {
@@ -356,7 +357,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 						e.printStackTrace();
 					}
 				}
-
 				geom = GisUtils.fromGISToAbsolute(geom);
 
 				Map<String, Object> map = new GamaMap();
