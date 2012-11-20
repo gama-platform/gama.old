@@ -136,12 +136,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
-		System.out.println("JOGLAWTGLRenderer()");
+
 		// Initialize the user camera
 		camera = new Camera();
-
-		
-
 		canvas = new GLCanvas();
 
 		myListener = new MyListener(camera, this);
@@ -159,7 +156,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		System.out.println("JOGLAWTGLRenderer init()");
+		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		// Get the OpenGL graphics context
@@ -170,12 +167,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		myGLDrawer = new MyGLToyDrawer();
 
 		context = drawable.getContext();
-
-		// Initialize the IGraphics (FIXME: Should we initialize it here??)
-		//displaySurface.openGLGraphics = new JOGLAWTDisplayGraphics(gl, glu,
-			//	this, displaySurface.envWidth, displaySurface.envHeight);
-		
-        System.out.println(width + "," + height);
         
 		arcBall = new ArcBall(width, height);
 

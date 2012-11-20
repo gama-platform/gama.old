@@ -99,7 +99,7 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if (height > 0) {
-				DrawPolyhedre(curPolygon, z_layer, c, alpha, height, angle,
+				DrawPolyhedre(curPolygon, z_layer, c, alpha,fill, height, angle,
 						false, border);
 			} else {
 				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle,
@@ -371,14 +371,14 @@ public class JTSDrawer {
 		}
 	}
 
-	public void DrawPolyhedre(Polygon p, float z, Color c, float alpha,
+	public void DrawPolyhedre(Polygon p, float z, Color c, float alpha,boolean fill,
 			float height, Integer angle, boolean drawPolygonContour, Color border) {
 
-		DrawPolygon(p, z, c, alpha, true, border, false, angle, drawPolygonContour);
-		DrawPolygon(p, z + height, c, alpha, true, border, false, angle,
+		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour);
+		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle,
 				drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha, z, height, drawPolygonContour, false);
+		DrawFaces(p, c, alpha, fill, z, height, drawPolygonContour, false);
 
 	}
 
@@ -392,7 +392,7 @@ public class JTSDrawer {
 	 * @param height
 	 *            : height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float alpha, float z_layer,
+	public void DrawFaces(Polygon p, Color c, float alpha, boolean fill,  float z_layer,
 			float height, boolean drawPolygonContour, boolean drawNormal) {
 
 		// Set z_layer
@@ -444,19 +444,22 @@ public class JTSDrawer {
 			// of the quad, to be enhance for non plan polygon)
 			float[] normal = CalculateNormal(vertices[2], vertices[1],
 					vertices[0]);
+    
+			if(fill){
+				myGl.glBegin(GL.GL_QUADS);
+	
+				myGl.glNormal3fv(normal, 0);
+	
+				myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
+				myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
+				myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
+				myGl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
+	
+				myGl.glEnd();
+			}
+			
 
-			myGl.glBegin(GL.GL_QUADS);
-
-			myGl.glNormal3fv(normal, 0);
-
-			myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
-			myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
-			myGl.glVertex3f(vertices[2].x, vertices[2].y, vertices[2].z);
-			myGl.glVertex3f(vertices[3].x, vertices[3].y, vertices[3].z);
-
-			myGl.glEnd();
-
-			if (drawPolygonContour == true) {
+			if (drawPolygonContour == true || fill == false) {
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 
 				myGl.glBegin(GL.GL_LINES);

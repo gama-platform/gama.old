@@ -57,7 +57,7 @@ public class ArcBall {
 
     public void setBounds(float NewWidth, float NewHeight) {
         assert((NewWidth > 1.0f) && (NewHeight > 1.0f));
-        System.out.println("setBounds" + NewWidth + "," + NewHeight);
+
         //Set adjustment factor for width/height
         adjustWidth = 1.0f / ((NewWidth - 1.0f) * 0.5f);
         adjustHeight = 1.0f / ((NewHeight - 1.0f) * 0.5f);

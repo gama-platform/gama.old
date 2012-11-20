@@ -73,11 +73,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private double curX = 0, curY = 0;
 	
 	
-	// Handle opengl primitive.
-	
-	public GLUT glut;
-
-	// need to have the GLRenderer to enable texture mapping.
+	// GLRenderer.
 	public JOGLAWTGLRenderer myGLRender;
 
 	// List of all the dynamic  JTS geometry.
@@ -95,16 +91,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	// List of all the String
 	public ArrayList<MyString> myStrings = new ArrayList<MyString>();
 
-	// Define the environment properties.
+	// Environment properties.
 	public float envWidth, envHeight, maxEnvDim;
 
 	// All the geometry of the same layer are drawn in the same z plan.
 	public float currentZLayer = 0.0f;
+	public int currentLayerId = 0;
 	
 	//Is the layer static data or dynamic geometry that has to be redrawn every iteration
 	public boolean currentLayerIsStatic= false;
 	
-	public int currentLayerId = 0;
 
 	// OpenGL list ID
 	private int listID = -1;
@@ -141,20 +137,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 
 	/**
-	 * The environment property are given from the display surface.
-	 * 
-	 * @param GL
-	 *            gl
-	 * @param GLU
-	 *            glu
-	 * @param float env_width
-	 * @param float env_height
+	 * @param JOGLAWTDisplaySurface displaySurface
 	 */
 	public JOGLAWTDisplayGraphics( final JOGLAWTDisplaySurface displaySurface) {
-		System.out.println("JOGLAWTDisplayGraphics()");
 		
-		glut = new GLUT();
-
 		// Initialize the current environment data.
 		envWidth = displaySurface.envWidth;
 		envHeight = displaySurface.envHeight;
@@ -885,7 +871,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 					    myGLRender.gl.glColor3d(0, 0, 0);
 					    myGLRender.gl.glWindowPos2d(2, 5);
-						glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, curImage.agent.getSpeciesName() + curImage.agent.getIndex());
+						//glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, curImage.agent.getSpeciesName() + curImage.agent.getIndex());
 					    currentPicked=i;
 
 					    if(currentPicked !=  i){

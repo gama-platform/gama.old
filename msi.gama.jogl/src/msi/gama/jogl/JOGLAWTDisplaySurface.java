@@ -110,13 +110,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
-		System.out.println("JOGLAWTDisplaySurface() initialize");
 		
-
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
-		System.out.println("DisplaySurface Init. env_width:" + env_width + " env_height:" + env_height);
+		//System.out.println("OpenGL DisplaySurface Init. env_width:" + env_width + " env_height:" + env_height);
 		this.setLayout(new BorderLayout());
 		
 
@@ -603,7 +601,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomFit() {
-		System.out.println("zoomFit()");
 		if(openGLGraphicsGLRender!=null){
 			if ( ThreeD ) {
 				openGLGraphicsGLRender.camera.Initialize3DCamera(envWidth, envHeight);
