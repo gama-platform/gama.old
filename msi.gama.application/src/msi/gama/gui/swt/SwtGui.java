@@ -28,7 +28,6 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
-import msi.gama.hpc.gui.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
@@ -743,6 +742,8 @@ public class SwtGui implements IGui {
 
 	public final boolean openPerspective(final String perspectiveId) {
 		final IWorkbenchPage activePage = getPage(perspectiveId);
+		openBatchPerspective();
+		
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
@@ -762,6 +763,47 @@ public class SwtGui implements IGui {
 		return false;
 	}
 
+	public final boolean openBatchPerspective() {
+		
+		IConfigurationElement[] config =
+				Platform.getExtensionRegistry().getConfigurationElementsFor("msi.gama.hpc.HPCPerspectiveFactory");
+		for ( IConfigurationElement e : config ) 
+			{
+				final String pluginKeyword = e.getAttribute("keyword");
+				final String pluginClass = e.getAttribute("class");
+				final String pluginName = e.getContributor().getName();
+				System.out.println("Perspective found in " + pluginName + " with keyword " +
+					pluginKeyword + " and class " + pluginClass);
+				ClassLoader cl =
+					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+		/*		try {
+					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				*/
+			}
+		//}
+
+		/*Class<IDisplaySurface> clazz = displayClasses.get(keyword);
+		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
+			" is not defined anywhere."); }
+		try {
+			IDisplaySurface surface = clazz.newInstance();
+			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
+			// " display");
+			surface.initialize(w, h, layerDisplayOutput);
+			return surface;
+		} catch (InstantiationException e1) {
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		}
+		
+		*/
+		return false ; //openPerspective(I);
+	}
+	
 	@Override
 	public final boolean openSimulationPerspective() {
 

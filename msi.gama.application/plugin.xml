@@ -260,30 +260,7 @@
                visible="false">
          </view>
       </perspectiveExtension>
-      <perspectiveExtension
-            targetID="msi.gama.application.perspectives.HeadlessPerspective">
-         <view
-               closeable="false"
-               id="msi.gama.gui.view.GamaNavigator"
-               minimized="false"
-               moveable="true"
-               ratio="0.17f"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="true">
-         </view>
-         <view
-               id="msi.gama.application.view.HeadlessParam"
-               minimized="false"
-               relationship="right"
-               relative="msi.gama.gui.view.GamaNavigator"
-               showTitle="true"
-               visible="true">
-         </view>
-      </perspectiveExtension>
-   </extension>
+    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -571,16 +548,6 @@
                <command
                      commandId="msi.gama.application.commands.ShowHideRepositoriesView"
                      label="SVN repositories view "
-                     style="push">
-               </command>
-               <command
-                     commandId="msi.gama.application.commands.ShowHideHeadlessParamView"
-                     label="Headless Param view "
-                     style="push">
-               </command>
-               <command
-                     commandId="msi.gama.hpc.gui.ShowHideHeadlessChartView"
-                     label="Headless Chart view "
                      style="push">
                </command>
             </menu>
@@ -1164,14 +1131,6 @@
       <handler
             class="msi.gama.gui.swt.commands.RunModel"
             commandId="msi.gama.application.commands.RunModel">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ShowHideHeadlessParamViewHandler"
-            commandId="msi.gama.application.commands.ShowHideHeadlessParamView">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.ShowHideHeadlessChartViewHandler"
-            commandId="msi.gama.hpc.gui.ShowHideHeadlessChartView">
       </handler>
    </extension>
    <extension

@@ -56,7 +56,7 @@ Visit http://code.google.com/p/gama-platform/
    </license>
 
    <plugins>
-      <plugin id="cenres.gaml.extensions.hydro"/>
+      <plugin id="cenres.gaml.extensions.hydro" fragment=""/>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
@@ -85,9 +85,11 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.apache.lucene.core"/>
+      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.commands.source"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
       <plugin id="org.eclipse.core.databinding.observable"/>
@@ -127,6 +129,9 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.ds"/>
       <plugin id="org.eclipse.equinox.event"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin.equinox"/>
+      <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
       <plugin id="org.eclipse.equinox.p2.director.app"/>
@@ -135,6 +140,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
+      <plugin id="org.eclipse.equinox.p2.publisher"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
@@ -143,6 +150,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
+      <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.help.base"/>
@@ -162,6 +170,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.pde"/>
+      <plugin id="org.eclipse.pde.build"/>
       <plugin id="org.eclipse.pde.runtime"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
