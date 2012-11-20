@@ -77,7 +77,14 @@ public class Physical3DWorldAgent extends GamlAgent {
 	
 	@getter("gravity")
 	public Boolean getGravity(){
-		return (Boolean) this.getAttribute("gravity");
+		
+		if(this.getAttribute("gravity") == null){
+		  setGravity(true);
+		  return true;
+		}
+		else{
+		  return (Boolean) this.getAttribute("gravity");
+		}
 	}
 	
 	@setter ("gravity")
@@ -109,7 +116,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 		//e;G The location of a plan with a z value will be at 0.
 		//Basic way to set the right z get the first coordinate of the shape, problem if the shape is not in the z plan it is totally wrong.
 		float computedZLocation;
-		if(String.valueOf(geom.getInnerGeometry().getCoordinates()[0].z).equals("NaN") == true){
+		if(Double.isNaN (geom.getInnerGeometry().getCoordinates()[0].z) == true){
 			computedZLocation=(float)geom.getLocation().getZ();
 		}
 		else{
