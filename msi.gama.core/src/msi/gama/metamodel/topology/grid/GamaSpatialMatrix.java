@@ -173,8 +173,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
 		double ymin = environmentFrame.getEnvelope().getMinY();
+		GamaShape gbg = new GamaShape(environmentFrame.getInnerGeometry().buffer(0.1,2));
 		cellWidth = widthEnv/ (numCols * 0.75 + 0.25);
-		cellHeight = heightEnv/ numRows;
+		cellHeight = heightEnv/ (numRows +0.5);
 		xmin += cellWidth/2.0;
 		ymin += cellHeight/2.0;
 		//numCols = (int) (width / cellWidth);
@@ -184,7 +185,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			for(int c=0;c<numCols;c = c +2){
 				i = c + (numRows * l);
 				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight, new GamaPoint(xmin + c * cellWidth* 0.75 ,ymin + l * cellHeight)); 
-				if (environmentFrame.covers(poly)) {
+				if (gbg.covers(poly)) {
 					if ( firstCell == -1 ) {
 						firstCell = i;
 					}
@@ -199,7 +200,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			for(int c=1;c<numCols;c = c +2){
 				i = c + (numRows * l);
 				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,  new GamaPoint(xmin + c * cellWidth* 0.75 ,ymin + (l+0.5) * cellHeight)); 
-				if (environmentFrame.covers(poly)) {
+				if (gbg.covers(poly)) {
 					if ( firstCell == -1 ) {
 						firstCell = i;
 					}
@@ -301,7 +302,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			if (matrix[i] == null) return -1;
 			if (matrix[i].getLocation() == p)
 				return i;
-			List<Integer> toObserve = GridHexagonalNeighbourhood.getNeighboursAtRadius1(i,numCols, numRows);
+			List<Integer> toObserve = GridHexagonalNeighbourhood.getNeighboursAtRadius1(i,numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x =0, y = 0;
