@@ -187,7 +187,13 @@ public class EGaml {
 			serialize(expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
 			serialize(expr.getRight());
-			serializer.append(")").append("}");
+			serializer.append(")");
+			if ( ((Point) expr).getZ() != null ) {
+				serializer.append(',').append("(");
+				serialize(((Point) expr).getZ());
+				serializer.append(")");
+			}
+			serializer.append("}");
 		} else if ( expr instanceof Array ) {
 			array(((Array) expr).getExprs(), false);
 		} else if ( expr instanceof VariableRef ) {

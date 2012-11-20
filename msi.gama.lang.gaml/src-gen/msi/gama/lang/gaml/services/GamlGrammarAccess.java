@@ -28,10 +28,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cStatementsStatementParserRuleCall_3_0 = (RuleCall)cStatementsAssignment_3.eContents().get(0);
 		
 		//Model:
-		//	"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*;
+		//	"model" name=ID imports+=Import* statements+=Statement*;
 		public ParserRule getRule() { return rule; }
 
-		//"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*
+		//"model" name=ID imports+=Import* statements+=Statement*
 		public Group getGroup() { return cGroup; }
 
 		//"model"
@@ -103,13 +103,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cReturnKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
 		
 		/// **
-		// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA (not used anymore)
-		// * / //GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
-		////DefBinaryOp: '_binary &' name=ID'&;';
-		////DefReserved: '_reserved &' name=ID'&;';
-		////DefUnary: '_unary &'name=ID '&;';
-		/// **
-		// * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
+		// * Built-in keywords (corresponding to statements that accept Expressions without a facet name) -- TODO Needs to be replaced sooner or later by a more intelligent handling of these statements
 		// * / BuiltIn:
 		//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
 		//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
@@ -179,7 +173,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDefinitionParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		/// **
-		// * Statements (i.e. commands in the GAML descriptions).
+		// * Statements 
 		// * / Statement:
 		//	IfEval | ClassicStatement | Definition;
 		public ParserRule getRule() { return rule; }
@@ -1375,15 +1369,19 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOpCommaKeyword_3_2_1_0 = (Keyword)cOpAssignment_3_2_1.eContents().get(0);
 		private final Assignment cRightAssignment_3_2_2 = (Assignment)cGroup_3_2.eContents().get(2);
 		private final RuleCall cRightExpressionParserRuleCall_3_2_2_0 = (RuleCall)cRightAssignment_3_2_2.eContents().get(0);
+		private final Group cGroup_3_2_3 = (Group)cGroup_3_2.eContents().get(3);
+		private final Keyword cCommaKeyword_3_2_3_0 = (Keyword)cGroup_3_2_3.eContents().get(0);
+		private final Assignment cZAssignment_3_2_3_1 = (Assignment)cGroup_3_2_3.eContents().get(1);
+		private final RuleCall cZExpressionParserRuleCall_3_2_3_1_0 = (RuleCall)cZAssignment_3_2_3_1.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
 		
 		//PrimaryExpression returns Expression:
 		//	AbstractRef | "(" Expression ")" | "[" {Array} (exprs+=Expression ("," exprs+=Expression)*)? "]" | "{" {Point}
-		//	(left=Expression op="," right=Expression) "}";
+		//	(left=Expression op="," right=Expression ("," z=Expression)?) "}";
 		public ParserRule getRule() { return rule; }
 
 		//AbstractRef | "(" Expression ")" | "[" {Array} (exprs+=Expression ("," exprs+=Expression)*)? "]" | "{" {Point}
-		//(left=Expression op="," right=Expression) "}"
+		//(left=Expression op="," right=Expression ("," z=Expression)?) "}"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//AbstractRef
@@ -1434,7 +1432,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"]"
 		public Keyword getRightSquareBracketKeyword_2_3() { return cRightSquareBracketKeyword_2_3; }
 
-		//"{" {Point} (left=Expression op="," right=Expression) "}"
+		//"{" {Point} (left=Expression op="," right=Expression ("," z=Expression)?) "}"
 		public Group getGroup_3() { return cGroup_3; }
 
 		//"{"
@@ -1443,7 +1441,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//{Point}
 		public Action getPointAction_3_1() { return cPointAction_3_1; }
 
-		//left=Expression op="," right=Expression
+		//left=Expression op="," right=Expression ("," z=Expression)?
 		public Group getGroup_3_2() { return cGroup_3_2; }
 
 		//left=Expression
@@ -1463,6 +1461,18 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//Expression
 		public RuleCall getRightExpressionParserRuleCall_3_2_2_0() { return cRightExpressionParserRuleCall_3_2_2_0; }
+
+		//("," z=Expression)?
+		public Group getGroup_3_2_3() { return cGroup_3_2_3; }
+
+		//","
+		public Keyword getCommaKeyword_3_2_3_0() { return cCommaKeyword_3_2_3_0; }
+
+		//z=Expression
+		public Assignment getZAssignment_3_2_3_1() { return cZAssignment_3_2_3_1; }
+
+		//Expression
+		public RuleCall getZExpressionParserRuleCall_3_2_3_1_0() { return cZExpressionParserRuleCall_3_2_3_1_0; }
 
 		//"}"
 		public Keyword getRightCurlyBracketKeyword_3_3() { return cRightCurlyBracketKeyword_3_3; }
@@ -1782,7 +1792,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Model:
-	//	"model" name=ID imports+=Import* / * ('_gaml {' gaml=GamlLangDef '}')?* / statements+=Statement*;
+	//	"model" name=ID imports+=Import* statements+=Statement*;
 	public ModelElements getModelAccess() {
 		return (pModel != null) ? pModel : (pModel = new ModelElements());
 	}
@@ -1803,13 +1813,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// **
-	// * MetaGrammar: used to parse the tokens introduced automatically in the imports by GAMA (not used anymore)
-	// * / //GamlLangDef: (b+=DefBinaryOp | r+=DefReserved | unaries+=DefUnary )+;
-	////DefBinaryOp: '_binary &' name=ID'&;';
-	////DefReserved: '_reserved &' name=ID'&;';
-	////DefUnary: '_unary &'name=ID '&;';
-	/// **
-	// * Built-in keywords (corresponding to special statements) -- TODO Needs to be replaced sooner or later by a more intelligent handling of "classic" statements
+	// * Built-in keywords (corresponding to statements that accept Expressions without a facet name) -- TODO Needs to be replaced sooner or later by a more intelligent handling of these statements
 	// * / BuiltIn:
 	//	"write" | "warn" | "error" | "match" | "match_one" | "match_between" | "capture" | "release" | "ask" | "switch" |
 	//	"create" | "add" | "remove" | "put" | "save" | "set" | "return";
@@ -1822,7 +1826,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// **
-	// * Statements (i.e. commands in the GAML descriptions).
+	// * Statements 
 	// * / Statement:
 	//	IfEval | ClassicStatement | Definition;
 	public StatementElements getStatementAccess() {
@@ -2113,7 +2117,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//PrimaryExpression returns Expression:
 	//	AbstractRef | "(" Expression ")" | "[" {Array} (exprs+=Expression ("," exprs+=Expression)*)? "]" | "{" {Point}
-	//	(left=Expression op="," right=Expression) "}";
+	//	(left=Expression op="," right=Expression ("," z=Expression)?) "}";
 	public PrimaryExpressionElements getPrimaryExpressionAccess() {
 		return (pPrimaryExpression != null) ? pPrimaryExpression : (pPrimaryExpression = new PrimaryExpressionElements());
 	}

@@ -901,6 +901,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getPoint_Z()
+  {
+    return (EReference)pointEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getUnitName()
   {
     return unitNameEClass;
@@ -1067,6 +1077,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEReference(arrayEClass, ARRAY__EXPRS);
 
     pointEClass = createEClass(POINT);
+    createEReference(pointEClass, POINT__Z);
 
     unitNameEClass = createEClass(UNIT_NAME);
 
@@ -1222,6 +1233,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getArray_Exprs(), this.getExpression(), null, "exprs", null, 0, -1, Array.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(pointEClass, Point.class, "Point", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getPoint_Z(), this.getExpression(), null, "z", null, 0, 1, Point.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(unitNameEClass, UnitName.class, "UnitName", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

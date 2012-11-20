@@ -95,7 +95,7 @@ generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 	GamlUnaryExpr returns Expression: PrePrimaryExpr | {GamlUnaryExpr} ({GamlUnaryExpr.left=current}op=('-'|'!'|'my'|'the'|'not') right=GamlUnaryExpr);
 	PrePrimaryExpr returns Expression: TerminalExpression | MemberRef; 
 	MemberRef returns Expression : PrimaryExpression ({MemberRef.left=current} op='.' right=VariableRef)*;
-	PrimaryExpression returns Expression: AbstractRef | '('Expression')' | '[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' | '{' {Point} (left=Expression op=',' right=Expression ) '}';
+	PrimaryExpression returns Expression: AbstractRef | '('Expression')' | '[' {Array}(exprs+=Expression (',' exprs+=Expression)*)? ']' | '{' {Point} (left=Expression op=',' right=Expression (',' z=Expression)? ) '}';
 	AbstractRef: VariableRef | Function;
 	Function: {Function}(op=ID '('args+=Expression (',' args+=Expression)*')') ;
 

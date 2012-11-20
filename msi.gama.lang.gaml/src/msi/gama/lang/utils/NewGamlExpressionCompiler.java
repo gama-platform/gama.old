@@ -172,8 +172,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 		@Override
 		public IExpression caseArgPairExpr(final ArgPairExpr object) {
-			return binary(object.getOp(), caseVar(object.getArg(), object), object,
-				object.getRight());
+			return binary(object.getOp(), caseVar(object.getArg(), object), object.getRight());
 		}
 
 		@Override
@@ -220,7 +219,10 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 		@Override
 		public IExpression casePoint(final Point object) {
-			return binary(IExpressionCompiler.INTERNAL_POINT, object.getLeft(), object.getRight());
+			IExpression point2d =
+				binary(IExpressionCompiler.INTERNAL_POINT, object.getLeft(), object.getRight());
+			Expression z = object.getZ();
+			return z == null ? point2d : binary(IExpressionCompiler.INTERNAL_Z, point2d, z);
 		}
 
 		@Override
@@ -370,8 +372,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		return factory.createUnaryExpr(op, expr, context);
 	}
 
-	private IExpression binary(final String op, final IExpression left, final Expression e1,
-		final Expression e2) {
+	private IExpression binary(final String op, final IExpression left, final Expression e2) {
 		if ( left == null ) { return null; }
 		// if the operator is "as", the right-hand expression should be a casting type
 		if ( AS.equals(op) ) {
@@ -455,7 +456,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		if ( OF.equals(op) ) { return compileFieldExpr(right, e1); }
 		// we can now safely compile the left-hand expression
 		IExpression left = compile(e1);
-		return binary(op, left, e1, right);
+		return binary(op, left, right);
 	}
 
 	private SpeciesDescription getSpeciesContext(final String e) {

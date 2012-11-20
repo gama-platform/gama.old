@@ -2572,9 +2572,31 @@ rulePrimaryExpression returns [EObject current=null]
 	    }
 
 )
-))	otherlv_15='}' 
+)(	otherlv_15=',' 
     {
-    	newLeafNode(otherlv_15, grammarAccess.getPrimaryExpressionAccess().getRightCurlyBracketKeyword_3_3());
+    	newLeafNode(otherlv_15, grammarAccess.getPrimaryExpressionAccess().getCommaKeyword_3_2_3_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getPrimaryExpressionAccess().getZExpressionParserRuleCall_3_2_3_1_0()); 
+	    }
+		lv_z_16_0=ruleExpression		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getPrimaryExpressionRule());
+	        }
+       		set(
+       			$current, 
+       			"z",
+        		lv_z_16_0, 
+        		"Expression");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))?)	otherlv_17='}' 
+    {
+    	newLeafNode(otherlv_17, grammarAccess.getPrimaryExpressionAccess().getRightCurlyBracketKeyword_3_3());
     }
 ))
 ;

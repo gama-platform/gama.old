@@ -1376,13 +1376,22 @@ public interface GamlPackage extends EPackage
   int POINT__RIGHT = EXPRESSION__RIGHT;
 
   /**
+   * The feature id for the '<em><b>Z</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int POINT__Z = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
    * The number of structural features of the '<em>Point</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int POINT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
+  int POINT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.UnitNameImpl <em>Unit Name</em>}' class.
@@ -2261,6 +2270,17 @@ public interface GamlPackage extends EPackage
   EClass getPoint();
 
   /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Point#getZ <em>Z</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Z</em>'.
+   * @see msi.gama.lang.gaml.gaml.Point#getZ()
+   * @see #getPoint()
+   * @generated
+   */
+  EReference getPoint_Z();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.UnitName <em>Unit Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2824,6 +2844,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass POINT = eINSTANCE.getPoint();
+
+    /**
+     * The meta object literal for the '<em><b>Z</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference POINT__Z = eINSTANCE.getPoint_Z();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.UnitNameImpl <em>Unit Name</em>}' class.

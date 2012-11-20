@@ -74,7 +74,9 @@
     <genClasses ecoreClass="Gaml.ecore#//Array">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Array/exprs"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//Point"/>
+    <genClasses ecoreClass="Gaml.ecore#//Point">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Point/z"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//UnitName"/>
     <genClasses ecoreClass="Gaml.ecore#//IntLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//DoubleLiteral"/>
