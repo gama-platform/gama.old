@@ -55,21 +55,17 @@ import com.bulletphysics.linearmath.Transform;
  */
 public class PhysicsWorldJBullet {
 
-
     DiscreteDynamicsWorld dynamicsWorld;
-    public static void main(String[] args) {
-        PhysicsWorldJBullet app = new PhysicsWorldJBullet();
-    }
 
-    public PhysicsWorldJBullet(){
+    public PhysicsWorldJBullet(boolean gravity){
+    	
 		// collision configuration contains default setup for memory, collision
 		// setup. Advanced users can create their own configuration.
 		CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
 
 		// use the default collision dispatcher. For parallel processing you
 		// can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-		CollisionDispatcher dispatcher = new CollisionDispatcher(
-				collisionConfiguration);
+		CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
 
 		// the maximum size of the collision world. Make sure objects stay
 		// within these boundaries
@@ -80,19 +76,19 @@ public class PhysicsWorldJBullet {
 		int maxProxies = 1024;
 		AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
 		
-		//BroadphaseInterface overlappingPairCache = new SimpleBroadphase(
-		//		maxProxies);
 
-		// the default constraint solver. For parallel processing you can use a
-		// different solver (see Extras/BulletMultiThreaded)
 		SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
+		
 
 		dynamicsWorld = new DiscreteDynamicsWorld(
 				dispatcher, overlappingPairCache, solver,
 				collisionConfiguration);
-
-		dynamicsWorld.setGravity(new Vector3f(0, 0, -10));
-		
+		if(gravity == true){
+			dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,-9.81f));
+		}
+		else{
+		dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,0.0f));
+		}
     }
     
     
@@ -114,9 +110,9 @@ public class PhysicsWorldJBullet {
 		RigidBodyConstructionInfo rbInfo = new RigidBodyConstructionInfo(
 				mass, myMotionState, shape, localInertia);
 		RigidBody body = new RigidBody(rbInfo);
-		System.out.println(velocity);
+//		System.out.println(velocity);
+//		body.applyCentralForce(velocity);
 		body.setLinearVelocity(velocity);
-//		body.setLinearVelocity(new Vector3f(10, 0, 0));
 		dynamicsWorld.addRigidBody(body);
 
 		return body;
