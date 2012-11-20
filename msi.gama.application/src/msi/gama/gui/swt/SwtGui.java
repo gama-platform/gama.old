@@ -741,6 +741,7 @@ public class SwtGui implements IGui {
 
 
 	public final boolean openPerspective(final String perspectiveId) {
+		loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
@@ -761,25 +762,44 @@ public class SwtGui implements IGui {
 		return false;
 	}
 
-	public final boolean openBatchPerspective() {
-		
+	public final IPerspectiveDescriptor getActivePerspective()
+	{
+		final IWorkbenchPage activePage = getPage();
+		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
+		return currentDescriptor;
+	
+	}
+	public final String getActivePerspectiveName()
+	{
+		return getActivePerspective().getId();
+	
+	}
+	
+	static final Map<String, Class> perspectiveClasses = new HashMap();
+
+	public final boolean loadPerspectives() {
+		if(!perspectiveClasses.isEmpty())
+			return true;
+	
 		IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor("msi.gama.hpc.HPCPerspectiveFactory");
+				Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
 		for ( IConfigurationElement e : config ) 
 			{
-				final String pluginKeyword = e.getAttribute("keyword");
+				final String pluginID = e.getAttribute("id");
 				final String pluginClass = e.getAttribute("class");
 				final String pluginName = e.getContributor().getName();
-				System.out.println("Perspective found in " + pluginName + " with keyword " +
-					pluginKeyword + " and class " + pluginClass);
-				ClassLoader cl =
-					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-		/*		try {
-					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
+				//Check if is a gama perspective...
+				if(pluginID.contains("msi.gama"))
+				{
+					ClassLoader cl =
+						GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+					try {
+						perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					}
+					System.out.println("Gama perspective " + pluginID + " is loaded");
 				}
-				*/
 			}
 		//}
 
@@ -801,10 +821,9 @@ public class SwtGui implements IGui {
 		*/
 		return false ; //openPerspective(I);
 	}
-	
+		
 	@Override
 	public final boolean openSimulationPerspective() {
-
 	//	 boolean toto  = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID  );
 			return openPerspective( PERSPECTIVE_SIMULATION_ID);
 	}
