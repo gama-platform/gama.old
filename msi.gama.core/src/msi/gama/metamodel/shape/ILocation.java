@@ -34,21 +34,18 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 @vars({ @var(name = IKeyword.X, type = IType.FLOAT_STR),
 	@var(name = IKeyword.Y, type = IType.FLOAT_STR),
-	@var(name = IKeyword.Z, type = IType.FLOAT_STR)
-})
+	@var(name = IKeyword.Z, type = IType.FLOAT_STR) })
 public interface ILocation extends IShape, Comparable {
 
-	@getter( IKeyword.X)
+	@getter(IKeyword.X)
 	public abstract double getX();
 
-	@getter( IKeyword.Y)
+	@getter(IKeyword.Y)
 	public abstract double getY();
-	
 
 	// public abstract boolean equals(final Coordinate o);
 	@getter(IKeyword.Z)
-	public abstract double getZ(); 
-
+	public abstract double getZ();
 
 	public abstract void setLocation(final double xx, final double yy);
 
@@ -63,7 +60,5 @@ public interface ILocation extends IShape, Comparable {
 
 	@Override
 	public ILocation copy();
-	
-	public boolean hasZ();
 
 }

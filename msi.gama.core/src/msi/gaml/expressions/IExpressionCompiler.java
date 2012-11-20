@@ -32,6 +32,7 @@ import msi.gaml.types.*;
 public interface IExpressionCompiler<T> {
 
 	public static final String INTERNAL_POINT = "<->";
+	public static final String INTERNAL_Z = "add_z";
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE,
 		IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER,
 		IKeyword.THEIR, IKeyword.ITS, IKeyword.USER_LOCATION);
