@@ -643,7 +643,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.x = (float)curX;
 		curImage.y = (float)curY;
 
-		if (String.valueOf(z).equals("NaN") == true) {
+		if (Double.isNaN(z) == true) {
 		  curImage.z = 0;
 		}
 		else{

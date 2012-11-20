@@ -179,9 +179,7 @@ public class JTSDrawer {
 			tempPolygon[j][1] = yFlag
 					* (float) (p.getExteriorRing().getPointN(j).getY());
 
-			if (String.valueOf(
-					p.getExteriorRing().getPointN(j).getCoordinate().z).equals(
-					"NaN") == true) {
+			if (Double.isNaN( p.getExteriorRing().getPointN(j).getCoordinate().z) == true) {
 				tempPolygon[j][2] = 0.0f;
 			} else {
 				tempPolygon[j][2] = 0.0f + p.getExteriorRing().getPointN(j)
@@ -208,9 +206,7 @@ public class JTSDrawer {
 				tempPolygon[j][1] = yFlag
 						* (float) (p.getInteriorRingN(i).getPointN(j).getY());
 
-				if (String.valueOf(
-						p.getInteriorRingN(i).getPointN(j).getCoordinate().z)
-						.equals("NaN") == true) {
+				if (Double.isNaN (p.getInteriorRingN(i).getPointN(j).getCoordinate().z) == true) {
 					tempPolygon[j][2] = 0.0f;
 				} else {
 					tempPolygon[j][2] = 0.0f + p.getInteriorRingN(i)
@@ -251,7 +247,7 @@ public class JTSDrawer {
 			for (IShape tri : triangles) {
 				for (int i = 0; i < tri.getInnerGeometry().getNumPoints(); i++) {
 					Coordinate coord = tri.getInnerGeometry().getCoordinates()[i];
-					if ((coord.z + "").equals("NaN")) {
+					if (Double.isNaN(coord.z)) {
 						Point pt = GeometryUtils.factory.createPoint(coord);
 						double distMin = Double.MAX_VALUE;
 						Geometry closestSeg = null;
@@ -402,8 +398,7 @@ public class JTSDrawer {
 				(float) c.getBlue() / 255, alpha);
 		float elevation = 0.0f;
 
-		if (String.valueOf(p.getExteriorRing().getPointN(0).getCoordinate().z)
-				.equals("NaN") == false) {
+		if (Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z)  == false) {
 			elevation = (float) (p.getExteriorRing().getPointN(0)
 					.getCoordinate().z);
 		}
@@ -531,7 +526,7 @@ public class JTSDrawer {
 
 		// Add z value (if the whole line as a z value (add_z)
 		/*
-		 * if (String.valueOf(line.getCoordinate().z).equals("NaN") == false) {
+		 * if (Double.isNaN (line.getCoordinate().z) == false) {
 		 * z = z + (float) line.getCoordinate().z; }
 		 */
 
@@ -540,8 +535,7 @@ public class JTSDrawer {
 		myGl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
 			
-			if (String.valueOf(line.getPointN(j).getCoordinate().z).equals(
-					"NaN") == true) {
+			if (Double.isNaN (line.getPointN(j).getCoordinate().z) == true) {
 				myGl.glVertex3f((float) ((line.getPointN(j).getX())), yFlag
 						* (float) ((line.getPointN(j).getY())), z);
 
@@ -550,8 +544,7 @@ public class JTSDrawer {
 						* (float) ((line.getPointN(j).getY())), z
 						+ (float) line.getPointN(j).getCoordinate().z);
 			}
-			if (String.valueOf(line.getPointN(j + 1).getCoordinate().z).equals(
-					"NaN") == true) {
+			if (Double.isNaN(line.getPointN(j + 1).getCoordinate().z) == true) {
 				myGl.glVertex3f((float) ((line.getPointN(j + 1).getX())), yFlag
 						* (float) ((line.getPointN(j + 1).getY())), z);
 			} else {
@@ -577,7 +570,7 @@ public class JTSDrawer {
 		int numPoints = l.getNumPoints();
 
 		// Add z value
-		if (String.valueOf(l.getCoordinate().z).equals("NaN") == false) {
+		if (Double.isNaN(l.getCoordinate().z)== false) {
 			z = z + (float) l.getCoordinate().z;
 		}
 
@@ -639,7 +632,7 @@ public class JTSDrawer {
 		myGlu.gluTessBeginContour(tobj);
 		// FIXME: Does not work for Point.
 		// Add z value
-		if (String.valueOf(point.getCoordinate().z).equals("NaN") == false) {
+		if (Double.isNaN(point.getCoordinate().z)== false) {
 			z = z + (float) point.getCoordinate().z;
 		}
 
@@ -692,7 +685,7 @@ public class JTSDrawer {
 	public void DrawSphere(Point point, float z_layer, float radius, Color c,
 			float alpha) {
 
-		if (String.valueOf(point.getCoordinate().z).equals("NaN") == true){
+		if (Double.isNaN(point.getCoordinate().z) == true){
 			myGl.glTranslated(point.getCoordinate().x,
 					yFlag * point.getCoordinate().y, z_layer);
 		}
@@ -713,7 +706,7 @@ public class JTSDrawer {
 		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-        if (String.valueOf(point.getCoordinate().z).equals("NaN") == true){
+        if (Double.isNaN(point.getCoordinate().z) == true){
         	myGl.glTranslated(-point.getCoordinate().x,
     				-yFlag * point.getCoordinate().y, -z_layer);	
 		}
@@ -731,9 +724,7 @@ public class JTSDrawer {
 
 		if (showTriangulation) {
 
-			if (String.valueOf(
-					polygon.getExteriorRing().getPointN(0).getCoordinate().z)
-					.equals("NaN") == true) {
+			if (Double.isNaN( polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
 				myGl.glBegin(GL.GL_LINES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
 						yFlag * polygon.getExteriorRing().getPointN(0).getY(),
@@ -788,9 +779,7 @@ public class JTSDrawer {
 
 			}
 		} else {
-			if (String.valueOf(
-					polygon.getExteriorRing().getPointN(0).getCoordinate().z)
-					.equals("NaN") == true) {
+			if (Double.isNaN (polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
 
 				myGl.glBegin(GL_TRIANGLES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
