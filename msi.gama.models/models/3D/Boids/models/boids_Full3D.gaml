@@ -16,9 +16,9 @@ global {
 	bool apply_goal <- true parameter: 'Follow Goal ?'; 
 	bool apply_wind <- true parameter: 'Apply Wind ?';     
 	int bounds <- int(width_and_height_of_environment / 20); 
-	point wind_vector <- {0,0} add_z 0 parameter: 'Direction of the wind';   
+	point wind_vector <- {0,0,0}  parameter: 'Direction of the wind';   
 	int goal_duration <- 30 value: (goal_duration - 1); 
-	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 } add_z (rnd(z_max - 2) + 1); 
+	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
 	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
 	int xmin <- bounds;    
 	int ymin <- bounds;  
@@ -32,8 +32,9 @@ global {
 	var create_flock type: bool init: false;  
 	
 	init {
+		write wind_vector;
 		create boids number: number_of_agents { 
-			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 } add_z (rnd(z_max - 2) + 1);
+			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 , (rnd(z_max - 2) + 1)};
 		} 
 		 
 		create  boids_goal number: 1 {
@@ -65,7 +66,7 @@ entities {
 		float speed max: maximal_speed <- maximal_speed;
 		float range <- minimal_distance * 2;
 		int heading max: heading + maximal_turn min: heading - maximal_turn;
-		point velocity <- {0,0} add_z 0;
+		point velocity <- {0,0, 0} ;
 		int size <- 5;
 		
 		list others update: ((boids at_distance range)  - self);
@@ -73,7 +74,7 @@ entities {
 		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) )  : location;
 		
 		reflex separation when: apply_separation {
-			let acc value: {0,0} add_z 0;
+			let acc value: {0,0, 0};
 			loop boid over: (boids overlapping (circle(minimal_distance)))  {
 				set acc <- acc - ((location of boid) - location);
 			}  
@@ -81,7 +82,7 @@ entities {
 		}
 		
 		reflex alignment when: apply_alignment {
-			let acc <- (length(others) > 0) ? (mean (others collect (each.velocity))) : {0.0,0.0} add_z 0;
+			let acc <- (length(others) > 0) ? (mean (others collect (each.velocity))) : {0.0,0.0 , 0};
 			set acc <- acc - velocity;
 			set velocity <- velocity + (acc / alignment_factor);
 		}
@@ -95,15 +96,15 @@ entities {
 		action bounding {
 			if  !(torus_environment) {
 				if  (location.x) < xmin {
-					set velocity <- velocity + {bounds,0} add_z 0.0;
+					set velocity <- velocity + {bounds,0, 0.0};
 				} else if (location.x) > xmax {
-					set velocity <- velocity - {bounds,0} add_z 0.0;
+					set velocity <- velocity - {bounds,0, 0.0};
 				}
 				
 				if (location.y) < ymin {
-					set velocity <- velocity + {0,bounds} add_z 0.0;
+					set velocity <- velocity + {0,bounds, 0.0};
 				} else if (location.y) > ymax {
-					set velocity <- velocity - {0,bounds} add_z 0.0;
+					set velocity <- velocity - {0,bounds, 0.0};
 				}
 				
 			}
@@ -119,7 +120,7 @@ entities {
 		  
 		action do_move {  
 			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) and ((velocity.z) as int = 0) {
-				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2} add_z  ((rnd(4)) - 2) ; 
+				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2,  ((rnd(4)) - 2)} ; 
 			}
 			let old_location <- location;
 			do goto target: location + velocity;
