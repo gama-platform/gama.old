@@ -535,7 +535,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 			//Get the z composante of the agent.
 			//FIXME: (Added by Arno 09/12) Why not changing the method scale in order to make it return a 3D point instead of a 2D point.
-			if (String.valueOf(agent.getLocation().getZ()).equals("NaN") == true){
+			if (Double.isNaN(agent.getLocation().getZ()) == true){
 				return g.drawString(info, c, angle,0.0f);
 			}
 			else{

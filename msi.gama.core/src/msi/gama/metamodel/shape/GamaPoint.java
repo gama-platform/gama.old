@@ -44,21 +44,21 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		z = zz;
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 	}
 
 	public GamaPoint(final Coordinate coord) {
 		x = coord.x;
 		y = coord.y;
 		z = coord.z;
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 	}
 
 	public GamaPoint(final ILocation point) {
 		x = point.getX();
 		y = point.getY();
 		z = point.getZ();
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	
 	@Override
 	public double getZ() {
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 		if (hasZ)
 			return super.z;
 		return 0.0;
@@ -84,7 +84,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = al.getX();
 		y = al.getY();
 		z = al.getZ();
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		z = zz;
-		hasZ = !(z + "") .equals("NaN");
+		hasZ = !Double.isNaN(z);
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
 		y = y + loc.getY();
-		if (hasZ && !(loc.getZ() + "") .equals("NaN"))
+		if (hasZ && !Double.isNaN(loc.getZ()))
 			z = z + loc.getZ();
 	}
 
