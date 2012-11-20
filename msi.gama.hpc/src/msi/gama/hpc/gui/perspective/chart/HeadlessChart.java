@@ -24,8 +24,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 //import msi.gama.headless.executor.BatchExecutor;
-import msi.gama.hpc.gui.*;
 import msi.gama.hpc.gui.common.GUIUtils;
+import msi.gama.hpc.simulation.*;
 
 public class HeadlessChart extends ViewPart {
 

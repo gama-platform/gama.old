@@ -8,9 +8,9 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 
-import msi.gama.hpc.gui.*;
 import msi.gama.hpc.gui.common.GUIUtils;
 import msi.gama.hpc.gui.perspective.chart.HeadlessChart;
+import msi.gama.hpc.simulation.*;
 
 public class HeadlessParam extends ViewPart {
 
