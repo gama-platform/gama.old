@@ -9,41 +9,41 @@ global {
 	Physical3DWorld world2;
 	init {
 
-		create ball number: 100{
+		create ball number: 200{
 			set location <-  {rnd(width_of_environment),rnd(height_of_environment)} add_z 100;
-			set heading<-0;
-			set speed<-1;
-			set density <- 3.0;
-			set velocity <- {0.0, 0.0};
-			set collisionBound <-  ["shape"::"sphere","radius"::5];
+            set radius <-2;
+			set collisionBound <-  ["shape"::"sphere","radius"::radius];
+			set mass <-1.0;
 		}
 		
 		create floor 
 		{
 			set location <- {width_of_environment/2,height_of_environment/2};
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: height_of_environment/2, "z"::1];
+			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: height_of_environment/2, "z"::0];
 			set mass <-0.0;
 		}
 
 		
-		create Physical3DWorld;
-		set world2 <- first(Physical3DWorld as list);
-		ask world2 {set registeredAgents <-  (ball as list) + (floor as list);}
+		create Physical3DWorld{
+		  set world2 <- first(Physical3DWorld as list);
+		  ask world2 {set registeredAgents <-  (ball as list) + (floor as list);}	
+		}
+		
 		
 	}
 		reflex computeForces  {
-			ask world2 {do computeForces timeStep : 100;}
+			ask world2 {do computeForces timeStep : 0.05;}
 		} 
 			
 } 
 
-environment width: width_of_environment*2 height: height_of_environment*2; 
+environment width: width_of_environment height: height_of_environment; 
 
 entities {
  
     species floor skills: [physical3D]{    	
     	aspect default {
-			draw geometry: rectangle({width_of_environment,height_of_environment}) color: rgb('green');
+			draw geometry: rectangle({width_of_environment,height_of_environment}) color: rgb([10,114,63]);
 		}
     }
  
@@ -52,16 +52,17 @@ entities {
 		int size  <- size_of_agents;
 		int range  <- range_of_agents; 
 		float speed  <- speed_of_agents;  
+		float radius;
 		int heading <- rnd(359);
 
-		geometry shape <- circle (10);// buffer(12);
+		//geometry shape <- circle (radius);// buffer(12);
 		
 		aspect default {
 			draw shape: geometry color: color z:1;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb('blue') z:5;
+			draw geometry: geometry (point(self.location)) color: rgb([24,38,176]) z:radius;
 		}
 		
 	}
