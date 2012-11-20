@@ -14,7 +14,7 @@ global {
 	Physical3DWorld world2;
 	init {
 	
-		create ball number: 200{
+		create ball number: 1000{
 			set radius <-2;
 			set location <-  {offset + rnd(width_of_environment-offset*2), offset + rnd(height_of_environment- offset*2)} add_z  (offset + rnd(width_of_environment-offset*2));
 			set mass <-0.001;
