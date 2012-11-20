@@ -742,8 +742,6 @@ public class SwtGui implements IGui {
 
 	public final boolean openPerspective(final String perspectiveId) {
 		final IWorkbenchPage activePage = getPage(perspectiveId);
-		openBatchPerspective();
-		
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
@@ -807,7 +805,7 @@ public class SwtGui implements IGui {
 	@Override
 	public final boolean openSimulationPerspective() {
 
-		 boolean toto  = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID  );
+	//	 boolean toto  = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID  );
 			return openPerspective( PERSPECTIVE_SIMULATION_ID);
 	}
 
