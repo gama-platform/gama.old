@@ -22,9 +22,6 @@ global {
 		let i <- 1;
 		create section number: nbSection { 
 			set location <- {width_and_height_of_environment/2, width_and_height_of_environment*(i/nbSection)};
-			set start <- point({width_and_height_of_environment/2,0});
-			set end <- point({width_and_height_of_environment/2,width_and_height_of_environment});
-			set 2DRiver <- line([start,end]);
 			do initZSection;
 			set i <-i+1;	
 		}
@@ -32,8 +29,7 @@ global {
 	}
 	
 	reflex increaseDepth{
-		set meanDepth <- meanDepth + 100;
-		
+		set meanDepth <- meanDepth + 100;	
 	}
 	
 	reflex increaseNoise{
@@ -47,17 +43,11 @@ environment width: width_and_height_of_environment height: width_and_height_of_e
   
 entities { 
 	species section {
-		point start;
-		point end; 
-		 
-		//Polyline in x,y
-		geometry 2DRiver;
-		
 		
 		//Polyline in x,z
 		geometry zSection;
 		geometry zSection2;
-		geometry lit;
+		geometry river_channel;
 		
 		action initZSection{
 			
@@ -82,26 +72,20 @@ entities {
             set zSection2 <- polyline(zPoints2);
             let list_tmp type: list of: point <- list(reverse(zSection2.points));
 
-            set lit <- polygon( zSection.points + list_tmp);
+            set river_channel <- polygon( zSection.points + list_tmp);
 		}
 		
 		reflex update {
 			do initZSection;
 		}
-		
-		 
+			 
 		aspect default { 
-			//draw geometry: 2DRiver color: rgb('blue');
-			//draw geometry: zSection color: rgb('blue');
-			//draw geometry: zSection2 color: rgb('blue');
-			draw geometry: lit color: rgb('blue') empty:isEmpty;
+			draw geometry: river_channel color: rgb('blue') empty:isEmpty;
 		}
 	}
 }
 
 experiment morpho type: gui {
-
-	
 	output {
 		display morpho refresh_every: 1 type: opengl{
 			species section;
