@@ -44,14 +44,18 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		hasZ = !Double.isNaN(zz);
-		if (hasZ) z = zz;
+		if ( hasZ ) {
+			z = zz;
+		}
 	}
 
 	public GamaPoint(final Coordinate coord) {
 		x = coord.x;
 		y = coord.y;
 		hasZ = !Double.isNaN(coord.z);
-		if (hasZ) z = coord.z;
+		if ( hasZ ) {
+			z = coord.z;
+		}
 	}
 
 	public GamaPoint(final ILocation point) {
@@ -59,20 +63,25 @@ public class GamaPoint extends Coordinate implements ILocation {
 		y = point.getY();
 		double zz = point.getZ();
 		hasZ = !Double.isNaN(zz);
-		if (hasZ) z = zz;
+		if ( hasZ ) {
+			z = zz;
+		}
 	}
 
 	@Override
+	@getter("x")
 	public double getX() {
 		return x;
 	}
 
 	@Override
+	@getter("y")
 	public double getY() {
 		return y;
 	}
 
 	@Override
+	@getter("z")
 	public double getZ() {
 		return z;
 	}
@@ -90,25 +99,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return true;
 	}
 
-	// @Override
-	// public boolean equals(final Object o) {
-	// if ( o instanceof Coordinate ) { return IntervalSize.isZeroWidth(x, ((Coordinate) o).x) &&
-	// IntervalSize.isZeroWidth(y, ((Coordinate) o).y); }
-	// return false;
-	// }
-
-	// @Override
-	// public boolean equals(final Coordinate o) {
-	// return o != null && IntervalSize.isZeroWidth(x, o.x) && IntervalSize.isZeroWidth(y, o.y);
-	// }
-
-	/*
-	 * @Override
-	 * public int hashCode() {
-	 * return (int) (x * y + x);
-	 * }
-	 */
-
 	@Override
 	public void setLocation(final double xx, final double yy) {
 		x = xx;
@@ -121,7 +111,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = xx;
 		y = yy;
 		hasZ = !Double.isNaN(zz);
-		if (hasZ) z = zz;
+		if ( hasZ ) {
+			z = zz;
+		}
 	}
 
 	@Override
@@ -136,40 +128,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return "{" + x + "," + y + zStr + "}";
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// return Cast.class.getCanonicalName() + "toPoint(" + Cast.toJava(x) + "," + Cast.toJava(y) +
-	// ")";
-	// }
-
 	@Override
 	public GamaPoint getLocation() {
 		return this;
 	}
-
-	//
-	// @Override
-	// // @operator(value = "list", can_be_const = true, content_type = IType.FLOAT)
-	// public GamaList listValue(final IScope scope) {
-	// return GamaList.with(x, y/* , z */);
-	// }
-	//
-	// @Override
-	// // @operator(value = "matrix", can_be_const = true)
-	// public IMatrix matrixValue(final IScope scope) {
-	// return new GamaObjectMatrix((int) x, (int) y);
-	// }
-	//
-	// @Override
-	// // @operator(value = "as_matrix", can_be_const = true, content_type =
-	// ITypeProvider.LEFT_TYPE,
-	// // priority = IPriority.CAST)
-	// public IMatrix matrixValue(final IScope scope, final GamaPoint preferredSize)
-	// throws GamaRuntimeException {
-	// if ( preferredSize == null ) { return GamaMatrixType.with(null, this); }
-	// return GamaMatrixType.with(this, preferredSize);
-	// }
 
 	@Override
 	public String stringValue() {
@@ -186,10 +148,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
 		y = y + loc.getY();
-		if (hasZ) {
+		if ( hasZ ) {
 			double zz = loc.getZ();
-			if (!Double.isNaN(zz)){
-				z = z +zz;
+			if ( !Double.isNaN(zz) ) {
+				z = z + zz;
 			}
 		}
 	}
@@ -197,16 +159,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public Coordinate toCoordinate() {
 		return new Coordinate(x, y, z);
-	}
-
-	@getter("x")
-	public Double first() {
-		return x;
-	}
-
-	@getter("y")
-	public Double last() {
-		return y;
 	}
 
 	@Override
@@ -243,6 +195,13 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public Envelope getEnvelope() {
 		return new Envelope(this);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if ( o instanceof GamaPoint ) { return hasZ ? equals3D((GamaPoint) o)
+			: equals2D((GamaPoint) o); }
+		return false;
 	}
 
 	/**

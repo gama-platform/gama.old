@@ -112,8 +112,8 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 	@Override
 	protected void displayParameterValue() {
 		GamaPoint p = (GamaPoint) currentValue;
-		xText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.first()));
-		yText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.last()));
+		xText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.getX()));
+		yText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.getY()));
 	}
 
 	@Override
