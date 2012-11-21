@@ -254,5 +254,12 @@ public interface IGraphics {
 	 * 
 	 */
 	public boolean useTesselation(boolean useTesselation);
+	
+	
+	/*
+	 * Define if the value of the ambiant light (work only in Opengl)
+	 * 
+	 */
+	public void setAmbiantLight(float lightValue);
 
 }

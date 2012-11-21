@@ -55,6 +55,7 @@ import msi.gaml.types.*;
 		LayeredDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
@@ -68,6 +69,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	String snapshotFileName;
 	private boolean autosave = false;
 	private boolean tesselation = true;
+	private double ambiantLight = 1.0;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 
@@ -110,9 +112,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 		
+		
+		//OpenGL parameter initialization
 		IExpression tess = getFacet(IKeyword.TESSELATION);
 		if(tess != null){
 			tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
+		}
+		
+		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
+		if(light != null){
+			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
 		}
 		createSurface(sim);
 		
@@ -184,6 +193,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		//Use only for opengl
 		surface.getMyGraphics().useTesselation(tesselation);
+		surface.getMyGraphics().setAmbiantLight((float)ambiantLight);
 	}
 
 	public void setSurface(final IDisplaySurface sur) {
