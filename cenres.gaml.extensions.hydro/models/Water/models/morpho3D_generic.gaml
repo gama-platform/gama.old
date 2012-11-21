@@ -12,8 +12,8 @@ global {
 	int nbPointOnSection parameter: 'Number of point of the section' min: 1 <- 90 category: 'Model';
 	int nbSection parameter: "Number of section" min: 1 <-20 category: 'Model';
 	int lenghtSection parameter: "Distance between 2 sections" min: 1 <-1000 category: 'Model';
-	int meanDepth parameter: "Mean depth" min: 0  max: 500 <-100 category: 'Model';
-	int noise parameter: "Noise" min:0 max:100 <-50 category: 'Model';
+	int meanDepth parameter: "Mean depth" min: 0  max: 10000 <-100 category: 'Model';
+	int noise parameter: "Noise" min:0 max:500 <-50 category: 'Model';
 	
 	bool isEmpty parameter: "empty"  <-false category : 'Display';
 
@@ -33,7 +33,7 @@ global {
 	}
 	
 	reflex increaseNoise{
-		//set noise <- noise + 1;
+		set noise <- noise + 1;
 	}  
 	  
 } 
@@ -87,7 +87,7 @@ entities {
 
 experiment morpho type: gui {
 	output {
-		display morpho refresh_every: 1 type: opengl{
+		display morpho refresh_every: 1 type: opengl tesselation:false{
 			species section;
 		}
 	}
