@@ -111,8 +111,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		
 		IExpression tess = getFacet(IKeyword.TESSELATION);
-		tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
-		
+		if(tess != null){
+			tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
+		}
 		createSurface(sim);
 		
 		
