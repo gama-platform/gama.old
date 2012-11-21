@@ -30,11 +30,13 @@ import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.PlatformUI;
 
 
 import msi.gama.common.interfaces.*;
@@ -83,6 +85,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	private boolean synchronous = false;
 	private ActionListener menuListener;
 	private ActionListener focusListener;
+	
+	
 
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
@@ -126,7 +130,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 
-		
 		//new way
 		openGLGraphics = new JOGLAWTDisplayGraphics(this);
 		
@@ -412,8 +415,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void updateDisplay() {
-
+		
 		if ( synchronous && !EventQueue.isDispatchThread() ) {
+			
 			try {
 				EventQueue.invokeAndWait(openGLUpdateDisplayBlock);
 			} catch (InterruptedException e) {
@@ -833,6 +837,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		
 	}
 
-	
-
+	@Override
+	public IGraphics getMyGraphics() {
+		return this.openGLGraphics;
+	}
 }

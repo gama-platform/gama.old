@@ -40,6 +40,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.types.GamaGeometryType;
 
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
 
@@ -75,7 +80,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	
 	// GLRenderer.
 	public JOGLAWTGLRenderer myGLRender;
-
+	
 	// List of all the dynamic  JTS geometry.
 	public ArrayList<MyJTSGeometry> myJTSGeometries = new ArrayList<MyJTSGeometry>();
 	
@@ -1095,4 +1100,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return "opengl";
 	}
 
+	@Override
+	public boolean useTesselation(boolean useTesselation) {
+		if(useTesselation == true){
+			myGLRender.useTessellation = true;
+			return true;
+		}
+		else{
+			myGLRender.useTessellation = false;
+			return false;
+		}
+	}
+	
 }

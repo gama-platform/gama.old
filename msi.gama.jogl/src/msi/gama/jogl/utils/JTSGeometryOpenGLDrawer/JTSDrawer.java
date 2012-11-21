@@ -40,7 +40,7 @@ public class JTSDrawer {
 	// OpenGL member
 	private GL myGl;
 	private GLU myGlu;
-	private TessellCallBack tessCallback;
+	public TessellCallBack tessCallback;
 	private GLUtessellator tobj;
 
 	// need to have the GLRenderer to enable texture mapping.
@@ -58,8 +58,7 @@ public class JTSDrawer {
 	double tempPolygon[][];
 	double temp[];
 
-	// use glut tesselation or JTS tesselation
-	boolean useTessellation = true;
+	
 
 	// Use for JTS triangulation
 	IList<IShape> triangles;
@@ -94,6 +93,7 @@ public class JTSDrawer {
 			float alpha, boolean fill, Color border, Integer angle, float height) {
 		
 		numGeometries = polygons.getNumGeometries();
+		
 		// for each polygon of a multipolygon, get each point coordinates.
 		for (int i = 0; i < numGeometries; i++) {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
@@ -111,7 +111,7 @@ public class JTSDrawer {
 	public void DrawPolygon(Polygon p, float z_layer, Color c, float alpha,
 			boolean fill, Color border, boolean isTextured, Integer angle,
 			boolean drawPolygonContour) {
-
+		
 		// FIXME: Angle rotation is not implemented yet
 
 		// Set z_layer
@@ -130,7 +130,7 @@ public class JTSDrawer {
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
 
-			if (useTessellation) {
+			if (myGLRender.useTessellation) {
 				DrawTesselatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
@@ -174,8 +174,7 @@ public class JTSDrawer {
 		tempPolygon = new double[numExtPoints][3];
 		// Convert vertices as a list of double for gluTessVertex
 		for (int j = 0; j < numExtPoints; j++) {
-			tempPolygon[j][0] = (float) (float) (p.getExteriorRing().getPointN(
-					j).getX());
+			tempPolygon[j][0] = (float) (float) (p.getExteriorRing().getPointN(j).getX());
 			tempPolygon[j][1] = yFlag
 					* (float) (p.getExteriorRing().getPointN(j).getY());
 

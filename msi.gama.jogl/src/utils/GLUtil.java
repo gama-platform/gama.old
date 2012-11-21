@@ -529,7 +529,7 @@ public class GLUtil {
 		// Ambient light does not come from a particular direction. Need some
 		// ambient
 		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.6f;
+		float ambientMean=0.1f;
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		

@@ -38,6 +38,7 @@ public class BasicOpenGlDrawer {
 
 		myGl = gLRender.gl;
 		myGLRender = gLRender;
+		
 		myJTSDrawer = new JTSDrawer(myGLRender);
 		
 	}
@@ -63,7 +64,7 @@ public class BasicOpenGlDrawer {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.fill,geometry.height, geometry.angle, false, geometry.border);
+							geometry.fill,geometry.height, geometry.angle, true, geometry.border);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,

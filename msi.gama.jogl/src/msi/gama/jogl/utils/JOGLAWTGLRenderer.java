@@ -48,6 +48,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+import org.eclipse.ui.PlatformUI;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 
@@ -85,6 +86,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean opengl = true;
 	
 	public boolean isInitialized = false;
+	
+	public boolean enableGlRenderAnimator = true;
+	
 	// Event Listener
 	public MyListener myListener;
 
@@ -132,6 +136,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	//Arcball
 	private ArcBall arcBall;
 	
+	// use glut tesselation or JTS tesselation
+    public boolean useTessellation = true;
+	
 
 
 
@@ -151,6 +158,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
+		
+		
 
 	}
 
@@ -275,6 +284,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 
+		if(enableGlRenderAnimator){
+			
+			//System.out.println("I display");
 		// System.out.println("display");
 		// hdviet added 28/05/2012
 		synchronized (matrixLock) {
@@ -384,6 +396,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
         	      	
         	}
         }*/
+		}
+		else{
+			//System.out.println("I stop the display");
+		}
 	}
 	
 	public Point GetRealWorldPointFromWindowPoint(Point windowPoint){
