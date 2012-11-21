@@ -544,4 +544,13 @@ public class AWTDisplayGraphics implements IGraphics {
 		
 		return "java2D";
 	}
+
+	@Override
+	/**
+	 * Not use in Java2D
+	 */
+	public boolean useTesselation(boolean useTesselation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -746,6 +746,7 @@ public class SwtGui implements IGui {
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
+		
 
 		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
 		if ( descriptor != null ) {
@@ -754,7 +755,8 @@ public class SwtGui implements IGui {
 				@Override
 				public void run() {
 					activePage.setPerspective(descriptor);
-					// debug("Perspective " + perspectiveId + " open ");
+					debug("Perspective " + perspectiveId + " open ");
+					
 				}
 			});
 			return true;

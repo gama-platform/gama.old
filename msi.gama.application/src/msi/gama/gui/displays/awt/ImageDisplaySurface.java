@@ -447,4 +447,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	{
 	}
 
+	@Override
+	public IGraphics getMyGraphics() {
+		return this.displayGraphics;
+	}
+
 }
