@@ -88,10 +88,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public void setLocation(final ILocation al) {
-		x = al.getX();
-		y = al.getY();
-		z = al.getZ();
-		hasZ = !Double.isNaN(z);
+		setLocation(al.getX(), al.getY(), al.getZ());
 	}
 
 	@Override
