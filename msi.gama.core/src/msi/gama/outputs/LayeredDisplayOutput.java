@@ -46,6 +46,7 @@ import msi.gaml.types.*;
  * 
  * @author drogoul
  */
+//FIXME: Why this is not define in gaml/statement
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
@@ -53,6 +54,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
 		LayeredDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.TESSELATION, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
@@ -65,16 +67,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	protected IDisplaySurface surface;
 	String snapshotFileName;
 	private boolean autosave = false;
+	private boolean tesselation = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
+		
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
 		layers = new GamaList<AbstractLayerStatement>();
+		
 	}
 
 	@Override
@@ -104,7 +109,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				GAMA.reportError(e);
 			}
 		}
+		
+		IExpression tess = getFacet(IKeyword.TESSELATION);
+		tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
+		
 		createSurface(sim);
+		
+		
+		
+		
 	}
 
 	@Override
@@ -121,6 +134,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( surface != null && surface.canBeUpdated() ) {
 			// GUI.debug("Updating the surface of output " + getName());
 			surface.updateDisplay();
+			//Use to define which technique is used in opengl to triangulate polygon
+					
+			
 		}
 	}
 
@@ -165,6 +181,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
+		//Use only for opengl
+		surface.getMyGraphics().useTesselation(tesselation);
 	}
 
 	public void setSurface(final IDisplaySurface sur) {

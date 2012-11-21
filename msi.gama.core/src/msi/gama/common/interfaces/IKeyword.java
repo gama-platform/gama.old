@@ -272,6 +272,7 @@ public interface IKeyword {
 	public static final String TABU = "tabu";
 	public static final String TARGET = "target";
 	public static final String TARGETS = "scheduling_targets";
+	public static final String TESSELATION = "tesselation";
 	public static final String TEXT = "text";
 	public static final String THE = "the";
 	public static final String THEIR = "their";

@@ -248,5 +248,11 @@ public interface IGraphics {
 	 * 
 	 */
 	public abstract String getGraphicsType();
+	
+	/*
+	 * Define if the tesselation is used or the Gama Triangulation (work only in Opengl)
+	 * 
+	 */
+	public boolean useTesselation(boolean useTesselation);
 
 }

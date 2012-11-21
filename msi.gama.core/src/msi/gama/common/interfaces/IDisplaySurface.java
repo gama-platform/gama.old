@@ -167,6 +167,11 @@ public interface IDisplaySurface {
 	
 	public ILayerManager getLayerManager();
 	
+	/**
+	 * @return IGraphics
+	 */
+	public IGraphics getMyGraphics();
+	
 	public void addMouseEventListener(MouseListener e);
 
 }
