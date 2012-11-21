@@ -1111,5 +1111,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			return false;
 		}
 	}
+
+	@Override
+	public void setAmbiantLight(float lightValue) {
+		myGLRender.ambiantLightValue = lightValue;	
+	}
 	
 }

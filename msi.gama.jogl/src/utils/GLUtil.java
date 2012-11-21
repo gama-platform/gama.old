@@ -523,13 +523,9 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, GLU glu,float widthEnv){
+    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,float ambientMean){
     	
-    	// Set up the lighting for Light-1
-		// Ambient light does not come from a particular direction. Need some
-		// ambient
-		// light to light up the scene. Ambient's value in RGBA
-		float ambientMean=0.1f;
+    	
 		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		

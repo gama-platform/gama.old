@@ -116,6 +116,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Lighting
 	private static boolean isLightOn;
+	public float ambiantLightValue;
 
 	// Blending
 	private static boolean blendingEnabled; // blending on/off
@@ -191,7 +192,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		GLUtil.enableDepthTest(gl);
 
-		GLUtil.InitializeLighting(gl, glu, width);
+		// Set up the lighting for Light-1
+
+		GLUtil.InitializeLighting(gl, glu, width, ambiantLightValue);
 		
 		boolean fog=false;
 		if(fog==true){
