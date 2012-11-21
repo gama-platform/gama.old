@@ -66,7 +66,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
-      <plugin id="irit.maelia.gaml.additions"/>
+      <plugin id="irit.maelia.gaml.additions" fragment=""/>
       <plugin id="javax.inject"/>
       <plugin id="msi.gama.application"/>
       <plugin id="msi.gama.core"/>
@@ -77,7 +77,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.lang.gaml.ui"/>
       <plugin id="msi.gama.models"/>
       <plugin id="msi.gama.processor"/>
-      <plugin id="msi.gaml.extensions.humanmoving"/>
+      <plugin id="msi.gaml.extensions.fipa" version="1.4.0"/>
+      <plugin id="msi.gaml.extensions.humanmoving" fragment=""/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
@@ -232,7 +233,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="simtools.gaml.extensions.physics"/>
-      <plugin id="simtools.gaml.extensions.traffic"/>
+      <plugin id="simtools.gaml.extensions.traffic" fragment=""/>
    </plugins>
 
 
