@@ -65,10 +65,10 @@ entities {
 		int heading max: heading + maximal_turn min: heading - maximal_turn;
 		point velocity <- {0,0};
 		int size <- 5;
+	
+//		list others update: ((boids overlapping (circle (range)))  - self);
 		
-		list others update: ((boids overlapping (circle (range)))  - self);
-		
-		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+//		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
 		
 		reflex separation when: apply_separation {
 			let acc value: {0,0};
@@ -79,12 +79,17 @@ entities {
 		}
 		
 		reflex alignment when: apply_alignment {
+			let others type: list value: ((boids overlapping (circle (range)))  - self);
+
 			let toto <- others collect each;
 			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
 			set velocity <- velocity + (acc / alignment_factor);
 		}
 		 
 		reflex cohesion when: apply_cohesion {
+			let others type: list value: ((boids overlapping (circle (range)))  - self);
+			let mass_center type: point value:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+
 			let acc value: mass_center - location;
 			set acc value: acc / cohesion_factor;
 			set velocity value: velocity + acc; 
@@ -149,7 +154,8 @@ entities {
 	
 	species obstacle skills: [moving] {
 		float speed <- 2.0;
-		  
+		geometry shape <- triangle(15);
+		
 		reflex toto when: moving_obstacles {
 			if flip(0.5)  
 			{ 
@@ -161,6 +167,11 @@ entities {
 		}
 		aspect default {
 			draw shape: triangle color: rgb('yellow') size: 20;
+		}
+
+		
+		aspect geom {
+			draw shape: geometry color: rgb('yellow');
 		}
 	}
 }
