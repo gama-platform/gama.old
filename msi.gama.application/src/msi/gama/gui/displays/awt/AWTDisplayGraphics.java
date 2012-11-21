@@ -553,4 +553,12 @@ public class AWTDisplayGraphics implements IGraphics {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	/**
+	 * Not use in Java2D
+	 */
+	public void setAmbiantLight(float lightValue) {
+		// TODO Auto-generated method stub	
+	}
 }
