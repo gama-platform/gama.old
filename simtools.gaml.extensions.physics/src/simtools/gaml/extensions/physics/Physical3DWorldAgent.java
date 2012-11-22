@@ -89,7 +89,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 	
 	@setter ("gravity")
 	public void setGravity(Boolean gravity){
-		this.setAttribute("grabity", gravity);	
+		this.setAttribute("gravity", gravity);	
 	}
 
 	public void registerAgent(final IAgent _agent) {
@@ -123,7 +123,7 @@ public class Physical3DWorldAgent extends GamlAgent {
 			computedZLocation = (float)geom.getInnerGeometry().getCoordinates()[0].z;
 		}
 		Vector3f position = new Vector3f((float)(float)geom.getLocation().getX(), (float)geom.getLocation().getY(),computedZLocation);
-		
+			
 		GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null,  geom.getAttribute("velocity"));
 		Vector3f _velocity = new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 		
@@ -193,7 +193,6 @@ public class Physical3DWorldAgent extends GamlAgent {
 			for ( IAgent ia : registeredMap.keySet() ) {
 				RigidBody node = registeredMap.get(ia);
 				Vector3f _position = world.getNodePosition(node);
-	
 				GamaPoint position =
 					new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
 				ia.setLocation(position);
