@@ -21,6 +21,7 @@ package msi.gama.common.util;
 import java.util.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
@@ -33,6 +34,7 @@ import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder
 import com.vividsolutions.jts.triangulate.ConstraintVertex;
 import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
 import com.vividsolutions.jts.triangulate.Segment;
+import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
@@ -293,11 +295,15 @@ public class GeometryUtils {
 			Polygon polygon = (Polygon) geom;
 			double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
 			ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
-			dtb.setSites(polygon);
-			dtb.setConstraints(polygon);
-			dtb.setTolerance(sizeTol);
-			         
-			GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+			GeometryCollection tri = null;
+			try {
+				dtb.setSites(polygon);
+				dtb.setConstraints(polygon);
+				dtb.setTolerance(sizeTol);    
+				tri = (GeometryCollection) dtb.getTriangles(getFactory());
+			} catch (LocateFailureException e) {
+				throw new GamaRuntimeException("Impossible to draw Geometry");
+			}
 			PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
 			int nb = tri.getNumGeometries();
 			for ( int i = 0; i < nb; i++ ) {
