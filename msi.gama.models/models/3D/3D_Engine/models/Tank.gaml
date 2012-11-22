@@ -10,7 +10,7 @@ global {
 	Physical3DWorld world2;
 	init {
 		create ball number: nb_balls{
-			set location <-  {rnd(width_of_environment),rnd(height_of_environment)}  add_z (rnd(10) + 100);
+			set location <-  {rnd(width_of_environment),rnd(height_of_environment),(rnd(10) + 100)};
 			set heading<-0;
 			set speed<-1;
 			set density <- 3.0;
@@ -20,14 +20,14 @@ global {
 		}
 		create floor 
 		{
-			set location <- {width_of_environment/2,height_of_environment/2};
+			set location <- {width_of_environment/2,height_of_environment/2,0};
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::0];
 			set shape <- rectangle({width_of_environment,height_of_environment});
 			set mass <-0.0;
 		}
 		//down wall
 		create wall{
-			set location <- {width_of_environment/2,height_of_environment};
+			set location <- {width_of_environment/2,height_of_environment,0};
 			set shape <- rectangle({width_of_environment,2});
 			set _z <- 50;
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::_z];
@@ -36,7 +36,7 @@ global {
 		}
 		//upper wall
 		create wall{
-			set location <- {width_of_environment/2,0};
+			set location <- {width_of_environment/2,0,0};
 			set shape <- rectangle({width_of_environment,2});
 			set _z <- 50;
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::_z];
@@ -46,7 +46,7 @@ global {
 		}
 		//left wall
 		create wall{
-			set location <- {0,height_of_environment/2};
+			set location <- {0,height_of_environment/2,0};
 			set shape <- rectangle({2,height_of_environment});
 			set _z <- 50;
 			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::_z];
@@ -56,7 +56,7 @@ global {
 		}
 		//right wall
 		create wall{
-			set location <- {width_of_environment,height_of_environment/2};
+			set location <- {width_of_environment,height_of_environment/2,0};
 			set _z <- 50;
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::_z];
@@ -114,14 +114,14 @@ entities {
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: color z:radius;
+			draw geometry: geometry (point(self.location)) color: rgb('blue') z:radius;
 		}
 		
 	}
 }
 experiment tank type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl{
+	display Circle refresh_every: 1 type:opengl ambiant_light:0.1{
 		species floor;
 		species wall;
 	    species ball aspect:sphere;			

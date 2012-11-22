@@ -66,22 +66,21 @@ global {
 
 		create floor 
 		{
-			set location <- {width_of_environment/2,height_of_environment/2};
+			set location <- {width_of_environment/2,height_of_environment/2,0};
 			set shape <- rectangle({width_of_environment-24,height_of_environment - 24});
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 -12, "y":: height_of_environment/2 -12, "z"::0];
-			
+			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 -12, "y":: height_of_environment/2 -12, "z"::0];	
 			set mass <-0.0;
 		}
 		create floor 
 		{
-			set location <- {width_of_environment/2,6};
+			set location <- {width_of_environment/2,6,0};
 			set shape <- rectangle({width_of_environment - 24,12});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 - 12, "y":: 6, "z"::0];
 			set mass <-0.0;
 		}
 		create floor 
 		{
-			set location <- {width_of_environment/2,height_of_environment - 6};
+			set location <- {width_of_environment/2,height_of_environment - 6,0};
 			set shape <- rectangle({width_of_environment - 24,12});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 - 12, "y":: 6, "z"::0];
 			set mass <-0.0;
@@ -89,7 +88,7 @@ global {
 		
 		create floor 
 		{
-			set location <- {6,height_of_environment/4+3};
+			set location <- {6,height_of_environment/4+3,0};
 			set shape <- rectangle({12,height_of_environment/2 -18});
 			set collisionBound <-  ["shape"::"floor","x"::6, "y":: height_of_environment/4-9, "z"::0];
 			set mass <-0.0;
@@ -98,7 +97,7 @@ global {
 
 		create floor 
 		{
-			set location <- {6,3*height_of_environment/4-3};
+			set location <- {6,3*height_of_environment/4-3,0};
 			set shape <- rectangle({12,height_of_environment/2 -18});
 			set collisionBound <-  ["shape"::"floor","x"::6, "y":: height_of_environment/4-9, "z"::0];
 			set mass <-0.0;
@@ -106,7 +105,7 @@ global {
 		
 		create floor 
 		{
-			set location <- {width_of_environment-6,height_of_environment/4+3};
+			set location <- {width_of_environment-6,height_of_environment/4+3,0};
 			set shape <- rectangle({12,height_of_environment/2 -18});
 			set collisionBound <-  ["shape"::"floor","x"::6, "y":: height_of_environment/4-9, "z"::0];
 			set mass <-0.0;
@@ -114,7 +113,7 @@ global {
 		
 		create floor 
 		{
-			set location <- {width_of_environment-6,3*height_of_environment/4-3};
+			set location <- {width_of_environment-6,3*height_of_environment/4-3,0};
 			set shape <- rectangle({12,height_of_environment/2 -18});
 			set collisionBound <-  ["shape"::"floor","x"::6, "y":: height_of_environment/4-9, "z"::0];
 			set mass <-0.0;
@@ -124,7 +123,7 @@ global {
 		
 		//down wall
 		create wall{
-			set location <- {width_of_environment/2,height_of_environment};
+			set location <- {width_of_environment/2,height_of_environment,0};
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::10];
 			set mass <-0.0;
@@ -132,7 +131,7 @@ global {
 		}
 		//upper wall
 		create wall{
-			set location <- {width_of_environment/2,0};
+			set location <- {width_of_environment/2,0,0};
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::10];
 			set mass <-0.0;
@@ -141,7 +140,7 @@ global {
 		}
 		//left wall
 		create wall{
-			set location <- {0,height_of_environment/2};
+			set location <- {0,height_of_environment/2,0};
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::10];
 			set mass <-0.0;
@@ -150,7 +149,7 @@ global {
 		}
 		//right wall
 		create wall{
-			set location <- {width_of_environment,height_of_environment/2};
+			set location <- {width_of_environment,height_of_environment/2,0};
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::10];
 			set mass <-0.0;
@@ -158,13 +157,15 @@ global {
 			
 		}
 				
-		create Physical3DWorld;
+		create Physical3DWorld{
+			set gravity <-true;
+		}
 		set world2 <- first(Physical3DWorld as list);
 		ask world2 {set registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
 		
 	}
 		reflex computeForces  {
-			ask world2 {do computeForces timeStep : 0.001;}
+			ask world2 {do computeForces timeStep : 1;}
 		} 
 			
 } 
@@ -206,7 +207,7 @@ entities {
 }
 experiment pool type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl{
+	display Circle refresh_every: 1 type:opengl tesselation:true ambiant_light:0.5{
 		//image name:'background' file:'../images/billard2.jpg' ;
 		species floor;
 		species wall;

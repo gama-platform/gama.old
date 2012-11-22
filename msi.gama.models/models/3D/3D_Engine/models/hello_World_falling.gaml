@@ -9,7 +9,7 @@ global {
 	Physical3DWorld world2;
 	init {
 
-		create ball number: 200{
+		create ball number: 2{
 			set location <-  {rnd(width_of_environment),rnd(height_of_environment)} add_z 100;
             set radius <-2;
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
@@ -18,7 +18,7 @@ global {
 		
 		create floor 
 		{
-			set location <- {width_of_environment/2,height_of_environment/2};
+			set location <- {width_of_environment/2,height_of_environment/2,0};
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: height_of_environment/2, "z"::0];
 			set mass <-0.0;
 		}

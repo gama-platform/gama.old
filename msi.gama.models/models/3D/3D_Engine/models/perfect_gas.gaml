@@ -23,7 +23,7 @@ global {
 		
 		create floor 
 		{   
-			set location <- {width_of_environment/2,height_of_environment/2};
+			set location <- {width_of_environment/2,height_of_environment/2,0};
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
 			set shape <- rectangle({width_of_environment,height_of_environment});
 			set mass <-0.0;
@@ -31,7 +31,7 @@ global {
 		
 		//Sky
 		create floor{
-			set location <- {width_of_environment/2,height_of_environment/2} add_z width_of_environment;
+			set location <- {width_of_environment/2,height_of_environment/2,width_of_environment};
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
 			set shape <- rectangle({width_of_environment,height_of_environment});
 			set mass <-0.0;
@@ -39,7 +39,7 @@ global {
 
 		//down wall
 		create wall{
-			set location <- {width_of_environment/2,height_of_environment};
+			set location <- {width_of_environment/2,height_of_environment,0};
 			set height <- width_of_environment;
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
@@ -47,7 +47,7 @@ global {
 		}
 		//upper wall
 		create wall{
-			set location <- {width_of_environment/2,0};
+			set location <- {width_of_environment/2,0,0};
 			set height <- width_of_environment;
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
@@ -55,7 +55,7 @@ global {
 		}
 		//left wall
 		create wall{
-			set location <- {0,height_of_environment/2};
+			set location <- {0,height_of_environment/2,0};
 			set height <- width_of_environment;
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
@@ -63,7 +63,7 @@ global {
 		}
 		//right wall
 		create wall{
-			set location <- {width_of_environment,height_of_environment/2};
+			set location <- {width_of_environment,height_of_environment/2,0};
 			set height <- width_of_environment;
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
@@ -125,7 +125,7 @@ entities {
 }
 experiment pool type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl {
+	display Circle refresh_every: 1 type:opengl      {
 		//image name:'background' file:'../images/billard2.jpg' ;
 		species floor transparency:0.5;
 		species wall transparency:0.5;
