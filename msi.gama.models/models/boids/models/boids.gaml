@@ -16,15 +16,15 @@ global {
 	bool apply_avoid <- true;  
 	bool apply_wind <- true;   
 	bool moving_obstacles <- false;   
-	int bounds <- int(width_and_height_of_environment / 20); 
+	int bounds <- int(width_and_height_of_environment / 20) depends_on: [width_and_height_of_environment]; 
 	point wind_vector <- {0,0}; 
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
-	int xmin <- bounds;    
-	int ymin <- bounds;  
-	int xmax <- (width_and_height_of_environment - bounds);    
-	int ymax <- (width_and_height_of_environment - bounds);   
+	int xmin <- bounds depends_on: [bounds];    
+	int ymin <- bounds depends_on: [bounds];  
+	int xmax <- (width_and_height_of_environment - bounds) depends_on: [bounds];    
+	int ymax <- (width_and_height_of_environment - bounds) depends_on: [bounds];   
 
 	init {
 		create boids number: number_of_agents { 

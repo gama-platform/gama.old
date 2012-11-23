@@ -10,12 +10,16 @@ global {
 	int min_group_member <- 3;
 	
 	int update_frequency <- 3;
-	int merge_frequency <- 3;
-	int merge_possibility <- 0.3;
+	int merge_frequency <- 5;
 
 	bool create_flocks <- false;
-	int base_perception_range <- int (xmax / 100) min: 1 ;  
+	int base_perception_range <- int (xmax / 100) min: 1 ;
 	
+	init {
+		create boids_agents_viewer;
+		create flock_agents_viewer;
+		create boids_in_flock_viewer;
+	}
 	
 	reflex create_flocks when: create_flocks {
 		let free_boids type: list of: boids value: (boids as list) ;
@@ -24,7 +28,7 @@ global {
 			let satisfying_boids_groups type: list of: list value: (free_boids simple_clustering_by_envelope_distance flock_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			loop one_group over: satisfying_boids_groups {
-				let potential_flock_polygon type: geometry value: polygon(one_group collect (boids(each)).location) + (base_perception_range + 5);
+				let potential_flock_polygon type: geometry value: convex_hull ( solid( polygon(one_group collect (boids(each)).location) ) + (base_perception_range + 5) );
 				
 				if (empty ( obstacle overlapping potential_flock_polygon))  {
 					create flock returns: new_flocks;
@@ -43,6 +47,17 @@ entities {
 		rgb color <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		geometry shape <- polygon ( (list (boids_in_flock)) ) buffer  10 ;
 		float perception_range <- float(base_perception_range + (rnd(5))) ;
+		float speed value: self average_speed [];
+		
+		action average_speed type: float {
+			let sum type: float value: 0;
+			
+			loop s over: (members collect (boids_in_flock(each)).speed) {
+				set sum value: sum + s;
+			}
+			
+			return (sum/(length(members)));
+		}
 		
 		reflex disaggregate {
 			let buffered_shape type: geometry value: shape + perception_range;
@@ -58,31 +73,30 @@ entities {
 			let nearby_boids type: list of: boids value: (boids overlapping buffered_shape);
 			
 			if ( !(empty (nearby_boids)) ) {
-				let new_polygon type: geometry value: polygon( nearby_boids collect (each.location) );				
-				if (empty(obstacle overlapping new_polygon)) {
+				let new_polygon type: geometry value: convex_hull( solid(shape + polygon( nearby_boids collect (each.location) ) ) );				
+				if (empty (obstacle overlapping new_polygon)) {
 					capture nearby_boids as: boids_in_flock;
 				}
 			}
 		}
 
 		reflex merge_nearby_flocks when: ( (time mod merge_frequency) = 0 ) {
-				
-			let nearby_flocks type: list of: flock value: (flock overlapping (shape + perception_range)) - self ;
 			
-			loop f over: nearby_flocks {
-				let new_shape type: geometry value: (shape + f.shape + base_perception_range + 5); 
-				
-				if empty(obstacle overlapping  new_shape) {
-					let f_coms type: list of: boids_in_flock value: f.members;
-					let released_boids type: list of: boids value: [];
-					
-					ask f {
-						release f_coms as: boids in: world returns: released_coms;
-						set released_boids value: released_coms;
-						do die;
+			loop f over: (list(flock) - self) {
+				if (shape intersects f.shape) {
+					let new_shape type: geometry value: convex_hull(polygon ( shape.points + (f.shape).points) );
+					if empty(obstacle overlapping new_shape) {
+						let released_boids type: list of: boids value: [];
+						
+						ask f {
+							release members as: boids in: world returns: released_coms;
+							set released_boids value: released_coms;
+							do die;
+						}
+						capture released_boids as: boids_in_flock;
+						set shape value: convex_hull( polygon ( members collect (boids_in_flock(each).location) ) ); 
 					}
-					capture released_boids as: boids_in_flock;
-				} 
+				}
 			}
 		}
 
@@ -92,44 +106,38 @@ entities {
 			let dx type: float value: step_distance * (cos (direction_to_nearest_ball)) ;
 			let dy type: float value: step_distance * (sin (direction_to_nearest_ball)) ;
 			let envelope type: geometry value: shape.envelope ;
-			let topleft_point type: point value: (envelope.points) at 0 ;
-			let bottomright_point type: point value: (envelope.points) at 0 ;
 			
-			loop p over: envelope.points {
-				if ( (p.x <= topleft_point.x) and (p.y <= topleft_point.y) ) {
-					set topleft_point value: p ;
-				}
-				
-				if ( (p.x >= bottomright_point.x) and (p.y >= bottomright_point.y) ) {
-					set bottomright_point value: p ;
+			
+			let points_sort_x type: list of: point value: (envelope.points) sort_by (each.x);
+			let points_sort_y type: list of: point value: (envelope.points) sort_by (each.y);
+			
+			
+			let topleft_x type: int value: ( first(points_sort_x) ).x;
+			let topleft_y type: int value: (first(points_sort_y) ).y;
+			let bottomright_x type: int value: (last(points_sort_x)).x;
+			let bottomright_y type: int value: (last(points_sort_y)).y;
+			
+			if ( (dx + topleft_x) < xmin ) {
+				set dx value: 0;
+			} else {
+				if ( (dx + bottomright_x) > xmax ) {
+					set dx value: 0;
 				}
 			}
 			
-			if ( (dx + topleft_point.x) < xmin ) {
-				let tmp_dx value: dx + topleft_point.x ;
-				set dx value: dx - tmp_dx ;
+			if  (dy + topleft_y) < 0 {
+				set dy value: 0 ;
 			} else {
-				if ( (dx + bottomright_point.x) > xmax ) {
-					let tmp_dx value: (dx + bottomright_point.x) - xmax ;
-					set dx value: dx - tmp_dx ;
-				}
-			}
-			
-			if  (dy + topleft_point.y) < 0 {
-				let tmp_dy value: dy + topleft_point.y ;
-				set dy value: dy - tmp_dy ;
-			} else {
-				if ( (dy + topleft_point.y) > ymax ) {
-					let tmp_dy value: (dy + bottomright_point.y) - ymax ;
-					set dy value: dy - tmp_dy ;
+				if ( (dy + bottomright_y) > ymax ) {
+					set dy value: 0 ;
 				}
 			}
 			
 			loop com over: (list (boids_in_flock)) {
 				set (boids_in_flock (com)).location value: (boids_in_flock (com)).location + {dx, dy} ;
 			}
+			set shape value: convex_hull(polygon ( list(boids_in_flock) collect (each.location) ) ) ;
 			
-			set shape value: convex_hull((polygon ((list (boids_in_flock)) collect (boids_in_flock (each)).location)) + 2.0) ;
 		}
 
 		aspect default {
@@ -171,11 +179,34 @@ entities {
 			
 		}
 	}
+
+	species flock_agents_viewer  { 
+		aspect default {
+			draw text: 'Flocks: ' + (string (length (list(flock)))) at: {width_and_height_of_environment - 810, (width_and_height_of_environment) - 5} color: rgb('blue') size: 80 style: bold ;
+		}
+	}
+
+	species boids_agents_viewer  { 
+		aspect default {
+			draw text: 'Boids: ' + (string (length (list(boids)))) at: {width_and_height_of_environment - 810, (width_and_height_of_environment) - 165} color: rgb('blue') size: 80 style: bold;
+		}
+	}
+
+	species boids_in_flock_viewer  { 
+		aspect default {
+			draw text: 'Boids in flocks: ' + (string (number_of_agents - (length (list(boids))) ) ) at: {width_and_height_of_environment - 810, width_and_height_of_environment - 85} color: rgb('blue') size: 80 style: bold;
+		}
+	}
 }
 
 experiment boids_flocks type: gui {
 	parameter 'Create flock?' var: create_flocks <- true;
+	parameter 'Number of boids' var: number_of_agents <- 300;
+	parameter 'Environment size' var: width_and_height_of_environment <- 1600;
 	parameter 'Moving obstacles?' var: moving_obstacles <- true;
+	parameter 'Torus environment?' var: torus_environment <- false;
+	parameter 'Number of obstacles' var: number_of_obstacles <- 5;
+	
 	
 	output {
 		display default_display {
@@ -186,6 +217,10 @@ experiment boids_flocks type: gui {
 			species flock aspect: default transparency: 0.5 {
 				species boids_in_flock aspect: default;
 			}
+			
+			species flock_agents_viewer;
+			species boids_agents_viewer;
+			species boids_in_flock_viewer;
 		}
 	}
 }
