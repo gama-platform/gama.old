@@ -73,6 +73,8 @@ import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
 import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
 
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+
 public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// ///OpenGL member//////
@@ -137,12 +139,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	//Arcball
 	private ArcBall arcBall;
 	
-	// use glut tesselation or JTS tesselation
+	// use glut tesselation or JTS tesselation 
+	//(can be set in GAML with the boolean facet "tesselation")
     public boolean useTessellation = true;
+    
+    //Display or not the triangle when using triangulatin (useTessellation = false)
+    public boolean showTriangulation = false;
 	
-
-
-
+	
+	
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 
 		// Initialize the user camera
@@ -745,9 +750,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 		
 	public BufferedImage getScreenShot(){
-		this.context.makeCurrent();
-		BufferedImage img =  Screenshot.readToBufferedImage(width,height);
-		this.context.release();
+		BufferedImage img = null;
+		if(context!=null){
+			this.context.makeCurrent();
+			img =  Screenshot.readToBufferedImage(width,height);
+			this.context.release();
+		}
+		else{
+		}
 		return img;
+		
 	}
 }

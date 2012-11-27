@@ -1107,7 +1107,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			return true;
 		}
 		else{
-			myGLRender.useTessellation = false;
+			myGLRender.useTessellation= false;
 			return false;
 		}
 	}

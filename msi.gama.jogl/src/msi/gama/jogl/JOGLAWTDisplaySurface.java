@@ -454,10 +454,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanImages();
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
-			/*boolean snapshot = true;
-			if(snapshot == true){
+
+			//FIXME: Need to check if it's working with AWTDisplay
+			if(autosave== true){
 				snapshot();
-			}*/
+			}
+			
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
@@ -489,9 +491,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
-		if ( autosave ) {
+		/* The autosave has been move in the penGLUpdateDisplayBlock
+		 * if ( autosave ) {
 			snapshot();
-		}
+		}*/
 		redrawNavigator();
 	}
 
@@ -778,9 +781,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 
 	@Override
-	public void snapshot() {	
+	public void snapshot() {
 		buffImage =  openGLGraphicsGLRender.getScreenShot();
-		save(GAMA.getDefaultScope(), buffImage);
+		if(buffImage != null){
+			save(GAMA.getDefaultScope(), buffImage);
+		}	
 	}
 
 	@Override

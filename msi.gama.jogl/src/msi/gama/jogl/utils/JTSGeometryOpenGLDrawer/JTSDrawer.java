@@ -129,7 +129,7 @@ public class JTSDrawer {
 			
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
-
+			
 			if (myGLRender.useTessellation) {
 				DrawTesselatedPolygon(p);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
@@ -140,7 +140,7 @@ public class JTSDrawer {
 			// use JTS triangulation on simplified geometry (DouglasPeucker)
 			// FIXME: not working with a z_layer value!!!!
 			else {
-				DrawTriangulatedPolygon(p);
+				DrawTriangulatedPolygon(p,myGLRender.showTriangulation);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
 					DrawPolygonContour(p, border);
@@ -185,8 +185,9 @@ public class JTSDrawer {
 						.getCoordinate().z;
 			}
 		}
-
+ 
 		for (int j = 0; j < numExtPoints; j++) {
+			
 			myGlu.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
 		}
 
@@ -222,7 +223,7 @@ public class JTSDrawer {
 		myGlu.gluTessEndPolygon(tobj);
 	}
 
-	void DrawTriangulatedPolygon(Polygon p) {
+	void DrawTriangulatedPolygon(Polygon p, boolean showTriangulation) {
 		boolean simplifyGeometry = false;
 		if (simplifyGeometry) {
 			double sizeTol = Math.sqrt(p.getArea()) / 100.0;
@@ -269,7 +270,7 @@ public class JTSDrawer {
 								* closestSeg.getCoordinates()[0].z
 								+ (1 - (dist2 / closestSeg.getLength()))
 								* closestSeg.getCoordinates()[1].z;
-						DrawShape(tri, false);
+						DrawShape(tri, showTriangulation);
 					}
 				}
 			}
@@ -278,7 +279,7 @@ public class JTSDrawer {
 			triangles.add(new GamaShape(p));
 		}
 		for (IShape tri : triangles) {
-			DrawShape(tri, false);
+			DrawShape(tri, showTriangulation);
 		}
 	}
 
