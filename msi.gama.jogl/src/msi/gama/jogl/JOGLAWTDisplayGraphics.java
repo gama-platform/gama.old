@@ -554,7 +554,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		return rect.getBounds2D();
 	}
 
-	/**
+	/**	
 	 * Method drawString.
 	 * 
 	 * @param string

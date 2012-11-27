@@ -374,7 +374,7 @@ public class JTSDrawer {
 		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle,
 				drawPolygonContour);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha, fill, z, height, drawPolygonContour, false);
+		DrawFaces(p, c, alpha, fill, border, z, height, drawPolygonContour, false);
 
 	}
 
@@ -388,7 +388,7 @@ public class JTSDrawer {
 	 * @param height
 	 *            : height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, float alpha, boolean fill,  float z_layer,
+	public void DrawFaces(Polygon p, Color c, float alpha, boolean fill, Color b, float z_layer,
 			float height, boolean drawPolygonContour, boolean drawNormal) {
 
 		// Set z_layer
@@ -455,7 +455,8 @@ public class JTSDrawer {
 			
 
 			if (drawPolygonContour == true || fill == false) {
-				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
+				
+				myGl.glColor4f((float) b.getRed() / 255, (float) b.getGreen() / 255, (float) b.getBlue() / 255, alpha);
 
 				myGl.glBegin(GL.GL_LINES);
 
