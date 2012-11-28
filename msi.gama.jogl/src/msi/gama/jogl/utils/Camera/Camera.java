@@ -16,6 +16,9 @@ public class Camera {
 	private double yaw;
 	
 	private float maxDim;
+	private float envWidth;
+	private float envHeight;
+	
 	
 	
 	//Draw the model on 0,0,0 coordinate
@@ -62,9 +65,16 @@ public class Camera {
 		this.setzLPos(zLPos);
 	}
 
+	
+	//FIXME: Has been replace by moveXYPlan2 should be remove once every model works well with moveXYPlan2
 	// Move in the XY plan by changing camera pos and look pos.
 	public void moveXYPlan(double diffx, double diffy, double speed) {
 
+		
+		System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
+		//System.out.println("before");
+		//System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
+		//System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
 		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
 			speed = Math.abs(diffx) * speed;
 			if (diffx > 0) {// move right
@@ -93,9 +103,55 @@ public class Camera {
 			}
 
 		}
+		
+		System.out.println("speed" + speed);
+		System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
+		System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
 
 	}
 
+	// Move in the XY plan by changing camera pos and look pos.
+	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
+
+		double translationValue =0;
+
+		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
+			
+			if(z>maxDim){
+				translationValue = (Math.abs(diffx) * (z/w));
+			}
+			//Avoid very slow translation when z is close to 0.
+			//Whenever z is less that maxDim the translation is constant.
+			else{
+				translationValue = (Math.abs(diffx) * (maxDim/w)/4);	
+			}
+			
+			if (diffx > 0) {// move right
+				updatePosition(getXPos() - translationValue, getYPos(),getZPos());
+				lookPosition(getXLPos() - translationValue, getYLPos(),getZLPos());
+			} else {// move left
+				updatePosition(getXPos() + translationValue, getYPos(),getZPos());
+				lookPosition(getXLPos() + translationValue, getYLPos(),getZLPos());
+			}
+		} else if (Math.abs(diffx) < Math.abs(diffy)) { // Move Y
+			if(z>maxDim){
+				translationValue = (Math.abs(diffy) * (z/h));
+			}
+			//Avoid very slow translation when z is close to 0
+			//Whenever z is less that maxDim the translation is constant.
+			else{
+				translationValue = (Math.abs(diffy) * (maxDim/h)/4);	
+			}
+			if (diffy > 0) {// move down
+				updatePosition(getXPos(), getYPos() + translationValue,getZPos());
+				this.lookPosition(getXLPos(), getYLPos() + translationValue,getZLPos());
+			} else {// move up
+				updatePosition(getXPos(), getYPos() - translationValue,getZPos());
+				lookPosition(getXLPos(), getYLPos() - translationValue,getZLPos());
+			}
+		}
+	}
+	
 	// Moves the entity forward according to its pitch and yaw and the
 	// magnitude.
 
@@ -254,6 +310,8 @@ public class Camera {
 
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
+		this.envWidth= envWidth;
+		this.envHeight = envHeight;
 		
 		if (envWidth > envHeight) {
 			maxDim = envWidth;

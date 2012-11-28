@@ -109,8 +109,7 @@ public class MyListener implements KeyListener, MouseListener,
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 					myRenderer.startDrag(mouseEvent.getPoint());
 				}
-			}
-			
+			}	
 			enableROIDrawing =true;
 		} 
 		
@@ -155,14 +154,14 @@ public class MyListener implements KeyListener, MouseListener,
 				}
 			}
 		} else {
-			int diffx = mouseEvent.getX() - lastxPressed; // check the difference between the
-												// current x and the last x
-												// position
-			int diffy = mouseEvent.getY() - lastyPressed; // check the difference between the
-												// current y and the last y
-												// position
-			lastxPressed = mouseEvent.getX(); // set lastx to the current x position
-			lastyPressed = mouseEvent.getY(); // set lastyPressed to the current y position
+			//check the difference between the current x and the last x position
+			int diffx = mouseEvent.getX() - lastxPressed; 
+			// check the difference between the current y and the last y position
+			int diffy = mouseEvent.getY() - lastyPressed; 
+			// set lastx to the current x position
+			lastxPressed = mouseEvent.getX(); 
+			// set lastyPressed to the current y position
+			lastyPressed = mouseEvent.getY(); 
 			
 
 			double speed = 0.035;
@@ -174,7 +173,8 @@ public class MyListener implements KeyListener, MouseListener,
 				speed = (speed * Math.abs(myCamera.getZPos()) / 4);
 			}
 			// camera.PrintParam();
-			myCamera.moveXYPlan(diffx, diffy, speed);
+			//myCamera.moveXYPlan(diffx, diffy,speed);
+			myCamera.moveXYPlan2(diffx, diffy, myCamera.getZPos(),this.myRenderer.getWidth(), this.myRenderer.getHeight());
 		}
 	}
 

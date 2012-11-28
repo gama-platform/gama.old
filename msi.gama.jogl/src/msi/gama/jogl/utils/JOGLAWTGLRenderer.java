@@ -761,4 +761,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return img;
 		
 	}
+	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
+	}
 }
