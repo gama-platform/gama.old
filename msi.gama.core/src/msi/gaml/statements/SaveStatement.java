@@ -248,12 +248,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void writePRJ(final String path){
-		try {
-			FileWriter fw = new FileWriter(path.replace(".shp",".prj"));
-			fw.write(GisUtils.getCrs().toString());
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (GisUtils.getCrs() != null) {
+			try {
+				FileWriter fw = new FileWriter(path.replace(".shp",".prj"));
+				fw.write(GisUtils.getCrs().toString());
+				fw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	@Override
