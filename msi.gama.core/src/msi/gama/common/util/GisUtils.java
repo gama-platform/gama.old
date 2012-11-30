@@ -67,7 +67,8 @@ public class GisUtils {
 	public static MathTransform transformCRS;
 	private static double absEnvHeight;
 	private static final double margin = 0;
-
+	private static CoordinateReferenceSystem crsInit;
+	
 	public static void init(final double absHeight, final double absEnvWidth, final double xMin,
 		final double yMin, final double xMax, final double yMax, final MathTransform transform) {
 		absEnvHeight = absHeight;
@@ -108,30 +109,30 @@ public class GisUtils {
 		final double longitude) throws IOException {
 		PrjFileReader prjreader = new PrjFileReader(shpf);
 		MathTransform transfCRS = null;
-		CoordinateReferenceSystem crs = null;
+		crsInit = null;
 		try {
-			crs = CRS.parseWKT(prjreader.getCoodinateSystem().toWKT());
+			crsInit = CRS.parseWKT(prjreader.getCoodinateSystem().toWKT());
 			//begin ---------------------------------------------------------------------------------------------
 			//Thai.truongminh@gmail.com 
 			// 18-sep-2012: for create agen from:list
 			// for tracing nly
 
 			if (DEBUG)
-				GuiUtils.informConsole("GisUtil.CRS="+crs.toString());
+				GuiUtils.informConsole("GisUtil.CRS="+crsInit.toString());
 			//--------------------------------------------------------------------------------------------- end
 		} catch (FactoryException e2) {
 			e2.printStackTrace();
 		}
-		ProjectedCRS projectd = CRS.getProjectedCRS(crs);		
+		ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);		
 		if ( projectd == null ) {
 			System.out.println("NOT PROJECTED");
 			try {
 				int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
 				boolean north = longitude > 0;
 				int wgs84utm = 32600 + index + (north ? 0 : 100);
-				CoordinateReferenceSystem decodedcrs = CRS.decode("EPSG:" + wgs84utm);
-				transfCRS = CRS.findMathTransform(crs, decodedcrs);
-				System.out.println("decodedcrs : " + decodedcrs);
+				CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
+				transfCRS = CRS.findMathTransform(crsInit, crs);
+				System.out.println("decodedcrs : " + crs);
 			} catch (NoSuchAuthorityCodeException e) {
 				System.out.println("WARNING : STILL NOT PROJECTED");
 			} catch (FactoryException e) {
@@ -161,5 +162,12 @@ public class GisUtils {
 			return null;
 		}
 	}
+
+	public static CoordinateReferenceSystem getCrs() {
+		return crsInit;
+	}
+
+	
+	
 
 }

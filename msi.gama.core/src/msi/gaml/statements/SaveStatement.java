@@ -234,7 +234,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					liste.add(ag.getAttribute(e.toString()));
 				}
 			}
-
+			
 			SimpleFeature simpleFeature =
 				SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
@@ -244,9 +244,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		t.commit();
 		t.close();
 		store.dispose();
-
+		writePRJ(path);
 	}
 
+	private void writePRJ(final String path){
+		try {
+			FileWriter fw = new FileWriter(path.replace(".shp",".prj"));
+			fw.write(GisUtils.getCrs().toString());
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		init = args;
