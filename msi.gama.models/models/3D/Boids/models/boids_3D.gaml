@@ -104,8 +104,8 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: circle color: 'red' size: 10;
-			draw shape: circle color: 'orange' size: 40 empty: true;
+			draw shape: circle color: rgb ('red') size: 10;
+			draw shape: circle color: rgb ('orange') size: 40 empty: true;
 		}
 	} 
 	
