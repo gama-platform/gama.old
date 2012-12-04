@@ -9,11 +9,13 @@ model primitive_shape
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 25 ;
-	const global_color type: rgb <- [255, 200,0] as rgb;
+	rgb global_color;
 	
 	file imageRaster <- file('Gama.png') ;
 
 	init { 
+		
+		set global_color <- global_color hsb_to_rgb ([0.25,1.0,1.0]);
 		
 		//2D Primitive Shape
 		create myPoint number: 1{
@@ -71,9 +73,9 @@ entities {
 	
 	species myPoint{
 		const color type: rgb <- [0, 175,100] as rgb;
-		geometry shape <- geometry (point([1,1])) ;
+		//geometry shape <- geometry (point([1,1])) ;
 		aspect 2D {
-			draw geometry: shape color: global_color  ;
+			draw geometry: geometry (point([location.x,location.y])) color: global_color ;
 			draw text: "Point" size: 1 color: rgb('black');
 		}		
 	}
@@ -124,18 +126,17 @@ entities {
 	//3D Object
 	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
-		geometry shape <- geometry (point([1,1])) ;
-		aspect 3D {
-			draw geometry: shape color: global_color z:0.1 ;
+		aspect 3D {	
+			draw geometry: geometry (point([location.x,location.y])) color: global_color z:0.1;
 			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
 	}
 	
 	species myPlan{
 		const color type: rgb <- [33, 98,120] as rgb;
-		geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
+		//geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
 		aspect 3D {
-			draw geometry: shape color: global_color z:2 ;
+			draw geometry: geometry (line ([{5,7.5},{7,5.5}])) color: global_color z:2 ;
 			draw text: "Plan" size: 1 color: rgb('black');
 		}
 	}
@@ -150,10 +151,9 @@ entities {
 	}
 		
 	species myCube{
-		const color type: rgb <- [255, 131,0] as rgb;
-		geometry shape <- rectangle({2, 2})  ;		
+		const color type: rgb <- [255, 131,0] as rgb;		
 		aspect 3D {
-			draw geometry: shape color: global_color z:2 ;
+			draw geometry: square(2) color: global_color z:2 border: rgb('blue') ;
 			draw text: "Cube" size: 1 color: rgb('black');
 		}
 	}
@@ -161,9 +161,8 @@ entities {
 
 	species myPolyhedron{
 		const color type: rgb <- [255, 73,0] as rgb;
-		geometry shape <- polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) ;		
 		aspect 3D {
-			draw geometry: shape color: global_color z:2;
+			draw geometry: polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) color: global_color z:2;
 			draw text: "Polyhedron" size: 1 color: rgb('black');
 		}
 	}
@@ -178,7 +177,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1 type:opengl   {
+		display Display refresh_every: 1   type:opengl {
 			
 			//image name: 'Background' file: imageRaster.path;
 			
