@@ -108,7 +108,6 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	//private (return the renderer of the openGLGraphics) 
 	private JOGLAWTGLRenderer openGLGraphicsGLRender;
-	
 
 
 	@Override
@@ -571,16 +570,31 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomIn() {
-		float incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		float incrementalZoomStep;
+		//Check if Z is not equal to 0 (avoid being block on z=0)
+		if(openGLGraphicsGLRender.camera.zPos !=0){
+		  incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		}
+		else{
+		  incrementalZoomStep =0.1f;
+		}
 		openGLGraphicsGLRender.camera.zPos -= incrementalZoomStep;
 		openGLGraphicsGLRender.camera.zLPos -= incrementalZoomStep;
 	}
 
 	@Override
 	public void zoomOut() {
-		float incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		float incrementalZoomStep;
+		//Check if Z is not equal to 0 (avoid being block on z=0)
+		if(openGLGraphicsGLRender.camera.zPos !=0){
+		  incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		}
+		else{
+		  incrementalZoomStep =0.1f;
+		}
 		openGLGraphicsGLRender.camera.zPos += incrementalZoomStep;
 		openGLGraphicsGLRender.camera.zLPos += incrementalZoomStep;
+		
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -663,7 +677,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	}
 	
 	/**
-	 * Add a simpel feature collection  from a .Shp file.
+	 * Add a simple feature collection  from a .Shp file.
 	 */
 	@Override
 	public void addShapeFile() {
@@ -709,26 +723,21 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
+		
+		this.openGLGraphicsGLRender.camera.PrintParam();
+		
 		Envelope env = geometry.getEnvelope();
-		double minX = env.getMinX();
-		double minY = env.getMinY();
-		double maxX = env.getMaxX();
-		double maxY = env.getMaxY();
-
-		int leftX = display.getPosition().x + (int) (display.getXScale() * minX + 0.5);
-		int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
-		int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
-		int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
-		Rectangle envelop =
-			new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
-		// / PFfff... Quel bordel !
-		double xScale = (double) getWidth() / (rightX - leftX);
-		double yScale = (double) getHeight() / (rightY - leftY);
-		double zoomFactor = Math.min(xScale, yScale);
-		if ( bWidth * zoomFactor > MAX_SIZE ) {
-			zoomFactor = (double) MAX_SIZE / bWidth;
-		}
-		setZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
+		
+		double xPos= geometry.getLocation().getX() - this.envWidth/2;
+		double yPos= -(geometry.getLocation().getY() - this.envHeight/2);
+		
+		//FIXME: Need to compute the depth of the  shape to adjust ZPos value.
+		//FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
+		double zPos = env.maxExtent()*2 + geometry.getLocation().getZ();
+		double zLPos = -(env.maxExtent()*2);
+		
+		this.openGLGraphicsGLRender.camera.updatePosition(xPos, yPos, zPos);
+		this.openGLGraphicsGLRender.camera.lookPosition(xPos,yPos,zLPos);
 	}
 
 	@Override

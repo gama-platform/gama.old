@@ -132,7 +132,6 @@ public class JTSDrawer {
 			
 			if (myGLRender.useTessellation) {
 				DrawTesselatedPolygon(p);
-				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if (drawPolygonContour == true) {
 					DrawPolygonContour(p, border);
 				}
@@ -149,10 +148,14 @@ public class JTSDrawer {
 		}
 		// fill = false. Draw only the contour of the polygon.
 		else {
-			myGl.glColor4f((float) c.getRed() / 255,
-					(float) c.getGreen() / 255, (float) c.getBlue() / 255,
-					alpha);
-			DrawPolygonContour(p, border);
+
+			//if no border has been define draw empty shape with their original color
+			if(border.equals(Color.black)){
+			  DrawPolygonContour(p, c);
+			}
+			else{
+			  DrawPolygonContour(p, border);	
+			}
 		}
 
 		// FIXME: Need to check that the polygon is a quad
@@ -353,7 +356,7 @@ public class JTSDrawer {
 			myGl.glColor4f((float) border.getRed() / 255,
 					(float) border.getGreen() / 255, (float) border.getBlue() / 255, 1.0f);				
 			p.getInteriorRingN(i).apply(visitor);
-			myGl.glEnd();
+		myGl.glEnd();
 		}
 	}
 

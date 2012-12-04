@@ -482,9 +482,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			final Color border, final Integer angle,final float height) {
 		GamaPoint offSet = new GamaPoint(offsetX,offsetY);
 
-		Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2,
-				new GamaPoint(curX + (double) curWidth / 2, curY
-						+ (double) curWidth / 2)).getInnerGeometry();
+		//Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2, new GamaPoint(curX + (double) curWidth / 2, curY+ (double) curWidth / 2)).getInnerGeometry();
+		Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2, new GamaPoint(curX , curY)).getInnerGeometry();
+		
 		this.AddJTSGeometryInJTSGeometries(g, scope.getAgentScope(), currentZLayer,currentLayerId, c, fill, border, false, 0,
 				height,offSet);
 		oval.setFrame(curX, curY, curWidth, curWidth);

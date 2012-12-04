@@ -71,7 +71,7 @@ public class Camera {
 	public void moveXYPlan(double diffx, double diffy, double speed) {
 
 		
-		System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
+		//System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
 		//System.out.println("before");
 		//System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
 		//System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
@@ -103,28 +103,17 @@ public class Camera {
 			}
 
 		}
-		
-		System.out.println("speed" + speed);
-		System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
-		System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
-
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
 	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
 
+		
 		double translationValue =0;
 
 		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
 			
-			if(z>maxDim){
-				translationValue = (Math.abs(diffx) * (z/w));
-			}
-			//Avoid very slow translation when z is close to 0.
-			//Whenever z is less that maxDim the translation is constant.
-			else{
-				translationValue = (Math.abs(diffx) * (maxDim/w)/4);	
-			}
+		    translationValue = (Math.abs(diffx) * ((z+1)/w));
 			
 			if (diffx > 0) {// move right
 				updatePosition(getXPos() - translationValue, getYPos(),getZPos());
@@ -134,14 +123,9 @@ public class Camera {
 				lookPosition(getXLPos() + translationValue, getYLPos(),getZLPos());
 			}
 		} else if (Math.abs(diffx) < Math.abs(diffy)) { // Move Y
-			if(z>maxDim){
-				translationValue = (Math.abs(diffy) * (z/h));
-			}
-			//Avoid very slow translation when z is close to 0
-			//Whenever z is less that maxDim the translation is constant.
-			else{
-				translationValue = (Math.abs(diffy) * (maxDim/h)/4);	
-			}
+			
+			translationValue = (Math.abs(diffy) * ((z+1)/h));
+
 			if (diffy > 0) {// move down
 				updatePosition(getXPos(), getYPos() + translationValue,getZPos());
 				this.lookPosition(getXLPos(), getYLPos() + translationValue,getZLPos());
@@ -150,6 +134,8 @@ public class Camera {
 				lookPosition(getXLPos(), getYLPos() - translationValue,getZLPos());
 			}
 		}
+		System.out.println("move XY" );
+		this.PrintParam();
 	}
 	
 	// Moves the entity forward according to its pitch and yaw and the
@@ -367,10 +353,8 @@ public class Camera {
 	}
 
 	public void PrintParam() {
-		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos()
-				+ " zPos:" + getzPos());
-		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:"
-				+ getzLPos());
+		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos() + " zPos:" + getzPos());
+		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:"+ getzLPos());
 		System.out.println("yaw:" + yaw + " picth:" + pitch);
 	}
 
