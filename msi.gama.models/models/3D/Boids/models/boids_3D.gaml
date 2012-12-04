@@ -279,23 +279,18 @@ entities {
 		aspect default { 
 			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
 		}
+		
+		aspect dynamicColor{
+			let hue <- heading/360;
+			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
+			let geometry1 <- geometry (triangle(20));
+			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color ;
+		}
 	} 
 	
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
-		  
-		reflex toto when: moving_obstacles {
-//			if flip(0.5)  
-//			{ 
-//				do goto target: one_of(boids);
-//			} 
-//			else{ 
-//				do wander amplitude: 360;   
-//			}
-		}
-		
- 
-		
+		 		
 		aspect default {
 			draw shape: triangle color: rgb('yellow') size: 20;
 		}
@@ -326,11 +321,12 @@ experiment without_flocks type: gui {
 		inspect name: 'Inspector' type: agent;
 
 		
-		display Sky1 type:opengl refresh_every: 1 {
+		display Sky1  refresh_every: 1 type:opengl{
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.2 transparency:0.2;
 			species obstacle ;
+			
 		}
 		
 

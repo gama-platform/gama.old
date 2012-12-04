@@ -139,6 +139,10 @@ entities {
 		aspect default { 
 			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
 		}
+		
+		aspect sphere {
+			draw geometry: geometry (point(self.location)) z:10;
+		}
 	} 
 }
 
