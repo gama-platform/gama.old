@@ -673,6 +673,10 @@ public class Maths {
 	}
 
 	@operator(value = "atan2", can_be_const = true)
+	public static double atan2(final double y, final double x) {
+		return Math.atan2(y, x) * toDeg;
+	}
+
 	public static double aTan2(final double y, final double x) {
 		final double abs_y = Math.abs(y);
 		double angle;
