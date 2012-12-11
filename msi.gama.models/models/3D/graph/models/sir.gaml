@@ -14,11 +14,11 @@ global {
     int number_R <- 0 parameter: 'Number of Removed';	// The number of removed
     float survivalProbability <- 1/(70*365) parameter: 'Survival Probability'; // The survival probability
 	float beta <- 0.05 parameter: 'Beta (S->I)'; 	// The parameter Beta
-	float nu <- 0 parameter: 'Mortality';	// The parameter Nu
+	float nu <- 0.0 parameter: 'Mortality';	// The parameter Nu
 	float delta <- 0.01 parameter: 'Delta (I->R)'; // The parameter Delta
 	int numberHosts <- number_S+number_I+number_R;
 	bool local_infection <- true parameter: 'Is the infection is computed locally?';
-	int neighbours_size <- 2 min:1 max: 5 parameter:'Size of the neighbours';
+	int neighbours_size <- 10 min:1 max: 5 parameter:'Size of the neighbours';
 	int nb_infected <- number_I;
 	float R0 ;
 	
@@ -251,7 +251,8 @@ entities {
         }
                 
         aspect basic {
-	        draw shape: circle color: color size: 1; 
+	        //draw shape: circle color: color size: 1 depth:1; 
+	        draw geometry: geometry (point(self.location)) color: color depth:neighbours_size/4;
 	        draw shape: circle color: color size: neighbours_size empty: true;
         }
     }
@@ -260,14 +261,16 @@ entities {
 experiment simulation type: gui { 
  	output {
  		
- 		 display modavi_display type:opengl ambiant_light: 0.5	{
-			species macroNode aspect:sphere;
-			species macroEdge aspect:base;				
+ 		 display modavi_display type:opengl ambiant_light: 0.2	{
+ 		 	species Host aspect: basic;	
+			species macroNode aspect:sphere z:0.2;
+			species macroEdge aspect:base z:0.2;	
+					
 		}
  		 
-	    display sir_display type:opengl{
+	    display sir_display type:opengl ambiant_light: 0.2{
 	        //grid sir_grid lines: rgb("black");
-	        species Host aspect: basic z:0.001;
+	        
 	    }
 	    
 	   	
