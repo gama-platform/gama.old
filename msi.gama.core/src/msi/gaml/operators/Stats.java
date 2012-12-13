@@ -5,7 +5,7 @@
  * 
  * Developers :
  * 
- * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
+ * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML, RCaller), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
@@ -15,9 +15,12 @@
  * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
+ * - Truong Xuan Viet, UMI 209 UMMISCO, IRD/UPMC (RCaller integration), 2012
+ * - Huynh Quang Nghi, UMI 209 UMMISCO, IRD/UPMC (RCaller integration), 2012
  */
 package msi.gaml.operators;
 
+import java.awt.print.Printable;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -164,102 +167,97 @@ public class Stats {
 		return result;
 	}
 	
+	
 	@operator(value = "corR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static Object getCorrelationR(final IScope scope,
-			final IContainer l1, final IContainer l2)
-			throws GamaRuntimeException {
-		if (l1.length() == 0 || l2.length() == 0) {
+	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
+		if ( l1.length() == 0 || l2.length() == 0 ) { 
+			return Double.valueOf(0d); 
+		}
+		
+		if ( l1.length() != l2.length()) { 
 			return Double.valueOf(0d);
 		}
-
-		if (l1.length() != l2.length()) {
-			return Double.valueOf(0d);
+		
+		
+		RCaller caller = new RCaller();
+		
+		String RPath = Preferences.userRoot().node("gama")
+				.get("RScript", null);
+		caller.setRscriptExecutable("\"" + RPath + "\"");
+		if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+		{
+			caller.setRscriptExecutable(RPath);
 		}
-		double[] results;
-		RCaller caller;
-		try {
-			caller = new RCaller();
-
-			String RPath = Preferences.userRoot().node("gama")
-					.get("RScript", null);
-			caller.setRscriptExecutable("\"" + RPath + "\"");
-			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			{
-				caller.setRscriptExecutable(RPath);
-			}
-			caller.cleanRCode();
-			double[] vectorX = new double[l1.length()];
-			double[] vectorY = new double[l2.length()];
-
-			int i = 0;
-			for (Object o : l1) {
-				vectorX[i++] = Double.parseDouble(o.toString());
-			}
-
-			i = 0;
-			for (Object o : l2) {
-				vectorY[i++] = Double.parseDouble(o.toString());
-			}
-
-			caller.addDoubleArray("vectorX", vectorX);
-			caller.addDoubleArray("vectorY", vectorY);
-
-			caller.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
-
-			caller.runAndReturnResult("corCoef");
-
-			results = caller.getParser().getAsDoubleArray("corCoef");
-
-			caller.cleanRCode();
-		} catch (Exception ex) {
-//			GuiUtils.error("RCallerExecutionException \n" + ex.getMessage());
-			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
-
-		} 
-		return results[0];
+		
+		double[] vectorX = new double[l1.length()];
+		double[] vectorY = new double[l2.length()];
+		
+        int i = 0; 
+		for (Object o : l1){
+			vectorX[i++] = Double.parseDouble(o.toString());
+        }
+		
+		i = 0;
+		for (Object o : l2){
+			vectorY[i++] = Double.parseDouble(o.toString());
+        }
+        
+		caller.addDoubleArray("vectorX", vectorX);
+		caller.addDoubleArray("vectorY", vectorY);
+		
+		caller.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
+		
+        caller.runAndReturnResult("corCoef");
+        
+        double[] results;
+        try
+        {
+        	results = caller.getParser().getAsDoubleArray("corCoef");
+        }
+        catch(Exception ex)
+        {
+        	return 0.0;
+        }
+        
+        return results[0];
 	}
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static Object getMeanR(final IScope scope, final IContainer l)
-			throws GamaRuntimeException {
+			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if (l.length() == 0) {
 			return Double.valueOf(0d);
 		}
 
 		double[] results;
-		RCaller caller;
+		RCaller caller = new RCaller();
 
-		try {
-			caller = new RCaller();
-
-			String RPath = Preferences.userRoot().node("gama")
+		String RPath = Preferences.userRoot().node("gama")
 					.get("RScript", null);
-			caller.setRscriptExecutable("\"" + RPath + "\"");
-
-			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			{
-				caller.setRscriptExecutable(RPath);
-			}
-			double[] data = new double[l.length()];
-			int i = 0;
-			for (Object o : l) {
-				data[i++] = Double.parseDouble(o.toString());
-			}
-
-			caller.addDoubleArray("data", data);
-			caller.addRCode("mean<-mean(data)");
-			caller.runAndReturnResult("mean");
-
-			results = caller.getParser().getAsDoubleArray("mean");
-		} catch (Exception ex) {
-			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
+		caller.setRscriptExecutable("\"" + RPath + "\"");
+		if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+		{
+			caller.setRscriptExecutable(RPath);
 		}
+			
+		double[] data = new double[l.length()];
+		int i = 0;
+		for (Object o : l) {
+			data[i++] = Double.parseDouble(o.toString());
+		}
+
+		caller.addDoubleArray("data", data);
+		caller.addRCode("mean<-mean(data)");
+		caller.runAndReturnResult("mean");
+
+		results = caller.getParser().getAsDoubleArray("mean");
 		return results[0];
 	}
 
 	@operator(value = "R_compute", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile)
-			throws GamaRuntimeException {
+			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException  {
 		try {
 			// Call R
 			RCaller caller = new RCaller();
@@ -267,10 +265,12 @@ public class Stats {
 			String RPath = Preferences.userRoot().node("gama")
 					.get("RScript", null);
 			caller.setRscriptExecutable("\"" + RPath + "\"");
-			if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			{
-				caller.setRscriptExecutable(RPath);
-			}
+			//if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			//{
+			//	caller.setRscriptExecutable(RPath);
+			//}
+			
+			
 			RCode c = new RCode();
 			GamaList R_statements = new GamaList<String>();
 			FileReader fr = new FileReader(RFile);
@@ -284,6 +284,7 @@ public class Stats {
 			fr.close();
 
 			caller.setRCode(c);
+		
 			GamaMap result = new GamaMap();
 
 			String var = computeVariable(R_statements.get(
@@ -302,9 +303,6 @@ public class Stats {
 		} catch (Exception ex) {
 
 			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
-//			GuiUtils.error("Cannot find RScript, config in the preferences\n"
-//					+ ex.getMessage());
-//			return null;
 		}
 	}
 	
