@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="CellulaAutomata">
+
+	<global>
+		
+		<!-- Shape file of Mekong Delta Region (Size 0.1 degree for LONxLAT) -->
+		<var type="string" name="shape_file_cellula_mekong" init="'../gis/grids/MekongRect_PointZeroFive.shp'"
+			parameter="Grids of 0.1 degree for Lon/Lat:" category="GRIDS" />
+		
+		<!-- Shape file of Dong Thap Province (Size 0.01 for degree LONxLAT) -->
+		<var type="string" name="shape_file_province_DONGTHAP" init="'../gis/grids/provinces/DongThapRect_PointZeroOne_RiceArea.shp'"
+			parameter="Grids of 0.01 degree for Lon/Lat (DONG THAP):" category="GRIDS" />
+				
+		<var type="string" name="SHAPE_BOUNDING_BOX" value="shape_file_province_DONGTHAP"/>
+				
+		<init>
+		
+		</init>
+		
+		 
+	</global>
+
+	<environment>
+		<!-- Insert the grid or gis environment(s) in which the agents will be located -->
+	</environment>
+
+	<entities>
+		<species name="estimation_cellula_automata" skills="situated, visible">
+			<var type="string" name="id"/>
+			<var type="string" name="name"/>
+			<var type="string" name="E"/>
+			<var type="string" name="NE"/>
+			<var type="string" name="N"/>
+			<var type="string" name="NW"/>
+			<var type="string" name="W"/>
+			<var type="string" name="SW"/>
+			<var type="string" name="S"/>
+			<var type="string" name="SE"/>
+			<var type="string" name="x_coordinate"/>
+			<var type="string" name="y_coordinate"/>
+			
+			<!-- Area -->
+			<var type="float" name="square_area"/>
+			<var type="float" name="rice_area"/>
+			
+			<!-- Main indexes -->
+			<var type="float" name="attractive_index" init="0"/>
+			<var type="float" name="hinder_index" init="0"/>
+						
+			<!-- Colors Definition -->
+			<var 	type="rgb" name="color" init="rgb 'white'"/>
+			<var	type="rgb" name="color"
+					value=	"(number_of_BPHs &gt; 1000000)?rgb [0,0,0]:
+							((number_of_BPHs &gt; 750000)?rgb [20,0,0]:
+							((number_of_BPHs &gt; 500000)?rgb [38,0,0]:
+							((number_of_BPHs &gt; 250000)?rgb [58,0,0]:
+							((number_of_BPHs &gt; 100000)?rgb [76,0,0]:
+							((number_of_BPHs &gt; 75000)?rgb [96,0,0]:
+							((number_of_BPHs &gt; 50000)?rgb [102,0,0]:
+							((number_of_BPHs &gt; 25000)?rgb [130,0,0]:
+							((number_of_BPHs &gt; 10000)?rgb [160,0,0]:
+							((number_of_BPHs &gt; 7500)?rgb [208,0,0]:
+							((number_of_BPHs &gt; 5000)?rgb [178,0,0]:
+							((number_of_BPHs &gt; 2500)?rgb [255,7,7]:
+							((number_of_BPHs &gt; 1000)?rgb [255,37,37]:
+							((number_of_BPHs &gt; 750)?rgb [255,65,65]:
+							((number_of_BPHs &gt; 500)?rgb [255,93,93]:
+							((number_of_BPHs &gt; 250)?rgb [255,123,123]:
+							((number_of_BPHs &gt; 100)?rgb [255,151,151]:
+							((number_of_BPHs &gt; 75)?rgb [255,181,181]:
+							((number_of_BPHs &gt; 50)?rgb [255,209,209]:
+							((number_of_BPHs &gt; 25)?rgb [255,237,237]:rgb [255,255,255])))))))))))))))))))" />
+					
+			<action name="resetcolor">
+				<let type="float" name="ratio" value="(rice_area / square_area) * 100" /> 
+				<set name="color" value="(ratio &gt; 90)? rgb [0,0,0]: 
+								((ratio &gt; 80)?rgb [38,0,0]:
+								((ratio &gt; 70)?rgb [76,0,0]:
+								((ratio &gt; 60)?rgb [102,0,0]:
+								((ratio &gt; 50)?rgb [160,0,0]:
+								((ratio &gt; 40)?rgb [178,0,0]:
+								((ratio &gt; 30)?rgb [255,37,37]:
+								((ratio &gt; 20)?rgb [255,93,93]:
+								((ratio &gt; 10)?rgb [255,151,151]))))))))" />
+							
+			</action>
+			
+			<!-- Used when explicitly assign the colors -->
+			<action name="setcolor">
+				<set name="color" value="(number_of_BPHs &gt; 1000000)?rgb [0,0,0]:
+							((number_of_BPHs &gt; 750000)?rgb [20,0,0]:
+							((number_of_BPHs &gt; 500000)?rgb [38,0,0]:
+							((number_of_BPHs &gt; 250000)?rgb [58,0,0]:
+							((number_of_BPHs &gt; 100000)?rgb [76,0,0]:
+							((number_of_BPHs &gt; 75000)?rgb [96,0,0]:
+							((number_of_BPHs &gt; 50000)?rgb [102,0,0]:
+							((number_of_BPHs &gt; 25000)?rgb [130,0,0]:
+							((number_of_BPHs &gt; 10000)?rgb [160,0,0]:
+							((number_of_BPHs &gt; 7500)?rgb [208,0,0]:
+							((number_of_BPHs &gt; 5000)?rgb [178,0,0]:
+							((number_of_BPHs &gt; 2500)?rgb [255,7,7]:
+							((number_of_BPHs &gt; 1000)?rgb [255,37,37]:
+							((number_of_BPHs &gt; 750)?rgb [255,65,65]:
+							((number_of_BPHs &gt; 500)?rgb [255,93,93]:
+							((number_of_BPHs &gt; 250)?rgb [255,123,123]:
+							((number_of_BPHs &gt; 100)?rgb [255,151,151]:
+							((number_of_BPHs &gt; 75)?rgb [255,181,181]:
+							((number_of_BPHs &gt; 50)?rgb [255,209,209]:
+							((number_of_BPHs &gt; 25)?rgb [255,237,237]:rgb [255,255,255])))))))))))))))))))"/>
+			</action>
+			
+			<action name="setcolor_smootly">
+				<let type = "int" name="reverse_color" value="(number_of_BPHs &gt; 1000000)?100:
+													((number_of_BPHs &gt; 750000)?((number_of_BPHs-750000) /50000)+100:
+													((number_of_BPHs &gt; 500000)?((number_of_BPHs-500000) /50000)+105:
+													((number_of_BPHs &gt; 250000)?((number_of_BPHs-250000) /30000)+110:
+													((number_of_BPHs &gt; 100000)?((number_of_BPHs-100000) /5000)+115:
+													((number_of_BPHs &gt; 75000)?((number_of_BPHs-75000) /5000)+120:
+													((number_of_BPHs &gt; 50000)?((number_of_BPHs-50000) /5000)+125:
+													((number_of_BPHs &gt; 25000)?((number_of_BPHs-25000) /3000)+130:
+													((number_of_BPHs &gt; 10000)?((number_of_BPHs-10000) /500)+135:
+													((number_of_BPHs &gt; 7500)?((number_of_BPHs-7500) /500)+140:
+													((number_of_BPHs &gt; 5000)?((number_of_BPHs-5000) /500)+145:
+													((number_of_BPHs &gt; 2500)?((number_of_BPHs-2500) /300)+150:
+													((number_of_BPHs &gt; 1000)?((number_of_BPHs-1000) /50)+155:
+													((number_of_BPHs &gt; 750)?((number_of_BPHs-750) /50)+160:
+													((number_of_BPHs &gt; 500)?((number_of_BPHs-500) /50)+165:
+													((number_of_BPHs &gt; 250)?((number_of_BPHs-250) /30)+170:
+													((number_of_BPHs &gt; 100)?((number_of_BPHs-100) /5)+175:
+													((number_of_BPHs &gt; 75)?((number_of_BPHs-75) /5)+180:
+													((number_of_BPHs &gt; 50)?((number_of_BPHs-50) /5)+185:
+													((number_of_BPHs &gt; 25)?((number_of_BPHs-25) /5)+190:
+													((number_of_BPHs-0) /5)+195)))))))))))))))))))"/>
+				<let type = "int" name="r" value="255 - reverse_color"/>
+				<let type = "int" name="g" value="255 - reverse_color"/>
+				<let type = "int" name="b" value="0"/>
+				<set name="color" value="rgb [r, g, b]"/>
+			</action>
+			
+			
+			<!-- NATURAL ATTRIBUTES -->
+				<!-- (1) WIND DIRECTION -->
+				
+				<!-- (2) OTHERS -->
+			
+			
+			<!-- RICE ATTRIBUTES -->
+				<!-- (1) RICE STAGE (AGE) -->
+				
+				<!-- (2) KINDS -->
+			
+			<!-- BROWN PLANT HOPPERS -->
+			<var type="float" name="number_of_BPHs" init="0"/>
+			<var type="int" name="regression_count" init="0"/>
+			
+			<action name="reset_no_of_insect">
+				<arg type="float" name="no_insect"/>
+				<if condition = "regression_count &gt; 0">
+					<set name="regression_count" value="regression_count + 1"/> 
+					<set name="number_of_BPHs" value="((number_of_BPHs * (regression_count - 1)) / regression_count) + (no_insect / regression_count)"/>
+					<else>
+						<set name="regression_count" value="regression_count + 1"/>
+						<set name="number_of_BPHs" value="no_insect"/>
+					</else>
+				</if>
+				
+			</action>
+			
+			<!-- ATTRACTIVE INDEX: Calculated by any values affected into the moving of BPHs 
+					IF(ATTRACTIVE INDEX = 100%)
+						ALL BPHs DON'T MOVE;
+					IF(ATTRACTIVE INDEX = 0%)
+						100% BPHs WILL MOVE;
+			-->
+			
+			
+						
+		</species>
+	</entities>
+
+	<output>
+		<!-- Insert here the definition of the different outputs shown during the simulations -->
+	</output>
+
+</model>
+
