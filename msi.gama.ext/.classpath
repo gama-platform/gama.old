@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="postgresql-8.4-701.jdbc3.jar"/>
+	<classpathentry exported="true" kind="lib" path="postgresql-9.2-1002.jdbc4.jar"/>
+	<classpathentry exported="true" kind="lib" path="sqlsheet-6.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="mysql-connector-java-5.1.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="sqlite-jdbc-spatialite-3.7.2-1.jar"/>
 	<classpathentry exported="true" kind="lib" path="sqljdbc4.jar"/>
