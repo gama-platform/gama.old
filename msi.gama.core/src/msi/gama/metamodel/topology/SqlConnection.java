@@ -59,10 +59,10 @@ import msi.gaml.types.IType;
  *   18-Nov-2012:
  *      add PostgresSQL case
  *      
- *   18-Nov-2012:
+ *   08-Jan-2013:
  *      modify geometry type for postgres data
  *        
- * Last Modified: 08-Sep-2012
+ * Last Modified: 08-Jan-2013
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
