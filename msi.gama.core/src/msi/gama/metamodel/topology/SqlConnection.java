@@ -29,11 +29,11 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
 /*
- * @Author TRUONG Minh Thai 
- * @Supervisors:
- *     Christophe Sibertin-BLANC
+ * @Author  
+ *     TRUONG Minh Thai
  *     Fredric AMBLARD
  *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
  * 
  * 
  * SQLConnection:   supports the method
@@ -55,15 +55,22 @@ import msi.gaml.types.IType;
  *        Add case: geometry of SQLITE into methods:
  *    			- List<Integer> getGeometryColumns(ResultSetMetaData rsmd)
  *              - GamaList<Object> getColumnTypeName(ResultSetMetaData rsmd)       
- * Last Modified: 25-Sep-2012
+ *              
+ *   18-Nov-2012:
+ *      add PostgresSQL case
+ *      
+ *   18-Nov-2012:
+ *      modify geometry type for postgres data
+ *        
+ * Last Modified: 08-Sep-2012
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
 		public static final String MYSQL ="MySQL";
 		public static final String POSTGRES="postgres";
-		//static final String MSSQL ="MsSQL";
 		public static final String MSSQL ="sqlserver";
 		public static final String SQLITE="sqlite";
+		public static final String GEOMETRYTYPE="GEOMETRY";
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
@@ -196,6 +203,7 @@ public class SqlConnection {
 				result.add(getColumnTypeName(rsmd));
 				
 				repRequest=resultSet2GamaList(rs);
+				
 				result.add(repRequest);
 				
 				if (DEBUG){
@@ -372,13 +380,18 @@ public class SqlConnection {
 					List<Integer>  geoColumn = getGeometryColumns(rsmd);
 					int nbCol = rsmd.getColumnCount();
 					int i=1;
+					if (DEBUG) System.out.println("Number of col:"+ nbCol);
+					if (DEBUG) System.out.println("Number of row:"+ rs.getFetchSize());
 					while (rs.next())
 					{
 						//InputStream inputStream = rs.getBinaryStream(i);
+						if (DEBUG) System.out.println("processing at row:"+ i);
+
 						GamaList<Object> rowList = new GamaList<Object>();
 						for ( int j = 1; j <= nbCol; j++ ) 
 						{
 							// check column is geometry column?
+							if (DEBUG) System.out.println("col "+j+": " +rs.getObject(j));
 							if (geoColumn.contains(j)){
 								if (DEBUG) System.out.println("convert at ["+ i+","+j+"]: ");
 								//rowList.add(Binary2Geometry(rs.getBytes(j)));
@@ -386,7 +399,9 @@ public class SqlConnection {
 								//rowList.add(read((byte[])rs.getObject(j)));
 								//rowList.add(read(rs.getBytes(j)));
 								//rowList.add(read(rs,j));
-								if (vender.equalsIgnoreCase(MYSQL)){
+								if ( vender.equalsIgnoreCase(MYSQL))
+										// ||vender.equalsIgnoreCase(POSTGRES))
+								{
 									rowList.add(InputStream2Geometry(rs.getBinaryStream(j)));
 								}
 								else //for (vender.equalsIgnoreCase(MSSQL)/(vender.equalsIgnoreCase(SQLITE))
@@ -399,6 +414,7 @@ public class SqlConnection {
 						repRequest.add(rowList);
 						i++;
 					}
+					if (DEBUG) System.out.println("Number of row:"+ i);
 				}
 				catch (Exception e)
 				{
@@ -439,12 +455,17 @@ public class SqlConnection {
 					 - in MySQL Type: -2/-4   - TypeName: UNKNOWN   - size: 2147483647
 					 - In MSSQL Type: -3   - TypeName: geometry     - size: 2147483647
 					 - In SQLITE Type: 2004   - TypeName: BLOB      - size: 2147483647
+					 - In PostGIS/PostGresSQL Type: 1111   - TypeName: geometry  - size: 2147483647
+					          st_asbinary(geom):   - Type: -2   - TypeName: bytea  - size: 2147483647
 					 */
 					 // Search column with Geometry type
 					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-4 ) || 
 							 (vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2 ) || 
 							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 )||
-							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004) )
+							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004)||
+							 //add:03-Jan-2013
+							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==1111)||
+							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==-2)) 
 						 geoColumn.add(i);
 				}		
 				 return geoColumn;
@@ -488,14 +509,20 @@ public class SqlConnection {
 				 GamaList<Object>  columnType = new GamaList<Object>();
 				 for (int i=1; i<=numberOfColumns; i++){
 					 /* for Geometry 
-					 - in MySQL Type: -2   - TypeName: UNKNOWN   - size: 2147483647
-					 - In MSSQL Type: -3   - TypeName: geometry  - size: 2147483647
+					 - in MySQL Type: -2/-4   - TypeName: UNKNOWN   - size: 2147483647
+					 - In MSSQL Type: -3   - TypeName: geometry     - size: 2147483647
+					 - In SQLITE Type: 2004   - TypeName: BLOB      - size: 2147483647
+					 - In PostGIS/PostGresSQL Type: 1111   - TypeName: geometry  - size: 2147483647
 					 */
-					 // Search column with Geometry type
+				     // Search column with Geometry type
 					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2) || 
 							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3)||
-							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004) )
-						 columnType.add("GEOMETRY");
+							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004)||
+							 //add: 03-Jan-2013
+							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==1111)||
+							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==-2))
+						// columnType.add("GEOMETRY");
+						 columnType.add(GEOMETRYTYPE);
 					 else
 						 columnType.add(rsmd.getColumnTypeName(i).toUpperCase());
 				}		
