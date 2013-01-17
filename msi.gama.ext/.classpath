@@ -28,7 +28,6 @@
 	<classpathentry exported="true" kind="lib" path="jai_core-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="jcommon-1.0.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="jsr-275-1.0-beta-2.jar"/>
-	<classpathentry exported="true" kind="lib" path="jts-1.12.jar" sourcepath="sources/jts1.12.zip"/>
 	<classpathentry exported="true" kind="lib" path="miglayout-3.7-swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="vecmath-1.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="xercesImpl-2.7.1.jar"/>
@@ -45,5 +44,6 @@
 	<classpathentry exported="true" kind="lib" path="janino.jar"/>
 	<classpathentry exported="true" kind="lib" path="jdom-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jme-collada.jar"/>
+	<classpathentry exported="true" kind="lib" path="jts-1.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
