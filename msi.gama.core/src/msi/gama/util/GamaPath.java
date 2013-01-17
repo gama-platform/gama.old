@@ -50,16 +50,16 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	public GamaPath(final ITopology t, final IShape start, final IShape target,
 		final IList<IShape> edges) {
-		init(t, start, target,edges, true); 
+		init(t, start, target, edges, true);
 	}
 
 	public GamaPath(final ITopology t, final IShape start, final IShape target,
-			final IList<IShape> edges,boolean modify_edges) {
-		init(t, start, target,edges, modify_edges); 
+		final IList<IShape> edges, final boolean modify_edges) {
+		init(t, start, target, edges, modify_edges);
 	}
-	
-	public void init (final ITopology t, final IShape start, final IShape target,
-			final IList<IShape> edges,boolean modify_edges) {
+
+	public void init(final ITopology t, final IShape start, final IShape target,
+		final IList<IShape> edges, final boolean modify_edges) {
 		source = start;
 		this.target = target;
 		topology = t;
@@ -85,10 +85,11 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 				pt = start.euclidianDistanceTo(pt0) < target.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
 			GamaSpatialGraph graph = getGraph();
-			if (graph != null)
+			if ( graph != null ) {
 				graphVersion = graph.getVersion();
+			}
 			for ( IShape edge : edges ) {
-				if (modify_edges) {
+				if ( modify_edges ) {
 					IAgent ag = edge.getAgent();
 					Geometry geom = edge.getInnerGeometry();
 					Coordinate c0 = geom.getCoordinates()[0];
@@ -226,7 +227,8 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	private void computeGeometry() {
 		if ( super.getInnerGeometry() == null ) {
 			try {
-				setGeometry(GamaGeometryType.geometriesToGeometry(segments));
+				setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
+																					// parameter
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
 				e.printStackTrace();
@@ -428,7 +430,8 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	public void setTarget(final IShape target) {
 		this.target = target;
 	}
-	
+
+	@Override
 	public int getGraphVersion() {
 		return graphVersion;
 	}

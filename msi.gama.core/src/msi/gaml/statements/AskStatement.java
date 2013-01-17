@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -63,26 +63,30 @@ public class AskStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		Object t = target.value(stack);
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		Object t = target.value(scope);
 		if ( t == null ) {
-			stack.setStatus(ExecutionStatus.failure);
+			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		if ( t instanceof List ) {
-			targets.addAll((List) t);
+		if ( t instanceof IContainer ) {
+			targets.addAll(((IContainer) t).listValue(scope));
 		} else {
 			targets.add(t);
 		}
 
-		IAgent scopeAgent = stack.getAgentScope();
-		stack.addVarWithValue(IKeyword.MYSELF, scopeAgent);
+		IAgent scopeAgent = scope.getAgentScope();
+		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
 		for ( int i = 0, n = targets.size(); i < n; i++ ) {
-			final IAgent remoteAgent = (IAgent) targets.get(i);
-			if ( !remoteAgent.dead() ) {
-				stack.execute(sequence, remoteAgent);
+			Object o = targets.get(i);
+			if ( !(o instanceof IAgent) ) {
+				continue;
 			}
-			stack.setStatus(ExecutionStatus.skipped);
+			final IAgent remoteAgent = (IAgent) o;
+			if ( !remoteAgent.dead() ) {
+				scope.execute(sequence, remoteAgent);
+			}
+			scope.setStatus(ExecutionStatus.skipped);
 		}
 		targets.clear();
 		return null;

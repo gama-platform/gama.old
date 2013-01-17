@@ -51,34 +51,36 @@ public class Containers {
 	// ADDRESS GROUPS OF AGENTS WITH THE SAME SPECIES. POPULATIONS WILL BE RETURNED NOW WHEN WE USE
 	// THE NAME OF THE SPECIES. AND POPULATIONS WILL BE CONTAINERS.
 
-	@operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
-	@doc(deprecated = "The use of first on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
-	public static IAgent getFirst(final IScope scope, final ISpecies s) throws GamaRuntimeException {
-		if ( s == null ) { return null; }
-		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
-		if ( agents.size() == 0 ) { return null; }
-		return agents.first();
-	}
-
-	@operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
-	@doc(deprecated = "The use of last on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
-	public static IAgent getLast(final IScope scope, final ISpecies s) throws GamaRuntimeException {
-		if ( s == null ) { return null; }
-		IList<IAgent> agents = scope.getAgentScope().getPopulationFor(s).getAgentsList();
-		int size = agents.size();
-		if ( size == 0 ) { return null; }
-		return agents.last();
-	}
-
-	@operator(value = "length")
-	@doc(deprecated = "The use of length on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
-	public static Integer getLength(final IScope scope, final ISpecies s)
-		throws GamaRuntimeException {
-		if ( s == null ) { return 0; }
-		return scope.getAgentScope().getPopulationFor(s).size();
-	}
-
-	@operator(value = { "at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	// @operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type =
+	// ITypeProvider.CHILD_CONTENT_TYPE)
+	// @doc(deprecated =
+	// "The use of first on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	// public static IAgent getFirst(final IScope scope, final ISpecies s) throws
+	// GamaRuntimeException {
+	// if ( s == null ) { return null; }
+	// return s.first(scope);
+	// }
+	//
+	// @operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type =
+	// ITypeProvider.CHILD_CONTENT_TYPE)
+	// @doc(deprecated =
+	// "The use of last on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	// public static IAgent getLast(final IScope scope, final ISpecies s) throws
+	// GamaRuntimeException {
+	// if ( s == null ) { return null; }
+	// return s.last(scope);
+	// }
+	//
+	// @operator(value = "length")
+	// @doc(deprecated =
+	// "The use of length on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	// public static Integer getLength(final IScope scope, final ISpecies s)
+	// throws GamaRuntimeException {
+	// if ( s == null ) { return 0; }
+	// return scope.getAgentScope().getPopulationFor(s).size();
+	// }
+	//
+	@operator(value = { IKeyword.AT, "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
@@ -92,28 +94,26 @@ public class Containers {
 	// return null;}
 
 	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(
-		value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand",
-		comment = "If the left-hand operand is a point of floats, it is used as a point of ints.",
-		special_cases = {"if the left-hand operand is not a grid cell species, returns nil"}, 
-		examples = {"grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
+	@doc(value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand", comment = "If the left-hand operand is a point of floats, it is used as a point of ints.", special_cases = { "if the left-hand operand is not a grid cell species, returns nil" }, examples = { "grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
 	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();
 		IContainer<?, IShape> m = t.getPlaces();
 		if ( m instanceof GamaSpatialMatrix ) {
-			IShape shp = ((GamaSpatialMatrix) m).get(val);
+			IShape shp = ((GamaSpatialMatrix) m).get(scope, val);
 			if ( shp != null ) { return shp.getAgent(); }
 		}
 		return null;
 	}
 
-	@operator(value = { "at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
-	public static IAgent getAgent(final IScope scope, final ISpecies s, final Integer val)
-		throws GamaRuntimeException {
-		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
-	}
+	//
+	// @operator(value = { "at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	// @doc(deprecated =
+	// "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	// public static IAgent getAgent(final IScope scope, final ISpecies s, final Integer val)
+	// throws GamaRuntimeException {
+	// return scope.getAgentScope().getPopulationFor(s).getAgent(val);
+	// }
 
 	// =====
 	// =====
@@ -147,13 +147,13 @@ public class Containers {
 		"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]",
 		"remove_duplicates([1::3,2::4,3::3,5::7]) --: [3,4,7]" })
 	// TODO finish doc for other kinds of Container
-	public static IList asSet(final IContainer l) {
+	public static IList asSet(final IScope scope, final IContainer l) {
 		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
 		// utilis� � la place � v�rifier
 
 		if ( l == null ) { return null; }
-		final LinkedHashSet list = new LinkedHashSet(l.length());
-		for ( Object o : l ) {
+		final LinkedHashSet list = new LinkedHashSet(l.length(scope));
+		for ( Object o : l.iterable(scope) ) {
 			list.add(o);
 		}
 		return new GamaList(list);
@@ -165,11 +165,11 @@ public class Containers {
 		"[1,2,3,4,5,6] contains_all [2,8] 		--: 	false",
 		"[1::2, 3::4, 5::6] contains_all [1,3] 	--: 	true ",
 		"[1::2, 3::4, 5::6] contains_all [2,4] 	--: 	false" }, see = { "contains", "contains_any" })
-	public static Boolean opContainsAll(final IContainer m, final IContainer l)
+	public static Boolean opContainsAll(final IScope scope, final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
-		if ( l == null || l.isEmpty() ) { return true; }
-		for ( Object o : l ) {
-			if ( !m.contains(o) ) { return false; }
+		if ( l == null || l.isEmpty(scope) ) { return true; }
+		for ( Object o : l.iterable(scope) ) {
+			if ( !m.contains(scope, o) ) { return false; }
 		}
 		return true;
 	}
@@ -180,12 +180,11 @@ public class Containers {
 		"[1,2,3,4,5,6] contains_any [2,8] 		--: 	true",
 		"[1::2, 3::4, 5::6] contains_any [1,3] 	--: 	true ",
 		"[1::2, 3::4, 5::6] contains_any [2,4] 	--: 	false" }, see = { "contains", "contains_all" })
-	public static Boolean opContainsAny(final IContainer m, final IContainer l)
+	public static Boolean opContainsAny(final IScope scope, final IContainer c, final IContainer l)
 		throws GamaRuntimeException {
-		if ( l == null || l.isEmpty() ) { return false; }
-		IContainer c = m;
-		for ( Object o : l ) {
-			if ( c.contains(o) ) { return true; }
+		if ( l == null || l.isEmpty(scope) ) { return false; }
+		for ( Object o : l.iterable(scope) ) {
+			if ( c.contains(scope, o) ) { return true; }
 		}
 		return false;
 	}
@@ -206,9 +205,18 @@ public class Containers {
 	@doc(value = "true if the right operand contains the left operand, false otherwise", comment = "the definition of in depends on the container", special_cases = { "if the right operand is nil or empty, in returns false" }, examples = {
 		"2 in [1,2,3,4,5,6] : true", "7 in [1,2,3,4,5,6] : false",
 		"3 in [1::2, 3::4, 5::6] : true", "6 in [1::2, 3::4, 5::6] : false" }, see = { "contains" })
-	public static Boolean opIn(final Object o, final IContainer source) throws GamaRuntimeException {
+	public static Boolean opIn(final IScope scope, final Object o, final IContainer source)
+		throws GamaRuntimeException {
 		if ( source == null ) { return false; }
-		return source.contains(o);
+		return source.contains(scope, o);
+	}
+
+	@operator(value = "index_of", can_be_const = true)
+	@doc(value = "the index of an agent in a species. If the argument is not an agent of this species, returns -1", comment = "Use int(agent) instead")
+	public static Integer opIndexOf(final ISpecies s, final Object o) {
+		if ( !(o instanceof IAgent) ) { return -1; }
+		if ( !((IAgent) o).isInstanceOf(s, true) ) { return -1; }
+		return ((IAgent) o).getIndex();
 	}
 
 	@operator(value = "index_of", can_be_const = true)
@@ -237,6 +245,13 @@ public class Containers {
 			}
 		}
 		return null;
+	}
+
+	@operator(value = "last_index_of", can_be_const = true)
+	@doc(value = "for species, the last index of an agent is the same as its index", comment = "", see = {
+		"at", "index_of" })
+	public static Integer opLastIndexOf(final ISpecies l1, final Object o) {
+		return opIndexOf(l1, o);
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
@@ -273,22 +288,23 @@ public class Containers {
 		"[1::2, 3::4, 5::6] inter [2,4] 		--: 	[2,4]", "[1::2, 3::4, 5::6] inter [1,3] 		--: 	[]",
 		"matrix([[1,2,3],[4,5,4]]) inter [3,4] 	--: 	[4,3]" }, see = { "remove_duplicates" })
 	public static IList opInter(final IScope scope, final IContainer l1, final IContainer l) {
-		IList list = asSet(l1);
+		IList list = asSet(scope, l1);
 		if ( l == null ) { return list; }
-		list.retainAll(asSet(l));
+		list.retainAll(asSet(scope, l));
 		return list;
 	}
 
 	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", 
-	comment = "The behavior of the operator depends on the type of the operands.", special_cases = { "if the right operand is empty or nil, " +
+	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", comment = "The behavior of the operator depends on the type of the operands.", special_cases = { "if the right operand is empty or nil, " +
 		IKeyword.MINUS + " returns the left operand" }, examples = {
 		"[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]", "[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" +
 		IKeyword.PLUS })
-	public static IList opMinus(final IList l1, final IList l) {
-		if ( l == null || l.isEmpty() ) { return l1; }
+	public static IList opMinus(final IScope scope, final IContainer source, final IContainer l) {
+		if ( source == null || source.isEmpty(scope) ) { return new GamaList(); }
+		if ( l == null || l.isEmpty(scope) ) { return source.listValue(scope); }
+		IList l1 = source.listValue(scope);
 		HashSet set = new HashSet(l1);
-		if ( set.removeAll(l) ) { return new GamaList(set); }
+		if ( set.removeAll(l.listValue(scope)) ) { return new GamaList(set); }
 		return l1;
 	}
 
@@ -312,8 +328,9 @@ public class Containers {
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species sous_test 	--: [sous_test0,sous_test1]",
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_species test 				--: [test2,test3]",
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_species sous_test 			--: [sous_test0,sous_test1]" }, see = { "of_species" })
-	public static IList opOfGenericSpecies(final IContainer agents, final ISpecies s) {
-		return opOfSpecies(agents, s, true);
+	public static IList opOfGenericSpecies(final IScope scope, final IContainer agents,
+		final ISpecies s) {
+		return opOfSpecies(scope, agents, s, true);
 	}
 
 	@operator(value = "of_species", content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
@@ -325,16 +342,16 @@ public class Containers {
 		"(self neighbours_at 10) of_species (species (self)) 	--:  all the neighbouring agents of the same species.",
 		"[test(0),test(1),node(1),node(2)] of_species test 		--:  [test0,test1]",
 		"[1,2,3,4,5,6] of_species test							--:	 []" }, see = { "of_generic_species" })
-	public static IList opOfSpecies(final IContainer agents, final ISpecies s) {
-		return opOfSpecies(agents, s, false);
+	public static IList opOfSpecies(final IScope scope, final IContainer agents, final ISpecies s) {
+		return opOfSpecies(scope, agents, s, false);
 	}
 
-	private static IList opOfSpecies(final IContainer agents, final ISpecies s,
+	private static IList opOfSpecies(final IScope scope, final IContainer agents, final ISpecies s,
 		final boolean generic) {
 		if ( s == null ) { return GamaList.EMPTY_LIST; }
 		// int n = agents.size();
-		final GamaList result = new GamaList(agents.length());
-		for ( Object be : agents ) {
+		final GamaList result = new GamaList(agents.length(scope));
+		for ( Object be : agents.iterable(scope) ) {
 			if ( be instanceof IAgent && ((IAgent) be).isInstanceOf(s, !generic) ) {
 				result.add(be);
 			}
@@ -354,16 +371,18 @@ public class Containers {
 		IKeyword.PLUS + " returns the left operand" }, examples = {
 		"[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
-	public static IList opPlus(final IList l1, final IList l) {
-		if ( l == null ) { return new GamaList(l1); }
-		GamaList result = new GamaList(l1.size() + l.size());
+	public static IList opPlus(final IScope scope, final IContainer source, final IContainer l) {
+		if ( source == null || source.isEmpty(scope) ) { return l.listValue(scope); }
+		IList l1 = source.listValue(scope);
+		if ( l == null || l.isEmpty(scope) ) { return l1; }
+		GamaList result = new GamaList(l1.length(scope) + l.length(scope));
 		result.addAll(l1);
-		result.addAll(l);
+		result.addAll(l.listValue(scope));
 		return result;
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(special_cases = { "if the right operand is an object of any type (except list), " +
+	@doc(special_cases = { "if the right operand is an object of any type (except a container), " +
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
 	public static IList opPlus(final IList l1, final Object l) {
@@ -378,11 +397,16 @@ public class Containers {
 		"[1,2,3,4,5,6] union [2,4,9] 		--: 	[1,2,3,4,5,6,9]",
 		"[1,2,3,4,5,6] union [0,8] 			--: 	[0,1,2,3,4,5,6,8]",
 		"[1,3,2,4,5,6,8,5,6] union [0,8] 	--: 	[0,1,2,3,4,5,6,8]" }, see = { "inter", IKeyword.PLUS })
-	public static IList opUnion(final IList l1, final IList l) {
-		if ( l == null ) { return new GamaList(l1); }
-		Set s = new HashSet(l.size() + l1.size());
+	public static IList opUnion(final IScope scope, final IContainer source, final IContainer l) {
+		if ( source == null || source.isEmpty(scope) ) {
+			if ( l == null ) { return GamaList.EMPTY_LIST; }
+			return l.listValue(scope);
+		}
+		IList l1 = source.listValue(scope);
+		if ( l == null ) { return source.listValue(scope); }
+		Set s = new LinkedHashSet(l.length(scope) + l1.length(scope));
 		s.addAll(l1);
-		s.addAll(l);
+		s.addAll(l.listValue(scope));
 		return new GamaList(s);
 	}
 
@@ -400,7 +424,7 @@ public class Containers {
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			Object key = filter.value(scope);
 			if ( !result.containsKey(key) ) {
@@ -437,7 +461,7 @@ public class Containers {
 	public static Object last_with(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
-		for ( Object each : original.reverse() ) {
+		for ( Object each : original.reverse(scope) ) {
 			scope.setEach(each);
 			if ( Cast.asBool(scope, filter.value(scope)) ) { return each; }
 		}
@@ -454,7 +478,7 @@ public class Containers {
 	public static Object first_with(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			if ( Cast.asBool(scope, filter.value(scope)) ) { return each; }
 		}
@@ -472,7 +496,7 @@ public class Containers {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		if ( filter.getType().id() == IType.INT ) {
 			int max = Integer.MIN_VALUE;
-			for ( Object each : original ) {
+			for ( Object each : original.iterable(scope) ) {
 				scope.setEach(each);
 				final int rv = Cast.asInt(scope, filter.value(scope));
 				if ( rv > max ) {
@@ -482,7 +506,7 @@ public class Containers {
 			return max;
 		}
 		double max = Double.MIN_VALUE;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
 			if ( rv > max ) {
@@ -503,7 +527,7 @@ public class Containers {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		if ( filter.getType().id() == IType.INT ) {
 			int min = Integer.MAX_VALUE;
-			for ( Object each : original ) {
+			for ( Object each : original.iterable(scope) ) {
 				scope.setEach(each);
 				final int rv = Cast.asInt(scope, filter.value(scope));
 				if ( rv < min ) {
@@ -514,7 +538,7 @@ public class Containers {
 		}
 
 		double min = Double.MAX_VALUE;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
 			if ( rv < min ) {
@@ -631,10 +655,10 @@ public class Containers {
 		throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
-		for ( Object p : original ) {
+		for ( GamaPair p : original.iterable(scope) ) {
 			scope.setEach(p);
 			if ( Cast.asBool(scope, filter.value(scope)) ) {
-				result.add((GamaPair) p);
+				result.add(p);
 			}
 		}
 		return result;
@@ -650,8 +674,8 @@ public class Containers {
 	public static IList where(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return GamaList.EMPTY_LIST; }
-		final GamaList result = new GamaList(original.length());
-		for ( Object each : original ) {
+		final GamaList result = new GamaList(original.length(scope));
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			if ( Cast.asBool(scope, filter.value(scope)) ) {
 				result.add(each);
@@ -671,7 +695,7 @@ public class Containers {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		double max = Double.MIN_VALUE;
 		Object result = null;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
 			if ( rv > max ) {
@@ -693,7 +717,7 @@ public class Containers {
 		if ( original == null ) { return null; }
 		double min = Double.MAX_VALUE;
 		Object result = null;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
 			if ( rv < min ) {
@@ -714,7 +738,7 @@ public class Containers {
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaList result = new GamaList();
 		if ( original == null ) { return result; }
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final Object values = filter.value(scope);
 			if ( values instanceof GamaList ) {
@@ -732,10 +756,11 @@ public class Containers {
 	@doc(value = "a new list containing interleaved elements of the operand", comment = "the operand should be a list of lists of elements. The result is a list of elements. ", special_cases = { "if the operand is nil or a list of (non-list) elements, accumulate returns an empty list" }, examples = {
 		"collate([1,2,4,3,5,7,6,8]) 	--: 	[]",
 		"collate([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]" })
-	public static IList interleave(final IScope scope, final IList original) {
+	public static IList interleave(final IScope scope, final IContainer cc) {
 
 		final GamaList result = new GamaList();
-		if ( original == null ) { return result; }
+		if ( cc == null ) { return result; }
+		IList original = cc.listValue(scope);
 		int n = original.size();
 		final int[] sizeArray = new int[n];
 		final boolean[] isListArray = new boolean[n];
@@ -778,7 +803,7 @@ public class Containers {
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return 0; }
 		Integer result = 0;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			if ( Cast.asBool(scope, filter.value(scope)) ) {
 				result++;
@@ -794,7 +819,7 @@ public class Containers {
 	public static GamaMap asMap(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaMap result = new GamaMap();
-		if ( original == null || original.isEmpty() ) { return result; }
+		if ( original == null || original.isEmpty(scope) ) { return result; }
 		GamaPair<IExpression, IExpression> p;
 		if ( filter instanceof MapExpression ) {
 			MapExpression exp = (MapExpression) filter;
@@ -806,7 +831,7 @@ public class Containers {
 			throw new GamaRuntimeException(
 				"The as_map operator expects either a pair or a map for its second argument");
 		}
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			result.put(((IExpression) p.key).value(scope), p.value.value(scope));
 		}
@@ -824,10 +849,10 @@ public class Containers {
 	public static IList collect(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return GamaList.EMPTY_LIST; }
-		int size = original.length();
+		int size = original.length(scope);
 		final Object[] result = new Object[size];
 		int i = 0;
-		for ( Object each : original ) {
+		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			result[i++] = filter.value(scope);
 		}

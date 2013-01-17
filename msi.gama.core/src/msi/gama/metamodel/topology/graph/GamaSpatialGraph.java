@@ -25,11 +25,8 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
-
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph {
 
@@ -40,7 +37,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	private ITopology topology;
 	private boolean agentEdge;
-	
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -63,16 +59,14 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		super(vertices, byEdge, directed, rel);
 		try {
 			agentEdge =
-				byEdge && vertices != null && !vertices.isEmpty() &&
-					vertices.first() instanceof IAgent;
+				byEdge && vertices != null && !vertices.isEmpty(null) &&
+					vertices.first(null) instanceof IAgent;
 		} catch (GamaRuntimeException e) {
 			e.printStackTrace();
 		}
 		verbose = false;
 
 	}
-	
-	
 
 	@Override
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
@@ -215,7 +209,5 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public void reInitPathFinder() {
 		pathFinder = null;
 	}
-	
-	
 
 }

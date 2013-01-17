@@ -65,7 +65,7 @@ public class PutStatement extends AbstractContainerStatement {
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final Boolean whole, final IContainer container) throws GamaRuntimeException {
-		Object casted = whole ? ((IContainer) object).get(0) : object;
+		Object casted = whole ? ((IContainer) object).get(scope, 0) : object;
 		casted =
 			listType == IType.FLOAT ? Cast.asFloat(scope, casted) : listType == IType.INT ? Cast
 				.asInt(scope, casted) : casted;

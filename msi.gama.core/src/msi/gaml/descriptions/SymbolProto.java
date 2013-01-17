@@ -53,6 +53,13 @@ public class SymbolProto {
 
 	static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
+	static final List<String> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID,
+		IType.NEW_VAR_ID);
+
+	static {
+		nonVariableStatements.add(IKeyword.EXPERIMENT);
+		nonVariableStatements.add(IKeyword.METHOD);
+	}
 
 	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets,
@@ -93,6 +100,13 @@ public class SymbolProto {
 		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
 		return f.isLabel;
+	}
+
+	public boolean isDefinition() {
+		if ( omissibleFacet == null ) { return false; }
+		FacetProto f = getPossibleFacets().get(omissibleFacet);
+		if ( f == null ) { return false; }
+		return f.isDefinition;
 	}
 
 	public boolean hasSequence() {

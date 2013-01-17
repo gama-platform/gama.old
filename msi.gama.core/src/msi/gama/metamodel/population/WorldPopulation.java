@@ -1,22 +1,14 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
-
-import org.codehaus.janino.Java.NewArray;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaAgentType;
 
 public class WorldPopulation extends GamlPopulation {
 
@@ -38,34 +30,37 @@ public class WorldPopulation extends GamlPopulation {
 			modelEnv.initializeFor(scope);
 			world.initializeLocationAndGeomtry(scope);
 			topology = new ContinuousTopology(scope, world.getGeometry(), false);
-			
+
 			// TORUS
-		/*	for(IAgent agent: agents)
-			{
-				Geometry agentGeom = agent.getAgent().getInnerGeometry();
-				Geometry virtualGeoms = topology.returnToroidalGeom(agentGeom);
-				if(!virtualGeoms.isEmpty())
-				{
-					Geometry[] geoms =  GeometryUtils.factory.toGeometryArray((Collection<Geometry>) virtualGeoms);
-					GamaList<IAgent> virtualAgents = new GamaList();
-					for(Geometry geom: geoms)
-					{
-						 GamaList<IAgent> virtualAgents = null;
-						 
-						
-					}
-					agents.add(Creation.)
-				}
-				
-				
-			}*/
+			/*
+			 * for(IAgent agent: agents)
+			 * {
+			 * Geometry agentGeom = agent.getAgent().getInnerGeometry();
+			 * Geometry virtualGeoms = topology.returnToroidalGeom(agentGeom);
+			 * if(!virtualGeoms.isEmpty())
+			 * {
+			 * Geometry[] geoms = GeometryUtils.factory.toGeometryArray((Collection<Geometry>)
+			 * virtualGeoms);
+			 * GamaList<IAgent> virtualAgents = new GamaList();
+			 * for(Geometry geom: geoms)
+			 * {
+			 * GamaList<IAgent> virtualAgents = null;
+			 * 
+			 * 
+			 * }
+			 * agents.add(Creation.)
+			 * }
+			 * 
+			 * 
+			 * }
+			 */
 		}
 		return agents;
 	}
 
 	@Override
 	public IAgent getAgent(final ILocation value) {
-		return get(0);
+		return get(null, 0);
 	}
 
 	@Override

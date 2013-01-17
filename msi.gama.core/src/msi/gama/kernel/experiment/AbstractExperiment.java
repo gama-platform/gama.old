@@ -118,7 +118,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 
 		@Override
 		public IAgent getAgent(final ILocation value) {
-			return get(0);
+			return get(null, 0);
 		}
 
 		@Override

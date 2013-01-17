@@ -19,10 +19,8 @@
 package msi.gaml.species;
 
 import java.util.*;
-import msi.gama.common.interfaces.IValue;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpression;
@@ -36,7 +34,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface ISpecies extends IValue, ISymbol {
+public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract IExpression getFrequency();
 
@@ -131,21 +129,6 @@ public interface ISpecies extends IValue, ISymbol {
 	 */
 	public abstract int getLevel();
 
-	// TODO THESE METHODS ARE INTENDED TO BE PORTED ON IPopulation instead
-	/**
-	 * @throws GamaRuntimeException
-	 * @param scope
-	 * @return
-	 */
-	IList listValue(IScope scope) throws GamaRuntimeException;
-
-	/**
-	 * @throws GamaRuntimeException
-	 * @param scope
-	 * @return
-	 */
-	Map mapValue(IScope scope) throws GamaRuntimeException;
-
 	public abstract void addAction(final IStatement ce);
 
 	public abstract void addAspect(final IStatement ce);
@@ -190,9 +173,4 @@ public interface ISpecies extends IValue, ISymbol {
 
 	public abstract void setMacroSpecies(final ISpecies macroSpecies);
 
-	/**
-	 * @param string
-	 */
-	@Override
-	public abstract void error(String string);
 }

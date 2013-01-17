@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.ACTION, kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.VALUE)
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.VALUE)
 public class ReturnStatement extends AbstractStatement {
 
 	final IExpression value;

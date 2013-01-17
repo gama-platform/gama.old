@@ -115,7 +115,8 @@ public class MatchStatement extends AbstractStatementSequence {
 		public boolean matches(final IScope scope, final Object switchValue)
 			throws GamaRuntimeException {
 			Object val = getValue(scope);
-			if ( val instanceof IContainer ) { return ((IContainer) val).contains(switchValue); }
+			if ( val instanceof IContainer ) { return ((IContainer) val).contains(scope,
+				switchValue); }
 			return Cast.asList(scope, val).contains(switchValue);
 		}
 

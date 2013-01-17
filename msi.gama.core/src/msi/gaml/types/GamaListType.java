@@ -26,7 +26,6 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.species.ISpecies;
 
 @type(name = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaListType extends GamaType<IList> {
@@ -40,7 +39,6 @@ public class GamaListType extends GamaType<IList> {
 	public static IList staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaList(); }
-		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).listValue(scope); }
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope); }
 		if ( obj instanceof Collection ) { return new GamaList((Collection) obj); }
 		if ( obj instanceof Color ) {

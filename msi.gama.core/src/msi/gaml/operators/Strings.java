@@ -85,8 +85,7 @@ public class Strings {
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
-	@doc(
-		special_cases = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string")
+	@doc(special_cases = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string")
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
@@ -99,17 +98,13 @@ public class Strings {
 	}
 
 	@operator(value = "in", can_be_const = true)
-	@doc(
-		special_cases = "if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;",
-		examples = " 'bc' in 'abcded' 	--:  true")
+	@doc(special_cases = "if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;", examples = " 'bc' in 'abcded' 	--:  true")
 	public static Boolean opIn(final String pattern, final String target) {
 		return target.contains(pattern);
 	}
 
 	@operator(value = "contains", can_be_const = true)
-	@doc(
-		special_cases = "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;",
-		examples = "'abcded' contains 'bc' 	--:  true")	
+	@doc(special_cases = "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;", examples = "'abcded' contains 'bc' 	--:  true")
 	public static Boolean opContains(final String target, final String pattern) {
 		return opIn(pattern, target);
 	}
@@ -133,17 +128,13 @@ public class Strings {
 	}
 
 	@operator(value = "index_of", can_be_const = true)
-	@doc(
-		special_cases = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string",
-		examples = " \"abcabcabc\" index_of \"ca\" 	--: 	2")
+	@doc(special_cases = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string", examples = " \"abcabcabc\" index_of \"ca\" 	--: 	2")
 	public static Integer opIndexOf(final String target, final String pattern) {
 		return target.indexOf(pattern);
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
-	@doc(
-		special_cases = "if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string",
-		examples = "\"abcabcabc\" last_index_of \"ca\" 	--: 	5")
+	@doc(special_cases = "if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string", examples = "\"abcabcabc\" last_index_of \"ca\" 	--: 	5")
 	public static Integer opLastIndexOf(final String target, final String pattern) {
 		return target.lastIndexOf(pattern);
 	}
@@ -158,26 +149,18 @@ public class Strings {
 	}
 
 	@operator(value = { "split_with", "tokenize" }, can_be_const = true)
-	@doc(
-		value = "a list, containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.",
-		comment = "delimiters themselves are excluded from the resulting list",
-		examples = "'to be or not to be,that is the question' split_with ' ,'  --:  [to,be,or,not,to,be,that,is,the,question]")
+	@doc(value = "a list, containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.", comment = "delimiters themselves are excluded from the resulting list", examples = "'to be or not to be,that is the question' split_with ' ,'  --:  [to,be,or,not,to,be,that,is,the,question]")
 	public static IList opTokenize(final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return new GamaList(Collections.list(st));
 	}
 
 	@operator(value = "is_number", can_be_const = true)
-	@doc(
-		value = "tests whether the operand represents a numerical value",
-		comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). " +
-				"Symbols e and E are also accepted. A hexadecimal value should begin with #.",
-		examples = {
-			"is_number(\"test\") 	--: false",
-			"is_number(\"123.56\") 	--: true",
-			"is_number(\"-1.2e5\") 	--: true",
-			"is_number(\"1,2\") 	--: false",
-			"is_number(\"#12FA\") 	--: true"})
+	@doc(value = "tests whether the operand represents a numerical value", comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
+		+ "Symbols e and E are also accepted. A hexadecimal value should begin with #.", examples = {
+		"is_number(\"test\") 	--: false", "is_number(\"123.56\") 	--: true",
+		"is_number(\"-1.2e5\") 	--: true", "is_number(\"1,2\") 	--: false",
+		"is_number(\"#12FA\") 	--: true" })
 	public static Boolean isGamaNumber(final String s) {
 		// copright notice:
 		// original code taken from org.apache.commons.lang.NumberUtils.isNumber(String)
@@ -299,7 +282,7 @@ public class Strings {
 		return s.length();
 	}
 
-	@operator(value = { "at" /* , "@" */}, can_be_const = true)
+	@operator(value = { IKeyword.AT, "@" }, can_be_const = true)
 	@doc(examples = "'abcdef' at 0 	--: 'a';")
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
@@ -337,11 +320,7 @@ public class Strings {
 	}
 
 	@operator(value = "as_date", can_be_const = true)
-	@doc(
-		value = "converts a number into a string with year, month, day, hour, minutes, second following a given pattern (right-hand operand)",
-		comment = "Pattern should include : \"%Y %M %D %h %m %s\" for outputting years, months, days, hours, minutes, seconds",
-		examples = "22324234 as_date \"%M m %D d %h h %m m %s seconds\" 	--: 8 m 18 d 9 h 10 m 34 seconds",
-		see = {"as_time"})
+	@doc(value = "converts a number into a string with year, month, day, hour, minutes, second following a given pattern (right-hand operand)", comment = "Pattern should include : \"%Y %M %D %h %m %s\" for outputting years, months, days, hours, minutes, seconds", examples = "22324234 as_date \"%M m %D d %h h %m m %s seconds\" 	--: 8 m 18 d 9 h 10 m 34 seconds", see = { "as_time" })
 	public static String asDate(final double time, final String pattern) {
 		// Pattern should include : "%Y %M %D %h %m %s" for outputting years, months, days, hours,
 		// minutes, seconds
@@ -400,9 +379,7 @@ public class Strings {
 	}
 
 	@operator(value = "as_date", can_be_const = true)
-	@doc(
-		special_cases = "used as an unary operator, uses a defined pattern with years, months, days",
-		examples = "as_date(22324234) 	--: 8 months, 18 days")
+	@doc(special_cases = "used as an unary operator, uses a defined pattern with years, months, days", examples = "as_date(22324234) 	--: 8 months, 18 days")
 	public static String asDate(final double time) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
 		return getDateFormat().print(
@@ -410,11 +387,7 @@ public class Strings {
 	}
 
 	@operator(value = "as_time", can_be_const = true)
-	@doc(
-		value = "converts the given number into a string with hours, minutes and seconds",
-		comment = "as_time operator is a particular case (using a particular pattern) of the as_date operator.",
-		examples = "as_time(22324234) 	--: 09:10:34",
-		see = "as_date")
+	@doc(value = "converts the given number into a string with hours, minutes and seconds", comment = "as_time operator is a particular case (using a particular pattern) of the as_date operator.", examples = "as_time(22324234) 	--: 09:10:34", see = "as_date")
 	public static String asTime(final double cycles) {
 		PeriodType pt = PeriodType.yearMonthDayTime();
 		return getTimeFormat().print(

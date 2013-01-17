@@ -22,6 +22,7 @@ import com.vividsolutions.jts.io.WKBReader;
 import msi.gama.common.util.GisUtils;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
@@ -651,7 +652,7 @@ public class SqlConnection {
 		     * @throws Exception
 		 	 */
 
-		public static Envelope getBounds( GamaList<Object> gamaList)throws IOException {
+		public static Envelope getBounds( IScope scope, GamaList<Object> gamaList)throws IOException {
 				   	Envelope envelope;
 					//get Column name
 					GamaList<Object> colNames=(GamaList<Object>) gamaList.get(0);
@@ -662,7 +663,7 @@ public class SqlConnection {
 					else {
 						//Get ResultSet 
 						GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) gamaList.get(2);
-						int n=initValue.length();
+						int n=initValue.length(scope);
 						//int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
 			            if (n<0) return null;
 			            else {

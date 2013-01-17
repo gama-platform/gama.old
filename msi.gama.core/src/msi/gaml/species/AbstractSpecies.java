@@ -70,8 +70,19 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
+	public Iterable<IAgent> iterable(final IScope scope) {
+		return getPopulation(scope);
+	}
+
+	@Override
 	public IType type() {
 		return Types.get(IType.SPECIES);
+	}
+
+	protected IPopulation getPopulation(final IScope scope) {
+		IAgent a = scope.getAgentScope();
+		if ( a != null ) { return a.getPopulationFor(this); }
+		return null;
 	}
 
 	@Override
@@ -90,13 +101,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
-		IList<IAgent> agents;
-		try {
-			agents = scope.getAgentScope().getPopulationFor(this).getAgentsList();
-		} catch (NullPointerException npe) {
-			agents = GamaList.EMPTY_LIST;
-		}
-
+		IList<IAgent> agents = listValue(scope);
 		// Default behavior : Returns a map containing the names of agents as keys and the
 		// agents themselves as values
 		final GamaMap result = new GamaMap();

@@ -28,7 +28,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private final static Map<Set<Class>, List<IDescription>> ALL_ADDITIONS = new HashMap();
 	private final static Map<String, Class> SKILL_CLASSES = new HashMap();
 	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
-	// private final static Map<String, ISkillConstructor> ARCHI_CONSTRUCTORS = new HashMap();
 	private final static Map<Class, ISkill> SKILL_INSTANCES = new HashMap();
 	private final static Map<Class, List<IDescription>> ADDITIONS = new HashMap();
 	private final static Map<Class, List<TypeFieldExpression>> FIELDS = new HashMap();
@@ -38,6 +37,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static IAgentConstructor WORLD_AGENT_CONSTRUCTOR;
 	public static Class DEFAULT_AGENT_CLASS;
 	public static IAgentConstructor DEFAULT_AGENT_CONSTRUCTOR;
+	public static Set<String> DEFINITION_STATEMENTS = new HashSet();
+	public static Set<String> DECLARATION_STATEMENTS = new HashSet();
+	public static List<String> ALL_STATEMENTS = new ArrayList();
+
+	static {
+		DECLARATION_STATEMENTS.add(IKeyword.VAR);
+		DECLARATION_STATEMENTS.add(IKeyword.CONST);
+	}
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper,
 		final String ... skills) {
@@ -62,7 +69,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final int varKind, final Class ... wraps) {
 		Types.initType(keyword, typeInstance, (short) id, varKind, wraps);
 		ISymbolFactory f = DescriptionFactory.getModelFactory();
-		if (f != null) f.addNewKeywordToSymbolProto(keyword, varKind);
+		if ( f != null ) {
+			f.addNewKeywordToSymbolProto(keyword, varKind);
+		}
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
@@ -126,13 +135,17 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			}
 			// Special trick and workaround for compiling species rather than variables
 			keywords.remove(SPECIES);
+			DECLARATION_STATEMENTS.addAll(keywords);
 		}
 
 		SymbolProto md =
 			new SymbolProto(sequence, args, sKind, !scope, facets, omissible,
 				Collections.EMPTY_LIST, contextKeywords, contextKinds, remote, sc);
+		if ( md.isDefinition() && !ISymbolKind.Variable.KINDS.contains(sKind) ) {
+			DEFINITION_STATEMENTS.addAll(keywords);
+		}
 		DescriptionFactory.getModelFactory().registerSymbol(md, keywords);
-
+		ALL_STATEMENTS.addAll(keywords);
 	}
 
 	public void _iterator(final String[] keywords, final Class left, final Class right,

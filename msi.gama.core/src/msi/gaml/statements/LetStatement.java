@@ -25,8 +25,6 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -51,20 +49,12 @@ public class LetStatement extends SetStatement {
 
 	public LetStatement(final IDescription desc) {
 		super(desc);
-		if ( varExpr == null ) {
-			setName(IKeyword.LET + " unknown variable ");
-		} else {
-			setName(IKeyword.LET + " " + varExpr.literalValue());
-		}
-
+		setName(IKeyword.LET + getVarName());
 	}
 
 	@Override
-	protected Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		Object val = value.value(stack);
-		varExpr.setVal(stack, val, true);
-		stack.setStatus(ExecutionStatus.skipped);
-		return val;
+	protected boolean isLet() {
+		return true;
 	}
 
 }

@@ -174,7 +174,7 @@ public abstract class In implements IAgentFilter {
 		 */
 		@Override
 		public int getSize() {
-			return graph.length();
+			return graph.length(null); // VERIFY NULL SCOPE
 		}
 	}
 

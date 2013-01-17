@@ -40,7 +40,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	private static class Immutable extends GamaList {
 
 		@Override
-		public Object get(final Integer index) {
+		public Object get(final IScope scope, final Integer index) {
 			return null;
 		}
 
@@ -308,13 +308,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public E first() {
+	public E first(final IScope scope) {
 		if ( size() == 0 ) { return null; }
 		return get(0);
 	}
 
 	@Override
-	public E last() {
+	public E last(final IScope scope) {
 		if ( size() == 0 ) { return null; }
 		return get(size() - 1);
 	}
@@ -325,7 +325,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	// }
 
 	@Override
-	public E get(final Integer index) {
+	public E get(final IScope scope, final Integer index) {
 		return get(index.intValue());
 	}
 
@@ -370,7 +370,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return sum;
 		}
 		if ( allPoint ) {
-			ILocation sum = new GamaPoint(0, 0,0);
+			ILocation sum = new GamaPoint(0, 0, 0);
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				ILocation o = Cast.asPoint(scope, get(i));
 				if ( o != null ) {
@@ -457,7 +457,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public int length() {
+	public int length(final IScope scope) {
 		return size();
 	}
 
@@ -586,7 +586,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public IContainer<Integer, E> reverse() {
+	public IContainer<Integer, E> reverse(final IScope scope) {
 		GamaList list = clone();
 		Collections.reverse(list);
 		return list;
@@ -686,9 +686,34 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public E any() {
+	public E any(final IScope scope) {
 		if ( isEmpty() ) { return null; }
+
 		int i = GAMA.getRandom().between(0, size() - 1);
 		return get(i);
+	}
+
+	@Override
+	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
+		return contains(o);
+	}
+
+	@Override
+	public boolean isEmpty(final IScope scope) {
+		return isEmpty();
+	}
+
+	@Override
+	public Iterable<E> iterable(final IScope scope) {
+		return this;
+	}
+
+	@Override
+	public E getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		if ( indices == null || indices.isEmpty() ) { return null; }
+		return get(scope, Cast.asInt(scope, indices.get(0)));
+		// We do not consider the case where multiple indices are used. Maybe could be used in the
+		// future to return a list of values ?
 	}
 }

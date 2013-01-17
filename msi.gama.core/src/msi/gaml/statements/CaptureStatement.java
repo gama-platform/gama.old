@@ -79,18 +79,18 @@ public class CaptureStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IAgent macroAgent = stack.getAgentScope();
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		IAgent macroAgent = scope.getAgentScope();
 		ISpecies macroSpecies = macroAgent.getSpecies();
 
-		Object t = target.value(stack);
+		Object t = target.value(scope);
 		if ( t == null ) {
-			stack.setStatus(ExecutionStatus.failure);
+			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 
-		if ( t instanceof List ) {
-			for ( Object o : (List) t ) {
+		if ( t instanceof IContainer ) {
+			for ( Object o : ((IContainer) t).iterable(scope) ) {
 				if ( o instanceof IGamlAgent ) {
 					microAgents.add((IGamlAgent) o);
 				}
@@ -134,10 +134,10 @@ public class CaptureStatement extends AbstractStatementSequence {
 					microAgents.clear();
 
 					if ( !capturedAgents.isEmpty() ) {
-						stack.addVarWithValue(IKeyword.MYSELF, macroAgent);
+						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( sequence != null && !sequence.isEmpty() ) {
 							for ( IAgent capturedA : capturedAgents ) {
-								stack.execute(sequence, capturedA);
+								scope.execute(sequence, capturedA);
 							}
 						}
 					}
@@ -151,9 +151,9 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 					if ( microSpecies != null ) {
 						capturedAgent = macroAgent.captureMicroAgent(microSpecies, c);
-						stack.addVarWithValue(IKeyword.MYSELF, macroAgent);
+						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( !sequence.isEmpty() ) {
-							stack.execute(sequence, capturedAgent);
+							scope.execute(sequence, capturedAgent);
 						}
 
 						capturedAgents.add(capturedAgent);
@@ -165,7 +165,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		}
 
 		if ( returnString != null ) {
-			stack.setVarValue(returnString, capturedAgents);
+			scope.setVarValue(returnString, capturedAgents);
 		}
 
 		// throw GamaRuntimeException if necessary

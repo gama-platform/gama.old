@@ -20,7 +20,6 @@ package msi.gaml.statements;
 
 import java.io.*;
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -33,7 +32,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
@@ -46,7 +45,7 @@ import org.opengis.feature.simple.*;
 import org.opengis.feature.type.FeatureType;
 import com.vividsolutions.jts.geom.Geometry;
 
-@symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true,remote_context = true)
+@symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT })
 @facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.STRING_STR, optional = true),
@@ -54,10 +53,11 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = IKeyword.DATA, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true)}, omissible = IKeyword.DATA)
-public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs{
+	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) }, omissible = IKeyword.DATA)
+public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+
 	private Arguments init;
-	
+
 	public SaveStatement(final IDescription desc) {
 		super(desc);
 	}
@@ -130,10 +130,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		try {
 			if ( attributes != null ) {
 				for ( String e : attributes.keySet() ) {
-					specs
-						.append(',')
-						.append(e)
-						.append(':').append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
+					specs.append(',').append(e).append(':')
+						.append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
 				}
 			}
 			String featureTypeName = agents.get(0).getSpeciesName();
@@ -163,7 +161,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						for ( int i = 0; i < values.size() - 1; i++ ) {
 							fw.write(Cast.asString(scope, values.get(i)) + ",");
 						}
-						fw.write(Cast.asString(scope, values.last()) +
+						fw.write(Cast.asString(scope, values.last(scope)) +
 							System.getProperty("line.separator"));
 					} else {
 						fw.write(Cast.asString(scope, item.value(scope)) +
@@ -186,29 +184,28 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if ( obj instanceof Integer ) { return "Integer"; }
 		return "String";
 	}
-	
+
 	public String type(final IType gamaName) {
 		if ( gamaName.id() == IType.BOOL ) { return "Boolean"; }
 		if ( gamaName.id() == IType.FLOAT ) { return "Double"; }
 		if ( gamaName.id() == IType.INT ) { return "Integer"; }
 		return "String";
 	}
-	
+
 	private void computeInits(final IScope scope, final Map<String, String> values)
-			throws GamaRuntimeException {
-			if ( init == null ) { return; }
-			for ( Facet f : init.entrySet() ) {
-				if ( f != null ) {
-					values.put(f.getValue().toString(), f.getKey());
-				}
+		throws GamaRuntimeException {
+		if ( init == null ) { return; }
+		for ( Facet f : init.entrySet() ) {
+			if ( f != null ) {
+				values.put(f.getValue().toString(), f.getKey());
 			}
 		}
-	
-
+	}
 
 	public void saveShapeFile(final IScope scope, final String path,
 		final List<? extends IAgent> agents, final String featureTypeName, final String specs,
-		final Map<String, String> attributes) throws IOException, SchemaException, GamaRuntimeException {
+		final Map<String, String> attributes) throws IOException, SchemaException,
+		GamaRuntimeException {
 
 		ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);

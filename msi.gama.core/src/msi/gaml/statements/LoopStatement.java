@@ -217,11 +217,11 @@ public class LoopStatement extends AbstractStatementSequence {
 				!(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
 			boolean allSkipped = true;
 			Object result = null;
-			if ( list_ == null || list_.isEmpty() ) {
+			if ( list_ == null || list_.isEmpty(scope) ) {
 				scope.setStatus(ExecutionStatus.skipped);
 				return null;
 			}
-			for ( Object each : list_ ) {
+			for ( Object each : list_.iterable(scope) ) {
 				scope.push(LoopStatement.this);
 				scope.addVarWithValue(varName, each);
 				result = LoopStatement.super.privateExecuteIn(scope);

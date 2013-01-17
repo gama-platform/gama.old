@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.io.File;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -50,7 +50,7 @@ public class GamaBoolType extends GamaType<Boolean> {
 		if ( obj == null ) { return false; }
 		if ( obj instanceof Boolean ) { return (Boolean) obj; }
 		if ( obj instanceof IAgent ) { return !((IAgent) obj).dead(); }
-		if ( obj instanceof IContainer ) { return !((IContainer) obj).isEmpty(); }
+		if ( obj instanceof IContainer ) { return !((IContainer) obj).isEmpty(scope); }
 		if ( obj instanceof File ) { return ((File) obj).exists(); }
 		if ( obj instanceof Integer ) { return !((Integer) obj == 0); }
 		if ( obj instanceof Double ) { return !((Double) obj == 0f); }

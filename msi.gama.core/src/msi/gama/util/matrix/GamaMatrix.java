@@ -136,12 +136,25 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public T get(final ILocation p) {
+	public T get(final IScope scope, final ILocation p) {
 		double px = p.getX();
 		double py = p.getY();
 		if ( px > numCols - 1 || px < 0 ) { return null; }
 		if ( py > numRows - 1 || py < 0 ) { return null; }
 		return get((int) px, (int) py);
+	}
+
+	@Override
+	public T getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		if ( indices == null || indices.isEmpty() ) { return null; }
+		int size = indices.size();
+		if ( size == 1 ) { return get(scope, Cast.asPoint(scope, indices.get(0))); }
+		int px = Cast.asInt(scope, indices.get(0));
+		int py = Cast.asInt(scope, indices.get(1));
+		if ( px > numCols - 1 || px < 0 ) { return null; }
+		if ( py > numRows - 1 || py < 0 ) { return null; }
+		return get(px, py);
 	}
 
 	@Override
@@ -267,7 +280,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#contains(java.lang.Object)
 	 */
 	@Override
-	public final boolean contains(final Object o) throws GamaRuntimeException {
+	public final boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
 		return _contains(o);
 	}
 
@@ -277,7 +290,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public final T first() throws GamaRuntimeException {
+	public final T first(final IScope scope) throws GamaRuntimeException {
 		return (T) _first();
 	}
 
@@ -287,7 +300,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#last()
 	 */
 	@Override
-	public final T last() throws GamaRuntimeException {
+	public final T last(final IScope scope) throws GamaRuntimeException {
 		return (T) _last();
 	}
 
@@ -297,7 +310,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#length()
 	 */
 	@Override
-	public final int length() {
+	public final int length(final IScope scope) {
 		return _length();
 	}
 
@@ -347,7 +360,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#isEmpty()
 	 */
 	@Override
-	public final boolean isEmpty() {
+	public final boolean isEmpty(final IScope scope) {
 		return _isEmpty();
 	}
 
@@ -357,7 +370,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public final IContainer<ILocation, T> reverse() throws GamaRuntimeException {
+	public final IContainer<ILocation, T> reverse(final IScope scope) throws GamaRuntimeException {
 		return _reverse();
 	}
 
@@ -458,6 +471,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return listValue(null).iterator();
 	}
 
+	@Override
+	public Iterable<T> iterable(final IScope scope) {
+		return listValue(scope);
+	}
+
 	/**
 	 * @see msi.gama.interfaces.IMatrix#getRowsList()
 	 */
@@ -527,7 +545,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public T any() {
+	public T any(final IScope scope) {
 		int x = GAMA.getRandom().between(0, numCols - 1);
 		int y = GAMA.getRandom().between(0, numRows - 1);
 		return this.get(x, y);

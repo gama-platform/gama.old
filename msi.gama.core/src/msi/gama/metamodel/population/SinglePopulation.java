@@ -14,7 +14,7 @@ import msi.gaml.types.IType;
 public class SinglePopulation extends AbstractPopulation {
 
 	protected IList<IAgent> agents = new GamaList();
-	
+
 	public SinglePopulation(final IAgent host, final ISpecies species) {
 		super(host, species);
 	}
@@ -45,40 +45,40 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.util.IContainer#get(java.lang.Object)
 	 */
 	@Override
-	public IAgent get(final Integer index) throws GamaRuntimeException {
-		return agents.get(index);
+	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
+		return agents.get(scope, index);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#contains(java.lang.Object)
 	 */
 	@Override
-	public boolean contains(final Object o) throws GamaRuntimeException {
-		return agents.contains(o);
+	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
+		return agents.contains(scope, o);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#first()
 	 */
 	@Override
-	public IAgent first() throws GamaRuntimeException {
-		return agents.first();
+	public IAgent first(final IScope scope) throws GamaRuntimeException {
+		return agents.first(scope);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#last()
 	 */
 	@Override
-	public IAgent last() throws GamaRuntimeException {
-		return agents.last();
+	public IAgent last(final IScope scope) throws GamaRuntimeException {
+		return agents.last(scope);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#length()
 	 */
 	@Override
-	public int length() {
-		return agents.length();
+	public int length(final IScope scope) {
+		return agents.length(scope);
 	}
 
 	/**
@@ -117,24 +117,24 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.util.IContainer#isEmpty()
 	 */
 	@Override
-	public boolean isEmpty() {
-		return agents.isEmpty();
+	public boolean isEmpty(final IScope scope) {
+		return agents.isEmpty(scope);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#reverse()
 	 */
 	@Override
-	public IContainer<Integer, IAgent> reverse() throws GamaRuntimeException {
-		return agents.reverse();
+	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
+		return agents.reverse(scope);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#any()
 	 */
 	@Override
-	public IAgent any() {
-		return agents.any();
+	public IAgent any(final IScope scope) {
+		return agents.any(scope);
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public IValue copy() throws GamaRuntimeException {
-		return null;
+		return listValue(null);
 	}
 
 	/**
@@ -327,6 +327,11 @@ public class SinglePopulation extends AbstractPopulation {
 	}
 
 	@Override
+	public Iterable<IAgent> iterable(final IScope scope) {
+		return agents;
+	}
+
+	@Override
 	public boolean removeFirst(final IAgent a) {
 		agents.remove(a);
 		return super.removeFirst(a);
@@ -335,6 +340,12 @@ public class SinglePopulation extends AbstractPopulation {
 	@Override
 	public GamaList<IAgent> getAgentsList() {
 		return new GamaList(agents);
+	}
+
+	@Override
+	public IAgent getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		return (IAgent) agents.getFromIndicesList(scope, indices);
 	}
 
 }

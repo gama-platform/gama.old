@@ -128,7 +128,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope,
 		final IContainer<?, IShape> geometries) {
-		int number = geometries.length();
+		int number = geometries.length(scope);
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
@@ -291,15 +291,16 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 			exp = species.getFacet(IKeyword.HEIGHT);
 			int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
 			exp = species.getFacet(IKeyword.TORUS);
-			 boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+			boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 			boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-			topology = new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
+			topology =
+				new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
 		} else {
 			IExpression exp = species.getFacet(IKeyword.TORUS);
-			 boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
-			topology = new ContinuousTopology(scope, this.getHost(),this.getHost().isTorus() );
+			boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+			topology = new ContinuousTopology(scope, this.getHost(), this.getHost().isTorus());
 		}
 	}
 
@@ -355,7 +356,7 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 
 	@Override
 	public Object removeAt(final Integer index) throws GamaRuntimeException {
-		fireAgentRemoved(get(index));
+		fireAgentRemoved(get(null, index));
 		return null;
 	}
 

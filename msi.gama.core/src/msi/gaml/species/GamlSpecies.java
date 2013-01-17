@@ -18,7 +18,11 @@
  */
 package msi.gaml.species;
 
+import java.util.Iterator;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -27,6 +31,10 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.*;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -109,5 +117,166 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public IExpression getSchedule() {
 		return this.getFacet(IKeyword.SCHEDULES);
+	}
+
+	@Override
+	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
+		return getPopulation(scope).get(scope, index);
+	}
+
+	@Override
+	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
+		return getPopulation(scope).contains(scope, o);
+	}
+
+	@Override
+	public IAgent first(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).first(scope);
+	}
+
+	@Override
+	public IAgent last(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).last(scope);
+	}
+
+	@Override
+	public int length(final IScope scope) {
+		return getPopulation(scope).length(scope);
+	}
+
+	@Override
+	public IAgent max(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).max(scope);
+	}
+
+	@Override
+	public IAgent min(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).min(scope);
+	}
+
+	@Override
+	public Object product(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).product(scope);
+	}
+
+	@Override
+	public Object sum(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).sum(scope);
+	}
+
+	@Override
+	public boolean isEmpty(final IScope scope) {
+		return getPopulation(scope).isEmpty(scope);
+	}
+
+	@Override
+	public IContainer<Integer, IAgent> reverse(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).reverse(scope);
+	}
+
+	@Override
+	public IAgent any(final IScope scope) {
+		return getPopulation(scope).any(scope);
+	}
+
+	@Override
+	public boolean isFixedLength() {
+		return true;
+	}
+
+	@Override
+	public boolean checkIndex(final Object index) {
+		return false;
+	}
+
+	@Override
+	public boolean checkValue(final Object value) {
+		return value instanceof IAgent;
+	}
+
+	@Override
+	public boolean checkBounds(final Integer index, final boolean forAdding) {
+		return false;
+	}
+
+	@Override
+	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void addAll(final Integer index, final IContainer value, final Object param)
+		throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void add(final Integer index, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public boolean removeFirst(final IAgent value) throws GamaRuntimeException {
+		return false;
+		// NOT ALLOWED
+	}
+
+	@Override
+	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
+		return false;
+		// NOT ALLOWED
+	}
+
+	@Override
+	public Object removeAt(final Integer index) throws GamaRuntimeException {
+		return null;
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void putAll(final IAgent value, final Object param) throws GamaRuntimeException {}
+
+	@Override
+	public void put(final Integer index, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void clear() throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
+		return getPopulation(scope).matrixValue(scope);
+	}
+
+	@Override
+	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize)
+		throws GamaRuntimeException {
+		return getPopulation(scope).matrixValue(scope, preferredSize);
+	}
+
+	@Override
+	public Iterator<IAgent> iterator() {
+		// FIX ME: should not have to get the current scope like this
+		ISimulation sim = GAMA.getFrontmostSimulation();
+		if ( sim == null ) { return GamaList.EMPTY_LIST.iterator(); }
+		IScope scope = sim.getExecutionScope();
+		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
+		return scope.getWorldScope().getPopulationFor(this).iterator();
+	}
+
+	@Override
+	public IAgent getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
 	}
 }

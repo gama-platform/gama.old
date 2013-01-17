@@ -76,15 +76,15 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		Object t = target.value(stack);
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		Object t = target.value(scope);
 		if ( t == null ) {
-			stack.setStatus(ExecutionStatus.failure);
+			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 
-		if ( t instanceof List ) {
-			for ( Object o : (List) t ) {
+		if ( t instanceof IContainer ) {
+			for ( Object o : ((IContainer) t).iterable(scope) ) {
 				if ( o instanceof IAgent ) {
 					microAgents.add((IAgent) o);
 				}
@@ -93,7 +93,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			microAgents.add((IAgent) t);
 		}
 
-		IAgent macroAgent = stack.getAgentScope();
+		IAgent macroAgent = scope.getAgentScope();
 		List<IAgent> removedAgents = new GamaList<IAgent>();
 
 		for ( IAgent m : microAgents ) {
@@ -108,10 +108,10 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 		List<IAgent> releasedMicroAgents = GamaList.EMPTY_LIST;
 		if ( asExpr != null && inExpr != null ) {
-			targetAgent = (IAgent) inExpr.value(stack);
+			targetAgent = (IAgent) inExpr.value(scope);
 
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
-				microSpecies = (ISpecies) stack.evaluate(asExpr, targetAgent);
+				microSpecies = (ISpecies) scope.evaluate(asExpr, targetAgent);
 
 				releasedMicroAgents = targetAgent.captureMicroAgents(microSpecies, microAgents);
 			}
@@ -132,7 +132,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			}
 
 		} else if ( asExpr == null && inExpr != null ) {
-			targetAgent = (IAgent) inExpr.value(stack);
+			targetAgent = (IAgent) inExpr.value(scope);
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
 				releasedMicroAgents = new GamaList<IAgent>();
 				for ( IAgent m : microAgents ) {
@@ -177,17 +177,17 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			microAgents.clear();
 
 			if ( !releasedMicroAgents.isEmpty() ) {
-				stack.addVarWithValue(IKeyword.MYSELF, macroAgent);
+				scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 				if ( !sequence.isEmpty() ) {
 					for ( IAgent releasedA : releasedMicroAgents ) {
-						stack.execute(sequence, releasedA);
+						scope.execute(sequence, releasedA);
 					}
 				}
 			}
 		}
 
 		if ( returnString != null ) {
-			stack.setVarValue(returnString, releasedMicroAgents);
+			scope.setVarValue(returnString, releasedMicroAgents);
 		}
 
 		return null;

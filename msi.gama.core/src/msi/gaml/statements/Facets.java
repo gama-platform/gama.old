@@ -211,7 +211,7 @@ public class Facets {
 		if ( i > -1 ) {
 			IExpressionDescription previous = facets[i].value;
 			facets[i].value = expr;
-			if ( previous.getTarget() != null && expr.getTarget() == null ) {
+			if ( previous != null && previous.getTarget() != null && expr.getTarget() == null ) {
 				expr.setTarget(previous.getTarget());
 			}
 			return expr;

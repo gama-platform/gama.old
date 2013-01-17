@@ -77,11 +77,7 @@ public abstract class Spatial {
 		}
 
 		@operator("cone")
-		@doc(value = "A cone geometry which min and max angles are given by the operands.", 
-		     special_cases = { "returns nil if the operand is nil." }, 
-		     comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", 
-		     examples = { "cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle is 45." }, 
-		     see = {
+		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
 			"around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
 		public static IShape opCone(final IScope scope, final GamaPoint p) {
@@ -141,7 +137,7 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
-		
+
 		@operator("hexagon")
 		@doc(value = "A hexagon geometry which the given with and height", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon({10,5}) --: returns a geometry as a hexagon of width of 10 and height of 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
@@ -152,8 +148,8 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			final Double width = size.x;
 			final Double height = size.y;
-			if ( width <= 0 || height <= 0) { return new GamaShape(location); }
-			return GamaGeometryType.buildHexagon(width, height,location);
+			if ( width <= 0 || height <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(width, height, location);
 		}
 
 		@operator(value = "polygon", expected_content_type = { IType.POINT })
@@ -182,14 +178,14 @@ public abstract class Spatial {
 			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 			"triangle" })
 		public static IShape opPolyline(final IList<GamaPoint> points) {
-	
+
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
 			if ( points.size() == 2 ) { return GamaGeometryType.buildLine(points.get(0),
 				points.get(1)); }
 			return GamaGeometryType.buildPolyline(points);
 		}
- 
+
 		@operator({ "link" })
 		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
 			"if the operand is nil, link returns a point {0,0}",
@@ -340,7 +336,6 @@ public abstract class Spatial {
 			return g;
 		}
 
-
 		@operator("masked_by")
 		@doc(value = "A geometry representing the part of the right operand visible from the point of view of the agent using the operator while considering the obstacles defined by the left operand", examples = { "perception_geom masked_by obstacle_species --: returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species." })
 		public static IShape opMaskedBy(final IScope scope, final IShape source,
@@ -357,7 +352,7 @@ public abstract class Spatial {
 		public static IShape opMaskedBy(final IScope scope, final IShape source,
 			final GamaMap parameters) {
 			IAgent a = scope.getAgentScope();
-			
+
 			GamaList<IAgent> obstacles = (GamaList<IAgent>) parameters.get("obstacles");
 			Double precision = (Double) parameters.get("pecision");
 			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -375,7 +370,9 @@ public abstract class Spatial {
 
 		private static IShape maskedBy(final IShape source, final IList<IAgent> obstacles,
 			final ILocation location, Double precision) {
-			if (precision == null) {precision = 120.0;}
+			if ( precision == null ) {
+				precision = 120.0;
+			}
 			Geometry visiblePercept =
 				GeometryUtils.getFactory().createGeometry(source.getInnerGeometry());
 			if ( obstacles != null && !obstacles.isEmpty() ) {
@@ -539,19 +536,17 @@ public abstract class Spatial {
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
-
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters" }, examples = { "shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment" })
 		public static IShape opBuffer(final IShape g, final GamaMap parameters) {
 			Double distance = (Double) parameters.get("distance");
 			Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
 			Integer endCapStyle = (Integer) parameters.get("endCapStyle");
-			if (endCapStyle == null)
-				return new GamaShape(g.getInnerGeometry().buffer(distance, quadrantSegments));
+			if ( endCapStyle == null ) { return new GamaShape(g.getInnerGeometry().buffer(distance,
+				quadrantSegments)); }
 			return new GamaShape(g.getInnerGeometry().buffer(distance, quadrantSegments,
 				endCapStyle));
 		}
-
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
@@ -668,22 +663,21 @@ public abstract class Spatial {
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primTriangulate(final IShape g) {
-			return GeometryUtils.triangulation(g.getInnerGeometry());
+		public static GamaList<IShape> primTriangulate(final IScope scope, final IShape g) {
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
-		
+
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primTriangulate(final GamaList<IShape> ls) {
-			return GeometryUtils.triangulation(ls);
+		public static GamaList<IShape> primTriangulate(final IScope scope, final IList<IShape> ls) {
+			return GeometryUtils.triangulation(scope, ls);
 		}
-		
+
 		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
 		public static GamaList<IShape> primHexagon(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
 		}
-
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { "self as_grid {10, 5} --: returns a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator." })
@@ -698,7 +692,7 @@ public abstract class Spatial {
 		public static IMatrix opAs4Grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
-			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false,true);
+			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false, true);
 		}
 
 		@operator(value = "split_lines", content_type = IType.GEOMETRY)
@@ -780,7 +774,7 @@ public abstract class Spatial {
 			"path_to" })
 		public static Double opDistanceBetween(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) {
-			int size = geometries.length();
+			int size = geometries.length(scope);
 			if ( size == 0 || size == 1 ) { return 0d; }
 			IShape previous = null;
 			Double distance = 0d;
@@ -800,10 +794,10 @@ public abstract class Spatial {
 			"towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
 		public static Integer opDirectionBetween(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) throws GamaRuntimeException {
-			int size = geometries.length();
+			int size = geometries.length(scope);
 			if ( size == 0 || size == 1 ) { return 0; }
-			IShape g1 = geometries.first();
-			IShape g2 = geometries.last();
+			IShape g1 = geometries.first(scope);
+			IShape g2 = geometries.last(scope);
 			return t.directionInDegreesTo(g1, g2);
 		}
 
@@ -816,12 +810,12 @@ public abstract class Spatial {
 			// TODO Assumes that all elements in nodes are vertices of the graph... Should be
 			// checked
 
-			if ( nodes.isEmpty() ) { return null; }
-			int n = nodes.length();
-			IShape source = nodes.first();
+			if ( nodes.isEmpty(scope) ) { return null; }
+			int n = nodes.length(scope);
+			IShape source = nodes.first(scope);
 			if ( n == 1 ) { return new GamaPath(scope.getAgentScope().getTopology(), source,
 				source, new GamaList()); }
-			IShape target = nodes.last();
+			IShape target = nodes.last(scope);
 			if ( n == 2 ) { return graph.pathBetween(source, target); }
 			GamaList<IShape> edges = new GamaList();
 			IShape previous = null;
@@ -875,7 +869,7 @@ public abstract class Spatial {
 
 	public static abstract class Properties {
 
-		@operator(value = {"disjoint_from", "<--:" }, priority = IPriority.COMPARATOR)
+		@operator(value = { "disjoint_from", "<--:" }, priority = IPriority.COMPARATOR)
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns true.",
 			"if one operand is a point, returns false if the point is included in the geometry." }, examples = {
@@ -1005,6 +999,7 @@ public abstract class Spatial {
 			if ( g1 == null || p == null ) { return false; }
 			return pl.intersects(p, g1.getInnerGeometry());
 		}
+
 		@operator("covers")
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covers square(2) --: true." }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
@@ -1012,6 +1007,7 @@ public abstract class Spatial {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().covers(g2.getInnerGeometry());
 		}
+
 		@operator("covered_by")
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is covered by the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covered_by square(2) --: false." }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
@@ -1020,7 +1016,6 @@ public abstract class Spatial {
 			return g1.getInnerGeometry().coveredBy(g2.getInnerGeometry());
 		}
 
-		
 	}
 
 	public static abstract class Punctal {
@@ -1032,22 +1027,22 @@ public abstract class Spatial {
 			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
 		}
-		
+
 		@operator(value = { "points_exterior_ring" })
 		@doc(value = "A list of points of the exterior ring of the operand-geometry distant from each other to the float right-operand .", examples = { " square(5) points_exterior_ring(2) --: a list of points belonging to the exterior ring of the square distant from each other of 2." }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
-		
-		public static GamaList primLocExteriorRing(IShape geom, Double distance) {
-            GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
-            if (geom.getInnerGeometry() instanceof GeometryCollection)
-            {
-                    for (int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++) {
-                            locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry().getGeometryN(i), distance));
-                    }
-            } else 
-                    locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry(), distance));
-            return locs;
-    }
+		public static GamaList primLocExteriorRing(final IShape geom, final Double distance) {
+			GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
+				for ( int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++ ) {
+					locs.addAll(GeometryUtils.locExteriorRing(
+						geom.getInnerGeometry().getGeometryN(i), distance));
+				}
+			} else {
+				locs.addAll(GeometryUtils.locExteriorRing(geom.getInnerGeometry(), distance));
+			}
+			return locs;
+		}
 
 		@operator(value = { "points_at" }, content_type = IType.POINT)
 		@doc(value = "A list of left-operand number of points located at a the right-operand distance to the agent location.", examples = { "3 points_at(20.0) --: returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location" }, see = {
@@ -1081,8 +1076,6 @@ public abstract class Spatial {
 				DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
 			return GamaList.with(new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
-		
-		
 
 		@operator("farthest_point_to")
 		@doc(value = "the farthest point of the left-operand to the left-point.", examples = { "geom farthest_point_to(pt) --: the closest point of geom to pt" }, see = {
@@ -1193,8 +1186,7 @@ public abstract class Spatial {
 			ITopology t = agent.getTopology();
 			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
 				In.list(scope, list)); }
-			if (t.isTorus()){ return t.getNeighboursOf(agent, distance,
-					In.list(scope, list)); }
+			if ( t.isTorus() ) { return t.getNeighboursOf(agent, distance, In.list(scope, list)); }
 			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.list(scope, list),
 				false);
 		}
@@ -1210,8 +1202,8 @@ public abstract class Spatial {
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
 			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
 				agent.getLocation(), distance, In.population(pop)); }
-			if ( agent.getTopology().isTorus()){ return agent.getTopology().getNeighboursOf(
-					agent, distance, In.population(pop)); }
+			if ( agent.getTopology().isTorus() ) { return agent.getTopology().getNeighboursOf(
+				agent, distance, In.population(pop)); }
 			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
 				In.population(pop), false);
 		}
@@ -1352,8 +1344,8 @@ public abstract class Spatial {
 		@operator(value = { "simple_clustering_by_distance" }, content_type = IType.LIST)
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_envelope_distance" })
 		public static IList simpleClusteringByDistance(final IScope scope,
-			final IList<IAgent> agents, final Double distance) {
-			int nb = agents.size();
+			final IContainer<?, IAgent> agents, final Double distance) {
+			int nb = agents.length(scope);
 
 			if ( nb == 0 ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -1364,7 +1356,7 @@ public abstract class Spatial {
 
 			IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
 			Map<Set<IList<IAgent>>, Double> distances = new HashMap<Set<IList<IAgent>>, Double>();
-			for ( IAgent ag : agents ) {
+			for ( IAgent ag : agents.iterable(scope) ) {
 				IList<IAgent> group = new GamaList<IAgent>();
 				group.add(ag);
 				groups.add(group);
@@ -1442,8 +1434,8 @@ public abstract class Spatial {
 		@doc(value = "A list of agent groups clustered by distance (considering the agent envelop) considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_distance" })
 		// CHANGER LE NOM !!!
 		public static IList simpleClusteringByEnvelopeDistance(final IScope scope,
-			final IList<IAgent> agents, final Double distance) {
-			int nb = agents.size();
+			final IContainer<?, IAgent> agents, final Double distance) {
+			int nb = agents.length(scope);
 
 			if ( nb == 0 ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -1454,7 +1446,7 @@ public abstract class Spatial {
 
 			IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
 			Map<Set<IList<IAgent>>, Double> distances = new HashMap<Set<IList<IAgent>>, Double>();
-			for ( IAgent ag : agents ) {
+			for ( IAgent ag : agents.iterable(scope) ) {
 				IList<IAgent> group = new GamaList<IAgent>();
 				group.add(ag);
 				groups.add(group);
@@ -1530,38 +1522,29 @@ public abstract class Spatial {
 		}
 
 	}
-	
 
 	public static abstract class ThreeD {
-		@operator(value = { "add_z" } )
-		@doc(value = "add_z", 
-		comment = "Return a geometry with a z value" +
-				"The add_z operator set the z value of the whole shape." +
-				"For each point of the cell the same z value is set.", 
-		examples = { "set shape <- shape add_z rnd(100);" }, 
-		see = { "add_z_pt" })
+
+		@operator(value = { "add_z" })
+		@doc(value = "add_z", comment = "Return a geometry with a z value"
+			+ "The add_z operator set the z value of the whole shape."
+			+ "For each point of the cell the same z value is set.", examples = { "set shape <- shape add_z rnd(100);" }, see = { "add_z_pt" })
 		public static IShape opAddZGeom(final IShape g, final Double z) {
 			Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
 			((GamaPoint) g.getLocation()).z = z;
-			for (int i = 0; i < coordinates.length; i++) {
+			for ( int i = 0; i < coordinates.length; i++ ) {
 				coordinates[i].z = z;
 			}
 			return g;
 		}
-		
-		@operator(value = { "add_z_pt" } )
-		@doc(value = "add_z_pt", 
-		comment = "Return a geometry with a z value", 
-		examples = { "loop i from: 0 to: length(shape.points) - 1{" +
-				"set shape <- shape add_z_pt {i,valZ};" +
-				"}" }, 
-		see = { "add_z" })
+
+		@operator(value = { "add_z_pt" })
+		@doc(value = "add_z_pt", comment = "Return a geometry with a z value", examples = { "loop i from: 0 to: length(shape.points) - 1{"
+			+ "set shape <- shape add_z_pt {i,valZ};" + "}" }, see = { "add_z" })
 		public static IShape opAddZPoint(final IShape geom, final GamaPoint data) {
 			geom.getInnerGeometry().getCoordinates()[(int) data.x].z = data.y;
 			return geom;
 		}
 	}
-	
-	
 
 }

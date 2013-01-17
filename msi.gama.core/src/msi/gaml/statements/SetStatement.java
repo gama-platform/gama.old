@@ -53,15 +53,19 @@ public class SetStatement extends AbstractStatement {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		varExpr = (IVarExpression) getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
-		setName("set " + varExpr == null ? "" : varExpr.toGaml());
+		setName(IKeyword.SET + getVarName());
 	}
 
 	@Override
 	protected Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
 		Object val = value.value(stack);
-		varExpr.setVal(stack, val, false);
+		varExpr.setVal(stack, val, isLet());
 		stack.setStatus(ExecutionStatus.skipped);
 		return val;
+	}
+
+	protected boolean isLet() {
+		return false;
 	}
 
 	public String getVarName() {

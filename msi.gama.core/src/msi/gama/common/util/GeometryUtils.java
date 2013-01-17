@@ -26,14 +26,9 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
 import msi.gaml.types.GamaGeometryType;
-
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.ConstraintVertex;
-import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
-import com.vividsolutions.jts.triangulate.Segment;
+import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.triangulate.*;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
@@ -95,11 +90,11 @@ public class GeometryUtils {
 			Coordinate coord2 = new Coordinate(x, yMax);
 			Coordinate[] coords = { coord1, coord2 };
 			Geometry line = getFactory().createLineString(coords);
-			 try {
-				 line = line.intersection(geom);
-			 } catch (TopologyException e) {
-				 line = line.intersection(geom.buffer(0.1));
-			 }
+			try {
+				line = line.intersection(geom);
+			} catch (TopologyException e) {
+				line = line.intersection(geom.buffer(0.1));
+			}
 			return pointInGeom(line, rand);
 		}
 		if ( geom instanceof GeometryCollection ) { return pointInGeom(
@@ -172,40 +167,52 @@ public class GeometryUtils {
 		}
 		return pts;
 	}
-	
-	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
+
+	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows,
+		final int nbColumns) {
 		double widthEnv = geom.getEnvelope().getWidth();
 		double heightEnv = geom.getEnvelope().getHeight();
 		double xmin = geom.getEnvelope().getMinX();
 		double ymin = geom.getEnvelope().getMinY();
-		double widthHex = widthEnv/ (nbColumns * 0.75 + 0.25);
-		double heightHex = heightEnv/ nbRows;
+		double widthHex = widthEnv / (nbColumns * 0.75 + 0.25);
+		double heightHex = heightEnv / nbRows;
 		GamaList<IShape> geoms = new GamaList<IShape>();
-		xmin += widthHex/2.0;
-		ymin += heightHex/2.0;
-		for(int l=0;l<nbRows;l++){
-			for(int c=0;c<nbColumns;c = c +2){
-				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex* 0.75 ,ymin + l * heightHex)); 
-				//GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size, ymin + 2* size*val * l); 
-				if (geom.covers(poly))
+		xmin += widthHex / 2.0;
+		ymin += heightHex / 2.0;
+		for ( int l = 0; l < nbRows; l++ ) {
+			for ( int c = 0; c < nbColumns; c = c + 2 ) {
+				GamaShape poly =
+					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(
+						xmin + c * widthHex * 0.75, ymin + l * heightHex));
+				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
+				// * size, ymin + 2* size*val * l);
+				if ( geom.covers(poly) ) {
 					geoms.add(poly);
+				}
 			}
 		}
-		for(int l=0;l<nbRows;l++){
-			for(int c=1;c<nbColumns;c = c +2){
-				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex* 0.75 ,ymin + (l+0.5) * heightHex)); 
-				//GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size, ymin + 2* size*val * l); 
-				if (geom.covers(poly))
+		for ( int l = 0; l < nbRows; l++ ) {
+			for ( int c = 1; c < nbColumns; c = c + 2 ) {
+				GamaShape poly =
+					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(
+						xmin + c * widthHex * 0.75, ymin + (l + 0.5) * heightHex));
+				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
+				// * size, ymin + 2* size*val * l);
+				if ( geom.covers(poly) ) {
 					geoms.add(poly);
+				}
 			}
 		}
-		/*for(int l=0;l<nbColumns;l++){
-			for(int c=0;c<nbRows;c = c+2){
-				GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size,  xmin + ((c +1) * 1.5) * size, ymin + 2* size*val * (l+0.5)); 
-				if (geom.covers(poly))
-					geoms.add(poly);
-			}
-		}*/
+		/*
+		 * for(int l=0;l<nbColumns;l++){
+		 * for(int c=0;c<nbRows;c = c+2){
+		 * GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + ((c +1) * 1.5) *
+		 * size, ymin + 2* size*val * (l+0.5));
+		 * if (geom.covers(poly))
+		 * geoms.add(poly);
+		 * }
+		 * }
+		 */
 		return geoms;
 	}
 
@@ -236,11 +243,11 @@ public class GeometryUtils {
 					y += size;
 					try {
 						Geometry g = null;
-						 try {
-							 g = square.intersection(geom);
-						 } catch (AssertionFailedException e) {
-							 g = square.intersection(geom.buffer(0.01));
-						 }
+						try {
+							g = square.intersection(geom);
+						} catch (AssertionFailedException e) {
+							g = square.intersection(geom.buffer(0.01));
+						}
 						// geoms.add(g);
 						if ( complex ) {
 							geoms.add(g);
@@ -263,38 +270,38 @@ public class GeometryUtils {
 		}
 		return geoms;
 	}
-	
-	public static GamaList<IShape> triangulation(final GamaList<IShape> lines) {
+
+	public static GamaList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
 		GamaList<IShape> geoms = new GamaList<IShape>();
-		ConformingDelaunayTriangulationBuilder dtb =
-				new ConformingDelaunayTriangulationBuilder();
-			
-			Geometry points = GamaGeometryType.geometriesToGeometry(lines).getInnerGeometry();
-			double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
-			
-			dtb.setSites(points);
-			dtb.setConstraints(points);
-			dtb.setTolerance(sizeTol);
-			GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
-			int nb = tri.getNumGeometries();
-			for ( int i = 0; i < nb; i++ ) {
-				Geometry gg = tri.getGeometryN(i);
-				geoms.add(new GamaShape(gg));
-			}
-			return geoms;
+		ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+
+		Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
+		double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
+
+		dtb.setSites(points);
+		dtb.setConstraints(points);
+		dtb.setTolerance(sizeTol);
+		GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
+		int nb = tri.getNumGeometries();
+		for ( int i = 0; i < nb; i++ ) {
+			Geometry gg = tri.getGeometryN(i);
+			geoms.add(new GamaShape(gg));
+		}
+		return geoms;
 	}
 
-	public static GamaList<IShape> triangulation(final Geometry geom) {
+	public static GamaList<IShape> triangulation(final IScope scope, final Geometry geom) {
 		GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
 			GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
-				geoms.addAll(triangulation(gc.getGeometryN(i)));
+				geoms.addAll(triangulation(scope, gc.getGeometryN(i)));
 			}
 		} else if ( geom instanceof Polygon ) {
 			Polygon polygon = (Polygon) geom;
 			double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
-			ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+			ConformingDelaunayTriangulationBuilder dtb =
+				new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {
 				dtb.setSites(polygon);
@@ -308,28 +315,28 @@ public class GeometryUtils {
 			int nb = tri.getNumGeometries();
 			for ( int i = 0; i < nb; i++ ) {
 				Geometry gg = tri.getGeometryN(i);
-				if ( (pg.covers(gg))) {
+				if ( pg.covers(gg) ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}
 		}
 		return geoms;
 	}
-	
+
 	public class contraintVertexFactory3D implements ConstraintVertexFactory {
 
 		@Override
-		public ConstraintVertex createVertex(Coordinate p, Segment constraintSeg) {
+		public ConstraintVertex createVertex(final Coordinate p, final Segment constraintSeg) {
 			Coordinate c = new Coordinate(p);
 			c.z = p.z;
 			return new ConstraintVertex(c);
 		}
-		
+
 	}
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
 		IList<LineString> network = new GamaList<LineString>();
-		IList polys = new GamaList(GeometryUtils.triangulation(geom));
+		IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
 		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
 		Collection<GamaShape> nodes = graph.vertexSet();
@@ -441,54 +448,49 @@ public class GeometryUtils {
 
 		return POLYGON;
 	}
-	
-	public static GamaList<GamaPoint> locExteriorRing(Geometry geom, Double distance) {
+
+	public static GamaList<GamaPoint> locExteriorRing(final Geometry geom, final Double distance) {
 		GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
-		if (geom instanceof Point)
-		{
+		if ( geom instanceof Point ) {
 			locs.add(new GamaPoint(geom.getCoordinate()));
-		}
-		else if (geom instanceof LineString)
-		{
+		} else if ( geom instanceof LineString ) {
 			double dist_cur = 0;
 			int nbSp = geom.getNumPoints();
 			Coordinate[] coordsSimp = geom.getCoordinates();
 			boolean same = false;
-			double x_t = 0,y_t=0,x_s=0,y_s=0;
-			for ( int i = 0; i < nbSp-1; i++ ) {
-				if (!same) {
+			double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
+			for ( int i = 0; i < nbSp - 1; i++ ) {
+				if ( !same ) {
 					Coordinate s = coordsSimp[i];
-					Coordinate t = coordsSimp[i+1];
+					Coordinate t = coordsSimp[i + 1];
 					x_t = t.x;
 					y_t = t.y;
 					x_s = s.x;
 					y_s = s.y;
 				} else {
-					i = i-1;
+					i = i - 1;
 				}
 				double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
 				if ( dist_cur < dist ) {
 					double ratio = dist_cur / dist;
 					x_s = x_s + ratio * (x_t - x_s);
 					y_s = y_s + ratio * (y_t - y_s);
-					locs.add(new GamaPoint(x_s,y_s));
+					locs.add(new GamaPoint(x_s, y_s));
 					dist_cur = distance;
-					same=true;
+					same = true;
 				} else if ( dist_cur > dist ) {
 					dist_cur = dist_cur - dist;
-					same=false;
+					same = false;
 				} else {
-					locs.add(new GamaPoint(x_t,y_t));
+					locs.add(new GamaPoint(x_t, y_t));
 					dist_cur = distance;
-					same=false;
+					same = false;
 				}
 			}
-		}
-		else if (geom instanceof Polygon)
-		{
-			Polygon poly = (Polygon)geom;
+		} else if ( geom instanceof Polygon ) {
+			Polygon poly = (Polygon) geom;
 			locs.addAll(locExteriorRing(poly.getExteriorRing(), distance));
-			for (int i = 0; i < poly.getNumInteriorRing(); i++) {
+			for ( int i = 0; i < poly.getNumInteriorRing(); i++ ) {
 				locs.addAll(locExteriorRing(poly.getInteriorRingN(i), distance));
 			}
 		}

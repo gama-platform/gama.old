@@ -32,14 +32,12 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.file.GamaFile;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.geometry.jts.JTS;
@@ -67,14 +65,14 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	private ISpatialIndex quadTree;
 
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
-	
+
 	public ModelEnvironment(final IDescription desc) {
 		super(desc);
 		boundsExp = getFacet(IKeyword.BOUNDS);
 		widthExp = getFacet(IKeyword.WIDTH);
 		heightExp = getFacet(IKeyword.HEIGHT);
 		torusExp = getFacet(IKeyword.TORUS);
-		
+
 	}
 
 	public Envelope loadAscFile(final String boundsStr) throws IOException {
@@ -99,28 +97,29 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		in.close();
 		return boundsEnv;
 	}
-	
+
 	public Envelope loadImageFile(final String boundsStr) throws IOException {
-		
-		GamaImageFile imageFile = new GamaImageFile(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+
+		GamaImageFile imageFile =
+			new GamaImageFile(GAMA.getModel().getRelativeFilePath(boundsStr, true));
 		int nbCols = imageFile.getWidth();
 		int nbRows = imageFile.getHeight();
 		String extension = imageFile.getExtension();
 		String geodataFile = imageFile.getPath().replaceAll(extension, "");
-		if (extension.equals("jpg")) {
+		if ( extension.equals("jpg") ) {
 			geodataFile = geodataFile + "jgw";
-		} else if (extension.equals("png")) {
+		} else if ( extension.equals("png") ) {
 			geodataFile = geodataFile + "pgw";
-		} else if (extension.equals("tiff")) {
+		} else if ( extension.equals("tiff") ) {
 			geodataFile = geodataFile + "tfw";
 		}
-		
+
 		File infodata = new File(geodataFile);
 		double cellSizeX = 1;
 		double cellSizeY = 1;
 		double xllcorner = 0;
 		double yllcorner = 0;
-		if (infodata.exists()) {
+		if ( infodata.exists() ) {
 			InputStream ips = new FileInputStream(geodataFile);
 			InputStreamReader ipsr = new InputStreamReader(ips);
 			BufferedReader in = new BufferedReader(ipsr);
@@ -140,9 +139,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		double x2 = xllcorner + cellSizeX * nbCols;
 		double y1 = yllcorner;
 		double y2 = yllcorner + cellSizeY * nbRows;
-		
+
 		Envelope boundsEnv =
-			new Envelope(Math.min(x1, x2), Math.max(x1,x2),Math.min(y1, y2), Math.max(y1,y2) );
+			new Envelope(Math.min(x1, x2), Math.max(x1, x2), Math.min(y1, y2), Math.max(y1, y2));
 		return boundsEnv;
 	}
 
@@ -156,47 +155,51 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// .getSchema().getCoordinateReferenceSystem();
 		Envelope env = source.getBounds();
 
-		//begin ---------------------------------------------------------------------------------------------
-		//Thai.truongminh@gmail.com 
+		// begin
+		// ---------------------------------------------------------------------------------------------
+		// Thai.truongminh@gmail.com
 		// 10-sep-2012: for create agen from:list
 		// for tracing nly
-		//if (debug) System.out.println("Bounds:" +bounds.toString());
+		// if (debug) System.out.println("Bounds:" +bounds.toString());
 		if ( DEBUG ) {
-			System.out.println("2_store :" +store.toString());
-			System.out.println("2_name of store:" +name);
-			System.out.println("2_FeatureSource :" +source.toString());
-			System.out.println("2_Envelop:" +env.toString());
-			System.out.println("2_store.getSchema().getCoordinateReferenceSystem():" +store.getSchema().getCoordinateReferenceSystem());
+			System.out.println("2_store :" + store.toString());
+			System.out.println("2_name of store:" + name);
+			System.out.println("2_FeatureSource :" + source.toString());
+			System.out.println("2_Envelop:" + env.toString());
+			System.out.println("2_store.getSchema().getCoordinateReferenceSystem():" +
+				store.getSchema().getCoordinateReferenceSystem());
 		}
 
-		//--------------------------------------------------------------------------------------------- end
-		
+		// ---------------------------------------------------------------------------------------------
+		// end
+
 		if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 			ShpFiles shpf = new ShpFiles(shpFile);
 			double latitude = env.centre().x;
 			double longitude = env.centre().y;
-			
+
 			MathTransform transformCRSNew = GisUtils.getTransformCRS(shpf, latitude, longitude);
-			
-			//begin ---------------------------------------------------------------------------------------------
-			//Thai.truongminh@gmail.com 
+
+			// begin
+			// ---------------------------------------------------------------------------------------------
+			// Thai.truongminh@gmail.com
 			// 10-sep-2012: for create agen from:list
-			// for tracing 
+			// for tracing
 			if ( DEBUG ) {
-				System.out.println("2.1_latitude :" +latitude);
-				System.out.println("2.1_longitude:" +longitude);
-				System.out.println("2.1_transformCRSNew :" +transformCRSNew.toString());
-				System.out.println("2.1_transformCRS:" + ( transformCRS == null ));
+				System.out.println("2.1_latitude :" + latitude);
+				System.out.println("2.1_longitude:" + longitude);
+				System.out.println("2.1_transformCRSNew :" + transformCRSNew.toString());
+				System.out.println("2.1_transformCRS:" + (transformCRS == null));
 			}
 
-			//--------------------------------------------------------------------------------------------- end
+			// ---------------------------------------------------------------------------------------------
+			// end
 			if ( transformCRS == null ) {
 				transformCRS = transformCRSNew;
 			}
 			if ( transformCRSNew != null && transformCRS != null ) {
 				env = JTS.transform(env, transformCRS);
 			}
-			
 
 		}
 		store.dispose();
@@ -209,21 +212,21 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	@Override
 	public void initializeFor(final IScope scope) throws GamaRuntimeException {
 		Boolean torus = (Boolean) (torusExp == null ? null : torusExp.value(scope));
-		if (torus != null) isTorus =torus;
-		
+		if ( torus != null ) {
+			isTorus = torus;
+		}
+
 		Object bounds = boundsExp == null ? null : boundsExp.value(scope);
-		//begin ---------------------------------------------------------------------------------------------
-		//Thai.truongminh@gmail.com 
+		// begin
+		// ---------------------------------------------------------------------------------------------
+		// Thai.truongminh@gmail.com
 		// 10-sep-2012: for create agen from:list
 		// for tracing nly
-		//if (debug) System.out.println("Bounds:" +bounds.toString());
-		//if ( DEBUG ) {
-		//	GuiUtils.informConsole("1_Bounds:" +bounds.toString());
-		//}
+		// if (debug) System.out.println("Bounds:" +bounds.toString());
+		// if ( DEBUG ) {
+		// GuiUtils.informConsole("1_Bounds:" +bounds.toString());
+		// }
 
-		
-		
-		
 		double xMin = 0d, yMin = 0d;
 		MathTransform transformCRS = null;
 		if ( bounds instanceof Number ) {
@@ -266,7 +269,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			}
 			if ( boundsEnv != null ) {
 				xMin = boundsEnv.getMinX();
-				yMin = boundsEnv.getMinY(); 
+				yMin = boundsEnv.getMinY();
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
 			}
@@ -278,7 +281,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				boundsStr = ((GamaFile) bounds).getPath();
 			}
 
-			if ( GamaFileType.isShape(boundsStr.toLowerCase() )) {
+			if ( GamaFileType.isShape(boundsStr.toLowerCase()) ) {
 				try {
 					Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
 					Envelope boundsEnv = (Envelope) result.get("envelope");
@@ -302,7 +305,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					e.printStackTrace();
 					throw new GamaRuntimeException(e);
 				}
-			} else if ( GamaFileType.isImageFile(boundsStr.toLowerCase())) {
+			} else if ( GamaFileType.isImageFile(boundsStr.toLowerCase()) ) {
 				try {
 					Envelope boundsEnv = loadImageFile(boundsStr);
 					xMin = boundsEnv.getMinX();
@@ -314,59 +317,56 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					throw new GamaRuntimeException(e);
 				}
 			}
-			
+
 		}
-		//begin ---------------------------------------------------------------------------------------------
-		//Thai.truongminh@gmail.com 
+		// begin
+		// ---------------------------------------------------------------------------------------------
+		// Thai.truongminh@gmail.com
 		// Created date:11-sep-2012: Process for SQL - MAP type
-		// 
-		
-		else if (bounds instanceof Map)
-		{
-			Map params= (Map) bounds;
-			//System.out.println("1.2.1_url:" +params.get("url"));
-			//System.out.println("1.2.2_venderName:" +params.get("venderName"));
-			//System.out.println("1.2.3_usrName:" +params.get("usrName"));
-		
+		//
+
+		else if ( bounds instanceof Map ) {
+			Map params = (Map) bounds;
+			// System.out.println("1.2.1_url:" +params.get("url"));
+			// System.out.println("1.2.2_venderName:" +params.get("venderName"));
+			// System.out.println("1.2.3_usrName:" +params.get("usrName"));
+
 			String dbtype = (String) params.get("dbtype");
-			String host = (String)params.get("host");
-			String port = (String)params.get("port");
+			String host = (String) params.get("host");
+			String port = (String) params.get("port");
 			String database = (String) params.get("database");
 			String user = (String) params.get("user");
-			String passwd = (String)params.get("passwd");
+			String passwd = (String) params.get("passwd");
 			SqlConnection sqlConn;
 
 			// create connection
-			if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 				String DBRelativeLocation =
-						scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 
-				//sqlConn=new SqlConnection(dbtype,database);
-				sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-			}else{
-				sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+				// sqlConn=new SqlConnection(dbtype,database);
+				sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+			} else {
+				sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
 			}
-			
-			
-			
-//			SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
-//						(String)params.get("host"),(String) params.get("port"),
-//						(String) params.get("database"),(String) params.get("user"),
-//						(String)params.get("passwd"));
-			
-			
-			GamaList<Object> gamaList= sqlConn.selectDB((String) params.get("select"));
-			
+
+			// SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
+			// (String)params.get("host"),(String) params.get("port"),
+			// (String) params.get("database"),(String) params.get("user"),
+			// (String)params.get("passwd"));
+
+			GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
+
 			try {
-				Envelope boundsEnv=SqlConnection.getBounds(gamaList);
-				//transformCRS = (MathTransform) result.get("transformCRS");
-				transformCRS=null;
+				Envelope boundsEnv = SqlConnection.getBounds(scope, gamaList);
+				// transformCRS = (MathTransform) result.get("transformCRS");
+				transformCRS = null;
 				xMin = boundsEnv.getMinX();
 				yMin = boundsEnv.getMinY();
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
-				if (DEBUG){
-					System.out.println("ModelEnvironment.bounds.map:"+boundsEnv.toString());
+				if ( DEBUG ) {
+					System.out.println("ModelEnvironment.bounds.map:" + boundsEnv.toString());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -374,9 +374,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				throw new GamaRuntimeException(e);
 			}
 		}
-		//--------------------------------------------------------------------------------------------- end		
-	
-		
+		// ---------------------------------------------------------------------------------------------
+		// end
+
 		else {
 			width = widthExp == null ? width : Cast.asFloat(scope, widthExp.value(scope));
 			height = heightExp == null ? height : Cast.asFloat(scope, heightExp.value(scope));
@@ -386,7 +386,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 		initializeSpatialIndex();
 
-	} 
+	}
 
 	/**
 	 * Initializes the global spatial index.
@@ -396,7 +396,6 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		quadTree = new GamaQuadTree(e);
 	}
 
-	
 	@Override
 	public ISpatialIndex getSpatialIndex() {
 		return quadTree;
@@ -421,12 +420,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		quadTree.drawOn(g2, width, height);
 	}
 
+	@Override
 	public boolean isTorus() {
 		return isTorus;
 	}
-	
-
 
 }
-
-

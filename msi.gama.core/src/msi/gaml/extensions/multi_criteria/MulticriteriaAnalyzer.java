@@ -37,7 +37,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		super(sim, s);
 	}
 
-	@action(name="weighted_means_DM")
+	@action(name = "weighted_means_DM")
 	@args(names = { "candidates", "criteria" })
 	public Integer WeightedMeansDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
@@ -81,7 +81,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	@action(name="promethee_DM")
+	@action(name = "promethee_DM")
 	@args(names = { "candidates", "criteria" })
 	public Integer PrometheeDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
@@ -160,14 +160,14 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		}
 		LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
-		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>(candsFilter).first()
+		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>(candsFilter).first(scope)
 			.getIndex(); }
 		Candidate decision = promethee.decision(candsFilter);
 		return decision.getIndex();
 
 	}
 
-	@action(name="electre_DM")
+	@action(name = "electre_DM")
 	@args(names = { "candidates", "criteria", "fuzzy_cut" })
 	public Integer electreDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List<Double>> cands = scope.getListArg("candidates");
@@ -246,7 +246,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	}
 
-	@action(name="evidence_theory_DM")
+	@action(name = "evidence_theory_DM")
 	@args(names = { "candidates", "criteria", "simple" })
 	public Integer evidenceTheoryDecisionMaking(final IScope scope) throws GamaRuntimeException {
 		List<List> cands = scope.getListArg("candidates");

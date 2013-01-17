@@ -33,7 +33,6 @@ import msi.gaml.types.*;
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
-
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class GamaGraph<K, V> implements IGraph<K, V> {
@@ -57,7 +56,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
-	private GamaMap verticesBuilt; //only used for optimization purpose of spatial graph building.
+	private final GamaMap verticesBuilt; // only used for optimization purpose of spatial graph
+											// building.
 	private int version;
 
 	public GamaGraph(final boolean directed) {
@@ -579,7 +579,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public Object get(final Object index) {
+	public Object get(final IScope scope, final Object index) {
 		if ( index instanceof GamaPair ) { return getEdge(((GamaPair) index).first(),
 			((GamaPair) index).last()); }
 		if ( containsVertex(index) ) { return new GamaList(edgesOf(index)); }
@@ -588,25 +588,34 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public boolean contains(final Object o) {
+	public Object getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		if ( indices == null || indices.isEmpty(scope) ) { return null; }
+		return get(scope, indices.first(scope));
+		// Maybe we should consider the case where two indices that represent vertices are passed
+		// (instead of a pair).
+	}
+
+	@Override
+	public boolean contains(final IScope scope, final Object o) {
 		return containsVertex(o) || containsEdge(o);
 	}
 
 	@Override
-	public V first() {
+	public V first(final IScope scope) {
 		Iterator it = this.iterator();
 		if ( it.hasNext() ) { return (V) it.next(); }
 		return null;
 	}
 
 	@Override
-	public V last() {
+	public V last(final IScope scope) {
 		// Solution d�bile. On devrait conserver le dernier entr�.
-		return new GamaList<V>(vertexSet()).last(); // Attention a l'ordre
+		return new GamaList<V>(vertexSet()).last(scope); // Attention a l'ordre
 	}
 
 	@Override
-	public int length() {
+	public int length(final IScope scope) {
 		return edgeBased ? edgeSet().size() : vertexSet().size(); // ??
 	}
 
@@ -635,7 +644,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty(final IScope scope) {
 		return edgeSet().isEmpty() && vertexSet().isEmpty();
 	}
 
@@ -667,7 +676,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public GamaGraph reverse() {
+	public GamaGraph reverse(final IScope scope) {
 		GamaGraph g = new GamaGraph(new GamaList(), false, directed);
 		Graphs.addGraphReversed(g, this);
 		return g;
@@ -836,7 +845,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#any()
 	 */
 	@Override
-	public V any() {
+	public V any(final IScope scope) {
 		if ( vertexMap.isEmpty() ) { return null; }
 		V[] array = (V[]) vertexMap.keySet().toArray();
 		int i = GAMA.getRandom().between(0, array.length - 1);
@@ -879,27 +888,37 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			}
 		}
 	}
-	
-	public void addBuiltVertex(IShape vertex) {
+
+	public void addBuiltVertex(final IShape vertex) {
 		verticesBuilt.put(vertex.getLocation().hashCode(), vertex);
 	}
-	public boolean containsBuiltVertex(IShape vertex) {
-		return verticesBuilt.contains(vertex.getLocation().hashCode());
+
+	public boolean containsBuiltVertex(final IShape vertex) {
+		return verticesBuilt.contains(null, vertex.getLocation().hashCode()); // VERIFY NULL SCOPE
 	}
-	public IShape getBuiltVertex(Coordinate vertex) {
+
+	public IShape getBuiltVertex(final Coordinate vertex) {
 		return (IShape) verticesBuilt.get(vertex.hashCode());
 	}
 
+	@Override
 	public int getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	@Override
+	public void setVersion(final int version) {
 		this.version = version;
 	}
+
+	@Override
 	public void incVersion() {
 		version++;
 	}
 
-	
+	@Override
+	public Iterable<V> iterable(final IScope scope) {
+		return listValue(scope);
+	}
+
 }

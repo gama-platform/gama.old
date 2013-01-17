@@ -19,11 +19,8 @@
 package msi.gama.util;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
@@ -139,19 +136,17 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return this;
 	}
 
-	@Override
-	@operator(value = { IKeyword.AT }, can_be_const = true, type = IType.NONE)
-	@doc(special_cases = "if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil")
-	public Object get(final Object index) {
-		return super.get(index);
-	}
+	// @Override
+	// @operator(value = { IKeyword.AT }, can_be_const = true, type = IType.NONE)
+	// @doc(special_cases =
+	// "if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil")
 
 	public void add(final GamaPair v) {
 		put(v.first(), v.last());
 	}
 
 	@Override
-	public Object any() {
+	public Object any(final IScope scope) {
 		if ( isEmpty() ) { return null; }
 		Object[] array = values().toArray();
 		int i = GAMA.getRandom().between(0, array.length - 1);
@@ -197,7 +192,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public Object first() {
+	public Object first(final IScope scope) {
 		Iterator<Map.Entry<Object, Object>> it = entrySet().iterator();
 		Map.Entry entry = it.hasNext() ? it.next() : null;
 		return entry == null ? new GamaPair(null, null) : new GamaPair(entry.getKey(),
@@ -205,7 +200,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public Object last() {
+	public Object last(final IScope scope) {
 		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
 		Collections.reverse(list);
 		Iterator<Map.Entry<Object, Object>> it = list.iterator();
@@ -234,7 +229,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public int length() {
+	public int length(final IScope scope) {
 		return size();
 	}
 
@@ -251,7 +246,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public boolean contains(final Object o) {
+	public boolean contains(final IScope scope, final Object o) {
 		return containsKey(o);
 	}
 
@@ -308,7 +303,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public IContainer reverse() {
+	public IContainer reverse(final IScope scope) {
 		toReverseProcedure.init(size());
 		for ( Map.Entry<Object, Object> entry : entrySet() ) {
 			toReverseProcedure.execute(entry.getKey(), entry.getValue());
@@ -418,6 +413,30 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	public void addAll(final Object index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		addAll(value, null);
+	}
+
+	@Override
+	public Object get(final IScope scope, final Object index) throws GamaRuntimeException {
+		return get(index);
+	}
+
+	@Override
+	public boolean isEmpty(final IScope scope) {
+		return isEmpty();
+	}
+
+	@Override
+	public Iterable<GamaPair> iterable(final IScope scope) {
+		return listValue(scope);
+	}
+
+	@Override
+	public Object getFromIndicesList(final IScope scope, final IList indices)
+		throws GamaRuntimeException {
+		if ( indices == null || indices.isEmpty() ) { return null; }
+		return get(scope, indices.get(0));
+		// We do not consider the case where multiple indices are used. Maybe could be used in the
+		// future to return a list of values ?
 	}
 
 }
