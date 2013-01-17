@@ -1,29 +1,29 @@
 model preys_predators_shelters
 
 global { 
-	var prey_color type: rgb init: rgb ('green') const: true;
-	var prey_perception type: float init: 3.0;
-	var prey_size type: float init: 2.0 const: true;
-	var prey_speed type: float init: 1.0;
-	var prey_flee_color type: rgb init: rgb ('orange');
-	var prey_invisible_speed type: float init: 3 * 	prey_speed;
-	var prey_invisible_color type: rgb init: rgb ('black');  
-	var prey_in_shelter_max_time type: int min: 1 init: 200;
-	var prey_invisible_max_time type: int min: 1 max: 100 init: 70; 
-	var number_of_prey type: int min: 1 max: 1000 init: 100;
+	rgb prey_color <- rgb ('green') const: true;
+	float prey_perception <- 3.0;
+	float prey_size <- 2.0 const: true;
+	float prey_speed <- 1.0;
+	rgb prey_flee_color <- rgb ('orange');
+	float prey_invisible_speed <- 3 * prey_speed;
+	rgb prey_invisible_color <- rgb ('black');  
+	int prey_in_shelter_max_time min: 1 init: 200;
+	int prey_invisible_max_time min: 1 max: 100 init: 70; 
+	int number_of_prey min: 1 max: 1000 init: 100;
 	
-	var predator_color type: rgb init: rgb ('red') const: true;
-	var predator_perception type: float init: 3.0;
-	var predator_size type: float init: 4.0;
-	var predator_speed type: float init: 1.0;
-	var number_of_predator type: int min: 1 max: 100 init: 30; 
+	rgb predator_color <- rgb ('red') const: true;
+	float predator_perception <- 3.0;
+	float predator_size <- 4.0;
+	float predator_speed <- 1.0;
+	int number_of_predator min: 1 max: 100 init: 30; 
 	
-	var predator_in_shelter_color type: rgb init: rgb ('yellow') const: true;
+	rgb predator_in_shelter_color <- rgb ('yellow') const: true;
 	 
-	var shelter_color type: rgb init: rgb ('blue') const: true; 
-	var shelter_speed type: float init: 1.5 const: true;
-	var shelter_shape type: geometry init: square (50.0);
-	var number_of_shelter type: int init: 2 const: true;
+	rgb shelter_color <- rgb ('blue') const: true; 
+	float shelter_speed <- 1.5 const: true;
+	geometry shelter_shape <- square (50.0);
+	int number_of_shelter <- 2 const: true;
 	
 	
 	init {
@@ -37,12 +37,12 @@ global {
 
 entities {  
 	species prey skills: [moving] control: fsm {
-		var shape type: geometry init: circle (prey_size);
-		var color type: rgb init: prey_color;
-		var nearby_predators type: list of: predator value: (agents_overlapping (shape + prey_perception)) of_species predator;
-		var invisible_time type: int min: 1 init: int(time);
+		geometry shape <- circle (prey_size);
+		rgb color <- prey_color;
+		list nearby_predators of: predator value: (agents_overlapping (shape + prey_perception)) of_species predator;
+		int invisible_time min: 1 init: int(time);
 
-		var nearest_shelter type: shelter init: nil;		
+		shelter nearest_shelter;		
 
 		state move_around initial: true {
 			enter {
@@ -80,16 +80,19 @@ entities {
 	}
 	
 	species predator skills: [moving] schedules: shuffle (list (predator)) {
-		var shape type: geometry init: circle (predator_size);
-		var target_prey type: prey value: self choose_target_prey [];
+		geometry shape <- circle (predator_size);
+		prey target_prey value: self choose_target_prey [];
 		
 		action choose_target_prey type: prey {
 			if ( (target_prey = nil) or (dead (target_prey) ) ) {
 				return one_of ( (list (prey)) where (each.state = 'move_around') );
 			}
+			
 			return target_prey;
 		}
+		
 		reflex move_around when: (target_prey = nil) { do wander speed: predator_speed; }
+		
 		reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
 		
 		aspect default {
@@ -98,8 +101,8 @@ entities {
 	} 
 	
 	species shelter skills: [moving]  frequency: 2 {
-		var shape type: geometry init: (circle (50.0)) at_location {250, 250};
-		var chased_preys type: list of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
+		geometry shape <- (circle (50.0)) at_location {250, 250};
+		list chased_preys of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
 		reflex move_around {
 			do wander speed: shelter_speed; 
@@ -124,13 +127,16 @@ entities {
 		
 		species prey_in_shelter parent: prey frequency: 2 schedules: ( ( int ( (length (prey_in_shelter)) / 2 ) ) among (list (prey_in_shelter)) ) {
 			var in_shelter_time type: int init: int(time);
+			
 			state in_shelter {
 				do wander speed: shelter_speed;
 			}
+			
 			aspect default {
 				draw shape: geometry color: predator_in_shelter_color;
 			}
 		}
+		
 		aspect default {
 			draw shape: geometry color: shelter_color;
 			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 8 at: {(location).x - 20, (location).y};

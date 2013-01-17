@@ -1,32 +1,32 @@
 model balls_groups_clouds
 
 global { 
-	const environment_bounds type: point <- {500, 500}; 
-	const inner_bounds_x type: int <- (int((environment_bounds.x) / 20))  ;
-	const inner_bounds_y type: int <- (int((environment_bounds.y) / 20))  ;
-	var xmin type: int <- inner_bounds_x ;
-	var ymin type: int <- inner_bounds_y ;       
-	var xmax type: int <- int((environment_bounds.x) - inner_bounds_x) ;
-	var ymax type: int <- int((environment_bounds.y) - inner_bounds_y) ;
-	var MAX_DISTANCE type: float <- environment_bounds.x + environment_bounds.y  ;
-	var ball_color type: rgb <- rgb('green'); 
-	var chaos_ball_color type: rgb <- rgb('red');
-	var ball_size type: float <- float(3);  
-	var ball_speed type: float <- float(1);
-	var chaos_ball_speed type: float <- 8 * ball_speed;  
-	var ball_number type: int <- 200 min: 2 max: 1000;  
-	const ball_shape type: geometry <- circle (ball_size) ;
-	var ball_separation type: float <- 6 * ball_size; 
-	var create_group type: bool parameter: 'Create groups?' <- true; 
-	var create_cloud type: bool parameter: 'Create clouds?' <- true; 
-	var group_creation_distance type: int <- int(ball_separation + 1);
-	var min_group_member type: int <- 3;
-	var group_base_speed type: int <- (int(ball_speed * 1.5));
-	var base_perception_range type: int <- int (environment_bounds.x / 100) min: 1 ;  
-	var creation_frequency type: int <- 3;
-	var update_frequency type: int <- 3;
-	var merge_frequency type: int <- 3;
-	var merge_possibility type: float <- 0.3;
+	point environment_bounds <- {500, 500}; 
+	int inner_bounds_x <- (int((environment_bounds.x) / 20))  ;
+	int inner_bounds_y <- (int((environment_bounds.y) / 20))  ;
+	int xmin <- inner_bounds_x ;
+	int ymin <- inner_bounds_y ;       
+	int xmax <- int((environment_bounds.x) - inner_bounds_x) ;
+	int ymax <- int((environment_bounds.y) - inner_bounds_y) ;
+	float MAX_DISTANCE <- environment_bounds.x + environment_bounds.y  ;
+	rgb ball_color <- rgb('green'); 
+	rgb chaos_ball_color <- rgb('red');
+	float ball_size <- float(3);  
+	float ball_speed <- float(1);
+	float chaos_ball_speed <- 8 * ball_speed;  
+	int ball_number <- 200 min: 2 max: 1000;  
+	geometry ball_shape <- circle (ball_size) ;
+	float ball_separation <- 6 * ball_size; 
+	bool create_group parameter: 'Create groups?' <- true; 
+	bool create_cloud parameter: 'Create clouds?' <- false; 
+	int group_creation_distance <- int(ball_separation + 1);
+	int min_group_member <- 3;
+	int group_base_speed <- (int(ball_speed * 1.5));
+	int base_perception_range <- int (environment_bounds.x / 100) min: 1 ;  
+	int creation_frequency <- 3;
+	int update_frequency <- 3;
+	int merge_frequency <- 3;
+	float merge_possibility <- 0.3;
 	
 	int cloud_creation_distance <- 30 const: true;
 	int min_cloud_member <- 3 const: true;
@@ -81,10 +81,10 @@ entities {
 	
 	species ball parent: base control: fsm {
 		//var shape type: geometry <- ball_shape at_location location ;
-		var speed type: float <- ball_speed ; 
-		var color type: rgb <- ball_color ;
-		var beginning_chaos_time type: int ; 
-		var time_in_chaos_state type: int ;
+		float speed <- ball_speed; 
+		rgb color <- ball_color;
+		int beginning_chaos_time; 
+		int time_in_chaos_state;
 		
 		init {
 			let continue_loop type: bool value: true ; 
@@ -170,15 +170,15 @@ entities {
 	}
 	
 	species group parent: base {
-		var color type: rgb <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
+		rgb color <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
-		var shape type: geometry <- polygon ( (list (ball_in_group)) ) buffer  10 ;
+		geometry shape <- polygon ( (list (ball_in_group)) ) buffer  10 ;
 		
-		var speed type: float value: float(group_base_speed) ;
-		var perception_range type: float value: float(base_perception_range + (rnd(5))) ;
-		var nearest_free_ball type: ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
-		var nearest_smaller_group type: group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		var target type: base value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
+		float speed value: float(group_base_speed) ;
+		float perception_range value: float(base_perception_range + (rnd(5))) ;
+		ball nearest_free_ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
+		group nearest_smaller_group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
+		base target value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
 		action get_nearer_target type: base {
 			if condition: (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
@@ -321,7 +321,7 @@ entities {
 		rgb color;
 				
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			var shape type: geometry value: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+			geometry shape value: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			}
@@ -441,7 +441,7 @@ entities {
 
 environment bounds: environment_bounds ;
 
-experiment default_expr type: gui {
+experiment default_experiment type: gui {
 	output {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;

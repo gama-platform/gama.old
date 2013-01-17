@@ -3,35 +3,35 @@ model pedestrian_corridor
 
 
 global {
-	var capture_pedestrians <- false type: bool parameter: 'Capture pedestrians?';
+	bool capture_pedestrians <- false parameter: 'Capture pedestrians?';
 	
-	const environment_size type: int init: 2000;
-	const environment_bounds type: point init: {environment_size, environment_size} ;
+	int environment_size init: 2000;
+	point environment_bounds init: {environment_size, environment_size} ;
 	
-	const pedestrian_size type: float init: 1.0;
-	const pedestrian_shape type: geometry init: circle (pedestrian_size);
-	const pedestrian_color type: rgb init: rgb ('green'); 
-	const pedestrian_speed type: float init: 2.0;
+	float pedestrian_size init: 1.0;
+	geometry pedestrian_shape <- circle (pedestrian_size);
+	rgb pedestrian_color <- rgb ('green'); 
+	float pedestrian_speed <- 2.0;
 	
-	const corridor_wall_color type: rgb init: rgb ('black');
-	const corridor_wall_width type: int init: int(environment_size / 2);
-	const corridor_wall_height type: int init: 200;
-	const corridor_wall_0_shape type: geometry init: rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, corridor_wall_height / 2};
-	const corridor_wall_1_shape type: geometry init: rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, environment_size - (corridor_wall_height / 2)};
+	rgb corridor_wall_color <- rgb ('black');
+	int corridor_wall_width <- int(environment_size / 2);
+	int corridor_wall_height <- 200;
+	geometry corridor_wall_0_shape <- rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, corridor_wall_height / 2};
+	geometry corridor_wall_1_shape <- rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, environment_size - (corridor_wall_height / 2)};
 	
-	const corridor_color type: rgb init: rgb ('blue');
-	const corridor_width type: int init: int(environment_size / 2) ;
-	const corridor_height type: int init: environment_size ;
-	const corridor_location type: point init: {environment_size / 2, environment_size / 2} ;
-	const corridor_shape type: geometry init: ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location) - (corridor_wall_0_shape + corridor_wall_1_shape);
-	const corridor_left_bounds type: int init: (int(corridor_location.x - (corridor_width / 2))) ;
-	const corridor_right_bounds type: int init: (int(corridor_location.x + (corridor_width / 2))) ;
+	rgb corridor_color <- rgb ('blue');
+	int corridor_width <- int(environment_size / 2) ;
+	int corridor_height <- environment_size ;
+	point corridor_location <- {environment_size / 2, environment_size / 2} ;
+	geometry corridor_shape <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location) - (corridor_wall_0_shape + corridor_wall_1_shape);
+	int corridor_left_bounds <- (int(corridor_location.x - (corridor_width / 2))) ;
+	int corridor_right_bounds <- (int(corridor_location.x + (corridor_width / 2))) ;
 	
-	const new_pedestrian_rate type: int init: 10;
-	const new_pedestian_generate_frequency type: int init: 1;
-	const new_pedestrian_y_distance type: int init: int(environment_size / new_pedestrian_rate);
+	int new_pedestrian_rate <- 10;
+	int new_pedestian_generate_frequency <- 1;
+	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
 	
-	var pedestrians type: list of: pedestrian init: [] value: list (pedestrian);
+	list pedestrians  of: pedestrian <- [] value: list (pedestrian);
 	float start_time <- machine_time;
 	init {
 		create species: corridor number: 1;
@@ -75,11 +75,11 @@ environment bounds: environment_bounds;
 entities {
 	species pedestrian skills: [situated, moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) frequency: 1 schedules: shuffle (list (pedestrian)) {
 //		var shape <-  (copy(pedestrian_shape)) type: geometry;
-		var shape <-  circle (pedestrian_size) type: geometry;
-		var initial_location type: point;
-		var target_location type: point;
-		var heading type: int;
-		var speed type: float init: 2.0;
+		geometry shape <-  circle (pedestrian_size);
+		point initial_location;
+		point target_location;
+		int heading;
+		float speed <- 2.0;
 		
 		action init_location {
 			arg name: loc type: point;
@@ -100,38 +100,37 @@ entities {
 			} 
 			
 //			if condition: (heading = update_heading + 180) {
-			if condition: (current_location = location) { // hack
-				if condition: ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
-					do action: move {
+			if (current_location = location) { // hack
+				if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
+					do move {
 						arg name: heading value: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2};
 					} 
 					
 
 				} else {
-						do action: move {
+						do move {
 							arg name: heading value: self towards {environment_size / 2, environment_size / 2};
 						} 
 					}
 			}
 			
-			if condition: ( (target_location.x - location.x) <= speed ) {
-				do action: die;
+			if( (target_location.x - location.x) <= speed ) {
+				do die;
 			}
 		}
 		 
-		aspect name: default {
+		aspect default {
 			draw shape: geometry color: pedestrian_color;
 		}
 	}
 	
 	species corridor  {
-		const shape type: geometry init: corridor_shape;
+		geometry shape <- corridor_shape;
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
-			var released_time type: int;
+			int released_time;
 			
-			aspect name: default { 
-			}
+			aspect default { }
 		}
 		
 		init {
@@ -142,8 +141,8 @@ entities {
 		reflex aggregate when: capture_pedestrians {
 			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape);
 			
-			if condition: !(empty (tobe_captured_pedestrians)) {
-				capture target: tobe_captured_pedestrians as: captured_pedestrian returns: cps;
+			if !(empty (tobe_captured_pedestrians)) {
+				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
 				
 				loop cp over: cps {
 					set cp.released_time value: time + (int ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
@@ -153,21 +152,21 @@ entities {
 		
 		reflex disaggregate  {
 			let tobe_released_pedestrians type: list value: (list (members)) where (time >= (captured_pedestrian (each)).released_time);
-			if condition: !(empty (tobe_released_pedestrians)) {
-				release target: tobe_released_pedestrians as: pedestrian in: world {
+			if !(empty (tobe_released_pedestrians)) {
+				release tobe_released_pedestrians as: pedestrian in: world {
 					set location value: {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
 				}
 			}
 		}
 		
-		aspect name: default {
+		aspect default {
 			draw shape: geometry color: corridor_color;
 		}
 	}
 	
 	species corridor_wall {
 		init {
-			create species: corridor_wall_info_drawer number: 1 with: [target :: self];
+			create corridor_wall_info_drawer number: 1 with: [target :: self];
 		}
 		
 		aspect name: default {
@@ -176,7 +175,7 @@ entities {
 	}
 	
 	species corridor_info_drawer {
-		var target type: corridor;
+		corridor target;
 		
 		aspect default {
 			draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 65 at: {(target.location).x - 480, (target.location).y};
@@ -185,7 +184,7 @@ entities {
 	}
 	
 	species corridor_wall_info_drawer {
-		var target type: corridor_wall;
+		corridor_wall target;
 		
 		init {
 			set location value: target.location;

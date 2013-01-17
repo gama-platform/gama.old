@@ -30,24 +30,24 @@ global {
 	init {
 		create corridor number: 2 returns: new_corridors;
 		
-		ask target: (new_corridors at 0) {
-			do action: init_corridor {
+		ask (new_corridors at 0) {
+			do init_corridor {
 				arg name: corridor_shape value: corridor_shape_0;
-				arg name: is_hybrid value: true;
+				arg name: is_hybrid value: false;
 			}
 		}
 
-		ask target: (new_corridors at 1) {
-			do action: init_corridor {
+		ask (new_corridors at 1) {
+			do init_corridor {
 				arg name: corridor_shape value: corridor_shape_1;
-				arg name: is_hybrid value: false;
+				arg name: is_hybrid value: true;
 			}
 		}
 	}
 
 	reflex generate_pedestrians when: ( (time mod new_pedestian_generate_frequency) = 0 ) { // and (time < 4){
-		create species: pedestrian number: 2 returns: new_pedestrians {
-			if condition: ( (time mod (red_pedestrian_frequency * new_pedestian_generate_frequency) ) = 0 ) {
+		create pedestrian number: 2 returns: new_pedestrians {
+			if ( (time mod (red_pedestrian_frequency * new_pedestian_generate_frequency) ) = 0 ) {
 				set color value: pedestrian_red;
 
 			}
@@ -56,14 +56,14 @@ global {
 			}				
 		}
 		
-		ask target:  (new_pedestrians at 0) {
-			do action: init_location {
+		ask (new_pedestrians at 0) {
+			do init_location {
 				arg name: loc value: pedestrian_source_0;
 			}
 		}
 		
-		ask target:  (new_pedestrians at 1) {
-			do action: init_location {
+		ask (new_pedestrians at 1) {
+			do init_location {
 				arg name: loc value: pedestrian_source_1;
 			}
 		}
@@ -73,16 +73,15 @@ global {
 entities {
 	species pedestrian skills: moving {
 //		var shape type: geometry init: copy (pedestrian_shape);
-		var shape type: geometry init: circle(pedestrian_size);
-		var color type: rgb;
-		var last_corridor type: corridor;
+		geometry shape init: circle(pedestrian_size);
+		rgb color;
+		corridor last_corridor;
 
-		var heading type: int;
-		var speed type: float init: pedestrian_speed;
+//		int heading;
+//		var speed type: float init: pedestrian_speed;
 		
-		var target_location type: point;
-		
-		var outgoing_density type: float;
+		point target_location;
+		float outgoing_density;
 		
 		action init_location {
 			arg loc type: point;
@@ -97,18 +96,18 @@ entities {
 				arg name: heading value: (self) towards (target_location);
 			} 
 			
-			if condition: ( (target_location.x - location.x) <= speed ) {
-				do action: die;
+			if ( (target_location.x - location.x) <= speed ) {
+				do die;
 			}
 		}
 		 
-		aspect name: default {
+		aspect default {
 			draw shape: geometry color: color;
 		}
 	}
 
 	species corridor skills: situated {
-		var capture_pedestrians type: bool;
+		bool capture_pedestrians;
 		
 		action init_corridor {
 			arg corridor_shape type: shape;
@@ -118,36 +117,37 @@ entities {
 			set capture_pedestrians value: is_hybrid;
 		}
 
-		var max_speed type: float value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
-		var macro_length type: float min: 0 init: corridor_width; // the length of macro_patch
+		float max_speed value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
+		float macro_length min: 0 <- corridor_width; // the length of macro_patch
 		
-		var incoming_density type: float; // Pr (formula 5)
-		var incoming_average_speed type: float;
+		float incoming_density; // Pr (formula 5)
+		float incoming_average_speed;
 		
-		var Pr type: float value: incoming_density;
-		var Pl type: float init: 0 const: true; // formula 5
-		var Pmax type: float init: 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
+		float Pr value: incoming_density;
+		float Pl <- 0 const: true; // formula 5
+		float Pmax <- 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
-			var released_time type: int;  
+			int released_time;  
 			
-			aspect name: default { }
+			aspect default { }
 		}
 		
 		init { 
-//			create corridor_info_drawer number: 1 with: [target :: self];
+			create corridor_info_drawer number: 1 with: [target :: self];
 		}
 		
 		
 		reflex aggregate when: capture_pedestrians {
-			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where (each.last_corridor != self);
+//			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where (each.last_corridor != self);
+			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where ( (each.last_corridor != self) and ((each.location).x < (self.location).x) ) ; // BUG
 			
-			if condition: !(empty (tobe_captured_pedestrians)) {
-				capture target: tobe_captured_pedestrians as: captured_pedestrian returns: cps { 
+			if !(empty (tobe_captured_pedestrians)) {
+				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps { 
 					set last_corridor value: myself;
 				}
 				
-				if condition: !(empty (cps)) {
+				if !(empty (cps)) {
 					
 					let average_speed type: float value: 0;
 					loop micro_a over: cps {
@@ -208,9 +208,7 @@ entities {
 		reflex disaggregate  {
 			let tobe_released_pedestrians type: list value: (list (members)) where (time >= (captured_pedestrian (each)).released_time);
 			
-			let one_member type: captured_pedestrian value: one_of(members);
-			
-			if condition: !(empty (tobe_released_pedestrians)) {
+			if !(empty (tobe_released_pedestrians)) {
 				
 				release tobe_released_pedestrians as: pedestrian in: world returns: released_pedestrians;
 				
@@ -219,43 +217,52 @@ entities {
 					let sigma value: outgoing_speed / 10;
 					
 					set (pedestrian (rp)).speed value: outgoing_speed + ( gauss({0, sigma}));
-					set (pedestrian (rp)).location value: {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_0).location).y};
+					set (pedestrian (rp)).location value: {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_1).location).y};
 				}
 			}
 		}
 		
-		aspect name: default {
-			draw shape: geometry color: corridor_color;
+		aspect default {
+			draw geometry color: corridor_color;
 		}
 	}
  
 	species corridor_info_drawer {
-		var target type: corridor;
+		corridor target;
 		
-		aspect default {
-			if condition: target.capture_pedestrians {
-				draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y};
-				draw text: 'Green: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_green)))) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 10};
-				draw text: 'Red: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_red)))) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
-			}
-			else {
-				let intersecting_pedestrians type: list of: pedestrian value: (list (pedestrian)) overlapping target;
-				draw text: 'Intersecting pedestrians: ' + (length (intersecting_pedestrians)) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y + 10};
-				draw text: 'Green: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_green)) ) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
-				draw text: 'Red: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_red)) ) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 30};
+		aspect base {
+			if target.capture_pedestrians {
+				draw text: 'Hybrid model (coupling: ABM and Mathematical Model)' color: rgb('blue') size: 7 at: {(target.location).x - 90, (target.location).y - 10};
+				draw text: 'Aggregated agents: ' + string(length(target.members)) color: rgb('black') size: 7 at: {(target.location).x - 30, (target.location).y + 2};
+			} else {
+				draw text: 'Agent-Based Model (ABM)' color: rgb('blue') size: 7 at: {(target.location).x - 40, (target.location).y - 10};
 			}
 		}
+
+//		aspect default {
+//			if condition: target.capture_pedestrians {
+//				draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y};
+//				draw text: 'Green: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_green)))) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 10};
+//				draw text: 'Red: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_red)))) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
+//			}
+//			else {
+//				let intersecting_pedestrians type: list of: pedestrian value: (list (pedestrian)) overlapping target;
+//				draw text: 'Intersecting pedestrians: ' + (length (intersecting_pedestrians)) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y + 10};
+//				draw text: 'Green: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_green)) ) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
+//				draw text: 'Red: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_red)) ) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 30};
+//			}
+//		}
 	}
 }
 
 environment width: environment_width height: environment_height;
 
-experiment default_expr type: gui {
+experiment default_experiment type: gui {
 	output {
 		display default_display {
 			species pedestrian;
 			species corridor transparency: 0.8;
-			species corridor_info_drawer;
+			species corridor_info_drawer aspect: base;
 		}
 	}
 }
