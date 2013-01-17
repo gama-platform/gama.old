@@ -70,7 +70,18 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		return trial == null ? "" : trial;
 	}
 
-	String text(final Definition obj) {
+	// String text(final Definition obj) {
+	// IGamlDescription ed = EGaml.getGamlDescription(obj);
+	// if ( ed != null ) { return removeTags(ed.getTitle()); }
+	// String s = text((EObject) obj);
+	// String n = obj.getName();
+	// if ( n == null ) {
+	// n = "";
+	// }
+	// return s + " " + obj.getName();
+	// }
+
+	String text(final Statement obj) {
 		IGamlDescription ed = EGaml.getGamlDescription(obj);
 		if ( ed != null ) { return removeTags(ed.getTitle()); }
 		String s = text((EObject) obj);
@@ -130,7 +141,8 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	public String image(final/* Sub */Statement ele) {
 		String kw = EGaml.getKeyOf(ele);
 		if ( kw.equals("var") || kw.equals("const") ) {
-			for ( FacetExpr f : ele.getFacets() ) {
+			// for ( FacetExpr f : ele.getFacets() ) {
+			for ( Facet f : ele.getFacets() ) {
 				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
 					VariableRef type = (VariableRef) f.getExpr();
 					return typeImage(EGaml.getKeyOf(type));
@@ -149,7 +161,11 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	// }
 
 	// dirty image for now (debug purpose, proposal provider)
-	String image(final FacetExpr ele) { // FIXME
+	// String image(final FacetExpr ele) { // FIXME
+	// return "gaml_facet.png";
+	// }
+
+	String image(final Facet ele) { // FIXME
 		return "gaml_facet.png";
 	}
 

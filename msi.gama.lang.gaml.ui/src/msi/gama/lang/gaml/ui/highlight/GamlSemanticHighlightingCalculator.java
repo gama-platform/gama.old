@@ -42,43 +42,44 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	Set<INode> done = new HashSet();
 
 	// @Override
-	public void provideHighlightingForOld(final XtextResource resource,
-		final IHighlightedPositionAcceptor a) {
-		acceptor = a;
-		// if ( resource == null || resource.getParseResult() == null ) { return; }
-		TreeIterator<EObject> root = resource.getAllContents();
-
-		while (root.hasNext()) {
-			EObject obj = root.next();
-			if ( obj != null ) {
-				if ( obj instanceof Statement ) {
-					if ( obj instanceof Definition ) {
-						setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
-					} else {
-						GamlFacetRef ref = ((Statement) obj).getRef();
-						if ( ref != null ) {
-							setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
-						}
-					}
-					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
-				} else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
-					setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
-				} else if ( obj instanceof FacetExpr ) {
-					setStyle(obj, FACET_ID, 0 /* EGaml.getKeyOf(obj) */);
-				} else if ( obj instanceof TerminalExpression ) {
-					if ( !(obj instanceof StringLiteral) ) {
-						setStyle(obj, NUMBER_ID, 0);
-					}
-				} else if ( obj instanceof VariableRef ) {
-					setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
-				}
-
-				// Ajouter la notion de scope pour pouvoir highlighter les variables globales
-
-			}
-		}
-		done.clear();
-	}
+	// public void provideHighlightingForOld(final XtextResource resource,
+	// final IHighlightedPositionAcceptor a) {
+	// acceptor = a;
+	// // if ( resource == null || resource.getParseResult() == null ) { return; }
+	// TreeIterator<EObject> root = resource.getAllContents();
+	//
+	// while (root.hasNext()) {
+	// EObject obj = root.next();
+	// if ( obj != null ) {
+	// if ( obj instanceof Statement ) {
+	// if ( obj instanceof Definition ) {
+	// setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
+	// } else {
+	// GamlFacetRef ref = ((Statement) obj).getRef();
+	// if ( ref != null ) {
+	// setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
+	// }
+	// }
+	// setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
+	// } else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
+	// setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
+	// // } else if ( obj instanceof FacetExpr ) {
+	// } else if ( obj instanceof Facet ) {
+	// setStyle(obj, FACET_ID, 0 /* EGaml.getKeyOf(obj) */);
+	// } else if ( obj instanceof TerminalExpression ) {
+	// if ( !(obj instanceof StringLiteral) ) {
+	// setStyle(obj, NUMBER_ID, 0);
+	// }
+	// } else if ( obj instanceof VariableRef ) {
+	// setStyle(obj, VARIABLE_ID, NodeModelUtils.getNode(obj));
+	// }
+	//
+	// // Ajouter la notion de scope pour pouvoir highlighter les variables globales
+	//
+	// }
+	// }
+	// done.clear();
+	// }
 
 	@Override
 	// Mettre un ID sur les descriptions pour les répèrer plus facilement.
@@ -91,22 +92,22 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			EObject obj = root.next();
 			if ( obj != null ) {
 				if ( obj instanceof Statement ) {
-					if ( obj instanceof Definition ) {
-						if ( ((Definition) obj).getName() != null ) {
-							setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
-						}
-					} else {
-						GamlFacetRef ref = ((Statement) obj).getRef();
-						if ( ref != null ) {
-							setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
-						}
+					// if ( obj instanceof Definition ) {
+					if ( ((Statement) obj).getName() != null ) {
+						setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
+						// }
+						// } else {
+						// GamlFacetRef ref = ((Statement) obj).getRef();
+						// if ( ref != null ) {
+						// setStyle(ref, FACET_ID, 0 /* ref.getRef() */);
+						// }
 					}
 					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
 				} else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
 					setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
-				} else if ( obj instanceof FacetExpr ) {
+				} else if ( obj instanceof Facet ) {
 					setStyle(obj, FACET_ID, 0);
-					if ( obj instanceof NameFacetExpr || obj instanceof ReturnsFacetExpr ) {
+					if ( ((Facet) obj).getName() != null ) {
 						setStyle(obj, VARDEF_ID, 1);
 					}
 				} else if ( obj instanceof TerminalExpression ) {

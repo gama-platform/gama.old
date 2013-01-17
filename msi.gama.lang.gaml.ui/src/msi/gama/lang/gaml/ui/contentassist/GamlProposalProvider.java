@@ -100,404 +100,406 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	}
 
-	@Override
-	public void completeIfEval_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeIfEval_Ref(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeIfEval_Expr(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeIfEval_Block(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeIfEval_Else(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeDefinition_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlFacetRef_Ref(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		completeFacetExpr_Key(model, assignment, context, acceptor);
-	}
-
-	@Override
-	public void completeFunctionGamlFacetRef_Ref(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FunctionGamlFacetRef ref");
-	}
-
-	@Override
-	public void completeFacetExpr_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FacetExpr_Key");
-		if ( model instanceof Statement ) {
-			IGamlDescription gd = EGaml.getGamlDescription(model);
-			if ( gd instanceof IDescription ) {
-				IDescription desc = (IDescription) gd;
-				Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
-				for ( String s : facets.keySet() ) {
-					acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
-						(facets.get(s).optional ? "optional" : "required") + ")", facetImage,
-						context));
-				}
-			}
-		}
-		GuiUtils.debug("Complete facetExpr key");
-	}
-
-	@Override
-	public void completeFacetExpr_Expr(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete facetExpr expr");
-	}
-
-	@Override
-	public void completeNameFacetExpr_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete facetExpr name");
-	}
-
-	@Override
-	public void completeReturnsFacetExpr_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ReturnsFacetExpr name");
-	}
-
-	@Override
-	public void completeActionFacetExpr_Name(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ActionFacetExpr name");
-	}
-
-	@Override
-	public void completeFunctionFacetExpr_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FunctionFacetExpr key");
-	}
-
-	@Override
-	public void completeFunctionFacetExpr_Expr(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FunctionFacetExpr expr");
-	}
-
-	@Override
-	public void completeBlock_Statements(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeTernExp_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeTernExp_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeTernExp_IfFalse(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeOrExp_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeOrExp_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeAndExp_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeAndExp_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeRelational_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeRelational_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeArgPairExpr_Arg(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeArgPairExpr_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeArgPairExpr_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePairExpr_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePairExpr_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeAddition_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeAddition_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeMultiplication_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeMultiplication_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlBinaryExpr_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlBinaryExpr_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlUnitExpr_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlUnitExpr_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlUnaryExpr_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeGamlUnaryExpr_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePrimaryExpression_Exprs(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePrimaryExpression_Left(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePrimaryExpression_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completePrimaryExpression_Right(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeFunction_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeFunction_Args(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeUnitName_Op(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeVariableRef_Ref(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void completeTerminalExpression_Value(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_Model(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_Import(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_Statement(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete Statement");
-	}
-
-	@Override
-	public void complete_ClassicStatement(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ClassicStatement");
-	}
-
-	@Override
-	public void complete_IfEval(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_Definition(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete Definition");
-	}
-
-	@Override
-	public void complete_FacetRef(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FacetRef");
-	}
-
-	@Override
-	public void complete_GamlFacetRef(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
-
-	@Override
-	public void complete_FunctionGamlFacetRef(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FunctionGamlFacetRef");
-	}
-
-	@Override
-	public void complete_FacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FacetExpr");
-	}
-
-	@Override
-	public void complete_DefinitionFacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete DefinitionFacetExpr");
-	}
-
-	@Override
-	public void complete_NameFacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete NameFacetExpr");
-	}
-
-	@Override
-	public void complete_ReturnsFacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ReturnsFacetExpr");
-	}
-
-	@Override
-	public void complete_ActionFacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ActionFacetExpr");
-	}
-
-	@Override
-	public void complete_FunctionFacetExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete FunctionFacetExpr");
-	}
-
-	@Override
+	/*
+	 * @Override
+	 * public void completeIfEval_Key(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeIfEval_Ref(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeIfEval_Expr(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeIfEval_Block(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeIfEval_Else(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeDefinition_Name(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlFacetRef_Ref(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * completeFacetExpr_Key(model, assignment, context, acceptor);
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFunctionGamlFacetRef_Ref(final EObject model, final Assignment
+	 * assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FunctionGamlFacetRef ref");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFacetExpr_Key(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FacetExpr_Key");
+	 * if ( model instanceof Statement ) {
+	 * IGamlDescription gd = EGaml.getGamlDescription(model);
+	 * if ( gd instanceof IDescription ) {
+	 * IDescription desc = (IDescription) gd;
+	 * Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
+	 * for ( String s : facets.keySet() ) {
+	 * acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
+	 * (facets.get(s).optional ? "optional" : "required") + ")", facetImage,
+	 * context));
+	 * }
+	 * }
+	 * }
+	 * GuiUtils.debug("Complete facetExpr key");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFacetExpr_Expr(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete facetExpr expr");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeNameFacetExpr_Name(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete facetExpr name");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeReturnsFacetExpr_Name(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete ReturnsFacetExpr name");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeActionFacetExpr_Name(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete ActionFacetExpr name");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFunctionFacetExpr_Key(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FunctionFacetExpr key");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFunctionFacetExpr_Expr(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FunctionFacetExpr expr");
+	 * }
+	 * 
+	 * @Override
+	 * public void completeBlock_Statements(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeTernExp_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeTernExp_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeTernExp_IfFalse(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeOrExp_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeOrExp_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeAndExp_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeAndExp_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeRelational_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeRelational_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeArgPairExpr_Arg(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeArgPairExpr_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeArgPairExpr_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePairExpr_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePairExpr_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeAddition_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeAddition_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeMultiplication_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeMultiplication_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlBinaryExpr_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlBinaryExpr_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlUnitExpr_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlUnitExpr_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlUnaryExpr_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeGamlUnaryExpr_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePrimaryExpression_Exprs(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePrimaryExpression_Left(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePrimaryExpression_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completePrimaryExpression_Right(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFunction_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeFunction_Args(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeUnitName_Op(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeVariableRef_Ref(final EObject model, final Assignment assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void completeTerminalExpression_Value(final EObject model, final Assignment
+	 * assignment,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_Model(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_Import(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_Statement(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete Statement");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_ClassicStatement(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete ClassicStatement");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_IfEval(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_Definition(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete Definition");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_FacetRef(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FacetRef");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_GamlFacetRef(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * 
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_FunctionGamlFacetRef(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FunctionGamlFacetRef");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_FacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FacetExpr");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_DefinitionFacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete DefinitionFacetExpr");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_NameFacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete NameFacetExpr");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_ReturnsFacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete ReturnsFacetExpr");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_ActionFacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete ActionFacetExpr");
+	 * }
+	 * 
+	 * @Override
+	 * public void complete_FunctionFacetExpr(final EObject model, final RuleCall ruleCall,
+	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	 * GuiUtils.debug("Complete FunctionFacetExpr");
+	 * }
+	 */@Override
 	public void complete_Block(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
@@ -575,11 +577,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	}
 
-	@Override
-	public void complete_PrePrimaryExpr(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
+	// @Override
+	// public void complete_PrePrimaryExpr(final EObject model, final RuleCall ruleCall,
+	// final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	//
+	// }
 
 	@Override
 	public void complete_MemberRef(final EObject model, final RuleCall ruleCall,
