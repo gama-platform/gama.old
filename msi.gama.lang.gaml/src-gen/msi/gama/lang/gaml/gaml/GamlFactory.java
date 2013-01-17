@@ -53,94 +53,22 @@ public interface GamlFactory extends EFactory
   Statement createStatement();
 
   /**
-   * Returns a new object of class '<em>Definition</em>'.
+   * Returns a new object of class '<em>Contents</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Definition</em>'.
+   * @return a new object of class '<em>Contents</em>'.
    * @generated
    */
-  Definition createDefinition();
+  Contents createContents();
 
   /**
-   * Returns a new object of class '<em>Facet Ref</em>'.
+   * Returns a new object of class '<em>Facet</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Facet Ref</em>'.
+   * @return a new object of class '<em>Facet</em>'.
    * @generated
    */
-  FacetRef createFacetRef();
-
-  /**
-   * Returns a new object of class '<em>Facet Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Facet Ref</em>'.
-   * @generated
-   */
-  GamlFacetRef createGamlFacetRef();
-
-  /**
-   * Returns a new object of class '<em>Function Gaml Facet Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function Gaml Facet Ref</em>'.
-   * @generated
-   */
-  FunctionGamlFacetRef createFunctionGamlFacetRef();
-
-  /**
-   * Returns a new object of class '<em>Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Facet Expr</em>'.
-   * @generated
-   */
-  FacetExpr createFacetExpr();
-
-  /**
-   * Returns a new object of class '<em>Definition Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Definition Facet Expr</em>'.
-   * @generated
-   */
-  DefinitionFacetExpr createDefinitionFacetExpr();
-
-  /**
-   * Returns a new object of class '<em>Name Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Name Facet Expr</em>'.
-   * @generated
-   */
-  NameFacetExpr createNameFacetExpr();
-
-  /**
-   * Returns a new object of class '<em>Returns Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Returns Facet Expr</em>'.
-   * @generated
-   */
-  ReturnsFacetExpr createReturnsFacetExpr();
-
-  /**
-   * Returns a new object of class '<em>Action Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Action Facet Expr</em>'.
-   * @generated
-   */
-  ActionFacetExpr createActionFacetExpr();
-
-  /**
-   * Returns a new object of class '<em>Function Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function Facet Expr</em>'.
-   * @generated
-   */
-  FunctionFacetExpr createFunctionFacetExpr();
+  Facet createFacet();
 
   /**
    * Returns a new object of class '<em>Block</em>'.
@@ -168,33 +96,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   PairExpr createPairExpr();
-
-  /**
-   * Returns a new object of class '<em>Abstract Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Abstract Ref</em>'.
-   * @generated
-   */
-  AbstractRef createAbstractRef();
-
-  /**
-   * Returns a new object of class '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function</em>'.
-   * @generated
-   */
-  Function createFunction();
-
-  /**
-   * Returns a new object of class '<em>Variable Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Variable Ref</em>'.
-   * @generated
-   */
-  VariableRef createVariableRef();
 
   /**
    * Returns a new object of class '<em>Var Ref</em>'.
@@ -260,6 +161,15 @@ public interface GamlFactory extends EFactory
   GamlUnaryExpr createGamlUnaryExpr();
 
   /**
+   * Returns a new object of class '<em>Access</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Access</em>'.
+   * @generated
+   */
+  Access createAccess();
+
+  /**
    * Returns a new object of class '<em>Member Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -287,6 +197,15 @@ public interface GamlFactory extends EFactory
   Point createPoint();
 
   /**
+   * Returns a new object of class '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function</em>'.
+   * @generated
+   */
+  Function createFunction();
+
+  /**
    * Returns a new object of class '<em>Unit Name</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -294,6 +213,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   UnitName createUnitName();
+
+  /**
+   * Returns a new object of class '<em>Variable Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Variable Ref</em>'.
+   * @generated
+   */
+  VariableRef createVariableRef();
 
   /**
    * Returns a new object of class '<em>Int Literal</em>'.

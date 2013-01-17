@@ -9,21 +9,21 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Function</b></em>'.
+ * A representation of the model object '<em><b>Access</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Access#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
  *
- * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction()
+ * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess()
  * @model
  * @generated
  */
-public interface Function extends Expression
+public interface Access extends Expression
 {
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference list.
@@ -35,10 +35,10 @@ public interface Function extends Expression
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Args</em>' containment reference list.
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Args()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess_Args()
    * @model containment="true"
    * @generated
    */
   EList<Expression> getArgs();
 
-} // Function
+} // Access
