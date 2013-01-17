@@ -93,54 +93,14 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createStatementAdapter();
       }
       @Override
-      public Adapter caseDefinition(Definition object)
+      public Adapter caseContents(Contents object)
       {
-        return createDefinitionAdapter();
+        return createContentsAdapter();
       }
       @Override
-      public Adapter caseFacetRef(FacetRef object)
+      public Adapter caseFacet(Facet object)
       {
-        return createFacetRefAdapter();
-      }
-      @Override
-      public Adapter caseGamlFacetRef(GamlFacetRef object)
-      {
-        return createGamlFacetRefAdapter();
-      }
-      @Override
-      public Adapter caseFunctionGamlFacetRef(FunctionGamlFacetRef object)
-      {
-        return createFunctionGamlFacetRefAdapter();
-      }
-      @Override
-      public Adapter caseFacetExpr(FacetExpr object)
-      {
-        return createFacetExprAdapter();
-      }
-      @Override
-      public Adapter caseDefinitionFacetExpr(DefinitionFacetExpr object)
-      {
-        return createDefinitionFacetExprAdapter();
-      }
-      @Override
-      public Adapter caseNameFacetExpr(NameFacetExpr object)
-      {
-        return createNameFacetExprAdapter();
-      }
-      @Override
-      public Adapter caseReturnsFacetExpr(ReturnsFacetExpr object)
-      {
-        return createReturnsFacetExprAdapter();
-      }
-      @Override
-      public Adapter caseActionFacetExpr(ActionFacetExpr object)
-      {
-        return createActionFacetExprAdapter();
-      }
-      @Override
-      public Adapter caseFunctionFacetExpr(FunctionFacetExpr object)
-      {
-        return createFunctionFacetExprAdapter();
+        return createFacetAdapter();
       }
       @Override
       public Adapter caseBlock(Block object)
@@ -156,21 +116,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter casePairExpr(PairExpr object)
       {
         return createPairExprAdapter();
-      }
-      @Override
-      public Adapter caseAbstractRef(AbstractRef object)
-      {
-        return createAbstractRefAdapter();
-      }
-      @Override
-      public Adapter caseFunction(Function object)
-      {
-        return createFunctionAdapter();
-      }
-      @Override
-      public Adapter caseVariableRef(VariableRef object)
-      {
-        return createVariableRefAdapter();
       }
       @Override
       public Adapter caseGamlVarRef(GamlVarRef object)
@@ -208,6 +153,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createGamlUnaryExprAdapter();
       }
       @Override
+      public Adapter caseAccess(Access object)
+      {
+        return createAccessAdapter();
+      }
+      @Override
       public Adapter caseMemberRef(MemberRef object)
       {
         return createMemberRefAdapter();
@@ -223,9 +173,19 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createPointAdapter();
       }
       @Override
+      public Adapter caseFunction(Function object)
+      {
+        return createFunctionAdapter();
+      }
+      @Override
       public Adapter caseUnitName(UnitName object)
       {
         return createUnitNameAdapter();
+      }
+      @Override
+      public Adapter caseVariableRef(VariableRef object)
+      {
+        return createVariableRefAdapter();
       }
       @Override
       public Adapter caseIntLiteral(IntLiteral object)
@@ -320,151 +280,31 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Definition <em>Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Contents <em>Contents</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Definition
+   * @see msi.gama.lang.gaml.gaml.Contents
    * @generated
    */
-  public Adapter createDefinitionAdapter()
+  public Adapter createContentsAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FacetRef <em>Facet Ref</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Facet <em>Facet</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.FacetRef
+   * @see msi.gama.lang.gaml.gaml.Facet
    * @generated
    */
-  public Adapter createFacetRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlFacetRef <em>Facet Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlFacetRef
-   * @generated
-   */
-  public Adapter createGamlFacetRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FunctionGamlFacetRef <em>Function Gaml Facet Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.FunctionGamlFacetRef
-   * @generated
-   */
-  public Adapter createFunctionGamlFacetRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FacetExpr <em>Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.FacetExpr
-   * @generated
-   */
-  public Adapter createFacetExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.DefinitionFacetExpr <em>Definition Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.DefinitionFacetExpr
-   * @generated
-   */
-  public Adapter createDefinitionFacetExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.NameFacetExpr <em>Name Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.NameFacetExpr
-   * @generated
-   */
-  public Adapter createNameFacetExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ReturnsFacetExpr <em>Returns Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ReturnsFacetExpr
-   * @generated
-   */
-  public Adapter createReturnsFacetExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionFacetExpr <em>Action Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ActionFacetExpr
-   * @generated
-   */
-  public Adapter createActionFacetExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.FunctionFacetExpr <em>Function Facet Expr</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.FunctionFacetExpr
-   * @generated
-   */
-  public Adapter createFunctionFacetExprAdapter()
+  public Adapter createFacetAdapter()
   {
     return null;
   }
@@ -510,51 +350,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createPairExprAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.AbstractRef <em>Abstract Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.AbstractRef
-   * @generated
-   */
-  public Adapter createAbstractRefAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Function
-   * @generated
-   */
-  public Adapter createFunctionAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.VariableRef
-   * @generated
-   */
-  public Adapter createVariableRefAdapter()
   {
     return null;
   }
@@ -665,6 +460,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Access <em>Access</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Access
+   * @generated
+   */
+  public Adapter createAccessAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.MemberRef <em>Member Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -710,6 +520,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Function
+   * @generated
+   */
+  public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.UnitName <em>Unit Name</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -720,6 +545,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createUnitNameAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.VariableRef
+   * @generated
+   */
+  public Adapter createVariableRefAdapter()
   {
     return null;
   }

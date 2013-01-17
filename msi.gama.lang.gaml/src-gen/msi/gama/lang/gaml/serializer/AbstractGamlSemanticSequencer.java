@@ -2,21 +2,18 @@ package msi.gama.lang.gaml.serializer;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import msi.gama.lang.gaml.gaml.ActionFacetExpr;
+import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ArgPairExpr;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
-import msi.gama.lang.gaml.gaml.Definition;
+import msi.gama.lang.gaml.gaml.Contents;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Expression;
-import msi.gama.lang.gaml.gaml.FacetExpr;
+import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
-import msi.gama.lang.gaml.gaml.FunctionFacetExpr;
-import msi.gama.lang.gaml.gaml.FunctionGamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
-import msi.gama.lang.gaml.gaml.GamlFacetRef;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.GamlUnaryExpr;
 import msi.gama.lang.gaml.gaml.GamlUnitExpr;
@@ -24,10 +21,7 @@ import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
 import msi.gama.lang.gaml.gaml.MemberRef;
 import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.NameFacetExpr;
-import msi.gama.lang.gaml.gaml.PairExpr;
 import msi.gama.lang.gaml.gaml.Point;
-import msi.gama.lang.gaml.gaml.ReturnsFacetExpr;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TernExp;
@@ -74,17 +68,40 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == GamlPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
-			case GamlPackage.ACTION_FACET_EXPR:
-				if(context == grammarAccess.getActionFacetExprRule() ||
-				   context == grammarAccess.getDefinitionFacetExprRule() ||
-				   context == grammarAccess.getFacetExprRule() ||
-				   context == grammarAccess.getGamlVarRefRule()) {
-					sequence_ActionFacetExpr(context, (ActionFacetExpr) semanticObject); 
+			case GamlPackage.ACCESS:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_Access(context, (Access) semanticObject); 
 					return; 
 				}
 				else break;
 			case GamlPackage.ARG_PAIR_EXPR:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -102,8 +119,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -114,7 +130,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.ARRAY:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -131,8 +149,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -149,7 +166,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.BOOLEAN_LITERAL:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -166,8 +185,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -179,7 +197,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.COLOR_LITERAL:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -196,8 +216,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -208,16 +227,16 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.DEFINITION:
-				if(context == grammarAccess.getDefinitionRule() ||
-				   context == grammarAccess.getGamlVarRefRule() ||
-				   context == grammarAccess.getStatementRule()) {
-					sequence_Definition(context, (Definition) semanticObject); 
+			case GamlPackage.CONTENTS:
+				if(context == grammarAccess.getContentsRule()) {
+					sequence_Contents(context, (Contents) semanticObject); 
 					return; 
 				}
 				else break;
 			case GamlPackage.DOUBLE_LITERAL:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -234,8 +253,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -247,7 +265,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.EXPRESSION:
-				if(context == grammarAccess.getAdditionRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
 				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
@@ -264,8 +284,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -275,14 +294,29 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.FACET_EXPR:
-				if(context == grammarAccess.getFacetExprRule()) {
-					sequence_FacetExpr(context, (FacetExpr) semanticObject); 
+			case GamlPackage.FACET:
+				if(context == grammarAccess.getClassicFacetRule()) {
+					sequence_ClassicFacet(context, (Facet) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getDefinitionFacetRule() ||
+				   context == grammarAccess.getGamlVarRefRule()) {
+					sequence_DefinitionFacet(context, (Facet) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getFacetRule()) {
+					sequence_Facet(context, (Facet) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getFunctionFacetRule()) {
+					sequence_FunctionFacet(context, (Facet) semanticObject); 
 					return; 
 				}
 				else break;
 			case GamlPackage.FUNCTION:
 				if(context == grammarAccess.getAbstractRefRule() ||
+				   context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
 				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
@@ -301,8 +335,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -312,346 +345,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.FUNCTION_FACET_EXPR:
-				if(context == grammarAccess.getFacetExprRule() ||
-				   context == grammarAccess.getFunctionFacetExprRule()) {
-					sequence_FunctionFacetExpr(context, (FunctionFacetExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.FUNCTION_GAML_FACET_REF:
-				if(context == grammarAccess.getFacetRefRule() ||
-				   context == grammarAccess.getFunctionGamlFacetRefRule()) {
-					sequence_FunctionGamlFacetRef(context, (FunctionGamlFacetRef) semanticObject); 
-					return; 
-				}
-				else break;
 			case GamlPackage.GAML_BINARY_EXPR:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_GamlBinaryExpr(context, (GamlBinaryExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.GAML_FACET_REF:
-				if(context == grammarAccess.getFacetRefRule() ||
-				   context == grammarAccess.getGamlFacetRefRule()) {
-					sequence_GamlFacetRef(context, (GamlFacetRef) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.GAML_UNARY_EXPR:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_GamlUnaryExpr(context, (GamlUnaryExpr) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getGamlUnaryExprAccess().getGamlUnaryExprLeftAction_1_1_0()) {
-					sequence_GamlUnaryExpr_GamlUnaryExpr_1_1_0(context, (GamlUnaryExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.GAML_UNIT_EXPR:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_GamlUnitExpr(context, (GamlUnitExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.IMPORT:
-				if(context == grammarAccess.getImportRule()) {
-					sequence_Import(context, (Import) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.INT_LITERAL:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTerminalExpressionRule() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_TerminalExpression(context, (IntLiteral) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.MEMBER_REF:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_MemberRef(context, (MemberRef) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.MODEL:
-				if(context == grammarAccess.getModelRule()) {
-					sequence_Model(context, (Model) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.NAME_FACET_EXPR:
-				if(context == grammarAccess.getDefinitionFacetExprRule() ||
-				   context == grammarAccess.getFacetExprRule() ||
-				   context == grammarAccess.getGamlVarRefRule() ||
-				   context == grammarAccess.getNameFacetExprRule()) {
-					sequence_NameFacetExpr(context, (NameFacetExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.PAIR_EXPR:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_PairExpr(context, (PairExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.POINT:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_PrimaryExpression(context, (Point) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.RETURNS_FACET_EXPR:
-				if(context == grammarAccess.getDefinitionFacetExprRule() ||
-				   context == grammarAccess.getFacetExprRule() ||
-				   context == grammarAccess.getGamlVarRefRule() ||
-				   context == grammarAccess.getReturnsFacetExprRule()) {
-					sequence_ReturnsFacetExpr(context, (ReturnsFacetExpr) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.STATEMENT:
-				if(context == grammarAccess.getClassicStatementRule()) {
-					sequence_ClassicStatement(context, (Statement) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getIfEvalRule()) {
-					sequence_IfEval(context, (Statement) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getStatementRule()) {
-					sequence_Statement(context, (Statement) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.STRING_LITERAL:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTerminalExpressionRule() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_TerminalExpression(context, (StringLiteral) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.TERN_EXP:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getAndExpRule() ||
-				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getExpressionRule() ||
-				   context == grammarAccess.getGamlBinaryExprRule() ||
-				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getGamlUnaryExprRule() ||
-				   context == grammarAccess.getGamlUnitExprRule() ||
-				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
-				   context == grammarAccess.getMemberRefRule() ||
-				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
-				   context == grammarAccess.getMultiplicationRule() ||
-				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getOrExpRule() ||
-				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
-				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
-				   context == grammarAccess.getPrimaryExpressionRule() ||
-				   context == grammarAccess.getRelationalRule() ||
-				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getTernExpRule() ||
-				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
-					sequence_TernExp(context, (TernExp) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.UNIT_NAME:
-				if(context == grammarAccess.getUnitNameRule()) {
-					sequence_UnitName(context, (UnitName) semanticObject); 
-					return; 
-				}
-				else break;
-			case GamlPackage.VARIABLE_REF:
-				if(context == grammarAccess.getAbstractRefRule() ||
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
 				   context == grammarAccess.getAdditionRule() ||
 				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
 				   context == grammarAccess.getAndExpRule() ||
@@ -669,8 +365,299 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrExpRule() ||
 				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairExprRule() ||
-				   context == grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0() ||
-				   context == grammarAccess.getPrePrimaryExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_GamlBinaryExpr(context, (GamlBinaryExpr) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.GAML_UNARY_EXPR:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_GamlUnaryExpr(context, (GamlUnaryExpr) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getGamlUnaryExprAccess().getGamlUnaryExprLeftAction_1_1_0_0()) {
+					sequence_GamlUnaryExpr_GamlUnaryExpr_1_1_0_0(context, (GamlUnaryExpr) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.GAML_UNIT_EXPR:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_GamlUnitExpr(context, (GamlUnitExpr) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.IMPORT:
+				if(context == grammarAccess.getImportRule()) {
+					sequence_Import(context, (Import) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.INT_LITERAL:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTerminalExpressionRule() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_TerminalExpression(context, (IntLiteral) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.MEMBER_REF:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_MemberRef(context, (MemberRef) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.MODEL:
+				if(context == grammarAccess.getModelRule()) {
+					sequence_Model(context, (Model) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.POINT:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_PrimaryExpression(context, (Point) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.STATEMENT:
+				if(context == grammarAccess.getAssignmentStatementRule()) {
+					sequence_AssignmentStatement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getClassicStatementRule()) {
+					sequence_ClassicStatement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getDefinitionStatementRule() ||
+				   context == grammarAccess.getGamlVarRefRule()) {
+					sequence_DefinitionStatement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getIfStatementRule()) {
+					sequence_IfStatement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getReturnStatementRule()) {
+					sequence_ReturnStatement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getStatementRule()) {
+					sequence_Statement(context, (Statement) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.STRING_LITERAL:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTerminalExpressionRule() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_TerminalExpression(context, (StringLiteral) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.TERN_EXP:
+				if(context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
+				   context == grammarAccess.getPrimaryExpressionRule() ||
+				   context == grammarAccess.getRelationalRule() ||
+				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getTernExpRule() ||
+				   context == grammarAccess.getTernExpAccess().getTernExpLeftAction_1_0()) {
+					sequence_TernExp(context, (TernExp) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.UNIT_NAME:
+				if(context == grammarAccess.getUnitNameRule()) {
+					sequence_UnitName(context, (UnitName) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.VARIABLE_REF:
+				if(context == grammarAccess.getAbstractRefRule() ||
+				   context == grammarAccess.getAccessRule() ||
+				   context == grammarAccess.getAccessAccess().getAccessLeftAction_1_0_0() ||
+				   context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getAndExpRule() ||
+				   context == grammarAccess.getAndExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getExpressionRule() ||
+				   context == grammarAccess.getGamlBinaryExprRule() ||
+				   context == grammarAccess.getGamlBinaryExprAccess().getGamlBinaryExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getGamlUnaryExprRule() ||
+				   context == grammarAccess.getGamlUnitExprRule() ||
+				   context == grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0() ||
+				   context == grammarAccess.getMemberRefRule() ||
+				   context == grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0() ||
+				   context == grammarAccess.getMultiplicationRule() ||
+				   context == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getOrExpRule() ||
+				   context == grammarAccess.getOrExpAccess().getExpressionLeftAction_1_0() ||
+				   context == grammarAccess.getPairExprRule() ||
+				   context == grammarAccess.getPairExprAccess().getExpressionLeftAction_1_1_0_0() ||
 				   context == grammarAccess.getPrimaryExpressionRule() ||
 				   context == grammarAccess.getRelationalRule() ||
 				   context == grammarAccess.getRelationalAccess().getExpressionLeftAction_1_0_0() ||
@@ -687,9 +674,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (name=ID | name=STRING | name=BuiltIn)
+	 *     (left=Access_Access_1_0_0 args+=Expression args+=Expression*)
 	 */
-	protected void sequence_ActionFacetExpr(EObject context, ActionFacetExpr semanticObject) {
+	protected void sequence_Access(EObject context, Access semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -699,6 +686,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *     (
 	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
 	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=GamlBinaryExpr) | 
+	 *         (left=PairExpr_Expression_1_1_0_0 op='::' right=Addition) | 
 	 *         (
 	 *             left=Relational_Expression_1_0_0 
 	 *             (
@@ -731,6 +719,29 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (
+	 *         expr=Expression 
+	 *         (
+	 *             key='<-' | 
+	 *             key='<<' | 
+	 *             key='>>' | 
+	 *             key='+=' | 
+	 *             key='-=' | 
+	 *             key='++' | 
+	 *             key='--' | 
+	 *             key=':='
+	 *         ) 
+	 *         value=Expression 
+	 *         facets+=Facet*
+	 *     )
+	 */
+	protected void sequence_AssignmentStatement(EObject context, Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (statements+=Statement*)
 	 */
 	protected void sequence_Block(EObject context, Block semanticObject) {
@@ -740,7 +751,16 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key=BuiltIn ref=GamlFacetRef? expr=Expression facets+=FacetExpr* block=Block?)
+	 *     ((key=ID | key='<-') expr=Expression)
+	 */
+	protected void sequence_ClassicFacet(EObject context, Facet semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (key=BuiltInStatementKey expr=Expression facets+=Facet* block=Block?)
 	 */
 	protected void sequence_ClassicStatement(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -749,56 +769,49 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key=ID (name=ID | name=STRING | name=BuiltIn)? facets+=FacetExpr* block=Block?)
+	 *     (type=ID type2=ID?)
 	 */
-	protected void sequence_Definition(EObject context, Definition semanticObject) {
+	protected void sequence_Contents(EObject context, Contents semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (key=GamlFacetRef expr=Expression)
+	 *     ((key='name:' | key='returns:' | key='action:') (name=ID | name=STRING | name=BuiltInStatementKey))
 	 */
-	protected void sequence_FacetExpr(EObject context, FacetExpr semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET_EXPR__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET_EXPR__KEY));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET_EXPR__EXPR) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET_EXPR__EXPR));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getFacetExprAccess().getKeyGamlFacetRefParserRuleCall_2_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getFacetExprAccess().getExprExpressionParserRuleCall_2_1_0(), semanticObject.getExpr());
-		feeder.finish();
+	protected void sequence_DefinitionFacet(EObject context, Facet semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (key=FunctionGamlFacetRef expr=Expression)
+	 *     (key=ID of=Contents? (name=ID | name=STRING | name=BuiltInStatementKey)? facets+=Facet* block=Block?)
 	 */
-	protected void sequence_FunctionFacetExpr(EObject context, FunctionFacetExpr semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET_EXPR__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET_EXPR__KEY));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET_EXPR__EXPR) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET_EXPR__EXPR));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getFunctionFacetExprAccess().getKeyFunctionGamlFacetRefParserRuleCall_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getFunctionFacetExprAccess().getExprExpressionParserRuleCall_2_0(), semanticObject.getExpr());
-		feeder.finish();
+	protected void sequence_DefinitionStatement(EObject context, Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (ref='function' | ref='->')
+	 *     (
+	 *         ((key='function:' | key='->') expr=Expression) | 
+	 *         ((key='name:' | key='returns:' | key='action:') (name=ID | name=STRING | name=BuiltInStatementKey)) | 
+	 *         ((key=ID | key='<-') expr=Expression)
+	 *     )
 	 */
-	protected void sequence_FunctionGamlFacetRef(EObject context, FunctionGamlFacetRef semanticObject) {
+	protected void sequence_Facet(EObject context, Facet semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     ((key='function:' | key='->') expr=Expression)
+	 */
+	protected void sequence_FunctionFacet(EObject context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -836,16 +849,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (ref=ID | ref='<-')
-	 */
-	protected void sequence_GamlFacetRef(EObject context, GamlFacetRef semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (left=GamlUnaryExpr_GamlUnaryExpr_1_1_0 (op='-' | op='!' | op='my' | op='the' | op='not') right=GamlUnaryExpr)
+	 *     ((left=GamlUnaryExpr_GamlUnaryExpr_1_1_0_0 (op='¡' right=UnitName)) | ((op='-' | op='!' | op='my' | op='the' | op='not') right=GamlUnaryExpr))
 	 */
 	protected void sequence_GamlUnaryExpr(EObject context, GamlUnaryExpr semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -856,38 +860,25 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 * Constraint:
 	 *     {GamlUnaryExpr}
 	 */
-	protected void sequence_GamlUnaryExpr_GamlUnaryExpr_1_1_0(EObject context, GamlUnaryExpr semanticObject) {
+	protected void sequence_GamlUnaryExpr_GamlUnaryExpr_1_1_0_0(EObject context, GamlUnaryExpr semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (left=GamlUnitExpr_GamlUnitExpr_1_0_0 op='#' right=UnitName)
+	 *     (left=GamlUnitExpr_GamlUnitExpr_1_0_0 (op='#' | op='¡') right=UnitName)
 	 */
 	protected void sequence_GamlUnitExpr(EObject context, GamlUnitExpr semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getGamlUnitExprAccess().getGamlUnitExprLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getGamlUnitExprAccess().getOpNumberSignKeyword_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getGamlUnitExprAccess().getRightUnitNameParserRuleCall_1_1_0(), semanticObject.getRight());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (key='if' ref=GamlFacetRef? expr=Expression block=Block (else=Statement | else=Block)?)
+	 *     (key='if' expr=Expression block=Block (else=IfStatement | else=Block)?)
 	 */
-	protected void sequence_IfEval(EObject context, Statement semanticObject) {
+	protected void sequence_IfStatement(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -910,23 +901,10 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (left=MemberRef_MemberRef_1_0 op='.' right=VariableRef)
+	 *     (left=MemberRef_MemberRef_1_0 (op='.' right=PrimaryExpression))
 	 */
 	protected void sequence_MemberRef(EObject context, MemberRef semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getMemberRefAccess().getMemberRefLeftAction_1_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getMemberRefAccess().getOpFullStopKeyword_1_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getMemberRefAccess().getRightVariableRefParserRuleCall_1_2_0(), semanticObject.getRight());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -936,37 +914,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 */
 	protected void sequence_Model(EObject context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (name=ID | name=STRING | name=BuiltIn)
-	 */
-	protected void sequence_NameFacetExpr(EObject context, NameFacetExpr semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (left=PairExpr_PairExpr_1_1_0_0 op='::' right=Addition)
-	 */
-	protected void sequence_PairExpr(EObject context, PairExpr semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getPairExprAccess().getPairExprLeftAction_1_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getPairExprAccess().getOpColonColonKeyword_1_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getPairExprAccess().getRightAdditionParserRuleCall_1_1_1_0(), semanticObject.getRight());
-		feeder.finish();
 	}
 	
 	
@@ -990,9 +937,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     name=ID
+	 *     (key='return' expr=Expression?)
 	 */
-	protected void sequence_ReturnsFacetExpr(EObject context, ReturnsFacetExpr semanticObject) {
+	protected void sequence_ReturnStatement(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1000,8 +947,25 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	/**
 	 * Constraint:
 	 *     (
-	 *         (key='if' ref=GamlFacetRef? expr=Expression block=Block (else=Statement | else=Block)?) | 
-	 *         (key=BuiltIn ref=GamlFacetRef? expr=Expression facets+=FacetExpr* block=Block?)
+	 *         (
+	 *             expr=Expression 
+	 *             (
+	 *                 key='<-' | 
+	 *                 key='<<' | 
+	 *                 key='>>' | 
+	 *                 key='+=' | 
+	 *                 key='-=' | 
+	 *                 key='++' | 
+	 *                 key='--' | 
+	 *                 key=':='
+	 *             ) 
+	 *             value=Expression 
+	 *             facets+=Facet*
+	 *         ) | 
+	 *         (key='return' expr=Expression?) | 
+	 *         (key='if' expr=Expression block=Block (else=IfStatement | else=Block)?) | 
+	 *         (key=BuiltInStatementKey expr=Expression facets+=Facet* block=Block?) | 
+	 *         (key=ID of=Contents? (name=ID | name=STRING | name=BuiltInStatementKey)? facets+=Facet* block=Block?)
 	 *     )
 	 */
 	protected void sequence_Statement(EObject context, Statement semanticObject) {

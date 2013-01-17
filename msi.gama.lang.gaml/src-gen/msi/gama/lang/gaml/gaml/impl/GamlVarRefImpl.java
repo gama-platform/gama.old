@@ -5,12 +5,15 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.GamlVarRef;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
@@ -22,6 +25,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
@@ -30,6 +35,36 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements GamlVarRef
 {
+  /**
+   * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected static final String KEY_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected String key = KEY_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpr()
+   * @generated
+   * @ordered
+   */
+  protected Expression expr;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -76,6 +111,77 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getKey()
+  {
+    return key;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setKey(String newKey)
+  {
+    String oldKey = key;
+    key = newKey;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_VAR_REF__KEY, oldKey, key));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getExpr()
+  {
+    return expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExpr(Expression newExpr, NotificationChain msgs)
+  {
+    Expression oldExpr = expr;
+    expr = newExpr;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_VAR_REF__EXPR, oldExpr, newExpr);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpr(Expression newExpr)
+  {
+    if (newExpr != expr)
+    {
+      NotificationChain msgs = null;
+      if (expr != null)
+        msgs = ((InternalEObject)expr).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.GAML_VAR_REF__EXPR, null, msgs);
+      if (newExpr != null)
+        msgs = ((InternalEObject)newExpr).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.GAML_VAR_REF__EXPR, null, msgs);
+      msgs = basicSetExpr(newExpr, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_VAR_REF__EXPR, newExpr, newExpr));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getName()
   {
     return name;
@@ -100,10 +206,30 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
    * @generated
    */
   @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case GamlPackage.GAML_VAR_REF__EXPR:
+        return basicSetExpr(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
     {
+      case GamlPackage.GAML_VAR_REF__KEY:
+        return getKey();
+      case GamlPackage.GAML_VAR_REF__EXPR:
+        return getExpr();
       case GamlPackage.GAML_VAR_REF__NAME:
         return getName();
     }
@@ -120,6 +246,12 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
   {
     switch (featureID)
     {
+      case GamlPackage.GAML_VAR_REF__KEY:
+        setKey((String)newValue);
+        return;
+      case GamlPackage.GAML_VAR_REF__EXPR:
+        setExpr((Expression)newValue);
+        return;
       case GamlPackage.GAML_VAR_REF__NAME:
         setName((String)newValue);
         return;
@@ -137,6 +269,12 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
   {
     switch (featureID)
     {
+      case GamlPackage.GAML_VAR_REF__KEY:
+        setKey(KEY_EDEFAULT);
+        return;
+      case GamlPackage.GAML_VAR_REF__EXPR:
+        setExpr((Expression)null);
+        return;
       case GamlPackage.GAML_VAR_REF__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -154,6 +292,10 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
   {
     switch (featureID)
     {
+      case GamlPackage.GAML_VAR_REF__KEY:
+        return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+      case GamlPackage.GAML_VAR_REF__EXPR:
+        return expr != null;
       case GamlPackage.GAML_VAR_REF__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
@@ -171,7 +313,9 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
+    result.append(" (key: ");
+    result.append(key);
+    result.append(", name: ");
     result.append(name);
     result.append(')');
     return result.toString();

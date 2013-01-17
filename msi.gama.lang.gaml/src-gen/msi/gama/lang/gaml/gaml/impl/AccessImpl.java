@@ -7,8 +7,8 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
+import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.Expression;
-import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -23,18 +23,18 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Function</b></em>'.
+ * An implementation of the model object '<em><b>Access</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class FunctionImpl extends ExpressionImpl implements Function
+public class AccessImpl extends ExpressionImpl implements Access
 {
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference list.
@@ -51,7 +51,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  protected FunctionImpl()
+  protected AccessImpl()
   {
     super();
   }
@@ -64,7 +64,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.FUNCTION;
+    return GamlPackage.Literals.ACCESS;
   }
 
   /**
@@ -76,7 +76,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     if (args == null)
     {
-      args = new EObjectContainmentEList<Expression>(Expression.class, this, GamlPackage.FUNCTION__ARGS);
+      args = new EObjectContainmentEList<Expression>(Expression.class, this, GamlPackage.ACCESS__ARGS);
     }
     return args;
   }
@@ -91,7 +91,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ARGS:
+      case GamlPackage.ACCESS__ARGS:
         return ((InternalEList<?>)getArgs()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -107,7 +107,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ARGS:
+      case GamlPackage.ACCESS__ARGS:
         return getArgs();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -124,7 +124,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ARGS:
+      case GamlPackage.ACCESS__ARGS:
         getArgs().clear();
         getArgs().addAll((Collection<? extends Expression>)newValue);
         return;
@@ -142,7 +142,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ARGS:
+      case GamlPackage.ACCESS__ARGS:
         getArgs().clear();
         return;
     }
@@ -159,10 +159,10 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ARGS:
+      case GamlPackage.ACCESS__ARGS:
         return args != null && !args.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-} //FunctionImpl
+} //AccessImpl

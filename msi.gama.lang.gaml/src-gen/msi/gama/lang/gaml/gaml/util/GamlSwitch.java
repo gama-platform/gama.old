@@ -93,92 +93,22 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Statement statement = (Statement)theEObject;
         T result = caseStatement(statement);
+        if (result == null) result = caseGamlVarRef(statement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.DEFINITION:
+      case GamlPackage.CONTENTS:
       {
-        Definition definition = (Definition)theEObject;
-        T result = caseDefinition(definition);
-        if (result == null) result = caseStatement(definition);
-        if (result == null) result = caseGamlVarRef(definition);
+        Contents contents = (Contents)theEObject;
+        T result = caseContents(contents);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.FACET_REF:
+      case GamlPackage.FACET:
       {
-        FacetRef facetRef = (FacetRef)theEObject;
-        T result = caseFacetRef(facetRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.GAML_FACET_REF:
-      {
-        GamlFacetRef gamlFacetRef = (GamlFacetRef)theEObject;
-        T result = caseGamlFacetRef(gamlFacetRef);
-        if (result == null) result = caseFacetRef(gamlFacetRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FUNCTION_GAML_FACET_REF:
-      {
-        FunctionGamlFacetRef functionGamlFacetRef = (FunctionGamlFacetRef)theEObject;
-        T result = caseFunctionGamlFacetRef(functionGamlFacetRef);
-        if (result == null) result = caseFacetRef(functionGamlFacetRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FACET_EXPR:
-      {
-        FacetExpr facetExpr = (FacetExpr)theEObject;
-        T result = caseFacetExpr(facetExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.DEFINITION_FACET_EXPR:
-      {
-        DefinitionFacetExpr definitionFacetExpr = (DefinitionFacetExpr)theEObject;
-        T result = caseDefinitionFacetExpr(definitionFacetExpr);
-        if (result == null) result = caseFacetExpr(definitionFacetExpr);
-        if (result == null) result = caseGamlVarRef(definitionFacetExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.NAME_FACET_EXPR:
-      {
-        NameFacetExpr nameFacetExpr = (NameFacetExpr)theEObject;
-        T result = caseNameFacetExpr(nameFacetExpr);
-        if (result == null) result = caseDefinitionFacetExpr(nameFacetExpr);
-        if (result == null) result = caseFacetExpr(nameFacetExpr);
-        if (result == null) result = caseGamlVarRef(nameFacetExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.RETURNS_FACET_EXPR:
-      {
-        ReturnsFacetExpr returnsFacetExpr = (ReturnsFacetExpr)theEObject;
-        T result = caseReturnsFacetExpr(returnsFacetExpr);
-        if (result == null) result = caseDefinitionFacetExpr(returnsFacetExpr);
-        if (result == null) result = caseFacetExpr(returnsFacetExpr);
-        if (result == null) result = caseGamlVarRef(returnsFacetExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.ACTION_FACET_EXPR:
-      {
-        ActionFacetExpr actionFacetExpr = (ActionFacetExpr)theEObject;
-        T result = caseActionFacetExpr(actionFacetExpr);
-        if (result == null) result = caseDefinitionFacetExpr(actionFacetExpr);
-        if (result == null) result = caseFacetExpr(actionFacetExpr);
-        if (result == null) result = caseGamlVarRef(actionFacetExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FUNCTION_FACET_EXPR:
-      {
-        FunctionFacetExpr functionFacetExpr = (FunctionFacetExpr)theEObject;
-        T result = caseFunctionFacetExpr(functionFacetExpr);
-        if (result == null) result = caseFacetExpr(functionFacetExpr);
+        Facet facet = (Facet)theEObject;
+        T result = caseFacet(facet);
+        if (result == null) result = caseGamlVarRef(facet);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -201,32 +131,6 @@ public class GamlSwitch<T> extends Switch<T>
         PairExpr pairExpr = (PairExpr)theEObject;
         T result = casePairExpr(pairExpr);
         if (result == null) result = caseExpression(pairExpr);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.ABSTRACT_REF:
-      {
-        AbstractRef abstractRef = (AbstractRef)theEObject;
-        T result = caseAbstractRef(abstractRef);
-        if (result == null) result = caseExpression(abstractRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.FUNCTION:
-      {
-        Function function = (Function)theEObject;
-        T result = caseFunction(function);
-        if (result == null) result = caseAbstractRef(function);
-        if (result == null) result = caseExpression(function);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.VARIABLE_REF:
-      {
-        VariableRef variableRef = (VariableRef)theEObject;
-        T result = caseVariableRef(variableRef);
-        if (result == null) result = caseAbstractRef(variableRef);
-        if (result == null) result = caseExpression(variableRef);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -286,6 +190,14 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.ACCESS:
+      {
+        Access access = (Access)theEObject;
+        T result = caseAccess(access);
+        if (result == null) result = caseExpression(access);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.MEMBER_REF:
       {
         MemberRef memberRef = (MemberRef)theEObject;
@@ -310,11 +222,27 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = caseExpression(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.UNIT_NAME:
       {
         UnitName unitName = (UnitName)theEObject;
         T result = caseUnitName(unitName);
         if (result == null) result = caseExpression(unitName);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.VARIABLE_REF:
+      {
+        VariableRef variableRef = (VariableRef)theEObject;
+        T result = caseVariableRef(variableRef);
+        if (result == null) result = caseExpression(variableRef);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -416,161 +344,33 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Contents</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Contents</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseDefinition(Definition object)
+  public T caseContents(Contents object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Facet Ref</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Facet</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Facet Ref</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Facet</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseFacetRef(FacetRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Facet Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Facet Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseGamlFacetRef(GamlFacetRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function Gaml Facet Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function Gaml Facet Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunctionGamlFacetRef(FunctionGamlFacetRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFacetExpr(FacetExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Definition Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Definition Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDefinitionFacetExpr(DefinitionFacetExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Name Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Name Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseNameFacetExpr(NameFacetExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Returns Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Returns Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseReturnsFacetExpr(ReturnsFacetExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Action Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Action Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseActionFacetExpr(ActionFacetExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function Facet Expr</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function Facet Expr</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunctionFacetExpr(FunctionFacetExpr object)
+  public T caseFacet(Facet object)
   {
     return null;
   }
@@ -619,54 +419,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T casePairExpr(PairExpr object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Abstract Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Abstract Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAbstractRef(AbstractRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunction(Function object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Variable Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Variable Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseVariableRef(VariableRef object)
   {
     return null;
   }
@@ -784,6 +536,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Access</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Access</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAccess(Access object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Member Ref</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -832,6 +600,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Unit Name</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -843,6 +627,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseUnitName(UnitName object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Variable Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Variable Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseVariableRef(VariableRef object)
   {
     return null;
   }

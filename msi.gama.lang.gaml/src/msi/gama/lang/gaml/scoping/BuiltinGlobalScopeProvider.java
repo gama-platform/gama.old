@@ -2,19 +2,13 @@
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
-import java.io.*;
-import java.util.*;
-import msi.gama.lang.gaml.gaml.GamlVarRef;
-import org.eclipse.core.runtime.*;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.*;
+import java.util.ArrayList;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.scoping.*;
 import org.eclipse.xtext.scoping.impl.*;
-import org.osgi.framework.Bundle;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 /**
@@ -32,8 +26,8 @@ import com.google.inject.Inject;
  */
 public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
-	@Inject
-	private IResourceDescription.Manager descriptionManager;
+	// @Inject
+	// private IResourceDescription.Manager descriptionManager;
 
 	@Inject
 	private IResourceFactory resourceFactory;
@@ -41,73 +35,40 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
 
-	static Iterable<IEObjectDescription> objectDescriptions = null;
-	public volatile static boolean scopeBuilt;
-
-	private Resource getResource(final Bundle bundle, final String filename) {
-		Path path = new Path(filename);
-		Resource resource =
-			resourceFactory.createResource(URI.createURI("platform:/plugin/" +
-				bundle.getSymbolicName() + "/" + path.toString()));
-		InputStream inputStream;
-		try {
-			// GuiUtils.debug("===> Loading " + resource.getURI() +
-			// " to populate the global scope.");
-			inputStream = FileLocator.openStream(bundle, path, false);
-			resource.load(inputStream, Collections.EMPTY_MAP);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return resource;
-	}
-
-	public final IResourceDescription getResourceDescription(final Bundle bundle,
-		final String filename) {
-		Resource r = getResource(bundle, filename);
-		if ( r == null ) { return null; }
-		return descriptionManager.getResourceDescription(r);
-	}
+	static ArrayList<IEObjectDescription> objectDescriptions = null;
+	static Resource globalResource = null;
 
 	/**
 	 * Get the object descriptions for the built-in scope.
 	 */
 	public Iterable<IEObjectDescription> getEObjectDescriptions() {
-		if ( objectDescriptions == null ) {
-			List<IEObjectDescription> temp = new ArrayList();
-			// for ( Map.Entry<Bundle, String> entry : GamaBundleLoader.gamlAdditionsBundleAndFiles
-			// .entrySet() ) {
-			// IResourceDescription rd = getResourceDescription(entry.getKey(), entry.getValue());
-			// if ( rd != null ) {
-			// Iterable<IEObjectDescription> desc = rd.getExportedObjects();
-			// Iterables.addAll(temp, desc);
-			// }
-			// }
-
-			LinkedHashMap map = Maps.newLinkedHashMap();
-			for ( IEObjectDescription e : temp ) {
-				EObject o = e.getEObjectOrProxy();
-				if ( o instanceof GamlVarRef ) {
-					map.put(((GamlVarRef) o).getName(), e);
-				}
-			}
-			objectDescriptions = new ArrayList(map.values());
-			// objectDescriptions = Scopes.filterDuplicates(temp);
-			scopeBuilt = true;
-		}
-		return objectDescriptions == null ? Collections.EMPTY_LIST : objectDescriptions;
+		// if ( globalResource == null ) {
+		// globalResource = resourceFactory.createResource(URI.createURI("global.gaml"));
+		// }
+		// if ( objectDescriptions == null ) {
+		// Collections.sort(AbstractGamlAdditions.ALL_STATEMENTS);
+		// for ( String s : AbstractGamlAdditions.ALL_STATEMENTS ) {
+		// System.out.println(s);
+		// }
+		// objectDescriptions = new ArrayList();
+		// for ( String name : AbstractGamlAdditions.DEFINITION_STATEMENTS ) {
+		// BuiltInDefinitionStatementKey o =
+		// EGaml.getFactory().createBuiltInDefinitionStatementKey();
+		// o.setName(name);
+		// globalResource.getContents().add(o);
+		// objectDescriptions.add(EObjectDescription.create(name, o));
+		// System.out.println("Definition:" + name);
+		// }
+		// for ( String name : AbstractGamlAdditions.DECLARATION_STATEMENTS ) {
+		// BuiltInType o = EGaml.getFactory().createBuiltInType();
+		// o.setName(name);
+		// globalResource.getContents().add(o);
+		// objectDescriptions.add(EObjectDescription.create(name, o));
+		// System.out.println("Type:" + name);
+		// }
+		// }
+		return objectDescriptions;
 	}
-
-	private final static List<Runnable> toRunAfterLoad = new ArrayList();
-
-	/**
-	 * @param run
-	 */
-	public static void registerRunnableAfterLoad(final Runnable run) {
-		toRunAfterLoad.add(run);
-	}
-
-	// static private IScope scope;
 
 	/**
 	 * Implementation of IGlobalScopeProvider.

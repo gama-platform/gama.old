@@ -17,28 +17,17 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Import/importURI"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/ref"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/expr"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/facets"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/block"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/else"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/facets"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/of"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/value"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//Definition"/>
-    <genClasses ecoreClass="Gaml.ecore#//FacetRef">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//FacetRef/ref"/>
+    <genClasses ecoreClass="Gaml.ecore#//Contents">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Contents/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Contents/type2"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//GamlFacetRef"/>
-    <genClasses ecoreClass="Gaml.ecore#//FunctionGamlFacetRef"/>
-    <genClasses ecoreClass="Gaml.ecore#//FacetExpr">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//FacetExpr/key"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//FacetExpr/expr"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//DefinitionFacetExpr"/>
-    <genClasses ecoreClass="Gaml.ecore#//NameFacetExpr"/>
-    <genClasses ecoreClass="Gaml.ecore#//ReturnsFacetExpr"/>
-    <genClasses ecoreClass="Gaml.ecore#//ActionFacetExpr"/>
-    <genClasses ecoreClass="Gaml.ecore#//FunctionFacetExpr"/>
+    <genClasses ecoreClass="Gaml.ecore#//Facet"/>
     <genClasses ecoreClass="Gaml.ecore#//Block">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
     </genClasses>
@@ -48,14 +37,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Expression/right"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//PairExpr"/>
-    <genClasses ecoreClass="Gaml.ecore#//AbstractRef"/>
-    <genClasses ecoreClass="Gaml.ecore#//Function">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//VariableRef">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//VariableRef/ref"/>
-    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//GamlVarRef">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//GamlVarRef/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//GamlVarRef/expr"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//GamlVarRef/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//TerminalExpression">
@@ -70,6 +54,9 @@
     <genClasses ecoreClass="Gaml.ecore#//GamlBinaryExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//GamlUnitExpr"/>
     <genClasses ecoreClass="Gaml.ecore#//GamlUnaryExpr"/>
+    <genClasses ecoreClass="Gaml.ecore#//Access">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Access/args"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//MemberRef"/>
     <genClasses ecoreClass="Gaml.ecore#//Array">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Array/exprs"/>
@@ -77,7 +64,13 @@
     <genClasses ecoreClass="Gaml.ecore#//Point">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Point/z"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Function">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//UnitName"/>
+    <genClasses ecoreClass="Gaml.ecore#//VariableRef">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//VariableRef/ref"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//IntLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//DoubleLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//ColorLiteral"/>

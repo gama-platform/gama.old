@@ -22,7 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.GamlExpressionFactory.*;
 import java.text.*;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
@@ -71,13 +71,16 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
 		@Override
-		public IExpression caseDefinition(final Definition object) {
+		public IExpression caseStatement(final Statement object) {
+
+			// WHAT IF THE NAME IS NULL ?
+
 			return factory.createConst(StringUtils.unescapeJava(object.getName()),
 				Types.get(IType.STRING));
 		}
 
 		@Override
-		public IExpression caseDefinitionFacetExpr(final DefinitionFacetExpr object) {
+		public IExpression caseFacet(final Facet object) {
 			return factory.createConst(StringUtils.unescapeJava(object.getName()),
 				Types.get(IType.STRING));
 		}
@@ -200,6 +203,20 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		@Override
 		public IExpression caseMemberRef(final MemberRef object) {
 			return compileFieldExpr(object.getLeft(), object.getRight());
+		}
+
+		@Override
+		public IExpression caseAccess(final Access object) {
+			List<? extends Expression> list = object.getArgs();
+			List<IExpression> result = new ArrayList();
+			for ( int i = 0, n = list.size(); i < n; i++ ) {
+				Expression eExpr = list.get(i);
+				IExpression e = compile(eExpr);
+				result.add(e);
+			}
+			IExpression container = compile(object.getLeft());
+			IExpression indices = factory.createList(result);
+			return factory.createBinaryExpr("internal_at", container, indices, context, false);
 		}
 
 		@Override
@@ -367,6 +384,8 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			// Otherwise, we ignore 'my' since it refers to 'self'
 			return compile(e);
 		}
+		// The unary "unit" operator should let the value of its child pass through
+		if ( op.equals("¡") ) { return compile(e); }
 		if ( isSpeciesName(op) ) { return factory.createBinaryExpr(AS, expr, species(op), context,
 			false); }
 		return factory.createUnaryExpr(op, expr, context);
@@ -471,7 +490,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		return getContext().getModelDescription().getTypeNamed(s) != null;
 	}
 
-	// KEEP
+	// New: "." can now be used to access containers elements.
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
 		String var = EGaml.getKeyOf(fieldExpr);
 		IExpression target = compile(leftExpr);
@@ -481,6 +500,10 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		if ( contextDesc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) {
+				if ( Types.get(IType.CONTAINER).isAssignableFrom(type) ) {
+					// We have an instance of the use of "." as "at" or "@"
+					return binary(IKeyword.AT, target, fieldExpr);
+				}
 				context.flagError("Field " + var + " unknown for " + target.toGaml() + " of type " +
 					type, IGamlIssue.UNKNOWN_FIELD, leftExpr, var, type.toString());
 				return null;

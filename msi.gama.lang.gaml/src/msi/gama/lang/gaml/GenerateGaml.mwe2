@@ -4,7 +4,7 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "classpath:/msi/gama/lang/gaml/Gaml.xtext"
+var grammarURI = "classpath:/msi/gama/lang/gaml/Gaml1.6.xtext"
 var file.extensions = "gaml"
 var projectName = "msi.gama.lang.gaml"
 var runtimeProject = "../${projectName}"
@@ -57,9 +57,9 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
-//              options = {
+             options = {
 //                  backtrack = true
-//              }
+              }
             }
 
             // java-based API for validation

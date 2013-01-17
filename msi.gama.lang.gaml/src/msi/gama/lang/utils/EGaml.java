@@ -77,37 +77,43 @@ public class EGaml {
 			return object.getKey();
 		}
 
-		@Override
-		public String caseFacetRef(final FacetRef object) {
-			return object.getRef();
-		}
+		// @Override
+		// public String caseFacetRef(final FacetRef object) {
+		// return object.getRef();
+		// }
 
 		@Override
-		public String caseFacetExpr(final FacetExpr object) {
-			FacetRef ref = object.getKey();
-			return ref == null ? null : caseFacetRef(ref);
+		// public String caseFacetExpr(final FacetExpr object) {
+		public String caseFacet(final Facet object) {
+			String s = object.getKey();
+			if ( s.endsWith(":") ) {
+				s = s.replace(':', ' ');
+			}
+			return s.trim();
+			// String ref = object.getKey();
+			// return ref == null ? null : caseFacetRef(ref);
 
 		}
 
-		@Override
-		public String caseNameFacetExpr(final NameFacetExpr object) {
-			return IKeyword.NAME;
-		}
-
-		@Override
-		public String caseReturnsFacetExpr(final ReturnsFacetExpr object) {
-			return IKeyword.RETURNS;
-		}
-
-		@Override
-		public String caseActionFacetExpr(final ActionFacetExpr object) {
-			return IKeyword.ACTION;
-		}
-
-		@Override
-		public String caseFunctionFacetExpr(final FunctionFacetExpr object) {
-			return IKeyword.FUNCTION;
-		}
+		// @Override
+		// public String caseNameFacetExpr(final NameFacetExpr object) {
+		// return IKeyword.NAME;
+		// }
+		//
+		// @Override
+		// public String caseReturnsFacetExpr(final ReturnsFacetExpr object) {
+		// return IKeyword.RETURNS;
+		// }
+		//
+		// @Override
+		// public String caseActionFacetExpr(final ActionFacetExpr object) {
+		// return IKeyword.ACTION;
+		// }
+		//
+		// @Override
+		// public String caseFunctionFacetExpr(final FunctionFacetExpr object) {
+		// return IKeyword.FUNCTION;
+		// }
 
 		@Override
 		public String caseFunction(final Function object) {
@@ -158,10 +164,15 @@ public class EGaml {
 
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
-		if ( expr instanceof Definition ) {
-			return ((Definition) expr).getName();
-		} else if ( expr instanceof DefinitionFacetExpr ) { return ((DefinitionFacetExpr) expr)
-			.getName(); }
+		if ( expr instanceof Statement ) {
+			return ((Statement) expr).getName();
+			/*
+			 * } else if ( expr instanceof DefinitionFacetExpr ) { return ((DefinitionFacetExpr)
+			 * expr)
+			 * .getName(); }
+			 */
+		} else if ( expr instanceof Facet ) { return ((Facet) expr).getName(); }
+
 		if ( !(expr instanceof Expression) ) { return expr.toString(); }
 		serializer.setLength(0);
 		serialize((Expression) expr);
