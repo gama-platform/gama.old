@@ -1,44 +1,41 @@
 package maps.gaml.edpSystem;
 
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-
-import de.congrace.exp4j.ExpressionBuilder;
-import de.congrace.exp4j.UnknownFunctionException;
-import de.congrace.exp4j.UnparsableExpressionException;
-
-import maps.gaml.edpSystem.SystemEDP;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
+import de.congrace.exp4j.*;
 
 public class UserEDPSystem extends SystemEDP {
 
-	private GamaList<ExpressionBuilder> systemEDP;
-	private GamaList<String> varName;
-	
-	public UserEDPSystem(GamaList<String> equations, GamaList<String> _varName, HashMap<String,Double> hmParam){
-		super.numberEquation = equations.length() ;
+	private final GamaList<ExpressionBuilder> systemEDP;
+	private final GamaList<String> varName;
+
+	public UserEDPSystem(final IScope scope, final GamaList<String> equations,
+		final GamaList<String> _varName, final HashMap<String, Double> hmParam) {
+		super.numberEquation = equations.length(scope);
 		varName = _varName;
-		
+
 		systemEDP = new GamaList<ExpressionBuilder>();
-		for(String equation : equations){
+		for ( String equation : equations ) {
 			ExpressionBuilder expBuilder = new ExpressionBuilder(equation);
-			for(Entry<String, Double> entry : hmParam.entrySet()) {
-			    String varName = entry.getKey();
-			    Double varValue = Cast.asFloat(null, entry.getValue());
-			    expBuilder.withVariable(varName, varValue);
-			}				
+			for ( Entry<String, Double> entry : hmParam.entrySet() ) {
+				String varName = entry.getKey();
+				Double varValue = Cast.asFloat(null, entry.getValue());
+				expBuilder.withVariable(varName, varValue);
+			}
 			systemEDP.add(expBuilder);
-		}		
+		}
 	}
-	
+
 	@Override
-	public GamaList<Double> compute(GamaList<Double> varValue) {
+	public GamaList<Double> compute(final GamaList<Double> varValue) {
 		GamaList<Double> systemReturn = new GamaList<Double>();
-		
-		for(ExpressionBuilder exprb : systemEDP) {
-			for (int i = 0; i<= varValue.length() - 1; i++){
+
+		for ( ExpressionBuilder exprb : systemEDP ) {
+			for ( int i = 0; i <= varValue.length(null) - 1; i++ ) { // VERIFY NULL SCOPE
 				exprb.withVariable(varName.get(i), varValue.get(i));
 			}
 			try {
@@ -48,9 +45,9 @@ public class UserEDPSystem extends SystemEDP {
 				throw new GamaRuntimeException("EDPSystem Computation Exception:  " + e.toString());
 			} catch (UnparsableExpressionException e) {
 				e.printStackTrace();
-				throw new GamaRuntimeException("EDPSystem Computation Exception:  " + e.toString());				
+				throw new GamaRuntimeException("EDPSystem Computation Exception:  " + e.toString());
 			}
-		}		
+		}
 		return systemReturn;
 	}
 
