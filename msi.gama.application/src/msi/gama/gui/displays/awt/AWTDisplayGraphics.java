@@ -276,7 +276,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param z float (has no effet in java 2D)
 	 */
 	@Override
-	public Rectangle2D drawImage(final IScope scope,final BufferedImage img, final Integer angle,
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
 		final boolean smooth, final String name, final float z) {
 		AffineTransform saved = g2.getTransform();
 		// RenderingHints hints = g2.getRenderingHints();
@@ -294,8 +294,9 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle, final String name,final float z) {
-		return drawImage(scope, img, angle, true, name,z);
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
+		final String name, final float z) {
+		return drawImage(scope, img, angle, true, name, z);
 	}
 
 	/**
@@ -320,7 +321,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill,
+		final Color border, final Integer angle, final float height) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, border, angle);
 	}
@@ -333,7 +335,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill,
+		final Color border, final Integer angle, final float height) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -364,7 +367,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill, final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill,
+		final Color border, final Integer angle, final float height) {
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return drawShape(color, rect, fill, border, angle);
 	}
@@ -377,7 +381,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param z float (has no effect in 2D)
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor, final Integer angle, final float z) {
+	public Rectangle2D drawString(final String string, final Color stringColor,
+		final Integer angle, final float z) {
 		setDrawingColor(stringColor);
 		AffineTransform saved = g2.getTransform();
 		if ( angle != null ) {
@@ -397,16 +402,15 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param angle Integer
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color, final boolean fill,
-		final Color border, final Integer angle) {
+	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
+		final boolean fill, final Color border, final Integer angle) {
 		Geometry geom = null;
-		if (scope.getAgentScope().getTopology().isTorus()) {
+		if ( scope.getAgentScope().getTopology().isTorus() ) {
 			geom = scope.getAgentScope().getTopology().returnToroidalGeom(geometry);
 		} else {
 			geom = geometry;
 		}
-		boolean f =
-			geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
+		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
 		return drawShape(color, sw.toShape(geom), f, border, angle);
 	}
 
@@ -421,29 +425,17 @@ public class AWTDisplayGraphics implements IGraphics {
 		final Color border, final Integer angle) {
 		try {
 			Rectangle2D r = s.getBounds2D();
-
-			// if ( clipping != null && !r.intersects(clipping) ) { return; }
-			// Graphics2D g3 = (Graphics2D) g2.create();
 			AffineTransform saved = g2.getTransform();
 			if ( angle != null ) {
 				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2,
 					r.getY() + r.getHeight() / 2);
 			}
-			// g3.setColor(c);
 			setDrawingColor(c);
 			if ( fill ) {
 				g2.fill(s);
-				setDrawingColor(border);	
-//				if(!border){
-//					// g3.setColor(Color.black);
-//					setDrawingColor(c);					
-//				}else{
-//					setDrawingColor(Color.black);		
-//				}
-
+				setDrawingColor(border);
 			}
 			g2.draw(s);
-			// g3.dispose();
 			g2.setTransform(saved);
 			return r;
 		} catch (Exception e) {
@@ -452,21 +444,11 @@ public class AWTDisplayGraphics implements IGraphics {
 		}
 	}
 
-	// @Override
-	// public void setGraphics(final GC gc, final Display displat) {
-	// Nothing to do
-	//
-	// }
-
 	@Override
 	public void fill(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
 		g2.setColor(bgColor);
-		// if ( clipping != null ) {
-		// g2.fillRect(clipping.x, clipping.y, clipping.width, clipping.height);
-		// } else {
 		g2.fillRect(0, 0, displayWidth, displayHeight);
-		// }
 	}
 
 	/*
@@ -536,20 +518,19 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void newLayer(final double zLayerValue, Boolean refresh) {}
+	public void newLayer(final double zLayerValue, final Boolean refresh) {}
 
-	
-	@Override
-	public String getGraphicsType() {
-		
-		return "java2D";
-	}
+	//
+	// @Override
+	// public boolean isOpenGL() {
+	// return false;
+	// }
 
 	@Override
 	/**
 	 * Not use in Java2D
 	 */
-	public boolean useTesselation(boolean useTesselation) {
+	public boolean useTesselation(final boolean useTesselation) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -558,7 +539,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void setAmbiantLight(float lightValue) {
-		// TODO Auto-generated method stub	
+	public void setAmbiantLight(final float lightValue) {
+		// TODO Auto-generated method stub
 	}
 }
