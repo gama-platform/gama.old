@@ -45,6 +45,8 @@ public interface IExpressionFactory {
 	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
 		IDescription context);
 
+	public abstract IExpression createUnitExpr(final String unit, IDescription context);
+
 	Map<String, IExpressionDescription> createArgumentMap(IExpressionDescription args,
 		IDescription context);
 

@@ -21,6 +21,7 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.IUnits;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.*;
 
@@ -61,6 +62,15 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(
 			(String) val, type, contentType); }
 		return new ConstantExpression(val, type, contentType);
+	}
+
+	@Override
+	public IExpression createUnitExpr(final String unit, final IDescription context) {
+		// FIXME Special cases (to be automated later)
+		if ( unit.equals("pixels") || unit.equals("px") ) { return new PixelUnitExpression(); }
+		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
+		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
+		return createConst(IUnits.UNITS.get(unit), Types.get(IType.FLOAT));
 	}
 
 	@Override
