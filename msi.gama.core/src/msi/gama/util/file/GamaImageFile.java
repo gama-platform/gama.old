@@ -22,7 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.StringTokenizer;
-import javax.imageio.ImageIO;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,6 +31,8 @@ import msi.gaml.operators.Files;
 import msi.gaml.types.*;
 
 public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
+
+	private BufferedImage image;
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -81,52 +83,53 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return (IMatrix) buffer;
 	}
 
-	public int getWidth () {
-		BufferedImage colorImage = null;
-		try {
-			colorImage = ImageIO.read(getFile());
-		} catch (final Exception e) {
-			throw new GamaRuntimeException(e);
+	private void loadImage() {
+		if ( image == null ) {
+			try {
+				image = ImageUtils.getInstance().getImageFromFile(path);
+				// image = ImageIO.read(getFile());
+			} catch (final IOException e) {
+				throw new GamaRuntimeException(e);
+			}
 		}
-		return colorImage.getWidth();
-		
 	}
-	
-	public int getHeight () {
-		BufferedImage colorImage = null;
-		try {
-			colorImage = ImageIO.read(getFile());
-		} catch (final Exception e) {
-			throw new GamaRuntimeException(e);
-		}
-		return colorImage.getHeight();
-		
+
+	public BufferedImage getImage() {
+		loadImage();
+		return image;
 	}
+
+	public int getWidth() {
+		loadImage();
+		return image.getWidth();
+	}
+
+	public int getHeight() {
+		loadImage();
+		return image.getHeight();
+
+	}
+
 	private IMatrix matrixValueFromImage(final ILocation preferredSize) throws GamaRuntimeException {
-		BufferedImage colorImage = null;
-		try {
-			colorImage = ImageIO.read(getFile());
-		} catch (final Exception e) {
-			throw new GamaRuntimeException(e);
-		}
+		loadImage();
 		int xSize, ySize;
 		if ( preferredSize == null ) {
-			xSize = colorImage.getWidth();
-			ySize = colorImage.getHeight();
+			xSize = image.getWidth();
+			ySize = image.getHeight();
 		} else {
 			xSize = (int) preferredSize.getX();
 			ySize = (int) preferredSize.getY();
 			final BufferedImage resultingImage =
 				new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
 			final Graphics2D g = resultingImage.createGraphics();
-			g.drawImage(colorImage, 0, 0, xSize, ySize, null);
+			g.drawImage(image, 0, 0, xSize, ySize, null);
 			g.dispose();
-			colorImage = resultingImage;
+			image = resultingImage;
 		}
 		final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
 		for ( int i = 0; i < xSize; i++ ) {
 			for ( int j = 0; j < ySize; j++ ) {
-				matrix.set(i, j, colorImage.getRGB(i, j));
+				matrix.set(i, j, image.getRGB(i, j));
 			}
 		}
 		return matrix;
