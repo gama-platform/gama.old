@@ -23,6 +23,25 @@ import java.util.*;
 
 public class IUnits {
 
+	/**
+	 * Special units
+	 */
+
+	public final static double pixels = 1, px = pixels; // Represents the value of a pixel in terms
+														// of model units. Parsed early
+														// and never used as a constant.
+
+	public final static double display_width = 1;
+	public final static double display_height = 1;
+
+	/**
+	 * Mathematical constants
+	 * 
+	 */
+	public final static double pi = Math.PI;
+
+	public final static double e = Math.E;
+
 	/*
 	 * 
 	 * Distance & size conversions
