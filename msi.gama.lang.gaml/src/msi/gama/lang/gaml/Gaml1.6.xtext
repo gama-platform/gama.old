@@ -15,6 +15,7 @@ BuiltInStatementKey:
 	'ask' |
 	'capture' |
 	'create' |
+	'draw' |
 	'error'|
 	'match' |
 	'match_between' |
@@ -41,7 +42,7 @@ IfStatement returns Statement:
 	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(IfStatement | Block))?;
 
 ClassicStatement returns Statement:
-	key=BuiltInStatementKey expr=Expression (facets+=Facet)* (block=Block | ';');
+	key=BuiltInStatementKey (ID':')? expr=Expression (facets+=Facet)* (block=Block | ';');
 
 DefinitionStatement returns Statement:
 	(key=ID) of=Contents? name=(ID | STRING | BuiltInStatementKey)? (facets+=Facet)* (block=Block | ';');
@@ -71,8 +72,9 @@ FunctionFacet returns Facet:
 /*
  * Definition facets (which are used for cross referencing variables)
  */
+DefinitionFacetKey: 'name:' | 'returns:'|'action:';
 DefinitionFacet returns Facet:
-	(key=('name:' | 'returns:'|'action:')) name=(ID | STRING | BuiltInStatementKey);
+	(key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey);
 
 /**
  * Blocks. An ordered list of statements inside curly brackets
@@ -113,12 +115,12 @@ Relational returns Expression:
 	right=PairExpr)?;
 
 ArgPairExpr returns PairExpr:
-	{ArgPairExpr} arg=ID op='::' right=Addition;
+	{ArgPairExpr} (arg=ID op='::' | arg=DefinitionFacetKey op=':') right=Addition;
 
 PairExpr returns Expression:
 	=> ArgPairExpr |
 	Addition
-	(({Expression.left=current}
+	(({PairExpr.left=current}
 	op='::')
 	right=Addition)?;
 
