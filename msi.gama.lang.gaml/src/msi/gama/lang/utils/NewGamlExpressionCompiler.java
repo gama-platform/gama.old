@@ -31,6 +31,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.*;
 import org.eclipse.emf.ecore.EObject;
 
@@ -104,10 +105,9 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 		@Override
 		public IExpression caseUnitName(final UnitName object) {
 			String s = object.getOp();
-			if ( IUnits.UNITS.containsKey(s) ) { return factory.createConst(IUnits.UNITS.get(s),
-				Types.get(IType.FLOAT)); }
+			if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, context); }
 			// If it is a unit, we return its float value
-			context.flagError("" + s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object,
+			context.flagError(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object,
 				(String[]) null);
 			return null;
 		}
@@ -150,6 +150,22 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
 			if ( temp_sd != null ) { return temp_sd.getVarExpr(s); }
 			if ( context != null ) {
+
+				// REGARDER SI ON PEUT COURT-CIRCUITER DRAW ICI ? LE PROBLEME EST QUE C'EST UN PEU
+				// TARD.
+
+				if ( context.getKeyword().equals(DRAW) ) {
+					if ( DrawStatement.SHAPES.keySet().contains(s) ) {
+						context
+							.flagWarning(
+								"The symbol " +
+									s +
+									" can not be used anymore in draw statements. Please use geometries instead, e.g. '" +
+									s + "(size)'", IGamlIssue.UNKNOWN_KEYWORD, object, s);
+					}
+					return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
+				}
+
 				context.flagWarning("The variable " + s +
 					" has not been previously defined. Check its name or declare it",
 					IGamlIssue.UNKNOWN_VAR, object, s);
@@ -175,7 +191,8 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 		@Override
 		public IExpression caseArgPairExpr(final ArgPairExpr object) {
-			return binary(object.getOp(), caseVar(object.getArg(), object), object.getRight());
+			return binary(object.getOp(), caseVar(EGaml.getKeyOf(object), object),
+				object.getRight());
 		}
 
 		@Override
@@ -539,10 +556,9 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			}
 			String arg = null;
 			if ( e instanceof ArgPairExpr ) {
-				arg = ((ArgPairExpr) e).getArg();
+				arg = EGaml.getKeyOf(e);
 			} else {
-				PairExpr p = (PairExpr) e;
-				arg = EGaml.getKeyOf(p.getLeft());
+				arg = EGaml.getKeyOf(((PairExpr) e).getLeft());
 
 			}
 			if ( !action.containsArg(arg) ) {
@@ -601,7 +617,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 			}
 			String arg = null;
 			if ( exp instanceof ArgPairExpr ) {
-				arg = ((ArgPairExpr) exp).getArg();
+				arg = EGaml.getKeyOf(exp);
 			} else {
 				PairExpr pair = (PairExpr) exp;
 				arg = EGaml.getKeyOf(pair.getLeft());
