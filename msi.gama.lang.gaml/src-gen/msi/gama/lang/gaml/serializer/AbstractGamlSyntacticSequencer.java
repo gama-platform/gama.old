@@ -8,6 +8,7 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
+import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -17,6 +18,7 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GamlGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q;
 	protected AbstractElementAlias match_IfStatement_ConditionKeyword_1_q;
 	protected AbstractElementAlias match_PrimaryExpression_LeftParenthesisKeyword_2_0_a;
 	protected AbstractElementAlias match_PrimaryExpression_LeftParenthesisKeyword_2_0_p;
@@ -24,6 +26,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GamlGrammarAccess) access;
+		match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getClassicStatementAccess().getIDTerminalRuleCall_1_0()), new TokenAlias(false, false, grammarAccess.getClassicStatementAccess().getColonKeyword_1_1()));
 		match_IfStatement_ConditionKeyword_1_q = new TokenAlias(false, true, grammarAccess.getIfStatementAccess().getConditionKeyword_1());
 		match_PrimaryExpression_LeftParenthesisKeyword_2_0_a = new TokenAlias(true, true, grammarAccess.getPrimaryExpressionAccess().getLeftParenthesisKeyword_2_0());
 		match_PrimaryExpression_LeftParenthesisKeyword_2_0_p = new TokenAlias(true, false, grammarAccess.getPrimaryExpressionAccess().getLeftParenthesisKeyword_2_0());
@@ -31,9 +34,16 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	@Override
 	protected String getUnassignedRuleCallToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if(ruleCall.getRule() == grammarAccess.getIDRule())
+			return getIDToken(semanticObject, ruleCall, node);
 		return "";
 	}
 	
+	protected String getIDToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (node != null)
+			return getTokenText(node);
+		return "";
+	}
 	
 	@Override
 	protected void emitUnassignedTokens(EObject semanticObject, ISynTransition transition, INode fromNode, INode toNode) {
@@ -41,7 +51,9 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if(match_IfStatement_ConditionKeyword_1_q.equals(syntax))
+			if(match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q.equals(syntax))
+				emit_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_IfStatement_ConditionKeyword_1_q.equals(syntax))
 				emit_IfStatement_ConditionKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_PrimaryExpression_LeftParenthesisKeyword_2_0_a.equals(syntax))
 				emit_PrimaryExpression_LeftParenthesisKeyword_2_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -51,6 +63,14 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		}
 	}
 
+	/**
+	 * Syntax:
+	 *     (ID ':')?
+	 */
+	protected void emit_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
 	/**
 	 * Syntax:
 	 *     'condition:'?
