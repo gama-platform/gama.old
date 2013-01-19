@@ -46,7 +46,7 @@ import msi.gaml.types.*;
  * 
  * @author drogoul
  */
-//FIXME: Why this is not define in gaml/statement
+// FIXME: Why this is not define in gaml/statement
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
@@ -76,12 +76,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
-		
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
 		}
 		layers = new GamaList<AbstractLayerStatement>();
-		
+
 	}
 
 	@Override
@@ -111,23 +110,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				GAMA.reportError(e);
 			}
 		}
-		
-		
-		//OpenGL parameter initialization
+
+		// OpenGL parameter initialization
 		IExpression tess = getFacet(IKeyword.TESSELATION);
-		if(tess != null){
+		if ( tess != null ) {
 			tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
 		}
-		
+
 		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
-		if(light != null){
+		if ( light != null ) {
 			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
 		}
 		createSurface(sim);
-		
-		
-		
-		
+
 	}
 
 	@Override
@@ -144,9 +139,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( surface != null && surface.canBeUpdated() ) {
 			// GUI.debug("Updating the surface of output " + getName());
 			surface.updateDisplay();
-			//Use to define which technique is used in opengl to triangulate polygon
-					
-			
+			// Use to define which technique is used in opengl to triangulate polygon
+
 		}
 	}
 
@@ -191,9 +185,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
-		//Use only for opengl
-		surface.getMyGraphics().useTesselation(tesselation);
-		surface.getMyGraphics().setAmbiantLight((float)ambiantLight);
+		// Use only for opengl
+		if ( surface.getMyGraphics() != null ) {
+			surface.getMyGraphics().useTesselation(tesselation);
+			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
+		}
 	}
 
 	public void setSurface(final IDisplaySurface sur) {
