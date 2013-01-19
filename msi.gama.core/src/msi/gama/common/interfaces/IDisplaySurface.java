@@ -33,7 +33,7 @@ import msi.gama.outputs.IDisplayOutput;
 public interface IDisplaySurface {
 
 	public static final double SELECTION_SIZE = 20; // pixels
-	public static final int MAX_SIZE = 4000; // pixels
+	public static final int MAX_SIZE = 8000; // pixels
 
 	BufferedImage getImage();
 
@@ -59,17 +59,17 @@ public interface IDisplaySurface {
 	 * Switch between 2D and 3D view (Only with Opengl view)
 	 */
 	void toggleView();
-	
+
 	/**
 	 * Activate the picking mode
 	 */
 	void togglePicking();
-	
+
 	/**
 	 * Activate arcball view (Only with Opengl view)
 	 */
 	void toggleArcball();
-	
+
 	/**
 	 * Activate select rectangle tool (Only with Opengl view)
 	 */
@@ -164,14 +164,14 @@ public interface IDisplaySurface {
 	void setHighlightColor(int[] rgb);
 
 	void addShapeFile();
-	
+
 	public ILayerManager getLayerManager();
-	
+
 	/**
 	 * @return IGraphics
 	 */
 	public IGraphics getMyGraphics();
-	
+
 	public void addMouseEventListener(MouseListener e);
 
 }
