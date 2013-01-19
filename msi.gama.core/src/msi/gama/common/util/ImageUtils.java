@@ -114,11 +114,16 @@ public class ImageUtils {
 	public BufferedImage getImageFromFile(final String fileName) throws IOException {
 		BufferedImage image = get(fileName);
 		if ( image != null ) { return image; }
-
 		File f =
 			new File(GAMA.getFrontmostSimulation().getModel().getRelativeFilePath(fileName, true));
-		image = ImageIO.read(f);
-		add(fileName, image);
+		return getImageFromFile(f);
+	}
+
+	public BufferedImage getImageFromFile(final File file) throws IOException {
+		BufferedImage image = get(file.getAbsolutePath());
+		if ( image != null ) { return image; }
+		image = ImageIO.read(file);
+		add(file.getAbsolutePath(), image);
 		return image;
 	}
 
@@ -141,16 +146,15 @@ public class ImageUtils {
 
 	public static BufferedImage createCompatibleImage(final int width, final int height) {
 		BufferedImage new_image = null;
-		if(GuiUtils.isInHeadLessMode())
-		{
-			new_image = new BufferedImage(width!=0?width:1024, height!=0?height:1024, BufferedImage.TYPE_INT_RGB);
-		}
-		else
-		{
+		if ( GuiUtils.isInHeadLessMode() ) {
+			new_image =
+				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024,
+					BufferedImage.TYPE_INT_RGB);
+		} else {
 			GraphicsConfiguration gfx_config =
-					GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-						.getDefaultConfiguration();
-			 new_image = gfx_config.createCompatibleImage(width, height);
+				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+					.getDefaultConfiguration();
+			new_image = gfx_config.createCompatibleImage(width, height);
 			new_image.setAccelerationPriority(1f);
 		}
 		return new_image;
@@ -271,7 +275,7 @@ public class ImageUtils {
 	 */
 	public static BufferedImage downScale(final BufferedImage img, final int targetWidth,
 		final int targetHeight, final Object hint, final boolean higherQuality) {
-		
+
 		int type =
 			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB
 				: BufferedImage.TYPE_INT_ARGB;
