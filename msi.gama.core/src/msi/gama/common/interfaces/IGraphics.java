@@ -21,9 +21,7 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
 import msi.gama.runtime.IScope;
-
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -34,7 +32,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 public interface IGraphics {
-	
+
 	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
 
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
@@ -118,8 +116,8 @@ public interface IGraphics {
 	 * @param String name
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawImage(final IScope scope,final BufferedImage img, final Integer angle,
-		final String name,float z);
+	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
+		final Integer angle, final String name, float z);
 
 	/**
 	 * Method drawCircle.
@@ -128,9 +126,10 @@ public interface IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 * @param height: height of the circle if using opengl and defining a z value
-	 *                (e.g: draw shape: circle  z:1;)
+	 *            (e.g: draw shape: circle z:1;)
 	 */
-	public abstract Rectangle2D drawCircle(final IScope scope,final Color c, final boolean fill, final Color border, final Integer angle,final float height);
+	public abstract Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill,
+		final Color border, final Integer angle, final float height);
 
 	/**
 	 * Method drawTriangle.
@@ -139,9 +138,10 @@ public interface IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 * @param height: height of the triangle if using opengl and defining a z value
-	 *                (e.g: draw shape: trinagle  z:1;)
+	 *            (e.g: draw shape: trinagle z:1;)
 	 */
-	public abstract Rectangle2D drawTriangle(final IScope scope,final Color c, final boolean fill, final Color border, final Integer angle,final float height);
+	public abstract Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill,
+		final Color border, final Integer angle, final float height);
 
 	/**
 	 * Method drawLine.
@@ -158,10 +158,10 @@ public interface IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 * @param height: height of the rectangle if using opengl and defining a z value
-	 *                (e.g: draw shape: square  size:2 color: global_color z:2;)
+	 *            (e.g: draw shape: square size:2 color: global_color z:2;)
 	 */
-	public abstract Rectangle2D drawRectangle(final IScope scope,final Color color, final boolean fill,
-		final Color border, final Integer angle, final float height);
+	public abstract Rectangle2D drawRectangle(final IScope scope, final Color color,
+		final boolean fill, final Color border, final Integer angle, final float height);
 
 	/**
 	 * @return
@@ -183,8 +183,8 @@ public interface IGraphics {
 	 * @param angle Integer
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle);
+	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry,
+		final Color color, final boolean fill, final Color border, final Integer angle);
 
 	public abstract void setDrawingOffset(final int x, final int y);
 
@@ -209,8 +209,9 @@ public interface IGraphics {
 	 * @param name
 	 * @return
 	 */
-	//FIXME: Why defining 2 method drawImage
-	Rectangle2D drawImage(final IScope scope,BufferedImage img, Integer angle, boolean smooth, String name, float z);
+	// FIXME: Why defining 2 method drawImage
+	Rectangle2D drawImage(final IScope scope, BufferedImage img, Integer angle, boolean smooth,
+		String name, float z);
 
 	/**
 	 * Draw grid as line
@@ -240,25 +241,21 @@ public interface IGraphics {
 	 * Sets the z value of the new created layer.
 	 * Set wether or not the current layer is static(will bve drawn only once) or dynamic.
 	 */
-	public abstract void newLayer(double zLayerValue,Boolean refresh);
-	
-	
-	/*
-	 * Return the type of the IGraphics (e.g Java2D or OpenGl)
-	 * 
-	 */
-	public abstract String getGraphicsType();
-	
+	public abstract void newLayer(double zLayerValue, Boolean refresh);
+
+	// /*
+	// * Return the type of the IGraphics (e.g Java2D or OpenGl)
+	// *
+	// */
+	// public abstract boolean isOpenGL();
+
 	/*
 	 * Define if the tesselation is used or the Gama Triangulation (work only in Opengl)
-	 * 
 	 */
 	public boolean useTesselation(boolean useTesselation);
-	
-	
+
 	/*
 	 * Define if the value of the ambiant light (work only in Opengl)
-	 * 
 	 */
 	public void setAmbiantLight(float lightValue);
 
