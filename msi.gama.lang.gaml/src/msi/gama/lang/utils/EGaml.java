@@ -64,7 +64,11 @@ public class EGaml {
 
 		@Override
 		public String caseArgPairExpr(final ArgPairExpr object) {
-			return object.getArg();
+			String s = object.getArg();
+			if ( s.endsWith(":") ) {
+				s = s.replace(':', ' ');
+			}
+			return s.trim();
 		}
 
 		@Override
