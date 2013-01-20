@@ -45,7 +45,7 @@ public class SymbolProto {
 	private final boolean hasScope;
 	private final boolean isRemoteContext;
 	private final Set<String> contextKeywords;
-	private final Set<Short> contextKinds;
+	private final Set<Integer> contextKinds;
 	private final Map<String, FacetProto> possibleFacets;
 	// private final List<String[]> combinations;
 	private final List<String> mandatoryFacets = new ArrayList();
@@ -64,7 +64,7 @@ public class SymbolProto {
 	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets,
 		final String omissible, final List<String[]> possibleCombinations,
-		final Set<String> contextKeywords, final Set<Short> contextKinds,
+		final Set<String> contextKeywords, final Set<Integer> contextKinds,
 		final boolean isRemoteContext, final ISymbolConstructor constr) {
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
@@ -171,8 +171,11 @@ public class SymbolProto {
 	}
 
 	public boolean verifyContext(final IDescription upper) {
-		return contextKeywords.contains(upper.getKeyword()) ||
-			contextKinds.contains(upper.getKind());
+		if ( upper == null ) { return true; }
+		String upperKeyword = upper.getKeyword();
+		Integer upperKind = upper.getKind();
+		boolean result = contextKeywords.contains(upperKeyword) || contextKinds.contains(upperKind);
+		return result;
 	}
 
 	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
