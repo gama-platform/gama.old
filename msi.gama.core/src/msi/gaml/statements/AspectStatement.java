@@ -20,7 +20,7 @@ package msi.gaml.statements;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -48,8 +48,8 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
 			}
 			Rectangle2D r =
-				((IGraphics) scope.getContext()).drawGeometry(scope,agent.getGeometry()
-					.getInnerGeometry(), c == null ? Color.YELLOW : c, true, Color.black, 0);
+				scope.getGraphics().drawGeometry(scope, agent.getGeometry().getInnerGeometry(),
+					c == null ? Color.YELLOW : c, true, Color.black, 0);
 			// GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
 			// agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +
 			// agent.getLocation().getY() / r.getCenterY());
