@@ -22,8 +22,8 @@ import java.util.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -48,7 +48,7 @@ public class GamaPathType extends GamaType<IPath> {
 		final ILocation target, final IGraph graph) {
 		if ( graph == null ) { return null; }
 		Collection<IShape> nodes = graph.vertexSet();
-		ITopology m = scope.getAgentScope().getTopology();
+		ITopology m = scope.getTopology();
 		IShape s = null;
 		IShape t = null;
 		double minS = Double.MAX_VALUE;
@@ -89,7 +89,7 @@ public class GamaPathType extends GamaType<IPath> {
 	public static IPath pathBetweenPoints(final IScope scope, final ILocation source,
 		final ILocation target, final GamaSpatialGraph graph) throws GamaRuntimeException {
 		if ( graph == null ) { return null; }
-		ITopology m = scope.getAgentScope().getTopology();
+		ITopology m = scope.getTopology();
 		Collection<IShape> edges = graph.edgeSet();
 		Object s1 = null;
 		Object t1 = null;
@@ -138,7 +138,7 @@ public class GamaPathType extends GamaType<IPath> {
 			for ( Object p : (List) obj ) {
 				list.add(Cast.asPoint(scope, p));
 			}
-			return new GamaPath(scope.getAgentScope().getTopology(), list);
+			return new GamaPath(scope.getTopology(), list);
 		}
 		return null;
 	}
