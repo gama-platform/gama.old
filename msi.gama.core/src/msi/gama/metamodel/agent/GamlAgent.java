@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.*;
 public class GamlAgent extends AbstractAgent implements IGamlAgent {
 
 	/**
-	 * Instantiates a new GAMA object using a Species. Constructor to use when the species is known
+	 * Instantiates a new GAMA agent using a Species. Constructor to use when the species is known
 	 * in advance and able to act by itself to add the agent, etc. In this constructor, it is
 	 * supposed that the species does the setting of skills, variables,behaviors, etc. by itself.
 	 * 
