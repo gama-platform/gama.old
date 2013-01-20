@@ -339,7 +339,7 @@ public abstract class AbstractAgent implements IAgent {
 			Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			Integer newHeading = topology.directionInDegreesTo(previousPoint, newLocation);
-			if ( newHeading != null && !this.getTopology().isTorus() ) {
+			if ( newHeading != null && !getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
 			topology.updateAgent(this, geometry.isPoint(), previousPoint, previousEnvelope);
