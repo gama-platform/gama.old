@@ -44,8 +44,7 @@ public class SymbolFactory extends AbstractFactory {
 	}
 
 	@Override
-	public final SymbolProto getMetaDescriptionFor(final IDescription context,
-		final String keyword) {
+	public final SymbolProto getMetaDescriptionFor(final IDescription context, final String keyword) {
 		SymbolProto md = registeredSymbols.get(keyword);
 		if ( md == null ) {
 			String upper = context == null ? null : context.getKeyword();
@@ -172,6 +171,7 @@ public class SymbolFactory extends AbstractFactory {
 	protected void privateValidate(final IDescription desc) {
 		SymbolProto md = desc.getMeta();
 		if ( md == null ) { return; }
+		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(desc);
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
