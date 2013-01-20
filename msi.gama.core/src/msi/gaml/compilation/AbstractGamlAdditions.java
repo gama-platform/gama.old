@@ -108,7 +108,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd,
 		final String omissible, final ISymbolConstructor sc, final String ... names) {
 		Set<String> contextKeywords = new HashSet();
-		Set<Short> contextKinds = new HashSet();
+		Set<Integer> contextKinds = new HashSet();
 		final Map<String, FacetProto> facets = new HashMap();
 		if ( fmd != null ) {
 			for ( FacetProto f : fmd ) {
@@ -122,7 +122,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 		if ( parentKinds != null ) {
 			for ( int p : parentKinds ) {
-				contextKinds.add((short) p);
+				contextKinds.add(p);
 			}
 		}
 
