@@ -298,6 +298,7 @@ public interface IKeyword {
 	public static final String USER_FIRST = "user_first";
 	public static final String USER_LAST = "user_last";
 	public static final String USER_PANEL = "user_panel";
+	public static final String USING = "using";
 	public static final String VALUE = "value";
 	public static final String VALUES = "values";
 	public static final String VAR = "var";
@@ -322,6 +323,6 @@ public interface IKeyword {
 	public static final String Z = "z";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
 		REACTIVE_TABU, EXHAUSTIVE };
-	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN};
+	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	public static final String USER_INIT = "user_init";
 }
