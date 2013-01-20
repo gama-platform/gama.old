@@ -19,8 +19,10 @@
 package msi.gama.runtime;
 
 import java.util.Map;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
@@ -65,7 +67,8 @@ public abstract class AbstractScope implements IScope {
 	private int statementsPointer = 0;
 	private int varsPointer = 0;
 	protected int agentsPointer = 0;
-	private Object context;
+	private IGraphics context;
+	private ITopology topology;
 	private ExecutionStatus currentStatus;
 	private final String name;
 
@@ -316,13 +319,28 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final void setContext(final Object val) {
+	public final void setGraphics(final IGraphics val) {
 		context = val;
 	}
 
 	@Override
-	public final Object getContext() {
+	public final IGraphics getGraphics() {
 		return context;
+	}
+
+	@Override
+	public final ITopology getTopology() {
+		if ( topology != null ) { return topology; }
+		IAgent agent = getAgentScope();
+		if ( agent != null ) { return agent.getTopology(); }
+		return null;
+	}
+
+	@Override
+	public final ITopology setTopology(final ITopology topo) {
+		ITopology previous = topology;
+		topology = topo;
+		return previous;
 	}
 
 }

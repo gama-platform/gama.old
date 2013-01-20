@@ -19,8 +19,10 @@
 package msi.gama.runtime;
 
 import java.util.Map;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
@@ -44,12 +46,6 @@ public interface IScope {
 
 	public abstract void pop(IStatement statement);
 
-	public abstract IAgent getAgentScope();
-
-	public abstract IAgent getWorldScope();
-
-	public abstract ISimulation getSimulationScope();
-
 	public abstract Object execute(IStatement statement, IAgent agent) throws GamaRuntimeException;
 
 	public abstract Object evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
@@ -67,12 +63,6 @@ public interface IScope {
 	public abstract void setEach(Object value);
 
 	public abstract Object getEach();
-
-	// Used to setup a "context" (i.e. a persistent object)
-	// like the graphics context for Draw statements, for instance
-	public abstract void setContext(Object val);
-
-	public abstract Object getContext();
 
 	public abstract Object getArg(String string, short type) throws GamaRuntimeException;
 
@@ -109,4 +99,57 @@ public interface IScope {
 
 	public abstract Object getName();
 
+	/**
+	 * CONTEXT METHODS
+	 * Used to gather contextual information about the current simulation and
+	 * execution context
+	 */
+
+	/**
+	 * Returns the current topology to use in this scope. Either it has been set (and not unset) or
+	 * the scope uses the current agent to compute it.
+	 * @return the topology to use in the current scope
+	 */
+	public ITopology getTopology();
+
+	/**
+	 * Sets a new topological context and returns the previous one.
+	 * @param topology, the new topology to set
+	 * @return the previous topology used
+	 */
+	public ITopology setTopology(ITopology topology);
+
+	/**
+	 * Used to setup a "graphical context" in which the execution can take place. Called by the
+	 * update procedures of displays.
+	 * @param val, an instance of IGraphics
+	 */
+
+	public abstract void setGraphics(IGraphics val);
+
+	/**
+	 * Returns the instance of IGraphics currently set, or null if none.
+	 * @return
+	 */
+	public abstract IGraphics getGraphics();
+
+	/**
+	 * Returns the current agent being executed.
+	 * @return
+	 */
+	public abstract IAgent getAgentScope();
+
+	/**
+	 * Return the current world of the simulation in which this scope is defined
+	 * @return
+	 */
+	public abstract IAgent getWorldScope();
+
+	/**
+	 * Returns the current simulation in which this scope is defined.
+	 * @return the current simulation or null if none is defined (unlikely as the scope is created
+	 *         by a simulation)
+	 */
+
+	public abstract ISimulation getSimulationScope();
 }
