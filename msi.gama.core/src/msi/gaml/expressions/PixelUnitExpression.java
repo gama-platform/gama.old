@@ -18,7 +18,6 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -32,7 +31,7 @@ public class PixelUnitExpression extends ConstantExpression {
 	public Double value(final IScope scope) {
 		// FIXME beware null values !
 		return scope.getSimulationScope().getModel().getModelEnvironment().getWidth() /
-			((IGraphics) scope.getContext()).getDisplayWidth();
+			scope.getGraphics().getDisplayWidth();
 	}
 
 	@Override

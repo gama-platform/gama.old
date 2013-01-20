@@ -18,7 +18,6 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -31,7 +30,7 @@ public class DisplayWidthUnitExpression extends ConstantExpression {
 	@Override
 	public Double value(final IScope scope) {
 		// FIXME beware null values !
-		return (double) ((IGraphics) scope.getContext()).getDisplayWidth();
+		return (double) scope.getGraphics().getDisplayWidth();
 	}
 
 	@Override
