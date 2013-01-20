@@ -102,7 +102,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// }
 
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		if ( isInBackgroundAgent ) {
 			neighbours.remove(backgroundAgent);
@@ -322,8 +322,8 @@ public class HumanMovingSkill extends MovingSkill {
 
 		double detectingRange = agentSize + maxDist;
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) getCurrentAgent(scope).getTopology().getNeighboursOf(
-				getCurrentAgent(scope), detectingRange, Different.with());
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(getCurrentAgent(scope),
+				detectingRange, Different.with());
 		if ( isInBackgroundAgent ) {
 			neighbours.remove(backgroundAgent);
 		}
@@ -475,7 +475,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// GamaPoint targetPoint = (GamaPoint) target;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		neighbours.remove(backgroundAgent);
 		// *****
@@ -618,7 +618,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 		double detectingRange = agentSize + maxDist;
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		if ( isInBackgroundAgent ) {
 			neighbours.remove(backgroundAgent);
@@ -771,7 +771,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// GamaPoint targetPoint = (GamaPoint) target;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		neighbours.remove(backgroundAgent);
 		// *****
@@ -998,7 +998,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 		double detectingRange = agentSize + maxDist;
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		if ( isInBackgroundAgent ) {
 			neighbours.remove(backgroundAgent);
@@ -1291,7 +1291,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 		double detectingRange = agentSize + maxDist;
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		neighbours.remove(backgroundAgent);
 
@@ -1597,7 +1597,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// OutputManager.debug("Target " + targetPoint.x + " : " + targetPoint.y);
 		// OutputManager.debug("Detecting range : "+ detectingRange);
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		if ( isInBackgroundAgent ) {
 			neighbours.remove(backgroundAgent);
@@ -1797,7 +1797,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// OutputManager.debug("Target " + targetPoint.x + " : " + targetPoint.y);
 		// OutputManager.debug("Detecting range : "+ detectingRange);
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		// if (neighbours.contains())
 		// neighbours.remove("metro0");
@@ -2217,7 +2217,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaPoint targetPoint = (GamaPoint) target;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		GamaList<IAgent> neighbours =
-			(GamaList<IAgent>) agent.getTopology().getNeighboursOf(agent, detectingRange,
+			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
 		neighbours.remove(backgroundAgent);
 		GamaPoint candidatePoint[] = new GamaPoint[9];
