@@ -221,6 +221,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		}
 
 		@Override
+		public boolean isNotModifiable() {
+			return ((IVarExpression) right).isNotModifiable();
+		}
+
+		@Override
 		public void setType(final IType type) {}
 
 		@Override

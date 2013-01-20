@@ -51,8 +51,13 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	}
 
 	@Override
-	public boolean isConst() {
+	public boolean isNotModifiable() {
 		return isNotModifiable;
+	}
+
+	@Override
+	public boolean isConst() {
+		return false;
 	}
 
 	@Override
