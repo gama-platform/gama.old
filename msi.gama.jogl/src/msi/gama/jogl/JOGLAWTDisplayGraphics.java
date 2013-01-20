@@ -30,6 +30,7 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaGeometryType;
@@ -335,8 +336,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		final boolean fill, final Color border, final Integer angle) {
 		// Check if the geometry has a height value (3D Shape or Volume)
 		Geometry geom = null;
-		if ( scope.getAgentScope().getTopology().isTorus() ) {
-			geom = scope.getAgentScope().getTopology().returnToroidalGeom(geometry);
+		ITopology topo = scope.getTopology();
+		if ( topo.isTorus() ) {
+			geom = topo.returnToroidalGeom(geometry);
 		} else {
 			geom = geometry;
 		}
