@@ -107,6 +107,10 @@ public class GamlBuilder {
 		Model model = (Model) resource.getContents().get(0);
 		for ( Import imp : model.getImports() ) {
 			String importUri = imp.getImportURI();
+			// we ignore "platform:" extensions
+			if ( importUri.startsWith("platform:") ) {
+				continue;
+			}
 			URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 			if ( !ir.getErrors().isEmpty() ) {
