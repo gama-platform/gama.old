@@ -93,7 +93,7 @@ public class SpeciesLayer extends AgentLayer {
 				if ( !world.dead() ) {
 					IPopulation microPop = world.getMicroPopulation(species);
 					if ( microPop != null ) {
-						scope.setContext(g);
+						scope.setGraphics(g);
 						drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope,
 							g);
 					}
