@@ -57,14 +57,6 @@ public class PrimitiveStatement extends ActionStatement {
 		skill =
 			AbstractGamlAdditions.getSkillInstanceFor(((StatementDescription) desc).getHelper()
 				.getSkillClass());
-		// String methodName = getLiteral(IKeyword.JAVA);
-
-		// SpeciesDescription context = desc.getSpeciesContext();
-		// Class methodClass = context.getSkillClassFor(methodName);
-		// if ( Skill.class.isAssignableFrom(methodClass) ) {
-		// skill = AbstractGamlAdditions.getSkillInstanceFor(methodClass);
-		// }
-		// executer = AbstractGamlAdditions.getPrimitive(methodClass, methodName);
 	}
 
 	@Override
