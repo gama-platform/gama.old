@@ -33,7 +33,5 @@ public interface IPrimRun {
 
 	public IType getReturnType();
 
-	// public void setReturnType(IType returnType);
-
 	public Class getSkillClass();
 }
