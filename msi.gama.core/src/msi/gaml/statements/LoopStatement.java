@@ -52,7 +52,7 @@ combinations = {
 	@combination({ IKeyword.OVER, IKeyword.VAR }),
 	@combination({ IKeyword.OVER, IKeyword.VAR, IKeyword.STEP }), @combination({ IKeyword.TIMES }),
 	@combination({ IKeyword.WHILE }) }, omissible = IKeyword.VAR)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class LoopStatement extends AbstractStatementSequence {
 
 	private final LoopExecuter executer;

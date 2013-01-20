@@ -51,7 +51,7 @@ import msi.gaml.types.IType;
 	@combination({ IKeyword.AT, IKeyword.ITEM, IKeyword.IN }),
 	@combination({ IKeyword.ALL, IKeyword.IN }) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class PutStatement extends AbstractContainerStatement {
 
 	short listType;

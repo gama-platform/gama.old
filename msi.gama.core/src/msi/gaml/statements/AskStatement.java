@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER_STR, IType.AGENT_STR }, optional = false),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true) }, omissible = IKeyword.TARGET)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class AskStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;

@@ -38,7 +38,7 @@ import msi.gaml.types.*;
  * 
  */
 @symbol(name = { IKeyword.DO, IKeyword.REPEAT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, with_scope = false, with_args = true)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false),
 	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)

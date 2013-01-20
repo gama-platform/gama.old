@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true)
-@inside(kinds = ISymbolKind.SPECIES)
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)

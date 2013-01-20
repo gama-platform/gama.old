@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false) }, combinations = {
 	@combination({ IKeyword.VAR, IKeyword.VALUE }), @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class SetStatement extends AbstractStatement {
 
 	protected final IVarExpression varExpr;

@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class RemoveStatement extends AbstractContainerStatement {
 
 	public RemoveStatement(final IDescription desc) {

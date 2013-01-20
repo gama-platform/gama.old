@@ -46,7 +46,7 @@ import org.opengis.feature.type.FeatureType;
 import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
@@ -231,7 +231,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					liste.add(ag.getAttribute(e.toString()));
 				}
 			}
-			
+
 			SimpleFeature simpleFeature =
 				SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
@@ -244,10 +244,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		writePRJ(path);
 	}
 
-	private void writePRJ(final String path){
-		if (GisUtils.getCrs() != null) {
+	private void writePRJ(final String path) {
+		if ( GisUtils.getCrs() != null ) {
 			try {
-				FileWriter fw = new FileWriter(path.replace(".shp",".prj"));
+				FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));
 				fw.write(GisUtils.getCrs().toString());
 				fw.close();
 			} catch (IOException e) {
@@ -255,6 +255,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 		}
 	}
+
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		init = args;

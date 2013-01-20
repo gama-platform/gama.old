@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  * 
  */
 @symbol(name = { IKeyword.USER_COMMAND }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT }, symbols = IKeyword.USER_PANEL)
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
