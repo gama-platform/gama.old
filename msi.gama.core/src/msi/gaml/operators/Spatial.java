@@ -89,8 +89,8 @@ public abstract class Spatial {
 			ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			double originx = origin.getX();
 			double originy = origin.getY();
-			double worldWidth = a.getTopology().getWidth() - originx;
-			double worldHeight = a.getTopology().getHeight() - originy;
+			double worldWidth = scope.getTopology().getWidth() - originx;
+			double worldHeight = scope.getTopology().getHeight() - originy;
 
 			double min_point_x = originx + Maths.cos(min_angle) * worldWidth;
 			double min_point_y = originy + Maths.sin(min_angle) * worldHeight;
@@ -342,7 +342,7 @@ public abstract class Spatial {
 			final ISpecies targets) {
 			IAgent a = scope.getAgentScope();
 			ILocation location = a.getLocation();
-			ITopology t = a.getTopology();
+			ITopology t = scope.getTopology();
 			IList<IAgent> obstacles = t.getAgentsIn(source, Different.with(), false);
 			return maskedBy(source, obstacles, location, null);
 		}
@@ -765,7 +765,7 @@ public abstract class Spatial {
 		@doc(value = "The direction (in degree) between the two geometries (geometries, agents, points) considering the topology of the agent applying the operator.", examples = { "ag1 towards ag2 --: the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator" }, see = {
 			"distance_between", "distance_to", "direction_between", "path_between", "path_to" })
 		public static Integer opTowards(final IScope scope, final IShape agent, final IShape target) {
-			return scope.getAgentScope().getTopology().directionInDegreesTo(agent, target);
+			return scope.getTopology().directionInDegreesTo(agent, target);
 		}
 
 		@operator("distance_between")
@@ -813,8 +813,7 @@ public abstract class Spatial {
 			if ( nodes.isEmpty(scope) ) { return null; }
 			int n = nodes.length(scope);
 			IShape source = nodes.first(scope);
-			if ( n == 1 ) { return new GamaPath(scope.getAgentScope().getTopology(), source,
-				source, new GamaList()); }
+			if ( n == 1 ) { return new GamaPath(scope.getTopology(), source, source, new GamaList()); }
 			IShape target = nodes.last(scope);
 			if ( n == 2 ) { return graph.pathBetween(source, target); }
 			GamaList<IShape> edges = new GamaList();
@@ -835,7 +834,7 @@ public abstract class Spatial {
 			"path_to" })
 		public static Double opDistanceTo(final IScope scope, final IShape source,
 			final IShape target) {
-			return scope.getAgentScope().getTopology().distanceBetween(source, target);
+			return scope.getTopology().distanceBetween(source, target);
 		}
 
 		@operator(value = "distance_to")
@@ -843,7 +842,7 @@ public abstract class Spatial {
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static Double opDistanceTo(final IScope scope, final GamaPoint source,
 			final GamaPoint target) {
-			return scope.getAgentScope().getTopology().distanceBetween(source, target);
+			return scope.getTopology().distanceBetween(source, target);
 		}
 
 		@operator("path_to")
@@ -853,7 +852,7 @@ public abstract class Spatial {
 		public static IPath opPathTo(final IScope scope, final IShape g, final IShape g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getAgentScope().getTopology().pathBetween(g1, g);
+			return scope.getTopology().pathBetween(g1, g);
 		}
 
 		@operator("path_to")
@@ -862,7 +861,7 @@ public abstract class Spatial {
 		public static IPath opPathTo(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			return scope.getAgentScope().getTopology().pathBetween(g1, g);
+			return scope.getTopology().pathBetween(g1, g);
 		}
 
 	}
@@ -1159,10 +1158,7 @@ public abstract class Spatial {
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			// CHANGE
-			IAgent target = agent.getAgent();
-			ITopology t =
-				target == null ? scope.getAgentScope().getTopology() : target.getTopology();
-			// ITopology t = scope.getAgentScope().getTopology();
+			ITopology t = scope.getTopology();
 			return t.getNeighboursOf(agent, distance, Different.with());
 		}
 
@@ -1172,8 +1168,7 @@ public abstract class Spatial {
 		public static IList opNeighboursAt(final IScope scope, final GamaPoint agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
-			return scope.getAgentScope().getTopology()
-				.getNeighboursOf(agent, distance, Different.with());
+			return scope.getTopology().getNeighboursOf(agent, distance, Different.with());
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
@@ -1183,7 +1178,7 @@ public abstract class Spatial {
 		public static IList opAtDistance(final IScope scope, final IList list, final Double distance) {
 			if ( list.isEmpty() ) { return GamaList.EMPTY_LIST; }
 			IAgent agent = scope.getAgentScope();
-			ITopology t = agent.getTopology();
+			ITopology t = scope.getTopology();
 			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
 				In.list(scope, list)); }
 			if ( t.isTorus() ) { return t.getNeighboursOf(agent, distance, In.list(scope, list)); }
@@ -1198,14 +1193,14 @@ public abstract class Spatial {
 		public static IList opAtDistance(final IScope scope, final ISpecies species,
 			final Double distance) {
 			IAgent agent = scope.getAgentScope();
+			ITopology t = scope.getTopology();
 			IPopulation pop = agent.getPopulationFor(species);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
-			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
-				agent.getLocation(), distance, In.population(pop)); }
-			if ( agent.getTopology().isTorus() ) { return agent.getTopology().getNeighboursOf(
-				agent, distance, In.population(pop)); }
-			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
-				In.population(pop), false);
+			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
+				In.population(pop)); }
+			if ( t.isTorus() ) { return t.getNeighboursOf(agent, distance, In.population(pop)); }
+			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.population(pop),
+				false);
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
@@ -1215,7 +1210,7 @@ public abstract class Spatial {
 		public static IList<IAgent> opInside(final IScope scope,
 			final IContainer<?, IShape> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.list(scope, targets), true);
 		}
@@ -1226,7 +1221,7 @@ public abstract class Spatial {
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
-			ITopology t = pop.getTopology();
+			ITopology t = scope.getTopology(); // VERIFY
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.population(pop), true);
 		}
@@ -1238,7 +1233,7 @@ public abstract class Spatial {
 		public static IList<IAgent> opOverlapping(final IScope scope,
 			final IContainer<?, IShape> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.list(scope, targets), false);
 		}
@@ -1249,7 +1244,7 @@ public abstract class Spatial {
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return new GamaList(); }
-			ITopology t = pop.getTopology();
+			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.population(pop), false);
 		}
@@ -1261,10 +1256,10 @@ public abstract class Spatial {
 		public static Object opClosestTo(final IScope scope, final IContainer<?, IShape> targets,
 			final IShape source) throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
-				return scope.getAgentScope().getTopology()
-					.getAgentClosestTo((ILocation) source, In.list(scope, targets));
-			} else if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
-				.getAgentClosestTo(source, In.list(scope, targets)); }
+				return scope.getTopology().getAgentClosestTo((ILocation) source,
+					In.list(scope, targets));
+			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(
+				source, In.list(scope, targets)); }
 			throw new GamaRuntimeException(StringUtils.toGaml(source) +
 				" is not a geometrical object");
 		}
@@ -1279,7 +1274,7 @@ public abstract class Spatial {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return null; }
 			// CHANGE
-			ITopology t = pop.getTopology();
+			ITopology t = scope.getTopology(); // VERIFY (was pop.getTopology())
 			// ITopology t = scope.getAgentScope().getTopology();
 			if ( source instanceof ILocation ) {
 				return t.getAgentClosestTo((ILocation) source, In.population(pop));
@@ -1296,10 +1291,9 @@ public abstract class Spatial {
 		public static IAgent opAgentsClosestTo(final IScope scope, final Object source)
 			throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
-				return scope.getAgentScope().getTopology()
-					.getAgentClosestTo((ILocation) source, Different.with());
-			} else if ( source instanceof IShape ) { return scope.getAgentScope().getTopology()
-				.getAgentClosestTo((IShape) source, Different.with()); }
+				return scope.getTopology().getAgentClosestTo((ILocation) source, Different.with());
+			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(
+				(IShape) source, Different.with()); }
 			throw new GamaRuntimeException(StringUtils.toGaml(source) +
 				" is not a geometrical object");
 		}
@@ -1309,7 +1303,7 @@ public abstract class Spatial {
 			"agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
 		public static IList<IAgent> opAgentsIn(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
 				true);
 		}
@@ -1320,7 +1314,7 @@ public abstract class Spatial {
 			"inside", "overlapping", "at_distance" })
 		public static IList<IAgent> opOverlappingAgents(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
-			ITopology t = scope.getAgentScope().getTopology();
+			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
 				false);
 		}
@@ -1331,9 +1325,9 @@ public abstract class Spatial {
 			"inside", "overlapping", "at_distance" })
 		public static IList opAgentsAtDistance(final IScope scope, final Double distance) {
 			IAgent agent = scope.getAgentScope();
-			if ( agent.isPoint() ) { return agent.getTopology().getNeighboursOf(
+			if ( agent.isPoint() ) { return scope.getTopology().getNeighboursOf(
 				agent.getLocation(), distance, Different.with()); }
-			return agent.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
+			return scope.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
 				Different.with(), false);
 		}
 
@@ -1373,7 +1367,7 @@ public abstract class Spatial {
 					distGp.add(g2);
 					IAgent a = g1.get(0);
 					IAgent b = g2.get(0);
-					Double dist = scope.getAgentScope().getTopology().distanceBetween(a, b);
+					Double dist = scope.getTopology().distanceBetween(a, b);
 					if ( dist < distance ) {
 						distances.put(distGp, dist);
 						if ( dist < distMin ) {
