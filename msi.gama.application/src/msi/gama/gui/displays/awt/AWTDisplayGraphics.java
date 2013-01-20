@@ -26,6 +26,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
@@ -405,8 +406,9 @@ public class AWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle) {
 		Geometry geom = null;
-		if ( scope.getAgentScope().getTopology().isTorus() ) {
-			geom = scope.getAgentScope().getTopology().returnToroidalGeom(geometry);
+		ITopology topo = scope.getTopology();
+		if ( topo.isTorus() ) {
+			geom = topo.returnToroidalGeom(geometry);
 		} else {
 			geom = geometry;
 		}
