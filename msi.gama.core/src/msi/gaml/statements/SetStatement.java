@@ -38,6 +38,7 @@ import msi.gaml.types.IType;
  * 
  */
 
+// FIXME Progressively remove unused facets
 @facets(value = { @facet(name = IKeyword.VAR, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false) }, combinations = {

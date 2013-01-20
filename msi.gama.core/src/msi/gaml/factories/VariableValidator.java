@@ -6,7 +6,6 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.IUnits;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.Facets;
@@ -65,11 +64,17 @@ public class VariableValidator extends DescriptionValidator {
 		 * } else if ( IExpressionParser.UNARIES.containsKey(name) ) {
 		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
 		 * }
-		 */else if ( IUnits.UNITS.containsKey(name) ) {
-			vd.flagError(
-				name + " is a unit name. " + type + " Units in GAML are :" +
-					String.valueOf(IUnits.UNITS.keySet()), IGamlIssue.IS_A_UNIT, NAME, name);
-		}
+		 */
+		// AD 19/01/13 : Removal of this test as unit names are expected to be declared using the
+		// "¡" symbol
+
+		/**
+		 * else if ( IUnits.UNITS.containsKey(name) ) {
+		 * vd.flagError(
+		 * name + " is a unit name. " + type + " Units in GAML are :" +
+		 * String.valueOf(IUnits.UNITS.keySet()), IGamlIssue.IS_A_UNIT, NAME, name);
+		 * }
+		 **/
 	}
 
 	public static void assertCanBeAmong(final IDescription vd, final IType type, final Facets facets) {

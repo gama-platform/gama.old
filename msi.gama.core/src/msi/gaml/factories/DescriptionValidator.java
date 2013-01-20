@@ -168,6 +168,11 @@ public class DescriptionValidator {
 					", which will be automatically casted.", IGamlIssue.SHOULD_CAST,
 					IKeyword.VALUE, expr.getType().toString());
 			}
+			// AD 19/1/13: test of the constants
+			if ( ((IVarExpression) expr).isConst() ) {
+				cd.flagError("The variable " + expr.toGaml() +
+					" is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
+			}
 		}
 
 	}

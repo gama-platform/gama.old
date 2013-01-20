@@ -39,7 +39,7 @@ import msi.gaml.types.*;
  * The Class Var.
  * 
  * 
- * FOR THE MOMENT SPECIES_WIDE CONSTANTS ARE NOT CONSIDERED (TOO MANY THINGS TO CONSIDER AND
+ * FIXME FOR THE MOMENT SPECIES_WIDE CONSTANTS ARE NOT CONSIDERED (TOO MANY THINGS TO CONSIDER AND
  * POSSIBILITIES TO MAKE FALSE POSITIVE)
  */
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
@@ -68,8 +68,6 @@ public class Variable extends Symbol implements IVariable {
 	protected String /* gName, sName, iName, */pName, cName;
 	protected ISkill gSkill/* , iSkill */, sSkill;
 
-	// public boolean javaInternal;
-
 	public Variable(final IDescription sd) {
 		super(sd);
 		VariableDescription desc = (VariableDescription) sd;
@@ -85,11 +83,7 @@ public class Variable extends Symbol implements IVariable {
 		type = desc.getType();
 		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
-		// SpeciesDescription context = desc.getSpeciesContext();
-		// buildHelpers(context);
 		buildHelpers(desc);
-		// javaInternal = getter != null && setter != null;
-
 	}
 
 	private void buildHelpers(final VariableDescription var) {
@@ -97,50 +91,13 @@ public class Variable extends Symbol implements IVariable {
 		getter = var.getGetter();
 		if ( getter != null ) {
 			gSkill = species.getSkillFor(getter.getSkillClass());
-			// if ( gSkill == null && getName().equals("states") ) {
-			// GuiUtils.debug("");
-			// }
 		}
 		initer = var.getIniter();
 		setter = var.getSetter();
 		if ( setter != null ) {
 			sSkill = species.getSkillFor(setter.getSkillClass());
 		}
-		// if ( getFacet(IKeyword.GETTER) != null ) {
-		// //gName = getLiteral(IKeyword.GETTER);
-		// //gSkill = species.getSkillFor(gName);
-		// getter = var.getGetter();
-		// gSkill = species.getSkillFor(getter.getSkillClass());
-		// }
-		// if ( getFacet(IKeyword.INITER) != null ) {
-		// // iName = getLiteral(IKeyword.INITER);
-		// // iSkill = species.getSkillFor(iName);
-		// initer = var.getIniter();
-		// }
-		// if ( getFacet(IKeyword.SETTER) != null ) {
-		// sName = getLiteral(IKeyword.SETTER);
-		// sSkill = species.getSkillFor(sName);
-		// setter = var.getSetter();
-		// }
 	}
-
-	// private void buildHelpers(final SpeciesDescription context) {
-	// if ( getFacet(IKeyword.GETTER) != null ) {
-	// gName = getLiteral(IKeyword.GETTER);
-	// gSkill = context.getSkillFor(gName);
-	// getter = AbstractGamlAdditions.getGetter(context.getSkillClassFor(gName), gName);
-	// }
-	// if ( getFacet(IKeyword.INITER) != null ) {
-	// iName = getLiteral(IKeyword.INITER);
-	// iSkill = context.getSkillFor(iName);
-	// initer = AbstractGamlAdditions.getGetter(context.getSkillClassFor(iName), iName);
-	// }
-	// if ( getFacet(IKeyword.SETTER) != null ) {
-	// sName = getLiteral(IKeyword.SETTER);
-	// sSkill = context.getSkillFor(sName);
-	// setter = AbstractGamlAdditions.getSetter(context.getSkillClassFor(sName), sName);
-	// }
-	// }
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v)
 		throws GamaRuntimeException {

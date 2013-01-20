@@ -46,8 +46,6 @@ public class VariableDescription extends SymbolDescription {
 	private IVarGetter init;
 	private IVarSetter set;
 
-	// private IFieldGetter field; // TODO only for fields. Should be moved to a subclass
-
 	public VariableDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
 		final SymbolProto md) {
@@ -94,9 +92,6 @@ public class VariableDescription extends SymbolDescription {
 		if ( init == null ) {
 			init = v2.init;
 		}
-		// if ( field == null ) {
-		// field = v2.field;
-		// }
 	}
 
 	@Override
@@ -186,6 +181,7 @@ public class VariableDescription extends SymbolDescription {
 
 	public IVarExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
+		//
 		varExpr =
 			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(),
 				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
