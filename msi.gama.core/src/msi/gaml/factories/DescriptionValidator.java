@@ -117,6 +117,14 @@ public class DescriptionValidator {
 		}
 	}
 
+	public static void assertDescriptionIsInsideTheRightSuperDescription(final IDescription desc) {
+		IDescription sd = desc.getSuperDescription();
+		if ( !desc.getMeta().verifyContext(sd) ) {
+			desc.flagError(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(),
+				IGamlIssue.WRONG_CONTEXT, desc.getName());
+		}
+	}
+
 	public static void assertNameIsUniqueInSuperDescription(final IDescription desc) {
 		IDescription sd = desc.getSuperDescription();
 		if ( sd == null ) { return; }
@@ -169,7 +177,7 @@ public class DescriptionValidator {
 					IKeyword.VALUE, expr.getType().toString());
 			}
 			// AD 19/1/13: test of the constants
-			if ( ((IVarExpression) expr).isConst() ) {
+			if ( ((IVarExpression) expr).isNotModifiable() ) {
 				cd.flagError("The variable " + expr.toGaml() +
 					" is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
