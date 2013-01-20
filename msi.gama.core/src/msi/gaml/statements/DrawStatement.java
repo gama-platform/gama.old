@@ -85,7 +85,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		SHAPES.put("square", 1);
 		SHAPES.put("circle", 2);
 		SHAPES.put("triangle", 3);
-		SHAPES.put("rectangle", 1); // FIXME UTILISER CES STRING POUR PARSER LES SHAPES AU DEPART.
+		SHAPES.put("rectangle", 1);
 		SHAPES.put("disc", 2);
 		SHAPES.put("line", 4);
 	}
@@ -113,6 +113,14 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/**
+	 * Various patches to keep the compatibility with GAMA 1.5 and previous versions, where symbols
+	 * could be used to draw shapes
+	 * @param exp, the expression representing what is to be drawn
+	 * @param desc, the description of the statement (used as a context for creating new
+	 *            expressions)
+	 * @return the new expression, patched for compatibility
+	 */
 	private IExpression patchForCompatibility(IExpression exp, final IDescription desc) {
 		if ( exp.getType().id() == IType.STRING && exp.isConst() ) {
 			String old = Cast.asString(null, exp.value(null));
@@ -163,7 +171,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IGraphics g = (IGraphics) stack.getContext();
+		IGraphics g = stack.getGraphics();
 		if ( g == null ) { return null; }
 		return executer.executeOn(stack, g);
 	}
@@ -370,12 +378,10 @@ public class DrawStatement extends AbstractStatementSequence {
 			// Get the z composante of the agent.
 			// FIXME: (Added by Arno 09/12) Why not changing the method scale in order to make it
 			// return a 3D point instead of a 2D point.
-			if ( Double.isNaN(agent.getLocation().getZ()) ) {
-				return g.drawString(info, getColor(scope), getRotation(scope), 0.0f);
-			} else {
-				return g.drawString(info, getColor(scope), getRotation(scope), (float) agent
-					.getLocation().getZ());
-			}
+			if ( Double.isNaN(agent.getLocation().getZ()) ) { return g.drawString(info,
+				getColor(scope), getRotation(scope), 0.0f); }
+			return g.drawString(info, getColor(scope), getRotation(scope), (float) agent
+				.getLocation().getZ());
 
 		}
 	}
