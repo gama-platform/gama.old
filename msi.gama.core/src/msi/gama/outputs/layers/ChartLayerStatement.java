@@ -133,12 +133,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 		dataDeclaration.setChildren(commands);
-		// datas = new GamaList();
-		// for ( ISymbol s : commands ) {
-		// if ( s instanceof ChartDataStatement ) {
-		// datas.add((ChartDataStatement) s);
-		// }
-		// }
 	}
 
 	void createSeries(final IScope scope, final boolean isTimeSeries) throws GamaRuntimeException {
