@@ -178,11 +178,10 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public final synchronized Map<String,Object> getAttributes() {
+	public final synchronized Map<String, Object> getAttributes() {
 		return attributes;
 	}
-	
-	
+
 	@Override
 	public final synchronized Object getAttribute(final String name) {
 		return attributes.get(name);
@@ -301,17 +300,17 @@ public abstract class AbstractAgent implements IAgent {
 		}
 		ITopology topology = population.getTopology();
 		ILocation newGeomLocation = newGeometry.getLocation().copy();
-		
+
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
 		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy());
 		topology.normalizeLocation(newGeomLocation, false);
-		
+
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
 			newLocalGeom.setLocation(newGeomLocation);
 		}
-		
+
 		newLocalGeom.setAgent(this);
 		geometry = newLocalGeom;
 
@@ -320,7 +319,7 @@ public abstract class AbstractAgent implements IAgent {
 		// update micro-agents' locations accordingly
 		for ( IPopulation p : microPopulations.values() ) {
 			p.hostChangesShape();
-		}	
+		}
 	}
 
 	@Override
@@ -340,7 +339,7 @@ public abstract class AbstractAgent implements IAgent {
 			Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			Integer newHeading = topology.directionInDegreesTo(previousPoint, newLocation);
-			if ( newHeading != null && !this.getTopology().isTorus()) {
+			if ( newHeading != null && !this.getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
 			topology.updateAgent(this, geometry.isPoint(), previousPoint, previousEnvelope);
@@ -619,8 +618,8 @@ public abstract class AbstractAgent implements IAgent {
 	public IAgent duplicate() {
 		return this;
 	}
-	
-	
+
+	@Override
 	public boolean isTorus() {
 		return false;
 	}
