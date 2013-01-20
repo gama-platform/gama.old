@@ -42,6 +42,10 @@ public class IUnits {
 
 	public final static double e = Math.E;
 
+	public final static double to_deg = 180d / Math.PI;
+
+	public final static double to_rad = Math.PI / 180d;
+
 	/*
 	 * 
 	 * Distance & size conversions

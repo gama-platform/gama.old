@@ -400,8 +400,9 @@ public class JavaWriter {
 				toClassObject(ret) + ").toString(), JAVA," + toJava(method) + ")";
 		sb.append(concat(in, "_action(", toJava(method), ",", toClassObject(clazz),
 			",new PrimRun(Types.get(", toClassObject(ret), "), ", toClassObject(clazz),
-			"){public ", ret, " run(", ISKILL, " t,", IAGENT, " a,", ISCOPE, " s){return ((",
-			clazz, ") t).", method, "(s);} },", desc, ");"));
+			"){public ", ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT,
+			" a,", ISCOPE, " s){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).",
+			method, "(s); ", ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
 	}
 
 	protected void writeSkill(final StringBuilder sb, final String s, final String doc) {

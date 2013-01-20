@@ -130,16 +130,16 @@ public class GamaProcessor extends AbstractProcessor {
 				// }
 			}
 			if ( "true".equals(processingEnv.getOptions().get("doc")) ) {
-				// new XMLWriter(processingEnv).write(createWriter("doc.xml"), gp);				
-				 if ( docProc.firstParsing ) {
-					 docProc.processDocXML(env, createWriter("docGAMA.xml"));
-					 docProc.firstParsing = false;
-				 } else {
-				 	processingEnv.getMessager().printMessage(Kind.NOTE,
+				// new XMLWriter(processingEnv).write(createWriter("doc.xml"), gp);
+				if ( docProc.firstParsing ) {
+					docProc.processDocXML(env, createWriter("docGAMA.xml"));
+					docProc.firstParsing = false;
+				} else {
+					processingEnv.getMessager().printMessage(Kind.NOTE,
 						"Documentation file has already been produced");
-				 }
+				}
 			}
-			
+
 			// Writer w2 = createAgentBaseSourceWriter();
 			// if ( w2 != null ) {
 			// try {
@@ -609,7 +609,12 @@ public class GamaProcessor extends AbstractProcessor {
 			// declClass
 			sb.append(rawNameOf(ex.getEnclosingElement())).append(SEP);
 			// retClass
-			sb.append(rawNameOf(ex.getReturnType())).append(SEP);
+			TypeMirror tm = ex.getReturnType();
+			if ( tm.getKind().equals(TypeKind.VOID) ) {
+				sb.append("void").append(SEP);
+			} else {
+				sb.append(rawNameOf(tm)).append(SEP);
+			}
 			// name
 			sb.append(action.name()).append(SEP);
 			// argNumber
