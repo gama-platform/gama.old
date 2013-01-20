@@ -174,14 +174,11 @@ public class Maths {
 	}
 
 	@operator(value = "acos", can_be_const = true)
-	@doc(
-		value = "the arccos of the operand (which has to be expressed in decimal degrees).",
-		examples = "acos (0) 	--: 	90",
-		see = {"asin", "atan"})
+	@doc(value = "the arccos of the operand (which has to be expressed in decimal degrees).", examples = "acos (0) 	--: 	90", see = {
+		"asin", "atan" })
 	public static Double acos(final Double rv) {
 		return Math.acos(rv) * toDeg;
 	}
-
 
 	@operator(value = "acos", can_be_const = true)
 	@doc()
@@ -232,26 +229,30 @@ public class Maths {
 	@doc(value = "the cosinus of the operand (in decimal degrees).", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 1", see = {
 		"sin", "tan" })
 	public static Double cos(final Double rv) {
-		return cosTable[(int) rv.doubleValue()];
+		double rad = toRad * rv;
+		return Math.cos(rad);
 	}
 
 	@operator(value = "cos", can_be_const = true)
 	@doc()
 	public static Double cos(final Integer rv) {
-		return cosTable[rv.intValue()];
+		double rad = toRad * rv;
+		return Math.cos(rad);
 	}
 
 	@operator(value = "sin", can_be_const = true)
 	@doc(value = "the sinus of the operand (in decimal degrees).", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 0", see = {
 		"cos", "tan" })
 	public static Double sin(final Double rv) {
-		return sinTable[rv.intValue()];
+		double rad = toRad * rv;
+		return Math.sin(rad);
 	}
 
 	@operator(value = "sin", can_be_const = true)
 	@doc()
 	public static Double sin(final Integer rv) {
-		return sinTable[rv.intValue()];
+		double rad = toRad * rv;
+		return Math.sin(rad);
 	}
 
 	@operator(value = "even", can_be_const = true)
@@ -363,13 +364,15 @@ public class Maths {
 	@doc(value = "the trigonometic tangent of the operand (in decimal degrees).", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (180) --: 0", see = {
 		"cos", "sin" })
 	public static Double tan(final Double v) {
-		return tanTable[v.intValue()];
+		double rad = toRad * v;
+		return Math.tan(rad);
 	}
 
 	@operator(value = "tan", can_be_const = true)
 	@doc()
 	public static Double tan(final Integer v) {
-		return tanTable[v.intValue()];
+		double rad = toRad * v;
+		return Math.tan(rad);
 	}
 
 	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
@@ -659,13 +662,6 @@ public class Maths {
 		return y;
 	}
 
-	/**
-	 * Rad to index.
-	 * 
-	 * @param radians the radians
-	 * 
-	 * @return the int
-	 */
 	public static final int radToIndex(final double radians) {
 		return (int) (radians * PI_2_OVER1_P) & PREC_MIN_1;
 	}
