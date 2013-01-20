@@ -54,6 +54,7 @@ public interface IGamlIssue {
 	public static String UNMATCHED_OPERANDS = "gaml.unmatched.operands.issue";
 	public static String UNMATCHED_UNARY = "gaml.unmatched.unary.issue";
 	public static String UNMATCHED_TYPES = "gaml.unmatched.types.issue";
+	public static String WRONG_CONTEXT = "gaml.wrong.context.issue";
 	public static String WRONG_PARENT = "gaml.wrong.parent.issue";
 	public static String WRONG_REDEFINITION = "gaml.wrong.redefinition.issue";
 	public static String WRONG_TYPE = "gaml.wrong.type.issue";
