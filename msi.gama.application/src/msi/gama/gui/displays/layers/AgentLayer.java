@@ -83,7 +83,7 @@ public class AgentLayer extends AbstractLayer {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 		IScope scope = GAMA.obtainNewScope();
 		if ( scope != null ) {
-			scope.setContext(g);
+			scope.setGraphics(g);
 			for ( IAgent a : getAgentsToDisplay() ) {
 				// if ( disposed ) {
 				// break;
