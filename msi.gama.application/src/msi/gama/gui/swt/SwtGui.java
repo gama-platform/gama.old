@@ -73,7 +73,7 @@ public class SwtGui implements IGui {
 		GuiUtils.setSwtGui(new SwtGui());
 	}
 
-	private SwtGui() {}
+	protected SwtGui() {}
 
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	private static Logger log;
@@ -636,7 +636,7 @@ public class SwtGui implements IGui {
 	public static final String PERSPECTIVE_MODELING_ID =
 		"msi.gama.application.perspectives.ModelingPerspective";
 
-		/** The Constants perspective ids */
+	/** The Constants perspective ids */
 	public static final String PERSPECTIVE_SIMULATION_ID =
 		"msi.gama.application.perspectives.SimulationPerspective";
 
@@ -731,7 +731,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean isSimulationPerspective() {
-		return getCurrentPerspective().getId().equals( PERSPECTIVE_SIMULATION_ID);
+		return getCurrentPerspective().getId().equals(PERSPECTIVE_SIMULATION_ID);
 	}
 
 	@Override
@@ -739,14 +739,12 @@ public class SwtGui implements IGui {
 		return openPerspective(PERSPECTIVE_MODELING_ID);
 	}
 
-
 	public final boolean openPerspective(final String perspectiveId) {
 		loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
-		
 
 		if ( currentDescriptor != null && currentDescriptor.equals(descriptor) ) { return true; }
 		if ( descriptor != null ) {
@@ -756,7 +754,7 @@ public class SwtGui implements IGui {
 				public void run() {
 					activePage.setPerspective(descriptor);
 					debug("Perspective " + perspectiveId + " open ");
-					
+
 				}
 			});
 			return true;
@@ -764,70 +762,67 @@ public class SwtGui implements IGui {
 		return false;
 	}
 
-	public final IPerspectiveDescriptor getActivePerspective()
-	{
+	public final IPerspectiveDescriptor getActivePerspective() {
 		final IWorkbenchPage activePage = getPage();
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
 		return currentDescriptor;
-	
+
 	}
-	public final String getActivePerspectiveName()
-	{
+
+	public final String getActivePerspectiveName() {
 		return getActivePerspective().getId();
-	
+
 	}
-	
+
 	static final Map<String, Class> perspectiveClasses = new HashMap();
 
 	public final boolean loadPerspectives() {
-		if(!perspectiveClasses.isEmpty())
-			return true;
-	
-		IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
-		for ( IConfigurationElement e : config ) 
-			{
-				final String pluginID = e.getAttribute("id");
-				final String pluginClass = e.getAttribute("class");
-				final String pluginName = e.getContributor().getName();
-				//Check if is a gama perspective...
-				if(pluginID.contains("msi.gama"))
-				{
-					ClassLoader cl =
-						GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-					try {
-						perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
-					} catch (ClassNotFoundException e1) {
-						e1.printStackTrace();
-					}
-					System.out.println("Gama perspective " + pluginID + " is loaded");
-				}
-			}
-		//}
+		if ( !perspectiveClasses.isEmpty() ) { return true; }
 
-		/*Class<IDisplaySurface> clazz = displayClasses.get(keyword);
-		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
-			" is not defined anywhere."); }
-		try {
-			IDisplaySurface surface = clazz.newInstance();
-			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
-			// " display");
-			surface.initialize(w, h, layerDisplayOutput);
-			return surface;
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
+		IConfigurationElement[] config =
+			Platform.getExtensionRegistry().getConfigurationElementsFor(
+				"org.eclipse.ui.perspectives");
+		for ( IConfigurationElement e : config ) {
+			final String pluginID = e.getAttribute("id");
+			final String pluginClass = e.getAttribute("class");
+			final String pluginName = e.getContributor().getName();
+			// Check if is a gama perspective...
+			if ( pluginID.contains("msi.gama") ) {
+				ClassLoader cl =
+					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+				try {
+					perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				System.out.println("Gama perspective " + pluginID + " is loaded");
+			}
 		}
-		
-		*/
-		return false ; //openPerspective(I);
+		// }
+
+		/*
+		 * Class<IDisplaySurface> clazz = displayClasses.get(keyword);
+		 * if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
+		 * " is not defined anywhere."); }
+		 * try {
+		 * IDisplaySurface surface = clazz.newInstance();
+		 * // debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
+		 * // " display");
+		 * surface.initialize(w, h, layerDisplayOutput);
+		 * return surface;
+		 * } catch (InstantiationException e1) {
+		 * e1.printStackTrace();
+		 * } catch (IllegalAccessException e1) {
+		 * e1.printStackTrace();
+		 * }
+		 */
+		return false; // openPerspective(I);
 	}
-		
+
 	@Override
 	public final boolean openSimulationPerspective() {
-	//	 boolean toto  = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID  );
-			return openPerspective( PERSPECTIVE_SIMULATION_ID);
+		// boolean toto = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID );
+		return openPerspective(PERSPECTIVE_SIMULATION_ID);
 	}
 
 	@Override
@@ -842,8 +837,8 @@ public class SwtGui implements IGui {
 	public void togglePerspective() {
 		if ( isSimulationPerspective() ) {
 			openModelingPerspective();
-//		} else if ( isModelingPerspective() ) {
-//			openHeadlessPerspective();
+			// } else if ( isModelingPerspective() ) {
+			// openHeadlessPerspective();
 		} else {
 			openSimulationPerspective();
 		}
@@ -876,13 +871,8 @@ public class SwtGui implements IGui {
 		return new AWTDisplayGraphics(width, height);
 	}
 
-	
-	
 	static final Map<String, Class> displayClasses = new HashMap();
-	
-	
-	
-	
+
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
@@ -1011,5 +1001,8 @@ public class SwtGui implements IGui {
 	public void setHighlightedAgent(final IAgent a) {
 		highlightedAgent = a;
 	}
+
+	@Override
+	public void openEditorAndSelect(final Object eObject) {}
 
 }
