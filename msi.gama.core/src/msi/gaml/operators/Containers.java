@@ -385,9 +385,10 @@ public class Containers {
 	@doc(special_cases = { "if the right operand is an object of any type (except a container), " +
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
-	public static IList opPlus(final IList l1, final Object l) {
-		if ( l == null ) { return new GamaList(l1); }
-		GamaList result = new GamaList(l1);
+	public static IList opPlus(final IScope scope, final IContainer l1, final Object l) {
+		IList result = l1.listValue(scope);
+		if ( l == null ) { return result; }
+
 		result.add(l);
 		return result;
 	}
