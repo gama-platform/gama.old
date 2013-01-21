@@ -22,7 +22,6 @@ import msi.gama.lang.gaml.linking.GamlLinkingService;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.*;
-import org.eclipse.xtext.service.SingletonBinding;
 import com.google.inject.Binder;
 
 /**
@@ -42,7 +41,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	@Override
-	@SingletonBinding(eager = true)
+	// @SingletonBinding(eager = true)
 	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
 		return msi.gama.lang.gaml.validation.GamlJavaValidator.class;
 	}
