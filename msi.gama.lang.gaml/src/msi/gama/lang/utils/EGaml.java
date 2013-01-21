@@ -139,6 +139,12 @@ public class EGaml {
 			return object.getValue();
 		}
 
+		@Override
+		public String doSwitch(final EObject f) {
+			if ( f == null ) { return null; }
+			return super.doSwitch(f);
+		}
+
 	};
 
 	public static String getKeyOf(final EObject f) {
