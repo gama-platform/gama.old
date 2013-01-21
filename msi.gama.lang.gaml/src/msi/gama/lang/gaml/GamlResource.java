@@ -69,7 +69,7 @@ public class GamlResource extends LazyLinkingResource {
 		long begin = System.currentTimeMillis();
 		ModelDescription md = GamlBuilder.INSTANCE.validate(this);
 		long end = System.currentTimeMillis();
-		GuiUtils.debug("Validation of " + this + " took " + (end - begin) + " milliseconds");
+		GuiUtils.debug("Validation of " + md + " took " + (end - begin) + " milliseconds");
 		return md;
 	}
 
