@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
+import msi.gaml.statements.Facets;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
@@ -140,11 +141,13 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
 		// We create a new world
+		ISyntacticElement ww = model.getSourceInformation().getChild(GLOBAL);
 		IDescription world =
 			getSpeciesFactory().createSpeciesDescription(WORLD_SPECIES,
 				AbstractGamlAdditions.WORLD_AGENT_CLASS, model,
 				AbstractGamlAdditions.WORLD_AGENT_CONSTRUCTOR,
-				AbstractGamlAdditions.getSpeciesSkills(WORLD_SPECIES));
+				AbstractGamlAdditions.getSpeciesSkills(WORLD_SPECIES),
+				ww == null ? new Facets() : ww.getFacets());
 		model.addChild(world);
 		// We then reattach the previous built-in species to the new world
 		for ( SpeciesDescription sd : AbstractGamlAdditions.BUILT_IN_SPECIES.values() ) {

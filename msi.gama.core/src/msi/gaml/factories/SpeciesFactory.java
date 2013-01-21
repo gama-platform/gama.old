@@ -52,10 +52,11 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills) {
+		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
+		final Facets userSkills) {
 		addSpeciesNameAsType(name);
 		return new SpeciesDescription(name, clazz, superDesc, helper, skills,
-			getMetaDescriptionFor(null, IKeyword.SPECIES));
+			getMetaDescriptionFor(null, IKeyword.SPECIES), userSkills);
 	}
 
 	@Override

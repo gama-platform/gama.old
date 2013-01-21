@@ -37,7 +37,7 @@ import org.eclipse.emf.common.notify.*;
  */
 public class SymbolDescription implements IDescription {
 
-	protected final Facets facets;
+	protected Facets facets;
 	private ISyntacticElement source;
 	protected IDescription enclosing;
 	protected final List<IDescription> children;

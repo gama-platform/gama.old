@@ -88,7 +88,7 @@ public class DescriptionFactory {
 	public static SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
 		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills) {
 		return modelFactory.getSpeciesFactory().createSpeciesDescription(name, clazz, superDesc,
-			helper, skills);
+			helper, skills, new Facets());
 	}
 
 }

@@ -68,10 +68,15 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
-		final IAgentConstructor helper, final Set<String> skills2, final SymbolProto md) {
+		final IAgentConstructor helper, final Set<String> skills2, final SymbolProto md,
+		final Facets ff) {
 		super(IKeyword.SPECIES, superDesc, IChildrenProvider.NONE, new SyntheticStatement(
 			IKeyword.SPECIES, new Facets(IKeyword.NAME, name)), md);
-		setSkills(null, skills2);
+		// facets.put(IKeyword.NAME, name);
+		if ( ff.containsKey(IKeyword.CONTROL) ) {
+			facets.putAsLabel(IKeyword.CONTROL, ff.get(IKeyword.CONTROL).toString());
+		}
+		setSkills(ff.get(IKeyword.SKILLS), skills2);
 		initJavaBase(clazz, helper);
 	}
 
