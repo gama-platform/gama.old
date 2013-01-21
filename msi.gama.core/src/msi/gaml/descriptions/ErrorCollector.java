@@ -6,15 +6,20 @@ import msi.gaml.compilation.GamlCompilationError;
 
 public class ErrorCollector implements IErrorCollector {
 
+	private final int SIZE = 100;
 	List<GamlCompilationError> errors = new ArrayList();
 	List<GamlCompilationError> warnings = new ArrayList();
 
 	@Override
 	public void add(final GamlCompilationError error) {
 		if ( error.isWarning() ) {
-			warnings.add(error);
+			if ( warnings.size() < SIZE ) {
+				warnings.add(error);
+			}
 		} else {
-			errors.add(error);
+			if ( errors.size() < SIZE ) {
+				errors.add(error);
+			}
 		}
 	}
 
@@ -26,6 +31,11 @@ public class ErrorCollector implements IErrorCollector {
 	@Override
 	public List<GamlCompilationError> getWarnings() {
 		return warnings;
+	}
+
+	public void clear() {
+		 errors = new ArrayList();
+	 warnings = new ArrayList();
 	}
 
 }

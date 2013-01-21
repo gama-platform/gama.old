@@ -84,6 +84,7 @@ public class ModelDescription extends SymbolDescription {
 		environment = null;
 		types.dispose();
 		worldSpecies = null;
+		//collect.clear();
 		super.dispose();
 
 	}
