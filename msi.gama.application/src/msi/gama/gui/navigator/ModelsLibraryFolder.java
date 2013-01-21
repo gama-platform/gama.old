@@ -38,7 +38,7 @@ public class ModelsLibraryFolder extends VirtualFolder {
 		System.out.println("Location to library : " + getBuiltInModelsPath());
 		for ( IProject project : totalList ) {
 			String projectPath = project.getLocation().toString();
-			System.out.println("Location to project : " + projectPath);
+			// System.out.println("Location to project : " + projectPath);
 			if ( projectPath.contains("msi.gama.models") ) {
 				resultList.add(project);
 			}
