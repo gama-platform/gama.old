@@ -33,7 +33,6 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
-import org.eclipse.xtext.ui.resource.*;
 import com.google.inject.*;
 
 /**
@@ -70,10 +69,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	// For performance issues on opening files : see http://alexruiz.developerblogs.com/?p=2359
-	@Override
-	public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
-		return SimpleResourceSetProvider.class;
-	}
+	// @Override
+	// public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
+	// return SimpleResourceSetProvider.class;
+	// }
 
 	/**
 	 * @author Pierrick
