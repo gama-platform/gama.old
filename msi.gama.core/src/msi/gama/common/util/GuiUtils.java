@@ -50,7 +50,7 @@ public class GuiUtils {
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
-	
+
 	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
 	public static final int[] defaultHighlight = new int[] { 0, 200, 200 };
 	private static boolean headlessMode = false;
@@ -259,7 +259,6 @@ public class GuiUtils {
 	// return null;
 	// }
 
-	
 	/**
 	 * @return
 	 */
@@ -355,6 +354,11 @@ public class GuiUtils {
 		if ( gui == null ) { return; }
 		gui.setHighlightedAgent(a);
 		GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+	}
+
+	public static void openEditorAndSelect(final Object eObject) {
+		if ( gui == null ) { return; }
+		gui.openEditorAndSelect(eObject);
 	}
 
 }
