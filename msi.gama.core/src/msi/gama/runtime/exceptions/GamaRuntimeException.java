@@ -19,8 +19,9 @@
 package msi.gama.runtime.exceptions;
 
 import java.util.*;
-import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -31,12 +32,11 @@ import msi.gama.kernel.simulation.SimulationClock;
 
 public class GamaRuntimeException extends RuntimeException {
 
-	private static final String ERROR = "Error: \n";
-	private static final String WARNING = "Warning: \n";
 	private final long cycle;
 	private String agent;
 	private boolean isWarning;
 	protected final List<String> context = new ArrayList();
+	protected int lineNumber;
 
 	public GamaRuntimeException(final Throwable ex) {
 		super(ex.toString(), ex);
@@ -63,8 +63,10 @@ public class GamaRuntimeException extends RuntimeException {
 		context.add(c);
 	}
 
-	public void addContext(final IGamlable setCommand) {
-		addContext("in " + setCommand.toGaml());
+	public void addContext(final IStatement s) {
+		addContext("in " + s.toGaml());
+		Object e = s.getDescription().getSourceInformation().getUnderlyingElement(null);
+		GuiUtils.debug(String.valueOf(e));
 	}
 
 	public void addAgent(final String agent) {
