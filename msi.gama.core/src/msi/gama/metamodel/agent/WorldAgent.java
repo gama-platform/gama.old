@@ -43,7 +43,7 @@ public class WorldAgent extends GamlAgent {
 		IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
 		double width = modelEnv.getWidth();
 		double height = modelEnv.getHeight();
-		isTorus= modelEnv.isTorus();
+		isTorus = modelEnv.isTorus();
 		location = new GamaPoint(width / 2, height / 2);
 		geometry = GamaGeometryType.buildRectangle(width, height, location);
 	}
@@ -65,12 +65,12 @@ public class WorldAgent extends GamlAgent {
 
 		return null;
 	}
-	
-	
-	public void setTorus(boolean isTorus) {
+
+	public void setTorus(final boolean isTorus) {
 		this.isTorus = isTorus;
 	}
 
+	@Override
 	public boolean isTorus() {
 		return isTorus;
 	}
