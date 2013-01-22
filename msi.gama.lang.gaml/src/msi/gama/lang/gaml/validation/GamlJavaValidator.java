@@ -30,8 +30,9 @@ import org.eclipse.xtext.validation.*;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	static boolean FORCE_VALIDATION = true;
-
+	// AD 22/1/13 : set to false to avoid lags in compilation.
+	static boolean FORCE_VALIDATION = false;
+ 
 	@Check(CheckType.FAST)
 	public void validate(final Model model) {
 		try {
