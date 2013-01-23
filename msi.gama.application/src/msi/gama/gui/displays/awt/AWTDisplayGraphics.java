@@ -26,6 +26,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
@@ -382,7 +383,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param z float (has no effect in 2D)
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor,
+	public Rectangle2D drawString(final IAgent agent,final String string, final Color stringColor,
 		final Integer angle, final float z) {
 		setDrawingColor(stringColor);
 		AffineTransform saved = g2.getTransform();

@@ -52,7 +52,7 @@ public class PauseLayer extends AbstractLayer {
 		g.setDrawingOffset(0, 0);
 		g.setDrawingCoordinates(20, 20);
 		g.setOpacity(1);
-		g.drawString("Display paused", Color.white, 0,0.0f);
+		g.drawString(null,"Display paused", Color.white, 0,0.0f);
 	}
 
 	/**
