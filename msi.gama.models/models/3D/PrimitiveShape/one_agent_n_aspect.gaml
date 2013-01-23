@@ -9,7 +9,7 @@ model one_agent_n_aspect
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 25;
-	file imageRaster <- file('Gama.png') ;
+	file imageRaster <- file('images/Gama.png') ;
 	rgb myColor parameter: 'Color' <- rgb('blue');
 
 	init { 		
@@ -40,15 +40,30 @@ entities {
 		}	
 		
 		aspect image{
-			draw image: imageRaster.path size: 1;
+			draw image: imageRaster size: 1;
 		}
-		do wander;
+		 
+		reflex wander{
+		  do wander;	
+		}	 
 	}
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1 type:opengl{
+		display text refresh_every: 1 type:opengl{
+			species myAgent aspect:text;	
+		}
+		display point refresh_every: 1 type:opengl{
+			species myAgent aspect:point;	
+		}
+		display sphere refresh_every: 1 type:opengl{
 			species myAgent aspect:sphere;	
+		}
+		display dynaSphere refresh_every: 1 type:opengl{
+			species myAgent aspect:dynaSphere;	
+		}
+		display image{
+			species myAgent aspect:image;
 		}
 	}
 }

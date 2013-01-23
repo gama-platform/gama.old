@@ -11,11 +11,11 @@ global {
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 25 ;
 	rgb global_color;
 	
-	file imageRaster <- file('Gama.png') ;
+	file imageRaster <- file('images/Gama.png') ;
 
 	init { 
 		
-		set global_color <- global_color hsb_to_rgb ([0.25,1.0,1.0]);
+		set global_color <- rgb("yellow");//global_color hsb_to_rgb ([0.25,1.0,1.0]);
 		
 		//2D Primitive Shape
 		create myPoint number: 1{
@@ -74,7 +74,7 @@ entities {
 	species myPoint{
 		const color type: rgb <- [0, 175,100] as rgb;
 		//geometry shape <- geometry (point([1,1])) ;
-		aspect 2D {
+		aspect Flat {
 			draw geometry: geometry (point([location.x,location.y])) color: global_color ;
 			draw text: "Point" size: 1 color: rgb('black');
 		}		
@@ -83,7 +83,7 @@ entities {
 	species myLine{
 		const color type: rgb <- [33, 98,120] as rgb;
 		geometry shape <- line ([{5,3},{7,1}]) ;		
-		aspect 2D {
+		aspect Flat {
 			draw geometry: shape color: global_color  ;
 			draw text: "Line" size: 1 color: rgb('black'); 
 		}
@@ -92,7 +92,7 @@ entities {
 	species myMultiLine{
 		const color type: rgb <- [2, 78,104] as rgb;
 		geometry shape <- polyline([{9,3},{9,2},{11,2},{11,1}]) ;		
-		aspect 2D {
+		aspect Flat {
 			draw geometry: shape color: global_color  ;
 			draw text: "Multiline" size: 1 color: rgb('black'); 
 		}
@@ -101,7 +101,7 @@ entities {
 	species mySquare{
 		const color type: rgb <- [255, 131,0] as rgb;
 		geometry shape <- rectangle({2, 2})  ;		
-		aspect 2D {
+		aspect Flat {
 			draw geometry: shape color: global_color  ;
 			draw text: "Square" size: 1 color: rgb('black'); 
 		}
@@ -110,7 +110,7 @@ entities {
 	species myPolygon{
 		const color type: rgb <- [255, 73,0] as rgb;
 		geometry shape <- polygon([{17,1.5}, {17.5,1}, {18.5,1}, {19,1.5},{19,2.5},{18.5,3},{17.5,3},{17,2.5}]) ;		
-		aspect 2D {
+		aspect Flat {
 			draw geometry: shape color: global_color  ;
 			draw text: "Polygon" size: 1 color: rgb('black');
 		}
@@ -119,14 +119,14 @@ entities {
 	species myTexture{
 		
 		aspect image{
-    		draw image: imageRaster.path size: 2.25;
+    		draw image: imageRaster size: 2.25;
     	}
 	}
 	
 	//3D Object
 	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
-		aspect 3D {	
+		aspect Volume {	
 			draw geometry: geometry (point([location.x,location.y])) color: global_color z:0.1;
 			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
@@ -135,7 +135,7 @@ entities {
 	species myPlan{
 		const color type: rgb <- [33, 98,120] as rgb;
 		//geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
-		aspect 3D {
+		aspect Volume {
 			draw geometry: geometry (line ([{5,7.5},{7,5.5}])) color: global_color z:2 ;
 			draw text: "Plan" size: 1 color: rgb('black');
 		}
@@ -144,7 +144,7 @@ entities {
 	species myMultiPlan{
 		const color type: rgb <- [2, 78,104] as rgb;
 		geometry shape <- polyline([{9,7},{9,6},{11,6},{11,5}]) ;		
-		aspect 3D {
+		aspect Volume {
 			draw geometry: shape color: global_color z:2 ;
 			draw text: "Multiplan" size: 1 color: rgb('black');
 		}
@@ -152,7 +152,7 @@ entities {
 		
 	species myCube{
 		const color type: rgb <- [255, 131,0] as rgb;		
-		aspect 3D {
+		aspect Volume {
 			draw geometry: square(2) color: global_color z:2 border: rgb('blue') ;
 			draw text: "Cube" size: 1 color: rgb('black');
 		}
@@ -161,7 +161,7 @@ entities {
 
 	species myPolyhedron{
 		const color type: rgb <- [255, 73,0] as rgb;
-		aspect 3D {
+		aspect Volume {
 			draw geometry: polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) color: global_color z:2;
 			draw text: "Polyhedron" size: 1 color: rgb('black');
 		}
@@ -170,43 +170,43 @@ entities {
 	species my3DObject{
 		
 		aspect file{
-    		//draw file: imageRaster.path size: 2.25;
+    		draw file: imageRaster size: 2.25;
     	}
 	}
 
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1   type:opengl {
+		display Display refresh_every: 1   type:opengl ambiant_light:0.8{
 			
 			//image name: 'Background' file: imageRaster.path;
 			
-			species myPoint aspect:2D ;
-			species myLine aspect:2D;
-			species myMultiLine aspect:2D;
-			species mySquare aspect:2D;
-			species myPolygon aspect:2D;
+			species myPoint aspect:Flat ;
+			species myLine aspect:Flat;
+			species myMultiLine aspect:Flat;
+			species mySquare aspect:Flat;
+			species myPolygon aspect:Flat;
 			species myTexture aspect:image;
 			
-			species mySphere aspect:3D;
-			species myPlan aspect:3D ;
-			species myMultiPlan aspect:3D;
-			species myCube aspect:3D ; 
-			species myPolyhedron aspect:3D ;
+			species mySphere aspect:Volume;
+			species myPlan aspect:Volume ;
+			species myMultiPlan aspect:Volume;
+			species myCube aspect:Volume ; 
+			species myPolyhedron aspect:Volume ;
 				
 			
-			species myPoint aspect:2D z:0.5;
-			species myLine aspect:2D z:0.5;
-			species myMultiLine aspect:2D z:0.5;
-			species mySquare aspect:2D z:0.5;
-			species myPolygon aspect:2D z:0.5;
+			species myPoint aspect:Flat z:0.5;
+			species myLine aspect:Flat z:0.5;
+			species myMultiLine aspect:Flat z:0.5;
+			species mySquare aspect:Flat z:0.5;
+			species myPolygon aspect:Flat z:0.5;
 			species myTexture aspect:image z:0.5;
 			
-			species mySphere aspect:3D z:0.5;
-			species myPlan aspect:3D z:0.5;
-			species myMultiPlan aspect:3D z:0.5;
-			species myCube aspect:3D z:0.5; 
-			species myPolyhedron aspect:3D z:0.5;
+			species mySphere aspect:Volume z:0.5;
+			species myPlan aspect:Volume z:0.5;
+			species myMultiPlan aspect:Volume z:0.5;
+			species myCube aspect:Volume z:0.5; 
+			species myPolyhedron aspect:Volume z:0.5;
 						
 		}
 	}
