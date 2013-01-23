@@ -93,7 +93,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			if ( obj != null ) {
 				if ( obj instanceof Statement ) {
 					// if ( obj instanceof Definition ) {
-					if ( ((Statement) obj).getName() != null ) {
+					if ( EGaml.getNameOf((Statement) obj) != null ) {
 						setStyle(obj, VARDEF_ID, 1 /* ((Definition) obj).getName() */);
 						// }
 						// } else {

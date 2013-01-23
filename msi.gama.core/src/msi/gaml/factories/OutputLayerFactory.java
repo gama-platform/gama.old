@@ -16,18 +16,20 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.outputs.layers;
+package msi.gaml.factories;
 
 import java.awt.Color;
 import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.*;
 
 /**
  * The Class OutputFactory.
@@ -36,12 +38,56 @@ import msi.gaml.species.ISpecies;
  */
 @factory(handles = { ISymbolKind.LAYER }, uses = { ISymbolKind.SINGLE_STATEMENT,
 	ISymbolKind.SEQUENCE_STATEMENT })
-public class OutputLayerFactory extends SymbolFactory {
+public class OutputLayerFactory extends StatementFactory {
 
-	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d, 0d,true);
+	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d, 0d, true);
 
 	public OutputLayerFactory(final List<Integer> handles, final List<Integer> uses) {
 		super(handles, uses);
+	}
+
+	@Override
+	protected void privateValidate(final IDescription desc) {
+		super.privateValidate(desc);
+	}
+
+	@Override
+	protected void compileFacet(final String tag, final IDescription sd) {
+		// Special case for the compilation of the "species species: ..." layer, which expects an
+		// expression, contrary to the "species" statement, which expects an ID. The same for
+		// "grid".
+		if ( tag.equals(SPECIES) ) {
+			IExpressionDescription ed = sd.getFacets().get(tag);
+			ed.compileAsLabel();
+			String s = sd.getFacets().getLabel(tag);
+			SpeciesDescription target = sd.getSpeciesDescription(s);
+			if ( target == null ) {
+				sd.flagError(s + " is not the name of a species", IGamlIssue.WRONG_TYPE, ed);
+			} else {
+				if ( sd.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
+					sd.flagError(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed);
+				} else {
+					IExpression expr =
+						GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES_STR));
+					ed.setExpression(expr);
+				}
+			}
+		} else if ( tag.equals(ASPECT) ) {
+			IExpressionDescription ed = sd.getFacets().get(ASPECT);
+			String s = sd.getFacets().getLabel(SPECIES);
+			String a = sd.getFacets().getLabel(ASPECT);
+			SpeciesDescription species = sd.getSpeciesDescription(s);
+			if ( species != null ) {
+				if ( species.getAspect(a) != null ) {
+					ed.compileAsLabel();
+				} else {
+					sd.flagError(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL,
+						ed);
+				}
+			}
+		} else {
+			super.compileFacet(tag, sd);
+		}
 	}
 
 	public static ILayerStatement createChartLayer() {

@@ -101,18 +101,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSwitchKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
 		private final Keyword cWarnKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
 		private final Keyword cWriteKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cPopulationKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cGrid_populationKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
 		
 		//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
+		//// FIXME : this is nonsense ! This list should not exist
 		//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//	"remove" | "save" | "set" | "switch" | "warn" | "write";
+		//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population";
 		public ParserRule getRule() { return rule; }
 
 		////Statements that accept an expression as their "default" facet
+		//// FIXME : this is nonsense ! This list should not exist
 		//"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//"remove" | "save" | "set" | "switch" | "warn" | "write"
+		//"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		////Statements that accept an expression as their "default" facet
+		//// FIXME : this is nonsense ! This list should not exist
 		//"add"
 		public Keyword getAddKeyword_0() { return cAddKeyword_0; }
 
@@ -163,6 +168,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"write"
 		public Keyword getWriteKeyword_16() { return cWriteKeyword_16; }
+
+		//"population"
+		public Keyword getPopulationKeyword_17() { return cPopulationKeyword_17; }
+
+		//"grid_population"
+		public Keyword getGrid_populationKeyword_18() { return cGrid_populationKeyword_18; }
 	}
 
 	public class StatementElements extends AbstractParserRuleElementFinder {
@@ -2001,8 +2012,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
+	//// FIXME : this is nonsense ! This list should not exist
 	//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-	//	"remove" | "save" | "set" | "switch" | "warn" | "write";
+	//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population";
 	public BuiltInStatementKeyElements getBuiltInStatementKeyAccess() {
 		return (pBuiltInStatementKey != null) ? pBuiltInStatementKey : (pBuiltInStatementKey = new BuiltInStatementKeyElements());
 	}

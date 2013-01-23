@@ -19,9 +19,7 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.List;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -46,20 +44,21 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.GRID, kind = ISymbolKind.LAYER, with_sequence = false)
+@symbol(name = IKeyword.GRID_POPULATION, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+	@facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
 
 	public GridLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
 		super(desc);
+		setName(getFacet(IKeyword.SPECIES).literalValue());
 	}
 
 	GamaSpatialMatrix grid;
@@ -69,6 +68,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	private IExpression setOfAgents;
 
 	HashSet<IAgent> agentsForLayer;
+
 	// BufferedImage supportImage;
 
 	@Override
@@ -100,8 +100,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public short getType() {
-		if (grid.getIsHexagon())
-				return ILayerStatement.AGENTS;
+		if ( grid.getIsHexagon() ) { return ILayerStatement.AGENTS; }
 		return ILayerStatement.GRID;
 	}
 
@@ -116,10 +115,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	public boolean agentsHaveChanged() {
 		return false;
 	}
+
 	@Override
 	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
 		super.compute(sim, cycle);
-		if (grid.getIsHexagon()) {
+		if ( grid.getIsHexagon() ) {
 			synchronized (agents) {
 				if ( cycle == 0l || agentsHaveChanged() ) {
 					agents.clear();
@@ -132,25 +132,23 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			currentColor = Cast.asColor(sim, lineColor.value(sim));
 		}
 	}
-	
+
 	public synchronized HashSet<IAgent> getAgentsToDisplay() {
 		return agentsForLayer;
 	}
 
-	
-	
 	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {
 		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
 		// composants qui vont être affichés.
 		return grid.getAgents();
 	}
-	
+
 	public void setAspect(final String currentAspect) {
-		
+
 	}
 
 	public String getAspectName() {
-		return IKeyword.DEFAULT ;
+		return IKeyword.DEFAULT;
 	}
 
 	public void setAgentsExpr(final IExpression setOfAgents) {

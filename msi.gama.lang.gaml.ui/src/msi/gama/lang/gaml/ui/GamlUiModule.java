@@ -22,6 +22,8 @@ import msi.gama.lang.gaml.ui.contentassist.GamlContentAssistProcessor;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import org.apache.log4j.*;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.*;
@@ -42,7 +44,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
-		// Logger.getLogger(GamlJavaValidator.class).setLevel(Level.DEBUG);
+		//Logger.getLogger(GamlJavaValidator.class).setLevel(Level.DEBUG);
 		// setValidationTrigger(activeWorkbenchWindow(), plugin);
 	}
 

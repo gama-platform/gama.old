@@ -147,6 +147,23 @@ public class EGaml {
 
 	};
 
+	public static String getNameOf(final Statement s) {
+		return s.getName();
+	}
+
+	public static Expression getExprOf(final Statement s) {
+		return s.getExpr();
+	}
+
+	public static Expression getValueOf(final Statement s) {
+		// if ( s instanceof AssignmentStatement ) { return ((AssignmentStatement) s).getVar(); }
+		return s.getValue();
+	}
+
+	public static EList<Facet> getFacetsOf(final Statement s) {
+		return s.getFacets();
+	}
+
 	public static String getKeyOf(final EObject f) {
 		return getKey.doSwitch(f);
 	}
@@ -175,7 +192,7 @@ public class EGaml {
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
 		if ( expr instanceof Statement ) {
-			return ((Statement) expr).getName();
+			return getNameOf((Statement) expr);
 			/*
 			 * } else if ( expr instanceof DefinitionFacetExpr ) { return ((DefinitionFacetExpr)
 			 * expr)

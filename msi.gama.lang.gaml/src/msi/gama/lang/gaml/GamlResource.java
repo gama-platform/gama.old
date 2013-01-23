@@ -167,31 +167,35 @@ public class GamlResource extends LazyLinkingResource {
 		 */
 		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
 			keyword = SAVE_BATCH;
-		} else if ( (upper.equals(DISPLAY) || upper.equals(POPULATION)) && keyword.equals(SPECIES) ) {
-			keyword = POPULATION;
+		} else if ( upper.equals(DISPLAY) || upper.equals(POPULATION) ) {
+			if ( keyword.equals(SPECIES) ) {
+				keyword = POPULATION;
+			} else if ( keyword.equals(GRID) ) {
+				keyword = GRID_POPULATION;
+			}
 
 		} else if ( keyword.equals(":=") || keyword.equals("<-") ) {
 			// Translation of "var := value" or "var <- value" to "set var value: value"
 			elt = new SyntacticStatement(SET, stm);
-			IExpressionDescription value = convExpr(stm.getValue());
+			IExpressionDescription value = convExpr(EGaml.getValueOf(stm));
 			addFacet(stm, elt, VALUE, value);
 			keyword = SET;
 		} else if ( keyword.equals("<<") || keyword.equals("++") ) {
 			// Translation of "container << item" or "container ++ item" to
 			// "add item: item to: container"
 			elt = new SyntacticStatement(ADD, stm);
-			addFacet(stm, elt, TO, convExpr(stm.getExpr()));
-			addFacet(stm, elt, ITEM, convExpr(stm.getValue()));
+			addFacet(stm, elt, TO, convExpr(EGaml.getExprOf(stm)));
+			addFacet(stm, elt, ITEM, convExpr(EGaml.getValueOf(stm)));
 			keyword = ADD;
 		} else if ( keyword.equals(">>") || keyword.equals("--") ) {
 			// Translation of "container >> item" or "container -- item" to
 			// "remove item: item from: container"
 			elt = new SyntacticStatement(REMOVE, stm);
-			addFacet(stm, elt, FROM, convExpr(stm.getExpr()));
-			addFacet(stm, elt, ITEM, convExpr(stm.getValue()));
+			addFacet(stm, elt, FROM, convExpr(EGaml.getExprOf(stm)));
+			addFacet(stm, elt, ITEM, convExpr(EGaml.getValueOf(stm)));
 			keyword = REMOVE;
 		}
-		Expression expr = stm.getExpr();
+		Expression expr = EGaml.getExprOf(stm);
 
 		if ( keyword.equals(SET) && expr instanceof Access ) {
 			// Translation of "container[index] <- value" to
@@ -237,7 +241,7 @@ public class GamlResource extends LazyLinkingResource {
 		}
 
 		// We apply some conversions to the facets expressed in the statement
-		for ( Facet f : stm.getFacets() ) {
+		for ( Facet f : EGaml.getFacetsOf(stm) ) {
 			String fname = EGaml.getKeyOf(f);
 			// We change the "<-" and "->" symbols into full names
 			if ( fname.equals("<-") ) {
@@ -332,7 +336,7 @@ public class GamlResource extends LazyLinkingResource {
 	private final String varDependenciesOf(final Statement s) {
 		sb.setLength(0);
 		// for ( FacetExpr facet : s.getFacets() ) {
-		for ( Facet facet : s.getFacets() ) {
+		for ( Facet facet : EGaml.getFacetsOf(s) ) {
 			Expression expr = facet.getExpr();
 			if ( expr != null ) {
 				for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
@@ -349,6 +353,7 @@ public class GamlResource extends LazyLinkingResource {
 	private final void convElse(final Statement stm, final ISyntacticElement elt) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
+			// EObject elseBlock = ((IfStatement) stm).getElse();
 			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
 				elseElt.addChild(convStatement(IF, (Statement) elseBlock));
@@ -373,8 +378,9 @@ public class GamlResource extends LazyLinkingResource {
 	private final IExpressionDescription findExpr(final Statement stm) {
 		if ( stm == null ) { return null; }
 		// The order below should be important
-		if ( stm.getName() != null ) { return new EcoreBasedExpressionDescription(stm); }
-		if ( stm.getExpr() != null ) { return convExpr(stm.getExpr()); }
+		if ( EGaml.getNameOf(stm) != null ) { return new EcoreBasedExpressionDescription(stm); }
+		if ( EGaml.getExprOf(stm) != null ) { return convExpr(EGaml.getExprOf(stm)); } // ??
+
 		return null;
 	}
 

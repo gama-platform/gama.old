@@ -56,6 +56,8 @@
       <elements xsi:type="xtext:Keyword" value="switch"/>
       <elements xsi:type="xtext:Keyword" value="warn"/>
       <elements xsi:type="xtext:Keyword" value="write"/>
+      <elements xsi:type="xtext:Keyword" value="population"/>
+      <elements xsi:type="xtext:Keyword" value="grid_population"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="Statement">

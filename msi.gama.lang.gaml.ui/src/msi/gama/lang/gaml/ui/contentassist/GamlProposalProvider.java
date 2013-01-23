@@ -88,11 +88,12 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	}
 
-	@Override
-	public void completeClassicStatement_Facets(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Complete ClassicStatement facets");
-	}
+	//
+	// @Override
+	// public void completeClassicStatement_Facets(final EObject model, final Assignment assignment,
+	// final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	// GuiUtils.debug("Complete ClassicStatement facets");
+	// }
 
 	@Override
 	public void completeClassicStatement_Block(final EObject model, final Assignment assignment,

@@ -76,7 +76,7 @@ public class NewGamlExpressionCompiler implements IExpressionCompiler<Expression
 
 			// WHAT IF THE NAME IS NULL ?
 
-			return factory.createConst(StringUtils.unescapeJava(object.getName()),
+			return factory.createConst(StringUtils.unescapeJava(EGaml.getNameOf(object)),
 				Types.get(IType.STRING));
 		}
 

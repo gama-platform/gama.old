@@ -37,8 +37,8 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT,
-	ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
+@factory(handles = { ISymbolKind.LAYER, ISymbolKind.SEQUENCE_STATEMENT,
+	ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	public StatementFactory(final List<Integer> handles, final List<Integer> uses) {
@@ -54,7 +54,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected void privateValidate(final IDescription desc) {
-		// GuiUtils.debug("Validating " + desc);
+		// GuiUtils.debug("Validating statement " + desc);
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
 		StatementDescription cd = (StatementDescription) desc;

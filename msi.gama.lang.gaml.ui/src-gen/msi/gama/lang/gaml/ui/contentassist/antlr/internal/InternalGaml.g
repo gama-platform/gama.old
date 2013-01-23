@@ -1209,6 +1209,22 @@ rule__BuiltInStatementKey__Alternatives
 { after(grammarAccess.getBuiltInStatementKeyAccess().getWriteKeyword_16()); }
 )
 
+    |(
+{ before(grammarAccess.getBuiltInStatementKeyAccess().getPopulationKeyword_17()); }
+
+	'population' 
+
+{ after(grammarAccess.getBuiltInStatementKeyAccess().getPopulationKeyword_17()); }
+)
+
+    |(
+{ before(grammarAccess.getBuiltInStatementKeyAccess().getGrid_populationKeyword_18()); }
+
+	'grid_population' 
+
+{ after(grammarAccess.getBuiltInStatementKeyAccess().getGrid_populationKeyword_18()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);

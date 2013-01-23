@@ -8,60 +8,55 @@ Model:
 
 Import:
 	'import' importURI=STRING; // must be named importURI
-//	
-//BuiltInStatementKey:
-//	//Statements that accept an expression as their "default" facet
-//	'add' |
-//	'ask' |
-//	'capture' |
-//	'create' |
-//	'draw' |
-//	'error'|
-//	'match' |
-//	'match_between' |
-//	'match_one' |
-//	'put' |
-//	'release' |
-//	'remove' |
-//	'save' |
-//	'set' |
-//	'switch'|
-//	'warn'|
-//	'write';
+	
+BuiltInStatementKey:
+	//Statements that accept an expression as their "default" facet
+	// FIXME : this is nonsense ! This list should not exist
+	'add' |
+	'ask' |
+	'capture' |
+	'create' |
+	'draw' |
+	'error'|
+	'match' |
+	'match_between' |
+	'match_one' |
+	'put' |
+	'release' |
+	'remove' |
+	'save' |
+	'set' |
+	'switch'|
+	'warn'|
+	'write' |
+	'population' |
+	'grid_population';
 
 /**
  * Statements 
  */
 Statement:
-		=>EmptyStatement  | ClassicStatement;
-		
-ComplexStatement returns Statement: 
-		=>ClassicStatement ;
-
-
+	=>AssignmentStatement | (ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement );
 
 //SetStatement returns Statement:
 //	key='set' var=Access ('<-'|'value:') expr=Expression ';'
 //	/*| (var=(MemberRef|Access) key=':=' expr=Expression ';') */; // enable "name=ID '<-' expr=Expression ';'" ? 
-IfStatement returns Statement: {IfStatement}
-	key='if' ('condition:')? body=ExprFacets block=Block (=> 'else' else=(IfStatement | Block))?;
+IfStatement returns Statement:
+	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(IfStatement | Block))?;
 
-EmptyStatement returns Statement: {EmptyStatement}key=ID (block=Block | ';');
- 
-ClassicStatement returns Statement: {Statement} key=ID of=Contents? body=StatementBody (block=Block | ';');
-	
-StatementBody: (=>AllFacets | (=>ExprFacets | NameFacets));
-	AllFacets returns StatementBody: {AllFacets}(facets+=Facet)+  ;
-	ExprFacets returns StatementBody: {ExprFacets}(expr= Expression) (facets+=Facet)* ;
-	NameFacets returns StatementBody: (name=(ID|STRING)) (facets+=Facet)* ;
+ClassicStatement returns Statement:
+	key=BuiltInStatementKey (ID':')? expr=Expression (facets+=Facet)* (block=Block | ';');
+
+DefinitionStatement returns Statement:
+	(key=ID) of=Contents? name=(ID | STRING | BuiltInStatementKey)? (facets+=Facet)* (block=Block | ';');
 	
 Contents: ('<' type=ID (',' type2= ID)? '>');
 
-//ReturnStatement returns Statement:
-//	key='return' body=ExprFacets? ';';
+ReturnStatement returns Statement:
+	key='return' expr=Expression? ';';
 
-//AssignmentStatement returns Statement: {AssignmentStatement}
-//	var=Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--"|":=") body=ExprFacets';';
+AssignmentStatement returns Statement:
+	expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--"|":=") value=Expression (facets+=Facet)*';';
 
 /**
  * Facets
@@ -69,7 +64,7 @@ Contents: ('<' type=ID (',' type2= ID)? '>');
 
 
 Facet:
-	=>FunctionFacet | (=>DefinitionFacet | ClassicFacet);
+	FunctionFacet | DefinitionFacet | ClassicFacet;
 
 ClassicFacet returns Facet:
 	(key=ID ':' | key='<-') expr=Expression;
@@ -82,7 +77,7 @@ FunctionFacet returns Facet:
  */
 DefinitionFacetKey: 'name:' | 'returns:'|'action:';
 DefinitionFacet returns Facet:
-	(key=DefinitionFacetKey) name=(ID | STRING);
+	(key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey);
 
 /**
  * Blocks. An ordered list of statements inside curly brackets
@@ -191,7 +186,7 @@ VariableRef returns Expression:
 	
 	//TypeRef: ref=[BuiltInType];
 GamlVarRef:
-	DefinitionFacet | NameFacets;
+	DefinitionFacet | DefinitionStatement;
 
 	/**
  * Terminals

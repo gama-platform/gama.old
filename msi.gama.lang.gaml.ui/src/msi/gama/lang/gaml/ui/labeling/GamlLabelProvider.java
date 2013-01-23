@@ -85,11 +85,11 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		IGamlDescription ed = EGaml.getGamlDescription(obj);
 		if ( ed != null ) { return removeTags(ed.getTitle()); }
 		String s = text((EObject) obj);
-		String n = obj.getName();
+		String n = EGaml.getNameOf(obj);
 		if ( n == null ) {
 			n = "";
 		}
-		return s + " " + obj.getName();
+		return s + " " + n;
 	}
 
 	String image(final Import ele) {
@@ -142,7 +142,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		String kw = EGaml.getKeyOf(ele);
 		if ( kw.equals("var") || kw.equals("const") ) {
 			// for ( FacetExpr f : ele.getFacets() ) {
-			for ( Facet f : ele.getFacets() ) {
+			for ( Facet f : EGaml.getFacetsOf(ele) ) {
 				if ( EGaml.getKeyOf(f).equals("type") && f.getExpr() instanceof VariableRef ) {
 					VariableRef type = (VariableRef) f.getExpr();
 					return typeImage(EGaml.getKeyOf(type));

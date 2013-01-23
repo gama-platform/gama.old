@@ -175,6 +175,7 @@ public class SymbolFactory extends AbstractFactory {
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
+
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f == null ) {
 				continue;

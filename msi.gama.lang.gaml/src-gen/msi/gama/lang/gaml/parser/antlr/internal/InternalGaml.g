@@ -317,6 +317,20 @@ ruleBuiltInStatementKey returns [AntlrDatatypeRuleToken current=new AntlrDatatyp
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getWriteKeyword_16()); 
     }
+
+    |
+	kw='population' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getPopulationKeyword_17()); 
+    }
+
+    |
+	kw='grid_population' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getGrid_populationKeyword_18()); 
+    }
 )
     ;
 

@@ -21,6 +21,7 @@ package msi.gaml.factories;
 import java.util.List;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gaml.descriptions.IDescription;
 
 /**
  * The Class OutputFactory.
@@ -32,6 +33,11 @@ public class OutputFactory extends SymbolFactory {
 
 	public OutputFactory(final List<Integer> handles, final List<Integer> uses) {
 		super(handles, uses);
+	}
+
+	@Override
+	protected void privateValidate(final IDescription desc) {
+		super.privateValidate(desc);
 	}
 
 }
