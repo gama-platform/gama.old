@@ -547,9 +547,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(final String string, final Color stringColor,
+	public Rectangle2D drawString(final IAgent agent, final String string, final Color stringColor,
 		final Integer angle, final float z) {
+		//Draw the text at the centroid of the Agent
+		if(agent !=null){
+			AddStringInStrings(string, (float) agent.getGeometry().getLocation().getX(), -(float) agent.getGeometry().getLocation().getY(), z);	
+		}
+		else{
 		AddStringInStrings(string, (float) curX, -(float) curY, z);
+		}
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
 		return r;
