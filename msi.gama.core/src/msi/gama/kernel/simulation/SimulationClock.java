@@ -31,7 +31,7 @@ import msi.gaml.operators.Strings;
  */
 public class SimulationClock {
 
-	public static boolean TREAT_ERRORS_AS_FATAL = false;
+	public static boolean TREAT_ERRORS_AS_FATAL = true;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
 	/**

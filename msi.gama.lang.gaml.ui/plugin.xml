@@ -2,7 +2,14 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-
+<extension point="org.eclipse.core.contenttype.contentTypes">
+<content-type id="gaml.encoding" name="GAML encoding"
+base-type="org.eclipse.core.runtime.text"
+priority="high"	
+file-extensions="gaml"
+default-charset="UTF-8">
+</content-type>
+</extension>
     <extension
             point="org.eclipse.ui.editors">
         <editor

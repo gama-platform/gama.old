@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.Platform;
  */
 
 @vars({
-	@var(name = GAMA._FATAL, type = IType.BOOL_STR, init = "false"),
+	@var(name = GAMA._FATAL, type = IType.BOOL_STR),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL_STR, init = "false"),
 	@var(name = IKeyword.TIME, type = IType.FLOAT_STR, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 	@var(name = IKeyword.SEED, type = IType.FLOAT_STR, doc = @doc(value = "The seed of the random number generator", comment = "Each time it is set, the random number generator is reinitialized")),
@@ -138,10 +138,10 @@ public class WorldSkill extends GeometricSkill {
 		return SimulationClock.TREAT_ERRORS_AS_FATAL;
 	}
 
-	@setter(GAMA._FATAL)
-	public void setFatalErrors(final IAgent agent, final boolean t) {
-		SimulationClock.TREAT_ERRORS_AS_FATAL = t;
-	}
+	// @setter(GAMA._FATAL)
+	// public void setFatalErrors(final IAgent agent, final boolean t) {
+	// SimulationClock.TREAT_ERRORS_AS_FATAL = t;
+	// }
 
 	@getter(value = GAMA._WARNINGS, initializer = true)
 	public Boolean getWarningsAsErrors(final IAgent agent) {

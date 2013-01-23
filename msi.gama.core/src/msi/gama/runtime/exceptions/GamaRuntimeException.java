@@ -37,6 +37,7 @@ public class GamaRuntimeException extends RuntimeException {
 	private boolean isWarning;
 	protected final List<String> context = new ArrayList();
 	protected int lineNumber;
+	protected boolean sent;
 
 	public GamaRuntimeException(final Throwable ex) {
 		super(ex.toString(), ex);
@@ -65,8 +66,17 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public void addContext(final IStatement s) {
 		addContext("in " + s.toGaml());
-		Object e = s.getDescription().getSourceInformation().getUnderlyingElement(null);
-		GuiUtils.debug(String.valueOf(e));
+		final Object e = s.getDescription().getSourceInformation().getUnderlyingElement(null);
+		if ( !sent ) {
+			sent = true;
+			GuiUtils.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					GuiUtils.openEditorAndSelect(e);
+				}
+			});
+		}
 	}
 
 	public void addAgent(final String agent) {

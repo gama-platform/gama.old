@@ -4,11 +4,12 @@
  */
 package msi.gama.lang.gaml.ui;
 
+import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
-import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * The class XtextGui.
@@ -22,6 +23,9 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 	@Override
 	public void openEditorAndSelect(final Object eObject) {
 		if ( !(eObject instanceof EObject) ) { return; }
-		//URI uri = (EObject) eObject.
+		URI uri = EcoreUtil.getURI((EObject) eObject);
+		Injector injector = GamlActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
+		IURIEditorOpener opener = injector.getInstance(IURIEditorOpener.class);
+		opener.open(uri, true);
 	}
 }

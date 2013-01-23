@@ -54,7 +54,7 @@ public class GAMA {
 	}
 
 	public static void newExperiment(final String id, final IModel model) {
-		
+
 		final IExperiment newExperiment = model.getExperiment(id);
 		if ( newExperiment == currentExperiment && currentExperiment != null ) {
 			currentExperiment.reload();
@@ -71,7 +71,7 @@ public class GAMA {
 				if ( !verifyClose() ) { return; }
 				closeCurrentExperiment();
 			} else {
-				if ( !verifyClose() ) { return; }				
+				if ( !verifyClose() ) { return; }
 				closeCurrentExperiment();
 			}
 		}
@@ -169,7 +169,7 @@ public class GAMA {
 		if ( currentExperiment == null ) { return; }
 		currentExperiment.reportError(g);
 		if ( SimulationClock.TREAT_ERRORS_AS_FATAL ) {
-			if ( !g.isWarning() ) {
+			if ( SimulationClock.TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
 				currentExperiment.pause();
 			}
 		}

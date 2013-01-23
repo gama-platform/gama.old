@@ -109,7 +109,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 			});
 
-		EditorFactory.create(parameters, "Pause at the first error",
+		EditorFactory.create(parameters, "Pause and reveal in editor",
 			SimulationClock.TREAT_ERRORS_AS_FATAL, new EditorListener<Boolean>() {
 
 				@Override
