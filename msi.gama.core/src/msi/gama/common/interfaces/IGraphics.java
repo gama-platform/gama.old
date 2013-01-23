@@ -21,6 +21,8 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
@@ -164,6 +166,7 @@ public interface IGraphics {
 		final boolean fill, final Color border, final Integer angle, final float height);
 
 	/**
+	 * @param agent 
 	 * @return
 	 *         Method drawString.
 	 * @param string String
@@ -171,7 +174,7 @@ public interface IGraphics {
 	 * @param angle Integer
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawString(final String string, final Color stringColor,
+	public abstract Rectangle2D drawString(IAgent agent, final String string, final Color stringColor,
 		final Integer angle, final float z);
 
 	/**
