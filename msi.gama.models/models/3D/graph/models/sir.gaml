@@ -268,10 +268,7 @@ experiment simulation type: gui {
 					
 		}
  		 
-	    display sir_display type:opengl ambiant_light: 0.2{
-	        //grid sir_grid lines: rgb("black");
-	        
-	    }
+
 	    
 	   	
 	}

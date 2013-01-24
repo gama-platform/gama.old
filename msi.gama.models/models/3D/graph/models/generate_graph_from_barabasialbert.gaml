@@ -47,10 +47,10 @@ entities {
 	species nodeSpecy  {
 		rgb color <- [rnd(255),rnd(255) ,rnd(255)] as rgb;
 		
-		geometry shape <- geometry (point([location.x,location.y])) ;  
+		geometry myShape <- geometry (point([location.x,location.y])) ;  
 		aspect base {
 			let colorValue <- (location.x + location.y);
-			draw shape: geometry color: rgb([colorValue, colorValue, colorValue]) z:0.5 ; 
+			draw myShape color: rgb([colorValue, colorValue, colorValue]) z:0.5 ; 
 		}  		
 	}
 	

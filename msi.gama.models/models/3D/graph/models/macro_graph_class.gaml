@@ -13,6 +13,11 @@
 */
 
 
+/* Need to distinguish aggregation != hierarchical
+ * 
+ * 
+ */
+
 /*  dendrogramme */
 
 model macro_graph
@@ -23,9 +28,9 @@ global {
 	
 	graph my_macroGraph;
 	
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
-	int nbClass parameter: 'Number of class' min: 1 max:100 <- 10 category: 'Model';
-	int threshold parameter: 'Threshold' min: 1 <- 4 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
+	int nbClass parameter: 'Number of class' min: 1 max:100 <- 15 category: 'Model';
+	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
 	
 	int colorFactor parameter: 'color factor' min:1 <-25 category: 'Aspect';
@@ -89,7 +94,7 @@ entities {
 		
 		int class;
 		rgb color;
-		geometry shape <- geometry (point([location.x,location.y])) ; 
+		geometry myShape <- geometry (point([location.x,location.y])) ; 
 		
 		action setPositionAndColor{
 			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
@@ -103,7 +108,7 @@ entities {
 		}
 						
 		aspect base {
-			draw shape: geometry color: color z:nodeSize ; 
+			draw myShape color: color z:nodeSize ; 
 		}  		
 	}
 	
@@ -132,6 +137,7 @@ entities {
 		
 		reflex update{
 			do updatemyNodes;
+			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
 		}
 		action updatemyNodes{			
 			set nbAggregatedNodes<-0;
@@ -146,7 +152,7 @@ entities {
 		} 
 		
 		
-        set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
+       // 
 
 		aspect cylinder{
 			draw geometry: circle ((nbAggregatedNodes/10)*macroNodeSize) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
@@ -167,14 +173,19 @@ entities {
 		int nbAggregatedLinks;
 		
 		aspect base {
-			draw geometry: line([src.location,dest.location]) color: color ;
+			//draw geometry: line([src.location,dest.location]) color: color ;
 			//draw text : 'nblink: ' + interactionMatrix  at {src.class-1,dest.class-1} z:10 at: location;
+			if(nbAggregatedLinks>threshold){
+			draw geometry: (line([src.location,dest.location]) buffer ((nbAggregatedLinks^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
+			}
+			
 		}	
 	}
 	
 	species macroGraph schedules:[] {
 		
-		reflex updateMacroEdge {
+	/*reflex updateMacroEdgeThreshold {
+			
 	 	ask macroEdge as list{
 	 		do die;
 	 	}
@@ -196,6 +207,27 @@ entities {
 	        }      
 	      }
 	    }
+  	}*/
+  	
+   reflex updateAllMacroEdge {
+			
+	 	ask macroEdge as list{
+	 		do die;
+	 	}
+	 	
+	 	loop i from: 0 to: nbClass-1{
+	      loop j from: 0 to: nbClass-1{
+	        let tmp <- interactionMatrix  at {i,j};  
+	        if(i!=j){
+	            create macroEdge{
+	            	set nbAggregatedLinks <- tmp;
+	              set src <- macroNodes at (i);
+			          set dest <- macroNodes at (j);	
+			          set my_macroGraph <- my_macroGraph add_edge (src::dest);
+	            }	  
+	        }      
+	      }
+	    }
   	}
   	
   	reflex initMatrix{
@@ -208,14 +240,21 @@ entities {
 }
 experiment generate_graph type: gui {
 	output {	
-		display test_display type:opengl ambiant_light: 0.5	{
+		
+		/*display graph_original type:opengl ambiant_light: 0.5	{				
+			species node aspect: base ; 
+			species edge aspect: base ;		
+			text  text1 value:"Original graph" position: {50,110};
+		}*/
+		
+		display graph_augmented type:opengl ambiant_light: 0.5	{
 					
 			species node aspect: base ; 
 			species edge aspect: base ;		
-			species macroNode aspect:sphere  position: {120,0};
-			species macroEdge aspect:base  position: {120,0};	
-			text  text1 value:"Original graph" position: {50,110};
-			text  text2 value:"Interaction graph" position: {170,110};
+			species macroNode aspect:sphere  position: {150,0} z:0;
+			species macroEdge aspect:base  position: {150,0} z:0;	
+			//text  text1 value:"Original graph" position: {50,110};
+			//text  text2 value:"Interaction graph" position: {170,110};
 			
 		}		
 	}		

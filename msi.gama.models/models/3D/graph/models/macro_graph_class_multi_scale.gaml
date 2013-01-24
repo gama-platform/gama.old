@@ -13,6 +13,11 @@
 */
 
 
+/* Need to distinguish aggregation != hierarchical
+ * 
+ * 
+ */
+
 /*  dendrogramme */
 
 model macro_graph
@@ -23,10 +28,8 @@ global {
 	
 	graph my_macroGraph;
 	
-	//int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
-	//int nbClass parameter: 'Number of class' min: 1 max:100 <- 10 category: 'Model';
-	int nbClass;
-	int nbAgent;
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
+	int nbClass parameter: 'Number of class' min: 1 max:100 <- 10 category: 'Model';
 	int threshold parameter: 'Threshold' min: 1 <- 4 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
 	
@@ -36,10 +39,49 @@ global {
 		
   matrix interactionMatrix;	
 	list macroNodes of: macroNode;
-	list macroEdges of: macroEdge;
 	
 	init {
-	
+
+		 set my_graph <- generate_barabasi_albert( [
+				"edges_specy"::edge,
+				"vertices_specy"::node,
+				"size"::nbAgent,
+				"m"::m_barabasi
+			] );
+		
+		
+		ask node as list{
+			set class <- rnd(nbClass-1)+1;			
+			do setPositionAndColor;	
+		}
+		
+		ask edge as list{
+			set color <- [125,125,125] as rgb;
+		}	
+		
+		
+		let i<-1;
+		create macroNode number: nbClass{	
+			set class <-i;
+			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
+			set i<-i+1;	
+			add self to: macroNodes;
+			do updatemyNodes;
+		}
+		
+		set my_macroGraph <- graph(macroNodes);
+		
+		/* macroGraph is created in last to be sure that all the agent update their state before that the macroGraph does something
+		 * A another possibility can be to define a scheduler like:
+		 * species scheduler schedules : shuffle (list(node) + list(edge) +list(macroNode) + list(macroEdge));
+		 * without forgetting to disable the scheduling of each species (e.g species node schedules [])
+		 */
+		create macroGraph;
+		
+		create scheduler;
+
+		//FIXME: If this is call at the beginning of the init block there is some null value in the matrix.
+		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
 		
 	 }
 }
@@ -52,7 +94,7 @@ entities {
 		
 		int class;
 		rgb color;
-		geometry myShape <- geometry (point([location.x,location.y])) ; 
+		geometry shape <- geometry (point([location.x,location.y])) ; 
 		
 		action setPositionAndColor{
 			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
@@ -60,13 +102,13 @@ entities {
 			set location <- {cos (float((class-1)/nbClass)*360)*tmpradius +50,sin (float((class-1)/nbClass)*360)*tmpradius +50,0};
 		} 
 						
-		/*reflex shuffleClass{	
+		reflex shuffleClass{	
 			set class <- rnd(nbClass-1)+1;
 			do setPositionAndColor;
-		}*/
+		}
 						
 		aspect base {
-			draw myShape color: color z:nodeSize ; 
+			draw shape: geometry color: color z:nodeSize ; 
 		}  		
 	}
 	
@@ -93,8 +135,9 @@ entities {
 		int nbAggregatedNodes;
 		 
 		
-		/*reflex update{
+		reflex update{
 			do updatemyNodes;
+			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
 		}
 		action updatemyNodes{			
 			set nbAggregatedNodes<-0;
@@ -106,33 +149,42 @@ entities {
 				set myself.color <-color;
 			  }	 
 		    }	    
-		} */
+		} 
 		
+		
+		species micro_node parent:node{
+			
+		}
+		
+        
 
+		aspect cylinder{
+			draw geometry: circle ((nbAggregatedNodes/10)*macroNodeSize) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
+			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
+		}
+		
 		aspect sphere{
-			draw geometry (point([location.x,location.y])) color:color   z:(nbAggregatedNodes/10);//(nbAggregatedNodes/nbAgent)*10;
-			//draw geometry: geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes/10)*macroNodeSize;
-			draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
+			draw geometry: geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
+			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
 		}
 	}
 	
 	
 	species macroEdge schedules:[] { 
 		rgb color <- rgb("black");
-		macroNode src;
-		macroNode dest;
+		node src;
+		node dest;
 		int nbAggregatedLinks;
 		
 		aspect base {
-
-			draw geometry: (line([src.location,dest.location]) buffer ((nbAggregatedLinks+1)/(nbAgent/5))) color: color ;
+			draw geometry: line([src.location,dest.location]) color: color ;
 			//draw text : 'nblink: ' + interactionMatrix  at {src.class-1,dest.class-1} z:10 at: location;
 		}	
 	}
 	
 	species macroGraph schedules:[] {
 		
-	/* 	reflex updateMacroEdge {
+		reflex updateMacroEdge {
 	 	ask macroEdge as list{
 	 		do die;
 	 	}
@@ -154,28 +206,27 @@ entities {
 	        }      
 	      }
 	    }
-  	}*/
+  	}
   	
-  	/*reflex initMatrix{
+  	reflex initMatrix{
 		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
-	  }*/
+	  }
 		
 	}
 	
-	//species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
+	species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
 }
-
-/*experiment generate_graph type: gui {
+experiment generate_graph type: gui {
 	output {	
 		display test_display type:opengl ambiant_light: 0.5	{
 					
 			species node aspect: base ; 
 			species edge aspect: base ;		
-			species macroNode aspect:sphere  position: {120,0};
-			species macroEdge aspect:base  position: {120,0};	
+			species macroNode aspect:sphere  position: {0,0} z:0.2;
+			species macroEdge aspect:base  position: {0,0} z:0.2;	
 			text  text1 value:"Original graph" position: {50,110};
 			text  text2 value:"Interaction graph" position: {170,110};
 			
 		}		
 	}		
-}*/
+}
