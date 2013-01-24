@@ -47,11 +47,6 @@ public class OutputLayerFactory extends StatementFactory {
 	}
 
 	@Override
-	protected void privateValidate(final IDescription desc) {
-		super.privateValidate(desc);
-	}
-
-	@Override
 	protected void compileFacet(final String tag, final IDescription sd) {
 		// Special case for the compilation of the "species species: ..." layer, which expects an
 		// expression, contrary to the "species" statement, which expects an ID. The same for
@@ -69,7 +64,7 @@ public class OutputLayerFactory extends StatementFactory {
 				} else {
 					IExpression expr =
 						GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES_STR));
-					ed.setExpression(expr);
+					sd.getFacets().put(SPECIES, expr);
 				}
 			}
 		} else if ( tag.equals(ASPECT) ) {
