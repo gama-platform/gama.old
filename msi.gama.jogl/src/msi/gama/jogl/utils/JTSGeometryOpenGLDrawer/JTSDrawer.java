@@ -105,7 +105,7 @@ public class JTSDrawer {
 
 			
 			//Draw rectangle with curved corner (only work for rectangle)
-			if(roundCorner == false ){
+			if(roundCorner == true ){
 				myGLRender.graphicsGLUtils.DrawRoundRectangle(p);
 			}
 			else{
