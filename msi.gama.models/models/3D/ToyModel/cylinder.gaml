@@ -29,7 +29,6 @@ entities {
 		const range type: float <- float(range_of_agents); 
 		const speed type: float <- speed_of_agents;   
 		int heading <- rnd(359);
-		geometry shape <- circle (size) ;
 		int z <- rnd(100);
 		
 		reflex go_to_center {
@@ -47,7 +46,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color z:z;
+			draw circle (size) color: color z:z;
 		}
 	}
 }
