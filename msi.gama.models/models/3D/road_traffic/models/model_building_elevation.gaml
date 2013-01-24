@@ -23,6 +23,7 @@ global {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}  
+			set height <-rnd(100);
 	  	}
 		create road from: shape_file_roads ;
 		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
@@ -49,8 +50,9 @@ entities {
 	species building {
 		string type; 
 		rgb color <- rgb('gray')  ; 
+		int height;
 		aspect base {
-			draw geometry: shape color: color z: 100 ;
+			draw geometry: shape color: color z: height ;
 		}
 	}
 	species road  {
@@ -118,7 +120,7 @@ experiment road_traffic type: gui {
 			species people aspect: base ;
 			species building aspect:base ;
 		}
-		save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
+		//save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
 	}
 }
 

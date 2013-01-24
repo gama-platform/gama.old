@@ -17,12 +17,7 @@ global {
 	float destroy <- 0.02;
 	graph the_graph;
 	
-	
-	set model_path <-('/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic/models');
-	set workspace_path <- ('/Users/Arno/Projects/Gama/MyWorkSpace/getaway');
-	set project_path <- ('/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.models/models/3D/road_traffic');
-	
-	
+		
 	init {
 		create building from: shape_file_buildings with: [type::read ('NATURE')] {       
 			if type='Industrial' {
@@ -119,10 +114,10 @@ experiment road_traffic type: gui {
 
 	
 	output {
-		display city_display refresh_every: 1 type: opengl{
-			species road aspect: base z:0;
-			species building aspect:base z:0.25 transparency: 0.5;
-			species people aspect: base z:0.5;
+		display city_display refresh_every: 1 type: opengl ambiant_light:0.1{
+			species people aspect: base z:0;
+			species road aspect: base z:0.25;
+			species building aspect:base z:0.5;
 		}
 	}
 }
