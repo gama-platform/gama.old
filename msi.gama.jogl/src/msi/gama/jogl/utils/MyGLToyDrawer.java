@@ -789,7 +789,7 @@ public class MyGLToyDrawer {
 		gl.glCallList(topDList); // draw the top
 	}
 	
-	
+		
 	public void DrawColladaObject(String filename){
 		
 		ColladaReaderXPath myColladaReader = new ColladaReaderXPath(filename);

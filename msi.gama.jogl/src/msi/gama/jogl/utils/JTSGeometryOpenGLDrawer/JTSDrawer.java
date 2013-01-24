@@ -1,6 +1,7 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
 import static javax.media.opengl.GL.*;
+
 import java.awt.Color;
 import java.util.Iterator;
 import javax.media.opengl.GL;
@@ -76,14 +77,14 @@ public class JTSDrawer {
 			if ( height > 0 ) {
 				DrawPolyhedre(curPolygon, z_layer, c, alpha, fill, height, angle, false, border);
 			} else {
-				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle, true);
+				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle, true,false);
 			}
 		}
 	}
 
 	public void DrawPolygon(final Polygon p, final float z_layer, final Color c, final float alpha,
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
-		final boolean drawPolygonContour) {
+		final boolean drawPolygonContour,final boolean roundCorner) {
 
 		// FIXME: Angle rotation is not implemented yet
 
@@ -101,7 +102,13 @@ public class JTSDrawer {
 
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
+
 			
+			//Draw rectangle with curved corner (only work for rectangle)
+			if(roundCorner == false ){
+				myGLRender.graphicsGLUtils.DrawRoundRectangle(p);
+			}
+			else{
 			if ( myGLRender.useTessellation ) {
 				DrawTesselatedPolygon(p);
 				if ( drawPolygonContour == true ) {
@@ -116,6 +123,7 @@ public class JTSDrawer {
 				if ( drawPolygonContour == true ) {
 					DrawPolygonContour(p, border);
 				}
+			}
 			}
 		}
 		// fill = false. Draw only the contour of the polygon.
@@ -342,8 +350,8 @@ public class JTSDrawer {
 		final boolean fill, final float height, final Integer angle,
 		final boolean drawPolygonContour, final Color border) {
 
-		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour);
-		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour);
+		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour,false);
+		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour,false);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha, fill, border, z, height, drawPolygonContour, false);
 

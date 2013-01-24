@@ -69,7 +69,7 @@ public class BasicOpenGlDrawer {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
 							geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
-							true);
+							true,false);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				
@@ -136,7 +136,7 @@ public class BasicOpenGlDrawer {
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
-							geometry.isTextured, geometry.angle, true);
+							geometry.isTextured, geometry.angle, true,false);
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
@@ -199,7 +199,7 @@ public class BasicOpenGlDrawer {
 
 			else if (sourceGeometry.getGeometryType() == "Polygon") {
 				myJTSDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0f, collection.color,
-						1.0f, true, null, false, 0, true);
+						1.0f, true, null, false, 0, true, false);
 			} else if (sourceGeometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
 						(MultiLineString) sourceGeometry, 0.0f, collection.color, 1.0f,

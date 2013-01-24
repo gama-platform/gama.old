@@ -2,8 +2,13 @@ package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.GL_BLEND;
 import static javax.media.opengl.GL.GL_COMPILE;
+import static javax.media.opengl.GL.GL_FILL;
+import static javax.media.opengl.GL.GL_FRONT_AND_BACK;
+import static javax.media.opengl.GL.GL_LINE;
+import static javax.media.opengl.GL.GL_POLYGON;
 import static javax.media.opengl.GL.GL_QUADS;
 import static javax.media.opengl.GL.GL_TRIANGLES;
+import static javax.media.opengl.GL.GL_TRIANGLE_FAN;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -172,5 +177,94 @@ public class MyGraphics {
 		myGl.glColor3f(0.0f, 1.0f, 0.0f);
 		DrawTorus(innerRadius,outterRadius,100,100);
 	}
+	
+	
+	
+	
+	//////////////////////////////////////// Rectangle with curved corner ////////////////////////////
+	
+	 public void DrawRoundRectangle(final Polygon p){
+		 
+		double width= p.getEnvelopeInternal().getWidth();
+	    double height = p.getEnvelopeInternal().getHeight(); 
+		 		
+		myGl.glTranslated(p.getCentroid().getX(), -p.getCentroid().getY(), 0.0f);
+			DrawRectangle(width, height*0.8, p.getCentroid());	
+			DrawRectangle(width*0.8, height, p.getCentroid());
+			DrawRoundCorner(width,height, width*0.1,height*0.1 , 5);
+		myGl.glTranslated(-p.getCentroid().getX(), p.getCentroid().getY(), 0.0f);
+		
+		
+	 }
+	 
+	 void DrawRectangle(double width, double height, Point point){
+		 myGl.glBegin(GL_POLYGON); // draw using quads
+		 myGl.glVertex3d(-width/2, height/2, 0.0f);
+		 myGl.glVertex3d(width/2,height/2, 0.0f);
+		 myGl.glVertex3d(width/2,-height/2 , 0.0f);
+		 myGl.glVertex3d(-width/2, -height/2 , 0.0f);
+		 myGl.glEnd();	 
+	 }
+	 
+	 void DrawFan(double radius, double x, double y, int or_x, int or_y, int timestep){
+		 myGl.glBegin(GL_TRIANGLE_FAN);     	//upper right
+		 myGl.glVertex3d(or_x*x, or_y*y, 0.0f);
+		 for (int i=0;i<=timestep;i++){
+			 double anglerad = (Math.PI/2 * i)/timestep;
+			 double xi = Math.cos(anglerad) * radius; 
+			 double yi = Math.sin(anglerad) * radius;
+			 myGl.glVertex3d(or_x*(x + xi), (y + yi), 0.0f);
+		 }
+	     myGl.glEnd(); 
+	 }
+	 
+	 void DrawRoundCorner(double width, double height , double x_radius, double y_radius, int nbPoints){
+		 
+		 double xc = (width/2)*0.8;
+		 double yc = (height/2)*0.8;
+		 //Enhancement implement DrawFan(radius, xc, yc, 10);
+		 
+		 myGl.glBegin(GL_TRIANGLE_FAN);     	//upper right
+		 myGl.glVertex3d(xc, yc, 0.0f);
+		 for (int i=0;i<=nbPoints;i++){
+			 double anglerad = (Math.PI/2 * i)/nbPoints;
+			 double xi = Math.cos(anglerad) * x_radius; 
+			 double yi = Math.sin(anglerad) * y_radius;
+			 myGl.glVertex3d((xc + xi), (yc + yi), 0.0f);
+		 }
+	     myGl.glEnd();
+	     
+	     myGl.glBegin(GL_TRIANGLE_FAN);     	// upper right
+	     
+	     myGl.glVertex3d(xc, -yc, 0.0f);
+		 for (int i=0;i<=nbPoints;i++){
+			 double anglerad = (Math.PI/2 * i)/nbPoints;
+			 double xi = Math.cos(anglerad) * x_radius; 
+			 double yi = Math.sin(anglerad) * y_radius;
+			 myGl.glVertex3d((xc + xi), -(yc + yi), 0.0f);
+		 }
+	     myGl.glEnd();
+	     
+	     myGl.glBegin(GL_TRIANGLE_FAN);     	//upper left
+	     
+	     myGl.glVertex3d(-xc, yc, 0.0f);
+		 for (int i=0;i<=nbPoints;i++){
+			 double anglerad = (Math.PI/2 * i)/nbPoints;
+			 double xi = Math.cos(anglerad) * x_radius; 
+			 double yi = Math.sin(anglerad) * y_radius;
+			 myGl.glVertex3d(-(xc + xi), (yc + yi), 0.0f);
+		 }
+	     myGl.glEnd();
+	     
+	     myGl.glBegin(GL_TRIANGLE_FAN);
+	     myGl.glVertex3d(-xc, -yc, 0.0f);   //down left
+		 for (int i=0;i<=nbPoints;i++){
+			 double anglerad = (Math.PI/2 * i)/nbPoints;
+			 double xi = Math.cos(anglerad) * x_radius; 
+			 double yi = Math.sin(anglerad) * y_radius;
+			 myGl.glVertex3d(-(xc + xi), -(yc + yi), 0.0f);
+		 }
+	     myGl.glEnd(); 
+	 }
 
 }
