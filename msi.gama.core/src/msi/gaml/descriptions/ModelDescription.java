@@ -66,7 +66,7 @@ public class ModelDescription extends SymbolDescription {
 	@Override
 	public String toString() {
 		return "description #" + number + " of model <" +
-			modelFilePath.substring(modelFilePath.lastIndexOf('/')) + ">";
+			modelFilePath.substring(modelFilePath.lastIndexOf('/')+1) + ">";
 	}
 
 	@Override
