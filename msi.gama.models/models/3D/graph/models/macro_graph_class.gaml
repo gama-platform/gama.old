@@ -94,7 +94,6 @@ entities {
 		
 		int class;
 		rgb color;
-		geometry myShape <- geometry (point([location.x,location.y])) ; 
 		
 		action setPositionAndColor{
 			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
@@ -108,7 +107,7 @@ entities {
 		}
 						
 		aspect base {
-			draw myShape color: color z:nodeSize ; 
+			draw shape color: color z:nodeSize ; 
 		}  		
 	}
 	
@@ -124,7 +123,7 @@ entities {
 		} 
 		
 		aspect base {
-			draw color: color ;
+			draw shape color: color ;
 		}	
 	}
 	
@@ -173,8 +172,6 @@ entities {
 		int nbAggregatedLinks;
 		
 		aspect base {
-			//draw geometry: line([src.location,dest.location]) color: color ;
-			//draw text : 'nblink: ' + interactionMatrix  at {src.class-1,dest.class-1} z:10 at: location;
 			if(nbAggregatedLinks>threshold){
 			draw geometry: (line([src.location,dest.location]) buffer ((nbAggregatedLinks^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
 			}
