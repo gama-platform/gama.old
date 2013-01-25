@@ -19,6 +19,8 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
+
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -42,5 +44,7 @@ public interface IEnvironment {
 	public void displaySpatialIndexOn(Graphics2D g2, int width, int height);
 	
 	public boolean isTorus() ;
+	
+	public void initializeFor(final IShape geom,final IScope scope) throws GamaRuntimeException;
 
 }

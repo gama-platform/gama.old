@@ -19,30 +19,51 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GisUtils;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.file.*;
-import msi.gaml.compilation.*;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.operators.Spatial.Transformations;
+import msi.gaml.types.GamaFileType;
+import msi.gaml.types.IType;
+
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.*;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShpFiles;
 import org.geotools.geometry.jts.JTS;
-import org.opengis.feature.simple.*;
-import org.opengis.referencing.operation.*;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -388,6 +409,18 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	}
 
+	public void initializeFor(final IShape geom,final IScope scope) throws GamaRuntimeException {
+		Envelope env = geom.getEnvelope();
+		width = env.getWidth();
+		height = env.getHeight();
+		GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY()  );
+		GisUtils.init(height, width, GisUtils.XMinComp + env.getMinX(), GisUtils.YMinComp +  env.getMinY(), GisUtils.XMinComp +env.getMaxX(),GisUtils.YMinComp + env.getMaxY(), GisUtils.transformCRS);
+		initializeSpatialIndex();
+		for (IAgent ag: scope.getWorldScope().getAgents()) {
+			ag.setGeometry(Transformations.primTranslationBy(ag.getGeometry(), p));
+		}
+		
+	}
 	/**
 	 * Initializes the global spatial index.
 	 */

@@ -62,10 +62,10 @@ public class GisUtils {
 		return gisReader;
 	}
 
-	private static double XMinComp;
-	private static double YMinComp;
+	public static double XMinComp;
+	public static double YMinComp;
 	public static MathTransform transformCRS;
-	private static double absEnvHeight;
+	public static double absEnvHeight;
 	private static final double margin = 0;
 	private static CoordinateReferenceSystem crsInit;
 	
