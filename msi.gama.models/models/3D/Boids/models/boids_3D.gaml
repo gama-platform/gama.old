@@ -2,7 +2,7 @@ model boids
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
-	float maximal_speed parameter: 'Maximal speed' <- 15 min: 0.1 max: 15;
+	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
 	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
@@ -20,7 +20,7 @@ global {
 	point wind_vector <- {0,0} parameter: 'Direction of the wind';  
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
-	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
+	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds;    
 	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);    
@@ -28,7 +28,7 @@ global {
 
 
 	// flock's parameter 
-	const two_boids_distance type: int init: 30;  
+	const two_boids_distance type: float init: 30.0;  
 	const merging_distance type: int init: 30;
 	var create_flock type: bool init: false;  
 	
@@ -95,8 +95,8 @@ environment width: width_and_height_of_environment height: width_and_height_of_e
 
 entities {
 	species name: boids_goal skills: [moving] {
-		const range type: float init: 20;
-		const size type: float init: 10;
+		const range type: float init: 20.0;
+		const size type: float init: 10.0;
 		
 		reflex wander { 
 			do  wander amplitude: 45 speed: 20;  
@@ -104,8 +104,8 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: circle color: rgb ('red') size: 10;
-			draw shape: circle color: rgb ('orange') size: 40 empty: true;
+			draw circle(10) color: rgb ('red') size: 10;
+			draw circle(10) color: rgb ('orange') size: 40 empty: true;
 		}
 	} 
 	
@@ -117,12 +117,12 @@ entities {
  
 		species boids_delegation parent: boids topology: topology(world.shape)  {
 			
-			// je ne comprends pas pourquoi cette liste peut contenir des agents morts de l'espces "boids_delegation"?
+			// je ne comprends pas pourquoi cette liste peut contenir des agents morts de l'espï¿½ces "boids_delegation"?
 			list others value: ( (boids_delegation overlapping (shape + range))) - self;
 
 			action compute_mass_center type: point {
 				loop o over: others {
-					if condition: dead(o) { // a peut faire lever un message "warning" dans la vue "Errors" 
+					if condition: dead(o) { // ï¿½a peut faire lever un message "warning" dans la vue "Errors" 
 						do write message: 'in ' + name + ' agent with others contains death agents'; 
 					} 
 				}
@@ -189,7 +189,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color;
+			draw geometry: shape color: color;
 		}
 	}
 	
@@ -277,14 +277,14 @@ entities {
 		}
 		
 		aspect default { 
-			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
+			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
 		}
 		
 		aspect dynamicColor{
 			let hue <- heading/360;
 			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
 			let geometry1 <- geometry (triangle(20));
-			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color ;
+			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color;
 		}
 	} 
 	
@@ -292,43 +292,29 @@ entities {
 		float speed <- 0.1;
 		 		
 		aspect default {
-			draw shape: triangle color: rgb('yellow') size: 20;
+			draw triangle(20) color: rgb('yellow');
 		}
 	}
 }
 
-/*experiment with_flocks type: gui {
-	parameter name: 'Create flock?' var: create_flock init: true category: 'Flock: ';
-	
-	output {
-		display Sky refresh_every: 1 {
-			image name:'background' file:'../images/sky.jpg';
-			species boids;
-			species boids_goal;
-			species obstacle;
-			
-			species flock transparency: 0.5 {
-				species boids_delegation;
-			}
-		}
-		 
-		monitor flocks value: length (flock);
-	}
-}*/
+
 
 experiment without_flocks type: gui {
 	output {
-		inspect name: 'Inspector' type: agent;
-
 		
-		display Sky1  refresh_every: 1 type:opengl{
-			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2 transparency:0.5;
-			species boids_goal z:0.2 transparency:0.2;
-			species obstacle ;
-			
+		display DynamicColor   type:opengl{
+			species boids  aspect: dynamicColor z:0.25;
+			species boids_goal  transparency:0.2 z:0.25;	
 		}
 		
+		/*display RealBoids   type:opengl{
+			//image name:'background' file:'../images/ocean.jpg' z:0;
+			species boids aspect: image z:0.2 transparency:0.5;
+			species boids_goal z:0.25 transparency:0.2;
+			//species boids z:0.2 aspect: dynamicColor position:{1000,0,0} ;
+			species obstacle ;	
+			
+		}*/
 
 	}
 }

@@ -19,7 +19,7 @@ global {
 	point wind_vector <- {0,0,0}  parameter: 'Direction of the wind';   
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
-	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
+	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds;    
 	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);    
@@ -32,7 +32,7 @@ global {
 	var create_flock type: bool init: false;  
 	
 	init {
-		write wind_vector;
+		write "" + wind_vector;
 		create boids number: number_of_agents { 
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 , (rnd(z_max - 2) + 1)};
 		} 
@@ -133,11 +133,11 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black');      
+			draw images at (rnd(2)) size: 35 rotate: heading color: rgb('black');      
 		}
 		
 		aspect default { 
-			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
+			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
 		}
 		
 		aspect sphere {
