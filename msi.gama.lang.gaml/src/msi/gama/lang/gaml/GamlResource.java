@@ -293,7 +293,7 @@ public class GamlResource extends LazyLinkingResource {
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(keyword);
 
-		if ( !def.isEmpty() && elt.getFacet(def) == null ) {
+		if ( def != null && !def.isEmpty() && elt.getFacet(def) == null ) {
 			IExpressionDescription ed = findExpr(stm);
 			if ( ed != null ) {
 				elt.setFacet(def, ed);
