@@ -69,7 +69,7 @@ public final class GamlAnnotations {
 		 * @return the facet that can be safely omitted by the modeler (provided its value is the
 		 *         first following the keyword of the statement).
 		 */
-		String omissible();
+		String omissible() default "name";
 
 	}
 

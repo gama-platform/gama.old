@@ -103,6 +103,16 @@ public interface IKeyword {
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
+	/*
+	 * Equations
+	 */
+	public static final String EQUATION = "=";
+	public static final String EQUATION_LEFT = "left";
+	public static final String EQUATION_RIGHT = "right";
+	public static final String SOLVER = "solver";
+	/*
+	 * 
+	 */
 	public static final String EVENT = "event";
 	public static final String ERROR = "error";
 	public static final String EXHAUSTIVE = "exhaustive";

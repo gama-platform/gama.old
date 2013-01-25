@@ -197,6 +197,11 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		Expression expr = EGaml.getExprOf(stm);
 
+		if ( keyword.equals(EQUATION) ) {
+			addFacet(stm, elt, EQUATION_LEFT, convExpr(stm.getFunction()));
+			addFacet(stm, elt, EQUATION_RIGHT, convExpr(EGaml.getExprOf(stm)));
+		}
+
 		if ( keyword.equals(SET) && expr instanceof Access ) {
 			// Translation of "container[index] <- value" to
 			// "put item: value in: container at: index"
@@ -288,7 +293,7 @@ public class GamlResource extends LazyLinkingResource {
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getModelFactory().getOmissibleFacetForSymbol(keyword);
 
-		if ( def != null && elt.getFacet(def) == null ) {
+		if ( !def.isEmpty() && elt.getFacet(def) == null ) {
 			IExpressionDescription ed = findExpr(stm);
 			if ( ed != null ) {
 				elt.setFacet(def, ed);

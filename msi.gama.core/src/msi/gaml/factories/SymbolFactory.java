@@ -64,7 +64,7 @@ public class SymbolFactory extends AbstractFactory {
 	@Override
 	public String getOmissibleFacetForSymbol(final String keyword) {
 		SymbolProto md = getMetaDescriptionFor(null, keyword);
-		return md == null ? IKeyword.NAME /* by default */: md.getOmissible();
+		return md.getOmissible();
 	}
 
 	protected String getKeyword(final ISyntacticElement cur) {
