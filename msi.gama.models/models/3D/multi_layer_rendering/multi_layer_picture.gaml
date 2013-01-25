@@ -2,7 +2,7 @@ model move
 
 global {
 	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
-	file folder <- folder('images/graph/');
+	file folder <- folder('images/graph2/');
 
 
 	int nb_layer<-0;
@@ -12,6 +12,7 @@ global {
 		 	if(string(fileName) contains '.png' or string(fileName) contains '.jpg'){
 		 			
 			 	create ImageAgent{
+			      //set location <-{layerSize/2,layerSize/2};
 				  set location <-{0,0};
 				  set image<-file(folder.path+"/"+fileName);
 				  set label<-fileName;
