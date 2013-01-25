@@ -333,7 +333,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle) {
+		final boolean fill, final Color border, final Integer angle,final boolean rounded) {
 		
 		
 		// Check if the geometry has a height value (3D Shape or Volume)
@@ -350,10 +350,10 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		if ( geom.getUserData() != null ) {
 			float height = new Float(geom.getUserData().toString());
 			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
-				currentZLayer, currentLayerId, color, fill, border, false, angle, height, offSet,false);
+				currentZLayer, currentLayerId, color, fill, border, false, angle, height, offSet,rounded);
 		} else {
 			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
-				currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,false);
+				currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,rounded);
 		}
 		// FIXME: Need to remove the use of sw.
 		return sw.toShape(geom).getBounds2D();

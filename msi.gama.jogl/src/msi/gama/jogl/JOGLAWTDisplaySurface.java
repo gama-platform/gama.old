@@ -357,7 +357,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void setBackgroundColor(final Color c) {
-		bgColor = c;
+		System.out.println("set background in jogl display surface");
+		openGLGraphicsGLRender.gl.glClearColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 	}
 
 	@Override

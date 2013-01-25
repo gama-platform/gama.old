@@ -186,7 +186,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		arcBall = new ArcBall(width, height);
 
 		// Set background color (in RGBA). Alpha of 0 for total transparency
+		
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		//gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.

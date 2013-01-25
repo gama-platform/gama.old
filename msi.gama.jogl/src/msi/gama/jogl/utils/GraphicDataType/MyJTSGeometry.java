@@ -37,11 +37,11 @@ public class MyJTSGeometry implements Cloneable{
 	
 	public float altitude;
 	
-	public boolean roundCorner;
+	public boolean rounded;
 	
 	public GamaPoint offSet;
 	
-	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,int layerId, Color color,float alpha,String type,boolean roundCorner){
+	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,int layerId, Color color,float alpha,String type,boolean rounded){
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer=z_layer;
@@ -56,10 +56,10 @@ public class MyJTSGeometry implements Cloneable{
 		this.height = 0;
 		this.altitude = 0;
 		this.offSet = new GamaPoint(0,0); 
-		this.roundCorner = roundCorner;
+		this.rounded = rounded;
 	}
 	
-	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,int layerId, Color color,float alpha,Boolean fill, Color border,Boolean isTextured,int angle,float height,GamaPoint offSet, boolean roundCorner ){
+	public MyJTSGeometry(Geometry geometry,IAgent agent,float z_layer,int layerId, Color color,float alpha,Boolean fill, Color border,Boolean isTextured,int angle,float height,GamaPoint offSet, boolean rounded ){
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer=z_layer;
@@ -74,7 +74,7 @@ public class MyJTSGeometry implements Cloneable{
 		this.height = height;
 		this.altitude = 0.0f;
 		this.offSet = offSet;
-		this.roundCorner = roundCorner;
+		this.rounded = rounded;
 	}
 	
 

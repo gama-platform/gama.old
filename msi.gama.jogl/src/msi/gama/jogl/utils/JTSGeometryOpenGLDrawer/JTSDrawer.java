@@ -84,7 +84,7 @@ public class JTSDrawer {
 
 	public void DrawPolygon(final Polygon p, final float z_layer, final Color c, final float alpha,
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
-		final boolean drawPolygonContour,final boolean roundCorner) {
+		final boolean drawPolygonContour,final boolean rounded) {
 
 		// FIXME: Angle rotation is not implemented yet
 
@@ -105,7 +105,7 @@ public class JTSDrawer {
 
 			
 			//Draw rectangle with curved corner (only work for rectangle)
-			if(roundCorner == true ){
+			if(rounded == true ){
 				myGLRender.graphicsGLUtils.DrawRoundRectangle(p);
 			}
 			else{
