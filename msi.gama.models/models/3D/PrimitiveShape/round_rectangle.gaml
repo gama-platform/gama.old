@@ -20,7 +20,7 @@ global {
 		create mySquare number:number_of_agents{
 			set self.width <- rnd(maxSize)+1;
 			set self.height <-rnd(maxSize)+1;
-			set color <- color hsb_to_rgb ([(width*height)/(maxSize*maxSize),0.5,1.0]);
+			set color <- color hsb_to_rgb ([(width*height)/(maxSize*maxSize),1.0,1.0]);
 		}
 
 	}  
@@ -43,7 +43,7 @@ entities {
 			set color <- color hsb_to_rgb ([(width*height)/(maxSize*maxSize),1.0,1.0]);
 		}
 		aspect RoundCorner {
-			draw rectangle({self.width, self.height}) color: color; 
+			draw rectangle({self.width, self.height}) color: color rounded:true; 
 		}
 	}	
 
