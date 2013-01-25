@@ -49,7 +49,7 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 			}
 			Rectangle2D r =
 				scope.getGraphics().drawGeometry(scope, agent.getGeometry().getInnerGeometry(),
-					c == null ? Color.YELLOW : c, true, Color.black, 0);
+					c == null ? Color.YELLOW : c, true, Color.black, 0,false);
 			// GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
 			// agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +
 			// agent.getLocation().getY() / r.getCenterY());

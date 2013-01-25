@@ -242,6 +242,7 @@ public interface IKeyword {
 	public static final String REWRITE = "rewrite";
 	public static final String RING = "ring";
 	public static final String RNG = "rng";
+	public static final String ROUNDED = "rounded";
 	public static final String ROTATE = "rotate";
 	public static final String SAVE = "save";
 	public static final String SAVE_BATCH = "save_batch";

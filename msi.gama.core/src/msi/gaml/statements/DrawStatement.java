@@ -55,6 +55,7 @@ import com.vividsolutions.jts.geom.Geometry;
 	// @facet(name = IMAGE, type = IType.STRING_STR, optional = true),
 	@facet(name = EMPTY, type = IType.BOOL_STR, optional = true),
 	@facet(name = BORDER, type = IType.COLOR_STR, optional = true),
+	@facet(name = ROUNDED, type = IType.BOOL_STR, optional = true),
 	@facet(name = AT, type = IType.POINT_STR, optional = true),
 	@facet(name = SIZE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = TO, type = IType.POINT_STR, optional = true),
@@ -65,10 +66,10 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = Z, type = IType.FLOAT_STR, optional = true),
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
-combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, COLOR, Z }),
-	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROTATE, Z }),
-	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER }),
-	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROTATE }),
+combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, Z }),
+	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED,  ROTATE, Z }),
+	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
+	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
 	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IType.GEOM_STR)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
@@ -178,13 +179,14 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, loc, color, bord, rot, elevation, item, empty;
+		IExpression size, loc, color, bord, rot, elevation, item, empty, rounded;
 
 		Color constCol;
 		private final Color constBord;
 		private final ILocation constSize;
 		private final Integer constRot;
 		private final Boolean constEmpty;
+		private final Boolean constRounded;
 		private final ILocation constLoc;
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
@@ -206,6 +208,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			color = getFacet(COLOR);
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
+			rounded = getFacet(ROUNDED);
+			
 			constSize =
 				size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
 			constCol =
@@ -214,6 +218,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
 			constRot = rot != null && rot.isConst() ? Cast.asInt(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
+			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
 		}
 
 		double scale(final double val, final IGraphics g) {
@@ -242,6 +247,11 @@ public class DrawStatement extends AbstractStatementSequence {
 				: scope.getAgentScope().getSpecies().hasVar(BORDER) ? Cast.asColor(scope,
 					scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black
 				: constBord;
+		}
+		
+		Boolean getRounded(final IScope scope) {
+			return constRounded == null ? empty == null ? false : Cast.asBool(scope,
+				rounded.value(scope)) : constRounded;
 		}
 
 		Boolean getEmpty(final IScope scope) {
@@ -273,7 +283,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				g.setUserData(elevation.value(scope));
 			}
 			return gr.drawGeometry(scope, g, getColor(scope), !getEmpty(scope), getBorder(scope),
-				getRotation(scope));
+				getRotation(scope), getRounded(scope));
 		}
 	}
 

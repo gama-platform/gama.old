@@ -187,7 +187,7 @@ public interface IGraphics {
 	 * @param z float
 	 */
 	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry,
-		final Color color, final boolean fill, final Color border, final Integer angle);
+		final Color color, final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
 	public abstract void setDrawingOffset(final int x, final int y);
 
