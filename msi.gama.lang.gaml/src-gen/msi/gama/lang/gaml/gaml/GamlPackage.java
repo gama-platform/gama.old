@@ -217,13 +217,22 @@ public interface GamlPackage extends EPackage
   int STATEMENT__NAME = GAML_VAR_REF__NAME;
 
   /**
+   * The feature id for the '<em><b>Function</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATEMENT__FUNCTION = GAML_VAR_REF_FEATURE_COUNT + 0;
+
+  /**
    * The feature id for the '<em><b>Block</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT__BLOCK = GAML_VAR_REF_FEATURE_COUNT + 0;
+  int STATEMENT__BLOCK = GAML_VAR_REF_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Else</b></em>' containment reference.
@@ -232,7 +241,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__ELSE = GAML_VAR_REF_FEATURE_COUNT + 1;
+  int STATEMENT__ELSE = GAML_VAR_REF_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Facets</b></em>' containment reference list.
@@ -241,7 +250,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__FACETS = GAML_VAR_REF_FEATURE_COUNT + 2;
+  int STATEMENT__FACETS = GAML_VAR_REF_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Of</b></em>' containment reference.
@@ -250,7 +259,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__OF = GAML_VAR_REF_FEATURE_COUNT + 3;
+  int STATEMENT__OF = GAML_VAR_REF_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -259,7 +268,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__VALUE = GAML_VAR_REF_FEATURE_COUNT + 4;
+  int STATEMENT__VALUE = GAML_VAR_REF_FEATURE_COUNT + 5;
 
   /**
    * The number of structural features of the '<em>Statement</em>' class.
@@ -268,7 +277,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT_FEATURE_COUNT = GAML_VAR_REF_FEATURE_COUNT + 5;
+  int STATEMENT_FEATURE_COUNT = GAML_VAR_REF_FEATURE_COUNT + 6;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ContentsImpl <em>Contents</em>}' class.
@@ -1494,6 +1503,17 @@ public interface GamlPackage extends EPackage
   EClass getStatement();
 
   /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Statement#getFunction <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Function</em>'.
+   * @see msi.gama.lang.gaml.gaml.Statement#getFunction()
+   * @see #getStatement()
+   * @generated
+   */
+  EReference getStatement_Function();
+
+  /**
    * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Statement#getBlock <em>Block</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2059,6 +2079,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass STATEMENT = eINSTANCE.getStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference STATEMENT__FUNCTION = eINSTANCE.getStatement_Function();
 
     /**
      * The meta object literal for the '<em><b>Block</b></em>' containment reference feature.

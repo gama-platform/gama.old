@@ -14,6 +14,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Statement" eSuperTypes="#//GamlVarRef">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Expression"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="else" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"

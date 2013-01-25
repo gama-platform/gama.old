@@ -66,6 +66,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getTerminalExpressionAccess().getAlternatives(), "rule__TerminalExpression__Alternatives");
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
+					put(grammarAccess.getEquationAccess().getGroup(), "rule__Equation__Group__0");
 					put(grammarAccess.getIfStatementAccess().getGroup(), "rule__IfStatement__Group__0");
 					put(grammarAccess.getIfStatementAccess().getGroup_4(), "rule__IfStatement__Group_4__0");
 					put(grammarAccess.getClassicStatementAccess().getGroup(), "rule__ClassicStatement__Group__0");
@@ -138,6 +139,9 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelAccess().getImportsAssignment_2(), "rule__Model__ImportsAssignment_2");
 					put(grammarAccess.getModelAccess().getStatementsAssignment_3(), "rule__Model__StatementsAssignment_3");
 					put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
+					put(grammarAccess.getEquationAccess().getFunctionAssignment_0(), "rule__Equation__FunctionAssignment_0");
+					put(grammarAccess.getEquationAccess().getKeyAssignment_1(), "rule__Equation__KeyAssignment_1");
+					put(grammarAccess.getEquationAccess().getExprAssignment_2(), "rule__Equation__ExprAssignment_2");
 					put(grammarAccess.getIfStatementAccess().getKeyAssignment_0(), "rule__IfStatement__KeyAssignment_0");
 					put(grammarAccess.getIfStatementAccess().getExprAssignment_2(), "rule__IfStatement__ExprAssignment_2");
 					put(grammarAccess.getIfStatementAccess().getBlockAssignment_3(), "rule__IfStatement__BlockAssignment_3");

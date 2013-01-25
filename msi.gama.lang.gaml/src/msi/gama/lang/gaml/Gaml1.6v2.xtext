@@ -37,11 +37,10 @@ BuiltInStatementKey:
  * Statements 
  */
 Statement:
-	=>AssignmentStatement | (ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement );
+	=>AssignmentStatement | (ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement  | Equation);
 
-//SetStatement returns Statement:
-//	key='set' var=Access ('<-'|'value:') expr=Expression ';'
-//	/*| (var=(MemberRef|Access) key=':=' expr=Expression ';') */; // enable "name=ID '<-' expr=Expression ';'" ? 
+Equation returns Statement: function=Function key="=" expr=Expression ';';
+ 
 IfStatement returns Statement:
 	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(IfStatement | Block))?;
 
@@ -57,7 +56,7 @@ ReturnStatement returns Statement:
 	key='return' expr=Expression? ';';
 
 AssignmentStatement returns Statement:
-	expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--"|":=") value=Expression (facets+=Facet)*';';
+	expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--") value=Expression (facets+=Facet)*';';
 
 /**
  * Facets

@@ -587,6 +587,10 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					sequence_DefinitionStatement(context, (Statement) semanticObject); 
 					return; 
 				}
+				else if(context == grammarAccess.getEquationRule()) {
+					sequence_Equation(context, (Statement) semanticObject); 
+					return; 
+				}
 				else if(context == grammarAccess.getIfStatementRule()) {
 					sequence_IfStatement(context, (Statement) semanticObject); 
 					return; 
@@ -758,8 +762,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *             key='+=' | 
 	 *             key='-=' | 
 	 *             key='++' | 
-	 *             key='--' | 
-	 *             key=':='
+	 *             key='--'
 	 *         ) 
 	 *         value=Expression 
 	 *         facets+=Facet*
@@ -820,6 +823,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *     (key=ID of=Contents? (name=ID | name=STRING | name=BuiltInStatementKey)? facets+=Facet* block=Block?)
 	 */
 	protected void sequence_DefinitionStatement(EObject context, Statement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (function=Function key='=' expr=Expression)
+	 */
+	protected void sequence_Equation(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1008,8 +1020,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *                 key='+=' | 
 	 *                 key='-=' | 
 	 *                 key='++' | 
-	 *                 key='--' | 
-	 *                 key=':='
+	 *                 key='--'
 	 *             ) 
 	 *             value=Expression 
 	 *             facets+=Facet*
@@ -1017,7 +1028,8 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *         (key='return' expr=Expression?) | 
 	 *         (key='if' expr=Expression block=Block (else=IfStatement | else=Block)?) | 
 	 *         (key=BuiltInStatementKey expr=Expression facets+=Facet* block=Block?) | 
-	 *         (key=ID of=Contents? (name=ID | name=STRING | name=BuiltInStatementKey)? facets+=Facet* block=Block?)
+	 *         (key=ID of=Contents? (name=ID | name=STRING | name=BuiltInStatementKey)? facets+=Facet* block=Block?) | 
+	 *         (function=Function key='=' expr=Expression)
 	 *     )
 	 */
 	protected void sequence_Statement(EObject context, Statement semanticObject) {

@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getElse <em>Else</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
@@ -47,6 +48,16 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class StatementImpl extends GamlVarRefImpl implements Statement
 {
+  /**
+   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFunction()
+   * @generated
+   * @ordered
+   */
+  protected Expression function;
+
   /**
    * The cached value of the '{@link #getBlock() <em>Block</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -116,6 +127,54 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.STATEMENT;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getFunction()
+  {
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetFunction(Expression newFunction, NotificationChain msgs)
+  {
+    Expression oldFunction = function;
+    function = newFunction;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__FUNCTION, oldFunction, newFunction);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setFunction(Expression newFunction)
+  {
+    if (newFunction != function)
+    {
+      NotificationChain msgs = null;
+      if (function != null)
+        msgs = ((InternalEObject)function).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__FUNCTION, null, msgs);
+      if (newFunction != null)
+        msgs = ((InternalEObject)newFunction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__FUNCTION, null, msgs);
+      msgs = basicSetFunction(newFunction, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__FUNCTION, newFunction, newFunction));
   }
 
   /**
@@ -334,6 +393,8 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__FUNCTION:
+        return basicSetFunction(null, msgs);
       case GamlPackage.STATEMENT__BLOCK:
         return basicSetBlock(null, msgs);
       case GamlPackage.STATEMENT__ELSE:
@@ -358,6 +419,8 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__FUNCTION:
+        return getFunction();
       case GamlPackage.STATEMENT__BLOCK:
         return getBlock();
       case GamlPackage.STATEMENT__ELSE:
@@ -383,6 +446,9 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__FUNCTION:
+        setFunction((Expression)newValue);
+        return;
       case GamlPackage.STATEMENT__BLOCK:
         setBlock((Block)newValue);
         return;
@@ -413,6 +479,9 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__FUNCTION:
+        setFunction((Expression)null);
+        return;
       case GamlPackage.STATEMENT__BLOCK:
         setBlock((Block)null);
         return;
@@ -442,6 +511,8 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
+      case GamlPackage.STATEMENT__FUNCTION:
+        return function != null;
       case GamlPackage.STATEMENT__BLOCK:
         return block != null;
       case GamlPackage.STATEMENT__ELSE:

@@ -377,7 +377,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Block()
+  public EReference getStatement_Function()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(0);
   }
@@ -387,7 +387,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Else()
+  public EReference getStatement_Block()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(1);
   }
@@ -397,7 +397,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Facets()
+  public EReference getStatement_Else()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
   }
@@ -407,7 +407,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Of()
+  public EReference getStatement_Facets()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(3);
   }
@@ -417,9 +417,19 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Value()
+  public EReference getStatement_Of()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getStatement_Value()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -871,6 +881,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
 
     statementEClass = createEClass(STATEMENT);
+    createEReference(statementEClass, STATEMENT__FUNCTION);
     createEReference(statementEClass, STATEMENT__BLOCK);
     createEReference(statementEClass, STATEMENT__ELSE);
     createEReference(statementEClass, STATEMENT__FACETS);
@@ -1004,6 +1015,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getStatement_Function(), this.getExpression(), null, "function", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Block(), this.getBlock(), null, "block", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Else(), ecorePackage.getEObject(), null, "else", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Facets(), this.getFacet(), null, "facets", null, 0, -1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

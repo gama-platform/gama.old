@@ -401,7 +401,93 @@ ruleStatement returns [EObject current=null]
         $current = $this_DefinitionStatement_4.current; 
         afterParserOrEnumRuleCall();
     }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getStatementAccess().getEquationParserRuleCall_1_4()); 
+    }
+    this_Equation_5=ruleEquation
+    { 
+        $current = $this_Equation_5.current; 
+        afterParserOrEnumRuleCall();
+    }
 ))
+;
+
+
+
+
+
+// Entry rule entryRuleEquation
+entryRuleEquation returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getEquationRule()); }
+	 iv_ruleEquation=ruleEquation 
+	 { $current=$iv_ruleEquation.current; } 
+	 EOF 
+;
+
+// Rule Equation
+ruleEquation returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		{ 
+	        newCompositeNode(grammarAccess.getEquationAccess().getFunctionFunctionParserRuleCall_0_0()); 
+	    }
+		lv_function_0_0=ruleFunction		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getEquationRule());
+	        }
+       		set(
+       			$current, 
+       			"function",
+        		lv_function_0_0, 
+        		"Function");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)(
+(
+		lv_key_1_0=	'=' 
+    {
+        newLeafNode(lv_key_1_0, grammarAccess.getEquationAccess().getKeyEqualsSignKeyword_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getEquationRule());
+	        }
+       		setWithLastConsumed($current, "key", lv_key_1_0, "=");
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getEquationAccess().getExprExpressionParserRuleCall_2_0()); 
+	    }
+		lv_expr_2_0=ruleExpression		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getEquationRule());
+	        }
+       		set(
+       			$current, 
+       			"expr",
+        		lv_expr_2_0, 
+        		"Expression");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)	otherlv_3=';' 
+    {
+    	newLeafNode(otherlv_3, grammarAccess.getEquationAccess().getSemicolonKeyword_3());
+    }
+)
 ;
 
 
@@ -1024,18 +1110,6 @@ ruleAssignmentStatement returns [EObject current=null]
 	            $current = createModelElement(grammarAccess.getAssignmentStatementRule());
 	        }
        		setWithLastConsumed($current, "key", lv_key_1_7, null);
-	    }
-
-    |		lv_key_1_8=	':=' 
-    {
-        newLeafNode(lv_key_1_8, grammarAccess.getAssignmentStatementAccess().getKeyColonEqualsSignKeyword_1_0_7());
-    }
- 
-	    {
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getAssignmentStatementRule());
-	        }
-       		setWithLastConsumed($current, "key", lv_key_1_8, null);
 	    }
 
 )
