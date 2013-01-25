@@ -69,6 +69,7 @@ import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.collada.ColladaReader;
+import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
 import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
@@ -145,6 +146,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
     
     //Display or not the triangle when using triangulatin (useTessellation = false)
     public boolean showTriangulation = false;
+    
+  //DEM
+    public DigitalElevationModelDrawer dem;
+
 	
 	
 	
@@ -165,6 +170,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
 		
+		
+		//dem = new DigitalElevationModelDrawer();
 		
 
 	}
@@ -256,6 +263,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		
 		//FIXME: Need to be place somewhere (triggered by a button in Gama)
+		//FIXME: Need to be place somewhere (triggered by a button in Gama)
+		if(dem !=null){
+				DigitalElevationModelDrawer.InitDEM(gl);	
+		}
 		
 	}
 
@@ -345,10 +356,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		//Use polygon offset for a better edges rendering (http://www.glprogramming.com/red/chapter06.html#name4)
 		gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-		gl.glPolygonOffset(1, 1);   
-        this.DrawScene();
-        this.DrawShapeFile();
-        this.DrawCollada();
+		gl.glPolygonOffset(1, 1);  
+		
+		if(dem !=null){
+			DigitalElevationModelDrawer.DisplayDEM(gl);
+		}
+		else{
+			this.DrawScene();
+		}
+
+        //this.DrawShapeFile();
+        //this.DrawCollada();
         gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
         
 
