@@ -18,7 +18,7 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gama.common.interfaces.IKeyword.PRIMITIVE;
 import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.util.*;
 import msi.gama.common.interfaces.*;
@@ -127,13 +127,14 @@ public class SymbolFactory extends AbstractFactory {
 		md.verifyFacets(source, facets, superDesc);
 		List<IDescription> children = new ArrayList();
 		for ( ISyntacticElement e : source.getChildren() ) {
+			children.add(createDescriptionRecursively(e, superDesc));
 			// Instead of having to consider this specific case, find a better solution.
-			if ( !source.getKeyword().equals(SPECIES) ) {
-				children.add(createDescriptionRecursively(e, superDesc));
-			} else if ( source.hasParent(DISPLAY) || source.hasParent(SPECIES) ) {
-				// "species" declared in "display" or "species" section
-				children.add(createDescriptionRecursively(e, superDesc));
-			}
+			// if ( !source.getKeyword().equals(SPECIES) ) {
+			// children.add(createDescriptionRecursively(e, superDesc));
+			// } else if ( source.hasParent(DISPLAY) || source.hasParent(SPECIES) ) {
+			// // "species" declared in "display" or "species" section
+			// children.add(createDescriptionRecursively(e, superDesc));
+			// }
 		}
 		IDescription desc =
 			buildDescription(source, keyword, new ChildrenProvider(children), superDesc, md);

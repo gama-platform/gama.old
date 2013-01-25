@@ -45,12 +45,8 @@ import msi.gaml.types.*;
 public class Cast {
 
 	@operator(value = { IKeyword.IS }, priority = IPriority.COMPARATOR)
-	@doc(
-		value = "returns true is the left operand is of the right operand type, false otherwise",
-		examples = {
-			"0 is int 		--: 	true",
-			"an_agent is node 	--: 	true",
-			"1 is float 		--: 	false"})
+	@doc(value = "returns true is the left operand is of the right operand type, false otherwise", examples = {
+		"0 is int 		--: 	true", "an_agent is node 	--: 	true", "1 is float 		--: 	false" })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b)
 		throws GamaRuntimeException {
 		IType type = asType(scope, b);
@@ -64,14 +60,6 @@ public class Cast {
 		}
 		return type.isAssignableFrom(Types.get(a.getClass()));
 	}
-
-	//
-	// public static String toJava(final Object val) {
-	// if ( val == null ) { return "null"; }
-	// if ( val instanceof IValue ) { return ((IValue) val).toJava(); }
-	// if ( val instanceof String ) { return StringUtils.toJavaString((String) val); }
-	// return val.toString();
-	// }
 
 	public static IType asType(final IScope scope, final IExpression expr)
 		throws GamaRuntimeException {
@@ -96,18 +84,14 @@ public class Cast {
 	}
 
 	@operator(value = IType.PATH_STR)
-	@doc(
-		value = "casting of the operand to a path",
-		special_cases = {
-			"if the operand is a path, returns itself",
-			"if the operand is a list, casts the list into a list of point and returns the path (in the current topology) through these points.",
-			"otherwise, returns nil"},
-		examples = "path([{2,5}, {4,7}, {2,1}])   --:  [polyline ([{2.0,5.0},{4.0,7.0}]),polyline ([{4.0,7.0},{2.0,1.0}])]",
-		see = "graph")
+	@doc(value = "casting of the operand to a path", special_cases = {
+		"if the operand is a path, returns itself",
+		"if the operand is a list, casts the list into a list of point and returns the path (in the current topology) through these points.",
+		"otherwise, returns nil" }, examples = "path([{2,5}, {4,7}, {2,1}])   --:  [polyline ([{2.0,5.0},{4.0,7.0}]),polyline ([{4.0,7.0},{2.0,1.0}])]", see = "graph")
 	public static IPath toPath(final IScope scope, final Object object) {
 		return GamaPathType.staticCast(scope, object, null);
-	}	
-	
+	}
+
 	@operator(value = IType.GRAPH_STR, content_type = ITypeProvider.CHILD_CONTENT_TYPE, priority = IPriority.CAST)
 	@doc(value = "casting of the operand to a graph.", special_cases = {
 		"if the operand is a graph, returns the graph itself",
@@ -142,12 +126,11 @@ public class Cast {
 	@doc(value = "casting of the operand to an agent (if a species name is used, casting to an instance of species name).", special_cases = {
 		"if the operand is a point, returns the closest agent (resp. closest instance of species name) to that point (computed in the topology of the calling agent);",
 		"if the operand is an agent, returns the agent (resp. tries to cast this agent to species name and returns nil if the agent is instance of another species);",
-		"if the operand is an int, returns the agent (resp. instance of species name) with this unique index;" }, 
-		examples = {
-		"species node {}", "node(0) 	--: node0", "node(3.78) 		--: null",
-		"node(true) 		--: null", "node({23, 4.0} 		--: node2", "node(5::34) 		--: null",
-		"node(green) 		--: null", "node([1,5,9,3]) 	--: null", "node(node1)		--: node1",
-		"node('4')		--: null" }, see = { "of_species", "species" })
+		"if the operand is an int, returns the agent (resp. instance of species name) with this unique index;" }, examples = {
+		"species node {}", "node(0) 	--: node0", "node(3.78) 		--: null", "node(true) 		--: null",
+		"node({23, 4.0} 		--: node2", "node(5::34) 		--: null", "node(green) 		--: null",
+		"node([1,5,9,3]) 	--: null", "node(node1)		--: node1", "node('4')		--: null" }, see = {
+		"of_species", "species" })
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}

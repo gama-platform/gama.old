@@ -28,7 +28,7 @@ public class TypePair {
 	}
 
 	public boolean isCompatibleWith(final IType l, final IType r) {
-		return left.isAssignableFrom(l) && right.isAssignableFrom(r);
+		return l.isTranslatableInto(left) && r.isTranslatableInto(right);
 	}
 
 	public int distanceTo(final IType l, final IType r) {

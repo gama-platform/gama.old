@@ -18,7 +18,7 @@
  */
 package msi.gaml.types;
 
-import java.util.Map;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
@@ -121,21 +121,22 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public boolean isAssignableFrom(IType l);
 
-	// public SpeciesDescription getSpecies();
+	public boolean isTranslatableInto(IType t);
 
-	// public boolean
+	public void setParent(IType p);
 
-	/**
-	 * @throws GamlException
-	 * @param expr
-	 * @param factory
-	 * @return
-	 */
+	public IType getParent();
+
+	public void addChild(IType p);
+
+	public Set<IType> getChildren();
+
+	public void clearChildren();
+
 	IType coerce(IType expr, IDescription context);
 
 	/**
-	 * returns the distance between two types : 0 if they are equal, 1 if they are directly related,
-	 * maxInt if they are not.
+	 * returns the distance between two types
 	 * @param originalChildType
 	 * @return
 	 */

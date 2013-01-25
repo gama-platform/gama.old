@@ -161,7 +161,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public GamaList listValue(final IScope scope) {
-		return this;
+		// AD 24/01/13 - modified by creating a new list to avoid side effects
+		return new GamaList(this);
 	}
 
 	/*

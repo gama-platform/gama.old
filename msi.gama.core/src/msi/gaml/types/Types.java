@@ -19,10 +19,12 @@
 package msi.gaml.types;
 
 import java.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.TypeFieldExpression;
+import msi.gaml.types.Tree.Order;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -108,6 +110,56 @@ public class Types {
 				initFieldGetters(type);
 			}
 		}
+		Tree<IType> hierarchy = buildHierarchy();
+		GuiUtils.debug(hierarchy.toStringWithDepth());
+		for ( Node<IType> n : hierarchy.build(Order.PRE_ORDER) ) {
+			n.getData().setParent(n.getParent() == null ? null : n.getParent().getData());
+		}
+	}
+
+	private static Tree<IType> buildHierarchy() {
+		Node<IType> root = new Node(NO_TYPE);
+		Tree<IType> hierarchy = new Tree();
+		hierarchy.setRoot(root);
+		List<IType>[] depths = typesWithDepths();
+		for ( int i = 1; i < 6; i++ ) {
+			List<IType> types = depths[i];
+			for ( IType t : types ) {
+				place(t, hierarchy);
+			}
+		}
+		return hierarchy;
+	}
+
+	private static List<IType>[] typesWithDepths() {
+		List<IType>[] depths = new ArrayList[6];
+		for ( int i = 0; i < 6; i++ ) {
+			depths[i] = new ArrayList();
+		}
+		Set<IType> list = new HashSet(classToIType.values());
+		for ( IType t : list ) {
+			int depth = 0;
+			for ( IType other : list ) {
+				if ( other.isAssignableFrom(t) && other != t ) {
+					depth++;
+				}
+			}
+			depths[depth].add(t);
+		}
+		return depths;
+	}
+
+	private static void place(final IType t, final Tree<IType> hierarchy) {
+		Map<Node<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
+		int max = 0;
+		Node<IType> parent = hierarchy.getRoot();
+		for ( Node<IType> current : map.keySet() ) {
+			if ( current.getData().isAssignableFrom(t) && map.get(current) > max ) {
+				max = map.get(current);
+				parent = current;
+			}
+		}
+		parent.addChild(new Node(t));
 	}
 
 }

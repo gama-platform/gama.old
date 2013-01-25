@@ -319,17 +319,17 @@ ruleBuiltInStatementKey returns [AntlrDatatypeRuleToken current=new AntlrDatatyp
     }
 
     |
-	kw='population' 
+	kw='display_population' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getPopulationKeyword_17()); 
+        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getDisplay_populationKeyword_17()); 
     }
 
     |
-	kw='grid_population' 
+	kw='display_grid' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getGrid_populationKeyword_18()); 
+        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getDisplay_gridKeyword_18()); 
     }
 )
     ;
@@ -1890,9 +1890,10 @@ ruleArgPairExpr returns [EObject current=null]
     }
 )(((
 (
-		lv_arg_1_0=RULE_ID
+(
+		lv_arg_1_1=RULE_ID
 		{
-			newLeafNode(lv_arg_1_0, grammarAccess.getArgPairExprAccess().getArgIDTerminalRuleCall_1_0_0_0()); 
+			newLeafNode(lv_arg_1_1, grammarAccess.getArgPairExprAccess().getArgIDTerminalRuleCall_1_0_0_0_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -1901,9 +1902,26 @@ ruleArgPairExpr returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"arg",
-        		lv_arg_1_0, 
+        		lv_arg_1_1, 
         		"ID");
 	    }
+
+    |		{ 
+	        newCompositeNode(grammarAccess.getArgPairExprAccess().getArgBuiltInStatementKeyParserRuleCall_1_0_0_0_1()); 
+	    }
+		lv_arg_1_2=ruleBuiltInStatementKey		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getArgPairExprRule());
+	        }
+       		set(
+       			$current, 
+       			"arg",
+        		lv_arg_1_2, 
+        		"BuiltInStatementKey");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
 
 )
 )(

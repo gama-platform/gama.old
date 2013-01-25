@@ -101,19 +101,19 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSwitchKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
 		private final Keyword cWarnKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
 		private final Keyword cWriteKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
-		private final Keyword cPopulationKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
-		private final Keyword cGrid_populationKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cDisplay_populationKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cDisplay_gridKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
 		
 		//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
 		//// FIXME : this is nonsense ! This list should not exist
 		//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population";
+		//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid";
 		public ParserRule getRule() { return rule; }
 
 		////Statements that accept an expression as their "default" facet
 		//// FIXME : this is nonsense ! This list should not exist
 		//"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population"
+		//"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		////Statements that accept an expression as their "default" facet
@@ -169,11 +169,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"write"
 		public Keyword getWriteKeyword_16() { return cWriteKeyword_16; }
 
-		//"population"
-		public Keyword getPopulationKeyword_17() { return cPopulationKeyword_17; }
+		//"display_population"
+		public Keyword getDisplay_populationKeyword_17() { return cDisplay_populationKeyword_17; }
 
-		//"grid_population"
-		public Keyword getGrid_populationKeyword_18() { return cGrid_populationKeyword_18; }
+		//"display_grid"
+		public Keyword getDisplay_gridKeyword_18() { return cDisplay_gridKeyword_18; }
 	}
 
 	public class StatementElements extends AbstractParserRuleElementFinder {
@@ -1016,7 +1016,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
 		private final Assignment cArgAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
-		private final RuleCall cArgIDTerminalRuleCall_1_0_0_0 = (RuleCall)cArgAssignment_1_0_0.eContents().get(0);
+		private final Alternatives cArgAlternatives_1_0_0_0 = (Alternatives)cArgAssignment_1_0_0.eContents().get(0);
+		private final RuleCall cArgIDTerminalRuleCall_1_0_0_0_0 = (RuleCall)cArgAlternatives_1_0_0_0.eContents().get(0);
+		private final RuleCall cArgBuiltInStatementKeyParserRuleCall_1_0_0_0_1 = (RuleCall)cArgAlternatives_1_0_0_0.eContents().get(1);
 		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
 		private final Keyword cOpColonColonKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
@@ -1028,26 +1030,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRightAdditionParserRuleCall_2_0 = (RuleCall)cRightAssignment_2.eContents().get(0);
 		
 		//ArgPairExpr returns PairExpr:
-		//	{ArgPairExpr} (arg=ID op="::" | arg=DefinitionFacetKey op=":") right=Addition;
+		//	{ArgPairExpr} (arg=(ID | BuiltInStatementKey) op="::" | arg=DefinitionFacetKey op=":") right=Addition;
 		public ParserRule getRule() { return rule; }
 
-		//{ArgPairExpr} (arg=ID op="::" | arg=DefinitionFacetKey op=":") right=Addition
+		//{ArgPairExpr} (arg=(ID | BuiltInStatementKey) op="::" | arg=DefinitionFacetKey op=":") right=Addition
 		public Group getGroup() { return cGroup; }
 
 		//{ArgPairExpr}
 		public Action getArgPairExprAction_0() { return cArgPairExprAction_0; }
 
-		//arg=ID op="::" | arg=DefinitionFacetKey op=":"
+		//arg=(ID | BuiltInStatementKey) op="::" | arg=DefinitionFacetKey op=":"
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//arg=ID op="::"
+		//arg=(ID | BuiltInStatementKey) op="::"
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
-		//arg=ID
+		//arg=(ID | BuiltInStatementKey)
 		public Assignment getArgAssignment_1_0_0() { return cArgAssignment_1_0_0; }
 
+		//ID | BuiltInStatementKey
+		public Alternatives getArgAlternatives_1_0_0_0() { return cArgAlternatives_1_0_0_0; }
+
 		//ID
-		public RuleCall getArgIDTerminalRuleCall_1_0_0_0() { return cArgIDTerminalRuleCall_1_0_0_0; }
+		public RuleCall getArgIDTerminalRuleCall_1_0_0_0_0() { return cArgIDTerminalRuleCall_1_0_0_0_0; }
+
+		//BuiltInStatementKey
+		public RuleCall getArgBuiltInStatementKeyParserRuleCall_1_0_0_0_1() { return cArgBuiltInStatementKeyParserRuleCall_1_0_0_0_1; }
 
 		//op="::"
 		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
@@ -1091,6 +1099,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cRightAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
 		private final RuleCall cRightAdditionParserRuleCall_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1.eContents().get(0);
 		
+		//// arg = GamlVarRef serait plus intelligent, non ? 
 		//PairExpr returns Expression:
 		//	ArgPairExpr | Addition (({PairExpr.left=current} op="::") right=Addition)?;
 		public ParserRule getRule() { return rule; }
@@ -2014,7 +2023,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
 	//// FIXME : this is nonsense ! This list should not exist
 	//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-	//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "population" | "grid_population";
+	//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid";
 	public BuiltInStatementKeyElements getBuiltInStatementKeyAccess() {
 		return (pBuiltInStatementKey != null) ? pBuiltInStatementKey : (pBuiltInStatementKey = new BuiltInStatementKeyElements());
 	}
@@ -2217,7 +2226,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ArgPairExpr returns PairExpr:
-	//	{ArgPairExpr} (arg=ID op="::" | arg=DefinitionFacetKey op=":") right=Addition;
+	//	{ArgPairExpr} (arg=(ID | BuiltInStatementKey) op="::" | arg=DefinitionFacetKey op=":") right=Addition;
 	public ArgPairExprElements getArgPairExprAccess() {
 		return (pArgPairExpr != null) ? pArgPairExpr : (pArgPairExpr = new ArgPairExprElements());
 	}
@@ -2226,6 +2235,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getArgPairExprAccess().getRule();
 	}
 
+	//// arg = GamlVarRef serait plus intelligent, non ? 
 	//PairExpr returns Expression:
 	//	ArgPairExpr | Addition (({PairExpr.left=current} op="::") right=Addition)?;
 	public PairExprElements getPairExprAccess() {

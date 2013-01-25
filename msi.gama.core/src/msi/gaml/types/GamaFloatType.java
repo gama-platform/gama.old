@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -59,8 +59,8 @@ public class GamaFloatType extends GamaType<Double> {
 	}
 
 	@Override
-	public boolean isSuperTypeOf(final IType type) {
-		return type instanceof GamaIntegerType;
+	public boolean isTranslatableInto(final IType type) {
+		return type == this || type.id() == IType.INT || type == Types.NO_TYPE;
 	}
 
 	@Override

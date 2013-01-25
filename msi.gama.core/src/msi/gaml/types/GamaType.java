@@ -50,12 +50,45 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	protected String name;
 	protected Class[] supports;
 	Map<String, TypeFieldExpression> getters = new HashMap();
+	protected IType parent;
+	protected Set<IType> children = new HashSet();
+	protected boolean inited;
 
 	@Override
 	public void init(final short id, final String name, final Class ... supports) {
 		this.id = id;
 		this.name = name;
 		this.supports = supports;
+	}
+
+	@Override
+	public void setParent(final IType p) {
+		inited = true;
+		parent = p;
+		if ( p != null ) {
+			p.addChild(this);
+		}
+	}
+
+	@Override
+	public void addChild(final IType p) {
+		children.add(p);
+	}
+
+	@Override
+	public Set<IType> getChildren() {
+		return children;
+	}
+
+	@Override
+	public void clearChildren() {
+		// parent = null;
+		children.clear();
+	}
+
+	@Override
+	public IType getParent() {
+		return parent;
 	}
 
 	@Override
@@ -100,11 +133,6 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		return false;
 	}
 
-	// @Override
-	// public SpeciesDescription getSpecies() {
-	// return null;
-	// }
-
 	@Override
 	public IType defaultContentType() {
 		return this;
@@ -116,6 +144,8 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	protected boolean isSuperTypeOf(final IType type) {
+		if ( type == null ) { return false; }
+		if ( inited ) { return type == this || isSuperTypeOf(type.getParent()); }
 		Class remote = type.toClass();
 		for ( int i = 0; i < supports.length; i++ ) {
 			if ( supports[i].isAssignableFrom(remote) ) { return true; }
@@ -126,6 +156,11 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	@Override
 	public boolean isAssignableFrom(final IType t) {
 		return t == null ? false : this == t || isSuperTypeOf(t);
+	}
+
+	@Override
+	public boolean isTranslatableInto(final IType t) {
+		return t.isAssignableFrom(this);
 	}
 
 	@Override
@@ -152,8 +187,14 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 
 	@Override
 	public int distanceTo(final IType type) {
-		if ( this == type ) { return 0; }
-		if ( type.isAssignableFrom(this) || this.isAssignableFrom(type) ) { return 1; }
+		if ( type == this ) { return 0; }
+		if ( type == null ) { return Integer.MAX_VALUE; }
+		if ( inited ) {
+			if ( isSuperTypeOf(type) ) { return 1 + distanceTo(type.getParent()); }
+			return 1 + getParent().distanceTo(type);
+		}
+		if ( isTranslatableInto(type) ) { return 1; }
+		if ( isAssignableFrom(type) ) { return 1; }
 		return Integer.MAX_VALUE;
 	}
 }

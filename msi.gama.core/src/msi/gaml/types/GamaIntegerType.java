@@ -77,8 +77,8 @@ public class GamaIntegerType extends GamaType<Integer> {
 	}
 
 	@Override
-	public boolean isSuperTypeOf(final IType type) {
-		return type instanceof GamaFloatType;
+	public boolean isTranslatableInto(final IType type) {
+		return type == this || type.id() == IType.FLOAT || type == Types.NO_TYPE;
 	}
 
 	@Override

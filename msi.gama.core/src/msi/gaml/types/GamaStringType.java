@@ -26,7 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * 
- * A Utility class for String related operations
+ * 
  * 
  * Written by drogoul Modified on 3 juin 2010
  * 

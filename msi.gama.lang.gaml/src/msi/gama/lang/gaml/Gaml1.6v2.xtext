@@ -9,6 +9,7 @@ Model:
 Import:
 	'import' importURI=STRING; // must be named importURI
 	
+
 BuiltInStatementKey:
 	//Statements that accept an expression as their "default" facet
 	// FIXME : this is nonsense ! This list should not exist
@@ -29,8 +30,8 @@ BuiltInStatementKey:
 	'switch'|
 	'warn'|
 	'write' |
-	'population' |
-	'grid_population';
+	'display_population' |
+	'display_grid';
 
 /**
  * Statements 
@@ -118,7 +119,8 @@ Relational returns Expression:
 	right=PairExpr)?;
 
 ArgPairExpr returns PairExpr:
-	{ArgPairExpr} (arg=ID op='::' | arg=DefinitionFacetKey op=':') right=Addition;
+	{ArgPairExpr} (arg=(ID|BuiltInStatementKey) op='::' | arg=DefinitionFacetKey op=':') right=Addition;
+	// arg = GamlVarRef serait plus intelligent, non ? 
 
 PairExpr returns Expression:
 	=> ArgPairExpr |
@@ -186,7 +188,7 @@ VariableRef returns Expression:
 	
 	//TypeRef: ref=[BuiltInType];
 GamlVarRef:
-	DefinitionFacet | DefinitionStatement;
+	DefinitionFacet | DefinitionStatement ;
 
 	/**
  * Terminals

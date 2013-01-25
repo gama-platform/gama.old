@@ -161,6 +161,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		TypePair signature = new TypePair(Types.get(left), Types.get(right));
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
+
 			if ( !BINARIES.containsKey(kw) ) {
 				BINARIES.put(kw, new GamaMap());
 			}
@@ -177,7 +178,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 						new BinaryOperator(Types.get(ret), helper, c, (short) t, (short) content,
 							IExpression.class.equals(right));
 				}
-				// simulation will be set after
 				exp.setName(kw);
 				map.put(signature, exp);
 			}

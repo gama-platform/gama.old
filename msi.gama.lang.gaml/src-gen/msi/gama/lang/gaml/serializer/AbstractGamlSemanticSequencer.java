@@ -740,7 +740,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (((arg=ID op='::') | (arg=DefinitionFacetKey op=':')) right=Addition)
+	 *     ((((arg=ID | arg=BuiltInStatementKey) op='::') | (arg=DefinitionFacetKey op=':')) right=Addition)
 	 */
 	protected void sequence_ArgPairExpr(EObject context, ArgPairExpr semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

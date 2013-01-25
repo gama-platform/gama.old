@@ -21,6 +21,7 @@ package msi.gaml.types;
 import static msi.gaml.types.IType.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.util.GuiUtils;
 import msi.gaml.descriptions.*;
 
 public class TypesManager {
@@ -69,6 +70,9 @@ public class TypesManager {
 
 		short newId = ++CURRENT_INDEX;
 		IType newType = new GamaAgentType(name, newId, base, model);
+		SpeciesDescription speciesParent = species.getParentSpecies();
+		String parentName = speciesParent == null ? IType.AGENT_STR : speciesParent.getName();
+		newType.setParent(get(parentName));
 		typeToIType.put(newId, newType);
 		stringToIType.put(name, newType);
 		classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
@@ -102,8 +106,36 @@ public class TypesManager {
 	}
 
 	public void dispose() {
+		for ( short i = SPECIES_TYPES + 1; i <= CURRENT_INDEX; i++ ) {
+			IType t = typeToIType.get(i);
+			if ( t != null ) {
+				t.clearChildren();
+			}
+		}
+		typeToIType.get(AGENT).clearChildren();
 		typeToIType.clear();
 		stringToIType.clear();
 		classToIType.clear();
+	}
+
+	public void printTypeHierarchy() {
+		Set<IType> roots = new HashSet();
+		roots.add(Types.NO_TYPE);
+		GuiUtils.debug("Type Hierarchy");
+
+		while (!roots.isEmpty()) {
+			String s = "";
+			Set<IType> current = new HashSet();
+			for ( IType t : roots ) {
+				s +=
+					t.toString() + "(" + t.id() + ", " +
+						(t.getParent() == null ? "" : t.getParent().toString()) + ") ";
+
+				current.addAll(t.getChildren());
+			}
+			GuiUtils.debug(s);
+			roots = current;
+		}
+
 	}
 }

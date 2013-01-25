@@ -179,6 +179,7 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 	@Override
 	synchronized public ModelDescription validate(final ModelStructure structure) {
 		ModelDescription md = parse(structure);
+		md.getTypesManager().printTypeHierarchy();
 		validateDescription(md);
 		return md;
 	}

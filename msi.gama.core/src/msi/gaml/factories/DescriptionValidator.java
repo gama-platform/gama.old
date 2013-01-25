@@ -77,8 +77,9 @@ public class DescriptionValidator {
 		final IExpression expr, final List<String> types, final TypesManager tm) {
 		boolean compatible = false;
 		IType actualType = expr.getType();
+
 		for ( String type : types ) {
-			compatible = compatible || tm.get(type).isAssignableFrom(actualType);
+			compatible = compatible || actualType.isTranslatableInto(tm.get(type));
 			if ( compatible ) {
 				break;
 			}
@@ -170,7 +171,7 @@ public class DescriptionValidator {
 		} else {
 			IExpression value = cd.getFacets().getExpr(VALUE);
 			if ( value != null && value.getType() != Types.NO_TYPE &&
-				!expr.getType().isAssignableFrom(value.getType()) ) {
+				!value.getType().isTranslatableInto(expr.getType()) ) {
 				cd.flagWarning("Variable " + expr.toGaml() + " of type " + expr.getType() +
 					" is assigned a value of type " + value.getType().toString() +
 					", which will be automatically casted.", IGamlIssue.SHOULD_CAST,

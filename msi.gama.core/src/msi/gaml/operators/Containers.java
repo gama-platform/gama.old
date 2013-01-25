@@ -20,6 +20,7 @@ package msi.gaml.operators;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -366,13 +367,16 @@ public class Containers {
 	}
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
-	@doc(value = "returns a new list containing all the elements of both operands", comment = IKeyword.PLUS +
-		" is only defined with a list as left operand", special_cases = { "if the right operand is nil, " +
-		IKeyword.PLUS + " returns the left operand" }, examples = {
+	@doc(value = "returns a new list containing all the elements of both operands", special_cases = { "if one of the operands is nil, " +
+		IKeyword.PLUS + " returns the casting of the other one into a list" }, examples = {
 		"[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
 	public static IList opPlus(final IScope scope, final IContainer source, final IContainer l) {
-		if ( source == null || source.isEmpty(scope) ) { return l.listValue(scope); }
+		GuiUtils.debug("Adding: " + source + " and " + l);
+		if ( source == null || source.isEmpty(scope) ) {
+			if ( l == null ) { return new GamaList(); }
+			return l.listValue(scope);
+		}
 		IList l1 = source.listValue(scope);
 		if ( l == null || l.isEmpty(scope) ) { return l1; }
 		GamaList result = new GamaList(l1.length(scope) + l.length(scope));
@@ -386,6 +390,7 @@ public class Containers {
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
 	public static IList opPlus(final IScope scope, final IContainer l1, final Object l) {
+		//GuiUtils.debug("Adding [IContainer, Object]: " + l1 + " and " + l);
 		IList result = l1.listValue(scope);
 		if ( l == null ) { return result; }
 
@@ -400,7 +405,7 @@ public class Containers {
 		"[1,3,2,4,5,6,8,5,6] union [0,8] 	--: 	[0,1,2,3,4,5,6,8]" }, see = { "inter", IKeyword.PLUS })
 	public static IList opUnion(final IScope scope, final IContainer source, final IContainer l) {
 		if ( source == null || source.isEmpty(scope) ) {
-			if ( l == null ) { return GamaList.EMPTY_LIST; }
+			if ( l == null ) { return new GamaList(); }
 			return l.listValue(scope);
 		}
 		IList l1 = source.listValue(scope);

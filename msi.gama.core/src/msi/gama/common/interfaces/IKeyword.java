@@ -131,7 +131,7 @@ public interface IKeyword {
 	public static final String GRAPH = "graph";
 	public static final String GRAPH_SKILL = "graph_user";
 	public static final String GRID = "grid";
-	public static final String GRID_POPULATION = "grid_population";
+	public static final String GRID_POPULATION = "display_grid";
 	public static final String GRID_X = "grid_x";
 	public static final String GRID_Y = "grid_y";
 	public static final String GROUP = "group";
@@ -217,7 +217,7 @@ public interface IKeyword {
 	public static final String PIE = "pie";
 	public static final String PLACES = "places";
 	public final static String PLUS = "+";
-	public final static String POPULATION = "population";
+	public final static String POPULATION = "display_population";
 	public static final String POSITION = "position";
 	public static final String PRIMITIVE = "primitive";
 	public static final String PRIORITY = "priority";

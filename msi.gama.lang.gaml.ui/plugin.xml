@@ -295,12 +295,6 @@ default-charset="UTF-8">
         <menu
               id="validationMenu"
               label="Validation">
-           <visibleWhen
-                 checkEnabled="false">
-              <reference
-                    definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-              </reference>
-           </visibleWhen>
            <command
                  commandId="org.eclipse.ui.project.cleanAction"
                  label="Clean and validate all models"

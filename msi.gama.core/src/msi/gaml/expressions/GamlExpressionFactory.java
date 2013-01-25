@@ -137,7 +137,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			if ( !ops.containsKey(childType) ) {
 				temp_types.clear();
 				for ( Map.Entry<IType, IOperator> entry : ops.entrySet() ) {
-					if ( entry.getKey().isAssignableFrom(childType) ) {
+					if ( childType.isTranslatableInto(entry.getKey()) ) {
 						temp_types.add(entry.getKey());
 					}
 				}
@@ -183,7 +183,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		IExpression right = r;
 		if ( left == null ) { return null; }
 		if ( right == null ) { return null; }
-
 		if ( BINARIES.containsKey(op) ) {
 			// We get the possible pairs of types registered
 			Map<TypePair, IOperator> map = BINARIES.get(op);

@@ -99,11 +99,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 			toClass().isAssignableFrom(type.toClass());
 	}
 
-	// @Override
-	// public SpeciesDescription getSpecies() {
-	// return model.getSpeciesDescription(name);
-	// }
-
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
 		boolean b = super.canBeTypeOf(scope, obj);
