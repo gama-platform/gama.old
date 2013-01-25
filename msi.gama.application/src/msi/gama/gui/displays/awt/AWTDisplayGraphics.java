@@ -402,10 +402,11 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param color Color
 	 * @param fill boolean
 	 * @param angle Integer
+	 * @param rounded boolean (not yet implemented in JAVA 2D)
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle) {
+		final boolean fill, final Color border, final Integer angle,final boolean rounded) {
 		Geometry geom = null;
 		ITopology topo = scope.getTopology();
 		if ( topo.isTorus() ) {
