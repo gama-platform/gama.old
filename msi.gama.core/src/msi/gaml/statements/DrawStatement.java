@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
@@ -67,7 +67,7 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
 combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, Z }),
-	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED,  ROTATE, Z }),
+	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, Z }),
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
@@ -91,25 +91,38 @@ public class DrawStatement extends AbstractStatementSequence {
 		SHAPES.put("line", 4);
 	}
 
+	IExpression color, item;
+
 	private final DrawExecuter executer;
+
+	private final IExpression getShapeExpression(final IDescription desc) {
+		return GAMA.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY),
+			Types.get(IType.GEOMETRY), false, IVarExpression.AGENT, desc);
+	}
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		IExpression toDraw = getFacet(IType.GEOM_STR);
-		if ( toDraw == null ) {
+		item = getFacet(IType.GEOM_STR);
+		color = getFacet(IKeyword.COLOR);
+		if ( item == null ) {
 			executer = null;
 			return;
 		}
 		// Compatibility with the old 'draw + shape' statement
-		toDraw = patchForCompatibility(toDraw, desc);
+		item = patchForCompatibility(item, desc);
 		//
-		if ( toDraw.getType().id() == IType.GEOMETRY ) {
+		if ( item.getType().id() == IType.GEOMETRY ) {
 			executer = new ShapeExecuter(desc);
-		} else if ( toDraw.getType().id() == IType.FILE ) {
+		} else if ( item.getType().id() == IType.FILE ) {
 			executer = new ImageExecuter(desc);
-		} else if ( toDraw.getType().id() == IType.STRING ) {
+		} else if ( item.getType().id() == IType.STRING ) {
 			executer = new TextExecuter(desc);
+		} else if ( item.getType().id() == IType.COLOR ) {
+			color = item;
+			item = getShapeExpression(desc);
+			executer = new ShapeExecuter(desc);
 		} else {
+			// toDraw is supposed to be castable into a geometry
 			executer = new ShapeExecuter(desc);
 		}
 	}
@@ -141,9 +154,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 					exp = GAMA.getExpressionFactory().createUnaryExpr("square", sizeExp, desc);
 				} else if ( old.equals("geometry") ) {
-					exp =
-						GAMA.getExpressionFactory().createVar("shape", Types.get(IType.GEOM_STR),
-							Types.get(IType.GEOM_STR), false, IVarExpression.AGENT, desc);
+					exp = getShapeExpression(desc);
 				} else if ( old.equals("line") ) {
 					IExpression at = getFacet(AT);
 					IExpression to = getFacet(TO);
@@ -179,7 +190,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, loc, color, bord, rot, elevation, item, empty, rounded;
+		IExpression size, loc, bord, rot, elevation, empty, rounded;
 
 		Color constCol;
 		private final Color constBord;
@@ -201,15 +212,13 @@ public class DrawStatement extends AbstractStatementSequence {
 				constEmpty = null;
 			}
 
-			item = getFacet(IType.GEOM_STR);
 			elevation = getFacet(Z);
 			size = getFacet(SIZE);
 			loc = getFacet(AT);
-			color = getFacet(COLOR);
 			bord = getFacet(BORDER);
 			rot = getFacet(ROTATE);
 			rounded = getFacet(ROUNDED);
-			
+
 			constSize =
 				size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
 			constCol =
@@ -218,7 +227,9 @@ public class DrawStatement extends AbstractStatementSequence {
 				bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
 			constRot = rot != null && rot.isConst() ? Cast.asInt(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
-			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
+			constRounded =
+				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope))
+					: null;
 		}
 
 		double scale(final double val, final IGraphics g) {
@@ -248,7 +259,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black
 				: constBord;
 		}
-		
+
 		Boolean getRounded(final IScope scope) {
 			return constRounded == null ? empty == null ? false : Cast.asBool(scope,
 				rounded.value(scope)) : constRounded;
@@ -388,9 +399,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			// Get the z composante of the agent.
 			// FIXME: (Added by Arno 09/12) Why not changing the method scale in order to make it
 			// return a 3D point instead of a 2D point.
-			if ( Double.isNaN(agent.getLocation().getZ()) ) { return g.drawString(agent,info,
+			if ( Double.isNaN(agent.getLocation().getZ()) ) { return g.drawString(agent, info,
 				getColor(scope), getRotation(scope), 0.0f); }
-			return g.drawString(agent,info, getColor(scope), getRotation(scope), (float) agent
+			return g.drawString(agent, info, getColor(scope), getRotation(scope), (float) agent
 				.getLocation().getZ());
 
 		}
