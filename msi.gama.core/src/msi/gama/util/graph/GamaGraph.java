@@ -366,7 +366,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	@Override
 	public boolean removeAllVertices(final Collection vertices) {
 		boolean result = false;
-		for ( Object o : vertices ) {
+		for ( Object o : vertices.toArray() ) {
 			result = result || removeVertex(o);
 		}
 		return result;
