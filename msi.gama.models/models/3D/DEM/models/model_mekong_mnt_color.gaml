@@ -51,7 +51,7 @@ environment bounds: shape_file_river{
 experiment display  type: gui {
 	
 	output {
-	display city_display  type: opengl refresh_every: 1 {
+	display city_display  type: opengl refresh_every: 1 tesselation:false{
 		species cell aspect: base refresh:false;
 		//image name: 'Background' file: mntImageRaster.path;
 	}
