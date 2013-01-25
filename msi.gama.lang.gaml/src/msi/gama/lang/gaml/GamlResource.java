@@ -198,6 +198,9 @@ public class GamlResource extends LazyLinkingResource {
 		Expression expr = EGaml.getExprOf(stm);
 
 		if ( keyword.equals(EQUATION) ) {
+			if ( elt == null ) {
+				elt = new SyntacticStatement(EQUATION, stm);
+				}
 			addFacet(stm, elt, EQUATION_LEFT, convExpr(stm.getFunction()));
 			addFacet(stm, elt, EQUATION_RIGHT, convExpr(EGaml.getExprOf(stm)));
 		}
