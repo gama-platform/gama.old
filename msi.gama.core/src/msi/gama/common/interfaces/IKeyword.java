@@ -106,10 +106,12 @@ public interface IKeyword {
 	/*
 	 * Equations
 	 */
-	public static final String EQUATION = "=";
+	public static final String EQUATION_OP = "=";
 	public static final String EQUATION_LEFT = "left";
 	public static final String EQUATION_RIGHT = "right";
+	public static final String EQUATION = "equation";
 	public static final String SOLVER = "solver";
+	public static final String SOLVE = "solve";
 	/*
 	 * 
 	 */
