@@ -124,4 +124,6 @@ public interface IGui {
 
 	void openEditorAndSelect(Object eObject);
 
+	void updateParameterView();
+
 }
