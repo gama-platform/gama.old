@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="commons-math3-3.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-math3-3.1.1.jar" sourcepath="sources/commons-math3-3.1.1-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="postgresql-9.2-1002.jdbc4.jar"/>
 	<classpathentry exported="true" kind="lib" path="sqlsheet-6.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="mysql-connector-java-5.1.17.jar"/>
