@@ -34,7 +34,7 @@ import msi.gaml.expressions.*;
  */
 public class GAMA {
 
-	public final static String VERSION = "GAMA 1.5";
+	public final static String VERSION = "GAMA 1.6";
 
 	public final static String PAUSED = "STOPPED";
 	public final static String RUNNING = "RUNNING";
