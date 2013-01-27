@@ -361,4 +361,9 @@ public class GuiUtils {
 		gui.openEditorAndSelect(eObject);
 	}
 
+	public static void updateParameterView() {
+		if ( gui == null ) { return; }
+		gui.updateParameterView();
+	}
+
 }
