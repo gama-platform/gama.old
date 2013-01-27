@@ -103,17 +103,18 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cWriteKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
 		private final Keyword cDisplay_populationKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
 		private final Keyword cDisplay_gridKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cUsingKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
 		
 		//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
 		//// FIXME : this is nonsense ! This list should not exist
 		//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid";
+		//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid" | "using";
 		public ParserRule getRule() { return rule; }
 
 		////Statements that accept an expression as their "default" facet
 		//// FIXME : this is nonsense ! This list should not exist
 		//"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-		//"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid"
+		//"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid" | "using"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		////Statements that accept an expression as their "default" facet
@@ -174,6 +175,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"display_grid"
 		public Keyword getDisplay_gridKeyword_18() { return cDisplay_gridKeyword_18; }
+
+		//"using"
+		public Keyword getUsingKeyword_19() { return cUsingKeyword_19; }
 	}
 
 	public class StatementElements extends AbstractParserRuleElementFinder {
@@ -2061,7 +2065,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//BuiltInStatementKey: //Statements that accept an expression as their "default" facet
 	//// FIXME : this is nonsense ! This list should not exist
 	//	"add" | "ask" | "capture" | "create" | "draw" | "error" | "match" | "match_between" | "match_one" | "put" | "release" |
-	//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid";
+	//	"remove" | "save" | "set" | "switch" | "warn" | "write" | "display_population" | "display_grid" | "using";
 	public BuiltInStatementKeyElements getBuiltInStatementKeyAccess() {
 		return (pBuiltInStatementKey != null) ? pBuiltInStatementKey : (pBuiltInStatementKey = new BuiltInStatementKeyElements());
 	}

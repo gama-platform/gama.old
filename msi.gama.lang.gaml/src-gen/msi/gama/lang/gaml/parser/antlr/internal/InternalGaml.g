@@ -331,6 +331,13 @@ ruleBuiltInStatementKey returns [AntlrDatatypeRuleToken current=new AntlrDatatyp
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getDisplay_gridKeyword_18()); 
     }
+
+    |
+	kw='using' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getBuiltInStatementKeyAccess().getUsingKeyword_19()); 
+    }
 )
     ;
 
