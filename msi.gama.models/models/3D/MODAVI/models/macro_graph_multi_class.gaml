@@ -28,7 +28,8 @@ global {
 	
 	graph my_macroGraph;
 	
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
+	int nbTypeOfClass parameter: "Type of class" min:1 <-5 category: 'Model';
 	int nbClass parameter: 'Number of class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
@@ -59,8 +60,9 @@ global {
 		
 		
 		ask node as list{
-			set class <- rnd(nbClass-1)+1;			
-			do setPositionAndColor;	
+			loop i from:0 to:nbTypeOfClass{
+				classVector[i] <- rnd(nbClass-1)+1;
+			}		
 		}
 		
 		ask edge as list{
@@ -72,6 +74,7 @@ global {
 		create macroNode number: nbClass{	
 			set class <-i;
 			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
+			color <- color hsb_to_rgb ([i/nbClass,1.0,1.0]);
 			set i<-i+1;	
 			add self to: macroNodes;
 			do updatemyNodes;
@@ -101,27 +104,38 @@ entities {
 
 	species node schedules:[] {
 		
-		int class;
+		list classVector <- [0,0,0,0,0,0];
+		list posVector <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+		list colorList <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 		rgb color;
-		
-		action setPositionAndColor{
-			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
-			let tmpradius <- rnd(25)+25;
-			if(microLayout)
-			{
-				set location <- {cos (float((class-1)/nbClass)*360)*tmpradius +50,sin (float((class-1)/nbClass)*360)*tmpradius +50,0};
-			}
-			
-		} 
-						
-		reflex shuffleClass{	
-			set class <- rnd(nbClass-1)+1;
-			do setPositionAndColor;
+								
+		reflex shuffleClass{
+			write "node" + name;
+			loop i from:0 to: nbTypeOfClass{
+				write "class " + i + ": " +classVector[i];
+				classVector[i] <- rnd(nbClass-1)+1;
+			}	
 		}
 						
-		aspect base {
-			draw shape color: color z:nodeSize ; 
-		}  		
+		aspect base {			
+			draw shape color: rgb('white') z:nodeSize ; 
+		}  
+		
+		aspect class0 {
+			let tmpradius <- rnd(25)+25;
+			colorList[0]<- color hsb_to_rgb ([classVector[0]/nbClass,1.0,1.0]);			
+			posVector[0] <- [cos (float((classVector[0]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[0]-1)/nbClass)*360)*tmpradius +50,0]; 	
+			draw geometry (point([posVector[0][0],posVector[0][1]]) ) color: rgb(colorList[0])  z:nodeSize ;
+			
+		}
+		
+		aspect class1 {
+			let tmpradius <- rnd(25)+25;
+			colorList[1] <- color hsb_to_rgb ([classVector[1]/nbClass,1.0,1.0]);
+			set location <- {cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,0};
+			draw shape color: rgb(colorList[1]) z:nodeSize ;
+			draw geometry (point([cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50])) color: rgb(colorList[1])  z:nodeSize ;
+		}		
 	}
 	
 
@@ -131,13 +145,20 @@ entities {
 		reflex updateInteractionMatrix{															
 				let src type:node<- my_graph source_of(self);
 				let dest type:node <- my_graph target_of(self);	
-				let tmp <- interactionMatrix  at {src.class-1,dest.class-1};
-				put (int(tmp)+1) at: {src.class-1,dest.class-1} in: interactionMatrix;
+				let tmp <- interactionMatrix  at {src.classVector[0]-1,dest.classVector[0]-1};
+				put (int(tmp)+1) at: {src.classVector[0]-1,dest.classVector[0]-1} in: interactionMatrix;
 		} 
 		
 		aspect base {
 			draw shape color: color ;
+			 
+			
 		}	
+		
+		aspect edge0{
+			//Line from src to dest
+			draw geometry: (line([point([1,1]),point([2,2])])) color:color;
+		}
 	}
 	
 	
@@ -146,34 +167,22 @@ entities {
 		int class;
 		int nbAggregatedNodes;
 		 
-		
 		reflex update{
 			do updatemyNodes;
-			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
 		}
 		action updatemyNodes{			
 			set nbAggregatedNodes<-0;
 			
 			
 			ask node as list{
-			  if	(class = myself.class) {
+			  if	(classVector[0] = myself.class) {
 				set myself.nbAggregatedNodes <- myself.nbAggregatedNodes+1;
-				set myself.color <-color;
 			  }	 
 		    }	    
 		} 
 		
-		
-       // 
-
-		aspect cylinder{
-			draw geometry: circle ((nbAggregatedNodes/10)*macroNodeSize) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
-			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
-		}
-		
 		aspect sphere{
-			draw geometry: geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
-			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
+			draw geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
 		}
 	}
 	
@@ -194,30 +203,7 @@ entities {
 	
 	species macroGraph schedules:[] {
 		
-	/*reflex updateMacroEdgeThreshold {
-			
-	 	ask macroEdge as list{
-	 		do die;
-	 	}
-	 	
-	 	loop i from: 0 to: nbClass-1{
-	      loop j from: 0 to: nbClass-1{
-	        let tmp <- interactionMatrix  at {i,j};  
-	        if(i!=j){
-	        	//write string(i+1) + "<->" + string(j+1) + " average linkage: " + int(tmp);
-	          if (int(tmp)>threshold){
-	            //write string(i+1) + "<->" + string(j+1) + " average linkage: " + int(tmp);
-	            create macroEdge{
-	            	set nbAggregatedLinks <- tmp;
-	              set src <- macroNodes at (i);
-			          set dest <- macroNodes at (j);	
-			          set my_macroGraph <- my_macroGraph add_edge (src::dest);
-	            }	
-	          }
-	        }      
-	      }
-	    }
-  	}*/
+
   	
    reflex updateAllMacroEdge {
 			
@@ -250,19 +236,19 @@ entities {
 }
 experiment generate_graph type: gui {
 	output {	
-		
-		/*display graph_original type:opengl ambiant_light: 0.5	{				
-			species node aspect: base ; 
-			species edge aspect: base ;		
-			text  text1 value:"Original graph" position: {50,110};
-		}*/
-		
+				
 		display Augmented_Graph type:opengl ambiant_light: 0.4	background: rgb('black'){
 					
-			species node aspect: base ; 
-			species edge aspect: base ;		
+			species node aspect: class0 ; 
+			species edge aspect: base ;
 			species macroNode aspect:sphere  position: {0,0} z:0.2;
-			species macroEdge aspect:base  position: {0,0} z:0.2;	
+			species macroEdge aspect:base  position: {0,0} z:0.2;
+			
+			//species node aspect: class1  z:0.4; 
+			//species edge aspect: base z:0.4;
+			
+			
+				
 			//text  text1 value:"Original graph" position: {50,110};
 			//text  text2 value:"Interaction graph" position: {170,110};
 			
