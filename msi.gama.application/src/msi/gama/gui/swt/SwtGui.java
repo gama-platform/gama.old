@@ -1005,4 +1005,24 @@ public class SwtGui implements IGui {
 	@Override
 	public void openEditorAndSelect(final Object eObject) {}
 
+	@Override
+	public void updateParameterView() {
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					ExperimentParametersView view =
+						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID,
+							null, IWorkbenchPage.VIEW_VISIBLE);
+					view.updateItemValues();
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+	}
+
 }
