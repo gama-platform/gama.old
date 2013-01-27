@@ -263,4 +263,7 @@ public class HeadlessListener implements IGui {
 	public void openEditorAndSelect(final Object eObject) {
 		// NOTHING TO DO OBVIOUSLY !
 	}
+
+	@Override
+	public void updateParameterView() {}
 }
