@@ -29,7 +29,7 @@ global {
 	graph my_macroGraph;
 	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
-	int nbTypeOfClass parameter: "Type of class" min:1 <-5 category: 'Model';
+	int nbTypeOfClass parameter: "Type of class" min:0 <-0 category: 'Model';
 	int nbClass parameter: 'Number of class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
@@ -62,7 +62,7 @@ global {
 		ask node as list{
 			loop i from:0 to:nbTypeOfClass{
 				classVector[i] <- rnd(nbClass-1)+1;
-			}		
+ 			}		
 		}
 		
 		ask edge as list{
@@ -104,60 +104,96 @@ entities {
 
 	species node schedules:[] {
 		
-		list classVector <- [0,0,0,0,0,0];
-		list posVector <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+		list classVector <- [0];
+		//list<int> classVector size: 3 fill_with: {0,0,0};
+		list<point> posVector <- [{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}];
 		list colorList <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 		rgb color;
 								
 		reflex shuffleClass{
-			write "node" + name;
 			loop i from:0 to: nbTypeOfClass{
-				write "class " + i + ": " +classVector[i];
 				classVector[i] <- rnd(nbClass-1)+1;
 			}	
 		}
 						
 		aspect base {			
-			draw shape color: rgb('white') z:nodeSize ; 
+			draw shape color: rgb('blue') z:nodeSize ; 
 		}  
 		
 		aspect class0 {
 			let tmpradius <- rnd(25)+25;
-			colorList[0]<- color hsb_to_rgb ([classVector[0]/nbClass,1.0,1.0]);			
-			posVector[0] <- [cos (float((classVector[0]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[0]-1)/nbClass)*360)*tmpradius +50,0]; 	
-			draw geometry (point([posVector[0][0],posVector[0][1]]) ) color: rgb(colorList[0])  z:nodeSize ;
+			colorList[0]<- color hsb_to_rgb ([classVector[0]/nbClass,1.0,1.0]);					
+			posVector[0] <- {(cos (float((classVector[0]-1)/nbClass)*360)*tmpradius +50),(sin (float((classVector[0]-1)/nbClass)*360)*tmpradius +50),0}; 
+			draw geometry (point(posVector[0])) color: rgb(colorList[0])  z:nodeSize ;
 			
 		}
 		
 		aspect class1 {
 			let tmpradius <- rnd(25)+25;
 			colorList[1] <- color hsb_to_rgb ([classVector[1]/nbClass,1.0,1.0]);
-			set location <- {cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,0};
-			draw shape color: rgb(colorList[1]) z:nodeSize ;
-			draw geometry (point([cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50,sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50])) color: rgb(colorList[1])  z:nodeSize ;
-		}		
+			posVector[1] <- {(cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50),(sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50),10}; 
+			draw geometry (point(posVector[1])) color: rgb(colorList[1])  z:nodeSize ;
+		}	
+		
+		
+		
+		aspect classGenericColored{
+			loop i from:0 to: nbTypeOfClass{
+				let tmpradius <- rnd(25)+25;
+			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbClass,1.0,1.0]);					
+			    posVector[i] <- {location.x+i*110,location.y,0}; 
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
+			}
+		}
+		
+		aspect classGenericSpatialized{
+			loop i from:0 to: nbTypeOfClass{
+				let tmpradius <- rnd(25)+25;
+			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbClass,1.0,1.0]);					
+			    posVector[i] <- {(cos (float((classVector[i]-1)/nbClass)*360)*tmpradius +50)+i*110,(sin (float((classVector[i]-1)/nbClass)*360)*tmpradius +50),0}; 
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
+			}
+		}	
 	}
 	
 
 	species edge schedules:[] { 
 		rgb color;
+		node src;
+		node dest;
+		
+		
 		
 		reflex updateInteractionMatrix{															
-				let src type:node<- my_graph source_of(self);
-				let dest type:node <- my_graph target_of(self);	
+				set src <- my_graph source_of(self);
+				set dest <- my_graph target_of(self);	
 				let tmp <- interactionMatrix  at {src.classVector[0]-1,dest.classVector[0]-1};
 				put (int(tmp)+1) at: {src.classVector[0]-1,dest.classVector[0]-1} in: interactionMatrix;
 		} 
 		
 		aspect base {
 			draw shape color: color ;
-			 
-			
 		}	
-		
 		aspect edge0{
-			//Line from src to dest
-			draw geometry: (line([point([1,1]),point([2,2])])) color:color;
+		//Line from src to dest			
+			if ((src != nil) and (dest !=nil) ){
+				draw geometry: line( [ point(src.posVector[0]) , point(dest.posVector[0])] ) color:color;
+			}
+		}
+		
+		aspect edge1{
+		//Line from src to dest			
+			if ((src != nil) and (dest !=nil) ){
+				draw geometry: line( [ point(src.posVector[1]) , point(dest.posVector[1])] ) color:color;
+			}
+		}
+		
+		aspect edgeGenericSpatialized{
+			loop i from:0 to: nbTypeOfClass{
+				if ((src != nil) and (dest !=nil) ){
+				draw geometry: line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:color;
+			}
+			}
 		}
 	}
 	
@@ -236,13 +272,29 @@ entities {
 }
 experiment generate_graph type: gui {
 	output {	
-				
-		display Augmented_Graph type:opengl ambiant_light: 0.4	background: rgb('black'){
-					
-			species node aspect: class0 ; 
+			
+		display OriginalGraph type:opengl ambiant_light: 0.4{
+			species node aspect: base ; 
 			species edge aspect: base ;
-			species macroNode aspect:sphere  position: {0,0} z:0.2;
-			species macroEdge aspect:base  position: {0,0} z:0.2;
+		}	
+		
+		display Augmented_Graph type:opengl{
+			species node aspect: classGenericColored ; 
+			species edge aspect: edgeGenericSpatialized ;
+			text name:"class1" value:"class1" position:{40,110,0};
+			text name:"class2" value:"class2" position:{150,110,0};
+			text name:"class3" value:"class3" position:{250,110,0};
+		}
+				
+		display Augmented_Graph_Spatialized type:opengl ambiant_light: 0.4{
+					
+			species node aspect: classGenericSpatialized ; 
+			species edge aspect: edgeGenericSpatialized ;
+			
+			//species node aspect: class1;
+		    //species edge aspect: edge1;
+			//species macroNode aspect:sphere  position: {0,0} z:0.2;
+			//species macroEdge aspect:base  position: {0,0} z:0.2;
 			
 			//species node aspect: class1  z:0.4; 
 			//species edge aspect: base z:0.4;
@@ -252,6 +304,19 @@ experiment generate_graph type: gui {
 			//text  text1 value:"Original graph" position: {50,110};
 			//text  text2 value:"Interaction graph" position: {170,110};
 			
+		}
+		display Augmented_Graph_Macro_Spatialized type:opengl ambiant_light: 0.4{
+					
+			species node aspect: classGenericSpatialized ; 
+			species edge aspect: edgeGenericSpatialized ;
+			
+			species macroNode aspect:sphere  position: {0,0} z:0.2;
+			species macroEdge aspect:base  position: {0,0} z:0.2;
+			
 		}		
+		
+		
+		
+			
 	}		
 }
