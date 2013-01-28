@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * The class ExpandableTopology.
@@ -83,9 +83,16 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean,
 	 *      msi.gama.util.GamaPoint, com.vividsolutions.jts.geom.Envelope)
 	 */
+	// @Override
+	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
+	// final ILocation previousLoc, final Envelope previousEnv) {
+	// IShape ng =
+	// Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
+	// expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
+	// }
+	//
 	@Override
-	public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
-		final ILocation previousLoc, final Envelope previousEnv) {
+	public void updateAgent(final IShape previous, final IShape agent) {
 		IShape ng =
 			Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));

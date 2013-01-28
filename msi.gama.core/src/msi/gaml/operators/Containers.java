@@ -20,7 +20,6 @@ package msi.gaml.operators;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -372,7 +371,7 @@ public class Containers {
 		"[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
 	public static IList opPlus(final IScope scope, final IContainer source, final IContainer l) {
-		GuiUtils.debug("Adding: " + source + " and " + l);
+		// GuiUtils.debug("Adding: " + source + " and " + l);
 		if ( source == null || source.isEmpty(scope) ) {
 			if ( l == null ) { return new GamaList(); }
 			return l.listValue(scope);
@@ -390,7 +389,7 @@ public class Containers {
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
 	public static IList opPlus(final IScope scope, final IContainer l1, final Object l) {
-		//GuiUtils.debug("Adding [IContainer, Object]: " + l1 + " and " + l);
+		// GuiUtils.debug("Adding [IContainer, Object]: " + l1 + " and " + l);
 		IList result = l1.listValue(scope);
 		if ( l == null ) { return result; }
 

@@ -29,7 +29,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -50,10 +49,13 @@ public interface ITopology extends IValue {
 
 	public abstract void initialize(IPopulation pop) throws GamaRuntimeException;
 
-	public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
-		final ILocation previousLoc, final Envelope previousEnv);
+	// public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
+	// final ILocation previousLoc, final Envelope previousEnv);
+
+	void updateAgent(IShape previous, IShape agent);
 
 	public abstract void removeAgent(final IAgent agent);
+
 	public abstract Geometry returnToroidalGeom(final Geometry geom);
 
 	public abstract IAgent getAgentClosestTo(final IShape source, IAgentFilter filter);
@@ -68,7 +70,7 @@ public interface ITopology extends IValue {
 
 	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
 		boolean covered);
-	
+
 	public abstract boolean isTorus();
 
 	/**
@@ -121,7 +123,7 @@ public interface ITopology extends IValue {
 	 * 
 	 * @return an instance of IGamaContainer, which geometries can be iterated.
 	 */
-	@getter( IKeyword.PLACES)
+	@getter(IKeyword.PLACES)
 	public abstract IContainer<?, IShape> getPlaces();
 
 	/**
@@ -129,7 +131,7 @@ public interface ITopology extends IValue {
 	 * 
 	 * @return an instance of IGeometry.
 	 */
-	@getter( IKeyword.ENVIRONMENT)
+	@getter(IKeyword.ENVIRONMENT)
 	public abstract IShape getEnvironment();
 
 	/**

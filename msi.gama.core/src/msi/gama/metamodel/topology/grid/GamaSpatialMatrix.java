@@ -704,17 +704,27 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public void insert(final Envelope bounds, final IShape o) {}
+	public void insert(final IShape a) {
+
+	}
 
 	@Override
-	public void insert(final Coordinate location, final IShape agent) {}
+	public void remove(final IShape previous, final IShape a) {
 
-	@Override
-	public void remove(final Envelope bounds, final IShape o) {}
+	}
 
-	@Override
-	public void remove(final Coordinate previousLoc, final IShape agent) {}
-
+	// @Override
+	// public void insert(final Envelope bounds, final IShape o) {}
+	//
+	// @Override
+	// public void insert(final Coordinate location, final IShape agent) {}
+	//
+	// @Override
+	// public void remove(final Envelope bounds, final IShape o) {}
+	//
+	// @Override
+	// public void remove(final Coordinate previousLoc, final IShape agent) {}
+	//
 	@Override
 	public IList<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
 		double exp = dist * Maths.SQRT2;
@@ -730,21 +740,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return external_results;
 	}
 
-	@Override
-	public IList<IShape> allAtDistance(final ILocation source, final double dist,
-		final IAgentFilter f) {
-		double exp = dist * Maths.SQRT2;
-		ENVELOPE.init(source.getEnvelope());
-		ENVELOPE.expandBy(exp);
-		Collection<IShape> set = allInEnvelope(source, ENVELOPE, f, false);
-		GamaList external_results = new GamaList();
-		for ( IShape a : set ) {
-			if ( source.euclidianDistanceTo(a) < dist ) {
-				external_results.add(a);
-			}
-		}
-		return external_results;
-	}
+	// @Override
+	// public IList<IShape> allAtDistance(final ILocation source, final double dist,
+	// final IAgentFilter f) {
+	// double exp = dist * Maths.SQRT2;
+	// ENVELOPE.init(source.getEnvelope());
+	// ENVELOPE.expandBy(exp);
+	// Collection<IShape> set = allInEnvelope(source, ENVELOPE, f, false);
+	// GamaList external_results = new GamaList();
+	// for ( IShape a : set ) {
+	// if ( source.euclidianDistanceTo(a) < dist ) {
+	// external_results.add(a);
+	// }
+	// }
+	// return external_results;
+	// }
 
 	@Override
 	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
@@ -764,37 +774,41 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return min_agent;
 	}
 
-	@Override
-	public IShape firstAtDistance(final ILocation source, final double dist, final IAgentFilter f) {
-		double exp = dist * Maths.SQRT2;
-		ENVELOPE.init(source.getEnvelope());
-		ENVELOPE.expandBy(exp);
-		Collection<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
-		double min_distance = dist;
-		IShape min_agent = null;
-		for ( IShape a : in_square ) {
-			Double dd = source.euclidianDistanceTo(a);
-			if ( dd < min_distance ) {
-				min_distance = dd;
-				min_agent = a;
-			}
-		}
-		return min_agent;
-	}
+	//
+	// @Override
+	// public IShape firstAtDistance(final ILocation source, final double dist, final IAgentFilter
+	// f) {
+	// double exp = dist * Maths.SQRT2;
+	// ENVELOPE.init(source.getEnvelope());
+	// ENVELOPE.expandBy(exp);
+	// Collection<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
+	// double min_distance = dist;
+	// IShape min_agent = null;
+	// for ( IShape a : in_square ) {
+	// Double dd = source.euclidianDistanceTo(a);
+	// if ( dd < min_distance ) {
+	// min_distance = dd;
+	// min_agent = a;
+	// }
+	// }
+	// return min_agent;
+	// }
 
 	@Override
 	public IList<IShape> allInEnvelope(final IShape source, final Envelope env,
 		final IAgentFilter f, final boolean covered) {
-		if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
+		// if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
 		int minX = getX(env.getMinX());
 		int minY = getY(env.getMinY());
 		int maxX = getX(env.getMaxX());
 		int maxY = getY(env.getMaxY());
 		IList<IShape> ags = new GamaList();
-		for ( int i = minX; i < maxX; i++ ) {
-			for ( int j = minY; j < maxY; j++ ) {
+		// BUGFIX AD 28/01/13 Changed "<" into "<="
+		for ( int i = minX; i <= maxX; i++ ) {
+			for ( int j = minY; j <= maxY; j++ ) {
 				int index = getPlaceIndexAt(i, j);
-				if ( index != 1 ) {
+				// BUGFIX AD 28/01/13 Changed "1" into "-1"
+				if ( index != -1 ) {
 					IAgent a = matrix[index].getAgent();
 					if ( a != null ) {
 						if ( covered && env.covers(a.getEnvelope()) || !covered &&

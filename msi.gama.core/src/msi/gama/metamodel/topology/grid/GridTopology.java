@@ -28,7 +28,6 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class GridTopology extends AbstractTopology {
 
@@ -37,17 +36,23 @@ public class GridTopology extends AbstractTopology {
 		places = matrix;
 	}
 
+	// @Override
+	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
+	// final ILocation previousLoc, final Envelope previousEnv) {
+	// // TODO grid agents should not be added to the spatial index. However, it may break some
+	// // algorithms.
+	// // super.updateAgent(agent, previousShapeIsPoint, previousLoc, previousEnv);
+	// }
+
 	@Override
-	public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
-		final ILocation previousLoc, final Envelope previousEnv) {
-		// TODO grid agents should not be added to the spatial index. However, it may break some
-		// algorithms.
-		// super.updateAgent(agent, previousShapeIsPoint, previousLoc, previousEnv);
+	public void updateAgent(final IShape previous, final IShape agent) {
+
 	}
 
 	@Override
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
+		spatialIndex.add(getPlaces(), pop.getSpecies());
 		super.initialize(pop);
 	}
 
@@ -57,13 +62,14 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows,
-		final int columns, final boolean isTorus,final boolean usesVN, final boolean isHexagon)
-		throws GamaRuntimeException { 
+		final int columns, final boolean isTorus, final boolean usesVN, final boolean isHexagon)
+		throws GamaRuntimeException {
 		super(scope, environment, isTorus);
-		if (isHexagon)
+		if ( isHexagon ) {
 			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN, isHexagon);
-		else 
+		} else {
 			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN);
+		}
 	}
 
 	@Override
@@ -102,7 +108,6 @@ public class GridTopology extends AbstractTopology {
 		return IKeyword.TOPOLOGY + " (" + places.toGaml() + ")";
 	}
 
-	
 	/**
 	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.AbstractTopology#_copy()
@@ -110,8 +115,7 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	protected ITopology _copy() throws GamaRuntimeException {
 		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(),
-			((GamaSpatialMatrix) places).getCols(),
-			((GamaSpatialMatrix) places).isTorus,
+			((GamaSpatialMatrix) places).getCols(), ((GamaSpatialMatrix) places).isTorus,
 			((GamaSpatialMatrix) places).neighbourhood.isVN(),
 			((GamaSpatialMatrix) places).isHexagon);
 	}
@@ -212,7 +216,7 @@ public class GridTopology extends AbstractTopology {
 		final IAgentFilter filter) throws GamaRuntimeException {
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
 	}
-	
+
 	@Override
 	public boolean isTorus() {
 		// TODO Auto-generated method stub

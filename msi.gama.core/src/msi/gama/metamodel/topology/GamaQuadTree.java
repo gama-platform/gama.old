@@ -23,7 +23,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Maths;
@@ -60,51 +60,74 @@ public class GamaQuadTree implements ISpatialIndex {
 	}
 
 	@Override
-	public void insert(final Envelope bounds, final IShape o) {
-		// try {
-		// lock.lock();
-
-		root.add(bounds, o);
+	public void insert(final IShape agent) {
+		if ( agent == null ) { return; }
+		if ( agent.isPoint() ) {
+			root.add((Coordinate) agent.getLocation(), agent);
+		} else {
+			root.add(agent.getEnvelope(), agent);
+		}
 		totalAgents++;
-		// } finally {
-		// lock.unlock();
-		// }
 	}
 
 	@Override
-	public void insert(final Coordinate point, final IShape a) {
-		try {
-			// lock.lock();
-
-			root.add(point, a);
-			totalAgents++;
-		} finally {
-			// lock.unlock();
+	public void remove(final IShape previous, final IShape agent) {
+		IShape current = previous == null ? agent : previous;
+		if ( current == null ) { return; }
+		if ( current.isPoint() ) {
+			root.remove((Coordinate) current.getLocation(), agent);
+		} else {
+			root.remove(current.getEnvelope(), agent);
 		}
+		totalAgents--;
 	}
 
-	@Override
-	public void remove(final Envelope bounds, final IShape o) {
-		try {
-			// lock.lock();
-
-			root.remove(bounds, o);
-			totalAgents--;
-		} finally {
-			// lock.unlock();
-		}
-	}
-
-	@Override
-	public void remove(final Coordinate point, final IShape o) {
-		try {
-			// lock.lock();
-			root.remove(point, o);
-			totalAgents--;
-		} finally {
-			// lock.unlock();
-		}
-	}
+	// @Override
+	// public void insert(final Envelope bounds, final IShape o) {
+	// // try {
+	// // lock.lock();
+	//
+	// root.add(bounds, o);
+	// totalAgents++;
+	// // } finally {
+	// // lock.unlock();
+	// // }
+	// }
+	//
+	// @Override
+	// public void insert(final Coordinate point, final IShape a) {
+	// try {
+	// // lock.lock();
+	//
+	// root.add(point, a);
+	// totalAgents++;
+	// } finally {
+	// // lock.unlock();
+	// }
+	// }
+	//
+	// @Override
+	// public void remove(final Envelope bounds, final IShape o) {
+	// try {
+	// // lock.lock();
+	//
+	// root.remove(bounds, o);
+	// totalAgents--;
+	// } finally {
+	// // lock.unlock();
+	// }
+	// }
+	//
+	// @Override
+	// public void remove(final Coordinate point, final IShape o) {
+	// try {
+	// // lock.lock();
+	// root.remove(point, o);
+	// totalAgents--;
+	// } finally {
+	// // lock.unlock();
+	// }
+	// }
 
 	protected Collection<IShape> findIntersects(final IShape source, final Envelope r,
 		final IAgentFilter filter) {
@@ -130,25 +153,26 @@ public class GamaQuadTree implements ISpatialIndex {
 		GamaQuadTree tree = new GamaQuadTree(root.bounds);
 		IShape[] shapes = filter.getShapes().toArray(new IShape[0]);
 		for ( int i = 0; i < size; i++ ) {
-			IShape s = shapes[i];
-			if ( s.isPoint() ) {
-				tree.insert((Coordinate) s.getLocation(), s);
-			} else {
-				tree.insert(s.getEnvelope(), s);
-			}
+			tree.insert(shapes[i]);
+			// if ( s.isPoint() ) {
+			// tree.insert((Coordinate) s.getLocation(), s);
+			// } else {
+			// tree.insert(s.getEnvelope(), s);
+			// }
 		}
 		cache.put(filter, tree);
 		return tree;
 	}
 
-	protected Collection<IShape> findIntersects(final ILocation source, final Envelope r,
-		final IAgentFilter filter) {
-		GamaQuadTree clone = cloneIfNecessary(filter);
-		if ( clone != null ) { return clone.findIntersects(source, r, null); }
-		HashSet<IShape> internal_results = new HashSet();
-		root.findIntersects(source, r, filter, internal_results);
-		return internal_results;
-	}
+	//
+	// protected Collection<IShape> findIntersects(final ILocation source, final Envelope r,
+	// final IAgentFilter filter) {
+	// GamaQuadTree clone = cloneIfNecessary(filter);
+	// if ( clone != null ) { return clone.findIntersects(source, r, null); }
+	// HashSet<IShape> internal_results = new HashSet();
+	// root.findIntersects(source, r, filter, internal_results);
+	// return internal_results;
+	// }
 
 	@Override
 	public GamaList<IShape> allAtDistance(final IShape source, final double dist,
@@ -169,24 +193,24 @@ public class GamaQuadTree implements ISpatialIndex {
 		return external_results;
 	}
 
-	@Override
-	public GamaList<IShape> allAtDistance(final ILocation source, final double dist,
-		final IAgentFilter f) {
-
-		// TODO filter result by topology's bounds
-
-		double exp = dist * Maths.SQRT2;
-		ENVELOPE.init((Coordinate) source);
-		ENVELOPE.expandBy(exp);
-		Collection<IShape> set = findIntersects(source, ENVELOPE, f);
-		GamaList external_results = new GamaList();
-		for ( IShape a : set ) {
-			if ( source.euclidianDistanceTo(a) < dist ) {
-				external_results.add(a);
-			}
-		}
-		return external_results;
-	}
+	// @Override
+	// public GamaList<IShape> allAtDistance(final ILocation source, final double dist,
+	// final IAgentFilter f) {
+	//
+	// // TODO filter result by topology's bounds
+	//
+	// double exp = dist * Maths.SQRT2;
+	// ENVELOPE.init((Coordinate) source);
+	// ENVELOPE.expandBy(exp);
+	// Collection<IShape> set = findIntersects(source, ENVELOPE, f);
+	// GamaList external_results = new GamaList();
+	// for ( IShape a : set ) {
+	// if ( source.euclidianDistanceTo(a) < dist ) {
+	// external_results.add(a);
+	// }
+	// }
+	// return external_results;
+	// }
 
 	@Override
 	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
@@ -206,23 +230,25 @@ public class GamaQuadTree implements ISpatialIndex {
 		return min_agent;
 	}
 
-	@Override
-	public IShape firstAtDistance(final ILocation source, final double dist, final IAgentFilter f) {
-		double exp = dist * Maths.SQRT2;
-		ENVELOPE.init((Coordinate) source);
-		ENVELOPE.expandBy(exp);
-		Collection<IShape> in_square = findIntersects(source, ENVELOPE, f);
-		double min_distance = dist;
-		IShape min_agent = null;
-		for ( IShape a : in_square ) {
-			Double dd = a.euclidianDistanceTo(source);
-			if ( dd < min_distance ) {
-				min_distance = dd;
-				min_agent = a;
-			}
-		}
-		return min_agent;
-	}
+	//
+	// @Override
+	// public IShape firstAtDistance(final ILocation source, final double dist, final IAgentFilter
+	// f) {
+	// double exp = dist * Maths.SQRT2;
+	// ENVELOPE.init((Coordinate) source);
+	// ENVELOPE.expandBy(exp);
+	// Collection<IShape> in_square = findIntersects(source, ENVELOPE, f);
+	// double min_distance = dist;
+	// IShape min_agent = null;
+	// for ( IShape a : in_square ) {
+	// Double dd = a.euclidianDistanceTo(source);
+	// if ( dd < min_distance ) {
+	// min_distance = dd;
+	// min_agent = a;
+	// }
+	// }
+	// return min_agent;
+	// }
 
 	@Override
 	public GamaList<IShape> allInEnvelope(final IShape source, final Envelope envelope,
@@ -490,32 +516,33 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
-		public void findIntersects(final ILocation source, final Envelope r, final IAgentFilter f,
-			final HashSet<IShape> result) {
-			if ( bounds.intersects(r) ) {
-				for ( int i = 0, n = size; i < n; i++ ) {
-					IShape entry = objects.get(i);
-					if ( (f == null || f.accept(source, entry)) &&
-						entry.getEnvelope().intersects(r) ) {
-						result.add(entry);
-					}
-				}
-				if ( !isLeaf ) {
-					if ( !nw.isEmpty() ) {
-						nw.findIntersects(source, r, f, result);
-					}
-					if ( !ne.isEmpty() ) {
-						ne.findIntersects(source, r, f, result);
-					}
-					if ( !sw.isEmpty() ) {
-						sw.findIntersects(source, r, f, result);
-					}
-					if ( !se.isEmpty() ) {
-						se.findIntersects(source, r, f, result);
-					}
-				}
-			}
-		}
+		// public void findIntersects(final ILocation source, final Envelope r, final IAgentFilter
+		// f,
+		// final HashSet<IShape> result) {
+		// if ( bounds.intersects(r) ) {
+		// for ( int i = 0, n = size; i < n; i++ ) {
+		// IShape entry = objects.get(i);
+		// if ( (f == null || f.accept(source, entry)) &&
+		// entry.getEnvelope().intersects(r) ) {
+		// result.add(entry);
+		// }
+		// }
+		// if ( !isLeaf ) {
+		// if ( !nw.isEmpty() ) {
+		// nw.findIntersects(source, r, f, result);
+		// }
+		// if ( !ne.isEmpty() ) {
+		// ne.findIntersects(source, r, f, result);
+		// }
+		// if ( !sw.isEmpty() ) {
+		// sw.findIntersects(source, r, f, result);
+		// }
+		// if ( !se.isEmpty() ) {
+		// se.findIntersects(source, r, f, result);
+		// }
+		// }
+		// }
+		// }
 
 		// public void findInside(final Envelope r, final HashSet<IAgent> result) {
 		// if ( bounds.intersects(r) ) {

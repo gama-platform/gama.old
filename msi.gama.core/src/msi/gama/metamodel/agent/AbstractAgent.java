@@ -32,7 +32,6 @@ import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul Modified on 24 oct. 2010
@@ -290,14 +289,14 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public synchronized void setGeometry(final IShape newGeometry) {
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null ) { return; }
-		Envelope previousEnv = null;
-		ILocation previousLoc = null;
-		boolean previousIsPoint = false;
-		if ( geometry != null && geometry.getInnerGeometry() != null ) {
-			previousEnv = geometry.getEnvelope();
-			previousLoc = geometry.getLocation();
-			previousIsPoint = geometry.isPoint();
-		}
+		// Envelope previousEnv = null;
+		// ILocation previousLoc = null;
+		// boolean previousIsPoint = false;
+		// if ( geometry != null && geometry.getInnerGeometry() != null ) {
+		// previousEnv = geometry.getEnvelope();
+		// previousLoc = geometry.getLocation();
+		// previousIsPoint = geometry.isPoint();
+		// }
 		ITopology topology = population.getTopology();
 		ILocation newGeomLocation = newGeometry.getLocation().copy();
 
@@ -312,9 +311,11 @@ public abstract class AbstractAgent implements IAgent {
 		}
 
 		newLocalGeom.setAgent(this);
+		IShape previous = geometry;
 		geometry = newLocalGeom;
 
-		topology.updateAgent(this, previousIsPoint, previousLoc, previousEnv);
+		topology.updateAgent(previous, this);
+		// topology.updateAgent(this, previousIsPoint, previousLoc, previousEnv);
 
 		// update micro-agents' locations accordingly
 		for ( IPopulation p : microPopulations.values() ) {
@@ -336,13 +337,16 @@ public abstract class AbstractAgent implements IAgent {
 		} else {
 			ILocation previousPoint = geometry.getLocation();
 			if ( newLocation.equals(previousPoint) ) { return; }
-			Envelope previousEnvelope = geometry.getEnvelope();
+			IShape previous =
+				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry()
+					.getEnvelope());
+			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			Integer newHeading = topology.directionInDegreesTo(previousPoint, newLocation);
 			if ( newHeading != null && !getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
-			topology.updateAgent(this, geometry.isPoint(), previousPoint, previousEnvelope);
+			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
 			for ( IPopulation p : microPopulations.values() ) {

@@ -64,7 +64,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	private double width = 100d, height = 100d;
 	private boolean isTorus = false;
 
-	private ISpatialIndex quadTree;
+	private ISpatialIndex.Compound spatialIndex;
 
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
@@ -411,12 +411,12 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 	 */
 	private void initializeSpatialIndex() {
 		Envelope e = new Envelope(0, width, 0, height);
-		quadTree = new GamaQuadTree(e);
+		spatialIndex = new CompoundSpatialIndex(e);
 	}
 
 	@Override
-	public ISpatialIndex getSpatialIndex() {
-		return quadTree;
+	public ISpatialIndex.Compound getSpatialIndex() {
+		return spatialIndex;
 	}
 
 	@Override
@@ -434,8 +434,8 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	@Override
 	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
-		if ( quadTree == null ) { return; }
-		quadTree.drawOn(g2, width, height);
+		if ( spatialIndex == null ) { return; }
+		spatialIndex.drawOn(g2, width, height);
 	}
 
 	@Override
