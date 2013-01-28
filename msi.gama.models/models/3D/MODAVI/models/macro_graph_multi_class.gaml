@@ -28,9 +28,9 @@ global {
 	
 	graph my_macroGraph;
 	
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
-	int nbTypeOfClass parameter: "Type of class" min:0 <-0 category: 'Model';
-	int nbClass parameter: 'Number of class' min: 1 max:100 <- 15 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
+	int nbTypeOfClass parameter: "Type of class" min:0 <-2 category: 'Model';
+	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
 	
@@ -61,7 +61,7 @@ global {
 		
 		ask node as list{
 			loop i from:0 to:nbTypeOfClass{
-				classVector[i] <- rnd(nbClass-1)+1;
+				classVector[i] <- rnd(nbValuePerClass-1)+1;
  			}		
 		}
 		
@@ -71,10 +71,10 @@ global {
 		
 		
 		let i<-1;
-		create macroNode number: nbClass{	
+		create macroNode number: nbValuePerClass{	
 			set class <-i;
-			set location <- {cos (float((class-1)/nbClass)*360)*50 +50,sin (float((class-1)/nbClass)*360)*50+50,0};
-			color <- color hsb_to_rgb ([i/nbClass,1.0,1.0]);
+			set location <- {cos (float((class-1)/nbValuePerClass)*360)*50 +50,sin (float((class-1)/nbValuePerClass)*360)*50+50,0};
+			color <- color hsb_to_rgb ([i/nbValuePerClass,1.0,1.0]);
 			set i<-i+1;	
 			add self to: macroNodes;
 			do updatemyNodes;
@@ -92,7 +92,7 @@ global {
 		create scheduler;
 
 		//FIXME: If this is call at the beginning of the init block there is some null value in the matrix.
-		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
+		set interactionMatrix <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	
 		
 		
 	 }
@@ -104,7 +104,7 @@ entities {
 
 	species node schedules:[] {
 		
-		list classVector <- [0];
+		list classVector <- [0,0,0];
 		//list<int> classVector size: 3 fill_with: {0,0,0};
 		list<point> posVector <- [{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}];
 		list colorList <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
@@ -112,36 +112,19 @@ entities {
 								
 		reflex shuffleClass{
 			loop i from:0 to: nbTypeOfClass{
-				classVector[i] <- rnd(nbClass-1)+1;
+				classVector[i] <- rnd(nbValuePerClass-1)+1;
 			}	
 		}
 						
 		aspect base {			
 			draw shape color: rgb('blue') z:nodeSize ; 
 		}  
-		
-		aspect class0 {
-			let tmpradius <- rnd(25)+25;
-			colorList[0]<- color hsb_to_rgb ([classVector[0]/nbClass,1.0,1.0]);					
-			posVector[0] <- {(cos (float((classVector[0]-1)/nbClass)*360)*tmpradius +50),(sin (float((classVector[0]-1)/nbClass)*360)*tmpradius +50),0}; 
-			draw geometry (point(posVector[0])) color: rgb(colorList[0])  z:nodeSize ;
-			
-		}
-		
-		aspect class1 {
-			let tmpradius <- rnd(25)+25;
-			colorList[1] <- color hsb_to_rgb ([classVector[1]/nbClass,1.0,1.0]);
-			posVector[1] <- {(cos (float((classVector[1]-1)/nbClass)*360)*tmpradius +50),(sin (float((classVector[1]-1)/nbClass)*360)*tmpradius +50),10}; 
-			draw geometry (point(posVector[1])) color: rgb(colorList[1])  z:nodeSize ;
-		}	
-		
-		
-		
+				
 		aspect classGenericColored{
 			loop i from:0 to: nbTypeOfClass{
 				let tmpradius <- rnd(25)+25;
-			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbClass,1.0,1.0]);					
-			    posVector[i] <- {location.x+i*110,location.y,0}; 
+			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
+			    posVector[i] <- {location.x+i*110,location.y,i*10}; 
 			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
 			}
 		}
@@ -149,8 +132,8 @@ entities {
 		aspect classGenericSpatialized{
 			loop i from:0 to: nbTypeOfClass{
 				let tmpradius <- rnd(25)+25;
-			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbClass,1.0,1.0]);					
-			    posVector[i] <- {(cos (float((classVector[i]-1)/nbClass)*360)*tmpradius +50)+i*110,(sin (float((classVector[i]-1)/nbClass)*360)*tmpradius +50),0}; 
+			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
+			    posVector[i] <- {(cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110,(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50),i*10}; 
 			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
 			}
 		}	
@@ -201,24 +184,32 @@ entities {
 	species macroNode schedules:[]{
 		rgb color;
 		int class;
-		int nbAggregatedNodes;
+		list nbAggregatedNodes <-[0,0,0];
+		list<point> posVector <- [{0,0,0},{0,0,0},{0,0,0}];
 		 
 		reflex update{
 			do updatemyNodes;
 		}
-		action updatemyNodes{			
-			set nbAggregatedNodes<-0;
-			
-			
-			ask node as list{
-			  if	(classVector[0] = myself.class) {
-				set myself.nbAggregatedNodes <- myself.nbAggregatedNodes+1;
-			  }	 
+		action updatemyNodes{
+			loop i from:0 to: nbTypeOfClass{			
+				nbAggregatedNodes[i]<-0;
+				ask node as list{
+				  if	(classVector[i] = myself.class) {
+					myself.nbAggregatedNodes[i] <- myself.nbAggregatedNodes[i]+1;
+				  }	 
+			    }
 		    }	    
 		} 
 		
 		aspect sphere{
-			draw geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
+			draw geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes[0]/10)*macroNodeSize;
+		}
+		
+		aspect Generic{
+			loop i from:0 to: nbTypeOfClass{
+			posVector[i] <- {location.x+i*150,location.y};	
+			draw geometry (point(posVector[i])) color: color z:(nbAggregatedNodes[i]/10)*macroNodeSize;
+			}
 		}
 	}
 	
@@ -227,11 +218,13 @@ entities {
 		rgb color <- rgb("black");
 		node src;
 		node dest;
-		int nbAggregatedLinks;
+		list nbAggregatedLinkList <- [0,0,0];
 		
 		aspect base {
-			if(nbAggregatedLinks>threshold){
-			draw geometry: (line([src.location,dest.location]) buffer ((nbAggregatedLinks^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
+			loop i from:0 to: nbTypeOfClass{
+				if(nbAggregatedLinkList[i]>threshold){
+				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
+				}
 			}
 			
 		}	
@@ -247,23 +240,25 @@ entities {
 	 		do die;
 	 	}
 	 	
-	 	loop i from: 0 to: nbClass-1{
-	      loop j from: 0 to: nbClass-1{
-	        let tmp <- interactionMatrix  at {i,j};  
-	        if(i!=j){
-	            create macroEdge{
-	            	set nbAggregatedLinks <- tmp;
-	              set src <- macroNodes at (i);
-			          set dest <- macroNodes at (j);	
-			          set my_macroGraph <- my_macroGraph add_edge (src::dest);
-	            }	  
-	        }      
-	      }
+	 	loop h from:0 to: nbTypeOfClass{
+		 	loop i from: 0 to: nbValuePerClass-1{
+		      loop j from: 0 to: nbValuePerClass-1{
+		        let tmp <- interactionMatrix  at {i,j};  
+		        if(i!=j){
+		            create macroEdge{
+		              nbAggregatedLinkList[h] <- tmp;
+		              set src <- macroNodes at (i);
+				      set dest <- macroNodes at (j);	
+				      set my_macroGraph <- my_macroGraph add_edge (src::dest);
+		            }	  
+		        }      
+		      }
+		    }
 	    }
   	}
   	
   	reflex initMatrix{
-		set interactionMatrix <- 0 as_matrix({nbClass,nbClass});	
+		set interactionMatrix <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	
 	  }
 		
 	}
@@ -310,7 +305,7 @@ experiment generate_graph type: gui {
 			//species node aspect: classGenericSpatialized ; 
 			//species edge aspect: edgeGenericSpatialized ;
 			
-			species macroNode aspect:sphere  position: {0,0} z:0.2;
+			species macroNode aspect:Generic  position: {0,0} z:0.2;
 			species macroEdge aspect:base  position: {0,0} z:0.2;
 			
 		}		
