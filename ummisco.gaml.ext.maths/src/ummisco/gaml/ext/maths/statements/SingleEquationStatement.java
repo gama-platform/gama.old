@@ -61,27 +61,21 @@ FirstOrderDifferentialEquations {
 	@Override
 	protected Double privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
-
 //		GuiUtils.informConsole(""+expression.value(scope));
 		return result;
 	}
-
-//	public Rk4Solver(double[] c, double omega) {
-//		this.c = c;
-//		this.omega = omega;
-//	}
-
+	public double[] c;
+    public double omega;
 
 	@Override
 	public Object executeOn(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		GuiUtils.informConsole("exp "+expression.value(scope));
+//		GuiUtils.informConsole("exp <<"+expression.value(scope)+">>");
 
 		return super.executeOn(scope);
 	}
-
-	public void computeDerivatives(IScope scope) {
-	}
+//
+//	public void computeDerivatives(IScope scope) {
+//	}
 
 	public int getOrder() {
 		if ( function.getName().equals("diff") ) { return 1; }
@@ -103,15 +97,13 @@ FirstOrderDifferentialEquations {
 
 	@Override
 	public int getDimension() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 2;
 	}
 
 	@Override
-	public void computeDerivatives(double t, double[] y, double[] yDot)
-			throws MaxCountExceededException, DimensionMismatchException {
-		// TODO Auto-generated method stub
-		
+	public void computeDerivatives(double t, double[] y, double[] yDot){
+		yDot[0] = omega * (c[1] - y[1]);
+        yDot[1] = omega * (y[0] - c[0]);
 	}
 
 }
