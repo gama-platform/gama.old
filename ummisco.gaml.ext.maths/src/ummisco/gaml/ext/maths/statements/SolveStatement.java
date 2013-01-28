@@ -43,8 +43,31 @@ public class SolveStatement extends AbstractStatementSequence {
 	public SolveStatement(final IDescription desc) {
 		super(desc);
 		
-//		ISpecies context = scope.getAgentScope().getSpecies();
-//		IStatement.WithArgs executer = context.getAction(name);
+		
+//		List<IDescription> statements = desc.getSpeciesContext().getChildren();
+//		String eqName = getFacet(IKeyword.EQUATION).literalValue();
+//		for ( IDescription s : statements ) {
+//			if ( s.getName().equals(eqName) ) {
+//				equations =  (StatementDescription) s;
+//			}
+//		}
+		// Based on the facets, choose a solver and init it;
+		String method=getFacet("method").literalValue();
+		if(method.equals("rk4")){
+			solver = new Rk4Solver(); 
+		}
+	}
+
+	@Override
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+
+		ISpecies context = scope.getAgentScope().getSpecies();
+		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, getFacet(IKeyword.EQUATION).literalValue());
+		for(SingleEquationStatement e : s.equations)
+		{
+			solver.solve(scope,e);	
+		}
+		
 //		executer.setRuntimeArgs(args);
 //		Object result = executer.executeOn(scope);
 //		String s = returnString;
@@ -52,25 +75,7 @@ public class SolveStatement extends AbstractStatementSequence {
 //			scope.setVarValue(s, result);
 //		}
 		
-		
-		List<IDescription> statements = desc.getSpeciesContext().getChildren();
-		String eqName = getFacet(IKeyword.EQUATION).literalValue();
-		for ( IDescription s : statements ) {
-			if ( s.getName().equals(eqName) ) {
-				equations =  (StatementDescription) s;
-			}
-		}
-		// Based on the facets, choose a solver and init it;
-		String method=getFacet("method").literalValue();
-		if(method.equals("rk4")){
-			solver = new Rk4Solver(equations); 
-		}
-	}
-
-	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		solver.solve(scope);		
-		return super.privateExecuteIn(scope);
+		return null;//super.privateExecuteIn(scope);
 	}
 
 

@@ -2,6 +2,7 @@ package ummisco.gaml.ext.maths.statements;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -42,6 +43,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence {
 
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
+		setName(getLiteral(IKeyword.EQUATION));
 	}
 
 	/**
@@ -66,6 +68,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		// We execute whatever is declared in addition to the equations (could be initializations,
 		// etc.)
+//		GuiUtils.informConsole("it works");
 		return super.privateExecuteIn(scope);
 	}
 

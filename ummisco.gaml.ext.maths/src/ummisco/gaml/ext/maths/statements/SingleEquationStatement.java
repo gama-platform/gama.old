@@ -31,7 +31,7 @@ import msi.gaml.types.IType;
  * @comment later, the order will be used as it will require a different integrator to solve the equation. For the moment, it is just 
  * here to show how to compute it from the function used
  *
- * @author Alexis Drogoul, Huynh Nguyen Nghi
+ * @author Alexis Drogoul, Huynh Quang Nghi
  * @since 26 janv. 2013
  *
  */
@@ -62,7 +62,7 @@ FirstOrderDifferentialEquations {
 	protected Double privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
 
-		GuiUtils.informConsole(""+expression.value(scope));
+//		GuiUtils.informConsole(""+expression.value(scope));
 		return result;
 	}
 
@@ -75,12 +75,12 @@ FirstOrderDifferentialEquations {
 	@Override
 	public Object executeOn(IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
+		GuiUtils.informConsole("exp "+expression.value(scope));
 
 		return super.executeOn(scope);
 	}
 
 	public void computeDerivatives(IScope scope) {
-		GuiUtils.informConsole(""+expression.value(scope));
 	}
 
 	public int getOrder() {
