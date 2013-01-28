@@ -307,8 +307,8 @@ experiment generate_graph type: gui {
 		}
 		display Augmented_Graph_Macro_Spatialized type:opengl ambiant_light: 0.4{
 					
-			species node aspect: classGenericSpatialized ; 
-			species edge aspect: edgeGenericSpatialized ;
+			//species node aspect: classGenericSpatialized ; 
+			//species edge aspect: edgeGenericSpatialized ;
 			
 			species macroNode aspect:sphere  position: {0,0} z:0.2;
 			species macroEdge aspect:base  position: {0,0} z:0.2;
