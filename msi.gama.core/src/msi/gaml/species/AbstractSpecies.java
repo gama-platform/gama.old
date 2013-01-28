@@ -32,7 +32,7 @@ import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
-
+import ummisco.gaml.ext.maths.statements.*;
 /**
  * Written by drogoul Modified on 29 déc. 2010
  * 
@@ -55,6 +55,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
 
 	private final Map<String, ActionStatement> actions = new HashMap<String, ActionStatement>();
+	/*
+	 * Equation (Huynh Quang Nghi)
+	 */
+	private final Map<String, SystemOfEquationsStatement> equations = new HashMap<String, SystemOfEquationsStatement>();
+	/*
+	 * 
+	 */
 
 	private final Map<String, UserCommandStatement> userCommands = new LinkedHashMap();
 
@@ -380,6 +387,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			addVariable((IVariable) s);
 		} else if ( s instanceof AspectStatement ) {
 			addAspect((AspectStatement) s);
+		} else if ( s instanceof SystemOfEquationsStatement ) {
+			addEquation((SystemOfEquationsStatement) s);
 		} else if ( s instanceof ActionStatement ) {
 			addAction((ActionStatement) s);
 		} else if ( s instanceof UserCommandStatement ) {
@@ -418,6 +427,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			ac.dispose();
 		}
 		actions.clear();
+
+		for ( SystemOfEquationsStatement ac : equations.values() ) {
+			ac.dispose();
+		}
+		equations.clear();
 
 		for ( IStatement c : behaviors ) {
 			c.dispose();
@@ -459,4 +473,22 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public void setMacroSpecies(final ISpecies macroSpecies) {
 		this.macroSpecies = macroSpecies;
 	}
+	/*
+	 * Equation (Huynh Quang Nghi)
+	 */
+	@Override
+	public void addEquation(final IStatement ce) {
+		System.out.println(""+ce);
+		equations.put(ce.getName(), (SystemOfEquationsStatement) ce);
+	}
+
+	@Override
+	public IStatement getEquation(String name) {
+		// TODO Auto-generated method stub
+		return equations.get(name);
+	}
+	/*
+	 * end-of Equation
+	 */
+
 }

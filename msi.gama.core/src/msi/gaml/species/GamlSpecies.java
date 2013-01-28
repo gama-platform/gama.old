@@ -37,6 +37,7 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -279,4 +280,5 @@ public class GamlSpecies extends AbstractSpecies {
 		throws GamaRuntimeException {
 		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
 	}
+
 }
