@@ -184,7 +184,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		IList<IShape> edges = path.getEdgeList();
 		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal.opClosestPointTo(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
 
 		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {
@@ -228,14 +228,13 @@ public class DrivingSkill2d extends MovingSkill {
 		if ( hasBackground ) {
 			for ( ISpecies currentSpecy : backgroundSpecies ) {
 				IList<IAgent> overlappingBackgroundWithCurrentPosition =
-					msi.gaml.operators.Spatial.Queries.opOverlapping(scope, currentSpecy,
-						agentShape);
+					msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
 				for ( IAgent ia : overlappingBackgroundWithCurrentPosition ) {
 					if ( consideringBackgroundAgentForCurrentPosition == null ) {
 						consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 					} else {
 						consideringBackgroundAgentForCurrentPosition =
-							msi.gaml.operators.Spatial.Operators.opUnion(
+							msi.gaml.operators.Spatial.Operators.union(
 								consideringBackgroundAgentForCurrentPosition, ia.getGeometry());
 					}
 				}
@@ -261,7 +260,7 @@ public class DrivingSkill2d extends MovingSkill {
 			// System.out.println("current location: " + currentLocation.toString() + " | " +
 			// " candidate location: " + pointToAdd.toString());
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.primRotation(agentShape,
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(agentShape,
 					dAngle);
 			candidateShape.setLocation(pointToAdd);
 			// check for non-overlapping
@@ -272,21 +271,21 @@ public class DrivingSkill2d extends MovingSkill {
 						consideringBackgroundAgentForCurrentPosition;
 					for ( ISpecies currentSpecy : backgroundSpecies ) {
 						IList<IAgent> overlappingBackgroundWithCandidatePosition =
-							msi.gaml.operators.Spatial.Queries.opOverlapping(scope, currentSpecy,
+							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy,
 								candidateShape);
 						for ( IAgent ia : overlappingBackgroundWithCandidatePosition ) {
 							if ( consideringBackgroundAgent == null ) {
 								consideringBackgroundAgent = ia.getGeometry();
 							} else {
 								consideringBackgroundAgent =
-									msi.gaml.operators.Spatial.Operators.opUnion(
+									msi.gaml.operators.Spatial.Operators.union(
 										consideringBackgroundAgent, ia.getGeometry());
 							}
 						}
 					}
 					if ( consideringBackgroundAgent != null ) {
 						// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
-						if ( msi.gaml.operators.Spatial.Properties.opCoveredBy(candidateShape,
+						if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
 							consideringBackgroundAgent) ) {
 							CandidateEntry candidateEntry =
 								new CandidateEntry(pointToAdd, candidateHeading, dAngle);
@@ -325,7 +324,7 @@ public class DrivingSkill2d extends MovingSkill {
 			setCurrentDistance(agent, minDistance);
 			int newHeading = chosenCandidate.candidateHeading;
 			int newRotateAngle = chosenCandidate.dAngle;
-			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.primRotation(agent,
+			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(agent,
 				newRotateAngle));
 			agent.setLocation(chosenCandidate.candidatePoint);
 			agent.setHeading(newHeading);
@@ -337,8 +336,8 @@ public class DrivingSkill2d extends MovingSkill {
 				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading),
 					currentLocation.y + maxDist * Maths.sin(candidateHeading));
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.primTranslationTo(
-					agentShape, chosenCandidate);
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(agentShape,
+					chosenCandidate);
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
 				agent.setLocation(chosenCandidate);
 			}
@@ -352,7 +351,7 @@ public class DrivingSkill2d extends MovingSkill {
 	private boolean isNonOverlapping(final IScope scope, final GamaShape candidateShape,
 		final GamaList<IAgent> obstacleAgents) {
 		for ( IAgent ia : obstacleAgents ) {
-			if ( msi.gaml.operators.Spatial.Properties.opOverlaps(scope, candidateShape,
+			if ( msi.gaml.operators.Spatial.Properties.overlaps(scope, candidateShape,
 				ia.getGeometry()) ) { return false; }
 		}
 		return true;
@@ -404,7 +403,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		IList<IShape> edges = path.getEdgeList();
 		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal.opClosestPointTo(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
 
 		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {
@@ -448,14 +447,13 @@ public class DrivingSkill2d extends MovingSkill {
 		if ( hasBackground ) {
 			for ( ISpecies currentSpecy : backgroundSpecies ) {
 				IList<IAgent> overlappingBackgroundWithCurrentPosition =
-					msi.gaml.operators.Spatial.Queries.opOverlapping(scope, currentSpecy,
-						agentShape);
+					msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
 				for ( IAgent ia : overlappingBackgroundWithCurrentPosition ) {
 					if ( consideringBackgroundAgentForCurrentPosition == null ) {
 						consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 					} else {
 						consideringBackgroundAgentForCurrentPosition =
-							msi.gaml.operators.Spatial.Operators.opUnion(
+							msi.gaml.operators.Spatial.Operators.union(
 								consideringBackgroundAgentForCurrentPosition, ia.getGeometry());
 					}
 				}
@@ -481,7 +479,7 @@ public class DrivingSkill2d extends MovingSkill {
 			// System.out.println("current location: " + currentLocation.toString() + " | " +
 			// " candidate location: " + pointToAdd.toString());
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.primRotation(agentShape,
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(agentShape,
 					dAngle);
 			candidateShape.setLocation(pointToAdd);
 			// check for non-overlapping
@@ -492,21 +490,21 @@ public class DrivingSkill2d extends MovingSkill {
 						consideringBackgroundAgentForCurrentPosition;
 					for ( ISpecies currentSpecy : backgroundSpecies ) {
 						IList<IAgent> overlappingBackgroundWithCandidatePosition =
-							msi.gaml.operators.Spatial.Queries.opOverlapping(scope, currentSpecy,
+							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy,
 								candidateShape);
 						for ( IAgent ia : overlappingBackgroundWithCandidatePosition ) {
 							if ( consideringBackgroundAgent == null ) {
 								consideringBackgroundAgent = ia.getGeometry();
 							} else {
 								consideringBackgroundAgent =
-									msi.gaml.operators.Spatial.Operators.opUnion(
+									msi.gaml.operators.Spatial.Operators.union(
 										consideringBackgroundAgent, ia.getGeometry());
 							}
 						}
 					}
 					if ( consideringBackgroundAgent != null ) {
 						// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
-						if ( msi.gaml.operators.Spatial.Properties.opCoveredBy(candidateShape,
+						if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
 							consideringBackgroundAgent) ) {
 							CandidateEntry candidateEntry =
 								new CandidateEntry(pointToAdd, candidateHeading, dAngle);
@@ -620,7 +618,7 @@ public class DrivingSkill2d extends MovingSkill {
 					IShape gl = GamaGeometryType.buildLine(aheadPoint, headPoint);
 					if ( gl != null ) {
 						IShape interShape =
-							msi.gaml.operators.Spatial.Operators.opInter(gl,
+							msi.gaml.operators.Spatial.Operators.inter(gl,
 								consideringBackgroundAgentForCurrentPosition);
 						if ( interShape != null ) {
 							Coordinate coords[] = interShape.getInnerGeometry().getCoordinates();
