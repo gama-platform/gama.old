@@ -261,5 +261,10 @@ public interface IGraphics {
 	 * Define if the value of the ambiant light (work only in Opengl)
 	 */
 	public void setAmbiantLight(float lightValue);
+	
+	/*
+	 * Define if polygon are dran in solid(true) or as outlines (work only in Opengl)
+	 */
+	public boolean setPolygonMode(boolean polygonMode);
 
 }

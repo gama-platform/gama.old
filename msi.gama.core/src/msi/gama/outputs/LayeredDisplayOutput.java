@@ -56,6 +56,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
+	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
@@ -70,6 +71,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean tesselation = true;
 	private double ambiantLight = 1.0;
+	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 
@@ -86,6 +88,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void prepare(final ISimulation sim) throws GamaRuntimeException {
 		super.prepare(sim);
+		
 		IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getOwnScope(), color.value(getOwnScope())));
@@ -94,6 +97,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setBackgroundColor(Cast.asColor(getOwnScope(), "white"));
 			}
 		}
+		
 		IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
@@ -121,7 +125,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( light != null ) {
 			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
 		}
+		
+		IExpression poly = getFacet(IKeyword.POLYGONMODE);
+		if ( poly != null ) {
+			polygonmode = Cast.asBool(getOwnScope(), poly.value(getOwnScope()));
+		}
 		createSurface(sim);
+		
+		
 
 	}
 
@@ -189,6 +200,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( surface.getMyGraphics() != null ) {
 			surface.getMyGraphics().useTesselation(tesselation);
 			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
+			surface.getMyGraphics().setPolygonMode(polygonmode);
 		}
 	}
 

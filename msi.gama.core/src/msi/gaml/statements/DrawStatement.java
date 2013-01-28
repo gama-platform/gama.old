@@ -261,7 +261,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		Boolean getRounded(final IScope scope) {
-			return constRounded == null ? empty == null ? false : Cast.asBool(scope,
+			return constRounded == null ? rounded == null ? false : Cast.asBool(scope,
 				rounded.value(scope)) : constRounded;
 		}
 
