@@ -236,7 +236,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.sat4j.pb"/>
       <plugin id="simtools.gaml.extensions.physics"/>
       <plugin id="simtools.gaml.extensions.traffic"/>
-      <plugin id="ummisco.gaml.ext.maths"/>
    </plugins>
 
 
