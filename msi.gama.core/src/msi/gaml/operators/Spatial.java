@@ -43,7 +43,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 /**
- * Written by drogoul Modified on 10 dï¿½c. 2010
+ * Written by drogoul Modified on 10 dec. 2010
  * 
  * All the spatial operators available in GAML. Regrouped by types of operators.
  * 
@@ -68,7 +68,7 @@ public abstract class Spatial {
 		@doc(value = "A circle geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the circle is by default the location of the current agent in which has been called this operator.", examples = { "circle(10) --: returns a geometry as a circle of radius 10." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 			"square", "triangle" })
-		public static IShape opCircle(final IScope scope, final Double radius) {
+		public static IShape circle(final IScope scope, final Double radius) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -80,7 +80,7 @@ public abstract class Spatial {
 		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
 			"around", "circle", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
-		public static IShape opCone(final IScope scope, final GamaPoint p) {
+		public static IShape cone(final IScope scope, final GamaPoint p) {
 			if ( p == null ) { return null; }
 
 			int min_angle = Maths.checkHeading((int) p.x);
@@ -100,14 +100,14 @@ public abstract class Spatial {
 			double max_point_y = originy + Maths.sin(max_angle) * worldHeight;
 			ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
-			return opPolygon(GamaList.with(origin, minPoint, maxPoint));
+			return polygon(GamaList.with(origin, minPoint, maxPoint));
 		}
 
 		@operator("square")
 		@doc(value = "A square geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the square is by default the location of the current agent in which has been called this operator.", examples = { "square(10) --: returns a geometry as a square of side size 10." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "triangle" })
-		public static IShape opSquare(final IScope scope, final Double side_size) {
+		public static IShape square(final IScope scope, final Double side_size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -119,7 +119,7 @@ public abstract class Spatial {
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle({10, 5}) --: returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"square", "triangle" })
-		public static IShape opRect(final IScope scope, final GamaPoint p) {
+		public static IShape rectangle(final IScope scope, final GamaPoint p) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -130,7 +130,7 @@ public abstract class Spatial {
 		@doc(value = "A triangle geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the triangle is by default the location of the current agent in which has been called this operator.", examples = { "triangle(5) --: returns a geometry as a triangle with side_size = 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "square" })
-		public static IShape opTriangle(final IScope scope, final Double side_size) {
+		public static IShape triangle(final IScope scope, final Double side_size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -142,7 +142,7 @@ public abstract class Spatial {
 		@doc(value = "A hexagon geometry which the given with and height", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the hexagon is by default the location of the current agent in which has been called this operator.", examples = { "hexagon({10,5}) --: returns a geometry as a hexagon of width of 10 and height of 5." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 			"rectangle", "triangle" })
-		public static IShape opHexagon(final IScope scope, final GamaPoint size) {
+		public static IShape hexagon(final IScope scope, final GamaPoint size) {
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -159,7 +159,7 @@ public abstract class Spatial {
 			"if the operand is composed of 2 points, returns a polyline geometry." }, examples = { "polygon([{0,0}, {0,10}, {10,10}, {10,0}]) --: returns a polygon geometry composed of the 4 points." }, see = {
 			"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle",
 			"square", "triangle" })
-		public static IShape opPolygon(final IList<GamaPoint> points) {
+		public static IShape polygon(final IList<GamaPoint> points) {
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
 			if ( new HashSet(points).size() == 2 ) { return GamaGeometryType.buildLine(
@@ -177,7 +177,7 @@ public abstract class Spatial {
 			"if the operand is composed of a single point, returns a point geometry." }, examples = { "polyline([{0,0}, {0,10}, {10,10}, {10,0}]) --: returns a polyline geometry composed of the 4 points." }, see = {
 			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 			"triangle" })
-		public static IShape opPolyline(final IList<GamaPoint> points) {
+		public static IShape line(final IList<GamaPoint> points) {
 
 			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
 			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
@@ -192,7 +192,7 @@ public abstract class Spatial {
 			"if one of the elements of the pair is a list of geometries or a species, link will consider the union of the geometries or of the geometry of each agent of the species" }, comment = "The geometry of the link is the intersection of the two geometries when they intersect, and a line between their centroids when they do not.", examples = { "link (geom1::geom2)  --: returns a link geometry between geom1 and geom2." }, see = {
 			"around", "circle", "cone", "line", "norm", "point", "polygon", "polyline",
 			"rectangle", "square", "triangle" })
-		public static IShape opLink(final IScope scope, final GamaPair points)
+		public static IShape link(final IScope scope, final GamaPair points)
 			throws GamaRuntimeException {
 			if ( points == null || points.first() == null && points.last() == null ) { return new GamaShape(
 				new GamaPoint(0, 0)); }
@@ -203,11 +203,11 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the difference between a buffer around the right-operand casted in geometry at a distance left-operand (right-operand buffer left-operand) and the right-operand casted as geometry.", special_cases = { "returns a circle geometry of radius right-operand if the left-operand is nil" }, examples = { "10 around circle(5) --: returns a the ring geometry between 5 and 10." }, see = {
 			"circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 			"square", "triangle" })
-		public static IShape opFringe(final IScope scope, final Double width,
+		public static IShape around(final IScope scope, final Double width,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry);
-			if ( g == null ) { return opCircle(scope, width); }
-			return Operators.opDifference(Transformations.opBuffer(g, width), g);
+			if ( g == null ) { return circle(scope, width); }
+			return Operators.minus(Transformations.enlarged_by(g, width), g);
 		}
 
 	}
@@ -217,7 +217,7 @@ public abstract class Spatial {
 		@operator(value = { "inter", "intersection" })
 		@doc(value = "A geometry resulting from the intersection between the two geometries", special_cases = { "returns false if the right-operand is nil" }, examples = { "square(5) intersects {10,10} --: false" }, see = {
 			"union", "+", "-" })
-		public static IShape opInter(final IShape g1, final IShape g2) {
+		public static IShape inter(final IShape g1, final IShape g2) {
 			if ( g2 == null || g1 == null ) { return null; }
 			if ( g2.isPoint() && g1.covers(g2.getLocation()) ) { return new GamaShape(g2); }
 			if ( g1.isPoint() && g2.covers(g1.getLocation()) ) { return new GamaShape(g1); }
@@ -235,16 +235,16 @@ public abstract class Spatial {
 
 		@operator(value = { "+", "union" })
 		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the union between both geometries" }, examples = { "geom1 + geom2 --: a geometry corresponding to union between geom1 and geom2" })
-		public static IShape opUnion(final IShape g1, final IShape g2) {
+		public static IShape union(final IShape g1, final IShape g2) {
 			if ( g1 == null ) {
 				if ( g2 == null ) { return null; }
 				return g2;
 			}
 			if ( g2 == null ) { return g1; }
-			return new GamaShape(opUnion(g1.getInnerGeometry(), g2.getInnerGeometry()));
+			return new GamaShape(_union(g1.getInnerGeometry(), g2.getInnerGeometry()));
 		}
 
-		private static Geometry opUnion(final Geometry geom1, final Geometry geom2) {
+		private static Geometry _union(final Geometry geom1, final Geometry geom2) {
 			Geometry geom;
 			try {
 				geom = geom1.union(geom2);
@@ -256,7 +256,7 @@ public abstract class Spatial {
 
 		@operator(value = { "union" })
 		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the union all the geometries" }, examples = { "union([geom1, geom2, geom3]) --: a geometry corresponding to union between geom1, geom2 and geom3" })
-		public static IShape opUnion(final IScope scope, final GamaList elements) {
+		public static IShape union(final IScope scope, final GamaList elements) {
 			try {
 				return Cast.asGeometry(scope, elements);
 			} catch (GamaRuntimeException e) {
@@ -266,7 +266,7 @@ public abstract class Spatial {
 
 		@operator(value = { "union" })
 		@doc(value = "The geometry resulting from the union of all geometries of agents of the operand-species", examples = { "union(species1)  --: returns the geometry resulting from the union of all of the geometries of agents of species species1." })
-		public static IShape opUnion(final IScope scope, final ISpecies target) {
+		public static IShape union(final IScope scope, final ISpecies target) {
 			try {
 				return Cast.asGeometry(scope, target);
 			} catch (GamaRuntimeException e) {
@@ -276,15 +276,16 @@ public abstract class Spatial {
 
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 --: a geometry corresponding to difference between geom1 and geom2" })
-		public static IShape opDifference(final IShape g1, final IShape g2) {
+		public static IShape minus(final IShape g1, final IShape g2) {
 			if ( g2 == null || g2.getInnerGeometry() == null ) { return g1; }
 			return new GamaShape(g1.getInnerGeometry().difference(g2.getInnerGeometry()));
 		}
 
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
-		public static IShape opDifferenceAgents(final IShape g1, final IList<IShape> agents) {
-			if ( agents == null || agents.isEmpty() ) { return g1; }
+		public static IShape minus(final IScope scope, final IShape g1,
+			final IContainer<?, IShape> agents) {
+			if ( agents == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.getFactory().createGeometry(g1.getInnerGeometry());
 			for ( IShape ag : agents ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
@@ -296,15 +297,15 @@ public abstract class Spatial {
 
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a species, returns the geometry resulting from the difference between the left-geometry and all of geometries all agents of the right-species" }, examples = { "geom1 - speciesA --: a geometry corresponding to geom1 - (the geometry of all agents of species speciesA)" })
-		public static IShape opDifferenceSpecies(final IScope scope, final IShape g1,
-			final ISpecies target) throws GamaRuntimeException {
-			IList agents = target.listValue(scope);
-			return opDifferenceAgents(g1, agents);
+		public static IShape minus(final IScope scope, final IShape g1, final ISpecies target)
+			throws GamaRuntimeException {
+			IList<IShape> agents = target.listValue(scope);
+			return minus(scope, g1, agents);
 		}
 
 		@operator(value = { "add_point" })
 		@doc(value = "A geometry resulting from the adding of a right-point (coordinate) to the right-geometry", examples = { "square(5) add_point {10,10} --: returns a hexagon" })
-		public static IShape opAddPoint(final IShape g, final ILocation p) {
+		public static IShape add_point(final IShape g, final ILocation p) {
 			if ( p == null ) { return g; }
 			Coordinate point = (Coordinate) p;
 			Geometry geometry = g.getInnerGeometry();
@@ -338,37 +339,37 @@ public abstract class Spatial {
 
 		@operator("masked_by")
 		@doc(value = "A geometry representing the part of the right operand visible from the point of view of the agent using the operator while considering the obstacles defined by the left operand", examples = { "perception_geom masked_by obstacle_species --: returns the geometry representing the part of perception_geom visible from the agent position considering the obstacles of species obstacle_species." })
-		public static IShape opMaskedBy(final IScope scope, final IShape source,
+		public static IShape masked_by(final IScope scope, final IShape source,
 			final ISpecies targets) {
 			IAgent a = scope.getAgentScope();
 			ILocation location = a.getLocation();
 			ITopology t = scope.getTopology();
 			IList<IAgent> obstacles = t.getAgentsIn(source, Different.with(), false);
-			return maskedBy(source, obstacles, location, null);
+			return _masked_by(source, obstacles, location, null);
 		}
 
 		@operator("masked_by")
 		@doc(examples = { "perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list." })
-		public static IShape opMaskedBy(final IScope scope, final IShape source,
+		public static IShape masked_by(final IScope scope, final IShape source,
 			final GamaMap parameters) {
 			IAgent a = scope.getAgentScope();
 
 			GamaList<IAgent> obstacles = (GamaList<IAgent>) parameters.get("obstacles");
 			Double precision = (Double) parameters.get("pecision");
 			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return maskedBy(source, obstacles, location, precision);
+			return _masked_by(source, obstacles, location, precision);
 		}
 
 		@operator("masked_by")
 		@doc(examples = { "perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list." })
-		public static IShape opMaskedBy(final IScope scope, final IShape source,
+		public static IShape masked_by(final IScope scope, final IShape source,
 			final GamaList<IAgent> obstacles) {
 			IAgent a = scope.getAgentScope();
 			ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return maskedBy(source, obstacles, location, null);
+			return _masked_by(source, obstacles, location, null);
 		}
 
-		private static IShape maskedBy(final IShape source, final IList<IAgent> obstacles,
+		private static IShape _masked_by(final IShape source, final IList<IAgent> obstacles,
 			final ILocation location, Double precision) {
 			if ( precision == null ) {
 				precision = 120.0;
@@ -413,7 +414,7 @@ public abstract class Spatial {
 					if ( !obstaclesGeom.intersects(geom) ) {
 						geomsVisible.add(geom);
 					} else {
-						Geometry result = perceivedArea(geom, obstaclesGeom, locG);
+						Geometry result = _perceived_area(geom, obstaclesGeom, locG);
 						if ( result != null ) {
 							geomsVisible.add(result);
 						}
@@ -436,7 +437,7 @@ public abstract class Spatial {
 			return new GamaShape(visiblePercept);
 		}
 
-		private static Geometry perceivedArea(final Geometry percept, final Geometry obst,
+		private static Geometry _perceived_area(final Geometry percept, final Geometry obst,
 			final Geometry locG) {
 			Geometry perceptReal = percept.difference(obst);
 			PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
@@ -453,11 +454,11 @@ public abstract class Spatial {
 
 		@operator("split_at")
 		@doc(value = "The two part of the left-operand lines split at the given right-operand point", special_cases = { "if the left-operand is a point or a polygon, returns an empty list" }, examples = { "polyline([{1,2},{4,6}]) split_at {7,6}  --: [polyline([{1.0;2.0},{7.0;6.0}]), polyline([{7.0;6.0},{4.0;6.0}])]." })
-		public static GamaList<IShape> splitLineAt(final IShape geom, final ILocation pt) {
+		public static GamaList<IShape> split_at(final IShape geom, final ILocation pt) {
 			GamaList<IShape> lines = new GamaList<IShape>();
 			GamaList<Geometry> geoms = null;
 			if ( geom.getInnerGeometry() instanceof LineString ) {
-				geoms = splitLineAt((LineString) geom.getInnerGeometry(), pt);
+				geoms = split_at((LineString) geom.getInnerGeometry(), pt);
 			} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
 				Point point = GeometryUtils.getFactory().createPoint((Coordinate) pt);
 				Geometry geom2 = null;
@@ -470,7 +471,7 @@ public abstract class Spatial {
 						distMin = dist;
 					}
 				}
-				geoms = splitLineAt((LineString) geom2, pt);
+				geoms = split_at((LineString) geom2, pt);
 			}
 			if ( geoms != null ) {
 				for ( Geometry g : geoms ) {
@@ -481,7 +482,7 @@ public abstract class Spatial {
 		}
 
 		// slit a line at a given point (cutpoint)
-		public static GamaList<Geometry> splitLineAt(final LineString geom, final ILocation cutPoint) {
+		public static GamaList<Geometry> split_at(final LineString geom, final ILocation cutPoint) {
 			Coordinate[] coords = geom.getCoordinates();
 			Point pt =
 				GeometryUtils.getFactory().createPoint(new GamaPoint(cutPoint.getLocation()));
@@ -525,20 +526,20 @@ public abstract class Spatial {
 
 		@operator("convex_hull")
 		@doc(value = "A geometry corresponding to the convex hull of the operand.", examples = { "convex_hull(self) --: returns the convex hull of the geometry of the agent applying the operator" })
-		public static IShape opConvexHull(final IShape g) {
+		public static IShape convex_hull(final IShape g) {
 			return new GamaShape(g.getInnerGeometry().convexHull());
 		}
 
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" }, priority = IPriority.PRODUCT)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient" }, examples = { "shape * 2 --: returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2" })
-		public static IShape opScaledBy(final IShape g, final Double coefficient) {
+		public static IShape scaled_by(final IShape g, final Double coefficient) {
 			return ((GamaShape) g.getGeometry()).scaledBy(coefficient);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters" }, examples = { "shape + [distance::5.0, quadrantSegments::4, endCapStyle:: 2] --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment" })
-		public static IShape opBuffer(final IShape g, final GamaMap parameters) {
+		public static IShape enlarged_by(final IShape g, final GamaMap parameters) {
 			Double distance = (Double) parameters.get("distance");
 			Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
 			Integer endCapStyle = (Integer) parameters.get("endCapStyle");
@@ -550,29 +551,15 @@ public abstract class Spatial {
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
-		public static IShape opBuffer(final IShape g, final Double size) {
+		public static IShape enlarged_by(final IShape g, final Double size) {
 			return new GamaShape(g.getInnerGeometry().buffer(size));
 		}
 
 		@operator(value = { "-", "reduced_by" }, priority = IPriority.ADDITION)
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance" }, examples = { "shape - 5 --: returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5" })
-		public static IShape opNegativeBuffer(final IShape g, final Double size) {
-			return opBuffer(g, -size);
+		public static IShape reduced_by(final IShape g, final Double size) {
+			return enlarged_by(g, -size);
 		}
-
-		// @operator(value = "as_matrix", content_type = IType.INT)
-		// // TODO revoir cet opï¿½rateur qui ne semble plus correspondre ï¿½ rien...
-		// public static IMatrix asMatrix(final IScope scope, final GamaGeometry gg,
-		// final Double squareSize) {
-		// if ( gg == null ) { return null; }
-		// Geometry geom = gg.getInnerGeometry();
-		// double size = squareSize == null ? 1 : squareSize.doubleValue();
-		// ITopology env = scope.getAgentScope().getTopology();
-		// GamaIntMatrix matrix =
-		// GeometricFunctions.discretisationGrid(geom, size, env.getWidth(), env.getHeight());
-		// matrix.setCellSize(size);
-		// return matrix;
-		// }
 
 		/**
 		 * @throws GamaRuntimeException
@@ -584,13 +571,13 @@ public abstract class Spatial {
 		@operator("rotated_by")
 		@doc(value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)", examples = { "self rotated_by 45 --: returns the geometry resulting from a 45 degres rotation to the geometry of the agent applying the operator." }, see = {
 			"transformed_by", "translated_by" })
-		public static IShape primRotation(final IShape g1, final Double angle) {
+		public static IShape rotated_by(final IShape g1, final Double angle) {
 			return ((GamaShape) g1.getGeometry()).rotatedBy(Math.toRadians(angle));
 		}
 
 		@operator("rotated_by")
 		@doc(comment = "the right-hand operand can be a float or a int")
-		public static IShape primRotation(final IShape g1, final Integer angle) {
+		public static IShape rotated_by(final IShape g1, final Integer angle) {
 			return ((GamaShape) g1.getGeometry()).rotatedBy(angle);
 		}
 
@@ -606,8 +593,8 @@ public abstract class Spatial {
 		@operator("transformed_by")
 		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45¡ rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "translated_by" })
-		public static IShape primAffinite(final IShape g, final GamaPoint p) {
-			return opScaledBy(primRotation(g, p.x), p.y);
+		public static IShape transformed_by(final IShape g, final GamaPoint p) {
+			return scaled_by(rotated_by(g, p.x), p.y);
 		}
 
 		/**
@@ -620,15 +607,14 @@ public abstract class Spatial {
 		@operator("translated_by")
 		@doc(value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)", examples = { "self translated_by 45 --: returns the geometry resulting from a 10m translation to the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "transformed_by" })
-		public static IShape primTranslationBy(final IShape g, final GamaPoint p)
+		public static IShape translated_by(final IShape g, final GamaPoint p)
 			throws GamaRuntimeException {
-			return primTranslationTo(g,
-				msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
+			return at_location(g, msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
 		}
 
 		@operator(value = { "at_location", "translated_to" })
 		@doc(value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)", examples = { "self at_location {10, 20} --: returns the geometry resulting from a translation to the location {10, 20} of the geometry of the agent applying the operator." })
-		public static IShape primTranslationTo(final IShape g, final ILocation p)
+		public static IShape at_location(final IShape g, final ILocation p)
 			throws GamaRuntimeException {
 			GamaShape newShape = (GamaShape) g.copy();
 			newShape.setLocation(p);
@@ -637,7 +623,7 @@ public abstract class Spatial {
 
 		@operator(value = { "without_holes", "solid" })
 		@doc(value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes", examples = { "solid(self) --: returns the geometry corresponding to the geometry of the agent applying the operator without its holes." })
-		public static IShape opWithoutHoles(final IShape g) {
+		public static IShape without_holes(final IShape g) {
 			Geometry geom = g.getInnerGeometry();
 			Geometry result = geom;
 
@@ -663,25 +649,25 @@ public abstract class Spatial {
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primTriangulate(final IScope scope, final IShape g) {
+		public static GamaList<IShape> triangulate(final IScope scope, final IShape g) {
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
 
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primTriangulate(final IScope scope, final IList<IShape> ls) {
+		public static GamaList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
 			return GeometryUtils.triangulation(scope, ls);
 		}
 
 		@operator(value = "as_hexagonal_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primHexagon(final IShape ls, final GamaPoint param) {
+		public static GamaList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
 		}
 
 		@operator(value = "as_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A matrix of square geometries (grid with 8-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { "self as_grid {10, 5} --: returns a matrix of square geometries (grid with 8-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator." })
-		public static IMatrix opAsGrid(final IScope scope, final IShape g, final GamaPoint dim)
+		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
 			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false, false);
@@ -689,7 +675,7 @@ public abstract class Spatial {
 
 		@operator(value = "as_4_grid", content_type = IType.GEOMETRY)
 		@doc(value = "A matrix of square geometries (grid with 4-neighbourhood) with dimension given by the rigth-hand operand ({nb_cols, nb_lines}) corresponding to the square tessellation of the left-hand operand geometry (geometry, agent)", examples = { "self as_grid {10, 5} --: returns matrix of square geometries (grid with 4-neighbourhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator." })
-		public static IMatrix opAs4Grid(final IScope scope, final IShape g, final GamaPoint dim)
+		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
 			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false, true);
@@ -697,7 +683,7 @@ public abstract class Spatial {
 
 		@operator(value = "split_lines", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries resulting after cutting the lines at their intersections.", examples = { "split_lines([line([{0,10}, {20,10}], line([{0,10}, {20,10}]]) --: returns a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])." })
-		public static IList<IShape> splitLines(final IScope scope, final IList geoms)
+		public static IList<IShape> split_lines(final IScope scope, final IList geoms)
 			throws GamaRuntimeException {
 			if ( geoms.isEmpty() ) { return new GamaList<IShape>(); }
 			Geometry grandMls = Cast.asGeometry(scope, geoms).getInnerGeometry();
@@ -716,7 +702,7 @@ public abstract class Spatial {
 
 		@operator(value = "skeletonize", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)", examples = { "skeletonize(self) --: returns the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator." })
-		public static GamaList<IShape> primSkeletonization(final IScope scope, final IShape g) {
+		public static GamaList<IShape> skeletonize(final IScope scope, final IShape g) {
 			List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
 			GamaList<IShape> geoms = new GamaList();
 			for ( LineString ls : netw ) {
@@ -727,7 +713,7 @@ public abstract class Spatial {
 
 		@operator("clean")
 		@doc(value = "A geometry corresponding to the cleaning of the operand (geometry, agent, point)", comment = "The cleaning corresponds to a buffer with a distance of 0.0", examples = { "cleaning(self) --: returns the geometry resulting from the cleaning of the geometry of the agent applying the operator." })
-		public static IShape opClean(final IShape g) {
+		public static IShape clean(final IShape g) {
 			if ( g == null || g.getInnerGeometry() == null ) { return g; }
 			if ( g.getInnerGeometry() instanceof Polygon ) { return new GamaShape(g
 				.getInnerGeometry().buffer(0.0)); }
@@ -749,7 +735,7 @@ public abstract class Spatial {
 
 		@operator("simplification")
 		@doc(value = "A geometry corresponding to the simplification of the operand (geometry, agent, point) considering a tolerance distance.", comment = "The algorithm used for the simplification is Douglas-Peucker", examples = { "self simplification 0.1 --: returns the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1." })
-		public static IShape opSimplication(final IShape g1, final Double distanceTolerance) {
+		public static IShape simplification(final IShape g1, final Double distanceTolerance) {
 			if ( g1 == null || g1.getInnerGeometry() == null ||
 				g1.getInnerGeometry() instanceof Point ||
 				g1.getInnerGeometry() instanceof MultiPoint ) { return g1; }
@@ -764,7 +750,7 @@ public abstract class Spatial {
 		@operator(value = { "towards", "direction_to" })
 		@doc(value = "The direction (in degree) between the two geometries (geometries, agents, points) considering the topology of the agent applying the operator.", examples = { "ag1 towards ag2 --: the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator" }, see = {
 			"distance_between", "distance_to", "direction_between", "path_between", "path_to" })
-		public static Integer opTowards(final IScope scope, final IShape agent, final IShape target) {
+		public static Integer towards(final IScope scope, final IShape agent, final IShape target) {
 			return scope.getTopology().directionInDegreesTo(agent, target);
 		}
 
@@ -772,7 +758,7 @@ public abstract class Spatial {
 		@doc(value = "A distance between a list of geometries (geometries, agents, points) considering a topology.", examples = { "my_topology distance_between [ag1, ag2, ag3] --: the distance between ag1, ag2 and ag3 considering the topology my_topology" }, see = {
 			"towards", "direction_to", "distance_to", "direction_between", "path_between",
 			"path_to" })
-		public static Double opDistanceBetween(final IScope scope, final ITopology t,
+		public static Double distance_between(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) {
 			int size = geometries.length(scope);
 			if ( size == 0 || size == 1 ) { return 0d; }
@@ -792,7 +778,7 @@ public abstract class Spatial {
 		@operator(value = "direction_between")
 		@doc(value = "A direction (in degree) between a list of two geometries (geometries, agents, points) considering a topology.", examples = { "my_topology direction_between [ag1, ag2] --: the direction between ag1 and ag2 considering the topology my_topology" }, see = {
 			"towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
-		public static Integer opDirectionBetween(final IScope scope, final ITopology t,
+		public static Integer direction_between(final IScope scope, final ITopology t,
 			final IContainer<?, IShape> geometries) throws GamaRuntimeException {
 			int size = geometries.length(scope);
 			if ( size == 0 || size == 1 ) { return 0; }
@@ -805,7 +791,7 @@ public abstract class Spatial {
 		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.", examples = { "my_topology path_between [ag1, ag2] --: A path between ag1 and ag2" }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_to",
 			"distance_to" })
-		public static IPath pathBetween(final IScope scope, final ITopology graph,
+		public static IPath path_between(final IScope scope, final ITopology graph,
 			final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			// TODO Assumes that all elements in nodes are vertices of the graph... Should be
 			// checked
@@ -832,7 +818,7 @@ public abstract class Spatial {
 		@doc(value = "A distance between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.", examples = { "ag1 distance_to ag2 --: the distance between ag1 and ag2 considering the topology of the agent applying the operator" }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_between",
 			"path_to" })
-		public static Double opDistanceTo(final IScope scope, final IShape source,
+		public static Double distance_to(final IScope scope, final IShape source,
 			final IShape target) {
 			return scope.getTopology().distanceBetween(source, target);
 		}
@@ -840,7 +826,7 @@ public abstract class Spatial {
 		@operator(value = "distance_to")
 		@doc()
 		// No documentation because it is same same as the previous one (but optimized for points?)
-		public static Double opDistanceTo(final IScope scope, final GamaPoint source,
+		public static Double distance_to(final IScope scope, final GamaPoint source,
 			final GamaPoint target) {
 			return scope.getTopology().distanceBetween(source, target);
 		}
@@ -849,7 +835,7 @@ public abstract class Spatial {
 		@doc(value = "A path between two geometries (geometries, agents or points) considering the topology of the agent applying the operator.", examples = { "ag1 path_to ag2 --: the path between ag1 and ag2 considering the topology of the agent applying the operator" }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_between",
 			"distance_to" })
-		public static IPath opPathTo(final IScope scope, final IShape g, final IShape g1)
+		public static IPath path_to(final IScope scope, final IShape g, final IShape g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
 			return scope.getTopology().pathBetween(g1, g);
@@ -858,7 +844,7 @@ public abstract class Spatial {
 		@operator("path_to")
 		@doc()
 		// No documentation because it is same same as the previous one (but optimized for points?)
-		public static IPath opPathTo(final IScope scope, final GamaPoint g, final GamaPoint g1)
+		public static IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
 			return scope.getTopology().pathBetween(g1, g);
@@ -868,7 +854,7 @@ public abstract class Spatial {
 
 	public static abstract class Properties {
 
-		@operator(value = { "disjoint_from", "<--:" }, priority = IPriority.COMPARATOR)
+		@operator(value = { "disjoint_from" }, priority = IPriority.COMPARATOR)
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns true.",
 			"if one operand is a point, returns false if the point is included in the geometry." }, examples = {
@@ -878,7 +864,7 @@ public abstract class Spatial {
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from geometry({25,25}) --: true.",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}]) --: true" }, see = {
 			"intersects", "crosses", "overlaps", "partially_overlaps", "touches" })
-		public static Boolean opDisjoint(final IScope scope, final IShape g1, final IShape g2) {
+		public static Boolean disjoint_from(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return true; }
 			if ( g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return true; }
 			return !g1.getInnerGeometry().intersects(g2.getInnerGeometry());
@@ -906,9 +892,9 @@ public abstract class Spatial {
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) --: true",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) --: true" }, see = {
 			"<--:", "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches" })
-		public static Boolean opOverlaps(final IScope scope, final IShape g1, final IShape g2) {
+		public static Boolean overlaps(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
-			return !opDisjoint(scope, g1, g2);
+			return !disjoint_from(scope, g1, g2);
 		}
 
 		/**
@@ -931,7 +917,7 @@ public abstract class Spatial {
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}]) --: true",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) --: false" }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "intersects", "touches" })
-		public static Boolean opPartiallyOverlaps(final IShape g1, final IShape g) {
+		public static Boolean partially_overlaps(final IShape g1, final IShape g) {
 			if ( g == null ) { return false; }
 			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());
 		}
@@ -957,7 +943,7 @@ public abstract class Spatial {
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({15,15}) --: false",
 			"polygon([{10,10},{10,20},{20,20},{20,10}]) touches geometry({10,15}) --: true" }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
-		public static Boolean opTouches(final IShape g, final IShape g2) {
+		public static Boolean touches(final IShape g, final IShape g2) {
 			if ( g == null ) { return false; }
 			return g2.getInnerGeometry().touches(g.getInnerGeometry());
 		}
@@ -978,7 +964,7 @@ public abstract class Spatial {
 			"polyline([{10,10},{20,20}]) crosses geometry({15,15}) --: false",
 			"polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}]) --: true" }, see = {
 			"<--:", "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
-		public static Boolean opCrosses(final IShape g1, final IShape g2) {
+		public static Boolean crosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().crosses(g2.getInnerGeometry());
 		}
@@ -986,7 +972,7 @@ public abstract class Spatial {
 		@operator("intersects")
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) intersects the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) intersects {10,10} --: false." }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
-		public static Boolean opIntersects(final IShape g1, final IShape g2) {
+		public static Boolean intersects(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().intersects(g2.getInnerGeometry());
 		}
@@ -994,7 +980,7 @@ public abstract class Spatial {
 		@operator("intersects")
 		@doc()
 		// no documentation because same same as before but optimized for points.
-		public static Boolean opIntersects(final IShape g1, final GamaPoint p) {
+		public static Boolean intersects(final IShape g1, final GamaPoint p) {
 			if ( g1 == null || p == null ) { return false; }
 			return pl.intersects(p, g1.getInnerGeometry());
 		}
@@ -1002,7 +988,7 @@ public abstract class Spatial {
 		@operator("covers")
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) covers the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covers square(2) --: true." }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
-		public static Boolean opCovers(final IShape g1, final IShape g2) {
+		public static Boolean covers(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().covers(g2.getInnerGeometry());
 		}
@@ -1010,7 +996,7 @@ public abstract class Spatial {
 		@operator("covered_by")
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is covered by the right-geometry (or agent/point).", special_cases = { "if one of the operand is null, returns false." }, examples = { "square(5) covered_by square(2) --: false." }, see = {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
-		public static Boolean opCoveredBy(final IShape g1, final IShape g2) {
+		public static Boolean covered_by(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
 			return g1.getInnerGeometry().coveredBy(g2.getInnerGeometry());
 		}
@@ -1022,7 +1008,7 @@ public abstract class Spatial {
 		@operator(value = { "any_location_in", "any_point_in" })
 		@doc(value = "A point inside (or touching) the operand-geometry.", examples = { "any_location_in(square(5)) --: a point of the square, for example : {3,4.6}." }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
-		public static ILocation opAnyLocationIn(final IScope scope, final IShape g) {
+		public static ILocation any_location_in(final IScope scope, final IShape g) {
 			ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), GAMA.getRandom());
 			return p;
 		}
@@ -1030,7 +1016,7 @@ public abstract class Spatial {
 		@operator(value = { "points_exterior_ring" })
 		@doc(value = "A list of points of the exterior ring of the operand-geometry distant from each other to the float right-operand .", examples = { " square(5) points_exterior_ring(2) --: a list of points belonging to the exterior ring of the square distant from each other of 2." }, see = {
 			"closest_points_with", "farthest_point_to", "points_at" })
-		public static GamaList primLocExteriorRing(final IShape geom, final Double distance) {
+		public static GamaList points_exterior_ring(final IShape geom, final Double distance) {
 			GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
 			if ( geom.getInnerGeometry() instanceof GeometryCollection ) {
 				for ( int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++ ) {
@@ -1046,7 +1032,7 @@ public abstract class Spatial {
 		@operator(value = { "points_at" }, content_type = IType.POINT)
 		@doc(value = "A list of left-operand number of points located at a the right-operand distance to the agent location.", examples = { "3 points_at(20.0) --: returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location" }, see = {
 			"any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
-		public static GamaList opPointsAt(final IScope scope, final Integer nbLoc,
+		public static GamaList points_at(final IScope scope, final Integer nbLoc,
 			final Double distance) {
 			if ( distance == null || nbLoc == null ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -1070,7 +1056,7 @@ public abstract class Spatial {
 		@operator("closest_points_with")
 		@doc(value = "A list of two closest points between the two geometries.", examples = { "geom1 closest_points_with(geom2) --: [pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1" }, see = {
 			"any_location_in", "any_point_in", "farthest_point_to", "points_at" })
-		public static IList<GamaPoint> opClosestPointsBetween(final IShape a, final IShape b) {
+		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			Coordinate[] coors =
 				DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
 			return GamaList.with(new GamaPoint(coors[0]), new GamaPoint(coors[1]));
@@ -1079,7 +1065,7 @@ public abstract class Spatial {
 		@operator("farthest_point_to")
 		@doc(value = "the farthest point of the left-operand to the left-point.", examples = { "geom farthest_point_to(pt) --: the closest point of geom to pt" }, see = {
 			"any_location_in", "any_point_in", "closest_points_with", "points_at" })
-		public static ILocation opFarthestPointTo(final IShape g, final GamaPoint p) {
+		public static ILocation farthest_point_to(final IShape g, final GamaPoint p) {
 			if ( g == null ) { return p.getLocation(); }
 			if ( p == null ) { return g.getLocation(); }
 
@@ -1104,7 +1090,7 @@ public abstract class Spatial {
 		 * @param pt a point
 		 * @param poly a polygon
 		 */
-		public static ILocation opClosestPointTo(final IShape pt, final IShape geom) {
+		public static ILocation _closest_point_to(final IShape pt, final IShape geom) {
 			if ( pt == null ) { return null; }
 			if ( geom == null ) { return pt.getLocation(); }
 			Coordinate[] cp =
@@ -1120,7 +1106,7 @@ public abstract class Spatial {
 		@doc(value = "a list, containing all the agents located at a distance inferior or equal to 1 to the right-hand operand agent considering the left-hand operand topology.", examples = { "topology(self) neighbours_of self --: returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology." }, see = {
 			"neighbours_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to" })
-		public static IList opNeighboursOf(final IScope scope, final ITopology t, final IAgent agent)
+		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent)
 			throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			return t.getNeighboursOf(agent, 1.0, Different.with());
@@ -1128,8 +1114,8 @@ public abstract class Spatial {
 
 		@operator(value = "neighbours_of", content_type = IType.AGENT)
 		@doc(special_cases = "a list, containing all the agents located at a distance inferior or equal to the right member (float) of the pair (right-hand operand) to the left member (agent, geometry or point) considering the left-hand operand topology.", examples = { "topology(self) neighbours_of self::10--: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology." })
-		public static IList opNeighboursOf(final IScope scope, final ITopology t,
-			final GamaPair pair) throws GamaRuntimeException {
+		public static IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair)
+			throws GamaRuntimeException {
 			if ( pair == null ) { return GamaList.EMPTY_LIST; }
 			Object a = pair.key;
 			if ( a == null ) { throw new GamaRuntimeException(
@@ -1154,7 +1140,7 @@ public abstract class Spatial {
 		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to", "at_distance" })
-		public static IList opNeighboursAt(final IScope scope, final IShape agent,
+		public static IList neighbours_at(final IScope scope, final IShape agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			// CHANGE
@@ -1165,7 +1151,7 @@ public abstract class Spatial {
 		@operator(value = "neighbours_at")
 		@doc()
 		// no doc, because same same as before but optimized for "point".
-		public static IList opNeighboursAt(final IScope scope, final GamaPoint agent,
+		public static IList neighbours_at(final IScope scope, final GamaPoint agent,
 			final Double distance) throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			return scope.getTopology().getNeighboursOf(agent, distance, Different.with());
@@ -1175,22 +1161,22 @@ public abstract class Spatial {
 		@doc(value = "A list of agents among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)", examples = { "[ag1, ag2, ag3] at_distance 20 --: return the agents of the list located at a distance <= 20 from the caller agent (in the same order)." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping" })
-		public static IList opAtDistance(final IScope scope, final IList list, final Double distance) {
+		public static IList at_distance(final IScope scope, final IList list, final Double distance) {
 			if ( list.isEmpty() ) { return GamaList.EMPTY_LIST; }
 			IAgent agent = scope.getAgentScope();
 			ITopology t = scope.getTopology();
 			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
 				In.list(scope, list)); }
 			if ( t.isTorus() ) { return t.getNeighboursOf(agent, distance, In.list(scope, list)); }
-			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.list(scope, list),
-				false);
+			return t.getAgentsIn(Transformations.enlarged_by(agent, distance),
+				In.list(scope, list), false);
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		@doc(special_cases = "If the left operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)", examples = { "species1 at_distance 20 --: return the agents of species1 located at a distance <= 20 from the caller agent." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping" })
-		public static IList opAtDistance(final IScope scope, final ISpecies species,
+		public static IList at_distance(final IScope scope, final ISpecies species,
 			final Double distance) {
 			IAgent agent = scope.getAgentScope();
 			ITopology t = scope.getTopology();
@@ -1199,7 +1185,7 @@ public abstract class Spatial {
 			if ( agent.isPoint() ) { return t.getNeighboursOf(agent.getLocation(), distance,
 				In.population(pop)); }
 			if ( t.isTorus() ) { return t.getNeighboursOf(agent, distance, In.population(pop)); }
-			return t.getAgentsIn(Transformations.opBuffer(agent, distance), In.population(pop),
+			return t.getAgentsIn(Transformations.enlarged_by(agent, distance), In.population(pop),
 				false);
 		}
 
@@ -1207,9 +1193,8 @@ public abstract class Spatial {
 		@doc(value = "A list of agents among the left-operand list, covered by the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] inside(self) --: return the agents among ag1, ag2 and ag3 that are covered by the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping",
 			"agents_inside", "agent_closest_to" })
-		public static IList<IAgent> opInside(final IScope scope,
-			final IContainer<?, IShape> targets, final Object toBeCastedIntoGeometry)
-			throws GamaRuntimeException {
+		public static IList<IAgent> inside(final IScope scope, final IContainer<?, IShape> targets,
+			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry),
 				In.list(scope, targets), true);
@@ -1217,7 +1202,7 @@ public abstract class Spatial {
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)." }, examples = { "species1 inside(self) --: return the agents of species species1 that are covered by the shape of the agent applying the operator." })
-		public static IList<IAgent> opInside(final IScope scope, final ISpecies targets,
+		public static IList<IAgent> inside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
@@ -1230,7 +1215,7 @@ public abstract class Spatial {
 		@doc(value = "A list of agents among the left-operand list, overlapping the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] overlapping(self) --: return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "agents_overlapping" })
-		public static IList<IAgent> opOverlapping(final IScope scope,
+		public static IList<IAgent> overlapping(final IScope scope,
 			final IContainer<?, IShape> targets, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			ITopology t = scope.getTopology();
@@ -1240,7 +1225,7 @@ public abstract class Spatial {
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 overlapping(self) --: return the agents of species species1 that overlap the shape of the agent applying the operator." })
-		public static IList<IAgent> opOverlapping(final IScope scope, final ISpecies targets,
+		public static IList<IAgent> overlapping(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return new GamaList(); }
@@ -1253,7 +1238,7 @@ public abstract class Spatial {
 		@doc(value = "An agent among the left-operand list, the closest to the operand (casted as a geometry).", comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.", examples = { "[ag1, ag2, ag3] closest_to(self) --: return the closest agent among ag1, ag2 and ag3 to the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside",
 			"overlapping", "agents_overlapping", "agents_inside", "agent_closest_to" })
-		public static Object opClosestTo(final IScope scope, final IContainer<?, IShape> targets,
+		public static Object closest_to(final IScope scope, final IContainer<?, IShape> targets,
 			final IShape source) throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
 				return scope.getTopology().getAgentClosestTo((ILocation) source,
@@ -1269,7 +1254,7 @@ public abstract class Spatial {
 			"neighbours_at",
 			"neighbours_of",
 			"species1 closest_to(self) --: return the closest agent of species species1 to the agent applying the operator." })
-		public static IAgent opClosestTo(final IScope scope, final ISpecies targets,
+		public static IAgent closest_to(final IScope scope, final ISpecies targets,
 			final IShape source) throws GamaRuntimeException {
 			IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return null; }
@@ -1288,7 +1273,7 @@ public abstract class Spatial {
 		@doc(value = "A agent, the closest to the operand (casted as a geometry).", comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.", examples = { "agent_closest_to(self) --: return the closest agent to the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "agents_inside", "agents_overlapping", "closest_to",
 			"inside", "overlapping" })
-		public static IAgent opAgentsClosestTo(final IScope scope, final Object source)
+		public static IAgent agent_closest_to(final IScope scope, final Object source)
 			throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
 				return scope.getTopology().getAgentClosestTo((ILocation) source, Different.with());
@@ -1301,7 +1286,7 @@ public abstract class Spatial {
 		@operator(value = "agents_inside", content_type = IType.AGENT)
 		@doc(value = "A list of agents covered by the operand (casted as a geometry).", examples = { "agents_inside(self) --: return the agents that are covered by the shape of the agent applying the operator." }, see = {
 			"agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
-		public static IList<IAgent> opAgentsIn(final IScope scope,
+		public static IList<IAgent> agents_inside(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
@@ -1312,7 +1297,7 @@ public abstract class Spatial {
 		@doc(value = "A list of agents overlapping the operand (casted as a geometry).", examples = { "agents_overlapping(self) --: return the agents that overlap the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping", "at_distance" })
-		public static IList<IAgent> opOverlappingAgents(final IScope scope,
+		public static IList<IAgent> agents_overlapping(final IScope scope,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			ITopology t = scope.getTopology();
 			return t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
@@ -1323,11 +1308,11 @@ public abstract class Spatial {
 		@doc(value = "A list of agents situated at a distance <= the right argument.", comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'", examples = { "agents_at_distance(20) --: all the agents (excluding the caller) which distance to the caller is <= 20" }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping", "at_distance" })
-		public static IList opAgentsAtDistance(final IScope scope, final Double distance) {
+		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			IAgent agent = scope.getAgentScope();
 			if ( agent.isPoint() ) { return scope.getTopology().getNeighboursOf(
 				agent.getLocation(), distance, Different.with()); }
-			return scope.getTopology().getAgentsIn(Transformations.opBuffer(agent, distance),
+			return scope.getTopology().getAgentsIn(Transformations.enlarged_by(agent, distance),
 				Different.with(), false);
 		}
 
@@ -1337,7 +1322,7 @@ public abstract class Spatial {
 
 		@operator(value = { "simple_clustering_by_distance" }, content_type = IType.LIST)
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_envelope_distance" })
-		public static IList simpleClusteringByDistance(final IScope scope,
+		public static IList simple_clustering_by_distance(final IScope scope,
 			final IContainer<?, IAgent> agents, final Double distance) {
 			int nb = agents.length(scope);
 
@@ -1427,7 +1412,7 @@ public abstract class Spatial {
 		@operator(value = { "simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
 		@doc(value = "A list of agent groups clustered by distance (considering the agent envelop) considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_distance" })
 		// CHANGER LE NOM !!!
-		public static IList simpleClusteringByEnvelopeDistance(final IScope scope,
+		public static IList simple_clustering_by_envelope_distance(final IScope scope,
 			final IContainer<?, IAgent> agents, final Double distance) {
 			int nb = agents.length(scope);
 
@@ -1523,7 +1508,7 @@ public abstract class Spatial {
 		@doc(value = "add_z", comment = "Return a geometry with a z value"
 			+ "The add_z operator set the z value of the whole shape."
 			+ "For each point of the cell the same z value is set.", examples = { "set shape <- shape add_z rnd(100);" }, see = { "add_z_pt" })
-		public static IShape opAddZGeom(final IShape g, final Double z) {
+		public static IShape add_z(final IShape g, final Double z) {
 			Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
 			((GamaPoint) g.getLocation()).z = z;
 			for ( int i = 0; i < coordinates.length; i++ ) {
@@ -1535,7 +1520,7 @@ public abstract class Spatial {
 		@operator(value = { "add_z_pt" })
 		@doc(value = "add_z_pt", comment = "Return a geometry with a z value", examples = { "loop i from: 0 to: length(shape.points) - 1{"
 			+ "set shape <- shape add_z_pt {i,valZ};" + "}" }, see = { "add_z" })
-		public static IShape opAddZPoint(final IShape geom, final GamaPoint data) {
+		public static IShape add_z_pt(final IShape geom, final GamaPoint data) {
 			geom.getInnerGeometry().getCoordinates()[(int) data.x].z = data.y;
 			return geom;
 		}

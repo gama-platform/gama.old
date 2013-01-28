@@ -18,13 +18,14 @@
  */
 package msi.gama.metamodel.topology.grid;
 
+import java.awt.Graphics2D;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -41,7 +42,8 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
  * This matrix contains geometries and can serve to organize the agents of a population as a grid in
  * the environment, or as a support for grid topologies
  */
-public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatialIndex */{
+public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatialIndex */implements
+	ISpatialIndex {
 
 	public class SpatialMatrixIterator implements Iterator<IShape> {
 
@@ -143,31 +145,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		matrix = new IShape[size];
 	}
 
-	/*
-	 * GamaList<IShape> geoms = new GamaList<IShape>();
-	 * xmin += widthHex/2.0;
-	 * ymin += heightHex/2.0;
-	 * for(int l=0;l<nbRows;l++){
-	 * for(int c=0;c<nbColumns;c = c +2){
-	 * GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new
-	 * GamaPoint(xmin + c * widthHex* 0.75 ,ymin + l * heightHex));
-	 * //GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size,
-	 * ymin + 2* size*val * l);
-	 * if (geom.covers(poly))
-	 * geoms.add(poly);
-	 * }
-	 * }
-	 * for(int l=0;l<nbRows;l++){
-	 * for(int c=1;c<nbColumns;c = c +2){
-	 * GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new
-	 * GamaPoint(xmin + c * widthHex* 0.75 ,ymin + (l+0.5) * heightHex));
-	 * //GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5) * size,
-	 * ymin + 2* size*val * l);
-	 * if (geom.covers(poly))
-	 * geoms.add(poly);
-	 * }
-	 * }
-	 */
 	public void createHexagons(final boolean partialCells) {
 		double widthEnv = environmentFrame.getEnvelope().getWidth();
 		double heightEnv = environmentFrame.getEnvelope().getHeight();
@@ -226,7 +203,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 				.getMinY());
 
 		IShape translatedReferenceFrame =
-			Spatial.Transformations.primTranslationBy(environmentFrame, origin);
+			Spatial.Transformations.translated_by(environmentFrame, origin);
 		// GeometryUtils.translation(g, -origin.x, -origin.y);
 
 		double cmx = cellWidth / 2;
@@ -239,7 +216,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			IShape rect = GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
 			boolean ok = isRectangle || translatedReferenceFrame.covers(rect);
 			if ( partialCells && !ok && rect.intersects(translatedReferenceFrame) ) {
-				rect.setGeometry(Spatial.Operators.opInter(rect, translatedReferenceFrame));
+				rect.setGeometry(Spatial.Operators.inter(rect, translatedReferenceFrame));
 				ok = true;
 			}
 			if ( ok ) {
@@ -399,10 +376,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public boolean _removeAll(final IContainer<?, IShape> o) {
+	public boolean _removeAll(final IContainer<?, IShape> value) throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 		return false;
-
 	}
 
 	@Override
@@ -702,26 +678,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		final IAgentFilter f, final boolean covered) {
 		if ( !f.filterSpecies(cellSpecies) ) { return Collections.EMPTY_LIST; }
 		Envelope env = source.getEnvelope();
-		int minX = getX(env.getMinX());
-		int minY = getY(env.getMinY());
-		int maxX = getX(env.getMaxX());
-		int maxY = getY(env.getMaxY());
-		Set<IAgent> ags = new HashSet();
-		for ( int i = minX; i < maxX; i++ ) {
-			for ( int j = minY; j < maxY; j++ ) {
-				int index = getPlaceIndexAt(i, j);
-				if ( index != 1 ) {
-					IAgent a = matrix[index].getAgent();
-					if ( a != null ) {
-						if ( covered && source.covers(a) || !covered && source.intersects(a) ) {
-							ags.add(a);
-						}
-					}
-				}
-			}
-		}
-		return ags;
-
+		return (Collection<? extends IAgent>) allInEnvelope(source, env, f, covered);
 	}
 
 	/**
@@ -745,5 +702,119 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		}
 		return agents;
 	}
+
+	@Override
+	public void insert(final Envelope bounds, final IShape o) {}
+
+	@Override
+	public void insert(final Coordinate location, final IShape agent) {}
+
+	@Override
+	public void remove(final Envelope bounds, final IShape o) {}
+
+	@Override
+	public void remove(final Coordinate previousLoc, final IShape agent) {}
+
+	@Override
+	public IList<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+		double exp = dist * Maths.SQRT2;
+		ENVELOPE.init(source.getEnvelope());
+		ENVELOPE.expandBy(exp);
+		Collection<IShape> set = allInEnvelope(source, ENVELOPE, f, false);
+		GamaList external_results = new GamaList();
+		for ( IShape a : set ) {
+			if ( source.euclidianDistanceTo(a) < dist ) {
+				external_results.add(a);
+			}
+		}
+		return external_results;
+	}
+
+	@Override
+	public IList<IShape> allAtDistance(final ILocation source, final double dist,
+		final IAgentFilter f) {
+		double exp = dist * Maths.SQRT2;
+		ENVELOPE.init(source.getEnvelope());
+		ENVELOPE.expandBy(exp);
+		Collection<IShape> set = allInEnvelope(source, ENVELOPE, f, false);
+		GamaList external_results = new GamaList();
+		for ( IShape a : set ) {
+			if ( source.euclidianDistanceTo(a) < dist ) {
+				external_results.add(a);
+			}
+		}
+		return external_results;
+	}
+
+	@Override
+	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+		double exp = dist * Maths.SQRT2;
+		ENVELOPE.init(source.getEnvelope());
+		ENVELOPE.expandBy(exp);
+		Collection<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
+		double min_distance = dist;
+		IShape min_agent = null;
+		for ( IShape a : in_square ) {
+			Double dd = source.euclidianDistanceTo(a);
+			if ( dd < min_distance ) {
+				min_distance = dd;
+				min_agent = a;
+			}
+		}
+		return min_agent;
+	}
+
+	@Override
+	public IShape firstAtDistance(final ILocation source, final double dist, final IAgentFilter f) {
+		double exp = dist * Maths.SQRT2;
+		ENVELOPE.init(source.getEnvelope());
+		ENVELOPE.expandBy(exp);
+		Collection<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
+		double min_distance = dist;
+		IShape min_agent = null;
+		for ( IShape a : in_square ) {
+			Double dd = source.euclidianDistanceTo(a);
+			if ( dd < min_distance ) {
+				min_distance = dd;
+				min_agent = a;
+			}
+		}
+		return min_agent;
+	}
+
+	@Override
+	public IList<IShape> allInEnvelope(final IShape source, final Envelope env,
+		final IAgentFilter f, final boolean covered) {
+		if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
+		int minX = getX(env.getMinX());
+		int minY = getY(env.getMinY());
+		int maxX = getX(env.getMaxX());
+		int maxY = getY(env.getMaxY());
+		IList<IShape> ags = new GamaList();
+		for ( int i = minX; i < maxX; i++ ) {
+			for ( int j = minY; j < maxY; j++ ) {
+				int index = getPlaceIndexAt(i, j);
+				if ( index != 1 ) {
+					IAgent a = matrix[index].getAgent();
+					if ( a != null ) {
+						if ( covered && env.covers(a.getEnvelope()) || !covered &&
+							env.intersects(a.getEnvelope()) ) {
+							ags.add(a);
+						}
+					}
+				}
+			}
+		}
+		return ags;
+	}
+
+	@Override
+	public void drawOn(final Graphics2D g2, final int width, final int height) {}
+
+	@Override
+	public void update() {}
+
+	@Override
+	public void cleanCache() {}
 
 }

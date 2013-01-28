@@ -415,13 +415,13 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	@Override
 	public void initialize(final ParametersSet sol, final Double seed) throws InterruptedException,
 		GamaRuntimeException {
-		// GuiUtils.debug("Beginning to initialize a new simulation");
+		GuiUtils.debug("Beginning to initialize a new simulation");
 		if ( currentSimulation != null ) { return; }
 		if ( agent == null ) {
 			createAgent();
 		}
 		parametersEditors = null;
-		// GuiUtils.debug("Setting the value of parameters from " + sol);
+		GuiUtils.debug("Setting the value of parameters from " + sol);
 
 		for ( IParameter p : targetedVars.values() ) {
 			String name = p.getName();
@@ -433,6 +433,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		// GUI.debug("Initializing the random agent");
 		getParameter(IKeyword.SEED).setValue(seed);
 		random = new RandomUtils(seed);
+		GuiUtils.updateParameterView();
 		GuiUtils.clearErrors();
 		GuiUtils.showConsoleView();
 		// GUI.debug("Instanciating a new simulation");

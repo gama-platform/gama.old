@@ -36,6 +36,7 @@ import msi.gaml.types.*;
 public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	public static final GamaList EMPTY_LIST = new Immutable();
+	public static final HashSet EMPTY_SET = new HashSet();
 
 	private static class Immutable extends GamaList {
 

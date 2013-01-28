@@ -1,7 +1,5 @@
 package msi.gama.metamodel.agent;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.population.*;
@@ -14,6 +12,7 @@ import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
+import com.vividsolutions.jts.geom.Envelope;
 
 @species(name = IKeyword.WORLD_SPECIES)
 public class WorldAgent extends GamlAgent {
@@ -41,12 +40,12 @@ public class WorldAgent extends GamlAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape newGlobalGeometry) {
-		if (geometry != null) {
+		if ( geometry != null ) {
 			IScope scope = this.getSimulation().getGlobalScope();
 			IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
 			Envelope env = newGlobalGeometry.getEnvelope();
-			GamaPoint p = new GamaPoint(-1 * env.getMinX(), - 1 * env.getMinY());
-			geometry = Transformations.primTranslationBy(newGlobalGeometry, p);
+			GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
+			geometry = Transformations.translated_by(newGlobalGeometry, p);
 			modelEnv.initializeFor(newGlobalGeometry, scope);
 		}
 	}

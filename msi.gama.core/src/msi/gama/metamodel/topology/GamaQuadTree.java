@@ -48,7 +48,6 @@ public class GamaQuadTree implements ISpatialIndex {
 	private double minSize = 10;
 	private int totalAgents = 0;
 	private int totalNodes = 0;
-	private final static Envelope ENVELOPE = new Envelope();
 	private final static double CLONE_THRESHOLD = 0.2;
 	private final Map<IAgentFilter, GamaQuadTree> cache = new HashMap();
 
@@ -364,10 +363,10 @@ public class GamaQuadTree implements ISpatialIndex {
 				retVal = ne.add(env, o);
 			}
 			if ( nw.bounds.intersects(env) ) {
-				retVal =  nw.add(env, o)||retVal;
+				retVal = nw.add(env, o) || retVal;
 			}
 			if ( se.bounds.intersects(env) ) {
-				retVal = se.add(env, o)|| retVal ;
+				retVal = se.add(env, o) || retVal;
 			}
 			if ( sw.bounds.intersects(env) ) {
 				retVal = sw.add(env, o) || retVal;

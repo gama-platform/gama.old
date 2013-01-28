@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.util.IList;
+import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -31,6 +32,8 @@ import com.vividsolutions.jts.geom.*;
  * 
  */
 public interface ISpatialIndex {
+
+	public final static Envelope ENVELOPE = new Envelope();
 
 	public abstract void insert(final Envelope bounds, final IShape o);
 
@@ -60,5 +63,14 @@ public interface ISpatialIndex {
 	public abstract void update();
 
 	public abstract void cleanCache();
+
+	public interface Compound extends ISpatialIndex {
+
+		public abstract void add(ISpatialIndex index, ISpecies species);
+
+		public abstract void remove(ISpatialIndex index);
+
+		public abstract void dispose();
+	}
 
 }

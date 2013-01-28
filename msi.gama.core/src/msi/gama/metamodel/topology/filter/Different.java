@@ -104,4 +104,9 @@ public class Different implements IAgentFilter {
 		return 0;
 	}
 
+	@Override
+	public ISpecies speciesFiltered() {
+		return null;
+	}
+
 }

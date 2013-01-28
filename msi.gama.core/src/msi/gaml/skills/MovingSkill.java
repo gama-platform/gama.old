@@ -381,7 +381,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 			line = edges.get(index);
 
-			currentLocation = (GamaPoint) Punctal.opClosestPointTo(currentLocation, line);
+			currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
 				distanceS = Double.MAX_VALUE;
@@ -401,7 +401,7 @@ public class MovingSkill extends GeometricSkill {
 			}
 		}
 		IShape lineEnd = edges.get(nb - 1);
-		GamaPoint falseTarget = (GamaPoint) Punctal.opClosestPointTo(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
 		endIndexSegment = 1;
 		Point pointGeom = (Point) falseTarget.getInnerGeometry();
 		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -645,7 +645,7 @@ public class MovingSkill extends GeometricSkill {
 				.getLocation(); }
 			frontier = geomsSimp;
 		}
-		ILocation computedPt = Punctal.opClosestPointTo(loc, new GamaShape(frontier));
+		ILocation computedPt = Punctal._closest_point_to(loc, new GamaShape(frontier));
 		if ( computedPt != null ) { return computedPt; }
 		return getCurrentAgent(scope).getLocation();
 	}

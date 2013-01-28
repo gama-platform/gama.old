@@ -19,51 +19,32 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.io.*;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GisUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.file.GamaFile;
-import msi.gama.util.file.GamaImageFile;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.compilation.Symbol;
+import msi.gama.util.file.*;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Transformations;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.IType;
-
+import msi.gaml.types.*;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShpFiles;
+import org.geotools.data.shapefile.*;
 import org.geotools.geometry.jts.JTS;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-
+import org.opengis.feature.simple.*;
+import org.opengis.referencing.operation.*;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -181,13 +162,13 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// Thai.truongminh@gmail.com
 		// 10-sep-2012: for create agen from:list
 		// for tracing nly
-		// if (debug) System.out.println("Bounds:" +bounds.toString());
+		// if (debug) GuiUtils.debug("Bounds:" +bounds.toString());
 		if ( DEBUG ) {
-			System.out.println("2_store :" + store.toString());
-			System.out.println("2_name of store:" + name);
-			System.out.println("2_FeatureSource :" + source.toString());
-			System.out.println("2_Envelop:" + env.toString());
-			System.out.println("2_store.getSchema().getCoordinateReferenceSystem():" +
+			GuiUtils.debug("2_store :" + store.toString());
+			GuiUtils.debug("2_name of store:" + name);
+			GuiUtils.debug("2_FeatureSource :" + source.toString());
+			GuiUtils.debug("2_Envelop:" + env.toString());
+			GuiUtils.debug("2_store.getSchema().getCoordinateReferenceSystem():" +
 				store.getSchema().getCoordinateReferenceSystem());
 		}
 
@@ -207,10 +188,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			// 10-sep-2012: for create agen from:list
 			// for tracing
 			if ( DEBUG ) {
-				System.out.println("2.1_latitude :" + latitude);
-				System.out.println("2.1_longitude:" + longitude);
-				System.out.println("2.1_transformCRSNew :" + transformCRSNew.toString());
-				System.out.println("2.1_transformCRS:" + (transformCRS == null));
+				GuiUtils.debug("2.1_latitude :" + latitude);
+				GuiUtils.debug("2.1_longitude:" + longitude);
+				GuiUtils.debug("2.1_transformCRSNew :" + transformCRSNew.toString());
+				GuiUtils.debug("2.1_transformCRS:" + (transformCRS == null));
 			}
 
 			// ---------------------------------------------------------------------------------------------
@@ -243,7 +224,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// Thai.truongminh@gmail.com
 		// 10-sep-2012: for create agen from:list
 		// for tracing nly
-		// if (debug) System.out.println("Bounds:" +bounds.toString());
+		// if (debug) GuiUtils.debug("Bounds:" +bounds.toString());
 		// if ( DEBUG ) {
 		// GuiUtils.informConsole("1_Bounds:" +bounds.toString());
 		// }
@@ -348,9 +329,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 		else if ( bounds instanceof Map ) {
 			Map params = (Map) bounds;
-			// System.out.println("1.2.1_url:" +params.get("url"));
-			// System.out.println("1.2.2_venderName:" +params.get("venderName"));
-			// System.out.println("1.2.3_usrName:" +params.get("usrName"));
+			// GuiUtils.debug("1.2.1_url:" +params.get("url"));
+			// GuiUtils.debug("1.2.2_venderName:" +params.get("venderName"));
+			// GuiUtils.debug("1.2.3_usrName:" +params.get("usrName"));
 
 			String dbtype = (String) params.get("dbtype");
 			String host = (String) params.get("host");
@@ -387,7 +368,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
 				if ( DEBUG ) {
-					System.out.println("ModelEnvironment.bounds.map:" + boundsEnv.toString());
+					GuiUtils.debug("ModelEnvironment.bounds.map:" + boundsEnv.toString());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -409,18 +390,22 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	}
 
-	public void initializeFor(final IShape geom,final IScope scope) throws GamaRuntimeException {
+	@Override
+	public void initializeFor(final IShape geom, final IScope scope) throws GamaRuntimeException {
 		Envelope env = geom.getEnvelope();
 		width = env.getWidth();
 		height = env.getHeight();
-		GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY()  );
-		GisUtils.init(height, width, GisUtils.XMinComp + env.getMinX(), GisUtils.YMinComp +  env.getMinY(), GisUtils.XMinComp +env.getMaxX(),GisUtils.YMinComp + env.getMaxY(), GisUtils.transformCRS);
+		GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
+		GisUtils.init(height, width, GisUtils.XMinComp + env.getMinX(),
+			GisUtils.YMinComp + env.getMinY(), GisUtils.XMinComp + env.getMaxX(),
+			GisUtils.YMinComp + env.getMaxY(), GisUtils.transformCRS);
 		initializeSpatialIndex();
-		for (IAgent ag: scope.getWorldScope().getAgents()) {
-			ag.setGeometry(Transformations.primTranslationBy(ag.getGeometry(), p));
+		for ( IAgent ag : scope.getWorldScope().getAgents() ) {
+			ag.setGeometry(Transformations.translated_by(ag.getGeometry(), p));
 		}
-		
+
 	}
+
 	/**
 	 * Initializes the global spatial index.
 	 */

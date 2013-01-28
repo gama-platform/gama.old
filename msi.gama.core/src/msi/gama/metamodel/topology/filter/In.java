@@ -126,6 +126,11 @@ public abstract class In implements IAgentFilter {
 			return agents.size();
 		}
 
+		@Override
+		public ISpecies speciesFiltered() {
+			return null;
+		}
+
 	}
 
 	private static class InGraph extends In {
@@ -175,6 +180,11 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public int getSize() {
 			return graph.length(null); // VERIFY NULL SCOPE
+		}
+
+		@Override
+		public ISpecies speciesFiltered() {
+			return null; // See if we can identify the species of edges / vertices
 		}
 	}
 
@@ -228,6 +238,11 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public int getSize() {
 			return pop.size();
+		}
+
+		@Override
+		public ISpecies speciesFiltered() {
+			return pop.getSpecies();
 		}
 	}
 
