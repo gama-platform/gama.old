@@ -20,7 +20,6 @@ package msi.gaml.species;
 
 import java.util.*;
 
-import ummisco.gaml.ext.maths.statements.SystemOfEquationsStatement;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
@@ -146,8 +145,8 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	 * Equation (Huynh Quang Nghi)
 	 */
 
-	public abstract IStatement getEquation(final String name);
-	public abstract void addEquation(final IStatement ce);
+	public abstract <T> IStatement getStatement(Class<T> clazz, String name);
+//	public abstract void addEquation(final IStatement ce);
 
 	/*
 	 * end-of Equation
