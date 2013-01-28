@@ -18,6 +18,7 @@
  */
 package msi.gaml.variables;
 
+import java.util.Arrays;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -72,18 +73,7 @@ public class ContainerVariable extends Variable {
 		if ( sizeExpr != null ) {
 			setSize(scope, owner, scope.evaluate(sizeExpr, owner));
 		}
-		if ( fillExpr != null ) {
-			setInitialValues(scope, owner);
-		}
-	}
 
-	private void setInitialValues(final IScope scope, final IAgent owner)
-		throws GamaRuntimeException {
-		final Object val = value(scope, owner);
-		if ( val == null ) { return; }
-		if ( !(val instanceof IContainer) ) { return; }
-		Object o = scope.evaluate(fillExpr, owner);
-		((IContainer) val).putAll(o, null);
 	}
 
 	private void setSize(final IScope scope, final IAgent owner, final Object value)
@@ -115,18 +105,17 @@ public class ContainerVariable extends Variable {
 							v == null ? new GamaObjectMatrix(size) : GamaObjectMatrix.from(
 								(int) size.x, (int) size.y, (IMatrix) v);
 				}
+				Object o =
+					fillExpr == null ? contentType.getDefault() : scope.evaluate(fillExpr, owner);
+				((IMatrix) result).putAll(o, null);
 				break;
 			}
 			case IType.LIST: {
-				result = new GamaList<Object>((int) size.x);
-				Object v = value(scope, owner);
-				if ( v instanceof GamaList ) {
-					if ( ((GamaList) v).size() < size.x ) {
-						((GamaList) result).addAll((GamaList) v);
-					} else {
-						((GamaList) result).addAll(((GamaList) v).subList(0, (int) size.x));
-					}
-				}
+				Object[] contents = new Object[Cast.asInt(scope, value)];
+				Object o =
+					fillExpr == null ? contentType.getDefault() : scope.evaluate(fillExpr, owner);
+				Arrays.fill(contents, o);
+				result = new GamaList(contents);
 			}
 		}
 		if ( result == null ) { return; }
