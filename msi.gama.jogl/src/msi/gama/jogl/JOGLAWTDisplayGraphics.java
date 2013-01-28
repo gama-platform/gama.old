@@ -746,6 +746,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 				myGLRender.gl.glPushMatrix();
 				myGLRender.gl.glLoadName(i);
 				MyJTSGeometry curGeometry = it.next();
+				
 
 				if ( pickedObjectIndex == i ) {
 					MyJTSGeometry pickedGeometry = (MyJTSGeometry) curGeometry.clone();
@@ -938,7 +939,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		Color c = new Color(225, 225, 225);
 		MyJTSGeometry curGeometry =
-			new MyJTSGeometry(g, null, -0.01f, -1, c, 1.0f, true, null, false, 0, 0.0f, offSet,false);
+			new MyJTSGeometry(g, null, -0.01f, -1, c, 1.0f, true, null, false, 0, 0.0f, offSet,true);
 		myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
@@ -1097,6 +1098,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public void setAmbiantLight(final float lightValue) {
 		myGLRender.ambiantLightValue = lightValue;
+	}
+
+	@Override
+	public boolean setPolygonMode(boolean polygonMode) {
+		
+		return myGLRender.polygonmode = polygonMode;
 	}
 
 }

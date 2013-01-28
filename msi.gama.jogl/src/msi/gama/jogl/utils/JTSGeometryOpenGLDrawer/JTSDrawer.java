@@ -66,7 +66,7 @@ public class JTSDrawer {
 
 	public void DrawMultiPolygon(final MultiPolygon polygons, final float z_layer, final Color c,
 		final float alpha, final boolean fill, final Color border, final Integer angle,
-		final float height) {
+		final float height,final boolean rounded) {
 
 		numGeometries = polygons.getNumGeometries();
 
@@ -75,9 +75,9 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if ( height > 0 ) {
-				DrawPolyhedre(curPolygon, z_layer, c, alpha, fill, height, angle, false, border);
+				DrawPolyhedre(curPolygon, z_layer, c, alpha, fill, height, angle, false, border,rounded);
 			} else {
-				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle, true,false);
+				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle, true,rounded);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ public class JTSDrawer {
 			// use JTS triangulation on simplified geometry (DouglasPeucker)
 			// FIXME: not working with a z_layer value!!!!
 			else {
-				DrawTriangulatedPolygon(p,myGLRender.showTriangulation);
+				DrawTriangulatedPolygon(p,myGLRender.JTSTriangulation);
 				myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 				if ( drawPolygonContour == true ) {
 					DrawPolygonContour(p, border);
@@ -348,10 +348,10 @@ public class JTSDrawer {
 
 	public void DrawPolyhedre(final Polygon p, final float z, final Color c, final float alpha,
 		final boolean fill, final float height, final Integer angle,
-		final boolean drawPolygonContour, final Color border) {
+		final boolean drawPolygonContour, final Color border,final boolean rounded) {
 
-		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour,false);
-		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour,false);
+		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour,rounded);
+		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour,rounded);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha, fill, border, z, height, drawPolygonContour, false);
 

@@ -57,14 +57,14 @@ public class BasicOpenGlDrawer {
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {				
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
 						geometry.z_layer, geometry.color, geometry.alpha,
-						geometry.fill, geometry.border, geometry.angle, geometry.height);
+						geometry.fill, geometry.border, geometry.angle, geometry.height,geometry.rounded);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.fill,geometry.height, geometry.angle, true, geometry.border);
+							geometry.fill,geometry.height, geometry.angle, true, geometry.border,geometry.rounded);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, geometry.color, geometry.alpha,
@@ -125,14 +125,14 @@ public class BasicOpenGlDrawer {
 			if (geometry.geometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry,
 						geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
-						geometry.angle, geometry.height);
+						geometry.angle, geometry.height,geometry.rounded);
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				if (geometry.height > 0) {
 					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
 							geometry.z_layer, c, geometry.alpha,geometry.fill, geometry.height,
-							geometry.angle, true, geometry.border);
+							geometry.angle, true, geometry.border,geometry.rounded);
 				} else {
 					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
 							geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
@@ -194,7 +194,7 @@ public class BasicOpenGlDrawer {
 
 			if (sourceGeometry.getGeometryType() == "MultiPolygon") {
 				myJTSDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry,
-						0.0f, collection.color, 1.0f, true, null, 0, 0.0f);
+						0.0f, collection.color, 1.0f, true, null, 0, 0.0f,false);
 			}
 
 			else if (sourceGeometry.getGeometryType() == "Polygon") {

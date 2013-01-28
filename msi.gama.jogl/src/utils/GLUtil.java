@@ -29,6 +29,8 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+import org.eclipse.swt.opengl.GLData;
+
 import msi.gama.jogl.utils.MyGLToyDrawer;
 
 public class GLUtil {

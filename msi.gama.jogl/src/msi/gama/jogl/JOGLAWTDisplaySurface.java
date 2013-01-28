@@ -310,8 +310,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void outputChanged(final double env_width, final double env_height,
 		final IDisplayOutput output) {
-		bgColor = output.getBackgroundColor();
-		this.setBackground(bgColor);
+		setBgColor(output.getBackgroundColor());
+		this.setBackground(getBgColor());
 		widthHeightConstraint = env_height / env_width;
 		menuListener = new ActionListener() {
 
@@ -357,8 +357,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void setBackgroundColor(final Color c) {
-		System.out.println("set background in jogl display surface");
-		openGLGraphicsGLRender.gl.glClearColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+		setBgColor(c);
 	}
 
 	@Override
@@ -663,7 +662,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void toggleArcball() {
 		Arcball = !Arcball;
-	/*	if(Arcball == true){
+	   /* if(Arcball == true){
 		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
 		}*/
 	}
@@ -671,7 +670,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void toggleSelectRectangle() {
     SelectRectangle = !SelectRectangle;
-		
+    	
 	/*	if(Arcball == true){
 		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
 		}*/
@@ -855,5 +854,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public IGraphics getMyGraphics() {
 		return this.openGLGraphics;
+	}
+
+	public Color getBgColor() {
+		return bgColor;
+	}
+
+	public void setBgColor(Color bgColor) {
+		this.bgColor = bgColor;
 	}
 }
