@@ -12,13 +12,13 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-//@species(name = "Solver")
-public class Solver extends GamlAgent {
+//@species(name = "AgentMaths")
+public class AgentMaths extends GamlAgent {
 
 
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
-	public Solver(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
+	public AgentMaths(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
 		super(sim, s);
 	}
 	

@@ -1,6 +1,11 @@
 package ummisco.gaml.ext.maths.statements;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -30,7 +35,8 @@ import msi.gaml.types.IType;
  * @since 26 janv. 2013
  *
  */
-public class SingleEquationStatement extends AbstractStatement {
+public class SingleEquationStatement extends AbstractStatement  implements
+FirstOrderDifferentialEquations {
 
 	final IExpression function, expression;
 	IVarExpression var;
@@ -55,7 +61,26 @@ public class SingleEquationStatement extends AbstractStatement {
 	@Override
 	protected Double privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
+
+		GuiUtils.informConsole(""+expression.value(scope));
 		return result;
+	}
+
+//	public Rk4Solver(double[] c, double omega) {
+//		this.c = c;
+//		this.omega = omega;
+//	}
+
+
+	@Override
+	public Object executeOn(IScope scope) throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+
+		return super.executeOn(scope);
+	}
+
+	public void computeDerivatives(IScope scope) {
+		GuiUtils.informConsole(""+expression.value(scope));
 	}
 
 	public int getOrder() {
@@ -74,6 +99,19 @@ public class SingleEquationStatement extends AbstractStatement {
 	@operator("diff2")
 	public static Double diff2(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
+	}
+
+	@Override
+	public int getDimension() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void computeDerivatives(double t, double[] y, double[] yDot)
+			throws MaxCountExceededException, DimensionMismatchException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

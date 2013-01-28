@@ -34,8 +34,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
  * @since 26 janv. 2013
  *
  */
-public class SystemOfEquationsStatement extends AbstractStatementSequence implements
-	FirstOrderDifferentialEquations {
+public class SystemOfEquationsStatement extends AbstractStatementSequence {
 
 	final IList<SingleEquationStatement> equations = new GamaList();
 	final IList<IVarExpression> variables = new GamaList();
@@ -76,35 +75,35 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
 	 *      double[], double[])
 	 */
-	@Override
-	public void computeDerivatives(final double time, final double[] y, final double[] ydot)
-		throws MaxCountExceededException, DimensionMismatchException {
-		// and the time ?
-		// we first initialize the vars with the y vector
-		for ( int i = 0, n = getDimension(); i < n; i++ ) {
-			IVarExpression v = variables.get(i);
-			v.setVal(currentScope, y[i], false);
-		}
-		// then we ask the equation(s) to compute and we store their results in the ydot vector
-		for ( int i = 0, n = getDimension(); i < n; i++ ) {
-			SingleEquationStatement s = equations.get(i);
-			ydot[i] = (Double) s.executeOn(currentScope);
-		}
-		// finally, we update the value of the variables
-		for ( int i = 0, n = getDimension(); i < n; i++ ) {
-			IVarExpression v = variables.get(i);
-			v.setVal(currentScope, ydot[i], false);
-		}
-	}
+//	@Override
+//	public void computeDerivatives(final double time, final double[] y, final double[] ydot)
+//		throws MaxCountExceededException, DimensionMismatchException {
+//		// and the time ?
+//		// we first initialize the vars with the y vector
+//		for ( int i = 0, n = getDimension(); i < n; i++ ) {
+//			IVarExpression v = variables.get(i);
+//			v.setVal(currentScope, y[i], false);
+//		}
+//		// then we ask the equation(s) to compute and we store their results in the ydot vector
+//		for ( int i = 0, n = getDimension(); i < n; i++ ) {
+//			SingleEquationStatement s = equations.get(i);
+//			ydot[i] = (Double) s.executeOn(currentScope);
+//		}
+//		// finally, we update the value of the variables
+//		for ( int i = 0, n = getDimension(); i < n; i++ ) {
+//			IVarExpression v = variables.get(i);
+//			v.setVal(currentScope, ydot[i], false);
+//		}
+//	}
 
 	/**
 	 * The dimension of the equations system is simply, here, the number of equations.
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#getDimension()
 	 */
-	@Override
-	public int getDimension() {
-		return equations.size();
-	}
+//	@Override
+//	public int getDimension() {
+//		return equations.size();
+//	}
 
 	@Override
 	public void leaveScope(final IScope scope) {
