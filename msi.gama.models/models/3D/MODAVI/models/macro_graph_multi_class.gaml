@@ -32,7 +32,7 @@ global {
 	int nbTypeOfClass parameter: "Type of class" min:0 <-3 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
-	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
+	int m_barabasi parameter: 'Edges density' min: 1 <- 2 category: 'Model';
 	
 	bool microLayout parameter: 'Micro Layout' <- true category: 'Visualization';
 	float macroLayer parameter: "Macro Layer Z" min:0.0 max:1.0 <-0.2 category: 'Visualization';
@@ -43,7 +43,7 @@ global {
 	
 	
 		
-    matrix interactionMatrix;	
+    list<matrix> interactionMatrix size:nbTypeOfClass;	
 	list macroNodes of: macroNode;
 	
 	//FIXME: Does not work
@@ -92,7 +92,10 @@ global {
 		create scheduler;
 
 		//FIXME: If this is call at the beginning of the init block there is some null value in the matrix.
-		set interactionMatrix <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	
+		loop i from:0 to:nbTypeOfClass-1{
+				interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});
+ 			}
+			
 		
 		
 	 }
@@ -146,39 +149,27 @@ entities {
 		
 		
 		
-		reflex updateInteractionMatrix{															
+		reflex updateInteractionMatrix{
+			loop i from:0 to: nbTypeOfClass-1{															
 				set src <- my_graph source_of(self);
-				set dest <- my_graph target_of(self);	
-				let tmp <- interactionMatrix  at {src.classVector[0]-1,dest.classVector[0]-1};
-				put (int(tmp)+1) at: {src.classVector[0]-1,dest.classVector[0]-1} in: interactionMatrix;
+				set dest <- my_graph target_of(self);
+				int tmp <- int(interactionMatrix[i]  at {(src.classVector[i]-1),(dest.classVector[i]-1)});
+				(interactionMatrix[i]) [(src.classVector[i]-1),(dest.classVector[i]-1)] <- (tmp+1);
+			}
 		} 
 		
 		aspect base {
 			draw shape color: color ;
 		}	
-		aspect edge0{
-		//Line from src to dest			
-			if ((src != nil) and (dest !=nil) ){
-				draw geometry: line( [ point(src.posVector[0]) , point(dest.posVector[0])] ) color:color;
-			}
-		}
-		
-		aspect edge1{
-		//Line from src to dest			
-			if ((src != nil) and (dest !=nil) ){
-				draw geometry: line( [ point(src.posVector[1]) , point(dest.posVector[1])] ) color:color;
-			}
-		}
 		
 		aspect edgeGenericSpatialized{
 			loop i from:0 to: nbTypeOfClass-1{
-				if ((src != nil) and (dest !=nil) ){
+			  if ((src != nil) and (dest !=nil) ){
 				draw geometry: line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:color;
-			}
+			  }
 			}
 		}
 	}
-	
 	
 	species macroNode schedules:[]{
 		rgb color;
@@ -217,7 +208,7 @@ entities {
 		rgb color <- rgb("black");
 		node src;
 		node dest;
-		list nbAggregatedLinkList <- [0,0,0];
+		list<int> nbAggregatedLinkList size:nbTypeOfClass;
 		
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
@@ -233,8 +224,7 @@ entities {
 		
 
   	
-   reflex updateAllMacroEdge {
-			
+   reflex updateAllMacroEdge {	
 	 	ask macroEdge as list{
 	 		do die;
 	 	}
@@ -242,10 +232,13 @@ entities {
 	 	loop h from:0 to: nbTypeOfClass-1{
 		 	loop i from: 0 to: nbValuePerClass-1{
 		      loop j from: 0 to: nbValuePerClass-1{
-		        let tmp <- interactionMatrix  at {i,j};  
+		        let tmp <- interactionMatrix[h]  at {i,j}; 
+
 		        if(i!=j){
 		            create macroEdge{
-		              nbAggregatedLinkList[h] <- tmp;
+		            	
+		             // nbAggregatedLinkList[h] <- tmp;
+		              nbAggregatedLinkList[h] <- interactionMatrix[h]  at {i,j};
 		              set src <- macroNodes at (i);
 				      set dest <- macroNodes at (j);	
 				      set my_macroGraph <- my_macroGraph add_edge (src::dest);
@@ -257,7 +250,10 @@ entities {
   	}
   	
   	reflex initMatrix{
-		set interactionMatrix <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	
+  		loop i from:0 to:nbTypeOfClass-1{
+  		  interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});	
+  		}
+			
 	  }
 		
 	}
