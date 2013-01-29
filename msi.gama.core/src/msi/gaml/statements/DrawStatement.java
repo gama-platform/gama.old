@@ -72,7 +72,7 @@ combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, Z
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
 	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IType.GEOM_STR)
-@inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
+@inside(symbols = { ASPECT, "graphics" }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
 public class DrawStatement extends AbstractStatementSequence {
 
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);

@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 combinations = { @combination({ IKeyword.VAR, IKeyword.VALUE }),
 	@combination({ IKeyword.NAME, IKeyword.VALUE }), }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.LET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 public class LetStatement extends SetStatement {
 
 	public LetStatement(final IDescription desc) {
