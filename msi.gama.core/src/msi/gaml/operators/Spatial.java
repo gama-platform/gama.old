@@ -406,10 +406,12 @@ public abstract class Spatial {
 					prec = next;
 				}
 				IList<Geometry> geomsVisible = new GamaList<Geometry>();
-				Geometry obstaclesGeom = obstacles.get(0).getInnerGeometry();
-				for ( int i = 1; i < obstacles.size(); i++ ) {
-					obstaclesGeom = obstaclesGeom.union(obstacles.get(i).getInnerGeometry());
+				Geometry geomObsts[] = new Geometry[obstacles.size()];
+				for ( int i = 0; i < obstacles.size(); i++ ) {
+					geomObsts[i] = obstacles.get(i).getInnerGeometry();
 				}
+				Geometry obstaclesGeom = GeometryUtils.factory.createGeometryCollection(geomObsts);
+				obstaclesGeom.union();
 				for ( Geometry geom : geoms ) {
 					if ( !obstaclesGeom.intersects(geom) ) {
 						geomsVisible.add(geom);
@@ -422,14 +424,8 @@ public abstract class Spatial {
 				}
 				Geometry newGeom = null;
 				if ( !geomsVisible.isEmpty() ) {
-					newGeom = geomsVisible.get(0);
-					for ( int i = 1; i < geomsVisible.size(); i++ ) {
-						try {
-							newGeom = newGeom.union(geomsVisible.get(i));
-						} catch (Exception e) {
-							newGeom = newGeom.buffer(0.01).union(geomsVisible.get(i));
-						}
-					}
+					newGeom = GeometryUtils.factory.createGeometryCollection((Geometry[]) geomsVisible.toArray());
+					newGeom.union();
 				}
 				if ( newGeom != null ) { return new GamaShape(newGeom); }
 				return null;
