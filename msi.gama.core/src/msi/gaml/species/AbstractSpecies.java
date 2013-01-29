@@ -535,7 +535,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		for ( IStatement s : behaviors ) {
 			boolean instance = clazz.isAssignableFrom(s.getClass());
 			if ( instance ) {
-				String t = getLiteral(IKeyword.NAME);
+				String t = s.getFacet(IKeyword.NAME).literalValue();
 				if ( t != null ) {
 					boolean named = t.equals(valueOfFacetName);
 					if ( named ) { return s; }
