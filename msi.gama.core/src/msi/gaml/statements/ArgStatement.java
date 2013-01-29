@@ -19,7 +19,6 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -30,10 +29,9 @@ import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
+	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = true),
-	@facet(name = IKeyword.DEFAULT, type = { IType.NONE_STR }, optional = true) }, combinations = {
-	@combination({ IKeyword.NAME, IKeyword.DEFAULT }), @combination({ IKeyword.NAME }),
-	@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.DEFAULT, type = { IType.NONE_STR }, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
 public class ArgStatement extends AbstractPlaceHolderStatement {
