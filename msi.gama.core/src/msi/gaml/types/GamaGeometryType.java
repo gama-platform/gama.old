@@ -234,14 +234,18 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final IContainer<?, ? extends IShape> ags) throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty(scope) ) { return null; }
 		Geometry geom = ((IShape) ags.first(scope)).getInnerGeometry();
+		Geometry geoms[] = new Geometry[ags.length(scope)];
+		int cpt = 0;
 		for ( IShape ent : ags ) {
-			try {
-				geom = geom.union(ent.getInnerGeometry());
-			} catch (TopologyException e) {
-				geom = geom.buffer(0.0).union(ent.getInnerGeometry().buffer(0.0));
-			}
+			geoms[cpt] = ent.getInnerGeometry();
+			cpt++;
 		}
-		if ( geom != null && geom.isValid() ) { return new GamaShape(geom); }
+		geom = GeometryUtils.factory.createGeometryCollection(geoms);
+		geom.union();
+        if ( geom != null && geom.isValid() && !geom.isEmpty() ) { 
+			
+			return new GamaShape(geom); 
+		}
 		return null;
 	}
 
