@@ -214,6 +214,9 @@ public class LayerManager implements ILayerManager {
 			case ILayerStatement.EVENT: {
 				return new EventLayer(env_width, env_height, layer, dg);
 			}
+			case ILayerStatement.GRAPHICS: {
+				return new GraphicLayer(env_width, env_height, layer, dg);
+			}
 			default:
 				return null;
 		}
