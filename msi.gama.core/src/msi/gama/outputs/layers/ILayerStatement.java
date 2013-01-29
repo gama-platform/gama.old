@@ -42,6 +42,7 @@ public interface ILayerStatement extends INamed {
 	public final static short CHART = 7;
 	public final static short QUADTREE = 8;
 	public final static short EVENT = 9;
+	public final static short GRAPHICS = 10;
 
 	public abstract void prepare(final IDisplayOutput out, final IScope sim)
 		throws GamaRuntimeException;
@@ -51,21 +52,21 @@ public interface ILayerStatement extends INamed {
 	public abstract void compute(final IScope scope, final long cycle) throws GamaRuntimeException;
 
 	public abstract Double getTransparency();
-	
+
 	public abstract Double getElevation();
-	
+
 	public abstract Boolean getRefresh();
-	
+
 	public abstract Rectangle2D.Double getBoundingBox();
 
 	public abstract IDisplayLayerBox getBox();
 
 	// public abstract void setPhysicalLayer(IDisplay abstractDisplay);
-	
+
 	public abstract void setElevation(Double elevation);
 
 	public abstract void setRefresh(Boolean refresh);
-	
+
 	public abstract void setOpacity(Double opacity);
 
 }
