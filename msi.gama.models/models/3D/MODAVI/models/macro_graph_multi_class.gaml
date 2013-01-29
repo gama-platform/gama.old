@@ -29,7 +29,7 @@ global {
 	graph my_macroGraph;
 	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
-	int nbTypeOfClass parameter: "Type of class" min:0 <-2 category: 'Model';
+	int nbTypeOfClass parameter: "Type of class" min:0 <-3 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 1 category: 'Model';
@@ -60,7 +60,7 @@ global {
 		
 		
 		ask node as list{
-			loop i from:0 to:nbTypeOfClass{
+			loop i from:0 to:nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
  			}		
 		}
@@ -104,14 +104,13 @@ entities {
 
 	species node schedules:[] {
 		
-		list classVector <- [0,0,0];
-		//list<int> classVector size: 3 fill_with: {0,0,0};
-		list<point> posVector <- [{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}];
+		list<int> classVector size:3;
+		list<point> posVector size:3;
 		list colorList <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 		rgb color;
 								
 		reflex shuffleClass{
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
 			}	
 		}
@@ -121,7 +120,7 @@ entities {
 		}  
 				
 		aspect classGenericColored{
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
 			    posVector[i] <- {location.x+i*110,location.y,i*10}; 
@@ -130,7 +129,7 @@ entities {
 		}
 		
 		aspect classGenericSpatialized{
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
 			    posVector[i] <- {(cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110,(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50),i*10}; 
@@ -172,7 +171,7 @@ entities {
 		}
 		
 		aspect edgeGenericSpatialized{
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 				if ((src != nil) and (dest !=nil) ){
 				draw geometry: line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:color;
 			}
@@ -191,7 +190,7 @@ entities {
 			do updatemyNodes;
 		}
 		action updatemyNodes{
-			loop i from:0 to: nbTypeOfClass{			
+			loop i from:0 to: nbTypeOfClass-1{			
 				nbAggregatedNodes[i]<-0;
 				ask node as list{
 				  if	(classVector[i] = myself.class) {
@@ -206,7 +205,7 @@ entities {
 		}
 		
 		aspect Generic{
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 			posVector[i] <- {location.x+i*150,location.y};	
 			draw geometry (point(posVector[i])) color: color z:(nbAggregatedNodes[i]/10)*macroNodeSize;
 			}
@@ -221,7 +220,7 @@ entities {
 		list nbAggregatedLinkList <- [0,0,0];
 		
 		aspect base {
-			loop i from:0 to: nbTypeOfClass{
+			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
 				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
 				}
@@ -240,7 +239,7 @@ entities {
 	 		do die;
 	 	}
 	 	
-	 	loop h from:0 to: nbTypeOfClass{
+	 	loop h from:0 to: nbTypeOfClass-1{
 		 	loop i from: 0 to: nbValuePerClass-1{
 		      loop j from: 0 to: nbValuePerClass-1{
 		        let tmp <- interactionMatrix  at {i,j};  
