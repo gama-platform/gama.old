@@ -19,7 +19,6 @@
 package msi.gaml.species;
 
 import java.util.*;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
@@ -141,12 +140,12 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	public abstract void addVariable(final IVariable v);
 
 	public abstract Collection<UserCommandStatement> getUserCommands();
+
 	/*
 	 * Equation (Huynh Quang Nghi)
 	 */
 
 	public abstract <T> IStatement getStatement(Class<T> clazz, String name);
-//	public abstract void addEquation(final IStatement ce);
 
 	/*
 	 * end-of Equation

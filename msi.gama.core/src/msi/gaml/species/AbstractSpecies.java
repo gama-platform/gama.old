@@ -32,6 +32,7 @@ import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
+
 /**
  * Written by drogoul Modified on 29 déc. 2010
  * 
@@ -54,12 +55,78 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
 
 	private final Map<String, ActionStatement> actions = new HashMap<String, ActionStatement>();
-	
+
 	private final Map<String, UserCommandStatement> userCommands = new LinkedHashMap();
 
 	private final IList<IStatement> behaviors = new GamaList<IStatement>();
 
 	protected ISpecies macroSpecies;
+
+	interface IMDArray<T> {
+
+		Object get(final int ... indexes);
+
+		IMDArray<T> getPartial(final int ... indexes);
+	}
+
+	class MDArray1<T> implements IMDArray<T> {
+
+		T[] array;
+
+		@Override
+		public T get(final int ... indexes) {
+			return array[indexes[0]];
+		}
+
+		@Override
+		public IMDArray<T> getPartial(final int ... indexes) {
+			return null;
+		}
+	}
+
+	class MDArray2<T> implements IMDArray<T> {
+
+		MDArray1<MDArray1<T>> list;
+
+		int getDim() {
+			return 2;
+		}
+
+		@Override
+		public T get(final int ... indexes) {
+			return list.get(indexes[0]).get(indexes[1]);
+		}
+
+		void set(final Object o, final int ... index) {}
+
+		@Override
+		public IMDArray getPartial(final int ... indexes) {
+			if ( indexes.length == 1 ) { return list.get(indexes[0]); }
+			return null;
+		}
+	}
+
+	class MDArray3<T> implements IMDArray<T> {
+
+		MDArray1<MDArray2<T>> list;
+
+		int getDim() {
+			return 2;
+		}
+
+		@Override
+		public T get(final int ... indexes) {
+			return list.get(indexes[0]).get(indexes[1]);
+		}
+
+		void set(final Object o, final int ... index) {}
+
+		@Override
+		public IMDArray getPartial(final int ... indexes) {
+			if ( indexes.length == 1 ) { return list.get(indexes[0]); }
+			return null;
+		}
+	}
 
 	public AbstractSpecies(final IDescription description) {
 		super(description);
@@ -458,21 +525,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public void setMacroSpecies(final ISpecies macroSpecies) {
 		this.macroSpecies = macroSpecies;
 	}
+
 	/*
 	 * Equation (Huynh Quang Nghi)
 	 */
-	
 
 	@Override
-	public <T> IStatement getStatement(Class<T> clazz, String name) {
-		behaviors.toString();
-
-		for(IStatement s: behaviors)
-		{
-			if(s.getClass().equals(clazz) && s.getName().equals(name))
-			{
-				return s;
-			}
+	public <T> IStatement getStatement(final Class<T> clazz, final String name) {
+		for ( IStatement s : behaviors ) {
+			if ( clazz.isAssignableFrom(s.getClass()) && s.getName().equals(name) ) { return s; }
 		}
 		return null;
 	}
