@@ -1,6 +1,5 @@
 package ummisco.gaml.extensions.maths.utils;
 
-import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
 import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
 import msi.gama.runtime.IScope;
 
@@ -11,7 +10,7 @@ public abstract class Solver {
 	// Should the solver implement StepHandler or use a given StepHandler ?
 
 	// Call the integrator, which should call computeDerivatives on the system of equations;
-	public abstract void solve(IScope scope, SingleEquationStatement eq);
+	public abstract void solve(IScope scope, SystemOfEquationsStatement eq);
 
 
 }

@@ -36,8 +36,7 @@ import msi.gaml.types.IType;
  * @since 26 janv. 2013
  *
  */
-public class SingleEquationStatement extends AbstractStatement implements
-		FirstOrderDifferentialEquations {
+public class SingleEquationStatement extends AbstractStatement {
 
 	final IExpression function, expression;
 	IVarExpression var;
@@ -64,7 +63,7 @@ public class SingleEquationStatement extends AbstractStatement implements
 	protected Double privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
-		// GuiUtils.informConsole(""+expression.value(scope));
+//		 GuiUtils.informConsole("sdsd "+expression);
 		return result;
 	}
 
@@ -72,7 +71,7 @@ public class SingleEquationStatement extends AbstractStatement implements
 	public Object executeOn(IScope scope) throws GamaRuntimeException {
 		// GuiUtils.informConsole("exp <<"+expression.value(scope)+">>");
 
-		return super.executeOn(scope);
+		return expression.value(scope);//super.executeOn(scope);
 	}
 
 	//
@@ -101,28 +100,23 @@ public class SingleEquationStatement extends AbstractStatement implements
 		return Double.NaN;
 	}
 
-	@Override
-	public int getDimension() {
-		return 3;
-	}
+//	public double[] S;
+//	public double[] I;
+//	public double[] R;
+//	public double beta=0.2;
+//	public double gamma=0.8;
+//	public double mi=0.0;
+//	public double up=0.0;
+//	public double N=0.0;
+//	public double f=0.0;
 
-	public double[] S;
-	public double[] I;
-	public double[] R;
-	public double beta=0.2;
-	public double gamma=0.8;
-	public double mi=0.0;
-	public double up=0.0;
-	public double N=0.0;
-	public double f=0.0;
-
-	@Override
-	public void computeDerivatives(double t, double[] y, double[] yDot) {
-		// yDot[0] = y[0];//omega * (c[1] - y[1]);
-		// yDot[1] = y[1];//omega * (y[0] - c[0]);
-		yDot[0] = (-beta * y[0] * y[1]) + mi * (N - y[0]) + (f * y[2]);
-		yDot[1] = (beta * y[0] * y[1]) - (gamma * y[1]) - (mi * y[1]);
-		yDot[2] = (gamma * y[1]) - (mi * y[2]) - (f * y[2]);
-	}
+//	public void computeDerivatives(double t, double[] y, double[] yDot) {
+//		// yDot[0] = y[0];//omega * (c[1] - y[1]);
+//		// yDot[1] = y[1];//omega * (y[0] - c[0]);
+//		yDot[0]=1;
+////		yDot[0] = (-beta * y[0] * y[1]) + mi * (N - y[0]) + (f * y[2]);
+////		yDot[1] = (beta * y[0] * y[1]) - (gamma * y[1]) - (mi * y[1]);
+////		yDot[2] = (gamma * y[1]) - (mi * y[2]) - (f * y[2]);
+//	}
 
 }

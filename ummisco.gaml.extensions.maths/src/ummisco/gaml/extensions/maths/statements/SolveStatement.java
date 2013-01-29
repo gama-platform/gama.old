@@ -1,6 +1,9 @@
 package ummisco.gaml.extensions.maths.statements;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -12,9 +15,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import org.apache.commons.math3.ode.*;
@@ -27,14 +35,17 @@ import ummisco.gaml.extensions.maths.utils.*;
 @facets(value = { @facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
 	@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
 	/** Numerous other facets to plan : step, init, etc.) **/
+	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = false)
 }, omissible = IKeyword.EQUATION)
-@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,  with_args = true)
 @inside(kinds = ISymbolKind.SPECIES)
-public class SolveStatement extends AbstractStatementSequence {
+public class SolveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	Solver solver;
 	StatementDescription equations;
+	private Arguments actualArgs = new Arguments();
+	
 
 	// Have the same organization as in DrawStatement :
 	// The statement contains an abstract subclass called "Solver"; Different solvers (maybe
@@ -57,19 +68,30 @@ public class SolveStatement extends AbstractStatementSequence {
 		// Based on the facets, choose a solver and init it;
 		String method=getFacet("method").literalValue();
 		if(method.equals("rk4")){
-			solver = new Rk4Solver(); 
+			solver = new Rk4Solver(Double.parseDouble(getFacet("step").literalValue())); 
 		}
 	}
-
+	boolean flag=false;
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+//		Map<String, Object> map = new GamaMap();
+//		computeInits(scope, map);
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, getFacet(IKeyword.EQUATION).literalValue());
-//		GuiUtils.informConsole(""+((GamaMap)s.getFacet("with")).entrySet());
-		for(SingleEquationStatement e : s.equations)
-		{
-			solver.solve(scope,e);	
-		}
+//		if(!flag)
+//		{
+//		for ( int i = 0, n = s.getDimension(); i < n; i++ ) {
+//			IVarExpression v = s.variables.get(i);
+//			v.setVal(scope, map.get(v.getName()), false);
+//		}
+//		flag=true;
+//		}
+		
+//		for(String key: map.keySet()){
+//			scope.setAgentVarValue(key, map.get(key));			
+//		}
+//		s.executeOn(scope);
+		solver.solve(scope,s);	
 		
 //		executer.setRuntimeArgs(args);
 //		Object result = executer.executeOn(scope);
@@ -79,6 +101,38 @@ public class SolveStatement extends AbstractStatementSequence {
 //		}
 		
 		return null;//super.privateExecuteIn(scope);
+	}
+	
+	@Override
+	public void setFormalArgs(final Arguments args) {
+		actualArgs.putAll(args);
+		// formalArgs = args;
+	}
+
+	private void computeInits(final IScope scope, final Map<String, Object> values)
+		throws GamaRuntimeException {
+		if ( actualArgs == null ) { return; }
+		for ( Facet f : actualArgs.entrySet() ) {
+			if ( f != null ) {
+				IExpression valueExpr = f.getValue().getExpression();
+				Object val = valueExpr.value(scope);
+				values.put(f.getKey(), val);
+			}
+		}
+	}
+	@Override
+	public void setRuntimeArgs(final Arguments args) {
+		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
+			actualArgs.put(entry.getKey(), entry.getValue());
+		}
+		// actualArgs.clear();
+		// for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
+		// if ( entry != null ) {
+		// String arg = entry.getKey();
+		// IExpressionDescription expr = entry.getValue();
+		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
+		// }
+		// }
 	}
 
 
