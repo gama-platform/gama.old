@@ -532,6 +532,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public <T> IStatement getStatement(final Class<T> clazz, final String name) {
+		/*
+		 * without some access before this "for", it seem that i can't get the exact statement (perhaps behaviors is null
+		 * or not exist statement). So i add this line
+		 * Nghi
+		 */
+		behaviors.toString();
+		/*
+		 * end-of additions
+		 */
 		for ( IStatement s : behaviors ) {
 			if ( clazz.isAssignableFrom(s.getClass()) && s.getName().equals(name) ) { return s; }
 		}
