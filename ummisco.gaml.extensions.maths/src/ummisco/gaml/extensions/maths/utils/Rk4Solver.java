@@ -38,7 +38,7 @@ public class Rk4Solver extends Solver {
 			public void handleStep(StepInterpolator interpolator, boolean isLast) {
 				double t = interpolator.getCurrentTime();
 				double[] y = interpolator.getInterpolatedState();
-				GuiUtils.informConsole("time="+t + " y=" + y[0] + " y'=" + y[1]);
+				GuiUtils.informConsole("time="+t + " y=" + y[0] + " y'=" + y[1] + " y'=" + y[2]);
 			}
 		};
 		integrator.addStepHandler(stepHandler);
@@ -51,7 +51,7 @@ public class Rk4Solver extends Solver {
 		// We need to save the state (previous time the integrator has been
 		// solved, etc.)
 
-		// GuiUtils.informConsole("it work "+eq);
+//		 GuiUtils.informConsole("it work ");
 		if (eq instanceof SingleEquationStatement) {
 
 			// ((SingleEquationStatement) eq).executeOn(scope);
@@ -60,7 +60,7 @@ public class Rk4Solver extends Solver {
 			eq.R = new double[] { 1.0, 1.0 };
 			double[] y = new double[] { 1500.0, 1.0, 0.0 }; // initial state
 			try {
-				integrator.integrate(eq, 0, y, SimulationClock.getCycle(), y);
+				integrator.integrate(eq, SimulationClock.getCycle()-1, y, SimulationClock.getCycle(), y);
 			} catch (Exception ex) {
 				System.out.println(ex.getMessage());
 			}

@@ -109,20 +109,20 @@ public class SingleEquationStatement extends AbstractStatement implements
 	public double[] S;
 	public double[] I;
 	public double[] R;
-	public double mi;
-	public double up;
-	public double N;
-	public double f;
-	public double beta;
-	public double gamma;
+	public double beta=0.2;
+	public double gamma=0.8;
+	public double mi=0.0;
+	public double up=0.0;
+	public double N=0.0;
+	public double f=0.0;
 
 	@Override
 	public void computeDerivatives(double t, double[] y, double[] yDot) {
 		// yDot[0] = y[0];//omega * (c[1] - y[1]);
 		// yDot[1] = y[1];//omega * (y[0] - c[0]);
 		yDot[0] = (-beta * y[0] * y[1]) + mi * (N - y[0]) + (f * y[2]);
-//		yDot[1] = (beta * S[1] * I[1]) - (gamma * I[1]) - (mi * I[1]);
-//		yDot[2] = (gamma * I[2]) - (mi * R[2]) - (f * R[2]);
+		yDot[1] = (beta * y[0] * y[1]) - (gamma * y[1]) - (mi * y[1]);
+		yDot[2] = (gamma * y[1]) - (mi * y[2]) - (f * y[2]);
 	}
 
 }

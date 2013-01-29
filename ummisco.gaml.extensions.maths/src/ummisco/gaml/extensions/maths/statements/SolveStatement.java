@@ -10,6 +10,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.species.ISpecies;
@@ -24,8 +25,9 @@ import org.apache.commons.math3.ode.sampling.StepInterpolator;
 import ummisco.gaml.extensions.maths.utils.*;
 
 @facets(value = { @facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
-	@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false)
-/** Numerous other facets to plan : step, init, etc.) **/
+	@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
+	/** Numerous other facets to plan : step, init, etc.) **/
+	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = false)
 }, omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = ISymbolKind.SPECIES)
@@ -61,9 +63,9 @@ public class SolveStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, getFacet(IKeyword.EQUATION).literalValue());
+//		GuiUtils.informConsole(""+((GamaMap)s.getFacet("with")).entrySet());
 		for(SingleEquationStatement e : s.equations)
 		{
 			solver.solve(scope,e);	
