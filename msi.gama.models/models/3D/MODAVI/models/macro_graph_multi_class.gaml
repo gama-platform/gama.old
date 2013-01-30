@@ -44,10 +44,7 @@ global {
 	
 		
     list<matrix> interactionMatrix size:nbTypeOfClass;	
-	list macroNodes of: macroNode;
-	
-	//FIXME: Does not work
-	//draw circle(1);
+	list<macroNode> macroNodes;
 	
 	init {
 
@@ -107,9 +104,9 @@ entities {
 
 	species node schedules:[] {
 		
-		list<int> classVector size:3;
-		list<point> posVector size:3;
-		list colorList <- [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+		list<int> classVector size:nbTypeOfClass;
+		list<point> posVector size:nbTypeOfClass;
+		list<rgb> colorList size:nbTypeOfClass;
 		rgb color;
 								
 		reflex shuffleClass{
@@ -174,8 +171,8 @@ entities {
 	species macroNode schedules:[]{
 		rgb color;
 		int class;
-		list nbAggregatedNodes <-[0,0,0];
-		list<point> posVector <- [{0,0,0},{0,0,0},{0,0,0}];
+		list<int> nbAggregatedNodes size:nbTypeOfClass;
+		list<point> posVector  size:nbTypeOfClass;
 		 
 		reflex update{
 			do updatemyNodes;
@@ -261,11 +258,12 @@ entities {
 	species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
 }
 experiment generate_graph type: gui {
-	output {	
-			
+	output {			
 		display OriginalGraph type:opengl ambiant_light: 0.4{
 			species node aspect: base ; 
 			species edge aspect: base ;
+			text name:"original graph" value: ("Generated graph with " + nbAgent + " agents") position:{110,50,0}; 
+		    text name:"original graph parameters" value: ( "" + nbTypeOfClass + " class, " + nbValuePerClass + " values per class") position:{110,55,0};
 		}	
 		
 		display Augmented_Graph type:opengl{
@@ -280,14 +278,7 @@ experiment generate_graph type: gui {
 					
 			species node aspect: classGenericSpatialized ; 
 			species edge aspect: edgeGenericSpatialized ;
-			
-			//species node aspect: class1;
-		    //species edge aspect: edge1;
-			//species macroNode aspect:sphere  position: {0,0} z:0.2;
-			//species macroEdge aspect:base  position: {0,0} z:0.2;
-			
-			//species node aspect: class1  z:0.4; 
-			//species edge aspect: base z:0.4;
+
 			
 			
 				
