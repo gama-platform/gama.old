@@ -34,6 +34,18 @@ import java.lang.annotation.*;
 
 public final class GamlAnnotations {
 
+	@Retention(RetentionPolicy.SOURCE)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface display {
+
+		/**
+		 * The keyword that will allow to open this display in GAML (in "display type: keyword").
+		 * @return
+		 */
+		String value();
+	}
+
 	/**
 	 * 
 	 * The class facets. Describes a list of facet used by a symbol (a statement, a declaration) in

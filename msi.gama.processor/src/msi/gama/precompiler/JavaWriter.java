@@ -10,6 +10,7 @@ public class JavaWriter {
 	public final static String SETTER_PREFIX = "-";
 	public final static String FIELD_PREFIX = "*";
 	public final static String SPECIES_PREFIX = "&";
+	public final static String DISPLAY_PREFIX = "\\";
 	public final static String SKILL_PREFIX = ")";
 	public final static String TYPE_PREFIX = "(";
 	public final static String SYMBOL_PREFIX = "[";
@@ -79,6 +80,9 @@ public class JavaWriter {
 		}
 		for ( Map.Entry<String, String> entry : props.filterFirst(SPECIES_PREFIX).entrySet() ) {
 			writeSpecies(sb, entry.getKey(), entry.getValue());
+		}
+		for ( Map.Entry<String, String> entry : props.filterFirst(DISPLAY_PREFIX).entrySet() ) {
+			writeDisplay(sb, entry.getKey(), entry.getValue());
 		}
 
 		writeFooter(sb);
@@ -414,6 +418,15 @@ public class JavaWriter {
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJava(segments[i]));
 		}
+		sb.append(");");
+	}
+
+	protected void writeDisplay(final StringBuilder sb, final String s, final String doc) {
+		String[] segments = s.split("\\$");
+		String name = segments[0];
+		String clazz = segments[1];
+		sb.append(concat(in, "_display(", toJava(name), ",", toClassObject(clazz),
+			", new IDisplayCreator(){public IDisplaySurface create(){return new ", clazz, "();}}"));
 		sb.append(");");
 	}
 

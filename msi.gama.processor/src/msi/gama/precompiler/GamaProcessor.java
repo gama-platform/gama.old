@@ -32,6 +32,7 @@ import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -69,7 +70,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	static final Class[] classes = new Class[] { symbol.class, factory.class, species.class,
 		skill.class, getter.class, setter.class, action.class, type.class, operator.class,
-		vars.class };
+		vars.class, display.class };
 
 	final static Set<String> annotNames = new HashSet();
 
@@ -108,6 +109,7 @@ public class GamaProcessor extends AbstractProcessor {
 			processActions(env);
 			processSymbols(env);
 			processVars(env);
+			processDisplays(env);
 
 			gp.store(createWriter(GAML));
 			Writer w = createSourceWriter();
@@ -472,6 +474,23 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(SEP).append(s);
 			}
 			gp.put(sb.toString(), docToString(spec.doc())); /* doc */
+		}
+	}
+
+	private void processDisplays(final RoundEnvironment env) {
+		Set<? extends Element> displays = env.getElementsAnnotatedWith(display.class);
+		for ( Element e : displays ) {
+			display spec = e.getAnnotation(display.class);
+			StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(DISPLAY_PREFIX);
+			// name
+			sb.append(spec.value()).append(SEP);
+			// class
+			sb.append(rawNameOf(e)).append(SEP);
+			// skills
+
+			gp.put(sb.toString(), ""); /* doc */
 		}
 	}
 
