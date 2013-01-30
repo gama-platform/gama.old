@@ -19,12 +19,6 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-
-import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -33,9 +27,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.Chrono;
-import msi.gama.util.graph.GamaGraph;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.Spatial.Punctal;
 
 /**
  * The class GraphTopology.
@@ -66,7 +58,6 @@ public class GraphTopology extends AbstractTopology {
 		return true;
 	}
 
-
 	/**
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException
@@ -75,7 +66,7 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	@Override
 	public IPath pathBetween(final IShape source, final IShape target) {
-		
+
 		IShape edgeS = null, edgeT = null;
 
 		IAgentFilter filter = In.edgesOf(getPlaces());
@@ -86,11 +77,12 @@ public class GraphTopology extends AbstractTopology {
 		edgeT =
 			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter)
 				: getAgentClosestTo(target, filter);
-		return pathBetweenCommon(edgeS,edgeT,source,target);
-		
+		return pathBetweenCommon(edgeS, edgeT, source, target);
+
 	}
-	
-	public IPath pathBetweenCommon(IShape edgeS, IShape edgeT, IShape source, IShape target) {
+
+	public IPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
+		final IShape target) {
 		Chrono c = new Chrono();
 		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
 		IShape s1 = null;
@@ -109,26 +101,26 @@ public class GraphTopology extends AbstractTopology {
 		}
 
 		Object nodeS = s1;
-		if ( s1 == nodeT ||
-			s2 != nodeT &&
-			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
-				.euclidianDistanceTo(source.getLocation()) ) {
+		if ( s2 != null &&
+			(s1 == nodeT || s2 != nodeT &&
+				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
+					.euclidianDistanceTo(source.getLocation())) ) {
 			nodeS = s2;
 		}
 		c.start();
 		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
-		
+
 		c.stop();
-		//System.out.println("Temps calcule: " + c.getMilliSec());
+		// System.out.println("Temps calcule: " + c.getMilliSec());
 		if ( edges.isEmpty() ) { return null; }
 		HashSet edgesSetInit =
-			new HashSet(Arrays.asList(((IShape) edges.get(0)).getInnerGeometry().getCoordinates()));
+			new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 		if ( !edgesSetS.equals(edgesSetInit) ) {
 			edges.add(0, edgeS);
 		}
 		HashSet edgesSetEnd =
-			new HashSet(Arrays.asList(((IShape) edges.get(edges.size() - 1)).getInnerGeometry()
+			new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry()
 				.getCoordinates()));
 		HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
@@ -141,19 +133,20 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public IPath pathBetween(final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
-		
-		if (! this.getPlaces().getEdges().isEmpty() ) {
-			if (this.getPlaces() instanceof GamaSpatialGraph &&  !(((GamaSpatialGraph) this.getPlaces()).isAgentEdge())) {
+
+		if ( !this.getPlaces().getEdges().isEmpty() ) {
+			if ( this.getPlaces() instanceof GamaSpatialGraph &&
+				!((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
-				for (IShape shp : this.getPlaces().getEdges()) {
+				for ( IShape shp : this.getPlaces().getEdges() ) {
 					double distS = shp.euclidianDistanceTo(source);
 					double distT = shp.euclidianDistanceTo(target);
-					if (distS < distMinS) {
+					if ( distS < distMinS ) {
 						distMinS = distS;
 						edgeS = shp;
 					}
-					if (distT < distMinT) {
+					if ( distT < distMinT ) {
 						distMinT = distT;
 						edgeT = shp;
 					}
@@ -161,9 +154,10 @@ public class GraphTopology extends AbstractTopology {
 			} else {
 				IAgentFilter filter = In.edgesOf(getPlaces());
 				edgeS = getAgentClosestTo(source, filter);
-				edgeT = getAgentClosestTo(target, filter);			}
+				edgeT = getAgentClosestTo(target, filter);
+			}
 		}
-		return pathBetweenCommon(edgeS,edgeT,source,target);
+		return pathBetweenCommon(edgeS, edgeT, source, target);
 	}
 
 	/**
@@ -272,7 +266,7 @@ public class GraphTopology extends AbstractTopology {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean isTorus() {
 		// TODO Auto-generated method stub
