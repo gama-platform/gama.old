@@ -46,9 +46,9 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  sqlite-jdbc-spatialite-3.7.2-1.jar,
  sqljdbc4.jar,
  sqlsheet-6.3.jar,
- postgresql-9.2-1002.jdbc4.jarjts-1.13.jar,
  jts-1.13.jar,
- commons-math3-3.1.1.jar
+ commons-math3-3.1.1.jar,
+ postgresql-9.2-1002.jdbc4.jar
 Bundle-Vendor: MSI
 Export-Package: com.googlecode.sqlsheet,
  com.jmex.model.collada,
