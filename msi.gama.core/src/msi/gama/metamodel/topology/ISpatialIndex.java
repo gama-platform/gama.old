@@ -19,10 +19,9 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
-import java.util.*;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.util.*;
+import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -70,9 +69,9 @@ public interface ISpatialIndex {
 
 	public interface Compound extends ISpatialIndex {
 
-		final static IList<IShape> _SHAPES = new GamaList();
+		// final static IList<IShape> _SHAPES = new GamaList();
 
-		final static Set<ISpatialIndex> _INDEXES = new HashSet();
+		// final static Set<ISpatialIndex> _INDEXES = new HashSet();
 
 		public abstract void add(ISpatialIndex index, ISpecies species);
 

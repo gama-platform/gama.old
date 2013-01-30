@@ -43,23 +43,23 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	private Set<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
 		ISpecies s = f.speciesFiltered();
+		Set<ISpatialIndex> result = new HashSet();
 		if ( s != null ) {
-			_INDEXES.clear();
 			ISpatialIndex si = indexes.get(s);
 			if ( si != null ) {
-				_INDEXES.add(si);
+				result.add(si);
 			}
-			return _INDEXES;
+			return result;
 		}
 		return all;
 
 	}
 
-	private IShape findClosest(final IShape source) {
-		if ( _SHAPES.size() == 1 ) { return _SHAPES.get(0); }
+	private IShape findClosest(final IShape source, final List<IShape> shapes) {
+		if ( shapes.size() == 1 ) { return shapes.get(0); }
 		double min_dist = Double.MAX_VALUE;
 		IShape min_agent = null;
-		for ( IShape s : _SHAPES ) {
+		for ( IShape s : shapes ) {
 			double dd = source.euclidianDistanceTo(s);
 			if ( dd < min_dist ) {
 				min_dist = dd;
@@ -115,29 +115,15 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	// si.remove(location, o);
 	// }
 
-	static void _INIT() {
-		_SHAPES.clear();
-	}
-
-	static void _STORE(final IShape a) {
-		if ( a != null ) {
-			_SHAPES.add(a);
-		}
-	}
-
-	static void _STORE(final Collection<IShape> a) {
-		_SHAPES.addAll(a);
-	}
-
 	@Override
 	public IList<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
 		Set<ISpatialIndex> sis = findSpatialIndexes(f);
 		if ( sis.isEmpty() ) { return new GamaList(); }
-		_INIT();
+		IList<IShape> shapes = new GamaList();
 		for ( ISpatialIndex si : sis ) {
-			_STORE(si.allAtDistance(source, dist, f));
+			shapes.addAll(si.allAtDistance(source, dist, f));
 		}
-		return new GamaList(_SHAPES);
+		return new GamaList(shapes);
 
 	}
 
@@ -157,16 +143,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
 		Set<ISpatialIndex> sis = findSpatialIndexes(f);
 		if ( sis.isEmpty() ) { return null; }
-		_INIT();
+		IList<IShape> shapes = new GamaList();
 		for ( int i = 0; i < steps.length; i++ ) {
 			for ( ISpatialIndex si : sis ) {
-				_STORE(si.firstAtDistance(source, steps[i], f));
+				shapes.add(si.firstAtDistance(source, steps[i], f));
 			}
-			if ( !_SHAPES.isEmpty() ) {
+			if ( !shapes.isEmpty() ) {
 				break;
 			}
 		}
-		return findClosest(source);
+		return findClosest(source, shapes);
 	}
 
 	// @Override
@@ -191,11 +177,11 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		final IAgentFilter f, final boolean contained) {
 		Set<ISpatialIndex> sis = findSpatialIndexes(f);
 		if ( sis.isEmpty() ) { return new GamaList(); }
-		_INIT();
+		IList<IShape> shapes = new GamaList();
 		for ( ISpatialIndex si : sis ) {
-			_STORE(si.allInEnvelope(source, envelope, f, contained));
+			shapes.addAll(si.allInEnvelope(source, envelope, f, contained));
 		}
-		return new GamaList(_SHAPES);
+		return new GamaList(shapes);
 	}
 
 	@Override
