@@ -1658,4 +1658,10 @@
                name="Config RScript&apos;s path">
          </page>
       </extension>
+      <extension
+            point="gaml.grammar.addition">
+         <path
+               name="gaml">
+         </path>
+      </extension>
 </plugin>
