@@ -32,108 +32,124 @@ import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
 import ummisco.gaml.extensions.maths.utils.*;
 
-@facets(value = { @facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
-	@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
-	/** Numerous other facets to plan : step, init, etc.) **/
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
-	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = false)
-}, omissible = IKeyword.EQUATION)
-@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,  with_args = true)
+@facets(value = {
+		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
+		@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
+		/** Numerous other facets to plan : step, init, etc.) **/
+		@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false),
+		@facet(name = IKeyword.TIME0, type = IType.FLOAT_STR, optional = false),
+		@facet(name = IKeyword.TIME1, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
+@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true)
 @inside(kinds = ISymbolKind.SPECIES)
-public class SolveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+public class SolveStatement extends AbstractStatementSequence implements
+		IStatement.WithArgs {
 
 	Solver solver;
 	StatementDescription equations;
 	private Arguments actualArgs = new Arguments();
-	
 
 	// Have the same organization as in DrawStatement :
-	// The statement contains an abstract subclass called "Solver"; Different solvers (maybe
-	// corresponding to different integrators?) are then subclasses of this one. And the statement
+	// The statement contains an abstract subclass called "Solver"; Different
+	// solvers (maybe
+	// corresponding to different integrators?) are then subclasses of this one.
+	// And the statement
 	// only calls the one which has been chosen at the beginning.
-	// Find a way to declare an initial state (either with the "with:" facet, or using assignments
+	// Find a way to declare an initial state (either with the "with:" facet, or
+	// using assignments
 	// in the body of "solve")
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
-		
-		
-//		List<IDescription> statements = desc.getSpeciesContext().getChildren();
-//		String eqName = getFacet(IKeyword.EQUATION).literalValue();
-//		for ( IDescription s : statements ) {
-//			if ( s.getName().equals(eqName) ) {
-//				equations =  (StatementDescription) s;
-//			}
-//		}
+
+		// List<IDescription> statements =
+		// desc.getSpeciesContext().getChildren();
+		// String eqName = getFacet(IKeyword.EQUATION).literalValue();
+		// for ( IDescription s : statements ) {
+		// if ( s.getName().equals(eqName) ) {
+		// equations = (StatementDescription) s;
+		// }
+		// }
 		// Based on the facets, choose a solver and init it;
-		String method=getFacet("method").literalValue();
-		if(method.equals("rk4")){
-			solver = new Rk4Solver(Double.parseDouble(getFacet("step").literalValue())); 
+		String method = getFacet("method").literalValue();
+		if (method.equals("rk4")) {
+			solver = new Rk4Solver(Double.parseDouble(getFacet("step")
+					.literalValue()), getFacet(IKeyword.TIME0),
+					getFacet(IKeyword.TIME1));
 		}
 	}
-	boolean flag=false;
+
+	boolean flag = false;
+
 	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-//		Map<String, Object> map = new GamaMap();
-//		computeInits(scope, map);
+	public Object privateExecuteIn(final IScope scope)
+			throws GamaRuntimeException {
+		// Map<String, Object> map = new GamaMap();
+		// computeInits(scope, map);
 		ISpecies context = scope.getAgentScope().getSpecies();
-		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, getFacet(IKeyword.EQUATION).literalValue());
-//		if(!flag)
-//		{
-//		for ( int i = 0, n = s.getDimension(); i < n; i++ ) {
-//			IVarExpression v = s.variables.get(i);
-//			v.setVal(scope, map.get(v.getName()), false);
-//		}
-//		flag=true;
-//		}
-		
-//		for(String key: map.keySet()){
-//			scope.setAgentVarValue(key, map.get(key));			
-//		}
-//		s.executeOn(scope);
-		solver.solve(scope,s);	
-		
-//		executer.setRuntimeArgs(args);
-//		Object result = executer.executeOn(scope);
-//		String s = returnString;
-//		if ( s != null ) {
-//			scope.setVarValue(s, result);
-//		}
-		
-		return null;//super.privateExecuteIn(scope);
+		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context
+				.getStatement(SystemOfEquationsStatement.class,
+						getFacet(IKeyword.EQUATION).literalValue());
+		// if(!flag)
+		// {
+		// for ( int i = 0, n = s.getDimension(); i < n; i++ ) {
+		// IVarExpression v = s.variables.get(i);
+		// v.setVal(scope, map.get(v.getName()), false);
+		// }
+		// flag=true;
+		// }
+
+		// for(String key: map.keySet()){
+		// scope.setAgentVarValue(key, map.get(key));
+		// }
+		// s.executeOn(scope);
+		solver.solve(scope, s);
+
+		// executer.setRuntimeArgs(args);
+		// Object result = executer.executeOn(scope);
+		// String s = returnString;
+		// if ( s != null ) {
+		// scope.setVarValue(s, result);
+		// }
+
+		return null;// super.privateExecuteIn(scope);
 	}
-	
+
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		actualArgs.putAll(args);
 		// formalArgs = args;
 	}
 
-	private void computeInits(final IScope scope, final Map<String, Object> values)
-		throws GamaRuntimeException {
-		if ( actualArgs == null ) { return; }
-		for ( Facet f : actualArgs.entrySet() ) {
-			if ( f != null ) {
+	private void computeInits(final IScope scope,
+			final Map<String, Object> values) throws GamaRuntimeException {
+		if (actualArgs == null) {
+			return;
+		}
+		for (Facet f : actualArgs.entrySet()) {
+			if (f != null) {
 				IExpression valueExpr = f.getValue().getExpression();
 				Object val = valueExpr.value(scope);
 				values.put(f.getKey(), val);
 			}
 		}
 	}
+
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
-		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
+		for (Map.Entry<String, IExpressionDescription> entry : args.entrySet()) {
 			actualArgs.put(entry.getKey(), entry.getValue());
 		}
 		// actualArgs.clear();
-		// for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
+		// for ( Map.Entry<String, IExpressionDescription> entry :
+		// formalArgs.entrySet() ) {
 		// if ( entry != null ) {
 		// String arg = entry.getKey();
 		// IExpressionDescription expr = entry.getValue();
-		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
+		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null :
+		// expr.getExpression()));
 		// }
 		// }
 	}
-
 
 }
