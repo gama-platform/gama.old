@@ -93,7 +93,8 @@ public class GraphTopology extends AbstractTopology {
 		t2 = (IShape) getPlaces().getEdgeTarget(edgeT);
 		s1 = (IShape) getPlaces().getEdgeSource(edgeS);
 		s2 = (IShape) getPlaces().getEdgeTarget(edgeS);
-
+		if (t1 == null || t2 == null || s1 == null || s2 == null)
+			return null;
 		IShape nodeT = t1;
 		if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation()
 			.euclidianDistanceTo(target.getLocation()) ) {
@@ -111,8 +112,8 @@ public class GraphTopology extends AbstractTopology {
 		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 
 		c.stop();
-		// System.out.println("Temps calcule: " + c.getMilliSec());
-		if ( edges.isEmpty() ) { return null; }
+		// System.out.println("Temps calcule: " + c.getMilliSec())
+		if ( edges.isEmpty() || edges.get(0) == null) { return null ; }
 		HashSet edgesSetInit =
 			new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
