@@ -3,7 +3,7 @@ package msi.gaml.compilation;
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.*;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.*;
@@ -44,6 +44,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	static {
 		DECLARATION_STATEMENTS.add(IKeyword.VAR);
 		DECLARATION_STATEMENTS.add(IKeyword.CONST);
+	}
+
+	public void _display(final String string, final Class class1, final IDisplayCreator d) {
+		IGui.displays.put(string, d);
 	}
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper,

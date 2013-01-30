@@ -18,7 +18,7 @@
  */
 package msi.gama.common.interfaces;
 
-import java.util.Map;
+import java.util.*;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
@@ -39,6 +39,7 @@ public interface IGui {
 	public static final int WAIT = 1;
 	public static final int INFORM = 2;
 	public static final String PLUGIN_ID = "msi.gama.application";
+	public static final Map<String, IDisplayCreator> displays = new HashMap();
 
 	void setStatus(String error, int code);
 

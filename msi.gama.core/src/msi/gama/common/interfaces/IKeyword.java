@@ -136,12 +136,12 @@ public interface IKeyword {
 	public static final String FUNCTION = "function";
 	public static final String GAML = "gaml";
 	public static final String GENETIC = "genetic";
-	// public static final String GETTER = "getter";
 	public static final String GIS = "gis";
 	public static final String GLOBAL = "global";
 	public static final String GRADIENT = "gradient";
 	public static final String GRAPH = "graph";
 	public static final String GRAPH_SKILL = "graph_user";
+	public static final String GRAPHICS = "graphics";
 	public static final String GRID = "grid";
 	public static final String GRID_POPULATION = "display_grid";
 	public static final String GRID_X = "grid_x";

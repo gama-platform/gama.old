@@ -83,22 +83,16 @@ public class SpeciesLayer extends AgentLayer {
 		shapes.clear();
 		IScope scope = GAMA.obtainNewScope();
 		try {
-			// TODO search for hostPopulations then recursively draw micro-grid-populations and
-			// micro-populations
-
-			// start drawing agents of "level 1" species ...
 			ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
-			if ( species.getLevel() == 1 ) {
-				IAgent world = scope.getWorldScope();
-				if ( !world.dead() ) {
-					IPopulation microPop = world.getMicroPopulation(species);
-					if ( microPop != null ) {
-						scope.setGraphics(g);
-						drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope,
-							g);
-					}
+			IAgent world = scope.getWorldScope();
+			if ( !world.dead() ) {
+				IPopulation microPop = world.getMicroPopulation(species);
+				if ( microPop != null ) {
+					scope.setGraphics(g);
+					drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope, g);
 				}
 			}
+
 		} finally {
 			GAMA.releaseScope(scope);
 		}
@@ -182,29 +176,14 @@ public class SpeciesLayer extends AgentLayer {
 			gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
 
 		IShape hostShape = host.getGeometry();
-		// GamaPoint hostLocation = hostShape.getLocation();
 		Envelope hostEnv = hostShape.getEnvelope();
-
-		// AffineTransform saved = g.getTransform();
-
 		g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(),
 			hostEnv.getMinY() * g.getYScale());
 		g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale() * 2),
 			(int) (gridAgentStorage.numCols * g.getYScale()));
 		g.setOpacity(layer.getTransparency());
-		g.drawImage(scope, supportImage, null, false, "SpeciesDisplay",0.0f);
-
-		// System.out.println("xScale = " + g.getXScale() + "; yScale = " + g.getYScale());
-
-		// TODO draw sub grids and sub micro-populations
-		//
-		// for ( IAgent a : population.getAgentsList() ) {
-
-		// }
+		g.drawImage(scope, supportImage, null, false, "SpeciesDisplay", 0.0f);
 
 	}
 
-	// private void drawSubPopulations() {
-	//
-	// }
 }

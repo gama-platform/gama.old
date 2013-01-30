@@ -877,42 +877,15 @@ public class SwtGui implements IGui {
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
 
-		if ( displayClasses.isEmpty() ) {
-
-			IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
-			for ( IConfigurationElement e : config ) {
-				final String pluginKeyword = e.getAttribute("keyword");
-				final String pluginClass = e.getAttribute("class");
-				final String pluginName = e.getContributor().getName();
-				System.out.println("Display found in " + pluginName + " with keyword " +
-					pluginKeyword + " and class " + pluginClass);
-				ClassLoader cl =
-					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
-				try {
-					displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-
-		Class<IDisplaySurface> clazz = displayClasses.get(keyword);
-		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
-			" is not defined anywhere."); }
-		try {
-			IDisplaySurface surface = clazz.newInstance();
-			// debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
-			// " display");
+		IDisplaySurface surface = null;
+		IDisplayCreator creator = displays.get(keyword);
+		if ( creator != null ) {
+			surface = creator.create();
 			surface.initialize(w, h, layerDisplayOutput);
-			return surface;
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
+		} else {
+			throw new GamaRuntimeException("Display " + keyword + " is not defined anywhere.");
 		}
-
-		return null;
+		return surface;
 	}
 
 	@Override

@@ -383,7 +383,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param z float (has no effect in 2D)
 	 */
 	@Override
-	public Rectangle2D drawString(final IAgent agent,final String string, final Color stringColor,
+	public Rectangle2D drawString(final IAgent agent, final String string, final Color stringColor,
 		final Integer angle, final float z) {
 		setDrawingColor(stringColor);
 		AffineTransform saved = g2.getTransform();
@@ -406,7 +406,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	 */
 	@Override
 	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle,final boolean rounded) {
+		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
 		Geometry geom = null;
 		ITopology topo = scope.getTopology();
 		if ( topo.isTorus() ) {
@@ -551,7 +551,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public boolean setPolygonMode(boolean polygonMode) {
+	public boolean setPolygonMode(final boolean polygonMode) {
 		// TODO Auto-generated method stub
 		return false;
 	}

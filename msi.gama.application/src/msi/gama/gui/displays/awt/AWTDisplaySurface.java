@@ -36,12 +36,14 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import com.vividsolutions.jts.geom.Envelope;
 
+@display("java2D")
 public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private boolean autosave = false;
@@ -60,7 +62,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	protected BufferedImage buffImage;
 	protected int bWidth, bHeight;
 	protected Point origin = new Point(0, 0);
-	
+
 	protected Point mousePosition;
 	Dimension previousPanelSize;
 	protected boolean navigationImageEnabled = true;
@@ -284,19 +286,21 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		bgColor = c;
 	}
 
-	/*@Override
-	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		// we take the smallest dimension as a guide
-		int[] dim = new int[2];
-		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
-		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
-		return dim;
-	}*/
-	
+	/*
+	 * @Override
+	 * public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+	 * // we take the smallest dimension as a guide
+	 * int[] dim = new int[2];
+	 * dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
+	 * dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
+	 * return dim;
+	 * }
+	 */
+
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		int[] dim = new int[2];
-		if (widthHeightConstraint < 1) {
+		if ( widthHeightConstraint < 1 ) {
 			dim[1] = Math.min(vheight, (int) (vwidth * widthHeightConstraint));
 			dim[0] = Math.min(vwidth, (int) (dim[1] / widthHeightConstraint));
 		} else {
@@ -424,7 +428,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean resizeImage(final int x, final int y) {
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
-		int imageWidth = Math.max(1,point[0]);
+		int imageWidth = Math.max(1, point[0]);
 		int imageHeight = Math.max(1, point[1]);
 		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
 			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
@@ -471,7 +475,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	public void setZoom(final double factor, final Point c) {
-		if ( resizeImage(Math.max(1, (int) Math.round(bWidth * factor)), Math.max(1,(int) Math.round(bHeight * factor))) ) {
+		if ( resizeImage(Math.max(1, (int) Math.round(bWidth * factor)),
+			Math.max(1, (int) Math.round(bHeight * factor))) ) {
 			int imagePX =
 				c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
 			int imagePY =
@@ -651,7 +656,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void toggleView() {
 		System.out.println("toggle view is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for JAVA2D display
 	 */
@@ -659,7 +664,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void togglePicking() {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for JAVA2D display
 	 */
@@ -667,7 +672,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void toggleArcball() {
 		System.out.println("arcball is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for JAVA2D display
 	 */
@@ -683,23 +688,24 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void addShapeFile() {
 		// TODO Auto-generated method stub
 	}
+
 	public Point getOrigin() {
 		return origin;
 	}
 
-	public ILayerManager getLayerManager()
-	{
+	@Override
+	public ILayerManager getLayerManager() {
 		return this.manager;
 	}
 
 	@Override
-	public void addMouseEventListener(MouseListener e) {
+	public void addMouseEventListener(final MouseListener e) {
 		// TODO Auto-generated method stub
 		this.addMouseListener(e);
-	} 
-	
+	}
+
 	@Override
-	public IGraphics getMyGraphics(){
-	      return this.displayGraphics;
+	public IGraphics getMyGraphics() {
+		return this.displayGraphics;
 	}
 }

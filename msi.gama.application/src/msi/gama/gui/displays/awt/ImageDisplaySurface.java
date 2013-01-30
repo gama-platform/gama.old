@@ -31,11 +31,13 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 
+@display("image")
 public class ImageDisplaySurface implements IDisplaySurface {
 
 	private boolean needsUpdate = true;
@@ -403,7 +405,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void toggleView() {
 		System.out.println("toggle view is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Image display
 	 */
@@ -411,7 +413,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void togglePicking() {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Image display
 	 */
@@ -419,7 +421,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void toggleArcball() {
 		System.out.println("arcball is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Image display
 	 */
@@ -434,7 +436,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void addShapeFile() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -442,10 +444,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		// TODO Auto-generated method stub
 		return manager;
 	}
-	
-	public void addMouseEventListener(MouseListener e)
-	{
-	}
+
+	@Override
+	public void addMouseEventListener(final MouseListener e) {}
 
 	@Override
 	public IGraphics getMyGraphics() {
