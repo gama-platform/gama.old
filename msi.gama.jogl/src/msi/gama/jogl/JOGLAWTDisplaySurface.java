@@ -19,6 +19,8 @@
 package msi.gama.jogl;
 
 import java.awt.*;
+import java.awt.Menu;
+import java.awt.MenuItem;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
@@ -29,35 +31,30 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.PlatformUI;
-
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
-import msi.gama.jogl.utils.*;
+import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.FileDialog;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import com.vividsolutions.jts.geom.Envelope;
 
+@display("opengl")
 public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private static final long serialVersionUID = 1L;
@@ -85,41 +82,38 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	private boolean synchronous = false;
 	private ActionListener menuListener;
 	private ActionListener focusListener;
-	
-	
 
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
 	// Use to toggle the 3D view.
-	public boolean ThreeD = false; //true; //false;
-	
-	//Use to toggle the Picking mode
-	public boolean Picking= false;
-	
-	//Use to toggle the Arcball view
-	public boolean Arcball= false;
-	
-	//Use to toggle the selectRectangle tool
-	public boolean SelectRectangle= false;
-	
-	//Use to draw .shp file
-	final String[] shapeFileName = new String[1];
-	
-	//private (return the renderer of the openGLGraphics) 
-	private JOGLAWTGLRenderer openGLGraphicsGLRender;
+	public boolean ThreeD = false; // true; //false;
 
+	// Use to toggle the Picking mode
+	public boolean Picking = false;
+
+	// Use to toggle the Arcball view
+	public boolean Arcball = false;
+
+	// Use to toggle the selectRectangle tool
+	public boolean SelectRectangle = false;
+
+	// Use to draw .shp file
+	final String[] shapeFileName = new String[1];
+
+	// private (return the renderer of the openGLGraphics)
+	private JOGLAWTGLRenderer openGLGraphicsGLRender;
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
 		final IDisplayOutput layerDisplayOutput) {
-		
+
 		envWidth = (float) env_width;
 		envHeight = (float) env_height;
 
-		//System.out.println("OpenGL DisplaySurface Init. env_width:" + env_width + " env_height:" + env_height);
+		// System.out.println("OpenGL DisplaySurface Init. env_width:" + env_width + " env_height:"
+		// + env_height);
 		this.setLayout(new BorderLayout());
-		
 
 		// /////
 		outputChanged(env_width, env_height, layerDisplayOutput);
@@ -129,16 +123,16 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 
-		//new way
+		// new way
 		openGLGraphics = new JOGLAWTDisplayGraphics(this);
-		
-		openGLGraphicsGLRender = ((JOGLAWTDisplayGraphics)openGLGraphics).myGLRender;
-		
+
+		openGLGraphicsGLRender = ((JOGLAWTDisplayGraphics) openGLGraphics).myGLRender;
+
 		this.add(openGLGraphicsGLRender.canvas, BorderLayout.CENTER);
-		
-		//myGLRender = new JOGLAWTGLRenderer(this);
-		//myGLRender.animator.start();
-		
+
+		// myGLRender = new JOGLAWTGLRenderer(this);
+		// myGLRender.animator.start();
+
 		zoomFit();
 
 		addComponentListener(new ComponentAdapter() {
@@ -202,12 +196,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void setPaused(final boolean flag) {
-		
-		if(flag == true){
-	      openGLGraphicsGLRender.animator.stop();	
-		}
-		else{
-		  openGLGraphicsGLRender.animator.start();	
+
+		if ( flag == true ) {
+			openGLGraphicsGLRender.animator.stop();
+		} else {
+			openGLGraphicsGLRender.animator.start();
 		}
 		paused = flag;
 		updateDisplay();
@@ -369,31 +362,33 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		return dim;
 	}
 
-	/*public void selectAgents(final int x, final int y) {
-		agentsMenu.removeAll();
-		agentsMenu.setLabel("Layers");
-		int xc = x - origin.x;
-		int yc = y - origin.y;
-		
-		final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
-		for ( ILayer layer : layers ) {
-			java.awt.Menu m = new java.awt.Menu(layer.getName());
-			Set<IAgent> agents = layer.collectAgentsAt(xc, yc);
-			if ( !agents.isEmpty() ) {
-				m.addSeparator();
+	/*
+	 * public void selectAgents(final int x, final int y) {
+	 * agentsMenu.removeAll();
+	 * agentsMenu.setLabel("Layers");
+	 * int xc = x - origin.x;
+	 * int yc = y - origin.y;
+	 * 
+	 * final List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+	 * for ( ILayer layer : layers ) {
+	 * java.awt.Menu m = new java.awt.Menu(layer.getName());
+	 * Set<IAgent> agents = layer.collectAgentsAt(xc, yc);
+	 * if ( !agents.isEmpty() ) {
+	 * m.addSeparator();
+	 * 
+	 * for ( IAgent agent : agents ) {
+	 * SelectedAgent sa = new SelectedAgent();
+	 * sa.macro = agent;
+	 * sa.buildMenuItems(m, layer);
+	 * }
+	 * }
+	 * agentsMenu.add(m);
+	 * }
+	 * agentsMenu.show(this, x, y);
+	 * }
+	 */
 
-				for ( IAgent agent : agents ) {
-					SelectedAgent sa = new SelectedAgent();
-					sa.macro = agent;
-					sa.buildMenuItems(m, layer);
-				}
-			}
-			agentsMenu.add(m);
-		}
-		agentsMenu.show(this, x, y);
-	}*/
-	
-	public void selectAgents(final int x, final int y,final IAgent agent, final int layerId) {
+	public void selectAgents(final int x, final int y, final IAgent agent, final int layerId) {
 
 		agentsMenu.removeAll();
 		agentsMenu.setLabel("Layers");
@@ -402,21 +397,22 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		SelectedAgent sa = new SelectedAgent();
 		sa.macro = agent;
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
-			
-		agentsMenu.add(m);
-	    agentsMenu.show(this, openGLGraphicsGLRender.myListener.mousePosition.x, openGLGraphicsGLRender.myListener.mousePosition.y);
 
-    }
-	
-	public void showAgentMonitor(IAgent agent){
-		
+		agentsMenu.add(m);
+		agentsMenu.show(this, openGLGraphicsGLRender.myListener.mousePosition.x,
+			openGLGraphicsGLRender.myListener.mousePosition.y);
+
+	}
+
+	public void showAgentMonitor(final IAgent agent) {
+
 	}
 
 	@Override
 	public void updateDisplay() {
-		
+
 		if ( synchronous && !EventQueue.isDispatchThread() ) {
-			
+
 			try {
 				EventQueue.invokeAndWait(openGLUpdateDisplayBlock);
 			} catch (InterruptedException e) {
@@ -454,11 +450,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).CleanStrings();
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
 
-			//FIXME: Need to check if it's working with AWTDisplay
-			if(autosave== true){
+			// FIXME: Need to check if it's working with AWTDisplay
+			if ( autosave == true ) {
 				snapshot();
 			}
-			
+
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
@@ -490,10 +486,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).drawRenderedImage(buffImage, translation);
-		/* The autosave has been move in the penGLUpdateDisplayBlock
+		/*
+		 * The autosave has been move in the penGLUpdateDisplayBlock
 		 * if ( autosave ) {
-			snapshot();
-		}*/
+		 * snapshot();
+		 * }
+		 */
 		redrawNavigator();
 	}
 
@@ -527,7 +525,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public BufferedImage getImage() {
-		buffImage =  openGLGraphicsGLRender.getScreenShot();
+		buffImage = openGLGraphicsGLRender.getScreenShot();
 		return buffImage;
 	}
 
@@ -571,12 +569,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void zoomIn() {
 		float incrementalZoomStep;
-		//Check if Z is not equal to 0 (avoid being block on z=0)
-		if(openGLGraphicsGLRender.camera.zPos !=0){
-		  incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
-		}
-		else{
-		  incrementalZoomStep =0.1f;
+		// Check if Z is not equal to 0 (avoid being block on z=0)
+		if ( openGLGraphicsGLRender.camera.zPos != 0 ) {
+			incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		} else {
+			incrementalZoomStep = 0.1f;
 		}
 		openGLGraphicsGLRender.camera.zPos -= incrementalZoomStep;
 		openGLGraphicsGLRender.camera.zLPos -= incrementalZoomStep;
@@ -585,16 +582,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void zoomOut() {
 		float incrementalZoomStep;
-		//Check if Z is not equal to 0 (avoid being block on z=0)
-		if(openGLGraphicsGLRender.camera.zPos !=0){
-		  incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
-		}
-		else{
-		  incrementalZoomStep =0.1f;
+		// Check if Z is not equal to 0 (avoid being block on z=0)
+		if ( openGLGraphicsGLRender.camera.zPos != 0 ) {
+			incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		} else {
+			incrementalZoomStep = 0.1f;
 		}
 		openGLGraphicsGLRender.camera.zPos += incrementalZoomStep;
 		openGLGraphicsGLRender.camera.zLPos += incrementalZoomStep;
-		
+
 	}
 
 	public void setZoom(final double factor, final Point c) {
@@ -622,13 +618,13 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void zoomFit() {
-		if(openGLGraphicsGLRender!=null){
+		if ( openGLGraphicsGLRender != null ) {
 			if ( ThreeD ) {
 				openGLGraphicsGLRender.camera.Initialize3DCamera(envWidth, envHeight);
 				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
 					openGLGraphicsGLRender.reset();
 				}
-	
+
 			} else {
 				openGLGraphicsGLRender.camera.InitializeCamera(envWidth, envHeight);
 				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
@@ -643,101 +639,115 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		ThreeD = !ThreeD;
 		zoomFit();
 	}
-	
+
 	@Override
 	public void togglePicking() {
-		
-       if(Picking==false){
-		    ThreeD=false;
+
+		if ( Picking == false ) {
+			ThreeD = false;
 			zoomFit();
 		}
-		//FIXME: need to change the status of the button
-		if (ThreeD==true){
-			ThreeD=false;
+		// FIXME: need to change the status of the button
+		if ( ThreeD == true ) {
+			ThreeD = false;
 		}
 		Picking = !Picking;
-		
+
 	}
-	
+
 	@Override
 	public void toggleArcball() {
 		Arcball = !Arcball;
-	   /* if(Arcball == true){
-		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
-		}*/
+		/*
+		 * if(Arcball == true){
+		 * ((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
+		 * }
+		 */
 	}
-	
+
 	@Override
 	public void toggleSelectRectangle() {
-    SelectRectangle = !SelectRectangle;
-    	
-	/*	if(Arcball == true){
-		((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
-		}*/
+		SelectRectangle = !SelectRectangle;
+
+		/*
+		 * if(Arcball == true){
+		 * ((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
+		 * }
+		 */
 	}
-	
+
 	/**
-	 * Add a simple feature collection  from a .Shp file.
+	 * Add a simple feature collection from a .Shp file.
 	 */
 	@Override
 	public void addShapeFile() {
 		new Thread(new Runnable() {
-		      public void run() {
-		            Display.getDefault().asyncExec(new Runnable() {
-		               public void run() {
-		            	   
-		            	   Shell shell = new Shell(Display.getDefault());
-		            	   FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 
-		            	   dialog.setText("Browse for a .shp file");
+			@Override
+			public void run() {
+				Display.getDefault().asyncExec(new Runnable() {
 
-		            	   dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
-		            	   
-		            	   dialog.setFilterExtensions(new String[] {"*.shp"});
+					@Override
+					public void run() {
 
-		            	   if (dialog.open() != null) {
+						Shell shell = new Shell(Display.getDefault());
+						FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 
-		            	       String path = dialog.getFilterPath();
+						dialog.setText("Browse for a .shp file");
 
-		            	       String[] names = dialog.getFileNames();
+						dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
 
-		            	       for (int i = 0; i < names.length; i++) {
-		            	           shapeFileName[i]=path + "/" + names[i]; 
-		            	           System.out.println(shapeFileName[i]);
-		            	       }
+						dialog.setFilterExtensions(new String[] { "*.shp" });
 
-		            	   }
-		            	   
-		            	   openGLGraphicsGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
-		                   SimpleFeatureCollection myCollection =  openGLGraphicsGLRender.myShapeFileReader.getFeatureCollectionFromShapeFile(openGLGraphicsGLRender.myShapeFileReader.store);
-		                   Color color = new Color((int)(Math.random()*255),(int)(Math.random()*255),(int) (Math.random()*255));
-		                   ((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(myCollection, color);
-		                   //FIXME: Need to reinitialise th displaylist
-		                   
-		               }
-		            });
-		      }
-		   }).start();
-		
+						if ( dialog.open() != null ) {
+
+							String path = dialog.getFilterPath();
+
+							String[] names = dialog.getFileNames();
+
+							for ( int i = 0; i < names.length; i++ ) {
+								shapeFileName[i] = path + "/" + names[i];
+								System.out.println(shapeFileName[i]);
+							}
+
+						}
+
+						openGLGraphicsGLRender.myShapeFileReader =
+							new ShapeFileReader(shapeFileName[0]);
+						SimpleFeatureCollection myCollection =
+							openGLGraphicsGLRender.myShapeFileReader
+								.getFeatureCollectionFromShapeFile(openGLGraphicsGLRender.myShapeFileReader.store);
+						Color color =
+							new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
+								(int) (Math.random() * 255));
+						((JOGLAWTDisplayGraphics) openGLGraphics).AddCollectionInCollections(
+							myCollection, color);
+						// FIXME: Need to reinitialise th displaylist
+
+					}
+				});
+			}
+		}).start();
+
 	}
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
-		
+
 		this.openGLGraphicsGLRender.camera.PrintParam();
-		
+
 		Envelope env = geometry.getEnvelope();
-		
-		double xPos= geometry.getLocation().getX() - this.envWidth/2;
-		double yPos= -(geometry.getLocation().getY() - this.envHeight/2);
-		
-		//FIXME: Need to compute the depth of the  shape to adjust ZPos value.
-		//FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
-		double zPos = env.maxExtent()*2 + geometry.getLocation().getZ();
-		double zLPos = -(env.maxExtent()*2);
-		
+
+		double xPos = geometry.getLocation().getX() - this.envWidth / 2;
+		double yPos = -(geometry.getLocation().getY() - this.envHeight / 2);
+
+		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
+		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
+		double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
+		double zLPos = -(env.maxExtent() * 2);
+
 		this.openGLGraphicsGLRender.camera.updatePosition(xPos, yPos, zPos);
-		this.openGLGraphicsGLRender.camera.lookPosition(xPos,yPos,zLPos);
+		this.openGLGraphicsGLRender.camera.lookPosition(xPos, yPos, zLPos);
 	}
 
 	@Override
@@ -791,10 +801,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	@Override
 	public void snapshot() {
-		buffImage =  openGLGraphicsGLRender.getScreenShot();
-		if(buffImage != null){
+		buffImage = openGLGraphicsGLRender.getScreenShot();
+		if ( buffImage != null ) {
 			save(GAMA.getDefaultScope(), buffImage);
-		}	
+		}
 	}
 
 	@Override
@@ -840,15 +850,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public ILayerManager getLayerManager() {
 		// TODO Auto-generated method stub
-		
+
 		return this.manager;
 	}
 
 	@Override
-	public void addMouseEventListener(MouseListener e) {
+	public void addMouseEventListener(final MouseListener e) {
 		openGLGraphicsGLRender.canvas.addMouseListener(e);
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -860,7 +870,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		return bgColor;
 	}
 
-	public void setBgColor(Color bgColor) {
+	public void setBgColor(final Color bgColor) {
 		this.bgColor = bgColor;
 	}
 }

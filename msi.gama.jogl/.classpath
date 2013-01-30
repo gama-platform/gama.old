@@ -13,5 +13,10 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/com.jogamp.jogl-macosx-universal"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="gaml">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

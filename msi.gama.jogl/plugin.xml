@@ -9,4 +9,10 @@
          </implementation>
          
     </extension>
+    <extension
+          point="gaml.grammar.addition">
+       <path
+             name="gaml">
+       </path>
+    </extension>
 </plugin>
