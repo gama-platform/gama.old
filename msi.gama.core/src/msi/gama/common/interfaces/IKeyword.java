@@ -112,6 +112,8 @@ public interface IKeyword {
 	public static final String EQUATION = "equation";
 	public static final String SOLVER = "solver";
 	public static final String SOLVE = "solve";
+	public static final String TIME0="time0";
+	public static final String TIME1="time1";	
 	/*
 	 * 
 	 */
