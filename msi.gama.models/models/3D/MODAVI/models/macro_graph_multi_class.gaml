@@ -26,18 +26,12 @@ global {
 	
 	graph my_graph ;
 	
-	graph my_macroGraph;
-	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
 	int nbTypeOfClass parameter: "Type of class" min:0 <-3 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 2 category: 'Model';
-	
-	bool microLayout parameter: 'Micro Layout' <- true category: 'Visualization';
-	float macroLayer parameter: "Macro Layer Z" min:0.0 max:1.0 <-0.2 category: 'Visualization';
-	
-	int colorFactor parameter: 'color factor' min:1 <-25 category: 'Aspect';
+		
 	int nodeSize parameter: 'Node size' min: 1 <- 2 category: 'Aspect';
 	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
 	
@@ -77,7 +71,7 @@ global {
 			do updatemyNodes;
 		}
 		
-		set my_macroGraph <- graph(macroNodes);
+		//set my_macroGraph <- graph(macroNodes);
 		
 		/* macroGraph is created in last to be sure that all the agent update their state before that the macroGraph does something
 		 * A another possibility can be to define a scheduler like:
@@ -92,9 +86,6 @@ global {
 		loop i from:0 to:nbTypeOfClass-1{
 				interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});
  			}
-			
-		
-		
 	 }
 }
 
@@ -143,8 +134,6 @@ entities {
 		rgb color;
 		node src;
 		node dest;
-		
-		
 		
 		reflex updateInteractionMatrix{
 			loop i from:0 to: nbTypeOfClass-1{															
@@ -213,7 +202,6 @@ entities {
 				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
 				}
 			}
-			
 		}	
 	}
 	
@@ -233,12 +221,9 @@ entities {
 
 		        if(i!=j){
 		            create macroEdge{
-		            	
-		             // nbAggregatedLinkList[h] <- tmp;
 		              nbAggregatedLinkList[h] <- interactionMatrix[h]  at {i,j};
 		              set src <- macroNodes at (i);
 				      set dest <- macroNodes at (j);	
-				      set my_macroGraph <- my_macroGraph add_edge (src::dest);
 		            }	  
 		        }      
 		      }
@@ -266,7 +251,7 @@ experiment generate_graph type: gui {
 		    text name:"original graph parameters" value: ( "" + nbTypeOfClass + " class, " + nbValuePerClass + " values per class") position:{110,55,0};
 		}	
 		
-		display Augmented_Graph type:opengl{
+		display Augmented_Graph type:opengl ambiant_light: 0.4{
 			species node aspect: classGenericColored ; 
 			species edge aspect: edgeGenericSpatialized ;
 			text name:"class1" value:"class1" position:{40,110,0};
@@ -278,26 +263,12 @@ experiment generate_graph type: gui {
 					
 			species node aspect: classGenericSpatialized ; 
 			species edge aspect: edgeGenericSpatialized ;
-
-			
-			
-				
-			//text  text1 value:"Original graph" position: {50,110};
-			//text  text2 value:"Interaction graph" position: {170,110};
-			
 		}
-		display Augmented_Graph_Macro_Spatialized type:opengl ambiant_light: 0.4{
-					
-			//species node aspect: classGenericSpatialized ; 
-			//species edge aspect: edgeGenericSpatialized ;
-			
+		
+		display Augmented_Graph_Macro_Spatialized type:opengl ambiant_light: 0.4{			
 			species macroNode aspect:Generic  position: {0,0} z:0.2;
 			species macroEdge aspect:base  position: {0,0} z:0.2;
-			
 		}		
-		
-		
-		
-			
+
 	}		
 }
