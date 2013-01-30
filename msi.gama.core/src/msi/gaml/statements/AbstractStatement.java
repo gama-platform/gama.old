@@ -40,6 +40,9 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	public AbstractStatement(final IDescription desc) {
 		super(desc);
+		String k = getLiteral(IKeyword.KEYWORD);
+		String n = getLiteral(IKeyword.NAME);
+		setName(k == null ? "" : k + " " + n == null ? "" : n);
 		pertinence = null;
 	}
 
@@ -76,11 +79,6 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public String toString() {
-		if ( name == null ) {
-			String k = getLiteral(IKeyword.KEYWORD);
-			String n = getLiteral(IKeyword.NAME);
-			setName(k == null ? "" : k + " " + n == null ? "" : n);
-		}
 		return name + description.getFacets();
 	}
 
