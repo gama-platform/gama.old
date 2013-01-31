@@ -89,15 +89,15 @@ public class Rk4Solver extends Solver {
 					cycle_length = Double.parseDouble(""
 							+ cycleLength.value(scope));
 				}
-				time_initial = SimulationClock.getCycle();
+				time_initial = SimulationClock.getCycle() - 1;
 				if (time0 != null) {
 					time_initial = Double.parseDouble("" + time0.value(scope));
 				}
-				time_final = time_initial;
+				time_final = SimulationClock.getCycle();
 				if (timef != null) {
 					time_final = Double.parseDouble("" + timef.value(scope));
 				}
-				integrator.integrate(eq, (time_initial - 1) * cycle_length, y,
+				integrator.integrate(eq, time_initial * cycle_length, y,
 						time_final * cycle_length, y);
 			} catch (Exception ex) {
 				System.out.println(ex);
