@@ -38,8 +38,9 @@ import ummisco.gaml.extensions.maths.utils.*;
 		/** Numerous other facets to plan : step, init, etc.) **/
 		@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false),
-		@facet(name = IKeyword.TIME0, type = IType.FLOAT_STR, optional = false),
-		@facet(name = IKeyword.TIME1, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
+		@facet(name = IKeyword.CYCLE_LENGTH, type = IType.FLOAT_STR, optional = true),
+		@facet(name = IKeyword.TIME_INITIAL, type = IType.FLOAT_STR, optional = true),
+		@facet(name = IKeyword.TIME_FINAL, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true)
 @inside(kinds = ISymbolKind.SPECIES)
 public class SolveStatement extends AbstractStatementSequence implements
@@ -74,8 +75,8 @@ public class SolveStatement extends AbstractStatementSequence implements
 		String method = getFacet("method").literalValue();
 		if (method.equals("rk4")) {
 			solver = new Rk4Solver(Double.parseDouble(getFacet("step")
-					.literalValue()), getFacet(IKeyword.TIME0),
-					getFacet(IKeyword.TIME1));
+					.literalValue()), getFacet(IKeyword.CYCLE_LENGTH), getFacet(IKeyword.TIME_INITIAL),
+					getFacet(IKeyword.TIME_FINAL));
 		}
 	}
 

@@ -22,11 +22,15 @@ import msi.gaml.expressions.IVarExpression;
 
 public class Rk4Solver extends Solver {
 	FirstOrderIntegrator integrator;
+	IExpression cycleLength;
 	IExpression time0;
-	IExpression time1;
+	IExpression timef;
 	double step;
+	double cycle_length;
+	double time_initial;
+	double time_final;
 
-	public Rk4Solver(double S, IExpression t0, IExpression t1) {
+	public Rk4Solver(double S, IExpression cl, IExpression t0, IExpression tf) {
 		// initialize the integrator, the step handler, etc.
 		// This class has access to the facets of the statement
 		// ie. getFacet(...)
@@ -34,8 +38,9 @@ public class Rk4Solver extends Solver {
 
 		// Just a trial
 		step = S;
+		cycleLength = cl;
 		time0 = t0;
-		time1 = t1;
+		timef = tf;
 		integrator = new ClassicalRungeKuttaIntegrator(step);
 		StepHandler stepHandler = new StepHandler() {
 			public void init(double t0, double[] y0, double t) {
@@ -79,9 +84,21 @@ public class Rk4Solver extends Solver {
 			try {
 				// integrator.integrate(eq, SimulationClock.getCycle()-1, y,
 				// SimulationClock.getCycle(), y);
-				integrator.integrate(eq,
-						Double.parseDouble("" + time0.value(scope)), y,
-						Double.parseDouble("" + time1.value(scope)), y);
+				cycle_length = 1;
+				if (cycleLength != null) {
+					cycle_length = Double.parseDouble(""
+							+ cycleLength.value(scope));
+				}
+				time_initial = SimulationClock.getCycle();
+				if (time0 != null) {
+					time_initial = Double.parseDouble("" + time0.value(scope));
+				}
+				time_final = time_initial;
+				if (timef != null) {
+					time_final = Double.parseDouble("" + timef.value(scope));
+				}
+				integrator.integrate(eq, (time_initial - 1) * cycle_length, y,
+						time_final * cycle_length, y);
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
