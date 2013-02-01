@@ -21,19 +21,23 @@
 /*  dendrogramme */
 
 model macro_graph
+
+//import "./modavi_output.gaml"
  
 global {
 	
 	graph my_graph ;
 	
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
-	int nbTypeOfClass parameter: "Type of class" min:0 <-3 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
+	int nbTypeOfClass parameter: "Type of class" min:0 <-1 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
 	int m_barabasi parameter: 'Edges density' min: 1 <- 2 category: 'Model';
 		
 	int nodeSize parameter: 'Node size' min: 1 <- 2 category: 'Aspect';
 	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
+	
+	int zoomFactor <- nbTypeOfClass;
 	
 	
 		
@@ -57,14 +61,14 @@ global {
 		}
 		
 		ask edge as list{
-			set color <- [125,125,125] as rgb;
+			set self.color <- [125,125,125] as rgb;
 		}	
 		
 		
 		let i<-1;
-		create macroNode number: nbValuePerClass{	
-			set class <-i;
-			set location <- {cos (float((class-1)/nbValuePerClass)*360)*50 +50,sin (float((class-1)/nbValuePerClass)*360)*50+50,0};
+		create macroNode number: nbValuePerClass{	 
+			set self.class <-i;
+			set location <- {(cos (float((class-1)/nbValuePerClass)*360)*50 +50),(sin (float((class-1)/nbValuePerClass)*360)*50+50),0};
 			color <- color hsb_to_rgb ([i/nbValuePerClass,1.0,1.0]);
 			set i<-i+1;	
 			add self to: macroNodes;
@@ -85,7 +89,11 @@ global {
 		//FIXME: If this is call at the beginning of the init block there is some null value in the matrix.
 		loop i from:0 to:nbTypeOfClass-1{
 				interactionMatrix[i] <- 0 as_matrix({nbValuePerClass,nbValuePerClass});
- 			}
+ 		}
+ 		
+ 		//do ModaviInit;
+ 		
+ 		
 	 }
 }
 
@@ -105,8 +113,13 @@ entities {
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
 			}	
 		}
+		
+		aspect real {			
+			draw shape color: rgb('white') z:nodeSize ; 
+			//draw sphere(nodeSize) color: rgb('white');
+		} 
 						
-		aspect base {			
+		aspect proxy {			
 			draw shape color: rgb('blue') z:nodeSize ; 
 		}  
 				
@@ -114,8 +127,8 @@ entities {
 			loop i from:0 to: nbTypeOfClass-1{
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
-			    posVector[i] <- {location.x+i*110,location.y,i*10}; 
-			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
+			    posVector[i] <- {(location.x+i*110)*(1/zoomFactor),(location.y)*(1/zoomFactor),0}; 
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize/zoomFactor ; 
 			}
 		}
 		
@@ -123,8 +136,8 @@ entities {
 			loop i from:0 to: nbTypeOfClass-1{
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
-			    posVector[i] <- {(cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110,(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50),i*10}; 
-			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize ; 
+			    posVector[i] <- {((cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110)*(1/zoomFactor),(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)*(1/zoomFactor),0}; 
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize/zoomFactor ; 
 			}
 		}	
 	}
@@ -183,8 +196,8 @@ entities {
 		
 		aspect Generic{
 			loop i from:0 to: nbTypeOfClass-1{
-			posVector[i] <- {location.x+i*150,location.y};	
-			draw geometry (point(posVector[i])) color: color z:(nbAggregatedNodes[i]/10)*macroNodeSize;
+			posVector[i] <- {(location.x+i*150)*(1/zoomFactor),(location.y)*(1/zoomFactor),0};	
+			draw geometry (point(posVector[i])) color: color z:(nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor);
 			}
 		}
 	}
@@ -199,7 +212,7 @@ entities {
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
-				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
+				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent*zoomFactor))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
 				}
 			}
 		}	
@@ -243,20 +256,26 @@ entities {
 	species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
 }
 experiment generate_graph type: gui {
-	output {			
-		display OriginalGraph type:opengl ambiant_light: 0.4{
-			species node aspect: base ; 
+	output {	
+		
+		display RealModel  type:opengl ambiant_light: 0.4{
+		  species node aspect: real ; 	
+		}
+				
+		/*display ProxyGraph type:opengl ambiant_light: 0.4{
+			species node aspect: proxy ; 
 			species edge aspect: base ;
-			text name:"original graph" value: ("Generated graph with " + nbAgent + " agents") position:{110,50,0}; 
-		    text name:"original graph parameters" value: ( "" + nbTypeOfClass + " class, " + nbValuePerClass + " values per class") position:{110,55,0};
+			text name:"original graph" value: ("Generated graph nbAgents: " + nbAgent) position:{110,50,0}; 
+		    text name:"original graph parameters" value: ("NbClass:" + nbTypeOfClass) position:{110,55,0};
+		    text name:"original graph parameters2" value: ("Nb Value per Class:" + nbValuePerClass) position:{110,60,0};
 		}	
 		
 		display Augmented_Graph type:opengl ambiant_light: 0.4{
 			species node aspect: classGenericColored ; 
 			species edge aspect: edgeGenericSpatialized ;
-			text name:"class1" value:"class1" position:{40,110,0};
-			text name:"class2" value:"class2" position:{150,110,0};
-			text name:"class3" value:"class3" position:{250,110,0};
+			//text name:"class1" value:"class1" position:{40,110,0};
+			//text name:"class2" value:"class2" position:{150,110,0};
+			//text name:"class3" value:"class3" position:{250,110,0};
 		}
 				
 		display Augmented_Graph_Spatialized type:opengl ambiant_light: 0.4{
@@ -265,10 +284,29 @@ experiment generate_graph type: gui {
 			species edge aspect: edgeGenericSpatialized ;
 		}
 		
-		display Augmented_Graph_Macro_Spatialized type:opengl ambiant_light: 0.4{			
-			species macroNode aspect:Generic  position: {0,0} z:0.2;
-			species macroEdge aspect:base  position: {0,0} z:0.2;
-		}		
+		display Augmented_Graph_Macro_Spatialized  type:opengl ambiant_light: 0.4{			
+			species macroNode aspect:Generic;
+			species macroEdge aspect:base;
+		}	*/
+		
+		display MODAVI type:opengl ambiant_light: 0.4{
+			species node aspect: real z:0;
+			
+			species node aspect: proxy z:0.2; 
+			species edge aspect: base z:0.2;
+			
+			species node aspect: classGenericColored z:0.4; 
+			species edge aspect: edgeGenericSpatialized z:0.4;
+			
+			species macroNode aspect:Generic z:0.6;
+			species macroEdge aspect:base z:0.6;	
+			
+			graphics arrow{
+				draw sphere(1);
+				draw geometry: (line([{1,1,1},{100,100,100}]));
+			}		
+		}	
+		
 
 	}		
 }
