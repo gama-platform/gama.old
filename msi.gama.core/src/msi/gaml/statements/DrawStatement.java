@@ -300,6 +300,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				 Geometry g = Cast.asGeometry(scope, item.value(scope)).getInnerGeometry();
 	 			 if ( elevation != null ) {
 	 				g.setUserData(elevation.value(scope));
+	 				
 	 			 }
 	 			 return gr.drawGeometry(scope, g, getColor(scope), !getEmpty(scope), getBorder(scope),
 	 				getRotation(scope), getRounded(scope));
@@ -307,7 +308,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			 else{
 					
 					GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
-					g1.setLocation(getLocation(scope,gr));
+					if (loc != null){
+						g1.setLocation(getLocation(scope,gr));	
+					}
 					return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
 						getRotation(scope), getRounded(scope)); 
 			}

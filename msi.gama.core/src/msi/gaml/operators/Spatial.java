@@ -162,6 +162,17 @@ public abstract class Spatial {
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
 		}
 		
+	   @operator("rectangle")
+		@doc(value = "A rectangle geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle(10, 5) --: returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"square", "triangle" })
+		public static IShape rectangle(final IScope scope, final double x, final double y) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return GamaGeometryType.buildRectangle(x, y, location);
+		}
+		
 		@operator("box")
 		@doc(value = "A box geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the box is by default the location of the current agent in which has been called this operator.", examples = { "box({10, 5 , 5}) --: returns a geometry as a rectangle with width = 10, heigh = 5 depth= 5." }, see = {
 			"around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
