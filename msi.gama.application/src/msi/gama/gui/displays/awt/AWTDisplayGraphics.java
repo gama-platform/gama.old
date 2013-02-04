@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
@@ -413,6 +414,28 @@ public class AWTDisplayGraphics implements IGraphics {
 			geom = topo.returnToroidalGeom(geometry);
 		} else {
 			geom = geometry;
+		}
+		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
+		return drawShape(color, sw.toShape(geom), f, border, angle);
+	}
+	
+	/**
+	 * Method drawGeometry.
+	 * @param geometry GamaShape
+	 * @param color Color
+	 * @param fill boolean
+	 * @param angle Integer
+	 * @param rounded boolean (not yet implemented in JAVA 2D)
+	 */
+	@Override
+	public Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry, final Color color,
+		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
+		Geometry geom = null;
+		ITopology topo = scope.getTopology();
+		if ( topo.isTorus() ) {
+			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
+		} else {
+			geom = geometry.getInnerGeometry();
 		}
 		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
 		return drawShape(color, sw.toShape(geom), f, border, angle);

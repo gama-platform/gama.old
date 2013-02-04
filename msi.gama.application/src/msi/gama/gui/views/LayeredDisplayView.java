@@ -99,6 +99,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		data.heightHint = 200;
 		data.widthHint = 200;
 		data.horizontalSpan = 2;
+		
 		aux.setLayoutData(data);
 		EditorFactory.create(general, "Color:", output.getBackgroundColor(),
 			new EditorListener<Color>() {
