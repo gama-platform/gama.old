@@ -15,10 +15,10 @@ import com.jmex.model.collada.ColladaImporter;
 public class ColladaReader {
  
 	public ColladaReader(){
-		
+		System.out.println("ColladaReader");
 		InputStream input = null;
 		try {
-			input = new FileInputStream("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/msi.gama.jogl/src/collada/sphere.dae");
+			input = new FileInputStream("/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT2/msi.gama.jogl/src/collada/astroBoy.DAE");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

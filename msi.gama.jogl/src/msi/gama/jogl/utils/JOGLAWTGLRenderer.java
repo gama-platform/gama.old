@@ -42,6 +42,7 @@ import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.GraphicDataType.MyTexture;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
+import msi.gama.jogl.utils.collada.ColladaReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
@@ -528,7 +529,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public void DrawCollada(){
 		
-		//ColladaReader myColReader = new ColladaReader();
+		ColladaReader myColReader = new ColladaReader();
 		return;
 	}
 

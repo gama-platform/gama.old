@@ -61,15 +61,23 @@ public class BasicOpenGlDrawer {
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
-				if (geometry.height > 0) {
-					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
-							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.fill,geometry.height, geometry.angle, true, geometry.border,geometry.rounded);
-				} else {
-					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
-							geometry.z_layer, geometry.color, geometry.alpha,
-							geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
-							true,geometry.rounded);
+				//The JTS geometry of a sphere is a circle (a polygon)
+				if((geometry.type).equals("sphere")){
+					myJTSDrawer.DrawSphere((Point) geometry.geometry.getCentroid(),
+							geometry.z_layer, geometry.height, geometry.color,
+							geometry.alpha);
+				}
+				else{
+					if (geometry.height > 0) {
+						myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
+								geometry.z_layer, geometry.color, geometry.alpha,
+								geometry.fill,geometry.height, geometry.angle, true, geometry.border,geometry.rounded);
+					} else {
+						myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
+								geometry.z_layer, geometry.color, geometry.alpha,
+								geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
+								true,geometry.rounded);
+					}
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				
@@ -129,14 +137,22 @@ public class BasicOpenGlDrawer {
 			}
 
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
-				if (geometry.height > 0) {
-					myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
-							geometry.z_layer, c, geometry.alpha,geometry.fill, geometry.height,
-							geometry.angle, true, geometry.border,geometry.rounded);
-				} else {
-					myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
-							geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
-							geometry.isTextured, geometry.angle, true,geometry.rounded);
+				//The JTS geometry of a sphere is a circle (a polygon)
+				if((geometry.type).equals("sphere")){
+					myJTSDrawer.DrawSphere((Point) geometry.geometry.getCentroid(),
+							geometry.z_layer, geometry.height, c,
+							geometry.alpha);
+				}
+				else{
+					if (geometry.height > 0) {
+						myJTSDrawer.DrawPolyhedre((Polygon) geometry.geometry,
+								geometry.z_layer, c, geometry.alpha,geometry.fill, geometry.height,
+								geometry.angle, true, geometry.border,geometry.rounded);
+					} else {
+						myJTSDrawer.DrawPolygon((Polygon) geometry.geometry,
+								geometry.z_layer, c, geometry.alpha, geometry.fill, geometry.border, 
+								geometry.isTextured, geometry.angle, true,geometry.rounded);
+					}
 				}
 			} else if (geometry.geometry.getGeometryType() == "MultiLineString") {
 				myJTSDrawer.DrawMultiLineString(
