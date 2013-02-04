@@ -72,7 +72,7 @@ experiment AugmentedGrid type:gui {
 			species cell aspect: base  refresh:false position: {0,0};
 		}
 		
-		display AugmentedDisplay type:opengl ambiant_light:0.5{		
+		display AugmentedDisplay type:opengl ambiant_light:0.5 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
 			species cell aspect: colored  refresh:true position: {width*1.1,0};
 			species cell aspect: blueElevation  refresh:true position: {0,height*1.1};
