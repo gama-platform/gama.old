@@ -75,6 +75,30 @@ public abstract class Spatial {
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildCircle(radius, location);
 		}
+		
+		@operator("cylinder")
+		@doc(value = "A cylinder geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the cylinder is by default the location of the current agent in which has been called this operator.", examples = { "cylinder(10,10) --: returns a geometry as a circle of radius 10." }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+			"square", "triangle" })
+		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildCylinder(radius, depth, location);
+		}
+		
+		@operator("sphere")
+		@doc(value = "A sphere geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { "sphere(10) --: returns a geometry as a circle of radius 10 but displays ." }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+			"square", "triangle" })
+		public static IShape sphere(final IScope scope, final Double radius) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildSphere(radius, location);
+		}
 
 		@operator("cone")
 		@doc(value = "A cone geometry which min and max angles are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone({0, 45}) --: returns a geometry as a cone with min angle is 0 and max angle is 45." }, see = {
@@ -114,6 +138,18 @@ public abstract class Spatial {
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildSquare(side_size, location);
 		}
+		
+		@operator("cube")
+		@doc(value = "A cube geometry which side size is equal to the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the cube is by default the location of the current agent in which has been called this operator.", examples = { "cube(10) --: returns a geometry as a square of side size 10." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"rectangle", "triangle" })
+		public static IShape cube(final IScope scope, final Double side_size) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( side_size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildCube(side_size, location);
+		}
 
 		@operator("rectangle")
 		@doc(value = "A rectangle geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the rectangle is by default the location of the current agent in which has been called this operator.", examples = { "rectangle({10, 5}) --: returns a geometry as a rectangle with width = 10 and heigh = 5." }, see = {
@@ -124,6 +160,17 @@ public abstract class Spatial {
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
+		}
+		
+		@operator("box")
+		@doc(value = "A box geometry which side sizes are given by the operands.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the box is by default the location of the current agent in which has been called this operator.", examples = { "box({10, 5 , 5}) --: returns a geometry as a rectangle with width = 10, heigh = 5 depth= 5." }, see = {
+			"around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
+			"square", "cube" ,"triangle" })
+		public static IShape box(final IScope scope, final GamaPoint p) {
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
 		}
 
 		@operator("triangle")
@@ -169,6 +216,25 @@ public abstract class Spatial {
 			}
 
 			return GamaGeometryType.buildPolygon(points);
+		}
+		
+		@operator(value = "polyhedron", expected_content_type = { IType.POINT })
+		@doc(value = "A polyhedron geometry from the given list of points.", special_cases = {
+			"if the operand is nil, returns the point geometry {0,0}",
+			"" + "if the operand is composed of a single point, returns a point geometry",
+			"if the operand is composed of 2 points, returns a polyline geometry." }, examples = { "polyhedron([{0,0}, {0,10}, {10,10}, {10,0}],10) --: returns a polygon geometry composed of the 4 points and of depth 10." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle",
+			"square", "triangle" })
+		public static IShape polyhedron(final IList<GamaPoint> points,final Double depth) {
+			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
+			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
+			if ( new HashSet(points).size() == 2 ) { return GamaGeometryType.buildLine(
+				points.get(0), points.get(1)); }
+			if ( !points.get(0).equals(points.get(points.size() - 1)) ) {
+				points.add(points.get(0));
+			}
+
+			return GamaGeometryType.buildPolyhedron(points,depth);
 		}
 
 		@operator(value = { "line", "polyline" }, expected_content_type = { IType.POINT })

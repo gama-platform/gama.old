@@ -54,6 +54,9 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
+	//Property map to add 3D information (e.g to specify if the geometry is a sphere, a cube, etc...) 
+	private GamaMap Property3D;
+	
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -500,5 +503,14 @@ public class GamaShape implements IShape {
 		}
 		return optimizedOperations;
 	}
+
+	public GamaMap getProperty3D() {
+		return Property3D;
+	}
+
+	public void setProperty3D(GamaMap property3D) {
+		Property3D = property3D;
+	}
+	
 
 }

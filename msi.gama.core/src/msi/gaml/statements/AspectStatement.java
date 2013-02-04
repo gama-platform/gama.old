@@ -50,9 +50,6 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 			Rectangle2D r =
 				scope.getGraphics().drawGeometry(scope, agent.getGeometry().getInnerGeometry(),
 					c == null ? Color.YELLOW : c, true, Color.black, 0,false);
-			// GuiUtils.debug("Agent " + agent.getIndex() + " with X ratio " +
-			// agent.getLocation().getX() / r.getCenterX() + " and Y ratio " +
-			// agent.getLocation().getY() / r.getCenterY());
 			return r;
 
 		}
@@ -67,7 +64,6 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 	@Override
 	public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		if ( agent != null && agent.acquireLock() ) {
-			// synchronized (agent) {
 			Object result;
 			try {
 				result = scope.execute(this, agent);
@@ -75,7 +71,6 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				agent.releaseLock();
 			}
 			return (Rectangle2D) result;
-			// }
 		}
 		return null;
 

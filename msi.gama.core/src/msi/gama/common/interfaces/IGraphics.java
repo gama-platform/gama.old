@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
@@ -187,6 +188,18 @@ public interface IGraphics {
 	 * @param z float
 	 */
 	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry,
+		final Color color, final boolean fill, final Color border, final Integer angle, final boolean rounded);
+	
+	/**
+	 * Method drawGamaShape.
+	 * @param scope IScope
+	 * @param geometry GamaShape
+	 * @param color Color
+	 * @param fill boolean
+	 * @param angle Integer
+	 * @param z float
+	 */
+	public abstract Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry,
 		final Color color, final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
 	public abstract void setDrawingOffset(final int x, final int y);

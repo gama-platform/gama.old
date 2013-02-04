@@ -104,9 +104,30 @@ public class GamaGeometryType extends GamaType<IShape> {
 		cs = CoordinateSequences.ensureValidRing(fact, cs);
 		LinearRing geom = GeometryUtils.getFactory().createLinearRing(cs);
 		Polygon p = GeometryUtils.getFactory().createPolygon(geom, null);
-		if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); }
+		
+		if ( p.isValid() ) { return new GamaShape(p.buffer(0.0)); } //Why buffer (0.0) ???
 		return buildPolyline(points);
 		// / ???
+	}
+	
+	
+	/**
+	 * Builds a (cleansed) polyhedron from a list of points and a given depth. The input points must be valid to create a
+	 * linear ring (first point and last point are duplicated). It is the responsible of the caller
+	 * to assure the validity of the input parameter.
+	 * Update: the coordinate sequence is now validated before creating the polygon, and any
+	 * necessary point is added.
+	 * 
+	 * @param points
+	 * @return
+	 */
+	public static IShape buildPolyhedron(final List<GamaPoint> points, final Double depth) {
+		GamaShape g = new GamaShape(buildPolygon(points));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",depth));
+		property3D.add(new GamaPair<String,String>("type","polyhedron"));
+		g.setProperty3D(property3D);
+		return g;
 	}
 
 	public static IShape buildLine(final ILocation location1, final ILocation location2) {
@@ -155,6 +176,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return buildRectangle(side_size, side_size, location == null ? new GamaPoint(0, 0)
 			: location);
 	}
+	
+	public static IShape buildCube(final double side_size, final ILocation location) {	
+	
+		GamaShape g = new GamaShape(buildRectangle(side_size, side_size,location));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",side_size));
+		property3D.add(new GamaPair<String,String>("type","cube"));
+		g.setProperty3D(property3D);
+		return g;
+		
+	}
 
 	public static IShape buildRectangle(final double width, final double height,
 		final ILocation location) {
@@ -176,6 +208,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		return new GamaShape(g);
 	}
+	
+	
+	public static IShape buildBox(final double width, final double height,final double depth,
+			final ILocation location) {		
+			GamaShape g = new GamaShape(buildRectangle(width, height,location));
+			GamaMap property3D = new GamaMap();
+			property3D.add(new GamaPair<String,Float>("depth",depth));
+			property3D.add(new GamaPair<String,String>("type","box"));
+			g.setProperty3D(property3D);
+			return g;
+		}
 
 	public static IShape buildHexagon(final double size, final double x, final double y) {
 		return buildHexagon(size, new GamaPoint(x, y));
@@ -229,6 +272,25 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		return new GamaShape(g);
 	}
+	
+	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {
+		GamaShape g = new GamaShape(buildCircle(radius, location));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",depth));
+		property3D.add(new GamaPair<String,String>("type","cylinder"));
+		g.setProperty3D(property3D);
+		return g;
+	}
+	
+	//FIXME: Be sure that a buffer on a sphere returns a sphere.
+	public static IShape buildSphere(final double radius, final ILocation location) {
+		GamaShape g = new GamaShape(buildCircle(radius, location));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",radius));
+		property3D.add(new GamaPair<String,String>("type","sphere"));
+		g.setProperty3D(property3D);
+		return g;
+	}
 
 	public static GamaShape geometriesToGeometry(final IScope scope,
 		final IContainer<?, ? extends IShape> ags) throws GamaRuntimeException {
@@ -270,5 +332,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if ( second == null ) { return null; }
 		return new GamaDynamicLink(first, second);
 	}
+	
+	
+	///////////////////////// 3D Shape (Not yet implemented in 3D (e.g a Sphere is displayed as a sphere but is a JTS circle) /////////////////////////////
+	
+
 
 }

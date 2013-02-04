@@ -35,6 +35,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -48,7 +50,7 @@ import com.vividsolutions.jts.geom.Geometry;
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
 	@facet(name = IType.GEOM_STR, type = IType.NONE_STR, optional = true),
-	// AD 18/01/13: geometry is now accepting any type of data
+	// AD 18/01/13: geometry is now accepting an	y type of data
 	// @facet(name = SHAPE, type = IType.ID, optional = true, values = { "geometry",
 	// "square", "circle", "triangle", "rectangle", "disc", "line" }),
 	// @facet(name = TEXT, type = IType.STRING_STR, optional = true),
@@ -274,7 +276,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			ILocation p =
 				constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope
 					.getAgentScope().getLocation() : constLoc;
-			return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale());
+			
+			//return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale());
+			return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale(),p.getZ());
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
@@ -289,12 +293,24 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-			Geometry g = Cast.asGeometry(scope, item.value(scope)).getInnerGeometry();
-			if ( elevation != null ) {
-				g.setUserData(elevation.value(scope));
+	
+             //FIXME : Feb2013:  Temporary (gr.drawGamaShape not yet finished)		
+			 if(true)
+			 {
+				 Geometry g = Cast.asGeometry(scope, item.value(scope)).getInnerGeometry();
+	 			 if ( elevation != null ) {
+	 				g.setUserData(elevation.value(scope));
+	 			 }
+	 			 return gr.drawGeometry(scope, g, getColor(scope), !getEmpty(scope), getBorder(scope),
+	 				getRotation(scope), getRounded(scope));
+			 }
+			 else{
+					
+					GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
+					g1.setLocation(getLocation(scope,gr));
+					return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
+						getRotation(scope), getRounded(scope)); 
 			}
-			return gr.drawGeometry(scope, g, getColor(scope), !getEmpty(scope), getBorder(scope),
-				getRotation(scope), getRounded(scope));
 		}
 	}
 
