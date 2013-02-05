@@ -110,6 +110,7 @@ public interface IKeyword {
 	public static final String EQUATION_LEFT = "left";
 	public static final String EQUATION_RIGHT = "right";
 	public static final String EQUATION = "equation";
+	public static final String SIMULTANEOUSLY = "simultaneously";
 	public static final String SOLVER = "solver";
 	public static final String SOLVE = "solve";
 	public static final String TIME_INITIAL="t0";

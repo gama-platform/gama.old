@@ -20,7 +20,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 
-public class Rk4Solver extends Solver {
+public class DormandPrince853Solver extends Solver {
 	FirstOrderIntegrator integrator;
 	IExpression cycleLength;
 	IExpression time0;
@@ -30,7 +30,7 @@ public class Rk4Solver extends Solver {
 	double time_initial;
 	double time_final;
 
-	public Rk4Solver(double S, IExpression cl, IExpression t0, IExpression tf) {
+	public DormandPrince853Solver(double S, IExpression cl, IExpression t0, IExpression tf) {
 		// initialize the integrator, the step handler, etc.
 		// This class has access to the facets of the statement
 		// ie. getFacet(...)
@@ -41,7 +41,7 @@ public class Rk4Solver extends Solver {
 		cycleLength = cl;
 		time0 = t0;
 		timef = tf;
-		integrator = new ClassicalRungeKuttaIntegrator(step);
+		integrator = new DormandPrince853Integrator(1, 1, 1, 1);
 		StepHandler stepHandler = new StepHandler() {
 			public void init(double t0, double[] y0, double t) {
 			}
@@ -67,11 +67,16 @@ public class Rk4Solver extends Solver {
 		// GuiUtils.informConsole("it work ");
 		if (eq instanceof SystemOfEquationsStatement) {
 
+			// ((SystemOfEquationsStatement) eq).executeOn(scope);
+			// eq.S = new double[] { 1.0, 1.0 };
+			// eq.I = new double[] { 1.0, 1.0 };
+			// eq.R = new double[] { 1.0, 1.0 };
+
 			// double[] y = new double[] { (Double) scope.getAgentVarValue("x"),
 			// (Double) scope.getAgentVarValue("y")}; // initial state
 			double[] y = new double[eq.variables.size()];
 			for (int i = 0, n = eq.variables.size(); i < n; i++) {
-				y[i] = (Double) eq.variables.get(i).resolveAgainst(scope).value(scope);
+				y[i] = (Double) eq.variables.get(i).value(scope);
 			}
 			// GuiUtils.informConsole(""+y[0]+" "+y[1]);
 			// double[] y = new double[] { 0.0, 1.0 };
