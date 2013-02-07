@@ -1,11 +1,11 @@
 model Geographics
 // gen by Xml2Gaml
-import "platform:/plugin/msi.gama.gui.application/generated/std.gaml"
+
 
 global ;
 environment ;
 entities {
-	species GeographicalFunction skills: situated {
+	species GeographicalFunction {
 		var R type: float init: 6371 ;
 		var dLon type: float init: 0 ;
 		var dLat type: float init: 0 ;
@@ -19,7 +19,7 @@ entities {
 			set dLon value: lonParam2 - lonParam1 ;
 			set dLat value: latParam2 - latParam1 ;
 			set a value: sin(dLat/2) * sin(dLat/2) + cos(latParam1) * cos(latParam2) *  sin(dLon/2) * sin(dLon/2) ;
-			return value: R * c ;
+			return  R * c ;
 		}
 	}
 }

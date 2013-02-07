@@ -19,11 +19,11 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.TypeFieldExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.Tree.Order;
 
 /**
@@ -46,7 +46,7 @@ public class Types {
 		if ( keyword.equals(IType.NONE_STR) ) {
 			typeInstance = NO_TYPE;
 		}
-		typeInstance.init(id, keyword, wraps);
+		typeInstance.init(varKind, id, keyword, wraps);
 		typeToIType[id] = typeInstance;
 		stringToIType.put(keyword, typeInstance);
 		for ( Class cc : wraps ) {
@@ -92,28 +92,18 @@ public class Types {
 		return Types.NO_TYPE;
 	}
 
-	public static List<IType> getSortedTypes() {
-		List<IType> types = new ArrayList(Arrays.asList(typeToIType));
-		types.removeAll(Collections.singleton(null));
-		Collections.sort(types);
-		return types;
-	}
-
 	public static void initFieldGetters(final IType t) {
 		Map<String, TypeFieldExpression> vars = AbstractGamlAdditions.getAllFields(t.toClass());
 		t.setFieldGetters(vars);
 	}
 
 	public static void init() {
-		for ( IType type : getSortedTypes() ) {
-			if ( type != null ) {
-				initFieldGetters(type);
-			}
-		}
 		Tree<IType> hierarchy = buildHierarchy();
-		GuiUtils.debug(hierarchy.toStringWithDepth());
-		for ( Node<IType> n : hierarchy.build(Order.PRE_ORDER) ) {
-			n.getData().setParent(n.getParent() == null ? null : n.getParent().getData());
+		for ( Node<IType> node : hierarchy.build(Order.PRE_ORDER) ) {
+			IType type = node.getData();
+			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
+			initFieldGetters(type);
+			type.setParent(node.getParent() == null ? null : node.getParent().getData());
 		}
 	}
 

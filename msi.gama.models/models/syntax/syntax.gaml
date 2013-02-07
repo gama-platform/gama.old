@@ -1,0 +1,5 @@
+model syntax
+
+global {
+	
+}

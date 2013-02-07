@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama 1.4" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.4.0" useFeatures="false" includeLaunchers="true">
+<product name="Gama 1.5" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.5.0" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
       <text>
-         * GAMA - V1.4 alpha
+         * GAMA - V1.5
 * Generic Agent-based Modelling Architecture
 
 * (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
@@ -21,17 +21,17 @@ Visit http://code.google.com/p/gama-platform/
 
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean -consoleLog</programArgs>
-      <vmArgs>-Xms256m -Xmx1536m -XX:MaxPermSize=256m</vmArgs>
-      <vmArgsMac>-d32 -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <vmArgs>-Xms256m -Xmx1024m -XX:MaxPermSize=256m</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/msi.gama.application/icons/launcher_icons/alt_window_16.gif" i32="/msi.gama.application/icons/launcher_icons/alt_window_32.gif" i48="/msi.gama.application/icons/launcher_icons/icon-48x48x32b.gif" i64="/msi.gama.application/icons/launcher_icons/icon-64x64x32b.gif" i128="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="25,420,400,10"
-      startupMessageRect="25,400,400,20"
-      startupForegroundColor="AB2741" />
+      startupProgressRect="25,520,400,10"
+      startupMessageRect="25,500,400,20"
+      startupForegroundColor="367D2F" />
    <launcher name="Gama">
       <linux icon="/msi.gama.application/icons/launcher_icons/icon-32x32x32b.xpm"/>
       <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
@@ -48,6 +48,8 @@ Visit http://code.google.com/p/gama-platform/
    </launcher>
 
    <vm>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
    </vm>
 
    <license>
@@ -55,6 +57,7 @@ Visit http://code.google.com/p/gama-platform/
    </license>
 
    <plugins>
+      <plugin id="cenres.gaml.extensions.hydro"/>
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
@@ -66,18 +69,21 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
       <plugin id="irit.maelia.gaml.additions"/>
       <plugin id="javax.inject"/>
+      <plugin id="maps.gama.extensions"/>
       <plugin id="msi.gama.application"/>
       <plugin id="msi.gama.core"/>
       <plugin id="msi.gama.ext"/>
       <plugin id="msi.gama.headless"/>
+      <plugin id="msi.gama.hpc"/>
       <plugin id="msi.gama.jogl"/>
       <plugin id="msi.gama.lang.gaml"/>
       <plugin id="msi.gama.lang.gaml.ui"/>
       <plugin id="msi.gama.models"/>
       <plugin id="msi.gama.processor"/>
-      <plugin id="msi.gaml.extensions.fipa"/>
-      <plugin id="msi.gaml.extensions.physics"/>
-      <plugin id="msi.gaml.extensions.traffic"/>
+      <plugin id="msi.gaml.extensions.cplex"/>
+      <plugin id="msi.gaml.extensions.fipa" version="1.4.0"/>
+      <plugin id="msi.gaml.extensions.humanmoving"/>
+      <plugin id="msi.gaml.extensions.traffic2d"/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
@@ -85,9 +91,11 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.apache.lucene.core"/>
+      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.commands.source"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
       <plugin id="org.eclipse.core.databinding.observable"/>
@@ -95,13 +103,22 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.hpux.ia64_32" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.net.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.net.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
-      <plugin id="org.eclipse.core.resources.compatibility" fragment="true"/>
+      <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
@@ -118,6 +135,9 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.common"/>
       <plugin id="org.eclipse.equinox.ds"/>
       <plugin id="org.eclipse.equinox.event"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin"/>
+      <plugin id="org.eclipse.equinox.frameworkadmin.equinox"/>
+      <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
       <plugin id="org.eclipse.equinox.p2.director.app"/>
@@ -126,12 +146,17 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
+      <plugin id="org.eclipse.equinox.p2.publisher"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
       <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
+      <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.help.base"/>
@@ -151,11 +176,26 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.pde"/>
+      <plugin id="org.eclipse.pde.build"/>
       <plugin id="org.eclipse.pde.runtime"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
       <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
       <plugin id="org.eclipse.team.svn"/>
       <plugin id="org.eclipse.team.svn.core"/>
@@ -164,6 +204,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.browser"/>
+      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.console"/>
       <plugin id="org.eclipse.ui.editors"/>
@@ -176,6 +217,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.views.log"/>
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
+      <plugin id="org.eclipse.ui.win32" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.xtend2.lib"/>
@@ -195,6 +237,9 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
+      <plugin id="simtools.gaml.extensions.physics"/>
+      <plugin id="simtools.gaml.extensions.traffic"/>
+      <plugin id="ummisco.gaml.extensions.maths"/>
    </plugins>
 
 

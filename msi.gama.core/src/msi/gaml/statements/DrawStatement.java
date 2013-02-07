@@ -147,14 +147,14 @@ public class DrawStatement extends AbstractStatementSequence {
 					if ( sizeExp == null ) {
 						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
-					exp = GAMA.getExpressionFactory().createUnaryExpr("circle", sizeExp, desc);
+					exp = GAMA.getExpressionFactory().createOperator("circle", desc, sizeExp);
 				} else if ( old.equals("rectangle") || old.equals("square") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
 						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
 
-					exp = GAMA.getExpressionFactory().createUnaryExpr("square", sizeExp, desc);
+					exp = GAMA.getExpressionFactory().createOperator("square", desc, sizeExp);
 				} else if ( old.equals("geometry") ) {
 					exp = getShapeExpression(desc);
 				} else if ( old.equals("line") ) {
@@ -170,11 +170,11 @@ public class DrawStatement extends AbstractStatementSequence {
 					elements.add(at);
 					elements.add(to);
 					IExpression list = GAMA.getExpressionFactory().createList(elements);
-					exp = GAMA.getExpressionFactory().createUnaryExpr("line", list, desc);
+					exp = GAMA.getExpressionFactory().createOperator("line", desc, list);
 				}
 			} else {
 				if ( GamaFileType.isImageFile(old) ) {
-					exp = GAMA.getExpressionFactory().createUnaryExpr("file", exp, desc);
+					exp = GAMA.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
 

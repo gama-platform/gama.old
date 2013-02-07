@@ -62,6 +62,33 @@ public interface GamlFactory extends EFactory
   Contents createContents();
 
   /**
+   * Returns a new object of class '<em>Parameters</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Parameters</em>'.
+   * @generated
+   */
+  Parameters createParameters();
+
+  /**
+   * Returns a new object of class '<em>Action Arguments</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Arguments</em>'.
+   * @generated
+   */
+  ActionArguments createActionArguments();
+
+  /**
+   * Returns a new object of class '<em>Argument Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Argument Definition</em>'.
+   * @generated
+   */
+  ArgumentDefinition createArgumentDefinition();
+
+  /**
    * Returns a new object of class '<em>Facet</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -98,6 +125,15 @@ public interface GamlFactory extends EFactory
   PairExpr createPairExpr();
 
   /**
+   * Returns a new object of class '<em>Expression List</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Expression List</em>'.
+   * @generated
+   */
+  ExpressionList createExpressionList();
+
+  /**
    * Returns a new object of class '<em>Var Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -114,6 +150,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   TerminalExpression createTerminalExpression();
+
+  /**
+   * Returns a new object of class '<em>String Evaluator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>String Evaluator</em>'.
+   * @generated
+   */
+  StringEvaluator createStringEvaluator();
 
   /**
    * Returns a new object of class '<em>Tern Exp</em>'.
@@ -204,6 +249,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Function createFunction();
+
+  /**
+   * Returns a new object of class '<em>Parameter</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Parameter</em>'.
+   * @generated
+   */
+  Parameter createParameter();
 
   /**
    * Returns a new object of class '<em>Unit Name</em>'.

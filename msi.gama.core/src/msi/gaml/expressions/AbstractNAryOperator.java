@@ -18,44 +18,41 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IKeyword;
 
 /**
  * AbstractBinaryOperator
  * @author drogoul 23 august 07
  */
-public abstract class AbstractBinaryOperator extends AbstractExpression implements IOperator {
+public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
-	protected IExpression left;
-	protected IExpression right;
-
-	@Override
-	public final IExpression left() {
-		return left;
-	}
-
-	@Override
-	public IExpression right() {
-		return right;
-	}
+	protected IExpression[] exprs;
 
 	@Override
 	public String toString() {
-		boolean isRef = literalValue().equals(".") || literalValue().endsWith(IKeyword.AS);
-		String l = left == null ? "null" : left.toString();
-		String r = right == null ? "null" : right.toString();
-		return "(" + l + ") " + literalValue() + (isRef ? " " : " (") + r + (isRef ? "" : ")");
+		String result = literalValue() + "(";
+		for ( int i = 0; i < exprs.length; i++ ) {
+			String l = exprs[i] == null ? "null" : exprs[i].toString();
+			result += l + (i != exprs.length - 1 ? "," : "");
+		}
+		return result;
 	}
 
 	@Override
 	public String toGaml() {
-		String l = left == null ? "nil" : "(" + left.toGaml() + ") ";
-		boolean isRef = literalValue().equals(".") || literalValue().endsWith(IKeyword.AS);
-		String r = right == null ? "nil" : isRef ? right.toGaml() : "(" + right.toGaml() + ") ";
-		return l + " " + literalValue() + " " + r;
+		String result = literalValue() + "(";
+		for ( int i = 0; i < exprs.length; i++ ) {
+			String l = exprs[i] == null ? "nil" : exprs[i].toGaml();
+			result += l + (i != exprs.length - 1 ? "," : "");
+		}
+		return result;
 	}
 
 	public boolean hasChildren() {
 		return true;
+	}
+
+	@Override
+	public IExpression arg(final int i) {
+		return exprs[i];
 	}
 }

@@ -32,10 +32,8 @@ public interface IOperator extends IExpression {
 
 	public void setName(String name);
 
-	IOperator init(String operator, IExpression left, IExpression right, IDescription context);
+	IOperator init(String operator, IDescription context, IExpression ... args);
 
-	public abstract IExpression left();
-
-	public abstract IExpression right();
+	public abstract IExpression arg(int i);
 
 }

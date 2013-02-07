@@ -29,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
@@ -118,9 +118,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public boolean setNewExpressionText(final String string, final ISimulation sim) {
 		expressionText = string;
-		value =
-			GAMA.getExpressionFactory().createExpr(new StringBasedExpressionDescription(string),
-				sim.getWorldPopulation().getSpecies().getDescription());
+		value = GAMA.compileExpression(string, sim.getWorld());
 		return true;
 	}
 

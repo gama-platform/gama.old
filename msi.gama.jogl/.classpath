@@ -3,16 +3,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="msi/gama/jogl/GLView.java" kind="src" path="src"/>
-	<classpathentry kind="lib" path="/com.jogamp.jogl/gluegen-rt.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/com.jogamp.jogl-macosx-universal"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/com.jogamp.jogl/jogl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/Users/Arno/Projects/Gama/Sources/GAMA_CURRENT/com.jogamp.jogl-macosx-universal"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="gaml">
 		<attributes>
 			<attribute name="optional" value="true"/>

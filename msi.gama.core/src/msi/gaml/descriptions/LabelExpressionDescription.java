@@ -7,10 +7,8 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.notify.*;
 
 /**
  * The class LabelExpressionDescription.
@@ -32,17 +30,17 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		return sc;
 	}
 
-	String value;
-
-	class StringConstantExpression implements IExpression {
+	class StringConstantExpression extends AbstractExpression {
 
 		StringConstantExpression(final String constant) {
-			value = constant;
+			setName(constant);
+			type = Types.get(IType.STRING);
+			contentType = Types.get(IType.STRING);
 		}
 
 		@Override
-		public Object value(final IScope scope) throws GamaRuntimeException {
-			return value;
+		public Object value(final IScope scope) {
+			return name;
 		}
 
 		@Override
@@ -52,93 +50,26 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 		@Override
 		public String toGaml() {
-			return StringUtils.toGamlString(value);
+			return StringUtils.toGamlString(name);
 		}
 
-		@Override
-		public String literalValue() {
-			return value;
-		}
-
-		@Override
-		public IType getContentType() {
-			return Types.get(IType.STRING);
-		}
-
-		@Override
-		public IType getType() {
-			return Types.get(IType.STRING);
-		}
-
-		/**
-		 * @see msi.gaml.expressions.IExpression#getDocumentation()
-		 */
 		@Override
 		public String getDocumentation() {
-			return "Constant string: " + value;
+			return "Constant string: " + name;
 		}
 
-		@Override
-		public String getName() {
-			return value;
-		}
-
-		/**
-		 * @see msi.gaml.descriptions.IGamlDescription#dispose()
-		 */
-		@Override
-		public void dispose() {}
-
-		/**
-		 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
-		 */
 		@Override
 		public String getTitle() {
-			return "Constant string: " + value;
-		}
-
-		/**
-		 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-		 */
-		@Override
-		public void notifyChanged(final Notification notification) {}
-
-		/**
-		 * @see org.eclipse.emf.common.notify.Adapter#getTarget()
-		 */
-		@Override
-		public Notifier getTarget() {
-			return null;
-		}
-
-		/**
-		 * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
-		 */
-		@Override
-		public void setTarget(final Notifier newTarget) {}
-
-		/**
-		 * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
-		 */
-		@Override
-		public boolean isAdapterForType(final Object type) {
-			return false;
-		}
-
-		@Override
-		public void unsetTarget(final Notifier oldTarget) {}
-
-		@Override
-		public IExpression resolveAgainst(final IScope scope) {
-			return this;
+			return "Constant string: " + name;
 		}
 
 	}
 
+	final String value;
+
 	public LabelExpressionDescription(final String label) {
 		super((IExpression) null);
 		value = label;
-		// expression = get(value);
 	}
 
 	@Override
@@ -164,6 +95,11 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public boolean equalsString(final String o) {
 		return value.equals(o);
+	}
+
+	@Override
+	public boolean isString() {
+		return true;
 	}
 
 }

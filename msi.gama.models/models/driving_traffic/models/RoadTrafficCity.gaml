@@ -80,7 +80,7 @@ entities {
 		
 		user_command Remove_road action: remove;
 		user_command Add_road action: add;
-		
+		 
 		action remove {
 			set blocked <- true;
 			set the_graph <-  (as_edge_graph(list(road) where (!each.blocked))) with_optimizer_type "Dijkstra";

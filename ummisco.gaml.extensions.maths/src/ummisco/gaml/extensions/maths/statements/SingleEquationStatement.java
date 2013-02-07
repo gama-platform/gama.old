@@ -1,11 +1,6 @@
 package ummisco.gaml.extensions.maths.statements;
 
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -19,9 +14,8 @@ import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@facets(value = {
-		@facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE_STR, optional = false),
-		@facet(name = IKeyword.EQUATION_RIGHT, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION_RIGHT)
+@facets(value = { @facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE_STR, optional = false),
+	@facet(name = IKeyword.EQUATION_RIGHT, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION_RIGHT)
 @symbol(name = { IKeyword.EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.EQUATION)
 /**
@@ -45,7 +39,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
 		function = getFacet(IKeyword.EQUATION_LEFT);
-		var = (IVarExpression) ((AbstractBinaryOperator) function).left();
+		var = (IVarExpression) ((AbstractNAryOperator) function).arg(0);
 		expression = getFacet(IKeyword.EQUATION_RIGHT);
 	}
 
@@ -60,18 +54,17 @@ public class SingleEquationStatement extends AbstractStatement {
 	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
 	 */
 	@Override
-	protected Double privateExecuteIn(final IScope scope)
-			throws GamaRuntimeException {
+	protected Double privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
-//		 GuiUtils.informConsole("sdsd "+expression);
+		// GuiUtils.informConsole("sdsd "+expression);
 		return result;
 	}
 
 	@Override
-	public Object executeOn(IScope scope) throws GamaRuntimeException {
+	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		// GuiUtils.informConsole("exp <<"+expression.value(scope)+">>");
 
-		return expression.value(scope);//super.executeOn(scope);
+		return expression.value(scope);// super.executeOn(scope);
 	}
 
 	//
@@ -79,12 +72,8 @@ public class SingleEquationStatement extends AbstractStatement {
 	// }
 
 	public int getOrder() {
-		if (function.getName().equals("diff")) {
-			return 1;
-		}
-		if (function.getName().equals("diff2")) {
-			return 2;
-		}
+		if ( function.getName().equals("diff") ) { return 1; }
+		if ( function.getName().equals("diff2") ) { return 2; }
 		return 0;
 	}
 
@@ -100,23 +89,23 @@ public class SingleEquationStatement extends AbstractStatement {
 		return Double.NaN;
 	}
 
-//	public double[] S;
-//	public double[] I;
-//	public double[] R;
-//	public double beta=0.2;
-//	public double gamma=0.8;
-//	public double mi=0.0;
-//	public double up=0.0;
-//	public double N=0.0;
-//	public double f=0.0;
+	// public double[] S;
+	// public double[] I;
+	// public double[] R;
+	// public double beta=0.2;
+	// public double gamma=0.8;
+	// public double mi=0.0;
+	// public double up=0.0;
+	// public double N=0.0;
+	// public double f=0.0;
 
-//	public void computeDerivatives(double t, double[] y, double[] yDot) {
-//		// yDot[0] = y[0];//omega * (c[1] - y[1]);
-//		// yDot[1] = y[1];//omega * (y[0] - c[0]);
-//		yDot[0]=1;
-////		yDot[0] = (-beta * y[0] * y[1]) + mi * (N - y[0]) + (f * y[2]);
-////		yDot[1] = (beta * y[0] * y[1]) - (gamma * y[1]) - (mi * y[1]);
-////		yDot[2] = (gamma * y[1]) - (mi * y[2]) - (f * y[2]);
-//	}
+	// public void computeDerivatives(double t, double[] y, double[] yDot) {
+	// // yDot[0] = y[0];//omega * (c[1] - y[1]);
+	// // yDot[1] = y[1];//omega * (y[0] - c[0]);
+	// yDot[0]=1;
+	// // yDot[0] = (-beta * y[0] * y[1]) + mi * (N - y[0]) + (f * y[2]);
+	// // yDot[1] = (beta * y[0] * y[1]) - (gamma * y[1]) - (mi * y[1]);
+	// // yDot[2] = (gamma * y[1]) - (mi * y[2]) - (f * y[2]);
+	// }
 
 }

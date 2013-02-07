@@ -36,40 +36,22 @@ import msi.gaml.statements.Facets.Facet;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION })
-public class SymbolFactory extends AbstractFactory {
+@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION,
+	ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
+public class SymbolFactory {
 
-	public SymbolFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	protected final Set<Integer> kindsHandled;
+
+	public SymbolFactory(final List<Integer> handles) {
+		kindsHandled = new HashSet(handles);
 	}
 
-	@Override
-	public final SymbolProto getMetaDescriptionFor(final IDescription context, final String keyword) {
-		SymbolProto md = registeredSymbols.get(keyword);
-		if ( md == null ) {
-			String upper = context == null ? null : context.getKeyword();
-			ISymbolFactory f = chooseFactoryFor(keyword, upper);
-			if ( f == null ) {
-				if ( context != null ) {
-					context.flagError("Unknown symbol " + keyword, IGamlIssue.UNKNOWN_KEYWORD,
-						null, keyword, upper);
-				}
-				return null;
-			}
-			return f.getMetaDescriptionFor(context, keyword);
-		}
-		return md;
+	Set<Integer> getHandles() {
+		return kindsHandled;
 	}
 
-	@Override
-	public String getOmissibleFacetForSymbol(final String keyword) {
-		SymbolProto md = getMetaDescriptionFor(null, keyword);
-		if ( md == null ) { return IKeyword.NAME; }
-		return md.getOmissible();
-	}
-
-	protected String getKeyword(final ISyntacticElement cur) {
-		return cur.getKeyword();
+	protected String getKeyword(final ISyntacticElement source) {
+		return source.getKeyword();
 	}
 
 	/**
@@ -77,21 +59,16 @@ public class SymbolFactory extends AbstractFactory {
 	 * possibly null -- list of children. In this method, the children of the source element are not
 	 * considered, so if "children" is null or empty, the description is created without children.
 	 */
-	@Override
-	public final IDescription createDescription(final ISyntacticElement source,
-		final IDescription superDesc, final IChildrenProvider cp) {
+	final IDescription create(final ISyntacticElement source, final IDescription superDesc,
+		final IChildrenProvider cp) {
 		String keyword = getKeyword(source);
-		SymbolFactory f = (SymbolFactory) chooseFactoryFor(keyword, null);
-		if ( f == null ) {
-			superDesc.flagError("Impossible to parse keyword " + keyword + " in this context",
-				IGamlIssue.UNKNOWN_KEYWORD, source, keyword);
-			return null;
-		}
-		SymbolProto md = f.getMetaDescriptionFor(superDesc, keyword);
-		return f.createDescriptionInternal(keyword, source, superDesc, cp, md);
+		SymbolProto md = DescriptionFactory.getProto(superDesc, source, keyword);
+		if ( md == null ) { return null; }
+		/* if (cp == null || cp.getChildren().isEmpty()) */
+		return md.getFactory().createDescriptionInternal(keyword, source, superDesc, cp, md);
 	}
 
-	private IDescription createDescriptionInternal(final String keyword,
+	private final IDescription createDescriptionInternal(final String keyword,
 		final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp,
 		final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
@@ -104,38 +81,21 @@ public class SymbolFactory extends AbstractFactory {
 	 * Creates a semantic tree based on a source element and a super-description. The
 	 * children of the source element are used as a basis for building, recursively, the tree.
 	 */
-	@Override
-	public final IDescription createDescriptionRecursively(final ISyntacticElement source,
-		final IDescription superDesc) {
+	final IDescription create(final ISyntacticElement source, final IDescription superDesc) {
 		if ( source == null ) { return null; }
 		String keyword = getKeyword(source);
-		String context = superDesc == null ? null : superDesc.getKeyword();
-		SymbolFactory f = (SymbolFactory) chooseFactoryFor(keyword, context);
-		if ( f == null ) {
-			if ( superDesc != null ) {
-				superDesc.flagError("Impossible to parse keyword " + keyword,
-					IGamlIssue.UNKNOWN_KEYWORD, source, keyword, context);
-			}
-			return null;
-		}
-		SymbolProto md = f.getMetaDescriptionFor(superDesc, keyword);
-		return f.createDescriptionRecursivelyInternal(keyword, source, superDesc, md);
+		SymbolProto md = DescriptionFactory.getProto(superDesc, source, keyword);
+		if ( md == null ) { return null; }
+		return md.getFactory().createDescriptionRecursivelyInternal(keyword, source, superDesc, md);
 	}
 
-	private IDescription createDescriptionRecursivelyInternal(final String keyword,
+	private final IDescription createDescriptionRecursivelyInternal(final String keyword,
 		final ISyntacticElement source, final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		md.verifyFacets(source, facets, superDesc);
 		List<IDescription> children = new ArrayList();
 		for ( ISyntacticElement e : source.getChildren() ) {
-			children.add(createDescriptionRecursively(e, superDesc));
-			// Instead of having to consider this specific case, find a better solution.
-			// if ( !source.getKeyword().equals(SPECIES) ) {
-			// children.add(createDescriptionRecursively(e, superDesc));
-			// } else if ( source.hasParent(DISPLAY) || source.hasParent(SPECIES) ) {
-			// // "species" declared in "display" or "species" section
-			// children.add(createDescriptionRecursively(e, superDesc));
-			// }
+			children.add(create(e, superDesc));
 		}
 		IDescription desc =
 			buildDescription(source, keyword, new ChildrenProvider(children), superDesc, md);
@@ -145,23 +105,16 @@ public class SymbolFactory extends AbstractFactory {
 
 	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
-		return new SymbolDescription(keyword, superDesc, cp, source, md);
+		return new SymbolDescription(keyword, superDesc, cp, source/* , md */);
 	}
 
-	@Override
-	public final ISymbol compileDescription(final IDescription desc) {
-		IDescription sd = desc.getSuperDescription();
-		SymbolFactory f =
-			(SymbolFactory) chooseFactoryFor(desc.getKeyword(), sd == null ? null : sd.getKeyword());
+	final ISymbol compile(final IDescription desc) {
+		SymbolFactory f = DescriptionFactory.getFactory(desc.getKeyword());
 		return f.privateCompile(desc);
 	}
 
-	@Override
-	public final void validateDescription(final IDescription desc) {
-		IDescription superDesc = desc.getSuperDescription();
-		SymbolFactory f =
-			(SymbolFactory) chooseFactoryFor(desc.getKeyword(), superDesc == null ? null
-				: superDesc.getKeyword());
+	final void validate(final IDescription desc) {
+		SymbolFactory f = DescriptionFactory.getFactory(desc.getKeyword());
 		if ( f == null ) {
 			desc.flagError("Impossible to validate " + desc.getKeyword(),
 				IGamlIssue.UNKNOWN_KEYWORD, null, desc.getKeyword());
@@ -176,7 +129,6 @@ public class SymbolFactory extends AbstractFactory {
 		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(desc);
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
-		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f == null ) {
@@ -195,7 +147,7 @@ public class SymbolFactory extends AbstractFactory {
 
 	protected void privateValidateChildren(final IDescription desc) {
 		for ( IDescription sd : desc.getChildren() ) {
-			validateDescription(sd);
+			validate(sd);
 		}
 	}
 
@@ -209,12 +161,10 @@ public class SymbolFactory extends AbstractFactory {
 		}
 	}
 
-	protected ISymbol privateCompile(final IDescription desc) {
+	final ISymbol privateCompile(final IDescription desc) {
 		SymbolProto md = desc.getMeta();
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();
-		// Addition of a facet to keep track of the keyword
-		// rawFacets.putAsLabel(KEYWORD, desc.getKeyword());
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f != null ) {
 				compileFacet(f.getKey(), desc);
@@ -243,7 +193,7 @@ public class SymbolFactory extends AbstractFactory {
 	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
 		List<ISymbol> lce = new ArrayList();
 		for ( IDescription sd : desc.getChildren() ) {
-			ISymbol s = compileDescription(sd);
+			ISymbol s = compile(sd);
 			if ( s != null ) {
 				lce.add(s);
 			}

@@ -141,15 +141,8 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract Collection<UserCommandStatement> getUserCommands();
 
-	/*
-	 * Equation (Huynh Quang Nghi)
-	 */
-
+	// Huynh Quang Nghi 29/01/13
 	public abstract <T> IStatement getStatement(Class<T> clazz, String name);
-
-	/*
-	 * end-of Equation
-	 */
 
 	public abstract IStatement.WithArgs getAction(final String name);
 

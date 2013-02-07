@@ -86,7 +86,7 @@ entities {
 			draw shape: circle color: nodecolor size: 1500;
 		}
 		
-		aspect 3D {
+		aspect threeD {
 			//draw shape: circle color: rgb([255, 0, 255]) size: 1500 ;
 			draw shape: circle color: nodecolor size: 1500;
 			set z value: 50;

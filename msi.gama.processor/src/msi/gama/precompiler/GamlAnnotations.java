@@ -620,9 +620,12 @@ public final class GamlAnnotations {
 		/**
 		 * @return the respective priority of the operator w.r.t. to the others. Priorities are
 		 *         classified in several categories, and specified using one of the constants
-		 *         declared in IPriority
+		 *         declared in IPriority.
+		 * @deprecated This annotation is now deprecated as it is not used anymore by the parser. It
+		 *             can be safely removed.
 		 * @see IPriority
 		 */
+		@Deprecated
 		short priority() default IPriority.DEFAULT;
 
 		/**
@@ -717,8 +720,10 @@ public final class GamlAnnotations {
 		/**
 		 * @return The subfactories that this factory can invocate, based on the kind of symbols
 		 *         they are handling
+		 * @deprecated This annotation is not used anymore and can be safely removed
 		 * @see ISymbolKind
 		 */
+		@Deprecated
 		int[] uses() default {};
 
 	}

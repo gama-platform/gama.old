@@ -63,7 +63,7 @@ entities {
                     }
                 }
                 do die;
-            }
+            } 
         }
         aspect basic {
             draw shape: circle color: color size: size;

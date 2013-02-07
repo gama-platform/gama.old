@@ -7,7 +7,7 @@
 model si
 
 global { 
-	int 3toto;
+
     int number_S <- 495 parameter: 'Number of Susceptible';  // The number of susceptible
     int number_I <- 5 parameter: 'Number of Infected';	// The number of infected
     int number_R <- 0 parameter: 'Number of Removed';	// The number of removed

@@ -130,10 +130,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public UnaryOperator init(final String name, final IExpression child, final IExpression none,
-		final IDescription context) {
+	public UnaryOperator init(final String name, final IDescription context,
+		final IExpression ... args) {
 		setName(name);
-		setChild(child);
+		setChild(args[0]);
 		computeType();
 		computeContentType();
 		return this;
@@ -148,20 +148,15 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public IExpression left() {
-		return child;
-	}
-
-	@Override
-	public IExpression right() {
-		return null;
-	}
-
-	@Override
 	public IOperator resolveAgainst(final IScope scope) {
 		UnaryOperator copy = copy();
 		copy.child = child.resolveAgainst(scope);
 		return copy;
+	}
+
+	@Override
+	public IExpression arg(final int i) {
+		return i == 0 ? child : null;
 	}
 
 }

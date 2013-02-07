@@ -98,6 +98,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createContentsAdapter();
       }
       @Override
+      public Adapter caseParameters(Parameters object)
+      {
+        return createParametersAdapter();
+      }
+      @Override
+      public Adapter caseActionArguments(ActionArguments object)
+      {
+        return createActionArgumentsAdapter();
+      }
+      @Override
+      public Adapter caseArgumentDefinition(ArgumentDefinition object)
+      {
+        return createArgumentDefinitionAdapter();
+      }
+      @Override
       public Adapter caseFacet(Facet object)
       {
         return createFacetAdapter();
@@ -118,6 +133,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createPairExprAdapter();
       }
       @Override
+      public Adapter caseExpressionList(ExpressionList object)
+      {
+        return createExpressionListAdapter();
+      }
+      @Override
       public Adapter caseGamlVarRef(GamlVarRef object)
       {
         return createGamlVarRefAdapter();
@@ -126,6 +146,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseTerminalExpression(TerminalExpression object)
       {
         return createTerminalExpressionAdapter();
+      }
+      @Override
+      public Adapter caseStringEvaluator(StringEvaluator object)
+      {
+        return createStringEvaluatorAdapter();
       }
       @Override
       public Adapter caseTernExp(TernExp object)
@@ -176,6 +201,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseFunction(Function object)
       {
         return createFunctionAdapter();
+      }
+      @Override
+      public Adapter caseParameter(Parameter object)
+      {
+        return createParameterAdapter();
       }
       @Override
       public Adapter caseUnitName(UnitName object)
@@ -295,6 +325,51 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Parameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Parameters
+   * @generated
+   */
+  public Adapter createParametersAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionArguments <em>Action Arguments</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ActionArguments
+   * @generated
+   */
+  public Adapter createActionArgumentsAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ArgumentDefinition <em>Argument Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ArgumentDefinition
+   * @generated
+   */
+  public Adapter createArgumentDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Facet <em>Facet</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -355,6 +430,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ExpressionList <em>Expression List</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ExpressionList
+   * @generated
+   */
+  public Adapter createExpressionListAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlVarRef <em>Var Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -380,6 +470,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createTerminalExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringEvaluator <em>String Evaluator</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.StringEvaluator
+   * @generated
+   */
+  public Adapter createStringEvaluatorAdapter()
   {
     return null;
   }
@@ -530,6 +635,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Parameter <em>Parameter</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Parameter
+   * @generated
+   */
+  public Adapter createParameterAdapter()
   {
     return null;
   }

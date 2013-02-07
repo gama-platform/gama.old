@@ -39,13 +39,6 @@ import msi.gaml.expressions.*;
 
 public abstract class GamaType<Inner> implements IType<Inner> {
 
-	@Override
-	public int compareTo(final IType o) {
-		if ( isSuperTypeOf(o) ) { return -1; }
-		// if ( isSubTypeOf(o) ) { return 1; }
-		return 1;
-	}
-
 	protected short id;
 	protected String name;
 	protected Class[] supports;
@@ -53,12 +46,25 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	protected IType parent;
 	protected Set<IType> children = new HashSet();
 	protected boolean inited;
+	protected int varKind;
 
 	@Override
-	public void init(final short id, final String name, final Class ... supports) {
+	public int compareTo(final IType o) {
+		if ( isSuperTypeOf(o) ) { return -1; }
+		// if ( isSubTypeOf(o) ) { return 1; }
+		return 1;
+	}
+
+	@Override
+	public void init(final int varKind, final short id, final String name, final Class ... supports) {
+		this.varKind = varKind;
 		this.id = id;
 		this.name = name;
 		this.supports = supports;
+	}
+
+	public int getVarKind() {
+		return varKind;
 	}
 
 	@Override

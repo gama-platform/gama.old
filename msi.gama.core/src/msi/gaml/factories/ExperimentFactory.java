@@ -30,25 +30,24 @@ import msi.gaml.descriptions.*;
  * 
  * @author drogoul
  */
-@factory(handles = { ISymbolKind.EXPERIMENT }, uses = { ISymbolKind.OUTPUT, ISymbolKind.PARAMETER,
-	ISymbolKind.BATCH_METHOD, ISymbolKind.ACTION, ISymbolKind.BEHAVIOR })
+@factory(handles = { ISymbolKind.EXPERIMENT })
 public class ExperimentFactory extends SpeciesFactory {
 
-	public ExperimentFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public ExperimentFactory(final List<Integer> handles) {
+		super(handles);
 	}
 
 	@Override
 	protected ExperimentDescription buildDescription(final ISyntacticElement se, final String kw,
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
-		return new ExperimentDescription(kw, sd, cp, se, md);
+		return new ExperimentDescription(kw, sd, cp, se/* , md */);
 	}
 
 	@Override
 	protected void privateValidateChildren(final IDescription sd) {
 		for ( IDescription s : sd.getChildren() ) {
 			if ( s.getFacets().equals(KEYWORD, PARAMETER) ) {
-				validateDescription(s);
+				validate(s);
 			}
 		}
 		super.privateValidateChildren(sd);

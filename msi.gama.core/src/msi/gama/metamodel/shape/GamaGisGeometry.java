@@ -52,7 +52,7 @@ public class GamaGisGeometry extends GamaShape {
 		}
 	}
 
-	GamaMap gisAttributes = new GamaMap();
+	GamaMap gisAttributes = new GamaMap(); // FIXME Use Geometry.getUserData(); ?
 
 	public void setAttribute(final String s, final Object o) {
 		gisAttributes.put(s, o);

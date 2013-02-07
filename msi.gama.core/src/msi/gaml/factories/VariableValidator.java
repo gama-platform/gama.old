@@ -65,7 +65,7 @@ public class VariableValidator extends DescriptionValidator {
 		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
 		 * }
 		 */
-		// AD 19/01/13 : Removal of this test as unit names are expected to be declared using the
+		// AD 19/01/13 : Removal of this test as unit names need to be used preceded by the
 		// "¡" symbol
 
 		/**

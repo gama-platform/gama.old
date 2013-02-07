@@ -109,6 +109,8 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public Inner getDefault();
 
+	public int getVarKind();
+
 	public IExpression getGetter(String name);
 
 	public Map<String, ? extends IGamlDescription> getFieldDescriptions();
@@ -154,6 +156,6 @@ public interface IType<Inner> extends Comparable<IType> {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
-	public void init(final short id, final String name, final Class ... supports);
+	public void init(int varKind, final short id, final String name, final Class ... supports);
 
 }

@@ -30,7 +30,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.GamaMap;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import org.codehaus.janino.ScriptEvaluator;
 
@@ -43,29 +43,22 @@ import org.codehaus.janino.ScriptEvaluator;
 public class System {
 
 	@operator(value = "dead")
-	@doc(value = "true if the agent is dead, false otherwise.",
-		examples = "dead(agent_A) 	--: 	true or false" )
+	@doc(value = "true if the agent is dead, false otherwise.", examples = "dead(agent_A) 	--: 	true or false")
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a.dead();
 	}
 
 	@operator(value = "every")
-	@doc(
-		value = "true every operand time step, false otherwise",
-		comment = "the value of the every operator depends deeply on the time step. It can be used to do something not every step.",
-		examples = {
-			"reflex text_every {",
-			"	if every(2) {write \"the time step is even\";}",
-			"		else {write \"the time step is odd\";}"})
+	@doc(value = "true every operand time step, false otherwise", comment = "the value of the every operator depends deeply on the time step. It can be used to do something not every step.", examples = {
+		"reflex text_every {", "	if every(2) {write \"the time step is even\";}",
+		"		else {write \"the time step is odd\";}" })
 	public static Boolean opEvery(final IScope scope, final Integer period) {
 		final int time = SimulationClock.getCycle();
 		return period > 0 && time >= period && time % period == 0;
 	}
 
 	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.RIGHT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.ADDRESSING)
-	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.",
-			special_cases = "if the agent is nil or dead, throws an exception",
-			examples = "agent.location 		--: 	returns the location of the agent")
+	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
 		if ( a == null ) { throw new GamaRuntimeWarning("Cannot evaluate " + s.toGaml() +
@@ -83,15 +76,12 @@ public class System {
 	}
 
 	@operator(value = "user_input")
-	@doc(
-		value = "asks the user for some values (not defined as parameters)",
-		comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). " +
-				"The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
-		examples = {
-			"init {",
-            "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
-            "	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
-			"}"})
+	@doc(value = "asks the user for some values (not defined as parameters)", comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
+		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
+		"init {",
+		"	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
+		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
+		"}" })
 	public static Map<String, Object> userInput(final IScope scope,
 		final Map<String, Object> initialValues) {
 		if ( initialValues.isEmpty() ) { return initialValues; }
@@ -106,9 +96,7 @@ public class System {
 		IAgent agent = scope.getAgentScope();
 		IDescription d = agent.getSpecies().getDescription();
 		try {
-			IExpression e =
-				GAMA.getExpressionFactory().createExpr(new StringBasedExpressionDescription(gaml),
-					d);
+			IExpression e = GAMA.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (GamaRuntimeException e) {
 			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " +
@@ -121,7 +109,8 @@ public class System {
 	}
 
 	@operator(value = "eval_java", can_be_const = false)
-	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = {"eval_gaml", "evaluate_with"})	
+	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = {
+		"eval_gaml", "evaluate_with" })
 	public static Object opEvalJava(final IScope scope, final String code) {
 		try {
 			ScriptEvaluator se = new ScriptEvaluator();
@@ -142,8 +131,8 @@ public class System {
 	private static final String[] gamaDefaultImports = new String[] {};
 
 	@operator(value = "evaluate_with", can_be_const = false)
-	@doc(value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)",
-		 see = {"eval_gaml","eval_java"})
+	@doc(value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
+		"eval_gaml", "eval_java" })
 	public static Object opEvalJava(final IScope scope, final String code,
 		final IExpression parameters) {
 		try {

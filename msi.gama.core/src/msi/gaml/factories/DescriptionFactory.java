@@ -18,8 +18,10 @@
  */
 package msi.gaml.factories;
 
+import static msi.gama.common.interfaces.IKeyword.AGENT;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
@@ -32,21 +34,93 @@ import msi.gaml.statements.Facets;
  */
 public class DescriptionFactory {
 
-	public synchronized static IDescription create(final ISymbolFactory factory,
+	static Map<Integer, SymbolFactory> FACTORIES = new HashMap();
+
+	static Map<String, SymbolProto> KEYWORDS_PROTOS = new HashMap();
+
+	static Map<Integer, SymbolProto> KINDS_PROTOS = new HashMap();
+
+	public static void addFactory(final SymbolFactory factory) {
+		for ( int i : factory.getHandles() ) {
+			FACTORIES.put(i, factory);
+		}
+	}
+
+	public final static SymbolProto getProto(final IDescription context,
+		final ISyntacticElement source, final String keyword) {
+		SymbolProto md = getProto(keyword);
+		if ( md == null ) {
+			if ( context != null ) {
+				context.flagError("Unknown symbol " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source,
+					keyword);
+			}
+			return null;
+		}
+		return md;
+	}
+
+	public final static SymbolProto getProto(final String keyword) {
+		return KEYWORDS_PROTOS.get(keyword);
+	}
+
+	public static String getOmissibleFacetForSymbol(final String keyword) {
+		SymbolProto md = getProto(keyword);
+		if ( md == null ) { return IKeyword.NAME; }
+		return md.getOmissible();
+	}
+
+	public static SymbolFactory getFactory(final int kind) {
+		return FACTORIES.get(kind);
+	}
+
+	public static void addProto(final SymbolProto md, final List<String> names) {
+		int kind = md.getKind();
+		if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
+			SymbolProto.nonVariableStatements.addAll(names);
+		}
+		for ( String s : names ) {
+			if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
+			KEYWORDS_PROTOS.put(s, md);
+		}
+		KINDS_PROTOS.put(kind, md);
+	}
+
+	public static void addNewTypeName(final String s, final int kind) {
+		if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
+		SymbolProto p = KINDS_PROTOS.get(kind);
+		if ( p != null ) {
+			KEYWORDS_PROTOS.put(s, p);
+		}
+	}
+
+	public static SymbolFactory getFactory(final String keyword) {
+		SymbolProto p = KEYWORDS_PROTOS.get(keyword);
+		if ( p != null ) { return p.getFactory(); }
+		return null;
+	}
+
+	public static void addSpeciesNameAsType(final String name) {
+		if ( !name.equals(AGENT) ) {
+			KEYWORDS_PROTOS.put(name, KEYWORDS_PROTOS.get(AGENT));
+		}
+	}
+
+	// -----
+
+	public synchronized static IDescription create(final SymbolFactory factory,
 		final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final Facets facets) {
-		return factory.createDescription(new SyntheticStatement(keyword, facets), superDesc,
-			children);
+		return factory.create(new SyntheticStatement(keyword, facets), superDesc, children);
 	}
 
 	public synchronized static IDescription create(final String keyword,
 		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
-		return create(getModelFactory(), keyword, superDesc, children, facets);
+		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword,
 		final IDescription superDesc, final IChildrenProvider children, final String ... facets) {
-		return create(getModelFactory(), keyword, superDesc, children, new Facets(facets));
+		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
 
 	public synchronized static IDescription create(final String keyword,
@@ -58,37 +132,25 @@ public class DescriptionFactory {
 		return create(keyword, null, facets);
 	}
 
-	public synchronized static IDescription createOutputDescription(final String keyword,
-		final String ... facets) {
-		return create(getOutputFactory(), keyword, null, IChildrenProvider.NONE, new Facets(facets));
+	public synchronized static ISymbol compile(final IDescription desc) {
+		return getFactory(desc.getKeyword()).compile(desc);
 	}
 
-	private volatile static ISymbolFactory.Model modelFactory;
-
-	public static ISymbolFactory getOutputFactory() {
-		return getModelFactory().chooseFactoryFor(IKeyword.OUTPUT);
-	}
-
-	public static ISymbolFactory.Model getModelFactory() {
-		return modelFactory;
+	public static ModelFactory getModelFactory() {
+		return (ModelFactory) getFactory(ISymbolKind.MODEL);
 	}
 
 	public static Set<String> getAllowedFacetsFor(final String key) {
 		if ( key == null ) { return Collections.EMPTY_SET; }
-		SymbolProto md = null;
-		md = getModelFactory().getMetaDescriptionFor(null, key);
-		Set<String> result = md == null ? null : md.getPossibleFacets().keySet();
-		return result == null ? Collections.EMPTY_SET : result;
-	}
-
-	public static void setModelFactory(final ISymbolFactory iSymbolFactory) {
-		modelFactory = (ModelFactory) iSymbolFactory;
+		SymbolProto md = getProto(key);
+		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
 	}
 
 	public static SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills) {
-		return modelFactory.getSpeciesFactory().createSpeciesDescription(name, clazz, superDesc,
-			helper, skills, new Facets());
+		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
+		final Facets facets) {
+		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createSpeciesDescription(name,
+			clazz, superDesc, helper, skills, facets == null ? new Facets() : facets);
 	}
 
 }

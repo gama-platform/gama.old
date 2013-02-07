@@ -63,12 +63,16 @@ public class GamaClassLoader extends ClassLoader {
 			this.bundle = bundle;
 		}
 
+		public Bundle getBundle() {
+			return bundle;
+		}
+
 		@Override
 		protected Class findClass(final String name) throws ClassNotFoundException {
 			try {
 				return bundle.loadClass(name);
 			} catch (ClassNotFoundException cnfe) {
-				throw new ClassNotFoundException(name + " not found from [" +
+				throw new ClassNotFoundException(name + " not found in [" +
 					bundle.getSymbolicName() + "]", cnfe);
 			} catch (NoClassDefFoundError ncdfe) {
 				throw new ClassNotFoundException(name + " not defined in [" +
@@ -119,9 +123,10 @@ public class GamaClassLoader extends ClassLoader {
 		super();
 	}
 
-	public boolean addNewClass(final Class c) {
-		return customLoader.addNewClass(c);
-	}
+	//
+	// public boolean addNewClass(final Class c) {
+	// return customLoader.addNewClass(c);
+	// }
 
 	public ClassLoader addBundle(final Bundle bundle) {
 		// TODO verify if the bundle is not already known

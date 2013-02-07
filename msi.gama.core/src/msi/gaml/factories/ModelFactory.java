@@ -19,7 +19,7 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
@@ -34,19 +34,16 @@ import msi.gaml.statements.Facets;
  * 
  * @todo Description
  */
-@factory(handles = { ISymbolKind.MODEL }, uses = { ISymbolKind.EXPERIMENT, ISymbolKind.SPECIES,
-	ISymbolKind.ENVIRONMENT, ISymbolKind.OUTPUT })
-public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model {
+@factory(handles = { ISymbolKind.MODEL })
+public class ModelFactory extends SymbolFactory {
 
-	public ModelFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public ModelFactory(final List<Integer> handles) {
+		super(handles);
 	}
-
-	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
 
 	private void addMicroSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
 		SpeciesDescription mDesc =
-			(SpeciesDescription) createDescription(micro.getNode(), macro, IChildrenProvider.NONE);
+			(SpeciesDescription) create(micro.getNode(), macro, IChildrenProvider.NONE);
 		macro.addChild(mDesc);
 		for ( SpeciesStructure microSpecStructure : micro.getMicroSpecies() ) {
 			addMicroSpecies(mDesc, microSpecStructure);
@@ -63,11 +60,12 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 	private void complementSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
 		ISyntacticElement msNode = micro.getNode();
 		SpeciesDescription mDesc = macro.getMicroSpecies(msNode.getLabel(IKeyword.NAME));
-		ISymbolFactory f = chooseFactoryFor(getKeyword(msNode), mDesc.getKeyword());
 		for ( ISyntacticElement child : msNode.getChildren() ) {
 			// if micro-species were already added, no need to re-add them
-			if ( !ModelFactory.SPECIES_NODES.contains(child.getKeyword()) ) {
-				mDesc.addChild(f.createDescriptionRecursively(child, mDesc));
+			String kw = getKeyword(child);
+			if ( !ModelStructure.SPECIES_NODES.contains(kw) ) {
+				SymbolFactory f = DescriptionFactory.getFactory(kw);
+				mDesc.addChild(f.create(child, mDesc));
 			}
 		}
 		// recursively complement micro-species
@@ -78,9 +76,9 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 	private void complementExperimentSpecies(final SpeciesDescription sd) {
 		ISyntacticElement e = sd.getSourceInformation();
-		ISymbolFactory f = chooseFactoryFor(getKeyword(e), sd.getKeyword());
 		for ( ISyntacticElement child : e.getChildren() ) {
-			f.createDescriptionRecursively(child, sd); // ???
+			SymbolFactory f = DescriptionFactory.getFactory(getKeyword(child));
+			f.create(child, sd); // ???
 		}
 		sd.finalizeDescription();
 	}
@@ -101,10 +99,11 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 		}
 
 		// Complementing the world
-		ISymbolFactory f = chooseFactoryFor(IKeyword.GLOBAL, null);
+
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
-				world.addChild(f.createDescriptionRecursively(child, world));
+				SymbolFactory f = DescriptionFactory.getFactory(getKeyword(child));
+				world.addChild(f.create(child, world));
 			}
 		}
 
@@ -118,7 +117,7 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 		// Parse the other definitions (output, environment, batch...)
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {
-			IDescription dd = createDescriptionRecursively(e, model);
+			IDescription dd = create(e, model);
 			if ( dd instanceof ExperimentDescription ) {
 				complementExperimentSpecies((ExperimentDescription) dd);
 			}
@@ -134,20 +133,14 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 		return model;
 	}
 
-	@Override
-	public SpeciesFactory getSpeciesFactory() {
-		return (SpeciesFactory) chooseFactoryFor(IKeyword.SPECIES);
-	}
-
 	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
 		// We create a new world
 		ISyntacticElement ww = model.getSourceInformation().getChild(GLOBAL);
 		IDescription world =
-			getSpeciesFactory().createSpeciesDescription(WORLD_SPECIES,
+			DescriptionFactory.createSpeciesDescription(WORLD_SPECIES,
 				AbstractGamlAdditions.WORLD_AGENT_CLASS, model,
-				AbstractGamlAdditions.WORLD_AGENT_CONSTRUCTOR,
-				AbstractGamlAdditions.getSpeciesSkills(WORLD_SPECIES),
-				ww == null ? new Facets() : ww.getFacets());
+				AbstractGamlAdditions.WORLD_AGENT_CONSTRUCTOR, AbstractGamlAdditions
+					.getSpeciesSkills(WORLD_SPECIES), ww == null ? new Facets() : ww.getFacets());
 		model.addChild(world);
 		// We then reattach the previous built-in species to the new world
 		for ( SpeciesDescription sd : AbstractGamlAdditions.BUILT_IN_SPECIES.values() ) {
@@ -169,18 +162,16 @@ public class ModelFactory extends SymbolFactory implements ISymbolFactory.Model 
 
 	}
 
-	@Override
 	public IModel compile(final ModelStructure structure) {
 		ModelDescription md = parse(structure);
-		IModel model = (IModel) compileDescription(md);
+		IModel model = (IModel) compile(md);
 		return model;
 	}
 
-	@Override
 	synchronized public ModelDescription validate(final ModelStructure structure) {
 		ModelDescription md = parse(structure);
-		md.getTypesManager().printTypeHierarchy();
-		validateDescription(md);
+		// md.getTypesManager().printTypeHierarchy();
+		validate(md);
 		return md;
 	}
 

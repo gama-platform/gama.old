@@ -56,7 +56,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 	+ "agent that is able to move")
 @vars({
 	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")),
-	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd 359", doc = @doc("the absolute heading of the agent in degrees (in the range 0-359)")),
+	@var(name = IKeyword.HEADING, type = IType.INT_STR, init = "rnd(359)", doc = @doc("the absolute heading of the agent in degrees (in the range 0-359)")),
 	@var(name = IKeyword.DESTINATION, type = IType.POINT_STR, depends_on = { IKeyword.SPEED,
 		IKeyword.HEADING, IKeyword.LOCATION }, doc = @doc("continuously updated destination of the agent with respect to its speed and heading (read-only)")) })
 @skill(name = IKeyword.MOVING_SKILL)

@@ -43,11 +43,11 @@ public class GamaBundleLoader {
 	}
 
 	public static void preBuild(final String s) {
-		ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(s));
 		final long start = System.currentTimeMillis();
 		try {
-			IGamlAdditions additions = (IGamlAdditions) cl.loadClass(ADDITIONS).newInstance();
-			additions.initialize();
+			IGamlAdditions add =
+				(IGamlAdditions) Platform.getBundle(s).loadClass(ADDITIONS).newInstance();
+			add.initialize();
 			long end = System.currentTimeMillis();
 			GuiUtils.debug("GAML plugin " + s + " scanned in " + (end - start) + " ms.");
 		} catch (Exception e1) {

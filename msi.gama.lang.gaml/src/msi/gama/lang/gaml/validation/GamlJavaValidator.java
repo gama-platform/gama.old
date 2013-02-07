@@ -19,8 +19,8 @@
 package msi.gama.lang.gaml.validation;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.util.URI;

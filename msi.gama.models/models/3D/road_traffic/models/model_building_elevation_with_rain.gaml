@@ -131,7 +131,7 @@ experiment road_traffic type: gui {
 			species building aspect:base ;
 			species Rain aspect:circle;
 		}
-		save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
+		//save species: road to: (project_path + 'road_traffic/includes/instruction-generated.shp') type: "shp" ;
 	}
 }
 

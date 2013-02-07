@@ -89,6 +89,7 @@ entities {
 		aspect name: 'default' {
 			draw shape: circle size: 2 color: color;
 		}
+		
 	}
 }
 experiment Simple type:gui {

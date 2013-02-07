@@ -124,14 +124,14 @@ public class JavaWriter {
 	private String toArrayOfStrings(final String array) {
 		if ( array.equals("") ) { return "AS"; }
 		String[] segments = array.split("\\,");
-		String result = "new String[]{";
+		String result = "S(";
 		for ( int i = 0; i < segments.length; i++ ) {
 			if ( i > 0 ) {
 				result += ",";
 			}
 			result += toJava(segments[i]);
 		}
-		result += "}";
+		result += ")";
 		return result;
 	}
 
@@ -153,12 +153,8 @@ public class JavaWriter {
 			String[] segments = key.split("\\$");
 			String clazz = segments[0];
 			String handles = "Arrays.asList(" + segments[1] + ")";
-			String uses = "null";
-			if ( segments.length > 2 ) {
-				uses = "Arrays.asList(" + segments[2] + ")";
-			}
 			sb.append("new ").append(clazz);
-			sb.append("(").append(handles).append(",").append(uses).append("),");
+			sb.append("(").append(handles).append("),");
 		}
 		sb.setLength(sb.length() - 1);
 		sb.append(");");
@@ -215,9 +211,8 @@ public class JavaWriter {
 		sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz))
 			.append(",");
 		if ( isField ) {
-			sb.append("new TypeFieldExpression(").append(name).append(",Types.get(").append(type)
-				.append("), Types.get(").append(contentType).append("),").append(getterHelper)
-				.append(")");
+			sb.append("new TypeFieldExpression(").append(name).append(",T(").append(type)
+				.append("), T(").append(contentType).append("),").append(getterHelper).append(")");
 		} else {
 			sb.append("desc(").append(type).append(",");
 			sb.append(toArrayOfStrings(facets)).append("),").append(getterHelper);
@@ -239,7 +234,7 @@ public class JavaWriter {
 		if ( parentKinds.equals("") ) {
 			parentKinds = "AI";
 		} else {
-			parentKinds = "new int[]{" + parentKinds + "}";
+			parentKinds = "I(" + parentKinds + ")";
 		}
 		int nbFacets = Integer.decode(segments[8]);
 		int pointer = 9;
@@ -248,7 +243,7 @@ public class JavaWriter {
 			facets = "null";
 			pointer++;
 		} else {
-			facets = "new FacetProto[]{";
+			facets = "P(";
 			for ( int i = 0; i < nbFacets; i++ ) {
 				if ( i > 0 ) {
 					facets += ",";
@@ -266,7 +261,7 @@ public class JavaWriter {
 				pointer++;
 				facets += ")";
 			}
-			facets += "}";
+			facets += ")";
 		}
 		String omissible = segments[pointer++];
 		String sc =
@@ -303,49 +298,46 @@ public class JavaWriter {
 
 	protected void writeOperatorAddition(final StringBuilder sb, final String s, final String doc) {
 		String[] segments = s.split("\\$");
-		boolean unary = segments[1].equals("");
-		String l = segments[0];
-		String r = segments[1];
-		String canBeConst = toBoolean(segments[2]);
-		String type = segments[3];
-		String contentType = segments[4];
-		boolean iterator = segments[5].equals("true");
-		String priority = segments[6];
-		String ret = segments[7];
-		String m = segments[8];
-		boolean stat = segments[9].equals("true");
-		boolean scope = segments[10].equals("true");
-		String helper =
-			concat(
-				"new IOpRun(){public ",
-				checkPrim(ret),
-				" run(",
-				ISCOPE,
-				" s,Object t,Object r)",
-				unary ? buildUnary(l, m, ret, stat, scope) : buildBinary(l, r, m, ret, stat, scope),
-				"}");
-		String kw = "new String[] {";
-		for ( int i = 11; i < segments.length; i++ ) {
-			if ( i > 11 ) {
+		int arg_number = Integer.decode(segments[0]);
+		String[] classes = new String[arg_number];
+		int index = 1;
+		for ( int i = index; i <= arg_number; i++ ) {
+			classes[i - 1] = segments[i];
+		}
+		index += arg_number;
+		String canBeConst = toBoolean(segments[index++]);
+		String type = segments[index++];
+		String contentType = segments[index++];
+		boolean iterator = segments[index++].equals("true");
+		// String priority = segments[index++];
+		String ret = segments[index++];
+		String m = segments[index++];
+		boolean stat = segments[index++].equals("true");
+		boolean scope = segments[index++].equals("true");
+		String kw = "S(";
+		for ( int i = index; i < segments.length; i++ ) {
+			kw += toJava(segments[i]);
+			if ( i < segments.length - 1 ) {
 				kw += ",";
 			}
-			kw += toJava(segments[i]);
 		}
-		kw += "}";
-
-		if ( unary ) {
-			sb.append(in).append("_unary(").append(kw).append(',').append(toClassObject(l))
-				.append(",").append(toClassObject(ret)).append(",").append(canBeConst).append(',')
-				.append(type).append(',').append(contentType).append(',').append(helper)
-				.append(");");
-		} else {
-			sb.append(in).append(iterator ? "_iterator(" : "_binary(").append(kw).append(',')
-				.append(toClassObject(l)).append(",").append(toClassObject(r)).append(",")
-				.append(toClassObject(ret)).append(",").append(priority).append(',')
-				.append(canBeConst).append(',').append(type).append(',').append(contentType)
-				.append(',').append(helper).append(");");
+		kw += ")";
+		String classNames = "C(";
+		for ( int i = 0; i < classes.length; i++ ) {
+			classNames += toClassObject(classes[i]);
+			if ( i < classes.length - 1 ) {
+				classNames += ",";
+			}
 		}
+		classNames += ")";
+		String helper =
+			concat("new IOpRun(){public ", checkPrim(ret), " run(", ISCOPE, " s,Object... o)",
+				buildNAry(classes, m, ret, stat, scope), "}");
 
+		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',')
+			.append(classNames).append(",").append(toClassObject(ret))/* .append(",").append(priority) */
+			.append(',').append(canBeConst).append(',').append(type).append(',')
+			.append(contentType).append(',').append(helper).append(");");
 	}
 
 	private String toJava(final String s) {
@@ -400,13 +392,13 @@ public class JavaWriter {
 		}
 		args += "))";
 		String desc =
-			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJava(name) + ",TYPE, " + "Types.get(" +
+			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJava(name) + ",TYPE, " + "T(" +
 				toClassObject(ret) + ").toString(), JAVA," + toJava(method) + ")";
 		sb.append(concat(in, "_action(", toJava(method), ",", toClassObject(clazz),
-			",new PrimRun(Types.get(", toClassObject(ret), "), ", toClassObject(clazz),
-			"){public ", ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT,
-			" a,", ISCOPE, " s){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).",
-			method, "(s); ", ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
+			",new PrimRun(T(", toClassObject(ret), "), ", toClassObject(clazz), "){public ",
+			ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT, " a,", ISCOPE,
+			" s){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).", method, "(s); ",
+			ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
 	}
 
 	protected void writeSkill(final StringBuilder sb, final String s, final String doc) {
@@ -429,18 +421,6 @@ public class JavaWriter {
 			", new IDisplayCreator(){public IDisplaySurface create(){return new ", clazz, "();}}"));
 		sb.append(");");
 	}
-
-	//
-	// protected void writeFieldGetterAddition(final StringBuilder sb, final String s, final String
-	// doc) {
-	// String[] segments = s.split("\\$");
-	// String clazz = segments[1];
-	// String name = segments[0];
-	// String ret = checkPrim(segments[2]);
-	// sb.append(concat(in, "_field(", toJava(name), ",", toClassObject(clazz),
-	// ", new IFieldGetter(){public ", ret, " run(", IVALUE, " v){return v == null?",
-	// returnWhenNull(ret), ":((", clazz, ") v).", name, "();}});"));
-	// }
 
 	protected void writeHeader(final StringBuilder sb, final String packageName) {
 		sb.append("package ").append(packageName).append(';');
@@ -516,7 +496,26 @@ public class JavaWriter {
 		if ( returnClass.equals(INTEGER) ) { return " 0"; }
 		if ( returnClass.equals(BOOLEAN) ) { return " false"; }
 		return " null";
-		// return concat(" ", TYPES + ".get(", returnClass, ".class).cast(null, null, null)");
+	}
+
+	protected String buildNAry(final String[] classes, final String name, final String retClass,
+		final boolean stat, final boolean scope) {
+		String ret = checkPrim(retClass);
+		int index = stat ? 0 : 1;
+		String firstArg = scope ? "s" : "";
+		String body =
+			stat ? concat("{return ", name, "(", firstArg) : concat("{return o[0]", " == null?",
+				returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(", firstArg);
+		if ( index < classes.length ) {
+			if ( scope ) {
+				body += ",";
+			}
+			for ( int i = index; i < classes.length; i++ ) {
+				body += param(classes[i], "o[" + i + "]") + (i != classes.length - 1 ? "," : "");
+			}
+		}
+		body += ");}";
+		return body;
 	}
 
 	protected String buildBinary(final String lc, final String rc, final String name,

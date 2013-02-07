@@ -28,6 +28,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface IOpRun {
 
-	public abstract Object run(IScope evaluation_scope, Object left_operand, Object right_operand)
+	public abstract Object run(IScope evaluation_scope, final Object ... operands)
 		throws GamaRuntimeException;
+
+	public static class Op implements IOpRun { // Default implementation
+
+		@Override
+		public Object run(final IScope evaluation_scope, final Object ... operands) {
+			return null;
+		}
+
+	}
 }

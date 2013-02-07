@@ -100,7 +100,7 @@ entities {
 			}
 		}
 		aspect default {
-			draw shape: circle empty: !hasFood color: rgb('orange') ;
+			draw shape: circle empty: !hasFood color: rgb('orange') ; 
 		}
 	}
 }

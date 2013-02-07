@@ -1,0 +1,267 @@
+grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate gaml "http://www.gama.msi/lang/gaml/Gaml"
+
+// FIXME ON 5/2/13 : Still breaks with a non-LL(*) decision in OtherStatement.
+
+
+Model:
+	'model' name=ID (imports+=Import)* (statements+=Statement)*;
+
+Import:
+	'import' importURI=STRING; // must be named importURI
+
+/**
+ * Statements 
+ */
+Statement:
+	=>AssignmentStatement | NormalStatement  ;
+
+NormalStatement returns Statement:
+	IfStatement | DoStatement | SpeciesStatement | OtherStatement
+;
+AssignmentStatement returns Statement:
+	AssignmentBody 
+	(
+		({Assignment.body=current} key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--") value=Expression ';') | 
+		({Equation.body=current} key="=" value=Expression ";")
+	);
+	
+AssignmentBody returns Body:
+	expr = Access
+;
+
+DoStatement returns Statement:
+	key="do"
+	body=DoBody
+	(facets+=Facet)?
+	';'
+;
+
+
+
+
+IfStatement returns Statement:
+	key='if' 
+	body=ExprBody 
+	block=Block
+	(=> 'else' else=(IfStatement | Block))?
+;
+
+SpeciesStatement returns Statement:
+	key=("species"|"grid")
+	body=SpeciesBody
+	(facets+=Facet)*
+	(block=Block | ';')
+;
+
+OtherStatement returns Statement:
+	key=ID ('<' of=ID '>')?
+	body=Body?
+	(facets+=Facet)*
+	(block=Block | ';')
+;
+
+ActionBody returns Body:
+	name=ID ('('args=ActionArguments')')
+;
+
+SpeciesBody returns Body:
+	name=ID
+;
+
+DoBody returns Body:
+	name=ID ('('params=Parameters ')')?
+;
+
+ExprBody returns Body:
+	expr=Expression
+;
+
+	
+Body: 
+	=>((ID ':') ? expr= Expression) | ActionBody | SpeciesBody
+;
+
+Contents: 
+	('<' type=ID '>')
+; // ('<' type=ID (',' type2= ID)? '>');
+
+Parameters: 
+	(params += Parameter (=>',' params+= Parameter)*)
+;
+	 
+Parameter:  
+	left=VariableRef ':' right=Expression
+;
+
+ActionArguments:
+	args+= ArgumentDefinition (=>',' args+=ArgumentDefinition)*;
+
+ArgumentDefinition:
+		type=ID of=Contents? name=ID (=>'<-' default=Expression)? // ou name= GamlVarRef ?
+	;
+
+
+/**
+ * Facets
+ */
+
+
+Facet:
+	({NormalFacet}(key=ID ':' | key='<-' | key="->") expr=Expression) | ({DefinitionFacet} key=("name"|"returns") ":" name=ID );
+
+
+/**
+ * Blocks. An ordered list of statements inside curly brackets
+ */
+Block:
+	{Block} 
+	(
+		('{' (statements+=Statement)* '}')
+	);
+
+/**
+ * Expressions
+ */
+ 
+
+Expression:
+	TernExp;
+
+TernExp returns Expression:
+	OrExp
+	({TernExp.left=current}
+	op='?'
+	right=OrExp
+	':'
+	ifFalse=OrExp)?;
+
+OrExp returns Expression:
+	AndExp
+	({Expression.left=current}
+	op='or'
+	right=AndExp)*;
+
+AndExp returns Expression:
+	Relational
+	({Expression.left=current}
+	op='and'
+	right=Relational)*;
+
+Relational returns Expression:
+	PairExpr
+	(({Expression.left=current}
+	op=('!=' | '=' | '>=' | '<=' | '<' | '>'))
+	right=PairExpr)?;
+
+ArgPairExpr returns PairExpr:
+	{ArgPairExpr} (arg=(ID) op='::') right=Addition;
+	// arg = GamlVarRef serait plus intelligent, non ? 
+
+PairExpr returns Expression:
+	=> ArgPairExpr |
+	Addition
+	(({PairExpr.left=current}
+	op='::')
+	right=Addition)?;
+
+Addition returns Expression:
+	Multiplication
+	(({Expression.left=current} op=('+' | '-'))
+	right=Multiplication)*;
+
+Multiplication returns Expression:
+	GamlBinaryExpr /*Access */
+	(({Expression.left=current} op=('*' | '/' | '^')) right=GamlBinaryExpr/*Access */)*;
+
+GamlBinaryExpr returns Expression:
+	GamlUnitExpr
+	(({GamlBinaryExpr.left=current} op=ID) right=GamlUnitExpr)*;
+
+	// NEW: Units can now be expressed using the "¡" symbol (in addition to "#")
+GamlUnitExpr returns Expression:
+	GamlUnaryExpr
+	(({GamlUnitExpr.left=current} op=('#' | '¡')) right=UnitName)?;
+
+GamlUnaryExpr returns Expression:
+	Access |
+	{GamlUnaryExpr} ({GamlUnaryExpr.left=current} (op='¡' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	right=GamlUnaryExpr));
+	
+		
+Access returns Expression:
+	MemberRef (({Access.left=current} '[') args+=Expression (=>',' args+=Expression)* ']')*;
+
+MemberRef returns Expression:
+	PrimaryExpression ({MemberRef.left=current} (op='.' right=PrimaryExpression))*;
+
+PrimaryExpression returns Expression:
+	TerminalExpression |
+	AbstractRef | 
+	'(' Expression ')' | 
+	'(' {Parameters} (params += Parameter (=>',' params+= Parameter)*)? ')' |
+	'[' {Array} (exprs+=Expression (=>',' exprs+=Expression)*)? ']' | 
+	'{' {Point} left=Expression op=',' right=Expression (=>',' z=Expression)? '}';
+
+AbstractRef returns Expression:
+	VariableRef | Function;
+
+Function returns Expression:
+	{Function} (op=ID '(' args+=Expression (=>',' args+=Expression)* ')');
+
+
+
+
+/**
+ * Cross-references to variables/operators/units
+ */
+UnitName returns Expression:
+	{UnitName} op=ID;
+
+VariableRef returns Expression:
+	{VariableRef} ref=[GamlVarRef];
+	
+	//TypeRef: ref=[BuiltInType];
+GamlVarRef:
+	Facet | Body ;
+
+/**
+ * Terminals
+ */
+TerminalExpression:
+	{IntLiteral} value=INTEGER | {DoubleLiteral} value=DOUBLE | {ColorLiteral} value=COLOR | {StringLiteral} value=STRING
+	| {BooleanLiteral} value=BOOLEAN;
+
+terminal INTEGER:
+	'0' | ('1'..'9' ('0'..'9')*);
+
+terminal BOOLEAN:
+	'true' | 'false';
+
+terminal ID:
+	('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*;
+
+terminal COLOR:
+	'#' ('0'..'9' | 'A'..'F')+;
+
+terminal DOUBLE:
+	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' |
+	'-')? '0'..'9'+)?;
+
+terminal STRING:
+	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\\') | !('\\' | '"'))* '"' | "'" ('\\' ('b' | 't' | 'n' | 'f' |
+	'r' | 'u' | "'" | '\\') | !('\\' | "'"))* "'";
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	'//' !('\n' | '\r')* ('\r'? '\n')?;
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;

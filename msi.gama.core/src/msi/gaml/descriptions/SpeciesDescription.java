@@ -56,9 +56,9 @@ public class SpeciesDescription extends SymbolDescription {
 	protected SpeciesDescription parentSpecies;
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
-		final SymbolProto md) {
-		super(keyword, superDesc, cp, source, md);
+		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source
+	/* ,final SymbolProto md */) {
+		super(keyword, superDesc, cp, source/* , md */);
 		setSkills(facets.get(IKeyword.SKILLS), new HashSet()
 		/*
 		 * TODO Always Empty ?
@@ -71,7 +71,7 @@ public class SpeciesDescription extends SymbolDescription {
 		final IAgentConstructor helper, final Set<String> skills2, final SymbolProto md,
 		final Facets ff) {
 		super(IKeyword.SPECIES, superDesc, IChildrenProvider.NONE, new SyntheticStatement(
-			IKeyword.SPECIES, new Facets(IKeyword.NAME, name)), md);
+			IKeyword.SPECIES, new Facets(IKeyword.NAME, name))/* , md */);
 		// facets.put(IKeyword.NAME, name);
 		if ( ff.containsKey(IKeyword.CONTROL) ) {
 			facets.putAsLabel(IKeyword.CONTROL, ff.get(IKeyword.CONTROL).toString());
@@ -225,7 +225,7 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
-		} else if ( ModelFactory.SPECIES_NODES.contains(kw) ) {
+		} else if ( ModelStructure.SPECIES_NODES.contains(kw) ) {
 			getModelDescription().addType((SpeciesDescription) desc);
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}

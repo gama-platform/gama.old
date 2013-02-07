@@ -731,8 +731,8 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 			
 			
 			// Set up the general weather parameters (homogeneous):
-			let Mean_Wind_Speed type: float value: current_natural_environment.Mean_Wind_Speed;
-			let Min_Wind_Speed type: float value: current_natural_environment.Min_Wind_Speed;
+			let Mean_Wind_Speed type: float value: (current_natural_environment.Mean_Wind_Speed);
+			let Min_Wind_Speed type: float value: current_natural_environment.Min_Wind_Speed; 
 			let Max_Wind_Speed type: float value: current_natural_environment.Max_Wind_Speed;
 			let Wind_Direction_From type: float value: current_natural_environment.Wind_Direction_From;
 			let Wind_Direction_To type: float value: current_natural_environment.Wind_Direction_To;
@@ -788,7 +788,7 @@ output {
 		//species UnitDiskGraph transparency: 0.5 ;
 		species node  aspect: default transparency: 0;
 		species edge aspect: default  transparency: 0 ;
-		species sea_region aspect: default  transparency: 0 ;
+		species sea_region   transparency: 0 ;
 		//species weather_region aspect: default  transparency: 0.5 ;
 		
 	}

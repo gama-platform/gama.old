@@ -116,7 +116,7 @@ entities {
 		action in_bounds type: bool {
 			arg a_point type: point ;
 			
-			return value: ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
+			return ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
 		 
 		state follow_nearest_ball initial: true {

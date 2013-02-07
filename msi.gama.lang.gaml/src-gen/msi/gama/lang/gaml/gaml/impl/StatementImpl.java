@@ -7,11 +7,13 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
+import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.Contents;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Statement;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -40,6 +42,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getElse <em>Else</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getOf <em>Of</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getParams <em>Params</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
@@ -97,6 +101,26 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * @ordered
    */
   protected Contents of;
+
+  /**
+   * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getArgs()
+   * @generated
+   * @ordered
+   */
+  protected ActionArguments args;
+
+  /**
+   * The cached value of the '{@link #getParams() <em>Params</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getParams()
+   * @generated
+   * @ordered
+   */
+  protected Parameters params;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -340,6 +364,102 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
+  public ActionArguments getArgs()
+  {
+    return args;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetArgs(ActionArguments newArgs, NotificationChain msgs)
+  {
+    ActionArguments oldArgs = args;
+    args = newArgs;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ARGS, oldArgs, newArgs);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setArgs(ActionArguments newArgs)
+  {
+    if (newArgs != args)
+    {
+      NotificationChain msgs = null;
+      if (args != null)
+        msgs = ((InternalEObject)args).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ARGS, null, msgs);
+      if (newArgs != null)
+        msgs = ((InternalEObject)newArgs).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ARGS, null, msgs);
+      msgs = basicSetArgs(newArgs, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ARGS, newArgs, newArgs));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Parameters getParams()
+  {
+    return params;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetParams(Parameters newParams, NotificationChain msgs)
+  {
+    Parameters oldParams = params;
+    params = newParams;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__PARAMS, oldParams, newParams);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setParams(Parameters newParams)
+  {
+    if (newParams != params)
+    {
+      NotificationChain msgs = null;
+      if (params != null)
+        msgs = ((InternalEObject)params).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__PARAMS, null, msgs);
+      if (newParams != null)
+        msgs = ((InternalEObject)newParams).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__PARAMS, null, msgs);
+      msgs = basicSetParams(newParams, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__PARAMS, newParams, newParams));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Expression getValue()
   {
     return value;
@@ -403,6 +523,10 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return ((InternalEList<?>)getFacets()).basicRemove(otherEnd, msgs);
       case GamlPackage.STATEMENT__OF:
         return basicSetOf(null, msgs);
+      case GamlPackage.STATEMENT__ARGS:
+        return basicSetArgs(null, msgs);
+      case GamlPackage.STATEMENT__PARAMS:
+        return basicSetParams(null, msgs);
       case GamlPackage.STATEMENT__VALUE:
         return basicSetValue(null, msgs);
     }
@@ -429,6 +553,10 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return getFacets();
       case GamlPackage.STATEMENT__OF:
         return getOf();
+      case GamlPackage.STATEMENT__ARGS:
+        return getArgs();
+      case GamlPackage.STATEMENT__PARAMS:
+        return getParams();
       case GamlPackage.STATEMENT__VALUE:
         return getValue();
     }
@@ -462,6 +590,12 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
       case GamlPackage.STATEMENT__OF:
         setOf((Contents)newValue);
         return;
+      case GamlPackage.STATEMENT__ARGS:
+        setArgs((ActionArguments)newValue);
+        return;
+      case GamlPackage.STATEMENT__PARAMS:
+        setParams((Parameters)newValue);
+        return;
       case GamlPackage.STATEMENT__VALUE:
         setValue((Expression)newValue);
         return;
@@ -494,6 +628,12 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
       case GamlPackage.STATEMENT__OF:
         setOf((Contents)null);
         return;
+      case GamlPackage.STATEMENT__ARGS:
+        setArgs((ActionArguments)null);
+        return;
+      case GamlPackage.STATEMENT__PARAMS:
+        setParams((Parameters)null);
+        return;
       case GamlPackage.STATEMENT__VALUE:
         setValue((Expression)null);
         return;
@@ -521,6 +661,10 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return facets != null && !facets.isEmpty();
       case GamlPackage.STATEMENT__OF:
         return of != null;
+      case GamlPackage.STATEMENT__ARGS:
+        return args != null;
+      case GamlPackage.STATEMENT__PARAMS:
+        return params != null;
       case GamlPackage.STATEMENT__VALUE:
         return value != null;
     }

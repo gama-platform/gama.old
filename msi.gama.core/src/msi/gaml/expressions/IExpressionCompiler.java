@@ -21,7 +21,7 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.*;
+import msi.gaml.types.Signature;
 
 /**
  * Written by drogoul Modified on 28 d�c. 2010
@@ -38,11 +38,8 @@ public interface IExpressionCompiler<T> {
 		IKeyword.THEIR, IKeyword.ITS, IKeyword.USER_LOCATION);
 	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR,
 		IKeyword.HIS, IKeyword.ITS, IKeyword.HER);
-	public static final Map<String, Map<IType, IOperator>> UNARIES = new HashMap();
-	public static final Map<String, Map<TypePair, IOperator>> BINARIES = new HashMap();
-	// public static final Set<String> FUNCTIONS = new HashSet();
+	public static final Map<String, Map<Signature, IOperator>> OPERATORS = new HashMap();
 	public static final Set<String> ITERATORS = new HashSet();
-	public static final Map<String, Short> BINARY_PRIORITIES = new HashMap();
 
 	public abstract IExpression compile(final IExpressionDescription s,
 		final IDescription parsingContext);

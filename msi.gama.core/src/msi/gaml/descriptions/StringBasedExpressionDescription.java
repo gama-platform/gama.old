@@ -28,6 +28,11 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	}
 
 	@Override
+	public boolean isString() {
+		return true;
+	}
+
+	@Override
 	public IExpressionDescription compileAsLabel() {
 		return new LabelExpressionDescription(string);
 	}

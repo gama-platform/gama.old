@@ -34,14 +34,13 @@ import msi.gaml.types.*;
  * 
  * @author drogoul
  */
-@factory(handles = { ISymbolKind.LAYER }, uses = { ISymbolKind.SINGLE_STATEMENT,
-	ISymbolKind.SEQUENCE_STATEMENT })
+@factory(handles = { ISymbolKind.LAYER })
 public class OutputLayerFactory extends StatementFactory {
 
 	static public IDisplayLayerBox largeBox = new LayerBox(1d, 0d, 0d, 1d, 1d, 0d, true);
 
-	public OutputLayerFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public OutputLayerFactory(final List<Integer> handles) {
+		super(handles);
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class OutputLayerFactory extends StatementFactory {
 		final IExpression listOfAgents, final String aspect, final IDisplayLayerBox box)
 		throws GamaRuntimeException {
 		IDescription desc;
-		desc = DescriptionFactory.createOutputDescription(IKeyword.AGENTS, IKeyword.NAME, title);
+		desc = DescriptionFactory.create(IKeyword.AGENTS, IKeyword.NAME, title);
 		AgentLayerStatement l = new AgentLayerStatement(desc);
 		l.setAspect(aspect);
 		l.setBox(box);

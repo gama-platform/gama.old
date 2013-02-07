@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Block#getFunction <em>Function</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Block#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
@@ -27,6 +28,32 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Block extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Function</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Function</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Function</em>' containment reference.
+   * @see #setFunction(Expression)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getBlock_Function()
+   * @model containment="true"
+   * @generated
+   */
+  Expression getFunction();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Block#getFunction <em>Function</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Function</em>' containment reference.
+   * @see #getFunction()
+   * @generated
+   */
+  void setFunction(Expression value);
+
   /**
    * Returns the value of the '<em><b>Statements</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.Statement}.

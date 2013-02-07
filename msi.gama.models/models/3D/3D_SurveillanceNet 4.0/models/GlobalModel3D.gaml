@@ -8,7 +8,7 @@
  
 
 model InsectSNM
-
+ 
 import "../includes/GlobalParam.gaml"
 import "../includes/administratives/administrative_region.gaml"
 import "../includes/ecologies/rice_region.gaml"
@@ -16,7 +16,7 @@ import "../includes/ecologies/rice_region.gaml"
 import "../includes/surveillances/node_network.gaml"
 import "../includes/surveillances/edge_network.gaml"
 import "../includes/surveillances/graph_network.gaml"
-
+ 
 import "../includes/naturals/natural_environment.gaml"
 import "../includes/naturals/weather_region.gaml"
 
@@ -97,11 +97,11 @@ global {
 	var _count type: int init: 0;
 	
 	init{
-		create species: district_region from: SHAPE_ADMINISTRATIVE_DISTRICT with: [id_1 :: read('ID_1'), region_name :: read('NAME_1'), id_2 :: read('ID_2'), province_name :: read('NAME_2'), district_name :: read('NAME_3')];
+		create  district_region from: SHAPE_ADMINISTRATIVE_DISTRICT with: [id_1 :: read('ID_1'), region_name :: read('NAME_1'), id_2 :: read('ID_2'), province_name :: read('NAME_2'), district_name :: read('NAME_3')];
 	    
 	    /*let SQLDISTRICT type:string <- ' select id_1,id_2,id_3,name_1,name_2,name_3,geom.STAsBinary() as geo from VNM_district';	
-		create species: db{
-			create species:district_region 
+		create  db{
+			create district_region 
 				from: list(self select [params:: PARAMS, select:: LOCATIONS]) 
 				with:
 				[id_1 :: 'ID_1', region_name ::'NAME_1', id_2 :: 'ID_2', province_name :: 'NAME_2', district_name ::'NAME_3',shape::'geo'];	
@@ -109,15 +109,15 @@ global {
 		
 		
 		
-		create species: province_region from: SHAPE_ADMINISTRATIVE_PROVINCE with: [id_1 :: read('ID_1'), region_name :: read('NAME_1'), id_2 :: read('ID_2'), province_name :: read('NAME_2')];
-		create species: sea_region from: SHAPE_SEA_REGION with: [description :: read('Description')];
-		create species: WS_rice_region from: WS_SHAPE_LAND_USE with: [id :: read('ID'), description :: read('SDD')];
-		create species: SA_rice_region from: SA_SHAPE_LAND_USE with: [id :: read('ID'), description :: read('SDD')];
-		create species: node from: SHAPE_NODE with: [id :: read('ID'), name :: read('LightTrap'), district_name :: read('District'), province_name :: read('Province'), id_0 :: read('ID_0'), id_1 :: read('ID_1'), id_2 :: read('ID_2')];
-		create species: weather_region from: SHAPE_WEATHER with: [id :: read('ID'), name :: read('NAME')];
+		create  province_region from: SHAPE_ADMINISTRATIVE_PROVINCE with: [id_1 :: read('ID_1'), region_name :: read('NAME_1'), id_2 :: read('ID_2'), province_name :: read('NAME_2')];
+		create  sea_region from: SHAPE_SEA_REGION with: [description :: read('Description')];
+		create  WS_rice_region from: WS_SHAPE_LAND_USE with: [id :: read('ID'), description :: read('SDD')];
+		create  SA_rice_region from: SA_SHAPE_LAND_USE with: [id :: read('ID'), description :: read('SDD')];
+		create  node from: SHAPE_NODE with: [id :: read('ID'), name :: read('LightTrap'), district_name :: read('District'), province_name :: read('Province'), id_0 :: read('ID_0'), id_1 :: read('ID_1'), id_2 :: read('ID_2')];
+		create  weather_region from: SHAPE_WEATHER with: [id :: read('ID'), name :: read('NAME')];
 		
 		// UDG Species
-		create species: UnitDiskGraph number: 1
+		create  UnitDiskGraph number: 1
 		{
 			set no_of_nodes value: length(node);
 		}
@@ -125,8 +125,8 @@ global {
 		set current_udg value: UnitDiskGraph at 0;
 		
 		
-		// Natural Environment species:
-		create species: NaturalEnvironment number: 1;
+		// Natural Environment 
+		create  NaturalEnvironment number: 1;
 		set current_natural_environment value: NaturalEnvironment at 0;
 	}
 
@@ -140,7 +140,7 @@ global {
 			do action: loadStandardDeviation;
 			do action: loadGeneralWeatherData;
 			do action: loadStationWeatherData;
-			ask target: current_udg
+			ask  current_udg
 			{
 				do action: resetEdgesList;
 			}
@@ -182,7 +182,7 @@ global {
 		else
 		{
 			/*
-			ask target: current_udg
+			ask  current_udg
 			{
 				loop from: 0 to: length(node) - 1 var: i
 				{
@@ -235,7 +235,7 @@ global {
 			if(number >= length(node_list))
 			{
 				set number value: number - length(node_list);
-				ask target: current_udg
+				ask  current_udg
 				{
 					loop from: 0 to: length(node_list) - 1 var: i
 					{
@@ -264,7 +264,7 @@ global {
 					write "Degree: " + string(the_degree);
 					write "No of nodes: " + string(number);
 					
-					ask target: current_udg
+					ask  current_udg
 					{
 						loop from: 0 to: number - 1 var: i
 						{
@@ -294,7 +294,7 @@ global {
 		loop from: 0 to: length (node) - 1 var: cnt {
 			let the_node type: node value: node at cnt;
 			 
-			ask target: the_node
+			ask  the_node
 			{
 				loop from: 1 to: (no_of_rows - 1) var: i
 				{
@@ -302,7 +302,7 @@ global {
 					{
 						loop from: 0 to: (HISTORICAL_DURATION - 1) var: j
 						{
-							put item: lighttrap_data at {3 + j, i} at: {0, j} in: density_matrix;
+							put  lighttrap_data at {3 + j, i} at: {0, j} in: density_matrix;
 						}
 						
 						// Choosing the first day for estimation & prediction 
@@ -324,7 +324,7 @@ global {
 			loop from: 1 to: 60 var: j
 			{
 			
-				ask target: cellula_std_deviation at ((j - 1) * 60 + (i - 1))
+				ask  cellula_std_deviation at ((j - 1) * 60 + (i - 1))
 				{
 					set estimation_std_deviation value: standard_deviation_data at {1, ((60 - j) * 60 + (i - 1)) + 1};
 					do aspect_by_std_deviation;
@@ -338,14 +338,14 @@ global {
 	action loadGeneralWeatherData
 	{
 		let no_of_months value: 12;
-		ask target: current_natural_environment{ 
+		ask  current_natural_environment{ 
 			loop from: 0 to: (no_of_months - 1) var: i
 			{
-				put item: genaral_weather_data at {i + 1, 0} at: i in: Mean_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 1} at: i in: Min_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 2} at: i in: Max_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 3} at: i in: Wind_Direction_From;
-				put item: genaral_weather_data at {i + 1, 4} at: i in: Wind_Direction_To;
+				put  genaral_weather_data at {i + 1, 0} at: i in: Mean_Wind_Speed;
+				put  genaral_weather_data at {i + 1, 1} at: i in: Min_Wind_Speed;
+				put  genaral_weather_data at {i + 1, 2} at: i in: Max_Wind_Speed;
+				put  genaral_weather_data at {i + 1, 3} at: i in: Wind_Direction_From;
+				put  genaral_weather_data at {i + 1, 4} at: i in: Wind_Direction_To;
 			}
 		}
 	}
@@ -358,37 +358,37 @@ global {
 		
 		loop from: 0 to: no_of_stations - 1 var: j {
 			let the_weather_region type: weather_region value: weather_region at j;
-			ask target: the_weather_region{
+			ask  the_weather_region{
 				loop from: 1 to: (no_of_months * no_of_stations) var: i {
 					if condition: the_weather_region.id = (station_weather_data at {0, i})
 					{
 						set _month  value: int (station_weather_data at {3, i});
 						// Temperature:
-						put item: station_weather_data at {5, i} at: _month - 1 in: Temp_Mean;
-						put item: station_weather_data at {6, i} at: _month - 1 in: Temp_Max;
-						put item: station_weather_data at {7, i} at: _month - 1 in: Temp_Min;
+						put  station_weather_data at {5, i} at: _month - 1 in: Temp_Mean;
+						put  station_weather_data at {6, i} at: _month - 1 in: Temp_Max;
+						put station_weather_data at {7, i} at: _month - 1 in: Temp_Min;
 						
 						// Rainning
-						put item: station_weather_data at {8, i} at: _month - 1 in: Rain_Amount;
-						put item: station_weather_data at {9, i} at: _month - 1 in: Rain_Max;
-						put item: station_weather_data at {10, i} at: _month - 1 in: Rain_No_Days_Max;
-						put item: station_weather_data at {11, i} at: _month - 1 in: Rain_No_Days;
-						put item: station_weather_data at {12, i} at: _month - 1 in: Rain_Mean;
+						put  station_weather_data at {8, i} at: _month - 1 in: Rain_Amount;
+						put  station_weather_data at {9, i} at: _month - 1 in: Rain_Max;
+						put  station_weather_data at {10, i} at: _month - 1 in: Rain_No_Days_Max;
+						put  station_weather_data at {11, i} at: _month - 1 in: Rain_No_Days;
+						put  station_weather_data at {12, i} at: _month - 1 in: Rain_Mean;
 								
 						// Humidity
-						put item: station_weather_data at {13, i} at: _month - 1 in: Hum_Mean;
-						put item: station_weather_data at {14, i} at: _month - 1 in: Hum_Min;
-						put item: station_weather_data at {15, i} at: _month - 1 in: Hum_No_Days;
+						put station_weather_data at {13, i} at: _month - 1 in: Hum_Mean;
+						put station_weather_data at {14, i} at: _month - 1 in: Hum_Min;
+						put station_weather_data at {15, i} at: _month - 1 in: Hum_No_Days;
 								
 						// Sunning
-						put item: station_weather_data at {16, i} at: _month - 1 in: Sunning_Hours;
-						put item: station_weather_data at {17, i} at: _month - 1 in: Sunning_Hours_Mean;
+						put  station_weather_data at {16, i} at: _month - 1 in: Sunning_Hours;
+						put  station_weather_data at {17, i} at: _month - 1 in: Sunning_Hours_Mean;
 					}
 				}
 			}
 		}
 		
-		ask target: weather_region at 0
+		ask  weather_region at 0
 		{
 				set temp value: Sunning_Hours_Mean;
 				set _id  value: id;
@@ -408,9 +408,9 @@ global {
 		let cnt type: int value: 0;
 		loop var: cnt from: 0 to: no_of_nodes - 1 {
 			
-			put item: 0.0 at: {0, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {1, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {2, cnt} in: orthogonal_vector;
+			put  0.0 at: {0, cnt} in: orthogonal_vector;
+			put 0.0 at: {1, cnt} in: orthogonal_vector;
+			put 0.0 at: {2, cnt} in: orthogonal_vector;
 		}
 		
 
@@ -438,14 +438,14 @@ global {
 				
 				if(the_node intersects the_cell)
 				{
-					ask target: the_node
+					ask the_node
 					{
 						set dominated_cell value: the_cell;
 					} 
 				}
 				
-				put item: distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
-				put item: the_node.number_of_BPHs at: {1, orthogonal_vector_index} in: orthogonal_vector;
+				put distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
+				put the_node.number_of_BPHs at: {1, orthogonal_vector_index} in: orthogonal_vector;
 				
 				set sum_distance value: sum_distance + float (orthogonal_vector at {0, orthogonal_vector_index}) ;
 				set orthogonal_vector_index value: orthogonal_vector_index + 1 ;
@@ -453,7 +453,7 @@ global {
 			
 			let i type: int value: 0;
 			loop var: i from: 0 to: no_of_nodes - 1 {
-				put item: (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
+				put (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
 				set sum_beta value: sum_beta + float (orthogonal_vector at {2, i}) ;
 			}
 				
@@ -461,11 +461,11 @@ global {
 			loop var: i from: 0 to: no_of_nodes - 1 {
 				set estimated_value value: estimated_value + (( float (orthogonal_vector at {2, i})/sum_beta) * float (orthogonal_vector at {1, i})) ;
 					
-				put item: 0.0 at: {0, i} in: orthogonal_vector;
-				put item: 0.0 at: {1, i} in: orthogonal_vector;
-				put item: 0.0 at: {2, i} in: orthogonal_vector;
+				put  0.0 at: {0, i} in: orthogonal_vector;
+				put  0.0 at: {1, i} in: orthogonal_vector;
+				put  0.0 at: {2, i} in: orthogonal_vector;
 				
-				ask target: the_cell {
+				ask the_cell {
 					/*if(hinder_index != 1.0)
 					{
 						set number_of_BPHs value: estimated_value;
@@ -506,16 +506,16 @@ global {
 		
 		let cnt type: int value: 0;
 		loop var: cnt from: 0 to: no_of_nodes - 1 {
-			put item: 0.0 at: {0, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {1, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {2, cnt} in: orthogonal_vector;
+			put 0.0 at: {0, cnt} in: orthogonal_vector;
+			put 0.0 at: {1, cnt} in: orthogonal_vector;
+			put 0.0 at: {2, cnt} in: orthogonal_vector;
 		} 
 		
 		set no_of_nodes value: length (node);
 		let mynode type: node value: nil;
 		
-		loop var: i from: 0 to: no_of_nodes - 1 {
-			ask target: node at i
+		loop i from: 0 to: no_of_nodes - 1 {
+			ask node at i
 			{
 				set number_of_BPHs_by_day value: float(density_matrix at {0, estimated_day});
 				set number_of_BPHs value: float(density_matrix at {0, estimated_day});
@@ -548,16 +548,16 @@ global {
 				
 				if(the_node intersects the_cell)
 				{
-					ask target: the_node
+					ask  the_node
 					{
 						set dominated_cell value: the_cell;
 					} 
 				}
 				
-				put item: distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
+				put  distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
 				
-				//put item: the_node.number_of_BPHs at: {1, orthogonal_vector_index} in: orthogonal_vector;
-				put item: the_node.number_of_BPHs_by_day at: {1, orthogonal_vector_index} in: orthogonal_vector;
+				//put  the_node.number_of_BPHs at: {1, orthogonal_vector_index} in: orthogonal_vector;
+				put  the_node.number_of_BPHs_by_day at: {1, orthogonal_vector_index} in: orthogonal_vector;
 				
 				set sum_distance value: sum_distance + float (orthogonal_vector at {0, orthogonal_vector_index}) ;
 				set orthogonal_vector_index value: orthogonal_vector_index + 1 ;
@@ -565,7 +565,7 @@ global {
 			
 			let i type: int value: 0;
 			loop var: i from: 0 to: no_of_nodes - 1 {
-				put item: (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
+				put  (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
 				set sum_beta value: sum_beta + float (orthogonal_vector at {2, i}) ;
 			}
 				
@@ -573,14 +573,14 @@ global {
 			loop var: i from: 0 to: no_of_nodes - 1 {
 				set estimated_value value: estimated_value + (( float (orthogonal_vector at {2, i})/sum_beta) * float (orthogonal_vector at {1, i})) ;
 					
-				put item: 0.0 at: {0, i} in: orthogonal_vector;
-				put item: 0.0 at: {1, i} in: orthogonal_vector;
-				put item: 0.0 at: {2, i} in: orthogonal_vector;
+				put  0.0 at: {0, i} in: orthogonal_vector;
+				put 0.0 at: {1, i} in: orthogonal_vector;
+				put 0.0 at: {2, i} in: orthogonal_vector;
 				
-				ask target: the_cell {
+				ask  the_cell {
 					set number_of_BPHs value: estimated_value * attractive_index;
 					
-					put item: number_of_BPHs at: {0, estimated_day} in: grid_density_matrix;  
+					put  number_of_BPHs at: {0, estimated_day} in: grid_density_matrix;  
 					
 					// Mouvable amount in the next simulation step:
 					set number_of_movable_BPHs value: (1.0 - attractive_index) * number_of_BPHs;
@@ -609,7 +609,7 @@ global {
 		loop var: cnt from: 0 to: no_of_nodes - 1 {
 			set the_node value: node at cnt;
 			let number_of_BPHs_by_day value: 0.0;
-			ask target: the_node
+			ask  the_node
 			{
 				set number_of_BPHs_by_day value: float(density_matrix at {0, monitored_day - 1}); 
 			}
@@ -639,9 +639,9 @@ global {
 		
 		let cnt type: int value: 0;
 		loop var: cnt from: 0 to: no_of_nodes - 1 {
-			put item: 0.0 at: {0, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {1, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {2, cnt} in: orthogonal_vector;
+			put 0.0 at: {0, cnt} in: orthogonal_vector;
+			put  0.0 at: {1, cnt} in: orthogonal_vector;
+			put  0.0 at: {2, cnt} in: orthogonal_vector;
 		}
 		
 
@@ -667,14 +667,14 @@ global {
 				}
 				if(the_node intersects the_cell)
 				{
-					ask target: the_node
+					ask  the_node
 					{
 						set dominated_cell_correlation value: the_cell;
 					} 
 				}
 				
-				put item: distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
-				put item: the_node.correlation_coefficient at: {1, orthogonal_vector_index} in: orthogonal_vector;
+				put  distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
+				put  the_node.correlation_coefficient at: {1, orthogonal_vector_index} in: orthogonal_vector;
 				
 			
 				set sum_distance value: sum_distance + float (orthogonal_vector at {0, orthogonal_vector_index}) ;
@@ -683,7 +683,7 @@ global {
 			
 			let i type: int value: 0;
 			loop var: i from: 0 to: no_of_nodes - 1 {
-				put item: (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
+				put  (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
 				set sum_beta value: sum_beta + float (orthogonal_vector at {2, i}) ;
 			}
 				
@@ -691,11 +691,11 @@ global {
 			loop var: i from: 0 to: no_of_nodes - 1 {
 				set estimated_value value: estimated_value + (( float (orthogonal_vector at {2, i})/sum_beta) * float (orthogonal_vector at {1, i})) ;
 					
-				put item: 0.0 at: {0, i} in: orthogonal_vector;
-				put item: 0.0 at: {1, i} in: orthogonal_vector;
-				put item: 0.0 at: {2, i} in: orthogonal_vector;
+				put  0.0 at: {0, i} in: orthogonal_vector;
+				put  0.0 at: {1, i} in: orthogonal_vector;
+				put  0.0 at: {2, i} in: orthogonal_vector;
 				
-				ask target: the_cell {
+				ask  the_cell {
 					
 					//set number_of_movable_BPHs value: (1.0 - attractive_index) * number_of_BPHs;
 					
@@ -719,9 +719,9 @@ global {
 		
 		let cnt type: int value: 0;
 		loop var: cnt from: 0 to: no_of_nodes - 1 {
-			put item: 0.0 at: {0, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {1, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {2, cnt} in: orthogonal_vector;
+			put  0.0 at: {0, cnt} in: orthogonal_vector;
+			put  0.0 at: {1, cnt} in: orthogonal_vector;
+			put  0.0 at: {2, cnt} in: orthogonal_vector;
 		}
 		
 
@@ -747,14 +747,14 @@ global {
 				}
 				if(the_node intersects the_cell)
 				{
-					ask target: the_node
+					ask  the_node
 					{
 						set dominated_cell_correlation value: the_cell;
 					} 
 				}
 				
-				put item: distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
-				put item: the_node.sample_variance at: {1, orthogonal_vector_index} in: orthogonal_vector;
+				put  distance at: {0, orthogonal_vector_index} in: orthogonal_vector;
+				put  the_node.sample_variance at: {1, orthogonal_vector_index} in: orthogonal_vector;
 				
 				set sum_distance value: sum_distance + float (orthogonal_vector at {0, orthogonal_vector_index}) ;
 				set orthogonal_vector_index value: orthogonal_vector_index + 1 ;
@@ -762,7 +762,7 @@ global {
 			
 			let i type: int value: 0;
 			loop var: i from: 0 to: no_of_nodes - 1 {
-				put item: (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
+				put  (sum_distance/ float ((orthogonal_vector) at {0, i})) at: {2, i} in: orthogonal_vector ;
 				set sum_beta value: sum_beta + float (orthogonal_vector at {2, i}) ;
 			}
 				
@@ -770,11 +770,11 @@ global {
 			loop var: i from: 0 to: no_of_nodes - 1 {
 				set estimated_value value: estimated_value + (( float (orthogonal_vector at {2, i})/sum_beta) * float (orthogonal_vector at {1, i})) ;
 					
-				put item: 0.0 at: {0, i} in: orthogonal_vector;
-				put item: 0.0 at: {1, i} in: orthogonal_vector;
-				put item: 0.0 at: {2, i} in: orthogonal_vector;
+				put  0.0 at: {0, i} in: orthogonal_vector;
+				put  0.0 at: {1, i} in: orthogonal_vector;
+				put  0.0 at: {2, i} in: orthogonal_vector;
 				
-				ask target: the_cell {
+				ask  the_cell {
 					
 					//set number_of_movable_BPHs value: (1.0 - attractive_index) * number_of_BPHs;
 					
@@ -804,7 +804,7 @@ global {
 		loop var: i from: 0 to: (COLUMNS_NO * ROWS_NO) - 1
 		{
 			
-			ask target: cellula_automata at i
+			ask  cellula_automata at i
 			{
 				set number_of_BPHs value: number_of_BPHs + in_number_of_BPHs - out_number_of_BPHs;
 				set in_number_of_BPHs value: 0.0;
@@ -876,13 +876,13 @@ global {
 		loop var: i from: 0 to: length(cell_list_under_wind) - 1
 		{
 			let the_under_cell type: cellula_automata value: cellula_automata (cell_list_under_wind at i);
-			ask target: the_under_cell
+			ask  the_under_cell
 			{
 				set in_number_of_BPHs value: in_number_of_BPHs + source_cell.number_of_movable_BPHs * (attractive_index / sum_attractive_index);
 			}				
 		}
 
-		ask target: source_cell
+		ask  source_cell
 		{
 			set out_number_of_BPHs value: number_of_movable_BPHs;
 		}			
@@ -901,8 +901,8 @@ global {
 			{
 				set vectorX value: vectorX + [float(density_matrix at {0, SIMULATION_STEP})];
 				set vectorY value: vectorY + [float(density_matrix at {0, SIMULATION_STEP+1})];
-				//put item: float(density_matrix at {0, simStep}) at: i in: vectorX;
-				//put item: float(density_matrix at {0, simStep+1}) at: i in: vectorY;
+				//put  float(density_matrix at {0, simStep}) at: i in: vectorX;
+				//put  float(density_matrix at {0, simStep+1}) at: i in: vectorY;
 			}
 		}
 			
@@ -927,12 +927,12 @@ global {
 				{
 					set vectorX value: vectorX + [float(density_matrix at {0, SIMULATION_STEP})];
 					
-					//put item: float(density_matrix at {0, simStep}) at: i in: vectorX;
+					//put  float(density_matrix at {0, simStep}) at: i in: vectorX;
 				}
 				ask destination_node
 				{
 					set vectorY value: vectorY + [float(density_matrix at {0, SIMULATION_STEP})];
-					//put item: float(density_matrix at {0, simStep}) at: i in: vectorY;
+					//put  float(density_matrix at {0, simStep}) at: i in: vectorY;
 				}
 				
 			}
@@ -1265,7 +1265,7 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 				
 				set _density value: _density - _density * adult_duration * NATURAL_MORTALITY_RATE;
 				
-				put item: _density at: {0, i} in: grid_density_matrix;
+				put  _density at: {0, i} in: grid_density_matrix;
 			}
 		}
 		
@@ -1282,7 +1282,7 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 				//let _density type: float value: float(grid_density_matrix at {0, i});
 				let _density_previous type: float value: float(grid_density_matrix at {0, (i + 1) mod BPH_LIFE_DURATION});
 				let _density type: float value: _density_previous - (_density_previous * NATURAL_MORTALITY_RATE);
-				put item: _density at: {0, i} in: grid_density_matrix;
+				put  _density at: {0, i} in: grid_density_matrix;
 				
 				// Sum all densities of adult satges (11 days):
 				
@@ -1334,11 +1334,11 @@ output {
 		//species UnitDiskGraph transparency: 0.5 ;
 		species node  aspect: default transparency: 0;
 		species edge aspect: default  transparency: 0 ;
-		species sea_region aspect: default  transparency: 0 ;
+		species sea_region   transparency: 0 ;
 		//species weather_region aspect: default  transparency: 0.5 ;
 		
 	}
-	
+	 
 	display GlobalCorrelation {
 		grid cellula_correlation transparency: 0;
 		species node  aspect: default transparency: 0;
@@ -1348,7 +1348,7 @@ output {
 	
 	display StandardDeviation type:opengl {
 		species cellula_std_deviation aspect: elevation;
-		species node  aspect: 3D transparency: 0;
+		species node  aspect: threeD transparency: 0;
 		species edge aspect: default  transparency: 0 ;
 	}
 	
@@ -1370,7 +1370,7 @@ output {
 			data name: "Accumulative average of correlation" value: edgesCorrelationAVG color: rgb('red');
 		}
 	}
-	
+	 
 	monitor NUMBER_OF_EDGES value: length(edge as list) refresh_every: 1 ;
 	monitor NUMBER_OF_NODES value: no_of_nodes;
 	

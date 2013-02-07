@@ -25,11 +25,11 @@ global {
 	var y1_to type: float value: 0.0;
 	
 	// TEST
-	var testtest type: int init: 0;
+	var testtest type: int init: 0; 
 	var testcor type: float init: 0.0;
 	
 	init{
-		//create species: node from: SHAPE_NODE with: [id :: read('ID'), name :: read('LightTrap'), district_name :: read('District'), province_name :: read('Province'), id_0 :: read('ID_0'), id_1 :: read('ID_1'), id_2 :: read('ID_2')];
+		//create  node from: SHAPE_NODE with: [id :: read('ID'), name :: read('LightTrap'), district_name :: read('District'), province_name :: read('Province'), id_0 :: read('ID_0'), id_1 :: read('ID_1'), id_2 :: read('ID_2')];
 	}
 }
 
@@ -59,7 +59,7 @@ entities {
 			let the_potential_cell type: cellula_automata value: nil;
 			let cell_list type: list value: (list (cellula_correlation))  where (((cellula_correlation (each) distance_to center_node) <= DISK_RADIUS) and ((cellula_correlation (each) distance_to center_node) > LOWEST_RADIUS)) ;
 			
-			ask target: center_node
+			ask  center_node
 			{
 				set center_correlation value: dominated_cell_correlation.correlation_coefficient;
 			}
@@ -67,7 +67,7 @@ entities {
 			loop from: 0 to: length(cell_list) - 1 var: cnt
 			{
 				let the_cell type: cellula_automata value: cell_list at cnt; // SAI
-				ask target: cell_list at cnt
+				ask  cell_list at cnt
 				{
 					set cell_correlation value: correlation_coefficient;
 				}
@@ -89,7 +89,7 @@ entities {
 			
 			if(location_found)
 			{
-				create species: node number: 1
+				create  node number: 1
 				{
 					set existing_status value: false;
 					set location value: the_potential_cell.location;
@@ -98,7 +98,7 @@ entities {
 				
 				// CREATE NEW EDGE:
 						
-				create species: edge number: 1;
+				create  edge number: 1;
 				set current_edge value: edge at (length(edge) - 1);
 				set current_edge.source value: center_node;
 				
@@ -124,7 +124,7 @@ entities {
 			let center_correlation type: float value: 0.0;
 			let the_potential_cell type: cellula_automata value: nil;
 			
-			ask target: center_node
+			ask  center_node
 			{
 				set center_correlation value: correlation_coefficient; //dominated_cell_correlation.correlation_coefficient;
 			}
@@ -141,12 +141,12 @@ entities {
 				let the_sigma_cell type: cellula_std_deviation value: std_deviation_cell_list at cnt;
 				let the_rho_cell type: cellula_correlation value: correlation_cell_list at cnt;
 				
-				ask target: the_sigma_cell
+				ask  the_sigma_cell
 				{
 					set current_std_deviation value: estimation_std_deviation;
 				}
 				
-				ask target: the_rho_cell
+				ask  the_rho_cell
 				{
 					set current_correlation value: correlation_coefficient;
 				}
@@ -172,7 +172,7 @@ entities {
 			}
 			if(location_found)
 			{
-				create species: node number: 1
+				create  node number: 1
 				{
 					set existing_status value: false;
 					set location value: the_potential_cell.location;
@@ -188,7 +188,7 @@ entities {
 				// CREATE NEW EDGE:
 				if(abs(center_correlation - selected_correlation) <= CORRELATION_THRESHOLD)
 				{
-					create species: edge number: 1;
+					create  edge number: 1;
 					set current_edge value: edge at (length(edge) - 1);
 					set current_edge.source value: center_node;
 					ask center_node{
@@ -250,7 +250,7 @@ entities {
 							// Correlation weight:
 							set vectorXX value: nil;
 							set vectorYY value: nil;
-							ask target: the_outside_node
+							ask  the_outside_node
 							{
 								loop var: i from: 0 to: (HISTORICAL_DURATION - 1)
 								{
@@ -259,7 +259,7 @@ entities {
 								}
 							}
 							
-							ask target: the_inside_node
+							ask  the_inside_node
 							{
 								loop var: i from: 0 to: (HISTORICAL_DURATION - 1)
 								{
@@ -274,7 +274,7 @@ entities {
 							set correlationAVG value: correlationW + correlationAVG;
 							if correlationW >= CORRELATION_THRESHOLD
 							{
-								create species: edge number: 1;
+								create  edge number: 1;
 								set current_edge value: edge at lasted_edge_id;
 								set current_edge.source value: the_outside_node;
 								ask the_outside_node{
@@ -299,7 +299,7 @@ entities {
 							// Correlation weight:
 							set vectorXX value: nil;
 							set vectorYY value: nil;
-							ask target: the_inside_node
+							ask  the_inside_node
 							{
 								loop var: i from: 0 to: (HISTORICAL_DURATION - 1)
 								{
@@ -309,7 +309,7 @@ entities {
 							}
 							
 							
-							ask target: the_outside_node
+							ask  the_outside_node
 							{
 								loop var: i from: 0 to: (HISTORICAL_DURATION - 1)
 								{
@@ -324,7 +324,7 @@ entities {
 							set correlationAVG value: correlationW + correlationAVG;
 							if correlationW >= CORRELATION_THRESHOLD
 							{
-								create species: edge number: 1;
+								create  edge number: 1;
 								set current_edge value: edge at lasted_edge_id;
 								set current_edge.source value: the_inside_node;
 								set current_edge.destination value: the_outside_node;

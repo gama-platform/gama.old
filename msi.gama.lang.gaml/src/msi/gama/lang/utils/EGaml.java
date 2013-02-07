@@ -4,15 +4,17 @@
  */
 package msi.gama.lang.utils;
 
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.descriptions.IGamlDescription;
 import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
 
 /**
  * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
@@ -72,6 +74,18 @@ public class EGaml {
 		}
 
 		@Override
+		public String caseParameter(final Parameter object) {
+			String s = getKeyOf(object.getLeft());
+			if ( s == null ) {
+				s = object.getBuiltInFacetKey();
+			}
+			if ( s.endsWith(":") ) {
+				s = s.replace(':', ' ');
+			}
+			return s.trim();
+		}
+
+		@Override
 		public String caseModel(final Model object) {
 			return IKeyword.MODEL;
 		}
@@ -98,26 +112,6 @@ public class EGaml {
 			// return ref == null ? null : caseFacetRef(ref);
 
 		}
-
-		// @Override
-		// public String caseNameFacetExpr(final NameFacetExpr object) {
-		// return IKeyword.NAME;
-		// }
-		//
-		// @Override
-		// public String caseReturnsFacetExpr(final ReturnsFacetExpr object) {
-		// return IKeyword.RETURNS;
-		// }
-		//
-		// @Override
-		// public String caseActionFacetExpr(final ActionFacetExpr object) {
-		// return IKeyword.ACTION;
-		// }
-		//
-		// @Override
-		// public String caseFunctionFacetExpr(final FunctionFacetExpr object) {
-		// return IKeyword.FUNCTION;
-		// }
 
 		@Override
 		public String caseFunction(final Function object) {
@@ -153,6 +147,28 @@ public class EGaml {
 
 	public static Expression getExprOf(final Statement s) {
 		return s.getExpr();
+	}
+
+	public static Parameters getParamsOf(final Statement stm) {
+		return stm.getParams();
+	}
+
+	public static ActionArguments getArgsOf(final Statement stm) {
+		return stm.getArgs();
+	}
+
+	public static Expression getFunctionOf(final Statement stm) {
+		// Prendre en compte le cas "type var function: expression".
+		Expression expr = stm.getFunction();
+		if ( expr == null && stm.getBlock() != null ) {
+			expr = stm.getBlock().getFunction();
+		}
+		return expr;
+	}
+
+	public static List<Expression> getExprsOf(final ExpressionList o) {
+		if ( o == null ) { return Collections.EMPTY_LIST; }
+		return o.getExprs();
 	}
 
 	public static Expression getValueOf(final Statement s) {
@@ -233,7 +249,7 @@ public class EGaml {
 			}
 			serializer.append("}");
 		} else if ( expr instanceof Array ) {
-			array(((Array) expr).getExprs(), false);
+			array(((Array) expr).getExprs().getExprs(), false);
 		} else if ( expr instanceof VariableRef ) {
 			serializer.append(getKeyOf(expr));
 		} else if ( expr instanceof GamlUnaryExpr ) {
@@ -256,7 +272,7 @@ public class EGaml {
 	}
 
 	private static void function(final Function expr) {
-		EList<Expression> args = expr.getArgs();
+		List<Expression> args = getExprsOf(expr.getArgs());
 		// String opName = EGaml.getKeyOf(expr.getLeft());
 		String opName = expr.getOp();
 		if ( args.size() == 1 ) {
@@ -277,7 +293,7 @@ public class EGaml {
 		}
 	}
 
-	private static void array(final EList<Expression> args, final boolean arguments) {
+	private static void array(final List<Expression> args, final boolean arguments) {
 		// if arguments is true, parses the list to transform it into a map of args
 		// (starting at 1); Experimental right now
 		serializer.append("[");
@@ -293,6 +309,17 @@ public class EGaml {
 			}
 		}
 		serializer.append("]");
+	}
+
+	private static IResourceServiceProvider injector;
+
+	public static <T> T getInstance(final Class<T> c) {
+		if ( injector == null ) {
+			injector =
+				IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(URI
+					.createPlatformResourceURI("dummy/dummy.gaml", false));
+		}
+		return injector.get(c);
 	}
 
 }

@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
+@symbol(name = IKeyword.OUTPUT_FILE, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = IKeyword.OUTPUT)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
@@ -240,9 +240,7 @@ public class FileOutput extends AbstractOutput {
 
 	public void refreshExpression() throws GamaRuntimeException {
 		// in case the file writer persists over different simulations (like in the batch)
-		data =
-			GAMA.getExpressionFactory().createExpr(
-				new StringBasedExpressionDescription(expressionText), GAMA.getModelContext());
+		data = GAMA.getExpressionFactory().createExpr(expressionText, GAMA.getModelContext());
 	}
 
 	public Object getLastValue() {

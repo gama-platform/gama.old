@@ -2,7 +2,7 @@
  * Created by drogoul, 19 avr. 2012
  * 
  */
-package msi.gama.lang.gaml;
+package msi.gama.lang.gaml.resource;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;

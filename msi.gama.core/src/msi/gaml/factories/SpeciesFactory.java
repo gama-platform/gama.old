@@ -18,11 +18,10 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.precompiler.ISymbolKind.*;
+import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.ISymbolKind.Variable;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
@@ -33,12 +32,11 @@ import msi.gaml.statements.Facets;
  * @author drogoul 25 oct. 07
  */
 
-@factory(handles = { SPECIES }, uses = { BEHAVIOR, ACTION, Variable.NUMBER, Variable.CONTAINER,
-	Variable.REGULAR, Variable.SIGNAL })
+@factory(handles = { SPECIES })
 public class SpeciesFactory extends SymbolFactory {
 
-	public SpeciesFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public SpeciesFactory(final List<Integer> handles) {
+		super(handles);
 	}
 
 	@Override
@@ -47,16 +45,16 @@ public class SpeciesFactory extends SymbolFactory {
 		final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
-		addSpeciesNameAsType(name);
-		return new SpeciesDescription(keyword, sd, facets, cp, source, md);
+		DescriptionFactory.addSpeciesNameAsType(name);
+		return new SpeciesDescription(keyword, sd, facets, cp, source/* , md */);
 	}
 
 	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
 		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
 		final Facets userSkills) {
-		addSpeciesNameAsType(name);
+		DescriptionFactory.addSpeciesNameAsType(name);
 		return new SpeciesDescription(name, clazz, superDesc, helper, skills,
-			getMetaDescriptionFor(null, IKeyword.SPECIES), userSkills);
+			DescriptionFactory.getProto(IKeyword.SPECIES), userSkills);
 	}
 
 	@Override
@@ -65,12 +63,12 @@ public class SpeciesFactory extends SymbolFactory {
 		// we first validate the variables in the right order
 		// Necessary to make content assist work correctly
 		for ( String s : desc.getVarNames() ) {
-			validateDescription(desc.getVariable(s));
+			validate(desc.getVariable(s));
 		}
 		// then the rest
 		for ( IDescription s : sd.getChildren() ) {
 			if ( !(s instanceof VariableDescription) ) {
-				validateDescription(s);
+				validate(s);
 			}
 		}
 	}

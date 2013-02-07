@@ -37,6 +37,12 @@ public class Comparison {
 	public final static String GTE = ">=";
 	public final static String LTE = "<=";
 
+	@operator(value = "between", can_be_const = true)
+	public static Boolean between(final Integer a, final Integer inf, final Integer sup) {
+		if ( inf > sup ) { return false; }
+		return a >= sup ? false : a > inf;
+	}
+
 	@operator(value = GT, priority = IPriority.COMPARATOR, can_be_const = true)
 	@doc(value = "true if the left-hand operand is greater than the right-hand operand, false otherwise.", special_cases = { "if one of the operands is nil, returns false" }, examples = { "3 > 7  --:  false" })
 	public static Boolean greater(final Integer a, final Integer b) {

@@ -17,7 +17,7 @@ global {
 	}  
 } 
  
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
+environment width: width_and_height_of_environment height: width_and_height_of_environment torus: false;  
  
   
 entities { 

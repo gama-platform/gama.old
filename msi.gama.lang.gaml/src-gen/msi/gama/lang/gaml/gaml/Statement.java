@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getElse <em>Else</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getOf <em>Of</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getParams <em>Params</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
@@ -151,6 +153,58 @@ public interface Statement extends GamlVarRef
    * @generated
    */
   void setOf(Contents value);
+
+  /**
+   * Returns the value of the '<em><b>Args</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Args</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Args</em>' containment reference.
+   * @see #setArgs(ActionArguments)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Args()
+   * @model containment="true"
+   * @generated
+   */
+  ActionArguments getArgs();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getArgs <em>Args</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Args</em>' containment reference.
+   * @see #getArgs()
+   * @generated
+   */
+  void setArgs(ActionArguments value);
+
+  /**
+   * Returns the value of the '<em><b>Params</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Params</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Params</em>' containment reference.
+   * @see #setParams(Parameters)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Params()
+   * @model containment="true"
+   * @generated
+   */
+  Parameters getParams();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getParams <em>Params</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Params</em>' containment reference.
+   * @see #getParams()
+   * @generated
+   */
+  void setParams(Parameters value);
 
   /**
    * Returns the value of the '<em><b>Value</b></em>' containment reference.

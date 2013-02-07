@@ -82,11 +82,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void completeImport_ImportURI(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {}
 
-	@Override
-	public void completeClassicStatement_Key(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
+	// @Override
+	// public void completeClassicStatement_Key(final EObject model, final Assignment assignment,
+	// final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	//
+	// }
 
 	//
 	// @Override
@@ -95,11 +95,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// GuiUtils.debug("Complete ClassicStatement facets");
 	// }
 
-	@Override
-	public void completeClassicStatement_Block(final EObject model, final Assignment assignment,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-
-	}
+	// @Override
+	// public void completeClassicStatement_Block(final EObject model, final Assignment assignment,
+	// final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	//
+	// }
 
 	/*
 	 * @Override

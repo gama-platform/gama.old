@@ -9,8 +9,8 @@ import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.GamlResource;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
@@ -38,7 +38,7 @@ public class GamlBuilder {
 
 	static {
 		IExpressionFactory fact = GAMA.getExpressionFactory();
-		fact.registerParser(new NewGamlExpressionCompiler());
+		fact.registerParser(new GamlExpressionCompiler());
 	}
 
 	public ModelDescription validate(final GamlResource resource) {

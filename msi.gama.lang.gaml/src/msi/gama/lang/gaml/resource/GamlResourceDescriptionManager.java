@@ -2,7 +2,7 @@
  * Created by drogoul, 20 avr. 2012
  * 
  */
-package msi.gama.lang.gaml;
+package msi.gama.lang.gaml.resource;
 
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 import org.eclipse.xtext.util.IResourceScopeCache;

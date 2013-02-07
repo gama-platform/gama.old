@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
@@ -50,6 +51,7 @@ public class SymbolProto {
 	// private final List<String[]> combinations;
 	private final List<String> mandatoryFacets = new ArrayList();
 	private final String omissibleFacet;
+	private final SymbolFactory factory;
 
 	static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
@@ -66,6 +68,7 @@ public class SymbolProto {
 		final String omissible, final List<String[]> possibleCombinations,
 		final Set<String> contextKeywords, final Set<Integer> contextKinds,
 		final boolean isRemoteContext, final ISymbolConstructor constr) {
+		factory = DescriptionFactory.getFactory(kind);
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
@@ -86,6 +89,10 @@ public class SymbolProto {
 		this.contextKinds = contextKinds;
 	}
 
+	public SymbolFactory getFactory() {
+		return factory;
+	}
+
 	public boolean isRemoteContext() {
 		return isRemoteContext;
 	}
@@ -100,13 +107,6 @@ public class SymbolProto {
 		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
 		return f.isLabel;
-	}
-
-	public boolean isDefinition() {
-		if ( omissibleFacet == null ) { return false; }
-		FacetProto f = getPossibleFacets().get(omissibleFacet);
-		if ( f == null ) { return false; }
-		return f.isDefinition;
 	}
 
 	public boolean hasSequence() {

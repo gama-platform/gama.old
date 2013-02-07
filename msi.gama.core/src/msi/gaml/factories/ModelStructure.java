@@ -20,6 +20,7 @@ import msi.gaml.descriptions.LabelExpressionDescription;
  */
 public class ModelStructure implements IKeyword {
 
+	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
 	static final List<String> GLOBAL_NODES = Arrays.asList(GLOBAL);
 	static final List<String> NON_RECURSIVE = Arrays.asList(OUTPUT, BATCH, GLOBAL, SPECIES, GRID);
 	static final List<String> NODES_TO_REMOVE = Arrays.asList(INCLUDE, GLOBAL, SPECIES, GRID);
@@ -124,7 +125,7 @@ public class ModelStructure implements IKeyword {
 		}
 		modelNodes = expanded;
 		//
-		speciesNodes.addAll(accumulateNodes(modelNodes, ModelFactory.SPECIES_NODES));
+		speciesNodes.addAll(accumulateNodes(modelNodes, SPECIES_NODES));
 		globalNodes.addAll(accumulateNodes(modelNodes, GLOBAL_NODES));
 		removeUselessNodes(modelNodes, NODES_TO_REMOVE);
 		return speciesNodes;

@@ -19,6 +19,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GamlGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q;
+	protected AbstractElementAlias match_DefinitionStatement___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q;
 	protected AbstractElementAlias match_IfStatement_ConditionKeyword_1_q;
 	protected AbstractElementAlias match_PrimaryExpression_LeftParenthesisKeyword_2_0_a;
 	protected AbstractElementAlias match_PrimaryExpression_LeftParenthesisKeyword_2_0_p;
@@ -27,6 +28,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GamlGrammarAccess) access;
 		match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getClassicStatementAccess().getIDTerminalRuleCall_1_0()), new TokenAlias(false, false, grammarAccess.getClassicStatementAccess().getColonKeyword_1_1()));
+		match_DefinitionStatement___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getDefinitionStatementAccess().getLeftParenthesisKeyword_3_0()), new TokenAlias(false, false, grammarAccess.getDefinitionStatementAccess().getRightParenthesisKeyword_3_2()));
 		match_IfStatement_ConditionKeyword_1_q = new TokenAlias(false, true, grammarAccess.getIfStatementAccess().getConditionKeyword_1());
 		match_PrimaryExpression_LeftParenthesisKeyword_2_0_a = new TokenAlias(true, true, grammarAccess.getPrimaryExpressionAccess().getLeftParenthesisKeyword_2_0());
 		match_PrimaryExpression_LeftParenthesisKeyword_2_0_p = new TokenAlias(true, false, grammarAccess.getPrimaryExpressionAccess().getLeftParenthesisKeyword_2_0());
@@ -53,6 +55,8 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if(match_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q.equals(syntax))
 				emit_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_DefinitionStatement___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q.equals(syntax))
+				emit_DefinitionStatement___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_IfStatement_ConditionKeyword_1_q.equals(syntax))
 				emit_IfStatement_ConditionKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_PrimaryExpression_LeftParenthesisKeyword_2_0_a.equals(syntax))
@@ -68,6 +72,14 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (ID ':')?
 	 */
 	protected void emit_ClassicStatement___IDTerminalRuleCall_1_0_ColonKeyword_1_1__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Syntax:
+	 *     ('(' ')')?
+	 */
+	protected void emit_DefinitionStatement___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

@@ -113,9 +113,9 @@ public interface IKeyword {
 	public static final String SIMULTANEOUSLY = "simultaneously";
 	public static final String SOLVER = "solver";
 	public static final String SOLVE = "solve";
-	public static final String TIME_INITIAL="t0";
-	public static final String TIME_FINAL="tf";
-	public static final String CYCLE_LENGTH="cycle_length";	
+	public static final String TIME_INITIAL = "t0";
+	public static final String TIME_FINAL = "tf";
+	public static final String CYCLE_LENGTH = "cycle_length";
 	/*
 	 * 
 	 */
@@ -129,6 +129,7 @@ public interface IKeyword {
 	public static final String EXTENSION = "extension";
 	public static final String FALSE = "false";
 	public static final String FILE = "file";
+	public static final String OUTPUT_FILE = "output_file";
 	public static final String FILL_WITH = "fill_with";
 	public static final String FOCUS = "focus";
 	public static final String FONT = "font";

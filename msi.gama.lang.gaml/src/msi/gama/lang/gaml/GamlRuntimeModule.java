@@ -19,6 +19,7 @@
 package msi.gama.lang.gaml;
 
 import msi.gama.lang.gaml.linking.GamlLinkingService;
+import msi.gama.lang.gaml.resource.*;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.*;

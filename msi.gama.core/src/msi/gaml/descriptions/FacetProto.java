@@ -10,7 +10,6 @@ public class FacetProto {
 	public final List<String> types;
 	public final boolean optional;
 	public final boolean isLabel;
-	public final boolean isDefinition;
 	public final String[] values;
 	static FacetProto KEYWORD = KEYWORD();
 	static FacetProto DEPENDS_ON = DEPENDS_ON();
@@ -20,11 +19,7 @@ public class FacetProto {
 		this.name = name;
 		this.types = Arrays.asList(types);
 		this.optional = optional;
-		isDefinition =
-			this.types.contains(IType.NEW_VAR_ID) || this.types.contains(IType.ID) ||
-				this.types.contains(IType.NEW_TEMP_ID);
-		isLabel =
-			isDefinition || this.types.contains(IType.LABEL) || this.types.contains(IType.TYPE_ID);
+		isLabel = SymbolProto.ids.contains(types[0]);
 		this.values = values;
 	}
 

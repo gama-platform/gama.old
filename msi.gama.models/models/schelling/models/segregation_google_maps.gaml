@@ -29,6 +29,8 @@ environment width: dimensions height: dimensions {
 }
 entities { 
 	species people parent: base  {
+
+		
 		const color type: rgb <- colors at (rnd (number_of_groups - 1));
 		list my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} of: people;
 		init {

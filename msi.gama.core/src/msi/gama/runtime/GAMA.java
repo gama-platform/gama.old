@@ -24,7 +24,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 
 /**
@@ -177,29 +177,16 @@ public class GAMA {
 
 	public static Object evaluateExpression(final String expression, final IAgent a)
 		throws GamaRuntimeException {
-		try {
-			if ( a == null ) { return null; }
-			final IExpression expr =
-				getExpressionFactory().createExpr(new StringBasedExpressionDescription(expression),
-					a.getSpecies().getDescription());
-			if ( expr == null ) { return null; }
-			return getDefaultScope().evaluate(expr, a);
-		} catch (final GamaRuntimeException e) {
-			e.addContext("in evaluating :" + expression);
-			return e;
-		}
+		if ( a == null ) { return null; }
+		final IExpression expr = compileExpression(expression, a);
+		if ( expr == null ) { return null; }
+		return getDefaultScope().evaluate(expr, a);
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent)
 		throws GamaRuntimeException {
-		try {
-			return GAMA.getExpressionFactory().createExpr(
-				new StringBasedExpressionDescription(expression),
-				agent.getSpecies().getDescription());
-		} catch (final GamaRuntimeException e) {
-			e.addContext("in compiling :" + expression);
-			throw e;
-		}
+		return getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
+
 	}
 
 	// private static IDisplayOutput getOutput(final String outputName) {

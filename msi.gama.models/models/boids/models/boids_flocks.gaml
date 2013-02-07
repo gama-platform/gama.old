@@ -84,7 +84,7 @@ entities {
 			
 			loop f over: (list(flock) - self) {
 				if (shape intersects f.shape) {
-					let new_shape type: geometry value: convex_hull(polygon ( shape.points + (f.shape).points) );
+					geometry new_shape <- convex_hull(polygon ( shape.points + f.shape.points) );
 					if empty(obstacle overlapping new_shape) {
 						let released_boids type: list of: boids value: [];
 						
@@ -174,7 +174,7 @@ entities {
 			}
 			
 			aspect default {
-				draw shape: circle color: ((host as flock).color).darker size: my_age ;
+				draw  circle(my_age) color: ((host as flock).color).darker ;
 			}
 			
 		}
@@ -182,7 +182,7 @@ entities {
 
 	species flock_agents_viewer  { 
 		aspect default {
-			draw text: 'Flocks: ' + (string (length (list(flock)))) at: {width_and_height_of_environment - 810, (width_and_height_of_environment) - 5} color: rgb('blue') size: 80 style: bold ;
+			draw  'Flocks: ' + (string (length (list(flock)))) at: {width_and_height_of_environment - 810, (width_and_height_of_environment) - 5} color: rgb('blue') size: 80 style: bold ;
 		}
 	}
 

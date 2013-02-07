@@ -85,7 +85,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public int hashCode() {
-		return expression.hashCode();
+		return super.hashCode();
 	}
 
 	/**
@@ -112,6 +112,11 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		if ( target == null ) {
 			target = newTarget;
 		}
+	}
+
+	@Override
+	public boolean isString() {
+		return false;
 	}
 
 }

@@ -142,9 +142,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 			if ( timeSeriesXData == null ) {
 				timeSeriesXData =
-					(ChartDataStatement) DescriptionFactory.getModelFactory().compileDescription(
-						DescriptionFactory.create(IKeyword.DATA, description, IKeyword.LEGEND,
-							IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
+					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
+						IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
+						IKeyword.TIME));
 			}
 			if ( !datas.contains(timeSeriesXData) ) {
 				datas.add(0, timeSeriesXData.createData(scope));

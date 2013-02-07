@@ -42,8 +42,7 @@ public interface IExpressionFactory {
 	public abstract IExpression createExpr(final IExpressionDescription s,
 		final IDescription context);
 
-	public abstract IExpression createUnaryExpr(final String op, final IExpression c,
-		IDescription context);
+	public abstract IExpression createExpr(final String s, IDescription context);
 
 	public abstract IExpression createUnitExpr(final String unit, IDescription context);
 
@@ -57,11 +56,12 @@ public interface IExpressionFactory {
 	IVarExpression createVar(String name, IType type, IType contentType, boolean isConst,
 		int scope, IDescription definitionDescription);
 
-	public IExpression createBinaryExpr(String string, IExpression compile, IExpression ifFalse,
-		IDescription context, boolean isAction);
-
 	public IExpression createList(final List<? extends IExpression> elements);
 
 	public IExpression createMap(final List<? extends IExpression> elements);
+
+	IExpression createOperator(String op, IDescription context, IExpression ... exprs);
+
+	IExpression createAction(String op, IDescription context, IExpression ... exprs);
 
 }

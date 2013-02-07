@@ -33,7 +33,7 @@ import msi.gaml.statements.*;
  * @author drogoul 4 sept. 07
  */
 
-public class PrimitiveOperator extends AbstractBinaryOperator {
+public class PrimitiveOperator extends AbstractNAryOperator {
 
 	IStatement.WithArgs statement;
 
@@ -47,13 +47,12 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 	}
 
 	@Override
-	public PrimitiveOperator init(final String op, final IExpression left, final IExpression right,
-		final IDescription context) {
-		this.left = left;
-		this.right = right;
+	public PrimitiveOperator init(final String op, final IDescription context,
+		final IExpression ... args) {
+		this.exprs = args;
 		Facets facets = new Facets();
 		facets.putAsLabel(IKeyword.ACTION, name); // TODO A vérifier
-		IDescription sd = context.getSpeciesDescription(left.getType().getSpeciesName());
+		IDescription sd = context.getSpeciesDescription(arg(0).getType().getSpeciesName());
 		IDescription cd = DescriptionFactory.create(IKeyword.DO, sd, IKeyword.ACTION, name);
 		statement = new DoStatement(cd);
 		type = statement.getReturnType();
@@ -64,15 +63,16 @@ public class PrimitiveOperator extends AbstractBinaryOperator {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		IAgent target = Cast.asAgent(scope, left.value(scope));
-		if ( target == null ) { return null; }
 		if ( scope == null ) { return null; }
+		IAgent target = Cast.asAgent(scope, arg(0).value(scope));
+		if ( target == null ) { return null; }
 		Object result = scope.execute(statement, target);
 		return result;
 	}
 
 	private Arguments createArgs() {
 		Arguments result = new Arguments();
+		IExpression right = arg(1); // FIXME A bit dangerous !
 		if ( !(right instanceof MapExpression) ) { return result; }
 		IExpression[] keys = ((MapExpression) right).keysArray();
 		IExpression[] values = ((MapExpression) right).valuesArray();

@@ -23,8 +23,6 @@ import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.precompiler.IUnits;
-import msi.gaml.expressions.IExpressionCompiler;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -68,141 +66,14 @@ public class StringUtils {
 		return s;
 	}
 
-	static public String stringArrayToString(final String[] array) {
-		StringBuilder sb = new StringBuilder(array.length * 10);
-		for ( String s : array ) {
-			sb.append(s);
-			sb.append(' ');
-		}
-		return sb.toString().trim();
-	}
-
 	public static List<String> tokenize(final String expression) {
 		if ( expression == null ) { return Collections.EMPTY_LIST; }
 		final List<String> tokens = new ArrayList<String>();
 		final Matcher m = p.matcher(expression);
 		while (m.find()) {
-			String tmp = "";
-			tmp = expression.substring(m.start(), m.end());
-			if ( tmp != null && IUnits.UNITS.containsKey(tmp) && tokens.size() > 0 ) {
-				if ( !IExpressionCompiler.BINARIES.containsKey(tokens.get(tokens.size() - 1)) ) {
-					tokens.add("*");
-				}
-				tokens.add(String.valueOf(IUnits.UNITS.get(tmp)));
-			} else {
-				if ( !IExpressionCompiler.IGNORED.contains(tmp) ) {
-					tokens.add(tmp);
-				}
-			}
+			tokens.add(expression.substring(m.start(), m.end()));
 		}
-		// OutputManager.debug("Tokens : " + tokens);
 		return tokens;
-	}
-
-	/**
-	 * Inserts a string after the specified position. If the position is beyond the length of the
-	 * original string, the result string is padded with the specified pad character.
-	 * 
-	 * @param s the input string
-	 * @param ins the string to be inserted
-	 * @param start the starting position for the insert
-	 * @param pad the pad character
-	 * 
-	 * @return a string with the input string inserted after the specified position.
-	 */
-	static public String insert(final String s, final String ins, final int start, final char pad) {
-		int ls = s.length();
-		int li = ins.length();
-		int newlen;
-
-		if ( start < 0 ) { return ""; }
-
-		if ( start > ls ) {
-			newlen = li + start;
-		} else {
-			newlen = ls + li;
-		}
-
-		int sPos = start > ls ? ls : start;
-		int sRest = sPos;
-
-		char[] buf = new char[newlen];
-
-		s.getChars(0, sPos, buf, 0);
-
-		while (sPos < start) {
-			buf[sPos++] = pad;
-		}
-
-		ins.getChars(0, li, buf, sPos);
-		s.getChars(sRest, ls, buf, sPos + li);
-
-		return new String(buf);
-	}
-
-	/**
-	 * Inserts a string after the specified position. If the position is beyond the length of the
-	 * original string, the result string is padded with blanks.
-	 * 
-	 * @param s the input string
-	 * @param ins the string to be inserted
-	 * @param start the starting position for the insert
-	 * 
-	 * @return a string with the input string inserted after the specified position.
-	 */
-	static public String insert(final String s, final String ins, final int start) {
-		return insert(s, ins, start, ' ');
-	}
-
-	/**
-	 * Overlay with.
-	 * 
-	 * @param s the s
-	 * @param o the o
-	 * @param start the start
-	 * @param pad the pad
-	 * 
-	 * @return the string
-	 */
-	static public String overlayWith(final String s, final String o, final int start, final char pad) {
-		int ls = s.length();
-		int lo = o.length();
-
-		if ( start < 0 ) { return ""; }
-
-		int ln = start + lo;
-		int pos = start >= ls ? ls : start;
-		int newlen = ln < ls ? ls : ln;
-
-		char[] buf = new char[newlen];
-
-		s.getChars(0, pos, buf, 0);
-
-		for ( int i = ls; i < start; i++ ) {
-			buf[i] = pad;
-		}
-
-		o.getChars(0, lo, buf, start);
-
-		if ( ln < ls ) {
-			s.getChars(ln, ls, buf, ln);
-		}
-
-		return new String(buf);
-	}
-
-	/**
-	 * Replaces part of the string with the specified string, starting at a specified position. If
-	 * the starting position is beyond the end of the string, it is padded with blanks.
-	 * 
-	 * @param s the original string
-	 * @param o the string to be overlayed over the original string
-	 * @param start the starting position for the overlay
-	 * 
-	 * @return a string with part of it replaced by the overlay string.
-	 */
-	static public String overlayWith(final String s, final String o, final int start) {
-		return overlayWith(s, o, start, ' ');
 	}
 
 	/**
@@ -336,7 +207,7 @@ public class StringUtils {
 	public static String toGaml(final Object val) {
 		if ( val == null ) { return "nil"; }
 		if ( val instanceof IValue ) { return ((IValue) val).toGaml(); }
-		if ( val instanceof String ) { return StringUtils.toGamlString((String) val); }
+		if ( val instanceof String ) { return toGamlString((String) val); }
 		if ( val instanceof Double ) { return DEFAULT_DECIMAL_FORMAT.format(val); }
 		return String.valueOf(val);
 	}

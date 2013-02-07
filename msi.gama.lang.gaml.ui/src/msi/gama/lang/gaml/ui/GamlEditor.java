@@ -8,7 +8,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;

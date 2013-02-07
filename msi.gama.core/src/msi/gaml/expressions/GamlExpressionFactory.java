@@ -18,7 +18,7 @@
  */
 package msi.gaml.expressions;
 
-import static msi.gaml.expressions.IExpressionCompiler.*;
+import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.IUnits;
@@ -81,6 +81,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
+	public IExpression createExpr(final String s, final IDescription context) {
+		if ( s == null || s.isEmpty() ) { return null; }
+		return parser.compile(new StringBasedExpressionDescription(s), context);
+	}
+
+	@Override
 	public Map<String, IExpressionDescription> createArgumentMap(final IExpressionDescription args,
 		final IDescription context) {
 		if ( args == null ) { return Collections.EMPTY_MAP; }
@@ -121,121 +127,73 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return new MapExpression(elements);
 	}
 
-	private final List<IType> temp_types = new ArrayList(10);
+	private final List<Signature> temp_types = new ArrayList(10);
 
 	@Override
-	public IExpression createUnaryExpr(final String op, final IExpression c,
-		final IDescription context) {
-		IExpression child = c;
-
-		if ( child == null ) { return null; }
-		if ( UNARIES.containsKey(op) ) {
-			Map<IType, IOperator> ops = UNARIES.get(op);
-			IType childType = child.getType();
-			IType originalChildType = childType;
-
-			if ( !ops.containsKey(childType) ) {
+	public IExpression createOperator(final String op, final IDescription context,
+		final IExpression ... args) {
+		if ( args == null ) { return null; }
+		for ( IExpression exp : args ) {
+			if ( exp == null ) { return null; }
+		}
+		if ( OPERATORS.containsKey(op) ) {
+			// We get the possible sets of types registered in OPERATORS
+			Map<Signature, IOperator> ops = OPERATORS.get(op);
+			// We create the signature corresponding to the arguments
+			Signature signature = new Signature(args);
+			Signature originalSignature = signature;
+			// If the signature is not present in the registry
+			if ( !ops.containsKey(signature) ) {
 				temp_types.clear();
-				for ( Map.Entry<IType, IOperator> entry : ops.entrySet() ) {
-					if ( childType.isTranslatableInto(entry.getKey()) ) {
+				// We collect all the signatures that are compatible
+				for ( Map.Entry<Signature, IOperator> entry : ops.entrySet() ) {
+					if ( signature.isCompatibleWith(entry.getKey()) ) {
 						temp_types.add(entry.getKey());
 					}
 				}
+				// No signature has been found, we throw an exception
 				if ( temp_types.size() == 0 ) {
 					context.flagError(
-						"No operator found for applying '" + op + "' to " + childType +
+						"No operator found for applying '" + op + "' to " + signature +
 							" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
-							")", IGamlIssue.UNMATCHED_UNARY);
+							")", IGamlIssue.UNMATCHED_OPERANDS);
 					return null;
 				}
-				childType = temp_types.get(0);
-				int dist = childType.distanceTo(originalChildType);
+				signature = temp_types.get(0);
+				// We find the one with the minimum distance to the arguments
+				int dist = signature.distanceTo(originalSignature);
 				for ( int i = 1, n = temp_types.size(); i < n; i++ ) {
-					int d = temp_types.get(i).distanceTo(originalChildType);
+					int d = temp_types.get(i).distanceTo(originalSignature);
 					if ( d < dist ) {
-						childType = temp_types.get(i);
+						signature = temp_types.get(i);
 						dist = d;
 					}
 				}
-				IType coercingType = childType.coerce(child.getType(), context);
-				if ( coercingType != null ) {
-					child = createUnaryExpr(coercingType.toString(), child, context);
+				// We coerce the types if necessary, by wrapping the original expressions in a
+				// casting expression
+				IType[] coercingTypes = signature.coerce(originalSignature, context);
+				for ( int i = 0; i < coercingTypes.length; i++ ) {
+					IType t = coercingTypes[i];
+					if ( t != null ) {
+						args[i] = createOperator(t.toString(), context, args[i]);
+					}
 				}
 			}
 
-			final IOperator helper = ops.get(childType);
-			return helper.copy().init(op, child, null, context);
+			final IOperator helper = ops.get(signature);
+			// We finally make a copy of the operator and init it with the arguments
+			return helper.copy().init(op, context, args);
 		}
-		context.flagError("Unary operator " + op + " does not exist", IGamlIssue.UNKNOWN_UNARY,
-			null, op);
+		// If no operator has been found, we throw an exception
+		context.flagError("Operator " + op + " does not exist", IGamlIssue.UNKNOWN_UNARY, null, op);
 		return null;
 
 	}
 
-	private final List<TypePair> temp_pairs = new ArrayList(10);
-
 	@Override
-	public IExpression createBinaryExpr(final String op, final IExpression l, final IExpression r,
-		final IDescription context /* useful as a workaround for primitive operators */,
-		final boolean isAction) {
-		if ( isAction ) { return new PrimitiveOperator(op).init(op, l, r, context); }
-		IExpression left = l;
-		IExpression right = r;
-		if ( left == null ) { return null; }
-		if ( right == null ) { return null; }
-		if ( BINARIES.containsKey(op) ) {
-			// We get the possible pairs of types registered
-			Map<TypePair, IOperator> map = BINARIES.get(op);
-			IType leftType = left.getType();
-			IType rightType = right.getType();
-			temp_pairs.clear();
-			// We filter the one(s) compatible with the operand types
-			for ( TypePair p : map.keySet() ) {
-				if ( p.isCompatibleWith(leftType, rightType) ) {
-					temp_pairs.add(p);
-				}
-			}
-			if ( temp_pairs.size() == 0 ) {
-				// No pair is matching the operand types, we throw an exception
-				context.flagError("No binary operator found for applying '" + op +
-					"' to left operand " + leftType.toString() + " and " + rightType.toString() +
-					" (operators available for " + map.keySet() + ")", IGamlIssue.UNMATCHED_BINARY);
-				return null;
-			}
-			// We gather the first one
-			TypePair pair = temp_pairs.get(0);
-			IOperator operator = map.get(pair);
-			if ( temp_pairs.size() > 1 ) {
-				// If multiple candidates are present, we choose the one with the smallest distance
-				// to the operand types.
-				int min = pair.distanceTo(leftType, rightType);
-				for ( int i = 1, n = temp_pairs.size(); i < n; i++ ) {
-					TypePair p = temp_pairs.get(i);
-					int dist = p.distanceTo(leftType, rightType);
-					if ( dist < min ) {
-						min = dist;
-						pair = p;
-						operator = map.get(p);
-					}
-				}
-			}
-			// We make a copy of the operator object.
-			operator = operator.copy();
-			// We coerce the two expressions to closely match the pair of types declared
-			IType coercingType = pair.left().coerce(left.getType(), context);
-			if ( coercingType != null ) {
-				left = createUnaryExpr(coercingType.toString(), left, context);
-			}
-			coercingType = pair.right().coerce(right.getType(), context);
-			if ( coercingType != null ) {
-				right = createUnaryExpr(coercingType.toString(), right, context);
-			}
-			// And we return it.
-			return operator.init(op, left, right, context);
-		}
-		context.flagError("Operator: " + op + " does not exist", IGamlIssue.UNKNOWN_BINARY, null,
-			op);
-		return null;
+	public IExpression createAction(final String op, final IDescription context,
+		final IExpression ... expressions) {
+		return new PrimitiveOperator(op).init(op, context, expressions[0], expressions[1]);
 	}
 
 	@Override

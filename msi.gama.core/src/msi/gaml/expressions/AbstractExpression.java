@@ -32,7 +32,7 @@ public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
 	protected IType contentType = null;
-	String name = null;
+	protected String name = null;
 
 	@Override
 	public String getName() {

@@ -32,4 +32,6 @@ public interface IExpressionDescription {
 
 	public void setTarget(EObject target);
 
+	public boolean isString();
+
 }

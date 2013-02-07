@@ -20,7 +20,7 @@ global {
 	point wind_vector <- {0,0}; 
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
-	list images of: string <- ['../images/bird1.png','../images/bird2.png','../images/bird3.png']; 
+	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds depends_on: [bounds];    
 	int ymin <- bounds depends_on: [bounds];  
 	int xmax <- (width_and_height_of_environment - bounds) depends_on: [bounds];    
@@ -28,9 +28,9 @@ global {
 
 	init {
 		create boids number: number_of_agents { 
-			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
+			 location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		} 
-		 
+				 
 		create obstacle number: number_of_obstacles {
 			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
@@ -38,7 +38,9 @@ global {
 		create  boids_goal number: 1 {
 			set location <- goal;
 		}
-	}	
+		
+		
+		}	
 }
 	
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
@@ -48,14 +50,14 @@ entities {
 		const range type: float init: 20.0;
 		const size type: float init: 10.0;
 		
-		reflex wander { 
+		reflex wander {  
 			do  wander amplitude: 45 speed: 20;  
 			set goal value: location;
 		}
 		
 		aspect default {
-			draw shape: circle color: rgb('red') size: 10;
-			draw shape: circle color: rgb('orange') size: 40 empty: true;
+			draw shape: circle(10) color: rgb('red') ;
+			draw shape: circle(40) color: rgb('orange') empty: true;
 		}
 	} 
 	
@@ -144,11 +146,11 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black');      
+			draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
 		}
 		
 		aspect default { 
-			draw shape: triangle  size: 15 rotate: 90 + heading color: rgb('yellow');
+			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
 		}
 	} 
 	
@@ -166,12 +168,12 @@ entities {
 			}
 		}
 		aspect default {
-			draw shape: triangle color: rgb('yellow') size: 20;
+			draw  triangle(20) color: rgb('yellow') ;
 		}
 
 		
 		aspect geom {
-			draw shape: geometry color: rgb('yellow');
+			draw shape color: rgb('yellow');
 		}
 	}
 }
@@ -196,9 +198,9 @@ experiment boids type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		inspect name: 'Inspector' type: agent;
+		inspect 'Inspector' type: agent;
 		display Sky refresh_every: 1 {
-			image name:'background' file:'../images/sky.jpg';
+			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;
 			species boids_goal;
 			species obstacle;

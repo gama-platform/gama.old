@@ -216,13 +216,18 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append("type").append(',').append(type).append(',');
 				sb.append("name").append(',').append(varName).append(',');
 				sb.append("const").append(',').append(s.constant() ? "true" : "false");
-				String depends = "";
+
 				String[] dependencies = s.depends_on();
 				if ( dependencies.length > 0 ) {
-					for ( String string : dependencies ) {
-						depends += string + " ";
+					String depends = "[";
+					for ( int i = 0; i < dependencies.length; i++ ) {
+						String string = dependencies[i];
+						depends += string;
+						if ( i < dependencies.length - 1 ) {
+							depends += "COMMA";
+						}
 					}
-					depends = depends.trim();
+					depends += "]";
 					sb.append(',').append("depends_on").append(',').append(depends);
 				}
 				if ( !"".equals(contentType) ) {
@@ -432,7 +437,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : factories ) {
 			factory factory = e.getAnnotation(factory.class);
 			int[] hKinds = factory.handles();
-			int[] uKinds = factory.uses();
+			// int[] uKinds = factory.uses();
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(FACTORY_PREFIX);
@@ -444,12 +449,12 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(',').append(String.valueOf(hKinds[i]));
 			}
 			// uses
-			if ( uKinds.length > 0 ) {
-				sb.append(SEP).append(String.valueOf(uKinds[0]));
-				for ( int i = 1; i < uKinds.length; i++ ) {
-					sb.append(',').append(String.valueOf(uKinds[i]));
-				}
-			}
+			// if ( uKinds.length > 0 ) {
+			// sb.append(SEP).append(String.valueOf(uKinds[0]));
+			// for ( int i = 1; i < uKinds.length; i++ ) {
+			// sb.append(',').append(String.valueOf(uKinds[i]));
+			// }
+			// }
 			gp.put(sb.toString(), ""); /* doc ? */
 		}
 	}
@@ -572,22 +577,40 @@ public class GamaProcessor extends AbstractProcessor {
 				args[i] = rawNameOf(argParams.get(i));
 			}
 			int n = args.length;
-			String methodName = ex.getSimpleName().toString();
-			String ret = rawNameOf(ex.getReturnType());
 			boolean scope = n > 0 && args[0].contains("IScope");
-			boolean unary =
-				n == 0 && !stat || n == 1 && (stat || !stat && scope) || n == 2 && stat && scope;
-			String leftClass, rightClass;
-			leftClass = stat ? scope ? args[1] : args[0] : declClass;
-			rightClass = unary ? "" : stat ? scope ? args[2] : args[1] : scope ? args[1] : args[0];
+			int actual_args_number = n + (scope ? -1 : 0) + (!stat ? 1 : 0);
+			String methodName = ex.getSimpleName().toString();
+			String[] classes = new String[actual_args_number];
+			int begin = 0;
+			if ( !stat ) {
+				classes[0] = declClass;
+				begin = 1;
+			}
+			int shift = scope ? 1 : 0;
+			try {
+				for ( int i = 0; i < actual_args_number - begin; i++ ) {
+					classes[begin + i] = args[i + shift];
+				}
+			} catch (Exception e1) {
+				processingEnv.getMessager().printMessage(
+					Kind.ERROR,
+					"Error in processing operator " + declClass + " " + methodName + " " +
+						Arrays.toString(args) + "; number of Java parameters: " + n +
+						"; number of Gaml parameters:" + actual_args_number + "; begin: " + begin +
+						"; shift: " + shift);
+			}
+
+			String ret = rawNameOf(ex.getReturnType());
 			methodName = stat ? declClass + "." + methodName : methodName;
 			StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(OPERATOR_PREFIX);
-			// 0.left (or child) class
-			sb.append(leftClass).append(SEP);
-			// 1.right class
-			sb.append(rightClass).append(SEP);
+			// 0.number of arguments
+			sb.append(actual_args_number).append(SEP);
+			// 1+.arguments classes in the right order
+			for ( String s : classes ) {
+				sb.append(s).append(SEP);
+			}
 			// 2.canBeConst
 			sb.append(op.can_be_const()).append(SEP);
 			// 3.type
@@ -597,7 +620,7 @@ public class GamaProcessor extends AbstractProcessor {
 			// 5.iterator
 			sb.append(op.iterator()).append(SEP);
 			// 6.priority
-			sb.append(op.priority()).append(SEP);
+			// sb.append(op.priority()).append(SEP);
 			// 7.return class
 			sb.append(ret).append(SEP);
 			// 8.methodName

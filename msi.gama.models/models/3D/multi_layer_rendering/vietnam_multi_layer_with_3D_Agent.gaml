@@ -32,7 +32,7 @@ global {
 			set label<-labels at nb_layer;
 			set shape <- shape add_z(layerSize*nb_layer);
 			
-			create 	3DAgent number: 10 {
+			create 	ThreeDAgent number: 10 {
 				add self to:myself.my3DAgents;
 				set parent<-myself;
 				set shape <- shape add_z (layerSize*nb_layer);
@@ -52,14 +52,14 @@ entities {
 	species ImageAgent skills: [moving]{
 	  file image;
 	  string label;
-	  list my3DAgents of:3DAgent;		
+	  list my3DAgents of:ThreeDAgent;		
 	  aspect image{
 		draw image:image.path  size : layerSize;
 		draw text:label;
 	  }
 	}
 	
-	species 3DAgent skills: [moving] {  
+	species ThreeDAgent skills: [moving] {  
 		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
 		const size type: float <- float(rnd(layerSize/100));
 		geometry shape <- square (rnd(5)+1) ;
@@ -84,7 +84,7 @@ experiment display  type: gui {
 	output {
 		display Display refresh_every: 1 type:opengl{
 			species ImageAgent aspect:image;
-			species 3DAgent aspect:default;
+			species ThreeDAgent aspect:default;
 		}
 	}
 }

@@ -40,14 +40,14 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(0, 1, 1).after(f.getML_COMMENTRule());
 
 		//
-		c.setLinewrap(0, 1, 1).after(f.getModelAccess().getNameAssignment_1());
+		c.setLinewrap(0, 1, 1).after(f.getModelAccess().getNameAssignment_0_1());
 		c.setLinewrap(0, 1, 1).after(f.getImportRule());
 		c.setLinewrap(0, 1, 1).after(f.getStatementRule());
-		c.setIndentation(f.getBlockAccess().getLeftCurlyBracketKeyword_1(), f.getBlockAccess()
-			.getRightCurlyBracketKeyword_3());
-		c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getLeftCurlyBracketKeyword_1());
-		c.setLinewrap(0, 1, 1).before(f.getBlockAccess().getRightCurlyBracketKeyword_3());
-		c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getRightCurlyBracketKeyword_3());
+		// c.setIndentation(f.getBlockAccess().getLeftCurlyBracketKeyword_1(), f.getBlockAccess()
+		// .getRightCurlyBracketKeyword_3());
+		// c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getLeftCurlyBracketKeyword_1());
+		// c.setLinewrap(0, 1, 1).before(f.getBlockAccess().getRightCurlyBracketKeyword_3());
+		// c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getRightCurlyBracketKeyword_3());
 		// c.setNoSpace().before(f.getDefinitionAccess().getSemicolonKeyword_3_1());
 		// c.setNoSpace().before(f.getEvaluationAccess().getSemicolonKeyword_2_1());
 		// c.setNoSpace().before(f.getGamlFacetRefAccess().getColonKeyword_1());

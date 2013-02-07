@@ -13,6 +13,7 @@ global {
 	list nodes of: node function: {node as list};
 	int input_water_quantity <- 20;
 
+
 	init {
 		create node from: nodes_file with: [id::read("ID"), id_next::read("ID_NEXT"), source::read("SOURCE")];
 		ask nodes {

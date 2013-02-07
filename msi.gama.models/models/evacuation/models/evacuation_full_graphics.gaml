@@ -12,7 +12,7 @@ global {
 	string shape_file_shelters <- '../gis/edu_gov.shp';
 	string shape_file_ward <- '../gis/wards.shp';
 
-	float insideRoadCoeff <- 0.1 min: 0.01 max: 0.4 parameter: 'Size of the external parts of the roads:';
+	float insideRoadCoeff <- 0.1 min: 0.01 max: 0.4 parameter: 'Size of the external parts of the roads:'; 
 	
 	rgb pedestrian_color <- rgb('green') const: true;
 	
@@ -37,9 +37,9 @@ global {
 	
 	float pedestrians_average_speed -> { self compute_average_speed [] };
 	int pedestrians_reach_target -> { self compute_pedestrians_reach_target [] };
-	int pedestrians_reach_shelter -> { length(list(pedestrian) where each.reach_shelter) };
+	int pedestrians_reach_shelter -> { length(pedestrian where each.reach_shelter) };
 	
-	list not_reach_schelters of: pedestrian <- list(pedestrian) update: list(pedestrian) where !((pedestrian(each)).reach_shelter);
+	list not_reach_schelters <- (pedestrian) update: (pedestrian) where !(((each)).reach_shelter);
 	
 	int captured_pedestrians <- sum(list(road) collect ( length((each.members))) );
 	int not_captured_pedestrians <- length(list(pedestrian));
@@ -56,7 +56,7 @@ global {
 	}
 	
 	action compute_average_speed type: float {
-		let not_reach_target_pedestrians type: list of: pedestrian <- list(pedestrian) where !(each.reach_shelter);
+		list not_reach_target_pedestrians <- (pedestrian) where !(each.reach_shelter);
 		
 		if (empty(not_reach_target_pedestrians)) { return 0; }
 		
@@ -64,7 +64,7 @@ global {
 	}
 	
 	action compute_pedestrians_reach_target type: int {
-		return length( list(pedestrian) where each.reach_shelter );
+		return length( pedestrian where each.reach_shelter );
 	}
 	
 	init {
@@ -78,12 +78,12 @@ global {
 		create river from: shape_file_rivers;
 		
 		loop s over: list(shelter) {
-			add item: ( road closest_to (s) ) to: nearest_roads_to_shelters;  	
+			add ( road closest_to (s) ) to: nearest_roads_to_shelters;  	
 		}
 		
 		set nearest_roads_to_shelters <- (remove_duplicates(nearest_roads_to_shelters));
 		
-		create ward from: shape_file_ward with: [id :: read('ID'), wardname :: read('Name'), population :: read('Population')] {
+		create ward from: shape_file_ward with: [ id :: get('ID'), wardname :: get('Name'), population :: get('Population')] {
 			do init_overlapping_roads;
 		}
 		
@@ -93,14 +93,14 @@ global {
 			create road_initializer;
 			let ri type: road_initializer <- first (road_initializer as list);
 			loop rd over: (road as list) {
-				ask target: (ri) {
+				ask (ri) {
 					do initialize the_road:rd;
 				}
 			}
 		}
 		
 		loop w over: list(ward) {
-			if condition: !(empty(w.roads)) {
+			if  !(empty(w.roads)) {
 				create pedestrian number: int ( (w.population * simulated_population_rate) ) {
 					set location <- any_location_in (one_of (w.roads));
 				}

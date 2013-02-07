@@ -37,19 +37,19 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.LAYER, ISymbolKind.SEQUENCE_STATEMENT,
-	ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
+@factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT,
+	ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
-	public StatementFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public StatementFactory(final List<Integer> handles) {
+		super(handles);
 	}
 
 	@Override
 	protected StatementDescription buildDescription(final ISyntacticElement source,
 		final String kw, final IChildrenProvider cp, final IDescription superDesc,
 		final SymbolProto md) {
-		return new StatementDescription(kw, superDesc, cp, md.hasScope(), md.hasArgs(), source, md);
+		return new StatementDescription(kw, superDesc, cp, md.hasScope(), md.hasArgs(), source/* , md */);
 	}
 
 	@Override

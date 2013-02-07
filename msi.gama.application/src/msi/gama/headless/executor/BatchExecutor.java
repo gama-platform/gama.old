@@ -1,22 +1,10 @@
 package msi.gama.headless.executor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Calendar;
-import java.util.Observable;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
-public class BatchExecutor  {
+public class BatchExecutor {
 
 	/**
 	 * @param args
@@ -35,7 +23,7 @@ public class BatchExecutor  {
 				new ThreadPoolExecutor.CallerRunsPolicy());
 	}
 
-	public BatchExecutor(int coreThreadSize) {
+	public BatchExecutor(final int coreThreadSize) {
 		this.setCoreThreadSize(coreThreadSize);
 		this.coreThreadSize = getSatisfiedThreads();
 		executorService =
@@ -51,7 +39,7 @@ public class BatchExecutor  {
 		return coreThreadSize;
 	}
 
-	public void setCoreThreadSize(int coreThreadSize) {
+	public void setCoreThreadSize(final int coreThreadSize) {
 		this.coreThreadSize = coreThreadSize;
 	}
 
@@ -59,9 +47,10 @@ public class BatchExecutor  {
 		int cpus = Runtime.getRuntime().availableProcessors();
 		System.out.println("cpus :" + cpus);
 		int maxThreads = cpus;
-		maxThreads = (maxThreads > 0 ? maxThreads : 1);
-		if ( coreThreadSize >= maxThreads )
+		maxThreads = maxThreads > 0 ? maxThreads : 1;
+		if ( coreThreadSize >= maxThreads ) {
 			coreThreadSize = maxThreads - 1;
+		}
 		return coreThreadSize;
 	}
 
@@ -73,12 +62,13 @@ public class BatchExecutor  {
 
 		double beginTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
 
-		for ( String inputFile : listInputs )
+		for ( String inputFile : listInputs ) {
 			batchExecutor.submit(path, inputFile, newOutDir);
+		}
 		batchExecutor.shutdown();
-		
+
 		double endTime = java.util.Calendar.getInstance().get(Calendar.SECOND);
-		return (endTime - beginTime);
+		return endTime - beginTime;
 	}
 
 	public void submit(final String path, final String inputFile, final String outDir) {
@@ -96,7 +86,7 @@ public class BatchExecutor  {
 		});
 	}
 
-	public void launchCommandLineGama(String path, String inpFile, String outDir) {
+	public void launchCommandLineGama(final String path, final String inpFile, String outDir) {
 		outDir = outDir + File.separator + getDirName(inpFile);
 		System.out.println("inpFile " + inpFile);
 		System.out.println("newOutDir " + outDir);
@@ -105,12 +95,12 @@ public class BatchExecutor  {
 		List<String> commands;
 		if ( os.startsWith("Windows") ) {
 			commands =
-				new ArrayList<String>((Arrays.asList("cmd.exe", "/C", "start gamaHeadless.bat " +
-					inpFile + " " + outDir)));
+				new ArrayList<String>(Arrays.asList("cmd.exe", "/C", "start gamaHeadless.bat " +
+					inpFile + " " + outDir));
 		} else {
 
 			commands =
-				new ArrayList<String>((Arrays.asList("sh", "gamaHeadless.sh", inpFile, outDir)));
+				new ArrayList<String>(Arrays.asList("sh", "gamaHeadless.sh", inpFile, outDir));
 		}
 
 		try {
@@ -118,7 +108,7 @@ public class BatchExecutor  {
 			pb.directory(new File(path));
 			pb.command(commands);
 			Process process = pb.start();
-		//	process.
+			// process.
 			InputStream is = process.getInputStream();
 			InputStream err = process.getErrorStream();
 			InputStreamReader isr = new InputStreamReader(is);
@@ -138,7 +128,7 @@ public class BatchExecutor  {
 				System.out.println(line);
 			}
 
-	//		process.
+			// process.
 			process.destroy();
 
 		} catch (IOException e) {
@@ -165,10 +155,11 @@ public class BatchExecutor  {
 		}
 	}
 
-	private static String mkDir(String dir) {
+	private static String mkDir(final String dir) {
 		File file = new File(dir);
-		if ( !file.exists() )
+		if ( !file.exists() ) {
 			file.mkdir();
+		}
 		return file.getAbsolutePath();
 	}
 
@@ -183,29 +174,28 @@ public class BatchExecutor  {
 		return name;
 	}
 
-	private static ArrayList<String> listDir(String dir) {
+	private static ArrayList<String> listDir(final String dir) {
 		ArrayList<String> listFileNames = new ArrayList<String>();
 
 		FilenameFilter textFilter = new FilenameFilter() {
 
-			public boolean accept(File dir, String name) {
+			@Override
+			public boolean accept(final File dir, final String name) {
 				String lowercaseName = name.toLowerCase();
-				if ( lowercaseName.endsWith(".xml") ) {
-					return true;
-				} else {
-					return false;
-				}
+				if ( lowercaseName.endsWith(".xml") ) { return true; }
+				return false;
 			}
 		};
 
 		File dirFile = new File(dir);
 		File[] listFiles = dirFile.listFiles(textFilter);
-		for ( File file : listFiles )
+		for ( File file : listFiles ) {
 			listFileNames.add(file.getAbsolutePath());
+		}
 		return listFileNames;
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		// TODO Auto-generated method stub
 		String path = "/Users/langthang/Desktop/MonGAMA/eclipse";
 		String inpDir = "/Users/langthang/Desktop/MonGAMA/eclipse/input";

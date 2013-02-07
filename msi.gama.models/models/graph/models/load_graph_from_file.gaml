@@ -53,7 +53,7 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw color: color ;
+			draw color ;
 			
 		}
 		

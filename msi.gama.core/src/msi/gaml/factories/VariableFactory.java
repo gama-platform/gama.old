@@ -41,8 +41,8 @@ import msi.gaml.types.*;
 	ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 
-	public VariableFactory(final List<Integer> handles, final List<Integer> uses) {
-		super(handles, uses);
+	public VariableFactory(final List<Integer> handles) {
+		super(handles);
 	}
 
 	@Override
@@ -87,9 +87,8 @@ public class VariableFactory extends SymbolFactory {
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
-			(VariableDescription) createDescription(new SyntheticStatement(IType.FLOAT_STR,
-				new Facets(NAME, name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")),
-				superDesc, null);
+			(VariableDescription) create(new SyntheticStatement(IType.FLOAT_STR, new Facets(NAME,
+				name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")), superDesc, null);
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.flagError("Environment " + env + " of signal " + name +
@@ -97,13 +96,6 @@ public class VariableFactory extends SymbolFactory {
 		}
 		if ( environment != null ) {
 			environment.addChild(vd);
-		}
-	}
-
-	@Override
-	public void addSpeciesNameAsType(final String name) {
-		if ( !name.equals(AGENT) ) {
-			registeredSymbols.put(name, registeredSymbols.get(AGENT));
 		}
 	}
 

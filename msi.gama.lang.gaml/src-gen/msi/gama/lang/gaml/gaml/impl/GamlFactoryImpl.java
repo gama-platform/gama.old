@@ -71,12 +71,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.CONTENTS: return createContents();
+      case GamlPackage.PARAMETERS: return createParameters();
+      case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
+      case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
       case GamlPackage.FACET: return createFacet();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.EXPRESSION: return createExpression();
       case GamlPackage.PAIR_EXPR: return createPairExpr();
+      case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.GAML_VAR_REF: return createGamlVarRef();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
+      case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
       case GamlPackage.TERN_EXP: return createTernExp();
       case GamlPackage.ARG_PAIR_EXPR: return createArgPairExpr();
       case GamlPackage.GAML_BINARY_EXPR: return createGamlBinaryExpr();
@@ -87,6 +92,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
       case GamlPackage.FUNCTION: return createFunction();
+      case GamlPackage.PARAMETER: return createParameter();
       case GamlPackage.UNIT_NAME: return createUnitName();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
@@ -148,6 +154,39 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Parameters createParameters()
+  {
+    ParametersImpl parameters = new ParametersImpl();
+    return parameters;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionArguments createActionArguments()
+  {
+    ActionArgumentsImpl actionArguments = new ActionArgumentsImpl();
+    return actionArguments;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ArgumentDefinition createArgumentDefinition()
+  {
+    ArgumentDefinitionImpl argumentDefinition = new ArgumentDefinitionImpl();
+    return argumentDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Facet createFacet()
   {
     FacetImpl facet = new FacetImpl();
@@ -192,6 +231,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public ExpressionList createExpressionList()
+  {
+    ExpressionListImpl expressionList = new ExpressionListImpl();
+    return expressionList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public GamlVarRef createGamlVarRef()
   {
     GamlVarRefImpl gamlVarRef = new GamlVarRefImpl();
@@ -207,6 +257,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     TerminalExpressionImpl terminalExpression = new TerminalExpressionImpl();
     return terminalExpression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StringEvaluator createStringEvaluator()
+  {
+    StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
+    return stringEvaluator;
   }
 
   /**
@@ -317,6 +378,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     FunctionImpl function = new FunctionImpl();
     return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Parameter createParameter()
+  {
+    ParameterImpl parameter = new ParameterImpl();
+    return parameter;
   }
 
   /**

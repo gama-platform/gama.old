@@ -55,8 +55,8 @@ public class StatementDescription extends SymbolDescription {
 
 	public StatementDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
-		final ISyntacticElement source, final SymbolProto md) {
-		super(keyword, superDesc, cp, source, md);
+		final ISyntacticElement source /* , final SymbolProto m */) {
+		super(keyword, superDesc, cp, source/* , md */);
 		temps = hasScope ? new HashMap() : null;
 		if ( hasArgs ) {
 			collectArgs();
@@ -107,11 +107,16 @@ public class StatementDescription extends SymbolDescription {
 			}
 			String facet = entry.getKey();
 			if ( !doFacets.contains(facet) ) {
-				Facets f = new Facets(IKeyword.NAME, facet);
-				f.put(IKeyword.VALUE, entry.getValue());
-				args.put(facet, DescriptionFactory.create(IKeyword.ARG, this, null, f));
+				args.put(facet, createArg(facet, entry.getValue()));
 			}
 		}
+	}
+
+	private IDescription createArg(final String n, final IExpressionDescription v) {
+		Facets f = new Facets(IKeyword.NAME, n);
+		f.put(IKeyword.VALUE, v);
+		IDescription a = DescriptionFactory.create(IKeyword.ARG, this, null, f);
+		return a;
 	}
 
 	private void explodeArgs() {
@@ -123,9 +128,7 @@ public class StatementDescription extends SymbolDescription {
 		if ( arguments == null ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> arg : arguments.entrySet() ) {
 			String name = arg.getKey();
-			Facets f = new Facets(IKeyword.NAME, name);
-			f.put(IKeyword.VALUE, arg.getValue());
-			args.put(name, DescriptionFactory.create(IKeyword.ARG, this, null, f));
+			args.put(name, createArg(name, arg.getValue()));
 		}
 	}
 
@@ -158,7 +161,7 @@ public class StatementDescription extends SymbolDescription {
 		}
 		StatementDescription desc =
 			new StatementDescription(getKeyword(), null, new ChildrenProvider(children),
-				temps != null, args != null, getSourceInformation(), meta);
+				temps != null, args != null, getSourceInformation()/* , meta */);
 		desc.setHelper(helper);
 		return desc;
 	}

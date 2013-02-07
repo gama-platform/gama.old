@@ -679,6 +679,7 @@ public class Containers {
 	public static IList where(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return GamaList.EMPTY_LIST; }
+		if ( filter == null ) { return Cast.asList(scope, original); }
 		final GamaList result = new GamaList(original.length(scope));
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);

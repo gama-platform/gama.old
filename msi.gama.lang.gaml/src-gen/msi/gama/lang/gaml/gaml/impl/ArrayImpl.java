@@ -5,21 +5,17 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import java.util.Collection;
-
 import msi.gama.lang.gaml.gaml.Array;
-import msi.gama.lang.gaml.gaml.Expression;
+import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -37,14 +33,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class ArrayImpl extends ExpressionImpl implements Array
 {
   /**
-   * The cached value of the '{@link #getExprs() <em>Exprs</em>}' containment reference list.
+   * The cached value of the '{@link #getExprs() <em>Exprs</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getExprs()
    * @generated
    * @ordered
    */
-  protected EList<Expression> exprs;
+  protected ExpressionList exprs;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,13 +68,47 @@ public class ArrayImpl extends ExpressionImpl implements Array
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Expression> getExprs()
+  public ExpressionList getExprs()
   {
-    if (exprs == null)
-    {
-      exprs = new EObjectContainmentEList<Expression>(Expression.class, this, GamlPackage.ARRAY__EXPRS);
-    }
     return exprs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExprs(ExpressionList newExprs, NotificationChain msgs)
+  {
+    ExpressionList oldExprs = exprs;
+    exprs = newExprs;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ARRAY__EXPRS, oldExprs, newExprs);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExprs(ExpressionList newExprs)
+  {
+    if (newExprs != exprs)
+    {
+      NotificationChain msgs = null;
+      if (exprs != null)
+        msgs = ((InternalEObject)exprs).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARRAY__EXPRS, null, msgs);
+      if (newExprs != null)
+        msgs = ((InternalEObject)newExprs).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARRAY__EXPRS, null, msgs);
+      msgs = basicSetExprs(newExprs, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARRAY__EXPRS, newExprs, newExprs));
   }
 
   /**
@@ -92,7 +122,7 @@ public class ArrayImpl extends ExpressionImpl implements Array
     switch (featureID)
     {
       case GamlPackage.ARRAY__EXPRS:
-        return ((InternalEList<?>)getExprs()).basicRemove(otherEnd, msgs);
+        return basicSetExprs(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -118,15 +148,13 @@ public class ArrayImpl extends ExpressionImpl implements Array
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
       case GamlPackage.ARRAY__EXPRS:
-        getExprs().clear();
-        getExprs().addAll((Collection<? extends Expression>)newValue);
+        setExprs((ExpressionList)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -143,7 +171,7 @@ public class ArrayImpl extends ExpressionImpl implements Array
     switch (featureID)
     {
       case GamlPackage.ARRAY__EXPRS:
-        getExprs().clear();
+        setExprs((ExpressionList)null);
         return;
     }
     super.eUnset(featureID);
@@ -160,7 +188,7 @@ public class ArrayImpl extends ExpressionImpl implements Array
     switch (featureID)
     {
       case GamlPackage.ARRAY__EXPRS:
-        return exprs != null && !exprs.isEmpty();
+        return exprs != null;
     }
     return super.eIsSet(featureID);
   }

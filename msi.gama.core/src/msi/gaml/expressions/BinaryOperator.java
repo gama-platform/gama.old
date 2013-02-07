@@ -31,7 +31,7 @@ import msi.gaml.types.*;
 /**
  * The Class UnaryOpCustomExpr.
  */
-public class BinaryOperator extends AbstractBinaryOperator {
+public class BinaryOperator extends AbstractNAryOperator {
 
 	protected final boolean lazy;
 	protected final boolean canBeConst;
@@ -41,8 +41,15 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	@Override
 	public boolean isConst() {
-		// if ( optimizedExpression != null ) { return optimizedExpression.isConst(); }
-		return canBeConst && left.isConst() && right.isConst();
+		return canBeConst && left().isConst() && right().isConst();
+	}
+
+	public final IExpression left() {
+		return exprs[0];
+	}
+
+	public IExpression right() {
+		return exprs[1];
 	}
 
 	public BinaryOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
@@ -56,11 +63,10 @@ public class BinaryOperator extends AbstractBinaryOperator {
 	}
 
 	@Override
-	public BinaryOperator init(final String operator, final IExpression left,
-		final IExpression right, final IDescription context) {
+	public BinaryOperator init(final String operator, final IDescription context,
+		final IExpression ... args) {
 		setName(operator);
-		this.left = left;
-		this.right = right;
+		this.exprs = args;
 		computeType(context);
 		computeContentType(context);
 		return this;
@@ -68,9 +74,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		Object leftVal = left.value(scope);
-		Object rightVal = lazy ? right : right.value(scope);
+		Object leftVal = "(nil)", rightVal = "(nil)";
 		try {
+			leftVal = left().value(scope);
+			rightVal = lazy ? right() : right().value(scope);
+
 			Object result = helper.run(scope, leftVal, rightVal);
 			return result;
 		} catch (GamaRuntimeException e1) {
@@ -87,14 +95,15 @@ public class BinaryOperator extends AbstractBinaryOperator {
 
 	public void computeType(final IDescription context) {
 		short t = typeProvider;
+		if ( t == NONE ) { return; }
 		if ( t == BOTH ) {
-			IType l = left.getType();
-			IType r = right.getType();
-			if ( left.isConst() && left.value(null) == null ) {
+			IType l = left().getType();
+			IType r = right().getType();
+			if ( left().isConst() && left().value(null) == null ) {
 				type = r;
 				return;
 			}
-			if ( right.isConst() && right.value(null) == null ) {
+			if ( right().isConst() && right().value(null) == null ) {
 				type = l;
 				return;
 			}
@@ -124,21 +133,21 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		type =
-			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType()
-				: t == LEFT_CONTENT_TYPE ? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right
-					.getContentType() : t >= 0 ? Types.get(t) : type;
+			t == LEFT_TYPE ? left().getType() : t == RIGHT_TYPE ? right().getType()
+				: t == LEFT_CONTENT_TYPE ? left().getContentType() : t == RIGHT_CONTENT_TYPE
+					? right().getContentType() : t >= 0 ? Types.get(t) : type;
 	}
 
 	public void computeContentType(final IDescription context) {
 		short t = contentTypeProvider;
 		if ( t == BOTH ) {
-			IType l = left.getContentType();
-			IType r = right.getContentType();
-			if ( left.isConst() && left.value(null) == null ) {
+			IType l = left().getContentType();
+			IType r = right().getContentType();
+			if ( left().isConst() && left().value(null) == null ) {
 				contentType = r;
 				return;
 			}
-			if ( right.isConst() && right.value(null) == null ) {
+			if ( right().isConst() && right().value(null) == null ) {
 				contentType = l;
 				return;
 			}
@@ -168,11 +177,11 @@ public class BinaryOperator extends AbstractBinaryOperator {
 			return;
 		}
 		contentType =
-			t == LEFT_TYPE ? left.getType() : t == RIGHT_TYPE ? right.getType()
-				: t == LEFT_CONTENT_TYPE ? left.getContentType() : t == RIGHT_CONTENT_TYPE ? right
-					.getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
-					type.id() == IType.MATRIX ? left.getContentType() : type.isSpeciesType() ? type
-					: type.defaultContentType();
+			t == LEFT_TYPE ? left().getType() : t == RIGHT_TYPE ? right().getType()
+				: t == LEFT_CONTENT_TYPE ? left().getContentType() : t == RIGHT_CONTENT_TYPE
+					? right().getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
+						type.id() == IType.MATRIX ? left().getContentType() : type.isSpeciesType()
+						? type : type.defaultContentType();
 	}
 
 	@Override
@@ -183,8 +192,8 @@ public class BinaryOperator extends AbstractBinaryOperator {
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
 		BinaryOperator copy = (BinaryOperator) copy();
-		copy.left = left.resolveAgainst(scope);
-		copy.right = right.resolveAgainst(scope);
+		copy.exprs[0] = left().resolveAgainst(scope);
+		copy.exprs[1] = right().resolveAgainst(scope);
 		return copy;
 	}
 
@@ -200,8 +209,8 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Left operand of type ").append(left.getType().toString()).append("<br>");
-		sb.append("Right operand of type ").append(right.getType().toString()).append("<br>");
+		sb.append("Left operand of type ").append(left().getType().toString()).append("<br>");
+		sb.append("Right operand of type ").append(right().getType().toString()).append("<br>");
 		return sb.toString();
 	}
 
@@ -215,14 +224,19 @@ public class BinaryOperator extends AbstractBinaryOperator {
 		@Override
 		public void setVal(final IScope scope, final Object v, final boolean create)
 			throws GamaRuntimeException {
-			IAgent agent = Cast.asAgent(scope, left.value(scope));
+			IAgent agent = Cast.asAgent(scope, left().value(scope));
 			if ( agent == null || agent.dead() ) { return; }
-			scope.setAgentVarValue(agent, ((IVarExpression) right).literalValue(), v);
+			scope.setAgentVarValue(agent, right().literalValue(), v);
 		}
 
 		@Override
 		public boolean isNotModifiable() {
-			return ((IVarExpression) right).isNotModifiable();
+			return right().isNotModifiable();
+		}
+
+		@Override
+		public IVarExpression right() {
+			return (IVarExpression) exprs[1];
 		}
 
 		@Override
@@ -237,4 +251,5 @@ public class BinaryOperator extends AbstractBinaryOperator {
 				contentTypeProvider, lazy);
 		}
 	}
+
 }

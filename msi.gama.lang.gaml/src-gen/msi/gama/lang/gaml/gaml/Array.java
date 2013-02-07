@@ -5,7 +5,6 @@
  */
 package msi.gama.lang.gaml.gaml;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,19 +25,29 @@ import org.eclipse.emf.common.util.EList;
 public interface Array extends Expression
 {
   /**
-   * Returns the value of the '<em><b>Exprs</b></em>' containment reference list.
-   * The list contents are of type {@link msi.gama.lang.gaml.gaml.Expression}.
+   * Returns the value of the '<em><b>Exprs</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Exprs</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Exprs</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Exprs</em>' containment reference list.
+   * @return the value of the '<em>Exprs</em>' containment reference.
+   * @see #setExprs(ExpressionList)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getArray_Exprs()
    * @model containment="true"
    * @generated
    */
-  EList<Expression> getExprs();
+  ExpressionList getExprs();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Array#getExprs <em>Exprs</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exprs</em>' containment reference.
+   * @see #getExprs()
+   * @generated
+   */
+  void setExprs(ExpressionList value);
 
 } // Array

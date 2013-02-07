@@ -72,8 +72,12 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	}
 
 	private Object computeValue() {
-		return editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
-			editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
+		try {
+			return editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
+				editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
+		} catch (GamaRuntimeException e) {
+			return e;
+		}
 
 	}
 
