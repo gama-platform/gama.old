@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama 1.5" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.5.0" useFeatures="false" includeLaunchers="true">
+<product name="Gama 1.6" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.0" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
       <text>
-         * GAMA - V1.5
-* Generic Agent-based Modelling Architecture
+         GAMA - V1.6
+Generic Agent-based Modelling Architecture
 
-* (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
-* (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
-
+(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
+(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
+(c) 2012-2013 UMI 209 UMMISCO IRD/UPMC &amp; Partners
 Visit http://code.google.com/p/gama-platform/
       </text>
    </aboutInfo>
@@ -46,6 +46,7 @@ Visit http://code.google.com/p/gama-platform/
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
