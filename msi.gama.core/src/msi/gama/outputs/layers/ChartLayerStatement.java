@@ -403,6 +403,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 * @param cycle
 	 */
 	private void computeSeries(final IScope scope, final long cycle) throws GamaRuntimeException {
+		if ( datas.isEmpty() ) { return; }
 		double x = datas.get(0).getValue(scope);
 		history.append(x);
 		history.append(',');

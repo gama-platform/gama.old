@@ -18,7 +18,6 @@
  */
 package msi.gaml.expressions;
 
-
 /**
  * AbstractBinaryOperator
  * @author drogoul 23 august 07
@@ -30,21 +29,25 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public String toString() {
 		String result = literalValue() + "(";
-		for ( int i = 0; i < exprs.length; i++ ) {
-			String l = exprs[i] == null ? "null" : exprs[i].toString();
-			result += l + (i != exprs.length - 1 ? "," : "");
+		if ( exprs != null ) {
+			for ( int i = 0; i < exprs.length; i++ ) {
+				String l = exprs[i] == null ? "null" : exprs[i].toString();
+				result += l + (i != exprs.length - 1 ? "," : "");
+			}
 		}
-		return result;
+		return result + ")";
 	}
 
 	@Override
 	public String toGaml() {
 		String result = literalValue() + "(";
-		for ( int i = 0; i < exprs.length; i++ ) {
-			String l = exprs[i] == null ? "nil" : exprs[i].toGaml();
-			result += l + (i != exprs.length - 1 ? "," : "");
+		if ( exprs != null ) {
+			for ( int i = 0; i < exprs.length; i++ ) {
+				String l = exprs[i] == null ? "nil" : exprs[i].toGaml();
+				result += l + (i != exprs.length - 1 ? "," : "");
+			}
 		}
-		return result;
+		return result + ")";
 	}
 
 	public boolean hasChildren() {
@@ -53,6 +56,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public IExpression arg(final int i) {
+		if ( exprs == null ) { return null; }
 		return exprs[i];
 	}
 }

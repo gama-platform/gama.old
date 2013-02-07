@@ -45,10 +45,12 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	public final IExpression left() {
+		if ( exprs == null ) { return null; }
 		return exprs[0];
 	}
 
 	public IExpression right() {
+		if ( exprs == null ) { return null; }
 		return exprs[1];
 	}
 
@@ -185,13 +187,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public IOperator copy() {
+	public BinaryOperator copy() {
 		return new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy);
 	}
 
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
-		BinaryOperator copy = (BinaryOperator) copy();
+		BinaryOperator copy = copy();
+		copy.exprs = new IExpression[2];
 		copy.exprs[0] = left().resolveAgainst(scope);
 		copy.exprs[1] = right().resolveAgainst(scope);
 		return copy;
@@ -236,6 +239,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 		@Override
 		public IVarExpression right() {
+			if ( exprs == null ) { return null; }
 			return (IVarExpression) exprs[1];
 		}
 
@@ -246,7 +250,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		public void setContentType(final IType type) {}
 
 		@Override
-		public IOperator copy() {
+		public BinaryVarOperator copy() {
 			return new BinaryVarOperator(type, helper, canBeConst, typeProvider,
 				contentTypeProvider, lazy);
 		}
