@@ -22,7 +22,7 @@ package msi.gama.gui.swt.dialogs;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.prefs.Preferences;
+import java.util.prefs.*;
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
@@ -50,11 +50,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/*
 	 * This are our preferences we will be using as the IPreferenceStore is not available yet
 	 */
-	private static Preferences preferences = Preferences.userRoot().node("gama");
+	// FIX: Removed the static reference in case it was causing trouble. Issue 240.
 
+	// static Preferences preferences = Preferences.userRoot().node("gama");
 	/* Various dialog messages */
 	private static final String strMsg =
-		"Your workspace is where settings and files of your Gama projects will be stored.";
+		"Your workspace is where settings and files of your Gama models will be stored.";
 	private static final String strInfo =
 		"Please select a directory that will be the workspace root";
 	private static final String strError = "You must set a directory";
@@ -88,12 +89,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Choose a workspace");
+		newShell.setText("GAMA Models Workspace");
 	}
 
 	/** Returns whether the user selected "remember workspace" in the preferences */
 	public static boolean isRememberWorkspace() {
-		return preferences.getBoolean(keyRememberWorkspace, false);
+		return Preferences.userRoot().node("gama").getBoolean(keyRememberWorkspace, false);
 	}
 
 	/**
@@ -102,12 +103,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @return null if none
 	 */
 	public static String getLastSetWorkspaceDirectory() {
-		return preferences.get(keyWorkspaceRootDir, null);
+		return Preferences.userRoot().node("gama").get(keyWorkspaceRootDir, null);
 	}
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		setTitle("Choose a Workspace");
+		setTitle("Choose a Workspace to store your models, settings, etc.");
 		setMessage(strMsg);
 
 		try {
@@ -123,13 +124,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 			/* Label on the left */
 			CLabel label = new CLabel(inner, SWT.NONE);
-			label.setText("Workspace Root Path");
+			label.setText("GAMA Models Workspace");
 			label.setLayoutData(new GridData());
 
 			/* Combo in the middle */
 			workspacePathCombo = new Combo(inner, SWT.BORDER);
 			workspacePathCombo.setLayoutData(new GridData());
-			String wsRoot = preferences.get(keyWorkspaceRootDir, "");
+			String wsRoot = Preferences.userRoot().node("gama").get(keyWorkspaceRootDir, "");
 			if ( wsRoot == null || wsRoot.length() == 0 ) {
 				wsRoot = getWorkspacePathSuggestion();
 			}
@@ -139,10 +140,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			rememberWorkspaceButton = new Button(inner, SWT.CHECK);
 			rememberWorkspaceButton.setText("Remember workspace");
 			rememberWorkspaceButton.setLayoutData(new GridData());
-			rememberWorkspaceButton.setSelection(preferences
+			rememberWorkspaceButton.setSelection(Preferences.userRoot().node("gama")
 				.getBoolean(keyRememberWorkspace, false));
 
-			String lastUsed = preferences.get(keyLastUsedWorkspaces, "");
+			String lastUsed = Preferences.userRoot().node("gama").get(keyLastUsedWorkspaces, "");
 			lastUsedWorkspaces = new ArrayList<String>();
 			if ( lastUsed != null ) {
 				String[] all = lastUsed.split(splitChar);
@@ -421,8 +422,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Save them onto our preferences */
-		preferences.putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
-		preferences.put(keyLastUsedWorkspaces, buf.toString());
+		Preferences.userRoot().node("gama")
+			.putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
+		Preferences.userRoot().node("gama").put(keyLastUsedWorkspaces, buf.toString());
+		try {
+			Preferences.userRoot().node("gama").flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 
 		/* Now create it */
 		boolean ok = checkAndCreateWorkspaceRoot(str);
@@ -437,7 +444,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* And on our preferences as well */
 		GuiUtils.debug("Writing " + str + " in the preferences");
-		preferences.put(keyWorkspaceRootDir, str);
+		Preferences.userRoot().node("gama").put(keyWorkspaceRootDir, str);
+		try {
+			Preferences.userRoot().node("gama").flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 
 		super.okPressed();
 	}
