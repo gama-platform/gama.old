@@ -63,14 +63,31 @@ public class GamlBuilder {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private ModelStructure parse(final GamlResource resource, final XtextResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models =
 			buildCompleteSyntacticTree(resource, resourceSet);
 
 		IPath path = new Path(resource.getURI().toPlatformString(false));
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		String modelPath = file.getLocation().toOSString();
-		String projectPath = file.getProject().getLocation().toOSString();
+		// NullPointerException when accessing a file / project with a space in it !
+		// FIX: see http://trac.rtsys.informatik.uni-kiel.de/trac/kieler/ticket/1065
+		// This is a workaround, not very elegant, but it works.
+		IPath fullPath = file.getLocation();
+		if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
+			org.eclipse.core.internal.resources.Resource r =
+				(org.eclipse.core.internal.resources.Resource) file;
+			fullPath = r.getLocalManager().locationFor(r);
+		}
+		String modelPath = fullPath == null ? "" : fullPath.toOSString();
+		fullPath = file.getProject().getLocation();
+		if ( fullPath == null &&
+			file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
+			org.eclipse.core.internal.resources.Resource r =
+				(org.eclipse.core.internal.resources.Resource) file.getProject();
+			fullPath = r.getLocalManager().locationFor(r);
+		}
+		String projectPath = fullPath == null ? "" : fullPath.toOSString();
 		return new ModelStructure(projectPath, modelPath, new ArrayList(models.values()));
 	}
 
