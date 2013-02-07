@@ -256,6 +256,7 @@ public class Stats {
 				R_statements.add(statement);
 				java.lang.System.out.println(statement);
 			}
+			
 			fr.close();
 
 			caller.setRCode(c);
@@ -280,6 +281,79 @@ public class Stats {
 			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
 		}
 	}
+	
+	@operator(value = "R_compute_param", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
+			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException  {
+		if (param.length(scope) == 0) {
+			throw new GamaRuntimeException("Missing Parameter Exception");
+		}
+		try {
+			// Call R
+			RCaller caller = new RCaller();
+
+			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+			caller.setRscriptExecutable("\"" + RPath + "\"");
+			//if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			//{
+			//	caller.setRscriptExecutable(RPath);
+			//}
+			
+			double[] vectorParam = new double[param.length(scope)];
+			
+	        int k = 0; 
+			for (Object o : param){
+				vectorParam[k++] = Double.parseDouble(o.toString());
+	        }
+			
+			RCode c = new RCode();
+			// Adding the parameters
+			c.addDoubleArray("vectorParam", vectorParam);
+			
+			// Adding the codes in file
+			GamaList R_statements = new GamaList<String>();
+			FileReader fr = new FileReader(RFile);
+			BufferedReader br = new BufferedReader(fr);
+			String statement;
+			
+			while ((statement = br.readLine()) != null) {
+				c.addRCode(statement);
+				R_statements.add(statement);
+				//java.lang.System.out.println(statement);
+			}
+			
+			fr.close();
+			caller.setRCode(c);
+		
+			GamaMap result = new GamaMap();
+
+			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			caller.runAndReturnResult(var);
+			
+			// DEBUG:
+			java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
+			
+			
+			for (String name : caller.getParser().getNames()) {
+				Object[] results = null;
+				results = caller.getParser().getAsStringArray(name);
+				java.lang.System.out.println("Name: '" + name + "'");
+				
+				for (int i = 0; i < results.length; i++) {
+					java.lang.System.out.println(results[i]);
+					//java.lang.System.out.println("Name: '" + name + "'");
+				}							
+				result.put(name, new GamaList(results));
+			}
+			
+			return result;
+
+		} catch (Exception ex) {
+
+			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
+		}
+	}
+	
 	private static String computeVariable(final String string) {
 		String[] tokens = string.split("<-");
 		return tokens[0];
