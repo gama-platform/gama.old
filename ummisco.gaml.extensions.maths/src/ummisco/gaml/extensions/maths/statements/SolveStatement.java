@@ -37,11 +37,15 @@ import ummisco.gaml.extensions.maths.utils.*;
 		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
 		@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
 		/** Numerous other facets to plan : step, init, etc.) **/
-//		@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
+		// @facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional =
+		// true),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
-@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)//, with_args = true)
-@inside(kinds = ISymbolKind.SPECIES)
-public class SolveStatement extends AbstractStatementSequence { //implements IStatement.WithArgs {
+@symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+// , with_args = true)
+@inside(kinds =  { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT,ISymbolKind.SPECIES})
+public class SolveStatement extends AbstractStatementSequence { // implements
+																// IStatement.WithArgs
+																// {
 
 	Solver solver;
 	StatementDescription equations;
@@ -69,45 +73,27 @@ public class SolveStatement extends AbstractStatementSequence { //implements ISt
 			}
 		}
 		// Based on the facets, choose a solver and init it;
-		String method = getFacet("method").literalValue();
-		if (method.equals("rk4")) {
-			solver = new Rk4Solver(Double.parseDouble(getFacet("step")
-					.literalValue()), getFacet(IKeyword.CYCLE_LENGTH),
-					getFacet(IKeyword.TIME_INITIAL),
-					getFacet(IKeyword.TIME_FINAL));
-		} else if (method.equals("dp853")) {
-			solver = new DormandPrince853Solver(0,
-					getFacet(IKeyword.CYCLE_LENGTH),
-					getFacet(IKeyword.TIME_INITIAL),
-					getFacet(IKeyword.TIME_FINAL));
-		}
+
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
-		// Map<String, Object> map = new GamaMap();
-		// computeInits(scope, map);
 		super.privateExecuteIn(scope);
-
+		String method = getFacet("method").literalValue();
+		
+		if (method.equals("rk4")) {
+			solver = new Rk4Solver(Double.parseDouble(""
+					+ getFacet(IKeyword.STEP).value(scope)));
+		} else if (method.equals("dp853")) {
+			solver = new DormandPrince853Solver(Double.parseDouble(""
+					+ getFacet(IKeyword.STEP).value(scope)));
+		}
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context
 				.getStatement(SystemOfEquationsStatement.class,
 						getFacet(IKeyword.EQUATION).literalValue());
-		// if(!flag)
-		// {
-		// for ( int i = 0, n = s.getDimension(); i < n; i++ ) {
-		// IVarExpression v = s.variables.get(i);
-		// v.setVal(scope, map.get(v.getName()), false);
-		// }
-		// flag=true;
-		// }
-
-		// for(String key: map.keySet()){
-		// scope.setAgentVarValue(key, map.get(key));
-		// }
-		// s.executeOn(scope);
-
+		
 		s.currentScope = scope;
 		if (scope.hasVar("cycle_length")) {
 			cycle_length = Double.parseDouble(""
@@ -123,51 +109,8 @@ public class SolveStatement extends AbstractStatementSequence { //implements ISt
 		}
 		solver.solve(scope, s, time_initial, time_final, cycle_length);
 
-		// executer.setRuntimeArgs(args);
-		// Object result = executer.executeOn(scope);
-		// String s = returnString;
-		// if ( s != null ) {
-		// scope.setVarValue(s, result);
-		// }
-
 		return null;
 	}
 
-//	@Override
-//	public void setFormalArgs(final Arguments args) {
-//		actualArgs.putAll(args);
-//		// formalArgs = args;
-//	}
-
-//	private void computeInits(final IScope scope,
-//			final Map<String, Object> values) throws GamaRuntimeException {
-//		if (actualArgs == null) {
-//			return;
-//		}
-//		for (Facet f : actualArgs.entrySet()) {
-//			if (f != null) {
-//				IExpression valueExpr = f.getValue().getExpression();
-//				Object val = valueExpr.value(scope);
-//				values.put(f.getKey(), val);
-//			}
-//		}
-//	}
-
-//	@Override
-//	public void setRuntimeArgs(final Arguments args) {
-//		for (Map.Entry<String, IExpressionDescription> entry : args.entrySet()) {
-//			actualArgs.put(entry.getKey(), entry.getValue());
-//		}
-//		// actualArgs.clear();
-//		// for ( Map.Entry<String, IExpressionDescription> entry :
-//		// formalArgs.entrySet() ) {
-//		// if ( entry != null ) {
-//		// String arg = entry.getKey();
-//		// IExpressionDescription expr = entry.getValue();
-//		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null :
-//		// expr.getExpression()));
-//		// }
-//		// }
-//	}
-
+	
 }

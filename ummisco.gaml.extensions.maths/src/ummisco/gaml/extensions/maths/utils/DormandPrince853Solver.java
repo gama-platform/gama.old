@@ -22,15 +22,12 @@ import msi.gaml.expressions.IVarExpression;
 
 public class DormandPrince853Solver extends Solver {
 	FirstOrderIntegrator integrator;
-	IExpression cycleLength;
-	IExpression time0;
-	IExpression timef;
 	double step;
 	double cycle_length;
 	double time_initial;
 	double time_final;
 
-	public DormandPrince853Solver(double S, IExpression cl, IExpression t0, IExpression tf) {
+	public DormandPrince853Solver(double S) {
 		// initialize the integrator, the step handler, etc.
 		// This class has access to the facets of the statement
 		// ie. getFacet(...)
@@ -38,9 +35,6 @@ public class DormandPrince853Solver extends Solver {
 
 		// Just a trial
 		step = S;
-		cycleLength = cl;
-		time0 = t0;
-		timef = tf;
 		integrator = new DormandPrince853Integrator(1, 1, 1, 1);
 		StepHandler stepHandler = new StepHandler() {
 			public void init(double t0, double[] y0, double t) {
