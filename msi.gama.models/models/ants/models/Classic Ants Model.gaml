@@ -91,16 +91,16 @@ entities {
 		}
 		aspect text {
 			if use_icons {
-				draw image: hasFood ? ant_shape_full : ant_shape_empty rotate: heading at: my location size: 3 ;
+				draw image: hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: my location size: 3 ;
 			} else {
-					draw shape: circle empty: !hasFood color: rgb ('orange') ;
+					draw shape: circle(1.0) empty: !hasFood color: rgb ('orange') ;
 				}
 			if condition: display_state {
 				draw text: state at: location + {-3,1.5} color: white size: 0.8 ;
 			}
 		}
 		aspect default {
-			draw shape: circle empty: !hasFood color: rgb('orange') ; 
+			draw shape: circle(1.0) empty: !hasFood color: rgb('orange') ; 
 		}
 	}
 }

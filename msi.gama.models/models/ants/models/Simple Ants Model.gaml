@@ -87,7 +87,7 @@ entities {
 			set heading <- heading - 180 ;
 		}
 		aspect name: 'default' {
-			draw shape: circle size: 2 color: color;
+			draw shape: circle(2.0) color: color;
 		}
 		
 	}
