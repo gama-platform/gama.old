@@ -136,6 +136,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2 };
 		return new GamaShape(GeometryUtils.getFactory().createLineString(coordinates));
 	}
+	
+	public static IShape buildPlan(final ILocation location1, final ILocation location2, final Double depth) {
+		GamaShape g = new GamaShape(buildLine(location1,location2));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",depth));
+		property3D.add(new GamaPair<String,String>("type","plan"));
+		g.setProperty3D(property3D);
+		return g;
+	}
 
 	public static IShape buildPolyline(final List<GamaPoint> points) {
 		List<Coordinate> coordinates = new ArrayList<Coordinate>();
@@ -145,6 +154,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		return new GamaShape(GeometryUtils.getFactory().createLineString(
 			coordinates.toArray(new Coordinate[0])));
+	}
+	
+	public static IShape buildPolyplan(final List<GamaPoint> points,final Double depth) {
+		GamaShape g = new GamaShape(buildPolyline(points));
+		GamaMap property3D = new GamaMap();
+		property3D.add(new GamaPair<String,Float>("depth",depth));
+		property3D.add(new GamaPair<String,String>("type","polyplan"));
+		g.setProperty3D(property3D);
+		return g;
 	}
 
 	public static IShape createPoint(final ILocation location) {

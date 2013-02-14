@@ -262,6 +262,21 @@ public abstract class Spatial {
 				points.get(1)); }
 			return GamaGeometryType.buildPolyline(points);
 		}
+		
+		@operator(value = { "plan", "polyplan" }, expected_content_type = { IType.POINT })
+		@doc(value = "A polyline geometry from the given list of points.", special_cases = {
+			"if the operand is nil, returns the point geometry {0,0}",
+			"if the operand is composed of a single point, returns a point geometry." }, examples = { "polyplan([{0,0}, {0,10}, {10,10}, {10,0}],10) --: returns a polyline geometry composed of the 4 points with a depth of 10." }, see = {
+			"around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+			"triangle" })
+		public static IShape plan(final IList<GamaPoint> points,final Double depth) {
+
+			if ( points == null || points.isEmpty() ) { return new GamaShape(new GamaPoint(0, 0)); }
+			if ( points.size() == 1 ) { return GamaGeometryType.createPoint(points.get(0)); }
+			if ( points.size() == 2 ) { return GamaGeometryType.buildPlan(points.get(0),
+				points.get(1),depth); }
+			return GamaGeometryType.buildPolyplan(points,depth);
+		}
 
 		@operator({ "link" })
 		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
