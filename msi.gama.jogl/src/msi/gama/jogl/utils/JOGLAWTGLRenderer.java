@@ -47,6 +47,8 @@ import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.jogl.utils.Camera.Arcball.ArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.Matrix4f;
 import msi.gama.jogl.utils.Camera.Arcball.Quat4f;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeWarning;
 
 
 public class JOGLAWTGLRenderer implements GLEventListener {
@@ -166,7 +168,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		glu = new GLU();
 		
 		
-
 		context = drawable.getContext();
         
 		arcBall = new ArcBall(width, height);
@@ -620,13 +621,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void InitTexture(BufferedImage image, String name) {
 
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
-		// need to have an opengl context valide.
-		this.context.makeCurrent();
-		Texture texture = TextureIO.newTexture(image, false);
-		MyTexture curTexture = new MyTexture();
-		curTexture.texture = texture;
-		curTexture.ImageName = name;
-		this.myTextures.add(curTexture);
+		// need to have an opengl context valide
+		if(this.context != null){
+			this.context.makeCurrent();
+			Texture texture = TextureIO.newTexture(image, false);
+			MyTexture curTexture = new MyTexture();
+			curTexture.texture = texture;
+			curTexture.ImageName = name;
+			this.myTextures.add(curTexture);
+		}
+		else{
+			//FIXME: See issue 310 
+			throw new GamaRuntimeException("JOGLRenderer context is null");
+		}
+		
 	}
 
 	// hdviet 27/05/2012

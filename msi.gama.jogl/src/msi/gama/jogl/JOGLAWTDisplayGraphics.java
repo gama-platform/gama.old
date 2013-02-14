@@ -393,16 +393,23 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
 
 		if(geometry.getProperty3D() !=null){
-			System.out.println("depth" + geometry.getProperty3D().get("depth"));
-			System.out.println("type" + geometry.getProperty3D().get("type"));
 			Double depth = (Double) geometry.getProperty3D().get("depth");
 			String type = (String) geometry.getProperty3D().get("type"); 
 			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
 					currentZLayer, currentLayerId, color, fill, border, false, angle, depth.floatValue() , offSet,rounded,type.toString());
 		}
+		
 		else{
-			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
-					currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,rounded,"none");
+			if(geometry.getInnerGeometry().getUserData() != null ){
+				float height = new Float(geom.getUserData().toString());
+				this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
+					currentZLayer, currentLayerId, color, fill, border, false, angle, height, offSet,rounded,"JTS");	
+			}
+			else{
+				this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
+						currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,rounded,"none");
+			}
+			
 		}
 		
 		//FIXME : Here should check the value of the Property3D of the GamaShape 
@@ -717,7 +724,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		}
 
 		curImage.name = name;
-
 		// For grid display and quadtree display the image is recomputed every
 		// iteration
 		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
