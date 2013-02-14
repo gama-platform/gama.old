@@ -120,7 +120,7 @@ entities {
 		} 
 						
 		aspect proxy {			
-			draw shape color: rgb('blue') z:nodeSize ;
+			draw shape color: rgb('blue') depth:nodeSize ;
 			//draw sphere(nodeSize) color: rgb('blue'); 
 		}  
 				
@@ -129,7 +129,7 @@ entities {
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
 			    posVector[i] <- {(location.x+i*110)*(1/zoomFactor),(location.y)*(1/zoomFactor),0}; 
-			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize/zoomFactor ; 
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  depth:nodeSize/zoomFactor ; 
 			    //draw sphere(nodeSize/zoomFactor) color: rgb(colorList[i]) at: point(posVector[i]) ;
 			    
 			}
@@ -140,7 +140,7 @@ entities {
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
 			    posVector[i] <- {((cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110)*(1/zoomFactor),(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)*(1/zoomFactor),0}; 
-			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  z:nodeSize/zoomFactor ;
+			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  depth:nodeSize/zoomFactor ;
 			    //draw sphere(nodeSize/zoomFactor) color: rgb(colorList[i]) at: point(posVector[i]) ; 
 			}
 		}	
@@ -195,7 +195,7 @@ entities {
 		} 
 		
 		aspect sphere{
-			draw geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes[0]/10)*macroNodeSize;
+			draw geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes[0]/10)*macroNodeSize;
 			//draw sphere((nbAggregatedNodes[0]/10)*macroNodeSize) color: color at: point([location.x,location.y]) ;
 		}
 		
@@ -203,7 +203,7 @@ entities {
 			loop i from:0 to: nbTypeOfClass-1
 			{
 			posVector[i] <- {(location.x+i*150)*(1/zoomFactor),(location.y)*(1/zoomFactor),0};	
-			draw geometry (point(posVector[i])) color: color z:(nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor);
+			draw geometry (point(posVector[i])) color: color depth:(nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor);
 			//draw sphere((nbAggregatedNodes[i]/10)*macroNodeSize*(1/zoomFactor)) color: color at: point(posVector[i]) ;
 			}
 		}

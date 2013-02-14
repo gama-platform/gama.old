@@ -117,7 +117,7 @@ entities {
 		}
 						
 		aspect base {
-			draw shape color: color z:nodeSize ; 
+			draw shape color: color depth:nodeSize ; 
 		}  		
 	}
 	
@@ -164,12 +164,12 @@ entities {
        // 
 
 		aspect cylinder{
-			draw geometry: circle ((nbAggregatedNodes/10)*macroNodeSize) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
+			draw geometry: circle ((nbAggregatedNodes/10)*macroNodeSize) color: color depth:(nbAggregatedNodes/10)*macroNodeSize;
 			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point([location.x,location.y])) color: color z:(nbAggregatedNodes/10)*macroNodeSize;
+			draw geometry: geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes/10)*macroNodeSize;
 			//draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
 		}
 	}
