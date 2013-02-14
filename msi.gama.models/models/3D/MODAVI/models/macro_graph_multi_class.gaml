@@ -115,7 +115,7 @@ entities {
 		}
 		
 		aspect real {			
-			draw shape color: rgb('white') z:nodeSize ; 
+			draw shape color: rgb('white') depth:nodeSize ; 
 			//draw sphere(nodeSize) color: rgb('white');
 		} 
 						
