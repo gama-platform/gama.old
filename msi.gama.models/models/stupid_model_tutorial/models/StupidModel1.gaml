@@ -20,7 +20,7 @@ entities {
             }
         }
         aspect basic {
-            draw shape: circle color: rgb('red') size: 1;
+            draw circle(1) color: rgb('red');
         }
     }
 }
