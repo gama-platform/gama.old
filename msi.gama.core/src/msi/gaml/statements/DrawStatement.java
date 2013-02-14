@@ -65,11 +65,11 @@ import com.vividsolutions.jts.geom.Geometry;
 	@facet(name = SCALE, type = IType.FLOAT_STR, optional = true),
 	@facet(name = ROTATE, type = IType.INT_STR, optional = true),
 	@facet(name = FONT, type = IType.STRING_STR, optional = true),
-	@facet(name = Z, type = IType.FLOAT_STR, optional = true),
+	@facet(name = DEPTH, type = IType.FLOAT_STR, optional = true),
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
-combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, Z }),
-	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, Z }),
+combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
+	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, DEPTH }),
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
@@ -192,7 +192,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private abstract class DrawExecuter {
 
-		IExpression size, loc, bord, rot, elevation, empty, rounded;
+		IExpression size, loc, bord, rot, depth, empty, rounded;
 
 		Color constCol;
 		private final Color constBord;
@@ -214,7 +214,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				constEmpty = null;
 			}
 
-			elevation = getFacet(Z);
+			depth = getFacet(DEPTH);
 			size = getFacet(SIZE);
 			loc = getFacet(AT);
 			bord = getFacet(BORDER);
@@ -293,27 +293,21 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-	
-             //FIXME : Feb2013:  Temporary (gr.drawGamaShape not yet finished)		
-			 if(true)
-			 {
-				 Geometry g = Cast.asGeometry(scope, item.value(scope)).getInnerGeometry();
-	 			 if ( elevation != null ) {
-	 				g.setUserData(elevation.value(scope));
-	 				
-	 			 }
-	 			 return gr.drawGeometry(scope, g, getColor(scope), !getEmpty(scope), getBorder(scope),
-	 				getRotation(scope), getRounded(scope));
-			 }
-			 else{
-					
-					GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
-					if (loc != null){
-						g1.setLocation(getLocation(scope,gr));	
-					}
-					return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
-						getRotation(scope), getRounded(scope)); 
+
+
+			GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
+			if (loc != null){
+				g1.setLocation(getLocation(scope,gr));	
 			}
+
+			if ( depth != null ) {
+				g1.getInnerGeometry().setUserData(depth.value(scope));
+
+			}
+
+			return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
+					getRotation(scope), getRounded(scope)); 
+
 		}
 	}
 
