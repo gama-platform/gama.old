@@ -99,7 +99,7 @@ entities {
     	rgb color;
     	float height;
     	aspect default {
-			draw geometry: shape color: rgb("black") z:height empty:true;
+			draw geometry: shape color: rgb("black") depth:height empty:true;
 		}
     }
  	
@@ -114,11 +114,11 @@ entities {
 		geometry shape <- circle (10);// buffer(12);
 		
 		aspect default {
-			draw shape: geometry color: color z:1;
+			draw shape: geometry color: color depth:1;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb('blue') z:radius;
+			draw geometry: geometry (point(self.location)) color: rgb('blue') depth:radius;
 		}
 		
 	}

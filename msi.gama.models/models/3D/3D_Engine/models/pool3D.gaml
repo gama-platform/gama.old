@@ -182,7 +182,7 @@ entities {
     species wall skills: [physical3D]{
     	rgb color;
     	aspect default {
-			draw geometry: shape color: color z:10;
+			draw geometry: shape color: color depth:10;
 		}
     }
  
@@ -192,15 +192,13 @@ entities {
 		int range  <- range_of_agents; 
 		float speed  <- speed_of_agents;  
 		int heading <- rnd(359);
-
-		geometry shape <- circle (10);// buffer(12);
 		
 		aspect default {
-			draw shape: geometry color: color z:1;
+			draw circle (10) color: color depth:1;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: color z:5;
+			draw geometry: geometry (point(self.location)) color: color depth:5;
 		}
 		
 	}

@@ -58,11 +58,11 @@ entities {
 		//geometry shape <- circle (radius);// buffer(12);
 		
 		aspect default {
-			draw shape: geometry color: color z:1;
+			draw shape: geometry color: color depth:1;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb([24,38,176]) z:radius;
+			draw geometry: geometry (point(self.location)) color: rgb([24,38,176]) depth:radius;
 		}
 		
 	}
