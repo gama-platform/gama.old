@@ -19,7 +19,7 @@ global {
 	}  
 } 
 
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
+environment width: width_and_height_of_environment height: width_and_height_of_environment;  
  
   
 entities { 
@@ -48,18 +48,9 @@ entities {
 		}
 		
 		aspect sphere {
-			draw geometry: geometry (point(self.location)) z:z;
+			draw geometry: geometry (point(self.location)) depth:z;
 		}
 		
-		//FIXME: Bug when using this aspect
-		aspect sphere2 {
-			draw shape: geometry color: color z:z; 
-		}
-		
-		//FIXME: Bug when using this aspect
-		aspect sphere3 {
-			draw geometry: shape color: color z:z; 
-		}
 	}
 }
 experiment sphere type: gui {

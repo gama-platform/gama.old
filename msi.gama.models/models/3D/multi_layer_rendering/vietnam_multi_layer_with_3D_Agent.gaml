@@ -54,20 +54,16 @@ entities {
 	  string label;
 	  list my3DAgents of:ThreeDAgent;		
 	  aspect image{
-		draw image:image.path  size : layerSize;
+		draw image:image  size : layerSize;
 		draw text:label;
 	  }
 	}
 	
 	species ThreeDAgent skills: [moving] {  
-		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;
-		const size type: float <- float(rnd(layerSize/100));
-		geometry shape <- square (rnd(5)+1) ;
-		
-		
+		const color type: rgb <- [100 + rnd (155),100 + rnd (155), 100 + rnd (155)] as rgb;		
 		ImageAgent parent;
 		aspect default {
-			draw geometry: shape color: color z:rnd(5) ;
+			draw cube(rnd(5)+1) color: color;
 		}
 	}
 }

@@ -46,11 +46,10 @@ entities {
 	 */
 	species nodeSpecy  {
 		rgb color <- [rnd(255),rnd(255) ,rnd(255)] as rgb;
-		
-		geometry myShape <- geometry (point([location.x,location.y])) ;  
+  
 		aspect base {
 			let colorValue <- (location.x + location.y);
-			draw myShape color: rgb([colorValue, colorValue, colorValue]) z:0.5 ; 
+			draw sphere(1) color: rgb([colorValue, colorValue, colorValue]) at: location; 
 		}  		
 	}
 	
@@ -59,10 +58,8 @@ entities {
 	 */
 	species edgeSpecy  { 
 		rgb color;// <- rgb('blue') ; 
-		
 		aspect base {
-			draw color: color ;
-			
+			draw color: color ;	
 		}
 		
 	}

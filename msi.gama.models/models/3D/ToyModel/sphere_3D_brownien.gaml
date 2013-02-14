@@ -20,7 +20,7 @@ global {
 } 
  
  
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
+environment width: width_and_height_of_environment height: width_and_height_of_environment;  
  
   
 entities { 
@@ -35,13 +35,11 @@ entities {
 		reflex move {
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
 			set shape <- shape add_z rnd(2000);
-
 		}
 
 		
 		aspect default {
-			//draw geometry: shape color: color ;
-			draw geometry: shape color: color z:10;
+			draw shape color:color;
 		}
 	}
 }

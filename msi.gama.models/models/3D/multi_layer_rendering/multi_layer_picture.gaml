@@ -2,7 +2,7 @@ model move
 
 global {
 	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
-	file folder <- folder('images/graph2/');
+	file folder <- folder('images/graph/');
 
 
 	int nb_layer<-0;
@@ -24,6 +24,7 @@ global {
 	}  
 } 
  
+ 
 environment;  
  
 entities { 
@@ -36,7 +37,7 @@ entities {
 	  	set image <- file(folder.path+"/" + filename);
 	  }	
 	  aspect image{
-		draw image:image.path  size : layerSize;
+		draw image:image  size : layerSize;
 	  }
 	}
 }

@@ -66,7 +66,7 @@ entities {
 		}*/
 						
 		aspect base {
-			draw myShape color: color z:nodeSize ; 
+			draw myShape color: color depth:nodeSize ; 
 		}  		
 	}
 	
@@ -110,9 +110,9 @@ entities {
 		
 
 		aspect sphere{
-			draw geometry (point([location.x,location.y])) color:color   z:(nbAggregatedNodes/10);//(nbAggregatedNodes/nbAgent)*10;
+			draw geometry (point([location.x,location.y])) color:color   depth:(nbAggregatedNodes/10);//(nbAggregatedNodes/nbAgent)*10;
 			//draw geometry: geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes/10)*macroNodeSize;
-			draw text : 'class' + class +": " + nbAggregatedNodes z:10 ;
+			draw text : 'class' + class +": " + nbAggregatedNodes depth:10 ;
 		}
 	}
 	

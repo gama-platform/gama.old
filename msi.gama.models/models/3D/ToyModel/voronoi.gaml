@@ -28,7 +28,7 @@ entities {
 			do wander amplitude: 90;
 		}  
 		aspect default {
-			draw shape: circle size: 3 color: color;
+			draw circle(3) color: color;
 		}
 	}
 }

@@ -145,7 +145,7 @@ entities {
 	        
 	        aspect basic {
 		        //draw shape: circle color: color size: 1 depth:1; 
-		        draw geometry: geometry (point(self.location)) color: color z:neighbours_size/4;
+		        draw geometry: geometry (point(self.location)) color: color depth:neighbours_size/4;
 		        draw circle(neighbours_size) color: color empty: true;
 	        }
 	    }

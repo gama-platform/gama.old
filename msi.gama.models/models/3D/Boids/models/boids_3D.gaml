@@ -299,22 +299,23 @@ entities {
 
 
 
-experiment without_flocks type: gui {
+experiment start type: gui {
 	output {
+		
+		display RealBoids   type:opengl{
+			image name:'background' file:'../images/ocean.jpg' z:0;
+			species boids aspect: image z:0.2 transparency:0.5;
+			species boids_goal z:0.25 transparency:0.2;
+			species obstacle ;	
+			
+		}
 		
 		display DynamicColor   type:opengl{
 			species boids  aspect: dynamicColor z:0.25;
 			species boids_goal  transparency:0.2 z:0.25;	
 		}
 		
-		/*display RealBoids   type:opengl{
-			//image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2 transparency:0.5;
-			species boids_goal z:0.25 transparency:0.2;
-			//species boids z:0.2 aspect: dynamicColor position:{1000,0,0} ;
-			species obstacle ;	
-			
-		}*/
+		
 
 	}
 }

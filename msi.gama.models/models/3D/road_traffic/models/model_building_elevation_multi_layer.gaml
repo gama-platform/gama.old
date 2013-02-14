@@ -50,7 +50,7 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ; 
 		aspect base {
-			draw geometry: shape color: color  z:100 ;
+			draw geometry: shape color: color  depth:100 ;
 		}
 	}
 	species road  {

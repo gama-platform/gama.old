@@ -32,11 +32,11 @@ entities {
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: myColor z:0.1;
+			draw sphere(0.1) color: myColor at:location;
 		}
 		aspect dynaSphere{
 			let colorValue <- ((self.location.x + self.location.y)/(width_and_height_of_environment*2))*255;
-			draw geometry: geometry (point(self.location)) color: rgb([colorValue, colorValue, colorValue]) z:self.location.x/100 + self.location.y/100;
+			draw sphere(self.location.x/100 + self.location.y/100) color: rgb([colorValue, colorValue, colorValue]) at:location;
 		}	
 		
 		aspect image{

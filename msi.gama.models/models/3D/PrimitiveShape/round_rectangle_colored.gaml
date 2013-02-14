@@ -26,7 +26,7 @@ global {
 		create mySquare number:number_of_agents{
 			set self.width <- rnd(maxSize)+1;
 			set self.height <-rnd(maxSize)+1;		
-			set color <- (ColorList[1])[rnd(2)];
+			set color <- rgb((ColorList[1])[rnd(2)]);
 		}
 
 	}  
@@ -46,7 +46,7 @@ entities {
 		reflex updateShape{
 			set self.width <- rnd(maxSize);
 			set self.height <-rnd(maxSize);
-			set color <- blueCombination[rnd(3)];
+			set color <- rgb (blueCombination[rnd(3)]);
 			
 		}
 		

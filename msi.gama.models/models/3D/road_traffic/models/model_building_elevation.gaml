@@ -52,7 +52,7 @@ entities {
 		rgb color <- rgb('gray')  ; 
 		int height;
 		aspect base {
-			draw geometry: shape color: color z: height ;
+			draw shape color: color depth: height ;
 		}
 	}
 	species road  {

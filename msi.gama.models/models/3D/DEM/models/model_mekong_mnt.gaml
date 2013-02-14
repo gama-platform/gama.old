@@ -47,7 +47,7 @@ environment bounds: shape_file_river{
 		cell voisin_min_elevation;
 		
 		aspect base {
-			draw shape: geometry color: water > 0 ? rgb('blue') : color ; 
+			draw shape color: water > 0 ? rgb('blue') : color ; 
 		}
 
 	}

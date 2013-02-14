@@ -127,7 +127,7 @@ entities {
 	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
 		aspect Volume {	
-			draw geometry: geometry (point([location.x,location.y])) color: global_color z:0.1;
+			draw geometry: geometry (point([location.x,location.y])) color: global_color depth:0.1;
 			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
 	}
@@ -136,7 +136,7 @@ entities {
 		const color type: rgb <- [33, 98,120] as rgb;
 		//geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
 		aspect Volume {
-			draw geometry: geometry (line ([{5,7.5},{7,5.5}])) color: global_color z:2 ;
+			draw geometry: geometry (line ([{5,7.5},{7,5.5}])) color: global_color depth:2 ;
 			draw text: "Plan" size: 1 color: rgb('black');
 		}
 	}
@@ -145,7 +145,7 @@ entities {
 		const color type: rgb <- [2, 78,104] as rgb;
 		geometry shape <- polyline([{9,7},{9,6},{11,6},{11,5}]) ;		
 		aspect Volume {
-			draw geometry: shape color: global_color z:2 ;
+			draw geometry: shape color: global_color depth:2 ;
 			draw text: "Multiplan" size: 1 color: rgb('black');
 		}
 	}
@@ -153,7 +153,7 @@ entities {
 	species myCube{
 		const color type: rgb <- [255, 131,0] as rgb;		
 		aspect Volume {
-			draw geometry: square(2) color: global_color z:2 border: rgb('blue') ;
+			draw geometry: square(2) color: global_color depth:2 border: rgb('blue') ;
 			draw text: "Cube" size: 1 color: rgb('black');
 		}
 	}
@@ -162,7 +162,7 @@ entities {
 	species myPolyhedron{
 		const color type: rgb <- [255, 73,0] as rgb;
 		aspect Volume {
-			draw geometry: polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) color: global_color z:2;
+			draw geometry: polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) color: global_color depth:2;
 			draw text: "Polyhedron" size: 1 color: rgb('black');
 		}
 	}

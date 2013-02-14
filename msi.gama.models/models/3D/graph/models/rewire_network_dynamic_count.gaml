@@ -51,14 +51,10 @@ entities {
 	 * initialized with default x,y random locations.
 	 */
 	species nodeSpecy  {
-		rgb color <- [rnd(100),rnd(100) ,rnd(100)] as rgb;
-		geometry shape <- geometry (point([location.x,location.y])) ;  
+		rgb color <- [rnd(100),rnd(100) ,rnd(100)] as rgb; 
 		aspect base {
-			draw shape: geometry color: color z:1 ; 
-		} 
-		 		
-		
-		
+			draw sphere(1) color:color at:location;
+		} 	
 	}
 	
 	/*
@@ -67,7 +63,7 @@ entities {
 	species edgeSpecy  { 
 		rgb color <- rgb('blue') ; 
 		aspect base {
-			draw shape: geometry color: color z:1 ;
+			draw shape color: color depth:1 ;
 			
 		}
 		

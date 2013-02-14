@@ -39,21 +39,21 @@ environment bounds: {width,height} {
 		}
 
 		aspect base {
-			draw shape color: rgb('white') z:0; 
+			draw shape color: rgb('white'); 
 			draw text: string(cellValue) size: 1 color: rgb('black');
 		}
 		
 		aspect colored {
-			draw shape color: color z:0;
+			draw shape color: color;
 			
 		}	
 		aspect blueElevation{
 			//FIXME: z:elevation change the z cellValue of the shape it should not.			
-			draw shape color: color  z:elevation border:color;		
+			draw shape color: color  depth:elevation border:color;		
 		}
 		
 		aspect hsbElevation{	
-			draw shape color: color hsb_to_rgb ([(cellValue/255),1.0,1.0]) z:elevation border:color hsb_to_rgb ([(cellValue/255),1.0,1.0]);
+			draw shape color: color hsb_to_rgb ([(cellValue/255),1.0,1.0]) depth:elevation border:color hsb_to_rgb ([(cellValue/255),1.0,1.0]);
 		}
 		
 		aspect circle{ 

@@ -19,7 +19,7 @@ global {
 	}  
 } 
 
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: true;  
+environment width: width_and_height_of_environment height: width_and_height_of_environment;  
  
   
 entities { 
@@ -46,7 +46,7 @@ entities {
 		}
 		
 		aspect default {
-			draw circle (size) color: color z:z;
+			draw cylinder(size,z) color:color;
 		}
 	}
 }

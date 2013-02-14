@@ -141,7 +141,7 @@ entities {
 		}
 		
 		aspect sphere {
-			draw geometry: geometry (point(self.location)) z:10;
+			draw geometry: geometry (point(self.location)) depth:10;
 		}
 	} 
 }

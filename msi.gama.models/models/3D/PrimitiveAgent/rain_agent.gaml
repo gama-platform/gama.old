@@ -37,7 +37,7 @@ entities {
 		}
 			
 		aspect sphere {
-			draw geometry: shape color: rgb('blue') z:envRain.width/1000 ;
+			draw geometry: shape color: rgb('blue') depth:envRain.width/1000 ;
 		}
 	}
 	}
