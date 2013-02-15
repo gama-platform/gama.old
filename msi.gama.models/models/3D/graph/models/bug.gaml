@@ -10,7 +10,11 @@ environment{
 }
 
 entities {
-    species bug {
+    species bug skills: [moving] {
+    	
+    	 reflex move{
+    	 	do move;
+    	 }
         aspect basic {
             draw sphere(1) color: rgb('red');
         }
@@ -18,8 +22,8 @@ entities {
 }
 
 output {
-    display bug_display type:opengl{
+   /*  display bug_display type:opengl{
         species bug aspect: basic;
-    }
-} 
+    }*/
+}
 
