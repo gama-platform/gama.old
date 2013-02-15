@@ -1,0 +1,1 @@
+result<-mean(vectorParam)
