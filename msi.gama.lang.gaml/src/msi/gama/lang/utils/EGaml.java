@@ -65,8 +65,8 @@ public class EGaml {
 		}
 
 		@Override
-		public String caseArgPairExpr(final ArgPairExpr object) {
-			String s = object.getArg();
+		public String caseArgumentPair(final ArgumentPair object) {
+			String s = object.getOp();
 			if ( s.endsWith(":") ) {
 				s = s.replace(':', ' ');
 			}
@@ -115,6 +115,7 @@ public class EGaml {
 
 		@Override
 		public String caseFunction(final Function object) {
+			// 6v4:
 			return object.getOp();
 		}
 
@@ -130,7 +131,7 @@ public class EGaml {
 
 		@Override
 		public String caseStringLiteral(final StringLiteral object) {
-			return object.getValue();
+			return object.getOp();
 		}
 
 		@Override
@@ -191,7 +192,7 @@ public class EGaml {
 	public static StringLiteral createTerminal(final String id) {
 		if ( id != null ) {
 			StringLiteral expr = getFactory().createStringLiteral();
-			expr.setValue(id);
+			expr.setOp(id);
 			return expr;
 		}
 		return null;
@@ -199,7 +200,7 @@ public class EGaml {
 
 	public static BooleanLiteral createTerminal(final boolean b) {
 		BooleanLiteral expr = getFactory().createBooleanLiteral();
-		expr.setValue(b ? IKeyword.TRUE : IKeyword.FALSE);
+		expr.setOp(b ? IKeyword.TRUE : IKeyword.FALSE);
 		return expr;
 	}
 
@@ -225,17 +226,17 @@ public class EGaml {
 	private static void serialize(final Expression expr) {
 		if ( expr == null ) {
 			return;
-		} else if ( expr instanceof TernExp ) {
+		} else if ( expr instanceof If ) {
 			serializer.append("(");
 			serialize(expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
 			serialize(expr.getRight());
 			serializer.append(")").append(":");
-			serialize(((TernExp) expr).getIfFalse());
+			serialize(((If) expr).getIfFalse());
 		} else if ( expr instanceof StringLiteral ) {
-			serializer.append(StringUtils.toGamlString(((StringLiteral) expr).getValue()));
+			serializer.append(StringUtils.toGamlString(((StringLiteral) expr).getOp()));
 		} else if ( expr instanceof TerminalExpression ) {
-			serializer.append(((TerminalExpression) expr).getValue());
+			serializer.append(((TerminalExpression) expr).getOp());
 		} else if ( expr instanceof Point ) {
 			serializer.append("{").append("(");
 			serialize(expr.getLeft());
@@ -252,7 +253,7 @@ public class EGaml {
 			array(((Array) expr).getExprs().getExprs(), false);
 		} else if ( expr instanceof VariableRef ) {
 			serializer.append(getKeyOf(expr));
-		} else if ( expr instanceof GamlUnaryExpr ) {
+		} else if ( expr instanceof Unary ) {
 			serializer.append(expr.getOp()).append("(");
 			serialize(expr.getRight());
 			serializer.append(")");

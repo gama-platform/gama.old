@@ -47,9 +47,8 @@ public class VariableDescription extends SymbolDescription {
 	private IVarSetter set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source,
-		final SymbolProto md) {
-		super(keyword, superDesc, cp, source/* , md */);
+		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source) {
+		super(keyword, superDesc, cp, source);
 		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
 		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
 			facets.putAsLabel(TYPE, keyword);
@@ -97,7 +96,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public VariableDescription copy() {
 		VariableDescription vd =
-			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation(), meta);
+			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation());
 		vd.addHelpers(get, init, set);
 		return vd;
 	}
@@ -116,7 +115,7 @@ public class VariableDescription extends SymbolDescription {
 			final Set<String> names = new HashSet();
 			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
-				List<String> dependsList =
+				Set<String> dependsList =
 					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());
 				names.addAll(dependsList);
 				for ( final String s : names ) {

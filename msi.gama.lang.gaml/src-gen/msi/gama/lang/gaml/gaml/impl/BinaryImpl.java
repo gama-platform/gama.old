@@ -5,28 +5,28 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.Binary;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.PairExpr;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Pair Expr</b></em>'.
+ * An implementation of the model object '<em><b>Binary</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class PairExprImpl extends ExpressionImpl implements PairExpr
+public class BinaryImpl extends ExpressionImpl implements Binary
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected PairExprImpl()
+  protected BinaryImpl()
   {
     super();
   }
@@ -39,7 +39,7 @@ public class PairExprImpl extends ExpressionImpl implements PairExpr
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.PAIR_EXPR;
+    return GamlPackage.Literals.BINARY;
   }
 
-} //PairExprImpl
+} //BinaryImpl

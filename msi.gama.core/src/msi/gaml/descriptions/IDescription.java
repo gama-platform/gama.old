@@ -94,4 +94,6 @@ public interface IDescription extends IGamlDescription {
 
 	public int getKind();
 
+	public boolean isBuiltIn();
+
 }

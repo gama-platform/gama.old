@@ -112,9 +112,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	// combinations and doc missing
 	protected void _symbol(final Class c, final int sKind, final boolean remote,
-		final boolean args, final boolean scope, final boolean sequence,
-		final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd,
-		final String omissible, final ISymbolConstructor sc, final String ... names) {
+		final boolean args, final boolean scope, final boolean sequence, final boolean unique,
+		final boolean name_unique, final String[] parentSymbols, final int[] parentKinds,
+		final FacetProto[] fmd, final String omissible, final ISymbolConstructor sc,
+		final String ... names) {
 
 		Set<String> contextKeywords = new HashSet();
 		Set<Integer> contextKinds = new HashSet();
@@ -147,7 +148,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 		SymbolProto md =
 			new SymbolProto(sequence, args, sKind, !scope, facets, omissible,
-				Collections.EMPTY_LIST, contextKeywords, contextKinds, remote, sc);
+				Collections.EMPTY_LIST, contextKeywords, contextKinds, remote, unique, name_unique,
+				sc);
 		DescriptionFactory.addProto(md, keywords);
 	}
 

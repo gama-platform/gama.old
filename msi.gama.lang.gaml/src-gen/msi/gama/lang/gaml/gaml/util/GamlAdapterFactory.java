@@ -128,14 +128,19 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createExpressionAdapter();
       }
       @Override
-      public Adapter casePairExpr(PairExpr object)
+      public Adapter caseArgumentPair(ArgumentPair object)
       {
-        return createPairExprAdapter();
+        return createArgumentPairAdapter();
       }
       @Override
       public Adapter caseExpressionList(ExpressionList object)
       {
         return createExpressionListAdapter();
+      }
+      @Override
+      public Adapter caseVariableRef(VariableRef object)
+      {
+        return createVariableRefAdapter();
       }
       @Override
       public Adapter caseGamlVarRef(GamlVarRef object)
@@ -153,29 +158,29 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createStringEvaluatorAdapter();
       }
       @Override
-      public Adapter caseTernExp(TernExp object)
+      public Adapter casePair(Pair object)
       {
-        return createTernExpAdapter();
+        return createPairAdapter();
       }
       @Override
-      public Adapter caseArgPairExpr(ArgPairExpr object)
+      public Adapter caseIf(If object)
       {
-        return createArgPairExprAdapter();
+        return createIfAdapter();
       }
       @Override
-      public Adapter caseGamlBinaryExpr(GamlBinaryExpr object)
+      public Adapter caseBinary(Binary object)
       {
-        return createGamlBinaryExprAdapter();
+        return createBinaryAdapter();
       }
       @Override
-      public Adapter caseGamlUnitExpr(GamlUnitExpr object)
+      public Adapter caseUnit(Unit object)
       {
-        return createGamlUnitExprAdapter();
+        return createUnitAdapter();
       }
       @Override
-      public Adapter caseGamlUnaryExpr(GamlUnaryExpr object)
+      public Adapter caseUnary(Unary object)
       {
-        return createGamlUnaryExprAdapter();
+        return createUnaryAdapter();
       }
       @Override
       public Adapter caseAccess(Access object)
@@ -183,9 +188,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createAccessAdapter();
       }
       @Override
-      public Adapter caseMemberRef(MemberRef object)
+      public Adapter caseDot(Dot object)
       {
-        return createMemberRefAdapter();
+        return createDotAdapter();
       }
       @Override
       public Adapter caseArray(Array object)
@@ -211,11 +216,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseUnitName(UnitName object)
       {
         return createUnitNameAdapter();
-      }
-      @Override
-      public Adapter caseVariableRef(VariableRef object)
-      {
-        return createVariableRefAdapter();
       }
       @Override
       public Adapter caseIntLiteral(IntLiteral object)
@@ -415,16 +415,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.PairExpr <em>Pair Expr</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ArgumentPair <em>Argument Pair</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.PairExpr
+   * @see msi.gama.lang.gaml.gaml.ArgumentPair
    * @generated
    */
-  public Adapter createPairExprAdapter()
+  public Adapter createArgumentPairAdapter()
   {
     return null;
   }
@@ -440,6 +440,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createExpressionListAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.VariableRef
+   * @generated
+   */
+  public Adapter createVariableRefAdapter()
   {
     return null;
   }
@@ -490,76 +505,76 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.TernExp <em>Tern Exp</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Pair <em>Pair</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.TernExp
+   * @see msi.gama.lang.gaml.gaml.Pair
    * @generated
    */
-  public Adapter createTernExpAdapter()
+  public Adapter createPairAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ArgPairExpr <em>Arg Pair Expr</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.If <em>If</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ArgPairExpr
+   * @see msi.gama.lang.gaml.gaml.If
    * @generated
    */
-  public Adapter createArgPairExprAdapter()
+  public Adapter createIfAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlBinaryExpr <em>Binary Expr</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Binary <em>Binary</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlBinaryExpr
+   * @see msi.gama.lang.gaml.gaml.Binary
    * @generated
    */
-  public Adapter createGamlBinaryExprAdapter()
+  public Adapter createBinaryAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnitExpr <em>Unit Expr</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Unit <em>Unit</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlUnitExpr
+   * @see msi.gama.lang.gaml.gaml.Unit
    * @generated
    */
-  public Adapter createGamlUnitExprAdapter()
+  public Adapter createUnitAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.GamlUnaryExpr <em>Unary Expr</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Unary <em>Unary</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.GamlUnaryExpr
+   * @see msi.gama.lang.gaml.gaml.Unary
    * @generated
    */
-  public Adapter createGamlUnaryExprAdapter()
+  public Adapter createUnaryAdapter()
   {
     return null;
   }
@@ -580,16 +595,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.MemberRef <em>Member Ref</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Dot <em>Dot</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.MemberRef
+   * @see msi.gama.lang.gaml.gaml.Dot
    * @generated
    */
-  public Adapter createMemberRefAdapter()
+  public Adapter createDotAdapter()
   {
     return null;
   }
@@ -665,21 +680,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createUnitNameAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VariableRef <em>Variable Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.VariableRef
-   * @generated
-   */
-  public Adapter createVariableRefAdapter()
   {
     return null;
   }

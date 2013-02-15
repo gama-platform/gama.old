@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getBlock <em>Block</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getElse <em>Else</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFacets <em>Facets</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getOf <em>Of</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getArgs <em>Args</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getParams <em>Params</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getValue <em>Value</em>}</li>
@@ -127,32 +126,6 @@ public interface Statement extends GamlVarRef
    * @generated
    */
   EList<Facet> getFacets();
-
-  /**
-   * Returns the value of the '<em><b>Of</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Of</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Of</em>' containment reference.
-   * @see #setOf(Contents)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Of()
-   * @model containment="true"
-   * @generated
-   */
-  Contents getOf();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getOf <em>Of</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Of</em>' containment reference.
-   * @see #getOf()
-   * @generated
-   */
-  void setOf(Contents value);
 
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference.

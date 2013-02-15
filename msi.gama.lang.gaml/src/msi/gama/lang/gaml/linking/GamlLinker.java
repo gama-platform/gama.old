@@ -19,7 +19,6 @@ public class GamlLinker extends LazyLinker {
 
 	@Override
 	protected void afterModelLinked(final EObject model, final IDiagnosticConsumer d) {
-		// if ( !GamaBundleLoader.contributionsLoaded ) { return; }
 
 		// GuiUtils.debug("Model " + model.eResource().getURI().lastSegment() + " has been linked");
 		// GamlResource r = (GamlResource) model.eResource();

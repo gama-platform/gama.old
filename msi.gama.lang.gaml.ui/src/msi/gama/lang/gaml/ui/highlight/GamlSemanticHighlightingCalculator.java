@@ -103,7 +103,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 						// }
 					}
 					setStyle(obj, KEYWORD_ID, EGaml.getKeyOf(obj));
-				} else if ( obj instanceof GamlBinaryExpr || obj instanceof Function ) {
+				} else if ( obj instanceof Binary || obj instanceof Function ) {
 					setStyle(obj, BINARY_ID, ((Expression) obj).getOp());
 				} else if ( obj instanceof Facet ) {
 					setStyle(obj, FACET_ID, 0);

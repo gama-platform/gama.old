@@ -47,9 +47,9 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected StatementDescription buildDescription(final ISyntacticElement source,
-		final String kw, final IChildrenProvider cp, final IDescription superDesc,
-		final SymbolProto md) {
-		return new StatementDescription(kw, superDesc, cp, md.hasScope(), md.hasArgs(), source/* , md */);
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
+		return new StatementDescription(source.getKeyword(), superDesc, cp, md.hasScope(),
+			md.hasArgs(), source);
 	}
 
 	@Override
@@ -61,28 +61,25 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
 			assertNameIsNotTypeOrSpecies(cd);
-		}
-		if ( kw.equals(STATE) ) {
+			// assertNameIsUniqueInSuperDescription(desc);
+		} else if ( kw.equals(STATE) ) {
 			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
 			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.FINAL,
 				GamlExpressionFactory.TRUE_EXPR);
 			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateStatement.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
-		}
-		if ( kw.equals(DO) ) {
+		} else if ( kw.equals(DO) ) {
 			assertActionIsExisting(cd, ACTION);
-		}
-		if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
+		} else if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
 			assertBehaviorIsExisting(cd, TO);
 		}
 		if ( kw.equals(SET) || kw.equals(LET) ) {
 			assertAssignmentIsOk(cd);
-		} else if ( kw.equals(REFLEX) || kw.equals(STATE) || kw.equals(ASPECT) || kw.equals(ARG) ||
-			kw.equals(ACTION) ) {
-			assertNameIsUniqueInSuperDescription(cd);
-		} else if ( kw.equals(DEFAULT) || kw.equals(RETURN) || kw.equals(FsmStateStatement.ENTER) |
-			kw.equals(FsmStateStatement.EXIT) ) {
+		} // else if ( desc.getMeta().nameIsUnique() ) {
+			// assertNameIsUniqueInSuperDescription(cd);
+		// }
+		else if ( desc.getMeta().isUnique() ) {
 			assertKeywordIsUniqueInSuperDescription(cd);
 		} else if ( kw.equals(CAPTURE) ) {
 			assertMicroSpeciesIsVisible(cd, AS);

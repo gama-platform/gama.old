@@ -25,12 +25,12 @@ import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
-@symbol(name = FsmStateStatement.ENTER, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_scope = false)
+@symbol(name = FsmStateStatement.ENTER, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_scope = false, unique_in_context = true)
 @inside(symbols = { FsmStateStatement.STATE })
 public class FsmEnterStatement extends AbstractStatementSequence {
 
-	public FsmEnterStatement(/* final ISymbol enclosingScope, */final IDescription desc) {
-		super(/* enclosingScope, */desc);
+	public FsmEnterStatement(final IDescription desc) {
+		super(desc);
 	}
 
 	@Override

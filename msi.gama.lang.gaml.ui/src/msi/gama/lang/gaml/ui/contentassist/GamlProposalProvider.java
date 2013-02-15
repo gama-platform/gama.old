@@ -61,9 +61,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	private IImageHelper imageHelper;
 
 	@Override
-	public void completeMemberRef_Op(final EObject model, final Assignment assignment,
+	public void completeDot_Op(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		completeMemberRef_Right(model, assignment, context, acceptor);
+		completeDot_Right(model, assignment, context, acceptor);
 	}
 
 	@Override
@@ -513,37 +513,37 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void complete_TernExp(final EObject model, final RuleCall ruleCall,
+	public void complete_If(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_OrExp(final EObject model, final RuleCall ruleCall,
+	public void complete_Or(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_AndExp(final EObject model, final RuleCall ruleCall,
+	public void complete_And(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_Relational(final EObject model, final RuleCall ruleCall,
+	public void complete_Comparison(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_ArgPairExpr(final EObject model, final RuleCall ruleCall,
+	public void complete_ArgumentPair(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_PairExpr(final EObject model, final RuleCall ruleCall,
+	public void complete_Pair(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
@@ -561,19 +561,19 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void complete_GamlBinaryExpr(final EObject model, final RuleCall ruleCall,
+	public void complete_Binary(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_GamlUnitExpr(final EObject model, final RuleCall ruleCall,
+	public void complete_Unit(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_GamlUnaryExpr(final EObject model, final RuleCall ruleCall,
+	public void complete_Unary(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
@@ -585,22 +585,22 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// }
 
 	@Override
-	public void complete_MemberRef(final EObject model, final RuleCall ruleCall,
+	public void complete_Dot(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
 	}
 
 	@Override
-	public void complete_PrimaryExpression(final EObject model, final RuleCall ruleCall,
+	public void complete_Primary(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		GuiUtils.debug("Completing PrimaryExpression");
 	}
 
-	@Override
-	public void complete_AbstractRef(final EObject model, final RuleCall ruleCall,
-		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		GuiUtils.debug("Completing AbstractRef");
-	}
+	// @Override
+	// public void complete_AbstractRef(final EObject model, final RuleCall ruleCall,
+	// final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+	// GuiUtils.debug("Completing AbstractRef");
+	// }
 
 	@Override
 	public void complete_Function(final EObject model, final RuleCall ruleCall,
@@ -693,11 +693,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	public void completeMemberRef_Right(final EObject model, final Assignment assignment,
+	public void completeDot_Right(final EObject model, final Assignment assignment,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
-		if ( !(model instanceof MemberRef) ) { return; }
-		Expression left = ((MemberRef) model).getLeft();
+		if ( !(model instanceof Dot) ) { return; }
+		Expression left = ((Dot) model).getLeft();
 		EObject obj = model;
 		IDescription desc = null;
 		// Find the upper description

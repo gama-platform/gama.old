@@ -316,6 +316,10 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(symbol.with_scope()).append(SEP);
 			// with_sequence
 			sb.append(symbol.with_sequence()).append(SEP);
+			// unique_in_context
+			sb.append(symbol.unique_in_context()).append(SEP);
+			// name_unique
+			sb.append(symbol.unique_name()).append(SEP);
 			inside inside = e.getAnnotation(inside.class);
 			// symbols_inside && kinds_inside
 			if ( inside != null ) {
@@ -549,8 +553,8 @@ public class GamaProcessor extends AbstractProcessor {
 				t.wraps();
 			} catch (MirroredTypesException ex) {
 				wraps = ex.getTypeMirrors();
-			} catch (MirroredTypeException ex) {
-				wraps = Arrays.asList(ex.getTypeMirror());
+			} catch (MirroredTypeException ex2) {
+				wraps = Arrays.asList(ex2.getTypeMirror());
 			}
 			for ( TypeMirror tm : wraps ) {
 				sb.append(SEP).append(rawNameOf(tm));

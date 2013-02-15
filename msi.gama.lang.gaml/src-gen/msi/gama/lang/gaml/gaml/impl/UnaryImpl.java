@@ -6,27 +6,27 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.MemberRef;
+import msi.gama.lang.gaml.gaml.Unary;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Member Ref</b></em>'.
+ * An implementation of the model object '<em><b>Unary</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class MemberRefImpl extends ExpressionImpl implements MemberRef
+public class UnaryImpl extends ExpressionImpl implements Unary
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MemberRefImpl()
+  protected UnaryImpl()
   {
     super();
   }
@@ -39,7 +39,7 @@ public class MemberRefImpl extends ExpressionImpl implements MemberRef
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.MEMBER_REF;
+    return GamlPackage.Literals.UNARY;
   }
 
-} //MemberRefImpl
+} //UnaryImpl

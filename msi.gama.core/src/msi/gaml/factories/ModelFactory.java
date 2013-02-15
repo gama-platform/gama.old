@@ -25,7 +25,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -60,12 +60,19 @@ public class ModelFactory extends SymbolFactory {
 	private void complementSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
 		ISyntacticElement msNode = micro.getNode();
 		SpeciesDescription mDesc = macro.getMicroSpecies(msNode.getLabel(IKeyword.NAME));
+		if ( mDesc == null ) { return; }
 		for ( ISyntacticElement child : msNode.getChildren() ) {
 			// if micro-species were already added, no need to re-add them
-			String kw = getKeyword(child);
+			String kw = child.getKeyword();
 			if ( !ModelStructure.SPECIES_NODES.contains(kw) ) {
-				SymbolFactory f = DescriptionFactory.getFactory(kw);
-				mDesc.addChild(f.create(child, mDesc));
+				SymbolProto sp = DescriptionFactory.getProto(kw);
+				if ( sp != null ) {
+					mDesc.addChild(sp.getFactory().create(child, mDesc));
+				} else {
+					mDesc.getErrorCollector().add(
+						new GamlCompilationError("Unknown statement " + kw, child));
+				}
+
 			}
 		}
 		// recursively complement micro-species
@@ -77,8 +84,13 @@ public class ModelFactory extends SymbolFactory {
 	private void complementExperimentSpecies(final SpeciesDescription sd) {
 		ISyntacticElement e = sd.getSourceInformation();
 		for ( ISyntacticElement child : e.getChildren() ) {
-			SymbolFactory f = DescriptionFactory.getFactory(getKeyword(child));
-			f.create(child, sd); // ???
+			SymbolProto sp = DescriptionFactory.getProto(child.getKeyword());
+			if ( sp != null ) {
+				sp.getFactory().create(child, sd); // ???
+			} else {
+				sd.getErrorCollector().add(
+					new GamlCompilationError("Unknown statement " + child.getKeyword(), child));
+			}
 		}
 		sd.finalizeDescription();
 	}
@@ -102,8 +114,8 @@ public class ModelFactory extends SymbolFactory {
 
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
-				SymbolFactory f = DescriptionFactory.getFactory(getKeyword(child));
-				world.addChild(f.create(child, world));
+				SymbolProto sp = DescriptionFactory.getProto(child.getKeyword());
+				world.addChild(sp.getFactory().create(child, world));
 			}
 		}
 

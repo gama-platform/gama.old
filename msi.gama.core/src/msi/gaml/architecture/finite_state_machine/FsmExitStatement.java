@@ -25,7 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
-@symbol(name = FsmStateStatement.EXIT, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_scope = false)
+@symbol(name = FsmStateStatement.EXIT, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_scope = false, unique_in_context = true)
 @inside(symbols = { FsmStateStatement.STATE })
 public class FsmExitStatement extends AbstractStatementSequence {
 

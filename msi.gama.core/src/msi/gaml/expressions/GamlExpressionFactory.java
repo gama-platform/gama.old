@@ -197,8 +197,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
-		if ( s == null ) { return new ArrayList(); }
+	public Set<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+		if ( s == null ) { return Collections.EMPTY_SET; }
 		return parser.parseLiteralArray(s, context);
 	}
 

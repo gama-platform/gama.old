@@ -18,6 +18,7 @@
  */
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -29,8 +30,9 @@ public class DisplayHeightUnitExpression extends ConstantExpression {
 
 	@Override
 	public Double value(final IScope scope) {
-		// FIXME beware null values !
-		return (double) scope.getGraphics().getDisplayHeight();
+		IGraphics g = scope.getGraphics();
+		if ( g == null ) { return 0d; }
+		return (double) g.getDisplayHeight();
 	}
 
 	@Override

@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 14 nov. 07
  */
-@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE, IKeyword.DEFAULT }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
+@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(symbols = IKeyword.SWITCH)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.VALUE)
 public class MatchStatement extends AbstractStatementSequence {
@@ -55,12 +55,15 @@ public class MatchStatement extends AbstractStatementSequence {
 		executer =
 			keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE)
 				? new MatchOne() : keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween()
-					: new MatchDefault();
-		executer.acceptValue();
+					: null;
+		if ( executer != null ) {
+			executer.acceptValue();
+		}
 	}
 
 	public boolean matches(final IScope scope, final Object switchValue)
 		throws GamaRuntimeException {
+		if ( executer == null ) { return false; }
 		return executer.matches(scope, switchValue);
 	}
 
@@ -77,25 +80,6 @@ public class MatchStatement extends AbstractStatementSequence {
 		Object getValue(final IScope scope) throws GamaRuntimeException {
 			return constantValue == null ? value.value(scope) : constantValue;
 		}
-	}
-
-	class MatchDefault extends MatchExecuter {
-
-		@Override
-		boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-			return false;
-		}
-
-		@Override
-		void acceptValue() {
-
-		}
-
-		@Override
-		Object getValue(final IScope scope) throws GamaRuntimeException {
-			return null;
-		}
-
 	}
 
 	class SimpleMatch extends MatchExecuter {

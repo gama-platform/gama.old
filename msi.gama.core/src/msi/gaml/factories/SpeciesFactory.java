@@ -41,12 +41,11 @@ public class SpeciesFactory extends SymbolFactory {
 
 	@Override
 	protected SpeciesDescription buildDescription(final ISyntacticElement source,
-		final String keyword, final IChildrenProvider cp, final IDescription sd,
-		final SymbolProto md) {
+		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(keyword, sd, facets, cp, source/* , md */);
+		return new SpeciesDescription(source.getKeyword(), sd, facets, cp, source);
 	}
 
 	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,

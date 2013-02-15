@@ -112,7 +112,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 		toolbar = new Composite(top, SWT.None);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 20;
+		data.heightHint = 15;
 		toolbar.setLayoutData(data);
 		layout = new GridLayout(INITIAL_BUTTONS + 1, false);
 		layout.horizontalSpacing = 0;
@@ -124,7 +124,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 		status = new Label(toolbar, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		// data.widthHint = 80;
 		data.minimumHeight = SWT.DEFAULT;
 		status.setLayoutData(data);
 		status.setForeground(COLOR_TEXT);
@@ -183,12 +182,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		return s;
 	}
 
-	private void enableButton(final int index, final String text/* , final Image image */) {
+	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
 		((GridData) buttons[index].getLayoutData()).exclude = false;
 		buttons[index].setVisible(true);
 		buttons[index].setText(convert(text));
-		// buttons[index].setImage(image);
 		buttons[index].pack();
 	}
 
@@ -217,13 +215,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
-					if ( currentExperiments.size() == 1 &&
-						currentExperiments.contains(IKeyword.DEFAULT) ) {
+					int size = currentExperiments.size();
+					if ( size == 1 && currentExperiments.contains(IKeyword.DEFAULT) ) {
 						setStatus(
 							COLOR_WARNING,
-							"No experiments have been defined. Run the default experiment with the parameters and outputs directly defined in the model.");
+							"No experiments have been defined. Run a default experiment with the parameters and outputs directly defined in the model.");
 					} else {
-						setStatus(COLOR_OK, "Run experiments:");
+						setStatus(COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
 					}
 					int i = 0;
 					if ( currentExperiments.size() > 1 ) {
@@ -233,11 +231,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 						enableButton(i++, e);
 					}
 				} else {
-					setStatus(COLOR_ERROR, "Error(s) detected");
+					setStatus(COLOR_ERROR, "Error(s) detected. Impossible to run any experiment");
 				}
 
 				toolbar.layout(true);
-				toolbar.update();
+				// toolbar.update();
 			}
 		});
 

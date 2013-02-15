@@ -116,13 +116,13 @@ public interface GamlFactory extends EFactory
   Expression createExpression();
 
   /**
-   * Returns a new object of class '<em>Pair Expr</em>'.
+   * Returns a new object of class '<em>Argument Pair</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Pair Expr</em>'.
+   * @return a new object of class '<em>Argument Pair</em>'.
    * @generated
    */
-  PairExpr createPairExpr();
+  ArgumentPair createArgumentPair();
 
   /**
    * Returns a new object of class '<em>Expression List</em>'.
@@ -132,6 +132,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   ExpressionList createExpressionList();
+
+  /**
+   * Returns a new object of class '<em>Variable Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Variable Ref</em>'.
+   * @generated
+   */
+  VariableRef createVariableRef();
 
   /**
    * Returns a new object of class '<em>Var Ref</em>'.
@@ -161,49 +170,49 @@ public interface GamlFactory extends EFactory
   StringEvaluator createStringEvaluator();
 
   /**
-   * Returns a new object of class '<em>Tern Exp</em>'.
+   * Returns a new object of class '<em>Pair</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Tern Exp</em>'.
+   * @return a new object of class '<em>Pair</em>'.
    * @generated
    */
-  TernExp createTernExp();
+  Pair createPair();
 
   /**
-   * Returns a new object of class '<em>Arg Pair Expr</em>'.
+   * Returns a new object of class '<em>If</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Arg Pair Expr</em>'.
+   * @return a new object of class '<em>If</em>'.
    * @generated
    */
-  ArgPairExpr createArgPairExpr();
+  If createIf();
 
   /**
-   * Returns a new object of class '<em>Binary Expr</em>'.
+   * Returns a new object of class '<em>Binary</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Binary Expr</em>'.
+   * @return a new object of class '<em>Binary</em>'.
    * @generated
    */
-  GamlBinaryExpr createGamlBinaryExpr();
+  Binary createBinary();
 
   /**
-   * Returns a new object of class '<em>Unit Expr</em>'.
+   * Returns a new object of class '<em>Unit</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unit Expr</em>'.
+   * @return a new object of class '<em>Unit</em>'.
    * @generated
    */
-  GamlUnitExpr createGamlUnitExpr();
+  Unit createUnit();
 
   /**
-   * Returns a new object of class '<em>Unary Expr</em>'.
+   * Returns a new object of class '<em>Unary</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unary Expr</em>'.
+   * @return a new object of class '<em>Unary</em>'.
    * @generated
    */
-  GamlUnaryExpr createGamlUnaryExpr();
+  Unary createUnary();
 
   /**
    * Returns a new object of class '<em>Access</em>'.
@@ -215,13 +224,13 @@ public interface GamlFactory extends EFactory
   Access createAccess();
 
   /**
-   * Returns a new object of class '<em>Member Ref</em>'.
+   * Returns a new object of class '<em>Dot</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Member Ref</em>'.
+   * @return a new object of class '<em>Dot</em>'.
    * @generated
    */
-  MemberRef createMemberRef();
+  Dot createDot();
 
   /**
    * Returns a new object of class '<em>Array</em>'.
@@ -267,15 +276,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   UnitName createUnitName();
-
-  /**
-   * Returns a new object of class '<em>Variable Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Variable Ref</em>'.
-   * @generated
-   */
-  VariableRef createVariableRef();
 
   /**
    * Returns a new object of class '<em>Int Literal</em>'.

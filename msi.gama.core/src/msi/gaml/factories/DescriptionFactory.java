@@ -20,7 +20,7 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -46,21 +46,12 @@ public class DescriptionFactory {
 		}
 	}
 
-	public final static SymbolProto getProto(final IDescription context,
-		final ISyntacticElement source, final String keyword) {
-		SymbolProto md = getProto(keyword);
-		if ( md == null ) {
-			if ( context != null ) {
-				context.flagError("Unknown symbol " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source,
-					keyword);
-			}
-			return null;
-		}
-		return md;
-	}
-
 	public final static SymbolProto getProto(final String keyword) {
 		return KEYWORDS_PROTOS.get(keyword);
+	}
+
+	public static SymbolFactory getFactory(final int kind) {
+		return FACTORIES.get(kind);
 	}
 
 	public static String getOmissibleFacetForSymbol(final String keyword) {
@@ -69,14 +60,10 @@ public class DescriptionFactory {
 		return md.getOmissible();
 	}
 
-	public static SymbolFactory getFactory(final int kind) {
-		return FACTORIES.get(kind);
-	}
-
 	public static void addProto(final SymbolProto md, final List<String> names) {
 		int kind = md.getKind();
 		if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
-			SymbolProto.nonVariableStatements.addAll(names);
+			SymbolProto.nonTypeStatements.addAll(names);
 		}
 		for ( String s : names ) {
 			if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }

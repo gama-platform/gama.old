@@ -46,11 +46,12 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
+	protected IDescription buildDescription(final ISyntacticElement source,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
+		String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
-			buildSignalDescription(source, keyword, superDesc, md);
+			buildSignalDescription(source, keyword, superDesc);
 		} else if ( keyword.equals(PARAMETER) ) {
 			// We copy the relevant facets from the targeted var of the parameter
 			String varName = facets.getLabel(VAR);
@@ -68,11 +69,11 @@ public class VariableFactory extends SymbolFactory {
 				}
 			}
 		}
-		return new VariableDescription(keyword, superDesc, facets, cp, source, md);
+		return new VariableDescription(keyword, superDesc, facets, cp, source);
 	}
 
 	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
-		final IDescription superDesc, final SymbolProto md) {
+		final IDescription superDesc) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(NAME);
 		String env = facets.getLabel(ENVIRONMENT);

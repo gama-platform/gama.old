@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
+@symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
 @facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL_STR, optional = true),
 	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL_STR, optional = true),

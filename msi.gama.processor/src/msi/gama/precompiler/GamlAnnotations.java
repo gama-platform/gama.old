@@ -567,6 +567,20 @@ public final class GamlAnnotations {
 		 */
 		doc[] doc() default {};
 
+		/**
+		 * 
+		 * @return Indicates that this statement must be unique in its super context (for example,
+		 *         only one return is allowed in the body of an action).
+		 */
+		boolean unique_in_context() default false;
+
+		/**
+		 * 
+		 * @return Indicates that only one statement with the same name should be allowed in the
+		 *         same super context
+		 */
+		boolean unique_name() default false;
+
 	}
 
 	/**

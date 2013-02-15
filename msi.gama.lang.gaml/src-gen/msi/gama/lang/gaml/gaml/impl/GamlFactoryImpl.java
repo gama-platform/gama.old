@@ -77,24 +77,24 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FACET: return createFacet();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.EXPRESSION: return createExpression();
-      case GamlPackage.PAIR_EXPR: return createPairExpr();
+      case GamlPackage.ARGUMENT_PAIR: return createArgumentPair();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
+      case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.GAML_VAR_REF: return createGamlVarRef();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
-      case GamlPackage.TERN_EXP: return createTernExp();
-      case GamlPackage.ARG_PAIR_EXPR: return createArgPairExpr();
-      case GamlPackage.GAML_BINARY_EXPR: return createGamlBinaryExpr();
-      case GamlPackage.GAML_UNIT_EXPR: return createGamlUnitExpr();
-      case GamlPackage.GAML_UNARY_EXPR: return createGamlUnaryExpr();
+      case GamlPackage.PAIR: return createPair();
+      case GamlPackage.IF: return createIf();
+      case GamlPackage.BINARY: return createBinary();
+      case GamlPackage.UNIT: return createUnit();
+      case GamlPackage.UNARY: return createUnary();
       case GamlPackage.ACCESS: return createAccess();
-      case GamlPackage.MEMBER_REF: return createMemberRef();
+      case GamlPackage.DOT: return createDot();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
       case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.PARAMETER: return createParameter();
       case GamlPackage.UNIT_NAME: return createUnitName();
-      case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
       case GamlPackage.COLOR_LITERAL: return createColorLiteral();
@@ -220,10 +220,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public PairExpr createPairExpr()
+  public ArgumentPair createArgumentPair()
   {
-    PairExprImpl pairExpr = new PairExprImpl();
-    return pairExpr;
+    ArgumentPairImpl argumentPair = new ArgumentPairImpl();
+    return argumentPair;
   }
 
   /**
@@ -235,6 +235,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ExpressionListImpl expressionList = new ExpressionListImpl();
     return expressionList;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public VariableRef createVariableRef()
+  {
+    VariableRefImpl variableRef = new VariableRefImpl();
+    return variableRef;
   }
 
   /**
@@ -275,10 +286,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public TernExp createTernExp()
+  public Pair createPair()
   {
-    TernExpImpl ternExp = new TernExpImpl();
-    return ternExp;
+    PairImpl pair = new PairImpl();
+    return pair;
   }
 
   /**
@@ -286,10 +297,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ArgPairExpr createArgPairExpr()
+  public If createIf()
   {
-    ArgPairExprImpl argPairExpr = new ArgPairExprImpl();
-    return argPairExpr;
+    IfImpl if_ = new IfImpl();
+    return if_;
   }
 
   /**
@@ -297,10 +308,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlBinaryExpr createGamlBinaryExpr()
+  public Binary createBinary()
   {
-    GamlBinaryExprImpl gamlBinaryExpr = new GamlBinaryExprImpl();
-    return gamlBinaryExpr;
+    BinaryImpl binary = new BinaryImpl();
+    return binary;
   }
 
   /**
@@ -308,10 +319,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlUnitExpr createGamlUnitExpr()
+  public Unit createUnit()
   {
-    GamlUnitExprImpl gamlUnitExpr = new GamlUnitExprImpl();
-    return gamlUnitExpr;
+    UnitImpl unit = new UnitImpl();
+    return unit;
   }
 
   /**
@@ -319,10 +330,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlUnaryExpr createGamlUnaryExpr()
+  public Unary createUnary()
   {
-    GamlUnaryExprImpl gamlUnaryExpr = new GamlUnaryExprImpl();
-    return gamlUnaryExpr;
+    UnaryImpl unary = new UnaryImpl();
+    return unary;
   }
 
   /**
@@ -341,10 +352,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MemberRef createMemberRef()
+  public Dot createDot()
   {
-    MemberRefImpl memberRef = new MemberRefImpl();
-    return memberRef;
+    DotImpl dot = new DotImpl();
+    return dot;
   }
 
   /**
@@ -400,17 +411,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     UnitNameImpl unitName = new UnitNameImpl();
     return unitName;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public VariableRef createVariableRef()
-  {
-    VariableRefImpl variableRef = new VariableRefImpl();
-    return variableRef;
   }
 
   /**

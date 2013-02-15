@@ -148,7 +148,7 @@ public class Containers {
 		"remove_duplicates([1::3,2::4,3::3,5::7]) --: [3,4,7]" })
 	// TODO finish doc for other kinds of Container
 	public static IList asSet(final IScope scope, final IContainer l) {
-		// FIXME ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
+		// ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
 		// utilis� � la place � v�rifier
 
 		if ( l == null ) { return null; }

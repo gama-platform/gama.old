@@ -37,7 +37,7 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
+@symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_in_context = true)
 @inside(symbols = IKeyword.ACTION, kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.VALUE)
 public class ReturnStatement extends AbstractStatement {

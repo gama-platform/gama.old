@@ -28,28 +28,6 @@ public class DescriptionValidator {
 	 * Verification done after the facets have been compiled
 	 */
 
-	public static void verifyFacetsType(final IDescription desc) {
-		SymbolProto smd = desc.getMeta();
-		ModelDescription md = desc.getModelDescription();
-		TypesManager tm = md.getTypesManager();
-		for ( Map.Entry<String, IExpressionDescription> entry : desc.getFacets().entrySet() ) {
-			if ( entry == null ) {
-				continue;
-			}
-			String facetName = entry.getKey();
-			IExpressionDescription ed = entry.getValue();
-			if ( ed == null ) {
-				continue;
-			}
-			IExpression expr = ed.getExpression();
-			if ( expr == null ) {
-				continue;
-			}
-			verifyFacetType(desc, facetName, expr, smd, md, tm);
-
-		}
-	}
-
 	public static void verifyFacetType(final IDescription desc, final String facet,
 		final IExpression expr, final SymbolProto smd, final ModelDescription md,
 		final TypesManager tm) {
@@ -118,9 +96,10 @@ public class DescriptionValidator {
 		}
 	}
 
-	public static void assertDescriptionIsInsideTheRightSuperDescription(final IDescription desc) {
+	public static void assertDescriptionIsInsideTheRightSuperDescription(final SymbolProto meta,
+		final IDescription desc) {
 		IDescription sd = desc.getSuperDescription();
-		if ( !desc.getMeta().verifyContext(sd) ) {
+		if ( !meta.verifyContext(sd) ) {
 			desc.flagError(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(),
 				IGamlIssue.WRONG_CONTEXT, desc.getName());
 		}
@@ -128,14 +107,15 @@ public class DescriptionValidator {
 
 	public static void assertNameIsUniqueInSuperDescription(final IDescription desc) {
 		IDescription sd = desc.getSuperDescription();
+		String the_name = desc.getFacets().getLabel(NAME);
 		if ( sd == null ) { return; }
 		for ( IDescription child : sd.getChildren() ) {
 			if ( child.getMeta() == desc.getMeta() && child != desc ) {
-				String name = child.getName();
+				String name = child.getFacets().getLabel(NAME);
 				if ( name == null ) {
 					continue;
 				}
-				if ( name.equals(desc.getName()) ) {
+				if ( name.equals(the_name) ) {
 					String error =
 						"The " + desc.getKeyword() + " '" + desc.getName() +
 							"' is defined twice. Only one definition is allowed.";
@@ -150,14 +130,15 @@ public class DescriptionValidator {
 
 	public static void assertKeywordIsUniqueInSuperDescription(final IDescription desc) {
 		IDescription sd = desc.getSuperDescription();
+		String keyword = desc.getKeyword();
 		if ( sd == null ) { return; }
 		for ( IDescription child : sd.getChildren() ) {
-			if ( child.getKeyword().equals(desc.getKeyword()) && child != desc ) {
+			if ( child.getKeyword().equals(keyword) && child != desc ) {
 				String error =
-					"The statement " + desc.getKeyword() +
-						" is defined twice. Only one definition is allowed.";
-				child.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());
-				desc.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, desc.getKeyword());
+					keyword + " is defined twice. Only one definition is allowed directly in " +
+						sd.getKeyword();
+				child.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, keyword);
+				desc.flagError(error, IGamlIssue.DUPLICATE_KEYWORD, null, keyword);
 
 			}
 		}

@@ -5,6 +5,7 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.Contents;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.GamlVarRef;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getExpr <em>Expr</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getOf <em>Of</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.GamlVarRefImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
@@ -64,6 +66,16 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
    * @ordered
    */
   protected Expression expr;
+
+  /**
+   * The cached value of the '{@link #getOf() <em>Of</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOf()
+   * @generated
+   * @ordered
+   */
+  protected Contents of;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -182,6 +194,54 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
    * <!-- end-user-doc -->
    * @generated
    */
+  public Contents getOf()
+  {
+    return of;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetOf(Contents newOf, NotificationChain msgs)
+  {
+    Contents oldOf = of;
+    of = newOf;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_VAR_REF__OF, oldOf, newOf);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOf(Contents newOf)
+  {
+    if (newOf != of)
+    {
+      NotificationChain msgs = null;
+      if (of != null)
+        msgs = ((InternalEObject)of).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.GAML_VAR_REF__OF, null, msgs);
+      if (newOf != null)
+        msgs = ((InternalEObject)newOf).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.GAML_VAR_REF__OF, null, msgs);
+      msgs = basicSetOf(newOf, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.GAML_VAR_REF__OF, newOf, newOf));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getName()
   {
     return name;
@@ -212,6 +272,8 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
     {
       case GamlPackage.GAML_VAR_REF__EXPR:
         return basicSetExpr(null, msgs);
+      case GamlPackage.GAML_VAR_REF__OF:
+        return basicSetOf(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -230,6 +292,8 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
         return getKey();
       case GamlPackage.GAML_VAR_REF__EXPR:
         return getExpr();
+      case GamlPackage.GAML_VAR_REF__OF:
+        return getOf();
       case GamlPackage.GAML_VAR_REF__NAME:
         return getName();
     }
@@ -251,6 +315,9 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
         return;
       case GamlPackage.GAML_VAR_REF__EXPR:
         setExpr((Expression)newValue);
+        return;
+      case GamlPackage.GAML_VAR_REF__OF:
+        setOf((Contents)newValue);
         return;
       case GamlPackage.GAML_VAR_REF__NAME:
         setName((String)newValue);
@@ -275,6 +342,9 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
       case GamlPackage.GAML_VAR_REF__EXPR:
         setExpr((Expression)null);
         return;
+      case GamlPackage.GAML_VAR_REF__OF:
+        setOf((Contents)null);
+        return;
       case GamlPackage.GAML_VAR_REF__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -296,6 +366,8 @@ public class GamlVarRefImpl extends MinimalEObjectImpl.Container implements Gaml
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
       case GamlPackage.GAML_VAR_REF__EXPR:
         return expr != null;
+      case GamlPackage.GAML_VAR_REF__OF:
+        return of != null;
       case GamlPackage.GAML_VAR_REF__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }

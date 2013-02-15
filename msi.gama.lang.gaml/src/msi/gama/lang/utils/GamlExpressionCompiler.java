@@ -234,14 +234,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		final GamaList list = new GamaList();
 		for ( int i = 0, n = words.size(); i < n; i++ ) {
 			Expression e = words.get(i);
-			if ( !(e instanceof PairExpr) && !(e instanceof Parameter) ) {
+			if ( !(e instanceof Pair) && !(e instanceof ArgumentPair) && !(e instanceof Parameter) ) {
 				context.flagError(
 					"Arguments must be provided as [a1::v1, a2::v2] or (a1:v1, a2:v2) ; ",
 					IGamlIssue.UNKNOWN_ARGUMENT, e, action.getArgNames().toArray(new String[] {}));
 				return null;
 			}
 			String arg = null;
-			if ( e instanceof ArgPairExpr ) {
+			if ( e instanceof ArgumentPair ) {
 				arg = EGaml.getKeyOf(e);
 			} else {
 				arg = EGaml.getKeyOf(e.getLeft());
@@ -299,14 +299,15 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				.getParams());
 		Map<String, IExpressionDescription> argMap = new HashMap();
 		for ( Expression exp : parameters ) {
-			if ( !(exp instanceof PairExpr) && !(exp instanceof Parameter) ) {
+			if ( !(exp instanceof Pair) && !(exp instanceof ArgumentPair) &&
+				!(exp instanceof Parameter) ) {
 				command.flagError(
 					"Arguments must be provided as [a1::v1, a2::v2] or (a1:v1, a2:v2) ; ", WITH);
 				return argMap;
 			}
 
 			String arg = null;
-			if ( exp instanceof ArgPairExpr ) {
+			if ( exp instanceof ArgumentPair ) {
 				arg = EGaml.getKeyOf(exp);
 			} else {
 				arg = EGaml.getKeyOf(exp.getLeft());
@@ -322,16 +323,18 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	 * @see msi.gaml.expressions.IExpressionParser#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
 	 */
 	@Override
-	public List<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+	public Set<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+		if ( s instanceof StringListExpressionDescription ) { return ((StringListExpressionDescription) s)
+			.getStrings(); }
 		EObject o = getEObjectOf(s);
-		if ( o == null ) { return Collections.EMPTY_LIST; }
+		if ( o == null ) { return Collections.EMPTY_SET; }
 		if ( !(o instanceof Array) ) {
 			if ( o instanceof VariableRef ) {
 				String skillName = EGaml.getKeyOf(o);
 				context.flagWarning(
 					"Skills should be provided as a list of identifiers, for instance [" +
 						skillName + "]", IGamlIssue.AS_ARRAY, o, skillName);
-				return Arrays.asList(skillName);
+				return new HashSet(Arrays.asList(skillName));
 			}
 			if ( o instanceof Expression ) {
 				context.flagError("Impossible to recognize valid skills in " + EGaml.toString(o),
@@ -340,9 +343,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				context.flagError("Skills should be provided as a list of identifiers.",
 					IGamlIssue.UNKNOWN_SKILL, o);
 			}
-			return Collections.EMPTY_LIST;
+			return Collections.EMPTY_SET;
 		}
-		List<String> result = new ArrayList();
+		Set<String> result = new HashSet();
 		Array array = (Array) o;
 		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
 			String name = EGaml.getKeyOf(expr);
@@ -466,7 +469,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		@Override
-		public IExpression caseTernExp(final TernExp object) {
+		public IExpression caseIf(final If object) {
 
 			IExpression ifFalse = compile(object.getIfFalse());
 			IExpression alt =
@@ -475,35 +478,34 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		@Override
-		public IExpression caseArgPairExpr(final ArgPairExpr object) {
-			return binary(object.getOp(), caseVar(EGaml.getKeyOf(object), object),
-				object.getRight());
+		public IExpression caseArgumentPair(final ArgumentPair object) {
+			return binary("::", caseVar(EGaml.getKeyOf(object), object), object.getRight());
 		}
 
 		@Override
-		public IExpression casePairExpr(final PairExpr object) {
+		public IExpression casePair(final Pair object) {
 			return binary(object.getOp(), object.getLeft(), object.getRight());
 		}
 
 		@Override
-		public IExpression caseGamlBinaryExpr(final GamlBinaryExpr object) {
+		public IExpression caseBinary(final Binary object) {
 			return binary(object.getOp(), object.getLeft(), object.getRight());
 		}
 
 		@Override
-		public IExpression caseGamlUnitExpr(final GamlUnitExpr object) {
+		public IExpression caseUnit(final Unit object) {
 			// We simply return a multiplication, since the right member (the "unit") will be
 			// translated into its float value
 			return binary("*", object.getLeft(), object.getRight());
 		}
 
 		@Override
-		public IExpression caseGamlUnaryExpr(final GamlUnaryExpr object) {
+		public IExpression caseUnary(final Unary object) {
 			return unary(object.getOp(), object.getRight());
 		}
 
 		@Override
-		public IExpression caseMemberRef(final MemberRef object) {
+		public IExpression caseDot(final Dot object) {
 			return compileFieldExpr(object.getLeft(), object.getRight());
 		}
 
@@ -528,7 +530,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			boolean allPairs = true;
 			for ( int i = 0, n = list.size(); i < n; i++ ) {
 				Expression eExpr = list.get(i);
-				allPairs = allPairs && eExpr instanceof PairExpr;
+				allPairs = allPairs && eExpr instanceof Pair;
 				IExpression e = compile(eExpr);
 				result.add(e);
 			}
@@ -571,10 +573,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseIntLiteral(final IntLiteral object) {
 			try {
-				Integer val = Integer.parseInt(object.getValue(), 10);
+				Integer val = Integer.parseInt(object.getOp(), 10);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
-				context.flagError("Malformed integer: " + object.getValue(),
+				context.flagError("Malformed integer: " + object.getOp(),
 					IGamlIssue.UNKNOWN_NUMBER, object);
 				return null;
 			}
@@ -583,11 +585,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseDoubleLiteral(final DoubleLiteral object) {
 			try {
-				Number val = nf.parse(object.getValue());
+				Number val = nf.parse(object.getOp());
 				return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
 			} catch (ParseException e) {
-				context.flagError("Malformed float: " + object.getValue(),
-					IGamlIssue.UNKNOWN_NUMBER, object);
+				context.flagError("Malformed float: " + object.getOp(), IGamlIssue.UNKNOWN_NUMBER,
+					object);
 				return null;
 			}
 
@@ -596,10 +598,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseColorLiteral(final ColorLiteral object) {
 			try {
-				Integer val = Integer.parseInt(object.getValue().substring(1), 16);
+				Integer val = Integer.parseInt(object.getOp().substring(1), 16);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
-				context.flagError("Malformed integer: " + object.getValue(),
+				context.flagError("Malformed integer: " + object.getOp(),
 					IGamlIssue.UNKNOWN_NUMBER, object);
 				return null;
 			}
@@ -607,23 +609,22 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression caseStringLiteral(final StringLiteral object) {
-			return factory.createConst(StringUtils.unescapeJava(object.getValue()),
+			return factory.createConst(StringUtils.unescapeJava(object.getOp()),
 				Types.get(IType.STRING));
 		}
 
 		@Override
 		public IExpression caseBooleanLiteral(final BooleanLiteral object) {
-			return object.getValue().equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
+			return object.getOp().equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
 		}
 
 		@Override
 		public IExpression defaultCase(final EObject object) {
-			if ( object instanceof Expression ) {
-				getContext().flagError("Unrecognized expression " + EGaml.toString(object),
-					IGamlIssue.GENERAL, object);
-			} else {
-				getContext().flagError("Not an expression: " + object, IGamlIssue.GENERAL, object);
-			}
+			// if ( object instanceof Expression ) {
+			// getContext().flagError("Unrecognized expression " + EGaml.toString(object),
+			// IGamlIssue.GENERAL, object);
+			// } else {}
+			getContext().flagError("Not an expression: " + object, IGamlIssue.GENERAL, object);
 			return null;
 		}
 

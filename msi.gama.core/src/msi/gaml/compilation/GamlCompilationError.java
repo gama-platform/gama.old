@@ -20,7 +20,6 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gaml.descriptions.IDescription;
 
 /**
  * The Class GamlException.
@@ -31,7 +30,7 @@ public class GamlCompilationError {
 	protected final String message;
 	protected String code;
 	protected String[] data;
-	protected IDescription desc;
+	// protected IDescription desc;
 	/**
 	 * This element normally contains a reference to the initial statement in GAML
 	 */
@@ -68,11 +67,11 @@ public class GamlCompilationError {
 	 * @param facet
 	 * @param data
 	 */
-	public GamlCompilationError(final IDescription desc, final String string, final String code,
+	public GamlCompilationError(final String string, final String code,
 		final ISyntacticElement sourceInformation, final boolean warning, final Object facet,
 		final String ... data) {
 		this(string);
-		this.desc = desc;
+		// this.desc = desc;
 		isWarning = warning;
 		this.facet = facet;
 		this.code = code;

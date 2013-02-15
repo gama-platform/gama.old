@@ -5,28 +5,28 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.GamlBinaryExpr;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Unit;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Binary Expr</b></em>'.
+ * An implementation of the model object '<em><b>Unit</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class GamlBinaryExprImpl extends ExpressionImpl implements GamlBinaryExpr
+public class UnitImpl extends ExpressionImpl implements Unit
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected GamlBinaryExprImpl()
+  protected UnitImpl()
   {
     super();
   }
@@ -39,7 +39,7 @@ public class GamlBinaryExprImpl extends ExpressionImpl implements GamlBinaryExpr
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.GAML_BINARY_EXPR;
+    return GamlPackage.Literals.UNIT;
   }
 
-} //GamlBinaryExprImpl
+} //UnitImpl

@@ -5,28 +5,28 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.GamlUnitExpr;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Unit Expr</b></em>'.
+ * An implementation of the model object '<em><b>Argument Pair</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class GamlUnitExprImpl extends ExpressionImpl implements GamlUnitExpr
+public class ArgumentPairImpl extends ExpressionImpl implements ArgumentPair
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected GamlUnitExprImpl()
+  protected ArgumentPairImpl()
   {
     super();
   }
@@ -39,7 +39,7 @@ public class GamlUnitExprImpl extends ExpressionImpl implements GamlUnitExpr
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.GAML_UNIT_EXPR;
+    return GamlPackage.Literals.ARGUMENT_PAIR;
   }
 
-} //GamlUnitExprImpl
+} //ArgumentPairImpl

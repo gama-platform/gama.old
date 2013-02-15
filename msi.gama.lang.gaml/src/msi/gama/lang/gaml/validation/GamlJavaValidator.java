@@ -18,7 +18,6 @@
  */
 package msi.gama.lang.gaml.validation;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
@@ -32,17 +31,17 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	// AD 22/1/13 : set to false to avoid lags in compilation.
 	static boolean FORCE_VALIDATION = false;
- 
+
 	@Check(CheckType.FAST)
 	public void validate(final Model model) {
 		try {
-			GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
+			// GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
 			ModelDescription result = null;
-			if ( r.getErrors().isEmpty() || FORCE_VALIDATION ) {
+			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
 				result = r.doValidate();
 			} else {
-				GuiUtils.debug("Syntactic errors detected. No validation");
+				// GuiUtils.debug("Syntactic errors detected. No validation");
 			}
 			boolean hasError = result == null || !result.getErrors().isEmpty();
 			if ( result != null ) {
@@ -82,7 +81,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public void add(final GamlCompilationError e) {
 		EObject object = (EObject) e.getStatement();
 		if ( object == null ) {
-			object = getCurrentObject();
+			try {
+				object = getCurrentObject();
+			} catch (NullPointerException ex) {
+				return;
+			}
 		}
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
@@ -105,7 +108,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	private EObject findImport(final URI uri) {
-		Model m = (Model) getCurrentObject();
+		Model m;
+		try {
+			m = (Model) getCurrentObject();
+		} catch (NullPointerException ex) {
+			return null;
+		}
 		for ( Import imp : m.getImports() ) {
 			URI iu = URI.createURI(imp.getImportURI()).resolve(getCurrentRessource().getURI());
 			if ( uri.equals(iu) ) { return imp; }

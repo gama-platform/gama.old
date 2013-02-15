@@ -19,7 +19,7 @@
 package msi.gama.metamodel.topology;
 
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -333,14 +333,9 @@ public abstract class AbstractTopology implements ITopology {
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		IAgent result = null;
 		if ( !isTorus() ) {
-			// for ( int i = 0; i < steps.length; i++ ) {
 			IShape min_neighbour = spatialIndex.firstAtDistance(source, 0, filter);
 			if ( min_neighbour != null ) {
 				result = min_neighbour.getAgent();
-				// break;
-				// }
-			} else {
-				GuiUtils.debug("fdle");
 			}
 		} else {
 			Geometry g0 = returnToroidalGeom(source.getGeometry());
@@ -357,10 +352,6 @@ public abstract class AbstractTopology implements ITopology {
 					result = ag;
 				}
 			}
-		}
-
-		if ( result == null ) {
-			GuiUtils.debug("");
 		}
 
 		return result;

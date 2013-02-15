@@ -7,7 +7,7 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.TernExp;
+import msi.gama.lang.gaml.gaml.If;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -19,18 +19,18 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Tern Exp</b></em>'.
+ * An implementation of the model object '<em><b>If</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.TernExpImpl#getIfFalse <em>If False</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.IfImpl#getIfFalse <em>If False</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class TernExpImpl extends ExpressionImpl implements TernExp
+public class IfImpl extends ExpressionImpl implements If
 {
   /**
    * The cached value of the '{@link #getIfFalse() <em>If False</em>}' containment reference.
@@ -47,7 +47,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
    * <!-- end-user-doc -->
    * @generated
    */
-  protected TernExpImpl()
+  protected IfImpl()
   {
     super();
   }
@@ -60,7 +60,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.TERN_EXP;
+    return GamlPackage.Literals.IF;
   }
 
   /**
@@ -84,7 +84,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
     ifFalse = newIfFalse;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.TERN_EXP__IF_FALSE, oldIfFalse, newIfFalse);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.IF__IF_FALSE, oldIfFalse, newIfFalse);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -101,14 +101,14 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
     {
       NotificationChain msgs = null;
       if (ifFalse != null)
-        msgs = ((InternalEObject)ifFalse).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TERN_EXP__IF_FALSE, null, msgs);
+        msgs = ((InternalEObject)ifFalse).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.IF__IF_FALSE, null, msgs);
       if (newIfFalse != null)
-        msgs = ((InternalEObject)newIfFalse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.TERN_EXP__IF_FALSE, null, msgs);
+        msgs = ((InternalEObject)newIfFalse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.IF__IF_FALSE, null, msgs);
       msgs = basicSetIfFalse(newIfFalse, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.TERN_EXP__IF_FALSE, newIfFalse, newIfFalse));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.IF__IF_FALSE, newIfFalse, newIfFalse));
   }
 
   /**
@@ -121,7 +121,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   {
     switch (featureID)
     {
-      case GamlPackage.TERN_EXP__IF_FALSE:
+      case GamlPackage.IF__IF_FALSE:
         return basicSetIfFalse(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -137,7 +137,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   {
     switch (featureID)
     {
-      case GamlPackage.TERN_EXP__IF_FALSE:
+      case GamlPackage.IF__IF_FALSE:
         return getIfFalse();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -153,7 +153,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   {
     switch (featureID)
     {
-      case GamlPackage.TERN_EXP__IF_FALSE:
+      case GamlPackage.IF__IF_FALSE:
         setIfFalse((Expression)newValue);
         return;
     }
@@ -170,7 +170,7 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   {
     switch (featureID)
     {
-      case GamlPackage.TERN_EXP__IF_FALSE:
+      case GamlPackage.IF__IF_FALSE:
         setIfFalse((Expression)null);
         return;
     }
@@ -187,10 +187,10 @@ public class TernExpImpl extends ExpressionImpl implements TernExp
   {
     switch (featureID)
     {
-      case GamlPackage.TERN_EXP__IF_FALSE:
+      case GamlPackage.IF__IF_FALSE:
         return ifFalse != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //TernExpImpl
+} //IfImpl

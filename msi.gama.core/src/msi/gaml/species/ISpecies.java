@@ -120,15 +120,6 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract List<ISpecies> getSelfWithParents();
 
-	/**
-	 * Returns the level of this species.
-	 * "world" species is the top level species having 0 as level.
-	 * level of a species is equal to level of its direct macro-species plus 1.
-	 * 
-	 * @return
-	 */
-	public abstract int getLevel();
-
 	public abstract void addAction(final IStatement ce);
 
 	public abstract void addAspect(final IStatement ce);

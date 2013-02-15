@@ -226,18 +226,20 @@ public class JavaWriter {
 		String kind = segments[0];
 		String clazz = segments[1];
 		String remote = toBoolean(segments[2]);
-		String args = segments[3];
+		String args = toBoolean(segments[3]);
 		String scope = toBoolean(segments[4]);
 		String sequence = toBoolean(segments[5]);
-		String parentSymbols = toArrayOfStrings(segments[6]);
-		String parentKinds = segments[7];
+		String unique = toBoolean(segments[6]);
+		String name_unique = toBoolean(segments[7]);
+		String parentSymbols = toArrayOfStrings(segments[8]);
+		String parentKinds = segments[9];
 		if ( parentKinds.equals("") ) {
 			parentKinds = "AI";
 		} else {
 			parentKinds = "I(" + parentKinds + ")";
 		}
-		int nbFacets = Integer.decode(segments[8]);
-		int pointer = 9;
+		int nbFacets = Integer.decode(segments[10]);
+		int pointer = 11;
 		String facets;
 		if ( nbFacets == 0 ) {
 			facets = "null";
@@ -269,9 +271,10 @@ public class JavaWriter {
 				clazz, "(d);}}");
 		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",").append(kind)
 			.append(',').append(remote).append(',').append(args).append(',').append(scope)
-			.append(',').append(sequence).append(',').append(parentSymbols).append(",")
-			.append(parentKinds).append(',').append(facets).append(',').append(toJava(omissible))
-			.append(',').append(sc);
+			.append(',').append(sequence).append(',').append(unique).append(',')
+			.append(name_unique).append(',').append(parentSymbols).append(",").append(parentKinds)
+			.append(',').append(facets).append(',').append(toJava(omissible)).append(',')
+			.append(sc);
 		if ( segments.length > pointer ) {
 			for ( int i = pointer; i < segments.length; i++ ) {
 				sb.append(',').append(toJava(segments[i]));

@@ -19,16 +19,17 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.PRIMITIVE;
-import static msi.gaml.factories.DescriptionValidator.verifyFacetsType;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
+import msi.gaml.types.TypesManager;
 
 /**
  * Written by Alexis Drogoul Modified on 11 mai 2010
@@ -50,10 +51,6 @@ public class SymbolFactory {
 		return kindsHandled;
 	}
 
-	protected String getKeyword(final ISyntacticElement source) {
-		return source.getKeyword();
-	}
-
 	/**
 	 * Creates a semantic description based on a source element, a super-description, and a --
 	 * possibly null -- list of children. In this method, the children of the source element are not
@@ -61,18 +58,26 @@ public class SymbolFactory {
 	 */
 	final IDescription create(final ISyntacticElement source, final IDescription superDesc,
 		final IChildrenProvider cp) {
-		String keyword = getKeyword(source);
-		SymbolProto md = DescriptionFactory.getProto(superDesc, source, keyword);
+		SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
-		/* if (cp == null || cp.getChildren().isEmpty()) */
-		return md.getFactory().createDescriptionInternal(keyword, source, superDesc, cp, md);
+		return md.getFactory().createDescriptionInternal(source, superDesc, cp, md);
 	}
 
-	private final IDescription createDescriptionInternal(final String keyword,
-		final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp,
-		final SymbolProto md) {
+	private SymbolProto getProto(final IDescription superDesc, final ISyntacticElement source) {
+		String keyword = source.getKeyword();
+		SymbolProto sp = DescriptionFactory.getProto(keyword);
+		if ( sp == null ) {
+			superDesc.getErrorCollector().add(
+				new GamlCompilationError("Unknown statement " + keyword, source));
+			return null;
+		}
+		return sp;
+	}
+
+	private final IDescription createDescriptionInternal(final ISyntacticElement source,
+		final IDescription superDesc, final IChildrenProvider cp, final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
-		IDescription desc = buildDescription(source, keyword, cp, superDesc, md);
+		IDescription desc = buildDescription(source, cp, superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
@@ -83,50 +88,50 @@ public class SymbolFactory {
 	 */
 	final IDescription create(final ISyntacticElement source, final IDescription superDesc) {
 		if ( source == null ) { return null; }
-		String keyword = getKeyword(source);
-		SymbolProto md = DescriptionFactory.getProto(superDesc, source, keyword);
+		SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
-		return md.getFactory().createDescriptionRecursivelyInternal(keyword, source, superDesc, md);
+		return md.getFactory().createDescriptionRecursivelyInternal(source, superDesc, md);
 	}
 
-	private final IDescription createDescriptionRecursivelyInternal(final String keyword,
-		final ISyntacticElement source, final IDescription superDesc, final SymbolProto md) {
+	private final IDescription createDescriptionRecursivelyInternal(final ISyntacticElement source,
+		final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		md.verifyFacets(source, facets, superDesc);
 		List<IDescription> children = new ArrayList();
 		for ( ISyntacticElement e : source.getChildren() ) {
 			children.add(create(e, superDesc));
 		}
-		IDescription desc =
-			buildDescription(source, keyword, new ChildrenProvider(children), superDesc, md);
+		IDescription desc = buildDescription(source, new ChildrenProvider(children), superDesc, md);
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
 
-	protected IDescription buildDescription(final ISyntacticElement source, final String keyword,
+	protected IDescription buildDescription(final ISyntacticElement source,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
-		return new SymbolDescription(keyword, superDesc, cp, source/* , md */);
+		return new SymbolDescription(source.getKeyword(), superDesc, cp, source);
 	}
 
 	final ISymbol compile(final IDescription desc) {
-		SymbolFactory f = DescriptionFactory.getFactory(desc.getKeyword());
-		return f.privateCompile(desc);
+		SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
+		return sp.getFactory().privateCompile(desc);
 	}
 
 	final void validate(final IDescription desc) {
-		SymbolFactory f = DescriptionFactory.getFactory(desc.getKeyword());
-		if ( f == null ) {
+		SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
+		if ( sp == null ) {
 			desc.flagError("Impossible to validate " + desc.getKeyword(),
 				IGamlIssue.UNKNOWN_KEYWORD, null, desc.getKeyword());
 			return;
 		}
-		f.privateValidate(desc);
+		sp.getFactory().privateValidate(desc);
 	}
 
 	protected void privateValidate(final IDescription desc) {
-		SymbolProto md = desc.getMeta();
-		if ( md == null ) { return; }
-		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(desc);
+		SymbolProto smd = desc.getMeta();
+		if ( smd == null ) { return; }
+		ModelDescription md = desc.getModelDescription();
+		TypesManager tm = md.getTypesManager();
+		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(smd, desc);
 		Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 
@@ -134,11 +139,21 @@ public class SymbolFactory {
 			if ( f == null ) {
 				continue;
 			}
-			compileFacet(f.getKey(), desc);
+			String facetName = f.getKey();
+			IExpressionDescription ed = f.getValue();
+			if ( ed == null ) {
+				continue;
+			}
+			compileFacet(facetName, desc);
+			IExpression expr = ed.getExpression();
+			if ( expr == null ) {
+				continue;
+			}
+			DescriptionValidator.verifyFacetType(desc, facetName, expr, smd, md, tm);
 		}
-		verifyFacetsType(desc);
-		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
-			if ( md.isRemoteContext() ) {
+		// verifyFacetsType(desc, rawFacets);
+		if ( smd.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
+			if ( smd.isRemoteContext() ) {
 				desc.copyTempsAbove();
 			}
 			privateValidateChildren(desc);

@@ -155,65 +155,51 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
-
 		// If the initial statement is null, we return null
 		if ( stm == null ) { return null; }
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
-		if ( keyword == null ) { return null; }
-		ISyntacticElement elt = null;
+		if ( keyword == null ) {
+			return null;
+		} else {
+			keyword = convertKeyword(keyword, upper);
+		}
+		final ISyntacticElement elt = new SyntacticStatement(keyword, stm);;
 		Expression expr = EGaml.getExprOf(stm);
 		/**
 		 * Some syntactic rewritings to remove ambiguities inherent to the grammar of GAML and
 		 * translate the new compact syntax into the legacy facet-based one
 		 */
-		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
-			keyword = SAVE_BATCH;
-		} else if ( upper.equals(OUTPUT) && keyword.equals(FILE) ) {
-			keyword = OUTPUT_FILE;
-		} else if ( upper.equals(DISPLAY) || upper.equals(POPULATION) ) {
-			if ( keyword.equals(SPECIES) ) {
-				keyword = POPULATION;
-			} else if ( keyword.equals(GRID) ) {
-				keyword = GRID_POPULATION;
-			}
-		} else if ( keyword.equals(":=") || keyword.equals("<-") ) {
+
+		if ( keyword.equals("<-") ) {
 			// Translation of "var := value" or "var <- value" to "set var value: value"
-			elt = new SyntacticStatement(SET, stm);
+			elt.setKeyword(SET);
 			IExpressionDescription value = convExpr(EGaml.getValueOf(stm));
 			addFacet(stm, elt, VALUE, value);
 			keyword = SET;
-		} else if ( keyword.equals("<<") || keyword.equals("++") ) {
+		} else if ( keyword.equals("<<") || keyword.equals("+=") || keyword.equals("++") ) {
 			// Translation of "container << item" or "container ++ item" to
 			// "add item: item to: container"
-			elt = new SyntacticStatement(ADD, stm);
+			elt.setKeyword(ADD);
 			addFacet(stm, elt, TO, convExpr(expr));
 			addFacet(stm, elt, ITEM, convExpr(EGaml.getValueOf(stm)));
 			keyword = ADD;
-		} else if ( keyword.equals(">>") || keyword.equals("--") ) {
+		} else if ( keyword.equals("-=") || keyword.equals("<<") || keyword.equals("--") ) {
 			// Translation of "container >> item" or "container -- item" to
 			// "remove item: item from: container"
-			elt = new SyntacticStatement(REMOVE, stm);
+			elt.setKeyword(REMOVE);
 			addFacet(stm, elt, FROM, convExpr(expr));
 			addFacet(stm, elt, ITEM, convExpr(EGaml.getValueOf(stm)));
 			keyword = REMOVE;
-		}
-		// Translation of equations "diff(x, t) = ax + b" to "= left: diff(x, t) right: ax+b"
-		if ( keyword.equals(EQUATION_OP) ) {
-			if ( elt == null ) {
-				elt = new SyntacticStatement(EQUATION_OP, stm);
-			}
+		} else if ( keyword.equals(EQUATION_OP) ) {
+			// Translation of equations "diff(x, t) = ax + b" to "= left: diff(x, t) right: ax+b"
 			addFacet(stm, elt, EQUATION_LEFT, convExpr(EGaml.getFunctionOf(stm)));
 			addFacet(stm, elt, EQUATION_RIGHT, convExpr(expr));
 		}
 		// Translation of "container[index] <- value" to
 		// "put item: value in: container at: index"
 		if ( keyword.equals(SET) && expr instanceof Access ) {
-			if ( elt == null ) {
-				elt = new SyntacticStatement(PUT, stm);
-			} else {
-				elt.setKeyword(PUT);
-			}
+			elt.setKeyword(PUT);
 			addFacet(stm, elt, ITEM, elt.getFacets().remove(VALUE));
 			addFacet(stm, elt, IN, convExpr(expr.getLeft()));
 			List<Expression> args = EGaml.getExprsOf(((Access) expr).getArgs());
@@ -238,22 +224,19 @@ public class GamlResource extends LazyLinkingResource {
 			}
 			keyword = PUT;
 		}
-		// If the syntactic element has still not been created after all these checks
-		if ( elt == null ) {
-			elt = new SyntacticStatement(keyword, stm);
-		}
+
 		// If we define a variable with this statement
-		if ( !SymbolProto.nonVariableStatements.contains(keyword) ) {
+		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
 			if ( !TOP_LEVEL_STATEMENTS.contains(upper) ) {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
-				elt = new SyntacticStatement(LET, stm);
+				elt.setKeyword(LET);
 				addFacet(stm, elt, TYPE, convExpr(EGaml.createTerminal(keyword)));
 				keyword = LET;
 			} else if ( stm.getBlock() != null && EGaml.getFunctionOf(stm) == null ) {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
 				// "action ID1 type: type1 { arg ID2 type: type2; arg ID3 type: type3; ...}"
-				elt = new SyntacticStatement(ACTION, stm);
+				elt.setKeyword(ACTION);
 				addFacet(stm, elt, TYPE, convExpr(EGaml.createTerminal(keyword)));
 				keyword = ACTION;
 			}
@@ -273,21 +256,7 @@ public class GamlResource extends LazyLinkingResource {
 		}
 
 		// We apply some conversions to the facets expressed in the statement
-		for ( Facet f : EGaml.getFacetsOf(stm) ) {
-			String fname = EGaml.getKeyOf(f);
-			// We change the "<-" and "->" symbols into full names
-			if ( fname.equals("<-") ) {
-				fname = keyword.equals(LET) || keyword.equals(SET) ? VALUE : INIT;
-			} else if ( fname.equals("->") ) {
-				fname = FUNCTION;
-			}
-			// We compute (and convert) the expression attached to the facet
-			IExpressionDescription fexpr = convExpr(f.getExpr());
-			if ( fexpr == null ) {
-				fexpr = convExpr(f);
-			}
-			addFacet(stm, elt, fname, fexpr);
-		}
+		convertFacets(stm, keyword, elt);
 
 		// If the statement is "if", we convert its potential "else" part and put it as a child of
 		// the syntactic element (as GAML expects it)
@@ -297,44 +266,11 @@ public class GamlResource extends LazyLinkingResource {
 		// Conversion of "action ID (type1 ID1 <- V1, type2 ID2)" to
 		// "action ID {arg ID1 type: type1 default: V1; arg ID2 type: type2}"
 		if ( keyword.equals(ACTION) ) {
-			ActionArguments args = EGaml.getArgsOf(stm);
-			if ( args != null ) {
-				for ( ArgumentDefinition def : args.getArgs() ) {
-					ISyntacticElement arg = new SyntacticStatement(ARG, def);
-					addFacet(def, arg, NAME, convExpr(EGaml.createTerminal(def.getName())));
-					addFacet(def, arg, TYPE, convExpr(EGaml.createTerminal(def.getType())));
-					if ( def.getOf() != null ) {
-						addFacet(stm, elt, OF,
-							convExpr(EGaml.createTerminal(def.getOf().getType())));
-					}
-					if ( def.getDefault() != null ) {
-						addFacet(def, arg, DEFAULT, convExpr(def.getDefault()));
-					}
-					elt.addChild(arg);
-				}
-			}
+			convertArgs(stm, elt);
 
 		}
 		// We add the dependencies (only for variable declarations)
-		if ( !SymbolProto.nonVariableStatements.contains(keyword) ) {
-			Array s = varDependenciesOf(stm);
-			if ( s != null && !s.getExprs().getExprs().isEmpty() ) {
-				elt.setFacet(DEPENDS_ON, new EcoreBasedExpressionDescription(s));
-			}
-			if ( !keyword.equals(VAR) && !keyword.equals(CONST) ) {
-				String type = elt.getLabel(TYPE);
-				if ( type != null ) {
-					if ( type.equals(keyword) ) {
-						((GamlResource) stm.eResource()).add(new GamlCompilationError(
-							"Duplicated declaration of type", elt, true));
-					} else {
-						((GamlResource) stm.eResource()).add(new GamlCompilationError(
-							"Conflicting declaration of type (" + type + " and " + keyword +
-								"), only the last one will be considered", elt, true));
-					}
-				}
-			}
-		}
+		assignDependencies(stm, keyword, elt);
 
 		// We add the "default" (or omissible) facet to the syntactic element
 		String def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
@@ -387,44 +323,126 @@ public class GamlResource extends LazyLinkingResource {
 		return elt;
 	}
 
-	static final StringBuilder sb = new StringBuilder(30);
+	private String convertKeyword(final String k, final String upper) {
 
-	private final Array varDependenciesOf(final Statement s) {
-		ExpressionList list = EGaml.getFactory().createExpressionList();
+		String keyword = k;
+		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
+			keyword = SAVE_BATCH;
+		} else if ( upper.equals(OUTPUT) && keyword.equals(FILE) ) {
+			keyword = OUTPUT_FILE;
+		} else if ( upper.equals(DISPLAY) || upper.equals(POPULATION) ) {
+			if ( keyword.equals(SPECIES) ) {
+				keyword = POPULATION;
+			} else if ( keyword.equals(GRID) ) {
+				keyword = GRID_POPULATION;
+			}
+		}
+		return keyword;
+	}
+
+	private void assignDependencies(final Statement stm, final String keyword,
+		final ISyntacticElement elt) {
+		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
+			Set<String> s = varDependenciesOf(stm);
+			if ( s != null && !s.isEmpty() ) {
+				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
+			}
+			if ( !keyword.equals(VAR) && !keyword.equals(CONST) ) {
+				String type = elt.getLabel(TYPE);
+				if ( type != null ) {
+					if ( type.equals(keyword) ) {
+						((GamlResource) stm.eResource()).add(new GamlCompilationError(
+							"Duplicated declaration of type", elt, true));
+					} else {
+						((GamlResource) stm.eResource()).add(new GamlCompilationError(
+							"Conflicting declaration of type (" + type + " and " + keyword +
+								"), only the last one will be considered", elt, true));
+					}
+				}
+			}
+		}
+	}
+
+	private void convertFacets(final Statement stm, final String keyword,
+		final ISyntacticElement elt) {
+		for ( Facet f : EGaml.getFacetsOf(stm) ) {
+			String fname = EGaml.getKeyOf(f);
+			// We change the "<-" and "->" symbols into full names
+			if ( fname.equals("<-") ) {
+				fname = keyword.equals(LET) || keyword.equals(SET) ? VALUE : INIT;
+			} else if ( fname.equals("->") ) {
+				fname = FUNCTION;
+			} else if ( fname.equals(TYPE) ) {
+				// We convert type: ss<tt> to type: ss of: tt
+				if ( f.getOf() != null ) {
+					addFacet(stm, elt, OF, convExpr(EGaml.createTerminal(f.getOf().getType())));
+				}
+			}
+			// We compute (and convert) the expression attached to the facet
+			IExpressionDescription fexpr = convExpr(f.getExpr());
+			if ( fexpr == null ) {
+				fexpr = convExpr(f);
+			}
+			addFacet(stm, elt, fname, fexpr);
+		}
+	}
+
+	private void convertArgs(final Statement stm, final ISyntacticElement elt) {
+		ActionArguments args = EGaml.getArgsOf(stm);
+		if ( args != null ) {
+			for ( ArgumentDefinition def : args.getArgs() ) {
+				ISyntacticElement arg = new SyntacticStatement(ARG, def);
+				addFacet(def, arg, NAME, convExpr(EGaml.createTerminal(def.getName())));
+				addFacet(def, arg, TYPE, convExpr(EGaml.createTerminal(def.getType())));
+				if ( def.getOf() != null ) {
+					addFacet(stm, elt, OF, convExpr(EGaml.createTerminal(def.getOf().getType())));
+				}
+				if ( def.getDefault() != null ) {
+					addFacet(def, arg, DEFAULT, convExpr(def.getDefault()));
+				}
+				elt.addChild(arg);
+			}
+		}
+	}
+
+	private final Set<String> varDependenciesOf(final Statement s) {
+		// ExpressionList list = EGaml.getFactory().createExpressionList();
+		Set<String> list = new HashSet();
 		for ( Facet facet : EGaml.getFacetsOf(s) ) {
 			Expression expr = facet.getExpr();
 			if ( expr != null ) {
 				for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
 					EObject obj = tree.next();
 					if ( obj instanceof VariableRef ) {
-						list.getExprs().add(
-							EGaml.createTerminal(EGaml.getKey.caseVariableRef((VariableRef) obj)));
+						list.add(EGaml.getKey.caseVariableRef((VariableRef) obj));
 					}
 				}
 			}
 		}
-		if ( list.getExprs().isEmpty() ) { return null; }
-		Array array = EGaml.getFactory().createArray();
-		array.setExprs(list);
-		return array;
+		if ( list.isEmpty() ) { return null; }
+		// Array array = EGaml.getFactory().createArray();
+		// array.setExprs(list);
+		return list;
 	}
 
-	//
-	// private final String varDependenciesOf(final Statement s) {
-	// sb.setLength(0);
+	// private final Array varDependenciesOf(final Statement s) {
+	// ExpressionList list = EGaml.getFactory().createExpressionList();
 	// for ( Facet facet : EGaml.getFacetsOf(s) ) {
 	// Expression expr = facet.getExpr();
 	// if ( expr != null ) {
 	// for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
 	// EObject obj = tree.next();
 	// if ( obj instanceof VariableRef ) {
-	// sb.append(" ").append(EGaml.getKey.caseVariableRef((VariableRef) obj));
-	// }
-	// // FIXME CONSTRUIRE UNE VRAIE LISTE, PLUTOT.
-	// }
+	// list.getExprs().add(
+	// EGaml.createTerminal(EGaml.getKey.caseVariableRef((VariableRef) obj)));
 	// }
 	// }
-	// return sb.toString();
+	// }
+	// }
+	// if ( list.getExprs().isEmpty() ) { return null; }
+	// Array array = EGaml.getFactory().createArray();
+	// array.setExprs(list);
+	// return array;
 	// }
 
 	private final void convElse(final Statement stm, final ISyntacticElement elt) {

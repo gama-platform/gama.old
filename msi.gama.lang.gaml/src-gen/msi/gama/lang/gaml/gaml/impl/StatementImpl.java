@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.Block;
-import msi.gama.lang.gaml.gaml.Contents;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlPackage;
@@ -41,7 +40,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getElse <em>Else</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getOf <em>Of</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getArgs <em>Args</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getParams <em>Params</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getValue <em>Value</em>}</li>
@@ -91,16 +89,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * @ordered
    */
   protected EList<Facet> facets;
-
-  /**
-   * The cached value of the '{@link #getOf() <em>Of</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getOf()
-   * @generated
-   * @ordered
-   */
-  protected Contents of;
 
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
@@ -316,54 +304,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
-  public Contents getOf()
-  {
-    return of;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetOf(Contents newOf, NotificationChain msgs)
-  {
-    Contents oldOf = of;
-    of = newOf;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__OF, oldOf, newOf);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setOf(Contents newOf)
-  {
-    if (newOf != of)
-    {
-      NotificationChain msgs = null;
-      if (of != null)
-        msgs = ((InternalEObject)of).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__OF, null, msgs);
-      if (newOf != null)
-        msgs = ((InternalEObject)newOf).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__OF, null, msgs);
-      msgs = basicSetOf(newOf, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__OF, newOf, newOf));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public ActionArguments getArgs()
   {
     return args;
@@ -521,8 +461,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return basicSetElse(null, msgs);
       case GamlPackage.STATEMENT__FACETS:
         return ((InternalEList<?>)getFacets()).basicRemove(otherEnd, msgs);
-      case GamlPackage.STATEMENT__OF:
-        return basicSetOf(null, msgs);
       case GamlPackage.STATEMENT__ARGS:
         return basicSetArgs(null, msgs);
       case GamlPackage.STATEMENT__PARAMS:
@@ -551,8 +489,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return getElse();
       case GamlPackage.STATEMENT__FACETS:
         return getFacets();
-      case GamlPackage.STATEMENT__OF:
-        return getOf();
       case GamlPackage.STATEMENT__ARGS:
         return getArgs();
       case GamlPackage.STATEMENT__PARAMS:
@@ -586,9 +522,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         getFacets().addAll((Collection<? extends Facet>)newValue);
-        return;
-      case GamlPackage.STATEMENT__OF:
-        setOf((Contents)newValue);
         return;
       case GamlPackage.STATEMENT__ARGS:
         setArgs((ActionArguments)newValue);
@@ -625,9 +558,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         return;
-      case GamlPackage.STATEMENT__OF:
-        setOf((Contents)null);
-        return;
       case GamlPackage.STATEMENT__ARGS:
         setArgs((ActionArguments)null);
         return;
@@ -659,8 +589,6 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
         return else_ != null;
       case GamlPackage.STATEMENT__FACETS:
         return facets != null && !facets.isEmpty();
-      case GamlPackage.STATEMENT__OF:
-        return of != null;
       case GamlPackage.STATEMENT__ARGS:
         return args != null;
       case GamlPackage.STATEMENT__PARAMS:

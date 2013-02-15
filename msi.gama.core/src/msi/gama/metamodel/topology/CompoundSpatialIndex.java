@@ -141,12 +141,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+		// TODO -- Verify : dist not taken into account here. Normal ?
 		Set<ISpatialIndex> sis = findSpatialIndexes(f);
 		if ( sis.isEmpty() ) { return null; }
 		IList<IShape> shapes = new GamaList();
 		for ( int i = 0; i < steps.length; i++ ) {
 			for ( ISpatialIndex si : sis ) {
-				shapes.add(si.firstAtDistance(source, steps[i], f));
+				IShape first = si.firstAtDistance(source, steps[i], f);
+				if ( first != null ) {
+					shapes.add(first);
+				}
 			}
 			if ( !shapes.isEmpty() ) {
 				break;

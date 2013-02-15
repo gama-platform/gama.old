@@ -22,8 +22,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="facets" upperBound="-1"
         eType="#//Facet" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="of" eType="#//Contents"
-        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" eType="#//ActionArguments"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="params" eType="#//Parameters"
@@ -65,39 +63,40 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PairExpr" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ArgumentPair" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="ExpressionList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="exprs" upperBound="-1"
         eType="#//Expression" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VariableRef" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//GamlVarRef"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GamlVarRef">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="of" eType="#//Contents"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TerminalExpression" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TerminalExpression" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="StringEvaluator" eSuperTypes="#//Model">
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TernExp" eSuperTypes="#//Expression">
+  <eClassifiers xsi:type="ecore:EClass" name="Pair" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="If" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ifFalse" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArgPairExpr" eSuperTypes="#//PairExpr">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arg" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GamlBinaryExpr" eSuperTypes="#//Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="GamlUnitExpr" eSuperTypes="#//Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="GamlUnaryExpr" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Binary" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Unit" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Unary" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Access" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" eType="#//ExpressionList"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MemberRef" eSuperTypes="#//Expression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Dot" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Array" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="exprs" eType="#//ExpressionList"
         containment="true"/>
@@ -114,9 +113,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="builtInFacetKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UnitName" eSuperTypes="#//Expression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="VariableRef" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//GamlVarRef"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="DoubleLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="ColorLiteral" eSuperTypes="#//TerminalExpression"/>

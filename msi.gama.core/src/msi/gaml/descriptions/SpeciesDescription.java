@@ -93,7 +93,6 @@ public class SpeciesDescription extends SymbolDescription {
 			getActions().clear();
 		}
 		if ( hasVariables() ) {
-			// GuiUtils.debug("Variables of " + this + " disposed");
 			getVariables().clear();
 		}
 		skills.clear();
@@ -145,20 +144,6 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 		}
 
-	}
-
-	/**
-	 * Returns the level of this species.
-	 * "world" species is the top level species having 0 as level.
-	 * level of a species is equal to level of its direct macro-species plus 1.
-	 * 
-	 * @return
-	 */
-	public int getLevel() {
-		// "world_species" has ModelDescription as enclosing description.
-		if ( enclosing instanceof ModelDescription ) { return 0; }
-
-		return ((SpeciesDescription) enclosing).getLevel() + 1;
 	}
 
 	public String getControlName() {
@@ -240,13 +225,11 @@ public class SpeciesDescription extends SymbolDescription {
 		String behaviorName = r.getName();
 		StatementDescription existing = getBehaviors().get(behaviorName);
 		if ( existing != null ) {
-			if ( !existing.getKeyword().equals(r.getKeyword()) ) {
-				r.flagWarning(
-					r.getKeyword() + " " + behaviorName + " replaces the " + existing.getKeyword() +
-						" declared in the parent species.", IGamlIssue.SHADOWS_NAME, IKeyword.NAME,
-					behaviorName);
+			if ( existing.getKeyword().equals(r.getKeyword()) ) {
+				duplicateError(r, existing);
+				children.remove(existing);
 			}
-			children.remove(existing);
+
 		}
 		getBehaviors().put(behaviorName, r);
 	}
@@ -255,13 +238,21 @@ public class SpeciesDescription extends SymbolDescription {
 		return getBehaviors().containsKey(a);
 	}
 
+	void duplicateError(final IDescription one, final IDescription two) {
+		String name = one.getFacets().getLabel(IKeyword.NAME);
+		String key = one.getKeyword();
+		String error = key + " " + name + " is declared twice. Only the last will be kept.";
+		one.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, IKeyword.NAME, name);
+		two.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, IKeyword.NAME, name);
+	}
+
 	private void addAction(final StatementDescription ce) {
 		String actionName = ce.getName();
 		StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			String previous = existing.getKeyword();
 			if ( previous.equals(IKeyword.PRIMITIVE) && ce.getKeyword().equals(IKeyword.ACTION) ) {
-				ce.flagError("action name already declared as a primitive : " + actionName,
+				ce.flagError("Action " + actionName + " replaces a primitive of the same name.",
 					IGamlIssue.GENERAL);
 			} else if ( !ce.getArgNames().containsAll(existing.getArgNames()) ) {
 				String error =
@@ -269,6 +260,7 @@ public class SpeciesDescription extends SymbolDescription {
 				ce.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 				existing.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 			} else {
+				duplicateError(ce, existing);
 				children.remove(existing);
 			}
 		}
@@ -288,8 +280,7 @@ public class SpeciesDescription extends SymbolDescription {
 			ce.getFacets().putAsLabel(IKeyword.NAME, aspectName);
 		}
 		if ( !aspectName.equals(IKeyword.DEFAULT) && hasAspect(aspectName) ) {
-			ce.flagError("aspect name already declared : " + aspectName, IGamlIssue.DUPLICATE_NAME,
-				IKeyword.NAME, aspectName);
+			duplicateError(ce, getAspect(aspectName));
 		}
 		getAspects().put(aspectName, ce);
 	}
@@ -320,9 +311,11 @@ public class SpeciesDescription extends SymbolDescription {
 		String vName = v.getName();
 
 		if ( hasVar(vName) ) {
-			// GuiUtils.debug("Redefining var " + v.getName() + " for " + getName());
 			IDescription builtIn = getVariables().get(vName);
-			getChildren().remove(builtIn);
+			if ( !builtIn.isBuiltIn() ) {
+				duplicateError(v, builtIn);
+				getChildren().remove(builtIn);
+			}
 			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(IKeyword.TYPE));
 			IType vType = v.getTypeNamed(v.getFacets().getLabel(IKeyword.TYPE));
 			if ( bType != vType ) {
@@ -554,8 +547,6 @@ public class SpeciesDescription extends SymbolDescription {
 								"', which is inherited from " + parent.getName() +
 								", should be redefined.", IGamlIssue.GENERAL);
 						}
-						// GuiUtils.debug("Copying action " + aName + " from " + parent + " to " +
-						// this);
 						addChild(parent.getActions().get(aName).copy());
 					}
 				}
@@ -570,7 +561,7 @@ public class SpeciesDescription extends SymbolDescription {
 			}
 			if ( parent.hasVariables() ) {
 				// We only copy the variables that are not redefined in this species
-				for ( final SymbolDescription v : parent.getVariables().values() ) {
+				for ( final VariableDescription v : parent.getVariables().values() ) {
 					if ( !hasVar(v.getName()) ) {
 						addChild(v.copy());
 					}

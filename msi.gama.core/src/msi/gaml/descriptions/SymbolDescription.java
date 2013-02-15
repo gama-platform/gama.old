@@ -45,16 +45,16 @@ public class SymbolDescription implements IDescription {
 
 	// protected String name;
 	protected String keyword;
-	boolean builtIn = false;
+
+	// boolean builtIn = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source /* , final SymbolProto md */) {
+		final IChildrenProvider cp, final ISyntacticElement source) {
 		this.facets = source.getFacets();
 		facets.putAsLabel(IKeyword.KEYWORD, keyword);
 		this.keyword = keyword;
 		setSource(source);
 		meta = DescriptionFactory.getProto(keyword);
-		// meta = md;
 		setSuperDescription(superDesc);
 		if ( meta.hasSequence() ) {
 			this.children = new ArrayList();
@@ -88,7 +88,7 @@ public class SymbolDescription implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
-		getErrorCollector().add(new GamlCompilationError(this, s, code, e, warning, facet, data));
+		getErrorCollector().add(new GamlCompilationError(s, code, e, warning, facet, data));
 	}
 
 	@Override
@@ -297,7 +297,6 @@ public class SymbolDescription implements IDescription {
 	}
 
 	protected void setSource(final ISyntacticElement source) {
-		builtIn = source.isSynthetic();
 		this.source = source;
 
 	}
@@ -367,7 +366,8 @@ public class SymbolDescription implements IDescription {
 		return enclosing.getErrorCollector();
 	}
 
-	protected boolean isBuiltIn() {
-		return builtIn;
+	@Override
+	public boolean isBuiltIn() {
+		return source.isSynthetic();
 	}
 }

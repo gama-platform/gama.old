@@ -38,9 +38,9 @@ public class ExperimentFactory extends SpeciesFactory {
 	}
 
 	@Override
-	protected ExperimentDescription buildDescription(final ISyntacticElement se, final String kw,
+	protected ExperimentDescription buildDescription(final ISyntacticElement se,
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
-		return new ExperimentDescription(kw, sd, cp, se/* , md */);
+		return new ExperimentDescription(se.getKeyword(), sd, cp, se);
 	}
 
 	@Override

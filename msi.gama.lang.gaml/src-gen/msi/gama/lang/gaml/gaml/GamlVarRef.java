@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.GamlVarRef#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.GamlVarRef#getExpr <em>Expr</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.GamlVarRef#getOf <em>Of</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.GamlVarRef#getName <em>Name</em>}</li>
  * </ul>
  * </p>
@@ -78,6 +79,32 @@ public interface GamlVarRef extends EObject
    * @generated
    */
   void setExpr(Expression value);
+
+  /**
+   * Returns the value of the '<em><b>Of</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Of</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Of</em>' containment reference.
+   * @see #setOf(Contents)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getGamlVarRef_Of()
+   * @model containment="true"
+   * @generated
+   */
+  Contents getOf();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.GamlVarRef#getOf <em>Of</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Of</em>' containment reference.
+   * @see #getOf()
+   * @generated
+   */
+  void setOf(Contents value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.

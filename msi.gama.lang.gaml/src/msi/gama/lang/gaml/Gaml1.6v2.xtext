@@ -39,7 +39,7 @@ BuiltInStatementKey:
  * Statements 
  */
 Statement:
-	=>AssignmentStatement | ( ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement  | Equation);
+	AssignmentStatement | ( ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement  | Equation);
 
 Equation returns Statement: function=Function key="=" expr=Expression ';';
  
@@ -59,7 +59,7 @@ ReturnStatement returns Statement:
 	key='return' expr=Expression? ';';
 
 AssignmentStatement returns Statement:
-	expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--") value=Expression (facets+=Facet)*';';
+	=> (expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--")) value=Expression (facets+=Facet)*';';
 	
 Parameters: 
 	 {Parameters} (params=ParameterList)? 
@@ -80,11 +80,11 @@ ArgumentDefinition:
 Facet:
 	FunctionFacet | ClassicFacet;
 
-DefinitionFacetKey: "name:" | "returns:" | "action:";
+DefinitionFacetKey: "name:" | "returns:" | "action:" | "type:";
 	
 
 ClassicFacet returns Facet:
-	=>((key=ID ':' | key='<-') expr=Expression) | ((key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey));
+	((key=ID ':' | key='<-') expr=Expression) | ((=>key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey)) of=Contents?;
 
 FunctionFacet returns Facet:
 	(key='function:' | key='->') '{' expr=Expression '}';
@@ -100,53 +100,54 @@ FunctionFacet returns Facet:
  * Blocks. An ordered list of statements inside curly brackets
  */
 Block:
-	{Block} 
-	(
-		=>('{'  (function=Expression) '}') | 
-		('{' (statements+=Statement)* '}')
-	);
+	{Block} '{' 
+		( =>((function=Expression) '}')| ((statements+=Statement)* '}')) 
+	;
 
 	/**
  * Expressions
  */
 Expression:
-	TernExp;
+	ArgumentPair | Pair;
+	
+ArgumentPair:
+	=>(op=(ID|BuiltInStatementKey) '::' | op=DefinitionFacetKey ':')? right=If
+;
 
-TernExp returns Expression:
-	OrExp
-	({TernExp.left=current}
+Pair returns Expression:
+	If
+	(
+		(
+		{Pair.left=current}
+		op='::'
+		)
+		right=If
+	)?;
+
+If returns Expression:
+	Or
+	({If.left=current}
 	op='?'
-	right=OrExp
+	right=Or
 	':'
-	ifFalse=OrExp)?;
+	ifFalse=Or)?;
 
-OrExp returns Expression:
-	AndExp
+Or returns Expression:
+	And
 	({Expression.left=current}
 	op='or'
-	right=AndExp)*;
+	right=And)*;
 
-AndExp returns Expression:
-	Relational
+And returns Expression:
+	Comparison
 	({Expression.left=current}
 	op='and'
-	right=Relational)*;
+	right=Comparison)*;
 
-Relational returns Expression:
-	PairExpr
+Comparison returns Expression:
+	Addition
 	(({Expression.left=current}
 	op=('!=' | '=' | '>=' | '<=' | '<' | '>'))
-	right=PairExpr)?;
-
-ArgPairExpr returns PairExpr:
-	{ArgPairExpr} (arg=(ID|BuiltInStatementKey) op='::' | arg=DefinitionFacetKey op=':') right=Addition;
-	// arg = GamlVarRef serait plus intelligent, non ? 
-
-PairExpr returns Expression:
-	=> ArgPairExpr |
-	Addition
-	(({PairExpr.left=current}
-	op='::')
 	right=Addition)?;
 
 Addition returns Expression:
@@ -155,31 +156,31 @@ Addition returns Expression:
 	right=Multiplication)*;
 
 Multiplication returns Expression:
-	GamlBinaryExpr 
-	(({Expression.left=current} op=('*' | '/' | '^')) right=GamlBinaryExpr)*;
+	Binary 
+	(({Expression.left=current} op=('*' | '/' | '^')) right=Binary)*;
 
-GamlBinaryExpr returns Expression:
-	GamlUnitExpr
-	(({GamlBinaryExpr.left=current} op=ID) right=GamlUnitExpr)*;
+Binary returns Expression:
+	Unit
+	(({Binary.left=current} op=ID) right=Unit)*;
 
 // NEW: Units can now be expressed using the "¡" symbol (in addition to "#")
-GamlUnitExpr returns Expression:
-	GamlUnaryExpr
-	(({GamlUnitExpr.left=current} op=('#' | '¡')) right=UnitName)?;
+Unit returns Expression:
+	Unary
+	(({Unit.left=current} op=('¡')) right=UnitName)?;
 
-GamlUnaryExpr returns Expression:
+Unary returns Expression:
 	Access |
-	{GamlUnaryExpr} ({GamlUnaryExpr.left=current} (op='¡' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
-	right=GamlUnaryExpr));
+	{Unary} ((op='¡' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	right=Unary));
 	
 		
 Access returns Expression:
-	MemberRef (({Access.left=current} '[') args=ExpressionList ']')*;
+	Dot (({Access.left=current} '[') args=ExpressionList ']')*;
 
-MemberRef returns Expression:
-	PrimaryExpression ({MemberRef.left=current} (op='.' right=PrimaryExpression))*;
+Dot returns Expression:
+	Primary ({Dot.left=current} (op='.' right=Primary))*;
 
-PrimaryExpression returns Expression:
+Primary returns Expression:
 	TerminalExpression |
 	AbstractRef | 
 	'(' Expression ')' | 
@@ -190,33 +191,30 @@ PrimaryExpression returns Expression:
 AbstractRef returns Expression:
 	VariableRef | Function;
 
-Function returns Expression:
-	{Function} (op=ID '(' args = ExpressionList ')');
+Function returns Expression :
+	{Function} op=ID '(' args = ExpressionList ')';
 
 Parameter returns Expression: {Parameter} ((builtInFacetKey=DefinitionFacetKey) | (left=VariableRef ':')) right=Expression;
-
 
 ExpressionList: exprs+=Expression (',' exprs+=Expression)*;
 ParameterList returns ExpressionList: exprs+=Parameter (',' exprs+=Parameter)*;
 
-/**
- * Cross-references to variables/operators/units
- */
+
 UnitName returns Expression:
 	{UnitName} op=ID;
 
-VariableRef returns Expression:
+VariableRef:
 	{VariableRef} ref=[GamlVarRef];
 	
 GamlVarRef:
 	ClassicFacet | DefinitionStatement ;
 
-	/**
+/**
  * Terminals
  */
 TerminalExpression:
-	{IntLiteral} value=INTEGER | {DoubleLiteral} value=DOUBLE | {ColorLiteral} value=COLOR | {StringLiteral} value=STRING
-	| {BooleanLiteral} value=BOOLEAN;
+	{IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {ColorLiteral} op=COLOR | {StringLiteral} op=STRING
+	| {BooleanLiteral} op=BOOLEAN;
 
 terminal INTEGER:
 	'0' | ('1'..'9' ('0'..'9')*);

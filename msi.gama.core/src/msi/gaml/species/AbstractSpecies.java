@@ -336,11 +336,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public int getLevel() {
-		return this.getDescription().getLevel();
-	}
-
-	@Override
 	public boolean equals(final Object other) {
 		/**
 		 * species name is unique

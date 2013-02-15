@@ -37,7 +37,7 @@ import msi.gaml.types.IType;
  */
 public class SymbolProto {
 
-	public static Set<String> nonVariableStatements = new HashSet();
+	public static Set<String> nonTypeStatements = new HashSet();
 
 	private final ISymbolConstructor constructor;
 	private final int kind;
@@ -45,6 +45,8 @@ public class SymbolProto {
 	private final boolean hasArgs;
 	private final boolean hasScope;
 	private final boolean isRemoteContext;
+	private final boolean isUniqueInContext;
+	private final boolean nameUniqueInContext;
 	private final Set<String> contextKeywords;
 	private final Set<Integer> contextKinds;
 	private final Map<String, FacetProto> possibleFacets;
@@ -59,22 +61,24 @@ public class SymbolProto {
 		IType.NEW_VAR_ID);
 
 	static {
-		nonVariableStatements.add(IKeyword.EXPERIMENT);
-		nonVariableStatements.add(IKeyword.METHOD);
+		nonTypeStatements.add(IKeyword.EXPERIMENT);
+		nonTypeStatements.add(IKeyword.METHOD);
 	}
 
 	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets,
 		final String omissible, final List<String[]> possibleCombinations,
 		final Set<String> contextKeywords, final Set<Integer> contextKinds,
-		final boolean isRemoteContext, final ISymbolConstructor constr) {
+		final boolean isRemoteContext, final boolean isUniqueInContext,
+		final boolean nameUniqueInContext, final ISymbolConstructor constr) {
 		factory = DescriptionFactory.getFactory(kind);
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
 		this.hasArgs = hasArgs;
 		this.omissibleFacet = omissible;
-		// this.combinations = possibleCombinations;
+		this.isUniqueInContext = isUniqueInContext;
+		this.nameUniqueInContext = nameUniqueInContext;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
@@ -119,6 +123,14 @@ public class SymbolProto {
 
 	public boolean hasScope() {
 		return hasScope;
+	}
+
+	public boolean isUnique() {
+		return isUniqueInContext;
+	}
+
+	public boolean nameIsUnique() {
+		return nameUniqueInContext;
 	}
 
 	public Map<String, FacetProto> getPossibleFacets() {
