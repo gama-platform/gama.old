@@ -52,6 +52,7 @@ Visit http://code.google.com/p/gama-platform/
       </win>
    </launcher>
 
+
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
@@ -81,7 +82,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.core"/>
       <plugin id="msi.gama.ext"/>
       <plugin id="msi.gama.headless"/>
-      <plugin id="msi.gama.hpc"/>
       <plugin id="msi.gama.jogl"/>
       <plugin id="msi.gama.lang.gaml"/>
       <plugin id="msi.gama.lang.gaml.ui"/>
