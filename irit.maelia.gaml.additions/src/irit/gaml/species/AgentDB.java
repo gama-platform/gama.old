@@ -41,7 +41,10 @@ import msi.gaml.types.IType;
  *      - getParameter: return connection Parameter;
  *      Delete method: selectDB, executeUpdateDB
  *   25-Sep-2012: Add methods: timeStamp, helloWorld    
- * Last Modified: 25-Sep-2012
+ *   18-Feb-2013:
+ *      Add public int insert(final IScope scope) throws GamaRuntimeException
+ *        
+ * Last Modified: 18-Feb-2013
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
@@ -281,6 +284,33 @@ public class AgentDB extends GamlAgent {
 //		return null;
 //	}
 		
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do insert with: [into:: table_name, columns:column_list, values:value_list]; 
+	 * @return an integer
+	 */
+	@action(name="insert")
+	@args(names = {"into","columns", "values"})
+	public int insert(final IScope scope) throws GamaRuntimeException
+	{
+		String table_name = (String) scope.getArg("into", IType.STRING);
+		GamaList<Object> cols =(GamaList<Object>) scope.getArg("columns", IType.LIST);
+		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
+		int rec_no=-1;
+		try{
+			  rec_no = new SqlConnection().insertDB(conn,table_name,cols,values);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GamaRuntimeException("AgentDB.insert: " + e.toString());
+		}
+		if ( DEBUG ) {
+			GuiUtils.informConsole("Insert into " + " was run");
+		}
+
+		return rec_no;
+
+	}
 
 
 }
