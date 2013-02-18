@@ -19,6 +19,9 @@
 package msi.gaml.operators;
 
 import java.util.*;
+
+import org.geotools.geometry.jts.GeometryCollector;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -39,6 +42,7 @@ import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
+import com.vividsolutions.jts.noding.snapround.GeometryNoder;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
@@ -769,22 +773,27 @@ public abstract class Spatial {
 			return new GamaSpatialMatrix(g, (int) dim.x, (int) dim.y, false, true);
 		}
 
+		
 		@operator(value = "split_lines", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries resulting after cutting the lines at their intersections.", examples = { "split_lines([line([{0,10}, {20,10}], line([{0,10}, {20,10}]]) --: returns a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])." })
 		public static IList<IShape> split_lines(final IScope scope, final IList geoms)
 			throws GamaRuntimeException {
 			if ( geoms.isEmpty() ) { return new GamaList<IShape>(); }
-			Geometry grandMls = Cast.asGeometry(scope, geoms).getInnerGeometry();
-			Point mlsPt = GeometryUtils.getFactory().createPoint(grandMls.getCoordinate());
-			Geometry nodedLines = grandMls.union(mlsPt);
+			Geometry nodedLineStrings = ((IShape) geoms.get(0)).getInnerGeometry();
+			
+			for (Object obj : geoms) {
+				Geometry g = ((IShape) obj).getInnerGeometry();
+				if (g instanceof LineString)
+					nodedLineStrings =  nodedLineStrings.union(g);
+			}
 			GamaList<IShape> nwGeoms = new GamaList<IShape>();
 
-			for ( int i = 0, n = nodedLines.getNumGeometries(); i < n; i++ ) {
-				Geometry g = nodedLines.getGeometryN(i);
+			for ( int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++ ) {
+				Geometry g = nodedLineStrings.getGeometryN(i);
 				if ( g instanceof LineString ) {
 					nwGeoms.add(new GamaShape(g));
 				}
-			}
+			} 
 			return nwGeoms;
 		}
 
