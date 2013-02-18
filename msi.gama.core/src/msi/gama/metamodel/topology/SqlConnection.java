@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -63,7 +64,12 @@ import msi.gaml.types.IType;
  *   08-Jan-2013:
  *      modify geometry type for postgres data
  *        
- * Last Modified: 08-Jan-2013
+ *   18-Feb-2013:
+ *      Add InsertDB(Connection conn, String table_name, GamaList<Object> cols, GammaList<Object> values)
+ *      Add InsertDB(String table_name, GamaList<Object> cols, GammaList<Object> values)
+ *        
+ *      Modify selectDB(String selectComm)
+ * Last Modified: 18-Feb-2013
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -174,6 +180,128 @@ public class SqlConnection {
 		}
 
 		/*
+		 * Make Insert a reccord into table
+		 * 
+		 * @syntax: do action: connectDB {
+		 * arg vendorName value: vendorName; //MySQL/MSSQL
+		 * }
+		 */
+		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+				throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException{
+			//Connection conn=null;
+			PreparedStatement pstmt = null;
+			//int col_no=cols.length(scope);
+			int col_no=cols.size();
+			int rec_no=0;
+			String insertStr= "INSERT INTO ";
+			String selectStr="SELECT ";
+			String col_names="";
+			String valueStr="";
+			//Get column name
+			for (int i=0; i<col_no;i++){
+				if (i==col_no-1){
+					col_names= col_names+ (String) (cols.get(i));
+					valueStr=valueStr + "?";
+				}else{
+					col_names= col_names+ (String) (cols.get(i))+",";
+					valueStr=valueStr + "?"+",";
+				}
+				if (DEBUG){
+					System.out.println("col"+(String) (cols.get(i)));
+				}
+					
+			}
+			// create INSERT statement string
+			insertStr= insertStr + table_name +"("+col_names+") " +"VALUES("+valueStr+")";
+			// create SELECT statement string
+			selectStr=selectStr + col_names + " FROM " + table_name;
+
+			if (DEBUG){
+				System.out.println("Insert command:"+insertStr);
+				
+				System.out.println("select command:"+selectStr);
+			}
+				
+		
+			try{
+				//get column type;
+//				Statement st = conn.createStatement(); 
+//				ResultSet rs = st.executeQuery(selectStr);
+//				ResultSetMetaData rsmd = rs.getMetaData();
+//				if (DEBUG){
+//					System.out.println("MetaData:"+rsmd.toString());
+//				}
+//				GamaList<Object> col_Names= getColumnName(rsmd);
+//				GamaList<Object> col_Types=getColumnTypeName(rsmd);
+//				
+//				if (DEBUG){
+//					System.out.println("list of column type:" + col_Types);
+//				}
+				
+				//Insert command
+				
+				pstmt=conn.prepareStatement(insertStr);
+				//set parameter value
+				for (int i=0; i<col_no;i++){
+					pstmt.setObject(i+1, values.get(i));
+				}
+				
+				rec_no=pstmt.executeUpdate();
+				if (DEBUG){
+					System.out.println("rec count:" + rec_no);
+				}
+				
+			}catch (SQLException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new SQLException(e.toString());
+				
+			}
+			
+			return rec_no;
+		}
+
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 * @syntax: do action: connectDB {
+		 * arg vendorName value: vendorName; //MySQL/MSSQL
+		 * }
+		 */
+		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+				throws GamaRuntimeException {
+			Connection conn;
+			int rec_no=-1;
+			try{
+				conn=connectDB();
+				rec_no=insertDB(conn,table_name,cols,values);
+				conn.close();
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			}
+			return rec_no;
+		}
+			
+		
+//		private String String(Object object) {
+//			// TODO Auto-generated method stub
+//			return null;
+//		}
+		/*
 		 * Make a connection to BDMS and execute the select statement
 		 * 
 		 * @return GamaList<GamaList<Object>>
@@ -181,38 +309,38 @@ public class SqlConnection {
 		//public GamaList<GamaList<Object>> selectDB(String selectComm) 
 		public GamaList<Object> selectDB(String selectComm) 
 		{
-			ResultSet rs;
 			GamaList<Object> result=new GamaList<Object>();
-			//GamaList<Object> rowList = new GamaList<Object>();
-			GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+
+//			ResultSet rs;
+//			GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 			Connection conn=null;
 			try {
 				conn=connectDB();
-				if (DEBUG){
-					System.out.println("Select Command:"+ selectComm);
-				}
-				Statement st = conn.createStatement(); 
-				rs = st.executeQuery(selectComm);
-				ResultSetMetaData rsmd = rs.getMetaData();
-				if (DEBUG){
-					System.out.println("MetaData:"+rsmd.toString());
-				}
-				//repRequest=resultSet2GamaList(rs);
+
+//				Statement st = conn.createStatement(); 
+//				rs = st.executeQuery(selectComm);
+//				ResultSetMetaData rsmd = rs.getMetaData();
+//				if (DEBUG){
+//					System.out.println("MetaData:"+rsmd.toString());
+//				}
+//				//repRequest=resultSet2GamaList(rs);
+//				
+//				//result.add(rsmd);
+//				result.add(getColumnName(rsmd));
+//				result.add(getColumnTypeName(rsmd));
+//				
+//				repRequest=resultSet2GamaList(rs);
+//				
+//				result.add(repRequest);
+//				
+//				if (DEBUG){
+//					System.out.println("list of column name:" + result.get(0) );
+//					System.out.println("list of column type:" + result.get(1) );
+//					System.out.println("list of data:" + result.get(2) );
+//				}
+//				rs.close();
 				
-				//result.add(rsmd);
-				result.add(getColumnName(rsmd));
-				result.add(getColumnTypeName(rsmd));
-				
-				repRequest=resultSet2GamaList(rs);
-				
-				result.add(repRequest);
-				
-				if (DEBUG){
-					System.out.println("list of column name:" + result.get(0) );
-					System.out.println("list of column type:" + result.get(1) );
-					System.out.println("list of data:" + result.get(2) );
-				}
-				rs.close();
+				result=selectDB(conn,selectComm);
 				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
