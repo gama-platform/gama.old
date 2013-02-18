@@ -294,6 +294,12 @@ public class GamaShape implements IShape {
 			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
 				.intersects(g.getInnerGeometry());
 		}
+		
+		public boolean crosses(final IShape g) {
+			return g.isPoint() ?pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
+				.crosses(g.getInnerGeometry());
+		}
+		
 	}
 
 	@Override
@@ -495,6 +501,10 @@ public class GamaShape implements IShape {
 	@Override
 	public boolean intersects(final IShape g) {
 		return operations().intersects(g);
+	}
+	
+	public boolean crosses(final IShape g) {
+		return operations().crosses(g);
 	}
 
 	private GamaShape.Operations operations() {

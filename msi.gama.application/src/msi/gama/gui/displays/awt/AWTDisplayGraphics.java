@@ -431,6 +431,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
 		Geometry geom = null;
+		if (geometry == null)
+			return null;
 		ITopology topo = scope.getTopology();
 		if ( topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());

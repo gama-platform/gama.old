@@ -18,19 +18,42 @@
  */
 package msi.gama.common.util;
 
-import java.util.*;
-import msi.gama.metamodel.shape.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Graphs;
 import msi.gaml.types.GamaGeometryType;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
-import com.vividsolutions.jts.triangulate.*;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.TopologyException;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
+import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+import com.vividsolutions.jts.triangulate.ConstraintVertex;
+import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
+import com.vividsolutions.jts.triangulate.Segment;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
-import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
  * The class GamaGeometryUtils.
@@ -92,8 +115,10 @@ public class GeometryUtils {
 			Geometry line = getFactory().createLineString(coords);
 			try {
 				line = line.intersection(geom);
-			} catch (TopologyException e) {
-				line = line.intersection(geom.buffer(0.1));
+			} catch (Exception e) {
+				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+				line = GeometryPrecisionReducer.reducePointwise(line, pm).intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
+		
 			}
 			return pointInGeom(line, rand);
 		}
@@ -245,8 +270,9 @@ public class GeometryUtils {
 						Geometry g = null;
 						try {
 							g = square.intersection(geom);
-						} catch (AssertionFailedException e) {
-							g = square.intersection(geom.buffer(0.01));
+						} catch (Exception e) {
+							PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+							g = GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(GeometryPrecisionReducer.reducePointwise(square, pm));
 						}
 						// geoms.add(g);
 						if ( complex ) {

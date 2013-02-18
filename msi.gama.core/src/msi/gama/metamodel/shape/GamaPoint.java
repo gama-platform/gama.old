@@ -243,6 +243,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if ( g.isPoint() ) { return g.getLocation().equals(this); }
 		return g.intersects(this);
 	}
+	
+	@Override
+	public boolean crosses(final IShape g) {
+		if ( g.isPoint() ) { return false; }
+		return g.crosses(this);
+	}
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getAgent()

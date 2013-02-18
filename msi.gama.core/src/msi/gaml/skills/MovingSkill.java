@@ -19,13 +19,20 @@
 package msi.gaml.skills;
 
 import java.util.Map;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ILocated;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -34,15 +41,28 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.*;
+import msi.gama.runtime.ExecutionStatus;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPath;
+import msi.gama.util.IList;
+import msi.gama.util.IPath;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Punctal;
-import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.util.AssertionFailedException;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
 /**
  * MovingSkill : This class is intended to define the minimal set of behaviours required from an
@@ -627,8 +647,11 @@ public class MovingSkill extends GeometricSkill {
 		Geometry frontier = null;
 		try {
 			frontier = buff.intersection(geom);
-		} catch (AssertionFailedException e) {
-			frontier = buff.intersection(geom.buffer(0.0));
+		} catch (Exception e) {
+			//frontier = buff.intersection(geom.buffer(0.0));
+			PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+			frontier = GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(GeometryPrecisionReducer.reducePointwise(buff, pm));
+	
 		}
 
 		Geometry geomsSimp = null;

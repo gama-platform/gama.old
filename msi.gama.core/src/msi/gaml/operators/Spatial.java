@@ -18,32 +18,62 @@
  */
 package msi.gaml.operators;
 
-import java.util.*;
-
-import org.geotools.geometry.jts.GeometryCollector;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.IPriority;
+import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.ExecutionStatus;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.GamaPath;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.IPath;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*;
-import com.vividsolutions.jts.noding.snapround.GeometryNoder;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 /**
@@ -320,10 +350,9 @@ public abstract class Spatial {
 			Geometry geom = null;
 			try {
 				geom = g1.getInnerGeometry().intersection(g2.getInnerGeometry());
-			} catch (TopologyException ex) {
-				geom =
-					g1.getInnerGeometry().buffer(0.0)
-						.intersection(g2.getInnerGeometry().buffer(0.0));
+			} catch (Exception ex) {
+				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+				geom = GeometryPrecisionReducer.reducePointwise(g1.getInnerGeometry(), pm).intersection(GeometryPrecisionReducer.reducePointwise(g2.getInnerGeometry(), pm));
 			}
 			if ( geom.isEmpty() ) { return null; }
 			return new GamaShape(geom);
@@ -344,8 +373,11 @@ public abstract class Spatial {
 			Geometry geom;
 			try {
 				geom = geom1.union(geom2);
-			} catch (TopologyException e) {
-				geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
+			} catch (Exception e) {
+				//geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
+				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+				geom = GeometryPrecisionReducer.reducePointwise(geom1, pm).intersection(GeometryPrecisionReducer.reducePointwise(geom2, pm));
+		
 			}
 			return geom;
 		}
@@ -497,7 +529,7 @@ public abstract class Spatial {
 					coordinates[2] = next;
 					coordinates[3] = location.toCoordinate();
 					LinearRing closeRing = GeometryUtils.getFactory().createLinearRing(coordinates);
-					geoms.add(source.getInnerGeometry().intersection(
+					geoms.add(source.getGeometry().getInnerGeometry().intersection(
 						GeometryUtils.getFactory().createPolygon(closeRing, null)));
 					prec = next;
 				}
@@ -964,7 +996,7 @@ public abstract class Spatial {
 		public static Boolean disjoint_from(final IScope scope, final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return true; }
 			if ( g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return true; }
-			return !g1.getInnerGeometry().intersects(g2.getInnerGeometry());
+			return !g1.intersects(g2);
 		}
 
 		/**
@@ -1063,7 +1095,7 @@ public abstract class Spatial {
 			"<--:", "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean crosses(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
-			return g1.getInnerGeometry().crosses(g2.getInnerGeometry());
+			return g1.crosses(g2);
 		}
 
 		@operator("intersects")
@@ -1071,7 +1103,7 @@ public abstract class Spatial {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean intersects(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
-			return g1.getInnerGeometry().intersects(g2.getInnerGeometry());
+			return g1.intersects(g2);
 		}
 
 		@operator("intersects")
@@ -1087,7 +1119,7 @@ public abstract class Spatial {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean covers(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
-			return g1.getInnerGeometry().covers(g2.getInnerGeometry());
+			return g1.covers(g2);
 		}
 
 		@operator("covered_by")
@@ -1095,7 +1127,7 @@ public abstract class Spatial {
 			"<--:", "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
 		public static Boolean covered_by(final IShape g1, final IShape g2) {
 			if ( g1 == null || g2 == null ) { return false; }
-			return g1.getInnerGeometry().coveredBy(g2.getInnerGeometry());
+			return g2.covers(g1);
 		}
 
 	}

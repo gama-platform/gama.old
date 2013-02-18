@@ -483,6 +483,12 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		IShape gg = getGeometry();
 		return gg == null ? false : gg.intersects(g);
 	}
+	
+	@Override
+	public boolean crosses(final IShape g) {
+		IShape gg = getGeometry();
+		return gg == null ? false : gg.crosses(g);
+	}
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getAgent()

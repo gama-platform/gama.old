@@ -53,6 +53,8 @@ public interface IShape extends ILocated, IValue {
 	public abstract Envelope getEnvelope();
 
 	public abstract boolean covers(IShape g);
+	
+	public abstract boolean crosses(IShape g);
 
 	public abstract double euclidianDistanceTo(IShape g);
 
