@@ -38,7 +38,10 @@ import msi.gaml.types.IType;
 *                add sqlite driver to SQLSKILL
 *   25-Sep-2012: add timeStamp
 *   
-* Last Modified: 25-Sep-2012
+ *   18-Feb-2013:
+ *      Add public int insert(final IScope scope) throws GamaRuntimeException
+ *       
+ * Last Modified: 18-Feb-2013
 */
 
 @skill(name = "SQLSKILL")
@@ -378,4 +381,53 @@ public class SQLSkill extends Skill {
 
 	}
 
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do insert with: [into:: table_name, columns:column_list, values:value_list]; 
+	 * @return an integer
+	 */
+	@action(name="insert")
+	@args(names = {"params","into","columns", "values"})
+	public int insert(final IScope scope) throws GamaRuntimeException
+	{
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		String table_name = (String) scope.getArg("into", IType.STRING);
+		GamaList<Object> cols =(GamaList<Object>) scope.getArg("columns", IType.LIST);
+		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn;
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			System.out.println("database sqlite:"+DBRelativeLocation);
+			//sqlConn=new SqlConnection(dbtype,database);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
+
+		int rec_no=-1;
+		
+		try{
+			//Connection conn=sqlConn.connectDB();  
+			rec_no = sqlConn.insertDB(table_name,cols,values);
+			//conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new GamaRuntimeException("AgentDB.insert: " + e.toString());
+		}
+		if ( DEBUG ) {
+			GuiUtils.informConsole("Insert into " + " was run");
+		}
+
+		return rec_no;
+
+	}
 }
