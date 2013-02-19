@@ -338,10 +338,13 @@ public class GeometryUtils {
 				throw new GamaRuntimeException("Impossible to draw Geometry");
 			}
 			PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
+			PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
 			int nb = tri.getNumGeometries();
 			for ( int i = 0; i < nb; i++ ) {
+				
 				Geometry gg = tri.getGeometryN(i);
-				if ( pg.covers(gg) ) {
+				
+				if (env.covers(gg) && pg.covers(gg) ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}

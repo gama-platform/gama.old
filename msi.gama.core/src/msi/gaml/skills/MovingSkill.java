@@ -381,62 +381,69 @@ public class MovingSkill extends GeometricSkill {
 		Integer index = 0;
 		Integer indexSegment = 1;
 		Integer endIndexSegment = 0;
-
+		GamaPoint falseTarget = null;
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
-		if ( path.isVisitor(agent) ) {
-			index = path.indexOf(agent);
-			indexSegment = path.indexSegmentOf(agent);
+		if (path.getGraph() == null && nb == 1 && edges.get(0).getInnerGeometry().getNumPoints() == 2) {
+			index = 0;
+			indexSegment = 0;
+			endIndexSegment = 0;
+			falseTarget = (GamaPoint)path.getEndVertex();
 		} else {
-			path.acceptVisitor(agent);
-			double distanceS = Double.MAX_VALUE;
-			IShape line = null;
-			for ( int i = 0; i < nb; i++ ) {
-				line = edges.get(i);
-				double distS = line.euclidianDistanceTo(currentLocation);
-				if ( distS < distanceS ) {
-					distanceS = distS;
-					index = i;
+			if ( path.isVisitor(agent) ) {
+				index = path.indexOf(agent);
+				indexSegment = path.indexSegmentOf(agent);
+			} else {
+				path.acceptVisitor(agent);
+				double distanceS = Double.MAX_VALUE;
+				IShape line = null;
+				for ( int i = 0; i < nb; i++ ) {
+					line = edges.get(i);
+					double distS = line.euclidianDistanceTo(currentLocation);
+					if ( distS < distanceS ) {
+						distanceS = distS;
+						index = i;
+					}
+				}
+				line = edges.get(index);
+	
+				currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
+				Point pointGeom = (Point) currentLocation.getInnerGeometry();
+				if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
+					distanceS = Double.MAX_VALUE;
+					Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+					int nbSp = coords.length;
+					Coordinate[] temp = new Coordinate[2];
+					for ( int i = 0; i < nbSp - 1; i++ ) {
+						temp[0] = coords[i];
+						temp[1] = coords[i + 1];
+						LineString segment = GeometryUtils.getFactory().createLineString(temp);
+						double distS = segment.distance(pointGeom);
+						if ( distS < distanceS ) {
+							distanceS = distS;
+							indexSegment = i + 1;
+						}
+					}
 				}
 			}
-			line = edges.get(index);
-
-			currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
-			Point pointGeom = (Point) currentLocation.getInnerGeometry();
-			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
-				distanceS = Double.MAX_VALUE;
-				Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+			IShape lineEnd = edges.get(nb - 1);
+			falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
+			endIndexSegment = 1;
+			Point pointGeom = (Point) falseTarget.getInnerGeometry();
+			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
+				double distanceT = Double.MAX_VALUE;
+				Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
 				int nbSp = coords.length;
 				Coordinate[] temp = new Coordinate[2];
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
 					LineString segment = GeometryUtils.getFactory().createLineString(temp);
-					double distS = segment.distance(pointGeom);
-					if ( distS < distanceS ) {
-						distanceS = distS;
-						indexSegment = i + 1;
+					double distT = segment.distance(pointGeom);
+					if ( distT < distanceT ) {
+						distanceT = distT;
+						endIndexSegment = i + 1;
 					}
-				}
-			}
-		}
-		IShape lineEnd = edges.get(nb - 1);
-		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
-		endIndexSegment = 1;
-		Point pointGeom = (Point) falseTarget.getInnerGeometry();
-		if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
-			double distanceT = Double.MAX_VALUE;
-			Coordinate coords[] = lineEnd.getInnerGeometry().getCoordinates();
-			int nbSp = coords.length;
-			Coordinate[] temp = new Coordinate[2];
-			for ( int i = 0; i < nbSp - 1; i++ ) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				LineString segment = GeometryUtils.getFactory().createLineString(temp);
-				double distT = segment.distance(pointGeom);
-				if ( distT < distanceT ) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
 				}
 			}
 		}
