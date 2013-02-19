@@ -1,36 +1,25 @@
 package ummisco.gaml.extensions.maths.statements;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IVarExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.statements.Arguments;
-import msi.gaml.statements.Facets.Facet;
-import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
-import org.apache.commons.math3.ode.*;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.sampling.StepHandler;
-import org.apache.commons.math3.ode.sampling.StepInterpolator;
-
 import ummisco.gaml.extensions.maths.utils.*;
 
 @facets(value = {
@@ -40,6 +29,10 @@ import ummisco.gaml.extensions.maths.utils.*;
 		// @facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional =
 		// true),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
+@vars({
+	@var(name = "time0", type = IType.FLOAT_STR,  init = "0.0"),
+	@var(name = "time_final", type = IType.FLOAT_STR, init = "1.0")})
+
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 // , with_args = true)
 @inside(kinds =  { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT,ISymbolKind.SPECIES})
@@ -49,7 +42,6 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 
 	Solver solver;
 	StatementDescription equations;
-	private Arguments actualArgs = new Arguments();
 	double time_initial = 0, time_final = 1, cycle_length = 1;
 
 	// Have the same organization as in DrawStatement :
@@ -76,6 +68,17 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 
 	}
 
+	
+
+	@setter("time0")
+	public void setTime_initial(final IAgent agent,final float t0) {
+		time_initial=t0;
+	}
+	@getter("time0")
+	public float getTime0() throws GamaRuntimeException {
+		return (float) time_initial;
+	}
+	
 	@Override
 	public Object privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
@@ -107,8 +110,10 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		if (scope.hasVar("tf")) {
 			time_final = Double.parseDouble("" + scope.getVarValue("tf"));
 		}
-		solver.solve(scope, s, time_initial, time_final, cycle_length);
 
+		s.addExtern(getFacet(IKeyword.EQUATION).literalValue()); 
+		solver.solve(scope, s, time_initial, time_final, cycle_length);
+		s.removeExtern(getFacet(IKeyword.EQUATION).literalValue());
 		return null;
 	}
 

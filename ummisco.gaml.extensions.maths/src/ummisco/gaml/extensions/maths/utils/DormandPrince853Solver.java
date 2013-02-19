@@ -1,24 +1,13 @@
 package ummisco.gaml.extensions.maths.utils;
 
-import java.util.List;
-
-import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
-import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
 import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
 import ummisco.gaml.extensions.maths.utils.Solver;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IVarExpression;
 
 public class DormandPrince853Solver extends Solver {
 	FirstOrderIntegrator integrator;

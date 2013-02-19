@@ -55,7 +55,6 @@ public class Rk4Solver extends Solver {
 		// GuiUtils.informConsole("it work ");
 		if (eq instanceof SystemOfEquationsStatement) {
 			// add all equations externe to have one complete systemofequation
-			eq.addExtern(); 
 			//
 			
 			
@@ -95,7 +94,6 @@ public class Rk4Solver extends Solver {
 			}
 			
 			// remove external equations 
-			eq.removeExtern();
 		}
 
 	}
