@@ -5,11 +5,11 @@
 package msi.gaml.architecture.weighted_tasks;
 
 import java.util.*;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.statements.IStatement;
-import msi.gama.precompiler.GamlAnnotations.skill;
 
 /**
  * The class WeightedTasksArchitecture. A simple architecture of competing tasks, where one can be
@@ -28,6 +28,12 @@ public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	public static final String WT = "weighted_tasks";
 	List<WeightedTaskStatement> tasks = new ArrayList();
+
+	@Override
+	protected void clearBehaviors() {
+		super.clearBehaviors();
+		tasks.clear();
+	}
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {

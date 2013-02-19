@@ -44,9 +44,17 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
+		clearBehaviors();
 		for ( ISymbol c : children ) {
 			addBehavior((IStatement) c);
 		}
+	}
+
+	protected void clearBehaviors() {
+		_inits.clear();
+		_reflexes.clear();
+		_reflexesNumber = 0;
+		_inits_number = 0;
 	}
 
 	public void addBehavior(final IStatement c) {

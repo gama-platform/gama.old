@@ -20,8 +20,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
-import msi.gama.kernel.simulation.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -48,7 +47,7 @@ public abstract class AbstractAgent implements IAgent {
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
 	protected String name;
-	protected ISimulation simulation;
+	// protected ISimulation simulation;
 
 	/**
 	 * If true, this means that the agent will soon be died
@@ -63,8 +62,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	protected final Map<ISpecies, IPopulation> microPopulations = new HashMap();
 
-	public AbstractAgent(final ISimulation sim, final IPopulation p) {
-		simulation = sim;
+	public AbstractAgent(final IPopulation p) {
 		population = p;
 		attributes = new HashMap<String, Object>();
 	}
@@ -93,10 +91,6 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public int compareTo(final IAgent a) {
 		return Integer.valueOf(getIndex()).compareTo(a.getIndex());
-	}
-
-	public AbstractAgent(final ISimulation sim) {
-		this(sim, null);
 	}
 
 	@Override
@@ -171,7 +165,7 @@ public abstract class AbstractAgent implements IAgent {
 			geometry.dispose();
 		}
 		index = -1;
-		simulation = null;
+		// simulation = null;
 
 		releaseLock();
 	}
@@ -195,9 +189,9 @@ public abstract class AbstractAgent implements IAgent {
 	public abstract void updateAttributes(final IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public void schedule() throws GamaRuntimeException {
+	public void schedule(final IScope scope) throws GamaRuntimeException {
 		if ( index != -1 ) {
-			simulation.getScheduler().insertAgentToInit(this);
+			scope.getSimulationScope().getScheduler().insertAgentToInit(this, scope);
 		}
 	}
 
@@ -262,23 +256,6 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public synchronized boolean dead() {
 		return index == -1 || dying;
-	}
-
-	public static void error(final String error) {
-		GuiUtils.error(error);
-	}
-
-	public static void tell(final String s) {
-		GuiUtils.tell(s);
-	}
-
-	public static void write(final String s) {
-		GuiUtils.informConsole(s);
-	}
-
-	protected void debug(final String s) {
-		// ISimulation sim = getSimulationScope();
-		GuiUtils.debugConsole(SimulationClock.getCycle(), s);
 	}
 
 	@Override
@@ -453,10 +430,11 @@ public abstract class AbstractAgent implements IAgent {
 		return getSpecies().getName();
 	}
 
-	@Override
-	public ISimulation getSimulation() {
-		return simulation;
-	}
+	//
+	// @Override
+	// public ISimulation getSimulation() {
+	// return simulation;
+	// }
 
 	@Override
 	public boolean contains(final IAgent component) {

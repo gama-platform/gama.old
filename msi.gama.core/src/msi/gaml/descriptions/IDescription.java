@@ -90,7 +90,7 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract List<GamlCompilationError> getErrors();
 
-	public abstract IDescription copy();
+	public abstract IDescription copy(IDescription into);
 
 	public int getKind();
 

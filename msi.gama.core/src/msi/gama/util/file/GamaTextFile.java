@@ -33,10 +33,6 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 		super(scope, pathName);
 	}
 
-	public GamaTextFile(final String absoluteFilePath) throws GamaRuntimeException {
-		super(absoluteFilePath);
-	}
-
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();

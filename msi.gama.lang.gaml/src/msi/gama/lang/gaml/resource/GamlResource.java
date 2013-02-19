@@ -13,6 +13,7 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.lang.utils.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
@@ -33,7 +34,8 @@ import com.google.inject.Inject;
 public class GamlResource extends LazyLinkingResource {
 
 	static int counter = 0;
-	static final List<String> TOP_LEVEL_STATEMENTS = Arrays.asList(GLOBAL, SPECIES, GRID, OUTPUT);
+	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES,
+		ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT);
 
 	private final int count;
 	private ISyntacticElement syntacticContents;
@@ -54,7 +56,6 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
-
 		if ( listener != null ) {
 			Set<String> exp = model == null ? Collections.EMPTY_SET : model.getExperimentNames();
 			listener.validationEnded(exp, withErrors);
@@ -227,7 +228,8 @@ public class GamlResource extends LazyLinkingResource {
 
 		// If we define a variable with this statement
 		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
-			if ( !TOP_LEVEL_STATEMENTS.contains(upper) ) {
+			int kind = DescriptionFactory.getProto(upper).getKind();
+			if ( !STATEMENTS_WITH_ATTRIBUTES.contains(kind) ) {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
@@ -279,6 +281,12 @@ public class GamlResource extends LazyLinkingResource {
 			if ( ed != null ) {
 				elt.setFacet(def, ed);
 			}
+		}
+
+		// We modify the names of experiments so as not to confuse them with species
+		if ( keyword.equals(EXPERIMENT) ) {
+			String name = elt.getLabel(NAME);
+			elt.setFacet(NAME, convExpr(EGaml.createTerminal("Experiment " + name)));
 		}
 
 		// We modify the "var", "const" and "experiment" declarations in order to replace the

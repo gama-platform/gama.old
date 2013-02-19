@@ -21,11 +21,12 @@ package msi.gama.kernel.simulation;
 import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IScheduledAction;
 
 /**
- * The class IGlobalScheduler.
+ * The class IScheduler.
  * 
  * @author drogoul
  * @since 14 déc. 2011
@@ -35,7 +36,8 @@ public interface IScheduler extends IStepable {
 
 	public final static Semaphore SCHEDULER_AUTHORIZATION = new Semaphore(1);
 
-	public abstract void insertAgentToInit(final IAgent entity) throws GamaRuntimeException;
+	public abstract void insertAgentToInit(final IAgent entity, IScope scope)
+		throws GamaRuntimeException;
 
 	public abstract void removeAction(final IScheduledAction haltAction);
 
@@ -54,7 +56,9 @@ public interface IScheduler extends IStepable {
 	public abstract void dispose();
 
 	public abstract boolean isUserHold();
-	
+
 	public abstract void addListener(ISchedulerListener l);
+
+	public abstract SimulationClock getClock();
 
 }

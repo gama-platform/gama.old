@@ -30,7 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.file.*;
@@ -77,8 +77,9 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 	}
 
-	public Envelope loadAscFile(final String boundsStr) throws IOException {
-		File ascFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+	public Envelope loadAscFile(final IScope scope, final String boundsStr) throws IOException {
+		File ascFile =
+			new File(scope.getAgentScope().getModel().getRelativeFilePath(boundsStr, true));
 		InputStream ips = new FileInputStream(ascFile);
 		InputStreamReader ipsr = new InputStreamReader(ips);
 		BufferedReader in = new BufferedReader(ipsr);
@@ -100,10 +101,11 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		return boundsEnv;
 	}
 
-	public Envelope loadImageFile(final String boundsStr) throws IOException {
+	public Envelope loadImageFile(final IScope scope, final String boundsStr) throws IOException {
 
 		GamaImageFile imageFile =
-			new GamaImageFile(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+			new GamaImageFile(scope, scope.getAgentScope().getModel()
+				.getRelativeFilePath(boundsStr, true));
 		int nbCols = imageFile.getWidth();
 		int nbRows = imageFile.getHeight();
 		String extension = imageFile.getExtension();
@@ -147,9 +149,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		return boundsEnv;
 	}
 
-	public Map<String, Object> loadShapeFile(final String boundsStr, MathTransform transformCRS)
-		throws IOException, TransformException {
-		File shpFile = new File(GAMA.getModel().getRelativeFilePath(boundsStr, true));
+	public Map<String, Object> loadShapeFile(final IScope scope, final String boundsStr,
+		MathTransform transformCRS) throws IOException, TransformException {
+		File shpFile =
+			new File(scope.getAgentScope().getModel().getRelativeFilePath(boundsStr, true));
 		ShapefileDataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
 		String name = store.getTypeNames()[0];
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
@@ -247,11 +250,12 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 					Envelope env = null;
 					try {
 						if ( boundsStr.toLowerCase().endsWith(".shp") ) {
-							Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
+							Map<String, Object> result =
+								loadShapeFile(scope, boundsStr, transformCRS);
 							env = (Envelope) result.get("envelope");
 							transformCRS = (MathTransform) result.get("transformCRS");
 						} else if ( boundsStr.toLowerCase().endsWith(".asc") ) {
-							env = loadAscFile(boundsStr);
+							env = loadAscFile(scope, boundsStr);
 						}
 						if ( env != null ) {
 							if ( boundsEnv == null ) {
@@ -285,7 +289,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 			if ( GamaFileType.isShape(boundsStr.toLowerCase()) ) {
 				try {
-					Map<String, Object> result = loadShapeFile(boundsStr, transformCRS);
+					Map<String, Object> result = loadShapeFile(scope, boundsStr, transformCRS);
 					Envelope boundsEnv = (Envelope) result.get("envelope");
 					transformCRS = (MathTransform) result.get("transformCRS");
 					xMin = boundsEnv.getMinX();
@@ -298,7 +302,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				}
 			} else if ( boundsStr.toLowerCase().endsWith(".asc") ) {
 				try {
-					Envelope boundsEnv = loadAscFile(boundsStr);
+					Envelope boundsEnv = loadAscFile(scope, boundsStr);
 					xMin = boundsEnv.getMinX();
 					yMin = boundsEnv.getMinY();
 					width = boundsEnv.getWidth();
@@ -309,7 +313,7 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 				}
 			} else if ( GamaFileType.isImageFile(boundsStr.toLowerCase()) ) {
 				try {
-					Envelope boundsEnv = loadImageFile(boundsStr);
+					Envelope boundsEnv = loadImageFile(scope, boundsStr);
 					xMin = boundsEnv.getMinX();
 					yMin = boundsEnv.getMinY();
 					width = boundsEnv.getWidth();

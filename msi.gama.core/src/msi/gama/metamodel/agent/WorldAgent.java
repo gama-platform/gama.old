@@ -1,7 +1,6 @@
 package msi.gama.metamodel.agent;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.IEnvironment;
@@ -20,8 +19,8 @@ public class WorldAgent extends GamlAgent {
 	private GamaPoint location;
 	private boolean isTorus;
 
-	public WorldAgent(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
+	public WorldAgent(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 		index = 0;
 	}
 
@@ -41,12 +40,11 @@ public class WorldAgent extends GamlAgent {
 	@Override
 	public synchronized void setGeometry(final IShape newGlobalGeometry) {
 		if ( geometry != null ) {
-			IScope scope = this.getSimulation().getGlobalScope();
-			IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
+			IEnvironment modelEnv = getModel().getModelEnvironment();
 			Envelope env = newGlobalGeometry.getEnvelope();
 			GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
 			geometry = Transformations.translated_by(newGlobalGeometry, p);
-			modelEnv.initializeFor(newGlobalGeometry, scope);
+			modelEnv.initializeFor(newGlobalGeometry, getSimulation().getExecutionScope());
 		}
 	}
 
@@ -70,7 +68,7 @@ public class WorldAgent extends GamlAgent {
 			ISpecies microSpec = this.getSpecies().getMicroSpecies(speciesName);
 			pop = new GamlPopulation(this, microSpec);
 			microPopulations.put(microSpec, pop);
-			pop.initializeFor(this.getSimulation().getExecutionScope());
+			pop.initializeFor(getSimulation().getExecutionScope());
 			return pop;
 		}
 

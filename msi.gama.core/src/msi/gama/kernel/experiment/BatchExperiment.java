@@ -40,7 +40,6 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 import org.jfree.data.statistics.Statistics;
-import org.jfree.experimental.swt.SWTGraphics2D;
 
 /**
  * Written by drogoul Modified on 28 mai 2011
@@ -57,7 +56,7 @@ import org.jfree.experimental.swt.SWTGraphics2D;
 	@facet(name = IKeyword.MULTICORE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
 		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
-@inside(symbols = IKeyword.MODEL)
+@inside(symbols = IKeyword.MODEL, kinds = ISymbolKind.SPECIES)
 public class BatchExperiment extends AbstractExperiment {
 
 	private IExploration exploAlgo;
@@ -83,14 +82,14 @@ public class BatchExperiment extends AbstractExperiment {
 		IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if ( expr != null && expr.isConst() ) {
 			keep_seed = Cast.asBool(getExperimentScope(), expr.value(getExperimentScope()));
-			}
-		
+		}
+
 		IExpression multi = getFacet(IKeyword.MULTICORE);
 		if ( multi != null && multi.isConst() ) {
 			this.multicore = Cast.asBool(getExperimentScope(), multi.value(getExperimentScope()));
-		//	 GuiUtils.isSimulationPerspective();//(GuiUtils.HPC_PERSPECTIVE_ID);
+			// GuiUtils.isSimulationPerspective();//(GuiUtils.HPC_PERSPECTIVE_ID);
 		}
-		
+
 		stopCondition = getFacet(IKeyword.UNTIL);
 		if ( stopCondition != null ) {
 			haltAction = new ScheduledAction() {

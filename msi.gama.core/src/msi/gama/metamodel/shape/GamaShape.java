@@ -54,9 +54,9 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
-	//Property map to add 3D information (e.g to specify if the geometry is a sphere, a cube, etc...) 
+	// Property map to add 3D information (e.g to specify if the geometry is a sphere, a cube,
+	// etc...)
 	private GamaMap Property3D;
-	
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -80,12 +80,12 @@ public class GamaShape implements IShape {
 		return Types.get(IType.GEOMETRY);
 	}
 
-	@getter( "multiple")
+	@getter("multiple")
 	public boolean isMultiple() {
 		return getInnerGeometry() instanceof GeometryCollection;
 	}
 
-	@getter( "geometries")
+	@getter("geometries")
 	public GamaList<GamaShape> getGeometries() {
 		GamaList<GamaShape> result = new GamaList();
 		if ( isMultiple() ) {
@@ -114,10 +114,11 @@ public class GamaShape implements IShape {
 		if ( isMultiple() ) { return getGeometries().toGaml() + " as geometry"; }
 		GamaList<GamaShape> holes = getHoles();
 		String result = "";
-		if (getInnerGeometry() instanceof LineString)
+		if ( getInnerGeometry() instanceof LineString ) {
 			result = "polyline (" + new GamaList(getPoints()).toGaml() + ")";
-		else
+		} else {
 			result = "polygon (" + new GamaList(getPoints()).toGaml() + ")";
+		}
 		if ( holes.isEmpty() ) { return result; }
 		for ( GamaShape g : holes ) {
 			result = "(" + result + ") - (" + g.toGaml() + ")";
@@ -307,7 +308,7 @@ public class GamaShape implements IShape {
 		return this;
 	}
 
-	@getter( "area")
+	@getter("area")
 	public Double getArea() {
 		return getInnerGeometry().getArea();
 	}
@@ -317,7 +318,7 @@ public class GamaShape implements IShape {
 		return getInnerGeometry().getLength();
 	}
 
-	@getter( "holes")
+	@getter("holes")
 	public GamaList<GamaShape> getHoles() {
 		GamaList<GamaShape> holes = new GamaList();
 		if ( getInnerGeometry() instanceof Polygon ) {
@@ -330,7 +331,7 @@ public class GamaShape implements IShape {
 		return holes;
 	}
 
-	@getter( "contour")
+	@getter("contour")
 	public GamaShape getExteriorRing() {
 		Geometry result = getInnerGeometry();
 		if ( result instanceof Polygon ) {
@@ -349,22 +350,22 @@ public class GamaShape implements IShape {
 		return new GamaShape(result);
 	}
 
-	@getter( "width")
+	@getter("width")
 	public Double getWidth() {
 		return getInnerGeometry().getEnvelopeInternal().getWidth();
 	}
 
-	@getter( "height")
+	@getter("height")
 	public Double getHeight() {
 		return getInnerGeometry().getEnvelopeInternal().getHeight();
 	}
 
-	@getter( "envelope")
+	@getter("envelope")
 	public GamaShape getGeometricEnvelope() {
 		return new GamaShape(getInnerGeometry().getEnvelope());
 	}
 
-	@getter( "points")
+	@getter("points")
 	public IList<GamaPoint> getPoints() {
 		GamaList<GamaPoint> result = new GamaList();
 		Coordinate[] points = getInnerGeometry().getCoordinates();
@@ -426,7 +427,7 @@ public class GamaShape implements IShape {
 
 	@Override
 	public void dispose() {
-		// if ( getInnerGeometry() != null ) { 
+		// if ( getInnerGeometry() != null ) {
 		// setInnerGeometry((Geometry) null);
 		// }
 		// IMPORTANT We now leave the geometry of the agent intact in case it is used elsewhere
@@ -518,9 +519,8 @@ public class GamaShape implements IShape {
 		return Property3D;
 	}
 
-	public void setProperty3D(GamaMap property3D) {
+	public void setProperty3D(final GamaMap property3D) {
 		Property3D = property3D;
 	}
-	
 
 }

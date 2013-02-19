@@ -24,7 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.factories.*;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -36,7 +36,6 @@ import org.eclipse.emf.common.notify.*;
  */
 public class ModelDescription extends SymbolDescription {
 
-	private static final Map<String, Integer> countPerModel = new HashMap();
 	private final int number;
 	private static int count = 1;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
@@ -52,15 +51,11 @@ public class ModelDescription extends SymbolDescription {
 	private final Map<String, SpeciesDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(final String projectPath, final String filePath,
-		final ISyntacticElement source) {
-		super(IKeyword.MODEL, null, IChildrenProvider.NONE, source
-		/* ,DescriptionFactory.getProto(IKeyword.MODEL) */);
+	public ModelDescription(final ModelStructure struct) {
+		super(IKeyword.MODEL, null, IChildrenProvider.NONE, struct.getSource());
 		types = new TypesManager(this);
-		setModelFilePath(projectPath, filePath);
+		setModelFilePath(struct.getProjectPath(), struct.getPath());
 		number = count++;
-		// inc(fileName);
-		// GuiUtils.debug("Creation of " + this);
 	}
 
 	@Override
@@ -76,39 +71,14 @@ public class ModelDescription extends SymbolDescription {
 			return;
 		}
 		isDisposed = true;
-		// int left = dec(fileName);
-		// GuiUtils.debug("Disposal of " + this);
 		experiments.clear();
 		allSpeciesDescription.clear();
 		output = null;
 		environment = null;
 		types.dispose();
 		worldSpecies = null;
-		// collect.clear();
 		super.dispose();
 
-	}
-
-	static int inc(final String fileName) {
-		Integer count = countPerModel.get(fileName);
-		if ( count == null ) {
-			countPerModel.put(fileName, 1);
-			return 1;
-		}
-		countPerModel.put(fileName, count + 1);
-		return count + 1;
-	}
-
-	static int dec(final String fileName) {
-		Integer count = countPerModel.get(fileName);
-		if ( count == null ) // should not happen but well...
-		{ return 0; }
-		if ( count == 1 ) {
-			countPerModel.remove(fileName);
-			return 0;
-		}
-		countPerModel.put(fileName, count - 1);
-		return count - 1;
 	}
 
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
@@ -158,9 +128,15 @@ public class ModelDescription extends SymbolDescription {
 		modelProjectPath = projectPath;
 	}
 
-	public void addType(final SpeciesDescription species) {
+	/**
+	 * Create types from the species descriptions
+	 */
+	public void buildTypes() {
+		types.addAll(allSpeciesDescription);
+	}
+
+	public void addSpeciesDescription(final SpeciesDescription species) {
 		allSpeciesDescription.put(species.getName(), species);
-		types.addType(species);
 	}
 
 	@Override
@@ -168,10 +144,14 @@ public class ModelDescription extends SymbolDescription {
 		child.setSuperDescription(this);
 		String keyword = child.getKeyword();
 		if ( child instanceof ExperimentDescription ) {
-			experiments.put(child.getName(), (ExperimentDescription) child);
+			String s = child.getName();
+			experiments.put(s, (ExperimentDescription) child);
+			// If the experiment is not the "default" one, we return the child directly without
+			// adding it to the children
+			if ( !IKeyword.DEFAULT_EXP.equals(s) ) { return child; }
 		} else if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
-			addType(worldSpecies);
+			addSpeciesDescription(worldSpecies);
 		} else if ( keyword.equals(IKeyword.OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
@@ -224,9 +204,8 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		// if ( spec == null || worldSpecies == null ) { return null; }
 		SpeciesDescription result = allSpeciesDescription.get(spec);
-		return result; // == null ? findSpecies(worldSpecies, spec) : result;
+		return result;
 	}
 
 	public boolean hasSpeciesDescription(final String spec) {
@@ -254,6 +233,10 @@ public class ModelDescription extends SymbolDescription {
 	@Override
 	public IErrorCollector getErrorCollector() {
 		return collect;
+	}
+
+	public boolean isAbstract() {
+		return this.getWorldSpecies().isAbstract();
 	}
 
 }

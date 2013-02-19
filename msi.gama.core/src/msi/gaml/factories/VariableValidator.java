@@ -58,23 +58,7 @@ public class VariableValidator extends DescriptionValidator {
 		} else if ( IExpressionCompiler.RESERVED.contains(name) ) {
 			vd.flagError(name + " is a reserved keyword. " + type + " Reserved keywords are: " +
 				IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
-		}/*
-		 * else if ( IExpressionParser.BINARIES.containsKey(name) ) {
-		 * flagError(name + " is a binary operator name. It cannot be used as a variable name");
-		 * } else if ( IExpressionParser.UNARIES.containsKey(name) ) {
-		 * flagError(name + " is a unary operator name. It cannot be used as a variable name");
-		 * }
-		 */
-		// AD 19/01/13 : Removal of this test as unit names need to be used preceded by the
-		// "¡" symbol
-
-		/**
-		 * else if ( IUnits.UNITS.containsKey(name) ) {
-		 * vd.flagError(
-		 * name + " is a unit name. " + type + " Units in GAML are :" +
-		 * String.valueOf(IUnits.UNITS.keySet()), IGamlIssue.IS_A_UNIT, NAME, name);
-		 * }
-		 **/
+		}
 	}
 
 	public static void assertCanBeAmong(final IDescription vd, final IType type, final Facets facets) {
@@ -149,11 +133,6 @@ public class VariableValidator extends DescriptionValidator {
 				vd.flagError(p + "type must be the same as that of " + varName,
 					IGamlIssue.UNMATCHED_TYPES, IKeyword.TYPE);
 			}
-			// We are validating an experiment parameter so we fusion the facets of the targeted var
-			// and those of the parameter (EDIT: normally done, now, in the construction of the
-			// description)
-			// facets.complementWith(targetedVar.getFacets());
-			// facets.putAll(paramFacets);
 			assertCanBeAmong(vd, targetedVar.getType(), facets);
 			assertFacetsAreOfType(vd, targetedVar.getType(), valueFacetsArray);
 			assertValueFacetsAreTheSameType(vd, facets);

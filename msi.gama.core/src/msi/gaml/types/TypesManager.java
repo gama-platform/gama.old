@@ -42,8 +42,12 @@ public class TypesManager {
 
 		typeToIType = new HashMap<Short, IType>();
 		for ( short typeId = 0; typeId < Types.typeToIType.length; typeId++ ) {
-			if ( Types.typeToIType[typeId] != null ) {
-				typeToIType.put(typeId, Types.typeToIType[typeId]);
+			IType toAdd = Types.typeToIType[typeId];
+			if ( toAdd != null ) {
+				typeToIType.put(typeId, toAdd);
+				if ( toAdd.toString().equals(AGENT_STR) ) {
+					toAdd.clearChildren();
+				}
 			}
 		}
 
@@ -67,16 +71,27 @@ public class TypesManager {
 			species.flagError("Species " + name + " already declared. Species name must be unique",
 				IGamlIssue.DUPLICATE_NAME, null, name);
 		}
-
 		short newId = ++CURRENT_INDEX;
 		IType newType = new GamaAgentType(name, newId, base, model);
-		SpeciesDescription speciesParent = species.getParentSpecies();
-		String parentName = speciesParent == null ? IType.AGENT_STR : speciesParent.getName();
-		newType.setParent(get(parentName));
 		typeToIType.put(newId, newType);
 		stringToIType.put(name, newType);
 		classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
 		return newType;
+	}
+
+	public void addAll(final Map<String, SpeciesDescription> species) {
+		Map<String, IType> map = new HashMap();
+		for ( Map.Entry<String, SpeciesDescription> entry : species.entrySet() ) {
+			map.put(entry.getKey(), addType(entry.getValue()));
+		}
+		map.remove(IType.AGENT_STR);
+		for ( Map.Entry<String, IType> entry : map.entrySet() ) {
+			SpeciesDescription s = species.get(entry.getKey());
+			String parentName = s.getParentName();
+			SpeciesDescription parentSpecies = species.get(parentName);
+			IType parentType = parentSpecies == null ? get(IType.AGENT_STR) : map.get(parentName);
+			entry.getValue().setParent(parentType);
+		}
 	}
 
 	public ModelDescription getModel() {
@@ -113,6 +128,8 @@ public class TypesManager {
 			}
 		}
 		typeToIType.get(AGENT).clearChildren();
+		// stringToIType.get("experimentator").clearChildren();
+		// FIXME : do the same for all built in species ?
 		typeToIType.clear();
 		stringToIType.clear();
 		classToIType.clear();

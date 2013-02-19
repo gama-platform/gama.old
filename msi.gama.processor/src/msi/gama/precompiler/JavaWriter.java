@@ -49,11 +49,9 @@ public class JavaWriter {
 		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
 		"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables",
 		"msi.gama.kernel.experiment", "msi.gaml.operators" };
-	final static String[] EXPLICIT_IMPORTS =
-		new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
-			"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties",
-			"msi.gaml.operators.System",
-			"msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent" };
+	final static String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random",
+		"msi.gaml.operators.Maths", "msi.gaml.operators.Points",
+		"msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
 	public String write(final String packageName, final GamlProperties props) {
 		StringBuilder sb = new StringBuilder();
@@ -177,6 +175,7 @@ public class JavaWriter {
 			String ret = checkPrim(segments[6]);
 			boolean dynamic = segments[7].equals("true");
 			isField = segments[8].equals("true");
+			boolean scope = segments[9].equals("true");
 
 			if ( isField ) {
 				getterHelper =
@@ -186,26 +185,29 @@ public class JavaWriter {
 			} else {
 				getterHelper =
 					concat("new VarGetter(", toClassObject(clazz), "){public ", ret, " run(",
-						IAGENT, " a, ", ISKILL, " t) {return t == null?", returnWhenNull(ret),
-						":((", clazz, ")t).", getterName, dynamic ? "(a);}}" : "();}}");
+						ISCOPE, " scope, ", IAGENT, " a, ", ISKILL, " t) {return t == null?",
+						returnWhenNull(ret), ":((", clazz, ")t).", getterName, "(", scope
+							? "scope," : "", dynamic ? "a);}}" : ");}}");
 			}
 
 			// initer
-			boolean init = segments[9].equals("true");
+			boolean init = segments[10].equals("true");
 			if ( init ) {
 				initerHelper = getterHelper;
 			}
 		}
-		int i = getterHelper == null ? 6 : 10;
+		int i = getterHelper == null ? 6 : 11;
 		// setter
 		String setterName = segments[i];
 		if ( !"null".equals(setterName) ) {
 			String param = checkPrim(segments[i + 1]);
 			boolean dyn = segments[i + 2].equals("true");
+			boolean scope = segments[i + 3].equals("true");
 			setterHelper =
 				concat("new VarSetter(", toClassObject(clazz), ")", "{public void ",
-					"run(IAgent a, ISkill t, Object arg)", " {if (t != null) ((", clazz, ") t).",
-					setterName, "(", dyn ? "a, " : "", "(" + param + ") arg); }}");
+					"run(IScope scope, IAgent a, ISkill t, Object arg)", " {if (t != null) ((",
+					clazz, ") t).", setterName, "(", scope ? "scope," : "", dyn ? "a, " : "", "(" +
+						param + ") arg); }}");
 
 		}
 		sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz))
@@ -362,8 +364,8 @@ public class JavaWriter {
 		String clazz = segments[1];
 		sb.append(in).append("_species(").append(toJava(name)).append(",")
 			.append(toClassObject(clazz)).append(", new IAgentConstructor(){public ")
-			.append(IAGENT).append(" createOneAgent(").append(ISIMULATION).append(" s,")
-			.append(IPOPULATION).append(" p) {return new ").append(clazz).append("(s, p);}}");
+			.append(IAGENT).append(" createOneAgent(").append(IPOPULATION)
+			.append(" p) {return new ").append(clazz).append("(p);}}");
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJava(segments[i]));
 		}
@@ -374,12 +376,13 @@ public class JavaWriter {
 		String[] segments = s.split("\\$");
 		String method = segments[0];
 		String clazz = segments[1];
-		String name = segments[3];
+		String virtual = segments[3];
+		String name = segments[4];
 		String ret = checkPrim(segments[2]);
-		int nbArgs = Integer.decode(segments[4]);
+		int nbArgs = Integer.decode(segments[5]);
 		String args = "new ChildrenProvider(Arrays.asList(";
 		// TODO Argument types not taken into account when declaring them
-		int pointer = 5;
+		int pointer = 6;
 		for ( int i = 0; i < nbArgs; i++ ) {
 			if ( i > 0 ) {
 				args += ",";
@@ -396,7 +399,8 @@ public class JavaWriter {
 		args += "))";
 		String desc =
 			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJava(name) + ",TYPE, " + "T(" +
-				toClassObject(ret) + ").toString(), JAVA," + toJava(method) + ")";
+				toClassObject(ret) + ").toString(), JAVA," + toJava(method) + ", VIRTUAL," +
+				toJava(virtual) + ")";
 		sb.append(concat(in, "_action(", toJava(method), ",", toClassObject(clazz),
 			",new PrimRun(T(", toClassObject(ret), "), ", toClassObject(clazz), "){public ",
 			ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT, " a,", ISCOPE,

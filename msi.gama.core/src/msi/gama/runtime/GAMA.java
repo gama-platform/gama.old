@@ -140,6 +140,12 @@ public class GAMA {
 		return currentExperiment.getExperimentScope();
 	}
 
+	public static SimulationClock getClock() {
+		SimulationClock clock =
+			currentExperiment == null ? null : currentExperiment.getExperimentScope().getClock();
+		return clock == null ? new SimulationClock() : clock;
+	}
+
 	public static RandomUtils getRandom() {
 		if ( currentExperiment == null ) { return RandomUtils.getDefault(); }
 		return currentExperiment.getRandomGenerator();
@@ -168,8 +174,8 @@ public class GAMA {
 	public static void reportError(final GamaRuntimeException g) {
 		if ( currentExperiment == null ) { return; }
 		currentExperiment.reportError(g);
-		if ( SimulationClock.TREAT_ERRORS_AS_FATAL ) {
-			if ( SimulationClock.TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
+		if ( GAMA.TREAT_ERRORS_AS_FATAL ) {
+			if ( GAMA.TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
 				currentExperiment.pause();
 			}
 		}
@@ -243,5 +249,9 @@ public class GAMA {
 		if ( currentExperiment == null ) { return null; }
 		return currentExperiment.getModel().getDescription();
 	}
+
+	public static boolean TREAT_ERRORS_AS_FATAL = true;
+
+	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
 }

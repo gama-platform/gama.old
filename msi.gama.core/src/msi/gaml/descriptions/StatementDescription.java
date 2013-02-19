@@ -149,19 +149,19 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public StatementDescription copy() {
+	public StatementDescription copy(final IDescription into) {
 		List<IDescription> children = new ArrayList();
 		for ( IDescription child : getChildren() ) {
-			children.add(child.copy());
+			children.add(child.copy(into));
 		}
 		if ( args != null ) {
 			for ( IDescription child : args.values() ) {
-				children.add(child.copy());
+				children.add(child.copy(into));
 			}
 		}
 		StatementDescription desc =
-			new StatementDescription(getKeyword(), null, new ChildrenProvider(children),
-				temps != null, args != null, getSourceInformation()/* , meta */);
+			new StatementDescription(getKeyword(), into, new ChildrenProvider(children),
+				temps != null, args != null, getSourceInformation());
 		desc.setHelper(helper);
 		return desc;
 	}
@@ -310,7 +310,8 @@ public class StatementDescription extends SymbolDescription {
 	 * @return
 	 */
 	public boolean isAbstract() {
-		return !getKeyword().equals(IKeyword.PRIMITIVE) && getChildren().isEmpty();
+		return IKeyword.TRUE.equals(facets.getLabel(IKeyword.VIRTUAL));
+		// return !getKeyword().equals(IKeyword.PRIMITIVE) && getChildren().isEmpty();
 	}
 
 }

@@ -29,7 +29,7 @@ public abstract class Skill implements ISkill {
 
 	/**
 	 * By default, skills are singletons. This behavior is redefined in AbstractArchitecture
-	 * @see msi.gaml.skills.ISkill#copy()
+	 * @see msi.gaml.skills.ISkill#duplicate()
 	 */
 	@Override
 	public ISkill duplicate() {

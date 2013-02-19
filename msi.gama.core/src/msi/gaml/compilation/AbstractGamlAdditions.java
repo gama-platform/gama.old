@@ -36,6 +36,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static IAgentConstructor WORLD_AGENT_CONSTRUCTOR;
 	public static Class DEFAULT_AGENT_CLASS;
 	public static IAgentConstructor DEFAULT_AGENT_CONSTRUCTOR;
+	public static Class EXPERIMENTATOR_AGENT_CLASS;
+	public static IAgentConstructor EXPERIMENTATOR_AGENT_CONSTRUCTOR;
 
 	protected static String[] S(final String ... strings) {
 		return strings;
@@ -79,6 +81,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		} else if ( IKeyword.AGENT.equals(name) ) {
 			DEFAULT_AGENT_CLASS = clazz;
 			DEFAULT_AGENT_CONSTRUCTOR = helper;
+		} else if ( "experimentator".equals(name) ) {
+			EXPERIMENTATOR_AGENT_CLASS = clazz;
+			EXPERIMENTATOR_AGENT_CONSTRUCTOR = helper;
 		}
 		Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		Set<String> builtInSkills = SPECIES_SKILLS.get(name);

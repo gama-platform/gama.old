@@ -18,7 +18,7 @@
  */
 package msi.gaml.types;
 
-import java.util.Map;
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -37,13 +37,12 @@ import msi.gaml.species.ISpecies;
  */
 public class GamaAgentType extends GamaType<IAgent> {
 
-	ModelDescription model;
+	// ModelDescription model;
 
 	// SpeciesDescription species;
 
 	public GamaAgentType(final String speciesName, final short speciesId, final Class base,
 		final ModelDescription model) {
-		this.model = model;
 		name = speciesName;
 		id = speciesId;
 		supports = new Class[] { base };
@@ -80,12 +79,9 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public Map<String, ? extends IGamlDescription> getFieldDescriptions() {
-		return getModel().getSpeciesDescription(name).getVariables();
-	}
-
-	protected ModelDescription getModel() {
-		return model;
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription model) {
+		if ( model == null ) { return Collections.EMPTY_MAP; }
+		return model.getSpeciesDescription(name).getVariables();
 	}
 
 	@Override
@@ -104,8 +100,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		boolean b = super.canBeTypeOf(scope, obj);
 		if ( b ) { return true; }
 		if ( obj instanceof IAgent ) {
-			ISpecies s =
-				scope.getAgentScope().getSimulation().getModel().getSpecies(getSpeciesName());
+			ISpecies s = scope.getSimulationScope().getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
 		}
 		return false;

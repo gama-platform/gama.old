@@ -167,4 +167,6 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract void setMacroSpecies(final ISpecies macroSpecies);
 
+	public abstract boolean isMirror();
+
 }

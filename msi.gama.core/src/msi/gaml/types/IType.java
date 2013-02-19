@@ -113,7 +113,7 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public IExpression getGetter(String name);
 
-	public Map<String, ? extends IGamlDescription> getFieldDescriptions();
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions(ModelDescription model);
 
 	public boolean isSpeciesType();
 
@@ -131,7 +131,7 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public void addChild(IType p);
 
-	public Set<IType> getChildren();
+	public Collection<IType> getChildren();
 
 	public void clearChildren();
 

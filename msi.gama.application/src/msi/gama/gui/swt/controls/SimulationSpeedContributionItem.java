@@ -5,7 +5,7 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 
 /**
@@ -21,11 +21,11 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	 * 
 	 */
 	public SimulationSpeedContributionItem() {
-		super("Adjust simulation speed", SimulationClock.getDelay(), new IPositionChangeListener() {
+		super("Adjust simulation speed", GAMA.getClock().getDelay(), new IPositionChangeListener() {
 
 			@Override
 			public void positionChanged(final double position) {
-				SimulationClock.setDelay(position);
+				GAMA.getClock().setDelay(position);
 			}
 
 		}, new IToolTipProvider() {

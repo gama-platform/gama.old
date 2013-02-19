@@ -18,14 +18,14 @@
  */
 package msi.gama.metamodel.population;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
+import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -42,8 +42,48 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 
 	IExpression scheduleFrequency = new JavaConstExpression(1);
 
+	class PopulationManagement extends ScheduledAction {
+
+		final IExpression listOfTargetAgents;
+
+		PopulationManagement(final IExpression exp) {
+			listOfTargetAgents = exp;
+		}
+
+		@Override
+		public void execute(final IScope scope) throws GamaRuntimeException {
+			IPopulation pop = GamlPopulation.this;
+			IList<IAgent> targets = Cast.asList(scope, listOfTargetAgents.value(scope));
+			IList<IAgent> toKill = new GamaList();
+			for ( IAgent agent : pop ) {
+				IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
+				if ( targets.contains(target) ) {
+					targets.remove(target);
+				} else {
+					toKill.add(agent);
+				}
+			}
+			for ( IAgent agent : toKill ) {
+				agent.die();
+			}
+			List<Map<String, Object>> attributes = new ArrayList();
+			for ( IAgent target : targets ) {
+				Map<String, Object> att = new HashMap();
+				att.put("target", target);
+				attributes.add(att);
+			}
+			pop.createAgents(scope, targets.size(), attributes, false);
+		}
+
+	}
+
 	public GamlPopulation(final IAgent host, final ISpecies species) {
 		super(host, species);
+		if ( species.isMirror() ) {
+			host.getScheduler().insertEndAction(
+				new PopulationManagement(species.getFacet(IKeyword.MIRRORS)));
+		}
+		// Add an attribute to the agents (dans SpeciesDescription)
 		IExpression exp = species.getFrequency();
 		if ( exp != null ) {
 			scheduleFrequency = exp;
@@ -82,6 +122,14 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 		}
 	}
 
+	@Override
+	public void updateVariablesFor(final IScope scope, final IAgent agent)
+		throws GamaRuntimeException {
+		for ( int i = 0; i < updatableVars.length; i++ ) {
+			updatableVars[i].updateFor(scope, agent);
+		}
+	}
+
 	/**
 	 * 
 	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope,
@@ -91,17 +139,19 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 	public void computeAgentsToSchedule(final IScope scope, final IList list)
 		throws GamaRuntimeException {
 		int frequency = Cast.asInt(scope, scheduleFrequency.value(scope));
-		int step = SimulationClock.getCycle();
+		int step = scope.getClock().getCycle();
 		IExpression ags = getSpecies().getSchedule();
-		List<IAgent> agents =
-			ags == null ? this.getAgentsList() : Cast.asList(scope, ags.value(scope));
+		List<IAgent> allAgents = getAgentsList();
+		List<IAgent> agents = ags == null ? allAgents : Cast.asList(scope, ags.value(scope));
 		if ( step % frequency == 0 ) {
 			list.addAll(agents);
 		}
 		if ( species.hasMicroSpecies() ) {
-			for ( IAgent agent : this.getAgentsList() ) {
+			for ( IAgent agent : allAgents ) {
+				// FIXME: shouldn't it be "agents" rather than "allAgents" ?
 				agent.computeAgentsToSchedule(scope, list);
 			}
 		}
 	}
+
 }

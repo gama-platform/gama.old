@@ -1,13 +1,10 @@
 package irit.gaml.species;
 
-
-
 import java.sql.*;
-import msi.gama.metamodel.topology.SqlConnection;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.topology.SqlConnection;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.species;
@@ -17,11 +14,12 @@ import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
 
 /*
- * @Author TRUONG Minh Thai 
+ * @Author TRUONG Minh Thai
+ * 
  * @Supervisors:
- *     Christophe Sibertin-BLANC
- *     Fredric AMBLARD
- *     Benoit GAUDOU
+ * Christophe Sibertin-BLANC
+ * Fredric AMBLARD
+ * Benoit GAUDOU
  * 
  * species: The AgentDB is defined in this class. AgentDB supports the action
  * - isConnected: return true/false
@@ -33,14 +31,14 @@ import msi.gaml.types.IType;
  * 
  * created date: 22-Feb-2012
  * Modified:
- *   24-Sep-2012: 
- *      Add methods:
- *      - boolean isconnected()
- *      - select(String select)
- *      - executeUpdate(String updateComm)
- *      - getParameter: return connection Parameter;
- *      Delete method: selectDB, executeUpdateDB
- *   25-Sep-2012: Add methods: timeStamp, helloWorld    
+ * 24-Sep-2012:
+ * Add methods:
+ * - boolean isconnected()
+ * - select(String select)
+ * - executeUpdate(String updateComm)
+ * - getParameter: return connection Parameter;
+ * Delete method: selectDB, executeUpdateDB
+ * 25-Sep-2012: Add methods: timeStamp, helloWorld
  *   18-Feb-2013:
  *      Add public int insert(final IScope scope) throws GamaRuntimeException
  *        
@@ -50,99 +48,97 @@ import msi.gaml.types.IType;
 public class AgentDB extends GamlAgent {
 
 	private Connection conn = null;
-	private boolean isConnection=false;
-	private java.util.Map params=null;
+	private boolean isConnection = false;
+	private java.util.Map params = null;
 	// private Statement stat;
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
-	public AgentDB(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
+	public AgentDB(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 	}
-	
-	@action(name="isConnected")
+
+	@action(name = "isConnected")
 	@args(names = {})
-	public  boolean isConnected(final IScope scope) throws GamaRuntimeException
-	{
-		
+	public boolean isConnected(final IScope scope) throws GamaRuntimeException {
+
 		return isConnection;
-		
+
 	}
-	
-	@action(name="close")
+
+	@action(name = "close")
 	@args(names = {})
-	public  Object close(final IScope scope) throws GamaRuntimeException
-	{
+	public Object close(final IScope scope) throws GamaRuntimeException {
 		try {
 			conn.close();
-			isConnection=false;
+			isConnection = false;
 		} catch (SQLException e) {
-			//e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.close error:"+ e.toString() );
+			// e.printStackTrace();
+			throw new GamaRuntimeException("AgentDB.close error:" + e.toString());
 		}
 		return null;
-		
+
 	}
-	
-	@action(name="helloWorld")
+
+	@action(name = "helloWorld")
 	@args(names = {})
 	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
 		GuiUtils.informConsole("Hello World");
 		return null;
 	}
 
-	//Get current time of system
-	//added from MaeliaSkill
+	// Get current time of system
+	// added from MaeliaSkill
 	@action(name = "timeStamp")
 	@args(names = {})
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
-			Long timeStamp = System.currentTimeMillis();
-			return timeStamp;
+		Long timeStamp = System.currentTimeMillis();
+		return timeStamp;
 	}
+
 	/*
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 *			arg params value:[
-	 * 					 "dbtype":"SQLSERVER", 
-	 *                   "url":"host address",
-	 *                   "port":"port number",
-	 *                   "database":"database name",
-	 *                   "user": "user name",
-	 *                   "passwd": "password"
-	 *                  ];
+	 * arg params value:[
+	 * "dbtype":"SQLSERVER",
+	 * "url":"host address",
+	 * "port":"port number",
+	 * "database":"database name",
+	 * "user": "user name",
+	 * "passwd": "password"
+	 * ];
 	 * }
 	 */
-	@action(name="connect")
+	@action(name = "connect")
 	@args(names = { "params" })
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
-		
-		//java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+
+		// java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		params = (java.util.Map) scope.getArg("params", IType.MAP);
-		
+
 		String dbtype = (String) params.get("dbtype");
-		String host = (String)params.get("host");
-		String port = (String)params.get("port");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
-		String passwd = (String)params.get("passwd");
+		String passwd = (String) params.get("passwd");
 		SqlConnection sqlConn;
-		if (isConnection){
-			throw new GamaRuntimeException("AgentDB.connection error: a connection is already opened" );
-		}
+		if ( isConnection ) { throw new GamaRuntimeException(
+			"AgentDB.connection error: a connection is already opened"); }
 		// create connection
-		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation =
-					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 
-			//sqlConn=new SqlConnection(dbtype,database);
-			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-		}else{
-			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+			// sqlConn=new SqlConnection(dbtype,database);
+			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+		} else {
+			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
 		}
-		try {	
+		try {
 			conn = sqlConn.connectDB();
-			isConnection=true;
-		}  catch (SQLException e) {
+			isConnection = true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
 		} catch (ClassNotFoundException e) {
@@ -157,77 +153,73 @@ public class AgentDB extends GamlAgent {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Make a connection to BDMS
 	 * 
 	 * @syntax: do action: connectDB {
-	 *			arg params value:[
-	 * 					 "dbtype":"SQLSERVER", 
-	 *                   "url":"host address",
-	 *                   "port":"port number",
-	 *                   "database":"database name",
-	 *                   "user": "user name",
-	 *                   "passwd": "password",
-	 *                  ];
+	 * arg params value:[
+	 * "dbtype":"SQLSERVER",
+	 * "url":"host address",
+	 * "port":"port number",
+	 * "database":"database name",
+	 * "user": "user name",
+	 * "passwd": "password",
+	 * ];
 	 * }
 	 */
-	@action(name="testConnection")
+	@action(name = "testConnection")
 	@args(names = { "params" })
-	public  boolean testConnection(final IScope scope) throws GamaRuntimeException
-	{
+	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
 		Connection conn;
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String dbtype = (String) params.get("dbtype");
-		String host = (String)params.get("host");
-		String port = (String)params.get("port");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
-		String passwd = (String)params.get("passwd");
+		String passwd = (String) params.get("passwd");
 		SqlConnection sqlConn;
 
 		// create connection
-		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation =
-					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 
-			//sqlConn=new SqlConnection(dbtype,database);
-			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-		}else{
-			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+			// sqlConn=new SqlConnection(dbtype,database);
+			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+		} else {
+			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
 		}
-		try {	
+		try {
 			conn = sqlConn.connectDB();
 			conn.close();
 		} catch (Exception e) {
-			//e.printStackTrace();
-			//throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
+			// e.printStackTrace();
+			// throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
 			return false;
-		} 
+		}
 		return true;
 	}
-	
-
 
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 * 
-	 * @syntax do action: 
-	 * 	select {
-	 *  	arg select value: "select string"
-	 *   }
+	 * @syntax do action:
+	 * select {
+	 * arg select value: "select string"
+	 * }
 	 * 
 	 * @return GamaList<GamaList<Object>>
 	 */
-	@action(name="select")
-	@args(names = {"select"})
-	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
-	{
+	@action(name = "select")
+	@args(names = { "select" })
+	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException {
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> repRequest = new GamaList<Object>();
 		// get data
-		try{
-			  repRequest = new SqlConnection().selectDB(conn, selectComm);
+		try {
+			repRequest = new SqlConnection().selectDB(conn, selectComm);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
@@ -240,18 +232,16 @@ public class AgentDB extends GamlAgent {
 
 	}
 
-
 	/*
 	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 * 
 	 * @syntax: do action: executeUpdate {
 	 * arg params value:[
-	 *  	arg updateComm value: "update string"
-	 *   }
-	 *   
-	 *   */
-	@action(name="executeUpdate")
-	@args(names = {"updateComm"})
+	 * arg updateComm value: "update string"
+	 * }
+	 */
+	@action(name = "executeUpdate")
+	@args(names = { "updateComm" })
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		int n = 0;
@@ -270,20 +260,21 @@ public class AgentDB extends GamlAgent {
 		return n;
 
 	}
-	@action(name="getParameter")
+
+	@action(name = "getParameter")
 	@args(names = {})
 	public Object getParamater(final IScope scope) throws GamaRuntimeException {
 		return params;
 	}
-//	@action(name="setParameter")
-//	@args(names = { "params" })
-//	public  Object setParameter(final IScope scope) throws GamaRuntimeException
-//	{
-//		Connection conn;
-//		params = (java.util.Map) scope.getArg("params", IType.MAP);
-//		return null;
-//	}
-		
+	// @action(name="setParameter")
+	// @args(names = { "params" })
+	// public Object setParameter(final IScope scope) throws GamaRuntimeException
+	// {
+	// Connection conn;
+	// params = (java.util.Map) scope.getArg("params", IType.MAP);
+	// return null;
+	// }
+
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 * 
@@ -311,6 +302,4 @@ public class AgentDB extends GamlAgent {
 		return rec_no;
 
 	}
-
-
 }

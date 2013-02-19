@@ -76,7 +76,8 @@ public class MigrateStatement extends AbstractStatementSequence {
 		ISpecies targetMicroSpecies = executor.getSpecies().getMicroSpecies(target);
 		ISpecies sourceMicroSpecies = executor.getSpecies().getMicroSpecies(source);
 
-		immigrants.addAll(executor.migrateMicroAgents(sourceMicroSpecies, targetMicroSpecies));
+		immigrants.addAll(executor
+			.migrateMicroAgents(stack, sourceMicroSpecies, targetMicroSpecies));
 
 		/*
 		 * Object immigrantCandidates = source.value(stack);

@@ -44,7 +44,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	protected Class[] supports;
 	Map<String, TypeFieldExpression> getters = new HashMap();
 	protected IType parent;
-	protected Set<IType> children = new HashSet();
+	protected Map<String, IType> children = new HashMap();
 	protected boolean inited;
 	protected int varKind;
 
@@ -63,6 +63,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		this.supports = supports;
 	}
 
+	@Override
 	public int getVarKind() {
 		return varKind;
 	}
@@ -78,17 +79,20 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 
 	@Override
 	public void addChild(final IType p) {
-		children.add(p);
+		children.put(p.toString(), p);
 	}
 
 	@Override
-	public Set<IType> getChildren() {
-		return children;
+	public Collection<IType> getChildren() {
+		return children.values();
 	}
 
 	@Override
 	public void clearChildren() {
 		// parent = null;
+		for ( IType t : children.values() ) {
+			t.clearChildren();
+		}
 		children.clear();
 	}
 
@@ -108,7 +112,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public Map<String, ? extends IGamlDescription> getFieldDescriptions() {
+	public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription desc) {
 		return getters;
 	}
 

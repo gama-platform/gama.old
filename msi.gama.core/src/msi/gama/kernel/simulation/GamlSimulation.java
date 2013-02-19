@@ -18,12 +18,8 @@
  */
 package msi.gama.kernel.simulation;
 
-import java.util.*;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 
 public class GamlSimulation extends AbstractSimulation {
 
@@ -33,23 +29,7 @@ public class GamlSimulation extends AbstractSimulation {
 
 	@Override
 	protected void initSchedulingPolicy() {
-		scheduler = new Scheduler(this);
+		scheduler = new Scheduler(this, experiment.getAgent());
 	}
 
-	@Override
-	protected void initializeWorldPopulation() {
-		worldPopulation = new WorldPopulation(getModel().getWorldSpecies());
-	}
-
-	@Override
-	protected void initializeWorld(final Map<String, Object> parameters)
-		throws GamaRuntimeException, InterruptedException {
-		IGamlPopulation g = (IGamlPopulation) getWorldPopulation();
-		g.initializeFor(getGlobalScope());
-		List<? extends IAgent> newAgents =
-			g.createAgents(getGlobalScope(), 1, GamaList.with(parameters), false);
-		IAgent world = newAgents.get(0);
-		world.schedule();
-		world.initializeMicroPopulations(getGlobalScope());
-	}
 }

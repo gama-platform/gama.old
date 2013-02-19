@@ -18,7 +18,7 @@
  */
 package msi.gama.kernel.simulation;
 
-import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -73,4 +73,6 @@ public interface ISimulation {
 
 	public abstract void initialize(ParametersSet parameters) throws GamaRuntimeException,
 		InterruptedException;
+
+	public abstract IExperiment getExperiment();
 }

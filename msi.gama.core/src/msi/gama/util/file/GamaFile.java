@@ -47,20 +47,13 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		if ( pathName == null ) { throw new GamaRuntimeException("Attempt to create a null file"); }
-		path = pathName;
 		if ( scope != null ) {
-			// file = new File(scope.getSimulationScope().getModel().getRelativeFilePath(pathName,
-			// false));
+			path = GAMA.getModel().getRelativeFilePath(pathName, false);
 			checkValidity();
 			setWritable(false);
+		} else {
+			path = pathName;
 		}
-	}
-
-	public GamaFile(final String pathName) throws GamaRuntimeException {
-		if ( pathName == null ) { throw new GamaRuntimeException("Attempt to create a null file"); }
-		path = pathName;
-		// file = new File(pathName);
-		checkValidity();
 	}
 
 	protected void checkValidity() throws GamaRuntimeException {
@@ -554,9 +547,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	protected File getFile() {
 		if ( file == null ) {
-			if ( GAMA.getModel() != null ) {
-				file = new File(GAMA.getModel().getRelativeFilePath(path, false));
-			}
+			file = new File(path);
 		}
 		return file;
 	}

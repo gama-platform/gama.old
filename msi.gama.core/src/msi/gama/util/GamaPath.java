@@ -259,13 +259,12 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public int indexOf(final IAgent a) {
-		return Cast.asInt(a.getSimulation().getExecutionScope(), a.getAttribute("index_on_path")); // ???
+		return Cast.asInt(null, a.getAttribute("index_on_path")); // ???
 	}
 
 	@Override
 	public int indexSegmentOf(final IAgent a) {
-		return Cast.asInt(a.getSimulation().getExecutionScope(),
-			a.getAttribute("index_on_path_segment")); // ???
+		return Cast.asInt(null, a.getAttribute("index_on_path_segment")); // ???
 	}
 
 	@Override

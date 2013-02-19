@@ -3,7 +3,6 @@ package msi.gaml.extensions.humanmoving;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.filter.Different;
@@ -195,7 +194,7 @@ public class HumanMovingSkill extends MovingSkill {
 		if ( s != null ) {
 			setSpeed(agent, s);
 		}
-		double dist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		double dist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 		// OutputManager.debug("dist: " + dist);
 		Double agentSize =
 			scope.hasArg("agent_size") ? Cast.asFloat(scope,
@@ -317,7 +316,7 @@ public class HumanMovingSkill extends MovingSkill {
 			agentSize = new Double(2);
 		}
 
-		final double maxDist = getSpeed(getCurrentAgent(scope)) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(getCurrentAgent(scope)) * scope.getClock().getStep();// timeStep;
 		GamaPoint startingPoint = (GamaPoint) getCurrentAgent(scope).getLocation();
 
 		double detectingRange = agentSize + maxDist;
@@ -613,7 +612,7 @@ public class HumanMovingSkill extends MovingSkill {
 		// int direction = args.intValue("direction");
 		int direction = scope.getIntArg("direction");
 
-		final double maxDist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 
 		double detectingRange = agentSize + maxDist;
@@ -948,7 +947,7 @@ public class HumanMovingSkill extends MovingSkill {
 			// OutputManager.debug("passedList length: "+passedList.size());
 		}
 
-		final double maxDist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		GamaPoint targetPoint = (GamaPoint) targetAgent.getLocation();
 
@@ -1252,7 +1251,7 @@ public class HumanMovingSkill extends MovingSkill {
 			}
 		}
 
-		final double maxDist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 		GamaPoint startingPoint = (GamaPoint) agent.getLocation();
 		GamaPoint targetPoint = (GamaPoint) target.getLocation();
 
@@ -1577,7 +1576,7 @@ public class HumanMovingSkill extends MovingSkill {
 			agentSize = new Double(2);
 		}
 
-		final double maxDist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 		// OutputManager.debug("maxDist " + maxDist);
 		/**
 		 * test getNetDestination GamaPoint O = new GamaPoint(0 ,0); GamaPoint X = new GamaPoint(2,
@@ -1772,7 +1771,7 @@ public class HumanMovingSkill extends MovingSkill {
 			agentSize = new Double(2);
 		}
 
-		final double maxDist = getSpeed(agent) * SimulationClock.getStep();// timeStep;
+		final double maxDist = getSpeed(agent) * scope.getClock().getStep();// timeStep;
 
 		// OutputManager.debug("maxDist " + maxDist);
 		/**
@@ -2153,7 +2152,7 @@ public class HumanMovingSkill extends MovingSkill {
 			scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		// 20/1/2012 Change : The speed of the agent is multiplied by the timestep in order to
 		// obtain the maximal distance it can cover in one step.
-		return s * SimulationClock.getStep()/* getTimeStep(scope) */;
+		return s * scope.getClock().getStep()/* getTimeStep(scope) */;
 	}
 
 	/**

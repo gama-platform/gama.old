@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
@@ -42,96 +42,17 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected boolean isGrid;
-
 	protected final Map<String, ISpecies> microSpecies = new HashMap<String, ISpecies>();
-
-	// TODO remove -> not necessary: this.getMacroSpecies().getMicroSpecies().remove(this);
-	// private IList<ISpecies> peerSpecies;
-
-	private IScope ownStack;
-
 	private final Map<String, IVariable> variables = new HashMap<String, IVariable>();
-
 	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
-
 	private final Map<String, ActionStatement> actions = new HashMap<String, ActionStatement>();
-
 	private final Map<String, UserCommandStatement> userCommands = new LinkedHashMap();
-
 	private final IList<IStatement> behaviors = new GamaList<IStatement>();
-
 	protected ISpecies macroSpecies;
-
-	interface IMDArray<T> {
-
-		Object get(final int ... indexes);
-
-		IMDArray<T> getPartial(final int ... indexes);
-	}
-
-	class MDArray1<T> implements IMDArray<T> {
-
-		T[] array;
-
-		@Override
-		public T get(final int ... indexes) {
-			return array[indexes[0]];
-		}
-
-		@Override
-		public IMDArray<T> getPartial(final int ... indexes) {
-			return null;
-		}
-	}
-
-	class MDArray2<T> implements IMDArray<T> {
-
-		MDArray1<MDArray1<T>> list;
-
-		int getDim() {
-			return 2;
-		}
-
-		@Override
-		public T get(final int ... indexes) {
-			return list.get(indexes[0]).get(indexes[1]);
-		}
-
-		void set(final Object o, final int ... index) {}
-
-		@Override
-		public IMDArray getPartial(final int ... indexes) {
-			if ( indexes.length == 1 ) { return list.get(indexes[0]); }
-			return null;
-		}
-	}
-
-	class MDArray3<T> implements IMDArray<T> {
-
-		MDArray1<MDArray2<T>> list;
-
-		int getDim() {
-			return 2;
-		}
-
-		@Override
-		public T get(final int ... indexes) {
-			return list.get(indexes[0]).get(indexes[1]);
-		}
-
-		void set(final Object o, final int ... index) {}
-
-		@Override
-		public IMDArray getPartial(final int ... indexes) {
-			if ( indexes.length == 1 ) { return list.get(indexes[0]); }
-			return null;
-		}
-	}
 
 	public AbstractSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		setOwnScope(GAMA.obtainNewScope());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
 	}
 
@@ -444,13 +365,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		} else if ( s instanceof ActionStatement ) {
 			addAction((ActionStatement) s);
 		} else if ( s instanceof UserCommandStatement ) {
-			addUserCommand((UserCommandStatement) s); // reflexes, states or tasks
+			addUserCommand((UserCommandStatement) s);
 		} else if ( s instanceof IStatement ) {
 			addBehavior((IStatement) s); // reflexes, states or tasks
 		}
 	}
 
-	private void createControl() {
+	protected void createControl() {
 		IArchitecture control = getArchitecture();
 		List<IStatement> behaviors = getBehaviors();
 		if ( control == null ) {
@@ -489,14 +410,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 		// TODO dispose micro_species first???
 		microSpecies.clear();
-	}
-
-	protected void setOwnScope(final IScope ownStack) {
-		this.ownStack = ownStack;
-	}
-
-	public IScope getOwnScope() {
-		return ownStack;
 	}
 
 	@Override

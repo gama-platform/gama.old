@@ -184,7 +184,7 @@ public class Variable extends Symbol implements IVariable {
 			} else if ( initExpression != null ) {
 				_setVal(a, scope, scope.evaluate(initExpression, a));
 			} else if ( initer != null ) {
-				_setVal(a, scope, initer.run(a, gSkill == null ? (ISkill) a : gSkill));
+				_setVal(a, scope, initer.run(scope, a, gSkill == null ? (ISkill) a : gSkill));
 			} else {
 				doUpdate = true;
 				_setVal(a, scope, type().getDefault());
@@ -236,7 +236,7 @@ public class Variable extends Symbol implements IVariable {
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
 		if ( setter != null ) {
-			setter.run(agent, sSkill == null ? agent : sSkill, val);
+			setter.run(scope, agent, sSkill == null ? agent : sSkill, val);
 		} else {
 			agent.setAttribute(name, val);
 		}
@@ -260,7 +260,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		if ( getter != null ) { return getter.run(agent, gSkill == null ? agent : gSkill); }
+		if ( getter != null ) { return getter.run(scope, agent, gSkill == null ? agent : gSkill); }
 		if ( functionExpression != null ) { return scope.evaluate(functionExpression, agent); }
 		return agent.getAttribute(name);
 	}

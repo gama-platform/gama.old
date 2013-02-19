@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -160,7 +159,7 @@ public class MovingSkill extends GeometricSkill {
 			scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		// 20/1/2012 Change : The speed of the agent is multiplied by the timestep in order to
 		// obtain the maximal distance it can cover in one step.
-		return s * SimulationClock.getStep()/* getTimeStep(scope) */;
+		return s * scope.getClock().getStep();
 	}
 
 	protected ILocation computeTarget(final IScope scope, final IAgent agent)

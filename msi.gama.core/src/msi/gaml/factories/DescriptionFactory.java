@@ -87,6 +87,7 @@ public class DescriptionFactory {
 	}
 
 	public static void addSpeciesNameAsType(final String name) {
+
 		if ( !name.equals(AGENT) ) {
 			KEYWORDS_PROTOS.put(name, KEYWORDS_PROTOS.get(AGENT));
 		}

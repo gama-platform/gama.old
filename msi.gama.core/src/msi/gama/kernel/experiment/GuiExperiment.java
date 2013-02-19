@@ -44,8 +44,7 @@ import msi.gaml.variables.IVariable;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
 		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
-// @commands({ ActionCommand.class, PrimitiveCommand.class, ReflexCommand.class })
-@inside(symbols = IKeyword.MODEL)
+@inside(symbols = IKeyword.MODEL, kinds = ISymbolKind.SPECIES)
 public class GuiExperiment extends AbstractExperiment {
 
 	protected final List<IParameter> regularParameters;

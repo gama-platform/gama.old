@@ -710,7 +710,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			IExpression expression = GAMA.getExpressionFactory().createExpr(ed, desc);
 			if ( expression != null ) {
 				IType type = expression.getType();
-				Map<String, ? extends IGamlDescription> descs = type.getFieldDescriptions();
+				Map<String, ? extends IGamlDescription> descs =
+					type.getFieldDescriptions(desc.getModelDescription());
 				for ( String s : descs.keySet() ) {
 					IGamlDescription d = descs.get(s);
 					String ss = provider.removeTags(d.getTitle()) + " (type: " + d.getType() + ")";

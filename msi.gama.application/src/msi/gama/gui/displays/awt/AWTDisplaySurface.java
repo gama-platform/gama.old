@@ -32,7 +32,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -104,7 +103,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			scope.getSimulationScope().getModel()
 				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
 
-		String file = snapshotFile + SimulationClock.getCycle() + ".png";
+		String file = snapshotFile + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));

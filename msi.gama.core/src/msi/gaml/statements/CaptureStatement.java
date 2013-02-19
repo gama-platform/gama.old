@@ -130,7 +130,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 				}
 
 				if ( !microAgents.isEmpty() ) {
-					capturedAgents = macroAgent.captureMicroAgents(microSpecies, microAgents);
+					capturedAgents =
+						macroAgent.captureMicroAgents(scope, microSpecies, microAgents);
 					microAgents.clear();
 
 					if ( !capturedAgents.isEmpty() ) {
@@ -150,7 +151,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 					microSpecies = macroSpecies.getMicroSpecies(c.getSpeciesName());
 
 					if ( microSpecies != null ) {
-						capturedAgent = macroAgent.captureMicroAgent(microSpecies, c);
+						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( !sequence.isEmpty() ) {
 							scope.execute(sequence, capturedAgent);

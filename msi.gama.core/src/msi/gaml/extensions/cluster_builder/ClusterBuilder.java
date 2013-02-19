@@ -19,7 +19,6 @@
 package msi.gaml.extensions.cluster_builder;
 
 import java.util.List;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -37,12 +36,12 @@ import weka.core.*;
 @species(name = "cluster_builder")
 public class ClusterBuilder extends GamlAgent {
 
-	public ClusterBuilder(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
+	public ClusterBuilder(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 	}
 
-	private Instances convertToInstances(final IList<String> attributes, final IList<IAgent> agents)
-		throws GamaRuntimeException {
+	private Instances convertToInstances(final IScope scope, final IList<String> attributes,
+		final IList<IAgent> agents) throws GamaRuntimeException {
 		FastVector attribs = new FastVector();
 		for ( String att : attributes ) {
 			attribs.addElement(new Attribute(att));
@@ -54,9 +53,7 @@ public class ClusterBuilder extends GamlAgent {
 			double vals[] = new double[nb];
 			for ( int i = 0; i < nb; i++ ) {
 				String attrib = attributes.get(i);
-				Double var =
-					Cast.asFloat(simulation.getGlobalScope(),
-						ag.getDirectVarValue(simulation.getGlobalScope(), attrib));
+				Double var = Cast.asFloat(scope, ag.getDirectVarValue(scope, attrib));
 				vals[i] = var;
 			}
 			Instance instance = new Instance(1, vals);
@@ -65,9 +62,9 @@ public class ClusterBuilder extends GamlAgent {
 		return dataset;
 	}
 
-	private List<List<IAgent>> clusteringUsingWeka(final Clusterer clusterer,
+	private List<List<IAgent>> clusteringUsingWeka(final IScope scope, final Clusterer clusterer,
 		final IList<String> attributes, final IList<IAgent> agents) throws GamaRuntimeException {
-		Instances dataset = convertToInstances(attributes, agents);
+		Instances dataset = convertToInstances(scope, attributes, agents);
 		try {
 			clusterer.buildClusterer(dataset);
 
@@ -148,7 +145,7 @@ public class ClusterBuilder extends GamlAgent {
 			xmeans.setSeed(scope.getIntArg("seed"));
 		}
 
-		List<List<IAgent>> groupes = clusteringUsingWeka(xmeans, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, xmeans, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}
@@ -200,7 +197,7 @@ public class ClusterBuilder extends GamlAgent {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(kmeans, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, kmeans, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}
@@ -236,7 +233,7 @@ public class ClusterBuilder extends GamlAgent {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(em, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, em, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}
@@ -267,7 +264,7 @@ public class ClusterBuilder extends GamlAgent {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(ff, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, ff, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}
@@ -305,7 +302,7 @@ public class ClusterBuilder extends GamlAgent {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(dbScan, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, dbScan, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}
@@ -337,7 +334,7 @@ public class ClusterBuilder extends GamlAgent {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(cutOff, attributes, agents);
+		List<List<IAgent>> groupes = clusteringUsingWeka(scope, cutOff, attributes, agents);
 		{
 			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		}

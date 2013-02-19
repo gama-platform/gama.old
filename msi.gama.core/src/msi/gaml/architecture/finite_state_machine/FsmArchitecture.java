@@ -45,9 +45,16 @@ import msi.gaml.types.IType;
 @skill(name = IKeyword.FSM)
 public class FsmArchitecture extends ReflexArchitecture {
 
-	protected Map<String, FsmStateStatement> states = new HashMap();
+	protected final Map<String, FsmStateStatement> states = new HashMap();
 	protected GamaList<String> stateNames;
 	protected FsmStateStatement initialState;
+
+	@Override
+	protected void clearBehaviors() {
+		super.clearBehaviors();
+		states.clear();
+		stateNames = null;
+	}
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {

@@ -20,7 +20,7 @@ package msi.gama.runtime.exceptions;
 
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.runtime.GAMA;
 import msi.gaml.statements.IStatement;
 
 /**
@@ -93,11 +93,11 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public boolean isWarning() {
-		return isWarning && !SimulationClock.TREAT_WARNINGS_AS_ERRORS;
+		return isWarning && !GAMA.TREAT_WARNINGS_AS_ERRORS;
 	}
 
 	public static long computeCycle() {
-		return SimulationClock.getCycle();
+		return GAMA.getClock().getCycle();
 	}
 
 	public List<String> getContextAsList() {

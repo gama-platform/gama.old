@@ -2,8 +2,8 @@ package msi.gama.headless.core;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.*;
+import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -29,12 +29,9 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		regularParameters = new ArrayList();
 	}
 
-	private final ParametersSet parameters = new ParametersSet();
-	private double seed;
-
 	@Override
 	public void setSeed(final double seed) {
-		this.seed = seed;
+		// this.seed = seed;
 	}
 
 	@Override
@@ -111,6 +108,11 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	}
 
 	@Override
+	public ISimulation createSimulation() {
+		return new HeadlessSimulation(this);
+	}
+
+	@Override
 	public void stepExperiment() {
 		this.currentSimulation.step();
 		// TODO Auto-generated method stub
@@ -129,29 +131,6 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		InterruptedException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void initialize(final ParametersSet sol, final Double seed) throws InterruptedException,
-		GamaRuntimeException {
-
-		for ( IParameter p : targetedVars.values() ) {
-			String name = p.getName();
-			this.getParameter(name);
-
-			if ( sol.containsKey(name) ) {
-				p.setValue(sol.get(name));
-			}
-		}
-
-		// GUI.debug("Initializing the random agent");
-		getParameter(IKeyword.SEED).setValue(seed);
-		random = new RandomUtils(seed);
-		// GUI.debug("Instanciating a new simulation");
-		currentSimulation = new HeadlessSimulation(this);
-		// GUI.debug("Building the outputs of the new simulation");
-		currentSimulation.initialize(sol);
-		buildOutputs();
 	}
 
 }

@@ -19,13 +19,13 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gaml.compilation.AbstractGamlAdditions.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -41,38 +41,41 @@ public class ModelFactory extends SymbolFactory {
 		super(handles);
 	}
 
-	private void addMicroSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
+	private void addMicroSpecies(final ModelDescription model, final IDescription macro,
+		final SpeciesStructure micro) {
+		// Create the species description without any children
 		SpeciesDescription mDesc =
 			(SpeciesDescription) create(micro.getNode(), macro, IChildrenProvider.NONE);
+		// Add it to its macro-species
 		macro.addChild(mDesc);
+		// Add it to the model
+		model.addSpeciesDescription(mDesc);
+		// Recursively create each micro-species of the newly added micro-species
 		for ( SpeciesStructure microSpecStructure : micro.getMicroSpecies() ) {
-			addMicroSpecies(mDesc, microSpecStructure);
+			addMicroSpecies(model, mDesc, microSpecStructure);
 		}
 	}
 
 	/**
-	 * Recursively complements a species with its micro-species.
+	 * Recursively complements a species and its micro-species.
 	 * Add variables, behaviors (actions, reflex, task, states, ...), aspects to species.
 	 * 
-	 * @param macroSpecies the macro-species
-	 * @param microSpeciesStructure the structure of micro-species
+	 * @param macro the macro-species
+	 * @param micro the structure of micro-species
 	 */
 	private void complementSpecies(final SpeciesDescription macro, final SpeciesStructure micro) {
 		ISyntacticElement msNode = micro.getNode();
+		// Gather the previously created species
 		SpeciesDescription mDesc = macro.getMicroSpecies(msNode.getLabel(IKeyword.NAME));
 		if ( mDesc == null ) { return; }
+		// GuiUtils.debug("Complementing " + mDesc.getName());
 		for ( ISyntacticElement child : msNode.getChildren() ) {
-			// if micro-species were already added, no need to re-add them
 			String kw = child.getKeyword();
 			if ( !ModelStructure.SPECIES_NODES.contains(kw) ) {
-				SymbolProto sp = DescriptionFactory.getProto(kw);
-				if ( sp != null ) {
-					mDesc.addChild(sp.getFactory().create(child, mDesc));
-				} else {
-					mDesc.getErrorCollector().add(
-						new GamlCompilationError("Unknown statement " + kw, child));
+				IDescription childDesc = create(child, mDesc);
+				if ( childDesc != null ) {
+					mDesc.addChild(childDesc);
 				}
-
 			}
 		}
 		// recursively complement micro-species
@@ -81,60 +84,46 @@ public class ModelFactory extends SymbolFactory {
 		}
 	}
 
-	private void complementExperimentSpecies(final SpeciesDescription sd) {
-		ISyntacticElement e = sd.getSourceInformation();
-		for ( ISyntacticElement child : e.getChildren() ) {
-			SymbolProto sp = DescriptionFactory.getProto(child.getKeyword());
-			if ( sp != null ) {
-				sp.getFactory().create(child, sd); // ???
-			} else {
-				sd.getErrorCollector().add(
-					new GamlCompilationError("Unknown statement " + child.getKeyword(), child));
-			}
-		}
-		sd.finalizeDescription();
-	}
-
 	public ModelDescription parse(final ModelStructure structure) {
-		ModelDescription model =
-			new ModelDescription(structure.getProjectPath(), structure.getPath(),
-				structure.getSource());
+		ModelDescription model = new ModelDescription(structure);
 		model.getSourceInformation().setDescription(model);
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
-
-		// Collecting built-in species
+		// Collect and build built-in species
 		SpeciesDescription world = computeBuiltInSpecies(model);
-
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( SpeciesStructure speciesStructure : structure.getSpecies() ) {
-			addMicroSpecies(world, speciesStructure);
+			addMicroSpecies(model, world, speciesStructure);
 		}
+		// Add all the new species descriptions as types
+		model.buildTypes();
 
-		// Complementing the world
-
+		// Complement the world with its elements
 		for ( final ISyntacticElement e : structure.getGlobalNodes() ) {
 			for ( ISyntacticElement child : e.getChildren() ) {
-				SymbolProto sp = DescriptionFactory.getProto(child.getKeyword());
-				world.addChild(sp.getFactory().create(child, world));
+				world.addChild(create(child, world));
 			}
 		}
-
-		// Complementing species
+		// Complement recursively the different species
 		for ( SpeciesStructure specStructure : structure.getSpecies() ) {
 			complementSpecies(world, specStructure);
 		}
-
-		// Inheritance (of attributes, actions, control, ... ) between parent & sub-species
+		// Make species recursively inherit (of attributes, actions, control, ... ) from their
+		// parent, create their control, skills
 		world.finalizeDescription();
 
-		// Parse the other definitions (output, environment, batch...)
+		// Parse the other definitions (output, environment, ...)
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {
 			IDescription dd = create(e, model);
-			if ( dd instanceof ExperimentDescription ) {
-				complementExperimentSpecies((ExperimentDescription) dd);
-			}
 			if ( dd != null ) {
 				model.addChild(dd);
+			}
+		}
+		// Gather the species created to see if some describe experiments, in which case they are
+		// added to the experiments of the model
+		for ( IDescription desc : world.getAllMicroSpecies() ) {
+			if ( desc instanceof ExperimentDescription ) {
+				// TODO addExperiment() without breaking the link
+				model.addChild(desc);
 			}
 		}
 
@@ -148,41 +137,31 @@ public class ModelFactory extends SymbolFactory {
 	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
 		// We create a new world
 		ISyntacticElement ww = model.getSourceInformation().getChild(GLOBAL);
-		IDescription world =
-			DescriptionFactory.createSpeciesDescription(WORLD_SPECIES,
-				AbstractGamlAdditions.WORLD_AGENT_CLASS, model,
-				AbstractGamlAdditions.WORLD_AGENT_CONSTRUCTOR, AbstractGamlAdditions
-					.getSpeciesSkills(WORLD_SPECIES), ww == null ? new Facets() : ww.getFacets());
+		SpeciesDescription world =
+			DescriptionFactory.createSpeciesDescription(WORLD_SPECIES, WORLD_AGENT_CLASS, model,
+				WORLD_AGENT_CONSTRUCTOR, getSpeciesSkills(WORLD_SPECIES), ww == null ? new Facets()
+					: ww.getFacets());
 		model.addChild(world);
 		// We then reattach the previous built-in species to the new world
-		for ( SpeciesDescription sd : AbstractGamlAdditions.BUILT_IN_SPECIES.values() ) {
+		for ( SpeciesDescription sd : BUILT_IN_SPECIES.values() ) {
 			sd.setSuperDescription(world);
 			world.addChild(sd);
 		}
-		return (SpeciesDescription) world;
+		return world;
 	}
 
 	private IDescription createDefaultExperiment() {
-		IDescription def;
-		if ( GuiUtils.isInHeadLessMode() ) {
-			def = DescriptionFactory.create(HEADLESS_UI, NAME, DEFAULT_EXP, TYPE, HEADLESS_UI);
-		} else {
-			def = DescriptionFactory.create(GUI_, NAME, DEFAULT_EXP, TYPE, GUI_);
-		}
-		complementExperimentSpecies((ExperimentDescription) def);
-		return def;
-
+		String type = GuiUtils.isInHeadLessMode() ? HEADLESS_UI : GUI_;
+		return DescriptionFactory.create(type, NAME, DEFAULT_EXP, TYPE, type);
 	}
 
 	public IModel compile(final ModelStructure structure) {
-		ModelDescription md = parse(structure);
-		IModel model = (IModel) compile(md);
-		return model;
+		return (IModel) compile(parse(structure));
 	}
 
 	synchronized public ModelDescription validate(final ModelStructure structure) {
 		ModelDescription md = parse(structure);
-		// md.getTypesManager().printTypeHierarchy();
+		md.getTypesManager().printTypeHierarchy();
 		validate(md);
 		return md;
 	}

@@ -22,23 +22,23 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.utils.*;
 
-@facets(value = {
-		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
-		@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
-		/** Numerous other facets to plan : step, init, etc.) **/
-		// @facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional =
-		// true),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
+@facets(value = { @facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
+	@facet(name = IKeyword.METHOD, type = IType.STRING_STR /* CHANGE */, optional = false),
+	/** Numerous other facets to plan : step, init, etc.) **/
+	// @facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional =
+	// true),
+	@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
 @vars({
 	@var(name = "time0", type = IType.FLOAT_STR,  init = "0.0"),
 	@var(name = "time_final", type = IType.FLOAT_STR, init = "1.0")})
 
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 // , with_args = true)
-@inside(kinds =  { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT,ISymbolKind.SPECIES})
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SPECIES })
 public class SolveStatement extends AbstractStatementSequence { // implements
-																// IStatement.WithArgs
-																// {
+
+	// IStatement.WithArgs
+	// {
 
 	Solver solver;
 	StatementDescription equations;
@@ -59,8 +59,8 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 
 		List<IDescription> statements = desc.getSpeciesContext().getChildren();
 		String eqName = getFacet(IKeyword.EQUATION).literalValue();
-		for (IDescription s : statements) {
-			if (s.getName().equals(eqName)) {
+		for ( IDescription s : statements ) {
+			if ( s.getName().equals(eqName) ) {
 				equations = (StatementDescription) s;
 			}
 		}
@@ -80,34 +80,32 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 	}
 	
 	@Override
-	public Object privateExecuteIn(final IScope scope)
-			throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		super.privateExecuteIn(scope);
 		String method = getFacet("method").literalValue();
-		
-		if (method.equals("rk4")) {
-			solver = new Rk4Solver(Double.parseDouble(""
-					+ getFacet(IKeyword.STEP).value(scope)));
-		} else if (method.equals("dp853")) {
-			solver = new DormandPrince853Solver(Double.parseDouble(""
-					+ getFacet(IKeyword.STEP).value(scope)));
+
+		if ( method.equals("rk4") ) {
+			solver = new Rk4Solver(Double.parseDouble("" + getFacet(IKeyword.STEP).value(scope)));
+		} else if ( method.equals("dp853") ) {
+			solver =
+				new DormandPrince853Solver(Double.parseDouble("" +
+					getFacet(IKeyword.STEP).value(scope)));
 		}
 		ISpecies context = scope.getAgentScope().getSpecies();
-		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context
-				.getStatement(SystemOfEquationsStatement.class,
-						getFacet(IKeyword.EQUATION).literalValue());
-		
+		SystemOfEquationsStatement s =
+			(SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class,
+				getFacet(IKeyword.EQUATION).literalValue());
+
 		s.currentScope = scope;
-		if (scope.hasVar("cycle_length")) {
-			cycle_length = Double.parseDouble(""
-					+ scope.getVarValue("cycle_length"));
+		if ( scope.hasVar("cycle_length") ) {
+			cycle_length = Double.parseDouble("" + scope.getVarValue("cycle_length"));
 		}
-		time_initial = SimulationClock.getCycle() - 1;
-		if (scope.hasVar("t0")) {
+		time_initial = scope.getClock().getCycle() - 1;
+		if ( scope.hasVar("t0") ) {
 			time_initial = Double.parseDouble("" + scope.getVarValue("t0"));
 		}
-		time_final = SimulationClock.getCycle();
-		if (scope.hasVar("tf")) {
+		time_final = scope.getClock().getCycle();
+		if ( scope.hasVar("tf") ) {
 			time_final = Double.parseDouble("" + scope.getVarValue("tf"));
 		}
 
@@ -117,5 +115,4 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		return null;
 	}
 
-	
 }

@@ -120,20 +120,12 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public String getKeyword() {
-		// if ( keyword == null ) {
-		// keyword = facets.getLabel(IKeyword.KEYWORD);
-		// }
 		return keyword;
 	}
 
 	@Override
 	public String getName() {
-		// if ( name == null ) {
-		// name =
-
 		return facets.getLabel(IKeyword.NAME);
-		// }
-		// return name;
 	}
 
 	@Override
@@ -187,7 +179,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IDescription copy() {
+	public IDescription copy(final IDescription into) {
 		return this;
 	}
 
@@ -370,4 +362,5 @@ public class SymbolDescription implements IDescription {
 	public boolean isBuiltIn() {
 		return source.isSynthetic();
 	}
+
 }

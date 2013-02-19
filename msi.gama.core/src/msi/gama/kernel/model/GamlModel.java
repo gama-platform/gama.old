@@ -62,6 +62,13 @@ public class GamlModel extends AbstractModel {
 				break;
 			}
 		}
+		// gather the experiments from its micro-species
+		for ( ISymbol s : worldSpecies.getMicroSpecies() ) {
+			if ( s instanceof IExperiment ) {
+				addExperiment((IExperiment) s);
+				experiments.add((IExperiment) s);
+			}
+		}
 
 		for ( ISymbol s : children ) {
 			if ( s instanceof IExperiment ) {

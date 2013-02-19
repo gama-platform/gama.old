@@ -1,19 +1,21 @@
-package msi.gama.metamodel.population;
+package msi.gama.kernel.experiment;
 
 import java.util.*;
-import msi.gama.kernel.experiment.ExperimentatorAgent;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.GamlPopulation;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.topology.IEnvironment;
-import msi.gama.metamodel.topology.continuous.*;
+import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 
-public class WorldPopulation extends GamlPopulation {
+public class ExperimentatorPopulation extends GamlPopulation {
 
-	public WorldPopulation(final ISpecies expr) {
+	/**
+	 * @param expr
+	 */
+	public ExperimentatorPopulation(final ISpecies expr) {
 		super(null, expr);
 	}
 
@@ -22,17 +24,13 @@ public class WorldPopulation extends GamlPopulation {
 		final List<Map<String, Object>> initialValues, final boolean isRestored)
 		throws GamaRuntimeException {
 		if ( size() == 0 ) {
-			WorldAgent world = new WorldAgent(this);
-			world.setIndex(0);
-			agents.add(world);
+			ExperimentatorAgent exp = new ExperimentatorAgent(this);
+			exp.setIndex(0);
+			agents.add(exp);
 			createVariablesFor(scope, agents, initialValues);
-			// initialize the model environment
-			IEnvironment modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
-			modelEnv.initializeFor(scope);
-			world.initializeLocationAndGeomtry(scope);
-			topology = new ContinuousTopology(scope, world.getGeometry(), false);
 		}
 		return agents;
+
 	}
 
 	@Override
@@ -40,8 +38,9 @@ public class WorldPopulation extends GamlPopulation {
 		return get(null, 0);
 	}
 
-	public void setHost(final ExperimentatorAgent agent) {
-		host = agent;
+	@Override
+	public IAgent getHost() {
+		return null;
 	}
 
 	@Override

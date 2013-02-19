@@ -346,6 +346,12 @@ public final class GamlAnnotations {
 		String name();
 
 		/**
+		 * Abstract
+		 */
+
+		boolean virtual() default false;
+
+		/**
 		 * Args
 		 * 
 		 * @return the list of arguments passed to this action. Each argument is an instance of arg

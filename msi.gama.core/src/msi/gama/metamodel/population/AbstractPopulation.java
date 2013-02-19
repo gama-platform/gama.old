@@ -20,7 +20,6 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -44,7 +43,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public abstract class AbstractPopulation /* extends GamaList<IAgent> */implements IPopulation {
+public abstract class AbstractPopulation implements IPopulation {
 
 	/** The agent hosting this population which is considered as the direct macro-agent. */
 	protected IAgent host;
@@ -132,9 +131,8 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
-		ISimulation sim = scope.getSimulationScope();
 		for ( IShape geom : geometries ) {
-			IAgent a = constr.createOneAgent(sim, this);
+			IAgent a = constr.createOneAgent(this);
 			int ind = currentAgentIndex++;
 			a.setIndex(ind);
 			a.setGeometry(geom);
@@ -150,15 +148,14 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	}
 
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope sim, final int number,
+	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<Map<String, Object>> initialValues, final boolean isRestored)
 		throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
-		ISimulation simulation = sim.getSimulationScope();
 		for ( int i = 0; i < number; i++ ) {
-			IAgent a = constr.createOneAgent(simulation, this);
+			IAgent a = constr.createOneAgent(this);
 			int ind = currentAgentIndex++;
 			a.setIndex(ind);
 			// Try to grab the location earlier
@@ -177,17 +174,17 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 		addAll(list, null);
 
 		for ( IAgent a : list ) {
-			a.initializeMicroPopulations(sim);
+			a.initializeMicroPopulations(scope);
 		}
 
-		createVariablesFor(sim, list, initialValues);
+		createVariablesFor(scope, list, initialValues);
 
 		for ( IAgent a : list ) {
 
 			// if agent is restored (on the capture or release); then don't need to run the "init"
 			// reflex
 			if ( !isRestored ) {
-				a.schedule();
+				a.schedule(scope);
 			}
 		}
 
@@ -254,13 +251,6 @@ public abstract class AbstractPopulation /* extends GamaList<IAgent> */implement
 	@Override
 	public boolean isGlobal() {
 		return species.isGlobal();
-	}
-
-	public void updateVariablesFor(final IScope scope, final IAgent agent)
-		throws GamaRuntimeException {
-		for ( int i = 0; i < updatableVars.length; i++ ) {
-			updatableVars[i].updateFor(scope, agent);
-		}
 	}
 
 	@Override

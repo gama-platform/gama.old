@@ -20,7 +20,7 @@ package msi.gaml.skills;
 
 import java.net.URL;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -79,7 +79,7 @@ public class WorldSkill extends GeometricSkill {
 
 	@getter(MODEL_PATH)
 	public String getModelPath(final IAgent agent) {
-		return GAMA.getModel().getFolderPath() + "/";
+		return agent.getModel().getFolderPath() + "/";
 	}
 
 	@getter(value = WORKSPACE_PATH, initializer = true)
@@ -90,22 +90,22 @@ public class WorldSkill extends GeometricSkill {
 
 	@getter(PROJECT_PATH)
 	public String getProjectPath(final IAgent agent) {
-		return GAMA.getModel().getProjectPath() + "/";
+		return agent.getModel().getProjectPath() + "/";
 	}
 
 	@getter(DURATION)
-	public String getDuration(final IAgent agent) {
-		return Long.toString(SimulationClock.getDuration());
+	public String getDuration(final IScope scope, final IAgent agent) {
+		return Long.toString(scope.getClock().getDuration());
 	}
 
 	@getter(TOTAL_DURATION)
-	public String getTotalDuration(final IAgent agent) {
-		return Long.toString(SimulationClock.getTotalDuration());
+	public String getTotalDuration(final IScope scope, final IAgent agent) {
+		return Long.toString(scope.getClock().getTotalDuration());
 	}
 
 	@getter(AVERAGE_DURATION)
-	public String getAverageDuration(final IAgent agent) {
-		return Double.toString(SimulationClock.getAverageDuration());
+	public String getAverageDuration(final IScope scope, final IAgent agent) {
+		return Double.toString(scope.getClock().getAverageDuration());
 	}
 
 	@getter(MACHINE_TIME)
@@ -119,23 +119,24 @@ public class WorldSkill extends GeometricSkill {
 	}
 
 	@getter(IKeyword.TIME)
-	public double getTime(final IAgent agent) {
-		return SimulationClock.getTime();
+	public double getTime(final IScope scope, final IAgent agent) {
+		return scope.getClock().getTime();
 	}
 
 	@setter(IKeyword.TIME)
-	public void setTime(final IAgent agent, final double t) throws GamaRuntimeException {
-		SimulationClock.setTime(t);
+	public void setTime(final IScope scope, final IAgent agent, final double t)
+		throws GamaRuntimeException {
+		scope.getClock().setTime(t);
 	}
 
 	@getter(CYCLE)
-	public Integer getCycle(final IAgent agent) {
-		return SimulationClock.getCycle();
+	public Integer getCycle(final IScope scope, final IAgent agent) {
+		return scope.getClock().getCycle();
 	}
 
 	@getter(value = GAMA._FATAL, initializer = true)
 	public Boolean getFatalErrors(final IAgent agent) {
-		return SimulationClock.TREAT_ERRORS_AS_FATAL;
+		return GAMA.TREAT_ERRORS_AS_FATAL;
 	}
 
 	// @setter(GAMA._FATAL)
@@ -145,22 +146,23 @@ public class WorldSkill extends GeometricSkill {
 
 	@getter(value = GAMA._WARNINGS, initializer = true)
 	public Boolean getWarningsAsErrors(final IAgent agent) {
-		return SimulationClock.TREAT_WARNINGS_AS_ERRORS;
+		return GAMA.TREAT_WARNINGS_AS_ERRORS;
 	}
 
 	@setter(GAMA._WARNINGS)
 	public void setWarningsAsErrors(final IAgent agent, final boolean t) {
-		SimulationClock.TREAT_WARNINGS_AS_ERRORS = t;
+		GAMA.TREAT_WARNINGS_AS_ERRORS = t;
 	}
 
 	@getter(IKeyword.STEP)
-	public double getTimeStep(final IAgent agent) {
-		return SimulationClock.getStep();
+	public double getTimeStep(final IScope scope, final IAgent agent) {
+		return scope.getClock().getStep();
 	}
 
 	@setter(IKeyword.STEP)
-	public void setTimeStep(final IAgent agent, final double t) throws GamaRuntimeException {
-		SimulationClock.setStep(t);
+	public void setTimeStep(final IScope scope, final IAgent agent, final double t)
+		throws GamaRuntimeException {
+		scope.getClock().setStep(t);
 	}
 
 	@getter(value = IKeyword.SEED, initializer = true)

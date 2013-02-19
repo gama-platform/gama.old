@@ -54,11 +54,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = coord.x;
 		y = coord.y;
 		hasZ = !Double.isNaN(coord.z);
-		if (hasZ) {
+		if ( hasZ ) {
 			z = coord.z;
-		}
-		else{
-			z=0.0f;
+		} else {
+			z = 0.0f;
 		}
 	}
 
@@ -68,11 +67,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		double zz = point.getZ();
 		hasZ = !Double.isNaN(zz);
 
-		if (hasZ){
+		if ( hasZ ) {
 			z = zz;
-		}
-		else{
-			z=0.0f;
+		} else {
+			z = 0.0f;
 		}
 
 	}

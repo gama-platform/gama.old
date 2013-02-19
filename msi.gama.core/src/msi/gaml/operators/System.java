@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -53,7 +52,7 @@ public class System {
 		"reflex text_every {", "	if every(2) {write \"the time step is even\";}",
 		"		else {write \"the time step is odd\";}" })
 	public static Boolean opEvery(final IScope scope, final Integer period) {
-		final int time = SimulationClock.getCycle();
+		final int time = scope.getClock().getCycle();
 		return period > 0 && time >= period && time % period == 0;
 	}
 

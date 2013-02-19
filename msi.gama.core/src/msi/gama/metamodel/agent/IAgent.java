@@ -18,11 +18,11 @@
  */
 package msi.gama.metamodel.agent;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -40,15 +40,17 @@ import msi.gaml.species.ISpecies;
  */
 public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable {
 
+	// public abstract IScheduler getScheduler();
+
 	@Override
 	public abstract void dispose();
 
 	public abstract void init(IScope scope) throws GamaRuntimeException;
 
-	public abstract void schedule() throws GamaRuntimeException;
+	public abstract void schedule(IScope scope) throws GamaRuntimeException;
 
-	public abstract Map<String,Object> getAttributes();
-	
+	public abstract Map<String, Object> getAttributes();
+
 	public abstract Object getAttribute(final String name);
 
 	public abstract void setAttribute(final String name, final Object val);
@@ -62,7 +64,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract ISpecies getSpecies();
 
 	public IPopulation getPopulation();
-	 
+
 	public boolean isTorus();
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
@@ -81,7 +83,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
-	public abstract ISimulation getSimulation();
+	// public abstract ISimulation getSimulation();
 
 	public abstract boolean contains(IAgent component);
 
@@ -110,7 +112,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Finds the corresponding population of a species from the "viewpoint" of this agent.
+	 *             Finds the corresponding population of a species from the "viewpoint" of this
+	 *             agent.
 	 * 
 	 *             An agent can "see" the following populations:
 	 *             1. populations of its species' direct micro-species;
@@ -120,7 +123,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @param speciesName the name of the species
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException;
+	public abstract IPopulation getPopulationFor(final String speciesName)
+		throws GamaRuntimeException;
 
 	/**
 	 * Initialize Populations to manage micro-agents.
@@ -196,7 +200,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract IAgent getHost();
 
 	public abstract void setHost(final IAgent hostAgent);
-	
+
 	public abstract List<IAgent> getMacroAgents();
 
 	/**
@@ -249,10 +253,11 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<IAgent> captureMicroAgents(final ISpecies microSpecies,
+	public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
 		final IList<IAgent> microAgents) throws GamaRuntimeException;
-	
-	public abstract IAgent captureMicroAgent(final ISpecies microSpecies, final IAgent microAgent) throws GamaRuntimeException;
+
+	public abstract IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies,
+		final IAgent microAgent) throws GamaRuntimeException;
 
 	/**
 	 * Releases some micro-agents of this agent.
@@ -261,26 +266,30 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<IAgent> releaseMicroAgents(final IList<IAgent> microAgents)
+	public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
 		throws GamaRuntimeException;
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
+	 * species.
 	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
 	 */
-	public abstract IList<IAgent> migrateMicroAgents(final IList<IAgent> microAgents, final ISpecies newMicroSpecies);
-	
+	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final IList<IAgent> microAgents,
+		final ISpecies newMicroSpecies);
+
 	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
+	 * species.
 	 * 
 	 * @param microAgent
 	 * @param newMicroSpecies
 	 * @return
 	 */
-	public abstract IList<IAgent> migrateMicroAgents(final ISpecies oldMicroSpecies, final ISpecies newMicroSpecies);
+	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies,
+		final ISpecies newMicroSpecies);
 
 	/**
 	 * Tells this agent that the host has changed its shape.
@@ -290,5 +299,13 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract void computeAgentsToSchedule(final IScope scope, final IList<IAgent> list)
 		throws GamaRuntimeException;
+
+	public ISimulation getSimulation();
+
+	public IScheduler getScheduler();
+
+	public IModel getModel();
+
+	public IExperiment getExperiment();
 
 }

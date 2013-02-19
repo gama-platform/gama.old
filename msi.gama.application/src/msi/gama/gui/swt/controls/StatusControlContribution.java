@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -69,7 +70,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
-				SimulationClock.toggleDisplay();
+				GAMA.getClock().toggleDisplay();
 			}
 		});
 		popup = new Popup(this, label);
@@ -102,15 +103,16 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if ( status == IGui.ERROR || status == IGui.WAIT ) { return label.getText(); }
 		StringBuilder sb = new StringBuilder(300);
 		String nl = StringUtils.getLineSeparator();
-		sb.append("Cycles elapsed: ").append("\t").append(SimulationClock.getCycle()).append(nl);
-		sb.append("Simulated time: ").append("\t")
-			.append(Strings.asDate(SimulationClock.getTime(), null)).append(nl);
-		sb.append("Cycle duration: ").append("\t").append("\t")
-			.append(SimulationClock.getDuration()).append("ms").append(nl);
-		sb.append("Average duration: ").append("\t")
-			.append((int) SimulationClock.getAverageDuration()).append("ms").append(nl);
-		sb.append("Total duration: ").append("\t").append("\t")
-			.append(SimulationClock.getTotalDuration()).append("ms");
+		SimulationClock clock = GAMA.getFrontmostSimulation().getScheduler().getClock();
+		sb.append("Cycles elapsed: ").append("\t").append(clock.getCycle()).append(nl);
+		sb.append("Simulated time: ").append("\t").append(Strings.asDate(clock.getTime(), null))
+			.append(nl);
+		sb.append("Cycle duration: ").append("\t").append("\t").append(clock.getDuration())
+			.append("ms").append(nl);
+		sb.append("Average duration: ").append("\t").append((int) clock.getAverageDuration())
+			.append("ms").append(nl);
+		sb.append("Total duration: ").append("\t").append("\t").append(clock.getTotalDuration())
+			.append("ms");
 		return sb.toString();
 	}
 

@@ -1,7 +1,6 @@
 package msi.gama.kernel.simulation;
 
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -11,6 +10,8 @@ import msi.gaml.compilation.*;
 public abstract class AbstractScheduler implements IScheduler {
 
 	protected final ISimulation simulation;
+
+	protected final SimulationClock clock;
 
 	// Flag indicating that the simulation has been launched and is alive (maybe paused)
 	public volatile boolean alive = false;
@@ -32,19 +33,22 @@ public abstract class AbstractScheduler implements IScheduler {
 	private final List<IAgent> agentsToInit;
 
 	private boolean inInitSequence = true;
-
-	private IAgent world;
+	/**
+	 * The agent that owns this scheduler
+	 */
+	private final IAgent owner;
 
 	private final List<ISchedulerListener> listeners;
 
-	protected AbstractScheduler(final ISimulation sim) {
+	protected AbstractScheduler(final ISimulation sim, final IAgent owner) {
 		simulation = sim;
+		this.owner = owner;
 		paused = true;
 		beginActions = new GamaList();
 		endActions = new GamaList();
 		agentsToInit = new GamaList();
 		listeners = new GamaList<ISchedulerListener>();
-		SimulationClock.reset();
+		clock = new SimulationClock();
 	}
 
 	@Override
@@ -70,19 +74,19 @@ public abstract class AbstractScheduler implements IScheduler {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		SimulationClock.beginCycle();
+		clock.beginCycle();
 		executeBeginActions(scope);
 		// Another strategy would be to run these agents hierarchically (all the level 1 first, then
 		// all the level 2, etc.). Maybe we can propose this strategy.
-		GamaList<IAgent> listOfAgentsToSchedule = GamaList.with(world);
-		world.computeAgentsToSchedule(scope, listOfAgentsToSchedule);
+		GamaList<IAgent> listOfAgentsToSchedule = GamaList.with(owner);
+		owner.computeAgentsToSchedule(scope, listOfAgentsToSchedule);
 		for ( IAgent a : listOfAgentsToSchedule ) {
 			if ( a != null ) {
 				a.step(scope);
 			}
 		}
 		executeEndActions(scope);
-		SimulationClock.step();
+		clock.step();
 	}
 
 	@Override
@@ -90,10 +94,10 @@ public abstract class AbstractScheduler implements IScheduler {
 		return inInitSequence;
 	}
 
-	protected void enterInitSequence() throws GamaRuntimeException, InterruptedException {
-		executeAgentsToInit(simulation.getExecutionScope());
+	protected void enterInitSequence(final IScope scope) throws GamaRuntimeException,
+		InterruptedException {
+		executeAgentsToInit(scope);
 		inInitSequence = false;
-		world = simulation.getWorld();
 	}
 
 	private void executeEndActions(final IScope scope) throws GamaRuntimeException {
@@ -128,7 +132,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		agentsToInit.toArray(toInit);
 		agentsToInit.clear();
 		for ( int i = 0, n = toInit.length; i < n; i++ ) {
-			GuiUtils.stopIfCancelled();
+			// GuiUtils.stopIfCancelled();
 			// GUI.debug("Executing the init section of " + toInit[i]);
 			IAgent a = toInit[i];
 			if ( !a.dead() ) {
@@ -182,12 +186,13 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	@Override
-	public void insertAgentToInit(final IAgent entity) throws GamaRuntimeException {
+	public void insertAgentToInit(final IAgent entity, final IScope scope)
+		throws GamaRuntimeException {
 		if ( inInitSequence ) {
 			agentsToInit.add(entity);
 		} else {
 			if ( !entity.dead() ) {
-				init(entity, simulation.getExecutionScope());
+				init(entity, scope);
 			}
 		}
 	}
@@ -203,4 +208,9 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	public abstract void pause();
+
+	@Override
+	public SimulationClock getClock() {
+		return clock;
+	}
 }

@@ -27,7 +27,6 @@ import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -80,7 +79,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			return;
 		}
 
-		String file = snapshotFolder + "/" + snapshotFileName + SimulationClock.getCycle() + ".png";
+		String file =
+			snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));

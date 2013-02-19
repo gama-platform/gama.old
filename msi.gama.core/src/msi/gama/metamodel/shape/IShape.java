@@ -62,7 +62,7 @@ public interface IShape extends ILocated, IValue {
 
 	public abstract boolean intersects(IShape g);
 
-	@getter( "perimeter")
+	@getter("perimeter")
 	public abstract double getPerimeter();
 
 	public abstract void setInnerGeometry(Geometry intersection);

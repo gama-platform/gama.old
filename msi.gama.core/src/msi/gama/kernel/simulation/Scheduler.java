@@ -18,9 +18,7 @@
  */
 package msi.gama.kernel.simulation;
 
-import java.util.List;
-
-import msi.gama.outputs.IOutputManager;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IScheduledAction;
@@ -31,15 +29,15 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 	public final Thread executionThread;
 
 	private static int threadCount = 0;
-	
-	protected Scheduler(final ISimulation sim) throws GamaRuntimeException {
-		super(sim);
+
+	protected Scheduler(final ISimulation sim, final IAgent owner) throws GamaRuntimeException {
+		super(sim, owner);
 		executionThread = new Thread(null, this, "Scheduler execution thread #" + threadCount++);
 	}
 
 	@Override
 	public void run() {
-		IOutputManager m = GAMA.getExperiment().getOutputManager();
+		// IOutputManager m = GAMA.getExperiment().getOutputManager();
 		while (alive) {
 			try {
 				IScheduler.SCHEDULER_AUTHORIZATION.acquire();
@@ -47,16 +45,16 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 				if ( !paused && alive ) {
 					step(simulation.getExecutionScope());
 				}
-				if ( alive ) {
-					m.step(simulation.getExecutionScope());
-				}
-				if ( alive ) {
-					m.updateOutputs();
-				}
+				// if ( alive ) {
+				// m.step(simulation.getExecutionScope());
+				// }
+				// if ( alive ) {
+				// m.updateOutputs();
+				// }
 
 				// HACK TO TEST
 
-				simulation.getModel().getModelEnvironment().getSpatialIndex().cleanCache();
+				// simulation.getModel().getModelEnvironment().getSpatialIndex().cleanCache();
 
 				paused = stepped ? true : paused;
 				stepped = false;

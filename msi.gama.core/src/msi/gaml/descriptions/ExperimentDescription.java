@@ -19,13 +19,14 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.interfaces.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.factories.IChildrenProvider;
 
 public class ExperimentDescription extends SpeciesDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source/* , final SymbolProto md */) {
-		super(keyword, superDesc, source.getFacets(), cp, source/* , md */);
+		final IChildrenProvider cp, final ISyntacticElement source) {
+		super(keyword, superDesc, source.getFacets(), cp, source);
 	}
 
 	@Override
@@ -37,7 +38,20 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	@Override
 	public String getTitle() {
-		return "Experiment " + getName();
+		return getName();
+	}
+
+	@Override
+	public void initJavaBase() {
+		initJavaBase(AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CLASS,
+			AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CONSTRUCTOR);
+	}
+
+	@Override
+	public String getParentName() {
+		String p = super.getParentName();
+		if ( p == null ) { return "experimentator"; }
+		return p;
 	}
 
 }

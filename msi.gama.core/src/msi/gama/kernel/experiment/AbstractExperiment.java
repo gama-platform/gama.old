@@ -22,17 +22,11 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.*;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.OutputManager;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.*;
@@ -62,76 +56,6 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	protected final List<IParameter> systemParameters;
 	protected ExperimentatorAgent agent;
-
-	public static class ExperimentatorPopulation extends GamlPopulation {
-
-		/**
-		 * @param expr
-		 */
-		public ExperimentatorPopulation(final ISpecies expr) {
-			super(null, expr);
-		}
-
-		@Override
-		public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-			final List<Map<String, Object>> initialValues, final boolean isRestored)
-			throws GamaRuntimeException {
-			if ( size() == 0 ) {
-				ExperimentatorAgent exp = new ExperimentatorAgent(scope.getSimulationScope(), this);
-				exp.setIndex(0);
-				agents.add(exp);
-				createVariablesFor(scope, agents, initialValues);
-
-			}
-			return agents;
-
-		}
-
-		@msi.gama.precompiler.GamlAnnotations.species(name = "experimentator")
-		public static class ExperimentatorAgent extends GamlAgent {
-
-			private GamaPoint location;
-
-			public ExperimentatorAgent(final ISimulation sim, final IPopulation s)
-				throws GamaRuntimeException {
-				super(sim, s);
-				index = 0;
-			}
-
-			@Override
-			public synchronized GamaPoint getLocation() {
-				return location;
-			}
-
-			@Override
-			public synchronized void setLocation(final ILocation newGlobalLoc) {}
-
-			@Override
-			public synchronized void setGeometry(final IShape newGlobalGeometry) {}
-
-			@Override
-			public void step(final IScope scope) {
-				simulation = scope.getSimulationScope();
-				super.step(scope);
-			}
-		}
-
-		@Override
-		public IAgent getAgent(final ILocation value) {
-			return get(null, 0);
-		}
-
-		@Override
-		public IAgent getHost() {
-			return null;
-		}
-
-		@Override
-		public void computeTopology(final IScope scope) throws GamaRuntimeException {
-			topology = new AmorphousTopology();
-		}
-
-	}
 
 	@Override
 	public ExperimentatorAgent getAgent() {
@@ -166,12 +90,19 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		super.dispose();
 	}
 
+	@Override
+	protected void createControl() {
+
+		super.createControl();
+	}
+
 	protected void createAgent() {
-		IPopulation pop = new ExperimentatorPopulation(this);
-		pop.initializeFor(getExperimentScope());
+		ExperimentatorPopulation pop = new ExperimentatorPopulation(this);
+		IScope scope = getExperimentScope();
+		pop.initializeFor(scope);
 		agent =
-			(ExperimentatorAgent) pop.createAgents(getExperimentScope(), 1, Collections.EMPTY_LIST,
-				false).get(0);
+			(ExperimentatorAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false).get(0);
+		agent.setExperiment(this);
 	}
 
 	@Override
@@ -388,6 +319,10 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 			output.dispose(true);
 			output = null;
 		}
+		if ( agent != null ) {
+			agent.dispose();
+			agent = null;
+		}
 		isOpen = false;
 	}
 
@@ -415,13 +350,13 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	@Override
 	public void initialize(final ParametersSet sol, final Double seed) throws InterruptedException,
 		GamaRuntimeException {
-		GuiUtils.debug("Beginning to initialize a new simulation");
+		// GuiUtils.debug("Beginning to initialize a new simulation");
 		if ( currentSimulation != null ) { return; }
 		if ( agent == null ) {
 			createAgent();
 		}
 		parametersEditors = null;
-		GuiUtils.debug("Setting the value of parameters from " + sol);
+		// GuiUtils.debug("Setting the value of parameters from " + sol);
 
 		for ( IParameter p : targetedVars.values() ) {
 			String name = p.getName();
@@ -433,14 +368,21 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		// GUI.debug("Initializing the random agent");
 		getParameter(IKeyword.SEED).setValue(seed);
 		random = new RandomUtils(seed);
-		GuiUtils.updateParameterView();
-		GuiUtils.clearErrors();
-		GuiUtils.showConsoleView();
+		if ( isGui() ) {
+			GuiUtils.updateParameterView();
+			GuiUtils.clearErrors();
+			GuiUtils.showConsoleView();
+		}
 		// GUI.debug("Instanciating a new simulation");
-		currentSimulation = new GamlSimulation(this);
+		currentSimulation = agent.getSimulation();
 		// GUI.debug("Building the outputs of the new simulation");
 		currentSimulation.initialize(sol);
 		buildOutputs();
+	}
+
+	@Override
+	public ISimulation createSimulation() {
+		return new GamlSimulation(this);
 	}
 
 	protected void buildOutputs() {

@@ -21,9 +21,8 @@ package msi.gaml.types;
 import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.ModelDescription;
 
 /**
  * The "generic" agent type.
@@ -53,11 +52,6 @@ public class GamaGenericAgentType extends GamaAgentType {
 	@Override
 	public boolean isSuperTypeOf(final IType type) {
 		return type != this && type instanceof GamaAgentType;
-	}
-
-	@Override
-	public ModelDescription getModel() {
-		return (ModelDescription) GAMA.getModelContext();
 	}
 
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
@@ -110,22 +110,22 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 			});
 
 		EditorFactory.create(parameters, "Pause and reveal in editor",
-			SimulationClock.TREAT_ERRORS_AS_FATAL, new EditorListener<Boolean>() {
+			GAMA.TREAT_ERRORS_AS_FATAL, new EditorListener<Boolean>() {
 
 				@Override
 				public void valueModified(final Boolean newValue) {
 
-					SimulationClock.TREAT_ERRORS_AS_FATAL = newValue;
+					GAMA.TREAT_ERRORS_AS_FATAL = newValue;
 				}
 
 			});
 		EditorFactory.create(parameters, "Treat warnings as errors ",
-			SimulationClock.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
+			GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
 
 				@Override
 				public void valueModified(final Boolean newValue) {
 
-					SimulationClock.TREAT_WARNINGS_AS_ERRORS = newValue;
+					GAMA.TREAT_WARNINGS_AS_ERRORS = newValue;
 				}
 
 			});

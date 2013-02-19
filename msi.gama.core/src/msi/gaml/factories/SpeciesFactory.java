@@ -21,8 +21,9 @@ package msi.gaml.factories;
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -44,6 +45,7 @@ public class SpeciesFactory extends SymbolFactory {
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
+		if ( name == null ) { return null; }
 		DescriptionFactory.addSpeciesNameAsType(name);
 		return new SpeciesDescription(source.getKeyword(), sd, facets, cp, source);
 	}
@@ -70,6 +72,12 @@ public class SpeciesFactory extends SymbolFactory {
 				validate(s);
 			}
 		}
+	}
+
+	@Override
+	ISymbol privateCompile(final IDescription desc) {
+		GuiUtils.debug("Compiling " + desc.getTitle() + "as species");
+		return super.privateCompile(desc);
 	}
 
 }

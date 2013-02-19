@@ -66,7 +66,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	int target;
 
-	public InspectDisplayOutput(/* final ISymbol context, */final IDescription desc) {
+	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
 		String type = getLiteral(IKeyword.TYPE);
 		if ( value != null ) {

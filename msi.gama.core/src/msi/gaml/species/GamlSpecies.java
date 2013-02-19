@@ -37,7 +37,6 @@ import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -55,14 +54,15 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LABEL, optional = true),
-	// FIXME Build a list of control architectures dynamically at startup and populate the values
-	// attribute
+	@facet(name = "mirrors", type = IType.LIST_STR, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = "compile", type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER_STR, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) }, omissible = IKeyword.NAME)
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR) })
+// FIXME Build a list of control architectures dynamically at startup and populate the values
+// attribute
 public class GamlSpecies extends AbstractSpecies {
 
 	public GamlSpecies(final IDescription desc) {
@@ -279,6 +279,11 @@ public class GamlSpecies extends AbstractSpecies {
 	public IAgent getFromIndicesList(final IScope scope, final IList indices)
 		throws GamaRuntimeException {
 		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
+	}
+
+	@Override
+	public boolean isMirror() {
+		return getDescription().isMirror();
 	}
 
 }

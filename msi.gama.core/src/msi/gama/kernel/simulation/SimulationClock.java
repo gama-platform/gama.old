@@ -31,61 +31,58 @@ import msi.gaml.operators.Strings;
  */
 public class SimulationClock {
 
-	public static boolean TREAT_ERRORS_AS_FATAL = true;
-	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
-
 	/**
 	 * The delay, a value between 0 and 1, that can be introduced by the user (through the graphical
 	 * interface) for each cycle. A value of 1 means no delay, while a delay of 0 will pause the
 	 * simulation during 1 second for each cycle. Any intermediate value will be treated as a
 	 * percentage of a second equal to (1 - delay) * 100
 	 */
-	private static double delay = 1d;
+	private double delay = 1d;
 
 	/** The number of simulation cycles elapsed so far. */
-	private static int cycle = 0;
+	private int cycle = 0;
 
 	/**
 	 * The current value of time in the model timescale. The base unit is the second (see
-	 * <link>IUnits</link>). This value is normally always equal to step
-	 * * cycle. Note that time can take values smaller than 1 (in case of a step in milliseconds,
-	 * for instance), but not smaller than 0.
+	 * <link>IUnits</link>). This value is normally always equal to step * cycle. Note that time can
+	 * take values smaller than 1 (in case of a step in milliseconds, for instance), but not smaller
+	 * than 0.
 	 */
-	private static double time = 0d;
+	private double time = 0d;
 
 	/**
 	 * The length (in model time) of the interval between two cycles. Default is 1 (or 1 second if
 	 * time matters). Step can be smaller than 1 (to express an interval smaller than one second).
 	 */
-	private static double step = 1d;
+	private double step = 1d;
 
 	/** The duration (in milliseconds) of the last cycle elapsed. */
-	private static long duration = 0;
+	private long duration = 0;
 
 	/**
 	 * The total duration in milliseconds since the beginning of the simulation. Since it is the
 	 * addition of the consecutive durations of cycles, note that it may be different from the
 	 * actual duration of the simulation if the user chooses to pause it, for instance.
 	 */
-	private static long total_duration = 0;
+	private long total_duration = 0;
 
 	/**
 	 * A variable used to compute duration (holds the time, in milliseconds, of the beginning of a
 	 * cycle).
 	 */
-	private static long start = 0;
+	private long start = 0;
 
 	/**
 	 * Whether to display the number of cycles or a more readable information (in model time)
 	 */
-	private static boolean displayCycles = true;
+	private boolean displayCycles = true;
 
 	/**
 	 * @throws GamaRuntimeException
 	 *             Sets a new value to the cycle.
 	 * @param i the new value
 	 */
-	public static void setCycle(final int i) throws GamaRuntimeException {
+	private void setCycle(final int i) throws GamaRuntimeException {
 		if ( i < 0 ) { throw new GamaRuntimeException(
 			"The current cycle of a simulation cannot be negative"); }
 		cycle = i;
@@ -95,7 +92,7 @@ public class SimulationClock {
 	 * Increments the cycle by 1.
 	 * @return the new value of cycle
 	 */
-	private static int incrementCycle() {
+	private int incrementCycle() {
 		cycle++;
 		return cycle;
 	}
@@ -103,7 +100,7 @@ public class SimulationClock {
 	/**
 	 * Returns the current value of cycle
 	 */
-	public static int getCycle() {
+	public int getCycle() {
 		return cycle;
 	}
 
@@ -113,7 +110,7 @@ public class SimulationClock {
 	 * @throws GamaRuntimeException
 	 * @param i a positive double
 	 */
-	public static void setTime(final double i) throws GamaRuntimeException {
+	public void setTime(final double i) throws GamaRuntimeException {
 		if ( i < 0 ) { throw new GamaRuntimeException(
 			"The current time of a simulation cannot be negative"); }
 		time = i;
@@ -123,7 +120,7 @@ public class SimulationClock {
 	 * Increments the time by the value of step
 	 * @return the current value of time
 	 */
-	private static double incrementTime() {
+	private double incrementTime() {
 		time += step;
 		return time;
 	}
@@ -132,7 +129,7 @@ public class SimulationClock {
 	 * Gets the current value of time in the simulation
 	 * @return a positive double
 	 */
-	public static double getTime() {
+	public double getTime() {
 		return time;
 	}
 
@@ -146,7 +143,7 @@ public class SimulationClock {
 	 * @param i a positive double
 	 */
 
-	public static void setStep(final double i) throws GamaRuntimeException {
+	public void setStep(final double i) throws GamaRuntimeException {
 		if ( i < 0 ) { throw new GamaRuntimeException(
 			"The interval between two cycles of a simulation cannot be negative"); }
 		step = i <= 0 ? 1 : i;
@@ -156,21 +153,21 @@ public class SimulationClock {
 	 * Return the current value of step
 	 * @return a positive double
 	 */
-	public static double getStep() {
+	public double getStep() {
 		return step;
 	}
 
 	/**
 	 * Initializes start at the beginning of a step
 	 */
-	public static void resetDuration() {
+	public void resetDuration() {
 		start = System.currentTimeMillis();
 	}
 
 	/**
 	 * Computes the duration by substracting start to the current time in milliseconds
 	 */
-	private static void computeDuration() {
+	private void computeDuration() {
 		duration = System.currentTimeMillis() - start;
 		total_duration += duration;
 	}
@@ -179,7 +176,7 @@ public class SimulationClock {
 	 * Gets the duration (in milliseconds) of the latest cycle elapsed so far
 	 * @return a duration in milliseconds
 	 */
-	public static long getDuration() {
+	public long getDuration() {
 		return duration;
 	}
 
@@ -187,7 +184,7 @@ public class SimulationClock {
 	 * Gets the average duration (in milliseconds) over
 	 * @return a duration in milliseconds
 	 */
-	public static double getAverageDuration() {
+	public double getAverageDuration() {
 		if ( cycle == 0 ) { return 0; }
 		return (double) total_duration / (double) cycle;
 	}
@@ -196,18 +193,18 @@ public class SimulationClock {
 	 * Gets the total duration in milliseconds since the beginning of the current simulation.
 	 * @return a duration in milliseconds
 	 */
-	public static long getTotalDuration() {
+	public long getTotalDuration() {
 		return total_duration;
 	}
 
-	public static void step() {
+	public void step() {
 		incrementCycle();
 		incrementTime();
 		computeDuration();
 		waitDelay();
 	}
 
-	public static void waitDelay() {
+	public void waitDelay() {
 		if ( delay == 1d ) { return; }
 		try {
 			Thread.sleep((long) (1000 - delay * 1000));
@@ -216,7 +213,7 @@ public class SimulationClock {
 		}
 	}
 
-	public static void reset() throws GamaRuntimeException {
+	public void reset() throws GamaRuntimeException {
 		setCycle(0);
 		setTime(0d);
 		setDelay(1d);
@@ -227,20 +224,20 @@ public class SimulationClock {
 	/**
 	 * @param selection
 	 */
-	public static void setDelay(final double value) {
+	public void setDelay(final double value) {
 		// From 0 (slowest) to 1 (fastest)
 		delay = value < 0 ? 0d : value > 1d ? 1d : value;
 	}
 
-	public static double getDelay() {
+	public double getDelay() {
 		return delay;
 	}
 
-	public static void toggleDisplay() {
+	public void toggleDisplay() {
 		displayCycles = !displayCycles;
 	}
 
-	public static void beginCycle() {
+	public void beginCycle() {
 		resetDuration();
 		String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
 		GuiUtils.informStatus(info);

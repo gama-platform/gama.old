@@ -20,7 +20,7 @@ package msi.gama.runtime;
 
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -98,10 +98,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public void setAgentVarValue(final String name, final Object v) throws GamaRuntimeException {
-		if ( agentsPointer == 0 ) {
-			// setGlobalVarValue(name, v);
-			return;
-		}
+		if ( agentsPointer == 0 ) { return; }
 		IAgent agent = agentsStack[agentsPointer - 1];
 		if ( agent.dead() ) { return; }
 		agent.setDirectVarValue(this, name, v); // ??
@@ -341,6 +338,12 @@ public abstract class AbstractScope implements IScope {
 		ITopology previous = topology;
 		topology = topo;
 		return previous;
+	}
+
+	@Override
+	public final SimulationClock getClock() {
+		ISimulation sim = getSimulationScope();
+		return sim == null ? null : sim.getScheduler().getClock();
 	}
 
 }

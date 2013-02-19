@@ -38,10 +38,6 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		super(scope, pathName);
 	}
 
-	public GamaImageFile(final String absoluteFilePath) throws GamaRuntimeException {
-		super(absoluteFilePath);
-	}
-
 	@Override
 	protected void fillBuffer() throws GamaRuntimeException {
 		if ( buffer != null ) { return; }

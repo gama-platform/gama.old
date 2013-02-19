@@ -47,11 +47,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.INT_STR, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true),
-// @facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
-// @facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
-// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true)
-}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 public class ContainerVariable extends Variable {

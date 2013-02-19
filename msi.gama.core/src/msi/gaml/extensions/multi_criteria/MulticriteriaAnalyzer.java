@@ -19,7 +19,6 @@
 package msi.gaml.extensions.multi_criteria;
 
 import java.util.*;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -32,9 +31,8 @@ import msi.gama.util.GamaList;
 @species(name = "multicriteria_analyzer")
 public class MulticriteriaAnalyzer extends GamlAgent {
 
-	public MulticriteriaAnalyzer(final ISimulation sim, final IPopulation s)
-		throws GamaRuntimeException {
-		super(sim, s);
+	public MulticriteriaAnalyzer(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 	}
 
 	@action(name = "weighted_means_DM")

@@ -23,7 +23,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -64,6 +64,11 @@ public abstract class AbstractSimulation implements ISimulation {
 	@Override
 	public IScheduler getScheduler() {
 		return scheduler;
+	}
+
+	@Override
+	public IExperiment getExperiment() {
+		return experiment;
 	}
 
 	@Override
@@ -140,7 +145,9 @@ public abstract class AbstractSimulation implements ISimulation {
 		return worldPopulation.getAgent(0);
 	}
 
-	protected abstract void initializeWorldPopulation();
+	protected void initializeWorldPopulation() {
+		worldPopulation = new WorldPopulation(getModel().getWorldSpecies());
+	}
 
 	@Override
 	public void initialize(final ParametersSet parameters) throws GamaRuntimeException,
@@ -152,12 +159,24 @@ public abstract class AbstractSimulation implements ISimulation {
 		GuiUtils.waitStatus("Initializing the world");
 		initializeWorld(parameters);
 		GuiUtils.waitStatus(" Instantiating agents ");
-		scheduler.enterInitSequence();
+		scheduler.enterInitSequence(getExecutionScope());
 		isLoading = false;
 	}
 
-	protected abstract void initializeWorld(Map<String, Object> parameters)
-		throws GamaRuntimeException, InterruptedException;
+	protected void initializeWorld(final Map<String, Object> parameters)
+		throws GamaRuntimeException {
+		WorldPopulation g = (WorldPopulation) getWorldPopulation();
+		g.initializeFor(getGlobalScope());
+		// Here, the link is being made with the experimentator agent, which becomes the "host" of
+		// the world population
+		experiment.getAgent().addMicroPopulation(g);
+		List<? extends IAgent> newAgents =
+			g.createAgents(getGlobalScope(), 1, GamaList.with(parameters), false);
+		IAgent world = newAgents.get(0);
+		experiment.getAgent().schedule(getGlobalScope());
+		world.schedule(getGlobalScope());
+		world.initializeMicroPopulations(getGlobalScope());
+	}
 
 	@Override
 	public IModel getModel() {

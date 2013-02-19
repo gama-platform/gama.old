@@ -78,6 +78,7 @@ public class SymbolFactory {
 		final IDescription superDesc, final IChildrenProvider cp, final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
 		IDescription desc = buildDescription(source, cp, superDesc, md);
+		if ( desc == null ) { return null; }
 		desc.getSourceInformation().setDescription(desc);
 		return desc;
 	}
@@ -176,7 +177,7 @@ public class SymbolFactory {
 		}
 	}
 
-	final ISymbol privateCompile(final IDescription desc) {
+	ISymbol privateCompile(final IDescription desc) {
 		SymbolProto md = desc.getMeta();
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();

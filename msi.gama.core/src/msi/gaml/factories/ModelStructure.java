@@ -20,10 +20,13 @@ import msi.gaml.descriptions.LabelExpressionDescription;
  */
 public class ModelStructure implements IKeyword {
 
-	public final static List<String> SPECIES_NODES = Arrays.asList(IKeyword.SPECIES, IKeyword.GRID);
-	static final List<String> GLOBAL_NODES = Arrays.asList(GLOBAL);
-	static final List<String> NON_RECURSIVE = Arrays.asList(OUTPUT, BATCH, GLOBAL, SPECIES, GRID);
-	static final List<String> NODES_TO_REMOVE = Arrays.asList(INCLUDE, GLOBAL, SPECIES, GRID);
+	public final static Set<String> SPECIES_NODES = new HashSet(Arrays.asList(SPECIES, GRID, GUI_,
+		BATCH, REMOTE, HEADLESS_UI));
+	static final Set<String> GLOBAL_NODES = new HashSet(Arrays.asList(GLOBAL));
+	static final Set<String> NON_RECURSIVE = new HashSet(Arrays.asList(OUTPUT, BATCH, GLOBAL,
+		SPECIES, GRID, GUI_, REMOTE, HEADLESS_UI));
+	static final Set<String> NODES_TO_REMOVE = new HashSet(Arrays.asList(INCLUDE, GLOBAL, SPECIES,
+		GRID, BATCH, GUI_, REMOTE, HEADLESS_UI));
 	static final List<String> NODES_TO_EXPAND = Arrays.asList(ENTITIES);
 	private String name = "";
 	private String modelPath = "";
@@ -37,7 +40,6 @@ public class ModelStructure implements IKeyword {
 		final List<ISyntacticElement> models) {
 		this.projectPath = projectPath;
 		this.modelPath = modelPath;
-
 		for ( ISyntacticElement speciesNode : buildNodes(models) ) {
 			addSpecies(buildSpeciesStructure(speciesNode));
 		}
@@ -59,8 +61,9 @@ public class ModelStructure implements IKeyword {
 		SpeciesStructure species = new SpeciesStructure(speciesNode);
 		// recursively accumulate micro-species
 		List<ISyntacticElement> microSpecies = new GamaList<ISyntacticElement>();
-		microSpecies.addAll(speciesNode.getChildren(SPECIES));
-		microSpecies.addAll(speciesNode.getChildren(GRID));
+		for ( String s : SPECIES_NODES ) {
+			microSpecies.addAll(speciesNode.getChildren(s));
+		}
 		for ( ISyntacticElement microSpeciesNode : microSpecies ) {
 			species.addMicroSpecies(buildSpeciesStructure(microSpeciesNode));
 		}
@@ -132,7 +135,7 @@ public class ModelStructure implements IKeyword {
 	}
 
 	private List<ISyntacticElement> accumulateNodes(final List<ISyntacticElement> nodes,
-		final List<String> names) {
+		final Set<String> names) {
 		final List result = new ArrayList();
 		for ( final ISyntacticElement e : nodes ) {
 			final String name = e.getKeyword();
@@ -146,7 +149,7 @@ public class ModelStructure implements IKeyword {
 		return result;
 	}
 
-	private void removeUselessNodes(final List<ISyntacticElement> nodes, final List<String> names) {
+	private void removeUselessNodes(final List<ISyntacticElement> nodes, final Set<String> names) {
 		Iterator<ISyntacticElement> i = nodes.iterator();
 		while (i.hasNext()) {
 			ISyntacticElement e = i.next();

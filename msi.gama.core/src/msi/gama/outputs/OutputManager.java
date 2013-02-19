@@ -24,7 +24,6 @@ import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
@@ -48,43 +47,43 @@ public class OutputManager extends Symbol implements IOutputManager {
 	private final Set<IOutput> outputsToUnschedule = new HashSet<IOutput>();
 	private final Set<IOutput> scheduledOutputs = new HashSet<IOutput>();
 
-	/* Hack Nico need to be checked for the headless */
-	public static Thread OUTPUT_THREAD = new Thread(null, new Runnable() {
-
-		@Override
-		public void run() {
-			boolean cond = false;
-			while (cond) {
-				/*
-				 * C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant
-				 * l'instruction juste avant cond=false...
-				 */
-				try {
-					OutputManager.OUTPUT_AUTHORIZATION.acquire();
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				IExperiment exp = GAMA.getExperiment();
-				if ( exp != null && exp.isRunning() ) {
-					try {
-						OutputManager.OUTPUT_FINISHED.acquire();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					try {
-						exp.getOutputManager().updateOutputs();
-					} finally {
-						OutputManager.OUTPUT_FINISHED.release();
-					}
-				}
-
-			}
-		}
-	}, "Output thread");
-
-	static {
-		OUTPUT_THREAD.start();
-	}
+	// /* Hack Nico need to be checked for the headless */
+	// public static Thread OUTPUT_THREAD = new Thread(null, new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// boolean cond = false;
+	// while (cond) {
+	// /*
+	// * C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant
+	// * l'instruction juste avant cond=false...
+	// */
+	// try {
+	// OutputManager.OUTPUT_AUTHORIZATION.acquire();
+	// } catch (InterruptedException e1) {
+	// e1.printStackTrace();
+	// }
+	// IExperiment exp = GAMA.getExperiment();
+	// if ( exp != null && exp.isRunning() ) {
+	// try {
+	// OutputManager.OUTPUT_FINISHED.acquire();
+	// } catch (InterruptedException e) {
+	// e.printStackTrace();
+	// }
+	// try {
+	// exp.getOutputManager().updateOutputs();
+	// } finally {
+	// OutputManager.OUTPUT_FINISHED.release();
+	// }
+	// }
+	//
+	// }
+	// }
+	// }, "Output thread");
+	//
+	// static {
+	// // OUTPUT_THREAD.start();
+	// }
 
 	public OutputManager(final IDescription desc) {
 		super(desc);
@@ -263,7 +262,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public void step(final IScope scope) {
-		int cycle = SimulationClock.getCycle();
+		int cycle = scope.getClock().getCycle();
 		scheduledOutputs.removeAll(outputsToUnschedule);
 		outputsToUnschedule.clear();
 		for ( IOutput o : scheduledOutputs ) {

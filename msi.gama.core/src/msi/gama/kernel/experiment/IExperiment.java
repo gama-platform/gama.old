@@ -20,7 +20,6 @@ package msi.gama.kernel.experiment;
 
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.experiment.AbstractExperiment.ExperimentatorPopulation.ExperimentatorAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.outputs.IOutputManager;
@@ -115,5 +114,7 @@ public interface IExperiment extends ISpecies {
 	void interrupt();
 
 	public ExperimentatorAgent getAgent();
+
+	public abstract ISimulation createSimulation();
 
 }

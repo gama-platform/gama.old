@@ -243,14 +243,24 @@ public class GamaProcessor extends AbstractProcessor {
 					getter getter = m.getAnnotation(getter.class);
 					if ( getter != null && getter.value().equals(varName) ) {
 						ExecutableElement ex = (ExecutableElement) m;
+						List<? extends VariableElement> argParams = ex.getParameters();
+						String[] args = new String[argParams.size()];
+						for ( int i = 0; i < args.length; i++ ) {
+							args[i] = rawNameOf(argParams.get(i));
+						}
+						int n = args.length;
+						boolean scope = n > 0 && args[0].contains("IScope");
+
 						// method
 						sb.append(ex.getSimpleName()).append(SEP);
 						// retClass
 						sb.append(rawNameOf(ex.getReturnType())).append(SEP);
 						// dynamic ?
-						sb.append(ex.getParameters().size() > 0).append(SEP);
+						sb.append(!scope && n > 0 || scope && n > 1).append(SEP);
 						// field ?
-						sb.append(!isISkill);
+						sb.append(!isISkill).append(SEP);
+						// scope ?
+						sb.append(scope);
 						sb.append(SEP).append(getter.initializer());
 						found = true;
 						break;
@@ -265,14 +275,23 @@ public class GamaProcessor extends AbstractProcessor {
 					setter setter = m.getAnnotation(setter.class);
 					if ( setter != null && setter.value().equals(varName) ) {
 						ExecutableElement ex = (ExecutableElement) m;
+						List<? extends VariableElement> argParams = ex.getParameters();
+						String[] args = new String[argParams.size()];
+						for ( int i = 0; i < args.length; i++ ) {
+							args[i] = rawNameOf(argParams.get(i));
+						}
+						int n = args.length;
+						boolean scope = n > 0 && args[0].contains("IScope");
 						// method
 						sb.append(ex.getSimpleName()).append(SEP);
 						// paramClass
-						List<? extends VariableElement> params = ex.getParameters();
-						boolean isDynamic = params.size() == 2;
-						sb.append(rawNameOf(isDynamic ? params.get(1) : params.get(0))).append(SEP);
+						boolean isDynamic = !scope && n == 2 || scope && n == 3;
+						sb.append(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]).append(
+							SEP);
 						// isDynamic
-						sb.append(isDynamic);
+						sb.append(isDynamic).append(SEP);
+						// scope ?
+						sb.append(scope);
 						found = true;
 						break;
 					}
@@ -661,6 +680,8 @@ public class GamaProcessor extends AbstractProcessor {
 			} else {
 				sb.append(rawNameOf(tm)).append(SEP);
 			}
+			// virtual
+			sb.append(action.virtual()).append(SEP);
 			// name
 			sb.append(action.name()).append(SEP);
 			// argNumber

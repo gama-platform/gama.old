@@ -37,7 +37,6 @@ import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
@@ -172,7 +171,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			scope.getSimulationScope().getModel()
 				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
 
-		String file = snapshotFile + SimulationClock.getCycle() + ".png";
+		String file = snapshotFile + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));

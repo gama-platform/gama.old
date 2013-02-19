@@ -59,9 +59,8 @@ public class NumberVariable extends Variable {
 	private final IExpression min, max, step;
 	private final Number minVal, maxVal, stepVal;
 
-	public NumberVariable(/* final ISymbol enclosingScope, */final IDescription sd)
-		throws GamaRuntimeException {
-		super(/* enclosingScope, */sd);
+	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
+		super(sd);
 		IScope scope = GAMA.getDefaultScope();
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);

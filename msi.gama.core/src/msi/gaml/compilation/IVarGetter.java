@@ -19,6 +19,7 @@
 package msi.gaml.compilation;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.skills.ISkill;
 
@@ -28,5 +29,5 @@ import msi.gaml.skills.ISkill;
  */
 public interface IVarGetter extends IGamaHelper {
 
-	public Object run(IAgent agent, ISkill skill) throws GamaRuntimeException;
+	public Object run(IScope scope, IAgent agent, ISkill skill) throws GamaRuntimeException;
 }

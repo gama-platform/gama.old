@@ -204,6 +204,7 @@ public interface IKeyword {
 	public static final String MIN = "min";
 	public static final String MINIMIZE = "minimize";
 	public final static String MINUS = "-";
+	public final static String MIRRORS = "mirrors";
 	public static final String MODEL = "model";
 	public static final String MONITOR = "monitor";
 	public static final String MOUSE_DOWN = "mouse_down";
@@ -326,6 +327,7 @@ public interface IKeyword {
 	public static final String VARIATION = "variation";
 	public static final String VERSION = "version";
 	public static final String VERTEX = "vertex";
+	public static final String VIRTUAL = "virtual";
 	public static final String WARNING = "warn";
 	public static final String WEIGHT = "weight";
 	public static final String WHEN = "when";

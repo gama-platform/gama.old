@@ -94,9 +94,9 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	@Override
-	public VariableDescription copy() {
+	public VariableDescription copy(final IDescription into) {
 		VariableDescription vd =
-			new VariableDescription(getKeyword(), null, facets, null, getSourceInformation());
+			new VariableDescription(getKeyword(), into, facets, null, getSourceInformation());
 		vd.addHelpers(get, init, set);
 		return vd;
 	}

@@ -113,7 +113,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
 				microSpecies = (ISpecies) scope.evaluate(asExpr, targetAgent);
 
-				releasedMicroAgents = targetAgent.captureMicroAgents(microSpecies, microAgents);
+				releasedMicroAgents =
+					targetAgent.captureMicroAgents(scope, microSpecies, microAgents);
 			}
 		} else if ( asExpr != null && inExpr == null ) {
 			String microSpeciesName = asExpr.literalValue();
@@ -128,7 +129,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			}
 
 			if ( microSpecies != null ) {
-				releasedMicroAgents = macroOfMacro.captureMicroAgents(microSpecies, microAgents);
+				releasedMicroAgents =
+					macroOfMacro.captureMicroAgents(scope, microSpecies, microAgents);
 			}
 
 		} else if ( asExpr == null && inExpr != null ) {
@@ -138,7 +140,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 				for ( IAgent m : microAgents ) {
 					microSpecies = targetAgent.getSpecies().getMicroSpecies(m.getSpeciesName());
 					if ( microSpecies != null ) {
-						releasedMicroAgents.add(targetAgent.captureMicroAgent(microSpecies, m));
+						releasedMicroAgents.add(targetAgent.captureMicroAgent(scope, microSpecies,
+							m));
 					}
 				}
 			}
@@ -161,7 +164,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 				}
 
 				if ( macroOfMacro != null && microSpecies != null ) {
-					releasedMicroAgents.add(macroOfMacro.captureMicroAgent(microSpecies, m));
+					releasedMicroAgents.add(macroOfMacro.captureMicroAgent(scope, microSpecies, m));
 				} else {
 					// TODO throw exception when target population not found to release the agent
 					// instead of silently failed lie this!!!
