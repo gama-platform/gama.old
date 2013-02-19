@@ -865,11 +865,13 @@ public abstract class Spatial {
 		@operator("simplification")
 		@doc(value = "A geometry corresponding to the simplification of the operand (geometry, agent, point) considering a tolerance distance.", comment = "The algorithm used for the simplification is Douglas-Peucker", examples = { "self simplification 0.1 --: returns the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1." })
 		public static IShape simplification(final IShape g1, final Double distanceTolerance) {
-			if ( g1 == null || g1.getInnerGeometry() == null ||
-				g1.getInnerGeometry() instanceof Point ||
-				g1.getInnerGeometry() instanceof MultiPoint ) { return g1; }
-			return new GamaShape(DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(),
-				distanceTolerance));
+			if ( g1 == null || g1.getInnerGeometry() == null) { return g1; }
+			if ( g1.isPoint()) { new GamaShape(g1.getInnerGeometry()); }
+			Geometry geomSimp = DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(),
+					distanceTolerance);
+			if (geomSimp != null && !geomSimp.isEmpty() && geomSimp.isValid())
+				return new GamaShape(geomSimp);
+			return new GamaShape(g1.getInnerGeometry());
 		}
 
 	}
