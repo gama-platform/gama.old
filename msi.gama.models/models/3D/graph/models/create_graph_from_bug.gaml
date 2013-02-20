@@ -4,29 +4,21 @@ import 'bug.gaml'
 
 
 global{
-		
-	int distance parameter: 'Distance' min: 1 <- 10 category: 'Model';	
-		
-	reflex updateNode{
-		ask node as list{
-			do die;
-		}
-		ask bug as list{
-			let target <-self;
-			create node{
-				set self.target<-target;
-				set self.location<-target.location;
-			}
-		}
-	}
+	graph myGraph;
+	int distance parameter: 'Distance' min: 1 <- 10 category: 'Model';
+			
+   /*  reflex updateGraph{
+    	set myGraph <- list(node) as_distance_graph distance;
+    }*/
+
 	reflex updateEdge{
 		ask edge as list{
 			do die;
 		}
-		ask bug as list{
+		ask node as list{
 			let neighbours <- (self neighbours_at (distance));
 			ask neighbours as list{      
-		      if(self is bug){
+		      if(self is node){
 		      	let src <-self;
 		      	let dest <- myself;
 		      	create edge{
@@ -37,13 +29,14 @@ global{
 		    }  
 		}
 	}
+	
 }
 
 entities{
 	
-	species node {
-		bug target;
-		aspect basic{
+	species node mirrors: list(bug){
+		point location <- target.location value: target.location;
+		aspect base{
 		  draw sphere(1) color: rgb('blue');
 		}
    }
@@ -51,7 +44,7 @@ entities{
    species edge{
    	node src;
    	node dest;	
-   	aspect basic{
+   	aspect base{
    		draw line( [ src.location, dest.location] ) color:rgb('blue');
    	}
    }	
@@ -60,9 +53,9 @@ entities{
 experiment basicGraph type: gui {
 	output {
 	    display graph_plus_bug type:opengl ambiant_light:0.2{
-	    	species bug aspect:basic;
-	        species node aspect: basic z:0.1;
-	        species edge aspect:basic z:0.1;
+	    	species bug aspect:base;
+	        species node aspect: base z:0.2;
+	        species edge aspect:base z:0.2;
 	    }
 	} 
 }
