@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -44,7 +44,6 @@ import msi.gaml.types.IType;
 public class AskStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
-	private final GamaList targets = new GamaList();
 	private final IExpression target;
 
 	public AskStatement(final IDescription desc) {
@@ -69,26 +68,35 @@ public class AskStatement extends AbstractStatementSequence {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
+		IAgent[] targets;
 		if ( t instanceof IContainer ) {
-			targets.addAll(((IContainer) t).listValue(scope));
+			targets = new IAgent[((IContainer) t).length(scope)];
+			int index = 0;
+			for ( Object o : (IContainer) t ) {
+				if ( o instanceof IAgent ) {
+					targets[index++] = (IAgent) o;
+				} else {
+					throw new GamaRuntimeException("ask can only be invoked on agents. " + o +
+						" is not an agent");
+				}
+			}
+		} else if ( t instanceof IAgent ) {
+			targets = new IAgent[1];
+			targets[0] = (IAgent) t;
 		} else {
-			targets.add(t);
+			throw new GamaRuntimeException("ask can only be invoked on agents. " + t +
+				" is not an agent");
 		}
 
 		IAgent scopeAgent = scope.getAgentScope();
 		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
-		for ( int i = 0, n = targets.size(); i < n; i++ ) {
-			Object o = targets.get(i);
-			if ( !(o instanceof IAgent) ) {
-				continue;
-			}
-			final IAgent remoteAgent = (IAgent) o;
+		for ( int i = 0, n = targets.length; i < n; i++ ) {
+			IAgent remoteAgent = targets[i];
 			if ( !remoteAgent.dead() ) {
 				scope.execute(sequence, remoteAgent);
 			}
 			scope.setStatus(ExecutionStatus.skipped);
 		}
-		targets.clear();
 		return null;
 	}
 
