@@ -4,7 +4,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
@@ -287,6 +287,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {
 		ISkill skill = SKILL_INSTANCES.get(skillClass);
+		// FIXME Replace this with an ISkillCreator that simply returns a new instance
+		// Generates this ISkillCreator in GamaProcessor/JavaWriter
 		return skill == null ? null : skill.duplicate();
 	}
 

@@ -138,9 +138,12 @@ public abstract class AbstractPopulation implements IPopulation {
 			a.setGeometry(geom);
 			list.add(a);
 		}
-		addAll(list, null);
+		this.addAll(list, null);
 		for ( IAgent a : list ) {
 			a.initializeMicroPopulations(scope);
+		}
+		for ( IAgent a : list ) {
+			a.schedule(scope);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
 		return list;

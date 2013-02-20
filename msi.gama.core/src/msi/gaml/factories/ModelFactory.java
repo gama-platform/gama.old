@@ -152,7 +152,10 @@ public class ModelFactory extends SymbolFactory {
 
 	private IDescription createDefaultExperiment() {
 		String type = GuiUtils.isInHeadLessMode() ? HEADLESS_UI : GUI_;
-		return DescriptionFactory.create(type, NAME, DEFAULT_EXP, TYPE, type);
+		ExperimentDescription desc =
+			(ExperimentDescription) DescriptionFactory.create(type, NAME, DEFAULT_EXP, TYPE, type);
+		desc.finalizeDescription();
+		return desc;
 	}
 
 	public IModel compile(final ModelStructure structure) {

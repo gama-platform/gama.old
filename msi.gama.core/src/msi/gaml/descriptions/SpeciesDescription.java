@@ -21,6 +21,7 @@ package msi.gaml.descriptions;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
