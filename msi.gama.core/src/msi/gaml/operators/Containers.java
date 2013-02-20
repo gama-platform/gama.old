@@ -826,20 +826,24 @@ public class Containers {
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaMap result = new GamaMap();
 		if ( original == null || original.isEmpty(scope) ) { return result; }
-		GamaPair<IExpression, IExpression> p;
+		IExpression[] p = new IExpression[2];
 		if ( filter instanceof MapExpression ) {
 			MapExpression exp = (MapExpression) filter;
-			p = new GamaPair(exp.keysArray()[0], exp.valuesArray()[0]);
+			p[0] = exp.keysArray()[0];
+			p[1] = exp.valuesArray()[0];
 		} else if ( filter instanceof BinaryOperator &&
 			((BinaryOperator) filter).getName().equals("::") ) {
-			p = new GamaPair(((BinaryOperator) filter).left(), ((BinaryOperator) filter).right());
+			p[0] = ((BinaryOperator) filter).left();
+			p[1] = ((BinaryOperator) filter).right();
+		} else if ( filter instanceof ListExpression ) {
+			return asMap(scope, original, ((ListExpression) filter).getElements()[0]);
 		} else {
 			throw new GamaRuntimeException(
 				"The as_map operator expects either a pair or a map for its second argument");
 		}
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
-			result.put(((IExpression) p.key).value(scope), p.value.value(scope));
+			result.put(p[0].value(scope), p[1].value(scope));
 		}
 		return result;
 	}
