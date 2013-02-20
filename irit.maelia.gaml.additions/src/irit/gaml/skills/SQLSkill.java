@@ -5,7 +5,9 @@ import msi.gama.metamodel.topology.SqlConnection;
 import java.sql.Connection;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,8 +42,16 @@ import msi.gaml.types.IType;
 *   
  *   18-Feb-2013:
  *      Add public int insert(final IScope scope) throws GamaRuntimeException
- *       
- * Last Modified: 18-Feb-2013
+ *   20-Feb-2013:    
+ *      Add public int insert_AllCol(final IScope scope) throws GamaRuntimeException
+ *      Add public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException
+ *      Add public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException
+ *   21-Feb-2013
+ *   	Remove method:public int insert_AllCol(final IScope scope) throws GamaRuntimeException  
+ *      Remove method:public int executeUpdate(final IScope scope) throws GamaRuntimeException
+ *      Remove method:public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+ *      Add method:public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException
+ * Last Modified: 21-Feb-2013
 */
 
 @skill(name = "SQLSKILL")
@@ -57,7 +67,8 @@ public class SQLSkill extends Skill {
 		GuiUtils.informConsole("Hello World");
 		return null;
 	}
-    //Get current time of system
+
+	//Get current time of system
 	//added from MaeliaSkill
 	@action(name = "timeStamp")
 	@args(names = {})
@@ -65,49 +76,7 @@ public class SQLSkill extends Skill {
 		Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
 	}
-	/*
-	 * Make a connection to BDMS
-	 * 
-	 * @syntax: do action: connectDB {
-	 * arg dbtype value: vendorName; //MySQL/sqlserver/sqlite
-	 * arg host value: urlvalue;
-	 * arg port value: portvaluse;
-	 * arg database value: dbnamevalue;
-	 * arg user value: usrnamevalue;
-	 * arg passwd value: password valuse;
-	 * }
-	 */
-//	@action(name="connectDB")
-//	@args(names = { "dbtype", "host", "port", "database", "user", "passwd" })
-//	public  Object connectDB(final IScope scope) throws GamaRuntimeException
-//	{
-//		Connection conn;
-//		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
-//		String host= (String) scope.getArg("host", IType.STRING);
-//		String port = (String) scope.getArg("port", IType.STRING);
-//		String database = (String) scope.getArg("database", IType.STRING);
-//		String user = (String) scope.getArg("user", IType.STRING);
-//		String passwd = (String) scope.getArg("passwd", IType.STRING);
-//
-//		SqlConnection sqlConn;
-//		// create connection
-//		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
-//			String DBRelativeLocation =
-//					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
-//			//sqlConn=new SqlConnection(dbtype,database);
-//			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-//		}else{
-//			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
-//		}
-//		try {	
-//			conn = sqlConn.connectDB();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
-//		} 
-//		return conn;
-//	}
+
 	
 	/*
 	 * Make a connection to BDMS
@@ -158,153 +127,44 @@ public class SQLSkill extends Skill {
 		return true;
 	}
 
+
 	/*
-	 * Make a connection to BDMS and execute the select statement
+	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 * 
-	 * @syntax do action: selectDB {
-	 * arg dbtype value: vendorName; //MySQL/sqlserver/sqlite
-	 * arg host value: urlvalue;
-	 * arg port value: portvaluse;
-	 * arg database value: dbnamevalue;
-	 * arg user value: usrnamevalue;
-	 * arg passwd value: password valuse;
-	 * }
-	 * 
-	 * @return GamaList<GamaList<Object>>
-	 */
-//	@action(name="selectDB")
-//	@args(names = { "dbtype", "host", "port", "database", "user", "passwd", "select" })
-//	//public GamaList<GamaList<Object>> selectDB(final IScope scope) throws GamaRuntimeException
-//	public GamaList<Object> selectDB(final IScope scope) throws GamaRuntimeException
-//	{
-//		String selectComm=(String) scope.getArg("select", IType.STRING);
-//		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
-//		String host= (String) scope.getArg("host", IType.STRING);
-//		String port = (String) scope.getArg("port", IType.STRING);
-//		String database = (String) scope.getArg("database", IType.STRING);
-//		String user = (String) scope.getArg("user", IType.STRING);
-//		String passwd = (String) scope.getArg("passwd", IType.STRING);
-//
-//		SqlConnection sqlConn;
-//		// create connection
-//		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
-//			String DBRelativeLocation =
-//					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
-//			//sqlConn=new SqlConnection(dbtype,database);
-//			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-//		}else{
-//			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
-//		}
-//		
-//		//Select data
-//		//GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
-//		GamaList<Object> repRequest = new GamaList<Object>();
-//		try{
-//			repRequest = sqlConn.selectDB(selectComm);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("SQLSkill.selectDB: " + e.toString());
-//		}
-//		if ( DEBUG ) {
-//			GuiUtils.informConsole(selectComm + " was run");
-//		}
-//
-//		return repRequest;
-//
-//	}
-//	
-	/*
-	 * Make a connection to BDMS and execute the select statement
-	 * 
-	 * @syntax do action: 
-	 * 	select {
-	 * 		arg params value:[
-	 * 					 "dbtype":"SQLSERVER", 
+	 * @syntax: do action: executeUpdate {
+	 * arg params value:[
+	 * 					 "dbtype":"MSSQL", 
 	 *                   "url":"host address",
 	 *                   "port":"port number",
 	 *                   "database":"database name",
 	 *                   "user": "user name",
 	 *                   "passwd": "password",
-	 *                   "select": "select string"
 	 *                  ],
-	 *  	arg select value: "select string"
+	 *  	arg updateComm value: "update string"
 	 *   }
-	 * 
-	 * @return GamaList<GamaList<Object>>
-	 */
-	@action(name="select")
-	@args(names = { "params", "select"})
-	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
-	{
-		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		String selectComm = (String) scope.getArg("select", IType.STRING);
-		String dbtype = (String) params.get("dbtype");
-		String host = (String)params.get("host");
-		String port = (String)params.get("port");
-		String database = (String) params.get("database");
-		String user = (String) params.get("user");
-		String passwd = (String)params.get("passwd");
-		SqlConnection sqlConn;
-		GamaList<Object> repRequest = new GamaList<Object>();
-		// create connection
-		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
-			String DBRelativeLocation =
-					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-
-			//sqlConn=new SqlConnection(dbtype,database);
-			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
-		}else{
-			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
-		}
-		
-		// get data
-		try{
-			  //repRequest= sqlcon.selectDB((String) params.get("select"));
-			  repRequest = sqlConn.selectDB(selectComm);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.select: " + e.toString());
-		}
-		if ( DEBUG ) {
-			GuiUtils.informConsole(selectComm + " was run");
-		}
-
-		return repRequest;
-
-	}
-
-	/*
-	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
-	 * 
-	 * @syntax: do action: executeUpdateDB {
-	 * 							arg dbtype value: vendorvalue;
-	 * 							arg url value: urlvalue;
-	 * 							arg port value: portvalue;
-	 * 							arg database value: dbnamevalue;
-	 * 							arg user value: usrnamevalue;
-	 * 							arg passwd value: pwvaluse;
-	 * 							arg updateComm value: updateStatement;
-	 * }
-	 */
-//	@action(name="executeUpdateDB")
-//	@args(names = { "dbtype", "host", "port", "database", "user", "passwd", "updateComm" })
-//	public int executeUpdateDB(final IScope scope) throws GamaRuntimeException {
-//		String dbtype = (String) scope.getArg("dbtype", IType.STRING);
-//		String host= (String) scope.getArg("host", IType.STRING);
-//		String port = (String) scope.getArg("port", IType.STRING);
-//		String database = (String) scope.getArg("database", IType.STRING);
-//		String user = (String) scope.getArg("user", IType.STRING);
-//		String passwd = (String) scope.getArg("passwd", IType.STRING);
+	 *    
+	 *   */
+//	@action(name="executeUpdate",
+//			args = {
+//				@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+//				@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop"))
+//	})
+//
+//	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
+//		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 //		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+//		String dbtype = (String) params.get("dbtype");
+//		String host = (String)params.get("host");
+//		String port = (String)params.get("port");
+//		String database = (String) params.get("database");
+//		String user = (String) params.get("user");
+//		String passwd = (String)params.get("passwd");
 //		SqlConnection sqlConn;
 //		// create connection
 //		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 //			String DBRelativeLocation =
 //					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
+//			System.out.println("database sqlite:"+DBRelativeLocation);
 //			//sqlConn=new SqlConnection(dbtype,database);
 //			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
 //		}else{
@@ -326,9 +186,10 @@ public class SQLSkill extends Skill {
 //		return n;
 //
 //	}
+	
 	/*
-	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
-	 * 
+	 * - Make a connection to BDMS 
+	 * - Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
 	 * @syntax: do action: executeUpdate {
 	 * arg params value:[
 	 * 					 "dbtype":"MSSQL", 
@@ -338,15 +199,22 @@ public class SQLSkill extends Skill {
 	 *                   "user": "user name",
 	 *                   "passwd": "password",
 	 *                  ],
-	 *  	arg updateComm value: "update string"
+	 *  	arg updateComm value: " SQL statement string with question marks"
+	 *      arg values     value [List of values that are used to replace question marks]
 	 *   }
 	 *   
 	 *   */
-	@action(name="executeUpdate")
-	@args(names = { "params", "updateComm"})
-	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
+	@action(name="executeUpdate",
+			args = {
+				@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+				@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+				@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question mark"))
+	})
+	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException
+	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
 		String dbtype = (String) params.get("dbtype");
 		String host = (String)params.get("host");
 		String port = (String)params.get("port");
@@ -354,41 +222,50 @@ public class SQLSkill extends Skill {
 		String user = (String) params.get("user");
 		String passwd = (String)params.get("passwd");
 		SqlConnection sqlConn;
+	    int row_count=-1;
 		// create connection
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 			String DBRelativeLocation =
 					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			System.out.println("database sqlite:"+DBRelativeLocation);
-			//sqlConn=new SqlConnection(dbtype,database);
 			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
 		}else{
 			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
 		}
-		int n = 0;
-		try {
-			n = sqlConn.executeUpdateDB(updateComm);
+		
+		// get data
+		try{
+			if (values.size()>0){
+				row_count = sqlConn.executeUpdateDB(updateComm, values);
+			}else{
+				row_count = sqlConn.executeUpdateDB(updateComm);
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.exexuteUpdateDB:" + e.toString());
+			throw new GamaRuntimeException("SQLSkill.executeUpdateDB: " + e.toString());
 		}
-
 		if ( DEBUG ) {
 			GuiUtils.informConsole(updateComm + " was run");
 		}
 
-		return n;
+		return row_count;
 
 	}
-
 	/*
-	 * Make a connection to BDMS and execute the select statement
+	 * Make a connection to BDMS and execute the insert statement
 	 * 
 	 * @syntax do insert with: [into:: table_name, columns:column_list, values:value_list]; 
 	 * @return an integer
 	 */
-	@action(name="insert")
-	@args(names = {"params","into","columns", "values"})
+	@action(name="insert",
+	args = {
+		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),	
+		@arg(name = "columns", type = IType.LIST_STR, optional = true, doc = @doc("List of column name of table")),
+		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+	})
+		
 	public int insert(final IScope scope) throws GamaRuntimeException
 	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
@@ -414,20 +291,205 @@ public class SQLSkill extends Skill {
 		}
 
 		int rec_no=-1;
-		
+		 
 		try{
 			//Connection conn=sqlConn.connectDB();  
-			rec_no = sqlConn.insertDB(table_name,cols,values);
+			if (cols.size()>0){
+				rec_no = sqlConn.insertDB(table_name,cols,values);
+			}else {
+				rec_no = sqlConn.insertDB(table_name,values);
+			}
 			//conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.insert: " + e.toString());
+			throw new GamaRuntimeException("SQLSkill.insert: " + e.toString());
 		}
 		if ( DEBUG ) {
 			GuiUtils.informConsole("Insert into " + " was run");
 		}
 
 		return rec_no;
-
 	}
+
+	/*
+	 * Make a connection to BDMS and execute the insert statement
+	 * 
+	 * @syntax do insert with: [into:: table_name, values:value_list]; 
+	 * @return an integer
+	 */
+//	@action(name="insert_All",
+//	args = {
+//		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+//		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),	
+//		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+//	})
+//	public int insert_All(final IScope scope) throws GamaRuntimeException
+//	{
+//		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+//		String table_name = (String) scope.getArg("into", IType.STRING);
+//		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
+//		String dbtype = (String) params.get("dbtype");
+//		String host = (String)params.get("host");
+//		String port = (String)params.get("port");
+//		String database = (String) params.get("database");
+//		String user = (String) params.get("user");
+//		String passwd = (String)params.get("passwd");
+//		SqlConnection sqlConn;
+//		// create connection
+//		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+//			String DBRelativeLocation =
+//					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+//			System.out.println("database sqlite:"+DBRelativeLocation);
+//			//sqlConn=new SqlConnection(dbtype,database);
+//			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+//		}else{
+//			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+//		}
+//
+//		int rec_no=-1;
+//		
+//		try{
+//			//Connection conn=sqlConn.connectDB();  
+//			rec_no = sqlConn.insertDB(table_name,values);
+//			//conn.close();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			throw new GamaRuntimeException("SQLSkill.insert: " + e.toString());
+//		}
+//		if ( DEBUG ) {
+//			GuiUtils.informConsole("Insert into " + " was run");
+//		}
+//
+//		return rec_no;
+//
+//	}
+
+	
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do action: 
+	 * 	select {
+	 * 		arg params value:[
+	 * 					 "dbtype":"SQLSERVER", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password",
+	 *                  ];
+	 *  	arg select value: "select string"
+	 *   }
+	 * 
+	 * @return GamaList<GamaList<Object>>
+	 */
+//	@action(name="select",
+//		args = {
+//			@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+//			@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select command"))
+//	})
+//	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
+//	{
+//		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+//		String selectComm = (String) scope.getArg("select", IType.STRING);
+//		String dbtype = (String) params.get("dbtype");
+//		String host = (String)params.get("host");
+//		String port = (String)params.get("port");
+//		String database = (String) params.get("database");
+//		String user = (String) params.get("user");
+//		String passwd = (String)params.get("passwd");
+//		SqlConnection sqlConn;
+//		GamaList<Object> repRequest = new GamaList<Object>();
+//		// create connection
+//		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+//			String DBRelativeLocation =
+//					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+//
+//			//sqlConn=new SqlConnection(dbtype,database);
+//			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+//		}else{
+//			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+//		}
+//		
+//		// get data
+//		try{
+//			  //repRequest= sqlcon.selectDB((String) params.get("select"));
+//			  repRequest = sqlConn.selectDB(selectComm);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			throw new GamaRuntimeException("SQLSkill.select: " + e.toString());
+//		}
+//		if ( DEBUG ) {
+//			GuiUtils.informConsole(selectComm + " was run");
+//		}
+//
+//		return repRequest;
+//
+//	}
+
+	/*
+	 * Make a connection to BDMS and execute the select statement
+	 * 
+	 * @syntax do action: 
+	 * 	select {
+	 * 		arg params value:[
+	 * 					 "dbtype":"SQLSERVER", 
+	 *                   "url":"host address",
+	 *                   "port":"port number",
+	 *                   "database":"database name",
+	 *                   "user": "user name",
+	 *                   "passwd": "password"
+	 *                  ];
+	 *  	arg select value: "select string with question marks";
+	 *      arg values     value [List of values that are used to replace question marks]
+	 *   }
+	 * 
+	 * @return GamaList<GamaList<Object>>
+	 */
+	@action(name="select",
+		args = {
+			@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select string with question marks")),
+			@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks"))
+	})
+	public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException
+	{
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		String selectComm = (String) scope.getArg("select", IType.STRING);
+		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
+		String dbtype = (String) params.get("dbtype");
+		String host = (String)params.get("host");
+		String port = (String)params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String)params.get("passwd");
+		SqlConnection sqlConn; 
+		GamaList<Object> repRequest = new GamaList<Object>();
+		// create connection
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
+			String DBRelativeLocation =
+					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+		}else{
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+		}
+		
+		// get data
+		try{
+			if (values.size()>0){
+				repRequest = sqlConn.executeQueryDB(selectComm, values);
+			}else{
+				repRequest = sqlConn.selectDB(selectComm);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GamaRuntimeException("SQLSkill.executeQuery: " + e.toString());
+		}
+		if ( DEBUG ) {
+			GuiUtils.informConsole(selectComm + " was run");
+		}
+		return repRequest;
+	}	
 }
