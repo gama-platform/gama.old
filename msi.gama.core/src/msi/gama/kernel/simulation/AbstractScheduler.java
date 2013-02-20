@@ -2,7 +2,7 @@ package msi.gama.kernel.simulation;
 
 import java.util.List;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
@@ -89,6 +89,15 @@ public abstract class AbstractScheduler implements IScheduler {
 		clock.step();
 	}
 
+	public void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
+		scope.push(agent);
+		try {
+			agent.init(scope);
+		} finally {
+			scope.pop(agent);
+		}
+	}
+
 	@Override
 	public boolean inInitSequence() {
 		return inInitSequence;
@@ -142,17 +151,6 @@ public abstract class AbstractScheduler implements IScheduler {
 		// Recursive call
 		if ( !agentsToInit.isEmpty() ) {
 			executeAgentsToInit(scope);
-		}
-	}
-
-	public void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
-		scope.push(agent);
-		try {
-			agent.init(scope);
-		} catch (Exception e) {
-			GAMA.reportError(new GamaRuntimeException(e));
-		} finally {
-			scope.pop(agent);
 		}
 	}
 
