@@ -19,6 +19,7 @@
 package msi.gama.util.graph;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.*;
@@ -29,7 +30,9 @@ import msi.gama.util.*;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
+
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
@@ -101,7 +104,25 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		version = 1;
 	}
+	
+	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed,
+			final VertexRelationship rel,final ISpecies edgesSpecies, final IScope scope) {
+			this.directed = directed;
+			vertexMap = new GamaMap();
+			edgeMap = new GamaMap();
+			edgeBased = byEdge;
+			vertexRelation = rel;
 
+			verticesBuilt = new GamaMap();
+			if ( byEdge ) {
+				buildByEdge(vertices);
+			} else {
+				buildByVertices(vertices, edgesSpecies, scope);
+			}
+			version = 1;
+		}
+	
+	
 	@Override
 	public String toString() {
 		List<String> renderedVertices = new ArrayList<String>();
@@ -127,6 +148,13 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			addVertex(p);
 		}
 	}
+	
+	protected void buildByVertices(final IContainer<?, V> vertices, ISpecies edgeSpecies, IScope scope) {
+		for ( V p : vertices ) {
+			addVertex(p);
+		}
+	}
+
 
 	protected void buildByEdge(final IContainer vertices) {
 		for ( Object p : vertices ) {
@@ -164,12 +192,15 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		if ( addEdge(v1, v2, p) ) { return p; }
 		return null;
 	}
-
+	
+	
+	
+	
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
 		GamaPair p = new GamaPair(v1, v2);
 		return p;
 	}
-
+	
 	@Override
 	public boolean addEdge(final Object v1, final Object v2, final Object e) {
 		if ( containsEdge(e) ) { return false; }

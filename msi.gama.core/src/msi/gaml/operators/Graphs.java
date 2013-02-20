@@ -29,6 +29,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGraphType;
 
 /**
@@ -335,6 +336,22 @@ public class Graphs {
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance) {
 		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance));
+	}
+	
+	@operator(value = "as_distance_graph")
+	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
+		"as_intersection_graph", "as_edge_graph" })
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,final Double distance, final ISpecies edgeSpecies) {
+		java.lang.System.out.println("distance : " + distance + " edgeSpecies : " + edgeSpecies);
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
+	}
+	@operator(value = "as_distance_graph")
+	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
+		"as_intersection_graph", "as_edge_graph" })
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,final GamaMap params) {
+		Double distance = (Double) params.get("distance");
+		ISpecies edgeSpecies = (ISpecies) params.get("species");
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
 	}
 
 	// @operator(value = "spatialize")
