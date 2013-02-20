@@ -22,8 +22,8 @@ entities {
 }
 
 output {
-     display bug_display type:opengl{
+     /*display bug_display type:opengl{
         species bug aspect: base;
-    }
+    }*/
 }
 

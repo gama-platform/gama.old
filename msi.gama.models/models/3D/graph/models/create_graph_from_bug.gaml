@@ -7,8 +7,12 @@ global{
 	graph myGraph;
 	int distance parameter: 'Distance' min: 1 <- 10 category: 'Model';
 			
-   /*  reflex updateGraph{
+    /*reflex updateGraph{
     	set myGraph <- list(node) as_distance_graph distance;
+    	ask node as list{
+    		let degree <-  myGraph degree_of(self);
+    		write "name:"  + self.name +  "degree:" + degree;
+    	}
     }*/
 
 	reflex updateEdge{
@@ -52,7 +56,7 @@ entities{
 
 experiment basicGraph type: gui {
 	output {
-	    display graph_plus_bug type:opengl ambiant_light:0.2{
+	    display graph_plus_bug type:opengl ambiant_light:0.2 {
 	    	species bug aspect:base;
 	        species node aspect: base z:0.2;
 	        species edge aspect:base z:0.2;
