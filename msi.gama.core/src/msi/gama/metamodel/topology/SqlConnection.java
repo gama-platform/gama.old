@@ -62,14 +62,23 @@ import msi.gaml.types.IType;
  *      add PostgresSQL case
  *      
  *   08-Jan-2013:
- *      modify geometry type for postgres data
+ *      modify geometry type for postgresSQL data
  *        
  *   18-Feb-2013:
  *      Add InsertDB(Connection conn, String table_name, GamaList<Object> cols, GammaList<Object> values)
  *      Add InsertDB(String table_name, GamaList<Object> cols, GammaList<Object> values)
  *        
  *      Modify selectDB(String selectComm)
- * Last Modified: 18-Feb-2013
+ *  19-Feb-2013
+ *      Add public int executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+ *      Add public int executeUpdateDB(String queryStr, GamaList<Object> condition_values)    
+ *  20-Feb-2013:  
+ *    	Add InsertDB(Connection conn, String table_name, GammaList<Object> values)
+ *    	Add InsertDB(String table_name, GammaList<Object> values)
+ *    	Add public GamaList<Object> executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+ *      Add public GamaList<Object> executeQueryDB(String queryStr, GamaList<Object> condition_values)
+ *      
+ * Last Modified: 20-Feb-2013
  */
 public class SqlConnection {
 		static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -117,14 +126,6 @@ public class SqlConnection {
 		/*
 		 * Make a connection to BDMS
 		 * 
-		 * @syntax: do action: connectDB {
-		 * arg vendorName value: vendorName; //MySQL/MSSQL
-		 * arg url value: urlvalue;
-		 * arg port value: portvaluse;
-		 * arg dbName value: dbnamevalue;
-		 * arg usrName value: usrnamevalue;
-		 * arg password value: pwvaluse;
-		 * }
 		 */
 		public Connection connectDB()
 				throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException 
@@ -179,128 +180,8 @@ public class SqlConnection {
 				return conn;
 		}
 
-		/*
-		 * Make Insert a reccord into table
-		 * 
-		 * @syntax: do action: connectDB {
-		 * arg vendorName value: vendorName; //MySQL/MSSQL
-		 * }
-		 */
-		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
-				throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException{
-			//Connection conn=null;
-			PreparedStatement pstmt = null;
-			//int col_no=cols.length(scope);
-			int col_no=cols.size();
-			int rec_no=0;
-			String insertStr= "INSERT INTO ";
-			String selectStr="SELECT ";
-			String col_names="";
-			String valueStr="";
-			//Get column name
-			for (int i=0; i<col_no;i++){
-				if (i==col_no-1){
-					col_names= col_names+ (String) (cols.get(i));
-					valueStr=valueStr + "?";
-				}else{
-					col_names= col_names+ (String) (cols.get(i))+",";
-					valueStr=valueStr + "?"+",";
-				}
-				if (DEBUG){
-					System.out.println("col"+(String) (cols.get(i)));
-				}
-					
-			}
-			// create INSERT statement string
-			insertStr= insertStr + table_name +"("+col_names+") " +"VALUES("+valueStr+")";
-			// create SELECT statement string
-			selectStr=selectStr + col_names + " FROM " + table_name;
-
-			if (DEBUG){
-				System.out.println("Insert command:"+insertStr);
-				
-				System.out.println("select command:"+selectStr);
-			}
-				
 		
-			try{
-				//get column type;
-//				Statement st = conn.createStatement(); 
-//				ResultSet rs = st.executeQuery(selectStr);
-//				ResultSetMetaData rsmd = rs.getMetaData();
-//				if (DEBUG){
-//					System.out.println("MetaData:"+rsmd.toString());
-//				}
-//				GamaList<Object> col_Names= getColumnName(rsmd);
-//				GamaList<Object> col_Types=getColumnTypeName(rsmd);
-//				
-//				if (DEBUG){
-//					System.out.println("list of column type:" + col_Types);
-//				}
-				
-				//Insert command
-				
-				pstmt=conn.prepareStatement(insertStr);
-				//set parameter value
-				for (int i=0; i<col_no;i++){
-					pstmt.setObject(i+1, values.get(i));
-				}
-				
-				rec_no=pstmt.executeUpdate();
-				if (DEBUG){
-					System.out.println("rec count:" + rec_no);
-				}
-				
-			}catch (SQLException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new SQLException(e.toString());
-				
-			}
-			
-			return rec_no;
-		}
-
-		/*
-		 * Make Insert a reccord into table
-		 * 
-		 * @syntax: do action: connectDB {
-		 * arg vendorName value: vendorName; //MySQL/MSSQL
-		 * }
-		 */
-		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values ) 
-				throws GamaRuntimeException {
-			Connection conn;
-			int rec_no=-1;
-			try{
-				conn=connectDB();
-				rec_no=insertDB(conn,table_name,cols,values);
-				conn.close();
-			}catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
-			}
-			return rec_no;
-		}
-			
 		
-//		private String String(Object object) {
-//			// TODO Auto-generated method stub
-//			return null;
-//		}
 		/*
 		 * Make a connection to BDMS and execute the select statement
 		 * 
@@ -556,7 +437,7 @@ public class SqlConnection {
 	
 
 			/*
-		     * @Meththo: getGeometryColumns(ResultSetMetaData rsmd)
+		     * @Meththod: getGeometryColumns(ResultSetMetaData rsmd)
 		     * @Description: Get columns id of field with geometry type
 		     * 
 		     * @param ResultSetMetaData
@@ -769,16 +650,16 @@ public class SqlConnection {
 			public String getVendor(){ return vender; }
 			public String getUser(){ return userName;}
 			
-			/*
-		     * @Method: getBounds( GamaList<Object> gamaList)
-		     * @Description: Get Envelope of a set of geometry
-		     * 
-		     * @param GamaList<Object> gamaList: gamalist is a set of geometry type
-		     * 
-		     * @return Envelope: Envelope/boundary of the geometry set.
-		     * 
-		     * @throws Exception
-		 	 */
+		/*
+		 * @Method: getBounds( GamaList<Object> gamaList)
+		 * @Description: Get Envelope of a set of geometry
+		 * 
+		 * @param GamaList<Object> gamaList: gamalist is a set of geometry type
+		 * 
+		 * @return Envelope: Envelope/boundary of the geometry set.
+		 * 
+		 * @throws Exception
+		 */
 
 		public static Envelope getBounds( IScope scope, GamaList<Object> gamaList)throws IOException {
 				   	Envelope envelope;
@@ -827,4 +708,371 @@ public class SqlConnection {
 					}
 
 			   }
+		
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+				throws GamaRuntimeException
+		{
+			//Connection conn=null;
+			PreparedStatement pstmt = null;
+			//int col_no=cols.length(scope);
+			int col_no=cols.size();
+			int rec_no=0;
+			String insertStr= "INSERT INTO ";
+//			String selectStr="SELECT ";
+			String col_names="";
+			String valueStr="";
+			//Check size of parameters
+			if (values.size()!=col_no) {
+				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+			}
+			//Get column name
+			for (int i=0; i<col_no;i++){
+				if (i==col_no-1){
+					col_names= col_names+ (String) (cols.get(i));
+					valueStr=valueStr + "?";
+				}else{
+					col_names= col_names+ (String) (cols.get(i))+",";
+					valueStr=valueStr + "?"+",";
+				}
+				if (DEBUG){
+					System.out.println("col"+(String) (cols.get(i)));
+				}
+					
+			}
+			// create INSERT statement string
+			insertStr= insertStr + table_name +"("+col_names+") " +"VALUES("+valueStr+")";
+			// create SELECT statement string
+//			selectStr=selectStr + col_names + " FROM " + table_name;
+
+			if (DEBUG){
+				System.out.println("Insert command:"+insertStr);
+				
+//				System.out.println("select command:"+selectStr);
+			}
+				
+		
+			try{
+				//get column type;
+//				Statement st = conn.createStatement(); 
+//				ResultSet rs = st.executeQuery(selectStr);
+//				ResultSetMetaData rsmd = rs.getMetaData();
+//				if (DEBUG){
+//					System.out.println("MetaData:"+rsmd.toString());
+//				}
+//				GamaList<Object> col_Names= getColumnName(rsmd);
+//				GamaList<Object> col_Types=getColumnTypeName(rsmd);
+//				
+//				if (DEBUG){
+//					System.out.println("list of column type:" + col_Types);
+//				}
+				
+				//Insert command
+				
+				pstmt=conn.prepareStatement(insertStr);
+				//set parameter value
+				for (int i=0; i<col_no;i++){
+					pstmt.setObject(i+1, values.get(i));
+				}
+				
+				rec_no=pstmt.executeUpdate();
+				if (DEBUG){
+					System.out.println("rec count:" + rec_no);
+				}
+				
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			}
+			
+			return rec_no;
+		}
+
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+				throws GamaRuntimeException {
+			Connection conn;
+			int rec_no=-1;
+			try{
+				conn=connectDB();
+				rec_no=insertDB(conn,table_name,cols,values);
+				conn.close();
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			}
+			return rec_no;
+		}
+	
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(Connection conn, String table_name,GamaList<Object> values ) 
+				throws GamaRuntimeException
+		{
+			//Connection conn=null;
+			PreparedStatement pstmt = null;
+			//int col_no=cols.length(scope);
+			int col_no=values.size();
+			int rec_no=0;
+			String insertStr= "INSERT INTO ";
+			String valueStr="";
+			//Create question mark list
+			for (int i=0; i<col_no;i++){
+				if (i==col_no-1){
+					valueStr=valueStr + "?";
+				}else{
+					valueStr=valueStr + "?"+",";
+				}					
+			}
+			// create INSERT statement string
+			insertStr= insertStr + table_name +" VALUES("+valueStr+")";				
+		
+			try{				
+				pstmt=conn.prepareStatement(insertStr);
+				//set parameter value
+				for (int i=0; i<col_no;i++){
+					pstmt.setObject(i+1, values.get(i));
+				}	
+				rec_no=pstmt.executeUpdate();
+				if (DEBUG){
+					System.out.println("rec count:" + rec_no);
+				}
+				
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			}
+			return rec_no;
+		}
+
+		
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(String table_name, GamaList<Object> values ) 
+				throws GamaRuntimeException {
+			Connection conn;
+			int rec_no=-1;
+			try{
+				conn=connectDB();
+				rec_no=insertDB(conn,table_name,values);
+				conn.close();
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			}
+			return rec_no;
+		}
+	
+			
+
+		/*
+		 * @Method: executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+		 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated by the query
+		 * 
+		 * @param queryStr: SQL query string with question mark (?).
+		 * @param condition_value:List of values that are used to assign into conditions of queryStr
+		 * 
+		 * @return ResultSet:returns the ResultSet object generated by the query.
+		 * 
+		 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet object
+		 */
+			public GamaList<Object> executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+			throws GamaRuntimeException
+			{
+				PreparedStatement pstmt = null;
+				ResultSet rs;
+				GamaList<Object> result=new GamaList<Object>();
+				GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
+				int condition_count =condition_values.size();
+				try {
+					pstmt = conn.prepareStatement(queryStr);
+					// set value for each condition
+					for (int i=0; i<condition_count;i++){
+						pstmt.setObject(i+1, condition_values.get(i));
+					}
+					rs = pstmt.executeQuery();
+					ResultSetMetaData rsmd = rs.getMetaData();
+					if (DEBUG){
+						System.out.println("MetaData:"+rsmd.toString());
+					}
+					
+					result.add(getColumnName(rsmd));
+					result.add(getColumnTypeName(rsmd));
+					
+					repRequest=resultSet2GamaList(rs);
+					result.add(repRequest);
+					
+					if (DEBUG){
+						System.out.println("list of column name:" + result.get(0) );
+						System.out.println("list of column type:" + result.get(1) );
+						System.out.println("list of data:" + result.get(2) );
+					}
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+				}
+				//return repRequest;
+				return result;
+				
+			}
+			/*
+			 * @Method: ExecuteQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+			 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated by the query
+			 * 
+			 * @param conn: MAP of Connection parameters  to RDBM
+			 * @param queryStr: SQL query (select) string with question mark (?).
+			 * @param condition_value:List of values that are used to assign into conditions of queryStr
+			 * 
+			 * @return ResultSet:returns the ResultSet object generated by the query.
+			 * 
+			 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet object
+			 */
+				public GamaList<Object> executeQueryDB(String queryStr, GamaList<Object> condition_values)
+				throws GamaRuntimeException
+				{				
+					GamaList<Object> result=new GamaList<Object>();
+					Connection conn;
+					try {
+						conn=connectDB();
+						result=executeQueryDB(conn,queryStr,condition_values);
+						conn.close();
+						// set value for each condition
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+					}
+					//return repRequest;
+					return result;
+					
+				}
+				/*
+				 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+				 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
+				 * 
+				 * @param conn: MAP of Connection parameters  to RDBM
+				 * @param queryStr:  an SQL INSERT, UPDATE or DELETE statement with question mark (?).
+				 * @param condition_values: List of values that are used to assign into conditions of queryStr.
+				 * 
+				 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements that return nothing
+				 * 
+				 * @throws GamaRuntimeException
+				 */
+					public int executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+					throws GamaRuntimeException
+					{
+						PreparedStatement pstmt = null;
+						int row_count=-1;
+						int condition_count =condition_values.size();
+						try {
+							pstmt = conn.prepareStatement(queryStr);
+							// set value for each condition
+							for (int i=0; i<condition_count;i++){
+								pstmt.setObject(i+1, condition_values.get(i));
+							}
+							row_count = pstmt.executeUpdate();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+						}
+						//return repRequest;
+						return row_count;
+						
+					}
+
+				/*
+				 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+				 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
+				 * 
+				 * @param queryStr:  an SQL INSERT, UPDATE or DELETE statement with question mark (?).
+				 * @param condition_values:
+				 * 
+				 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements that return nothing
+				 * 
+				 * @throws GamaRuntimeException
+				 */
+					public int executeUpdateDB(String queryStr, GamaList<Object> condition_values)
+					throws GamaRuntimeException
+					{				
+						int row_count=-1;	
+						Connection conn;
+						try {
+							conn=connectDB();
+							row_count=executeUpdateDB(conn,queryStr,condition_values);
+							conn.close();
+							// set value for each condition
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+						}
+						//return repRequest;
+						return row_count;
+						
+					}				
 }
