@@ -18,9 +18,7 @@
  */
 package msi.gama.metamodel.topology.graph;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -31,7 +29,6 @@ import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
-
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 
@@ -48,16 +45,16 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	/**
 	 * Determines the relationship among two polygons.
 	 */
-	public static interface VertexRelationship {
+	public static interface VertexRelationship<T> {
 
 		/**
 		 * Determines if two vertex geometries are to be treated as related in any way.
 		 * @param p1 a geometrical object
 		 * @param p2 another geometrical object
 		 */
-		boolean related(IShape p1, IShape p2);
+		boolean related(T p1, T p2);
 
-		boolean equivalent(IShape p1, IShape p2);
+		boolean equivalent(T p1, T p2);
 
 	}
 
@@ -74,21 +71,21 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		verbose = false;
 
 	}
-	
+
 	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
-			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
-			super(vertices, byEdge, directed, rel, edgesSpecies, scope );
-			try {
-				agentEdge =
-					byEdge && vertices != null && !vertices.isEmpty(null) &&
-						vertices.first(null) instanceof IAgent;
-			} catch (GamaRuntimeException e) {
-				e.printStackTrace();
-			}
-			verbose = false;
-
+		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies,
+		final IScope scope) {
+		super(vertices, byEdge, directed, rel, edgesSpecies, scope);
+		try {
+			agentEdge =
+				byEdge && vertices != null && !vertices.isEmpty(null) &&
+					vertices.first(null) instanceof IAgent;
+		} catch (GamaRuntimeException e) {
+			e.printStackTrace();
 		}
+		verbose = false;
 
+	}
 
 	@Override
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
@@ -158,9 +155,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			}
 		}
 	}
-	 
+
 	@Override
-	protected void buildByVertices(final IContainer<?, IShape> list, ISpecies edgeSpecies, IScope scope) {
+	protected void buildByVertices(final IContainer<?, IShape> list, final ISpecies edgeSpecies,
+		final IScope scope) {
 		super.buildByVertices(list);
 		for ( IShape o1 : list ) { // Try to create automatic edges
 			if (o1.getAgent() != null) {
@@ -176,8 +174,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			}
 		}
 	}
-	
-		
+
 	@Override
 	protected _SpatialEdge getEdge(final Object e) {
 		return (_SpatialEdge) edgeMap.get(e);
@@ -210,8 +207,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		return added;
 	}
-
-	
 
 	/**
 	 * @param gamaPath
@@ -252,11 +247,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public void reInitPathFinder() {
 		pathFinder = null;
 	}
-	
-	public Object addEdge(final Object v1, final Object v2, ISpecies edgeSpecies, IScope scope) {
-		
+
+	public Object addEdge(final Object v1, final Object v2, final ISpecies edgeSpecies,
+		final IScope scope) {
+
 		Object p = null;
-		if (edgeSpecies != null) {
+		if ( edgeSpecies != null ) {
 			p = createNewEdgeObjectFromVertices(v1, v2, edgeSpecies, scope);
 		} else {
 			p = createNewEdgeObjectFromVertices(v1, v2);
@@ -264,15 +260,17 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		if ( addEdge(v1, v2, p) ) { return p; }
 		return null;
 	}
-	
-	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2, ISpecies edgeSpecies, IScope scope) {
+
+	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2,
+		final ISpecies edgeSpecies, final IScope scope) {
 		Map<String, Object> map = new GamaMap();
-		IShape line = GamaGeometryType.buildLine(((IShape)v1).getLocation(), ((IShape)v2).getLocation());
+		IShape line =
+			GamaGeometryType.buildLine(((IShape) v1).getLocation(), ((IShape) v2).getLocation());
 		IList initVal = new GamaList();
 		map.put(IKeyword.SHAPE, line);
 		initVal.add(map);
-		return (scope.getAgentScope().getPopulationFor(edgeSpecies).createAgents(scope, 1,initVal, false)).first(scope);
+		return scope.getAgentScope().getPopulationFor(edgeSpecies)
+			.createAgents(scope, 1, initVal, false).first(scope);
 	}
-
 
 }
