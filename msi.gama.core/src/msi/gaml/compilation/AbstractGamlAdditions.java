@@ -4,7 +4,7 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
@@ -176,24 +176,24 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			Map<Signature, IOperator> map = OPERATORS.get(kw);
 			if ( !map.containsKey(signature) ) {
 				IOperator exp;
+				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					// IType childType = Types.get(classes[0]);
-					IType returnType = Types.get(ret);
-					exp = new UnaryOperator(returnType, helper, c, (short) t, (short) content);
+					exp = new UnaryOperator(rt, helper, c, (short) t, (short) content);
 				} else if ( classes.length == 2 ) { // binary
 					if ( kw.equals(OF) || kw.equals(_DOT) ) {
 						exp =
-							new BinaryVarOperator(Types.get(ret), helper, c, (short) t,
-								(short) content, IExpression.class.equals(classes[1]));
+							new BinaryVarOperator(rt, helper, c, (short) t, (short) content,
+								IExpression.class.equals(classes[1]));
 					} else {
 						exp =
-							new BinaryOperator(Types.get(ret), helper, c, (short) t,
-								(short) content, IExpression.class.equals(classes[1]));
+							new BinaryOperator(rt, helper, c, (short) t, (short) content,
+								IExpression.class.equals(classes[1]));
 					}
 				} else {
 					exp =
-						new NAryOperator(Types.get(ret), helper, c, (short) t, (short) content,
+						new NAryOperator(rt, helper, c, (short) t, (short) content,
 							IExpression.class.equals(classes[1]));
+					// FIXME The lazy attribute is completely wrong here
 				}
 				exp.setName(kw);
 				map.put(signature, exp);

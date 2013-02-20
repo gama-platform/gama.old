@@ -14,7 +14,11 @@ public class NAryOperator extends BinaryOperator {
 
 	@Override
 	public boolean isConst() {
-		return canBeConst && left().isConst() && right().isConst();
+		if ( !canBeConst ) { return false; }
+		for ( int i = 0; i < exprs.length; i++ ) {
+			if ( !exprs[i].isConst() ) { return false; }
+		}
+		return true;
 	}
 
 	@Override
@@ -34,6 +38,11 @@ public class NAryOperator extends BinaryOperator {
 			ee.addContext("when applying the " + literalValue() + " operator on " + values);
 			throw ee;
 		}
+	}
+
+	@Override
+	public NAryOperator copy() {
+		return new NAryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy);
 	}
 
 }
