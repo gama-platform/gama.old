@@ -163,6 +163,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	protected void buildByVertices(final IContainer<?, IShape> list, ISpecies edgeSpecies, IScope scope) {
 		super.buildByVertices(list);
 		for ( IShape o1 : list ) { // Try to create automatic edges
+			if (o1.getAgent() != null) {
+				o1.getAgent().setAttribute("attached_graph", this);
+			}
 			for ( IShape o2 : list ) {
 				if ( o1 == o2 || vertexRelation.equivalent(o1, o2) ) {
 					continue;

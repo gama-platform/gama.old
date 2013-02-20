@@ -19,6 +19,7 @@
 package msi.gama.metamodel.agent;
 
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.population.*;
@@ -27,6 +28,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.GamaGraph;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.operators.Maths;
 import msi.gaml.species.ISpecies;
@@ -250,6 +252,19 @@ public abstract class AbstractAgent implements IAgent {
 				microPop.killMembers();
 			}
 		}
+		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+		if (graph != null) {
+			
+			Set edgesToModify =graph.edgesOf(this);
+			graph.removeVertex(this);
+			
+			for (Object obj : edgesToModify) {
+				if (obj instanceof IAgent) {
+					((IAgent) obj).die();
+				}
+			}
+			
+		}
 		dispose();
 	}
 
@@ -330,6 +345,18 @@ public abstract class AbstractAgent implements IAgent {
 				// FIXME DOES NOT WORK FOR THE MOMENT
 				p.hostChangesShape();
 			}
+		}
+		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+		if (graph != null) {
+			Set edgesToModify =graph.edgesOf(this);
+			for (Object obj : edgesToModify) {
+				if (obj instanceof IAgent) {
+					IShape ext1 = (IShape) graph.getEdgeSource(obj);
+					IShape ext2 = (IShape) graph.getEdgeTarget(obj);
+					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(), ext2.getLocation()));
+				}
+			}
+			
 		}
 	}
 
