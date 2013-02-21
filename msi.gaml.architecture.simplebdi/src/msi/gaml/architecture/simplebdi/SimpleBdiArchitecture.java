@@ -160,7 +160,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		boolean isExistPredicate = false;
 		for (Object item: factBase){
 			try{
@@ -203,7 +203,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		for (Object item: factBase){
 			try{
 				GamaList<Object> currentPredicate = (GamaList<Object>) item;
@@ -235,7 +235,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		boolean isExistPredicate = false;
 		for (Object item: desireBase){
 			try{
@@ -278,7 +278,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		for (Object item: desireBase){
 			try{
 				GamaList<Object> currentPredicate = (GamaList<Object>) item;
@@ -310,7 +310,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		GamaList<Object> newFactBase = new GamaList<Object>();
 		for (Object item: factBase){
 			try{
@@ -344,7 +344,7 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			predicateItem.add(predicateParameters);
 		}
 		else predicateItem.add(null);
-		int perceiveTime = SimulationClock.getCycle();
+		int perceiveTime = scope.getClock().getCycle();
 		GamaList<Object> newDesireBase = new GamaList<Object>();
 		for (Object item: desireBase){
 			try{
