@@ -60,8 +60,8 @@ public class AgentDB extends GamlAgent {
 	// private Statement stat;
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
-	public AgentDB(final ISimulation sim, final IPopulation s) throws GamaRuntimeException {
-		super(sim, s);
+	public AgentDB(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 	}
 	
 	@action(name="isConnected")
