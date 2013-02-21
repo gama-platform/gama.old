@@ -20,11 +20,12 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.metamodel.topology.filter.In;
+import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -228,6 +229,9 @@ public abstract class AbstractPopulation implements IPopulation {
 
 	@Override
 	public IAspect getAspect(final String default1) {
+		// if ( species.isGraph() && (default1 == null || default1.equals(IKeyword.DEFAULT)) ) {
+		// return DEFAULT_GRAPH_ASPECT; }
+
 		return species.getAspect(default1);
 	}
 
@@ -277,6 +281,7 @@ public abstract class AbstractPopulation implements IPopulation {
 	 */
 	protected void computeTopology(final IScope scope) throws GamaRuntimeException {
 		if ( this.isGlobal() ) {
+			// FIXME Normalement plus nécessaire si l'environnement disparait
 			topology = new AmorphousTopology();
 		} else if ( species.isGrid() ) {
 			IExpression exp = species.getFacet(IKeyword.WIDTH);
@@ -290,7 +295,19 @@ public abstract class AbstractPopulation implements IPopulation {
 			boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 			topology =
 				new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
-		} else {
+		} else if ( species.isGraph() ) {
+			IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
+			String edgeName = spec == null ? "base_edge" : spec.literalValue();
+			ISpecies edgeSpecies = scope.getSimulationScope().getModel().getSpecies(edgeName);
+			// TODO Specifier directed quelque part dans l'espèce
+			GamaSpatialGraph g =
+				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false,
+					new AbstractGraphNode.NodeRelation(scope), edgeSpecies, scope);
+			this.addListener(g);
+			topology = new GraphTopology(scope, this.getHost(), g);
+		}
+
+		else {
 			IExpression exp = species.getFacet(IKeyword.TORUS);
 			boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 			topology = new ContinuousTopology(scope, this.getHost(), this.getHost().isTorus());

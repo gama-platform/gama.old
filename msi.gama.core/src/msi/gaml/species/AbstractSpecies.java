@@ -20,7 +20,7 @@ package msi.gaml.species;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -41,7 +41,7 @@ import msi.gaml.variables.IVariable;
  */
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
-	protected boolean isGrid;
+	protected final boolean isGrid, isGraph;
 	protected final Map<String, ISpecies> microSpecies = new HashMap<String, ISpecies>();
 	private final Map<String, IVariable> variables = new HashMap<String, IVariable>();
 	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
@@ -54,6 +54,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		super(description);
 		setName(description.getName());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
+		isGraph =
+			AbstractGraphNode.class.isAssignableFrom(((SpeciesDescription) description)
+				.getJavaBase());
 	}
 
 	@Override
@@ -101,6 +104,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean isGrid() {
 		return isGrid;
+	}
+
+	@Override
+	public boolean isGraph() {
+		return isGraph;
 	}
 
 	// @Override

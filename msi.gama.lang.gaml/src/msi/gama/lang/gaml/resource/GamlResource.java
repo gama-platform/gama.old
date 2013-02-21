@@ -20,6 +20,7 @@ import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import com.google.inject.Inject;
@@ -41,6 +42,7 @@ public class GamlResource extends LazyLinkingResource {
 	private ISyntacticElement syntacticContents;
 
 	private IGamlBuilderListener listener;
+
 	@Inject
 	GamlJavaValidator validator;
 
@@ -87,9 +89,14 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void error(final String message, final EObject object) {
-		if ( object == null ) { return; }
-		if ( object.eResource() != this ) {
-			((GamlResource) object.eResource()).error(message, object);
+		if ( object == null ) { throw new NullPointerException(
+			"A parser error has been emitted on a null EObject. Please debug to see the cause."); }
+		Resource r = object.eResource();
+		if ( r == null ) { throw new NullPointerException(
+			"A parser error has been emitted on an EObject with a null resource. Please debug to see the cause."); }
+		if ( object.eResource() != this && r instanceof GamlResource ) {
+			// FIXME Use an UnitOfWork here to avoid thread related issues ?
+			((GamlResource) r).error(message, object);
 			return;
 		}
 		getErrors().add(
@@ -129,6 +136,8 @@ public class GamlResource extends LazyLinkingResource {
 
 	public void buildSyntacticContents() {
 		Model m = (Model) getContents().get(0);
+		if ( m == null ) { throw new NullPointerException("The model of " + this +
+			" appears to be null. Please debug to understand the cause."); }
 		syntacticContents = new SyntacticStatement(MODEL, m);
 		syntacticContents.setFacet(NAME, new LabelExpressionDescription(m.getName()));
 		for ( final Import i : m.getImports() ) {
@@ -157,11 +166,15 @@ public class GamlResource extends LazyLinkingResource {
 
 	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
 		// If the initial statement is null, we return null
-		if ( stm == null ) { return null; }
+		if ( stm == null ) { throw new NullPointerException(
+			"The converter is asked to convert a null statement. Please debug to understand the cause."); }
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) {
-			return null;
+			{
+				throw new NullPointerException(
+					"The converter is asked to convert a statement with a null keyword. Please debug to understand the cause.");
+			}
 		} else {
 			keyword = convertKeyword(keyword, upper);
 		}

@@ -53,6 +53,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TORUS, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
+	@facet(name = IKeyword.EDGE_SPECIES, type = IType.ID, optional = true),
 	@facet(name = IKeyword.SKILLS, type = IType.LABEL, optional = true),
 	@facet(name = "mirrors", type = IType.LIST_STR, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),

@@ -43,7 +43,9 @@ public class GamlCompilationError {
 
 	public Object getStatement() {
 		if ( source == null ) { return null; }
-		return source.getUnderlyingElement(facet);
+		Object o = source.getUnderlyingElement(facet);
+		if ( o == null ) { return source; }
+		return o;
 	}
 
 	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation) {

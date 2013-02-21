@@ -96,7 +96,14 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 		if ( expr == null ) {
 			super.computeTopology(scope);
 		} else {
-			System.out.println("host : " + host);
+			// FIXME Should be caught before as a compilation error (and more detailed)
+			if ( species.isGlobal() || species.isGraph() || species.isGrid() ) {
+				super.computeTopology(scope);
+				throw new GamaRuntimeException("Impossible to assign a topology to " +
+					species.getName() + " as it already defines one.", true);
+			}
+
+			// System.out.println("host : " + host);
 			topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), null);
 		}
 	}

@@ -19,7 +19,6 @@
 package msi.gama.metamodel.agent;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.population.*;
@@ -253,17 +252,17 @@ public abstract class AbstractAgent implements IAgent {
 			}
 		}
 		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
-		if (graph != null) {
-			
-			Set edgesToModify =graph.edgesOf(this);
+		if ( graph != null ) {
+
+			Set edgesToModify = graph.edgesOf(this);
 			graph.removeVertex(this);
-			
-			for (Object obj : edgesToModify) {
-				if (obj instanceof IAgent) {
+
+			for ( Object obj : edgesToModify ) {
+				if ( obj instanceof IAgent ) {
 					((IAgent) obj).die();
 				}
 			}
-			
+
 		}
 		dispose();
 	}
@@ -281,14 +280,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public synchronized void setGeometry(final IShape newGeometry) {
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null ) { return; }
-		// Envelope previousEnv = null;
-		// ILocation previousLoc = null;
-		// boolean previousIsPoint = false;
-		// if ( geometry != null && geometry.getInnerGeometry() != null ) {
-		// previousEnv = geometry.getEnvelope();
-		// previousLoc = geometry.getLocation();
-		// previousIsPoint = geometry.isPoint();
-		// }
+
 		ITopology topology = population.getTopology();
 		ILocation newGeomLocation = newGeometry.getLocation().copy();
 
@@ -347,16 +339,17 @@ public abstract class AbstractAgent implements IAgent {
 			}
 		}
 		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
-		if (graph != null) {
-			Set edgesToModify =graph.edgesOf(this);
-			for (Object obj : edgesToModify) {
-				if (obj instanceof IAgent) {
+		if ( graph != null ) {
+			Set edgesToModify = graph.edgesOf(this);
+			for ( Object obj : edgesToModify ) {
+				if ( obj instanceof IAgent ) {
 					IShape ext1 = (IShape) graph.getEdgeSource(obj);
 					IShape ext2 = (IShape) graph.getEdgeTarget(obj);
-					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(), ext2.getLocation()));
+					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(),
+						ext2.getLocation()));
 				}
 			}
-			
+
 		}
 	}
 

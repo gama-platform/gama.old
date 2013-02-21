@@ -11,7 +11,6 @@ package msi.gama.lang.gaml.linking;
 
 import static com.google.common.base.Objects.equal;
 import static java.util.Arrays.copyOf;
-import static org.eclipse.xtext.util.Arrays.contains;
 import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
 import org.eclipse.xtext.nodemodel.INode;
 import com.google.common.base.Objects;
@@ -31,10 +30,8 @@ public class GamlDiagnostic extends AbstractDiagnostic {
 
 	public GamlDiagnostic(final String code, final String[] data, final String message,
 		final INode node) {
-		if ( data == null ) { throw new NullPointerException("The given array should not be null"); }
-		if ( contains(data, null) ) { throw new IllegalArgumentException(
-			"The given array should not contain null elements"); }
-		if ( node == null ) { throw new NullPointerException("The given node should not be null"); }
+		if ( node == null || code == null || data == null || message == null ) { throw new NullPointerException(
+			"An incorrect diagnostic has been emitted. Please debug to find the root cause."); }
 		this.code = code;
 		this.data = copyOf(data, data.length);
 		this.message = new StringBuilder(message);

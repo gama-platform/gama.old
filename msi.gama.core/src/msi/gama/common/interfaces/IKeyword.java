@@ -97,6 +97,7 @@ public interface IKeyword {
 	public static final String DYNAMIC = "dynamic";
 	public static final String EACH = "each";
 	public static final String EDGE = "edge";
+	public static final String EDGE_SPECIES = "edge_species";
 	public static final String ELSE = "else";
 	public static final String EMPTY = "empty";
 	public static final String BORDER = "border";

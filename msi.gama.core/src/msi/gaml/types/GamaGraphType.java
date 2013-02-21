@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.util.Map;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -45,7 +45,7 @@ public class GamaGraphType extends GamaType<IGraph> {
 		if ( obj instanceof IGraph ) { return (IGraph) obj; }
 		boolean spatial = param != null && Cast.asBool(scope, param);
 
-		if ( obj instanceof IList ) { return from((IList) obj, spatial); }
+		if ( obj instanceof IList ) { return from(scope, (IList) obj, spatial); }
 		// List of agents, geometries...
 
 		if ( obj instanceof VariableExpression ) { // this may be a variable ?
@@ -53,17 +53,17 @@ public class GamaGraphType extends GamaType<IGraph> {
 			return (IGraph) ((VariableExpression) obj).value(scope);
 		}
 
-		if ( obj instanceof Map ) { return from((Map) obj, spatial); }
+		if ( obj instanceof Map ) { return from(scope, (Map) obj, spatial); }
 		// TODO Matrix, Pair ?
 
 		// throw new GamaRuntimeException("Unable to cast "+obj+" as a graph");
 		return null;
 	}
 
-	public static IGraph from(final Map<?, ?> obj, final boolean spatial) {
+	public static IGraph from(final IScope scope, final Map<?, ?> obj, final boolean spatial) {
 		IGraph result =
-			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null) : new GamaGraph(
-				new GamaList(), false, false);
+			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope)
+				: new GamaGraph(new GamaList(), false, false, null, null, scope);
 		GamaPair p = new GamaPair(null, null);
 		for ( Map.Entry<?, ?> k : obj.entrySet() ) {
 			p.key = k.getKey();
@@ -73,9 +73,9 @@ public class GamaGraphType extends GamaType<IGraph> {
 		return result;
 	}
 
-	public static IGraph from(final IList obj, final boolean spatial) {
-		return spatial ? new GamaSpatialGraph(obj, false, false, null) : new GamaGraph(obj, false,
-			false);
+	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
+		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope)
+			: new GamaGraph(obj, false, false, null, null, scope);
 	}
 
 	@Override

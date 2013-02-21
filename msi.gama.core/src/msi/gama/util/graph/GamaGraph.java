@@ -19,9 +19,9 @@
 package msi.gama.util.graph;
 
 import java.util.*;
-
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.runtime.*;
@@ -32,7 +32,6 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
-
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
@@ -44,6 +43,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	protected final Map<K, _Edge<K>> edgeMap;
 	protected boolean directed;
 	protected boolean edgeBased;
+	protected IScope scope;
 
 	protected VertexRelationship vertexRelation;
 	// protected IScope scope;
@@ -53,6 +53,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public static int Djikstra = 3;
 	public static int ASTar = 4;
 
+	protected ISpecies edgeSpecies;
 	protected int optimizerType = 3;
 	private FloydWarshallShortestPaths optimizer;
 	protected boolean verbose;
@@ -61,6 +62,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	private final GamaMap verticesBuilt; // only used for optimization purpose of spatial graph
 											// building.
+
+	private final Set<IAgent> generatedEdges = new HashSet();
 	private int version;
 
 	public GamaGraph(final boolean directed) {
@@ -73,30 +76,16 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		version = 1;
 	}
 
-	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed) {
-		this.directed = directed;
-		vertexMap = new GamaMap();
-		edgeMap = new GamaMap();
-		edgeBased = byEdge;
-		vertexRelation = null;
-		verticesBuilt = new GamaMap();
-		if ( byEdge ) {
-			buildByEdge(vertices);
-		} else {
-			buildByVertices(vertices);
-		}
-		version = 1;
-	}
-
 	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed,
-		final VertexRelationship rel) {
+		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
 		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
 		edgeBased = byEdge;
 		vertexRelation = rel;
-
+		edgeSpecies = edgesSpecies;
 		verticesBuilt = new GamaMap();
+		this.scope = scope;
 		if ( byEdge ) {
 			buildByEdge(vertices);
 		} else {
@@ -104,25 +93,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		}
 		version = 1;
 	}
-	
-	public GamaGraph(final IContainer vertices, final boolean byEdge, final boolean directed,
-			final VertexRelationship rel,final ISpecies edgesSpecies, final IScope scope) {
-			this.directed = directed;
-			vertexMap = new GamaMap();
-			edgeMap = new GamaMap();
-			edgeBased = byEdge;
-			vertexRelation = rel;
 
-			verticesBuilt = new GamaMap();
-			if ( byEdge ) {
-				buildByEdge(vertices);
-			} else {
-				buildByVertices(vertices, edgesSpecies, scope);
-			}
-			version = 1;
-		}
-	
-	
 	@Override
 	public String toString() {
 		List<String> renderedVertices = new ArrayList<String>();
@@ -148,13 +119,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			addVertex(p);
 		}
 	}
-	
-	protected void buildByVertices(final IContainer<?, V> vertices, ISpecies edgeSpecies, IScope scope) {
-		for ( V p : vertices ) {
-			addVertex(p);
-		}
-	}
-
 
 	protected void buildByEdge(final IContainer vertices) {
 		for ( Object p : vertices ) {
@@ -192,15 +156,25 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		if ( addEdge(v1, v2, p) ) { return p; }
 		return null;
 	}
-	
-	
-	
-	
+
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		GamaPair p = new GamaPair(v1, v2);
-		return p;
+		if ( edgeSpecies == null ) {
+			GamaPair p = new GamaPair(v1, v2);
+			return p;
+		}
+		return generateEdgeAgent(Collections.EMPTY_LIST);
 	}
-	
+
+	protected IAgent generateEdgeAgent(final List<Map<String, Object>> attributes) {
+		IAgent agent =
+			scope.getAgentScope().getPopulationFor(edgeSpecies)
+				.createAgents(scope, 1, attributes, false).first(scope);
+		if ( agent != null ) {
+			generatedEdges.add(agent);
+		}
+		return agent;
+	}
+
 	@Override
 	public boolean addEdge(final Object v1, final Object v2, final Object e) {
 		if ( containsEdge(e) ) { return false; }
@@ -413,6 +387,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		if ( edge == null ) { return false; }
 		edge.removeFromVerticesAs(e);
 		edgeMap.remove(e);
+		if ( generatedEdges.contains(e) ) {
+			((IAgent) e).die();
+		}
 		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_REMOVED));
 		return true;
 	}
@@ -708,7 +685,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public GamaGraph reverse(final IScope scope) {
-		GamaGraph g = new GamaGraph(new GamaList(), false, directed);
+		GamaGraph g =
+			new GamaGraph(new GamaList(), false, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addGraphReversed(g, this);
 		return g;
 	}
@@ -771,7 +749,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public IGraph copy() {
-		GamaGraph g = new GamaGraph(GamaList.EMPTY_LIST, true, directed);
+		GamaGraph g =
+			new GamaGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}

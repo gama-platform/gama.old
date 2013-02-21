@@ -57,7 +57,8 @@ public class SyntacticStatement extends AbstractSyntacticStatement {
 		if ( facet == null ) { return statement; }
 		if ( facet instanceof EObject ) { return (EObject) facet; }
 		IExpressionDescription f = facets.get(facet);
-		if ( f != null && f.getTarget() != null ) { return f.getTarget(); }
+		if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f
+			.getTarget(); }
 		return statement;
 	}
 

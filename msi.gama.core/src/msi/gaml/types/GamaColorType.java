@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import java.util.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -64,7 +64,11 @@ public class GamaColorType extends GamaType<GamaColor> {
 			String s = (String) obj;
 			GamaColor c = GamaColor.colors.get(s);
 			if ( c == null ) {
-				c = new GamaColor(Color.decode(s));
+				try {
+					c = new GamaColor(Color.decode(s));
+				} catch (NumberFormatException e) {
+					throw new GamaRuntimeException(e);
+				}
 				GamaColor.colors.put(s, c);
 			}
 			return c;

@@ -44,6 +44,8 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract boolean isGrid();
 
+	public abstract boolean isGraph();
+
 	public abstract boolean isGlobal();
 
 	/**

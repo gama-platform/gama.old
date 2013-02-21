@@ -1,0 +1,33 @@
+package msi.gama.metamodel.agent;
+
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.*;
+
+// FIXME: Add all the necessary variables and actions ?
+// FIXME:
+@species(name = "graph_edge")
+@vars({ @var(name = IKeyword.SOURCE, type = IType.AGENT_STR),
+	@var(name = IKeyword.TARGET, type = IType.AGENT_STR) })
+public class AbstractGraphEdge extends GamlAgent {
+
+	public AbstractGraphEdge(final IPopulation s) throws GamaRuntimeException {
+		super(s);
+	}
+
+	@Override
+	public void step(final IScope scope) {
+		IAgent s = (IAgent) getAttribute(IKeyword.SOURCE);
+		IAgent t = (IAgent) getAttribute(IKeyword.TARGET);
+		if ( s == null || t == null ) { return; }
+		setGeometry(GamaGeometryType.buildLine(s.getLocation(), t.getLocation()));
+
+		super.step(scope);
+	}
+
+}

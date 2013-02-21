@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -18,11 +18,12 @@
  */
 package msi.gama.metamodel.shape;
 
-import msi.gama.common.interfaces.*;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GamaDynamicLink extends GamaShape {
+
+	// FIXME: DynamicLink does not work
 
 	// Represents a dynamic link between two geometries. The geometry of this link
 	// is the intersection of the two geometries when they intersect, and a line between
@@ -30,6 +31,7 @@ public class GamaDynamicLink extends GamaShape {
 
 	final IShape source, target; // final ? Maybe can be dynamic as well.
 	ILocation s, t; // cache
+	IShape previousGeometry;
 
 	public GamaDynamicLink(final IShape source, final IShape target) {
 		this.source = source;
@@ -48,11 +50,21 @@ public class GamaDynamicLink extends GamaShape {
 	public void refresh() {
 		ILocation ss = source.getLocation();
 		ILocation tt = target.getLocation();
-		//if ( s == null || t == null || !s.equals(ss) || !t.equals(tt) ) {
-			s = ss;
-			t = tt;
-			setGeometry(buildGeometry());
-		//}
+		// if ( s == null || t == null || !s.equals(ss) || !t.equals(tt) ) {
+		s = ss;
+		t = tt;
+		setGeometry(buildGeometry());
+		// }
+	}
+
+	@Override
+	public void setGeometry(final IShape geom) {
+		if ( geom == null || geom == this ) { return; }
+		super.setGeometry(geom);
+		// if ( getAgent() != null ) {
+		// getAgent().getTopology().updateAgent(previousGeometry, getAgent());
+		// }
+		previousGeometry = geom;
 	}
 
 	private IShape buildGeometry() {

@@ -297,7 +297,7 @@ public class Graphs {
 	@doc(value = "creates a graph from the list/map of edges given as operand", special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices", examples = { "as_edge_graph([{1,5},{12,45},{34,56}])  --:  build a graph with these three vertices and reflexive links on each vertices" }, see = {
 		"as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
-		return new GamaSpatialGraph(edges, true, false, null);
+		return new GamaSpatialGraph(edges, true, false, null, null, scope);
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -310,7 +310,7 @@ public class Graphs {
 	@doc(special_cases = "if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])  --:  build a graph with these three vertices and two edges")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
-		return GamaGraphType.from(edges, true);
+		return GamaGraphType.from(scope, edges, true);
 	}
 
 	// @operator(value = "graph_from_vertices")
@@ -323,11 +323,13 @@ public class Graphs {
 		"as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
 		final Double tolerance) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance));
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
+			null, scope);
 	}
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine());
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null,
+			scope);
 	}
 
 	@operator(value = "as_distance_graph")
@@ -335,7 +337,8 @@ public class Graphs {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance));
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null,
+			scope);
 	}
 
 	@operator(value = "as_distance_graph")

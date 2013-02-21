@@ -21,6 +21,7 @@ package msi.gama.metamodel.topology.graph;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -28,11 +29,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGeometryType;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 
-public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph {
+public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph,
+	IPopulationListener {
 
 	private FloydWarshallStaticOptimizer pathFinder;
 	/*
@@ -40,7 +41,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * graph.
 	 */
 	private ITopology topology;
-	private boolean agentEdge;
+	private final boolean agentEdge;
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -56,42 +57,19 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		boolean equivalent(T p1, T p2);
 
-	}
-
-	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
-		final boolean directed, final VertexRelationship rel) {
-		super(vertices, byEdge, directed, rel);
-		try {
-			agentEdge =
-				byEdge && vertices != null && !vertices.isEmpty(null) &&
-					vertices.first(null) instanceof IAgent;
-		} catch (GamaRuntimeException e) {
-			e.printStackTrace();
-		}
-		verbose = false;
+		// Double distance(T p1, T p2);
 
 	}
 
-	public GamaSpatialGraph(final IContainer vertices, final boolean byEdge,
+	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies,
 		final IScope scope) {
-		super(vertices, byEdge, directed, rel, edgesSpecies, scope);
-		try {
-			agentEdge =
-				byEdge && vertices != null && !vertices.isEmpty(null) &&
-					vertices.first(null) instanceof IAgent;
-		} catch (GamaRuntimeException e) {
-			e.printStackTrace();
-		}
+		super(edgesOrVertices, byEdge, directed, rel, edgesSpecies, scope);
+		agentEdge =
+			edgesSpecies != null || byEdge && edgesOrVertices != null &&
+				edgesOrVertices.first(scope) instanceof IAgent;
 		verbose = false;
 
-	}
-
-	@Override
-	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		if ( v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink(
-			(IShape) v1, (IShape) v2); }
-		return super.createNewEdgeObjectFromVertices(v1, v2);
 	}
 
 	public boolean isAgentEdge() {
@@ -101,7 +79,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	public GamaSpatialGraph copy() {
 		GamaSpatialGraph g =
-			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation);
+			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies,
+				scope);
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
@@ -145,23 +124,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	protected void buildByVertices(final IContainer<?, IShape> list) {
 		super.buildByVertices(list);
 		for ( IShape o1 : list ) { // Try to create automatic edges
-			for ( IShape o2 : list ) {
-				if ( o1 == o2 || vertexRelation.equivalent(o1, o2) ) {
-					continue;
-				}
-				if ( vertexRelation.related(o1, o2) ) {
-					addEdge(o1, o2);
-				}
-			}
-		}
-	}
-
-	@Override
-	protected void buildByVertices(final IContainer<?, IShape> list, final ISpecies edgeSpecies,
-		final IScope scope) {
-		super.buildByVertices(list);
-		for ( IShape o1 : list ) { // Try to create automatic edges
-			if (o1.getAgent() != null) {
+			if ( o1.getAgent() != null ) {
 				o1.getAgent().setAttribute("attached_graph", this);
 			}
 			for ( IShape o2 : list ) {
@@ -169,7 +132,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 					continue;
 				}
 				if ( vertexRelation.related(o1, o2) ) {
-					addEdge(o1, o2, edgeSpecies, scope);
+					addEdge(o1, o2, scope);
 				}
 			}
 		}
@@ -248,29 +211,48 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		pathFinder = null;
 	}
 
-	public Object addEdge(final Object v1, final Object v2, final ISpecies edgeSpecies,
-		final IScope scope) {
-
-		Object p = null;
-		if ( edgeSpecies != null ) {
-			p = createNewEdgeObjectFromVertices(v1, v2, edgeSpecies, scope);
-		} else {
-			p = createNewEdgeObjectFromVertices(v1, v2);
-		}
-		if ( addEdge(v1, v2, p) ) { return p; }
-		return null;
+	@Override
+	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
+		if ( edgeSpecies == null && v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink(
+			(IShape) v1, (IShape) v2); }
+		Map<String, Object> map = new GamaMap();
+		// IShape line = new GamaDynamicLink((IShape) v1, (IShape) v2);
+		// GamaGeometryType.buildLine(((IShape) v1).getLocation(), ((IShape) v2).getLocation());
+		IList initVal = new GamaList();
+		map.put(IKeyword.SOURCE, v1);
+		map.put(IKeyword.TARGET, v2);
+		// map.put(IKeyword.SHAPE, line);
+		initVal.add(map);
+		return generateEdgeAgent(initVal);
 	}
 
-	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2,
-		final ISpecies edgeSpecies, final IScope scope) {
-		Map<String, Object> map = new GamaMap();
-		IShape line =
-			GamaGeometryType.buildLine(((IShape) v1).getLocation(), ((IShape) v2).getLocation());
-		IList initVal = new GamaList();
-		map.put(IKeyword.SHAPE, line);
-		initVal.add(map);
-		return scope.getAgentScope().getPopulationFor(edgeSpecies)
-			.createAgents(scope, 1, initVal, false).first(scope);
+	@Override
+	public void notifyAgentRemoved(final IPopulation pop, final IAgent agent) {
+		this.removeVertex(agent);
+	}
+
+	@Override
+	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
+		this.addVertex(agent);
+	}
+
+	@Override
+	public void notifyAgentsAdded(final IPopulation pop, final Collection agents) {
+		for ( Object o : agents ) {
+			addVertex((IAgent) o);
+		}
+	}
+
+	@Override
+	public void notifyAgentsRemoved(final IPopulation pop, final Collection agents) {
+		for ( Object o : agents ) {
+			removeVertex(o);
+		}
+	}
+
+	@Override
+	public void notifyPopulationCleared(final IPopulation pop) {
+		this.clear();
 	}
 
 }
