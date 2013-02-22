@@ -25,7 +25,7 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
@@ -49,14 +49,14 @@ public class Graphs {
 		}
 
 		@Override
-		public boolean related(final IShape p1, final IShape p2) {
+		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
 			return Spatial.Properties.intersects(
 				Spatial.Transformations.enlarged_by(p1.getGeometry(), tolerance),
 				Spatial.Transformations.enlarged_by(p2.getGeometry(), tolerance));
 		}
 
 		@Override
-		public boolean equivalent(final IShape p1, final IShape p2) {
+		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
 		}
 	};
@@ -66,12 +66,12 @@ public class Graphs {
 		IntersectionRelationLine() {}
 
 		@Override
-		public boolean related(final IShape p1, final IShape p2) {
+		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
 			return p1.getInnerGeometry().relate(p2.getInnerGeometry(), "****1****");
 		}
 
 		@Override
-		public boolean equivalent(final IShape p1, final IShape p2) {
+		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
 		}
 
@@ -91,9 +91,8 @@ public class Graphs {
 		 *      msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 		 */
 		@Override
-		public boolean related(final IShape g1, final IShape g2) {
-			return Spatial.Relations.distance_to(GAMA.getDefaultScope(), g1.getGeometry(),
-				g2.getGeometry()) <= distance;
+		public boolean related(final IScope scope, final IShape g1, final IShape g2) {
+			return Spatial.Relations.distance_to(scope, g1.getGeometry(), g2.getGeometry()) <= distance;
 		}
 
 		/**
@@ -102,7 +101,7 @@ public class Graphs {
 		 *      msi.gama.interfaces.IGeometry)
 		 */
 		@Override
-		public boolean equivalent(final IShape p1, final IShape p2) {
+		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
 		}
 

@@ -460,8 +460,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		}
 		return null;
 	}
+
 	/*
 	 * end-of Equation
 	 */
+
+	@Override
+	public Boolean implementsSkill(final String skill) {
+		return getDescription().implementsSkill(skill);
+	}
 
 }

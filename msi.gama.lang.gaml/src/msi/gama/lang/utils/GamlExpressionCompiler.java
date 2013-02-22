@@ -32,6 +32,7 @@ import msi.gama.precompiler.IUnits;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.DrawStatement;
@@ -94,9 +95,12 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			.getType());
 	}
 
+	private IExpression skill(final String name) {
+		return factory.createConst(name, Types.get(IType.STRING));
+	}
+
 	// KEEP
 	private IExpression unary(final String op, final Expression e) {
-
 		if ( op == null ) { return null; }
 		IExpression expr = compile(e);
 		if ( expr == null ) { return null; }
@@ -115,6 +119,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// The unary "unit" operator should let the value of its child pass through
 		if ( op.equals("¡") ) { return expr; }
 		if ( isSpeciesName(op) ) { return factory.createOperator(AS, context, expr, species(op)); }
+		if ( isSkillName(op) ) { return factory.createOperator(AS, context, expr, skill(op)); }
 		return factory.createOperator(op, context, expr);
 	}
 
@@ -125,6 +130,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			String type = EGaml.getKeyOf(e2);
 			if ( isSpeciesName(type) ) { return factory.createOperator(op, context, left,
 				species(type)); }
+			if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, left,
+				skill(type)); }
 			// allows expression such as 'agent as dead'. Should we allow them ?
 			return factory.createOperator(type, context, left);
 		}
@@ -133,9 +140,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			String type = EGaml.getKeyOf(e2);
 			if ( isTypeName(type) ) { return factory.createOperator(op, context, left,
 				factory.createConst(type, Types.get(IType.STRING))); }
+			if ( isSkillName(type) ) { return factory.createOperator(IS_SKILL, context, left,
+				factory.createConst(type, Types.get(IType.STRING))); }
 			getContext().flagError(
-				"'is' must be followed by a type name. " + type + " is not a type name.",
-				IGamlIssue.NOT_A_TYPE, e2, type);
+				"'is' must be followed by a type, species or skill name. " + type +
+					" is neither of these.", IGamlIssue.NOT_A_TYPE, e2, type);
 			return null;
 		}
 
@@ -185,6 +194,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	private boolean isSpeciesName(final String s) {
 		return getContext().getModelDescription().hasSpeciesDescription(s);
+	}
+
+	private boolean isSkillName(final String s) {
+		return AbstractGamlAdditions.getSkillClasses().containsKey(s);
 	}
 
 	private boolean isTypeName(final String s) {
@@ -323,24 +336,31 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	 * @see msi.gaml.expressions.IExpressionParser#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
 	 */
 	@Override
-	public Set<String> parseLiteralArray(final IExpressionDescription s, final IDescription context) {
+	public Set<String> parseLiteralArray(final IExpressionDescription s,
+		final IDescription context, final boolean skills) {
 		if ( s instanceof StringListExpressionDescription ) { return ((StringListExpressionDescription) s)
 			.getStrings(); }
+		String type = skills ? "skill" : "attribute";
 		EObject o = getEObjectOf(s);
 		if ( o == null ) { return Collections.EMPTY_SET; }
 		if ( !(o instanceof Array) ) {
 			if ( o instanceof VariableRef ) {
 				String skillName = EGaml.getKeyOf(o);
-				context.flagWarning(
-					"Skills should be provided as a list of identifiers, for instance [" +
-						skillName + "]", IGamlIssue.AS_ARRAY, o, skillName);
+				context.flagWarning(type +
+					"s should be provided as a list of identifiers, for instance [" + skillName +
+					"]", IGamlIssue.AS_ARRAY, o, skillName);
+				if ( skills && !isSkillName(skillName) ) {
+					context.flagError("Unknown " + type + " " + skillName,
+						IGamlIssue.UNKNOWN_SKILL, o);
+				}
 				return new HashSet(Arrays.asList(skillName));
 			}
 			if ( o instanceof Expression ) {
-				context.flagError("Impossible to recognize valid skills in " + EGaml.toString(o),
-					IGamlIssue.UNKNOWN_SKILL, o);
+				context.flagError(
+					"Impossible to recognize valid " + type + "s in " + EGaml.toString(o), skills
+						? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, o);
 			} else {
-				context.flagError("Skills should be provided as a list of identifiers.",
+				context.flagError(type + "s should be provided as a list of identifiers.",
 					IGamlIssue.UNKNOWN_SKILL, o);
 			}
 			return Collections.EMPTY_SET;
@@ -349,8 +369,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		Array array = (Array) o;
 		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
 			String name = EGaml.getKeyOf(expr);
-			if ( name == null ) {
-				context.flagError("Unknown skill", IGamlIssue.UNKNOWN_SKILL, expr);
+			if ( skills && !isSkillName(name) ) {
+				context.flagError("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
+					: IGamlIssue.UNKNOWN_VAR, expr);
 			} else {
 				result.add(name);
 			}

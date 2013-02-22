@@ -30,7 +30,6 @@ public class RuntimeScope extends AbstractScope {
 	public RuntimeScope(final ISimulation sim, final String name) {
 		super(name);
 		simulation = sim;
-		// world = simulation.getWorldScope();
 	}
 
 	@Override

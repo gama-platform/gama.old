@@ -352,9 +352,9 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		GamaRuntimeException {
 		// GuiUtils.debug("Beginning to initialize a new simulation");
 		if ( currentSimulation != null ) { return; }
-		if ( agent == null ) {
-			createAgent();
-		}
+		// if ( agent == null ) {
+		createAgent();
+		// }
 		parametersEditors = null;
 		// GuiUtils.debug("Setting the value of parameters from " + sol);
 

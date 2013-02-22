@@ -48,5 +48,5 @@ public interface IExpressionCompiler<T> {
 		IDescription context);
 
 	public abstract Set<String> parseLiteralArray(final IExpressionDescription s,
-		final IDescription context);
+		final IDescription context, boolean skills);
 }

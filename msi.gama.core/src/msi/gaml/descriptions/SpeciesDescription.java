@@ -21,7 +21,6 @@ package msi.gaml.descriptions;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.*;
@@ -112,11 +111,9 @@ public class SpeciesDescription extends SymbolDescription {
 
 	}
 
-	private static final Set<String> skillNames = new LinkedHashSet();
-
 	protected void setSkills(final IExpressionDescription userDefinedSkills,
 		final Set<String> builtInSkills) {
-		skillNames.clear();
+		Set<String> skillNames = new LinkedHashSet();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(IKeyword.CONTROL) ) {
 			skillNames.add(facets.getLabel(IKeyword.CONTROL));
@@ -124,7 +121,8 @@ public class SpeciesDescription extends SymbolDescription {
 		/* We add the keyword as a possible skill (used for 'grid' species) */
 		skillNames.add(getKeyword());
 		/* We add the user defined skills (i.e. as in 'species a skills: [s1, s2...]') */
-		skillNames.addAll(GAMA.getExpressionFactory().parseLiteralArray(userDefinedSkills, this));
+		skillNames.addAll(GAMA.getExpressionFactory().parseLiteralArray(userDefinedSkills, this,
+			true));
 		/*
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
@@ -917,4 +915,7 @@ public class SpeciesDescription extends SymbolDescription {
 		return facets.containsKey(IKeyword.MIRRORS);
 	}
 
+	public Boolean implementsSkill(final String skill) {
+		return skills.containsKey(AbstractGamlAdditions.getSkillClassFor(skill));
+	}
 }

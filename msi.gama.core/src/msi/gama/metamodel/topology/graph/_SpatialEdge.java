@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -34,11 +34,8 @@ public class _SpatialEdge extends _Edge<IShape> {
 	@Override
 	protected void init(final Object edge, final Object source, final Object target)
 		throws GamaRuntimeException {
-		if ( !(edge instanceof IShape) ) {
-			// storedObject = (IGeometry) edge;
-			// } else {
-			throw new GamaRuntimeException(StringUtils.toGaml(edge) + " is not a geometry");
-		}
+		if ( !(edge instanceof IShape) ) { throw new GamaRuntimeException(StringUtils.toGaml(edge) +
+			" is not a geometry"); }
 		super.init(edge, source, target);
 	}
 
@@ -67,20 +64,11 @@ public class _SpatialEdge extends _Edge<IShape> {
 
 	private Object findVertexWithCoordinates(final Coordinate c) {
 		IShape vertex = graph.getBuiltVertex(c);
-		if (vertex != null) {
-			return vertex;
-		}
+		if ( vertex != null ) { return vertex; }
 		vertex = new GamaPoint(c);
 		graph.addVertex(vertex);
 		graph.addBuiltVertex(vertex);
 		return vertex;
-		/*for ( Object vertex : graph.vertexSet() ) {
-			// _SpatialVertex internal = getVertex(vertex);
-			if ( vertex instanceof IShape && ((IShape) vertex).getLocation().equals(c) ) { return vertex; }
-		}
-		IShape vertex = new GamaPoint(c);
-		graph.addVertex(vertex);
-		return vertex;*/
 	}
 
 	@Override

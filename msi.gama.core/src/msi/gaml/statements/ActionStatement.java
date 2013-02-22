@@ -46,8 +46,7 @@ import msi.gaml.types.IType;
 public class ActionStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	Arguments actualArgs = new Arguments();
-
-	// Arguments formalArgs;
+	Arguments formalArgs = new Arguments();
 
 	/**
 	 * The Constructor.
@@ -66,12 +65,14 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		actualArgs.stack(stack);
-		Object result = super.privateExecuteIn(stack);
-		if ( stack.getStatus() == interrupt ) {
-			stack.setStatus(terminated);
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		actualArgs.stack(scope);
+		Object result = super.privateExecuteIn(scope);
+		if ( scope.getStatus() == interrupt ) {
+			scope.setStatus(terminated);
 		}
+		actualArgs.clear();
+		actualArgs.putAll(formalArgs);
 		return result;
 	}
 
@@ -80,19 +81,11 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
 			actualArgs.put(entry.getKey(), entry.getValue());
 		}
-		// actualArgs.clear();
-		// for ( Map.Entry<String, IExpressionDescription> entry : formalArgs.entrySet() ) {
-		// if ( entry != null ) {
-		// String arg = entry.getKey();
-		// IExpressionDescription expr = entry.getValue();
-		// actualArgs.put(arg, args.getExpr(arg, expr == null ? null : expr.getExpression()));
-		// }
-		// }
 	}
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
+		formalArgs.putAll(args);
 		actualArgs.putAll(args);
-		// formalArgs = args;
 	}
 }

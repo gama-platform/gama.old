@@ -171,4 +171,6 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract boolean isMirror();
 
+	public abstract Boolean implementsSkill(String skill);
+
 }

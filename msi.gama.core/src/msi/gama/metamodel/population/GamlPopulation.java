@@ -83,6 +83,7 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 			host.getScheduler().insertEndAction(
 				new PopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
+
 		// Add an attribute to the agents (dans SpeciesDescription)
 		IExpression exp = species.getFrequency();
 		if ( exp != null ) {

@@ -193,13 +193,13 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		// NOTHING TO DO
 	}
 
-	@Override
-	public void update() {}
+	// @Override
+	// public void update() {}
 
-	@Override
-	public void cleanCache() {
-		// indexes.clear();
-	}
+	// @Override
+	// public void cleanCache() {
+	// // indexes.clear();
+	// }
 
 	@Override
 	public void add(final ISpatialIndex index, final ISpecies species) {

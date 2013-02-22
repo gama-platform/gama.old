@@ -26,7 +26,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.IStatement;
+import msi.gaml.statements.*;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
@@ -47,6 +47,9 @@ public interface IScope {
 	public abstract void pop(IStatement statement);
 
 	public abstract Object execute(IStatement statement, IAgent agent) throws GamaRuntimeException;
+
+	public abstract Object execute(IStatement.WithArgs statement, IAgent agent, Arguments args)
+		throws GamaRuntimeException;
 
 	public abstract Object evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
 

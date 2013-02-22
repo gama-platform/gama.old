@@ -61,6 +61,13 @@ public class Cast {
 		return type.isAssignableFrom(Types.get(a.getClass()));
 	}
 
+	@operator(value = IKeyword.IS_SKILL)
+	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
+		if ( !(a instanceof IAgent) ) { return false; }
+		ISpecies s = ((IAgent) a).getSpecies();
+		return s.implementsSkill(skill);
+	}
+
 	public static IType asType(final IScope scope, final IExpression expr)
 		throws GamaRuntimeException {
 		Object value = expr.value(scope);
@@ -135,7 +142,7 @@ public class Cast {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
 
-	@operator(value = "as", type = ITypeProvider.RIGHT_CONTENT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
+	@operator(value = IKeyword.AS, type = ITypeProvider.RIGHT_CONTENT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
 	@doc(value = "casting of the left-hand operand to a species.", special_cases = {
 		"if the right-hand operand is nil, transforms the left-hand operand into an agent",
 		"if the left-hand operand is nil, returns nil",
@@ -149,7 +156,10 @@ public class Cast {
 		if ( species == null ) { return asAgent(scope, val); }
 		if ( val instanceof IAgent ) {
 			// if ( ((IAgent) val).dead() ) { return null; }
-			return ((IAgent) val).isInstanceOf(species, false) ? (IAgent) val : null;
+			boolean result = ((IAgent) val).isInstanceOf(species, false);
+			if ( result ) { return (IAgent) val; }
+			throw new GamaRuntimeException("Cast exception: " + val + " can not be casted into a " +
+				species);
 		}
 		// if ( val instanceof String ) { return species.getAgent((String) val); }
 		if ( val instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
@@ -157,6 +167,13 @@ public class Cast {
 		if ( val instanceof ILocation ) { return scope.getAgentScope().getPopulationFor(species)
 			.getAgent((GamaPoint) val); }
 		return null;
+	}
+
+	@operator(value = IKeyword.AS_SKILL, type = ITypeProvider.LEFT_TYPE)
+	public static IAgent asSkill(final IScope scope, final Object val, final String skill) {
+		if ( isSkill(scope, val, skill) ) { return (IAgent) val; }
+		throw new GamaRuntimeException("Cast exception: " + val + " can not be viewed as a " +
+			skill);
 	}
 
 	@operator(value = IType.BOOL_STR, can_be_const = true)

@@ -349,4 +349,6 @@ public interface IKeyword {
 		REACTIVE_TABU, EXHAUSTIVE };
 	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	public static final String USER_INIT = "user_init";
+	public static final String AS_SKILL = "as_skill";
+	public static final String IS_SKILL = "is_skill";
 }

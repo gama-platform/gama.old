@@ -282,7 +282,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static ISkill getSkillInstanceFor(final String skillName) {
-		return getSkillInstanceFor(SKILL_CLASSES.get(skillName));
+		return getSkillInstanceFor(getSkillClassFor(skillName));
+	}
+
+	public static Class getSkillClassFor(final String skillName) {
+		return SKILL_CLASSES.get(skillName);
 	}
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {

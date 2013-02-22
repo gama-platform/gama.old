@@ -110,11 +110,12 @@ public abstract class AbstractPopulation implements IPopulation {
 
 	@Override
 	public void dispose() {
+		firePopulationCleared();
 		if ( topology != null ) {
 			topology.dispose();
 			topology = null;
 		}
-		firePopulationCleared();
+
 	}
 
 	/**
@@ -147,6 +148,7 @@ public abstract class AbstractPopulation implements IPopulation {
 			a.schedule(scope);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
+		fireAgentsAdded(list);
 		return list;
 
 	}
@@ -191,7 +193,7 @@ public abstract class AbstractPopulation implements IPopulation {
 				a.schedule(scope);
 			}
 		}
-
+		fireAgentsAdded(list);
 		return list;
 	}
 
@@ -229,9 +231,6 @@ public abstract class AbstractPopulation implements IPopulation {
 
 	@Override
 	public IAspect getAspect(final String default1) {
-		// if ( species.isGraph() && (default1 == null || default1.equals(IKeyword.DEFAULT)) ) {
-		// return DEFAULT_GRAPH_ASPECT; }
-
 		return species.getAspect(default1);
 	}
 
@@ -302,14 +301,13 @@ public abstract class AbstractPopulation implements IPopulation {
 			// TODO Specifier directed quelque part dans l'espèce
 			GamaSpatialGraph g =
 				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false,
-					new AbstractGraphNode.NodeRelation(scope), edgeSpecies, scope);
+					new AbstractGraphNode.NodeRelation(), edgeSpecies, scope);
 			this.addListener(g);
+			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
-		}
-
-		else {
-			IExpression exp = species.getFacet(IKeyword.TORUS);
-			boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+		} else {
+			// IExpression exp = species.getFacet(IKeyword.TORUS);
+			// boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 			topology = new ContinuousTopology(scope, this.getHost(), this.getHost().isTorus());
 		}
 	}
@@ -338,13 +336,13 @@ public abstract class AbstractPopulation implements IPopulation {
 
 	@Override
 	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
-		fireAgentsAdded(value);
+		// fireAgentsAdded(value);
 	}
 
 	@Override
 	public void addAll(final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
-		fireAgentsAdded(value);
+		// fireAgentsAdded(value);
 	}
 
 	@Override

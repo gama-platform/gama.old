@@ -49,7 +49,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	private int totalAgents = 0;
 	private int totalNodes = 0;
 	private final static double CLONE_THRESHOLD = 0.2;
-	private final Map<IAgentFilter, GamaQuadTree> cache = new HashMap();
+	// private final Map<IAgentFilter, GamaQuadTree> cache = new HashMap();
 
 	// TODO check why we really need it?
 	private final ReentrantLock lock = new ReentrantLock();
@@ -131,8 +131,8 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	protected Collection<IShape> findIntersects(final IShape source, final Envelope r,
 		final IAgentFilter filter) {
-		GamaQuadTree clone = cloneIfNecessary(filter);
-		if ( clone != null ) { return clone.findIntersects(source, r, null); }
+		// GamaQuadTree clone = cloneIfNecessary(filter);
+		// if ( clone != null ) { return clone.findIntersects(source, r, null); }
 		HashSet<IShape> internal_results = new HashSet();
 		root.findIntersects(source, r, filter, internal_results);
 		return internal_results;
@@ -142,27 +142,27 @@ public class GamaQuadTree implements ISpatialIndex {
 	 * @param filter
 	 * @return
 	 */
-	private GamaQuadTree cloneIfNecessary(final IAgentFilter filter) {
-		for ( Map.Entry<IAgentFilter, GamaQuadTree> entry : cache.entrySet() ) {
-			if ( entry.getKey().identicalTo(filter) ) { return entry.getValue(); }
-		}
-		if ( filter == null ) { return null; }
-		int size = filter.getSize();
-		if ( size == 0 ) { return null; }
-		if ( size > totalAgents * CLONE_THRESHOLD ) { return null; }
-		GamaQuadTree tree = new GamaQuadTree(root.bounds);
-		IShape[] shapes = filter.getShapes().toArray(new IShape[0]);
-		for ( int i = 0; i < size; i++ ) {
-			tree.insert(shapes[i]);
-			// if ( s.isPoint() ) {
-			// tree.insert((Coordinate) s.getLocation(), s);
-			// } else {
-			// tree.insert(s.getEnvelope(), s);
-			// }
-		}
-		cache.put(filter, tree);
-		return tree;
-	}
+	// private GamaQuadTree cloneIfNecessary(final IAgentFilter filter) {
+	// for ( Map.Entry<IAgentFilter, GamaQuadTree> entry : cache.entrySet() ) {
+	// if ( entry.getKey().identicalTo(filter) ) { return entry.getValue(); }
+	// }
+	// if ( filter == null ) { return null; }
+	// int size = filter.getSize();
+	// if ( size == 0 ) { return null; }
+	// if ( size > totalAgents * CLONE_THRESHOLD ) { return null; }
+	// GamaQuadTree tree = new GamaQuadTree(root.bounds);
+	// IShape[] shapes = filter.getShapes().toArray(new IShape[0]);
+	// for ( int i = 0; i < size; i++ ) {
+	// tree.insert(shapes[i]);
+	// // if ( s.isPoint() ) {
+	// // tree.insert((Coordinate) s.getLocation(), s);
+	// // } else {
+	// // tree.insert(s.getEnvelope(), s);
+	// // }
+	// }
+	// cache.put(filter, tree);
+	// return tree;
+	// }
 
 	//
 	// protected Collection<IShape> findIntersects(final ILocation source, final Envelope r,
@@ -616,21 +616,21 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 	}
 
-	@Override
-	public void update() {
-		try {
-			lock.lock();
+	// @Override
+	// public void update() {
+	// try {
+	// lock.lock();
 
-			root.join();
-		} finally {
-			lock.unlock();
-		}
-	}
+	// root.join();
+	// } finally {
+	// lock.unlock();
+	// }
+	// }
 
-	@Override
-	public void cleanCache() {
-		cache.clear();
-	}
+	// @Override
+	// public void cleanCache() {
+	// cache.clear();
+	// }
 	//
 	// @Override
 	// public void dispose() {

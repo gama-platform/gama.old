@@ -825,10 +825,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	@Override
 	public void drawOn(final Graphics2D g2, final int width, final int height) {}
 
-	@Override
-	public void update() {}
+	// @Override
+	// public void update() {}
 
-	@Override
-	public void cleanCache() {}
+	// @Override
+	// public void cleanCache() {}
 
 }

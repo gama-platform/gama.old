@@ -16,6 +16,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -45,7 +46,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	Button[] buttons = new Button[INITIAL_BUTTONS];
 	Label status;
 	Set<String> currentExperiments = new LinkedHashSet();
-	boolean wasOK;
+	boolean wasOK = true;
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -150,9 +151,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			public void process(final XtextResource state) throws Exception {
 
 				((GamlResource) state).setListener(GamlEditor.this);
+
 			}
 		});
 
+	}
+
+	@Override
+	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
+		super.init(site, input);
+		// try {
+		// GamlEditor.this.updateToolbar(getResource().findMaxProblemSeverity(null, true,
+		// IResource.DEPTH_INFINITE) >= IMarker.SEVERITY_ERROR);
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	private final SelectionListener listener = new SelectionAdapter() {

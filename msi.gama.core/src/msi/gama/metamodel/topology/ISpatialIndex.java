@@ -63,9 +63,9 @@ public interface ISpatialIndex {
 
 	public abstract void drawOn(Graphics2D g2, int width, int height);
 
-	public abstract void update();
+	// public abstract void update();
 
-	public abstract void cleanCache();
+	// public abstract void cleanCache();
 
 	public interface Compound extends ISpatialIndex {
 

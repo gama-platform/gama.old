@@ -1,5 +1,6 @@
 package msi.gama.metamodel.agent;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -16,28 +17,31 @@ import msi.gaml.types.IType;
 @species(name = "graph_node")
 public class AbstractGraphNode extends GamlAgent {
 
+	final static Arguments args = new Arguments();
+
 	public static class NodeRelation implements VertexRelationship<AbstractGraphNode> {
 
-		IScope scope;
+		IStatement.WithArgs action;
 
-		public NodeRelation(final IScope scope) {
-			this.scope = scope;
+		@Override
+		public boolean related(final IScope scope, final AbstractGraphNode p1,
+			final AbstractGraphNode p2) {
+			args.put("other", new JavaConstExpression(p2));
+			return Cast.asBool(scope, scope.execute(getAction(p1), p1, args));
 		}
 
 		@Override
-		public boolean related(final AbstractGraphNode p1, final AbstractGraphNode p2) {
-			return p1.related_to(scope, p2);
-		}
-
-		@Override
-		public boolean equivalent(final AbstractGraphNode p1, final AbstractGraphNode p2) {
+		public boolean equivalent(final IScope scope, final AbstractGraphNode p1,
+			final AbstractGraphNode p2) {
 			return p1 == p2;
 		}
 
-		// @Override
-		// public Double distance(final AbstractGraphNode p1, final AbstractGraphNode p2) {
-		// return p1.distance_to(scope, p2);
-		// }
+		IStatement.WithArgs getAction(final AbstractGraphNode a1) {
+			if ( action == null ) {
+				action = a1.getAction();
+			}
+			return action;
+		}
 
 	};
 
@@ -45,37 +49,13 @@ public class AbstractGraphNode extends GamlAgent {
 		super(s);
 	}
 
-	// TODO Think about giving this knowledge to nodes
-	// public IGraph getGraph() {
-	// return (IGraph) population.getTopology().getPlaces();
-	// }
-
-	// @action(name = "distance_to", virtual = true, args = { @arg(name = "other", optional = false,
-	// type = { IType.AGENT_STR }) })
-	// public Double distanceTo(final IScope scope) {
-	// return 0d;
-	// }
+	IStatement.WithArgs getAction() {
+		return getSpecies().getAction("related_to");
+	}
 
 	@action(name = "related_to", virtual = true, args = { @arg(name = "other", optional = false, type = { IType.AGENT_STR }) })
 	public Boolean relatedTo(final IScope scope) {
+		GuiUtils.debug("Should never be called !");
 		return false;
-	}
-
-	// public Double distance_to(final IScope scope, final IAgent other) {
-	// // concrete call to the redefined action in GAML so that it can be called from Java...
-	// IStatement.WithArgs action = getSpecies().getAction("distance_to");
-	// scope.addVarWithValue("other", other);
-	// Object result = scope.execute(action, this);
-	// return Cast.asFloat(scope, result);
-	// }
-
-	public Boolean related_to(final IScope scope, final IAgent other) {
-		// concrete call to the redefined action in GAML so that it can be called from Java...
-		IStatement.WithArgs action = getSpecies().getAction("related_to");
-		Arguments args = new Arguments();
-		args.put("other", new JavaConstExpression(other));
-		action.setRuntimeArgs(args);
-		Object result = scope.execute(action, this);
-		return Cast.asBool(scope, result);
 	}
 }

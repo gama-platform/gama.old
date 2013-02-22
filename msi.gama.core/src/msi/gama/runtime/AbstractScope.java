@@ -26,7 +26,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.IStatement;
+import msi.gaml.statements.*;
 import msi.gaml.types.*;
 
 /**
@@ -256,6 +256,20 @@ public abstract class AbstractScope implements IScope {
 		Object result;
 		push(agent);
 		try {
+			result = statement.executeOn(this);
+		} finally {
+			pop(agent);
+		}
+		return result;
+	}
+
+	@Override
+	public final Object execute(final IStatement.WithArgs statement, final IAgent agent,
+		final Arguments args) throws GamaRuntimeException {
+		Object result;
+		push(agent);
+		try {
+			statement.setRuntimeArgs(args);
 			result = statement.executeOn(this);
 		} finally {
 			pop(agent);

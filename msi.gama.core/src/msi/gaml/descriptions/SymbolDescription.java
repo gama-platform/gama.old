@@ -88,7 +88,12 @@ public class SymbolDescription implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
 		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
-		getErrorCollector().add(new GamlCompilationError(s, code, e, warning, facet, data));
+		IErrorCollector c = getErrorCollector();
+		if ( c == null ) {
+			System.out.println((warning ? "Warning" : "Error") + ": " + s);
+			return;
+		}
+		c.add(new GamlCompilationError(s, code, e, warning, facet, data));
 	}
 
 	@Override

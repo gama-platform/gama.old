@@ -19,7 +19,6 @@
 package msi.gama.util.graph;
 
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-
 import org.jgrapht.WeightedGraph;
 
 public class _Edge<V> {
@@ -30,7 +29,7 @@ public class _Edge<V> {
 	protected final GamaGraph<V, ?> graph;
 	private double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
 	private Object source, target;
-	
+
 	public _Edge(final GamaGraph<V, ?> gamaGraph, final Object edge, final Object source,
 		final Object target) throws GamaRuntimeException {
 		graph = gamaGraph;
@@ -66,7 +65,6 @@ public class _Edge<V> {
 		// Systématique ??
 		Double na = graph.getVertexWeight(source);
 		Double nb = graph.getVertexWeight(target);
-		// if ( na == null || nb == null ) { return weight; }
 		return weight * (na + nb) / 2;
 	}
 

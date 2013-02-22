@@ -19,7 +19,7 @@
 package msi.gama.util.graph;
 
 import java.util.*;
-import msi.gama.common.interfaces.IValue;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -158,11 +158,17 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		if ( edgeSpecies == null ) {
-			GamaPair p = new GamaPair(v1, v2);
-			return p;
-		}
-		return generateEdgeAgent(Collections.EMPTY_LIST);
+		if ( edgeSpecies == null ) { return generateEdgeObject(v1, v2); }
+		Map<String, Object> map = new GamaMap();
+		IList initVal = new GamaList();
+		map.put(IKeyword.SOURCE, v1);
+		map.put(IKeyword.TARGET, v2);
+		initVal.add(map);
+		return generateEdgeAgent(initVal);
+	}
+
+	protected Object generateEdgeObject(final Object v1, final Object v2) {
+		return new GamaPair(v1, v2);
 	}
 
 	protected IAgent generateEdgeAgent(final List<Map<String, Object>> attributes) {
@@ -904,7 +910,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	public boolean containsBuiltVertex(final IShape vertex) {
-		return verticesBuilt.contains(null, vertex.getLocation().hashCode()); // VERIFY NULL SCOPE
+		return verticesBuilt.contains(scope, vertex.getLocation().hashCode());
 	}
 
 	public IShape getBuiltVertex(final Coordinate vertex) {

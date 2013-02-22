@@ -116,7 +116,8 @@ public class VariableDescription extends SymbolDescription {
 			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
 				Set<String> dependsList =
-					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription());
+					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription(),
+						false);
 				names.addAll(dependsList);
 				for ( final String s : names ) {
 					VariableDescription v = vars.get(s);
