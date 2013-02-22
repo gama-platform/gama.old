@@ -260,9 +260,10 @@ public class JavaWriter {
 				// values
 				facets += toArrayOfStrings(segments[pointer++]) + ",";
 				// optional
-				facets += segments[pointer++];
+				facets += segments[pointer++] + ',';
 				// doc
-				pointer++;
+				facets += toJava(segments[pointer++]);
+//				pointer++;
 				facets += ")";
 			}
 			facets += ")";

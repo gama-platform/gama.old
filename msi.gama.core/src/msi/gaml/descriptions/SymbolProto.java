@@ -272,6 +272,7 @@ public class SymbolProto {
 			if ( f.values != null && f.values.length != 0 ) {
 				sb.append(" among: ").append(Arrays.toString(f.values));
 			}
+			if(f.doc!=null && f.doc.length()>0)sb.append(" doc: ").append(f.doc.split("¤")[0]);
 			sb.append("</li>");
 		}
 		return sb.toString();
