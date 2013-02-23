@@ -32,6 +32,7 @@ import javax.tools.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -365,18 +366,26 @@ public class GamaProcessor extends AbstractProcessor {
 			facets facets = e.getAnnotation(facets.class);
 			// facets
 			if ( facets == null ) {
-				sb.append('0').append(SEP).append(SEP).append(SEP);
+				sb.append('0').append(SEP).append(SEP).append(SEP).append(SEP).append(SEP);
 			} else {
 				sb.append(facets.value().length).append(SEP);
 				sb.append(facetsToString(facets)).append(SEP);
+				sb.append(facets.combinations().length).append(SEP);
+				sb.append(combinationsFacetsToString(facets)).append(SEP);
 				sb.append(facets.omissible()).append(SEP);
 			}
+			// combinations missing
+//			if(facets.combinations() == null){sb.append('0').append(SEP).append(SEP);}
+//			else
+//			{
+//				sb.append(facets.combinations().length).append(SEP);
+//				sb.append(combinationsFacetsToString(facets)).append(SEP);
+//			}
 			// names
 			for ( String s : symbol.name() ) {
 				sb.append(s).append(SEP);
 			}
 			sb.setLength(sb.length() - 1);
-			// combinations missing
 			gp.put(sb.toString(), docToString(symbol.doc())); /* doc */
 		}
 	}
@@ -439,6 +448,21 @@ public class GamaProcessor extends AbstractProcessor {
 		sb.append(docToString(facet.doc()));
 		return sb.toString();
 	}
+	
+	private String combinationsFacetsToString(final facets facets) {
+		StringBuilder sb = new StringBuilder();
+		if ( facets.combinations() != null ) {
+			for ( combination cf : facets.combinations() ) {
+				sb.append(arrayToString(cf.value())).append(SEP);
+			}
+//			if ( facets.combinations().length > 0 ) {
+//				sb.setLength(sb.length() - 1);
+//			}
+		}
+		return sb.toString();
+	}
+
+
 
 	private String arrayToString(final String[] array) {
 		if ( array.length == 0 ) { return ""; }

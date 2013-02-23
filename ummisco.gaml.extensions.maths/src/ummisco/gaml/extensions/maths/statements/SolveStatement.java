@@ -2,16 +2,11 @@ package ummisco.gaml.extensions.maths.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -23,14 +18,25 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.utils.*;
 
-@facets(value = {
+@facets(
+	value = {
 		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
 		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = false, values = {
 				"rk4", "dp853" }, doc=@doc(value="integrate method")),
 		/** Numerous other facets to plan : step, init, etc.) **/
-		// @facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional =
-		// true),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = false) }, omissible = IKeyword.EQUATION)
+		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true),
+		@facet(name = "time_final", type = IType.FLOAT_STR, optional = true),
+		@facet(name = "min_step", type = IType.FLOAT_STR, optional = true),
+		@facet(name = "max_step", type = IType.FLOAT_STR, optional = true),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true) 
+	},
+
+	combinations = { 
+		@combination({ "time_initial", "time_final", IKeyword.STEP}),
+		@combination({ "time_initial", "time_final", "min_step", "max_step"})
+	},
+	omissible = IKeyword.EQUATION
+	)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 // , with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT,

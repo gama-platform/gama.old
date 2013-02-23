@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) },
 
 combinations = { @combination({ IKeyword.VAR, IKeyword.VALUE }),
-	@combination({ IKeyword.NAME, IKeyword.VALUE }), }, omissible = IKeyword.NAME)
+	@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.LET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 public class LetStatement extends SetStatement {

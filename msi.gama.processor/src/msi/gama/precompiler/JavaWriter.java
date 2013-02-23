@@ -242,7 +242,7 @@ public class JavaWriter {
 		}
 		int nbFacets = Integer.decode(segments[10]);
 		int pointer = 11;
-		String facets;
+		String facets;		
 		if ( nbFacets == 0 ) {
 			facets = "null";
 			pointer++;
@@ -263,12 +263,31 @@ public class JavaWriter {
 				facets += segments[pointer++] + ',';
 				// doc
 				facets += toJava(segments[pointer++]);
-//				pointer++;
 				facets += ")";
 			}
 			facets += ")";
 		}
+//		pointer++;
+//		pointer++;
+
+		//new String[][]{ {"s","a"},{"s","b"}},
+		int nbCombinations = Integer.parseInt("0"+segments[pointer++]);
+		String combinations="";
+		if ( nbCombinations == 0 ) {
+			combinations = "null";
+		} else {
+			for ( int i = 0; i < nbCombinations; i++ ) {
+				if ( i > 0 ) {
+					combinations += ",";
+				}
+				combinations += toArrayOfStrings(segments[pointer++]);
+			}
+		}
+		pointer++;
+		
+		
 		String omissible = segments[pointer++];
+		
 		String sc =
 			concat("new ISymbolConstructor() {public ISymbol create(" + IDESC + " d) {return new ",
 				clazz, "(d);}}");
@@ -277,6 +296,9 @@ public class JavaWriter {
 			.append(',').append(sequence).append(',').append(unique).append(',')
 			.append(name_unique).append(',').append(parentSymbols).append(",").append(parentKinds)
 			.append(',').append(facets).append(',').append(toJava(omissible)).append(',')
+			.append("new String[][]{").append(combinations).append("},")
+//			.append("new String[][]{}").append(",")
+//			.append("Collections.<String[]> emptyList()").append(",")
 			.append(sc);
 		if ( segments.length > pointer ) {
 			for ( int i = pointer; i < segments.length; i++ ) {
