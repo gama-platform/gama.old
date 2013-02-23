@@ -192,19 +192,21 @@ public class SymbolProto {
 				 boolean allPresent = true;
 				 if(c==null){ return; }
 				 String comb="\n\n"+"{ ";
+				 String missing="";
 				 int nbMatch=0;
 				 for ( String s : c ) {
 					 allPresent = allPresent && facets.containsKey(s);
 					 if(facets.containsKey(s)){nbMatch++;}
+					 else{missing+="["+s+"] ";}
 					 comb+="["+s+"] ";
 				 }
 				 comb+="}";
 			 	if ( allPresent ) { return; }
-			 	if(nbMatch>maxMatch){bestMatch=comb; maxMatch=nbMatch;}
+			 	if(nbMatch>maxMatch){bestMatch=missing; maxMatch=nbMatch;}
 			 	needFacets+=comb;
 			 }
-			 context.flagWarning("Wrong combination of facets:"
-			 +bestMatch+"\n\n Allowed combinations:" + needFacets,
+			 context.flagWarning("Missing some facets:"
+			 +bestMatch+"\n\n Allowed combinations of facets:" + needFacets,
 			 IGamlIssue.GENERAL, e);
 		}
 	}
