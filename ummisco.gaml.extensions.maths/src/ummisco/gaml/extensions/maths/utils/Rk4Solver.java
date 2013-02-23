@@ -46,12 +46,11 @@ public class Rk4Solver extends Solver {
 
 	@Override
 	public void solve(IScope scope, SystemOfEquationsStatement eq,
-			double time_initial, double time_final, double cycle_length)
+			double time_initial, double time_final, int cycle_length)
 			throws GamaRuntimeException {
 		// call the integrator.
 		// We need to save the state (previous time the integrator has been
 		// solved, etc.)
-
 		// GuiUtils.informConsole("it work ");
 		if (eq instanceof SystemOfEquationsStatement) {
 			// add all equations externe to have one complete systemofequation

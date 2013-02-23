@@ -10,7 +10,7 @@ public abstract class Solver {
 	// Should the solver implement StepHandler or use a given StepHandler ?
 
 	// Call the integrator, which should call computeDerivatives on the system of equations;
-	public abstract void solve(IScope scope, SystemOfEquationsStatement eq, double time_initial, double time_final, double cycle_length);
+	public abstract void solve(IScope scope, SystemOfEquationsStatement eq, double time_initial, double time_final, int cycle_length);
 
 
 }

@@ -18,25 +18,24 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.utils.*;
 
-@facets(
-	value = {
+@facets(value = {
 		@facet(name = IKeyword.EQUATION, type = IType.ID, optional = false),
 		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = false, values = {
-				"rk4", "dp853" }, doc=@doc(value="integrate method")),
+				"rk4", "dp853" }, doc = @doc(value = "integrate method")),
 		/** Numerous other facets to plan : step, init, etc.) **/
-		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true),
-		@facet(name = "time_final", type = IType.FLOAT_STR, optional = true),
-		@facet(name = "min_step", type = IType.FLOAT_STR, optional = true),
-		@facet(name = "max_step", type = IType.FLOAT_STR, optional = true),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true) 
-	},
+		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "initial time")),
+		@facet(name = "time_final", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
+		@facet(name = "cycle_length", type = IType.INT_STR, optional = true, doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator")),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true, doc = @doc(value = "integration step, use with most integrator method")),
+		@facet(name = "min_step", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "minimal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		@facet(name = "max_step", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "maximal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		@facet(name = "scalAbsoluteTolerance", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "allowed absolute error, use with dp853 method,")),
+		@facet(name = "scalRelativeTolerance", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "allowed relative error, use with dp853 method,")) },
 
-	combinations = { 
-		@combination({ "time_initial", "time_final", IKeyword.STEP}),
-		@combination({ "time_initial", "time_final", "min_step", "max_step"})
-	},
-	omissible = IKeyword.EQUATION
-	)
+combinations = {
+		@combination({ IKeyword.STEP }),
+		@combination({ "min_step", "max_step",
+				"scalAbsoluteTolerance", "scalRelativeTolerance" }) }, omissible = IKeyword.EQUATION)
 @symbol(name = { IKeyword.SOLVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 // , with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT,
@@ -48,7 +47,8 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 
 	Solver solver;
 	StatementDescription equations;
-	double time_initial = 0, time_final = 1, cycle_length = 1;
+	double time_initial = 0, time_final = 1;
+	int cycle_length = 1; 
 
 	// Have the same organization as in DrawStatement :
 	// The statement contains an abstract subclass called "Solver"; Different
@@ -84,9 +84,20 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		if (method.equals("rk4")) {
 			solver = new Rk4Solver(Double.parseDouble(""
 					+ getFacet(IKeyword.STEP).value(scope)));
-		} else if (method.equals("dp853")) {
-			solver = new DormandPrince853Solver(Double.parseDouble(""
-					+ getFacet(IKeyword.STEP).value(scope)));
+		} else if (method.equals("dp853") && getFacet("min_step") != null
+				&& getFacet("max_step") != null
+				&& getFacet("scalAbsoluteTolerance") != null
+				&& getFacet("scalRelativeTolerance") != null) {
+			double minStep = Double.parseDouble(""
+					+ getFacet("min_step").value(scope));
+			double maxStep = Double.parseDouble(""
+					+ getFacet("max_step").value(scope));
+			double scalAbsoluteTolerance = Double.parseDouble(""
+					+ getFacet("scalAbsoluteTolerance").value(scope));
+			double scalRelativeTolerance = Double.parseDouble(""
+					+ getFacet("scalRelativeTolerance").value(scope));
+			solver = new DormandPrince853Solver(minStep, maxStep,
+					scalAbsoluteTolerance, scalRelativeTolerance);
 		}
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context
@@ -94,17 +105,17 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 						getFacet(IKeyword.EQUATION).literalValue());
 
 		s.currentScope = scope;
-		if (scope.hasVar("cycle_length")) {
-			cycle_length = Double.parseDouble(""
-					+ scope.getVarValue("cycle_length"));
+		if (getFacet("cycle_length") != null) {
+			cycle_length = Integer.parseInt(""
+					+ getFacet("cycle_length").value(scope));
 		}
 		time_initial = scope.getClock().getCycle() - 1;
-		if (scope.hasVar("t0")) {
-			time_initial = Double.parseDouble("" + scope.getVarValue("t0"));
+		if (getFacet("time_initial") != null) {
+			time_initial = Double.parseDouble("" + getFacet("time_initial"));
 		}
 		time_final = scope.getClock().getCycle();
-		if (scope.hasVar("tf")) {
-			time_final = Double.parseDouble("" + scope.getVarValue("tf"));
+		if (getFacet("time_final") != null) {
+			time_final = Double.parseDouble("" + getFacet("time_final"));
 		}
 
 		s.addExtern(getFacet(IKeyword.EQUATION).literalValue());
