@@ -151,25 +151,27 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	 * GuiUtils.debug("Complete FunctionGamlFacetRef ref");
 	 * }
 	 * 
-	 * @Override
-	 * public void completeFacetExpr_Key(final EObject model, final Assignment assignment,
-	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-	 * GuiUtils.debug("Complete FacetExpr_Key");
-	 * if ( model instanceof Statement ) {
-	 * IGamlDescription gd = EGaml.getGamlDescription(model);
-	 * if ( gd instanceof IDescription ) {
-	 * IDescription desc = (IDescription) gd;
-	 * Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
-	 * for ( String s : facets.keySet() ) {
-	 * acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
-	 * (facets.get(s).optional ? "optional" : "required") + ")", facetImage,
-	 * context));
-	 * }
-	 * }
-	 * }
-	 * GuiUtils.debug("Complete facetExpr key");
-	 * }
-	 * 
+	 * */
+	
+	 @Override
+	 public void completeClassicFacet_Key(final EObject model, final Assignment assignment,
+	 final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {		 
+		 if ( model instanceof Statement ) {
+			 IGamlDescription gd = EGaml.getGamlDescription(model);
+			 if ( gd instanceof IDescription ) {
+				 IDescription desc = (IDescription) gd;
+				 Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
+				 for ( String s : facets.keySet() ) {
+					 acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
+							 (facets.get(s).optional ? "optional" : "required") + ")", facetImage,
+							 context));
+				 }
+			 }
+		 }	 
+	 }
+	 
+	/*
+	 *   
 	 * @Override
 	 * public void completeFacetExpr_Expr(final EObject model, final Assignment assignment,
 	 * final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
