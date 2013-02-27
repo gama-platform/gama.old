@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
+import msi.gama.database.SqlConnection;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -44,6 +45,8 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.geometry.jts.JTS;
 import org.opengis.feature.simple.*;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.*;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -164,19 +167,20 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// ---------------------------------------------------------------------------------------------
 		// Thai.truongminh@gmail.com
 		// 10-sep-2012: for create agen from:list
-		// for tracing nly
+		// for tracing only
 		// if (debug) GuiUtils.debug("Bounds:" +bounds.toString());
 		if ( DEBUG ) {
-			GuiUtils.debug("2_store :" + store.toString());
-			GuiUtils.debug("2_name of store:" + name);
-			GuiUtils.debug("2_FeatureSource :" + source.toString());
-			GuiUtils.debug("2_Envelop:" + env.toString());
-			GuiUtils.debug("2_store.getSchema().getCoordinateReferenceSystem():" +
+			GuiUtils.debug("ModelEnvironment.loadShapeFile: _store :" + store.toString());
+			GuiUtils.debug("ModelEnvironment.loadShapeFile: _name of store:" + name);
+			GuiUtils.debug("ModelEnvironment.loadShapeFile: _FeatureSource :" + source.toString());
+			GuiUtils.debug("ModelEnvironment.loadShapeFile: _Envelop:" + env.toString());
+			GuiUtils.debug("ModelEnvironment.loadShapeFile: _store.getSchema().getCoordinateReferenceSystem():" +
 				store.getSchema().getCoordinateReferenceSystem());
 		}
 
 		// ---------------------------------------------------------------------------------------------
 		// end
+
 
 		if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 			ShpFiles shpf = new ShpFiles(shpFile);
@@ -191,10 +195,10 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			// 10-sep-2012: for create agen from:list
 			// for tracing
 			if ( DEBUG ) {
-				GuiUtils.debug("2.1_latitude :" + latitude);
-				GuiUtils.debug("2.1_longitude:" + longitude);
-				GuiUtils.debug("2.1_transformCRSNew :" + transformCRSNew.toString());
-				GuiUtils.debug("2.1_transformCRS:" + (transformCRS == null));
+				GuiUtils.debug("ModelEnvironment.loadShapeFile: _latitude :" + latitude);
+				GuiUtils.debug("ModelEnvironment.loadShapeFile: _longitude:" + longitude);
+				GuiUtils.debug("ModelEnvironment.loadShapeFile: _transformCRSNew :" + transformCRSNew.toString());
+				GuiUtils.debug("ModelEnvironment.loadShapeFile: _transformCRS:" + (transformCRS == null));
 			}
 
 			// ---------------------------------------------------------------------------------------------
@@ -208,6 +212,81 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 
 		}
 		store.dispose();
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("envelope", env);
+		result.put("transformCRS", transformCRS);
+		return result;
+	}
+	// ---------------------------------------------------------------------------------------------
+	// Thai.truongminh@gmail.com
+	// Created date:24-Feb-2013: Process for SQL - MAP type
+	// Modified: 24-Feb-2012
+	
+	public Map<String, Object> loadSQL(final IScope scope, Map<String, Object> bounds,
+				MathTransform transformCRS) throws IOException, TransformException, NoSuchAuthorityCodeException, FactoryException {
+		 Map<String, Object> params =  (Map<String, Object>) bounds;
+
+		String dbtype = (String) params.get("dbtype");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String) params.get("passwd");
+		String crs = (String) params.get("crs");
+		String srid=(String) params.get("srid");
+		String longitudeFirst= (String) params.get("longitudeFirst");
+		SqlConnection sqlConn;
+		Envelope env = null;
+		// create connection
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
+			String DBRelativeLocation =
+				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			// sqlConn=new SqlConnection(dbtype,database);
+			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+		} else {
+			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
+		}
+
+		GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
+
+		try {
+			env = SqlConnection.getBounds(scope, gamaList);
+			double latitude = env.centre().x;
+			double longitude = env.centre().y;
+			
+			if ((crs!=null) || (srid!=null)){
+				
+				MathTransform transformCRSNew = ( (crs!=null) ? GisUtils.getTransformCRS(crs, latitude, longitude):
+												  (longitudeFirst !=null ) ? GisUtils.getTransformCRS(srid, Boolean.parseBoolean(longitudeFirst), latitude, longitude):
+												  GisUtils.getTransformCRS(srid, true, latitude, longitude)	);
+				if ( DEBUG ) {
+					GuiUtils.debug("ModelEnvironment.LoadSQL: _latitude :" + latitude);
+					GuiUtils.debug("ModelEnvironment.LoadSQL: _longitude:" + longitude);
+					GuiUtils.debug("ModelEnvironment.LoadSQL: _transformCRSNew:" + transformCRSNew.toString());
+					GuiUtils.debug("ModelEnvironment.LoadSQL: _crs:" + crs);
+				}
+
+				if ( transformCRS == null ) {
+					transformCRS = transformCRSNew;
+				}
+				if ( transformCRSNew != null && transformCRS != null ) {
+					env = JTS.transform(env, transformCRS);
+				}			
+				
+			}
+			if ( DEBUG ) {
+				GuiUtils.debug("ModelEnvironment.LoadSQL: _Envelop:" + env.toString());
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new GamaRuntimeException(e);
+		} catch (TransformException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("envelope", env);
 		result.put("transformCRS", transformCRS);
@@ -329,56 +408,22 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		// ---------------------------------------------------------------------------------------------
 		// Thai.truongminh@gmail.com
 		// Created date:11-sep-2012: Process for SQL - MAP type
-		//
+		// Modified: 24-Feb-2012
 
 		else if ( bounds instanceof Map ) {
-			Map params = (Map) bounds;
-			// GuiUtils.debug("1.2.1_url:" +params.get("url"));
-			// GuiUtils.debug("1.2.2_venderName:" +params.get("venderName"));
-			// GuiUtils.debug("1.2.3_usrName:" +params.get("usrName"));
-
-			String dbtype = (String) params.get("dbtype");
-			String host = (String) params.get("host");
-			String port = (String) params.get("port");
-			String database = (String) params.get("database");
-			String user = (String) params.get("user");
-			String passwd = (String) params.get("passwd");
-			SqlConnection sqlConn;
-
-			// create connection
-			if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-				String DBRelativeLocation =
-					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-
-				// sqlConn=new SqlConnection(dbtype,database);
-				sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-			} else {
-				sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-			}
-
-			// SqlConnection sqlcon=new SqlConnection((String) params.get("dbtype"),
-			// (String)params.get("host"),(String) params.get("port"),
-			// (String) params.get("database"),(String) params.get("user"),
-			// (String)params.get("passwd"));
-
-			GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
-
 			try {
-				Envelope boundsEnv = SqlConnection.getBounds(scope, gamaList);
-				// transformCRS = (MathTransform) result.get("transformCRS");
-				transformCRS = null;
+				Map<String, Object> result = loadSQL(scope, (Map) bounds, transformCRS);
+				Envelope boundsEnv = (Envelope) result.get("envelope");
+				transformCRS = (MathTransform) result.get("transformCRS");
 				xMin = boundsEnv.getMinX();
 				yMin = boundsEnv.getMinY();
 				width = boundsEnv.getWidth();
 				height = boundsEnv.getHeight();
-				if ( DEBUG ) {
-					GuiUtils.debug("ModelEnvironment.bounds.map:" + boundsEnv.toString());
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 				throw new GamaRuntimeException(e);
 			}
+
 		}
 		// ---------------------------------------------------------------------------------------------
 		// end
