@@ -44,6 +44,7 @@ Export-Package: msi.gama.common.interfaces;
    org.opengis.referencing.operation,
    com.vividsolutions.jts.geom,
    msi.gama.runtime.exceptions",
+ msi.gama.database,
  msi.gama.kernel.batch;
   uses:="org.uncommons.maths.number,
    msi.gaml.expressions,
