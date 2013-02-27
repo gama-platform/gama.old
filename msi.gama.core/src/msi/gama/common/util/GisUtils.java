@@ -144,7 +144,57 @@ public class GisUtils {
 		prjreader.close();
 		return transfCRS;
 	}
+//Begin
+//-----------------------------------------------------------------------------------
+	public static MathTransform getTransformCRS(final String coordinateRS, final double latitude,
+			final double longitude) throws IOException {
+			MathTransform transfCRS = null;
+			crsInit = null;
+			try {
+				crsInit = CRS.parseWKT(coordinateRS);
+				if (DEBUG)
+					GuiUtils.informConsole("GisUtil.getTransformCRS:"+crsInit.toString());
+			} catch (FactoryException e2) {
+				e2.printStackTrace();
+			}
+			ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);		
+			if ( projectd == null ) {
+				System.out.println("NOT PROJECTED");
+				try {
+					int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
+					boolean north = longitude > 0;
+					int wgs84utm = 32600 + index + (north ? 0 : 100);
+					CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
+					transfCRS = CRS.findMathTransform(crsInit, crs);
+					System.out.println("decodedcrs : " + crs);
+				} catch (NoSuchAuthorityCodeException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				} catch (FactoryException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				}
+			} else {
+				System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
+			}
+			return transfCRS;
+		}
 
+	public static MathTransform getTransformCRS(final String srid,final boolean longitudeFirst, final double latitude,
+			final double longitude) throws IOException {
+			MathTransform transfCRS = null;
+			crsInit = null;
+			try {
+				crsInit = CRS.decode("EPSG:"+srid, longitudeFirst);
+				transfCRS=getTransformCRS(crsInit.toWKT(),latitude,longitude);
+				if (DEBUG) GuiUtils.informConsole("GisUtil.getTransformCRS:"+crsInit.toString());
+			} catch (FactoryException e2) {
+				e2.printStackTrace();
+			}
+			return transfCRS;
+		}
+
+
+//------------------------------------------------------------------------------------
+//end	
 	public static FeatureIterator<SimpleFeature> getFeatureIterator(final File file) {
 		try {
 			ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
