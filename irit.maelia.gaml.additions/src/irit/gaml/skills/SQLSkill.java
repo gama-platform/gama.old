@@ -1,9 +1,9 @@
 package irit.gaml.skills;
 
-import msi.gama.metamodel.topology.SqlConnection;
 
 import java.sql.Connection;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.database.SqlConnection;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
@@ -12,6 +12,8 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 /*
@@ -56,7 +58,7 @@ import msi.gaml.types.IType;
 
 @skill(name = "SQLSKILL")
 public class SQLSkill extends Skill {
-	static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	/*
 	 * for test only
@@ -110,8 +112,6 @@ public class SQLSkill extends Skill {
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 			String DBRelativeLocation =
 					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-
-			//sqlConn=new SqlConnection(dbtype,database);
 			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
 		}else{
 			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
@@ -246,7 +246,7 @@ public class SQLSkill extends Skill {
 			throw new GamaRuntimeException("SQLSkill.executeUpdateDB: " + e.toString());
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole(updateComm + " was run");
+			GuiUtils.debug(updateComm + " was run");
 		}
 
 		return row_count;
@@ -283,8 +283,7 @@ public class SQLSkill extends Skill {
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 			String DBRelativeLocation =
 					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			System.out.println("database sqlite:"+DBRelativeLocation);
-			//sqlConn=new SqlConnection(dbtype,database);
+			if (DEBUG) GuiUtils.debug("database sqlite:"+DBRelativeLocation);
 			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
 		}else{
 			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
@@ -305,7 +304,7 @@ public class SQLSkill extends Skill {
 			throw new GamaRuntimeException("SQLSkill.insert: " + e.toString());
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole("Insert into " + " was run");
+			GuiUtils.debug("Insert into " + " was run");
 		}
 
 		return rec_no;
@@ -485,11 +484,55 @@ public class SQLSkill extends Skill {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.executeQuery: " + e.toString());
+			throw new GamaRuntimeException("SQLSkill.select_QM: " + e.toString());
 		}
 		if ( DEBUG ) {
-			GuiUtils.informConsole(selectComm + " was run");
+			GuiUtils.debug(selectComm + " was run");
 		}
 		return repRequest;
 	}	
+	
+	@action(name="list2Matrix",
+			args = {
+				@arg(name = "param", type = IType.LIST_STR, optional = false, doc = @doc(value="Param: a list of records and metadata")),
+				@arg(name = "getName", type = IType.BOOL_STR, optional = true, doc = @doc(value="getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnNames and data. default is true")), 
+				@arg(name = "getType", type = IType.BOOL_STR, optional = true, doc = @doc(value="getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnTypes and data. default is false")) 
+
+			})
+	public IMatrix List2matrix(final IScope scope) throws GamaRuntimeException{
+		try{
+			boolean getName =  (scope.hasArg("getName") ?  (Boolean) scope.getArg("getName", IType.BOOL) : true);
+			boolean getType =  (scope.hasArg("getType") ?  (Boolean) scope.getArg("getType", IType.BOOL) : false);
+			GamaList<Object> value =(GamaList<Object>) scope.getArg("param", IType.LIST);	
+			GamaList<Object> columnNames=(GamaList<Object>) value.get(0);
+			GamaList<Object> columnTypes=(GamaList<Object>) value.get(1);
+			GamaList<Object> records=(GamaList<Object>) value.get(2);
+			int columnSize=columnNames.size();
+			int lineSize=records.size();
+			
+			final IMatrix matrix= new GamaObjectMatrix(columnSize, lineSize+ (getType ? 1:0) + (getName ? 1:0));
+			// Add ColumnNames to Matrix
+			if (getName==true) 
+			for ( int j = 0; j < columnSize; j++ ) {
+				matrix.set(j, 0, columnNames.get(j));
+			}
+			// Add Columntype to Matrix
+			if (getType==true) 
+			for ( int j = 0; j < columnSize; j++ ) {
+				matrix.set(j, 0+(getName ? 1:0), columnTypes.get(j));
+			}
+			//Add Records to Matrix
+			for ( int i = 0; i < lineSize; i++ ) {
+				GamaList<Object> record=(GamaList<Object>) records.get(i);
+				for ( int j = 0; j < columnSize; j++ ) {
+					matrix.set(j, i + (getType ? 1:0) + (getName ? 1:0), record.get(j));
+				}
+			}
+			return matrix;
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

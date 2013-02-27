@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 
+import msi.gama.database.MDXConnection;
+
 import org.olap4j.*;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
@@ -30,6 +32,8 @@ public class MDXApp {
 			 wrapper = (OlapWrapper) connection;
 			 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			// OlapStatement statement =   olapConnection.createStatement();
+			 MDXConnection mdxConnection = new MDXConnection("MSAS","localhost","80","olap","sa","tmt");
+			 olapConnection = mdxConnection.connectMDB();
 			 OlapStatement statement = (OlapStatement) connection.createStatement();
 			 System.out.println("OK");
 			 System.out.println(olapConnection.getCatalog());

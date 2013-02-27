@@ -3,8 +3,8 @@ package irit.gaml.species;
 
 
 import java.sql.*;
-import msi.gama.metamodel.topology.SqlConnection;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.database.SqlConnection;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.IPopulation;
