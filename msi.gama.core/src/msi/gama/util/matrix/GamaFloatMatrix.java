@@ -144,7 +144,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public Double _max(final IScope scope) {
-		Double max = Double.MIN_VALUE;
+		Double max = - Double.MAX_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] > max ) {
 				max = Double.valueOf(matrix[i]);

@@ -510,7 +510,7 @@ public class Containers {
 			}
 			return max;
 		}
-		double max = Double.MIN_VALUE;
+		double max = - Double.MAX_VALUE;
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
@@ -699,7 +699,8 @@ public class Containers {
 	public static Object withMaxOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.getType().getDefault(); }
-		double max = Double.MIN_VALUE;
+		// double max = Double.MIN_VALUE;
+		double max = - Double.MAX_VALUE;
 		Object result = null;
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);

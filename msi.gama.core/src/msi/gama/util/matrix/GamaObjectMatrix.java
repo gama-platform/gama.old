@@ -122,7 +122,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public Double _max(final IScope scope) {
-		Double max = Double.MIN_VALUE;
+		Double max = - Double.MAX_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			Object o = matrix[i];
 			if ( o instanceof Number && ((Number) o).doubleValue() > max ) {

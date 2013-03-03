@@ -491,7 +491,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return (E) max;
 		}
 		if ( allFloat ) {
-			Double max = Double.MIN_VALUE;
+			Double max = - Double.MAX_VALUE;
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				// Double o = (Double) get(i);
 				Double o = Cast.asFloat(scope, get(i));
@@ -502,7 +502,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return (E) max;
 		}
 		if ( allPoint ) {
-			ILocation max = new GamaPoint(Double.MIN_VALUE, Double.MIN_VALUE);
+			ILocation max = new GamaPoint(- Double.MAX_VALUE, - Double.MAX_VALUE);
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				ILocation o = Cast.asPoint(scope, get(i));
 				if ( o.compareTo(max) > 0 ) {
@@ -514,7 +514,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 		// In case there is something else in the list other than ints, floats or points
 
-		Double max = Double.MIN_VALUE;
+		Double max = - Double.MAX_VALUE;
 		for ( int i = 0, n = size(); i < n; i++ ) {
 			Double o = Cast.asFloat(scope, get(i));
 			if ( o > max ) {
@@ -576,7 +576,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 		// In case there is something else in the list other than ints, floats or points
 
-		Double min = Double.MIN_VALUE;
+		Double min = Double.MAX_VALUE;
 		for ( int i = 0, n = size(); i < n; i++ ) {
 			Double o = Cast.asFloat(scope, get(i));
 			if ( o < min ) {
