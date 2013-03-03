@@ -66,6 +66,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		IExpression typeExp = getFacet(IKeyword.TYPE);
 		IExpression file = getFacet(IKeyword.TO);
+		IExpression rewriteExp = getFacet(IKeyword.REWRITE);
+		
 		String path = "";
 		if ( file == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -106,6 +108,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			saveShape(agents, path, scope);
 		} else if ( type.equals("text") || type.equals("csv") ) {
 			File fileTxt = new File(path);
+			if(rewriteExp != null){
+				boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
+				if(rewrite){
+					if(fileTxt.exists()) fileTxt.delete();
+				}
+			}		
+			try {
+				fileTxt.createNewFile();
+			} catch (GamaRuntimeException e) {
+				throw e;
+			} catch (IOException e) {
+				throw new GamaRuntimeException(e);
+			}
+
 			IExpression item = getFacet(IKeyword.ITEM, getFacet(IKeyword.DATA));
 			// if (fileTxt != null) {
 			saveText(type, item, fileTxt, scope);
@@ -147,7 +163,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveText(final String type, final IExpression item, final File fileTxt,
 		final IScope scope) throws GamaRuntimeException {
 		try {
-			fileTxt.createNewFile();
 			FileWriter fw = new FileWriter(fileTxt, true);
 
 			if ( item != null ) {
