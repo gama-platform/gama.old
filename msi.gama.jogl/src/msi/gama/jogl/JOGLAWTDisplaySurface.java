@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoit Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -51,6 +51,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
 import org.geotools.data.simple.SimpleFeatureCollection;
+
+import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
@@ -58,6 +60,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	private static final long serialVersionUID = 1L;
 	private boolean autosave = false;
+	private boolean output3D = false;
 	private String snapshotFileName;
 	public static String snapshotFolder = "snapshots";
 	protected ILayerManager manager;
@@ -416,7 +419,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 				EventQueue.invokeAndWait(openGLUpdateDisplayBlock);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				// TODO Problème si un modèle est relancé. Blocage.
+				// TODO Probleme si un modele est relance. Blocage.
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -457,6 +460,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
+			if(output3D == true){
+				Output3D.to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
+			}
 			Toolkit.getDefaultToolkit().sync();
 		}
 	};
@@ -793,6 +799,10 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		this.autosave = autosave;
 	}
 
+	public void setOutput3D(final boolean output3D) {
+		this.output3D = output3D;
+	}
+	
 	@Override
 	public void setSnapshotFileName(final String file) {
 		snapshotFileName = file;

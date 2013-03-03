@@ -227,6 +227,7 @@ public interface IKeyword {
 	public static final String OPEN_POINT = "{";
 	public static final String OTHER_EVENTS = "other_events";
 	public static final String OUTPUT = "output";
+	public final static String OUTPUT3D = "output3D";
 	public static final String OVER = "over";
 	public static final String PARAM = "param";
 	public static final String PARAMETER = "parameter";

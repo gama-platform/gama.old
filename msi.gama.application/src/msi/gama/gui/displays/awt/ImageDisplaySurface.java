@@ -452,5 +452,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IGraphics getMyGraphics() {
 		return this.displayGraphics;
 	}
-
+	
+	@Override	
+	public void setOutput3D(boolean output3D){;}
 }

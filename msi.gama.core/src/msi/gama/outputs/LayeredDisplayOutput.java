@@ -57,7 +57,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true),
+	@facet(name = IKeyword.OUTPUT3D, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
@@ -69,6 +70,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	protected IDisplaySurface surface;
 	String snapshotFileName;
 	private boolean autosave = false;
+	private boolean output3D = false;
 	private boolean tesselation = true;
 	private double ambiantLight = 1.0;
 	private boolean polygonmode = true;
@@ -106,7 +108,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			} else {
 				autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
 			}
-		}
+		}	
+		
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
 				layer.prepare(this, getOwnScope());
@@ -130,6 +133,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( poly != null ) {
 			polygonmode = Cast.asBool(getOwnScope(), poly.value(getOwnScope()));
 		}
+		
+		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
+		if ( out3D != null ) {
+			output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
+		}	
+		
 		createSurface(sim);
 		
 		
@@ -196,8 +205,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
+
 		// Use only for opengl
 		if ( surface.getMyGraphics() != null ) {
+			surface.setOutput3D(output3D);
 			surface.getMyGraphics().useTesselation(tesselation);
 			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
 			surface.getMyGraphics().setPolygonMode(polygonmode);
