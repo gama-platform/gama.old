@@ -57,6 +57,7 @@ public class SymbolProto {
 	private final Set<Integer> contextKinds;
 	private final Map<String, FacetProto> possibleFacets;
 	private final String[][] possibleCombinations;
+	private String bestSuitable="";
 	private final List<String> mandatoryFacets = new ArrayList();
 	private final String omissibleFacet;
 	private final SymbolFactory factory;
@@ -182,32 +183,44 @@ public class SymbolProto {
 		}
 	}
 
+
+	public String getSuitable(){
+		return bestSuitable;
+	}
 	public void verifyFacetsCombinations(final ISyntacticElement e,
 			final Facets facets, final IDescription context) {
 		 if ( getPossibleCombinations().length>0) { 
-			 String needFacets="";
-			 String bestMatch="";
+//			 System.out.println("before\n");
+//			 String needFacets="";
 			 int maxMatch=0;
 			 for ( String[] c : getPossibleCombinations() ) {
 				 boolean allPresent = true;
 				 if(c==null){ return; }
-				 String comb="\n\n"+"{ ";
+//				 String comb="\n\n"+"{ ";
 				 String missing="";
 				 int nbMatch=0;
 				 for ( String s : c ) {
 					 allPresent = allPresent && facets.containsKey(s);
 					 if(facets.containsKey(s)){nbMatch++;}
-					 else{missing+="["+s+"] ";}
-					 comb+="["+s+"] ";
+					 else{missing+=s+": ";}
+//					 comb+="["+s+"] ";
 				 }
-				 comb+="}";
-			 	if ( allPresent ) { return; }
-			 	if(nbMatch>maxMatch){bestMatch=missing; maxMatch=nbMatch;}
-			 	needFacets+=comb;
+//				 comb+="}";
+			 	if ( allPresent ) { 
+//					bestSuitable="";
+			 		return; 
+			 	}
+			 	if(nbMatch>maxMatch){
+			 		bestSuitable=missing; 
+			 		maxMatch=nbMatch;
+			 	}
+//			 	needFacets+=comb;
 			 }
-			 context.flagWarning("Missing some facets:"
-			 +bestMatch+"\n\n Allowed combinations of facets:" + needFacets,
-			 IGamlIssue.GENERAL, e);
+
+//			 context.flagWarning("Missing some facets:"
+//			 +bestSuitable,
+//			 IGamlIssue.GENERAL, e);
+
 		}
 	}
 

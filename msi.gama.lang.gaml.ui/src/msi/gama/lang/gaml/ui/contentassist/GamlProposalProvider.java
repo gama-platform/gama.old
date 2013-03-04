@@ -21,6 +21,7 @@ package msi.gama.lang.gaml.ui.contentassist;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.GamlProperties;
@@ -34,6 +35,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.*;
+
 import com.google.inject.Inject;
 
 /**
@@ -160,12 +162,27 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			 IGamlDescription gd = EGaml.getGamlDescription(model);
 			 if ( gd instanceof IDescription ) {
 				 IDescription desc = (IDescription) gd;
+//				 System.out.println("after\n");
+				 
+				 String[][] ss=desc.getMeta().getPossibleCombinations();
+				 for(String s[]:ss){
+					 if(s!=null){
+						 String combination="";
+						 for(String f:s){
+							 combination+=f+": ";
+						 }
+						 acceptor.accept(createCompletionProposal(combination, "Possible combination:(" + combination+")", facetImage,
+								 context));
+					 }
+				 }
+				 
 				 Map<String, FacetProto> facets = desc.getMeta().getPossibleFacets();
 				 for ( String s : facets.keySet() ) {
 					 acceptor.accept(createCompletionProposal(s + ":", "Facet " + s + ": (" +
-							 (facets.get(s).optional ? "optional" : "required") + ")", facetImage,
+							 (facets.get(s).optional ? "optional" : "required") + ") type:"+facets.get(s).types, facetImage,
 							 context));
 				 }
+				 
 			 }
 		 }	 
 	 }
@@ -662,6 +679,29 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void complete_DOUBLE(final EObject model, final RuleCall ruleCall,
 		final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 
+	}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.contentassist.AbstractGamlProposalProvider#completeDefinitionStatement_Facets(org.eclipse.emf.ecore.EObject, org.eclipse.xtext.Assignment, org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext, org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor)
+	 */
+	@Override
+	public void completeDefinitionStatement_Facets(EObject model,
+			Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+//		super.completeDefinitionStatement_Facets(model, assignment, context, acceptor);
+		if ( model instanceof Facet ) {
+			completeClassicFacet_Key(model.eContainer(), assignment, context, acceptor);
+	 }	 
+	}
+
+	/**
+	 * @see org.eclipse.xtext.ui.editor.contentassist.AbstractJavaBasedContentProposalProvider#completeKeyword(org.eclipse.xtext.Keyword, org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext, org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor)
+	 */
+	@Override
+	public void completeKeyword(Keyword keyword,
+			ContentAssistContext contentAssistContext,
+			ICompletionProposalAcceptor acceptor) {
+		super.completeKeyword(keyword, contentAssistContext, acceptor);
 	}
 
 	@Override
