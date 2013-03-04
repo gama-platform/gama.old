@@ -23,6 +23,8 @@ package msi.gaml.operators;
 import java.awt.print.Printable;
 import java.io.*;
 import java.util.prefs.Preferences;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -43,7 +45,8 @@ import rcaller.exception.*;
  * 
  */
 public class Stats {
-
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	
 	private static DataSet from(final IScope scope, final IContainer values) {
 		DataSet d = new DataSet(values.length(scope));
 		for ( Object o : values.iterable(scope) ) {
@@ -248,7 +251,21 @@ public class Stats {
 			
 			RCode c = new RCode();
 			GamaList R_statements = new GamaList<String>();
-			FileReader fr = new FileReader(RFile);
+			
+			//tmthai.begin----------------------------------------------------------------------------
+			String fullPath =
+					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			if(DEBUG)
+			{
+				GuiUtils.debug("Stats.R_compute:"+RFile);
+				GuiUtils.debug("Stats.R_compute:"+fullPath);
+			}
+			
+			//FileReader fr = new FileReader(RFile);			
+			FileReader fr = new FileReader(fullPath);
+			//tmthai.end----------------------------------------------------------------------------
+			
+			
 			BufferedReader br = new BufferedReader(fr);
 			String statement;
 			while ((statement = br.readLine()) != null) {
@@ -312,7 +329,23 @@ public class Stats {
 			
 			// Adding the codes in file
 			GamaList R_statements = new GamaList<String>();
-			FileReader fr = new FileReader(RFile);
+			
+			//tmthai.begin----------------------------------------------------------------------------
+			String fullPath =
+					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			if(DEBUG)
+			{
+				GuiUtils.debug("Stats.R_compute_param:"+RFile);
+				GuiUtils.debug("Stats.R_compute_param:"+fullPath);
+			}
+			
+			//FileReader fr = new FileReader(RFile);			
+			FileReader fr = new FileReader(fullPath);
+			//tmthai.end----------------------------------------------------------------------------
+			
+			
+
+			
 			BufferedReader br = new BufferedReader(fr);
 			String statement;
 			
