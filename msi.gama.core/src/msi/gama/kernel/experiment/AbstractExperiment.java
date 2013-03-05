@@ -90,12 +90,6 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		super.dispose();
 	}
 
-	@Override
-	protected void createControl() {
-
-		super.createControl();
-	}
-
 	protected void createAgent() {
 		ExperimentatorPopulation pop = new ExperimentatorPopulation(this);
 		IScope scope = getExperimentScope();
