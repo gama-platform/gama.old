@@ -148,12 +148,12 @@ public class SqlConnection {
 						conn =
 							DriverManager.getConnection("jdbc:sqlite:" + dbName);
 						if (DEBUG){
-							System.out.println("SQLlite:"+conn.toString());
+							GuiUtils.debug("SQLlite:"+conn.toString());
 						}
 					} else if ( vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS) ) {
 						Class.forName(POSTGRESDriver).newInstance();
 						//Class.forName("org.postgresql.Driver");
-						//System.out.println("Postgres:OK");
+						//GuiUtils.debug("Postgres:OK");
 						conn =
 							DriverManager.getConnection("jdbc:postgresql://"+url+":"+port+"/"+ dbName + "?user="+ userName + "&password=" + password);
 					}  else {
@@ -202,7 +202,7 @@ public class SqlConnection {
 //				rs = st.executeQuery(selectComm);
 //				ResultSetMetaData rsmd = rs.getMetaData();
 //				if (DEBUG){
-//					System.out.println("MetaData:"+rsmd.toString());
+//					GuiUtils.debug("MetaData:"+rsmd.toString());
 //				}
 //				//repRequest=resultSet2GamaList(rs);
 //				
@@ -215,9 +215,9 @@ public class SqlConnection {
 //				result.add(repRequest);
 //				
 //				if (DEBUG){
-//					System.out.println("list of column name:" + result.get(0) );
-//					System.out.println("list of column type:" + result.get(1) );
-//					System.out.println("list of data:" + result.get(2) );
+//					GuiUtils.debug("list of column name:" + result.get(0) );
+//					GuiUtils.debug("list of column type:" + result.get(1) );
+//					GuiUtils.debug("list of data:" + result.get(2) );
 //				}
 //				rs.close();
 				
@@ -264,7 +264,7 @@ public class SqlConnection {
 				rs = st.executeQuery(selectComm);
 				ResultSetMetaData rsmd = rs.getMetaData();
 				if (DEBUG){
-					System.out.println("MetaData:"+rsmd.toString());
+					GuiUtils.debug("MetaData:"+rsmd.toString());
 				}
 				//repRequest=resultSet2GamaList(rs);
 				
@@ -276,9 +276,9 @@ public class SqlConnection {
 				result.add(repRequest);
 				
 				if (DEBUG){
-					System.out.println("list of column name:" + result.get(0) );
-					System.out.println("list of column type:" + result.get(1) );
-					System.out.println("list of data:" + result.get(2) );
+					GuiUtils.debug("list of column name:" + result.get(0) );
+					GuiUtils.debug("list of column type:" + result.get(1) );
+					GuiUtils.debug("list of data:" + result.get(2) );
 				}
 				rs.close();
 			} catch (SQLException e) {
@@ -301,12 +301,12 @@ public class SqlConnection {
 			try {
 				conn = connectDB();
 				if (DEBUG) {
-					System.out.println("Update Command:" +updateComm);
+					GuiUtils.debug("Update Command:" +updateComm);
 				}
 				Statement st = conn.createStatement(); 
 				n = st.executeUpdate(updateComm);
 				if (DEBUG) {
-					System.out.println("Updated records :" +n);
+					GuiUtils.debug("Updated records :" +n);
 				}
 
 				conn.close();
@@ -345,12 +345,12 @@ public class SqlConnection {
 			int n = 0;
 			try {
 				if (DEBUG) {
-					System.out.println("Update Command:" +updateComm);
+					GuiUtils.debug("Update Command:" +updateComm);
 				}
 				Statement st = conn.createStatement(); 
 				n = st.executeUpdate(updateComm);
 				if (DEBUG) {
-					System.out.println("Updated records :" +n);
+					GuiUtils.debug("Updated records :" +n);
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -390,20 +390,20 @@ public class SqlConnection {
 					List<Integer>  geoColumn = getGeometryColumns(rsmd);
 					int nbCol = rsmd.getColumnCount();
 					int i=1;
-					if (DEBUG) System.out.println("Number of col:"+ nbCol);
-					if (DEBUG) System.out.println("Number of row:"+ rs.getFetchSize());
+					if (DEBUG) GuiUtils.debug("Number of col:"+ nbCol);
+					if (DEBUG) GuiUtils.debug("Number of row:"+ rs.getFetchSize());
 					while (rs.next())
 					{
 						//InputStream inputStream = rs.getBinaryStream(i);
-						if (DEBUG) System.out.println("processing at row:"+ i);
+						if (DEBUG) GuiUtils.debug("processing at row:"+ i);
 
 						GamaList<Object> rowList = new GamaList<Object>();
 						for ( int j = 1; j <= nbCol; j++ ) 
 						{
 							// check column is geometry column?
-							if (DEBUG) System.out.println("col "+j+": " +rs.getObject(j));
+							if (DEBUG) GuiUtils.debug("col "+j+": " +rs.getObject(j));
 							if (geoColumn.contains(j)){
-								if (DEBUG) System.out.println("convert at ["+ i+","+j+"]: ");
+								if (DEBUG) GuiUtils.debug("convert at ["+ i+","+j+"]: ");
 								//rowList.add(Binary2Geometry(rs.getBytes(j)));
 								//rowList.add(InputStream2Geometry(rs.getBinaryStream(j)));
 								//rowList.add(read((byte[])rs.getObject(j)));
@@ -424,7 +424,7 @@ public class SqlConnection {
 						repRequest.add(rowList);
 						i++;
 					}
-					if (DEBUG) System.out.println("Number of row:"+ i);
+					if (DEBUG) GuiUtils.debug("Number of row:"+ i);
 				}
 				catch (Exception e)
 				{
@@ -454,10 +454,10 @@ public class SqlConnection {
 				 for (int i=1; i<=numberOfColumns; i++){
 					 
 					 if (DEBUG){
-						 System.out.print("col "+ i + ": "+ rsmd.getColumnName(i));
-						 System.out.print("   - Type: "+ rsmd.getColumnType(i));
-						 System.out.print("   - TypeName: "+ rsmd.getColumnTypeName(i));
-						 System.out.println("  - size: "+ rsmd.getColumnDisplaySize(i));
+						 GuiUtils.debug("col "+ i + ": "+ rsmd.getColumnName(i));
+						 GuiUtils.debug("   - Type: "+ rsmd.getColumnType(i));
+						 GuiUtils.debug("   - TypeName: "+ rsmd.getColumnTypeName(i));
+						 GuiUtils.debug("  - size: "+ rsmd.getColumnDisplaySize(i));
 						 
 					 }
 					
@@ -743,7 +743,7 @@ public class SqlConnection {
 					valueStr=valueStr + "?"+",";
 				}
 				if (DEBUG){
-					System.out.println("col"+(String) (cols.get(i)));
+					GuiUtils.debug("col"+(String) (cols.get(i)));
 				}
 					
 			}
@@ -753,9 +753,9 @@ public class SqlConnection {
 //			selectStr=selectStr + col_names + " FROM " + table_name;
 
 			if (DEBUG){
-				System.out.println("Insert command:"+insertStr);
+				GuiUtils.debug("Insert command:"+insertStr);
 				
-//				System.out.println("select command:"+selectStr);
+//				GuiUtils.debug("select command:"+selectStr);
 			}
 				
 		
@@ -765,13 +765,13 @@ public class SqlConnection {
 //				ResultSet rs = st.executeQuery(selectStr);
 //				ResultSetMetaData rsmd = rs.getMetaData();
 //				if (DEBUG){
-//					System.out.println("MetaData:"+rsmd.toString());
+//					GuiUtils.debug("MetaData:"+rsmd.toString());
 //				}
 //				GamaList<Object> col_Names= getColumnName(rsmd);
 //				GamaList<Object> col_Types=getColumnTypeName(rsmd);
 //				
 //				if (DEBUG){
-//					System.out.println("list of column type:" + col_Types);
+//					GuiUtils.debug("list of column type:" + col_Types);
 //				}
 				
 				//Insert command
@@ -784,7 +784,7 @@ public class SqlConnection {
 				
 				rec_no=pstmt.executeUpdate();
 				if (DEBUG){
-					System.out.println("rec count:" + rec_no);
+					GuiUtils.debug("rec count:" + rec_no);
 				}
 				
 			}catch (SQLException e) {
@@ -861,7 +861,7 @@ public class SqlConnection {
 				}	
 				rec_no=pstmt.executeUpdate();
 				if (DEBUG){
-					System.out.println("rec count:" + rec_no);
+					GuiUtils.debug("rec count:" + rec_no);
 				}
 				
 			}catch (SQLException e) {
@@ -935,7 +935,7 @@ public class SqlConnection {
 					rs = pstmt.executeQuery();
 					ResultSetMetaData rsmd = rs.getMetaData();
 					if (DEBUG){
-						System.out.println("MetaData:"+rsmd.toString());
+						GuiUtils.debug("MetaData:"+rsmd.toString());
 					}
 					
 					result.add(getColumnName(rsmd));
@@ -945,9 +945,9 @@ public class SqlConnection {
 					result.add(repRequest);
 					
 					if (DEBUG){
-						System.out.println("list of column name:" + result.get(0) );
-						System.out.println("list of column type:" + result.get(1) );
-						System.out.println("list of data:" + result.get(2) );
+						GuiUtils.debug("list of column name:" + result.get(0) );
+						GuiUtils.debug("list of column type:" + result.get(1) );
+						GuiUtils.debug("list of data:" + result.get(2) );
 					}
 					rs.close();
 				} catch (SQLException e) {
@@ -1023,6 +1023,11 @@ public class SqlConnection {
 						try {
 							pstmt = conn.prepareStatement(queryStr);
 							// set value for each condition
+							if (DEBUG){
+								GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:"+condition_count);
+								GuiUtils.debug("SqlConnection.ExecuteUpdateDB.values.size:"+condition_values.toGaml());
+							}
+							
 							for (int i=0; i<condition_count;i++){
 								pstmt.setObject(i+1, condition_values.get(i));
 							}
