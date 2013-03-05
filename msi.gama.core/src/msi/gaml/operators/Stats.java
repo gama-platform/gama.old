@@ -257,8 +257,9 @@ public class Stats {
 					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
 			if(DEBUG)
 			{
-				GuiUtils.debug("Stats.R_compute:"+RFile);
-				GuiUtils.debug("Stats.R_compute:"+fullPath);
+				GuiUtils.debug("Stats.R_compute.RScript:"+RPath);
+				GuiUtils.debug("Stats.R_compute.RFile:"+RFile);
+				GuiUtils.debug("Stats.R_compute.fullPath:"+fullPath);
 			}
 			
 			//FileReader fr = new FileReader(RFile);			
@@ -271,7 +272,12 @@ public class Stats {
 			while ((statement = br.readLine()) != null) {
 				c.addRCode(statement);
 				R_statements.add(statement);
-				java.lang.System.out.println(statement);
+				//java.lang.System.out.println(statement);
+				if(DEBUG)
+				{
+					GuiUtils.debug("Stats.R_compute_param.statement:"+statement);
+				}
+
 			}
 			
 			fr.close();
@@ -286,10 +292,17 @@ public class Stats {
 			for (String name : caller.getParser().getNames()) {
 				Object[] results = null;
 				results = caller.getParser().getAsStringArray(name);
-				for (int i = 0; i < results.length; i++) {
-					java.lang.System.out.println(results[i]);
+//				for (int i = 0; i < results.length; i++) {
+//					java.lang.System.out.println(results[i]);
+//				}
+				if (DEBUG){
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: "+results.length + " - Value: "+ results.toString());
 				}
 				result.put(name, new GamaList(results));
+			}
+			if(DEBUG)
+			{
+				GuiUtils.debug("Stats.R_compute.return:"+result.toGaml());
 			}
 			return result;
 
@@ -335,8 +348,10 @@ public class Stats {
 					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
 			if(DEBUG)
 			{
-				GuiUtils.debug("Stats.R_compute_param:"+RFile);
-				GuiUtils.debug("Stats.R_compute_param:"+fullPath);
+				GuiUtils.debug("Stats.R_compute_param.RScript:"+RPath);
+				GuiUtils.debug("Stats.R_compute_param.Param:"+vectorParam.toString());
+				GuiUtils.debug("Stats.R_compute_param.RFile:"+RFile);
+				GuiUtils.debug("Stats.R_compute_param.fullPath:"+fullPath);
 			}
 			
 			//FileReader fr = new FileReader(RFile);			
@@ -364,21 +379,31 @@ public class Stats {
 			caller.runAndReturnResult(var);
 			
 			// DEBUG:
-			java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
+			//java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
+			if (DEBUG) GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" + R_statements.length(scope) + "'");
 			
 			
 			for (String name : caller.getParser().getNames()) {
 				Object[] results = null;
 				results = caller.getParser().getAsStringArray(name);
-				java.lang.System.out.println("Name: '" + name + "'");
+				//java.lang.System.out.println("Name: '" + name + "'");
+				if (DEBUG){
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: "+results.length + " - Value: "+ results.toString());
+				}
 				
-				for (int i = 0; i < results.length; i++) {
-					java.lang.System.out.println(results[i]);
-					//java.lang.System.out.println("Name: '" + name + "'");
-				}							
+//				for (int i = 0; i < results.length; i++) {
+//					//java.lang.System.out.println(results[i]);
+//					if (DEBUG) GuiUtils.debug(results[i].toString());
+//					//java.lang.System.out.println("Name: '" + name + "'");
+//				}							
 				result.put(name, new GamaList(results));
 			}
 			
+			if(DEBUG)
+			{
+				GuiUtils.debug("Stats.R_compute_param.return:"+result.toGaml());
+			}
+
 			return result;
 
 		} catch (Exception ex) {
