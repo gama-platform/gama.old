@@ -112,6 +112,11 @@ public class SQLSkill extends Skill {
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 			String DBRelativeLocation =
 					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			if(DEBUG)
+			{
+				GuiUtils.debug("testConnection.Database:"+database);
+				GuiUtils.debug("testConnection.DBRelativeLocation:"+DBRelativeLocation);
+			}
 			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
 		}else{
 			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
