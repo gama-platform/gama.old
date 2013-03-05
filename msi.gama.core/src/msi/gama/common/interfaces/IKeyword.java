@@ -281,6 +281,7 @@ public interface IKeyword {
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
 	public static final String SIZE = "size";
+	public static final String SKILL = "skill";
 	public static final String SKILLS = "skills";
 	public static final String SOURCE = "source";
 	public static final String SPECIES = "species";
