@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="gama"
+    nsURI="http://gama/1.0" nsPrefix="gama">
+  <eClassifiers xsi:type="ecore:EClass" name="EGamaModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="objects" upperBound="-1"
+        eType="#//EGamaObject" containment="true" eOpposite="#//EGamaObject/model"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
+        eType="#//EGamaLink" containment="true" eOpposite="#//EGamaLink/model"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EGamaObject">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"
+        eOpposite="#//EGamaModel/objects"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingLinks" upperBound="-1"
+        eType="#//EGamaLink" eOpposite="#//EGamaLink/target"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outcomingLinks" upperBound="-1"
+        eType="#//EGamaLink" eOpposite="#//EGamaLink/source"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ESpecies" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EAction" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EAspect" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EReflex" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EExperiment" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EGUIExperiment" eSuperTypes="#//EExperiment"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EBatchExperiment" eSuperTypes="#//EExperiment"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//EGamaObject" eOpposite="#//EGamaObject/incomingLinks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//EGamaObject" eOpposite="#//EGamaObject/outcomingLinks"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"
+        eOpposite="#//EGamaModel/links"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ESubSpeciesLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EActionLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EAspectLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EReflexLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EDisplayLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EDisplay" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EGrid" eSuperTypes="#//ESpecies"/>
+</ecore:EPackage>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/idees.gama.emf.metamodel/src"
+    modelPluginID="idees.gama.emf.metamodel" modelName="Gama" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>gama.ecore</foreignModel>
+  <genPackages prefix="Gama" disposableProviderFactory="true" ecorePackage="gama.ecore#/">
+    <genClasses ecoreClass="gama.ecore#//EGamaModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaModel/objects"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaModel/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaModel/links"/>
+    </genClasses>
+    <genClasses ecoreClass="gama.ecore#//EGamaObject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGamaObject/name"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/model"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/incomingLinks"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/outcomingLinks"/>
+    </genClasses>
+    <genClasses ecoreClass="gama.ecore#//ESpecies"/>
+    <genClasses ecoreClass="gama.ecore#//EAction"/>
+    <genClasses ecoreClass="gama.ecore#//EAspect"/>
+    <genClasses ecoreClass="gama.ecore#//EReflex"/>
+    <genClasses ecoreClass="gama.ecore#//EExperiment"/>
+    <genClasses ecoreClass="gama.ecore#//EGUIExperiment"/>
+    <genClasses ecoreClass="gama.ecore#//EBatchExperiment"/>
+    <genClasses ecoreClass="gama.ecore#//EGamaLink">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaLink/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaLink/source"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference gama.ecore#//EGamaLink/model"/>
+    </genClasses>
+    <genClasses ecoreClass="gama.ecore#//ESubSpeciesLink"/>
+    <genClasses ecoreClass="gama.ecore#//EActionLink"/>
+    <genClasses ecoreClass="gama.ecore#//EAspectLink"/>
+    <genClasses ecoreClass="gama.ecore#//EReflexLink"/>
+    <genClasses ecoreClass="gama.ecore#//EDisplayLink"/>
+    <genClasses ecoreClass="gama.ecore#//EDisplay"/>
+    <genClasses ecoreClass="gama.ecore#//EGrid"/>
+  </genPackages>
+</genmodel:GenModel>
