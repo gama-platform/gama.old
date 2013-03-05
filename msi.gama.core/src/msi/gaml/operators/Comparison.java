@@ -162,6 +162,18 @@ public class Comparison {
 		return a == null ? b == null : IntervalSize.isZeroWidth(a, b);
 		// return !(a < b) && !(a > b);
 	}
+	
+	@operator(value = { "=" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	public static Boolean equal(final Integer a, final Double b) {
+		return a == null ? b == null : (new Double(a)).equals(b);
+		// return !(a < b) && !(a > b);
+	}
+	
+	@operator(value = { "=" }, priority = IPriority.COMPARATOR, can_be_const = true)
+	public static Boolean equal(final Double a,final Integer b) {
+		return a == null ? b == null : (new Double(b)).equals(a);
+		// return !(a < b) && !(a > b);
+	}
 
 	@operator(value = { "!=", "<>" }, priority = IPriority.COMPARATOR, can_be_const = true)
 	@doc(value = "true if both operands are different, false otherwise", examples = { "4.5 = 4.7  	--:  false" }, see = { "=" })
