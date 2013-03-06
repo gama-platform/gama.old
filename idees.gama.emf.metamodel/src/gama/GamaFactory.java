@@ -179,6 +179,15 @@ public interface GamaFactory extends EFactory {
 	EGrid createEGrid();
 
 	/**
+	 * Returns a new object of class '<em>EVariable</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EVariable</em>'.
+	 * @generated
+	 */
+	EVariable createEVariable();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

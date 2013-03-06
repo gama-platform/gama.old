@@ -17,7 +17,9 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/incomingLinks"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//EGamaObject/outcomingLinks"/>
     </genClasses>
-    <genClasses ecoreClass="gama.ecore#//ESpecies"/>
+    <genClasses ecoreClass="gama.ecore#//ESpecies">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference gama.ecore#//ESpecies/variables"/>
+    </genClasses>
     <genClasses ecoreClass="gama.ecore#//EAction"/>
     <genClasses ecoreClass="gama.ecore#//EAspect"/>
     <genClasses ecoreClass="gama.ecore#//EReflex"/>
@@ -35,6 +37,18 @@
     <genClasses ecoreClass="gama.ecore#//EReflexLink"/>
     <genClasses ecoreClass="gama.ecore#//EDisplayLink"/>
     <genClasses ecoreClass="gama.ecore#//EDisplay"/>
-    <genClasses ecoreClass="gama.ecore#//EGrid"/>
+    <genClasses ecoreClass="gama.ecore#//EGrid">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGrid/nb_columns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGrid/nb_rows"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EGrid/neighbourhood"/>
+    </genClasses>
+    <genClasses ecoreClass="gama.ecore#//EVariable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/init"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/min"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/max"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/update"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute gama.ecore#//EVariable/function"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

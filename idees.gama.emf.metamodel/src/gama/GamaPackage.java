@@ -207,13 +207,22 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__VARIABLES = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>ESpecies</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -923,13 +932,122 @@ public interface GamaPackage extends EPackage {
 	int EGRID__OUTCOMING_LINKS = ESPECIES__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__VARIABLES = ESPECIES__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Nb columns</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__NB_COLUMNS = ESPECIES_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Nb rows</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__NB_ROWS = ESPECIES_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Neighbourhood</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__NEIGHBOURHOOD = ESPECIES_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>EGrid</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGRID_FEATURE_COUNT = ESPECIES_FEATURE_COUNT + 0;
+	int EGRID_FEATURE_COUNT = ESPECIES_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link gama.impl.EVariableImpl <em>EVariable</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EVariableImpl
+	 * @see gama.impl.GamaPackageImpl#getEVariable()
+	 * @generated
+	 */
+	int EVARIABLE = 17;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Init</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__INIT = 1;
+
+	/**
+	 * The feature id for the '<em><b>Min</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__MIN = 2;
+
+	/**
+	 * The feature id for the '<em><b>Max</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__MAX = 3;
+
+	/**
+	 * The feature id for the '<em><b>Update</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__UPDATE = 4;
+
+	/**
+	 * The feature id for the '<em><b>Function</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__FUNCTION = 5;
+
+	/**
+	 * The number of structural features of the '<em>EVariable</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE_FEATURE_COUNT = 6;
 
 
 	/**
@@ -1038,6 +1156,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getESpecies();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getVariables <em>Variables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Variables</em>'.
+	 * @see gama.ESpecies#getVariables()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_Variables();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EAction <em>EAction</em>}'.
@@ -1213,6 +1342,115 @@ public interface GamaPackage extends EPackage {
 	EClass getEGrid();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EGrid#getNb_columns <em>Nb columns</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Nb columns</em>'.
+	 * @see gama.EGrid#getNb_columns()
+	 * @see #getEGrid()
+	 * @generated
+	 */
+	EAttribute getEGrid_Nb_columns();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EGrid#getNb_rows <em>Nb rows</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Nb rows</em>'.
+	 * @see gama.EGrid#getNb_rows()
+	 * @see #getEGrid()
+	 * @generated
+	 */
+	EAttribute getEGrid_Nb_rows();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EGrid#getNeighbourhood <em>Neighbourhood</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Neighbourhood</em>'.
+	 * @see gama.EGrid#getNeighbourhood()
+	 * @see #getEGrid()
+	 * @generated
+	 */
+	EAttribute getEGrid_Neighbourhood();
+
+	/**
+	 * Returns the meta object for class '{@link gama.EVariable <em>EVariable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EVariable</em>'.
+	 * @see gama.EVariable
+	 * @generated
+	 */
+	EClass getEVariable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gama.EVariable#getName()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getInit <em>Init</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Init</em>'.
+	 * @see gama.EVariable#getInit()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Init();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getMin <em>Min</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Min</em>'.
+	 * @see gama.EVariable#getMin()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Min();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getMax <em>Max</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Max</em>'.
+	 * @see gama.EVariable#getMax()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Max();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getUpdate <em>Update</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Update</em>'.
+	 * @see gama.EVariable#getUpdate()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Update();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getFunction <em>Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Function</em>'.
+	 * @see gama.EVariable#getFunction()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Function();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1319,6 +1557,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ESPECIES = eINSTANCE.getESpecies();
+
+		/**
+		 * The meta object literal for the '<em><b>Variables</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__VARIABLES = eINSTANCE.getESpecies_Variables();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -1483,6 +1729,88 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EGRID = eINSTANCE.getEGrid();
+
+		/**
+		 * The meta object literal for the '<em><b>Nb columns</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGRID__NB_COLUMNS = eINSTANCE.getEGrid_Nb_columns();
+
+		/**
+		 * The meta object literal for the '<em><b>Nb rows</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGRID__NB_ROWS = eINSTANCE.getEGrid_Nb_rows();
+
+		/**
+		 * The meta object literal for the '<em><b>Neighbourhood</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGRID__NEIGHBOURHOOD = eINSTANCE.getEGrid_Neighbourhood();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EVariableImpl <em>EVariable</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EVariableImpl
+		 * @see gama.impl.GamaPackageImpl#getEVariable()
+		 * @generated
+		 */
+		EClass EVARIABLE = eINSTANCE.getEVariable();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__NAME = eINSTANCE.getEVariable_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Init</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__INIT = eINSTANCE.getEVariable_Init();
+
+		/**
+		 * The meta object literal for the '<em><b>Min</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__MIN = eINSTANCE.getEVariable_Min();
+
+		/**
+		 * The meta object literal for the '<em><b>Max</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__MAX = eINSTANCE.getEVariable_Max();
+
+		/**
+		 * The meta object literal for the '<em><b>Update</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__UPDATE = eINSTANCE.getEVariable_Update();
+
+		/**
+		 * The meta object literal for the '<em><b>Function</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__FUNCTION = eINSTANCE.getEVariable_Function();
 
 	}
 

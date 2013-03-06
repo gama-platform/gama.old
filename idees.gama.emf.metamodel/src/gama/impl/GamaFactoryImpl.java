@@ -77,6 +77,7 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 			case GamaPackage.EDISPLAY_LINK: return createEDisplayLink();
 			case GamaPackage.EDISPLAY: return createEDisplay();
 			case GamaPackage.EGRID: return createEGrid();
+			case GamaPackage.EVARIABLE: return createEVariable();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -250,6 +251,16 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 	public EGrid createEGrid() {
 		EGridImpl eGrid = new EGridImpl();
 		return eGrid;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EVariable createEVariable() {
+		EVariableImpl eVariable = new EVariableImpl();
+		return eVariable;
 	}
 
 	/**

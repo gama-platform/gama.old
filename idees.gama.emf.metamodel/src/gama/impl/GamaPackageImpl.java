@@ -23,6 +23,7 @@ import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
+import gama.EVariable;
 import gama.GamaFactory;
 import gama.GamaPackage;
 
@@ -158,6 +159,13 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	private EClass eGridEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eVariableEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -308,6 +316,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EClass getESpecies() {
 		return eSpeciesEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_Variables() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -468,6 +485,96 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEGrid_Nb_columns() {
+		return (EAttribute)eGridEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEGrid_Nb_rows() {
+		return (EAttribute)eGridEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEGrid_Neighbourhood() {
+		return (EAttribute)eGridEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getEVariable() {
+		return eVariableEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Name() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Init() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Min() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Max() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Update() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEVariable_Function() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public GamaFactory getGamaFactory() {
 		return (GamaFactory)getEFactoryInstance();
 	}
@@ -503,6 +610,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEReference(eGamaObjectEClass, EGAMA_OBJECT__OUTCOMING_LINKS);
 
 		eSpeciesEClass = createEClass(ESPECIES);
+		createEReference(eSpeciesEClass, ESPECIES__VARIABLES);
 
 		eActionEClass = createEClass(EACTION);
 
@@ -534,6 +642,17 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eDisplayEClass = createEClass(EDISPLAY);
 
 		eGridEClass = createEClass(EGRID);
+		createEAttribute(eGridEClass, EGRID__NB_COLUMNS);
+		createEAttribute(eGridEClass, EGRID__NB_ROWS);
+		createEAttribute(eGridEClass, EGRID__NEIGHBOURHOOD);
+
+		eVariableEClass = createEClass(EVARIABLE);
+		createEAttribute(eVariableEClass, EVARIABLE__NAME);
+		createEAttribute(eVariableEClass, EVARIABLE__INIT);
+		createEAttribute(eVariableEClass, EVARIABLE__MIN);
+		createEAttribute(eVariableEClass, EVARIABLE__MAX);
+		createEAttribute(eVariableEClass, EVARIABLE__UPDATE);
+		createEAttribute(eVariableEClass, EVARIABLE__FUNCTION);
 	}
 
 	/**
@@ -592,6 +711,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEReference(getEGamaObject_OutcomingLinks(), this.getEGamaLink(), this.getEGamaLink_Source(), "outcomingLinks", null, 0, -1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSpeciesEClass, ESpecies.class, "ESpecies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -623,6 +743,17 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eDisplayEClass, EDisplay.class, "EDisplay", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(eGridEClass, EGrid.class, "EGrid", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEGrid_Nb_columns(), ecorePackage.getEString(), "nb_columns", null, 0, 1, EGrid.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEGrid_Nb_rows(), ecorePackage.getEString(), "nb_rows", null, 0, 1, EGrid.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEGrid_Neighbourhood(), ecorePackage.getEString(), "neighbourhood", null, 0, 1, EGrid.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eVariableEClass, EVariable.class, "EVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Init(), ecorePackage.getEString(), "init", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Min(), ecorePackage.getEString(), "min", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Max(), ecorePackage.getEString(), "max", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Update(), ecorePackage.getEString(), "update", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Function(), ecorePackage.getEString(), "function", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

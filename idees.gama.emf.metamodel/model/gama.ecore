@@ -19,7 +19,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="outcomingLinks" upperBound="-1"
         eType="#//EGamaLink" eOpposite="#//EGamaLink/source"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ESpecies" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ESpecies" eSuperTypes="#//EGamaObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+        eType="#//EVariable" containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EAction" eSuperTypes="#//EGamaObject"/>
   <eClassifiers xsi:type="ecore:EClass" name="EAspect" eSuperTypes="#//EGamaObject"/>
   <eClassifiers xsi:type="ecore:EClass" name="EReflex" eSuperTypes="#//EGamaObject"/>
@@ -40,5 +43,17 @@
   <eClassifiers xsi:type="ecore:EClass" name="EReflexLink" eSuperTypes="#//EGamaLink"/>
   <eClassifiers xsi:type="ecore:EClass" name="EDisplayLink" eSuperTypes="#//EGamaLink"/>
   <eClassifiers xsi:type="ecore:EClass" name="EDisplay" eSuperTypes="#//EGamaObject"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EGrid" eSuperTypes="#//ESpecies"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EGrid" eSuperTypes="#//ESpecies">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_rows" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="neighbourhood" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EVariable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="init" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="update" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="function" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
 </ecore:EPackage>

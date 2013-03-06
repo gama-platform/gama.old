@@ -140,6 +140,10 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 				return createEGridAdapter();
 			}
 			@Override
+			public Adapter caseEVariable(EVariable object) {
+				return createEVariableAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -394,6 +398,20 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createEGridAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gama.EVariable <em>EVariable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gama.EVariable
+	 * @generated
+	 */
+	public Adapter createEVariableAdapter() {
 		return null;
 	}
 
