@@ -461,7 +461,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			paintingNeeded.release();
 			canBeUpdated(true);
 			if(output3D == true){
-				Output3D.to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
+				(new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
 			}
 			Toolkit.getDefaultToolkit().sync();
 		}
