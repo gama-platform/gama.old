@@ -41,6 +41,7 @@ import idees.gama.features.layout.LayoutCommonFeature;
 import idees.gama.features.layout.LayoutESpeciesEExperimentFeature;
 import idees.gama.features.modelgeneration.InitModelFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
+import idees.gama.features.others.RenameEGamaObjectFeature;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -136,7 +137,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-    	return new ICustomFeature[] { new ModelGenerationFeature(this),new InitModelFeature(this) };
+    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this),new InitModelFeature(this) };
     }
    
 }
