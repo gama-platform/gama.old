@@ -383,6 +383,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		
 		// Check if the geometry has a height value (3D Shape or Volume)
 		Geometry geom = null;
+		if (geometry == null)
+			return null;
 		ITopology topo = scope.getTopology();
 		if ( topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
@@ -395,6 +397,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		if(geometry.getProperty3D() !=null){
 			Double depth = (Double) geometry.getProperty3D().get("depth");
 			String type = (String) geometry.getProperty3D().get("type"); 
+	
 			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
 					currentZLayer, currentLayerId, color, fill, border, false, angle, depth.floatValue() , offSet,rounded,type.toString());
 		}
@@ -1004,7 +1007,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		Color c = new Color(225, 225, 225);
 		MyJTSGeometry curGeometry =
-			new MyJTSGeometry(g, null, -0.01f, -1, c, 1.0f, true, null, false, 0, 0.0f, offSet,true,"environment");
+			new MyJTSGeometry(g, null, -0.01f, -1, c, 1.0f, true, c, false, 0, 0.0f, offSet,false,"environment");
 		myGLRender.graphicsGLUtils.basicDrawer.DrawJTSGeometry(curGeometry);
 	}
 
