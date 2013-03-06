@@ -65,8 +65,11 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			AddConnectionContext addContext = new AddConnectionContext(
 					context.getSourceAnchor(), getAnchor(targetpe));
 			addContext.setNewObject(eReference);
+			
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
+			source.getOutcomingLinks().add(eReference);
+			target.getIncomingLinks().add(eReference);
 		}
 
 		return newConnection;
