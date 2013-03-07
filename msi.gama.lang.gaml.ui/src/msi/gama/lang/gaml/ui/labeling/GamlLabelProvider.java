@@ -140,6 +140,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	// Statement : keyword.value
 	public String image(final/* Sub */Statement ele) {
 		String kw = EGaml.getKeyOf(ele);
+		if ( kw == null ) { return image((Facet) null); }
 		if ( kw.equals("var") || kw.equals("const") ) {
 			// for ( FacetExpr f : ele.getFacets() ) {
 			for ( Facet f : EGaml.getFacetsOf(ele) ) {
