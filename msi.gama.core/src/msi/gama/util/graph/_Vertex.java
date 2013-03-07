@@ -73,7 +73,7 @@ public class _Vertex<V> {
 	public Object edgeTo(final Object v2) {
 		for ( Object e : outEdges ) {
 			_Edge<V> edge = (_Edge<V>) graph.edgeMap.get(e);
-			if ( edge.getTarget() == v2 ) { return e; }
+			if ( edge.getTarget().equals(v2) ) { return e; }
 		}
 		return null;
 	}
@@ -82,7 +82,7 @@ public class _Vertex<V> {
 		Set result = new HashSet();
 		for ( Object e : outEdges ) {
 			_Edge<V> edge = (_Edge<V>) graph.edgeMap.get(e);
-			if ( edge.getTarget() == v2 ) {
+			if ( edge.getTarget().equals(v2) ) {
 				result.add(e);
 			}
 		}
