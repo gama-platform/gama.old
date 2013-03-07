@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -111,8 +111,8 @@ public class CheckoutProjectHandler extends AbstractHandler {
 								str.append("</projects>");
 								str.append("<buildSpec><buildCommand><name>org.eclipse.xtext.ui.shared.xtextBuilder</name><arguments></arguments></buildCommand></buildSpec>");
 								str.append("<natures>");
-								str.append("<nature>msi.gama.application.gamaNature</nature>");
 								str.append("<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>");
+								str.append("<nature>msi.gama.application.gamaNature</nature>");
 								str.append("</natures>");
 								str.append("</projectDescription>");
 								writer.write(str.toString());
@@ -199,11 +199,11 @@ public class CheckoutProjectHandler extends AbstractHandler {
 		try {
 			desc = proj.getDescription();
 			/* Associate GamaNature et xtext nature to the project */
-			String[] ids = desc.getNatureIds();
-			String[] newIds = new String[ids.length + 2];
-			System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[ids.length] = "msi.gama.application.gamaNature";
-			newIds[ids.length + 1] = "org.eclipse.xtext.ui.shared.xtextNature";
+			// String[] ids = desc.getNatureIds();
+			String[] newIds = new String[2];
+			// System.arraycopy(ids, 0, newIds, 0, ids.length);
+			newIds[1] = "msi.gama.application.gamaNature";
+			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
 			desc.setNatureIds(newIds);
 			proj.setDescription(desc, IResource.FORCE, null);
 		} catch (CoreException e) {
