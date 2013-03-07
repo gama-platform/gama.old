@@ -22,8 +22,7 @@ import java.io.*;
 import java.io.FileReader;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GisUtils;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
@@ -32,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaFile;
@@ -376,6 +375,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				IAgent remoteAgent = list.get(i);
 				scope.execute(sequence, remoteAgent);
 			}
+			scope.setStatus(ExecutionStatus.skipped);
 		}
 		agents.addAll(list);
 	}
@@ -481,10 +481,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void computeInits(final IScope scope, final Map<String, Object> values,
 		final GamaList<Object> rowList, final GamaList<Object> colType) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		//24-Feb-2013
+		// 24-Feb-2013
 		transformCRS = GisUtils.transformCRS;
-		if (DEBUG){
-			GuiUtils.debug("CreateStatement.computeInits: _CRS:"+transformCRS);
+		if ( DEBUG ) {
+			GuiUtils.debug("CreateStatement.computeInits: _CRS:" + transformCRS);
 		}
 		for ( Facet f : init.entrySet() ) {
 			if ( f != null ) {
@@ -520,18 +520,18 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * Method: GamaList2ListMap
 	 * Description:
 	 * created date : 13-09-2012
-	 * 25-Feb-2013: 
-	 * 		Add transformCRS from GisUtils.transformCRS
+	 * 25-Feb-2013:
+	 * Add transformCRS from GisUtils.transformCRS
 	 * Last Modified: 25-Feb-2013
 	 */
 	private void computeInits(final IScope scope, final Map<String, Object> values,
 		final GamaList<Object> rowList, final GamaList<Object> colTypes,
 		final GamaList<Object> colNames) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		//24-Feb-2013
+		// 24-Feb-2013
 		transformCRS = GisUtils.transformCRS;
-		if (DEBUG){
-			GuiUtils.debug("CreateStatement.computeInits: _CRS:"+transformCRS);
+		if ( DEBUG ) {
+			GuiUtils.debug("CreateStatement.computeInits: _CRS:" + transformCRS);
 		}
 
 		for ( Facet f : init.entrySet() ) {
@@ -549,7 +549,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				// }
 				if ( ((String) colTypes.get(val)).equalsIgnoreCase("GEOMETRY") ) {
 					Geometry geom = (Geometry) rowList.get(val);
-					
+
 					if ( transformCRS != null ) {
 						try {
 							geom = JTS.transform(geom, transformCRS);
