@@ -51,6 +51,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
 		super.initialize(configurer);
+		IDE.registerAdapters();
 		configurer.setSaveAndRestore(true);
 		/* Setting various preferences */
 		IPreferenceStore ps = PlatformUI.getPreferenceStore();
@@ -65,7 +66,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		/* Show progress on startup */
 		ps.setValue(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP, true);
 		/* Register specific contents in the navigator */
-		IDE.registerAdapters();
+
 		/* Linking the stock models with the workspace if they are not already */
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		if ( workspace.getRoot().getProjects().length == 0 ) {
@@ -73,7 +74,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 		/* Early build of the contributions made by plugins to GAMA */
 		GamaBundleLoader.preBuildContributions();
-
 	}
 
 	@Override
@@ -215,11 +215,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		try {
 			desc = proj.getDescription();
 			/* Automatically associate GamaNature and Xtext nature to the project */
-			String[] ids = desc.getNatureIds();
-			String[] newIds = new String[ids.length + 2];
-			System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[ids.length] = "msi.gama.application.gamaNature";
-			newIds[ids.length + 1] = "org.eclipse.xtext.ui.shared.xtextNature";
+			// String[] ids = desc.getNatureIds();
+			String[] newIds = new String[2];
+			// System.arraycopy(ids, 0, newIds, 0, ids.length);
+			newIds[1] = "msi.gama.application.gamaNature";
+			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
 			desc.setNatureIds(newIds);
 			proj.setDescription(desc, IResource.FORCE, null);
 		} catch (CoreException e) {
@@ -238,14 +238,4 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-//	@Override
-//	public void postStartup() {
-//		try {
-//			IWorkbenchPage page =
-//				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-////			page.openEditor(new MyEditorInput("TutoGEF"), MyGraphicalEditor.ID, false);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 }
