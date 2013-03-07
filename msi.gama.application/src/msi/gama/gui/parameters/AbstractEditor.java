@@ -274,12 +274,9 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return s;
 	}
 
-	protected final void modifyValue(final Object val) {
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		currentValue = val;
 		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
-		// if ( tooltip != null ) {
-		// tooltip.setText(getTooltipText());
-		// }
 		if ( !internalModification ) {
 			setParameterValue(val);
 		}

@@ -59,6 +59,20 @@ public class FloatEditor extends NumberEditor {
 	}
 
 	@Override
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
+		Double i = Cast.asFloat(GAMA.getDefaultScope(), val);
+		if ( minValue != null && i < minValue.doubleValue() ) { throw new GamaRuntimeException(
+			"Value " + i + " should be greater than " + minValue); }
+		if ( maxValue != null && i > maxValue.doubleValue() ) { throw new GamaRuntimeException(
+			"Value " + i + " should be smaller than " + maxValue); }
+		currentValue = val;
+		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
+		if ( !internalModification ) {
+			setParameterValue(val);
+		}
+	}
+
+	@Override
 	protected void setOriginalValue(final Object val) {
 		if ( acceptNull && val == null ) {
 			super.setOriginalValue(val);

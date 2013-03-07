@@ -37,6 +37,8 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	Popup popup;
 	AbstractEditor editor;
 	Color background;
+	Object currentValue;
+	Exception currentException;
 
 	// IType expectedType;
 
@@ -59,52 +61,70 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		popup.display();
 	}
 
+	private void modifyNoPopup() {
+		editor.internalModification = true;
+		currentException = null;
+		text.setText(StringUtils.toGaml(currentValue));
+		editor.modifyValue(currentValue);
+		editor.internalModification = false;
+	}
+
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent me) {
 		try {
 			if ( me != null && me.detail == SWT.CANCEL ) {
-				text.setText(StringUtils.toGaml(editor.getOriginalValue()));
+				currentValue = editor.getOriginalValue();
 			}
-			modifyValue();
+			modifyNoPopup();
 			Popup.hide();
 
 		} catch (Exception e) {}
 	}
 
-	private Object computeValue() {
+	private void computeValue() {
 		try {
-			return editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
-				editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
-		} catch (GamaRuntimeException e) {
-			return e;
+			currentException = null;
+			currentValue =
+				editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
+					editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
+		} catch (Exception e) {
+			currentException = e;
 		}
-
 	}
 
-	private Object modifyValue() {
-		Object newValue = computeValue();
-		if ( newValue instanceof GamaRuntimeException ) { return editor.currentValue; }
-		editor.modifyValue(newValue);
-		return newValue;
+	private void modifyValue() {
+		Object oldValue = currentValue;
+		computeValue();
+		if ( currentException != null ) {
+			currentValue = oldValue;
+			return;
+		}
+		try {
+			editor.modifyValue(currentValue);
+		} catch (GamaRuntimeException e) {
+			currentValue = oldValue;
+			currentException = e;
+		}
 	}
 
 	String getPopupBody() {
-		try {
-			Object value = computeValue();
-			if ( value instanceof Exception ) { throw (Exception) value; }
-			String string = "Result: " + StringUtils.toGaml(value);
-			IType expectedType = editor.getExpectedType();
-			if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), value) ) {
-				background = SwtGui.COLOR_OK;
-			} else {
-				background = SwtGui.COLOR_WARNING;
-				string += "\nWarning: should be of type " + expectedType.toString();
-			}
-			return string;
-		} catch (Exception e) {
-			background = SwtGui.COLOR_ERROR;
-			return e.getMessage();
+		if ( currentValue == null ) {
+			computeValue();
 		}
+		if ( currentException != null ) {
+			background = SwtGui.COLOR_ERROR;
+			return currentException.getMessage();
+		}
+		String string = "Result: " + StringUtils.toGaml(currentValue);
+		IType expectedType = editor.getExpectedType();
+		if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), currentValue) ) {
+			background = SwtGui.COLOR_OK;
+		} else {
+			background = SwtGui.COLOR_WARNING;
+			string += "\nWarning: should be of type " + expectedType.toString();
+		}
+		return string;
+
 	}
 
 	protected Text createTextBox(final Composite comp) {
@@ -113,6 +133,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 
 	@Override
 	public void focusGained(final FocusEvent e) {
+		computeValue();
 		popup.display();
 	}
 
@@ -125,7 +146,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			public void run() {
 				if ( SwtGui.getDisplay().isDisposed() ) { return; }
 				final Control control = SwtGui.getDisplay().getFocusControl();
-				if ( control == null || control != text ) {
+				if ( control != text ) {
 					widgetDefaultSelected(null);
 				}
 			}

@@ -72,6 +72,20 @@ public class IntEditor extends NumberEditor {
 	}
 
 	@Override
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
+		Integer i = Cast.asInt(GAMA.getDefaultScope(), val);
+		if ( minValue != null && i < minValue.intValue() ) { throw new GamaRuntimeException(
+			"Value " + i + " should be greater than " + minValue); }
+		if ( maxValue != null && i > maxValue.intValue() ) { throw new GamaRuntimeException(
+			"Value " + i + " should be smaller than " + maxValue); }
+		currentValue = val;
+		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
+		if ( !internalModification ) {
+			setParameterValue(val);
+		}
+	}
+
+	@Override
 	protected void checkButtons() {
 		plus.setEnabled(maxValue == null || applyPlus() < maxValue.intValue());
 		minus.setEnabled(minValue == null || applyMinus() > minValue.intValue());
