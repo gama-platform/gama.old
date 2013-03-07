@@ -146,14 +146,14 @@ public class CaptureStatement extends AbstractStatementSequence {
 			} else { // micro-species name is not specified in the "as" facet.
 				ISpecies microSpecies;
 				IAgent capturedAgent;
-
+				scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 				for ( IAgent c : microAgents ) {
 					microSpecies = macroSpecies.getMicroSpecies(c.getSpeciesName());
 
 					if ( microSpecies != null ) {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
-						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
-						if ( !sequence.isEmpty() ) {
+
+						if ( sequence != null && !sequence.isEmpty() ) {
 							scope.execute(sequence, capturedAgent);
 						}
 
