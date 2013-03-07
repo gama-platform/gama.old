@@ -21,7 +21,7 @@ package msi.gama.gui.swt;
 import java.io.IOException;
 import java.net.*;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -121,6 +121,28 @@ public class Application implements IApplication {
 			gamaAdvisor = new ApplicationWorkbenchAdvisor();
 			int returnCode = PlatformUI.createAndRunWorkbench(display, gamaAdvisor);
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
+			try {
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.jdt.ui.decorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
+				PlatformUI.getWorkbench().getDecoratorManager()
+					.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 			return IApplication.EXIT_OK;
 		} finally {
 			display.dispose();
