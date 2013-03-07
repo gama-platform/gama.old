@@ -19,7 +19,7 @@
 package msi.gaml.descriptions;
 
 import java.util.List;
-import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.IErrorCollector;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
@@ -32,7 +32,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public interface IDescription extends IGamlDescription {
+public interface IDescription extends IGamlDescription, IKeyword {
 
 	public void flagError(final String message);
 
@@ -82,7 +82,7 @@ public interface IDescription extends IGamlDescription {
 
 	public abstract StatementDescription getAction(String name);
 
-	public abstract SpeciesDescription getWorldSpecies();
+	public abstract TypeDescription getWorldSpecies();
 
 	public abstract IErrorCollector getErrorCollector();
 

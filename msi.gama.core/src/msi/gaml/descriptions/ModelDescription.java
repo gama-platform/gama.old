@@ -20,7 +20,7 @@ package msi.gaml.descriptions;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -48,11 +48,11 @@ public class ModelDescription extends SymbolDescription {
 	private SpeciesDescription worldSpecies;
 	private boolean isDisposed = false;
 	// Only used to accelerate the parsing
-	private final Map<String, SpeciesDescription> allSpeciesDescription = new HashMap();
+	private final Map<String, TypeDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
 	public ModelDescription(final ModelStructure struct) {
-		super(IKeyword.MODEL, null, IChildrenProvider.NONE, struct.getSource());
+		super(MODEL, null, IChildrenProvider.NONE, struct.getSource());
 		types = new TypesManager(this);
 		setModelFilePath(struct.getProjectPath(), struct.getPath());
 		number = count++;
@@ -135,7 +135,7 @@ public class ModelDescription extends SymbolDescription {
 		types.addAll(allSpeciesDescription);
 	}
 
-	public void addSpeciesDescription(final SpeciesDescription species) {
+	public void addSpeciesDescription(final TypeDescription species) {
 		allSpeciesDescription.put(species.getName(), species);
 	}
 
@@ -148,18 +148,18 @@ public class ModelDescription extends SymbolDescription {
 			experiments.put(s, (ExperimentDescription) child);
 			// If the experiment is not the "default" one, we return the child directly without
 			// adding it to the children
-			if ( !IKeyword.DEFAULT_EXP.equals(s) ) { return child; }
+			if ( !DEFAULT_EXP.equals(s) ) { return child; }
 		} else if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
 			addSpeciesDescription(worldSpecies);
-		} else if ( keyword.equals(IKeyword.OUTPUT) ) {
+		} else if ( keyword.equals(OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
 			} else {
 				output.addChildren(child.getChildren());
 				return child;
 			}
-		} else if ( keyword.equals(IKeyword.ENVIRONMENT) ) {
+		} else if ( keyword.equals(ENVIRONMENT) ) {
 			if ( environment == null ) {
 				environment = child;
 			} else {
@@ -204,7 +204,7 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		SpeciesDescription result = allSpeciesDescription.get(spec);
+		SpeciesDescription result = (SpeciesDescription) allSpeciesDescription.get(spec);
 		return result;
 	}
 

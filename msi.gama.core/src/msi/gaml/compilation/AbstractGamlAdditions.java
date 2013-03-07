@@ -5,7 +5,6 @@ import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.JavaUtils;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
 import msi.gaml.descriptions.*;
@@ -119,7 +118,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _symbol(final Class c, final int sKind, final boolean remote,
 		final boolean args, final boolean scope, final boolean sequence, final boolean unique,
 		final boolean name_unique, final String[] parentSymbols, final int[] parentKinds,
-		final FacetProto[] fmd, final String omissible, final String[][] combinations, 
+		final FacetProto[] fmd, final String omissible, final String[][] combinations,
 		final ISymbolConstructor sc, final String ... names) {
 
 		Set<String> contextKeywords = new HashSet();
@@ -152,9 +151,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 
 		SymbolProto md =
-			new SymbolProto(sequence, args, sKind, !scope, facets, omissible,
-					combinations, contextKeywords, contextKinds, remote, unique, name_unique,
-				sc);
+			new SymbolProto(sequence, args, sKind, !scope, facets, omissible, combinations,
+				contextKeywords, contextKinds, remote, unique, name_unique, sc);
 		DescriptionFactory.addProto(md, keywords);
 	}
 
@@ -228,7 +226,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static List<IDescription> getFieldDescriptions(final Class clazz) {
-		List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET);
+		List<Class> classes =
+			JavaUtils
+				.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet());
 		Map<String, IDescription> fieldsMap = new LinkedHashMap();
 		for ( Class c : classes ) {
 			List<IDescription> descriptions = getAdditions(c);
@@ -267,7 +267,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Map<String, TypeFieldExpression> getAllFields(final Class clazz) {
-		List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET);
+		List<Class> classes =
+			JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
 		Map<String, TypeFieldExpression> fieldsMap = new LinkedHashMap();
 		for ( Class c : classes ) {
 			List<TypeFieldExpression> fields = FIELDS.get(c);
@@ -296,8 +297,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return skill == null ? null : skill.duplicate();
 	}
 
-	static final Class[] EXECUTE_ARGS = new Class[] { IAgent.class, ISkill.class };
-
 	public static List<IDescription> getAllChildrenOf(final Class base, final Set<Class> skills) {
 		Set<Class> key = new HashSet();
 		key.add(base);
@@ -305,7 +304,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		List<IDescription> children = ALL_ADDITIONS.get(key);
 		if ( children == null ) {
 			children = new ArrayList();
-			final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills);
+			final List<Class> classes =
+				JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
 			for ( final Class c1 : classes ) {
 				// GuiUtils
 				// .debug("Adding implementation class " + c1.getSimpleName() + " to " + getName());

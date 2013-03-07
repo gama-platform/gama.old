@@ -308,4 +308,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public IExperiment getExperiment();
 
+	public abstract boolean isInstanceOf(String skill, boolean direct);
+
 }

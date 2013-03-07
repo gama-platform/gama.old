@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -41,7 +40,7 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected SpeciesDescription buildDescription(final ISyntacticElement source,
+	protected TypeDescription buildDescription(final ISyntacticElement source,
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
@@ -54,13 +53,12 @@ public class SpeciesFactory extends SymbolFactory {
 		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
 		final Facets userSkills) {
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(name, clazz, superDesc, helper, skills,
-			DescriptionFactory.getProto(IKeyword.SPECIES), userSkills);
+		return new SpeciesDescription(name, clazz, superDesc, helper, skills, userSkills);
 	}
 
 	@Override
 	protected void privateValidateChildren(final IDescription sd) {
-		SpeciesDescription desc = sd.getSpeciesContext();
+		TypeDescription desc = sd.getSpeciesContext();
 		// we first validate the variables in the right order
 		// Necessary to make content assist work correctly
 		for ( String s : desc.getVarNames() ) {
@@ -74,10 +72,5 @@ public class SpeciesFactory extends SymbolFactory {
 		}
 	}
 
-	@Override
-	ISymbol privateCompile(final IDescription desc) {
-		GuiUtils.debug("Compiling " + desc.getTitle() + "as species");
-		return super.privateCompile(desc);
-	}
 
 }

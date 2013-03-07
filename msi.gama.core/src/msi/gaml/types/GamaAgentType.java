@@ -37,16 +37,10 @@ import msi.gaml.species.ISpecies;
  */
 public class GamaAgentType extends GamaType<IAgent> {
 
-	// ModelDescription model;
-
-	// SpeciesDescription species;
-
-	public GamaAgentType(final String speciesName, final short speciesId, final Class base,
-		final ModelDescription model) {
+	public GamaAgentType(final String speciesName, final short speciesId, final Class base) {
 		name = speciesName;
 		id = speciesId;
 		supports = new Class[] { base };
-		// species = sd;
 	}
 
 	@Override
@@ -57,7 +51,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 		if ( species == null ) { return (IAgent) Types.get(IType.AGENT).cast(scope, obj, param); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false)
 			? (IAgent) obj : null; }
-		// if ( obj instanceof String ) { return species.getAgent((String) obj); }
 		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
 			.getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {

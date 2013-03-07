@@ -55,7 +55,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 
 	private void verifyTarget() {
 		SpeciesDescription species = this.getDescription().getSpeciesContext();
-		SpeciesDescription targetSpeciesDesc = species.getMicroSpecies(target);
+		TypeDescription targetSpeciesDesc = species.getMicroSpecies(target);
 		if ( targetSpeciesDesc == null ) {
 			error(target + " is not a micro-species of " + species.getName());
 		}

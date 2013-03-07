@@ -46,7 +46,7 @@ public class TypesManager {
 			if ( toAdd != null ) {
 				typeToIType.put(typeId, toAdd);
 				if ( toAdd.toString().equals(AGENT_STR) ) {
-					toAdd.clearChildren();
+					toAdd.clearSubTypes();
 				}
 			}
 		}
@@ -63,7 +63,7 @@ public class TypesManager {
 	 * @param base
 	 * @return
 	 */
-	public IType addType(final SpeciesDescription species) {
+	public IType addType(final TypeDescription species) {
 		String name = species.getName();
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {
@@ -72,24 +72,25 @@ public class TypesManager {
 				IGamlIssue.DUPLICATE_NAME, null, name);
 		}
 		short newId = ++CURRENT_INDEX;
-		IType newType = new GamaAgentType(name, newId, base, model);
+		IType newType = new GamaAgentType(name, newId, base);
 		typeToIType.put(newId, newType);
 		stringToIType.put(name, newType);
 		classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
 		return newType;
 	}
 
-	public void addAll(final Map<String, SpeciesDescription> species) {
+	public void addAll(final Map<String, TypeDescription> species) {
 		Map<String, IType> map = new HashMap();
-		for ( Map.Entry<String, SpeciesDescription> entry : species.entrySet() ) {
+		for ( Map.Entry<String, TypeDescription> entry : species.entrySet() ) {
 			map.put(entry.getKey(), addType(entry.getValue()));
 		}
 		map.remove(IType.AGENT_STR);
 		for ( Map.Entry<String, IType> entry : map.entrySet() ) {
-			SpeciesDescription s = species.get(entry.getKey());
-			String parentName = s.getParentName();
-			SpeciesDescription parentSpecies = species.get(parentName);
-			IType parentType = parentSpecies == null ? get(IType.AGENT_STR) : map.get(parentName);
+			TypeDescription s = species.get(entry.getKey());
+			// String parentName = s.getParentName();
+			TypeDescription parentSpecies = s.getParent();
+			IType parentType =
+				parentSpecies == null ? get(IType.AGENT_STR) : map.get(parentSpecies.getName());
 			entry.getValue().setParent(parentType);
 		}
 	}
@@ -124,10 +125,10 @@ public class TypesManager {
 		for ( short i = SPECIES_TYPES + 1; i <= CURRENT_INDEX; i++ ) {
 			IType t = typeToIType.get(i);
 			if ( t != null ) {
-				t.clearChildren();
+				t.clearSubTypes();
 			}
 		}
-		typeToIType.get(AGENT).clearChildren();
+		typeToIType.get(AGENT).clearSubTypes();
 		// stringToIType.get("experimentator").clearChildren();
 		// FIXME : do the same for all built in species ?
 		typeToIType.clear();
@@ -148,7 +149,7 @@ public class TypesManager {
 					t.toString() + "(" + t.id() + ", " +
 						(t.getParent() == null ? "" : t.getParent().toString()) + ") ";
 
-				current.addAll(t.getChildren());
+				current.addAll(t.getSubTypes());
 			}
 			GuiUtils.debug(s);
 			roots = current;

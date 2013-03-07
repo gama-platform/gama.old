@@ -19,8 +19,6 @@
 package msi.gama.common.util;
 
 import java.util.*;
-import msi.gama.runtime.IScope;
-import msi.gaml.skills.ISkill;
 
 /**
  * Written by drogoul Modified on 28 déc. 2010
@@ -34,38 +32,45 @@ public class JavaUtils {
 	private static Map<Class, Set<Class>> allInterfaces = new HashMap();
 	private static Map<Class, Set<Class>> allSuperclasses = new HashMap();
 
-	private static void addAllInterfaces(final Class clazz, final Set allInterfaces) {
+	private static void addAllInterfaces(final Class clazz, final Set allInterfaces,
+		final Set<Class> in) {
 		if ( clazz == null ) { return; }
 		final Class[] interfaces = clazz.getInterfaces();
-		allInterfaces.addAll(Arrays.asList(interfaces));
-		addAllInterfaces(interfaces, allInterfaces);
-		addAllInterfaces(clazz.getSuperclass(), allInterfaces);
+		for ( Class c : interfaces ) {
+			if ( in.contains(c) ) {
+				allInterfaces.add(c);
+			}
+		}
+		addAllInterfaces(interfaces, allInterfaces, in);
+		addAllInterfaces(clazz.getSuperclass(), allInterfaces, in);
 	}
 
-	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces) {
+	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces,
+		final Set<Class> in) {
 		if ( clazzes != null ) {
 			for ( int i = 0; i < clazzes.length; i++ ) {
-				addAllInterfaces(clazzes[i], allInterfaces);
+				addAllInterfaces(clazzes[i], allInterfaces, in);
 			}
 		}
 	}
 
-	public static final Set<Class> allInterfacesOf(final Class c) {
+	public static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
 		if ( allInterfaces.containsKey(c) ) { return allInterfaces.get(c); }
 		final Set<Class> result = new HashSet<Class>();
-		if ( c.getName().startsWith("java") ) { return result; }
-		addAllInterfaces(c, result);
+		addAllInterfaces(c, result, in);
 		allInterfaces.put(c, result);
 		return result;
 	}
 
-	public static final Set<Class> allSuperclassesOf(final Class c) {
+	public static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
 		if ( allSuperclasses.containsKey(c) ) { return allSuperclasses.get(c); }
 		final HashSet<Class> result = new HashSet();
 		if ( c == null ) { return result; }
 		Class c2 = c.getSuperclass();
 		while (c2 != null) {
-			result.add(c2);
+			if ( in.contains(c2) ) {
+				result.add(c2);
+			}
 			c2 = c2.getSuperclass();
 		}
 		allSuperclasses.put(c, result);
@@ -74,18 +79,16 @@ public class JavaUtils {
 	}
 
 	public static List<Class> collectImplementationClasses(final Class baseClass,
-		final Set<Class> skillClasses) {
+		final Set<Class> skillClasses, final Set<Class> in) {
 		Set<Class> classes = new HashSet();
 		classes.add(baseClass);
 		classes.addAll(skillClasses);
 		Set<Class> key = new HashSet(classes);
 		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
-		classes.addAll(allInterfacesOf(baseClass));
+		classes.addAll(allInterfacesOf(baseClass, in));
 		for ( final Class classi : new ArrayList<Class>(classes) ) {
-			classes.addAll(allSuperclassesOf(classi));
+			classes.addAll(allSuperclassesOf(classi, in));
 		}
-		classes.remove(ISkill.class);
-		classes.remove(IScope.class);
 		final ArrayList<Class> classes2 = new ArrayList(classes);
 		Collections.sort(classes2, new Comparator<Class>() {
 

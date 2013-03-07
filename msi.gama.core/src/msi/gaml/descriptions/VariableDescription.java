@@ -18,7 +18,6 @@
  */
 package msi.gaml.descriptions;
 
-import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.runtime.GAMA;

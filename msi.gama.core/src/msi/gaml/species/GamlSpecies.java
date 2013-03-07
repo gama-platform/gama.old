@@ -35,7 +35,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
@@ -92,13 +92,8 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public SpeciesDescription getDescription() {
-		return (SpeciesDescription) description;
-	}
-
-	@Override
 	public boolean extendsSpecies(final ISpecies s) {
-		return getDescription().getSelfWithParents().contains(s.getDescription());
+		return s.getDescription().getType().isAssignableFrom(getDescription().getType());
 	}
 
 	/*

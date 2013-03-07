@@ -44,8 +44,8 @@ public class ModelFactory extends SymbolFactory {
 	private void addMicroSpecies(final ModelDescription model, final IDescription macro,
 		final SpeciesStructure micro) {
 		// Create the species description without any children
-		SpeciesDescription mDesc =
-			(SpeciesDescription) create(micro.getNode(), macro, IChildrenProvider.NONE);
+		TypeDescription mDesc =
+			(TypeDescription) create(micro.getNode(), macro, IChildrenProvider.NONE);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Add it to the model
@@ -143,7 +143,7 @@ public class ModelFactory extends SymbolFactory {
 					: ww.getFacets());
 		model.addChild(world);
 		// We then reattach the previous built-in species to the new world
-		for ( SpeciesDescription sd : BUILT_IN_SPECIES.values() ) {
+		for ( TypeDescription sd : BUILT_IN_SPECIES.values() ) {
 			sd.setSuperDescription(world);
 			world.addChild(sd);
 		}
@@ -164,7 +164,7 @@ public class ModelFactory extends SymbolFactory {
 
 	synchronized public ModelDescription validate(final ModelStructure structure) {
 		ModelDescription md = parse(structure);
-		md.getTypesManager().printTypeHierarchy();
+		// md.getTypesManager().printTypeHierarchy();
 		validate(md);
 		return md;
 	}

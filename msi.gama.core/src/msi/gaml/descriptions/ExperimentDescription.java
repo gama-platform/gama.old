@@ -18,8 +18,8 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.common.interfaces.*;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gaml.compilation.*;
 import msi.gaml.factories.IChildrenProvider;
 
 public class ExperimentDescription extends SpeciesDescription {
@@ -31,7 +31,7 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	@Override
 	protected void addVariable(final VariableDescription var) {
-		if ( var.getKeyword().equals(IKeyword.PARAMETER) ) {} else {
+		if ( var.getKeyword().equals(PARAMETER) ) {} else {
 			super.addVariable(var);
 		}
 	}
@@ -42,9 +42,13 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public void initJavaBase() {
-		initJavaBase(AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CLASS,
-			AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CONSTRUCTOR);
+	public Class getDefaultJavaBase() {
+		return AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CLASS;
+	}
+
+	@Override
+	public IAgentConstructor getDefaultAgentConstructor() {
+		return AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CONSTRUCTOR;
 	}
 
 	@Override

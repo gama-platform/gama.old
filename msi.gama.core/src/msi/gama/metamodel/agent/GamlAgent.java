@@ -467,7 +467,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		IShape gg = getGeometry();
 		return gg == null ? false : gg.intersects(g);
 	}
-	
+
 	@Override
 	public boolean crosses(final IShape g) {
 		IShape gg = getGeometry();
@@ -522,6 +522,11 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	@Override
 	public IExperiment getExperiment() {
 		return getHost().getExperiment();
+	}
+
+	@Override
+	public boolean isInstanceOf(final String skill, final boolean direct) {
+		return getSpecies().implementsSkill(skill);
 	}
 
 }

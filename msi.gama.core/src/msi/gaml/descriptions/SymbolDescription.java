@@ -51,7 +51,7 @@ public class SymbolDescription implements IDescription {
 	public SymbolDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final ISyntacticElement source) {
 		this.facets = source.getFacets();
-		facets.putAsLabel(IKeyword.KEYWORD, keyword);
+		facets.putAsLabel(KEYWORD, keyword);
 		this.keyword = keyword;
 		setSource(source);
 		meta = DescriptionFactory.getProto(keyword);
@@ -130,7 +130,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public String getName() {
-		return facets.getLabel(IKeyword.NAME);
+		return facets.getLabel(NAME);
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public class SymbolDescription implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getWorldSpecies()
 	 */
 	@Override
-	public SpeciesDescription getWorldSpecies() {
+	public TypeDescription getWorldSpecies() {
 		IDescription model = getModelDescription();
 		if ( model == null ) { return null; }
 		return model.getWorldSpecies();

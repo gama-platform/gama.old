@@ -68,7 +68,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
 		ModelDescription md = desc.getModelDescription();
-		SpeciesDescription wd = md.getWorldSpecies();
+		TypeDescription wd = md.getWorldSpecies();
 		SymbolDescription targetedGlobalVar = wd.getVariable(varName);
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = targetedGlobalVar.getType();

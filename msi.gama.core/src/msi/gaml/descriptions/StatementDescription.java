@@ -18,7 +18,6 @@
  */
 package msi.gaml.descriptions;
 
-import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
@@ -90,7 +89,7 @@ public class StatementDescription extends SymbolDescription {
 		args = new HashMap();
 		for ( Iterator<IDescription> it = getChildren().iterator(); it.hasNext(); ) {
 			IDescription c = it.next();
-			if ( c.getKeyword().equals(IKeyword.ARG) ) {
+			if ( c.getKeyword().equals(ARG) ) {
 				args.put(c.getName(), c);
 				it.remove();
 			}
@@ -100,7 +99,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void exploreArgs() {
-		if ( !getKeyword().equals(IKeyword.DO) ) { return; }
+		if ( !getKeyword().equals(DO) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> entry : facets.entrySet() ) {
 			if ( entry == null ) {
 				continue;
@@ -113,15 +112,15 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private IDescription createArg(final String n, final IExpressionDescription v) {
-		Facets f = new Facets(IKeyword.NAME, n);
-		f.put(IKeyword.VALUE, v);
-		IDescription a = DescriptionFactory.create(IKeyword.ARG, this, null, f);
+		Facets f = new Facets(NAME, n);
+		f.put(VALUE, v);
+		IDescription a = DescriptionFactory.create(ARG, this, null, f);
 		return a;
 	}
 
 	private void explodeArgs() {
-		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(IKeyword.WITH), this));
-		facets.remove(IKeyword.WITH);
+		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(WITH), this));
+		facets.remove(WITH);
 	}
 
 	private void addArgs(final Map<String, IExpressionDescription> arguments) {
@@ -135,7 +134,7 @@ public class StatementDescription extends SymbolDescription {
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
 		final IType contentType) {
 		String varName = facets.getLabel(facetName);
-		if ( facetName.equals(IKeyword.VAR) ) {
+		if ( facetName.equals(VAR) ) {
 			// Case of loops
 			return (IVarExpression) addTemp(varName, type, contentType);
 		}
@@ -197,11 +196,11 @@ public class StatementDescription extends SymbolDescription {
 		Set<String> allArgs = args.keySet();
 		for ( IDescription c : args.values() ) {
 			String n = c.getName();
-			if ( !c.getFacets().containsKey(IKeyword.DEFAULT) ) {
+			if ( !c.getFacets().containsKey(DEFAULT) ) {
 				mandatoryArgs.add(n);
 			}
 		}
-		if ( !getKeyword().equals(IKeyword.PRIMITIVE) ) {
+		if ( !getKeyword().equals(PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.containsKey(arg) ) {
 					caller.flagError("Missing argument " + arg + " in call to " + getName() +
@@ -219,14 +218,14 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public void verifyArgs(final String actionName, final Arguments args) {
-		SpeciesDescription declPlace =
-			(SpeciesDescription) getDescriptionDeclaringAction(actionName);
+		TypeDescription declPlace =
+			(TypeDescription) getDescriptionDeclaringAction(actionName);
 		StatementDescription executer = null;
 		if ( declPlace != null ) {
 			executer = declPlace.getAction(actionName);
 		}
 		if ( executer == null ) {
-			flagError("Unknown action " + actionName, IKeyword.ACTION);
+			flagError("Unknown action " + actionName, ACTION);
 			return;
 		}
 		executer.verifyArgs(this, args);
@@ -255,25 +254,25 @@ public class StatementDescription extends SymbolDescription {
 		String s = super.getName();
 		if ( s == null ) {
 			// Special case for aspects
-			if ( getKeyword().equals(IKeyword.ASPECT) ) {
-				s = IKeyword.DEFAULT;
+			if ( getKeyword().equals(ASPECT) ) {
+				s = DEFAULT;
 			} else {
-				if ( getKeyword().equals(IKeyword.REFLEX) ) {
+				if ( getKeyword().equals(REFLEX) ) {
 					flagWarning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
 				}
 				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
-			facets.putAsLabel(IKeyword.NAME, s);
+			facets.putAsLabel(NAME, s);
 		}
 		return s;
 	}
 
 	public IType getReturnType() {
-		return getTypeNamed(facets.getLabel(IKeyword.TYPE));
+		return getTypeNamed(facets.getLabel(TYPE));
 	}
 
 	public IType getReturnContentType() {
-		return getTypeNamed(facets.getLabel(IKeyword.OF));
+		return getTypeNamed(facets.getLabel(OF));
 	}
 
 	@Override
@@ -294,7 +293,7 @@ public class StatementDescription extends SymbolDescription {
 		kw = Character.toUpperCase(kw.charAt(0)) + kw.substring(1);
 		String name = getName();
 		if ( name.contains(INTERNAL) ) {
-			name = facets.getLabel(IKeyword.ACTION);
+			name = facets.getLabel(ACTION);
 			if ( name == null ) {
 				name = "statement";
 			}
@@ -310,8 +309,8 @@ public class StatementDescription extends SymbolDescription {
 	 * @return
 	 */
 	public boolean isAbstract() {
-		return IKeyword.TRUE.equals(facets.getLabel(IKeyword.VIRTUAL));
-		// return !getKeyword().equals(IKeyword.PRIMITIVE) && getChildren().isEmpty();
+		return TRUE.equals(facets.getLabel(VIRTUAL));
+		// return !getKeyword().equals(PRIMITIVE) && getChildren().isEmpty();
 	}
 
 }

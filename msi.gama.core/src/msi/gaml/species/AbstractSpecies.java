@@ -28,6 +28,7 @@ import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.skills.Skill;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
 import msi.gaml.types.*;
@@ -55,8 +56,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		setName(description.getName());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
 		isGraph =
-			AbstractGraphNode.class.isAssignableFrom(((SpeciesDescription) description)
-				.getJavaBase());
+			AbstractGraphNode.class.isAssignableFrom(((TypeDescription) description).getJavaBase());
 	}
 
 	@Override
@@ -231,7 +231,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public ISpecies getParentSpecies() {
-		SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
+		TypeDescription parentSpecDesc = getDescription().getParent();
 		if ( parentSpecDesc == null ) { return null; }
 
 		ISpecies currentMacroSpec = this.getMacroSpecies();
@@ -422,12 +422,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IType getAgentType() {
-		return ((SpeciesDescription) description).getType();
+		return getDescription().getType();
 	}
 
 	@Override
 	public IAgentConstructor getAgentConstructor() {
-		return ((SpeciesDescription) description).getAgentConstructor();
+		return getDescription().getAgentConstructor();
 	}
 
 	// TODO review this

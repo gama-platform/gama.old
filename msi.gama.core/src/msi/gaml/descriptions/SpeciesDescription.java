@@ -23,82 +23,65 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.*;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.IType;
 
-public class SpeciesDescription extends SymbolDescription {
+public class SpeciesDescription extends TypeDescription {
 
-	private Map<String, StatementDescription> behaviors;
-	private Map<String, StatementDescription> aspects;
-	private Map<String, StatementDescription> actions;
-	private Map<String, VariableDescription> variables;
-	protected IList<String> sortedVariableNames = new GamaList();
-	protected final IList<String> updatableVariableNames = new GamaList();
-	protected final Map<Class, ISkill> skills = new HashMap();
-	/**
-	 * The following map contains micro-species explicitly declared inside this species.
-	 */
-	private Map<String, SpeciesDescription> microSpecies;
+	private Map<String, StatementDescription> behaviors, aspects;
 	private List<StatementDescription> inits;
-
-	protected Class javaBase;
-	protected IAgentConstructor agentConstructor;
+	protected final Map<Class, ISkill> skills = new HashMap();
 	protected IArchitecture control;
-	protected int varCount = 0;
+	private Map<String, SpeciesDescription> microSpecies;
 	protected SpeciesDescription macroSpecies;
-	protected SpeciesDescription parentSpecies;
+	protected IAgentConstructor agentConstructor;
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
 		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source) {
-		super(keyword, superDesc, cp, source);
-		setSkills(facets.get(IKeyword.SKILLS), new HashSet());
-		initJavaBase();
+		super(keyword, null, superDesc, cp, source);
+		setSkills(facets.get(SKILLS), new HashSet());
+		copyJavaAdditions();
+		agentConstructor = getDefaultAgentConstructor();
 	}
 
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
-		final IAgentConstructor helper, final Set<String> skills2, final SymbolProto md,
-		final Facets ff) {
-		super(IKeyword.SPECIES, superDesc, IChildrenProvider.NONE, new SyntheticStatement(
-			IKeyword.SPECIES, new Facets(IKeyword.NAME, name)));
-		if ( ff.containsKey(IKeyword.CONTROL) ) {
-			facets.putAsLabel(IKeyword.CONTROL, ff.get(IKeyword.CONTROL).toString());
+		final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
+		super(SPECIES, clazz, superDesc, IChildrenProvider.NONE, new SyntheticStatement(SPECIES,
+			new Facets(NAME, name)));
+		if ( ff.containsKey(CONTROL) ) {
+			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
-		setSkills(ff.get(IKeyword.SKILLS), skills2);
-		initJavaBase(clazz, helper);
+		setSkills(ff.get(SKILLS), skills2);
+		copyJavaAdditions();
+		agentConstructor = helper;
 	}
 
 	@Override
 	public void dispose() {
 		if ( AbstractGamlAdditions.isBuiltIn(getName()) ) { return; }
-		if ( hasBehaviors() ) {
-			getBehaviors().clear();
+		if ( behaviors != null ) {
+			behaviors.clear();
 		}
-		if ( hasAspects() ) {
-			getAspects().clear();
-		}
-		if ( hasActions() ) {
-			getActions().clear();
-		}
-		if ( hasVariables() ) {
-			getVariables().clear();
+		if ( aspects != null ) {
+			aspects.clear();
 		}
 		skills.clear();
 		if ( control != null ) {
 			control.dispose();
 		}
 		macroSpecies = null;
-		parentSpecies = null;
-		if ( hasMicroSpecies() ) {
-			getMicroSpecies().clear();
+
+		if ( microSpecies != null ) {
+			microSpecies.clear();
 		}
-		getInits().clear();
+		if ( inits != null ) {
+			inits.clear();
+		}
 		super.dispose();
 	}
 
@@ -108,15 +91,14 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( desc instanceof SpeciesDescription ) {
 			macroSpecies = (SpeciesDescription) desc;
 		}
-
 	}
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills,
 		final Set<String> builtInSkills) {
 		Set<String> skillNames = new LinkedHashSet();
 		/* We try to add the control architecture if any is defined */
-		if ( facets.containsKey(IKeyword.CONTROL) ) {
-			skillNames.add(facets.getLabel(IKeyword.CONTROL));
+		if ( facets.containsKey(CONTROL) ) {
+			skillNames.add(facets.getLabel(CONTROL));
 		}
 		/* We add the keyword as a possible skill (used for 'grid' species) */
 		skillNames.add(getKeyword());
@@ -140,20 +122,16 @@ public class SpeciesDescription extends SymbolDescription {
 	}
 
 	public String getControlName() {
-		String controlName = facets.getLabel(IKeyword.CONTROL);
+		String controlName = facets.getLabel(CONTROL);
 		// if the "control" is not explicitly declared then inherit it from the parent species.
-		if ( controlName == null && parentSpecies != null ) {
-			controlName = parentSpecies.getControlName();
+		if ( controlName == null && parent != null ) {
+			controlName = getParent().getControlName();
 		}
 		if ( controlName == null ) {
 			// Default value
-			controlName = IKeyword.REFLEX;
+			controlName = REFLEX;
 		}
 		return controlName;
-	}
-
-	protected void createControl() {
-		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 	}
 
 	public ISkill getSkillFor(final Class clazz) {
@@ -186,237 +164,84 @@ public class SpeciesDescription extends SymbolDescription {
 		}
 	}
 
+	public String getParentName() {
+		return facets.getLabel(PARENT);
+	}
+
 	@Override
 	public IDescription addChild(final IDescription child) {
-		if ( child == null ) { return null; }
 		IDescription desc = super.addChild(child);
-		String kw = desc.getKeyword();
-		if ( kw.equals(IKeyword.ACTION) || kw.equals(IKeyword.PRIMITIVE) ) {
-			addAction((StatementDescription) desc);
-		} else if ( kw.equals(IKeyword.ASPECT) ) {
-			addAspect((StatementDescription) desc);
-		} else if ( desc instanceof StatementDescription ) {
-			if ( IKeyword.INIT.equals(kw) ) {
-				addInit((StatementDescription) desc);
+		if ( desc == null ) { return null; }
+		if ( desc instanceof StatementDescription ) {
+			StatementDescription statement = (StatementDescription) desc;
+			String kw = desc.getKeyword();
+			if ( ACTION.equals(kw) || PRIMITIVE.equals(kw) ) {
+				addAction(statement);
+			} else if ( ASPECT.equals(kw) ) {
+				addAspect(statement);
+			} else if ( INIT.equals(kw) ) {
+				addInit(statement);
 			} else {
-				addBehavior((StatementDescription) desc);
+				addBehavior(statement);
 			}
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
 		} else if ( desc instanceof SpeciesDescription ) {
-			getModelDescription().addSpeciesDescription((SpeciesDescription) desc);
+			getModelDescription().addSpeciesDescription((TypeDescription) desc);
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}
 		return desc;
 	}
 
 	private void addInit(final StatementDescription init) {
-		getInits().add(0, init); // Added at the beginning
+		if ( inits == null ) {
+			inits = new ArrayList<StatementDescription>();
+		}
+		inits.add(0, init); // Added at the beginning
 	}
 
 	private void addBehavior(final StatementDescription r) {
 		String behaviorName = r.getName();
-		StatementDescription existing = getBehaviors().get(behaviorName);
+		if ( behaviors == null ) {
+			behaviors = new LinkedHashMap<String, StatementDescription>();
+		}
+		StatementDescription existing = behaviors.get(behaviorName);
 		if ( existing != null ) {
 			if ( existing.getKeyword().equals(r.getKeyword()) ) {
 				duplicateError(r, existing);
 				children.remove(existing);
 			}
-
 		}
-		getBehaviors().put(behaviorName, r);
+		behaviors.put(behaviorName, r);
 	}
 
 	public boolean hasBehavior(final String a) {
-		return getBehaviors().containsKey(a);
-	}
-
-	void duplicateError(final IDescription one, final IDescription two) {
-		String name = one.getFacets().getLabel(IKeyword.NAME);
-		String key = one.getKeyword();
-		String error = key + " " + name + " is declared twice. Only the last will be kept.";
-		one.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, IKeyword.NAME, name);
-		two.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, IKeyword.NAME, name);
+		return behaviors != null && behaviors.containsKey(a);
 	}
 
 	// FAIRE UN FIX POUR CREER AUTOMATIQUEMENT L'ACTION CORRESPONDANTE
 
-	private void inheritAction(final SpeciesDescription parent, final StatementDescription a) {
-		String name = a.getName();
-		if ( !hasAction(name) ) {
-			if ( a.isAbstract() ) {
-				this.flagError("Abstract action '" + name + "', inherited from " +
-					parent.getName() + ", should be redefined.", IGamlIssue.MISSING_ACTION);
-				return;
-			}
-			addChild(a);
-			return;
-		}
-		StatementDescription existing = getAction(name);
-		if ( !existing.getArgNames().containsAll(a.getArgNames()) ) {
-			String error =
-				"The list of arguments is different from that of action " + name + " defined in " +
-					parent.getName() + " and redefined here.";
-			existing.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-			// a.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-			return;
-		}
-	}
-
-	private void addAction(final StatementDescription ce) {
-		String actionName = ce.getName();
-		StatementDescription existing = getAction(actionName);
-		if ( existing != null ) {
-			String previous = existing.getKeyword();
-			if ( previous.equals(IKeyword.PRIMITIVE) && ce.getKeyword().equals(IKeyword.ACTION) &&
-				!existing.isAbstract() ) {
-				ce.flagError("Action " + actionName + " replaces a primitive of the same name.",
-					IGamlIssue.GENERAL);
-			}
-			if ( !ce.getArgNames().containsAll(existing.getArgNames()) ) {
-				String error =
-					"The list of arguments differ in the two implementations of " + actionName;
-				existing.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-				ce.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-			} else {
-				if ( !existing.isAbstract() ) {
-					duplicateError(ce, existing);
-				}
-				children.remove(existing);
-			}
-		}
-		getActions().put(actionName, ce);
-		// Change (june 2012) : removed the necessity to register actions as binary operators. They
-		// are now searched directly in the species description and not in the global registry of
-		// operators.
-		// AbstractGamlAdditions.registerFunction(actionName,
-		// getSpeciesContext().getSpeciesContext()
-		// .getType());
-	}
-
 	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
 		if ( aspectName == null ) {
-			aspectName = IKeyword.DEFAULT;
-			ce.getFacets().putAsLabel(IKeyword.NAME, aspectName);
+			aspectName = DEFAULT;
+			ce.getFacets().putAsLabel(NAME, aspectName);
 		}
-		if ( !aspectName.equals(IKeyword.DEFAULT) && hasAspect(aspectName) ) {
+		if ( !aspectName.equals(DEFAULT) && hasAspect(aspectName) ) {
 			duplicateError(ce, getAspect(aspectName));
 		}
-		getAspects().put(aspectName, ce);
-	}
-
-	public Set<String> getAspectsNames() {
-		return aspects == null ? Collections.EMPTY_SET : getAspects().keySet();
+		if ( aspects == null ) {
+			aspects = new LinkedHashMap<String, StatementDescription>();
+		}
+		aspects.put(aspectName, ce);
 	}
 
 	public StatementDescription getAspect(final String aName) {
-		return aspects == null ? null : getAspects().get(aName);
-	}
-
-	@Override
-	public StatementDescription getAction(final String aName) {
-		return actions == null ? null : getActions().get(aName);
-	}
-
-	@Override
-	public boolean hasAction(final String a) {
-		return actions != null && getActions().containsKey(a);
-	}
-
-	public Set<String> getActionsNames() {
-		return actions == null ? Collections.EMPTY_SET : getActions().keySet();
-	}
-
-	protected void addVariable(final VariableDescription v) {
-		String vName = v.getName();
-
-		if ( hasVar(vName) ) {
-			IDescription builtIn = getVariables().get(vName);
-			if ( !builtIn.isBuiltIn() ) {
-				duplicateError(v, builtIn);
-				getChildren().remove(builtIn);
-			}
-			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(IKeyword.TYPE));
-			IType vType = v.getTypeNamed(v.getFacets().getLabel(IKeyword.TYPE));
-			if ( bType != vType ) {
-				String builtInType = bType.toString();
-				String varType = vType.toString();
-				v.flagError("variable " + vName + " is of type " + builtInType +
-					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
-			}
-			v.copyFrom((VariableDescription) builtIn);
-		}
-		v.setDefinitionOrder(varCount++);
-		getVariables().put(vName, v);
+		return aspects == null ? null : aspects.get(aName);
 	}
 
 	public IArchitecture getControl() {
 		return control;
-	}
-
-	public VariableDescription getVariable(final String name) {
-		return variables == null ? null : getVariables().get(name);
-	}
-
-	@Override
-	public boolean hasVar(final String a) {
-		return variables != null && getVariables().containsKey(a);
-	}
-
-	@Override
-	public IExpression getVarExpr(final String n) {
-		VariableDescription vd = getVariable(n);
-		if ( vd == null ) { return null; }
-		return vd.getVarExpr();
-	}
-
-	public IList<String> getVarNames() {
-		return sortedVariableNames;
-	}
-
-	public List<String> getUpdatableVarNames() {
-		return updatableVariableNames;
-	}
-
-	protected void sortVars() {
-		if ( variables == null ) { return; }
-		// GuiUtils.debug("***** Sorting variables of " + getNameFacetValue());
-		final List<VariableDescription> result = new GamaList();
-		final Collection<VariableDescription> vars = getVariables().values();
-		for ( final VariableDescription var : vars ) {
-			var.usedVariablesIn(getVariables());
-		}
-		for ( final VariableDescription var : vars ) {
-			var.expandDependencies(new GamaList());
-		}
-		for ( final VariableDescription toBePlaced : vars ) {
-			boolean found = false;
-			int i = 0;
-			while (!found && i < result.size()) {
-				final VariableDescription alreadyInPlace = result.get(i);
-				if ( alreadyInPlace.getDependencies().contains(toBePlaced) ) {
-					found = true;
-				} else {
-					i += 1;
-				}
-			}
-			if ( found ) {
-				result.add(i, toBePlaced);
-			} else {
-				result.add(toBePlaced);
-			}
-		}
-
-		sortedVariableNames.clear();
-		for ( int i = 0; i < result.size(); i++ ) {
-			VariableDescription v = result.get(i);
-			String s = v.getName();
-			sortedVariableNames.add(s);
-			if ( v.isUpdatable() ) {
-				updatableVariableNames.add(s);
-			}
-		}
 	}
 
 	/**
@@ -438,7 +263,7 @@ public class SpeciesDescription extends SymbolDescription {
 
 	@Override
 	protected boolean hasAspect(final String a) {
-		return aspects != null && getAspects().containsKey(a);
+		return aspects != null && aspects.containsKey(a);
 	}
 
 	@Override
@@ -451,8 +276,8 @@ public class SpeciesDescription extends SymbolDescription {
 		if ( hasMicroSpecies() ) {
 			retVal.addAll(getMicroSpecies().values());
 		}
-		if ( parentSpecies != null ) {
-			retVal.addAll(parentSpecies.getSelfAndParentMicroSpecies());
+		if ( parent != null ) {
+			retVal.addAll(getParent().getSelfAndParentMicroSpecies());
 		}
 
 		return retVal;
@@ -463,8 +288,7 @@ public class SpeciesDescription extends SymbolDescription {
 			SpeciesDescription retVal = microSpecies.get(name);
 			if ( retVal != null ) { return retVal; }
 		}
-
-		if ( this.parentSpecies != null ) { return parentSpecies.getMicroSpecies(name); }
+		if ( parent != null ) { return getParent().getMicroSpecies(name); }
 		return null;
 	}
 
@@ -473,26 +297,8 @@ public class SpeciesDescription extends SymbolDescription {
 		return "Description of " + getName();
 	}
 
-	public void initJavaBase(final Class clazz, final IAgentConstructor helper) {
-		if ( javaBase != null ) { return; }
-		javaBase = clazz;
-		if ( helper == null ) {
-			flagError("The base class " + javaBase.getName() + " cannot be used as an agent class",
-				IGamlIssue.GENERAL);
-			return;
-		}
-		agentConstructor = helper;
-		final List<IDescription> children =
-			AbstractGamlAdditions.getAllChildrenOf(javaBase, getSkillClasses());
-		for ( IDescription v : children ) {
-			addChild(((SymbolDescription) v).copy(this));
-		}
-
-	}
-
-	public void initJavaBase() {
-		initJavaBase(AbstractGamlAdditions.DEFAULT_AGENT_CLASS,
-			AbstractGamlAdditions.DEFAULT_AGENT_CONSTRUCTOR);
+	public IAgentConstructor getDefaultAgentConstructor() {
+		return AbstractGamlAdditions.DEFAULT_AGENT_CONSTRUCTOR;
 	}
 
 	public IAgentConstructor getAgentConstructor() {
@@ -506,25 +312,23 @@ public class SpeciesDescription extends SymbolDescription {
 		}
 	}
 
+	@Override
 	public Set<Class> getSkillClasses() {
 		return skills.keySet();
-	}
-
-	public Class getJavaBase() {
-		return javaBase;
-	}
-
-	@Override
-	public IType getType() {
-		return getTypeNamed(getName());
 	}
 
 	public SpeciesDescription getMacroSpecies() {
 		return macroSpecies;
 	}
 
-	protected void copyItemsFromParent() {
-		SpeciesDescription parent = getParentSpecies();
+	@Override
+	public SpeciesDescription getParent() {
+		return (SpeciesDescription) super.getParent();
+	}
+
+	@Override
+	protected void inheritFromParent() {
+		SpeciesDescription parent = getParent();
 		if ( parent != null ) {
 			if ( !parent.javaBase.isAssignableFrom(javaBase) ) {
 				if ( javaBase == GamlAgent.class ) { // default base class
@@ -538,78 +342,57 @@ public class SpeciesDescription extends SymbolDescription {
 						IGamlIssue.GENERAL);
 				}
 			}
-			for ( Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
-				if ( !skills.containsKey(entry.getKey()) ) {
-					skills.put(entry.getKey(), entry.getValue());
-				}
-			}
+			inheritSkills(parent);
+			inheritBehaviors(parent);
+			inheritInits(parent);
+			inheritAspects(parent);
+		}
+		super.inheritFromParent();
 
-			// We only copy the behaviors that are not redefined in this species
-			if ( parent.hasBehaviors() ) {
-				for ( final StatementDescription b : parent.getBehaviors().values() ) {
-					if ( !hasBehavior(b.getName()) ) {
-						// Copy done here
-						addChild(b.copy(this));
-					}
-				}
-			}
-			if ( parent.hasInits() ) {
-				for ( final StatementDescription init : parent.getInits() ) {
-					addChild(init.copy(this));
-				}
-			}
-			// We only copy the actions that are not redefined in this species
-			if ( parent.hasActions() ) {
-				for ( final StatementDescription action : parent.getActions().values() ) {
-					inheritAction(parent, action);
-				}
-			}
-			if ( parent.hasAspects() ) {
-				for ( final String aName : parent.getAspects().keySet() ) {
-					// if ( aName.equals(ISymbol.DEFAULT) || !hasAspect(aName) ) {
-					if ( !hasAspect(aName) ) {
-						addChild(parent.getAspects().get(aName).copy(this));
-					}
-				}
-			}
-			if ( parent.hasVariables() ) {
-				// We only copy the variables that are not redefined in this species
-				for ( final VariableDescription v : parent.getVariables().values() ) {
-					if ( !hasVar(v.getName()) ) {
-						addChild(v.copy(this));
-					}
+	}
+
+	private void inheritAspects(final SpeciesDescription parent) {
+		if ( parent.aspects != null ) {
+			for ( final String aName : parent.aspects.keySet() ) {
+				if ( !hasAspect(aName) ) {
+					addChild(parent.getAspect(aName).copy(this));
 				}
 			}
 		}
-		sortVars();
-
 	}
 
-	public boolean isArgOf(final String op, final String arg) {
-		if ( hasAction(op) ) { return getActions().get(op).containsArg(arg); }
-		return false;
+	private void inheritInits(final SpeciesDescription parent) {
+		if ( parent.inits != null ) {
+			for ( final StatementDescription init : parent.inits ) {
+				addChild(init.copy(this));
+			}
+		}
 	}
 
-	/**
-	 * @return
-	 */
-	public String getParentName() {
-		return facets.getLabel(IKeyword.PARENT);
+	private void inheritBehaviors(final SpeciesDescription parent) {
+		// We only copy the behaviors that are not redefined in this species
+		if ( parent.behaviors != null ) {
+			for ( final StatementDescription b : parent.behaviors.values() ) {
+				if ( !hasBehavior(b.getName()) ) {
+					// Copy done here
+					addChild(b.copy(this));
+				}
+			}
+		}
+	}
+
+	private void inheritSkills(final SpeciesDescription parent) {
+		for ( Map.Entry<Class, ISkill> entry : parent.skills.entrySet() ) {
+			if ( !skills.containsKey(entry.getKey()) ) {
+				skills.put(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 
 	public void verifyAndSetParent() {
 		String parentName = getParentName();
 		if ( parentName == null ) { return; }
-		parentSpecies = verifyParent(parentName);
-	}
-
-	/**
-	 * Returns the parent species.
-	 * 
-	 * @return
-	 */
-	public SpeciesDescription getParentSpecies() {
-		return parentSpecies;
+		parent = verifyParent(parentName);
 	}
 
 	/**
@@ -621,13 +404,13 @@ public class SpeciesDescription extends SymbolDescription {
 		SpeciesDescription currentSpeciesDesc = this;
 		while (currentSpeciesDesc != null) {
 			result.add(0, currentSpeciesDesc);
-			currentSpeciesDesc = currentSpeciesDesc.getParentSpecies();
+			currentSpeciesDesc = currentSpeciesDesc.getParent();
 		}
 		return result;
 	}
 
 	public boolean isGrid() {
-		return getKeyword().equals(IKeyword.GRID);
+		return getKeyword().equals(GRID);
 	}
 
 	@Override
@@ -712,8 +495,8 @@ public class SpeciesDescription extends SymbolDescription {
 	 * 
 	 * @param speciesName
 	 */
-	public SpeciesDescription getVisibleSpecies(final String speciesName) {
-		for ( SpeciesDescription visibleSpec : getVisibleSpecies() ) {
+	public TypeDescription getVisibleSpecies(final String speciesName) {
+		for ( TypeDescription visibleSpec : getVisibleSpecies() ) {
 			if ( visibleSpec.getName().equals(speciesName) ) { return visibleSpec; }
 		}
 
@@ -754,15 +537,14 @@ public class SpeciesDescription extends SymbolDescription {
 
 		if ( potentialParent == null ) {
 
-			List<String> availableSpecies = new GamaList<String>();
-			for ( SpeciesDescription p : candidates ) {
-				availableSpecies.add(p.getName());
-			}
-			availableSpecies.remove(availableSpecies.size() - 1);
+			// List<String> availableSpecies = new GamaList<String>();
+			// for ( TypeDescription p : candidates ) {
+			// availableSpecies.add(p.getName());
+			// }
+			// availableSpecies.remove(availableSpecies.size() - 1);
 
-			flagError(parentName + " can't be a parent species of " + this.getName() +
-				" species. Available parent species are: " + availableSpecies,
-				IGamlIssue.WRONG_PARENT, IKeyword.PARENT, availableSpecies.toArray(new String[] {}));
+			flagError(parentName + " can't be a parent species of " + this.getName() + " species.",
+				IGamlIssue.WRONG_PARENT, PARENT);
 
 			return null;
 		}
@@ -777,13 +559,14 @@ public class SpeciesDescription extends SymbolDescription {
 			return null;
 		}
 
-		if ( this.getAllMicroSpecies().contains(parentsOfParent) ) {
-			flagError(
-				this.getName() + " species can't be a sub-species of " + potentialParent.getName() +
-					" species because a species can't be sub-species of its direct or indirect micro-species.",
-				IGamlIssue.GENERAL);
-			return null;
-		}
+		// TODO Commented because the test does not make sense
+		// if ( this.getAllMicroSpecies().contains(parentsOfParent) ) {
+		// flagError(
+		// this.getName() + " species can't be a sub-species of " + potentialParent.getName() +
+		// " species because a species can't be sub-species of its direct or indirect micro-species.",
+		// IGamlIssue.GENERAL);
+		// return null;
+		// }
 
 		return potentialParent;
 	}
@@ -797,100 +580,15 @@ public class SpeciesDescription extends SymbolDescription {
 	 */
 	public void finalizeDescription() {
 		if ( isMirror() ) {
-			addChild(DescriptionFactory
-				.create(IKeyword.AGENT, this, IKeyword.NAME, IKeyword.TARGET));
+			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
-		copyItemsFromParent();
-		createControl();
+		inheritFromParent();
+		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species
 		for ( SpeciesDescription microSpec : sortedMicroSpecies() ) {
 			microSpec.finalizeDescription();
 		}
-	}
-
-	/**
-	 * Lazy initialization
-	 * 
-	 * @return the behaviors declared in this species
-	 */
-	boolean hasBehaviors() {
-		return behaviors != null;
-	}
-
-	protected Map<String, StatementDescription> getBehaviors() {
-		if ( behaviors == null ) {
-			behaviors = new LinkedHashMap<String, StatementDescription>();
-		}
-		return behaviors;
-	}
-
-	/**
-	 * Lazy initialization
-	 * 
-	 * @return the aspects declared in this species
-	 */
-
-	boolean hasAspects() {
-		return aspects != null;
-	}
-
-	protected Map<String, StatementDescription> getAspects() {
-		if ( aspects == null ) {
-			aspects = new LinkedHashMap<String, StatementDescription>();
-		}
-		return aspects;
-	}
-
-	/**
-	 * Lazy initialization
-	 * 
-	 * @return the actions declared in this species
-	 */
-
-	boolean hasActions() {
-		return actions != null;
-	}
-
-	public Map<String, StatementDescription> getActions() {
-		if ( actions == null ) {
-			actions = new LinkedHashMap<String, StatementDescription>();
-		}
-		return actions;
-	}
-
-	/**
-	 * Lazy initialization
-	 * 
-	 * @return the variables declared in this species
-	 */
-
-	boolean hasVariables() {
-		return actions != null;
-	}
-
-	public Map<String, VariableDescription> getVariables() {
-		if ( variables == null ) {
-			variables = new LinkedHashMap<String, VariableDescription>();
-		}
-		return variables;
-	}
-
-	/**
-	 * Lazy initialization
-	 * 
-	 * @return the inits declared in this species
-	 */
-
-	boolean hasInits() {
-		return inits != null;
-	}
-
-	protected List<StatementDescription> getInits() {
-		if ( inits == null ) {
-			inits = new ArrayList<StatementDescription>();
-		}
-		return inits;
 	}
 
 	boolean hasMicroSpecies() {
@@ -904,15 +602,8 @@ public class SpeciesDescription extends SymbolDescription {
 		return microSpecies;
 	}
 
-	public boolean isAbstract() {
-		for ( StatementDescription a : getActions().values() ) {
-			if ( a.isAbstract() ) { return true; }
-		}
-		return false;
-	}
-
 	public boolean isMirror() {
-		return facets.containsKey(IKeyword.MIRRORS);
+		return facets.containsKey(MIRRORS);
 	}
 
 	public Boolean implementsSkill(final String skill) {

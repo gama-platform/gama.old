@@ -172,7 +172,7 @@ public class DescriptionValidator {
 		String microSpeciesName = cd.getFacets().getLabel(facetContainingSpecies);
 		if ( microSpeciesName != null ) {
 			SpeciesDescription macroSpecies = cd.getSpeciesContext();
-			SpeciesDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
+			TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 			if ( microSpecies == null ) {
 				cd.flagError(macroSpecies.getName() + " species doesn't contain " +
 					microSpeciesName + " as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES,

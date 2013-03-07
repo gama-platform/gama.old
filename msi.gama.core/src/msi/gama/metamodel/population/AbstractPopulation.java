@@ -31,7 +31,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.IAgentConstructor;
-import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -64,7 +64,7 @@ public abstract class AbstractPopulation implements IPopulation {
 	public AbstractPopulation(final IAgent host, final ISpecies species) {
 		this.host = host;
 		this.species = species;
-		SpeciesDescription ecd = (SpeciesDescription) species.getDescription();
+		TypeDescription ecd = (TypeDescription) species.getDescription();
 		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
 		List<String> updatableVarNames = ecd.getUpdatableVarNames();
 		int updatableVarsSize = updatableVarNames.size();

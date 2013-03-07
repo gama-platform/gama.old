@@ -38,7 +38,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {
-		super(IType.AGENT_STR, IType.AGENT, IGamlAgent.class, null);
+		super(IType.AGENT_STR, IType.AGENT, IGamlAgent.class);
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
@@ -32,7 +33,7 @@ import msi.gaml.expressions.*;
  * @todo Description
  * 
  */
-public interface IType<Inner> extends Comparable<IType> {
+public interface IType<Support>  {
 
 	/** Constant fields to indicate the types of facets */
 	public static final String LABEL = IFacetType.LABEL;
@@ -101,13 +102,13 @@ public interface IType<Inner> extends Comparable<IType> {
 	public final static short AVAILABLE_TYPES = 50;
 	public final static short SPECIES_TYPES = 100;
 
-	public Inner cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
 
 	public short id();
 
-	public Class toClass();
+	public Class<Support> toClass();
 
-	public Inner getDefault();
+	public Support getDefault();
 
 	public int getVarKind();
 
@@ -116,6 +117,8 @@ public interface IType<Inner> extends Comparable<IType> {
 	public Map<String, ? extends IGamlDescription> getFieldDescriptions(ModelDescription model);
 
 	public boolean isSpeciesType();
+
+	public boolean isSkillType();
 
 	public abstract IType defaultContentType();
 
@@ -129,11 +132,11 @@ public interface IType<Inner> extends Comparable<IType> {
 
 	public IType getParent();
 
-	public void addChild(IType p);
+	public void addSubType(IType p);
 
-	public Collection<IType> getChildren();
+	public Collection<IType> getSubTypes();
 
-	public void clearChildren();
+	public void clearSubTypes();
 
 	IType coerce(IType expr, IDescription context);
 

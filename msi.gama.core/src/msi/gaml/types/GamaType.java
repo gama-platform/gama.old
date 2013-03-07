@@ -21,6 +21,7 @@ package msi.gaml.types;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
@@ -37,7 +38,8 @@ import msi.gaml.expressions.*;
  * 
  */
 
-public abstract class GamaType<Inner> implements IType<Inner> {
+public abstract class GamaType<Support>  implements IType<Support> {
+
 
 	protected short id;
 	protected String name;
@@ -47,13 +49,6 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	protected Map<String, IType> children = new HashMap();
 	protected boolean inited;
 	protected int varKind;
-
-	@Override
-	public int compareTo(final IType o) {
-		if ( isSuperTypeOf(o) ) { return -1; }
-		// if ( isSubTypeOf(o) ) { return 1; }
-		return 1;
-	}
 
 	@Override
 	public void init(final int varKind, final short id, final String name, final Class ... supports) {
@@ -73,25 +68,25 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 		inited = true;
 		parent = p;
 		if ( p != null ) {
-			p.addChild(this);
+			p.addSubType(this);
 		}
 	}
 
 	@Override
-	public void addChild(final IType p) {
+	public void addSubType(final IType p) {
 		children.put(p.toString(), p);
 	}
 
 	@Override
-	public Collection<IType> getChildren() {
+	public Collection<IType> getSubTypes() {
 		return children.values();
 	}
 
 	@Override
-	public void clearChildren() {
+	public void clearSubTypes() {
 		// parent = null;
 		for ( IType t : children.values() ) {
-			t.clearChildren();
+			t.clearSubTypes();
 		}
 		children.clear();
 	}
@@ -117,7 +112,7 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public abstract Inner cast(IScope scope, final Object obj, final Object param)
+	public abstract Support cast(IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException;
 
 	@Override
@@ -136,10 +131,15 @@ public abstract class GamaType<Inner> implements IType<Inner> {
 	}
 
 	@Override
-	public abstract Inner getDefault();
+	public abstract Support getDefault();
 
 	@Override
 	public boolean isSpeciesType() {
+		return false;
+	}
+
+	@Override
+	public boolean isSkillType() {
 		return false;
 	}
 
