@@ -16,26 +16,8 @@
  */
 package msi.gaml.extensions.fipa;
 
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.ACCEPT_PROPOSAL;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.AGREE;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.CANCEL;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.CFP;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.FAILURE;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.INFORM;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.PROPOSE;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.QUERY;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.REFUSE;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.REJECT_PROPOSAL;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.REQUEST;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.REQUEST_WHEN;
-import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.SUBSCRIBE;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import static msi.gaml.extensions.fipa.FIPAConstants.Performatives.*;
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -44,15 +26,13 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.ExecutionStatus;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 /**
  * Agents capable of communicate are equipped with this skill. The CommunicatingSkill supplies the
@@ -77,7 +57,7 @@ import msi.gaml.types.Types;
 	@var(name = "requestWhens", type = IType.LIST_STR, of = MessageType.MESSAGE_STR),
 	@var(name = "subscribes", type = IType.LIST_STR, of = MessageType.MESSAGE_STR) })
 public class CommunicatingSkill extends Skill {
-	
+
 	/** The protocol indexes. */
 	private static Map<String, Integer> protocolIndexes = new HashMap();
 
@@ -109,20 +89,18 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "send",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = IType.STRING_STR, optional = false, doc = @doc("to be described")),
-			@arg(name = "receivers", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
-			@arg(name = "performative", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
-			@arg(name = "protocol", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
-			@arg(name = "conversation", type = ConversationType.CONVERSATION_STR, optional = true, doc = @doc("to be described"))			
-		}
-	)
+	@action(name = "send", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = IType.STRING_STR, optional = false, doc = @doc("to be described")),
+		@arg(name = "receivers", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be described")),
+		@arg(name = "performative", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
+		@arg(name = "protocol", type = IType.STRING_STR, optional = true, doc = @doc("to be described")),
+		@arg(name = "conversation", type = ConversationType.CONVERSATION_STR, optional = true, doc = @doc("to be described")) })
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final Message m =
 			(Message) Types.get(MessageType.MESSAGE_STR).cast(scope,
-				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null);
+				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()),
+				null);
 		Message message;
 		message = m == null ? new Message() : m;
 
@@ -222,13 +200,10 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "reply",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "performative", type = IType.STRING_STR, optional = false, doc = @doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = true, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "reply", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "performative", type = IType.STRING_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = true, doc = @doc("to be documented")) })
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -254,12 +229,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "accept_proposal",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "accept_proposal", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primAcceptProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -278,12 +250,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "agree",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "agree", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -303,12 +272,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "cancel",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "cancel", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primCancel(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -328,12 +294,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "cfp",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "cfp", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primCfp(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -353,12 +316,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "end",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "end", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primEnd(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -379,12 +339,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "failure",
-			args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "failure", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primFailure(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -404,12 +361,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "inform",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "inform", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primInform(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -429,12 +383,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "propose",
-			args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "propose", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primPropose(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -454,12 +405,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "query",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "query", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primQuery(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -479,12 +427,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "refuse",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "refuse", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primRefuse(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -504,12 +449,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "reject_proposal",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "reject_proposal", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primRejectProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -529,12 +471,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "request",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "request", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primRequest(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -554,12 +493,9 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	@action(name = "subscribe",
-		args = {
-			@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc=@doc("to be documented")),
-			@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented"))
-		}
-	)
+	@action(name = "subscribe", args = {
+		@arg(name = MessageType.MESSAGE_STR, type = MessageType.MESSAGE_STR, optional = false, doc = @doc("to be documented")),
+		@arg(name = "content", type = IType.LIST_STR, optional = false, doc = @doc("to be documented")) })
 	public Object primSubscribe(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
@@ -579,17 +515,17 @@ public class CommunicatingSkill extends Skill {
 	@getter("messages")
 	public IList<Message> getMessages(final IAgent agent) {
 		IList<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
-		
+
 		List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
 		result.addAll(received);
 		for ( Iterator<Message> it = result.iterator(); it.hasNext(); ) {
 			Message m = it.next();
-//			if ( !m.isUnread() || m.getConversation().isEnded() ) {
+			// if ( !m.isUnread() || m.getConversation().isEnded() ) {
 			if ( !m.isUnread() ) {
 				it.remove();
 			}
 		}
-		
+
 		return result;
 	}
 
