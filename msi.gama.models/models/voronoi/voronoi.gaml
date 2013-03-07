@@ -14,10 +14,10 @@ environment width: environment_width height: environment_height  {
 	grid cell width: environment_width height: environment_height neighbours: 8  {
 		rgb color <- rgb('white') update: (center closest_to (self)).color;
 	}
-}
+} 
 
 	
-species center skills: [moving] {
+species center skills: [moving] { 
 	rgb color <- rgb([rnd (255),rnd (255),rnd (255)]);
 	reflex wander {
 		do wander (amplitude: 90);
@@ -31,10 +31,8 @@ experiment voronoi type: gui{
 	parameter 'Height of the environment:' var: environment_height;
 	output {
 		display Voronoi {
-			graphics toto {
-				draw circle(1);
-				loop times: 10 { draw square(10) at_location {rnd(20), rnd(20)};}
-			}
+			grid cell;
+			species center;
 		}
 	}	
 }
