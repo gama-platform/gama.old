@@ -13,7 +13,6 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.ModelStructure;
@@ -131,8 +130,8 @@ public class GamlBuilder {
 			URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 			if ( !ir.getErrors().isEmpty() ) {
-				resource.add(new GamlCompilationError("Imported file " + ir.getURI().lastSegment() +
-					" has errors. Fix them first.", new SyntacticStatement(INCLUDE, imp), true));
+				resource.error("Imported file " + ir.getURI().lastSegment() +
+					" has errors. Fix them first.", new SyntacticStatement(INCLUDE, imp), true);
 			}
 			imports.add(ir);
 		}

@@ -10,7 +10,6 @@ import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.linking.GamlDiagnostic;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.ISymbolKind;
@@ -20,9 +19,7 @@ import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import com.google.inject.Inject;
 
 /**
@@ -38,23 +35,15 @@ public class GamlResource extends LazyLinkingResource {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES,
 		ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT);
 
-	private final int count;
 	private ISyntacticElement syntacticContents;
-
 	private IGamlBuilderListener listener;
 
 	@Inject
 	GamlJavaValidator validator;
 
-	public GamlResource() {
-
-		// GuiUtils.debug("Instantiating a new resource");
-		count = counter++;
-	}
-
 	@Override
 	public String toString() {
-		return "resource" + count + "[" + getURI() + "]";
+		return "resource" + "[" + getURI() + "]";
 	}
 
 	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
@@ -88,19 +77,8 @@ public class GamlResource extends LazyLinkingResource {
 		return listener;
 	}
 
-	public void error(final String message, final EObject object) {
-		if ( object == null ) { throw new NullPointerException(
-			"A parser error has been emitted on a null EObject. Please debug to see the cause."); }
-		Resource r = object.eResource();
-		if ( r == null ) { throw new NullPointerException(
-			"A parser error has been emitted on an EObject with a null resource. Please debug to see the cause."); }
-		if ( object.eResource() != this && r instanceof GamlResource ) {
-			// FIXME Use an UnitOfWork here to avoid thread related issues ?
-			((GamlResource) r).error(message, object);
-			return;
-		}
-		getErrors().add(
-			new GamlDiagnostic("", new String[0], message, NodeModelUtils.getNode(object)));
+	public void error(final String message, final ISyntacticElement elt, final boolean warning) {
+		validator.add(new GamlCompilationError(message, elt, warning));
 	}
 
 	@Override
@@ -114,10 +92,6 @@ public class GamlResource extends LazyLinkingResource {
 			}
 		}
 		super.unload(oldRootObject);
-	}
-
-	public void add(final GamlCompilationError e) {
-		validator.add(e);
 	}
 
 	public ISyntacticElement getSyntacticContents() {
@@ -157,9 +131,8 @@ public class GamlResource extends LazyLinkingResource {
 	private void addFacet(final EObject stm, final ISyntacticElement e, final String key,
 		final IExpressionDescription expr) {
 		if ( e.getFacet(key) != null ) {
-			((GamlResource) stm.eResource()).add(new GamlCompilationError(
-				"Duplicate definition of facet " + key + ". Only the last one will be considered",
-				e, true));
+			error("Double definition of facet " + key + ". Only the last one will be considered",
+				e, true);
 		}
 		e.setFacet(key, expr);
 	}
@@ -167,14 +140,12 @@ public class GamlResource extends LazyLinkingResource {
 	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
 		// If the initial statement is null, we return null
 		if ( stm == null ) { throw new NullPointerException(
-			"The converter is asked to convert a null statement. Please debug to understand the cause."); }
+			"Trying to convert a null statement. Please debug to understand the cause."); }
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) {
-			{
-				throw new NullPointerException(
-					"The converter is asked to convert a statement with a null keyword. Please debug to understand the cause.");
-			}
+			throw new NullPointerException(
+				"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
 		} else {
 			keyword = convertKeyword(keyword, upper);
 		}
@@ -198,7 +169,7 @@ public class GamlResource extends LazyLinkingResource {
 			addFacet(stm, elt, TO, convExpr(expr));
 			addFacet(stm, elt, ITEM, convExpr(EGaml.getValueOf(stm)));
 			keyword = ADD;
-		} else if ( keyword.equals("-=") || keyword.equals("<<") || keyword.equals("--") ) {
+		} else if ( keyword.equals("-=") || keyword.equals(">>") || keyword.equals("--") ) {
 			// Translation of "container >> item" or "container -- item" to
 			// "remove item: item from: container"
 			elt.setKeyword(REMOVE);
@@ -246,13 +217,13 @@ public class GamlResource extends LazyLinkingResource {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
-				addFacet(stm, elt, TYPE, convExpr(EGaml.createTerminal(keyword)));
+				addFacet(stm, elt, TYPE, new StringBasedExpressionDescription(keyword));
 				keyword = LET;
 			} else if ( stm.getBlock() != null && EGaml.getFunctionOf(stm) == null ) {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
 				// "action ID1 type: type1 { arg ID2 type: type2; arg ID3 type: type3; ...}"
 				elt.setKeyword(ACTION);
-				addFacet(stm, elt, TYPE, convExpr(EGaml.createTerminal(keyword)));
+				addFacet(stm, elt, TYPE, new StringBasedExpressionDescription(keyword));
 				keyword = ACTION;
 			}
 		}
@@ -266,7 +237,7 @@ public class GamlResource extends LazyLinkingResource {
 		if ( of != null ) {
 			String type = of.getType();
 			if ( type != null ) {
-				addFacet(stm, elt, OF, convExpr(EGaml.createTerminal(type)));
+				addFacet(stm, elt, OF, new StringBasedExpressionDescription(type));
 			}
 		}
 
@@ -299,7 +270,7 @@ public class GamlResource extends LazyLinkingResource {
 		// We modify the names of experiments so as not to confuse them with species
 		if ( keyword.equals(EXPERIMENT) ) {
 			String name = elt.getLabel(NAME);
-			elt.setFacet(NAME, convExpr(EGaml.createTerminal("Experiment " + name)));
+			elt.setFacet(NAME, new LabelExpressionDescription("Experiment " + name));
 		}
 
 		// We modify the "var", "const" and "experiment" declarations in order to replace the
@@ -307,16 +278,15 @@ public class GamlResource extends LazyLinkingResource {
 		if ( keyword.equals(VAR) || keyword.equals(CONST) || keyword.equals(EXPERIMENT) ) {
 			String type = elt.getLabel(TYPE);
 			if ( type == null ) {
-				((GamlResource) stm.eResource()).add(new GamlCompilationError(
-					"Facet 'type' is missing", elt));
+				error("Facet 'type' is missing", elt, false);
+				return elt;
 			} else {
 				elt.setKeyword(type);
 			}
 			if ( keyword.equals(CONST) ) {
 				String constant = elt.getLabel(CONST);
 				if ( constant != null && constant.equals(FALSE) ) {
-					((GamlResource) stm.eResource()).add(new GamlCompilationError(
-						"Is this variable constant or not ?", elt, true));
+					error("Is this variable constant or not ?", elt, true);
 				}
 				elt.setFacet(CONST, convExpr(EGaml.createTerminal(true)));
 			}
@@ -372,12 +342,10 @@ public class GamlResource extends LazyLinkingResource {
 				String type = elt.getLabel(TYPE);
 				if ( type != null ) {
 					if ( type.equals(keyword) ) {
-						((GamlResource) stm.eResource()).add(new GamlCompilationError(
-							"Duplicated declaration of type", elt, true));
+						error("Duplicate declaration of type", elt, true);
 					} else {
-						((GamlResource) stm.eResource()).add(new GamlCompilationError(
-							"Conflicting declaration of type (" + type + " and " + keyword +
-								"), only the last one will be considered", elt, true));
+						error("Conflicting declaration of type (" + type + " and " + keyword +
+							"), only the last one will be considered", elt, true);
 					}
 				}
 			}
@@ -396,7 +364,8 @@ public class GamlResource extends LazyLinkingResource {
 			} else if ( fname.equals(TYPE) ) {
 				// We convert type: ss<tt> to type: ss of: tt
 				if ( f.getOf() != null ) {
-					addFacet(stm, elt, OF, convExpr(EGaml.createTerminal(f.getOf().getType())));
+					addFacet(stm, elt, OF,
+						new StringBasedExpressionDescription(f.getOf().getType()));
 				}
 			}
 			// We compute (and convert) the expression attached to the facet
@@ -413,10 +382,11 @@ public class GamlResource extends LazyLinkingResource {
 		if ( args != null ) {
 			for ( ArgumentDefinition def : args.getArgs() ) {
 				ISyntacticElement arg = new SyntacticStatement(ARG, def);
-				addFacet(def, arg, NAME, convExpr(EGaml.createTerminal(def.getName())));
-				addFacet(def, arg, TYPE, convExpr(EGaml.createTerminal(def.getType())));
+				addFacet(def, arg, NAME, new StringBasedExpressionDescription(def.getName()));
+				addFacet(def, arg, TYPE, new StringBasedExpressionDescription(def.getType()));
 				if ( def.getOf() != null ) {
-					addFacet(stm, elt, OF, convExpr(EGaml.createTerminal(def.getOf().getType())));
+					addFacet(stm, elt, OF, new StringBasedExpressionDescription(def.getOf()
+						.getType()));
 				}
 				if ( def.getDefault() != null ) {
 					addFacet(def, arg, DEFAULT, convExpr(def.getDefault()));
@@ -427,7 +397,6 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	private final Set<String> varDependenciesOf(final Statement s) {
-		// ExpressionList list = EGaml.getFactory().createExpressionList();
 		Set<String> list = new HashSet();
 		for ( Facet facet : EGaml.getFacetsOf(s) ) {
 			Expression expr = facet.getExpr();
@@ -441,35 +410,12 @@ public class GamlResource extends LazyLinkingResource {
 			}
 		}
 		if ( list.isEmpty() ) { return null; }
-		// Array array = EGaml.getFactory().createArray();
-		// array.setExprs(list);
 		return list;
 	}
-
-	// private final Array varDependenciesOf(final Statement s) {
-	// ExpressionList list = EGaml.getFactory().createExpressionList();
-	// for ( Facet facet : EGaml.getFacetsOf(s) ) {
-	// Expression expr = facet.getExpr();
-	// if ( expr != null ) {
-	// for ( TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext(); ) {
-	// EObject obj = tree.next();
-	// if ( obj instanceof VariableRef ) {
-	// list.getExprs().add(
-	// EGaml.createTerminal(EGaml.getKey.caseVariableRef((VariableRef) obj)));
-	// }
-	// }
-	// }
-	// }
-	// if ( list.getExprs().isEmpty() ) { return null; }
-	// Array array = EGaml.getFactory().createArray();
-	// array.setExprs(list);
-	// return array;
-	// }
 
 	private final void convElse(final Statement stm, final ISyntacticElement elt) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
-			// EObject elseBlock = ((IfStatement) stm).getElse();
 			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
 				elseElt.addChild(convStatement(IF, (Statement) elseBlock));
