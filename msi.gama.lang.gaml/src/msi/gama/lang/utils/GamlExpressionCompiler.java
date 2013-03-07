@@ -149,7 +149,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		// we verify and compile apart the calls to actions as operators
-		SpeciesDescription sd = getContext().getSpeciesDescription(left.getType().getSpeciesName());
+		TypeDescription sd = getContext().getSpeciesDescription(left.getType().getSpeciesName());
 		if ( sd != null ) {
 			StatementDescription cd = sd.getAction(op);
 			if ( cd != null ) {
@@ -188,7 +188,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return binary(op, left, right);
 	}
 
-	private SpeciesDescription getSpeciesContext(final String e) {
+	private TypeDescription getSpeciesContext(final String e) {
 		return getContext().getSpeciesDescription(e);
 	}
 
@@ -209,7 +209,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		IExpression target = compile(leftExpr);
 		if ( target == null ) { return null; }
 		IType type = target.getType();
-		SpeciesDescription desc = getSpeciesContext(type.getSpeciesName());
+		TypeDescription desc = getSpeciesContext(type.getSpeciesName());
 		if ( desc == null ) {
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) {
