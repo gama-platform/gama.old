@@ -281,7 +281,7 @@ default-charset="UTF-8">
         point="org.eclipse.ui.views">
      <view
            allowMultiple="false"
-           class="org.eclipse.search2.internal.ui.SearchView"
+           class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.search2.internal.ui.SearchView"
            icon="icons/_inspect.png"
            id="org.eclipse.search.ui.views.SearchView"
            name="Search Results"
@@ -327,5 +327,25 @@ default-charset="UTF-8">
         </menu>
      </menuContribution>
   </extension>
+    <extension point="org.eclipse.ui.decorators"> 
+           <decorator
+                 adaptable="true"
+                 class="msi.gama.lang.gaml.ui.decorators.GamlDecorator"
+                 id="msi.gama.light.decorator"
+                 label="Gaml Errors"
+                 lightweight="true"
+                 location="TOP_LEFT"
+                 state="true">
+          <description>
+             Aggregates errors in resources to folders and projects.
+          </description>
+          <enablement>
+             <objectClass
+                   name="org.eclipse.core.resources.IResource">
+             </objectClass>
+          </enablement>
+       </decorator>
+	</extension>
+
 
 </plugin>
