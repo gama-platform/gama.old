@@ -899,7 +899,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/project_nature.png"
+            icon="icons/gama_project.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
