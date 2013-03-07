@@ -6,13 +6,13 @@ global    {
 	int ants_number <- 50 min : 1 parameter : 'Number of ants:' category : 'Environment and Population';   
 	int grid_frequency <- 1 min : 1 max : 100 parameter : 'Grid updates itself every:' category : 'Environment and Population'; 
 	int number_of_food_places <- 5 min : 1 parameter : 'Number of food depots:' category : 'Environment and Population';  
-	float grid_transparency <- 1.0;  
+	float grid_transparency <- 1.0;   
 	const ant_shape_empty type : string <- '../icons/ant.png';   
 	const ant_shape_full type : string <- '../icons/full_ant.png';
 	const center type : point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };     
 	var food_gathered type : int <- 0; 
 	var food_placed type : int <- 0;
-	const background type : rgb <- rgb ( #999999 );  
+	const background type : rgb <- rgb( #999999 );  
 	const food_color type : rgb <- rgb ( #312200 ); 
 	const nest_color type : rgb <- rgb ( #000000 );
 	init {  
@@ -21,7 +21,7 @@ global    {
 			list<ant_grid> food_places <- ( ant_grid where ( ( each distance_to loc ) < 5 ) );
 			ask food_places {  
 				if food = 0 {     
-					food <- 5 ;      
+					food <- 5 ;                
 					food_placed <- food_placed + 5 ;
 					color <- food_color ;
 				}  
@@ -31,6 +31,7 @@ global    {
 
 		create ant number: ants_number with: (location:center, name:'ant');  
 	}
+
 }
 environment width : gridsize height : gridsize { 
 	grid ant_grid width : gridsize height : gridsize neighbours : 8 torus : false frequency : grid_frequency { 
@@ -44,21 +45,25 @@ environment width : gridsize height : gridsize {
 	}
 }
 entities {
+	
 	species ant skills : [moving]  control : fsm { 
 		float speed <- float ( 1 );
 		rgb color <- rgb ( 'red' ); 
 		bool has_food <- false;
 		signal road value : has_food ? 240 : 0 decay : evaporation_rate proportion : diffusion_rate environment : ant_grid;
-		action pick {
+
+
+		action pick {	
 			has_food <- true ;
 			ant_grid place <- ant_grid ( location );
 			place . food <- place . food - 1 ; 
 		}
 		action drop { 
 			food_gathered <- food_gathered + 1 ;
-			has_food <- false ;  
+			has_food <- false ;   
 			heading <- heading - 180 ;
 		}
+		
 		point choose_best_place {
 			container list_places <- (ant_grid ( location )).neighbours;
 			if ( list_places count ( each . food > 0 ) ) > 0 {  
@@ -68,7 +73,7 @@ entities {
 				return point ( last ( list_places ) ) ;
 			}  
 		}
-		reflex drop when : has_food and ( ant_grid ( location ) ) . is_nest {
+		reflex drop when : has_food and  ( ant_grid ( location ) ) . is_nest {
 			do drop;
 		}
 		reflex pick when : ! has_food and ( ant_grid ( location ) ) . food > 0 {
@@ -85,6 +90,7 @@ entities {
 			do goto (target: center);
 			transition to : wandering when : ! has_food;
 		}
+
 		state followingRoad {
 			do choose_best_place returns: next_place;
 			float pr <-  ( ant_grid ( location ) ) . road;
@@ -111,8 +117,22 @@ experiment Complete type : gui {
 	parameter name: 'Number:' var : ants_number init : 100 unit : 'ants' category: 'Environment and Population'; 
 	parameter name: 'Grid dimension:' var : gridsize init : 100 unit : '(number of rows and columns)' category : 'Environment and Population'; 
 	parameter name: 'Number of food depots:' var : number_of_food_places init : 5 min : 1 category : 'Environment and Population';
+	int a <- 1000;
+	
+	init {
+		write "Experimentator agent running " + self; 
+	}
+	
+	reflex to {
+		write "Experimentator at cycle " + cycle;
+	}
+	
+	
+	
+
+	
 	output { 
-		display Ants background : rgb ( 'white' ) refresh_every : 1{      
+		display Ants background : rgb ( 'white' ) refresh_every : 1{  
 			image name: 'Background' file : '../images/soil.jpg' position : { 0.05 ,0.05 } size : { 0.9 , 0.9 };
 			agents ant_grid2 transparency : 0.5 position : { 0.05 , 0.05 } size : { 0.9 , 0.9 } value : ant_grid as list where ( ( each . food > 0 ) or ( each . road > 0 ) or ( each . is_nest ) );
 			species ant position : { 0.05 , 0.05 } size : { 0.9 , 0.9 } aspect : icon;
@@ -122,11 +142,10 @@ experiment Complete type : gui {
 			each . has_food ) ) + int ( ant as list count ( each . state =    
 			'followingRoad' ) ) ) position : { 0.5 , 0.03 } color : rgb ( 'black' ) size                
 			: { 1 , 0.02 };  
-			 
-			
 		}  
 	} 
 } 
+
 experiment Batch type : batch repeat : 2 keep_seed : true until : (food_gathered = food_placed ) or ( time > 400 ) {
 	parameter name: 'Size of the grid:' var : gridsize init : 75 unit :'width and height';
 	parameter name: 'Number:' var : ants_number init : 200 unit : 'ants';
