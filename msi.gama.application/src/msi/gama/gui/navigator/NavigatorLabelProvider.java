@@ -57,13 +57,13 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 		Image image = null;
 
 		if ( element instanceof VirtualSharedModelsFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_library.png");
+			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_library.png");
 			image = desc.createImage();
 		} else if ( element instanceof UserProjectsFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_workspace.png");
+			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_workspace.png");
 			image = desc.createImage();
 		} else if ( element instanceof ModelsLibraryFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("icons/folder_samples.png");
+			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_samples.png");
 			image = desc.createImage();
 		} else if ( element instanceof FileBean ) {
 			if ( ((FileBean) element).hasChildren() ) {
