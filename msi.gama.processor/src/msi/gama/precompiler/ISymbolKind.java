@@ -44,6 +44,8 @@ public interface ISymbolKind {
 
 	public static final int SPECIES = 0;
 
+	public static final int SKILL = 7;
+
 	public static final int MODEL = 1;
 
 	public static final int SINGLE_STATEMENT = 2;
