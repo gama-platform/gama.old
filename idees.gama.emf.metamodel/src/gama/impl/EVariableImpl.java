@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link gama.impl.EVariableImpl#getMax <em>Max</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getUpdate <em>Update</em>}</li>
  *   <li>{@link gama.impl.EVariableImpl#getFunction <em>Function</em>}</li>
+ *   <li>{@link gama.impl.EVariableImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -154,6 +155,26 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * @ordered
 	 */
 	protected String function = FUNCTION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected String type = TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -305,6 +326,27 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setType(String newType) {
+		String oldType = type;
+		type = newType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EVARIABLE__TYPE, oldType, type));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -320,6 +362,8 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return getUpdate();
 			case GamaPackage.EVARIABLE__FUNCTION:
 				return getFunction();
+			case GamaPackage.EVARIABLE__TYPE:
+				return getType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -349,6 +393,9 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return;
 			case GamaPackage.EVARIABLE__FUNCTION:
 				setFunction((String)newValue);
+				return;
+			case GamaPackage.EVARIABLE__TYPE:
+				setType((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -380,6 +427,9 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 			case GamaPackage.EVARIABLE__FUNCTION:
 				setFunction(FUNCTION_EDEFAULT);
 				return;
+			case GamaPackage.EVARIABLE__TYPE:
+				setType(TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -404,6 +454,8 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 				return UPDATE_EDEFAULT == null ? update != null : !UPDATE_EDEFAULT.equals(update);
 			case GamaPackage.EVARIABLE__FUNCTION:
 				return FUNCTION_EDEFAULT == null ? function != null : !FUNCTION_EDEFAULT.equals(function);
+			case GamaPackage.EVARIABLE__TYPE:
+				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -430,6 +482,8 @@ public class EVariableImpl extends EObjectImpl implements EVariable {
 		result.append(update);
 		result.append(", function: ");
 		result.append(function);
+		result.append(", type: ");
+		result.append(type);
 		result.append(')');
 		return result.toString();
 	}

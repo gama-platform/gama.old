@@ -26,7 +26,7 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface ESpecies extends EGamaObject {
 	/**
-	 * Returns the value of the '<em><b>Variables</b></em>' reference list.
+	 * Returns the value of the '<em><b>Variables</b></em>' containment reference list.
 	 * The list contents are of type {@link gama.EVariable}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -34,9 +34,9 @@ public interface ESpecies extends EGamaObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Variables</em>' reference list.
+	 * @return the value of the '<em>Variables</em>' containment reference list.
 	 * @see gama.GamaPackage#getESpecies_Variables()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<EVariable> getVariables();

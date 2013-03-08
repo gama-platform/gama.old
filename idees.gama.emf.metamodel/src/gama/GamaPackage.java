@@ -207,7 +207,7 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
-	 * The feature id for the '<em><b>Variables</b></em>' reference list.
+	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -932,7 +932,7 @@ public interface GamaPackage extends EPackage {
 	int EGRID__OUTCOMING_LINKS = ESPECIES__OUTCOMING_LINKS;
 
 	/**
-	 * The feature id for the '<em><b>Variables</b></em>' reference list.
+	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1041,13 +1041,22 @@ public interface GamaPackage extends EPackage {
 	int EVARIABLE__FUNCTION = 5;
 
 	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EVARIABLE__TYPE = 6;
+
+	/**
 	 * The number of structural features of the '<em>EVariable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EVARIABLE_FEATURE_COUNT = 6;
+	int EVARIABLE_FEATURE_COUNT = 7;
 
 
 	/**
@@ -1158,10 +1167,10 @@ public interface GamaPackage extends EPackage {
 	EClass getESpecies();
 
 	/**
-	 * Returns the meta object for the reference list '{@link gama.ESpecies#getVariables <em>Variables</em>}'.
+	 * Returns the meta object for the containment reference list '{@link gama.ESpecies#getVariables <em>Variables</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Variables</em>'.
+	 * @return the meta object for the containment reference list '<em>Variables</em>'.
 	 * @see gama.ESpecies#getVariables()
 	 * @see #getESpecies()
 	 * @generated
@@ -1451,6 +1460,17 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEVariable_Function();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EVariable#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see gama.EVariable#getType()
+	 * @see #getEVariable()
+	 * @generated
+	 */
+	EAttribute getEVariable_Type();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1559,7 +1579,7 @@ public interface GamaPackage extends EPackage {
 		EClass ESPECIES = eINSTANCE.getESpecies();
 
 		/**
-		 * The meta object literal for the '<em><b>Variables</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Variables</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1811,6 +1831,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EVARIABLE__FUNCTION = eINSTANCE.getEVariable_Function();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EVARIABLE__TYPE = eINSTANCE.getEVariable_Type();
 
 	}
 

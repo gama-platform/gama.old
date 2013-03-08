@@ -12,10 +12,14 @@ import gama.GamaPackage;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -33,7 +37,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	/**
-	 * The cached value of the '{@link #getVariables() <em>Variables</em>}' reference list.
+	 * The cached value of the '{@link #getVariables() <em>Variables</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getVariables()
@@ -68,9 +72,23 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 */
 	public EList<EVariable> getVariables() {
 		if (variables == null) {
-			variables = new EObjectResolvingEList<EVariable>(EVariable.class, this, GamaPackage.ESPECIES__VARIABLES);
+			variables = new EObjectContainmentEList<EVariable>(EVariable.class, this, GamaPackage.ESPECIES__VARIABLES);
 		}
 		return variables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case GamaPackage.ESPECIES__VARIABLES:
+				return ((InternalEList<?>)getVariables()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

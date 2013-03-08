@@ -575,6 +575,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEVariable_Type() {
+		return (EAttribute)eVariableEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public GamaFactory getGamaFactory() {
 		return (GamaFactory)getEFactoryInstance();
 	}
@@ -653,6 +662,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eVariableEClass, EVARIABLE__MAX);
 		createEAttribute(eVariableEClass, EVARIABLE__UPDATE);
 		createEAttribute(eVariableEClass, EVARIABLE__FUNCTION);
+		createEAttribute(eVariableEClass, EVARIABLE__TYPE);
 	}
 
 	/**
@@ -711,7 +721,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEReference(getEGamaObject_OutcomingLinks(), this.getEGamaLink(), this.getEGamaLink_Source(), "outcomingLinks", null, 0, -1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSpeciesEClass, ESpecies.class, "ESpecies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -754,6 +764,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEVariable_Max(), ecorePackage.getEString(), "max", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_Update(), ecorePackage.getEString(), "update", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEVariable_Function(), ecorePackage.getEString(), "function", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEVariable_Type(), ecorePackage.getEString(), "type", null, 0, 1, EVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
