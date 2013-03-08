@@ -48,7 +48,7 @@ entities {
 		float food update: min([max_food, food + foodProd] );
 		rgb color update: rgb([255 * ((max_food - food) / max_food), 255, 255 * ((max_food - food) / max_food)]) ;
 		aspect base {
-			draw shape: geometry color: color ;
+			draw shape color: color ;
 		}
 	}
 	species generic_species skills: [moving]{
@@ -84,13 +84,13 @@ entities {
 		}
 
 		aspect base {
-			draw shape: circle size: size color: color ;
+			draw circle(size) color: color ;
 		}
 		aspect icon {
 			draw image: my_icon size: size ;
 		}
 		aspect info {
-			draw shape: square size: size color: color ;
+			draw square(size) color: color ;
 			draw text: string(energy with_precision 2) size: 3 color: rgb('black') ;
 		}
 	}

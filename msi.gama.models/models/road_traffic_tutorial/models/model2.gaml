@@ -37,7 +37,7 @@ entities {
 	species people {
 		rgb color <- rgb('yellow') ;
 		aspect base {
-			draw shape: circle color: color size: 10 ;
+			draw circle(10) color: color;
 		}
 	}
 }

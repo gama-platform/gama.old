@@ -33,7 +33,7 @@ entities {
         }
         aspect basic {
             //draw geometry: circle color: rgb('red') size: 1;
-            draw shape: geometry color: rgb ([255, 0, 0]);
+            draw shape color: rgb ([255, 0, 0]);
         }
     }
 }

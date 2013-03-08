@@ -66,13 +66,13 @@ entities {
 		int nb_inputs;
 		
 		aspect circle {
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 		aspect network {
 			if (next_node != nil) {
 				draw geometry: line([location, next_node.location]) color: rgb('blue');
 			}
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 		action accept_water {
 			arg water_input type: water;
@@ -125,10 +125,10 @@ entities {
 		int quantity_clean function: {water_units count (!each.polluted)};
 		
 		aspect default{
-			draw shape: circle size: 5 color: rgb('blue');
+			draw circle(5) color: rgb('blue');
 		}	
 		aspect quantity_quality{
-			draw shape: circle size: quantity / 2 
+			draw circle(quantity / 2) 
 				color: rgb([255 * quantity_polluted / quantity, 0, 255 * quantity_clean / quantity]);
 		}
 	}

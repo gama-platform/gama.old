@@ -32,7 +32,7 @@ entities {
 		}
 		
 		aspect display {
-			draw circle size: 2 
+			draw circle(2) 
 				color: (state = "S" ) ? rgb('green') : 
 							((state = "I") ? rgb('red') : rgb('blue'));
 		}

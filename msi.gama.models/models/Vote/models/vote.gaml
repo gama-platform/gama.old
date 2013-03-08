@@ -171,7 +171,7 @@ entities {
 		
 		
 		aspect default {
-			draw shape:square size: 2 color: rgb("orange");
+			draw square(2) color: rgb("orange");
 		} 
 		
 	}
@@ -189,7 +189,7 @@ entities {
 		candidat mon_candidat;  
 		
 		aspect default {
-			draw shape: triangle size: 2 color: couleur ;
+			draw triangle(2) color: couleur ;
 		} 
 		action definition_candidat {
 			set mon_candidat <- candidats_en_course with_min_of (self distance_to each);
@@ -235,16 +235,16 @@ entities {
 		list mes_electeurs of: electeur;
 		bool est_elu <- false;
 		aspect default {
-			draw shape:circle size: 3 color: couleur;
+			draw circle(3) color: couleur;
 		} 
 		aspect dynamique {
 			if (actif) {
 				let rayon type: float <- 1 + (pourcentage_vote / 4.0);
 				if (est_elu) {
 					draw geometry:square( rayon *1.5) color: rgb("red"); 
-					draw shape:circle size: rayon color: couleur;
+					draw circle(rayon) color: couleur;
 				} else {
-					draw shape:circle size: rayon color: couleur;
+					draw circle(rayon) color: couleur;
 				}
 				draw text:string(pourcentage_vote) size: 5 color: rgb("white");
 			}
@@ -278,7 +278,7 @@ entities {
 		}
 		
 		action strategie_2 {
-			//s'Žloigner des autres candidats
+			//s'ï¿½loigner des autres candidats
 			let le_candidat type: candidat <- one_of(candidats - self) ;
 			if (le_candidat != nil) {
 				do goto target: point(location + location - le_candidat.location) speed: distance_parcourue;	
@@ -309,7 +309,7 @@ environment bounds: {200, 200};
 experiment vote type: gui {
 	/** Insert here the definition of the input and output of the model */
 	parameter "Nombre d'electeurs : " var: nb_electors category: "Electeur";
-	parameter "Vitesse de dŽplacement des electeurs vers un autre electeur : " var: distance_parcourue category: "Electeur";
+	parameter "Vitesse de dï¿½placement des electeurs vers un autre electeur : " var: distance_parcourue category: "Electeur";
 	parameter "Distance d'attraction entre electeurs : " var: seuil_attraction_electeurs category: "Electeur";
 	parameter "Nombre de candidats : " var: nb_candidates category: "Candidat";
 	parameter "Distance d'attraction des candidats sur les electeurs : " var: seuil_attraction_candidats category: "Electeur";
@@ -341,7 +341,7 @@ experiment vote type: gui {
 			chart "Entropie de Shannon" type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
 				data "entropie" value: entropie color: rgb('blue') ;
 			}
-			chart "Richesse du dŽbat public" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
+			chart "Richesse du dï¿½bat public" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
 				data "taux_couverture_espace" value: (union(candidats collect (each.shape buffer seuil_attraction_candidats)) intersection world.shape).area / 40000 color: rgb('blue') ;
 			}
 		}

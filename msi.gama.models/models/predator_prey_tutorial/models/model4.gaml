@@ -42,7 +42,7 @@ entities {
 		}
 
 		aspect base {
-			draw shape: circle size: size color: color ;
+			draw circle(size) color: color ;
 		}
 	}
 }

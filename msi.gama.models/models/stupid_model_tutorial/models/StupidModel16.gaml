@@ -75,7 +75,7 @@ entities {
             } 
         }
         aspect basic {
-            draw shape: circle color: color size: size;
+            draw circle(size) color: color;
         }
     }
 	species predator{
@@ -100,7 +100,7 @@ entities {
 		} 
 		
 		aspect basic{ 
-			draw shape: circle color:  color size: 2 ;
+			draw circle(2) color: color;
 		}
 	}  
 }

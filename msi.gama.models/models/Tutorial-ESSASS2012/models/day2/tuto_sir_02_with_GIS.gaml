@@ -47,7 +47,7 @@ entities {
 		}
 		
 		aspect display {
-			draw circle size: 20000.0 color: (state = "S" ) ? 
+			draw circle(20000.0) color: (state = "S" ) ? 
 					rgb('green') : ((state = "I") ? rgb('red') : rgb('blue'));
 		}
 	}
@@ -58,7 +58,7 @@ entities {
 		int nbI update: length(inhabitants where (each.state = "I"));
 		
 		aspect epidemic_state {
-			draw circle size: (nbI = 0) ? 20000.0 : ln(nbI)*10000 + 20000.0 
+			draw circle ((nbI = 0) ? 20000.0 : ln(nbI)*10000 + 20000.0) 
 					color: (nbI = 0) ? rgb('green') : rgb('red');
 		}
 	}

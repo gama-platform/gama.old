@@ -65,7 +65,7 @@ entities {
 			do die;
 		}
 		aspect default {
-			draw shape: circle color: red size: 1;
+			draw circle(1) color: red;
 		}
 	}
 }

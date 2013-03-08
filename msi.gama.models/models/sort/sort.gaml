@@ -48,7 +48,7 @@ species ant skills: [ moving ] control: fsm {
 		}
 	}
 	aspect default {
-		draw shape: circle size: 2 empty: false color: color ;
+		draw circle(2) empty: false color: color ;
 	}
 }
 

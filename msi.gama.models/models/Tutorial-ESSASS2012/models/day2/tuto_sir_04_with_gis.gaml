@@ -53,7 +53,7 @@ entities {
 		}
 		
 		aspect display {
-			draw circle size: 20000.0 color: (state = "S" ) ? rgb('green') : ((state = "I") ? rgb('red') : rgb('blue'));
+			draw circle(20000.0) color: (state = "S" ) ? rgb('green') : ((state = "I") ? rgb('red') : rgb('blue'));
 		}
 	}
 	species city {
@@ -80,7 +80,7 @@ entities {
 		}
 		
 		aspect epidemic_state {
-			draw circle size: (nbI = 0) ? 20000.0 : ln(nbI)*10000 + 20000.0 color: (nbI != 0) ? rgb('red') : rgb('green') ;
+			draw circle((nbI = 0) ? 20000.0 : ln(nbI)*10000 + 20000.0) color: (nbI != 0) ? rgb('red') : rgb('green') ;
 		}
 		
 		species people_in_city parent: people schedules: [] { }

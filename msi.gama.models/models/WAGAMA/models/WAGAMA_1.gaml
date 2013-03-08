@@ -23,7 +23,7 @@ entities {
 		rgb color <- rgb('white');
 		
 		aspect circle {
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 	}
 }

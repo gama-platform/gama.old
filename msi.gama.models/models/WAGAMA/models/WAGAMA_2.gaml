@@ -32,13 +32,13 @@ entities {
 		node next_node;
 		
 		aspect circle {
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 		aspect network {
 			if (next_node != nil) {
 				draw geometry: line([location, next_node.location]) color: rgb('blue');
 			}
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 	}
 }

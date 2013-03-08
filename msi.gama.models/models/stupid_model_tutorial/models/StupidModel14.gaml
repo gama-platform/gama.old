@@ -66,7 +66,7 @@ entities {
             } 
         }
         aspect basic {
-            draw shape: circle color: color size: size;
+            draw circle(size) color: color;
         }
     }
 }

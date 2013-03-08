@@ -63,13 +63,13 @@ entities {
 			set energy <- energy / nb_offsprings ;
 		}
 		aspect base {
-			draw shape: circle size: size color: color ;
+			draw circle(size) color: color ;
 		}
 		aspect icon {
 			draw image: my_icon size: size ;
 		}
 		aspect info {
-			draw shape: square size: size color: color ;
+			draw square(size) color: color ;
 			draw text: string(energy with_precision 2) size: 3 color: rgb('black') ;
 		}
 	}

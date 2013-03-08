@@ -39,7 +39,7 @@ entities {
 			do die ;
 		}
 		aspect base {
-			draw shape: circle size: size color: color ;
+			draw circle(size) color: color ;
 		}
 	}
 	species prey parent: generic_species {

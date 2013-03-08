@@ -40,13 +40,13 @@ entities {
 		list waters of: water;
 		
 		aspect circle {
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 		aspect network {
 			if (next_node != nil) {
 				draw geometry: line([location, next_node.location]) color: rgb('blue');
 			}
-			draw shape: circle size: radius color: color;
+			draw circle(radius) color: color;
 		}
 		
 		action accept_water {
@@ -58,7 +58,7 @@ entities {
 	
 	species water {
 		aspect default{
-			draw shape: circle size: 5 color: rgb('blue');
+			draw circle(5) color: rgb('blue');
 		}	
 	}
 }
