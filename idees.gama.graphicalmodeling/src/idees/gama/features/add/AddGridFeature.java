@@ -1,6 +1,7 @@
 package idees.gama.features.add;
 
 import gama.EGrid;
+import gama.EVariable;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -111,10 +112,31 @@ public class AddGridFeature extends AbstractAddShapeFeature {
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
             text.getFont().setBold(true);
             text.getFont().setSize(14);
+           
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
             // create link and wire it
             link(shape, addedClass);
+        }
+        {
+            // create shape for text
+            Shape shape2 = peCreateService.createShape(containerShape, false);
+ 
+            // create and set text graphics algorithm
+            String variables = "";
+            for (EVariable var:addedClass.getVariables() ) {
+            	variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
+            }
+            Text text2 = gaService.createDefaultText(getDiagram(), shape2,
+            		variables);
+            text2.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
+            text2.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
+           // text2.setVerticalAlignment(Orientation.);
+            text2.getFont().setSize(14);
+            gaService.setLocationAndSize(text2, 5, 25, width, 1 + addedClass.getVariables().size() * 20);
+ 
+            // create link and wire it
+            link(shape2, addedClass);
         }
         // add a chopbox anchor to the shape
         peCreateService.createChopboxAnchor(containerShape);

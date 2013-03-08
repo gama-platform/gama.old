@@ -1,6 +1,7 @@
 package idees.gama.features.add;
 
 import gama.ESpecies;
+import gama.EVariable;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -113,6 +114,28 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
             // create link and wire it
             link(shape, addedClass);
         }
+        {
+            // create shape for text
+            Shape shape2 = peCreateService.createShape(containerShape, false);
+           // create and set text graphics algorithm
+            String variables = "";
+            for (EVariable var:addedClass.getVariables() ) {
+            	variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
+            }
+            Text text2 = gaService.createDefaultText(getDiagram(), shape2,
+            		variables);
+            text2.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
+            text2.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
+           // text2.setVerticalAlignment(Orientation.ALIGNMENT_TOP);
+            text2.getFont().setSize(14);
+            gaService.setLocationAndSize(text2, 5, 25, width, 1 + addedClass.getVariables().size() * 20);
+            
+ 
+            // create link and wire it
+            link(shape2, addedClass);
+        }
+        // SHAPE WITH TEXT
+        
         // add a chopbox anchor to the shape
         peCreateService.createChopboxAnchor(containerShape);
   

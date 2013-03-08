@@ -17,7 +17,7 @@ public class MyGamaDiagramTypeProvider extends AbstractDiagramTypeProvider imple
 	        if (toolBehaviorProviders == null) {
 	            toolBehaviorProviders =
 	                new IToolBehaviorProvider[] { new MyGamaToolBehaviorProvider(
-	                    this) };
+	                    this) }; 
 	        }
 	        return toolBehaviorProviders;
 	    }

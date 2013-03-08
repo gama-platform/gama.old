@@ -39,21 +39,30 @@ import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.layout.LayoutCommonFeature;
 import idees.gama.features.layout.LayoutESpeciesEExperimentFeature;
-import idees.gama.features.modelgeneration.InitModelFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
+import idees.gama.features.others.UpdateEGamaObjectFeature;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.context.impl.AddContext;
+import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
@@ -97,10 +106,29 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICreateFeature[] getCreateFeatures() {
+    	final Diagram diagram = getDiagramTypeProvider().getDiagram();
+    	if (diagram.getChildren().isEmpty()) {
+    		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(diagram);
+         	domain.getCommandStack().execute(new RecordingCommand(domain) {
+         	     public void doExecute() {
+         	    	ESpecies newClass = gama.GamaFactory.eINSTANCE.createESpecies();
+         			diagram.eResource().getContents().add(newClass);
+         			 newClass.setName("World");
+         			 
+         			 CreateContext ac = new CreateContext();
+         			 ac.setLocation(50, 10);
+         			 ac.setSize(0, 0);
+         			 ac.setTargetContainer(diagram);
+         			 
+         			 addIfPossible(new AddContext(ac, newClass));
+         	     }
+         	  });
+    	}
     	return new ICreateFeature[] { 
         		new CreateGuiExperimentFeature(this),
         		new CreateBatchExperimentFeature(this)
         		};
+    	 
     }
     
     
@@ -137,7 +165,20 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this),new InitModelFeature(this) };
+    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this)};
     }
+    
+    @Override
+    public IUpdateFeature getUpdateFeature(IUpdateContext context) {
+        PictogramElement pictogramElement = context.getPictogramElement();
+        if (pictogramElement instanceof ContainerShape) {
+            Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+            if (bo instanceof EGamaObject) {
+                return new UpdateEGamaObjectFeature(this);
+            }
+        }
+        return super.getUpdateFeature(context);
+    }
+ 
    
 }
