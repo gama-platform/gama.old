@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKTReader;
 
 import msi.gama.common.util.GisUtils;
 import msi.gama.common.util.GuiUtils;
@@ -88,11 +89,16 @@ public class SqlConnection {
 		public static final String MSSQL ="sqlserver";
 		public static final String SQLITE="sqlite";
 		public static final String GEOMETRYTYPE="GEOMETRY";
+		public static final String CHAR="CHAR";
+		public static final String VARCHAR="VARCHAR";
+		public static final String NVARCHAR="NVARCHAR";
+		public static final String TEXT="TEXT";
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
 		static final String POSTGRESDriver= new String("org.postgresql.Driver");
 		static String vender="";
+		static String dbtype="";
 		static String url="";
 		static String port="";
 		static String dbName="";
@@ -120,6 +126,7 @@ public class SqlConnection {
 			this.dbName=dbName;
 			this.userName=userName;
 			this.password=password;	
+			this.dbtype=venderName;
 			//conn=connectDB();
 		}
 		
@@ -713,6 +720,67 @@ public class SqlConnection {
 
 			   }
 		
+//		/*
+//		 * Make Insert a reccord into table
+//		 * 
+//		 */
+//		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+//				throws GamaRuntimeException
+//		{
+//			PreparedStatement pstmt = null;
+//			//int col_no=cols.length(scope);
+//			int col_no=cols.size();
+//			int rec_no=0;
+//			String insertStr= "INSERT INTO ";
+//			String col_names="";
+//			String valueStr="";
+//			//Check size of parameters
+//			if (values.size()!=col_no) {
+//				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+//			}
+//			//Get column name
+//			for (int i=0; i<col_no;i++){
+//				if (i==col_no-1){
+//					col_names= col_names+ (String) (cols.get(i));
+//					valueStr=valueStr + "?";
+//				}else{
+//					col_names= col_names+ (String) (cols.get(i))+",";
+//					valueStr=valueStr + "?"+",";
+//				}
+//				if (DEBUG){
+//					GuiUtils.debug("col"+(String) (cols.get(i)));
+//				}
+//					
+//			}
+//			// create INSERT statement string
+//			insertStr= insertStr + table_name +"("+col_names+") " +"VALUES("+valueStr+")";
+//
+//			if (DEBUG){
+//				GuiUtils.debug("Insert command:"+insertStr);
+//			}
+//				
+//		
+//			try{
+//				//Insert command
+//				
+//				pstmt=conn.prepareStatement(insertStr);
+//				//set parameter value
+//				for (int i=0; i<col_no;i++){
+//						pstmt.setObject(i+1, values.get(i));
+//				}
+//				rec_no=pstmt.executeUpdate();				
+//				if (DEBUG){
+//					GuiUtils.debug("rec count:" + rec_no);
+//				}
+//				
+//			}catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+//			}
+//			
+//			return rec_no;
+//		}
 		/*
 		 * Make Insert a reccord into table
 		 * 
@@ -720,71 +788,16 @@ public class SqlConnection {
 		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
 				throws GamaRuntimeException
 		{
-			//Connection conn=null;
-			PreparedStatement pstmt = null;
-			//int col_no=cols.length(scope);
-			int col_no=cols.size();
-			int rec_no=0;
-			String insertStr= "INSERT INTO ";
-//			String selectStr="SELECT ";
-			String col_names="";
-			String valueStr="";
-			//Check size of parameters
-			if (values.size()!=col_no) {
+			int rec_no=-1;
+			if (values.size()!=cols.size()) {
 				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-			}
-			//Get column name
-			for (int i=0; i<col_no;i++){
-				if (i==col_no-1){
-					col_names= col_names+ (String) (cols.get(i));
-					valueStr=valueStr + "?";
-				}else{
-					col_names= col_names+ (String) (cols.get(i))+",";
-					valueStr=valueStr + "?"+",";
-				}
-				if (DEBUG){
-					GuiUtils.debug("col"+(String) (cols.get(i)));
-				}
-					
-			}
-			// create INSERT statement string
-			insertStr= insertStr + table_name +"("+col_names+") " +"VALUES("+valueStr+")";
-			// create SELECT statement string
-//			selectStr=selectStr + col_names + " FROM " + table_name;
-
-			if (DEBUG){
-				GuiUtils.debug("Insert command:"+insertStr);
-				
-//				GuiUtils.debug("select command:"+selectStr);
-			}
-				
-		
+			}		
 			try{
-				//get column type;
-//				Statement st = conn.createStatement(); 
-//				ResultSet rs = st.executeQuery(selectStr);
-//				ResultSetMetaData rsmd = rs.getMetaData();
-//				if (DEBUG){
-//					GuiUtils.debug("MetaData:"+rsmd.toString());
-//				}
-//				GamaList<Object> col_Names= getColumnName(rsmd);
-//				GamaList<Object> col_Types=getColumnTypeName(rsmd);
-//				
-//				if (DEBUG){
-//					GuiUtils.debug("list of column type:" + col_Types);
-//				}
-				
-				//Insert command
-				
-				pstmt=conn.prepareStatement(insertStr);
-				//set parameter value
-				for (int i=0; i<col_no;i++){
-					pstmt.setObject(i+1, values.get(i));
-				}
-				
-				rec_no=pstmt.executeUpdate();
+				//Get Insert command
+				Statement st=conn.createStatement();
+				rec_no=st.executeUpdate(getInsertString(conn,table_name,cols,values));
 				if (DEBUG){
-					GuiUtils.debug("rec count:" + rec_no);
+					GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 				}
 				
 			}catch (SQLException e) {
@@ -795,6 +808,7 @@ public class SqlConnection {
 			
 			return rec_no;
 		}
+
 
 		/*
 		 * Make Insert a reccord into table
@@ -828,6 +842,51 @@ public class SqlConnection {
 			return rec_no;
 		}
 	
+//		/*
+//		 * Make Insert a reccord into table
+//		 * 
+//		 */
+//		public int insertDB(Connection conn, String table_name,GamaList<Object> values ) 
+//				throws GamaRuntimeException
+//		{
+//			//Connection conn=null;
+//			PreparedStatement pstmt = null;
+//			//int col_no=cols.length(scope);
+//			int col_no=values.size();
+//			int rec_no=0;
+//			String insertStr= "INSERT INTO ";
+//			String valueStr="";
+//			//Create question mark list
+//			for (int i=0; i<col_no;i++){
+//				if (i==col_no-1){
+//					valueStr=valueStr + "?";
+//				}else{
+//					valueStr=valueStr + "?"+",";
+//				}					
+//			}
+//			// create INSERT statement string
+//			insertStr= insertStr + table_name +" VALUES("+valueStr+")";				
+//		
+//			try{				
+//				pstmt=conn.prepareStatement(insertStr);
+//				//set parameter value
+//				for (int i=0; i<col_no;i++){
+//					pstmt.setObject(i+1, values.get(i));
+//				}	
+//				rec_no=pstmt.executeUpdate();
+//				if (DEBUG){
+//					GuiUtils.debug("rec count:" + rec_no);
+//				}
+//				
+//			}catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+//			}
+//			return rec_no;
+//		}
+
+		
 		/*
 		 * Make Insert a reccord into table
 		 * 
@@ -835,35 +894,16 @@ public class SqlConnection {
 		public int insertDB(Connection conn, String table_name,GamaList<Object> values ) 
 				throws GamaRuntimeException
 		{
-			//Connection conn=null;
-			PreparedStatement pstmt = null;
-			//int col_no=cols.length(scope);
-			int col_no=values.size();
-			int rec_no=0;
-			String insertStr= "INSERT INTO ";
-			String valueStr="";
-			//Create question mark list
-			for (int i=0; i<col_no;i++){
-				if (i==col_no-1){
-					valueStr=valueStr + "?";
-				}else{
-					valueStr=valueStr + "?"+",";
-				}					
-			}
-			// create INSERT statement string
-			insertStr= insertStr + table_name +" VALUES("+valueStr+")";				
-		
+			int rec_no=-1;
 			try{				
-				pstmt=conn.prepareStatement(insertStr);
-				//set parameter value
-				for (int i=0; i<col_no;i++){
-					pstmt.setObject(i+1, values.get(i));
-				}	
-				rec_no=pstmt.executeUpdate();
+				//Get Insert command
+				Statement st=conn.createStatement();
+				rec_no=st.executeUpdate(getInsertString(conn,table_name,values));
+
 				if (DEBUG){
-					GuiUtils.debug("rec count:" + rec_no);
+					GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 				}
-				
+		
 			}catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -871,7 +911,6 @@ public class SqlConnection {
 			}
 			return rec_no;
 		}
-
 		
 		/*
 		 * Make Insert a reccord into table
@@ -1083,5 +1122,262 @@ public class SqlConnection {
 						//return repRequest;
 						return row_count;
 						
-					}				
+					}
+					
+				    /**
+				     * This method return a prepared MULTIPOINT geometry if is MULTIPOINT (We need do this
+				     * because MULTIPOINT Feature format is: MULTIPOINT ((x y),(x y),(x y)) and
+				     * MULTIPOINT Spatialite format is: MULTIPOINT (x y, x y, x y)
+				     * @param theGeom;
+				     * @return value;
+				     */
+				    private String prepareGeom (String theGeom){
+				        String value = theGeom;
+				            if (theGeom.contains("MULTIPOINT"))
+				            {
+				                value = value.replaceAll("\\(\\(", "*");
+				                value = value.replaceAll("\\)\\)", "#");
+				                value = value.replaceAll("\\(", "");
+				                value = value.replaceAll("\\)", "");
+				                value = value.replaceAll("\\*", "(");
+				                value = value.replaceAll("\\#", ")");
+				            }
+				        return value;
+				    }
+					/*
+					 * Make insert command string with columns and values
+					 * 
+					 */
+					public String getInsertString(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+							throws GamaRuntimeException
+					{
+						int col_no=cols.size();
+						String insertStr= "INSERT INTO ";
+						String selectStr="SELECT ";
+						String colStr="";
+						String valueStr="";
+						//Check size of parameters
+						if (values.size()!=col_no) {
+							throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+						}
+						//Get column name
+						for (int i=0; i<col_no;i++){
+							if (i==col_no-1){
+								colStr= colStr+ (String) (cols.get(i));
+							}else{
+								colStr= colStr+ (String) (cols.get(i))+",";
+							}					
+						}
+						// create SELECT statement string
+						if (vender.equalsIgnoreCase(MSSQL)){
+							selectStr=selectStr + " TOP 1 "+ colStr + " FROM " + table_name +" ;";
+						}else{
+							selectStr=selectStr + colStr + " FROM " + table_name +" LIMIT 1 ;";
+						}
+						
+						if (DEBUG){
+							GuiUtils.debug("SqlConnection.getInsertString.select command:"+selectStr);
+						}
+						
+						try{
+							//get column type;
+							Statement st = conn.createStatement(); 
+							ResultSet rs = st.executeQuery(selectStr);
+							ResultSetMetaData rsmd = rs.getMetaData();
+							GamaList<Object> col_Names= getColumnName(rsmd);
+							GamaList<Object> col_Types=getColumnTypeName(rsmd);
+							
+							if (DEBUG){
+								GuiUtils.debug("list of column Name:" + col_Names);
+								GuiUtils.debug("list of column type:" + col_Types);
+							}
+							//Insert command
+							//set parameter value
+							valueStr="";
+							for (int i=0; i<col_no;i++){
+//								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
+//									if (vender.equalsIgnoreCase(MYSQL)){
+//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
+//									}else if (vender.equalsIgnoreCase(MSSQL)){
+//										valueStr=valueStr+"geometry::STGeomFromText('"+values.get(i).toString()+"')";
+//									}else if (vender.equalsIgnoreCase(SQLITE)){
+//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
+//										
+//									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
+//										valueStr=valueStr+"ST_GeomFromText('"+values.get(i).toString()+"')";
+//									}
+								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
+									    //Transform GAMA GIS TO NORMAL
+										WKTReader wkt = new WKTReader();
+										Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+										
+										if (vender.equalsIgnoreCase(MYSQL)){
+											valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
+										}else if (vender.equalsIgnoreCase(MSSQL)){
+											valueStr=valueStr+"geometry::STGeomFromText('"+geo2.toString()+"')";
+										}else if (vender.equalsIgnoreCase(SQLITE)){
+											valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
+										}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
+											valueStr=valueStr+"ST_GeomFromText('"+geo2.toString()+"')";
+										}
+
+								}else if (((String)col_Types.get(i)).equalsIgnoreCase(CHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(VARCHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(NVARCHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(TEXT)){ // for String type
+									//Correct error string
+									String temp=values.get(i).toString();
+									temp=temp.replaceAll("'", "''");
+									//Add to value:
+									valueStr=valueStr+"'"+temp+"'";
+									}else { // For other type
+									valueStr=valueStr+values.get(i).toString();
+								}
+								if (i!=col_no-1){ // Add delimiter of each value 
+									valueStr=valueStr + ",";
+								}
+							}
+									//String geoWKT = prepareGeom(values.get(i).toString()) ;
+									//GuiUtils.debug("GEOM to TXT:" +geoWKT );	
+									//GuiUtils.debug("GEOM to SQL:" + "GeomFromText('"+geoWKT+"')" );	
+									//pstmt.setObject(i+1, "GeomFromText('"+geoWKT+"')");
+									//pstmt.setObject(i+1, WKBReader.hexToBytes(values.get(i).toString()));
+									//pstmt.setObject(i+1, "GeomFromText('"+values.get(i).toString()+"')");
+									//GuiUtils.debug("Statement1:" +pstmt.toString() );
+									//String value =pstmt.toString() ;
+									//value= value.replaceAll("\\*\\* NOT SPECIFIED \\*\\*", C);
+									//GuiUtils.debug("Statement2:" +value );
+									//GuiUtils.debug("Statement:" +"GeomFromText('"+values.get(i).toString()+"')" );	
+									//pstmt.setObject(i+1,(Object) "GeomFromText(\'"+values.get(i).toString()+"\')");
+									
+							insertStr= insertStr + table_name +"("+colStr+") " +"VALUES("+valueStr+")";					
+
+							if(DEBUG) 
+								GuiUtils.debug("SqlConection.getInsertString:" +insertStr );
+							
+							
+						}catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+						}
+						
+						return insertStr;
+					}
+					
+					/*
+					 * Make insert command string for all columns with values
+					 * 
+					 */
+
+					public String getInsertString(Connection conn, String table_name,GamaList<Object> values ) 
+							throws GamaRuntimeException
+					{
+						String insertStr= "INSERT INTO ";
+						String selectStr="SELECT ";
+						String colStr="";
+						String valueStr="";
+
+						//Get column name
+						// create SELECT statement string
+						if (vender.equalsIgnoreCase(MSSQL)){
+							selectStr=selectStr + " TOP 1 * " + " FROM " + table_name +" ;";
+						}else{
+							selectStr=selectStr +" * " + " FROM " + table_name +" LIMIT 1 ;";
+						}
+						
+						//if (DEBUG)
+							GuiUtils.debug("SqlConnection.getInsertString.select command:"+selectStr);
+						
+						try{
+							//get column type;
+							Statement st = conn.createStatement(); 
+							ResultSet rs = st.executeQuery(selectStr);
+							ResultSetMetaData rsmd = rs.getMetaData();
+							GamaList<Object> col_Names= getColumnName(rsmd);
+							GamaList<Object> col_Types=getColumnTypeName(rsmd);
+							int col_no=col_Names.size();
+							//Check size of parameters
+							if (values.size()!=col_Names.size()) {
+								throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+							}
+					
+							if (DEBUG){
+								GuiUtils.debug("list of column Name:" + col_Names);
+								GuiUtils.debug("list of column type:" + col_Types);
+							}
+							//Insert command
+							//set parameter value
+							colStr="";
+							valueStr="";
+							for (int i=0; i<col_no;i++){
+//								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
+//									if (vender.equalsIgnoreCase(MYSQL)){
+//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
+//									}else if (vender.equalsIgnoreCase(MSSQL)){
+//										valueStr=valueStr+"geometry::STGeomFromText('"+values.get(i).toString()+"')";
+//									}else if (vender.equalsIgnoreCase(SQLITE)){
+//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
+//									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
+//										valueStr=valueStr+"ST_GeomFromText('"+values.get(i).toString()+"')";
+//									}
+								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
+								    //Transform GAMA GIS TO NORMAL
+									WKTReader wkt = new WKTReader();
+									Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+									
+									if (vender.equalsIgnoreCase(MYSQL)){
+										valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
+									}else if (vender.equalsIgnoreCase(MSSQL)){
+										valueStr=valueStr+"geometry::STGeomFromText('"+geo2.toString()+"')";
+									}else if (vender.equalsIgnoreCase(SQLITE)){
+										valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
+									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
+										valueStr=valueStr+"ST_GeomFromText('"+geo2.toString()+"')";
+									}
+
+
+								}else if (((String)col_Types.get(i)).equalsIgnoreCase(CHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(VARCHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(NVARCHAR)
+										||((String)col_Types.get(i)).equalsIgnoreCase(TEXT)){ // for String type
+									//Correct error string
+									String temp=values.get(i).toString();
+									temp=temp.replaceAll("'", "''");
+									//Add to value:
+									valueStr=valueStr+"'"+temp+"'";
+								}else { // For other type
+									valueStr=valueStr+values.get(i).toString();
+								}
+								//column list
+								colStr=colStr + col_Names.get(i).toString();
+
+								if (i!=col_no-1){ // Add delimiter of each value 
+									colStr=colStr + ",";
+									valueStr=valueStr + ",";
+								}
+							}
+									
+							insertStr= insertStr + table_name +"("+colStr+") " +"VALUES("+valueStr+")";					
+
+							//if(DEBUG) 
+								GuiUtils.debug("SqlConection.getInsertString:" +insertStr );
+							
+						}catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+						}
+						
+						return insertStr;
+					}
+
 }
