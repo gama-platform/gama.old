@@ -53,7 +53,7 @@ entities {
 	}
 	species road_display  {
 		aspect base {    
-			draw shape: geometry color: rgb('black') ;
+			draw shape color: rgb('black') ;
 		} 
 	}
 	species people skills: [driving]{ 
@@ -74,7 +74,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw shape: circle color: color size: 10 ;
+			draw circle(10) color: color;
 		}
 	}
 }

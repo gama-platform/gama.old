@@ -14,7 +14,6 @@ global {
 	int nbGoalsAchived <- 0;
 	list roadsList of: road ; 
 	list buildings of: building;
-	int nb_people <- 100;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
@@ -165,7 +164,7 @@ entities {
 		}  
 	
 		aspect base {
-			draw shape: circle color: color size: 20 ;
+			draw circle(20) color: color;
 		}
 	}
 }

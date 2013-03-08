@@ -11,8 +11,8 @@ global {
 		
 		/*
 		 *  a grid of 5m * 5m
-		 * 723 / 5 ÷ 144
-		 * 545 / 5 ÷ 109
+		 * 723 / 5 ï¿½ 144
+		 * 545 / 5 ï¿½ 109
 		 */
 		let grid_dimension type: point <- {144, 109};
 		let env_grid type: matrix <- shape as_grid grid_dimension;
@@ -48,14 +48,14 @@ entities {
 		}
 		
 		aspect base {
-			draw shape: geometry color: color;
+			draw shape color: color;
 		}
 	}
 	
 	species road {
 		
 		aspect base {
-			draw shape: geometry color: rgb('black');
+			draw shape color: rgb('black');
 		}
 	}
 }

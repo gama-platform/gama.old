@@ -42,7 +42,7 @@ entities {
 			do goto target: target on: the_graph ;
 		}
 		aspect base {
-			draw shape: circle color: color size: 5 ;
+			draw circle(5) color: color;
 		}
 	}
 }

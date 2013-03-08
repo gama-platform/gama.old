@@ -3,7 +3,7 @@ model circle
 
 import "circle.gaml"     
 global {
-	int number_of_agents min: 1 <- 300;
+	int number_of_agents min: 1 <- 30;
 	int radius_of_circle min: 10 <- 15000;  
 	int repulsion_strength min: 1 <- 50;
 	int width_and_height_of_environment min: 10 <- 40000 ; 

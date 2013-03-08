@@ -40,12 +40,12 @@ entities {
 		int nbLanes;
 		int indexDirection; 
 		aspect base { 
-			draw shape: geometry color: rgb('black') ;
+			draw shape color: rgb('black') ;
 		} 
 	}
 	species road_display  {
 		aspect base { 
-			draw shape: geometry color: rgb('black') ;
+			draw shape color: rgb('black') ;
 		} 
 	}
 	species people skills: [driving]{ 
@@ -83,7 +83,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw shape: circle color: color size: 20 ;
+			draw circle(20) color: color;
 		}
 	}
 } 

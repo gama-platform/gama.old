@@ -90,7 +90,7 @@ entities {
 						
 						ask f {
 							release members as: boids in: world returns: released_coms;
-							set released_boids value: released_coms;
+							set released_boids value: list(released_coms);
 							do die;
 						}
 						capture released_boids as: boids_in_flock;
@@ -141,7 +141,7 @@ entities {
 		}
 
 		aspect default {
-			draw shape: geometry color: color;
+			draw shape color: color;
 		}
 		
 		species boids_in_flock parent: boids {

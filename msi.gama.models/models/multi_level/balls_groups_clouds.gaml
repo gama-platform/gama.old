@@ -335,15 +335,16 @@ entities {
 			reflex self_disaggregate {
 			}
 			
-			action move {
-				arg with_heading type: float;
-				arg with_speed type: float;
+			int action move (float with_heading, float with_speed ) {
+				//arg with_heading type: float;
+				//arg with_speed type: float;
 				
 				loop m over: members {
 					ask m as ball_in_cloud {
 						do move with: [ with_heading :: with_heading, with_speed :: with_speed ];
 					}
 				}
+				return 0;
 			}
 			 
 			species ball_in_cloud parent: ball_in_group topology: (world.shape) as topology control: fsm {

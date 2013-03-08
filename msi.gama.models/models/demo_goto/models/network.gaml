@@ -29,7 +29,7 @@ entities {
 	} 
 	species goal {
 		aspect default {
-			draw shape: circle color: rgb('red') size: 10 ;
+			draw circle(10) color: rgb('red');
 		}
 	}
 	species people skills: [moving] {
@@ -37,7 +37,7 @@ entities {
 		path my_path; 
 	
 		aspect default {
-			draw shape: circle color: rgb('green') size: 10 ;
+			draw circle(10) color: rgb('green');
 		}
 		reflex movement {
 			do goto on:the_graph target:target speed:1;

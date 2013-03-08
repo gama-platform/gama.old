@@ -111,7 +111,7 @@ experiment ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants refresh_every: 1 {
+		display Ants refresh_every: 1 type:opengl {
 			grid ant_grid ;
 			species ant aspect: text ;
 		}

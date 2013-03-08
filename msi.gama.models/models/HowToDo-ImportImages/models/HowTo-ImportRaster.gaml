@@ -50,7 +50,7 @@ entities {
 			set location <- (shuffle(cell as list) first_with ((each.color != rgb('white')) and (empty(each.agents)))).location ;
 		}		
 		aspect basic{
-    		draw shape: square color: rgb('orange') size: 1;
+    		draw square(1) color: rgb('orange');
     	}
     	aspect image{
     		draw image: izardShape.path size: 1;

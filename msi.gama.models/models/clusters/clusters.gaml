@@ -52,9 +52,9 @@ entities {
 			}
 		}
 		aspect default {
-			draw shape: circle size: size color: color ;
+			draw circle(size) color: color ;
 			if leader = self {
-				draw shape: circle size: range * 2.0 color: color + 30  empty: false ;
+				draw circle(range * 2.0) color: color + 30  empty: false ;
 			}
 		}
 	}

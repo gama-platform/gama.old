@@ -20,7 +20,7 @@ environment bounds: {50,50} {
 entities {
 	species goal {
 		aspect default { 
-			draw shape: circle color: rgb('red') size: 0.5 ;
+			draw circle(0.5) color: rgb('red');
 		}
 	} 
 	
@@ -29,7 +29,7 @@ entities {
 		goal target;
 		float speed <- float(3);
 		aspect default {
-			draw shape: circle color: rgb('green') size: 0.5;
+			draw circle(0.5) color: rgb('green');
 		}
 		reflex reflex1 {
 			let neighs type: list of: cell <- (cell(location) neighbours_at speed) + cell(location);

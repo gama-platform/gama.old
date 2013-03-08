@@ -48,7 +48,7 @@ entities {
 	species nodeSpecy  {
 		rgb color <- rgb('black') ;  
 		aspect base { 
-			draw shape: circle size:3 color: color ;
+			draw circle(3) color: color ;
 		} 
 		 		
 		reflex removing_node when : flip(0.1) {
