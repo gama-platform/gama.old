@@ -12,7 +12,6 @@ entities {
 	species Rain skills : [ moving ] {
 				
 		float z;	
-		geometry shape <- circle (envRain.width/1000) ;
 		geometry shape <- geometry (point([1,1]));
 		
 		reflex augmente {

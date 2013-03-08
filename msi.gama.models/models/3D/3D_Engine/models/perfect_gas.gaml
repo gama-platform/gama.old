@@ -114,7 +114,7 @@ entities {
 		geometry shape <- circle (10);// buffer(12);
 		
 		aspect default {
-			draw shape: geometry color: color depth:1;
+			draw shape color: color depth:1;
 		}
 		
 		aspect sphere{

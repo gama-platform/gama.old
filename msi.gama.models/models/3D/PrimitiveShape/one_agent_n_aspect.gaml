@@ -13,7 +13,8 @@ global {
 	rgb myColor parameter: 'Color' <- rgb('blue');
 
 	init { 		
-		create myAgent number:number_of_agents; 
+		create myAgent number:number_of_agents;
+		save species: myAgent to: ('./shapefile.shp') type: "collada" ; 
 	}  
 } 
  
@@ -28,7 +29,7 @@ entities {
 			draw text: string (self) color: rgb('black');
 		}	
 		aspect point {
-			draw geometry:geometry (point(self.location)); 
+			draw geometry (point(self.location)); 
 		}
 		
 		aspect sphere{

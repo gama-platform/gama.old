@@ -73,7 +73,7 @@ entities {
 			}
 		}
 		
-		species Host topology: (world.shape) {
+		species Host topology: topology(world.shape) {
 
 	        int status;
 	        rgb color;
@@ -153,7 +153,7 @@ entities {
 	    aspect null { }
 
 	    aspect default {
-	    	draw circle( length(members) / 10 ) color: color;
+	    	
 	    }
 	}
 }

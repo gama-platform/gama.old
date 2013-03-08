@@ -14,13 +14,14 @@ model AugmentedGrid
 
 global {
 
-	int width parameter : "width" min 1<- 40;
-	int height parameter : "height" min 1 <-40;
+	int width parameter : "width" min 1<- 6;
+	int height parameter : "height" min 1 <-6;
 	
 	init {    	
 		//Initialize the value of each cell
 	 	ask cell as list {		
-		  set color <-   rgb ([0.0,0.0,cellValue]) ;
+		 // set color <-   rgb ([0.0,0.0,cellValue]) ;
+		  set color <- color hsb_to_rgb [0.66,(cellValue/255),1.0];
 	      set elevation <-((cellValue/100)^2);
 		}  
 	} 
@@ -46,8 +47,14 @@ environment bounds: {width,height} {
 		aspect colored {
 			draw shape color: color;
 			
-		}	
-		aspect blueElevation{
+		}
+		
+		aspect square{
+			//FIXME: z:elevation change the z cellValue of the shape it should not.			
+			draw shape color: color  border:color;		
+		}
+			
+		aspect box{
 			//FIXME: z:elevation change the z cellValue of the shape it should not.			
 			draw shape color: color  depth:elevation border:color;		
 		}
@@ -60,23 +67,46 @@ environment bounds: {width,height} {
 			draw circle (cellValue/(255*2)) color: color border:color; 
 		}
 		
+		aspect cylinder{ 
+			draw circle (cellValue/(255*2)) color: color border:color depth:elevation; 
+		}
+		
 		
 	} 
 }
 entities {	
 }
 
+
 experiment AugmentedGrid type:gui {
 	output {
-		display TextDisplay type:opengl{
+		/*display TextDisplay {
 			species cell aspect: base  refresh:false position: {0,0};
+		}*/
+		
+		display AugmentedDisplay  ambiant_light:0.5 polygonmode:true{	
+		    species cell aspect: base  refresh:false position: {0,0};
+		    species cell aspect: square  refresh:true position: {width*1.1,0};	
+			species cell aspect: circle  refresh:true position: {width*2.3,0};
+			species cell aspect: cylinder  refresh:true position: {width*3.5,0};
 		}
 		
-		display AugmentedDisplay type:opengl ambiant_light:0.5 polygonmode:true{		
+		display Circle  ambiant_light:0.5 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
-			species cell aspect: colored  refresh:true position: {width*1.1,0};
-			species cell aspect: blueElevation  refresh:true position: {0,height*1.1};
-			species cell aspect: hsbElevation  refresh:true position:{width*1.1,height*1.1};
+			species cell aspect: square;
+			species cell aspect: cylinder;
+		}
+		
+		display Square  ambiant_light:0.5 polygonmode:true{		
+			species cell aspect: square  refresh:true position: {0,0};
+		}
+		
+		display Cylinder ambiant_light:0.5 polygonmode:true{		
+			species cell aspect: cylinder  refresh:true position: {0,0};
+		}
+		
+		display Box  ambiant_light:0.5 polygonmode:true{		
+			species cell aspect: box  refresh:true position: {0,0};
 		}
 	}
 }

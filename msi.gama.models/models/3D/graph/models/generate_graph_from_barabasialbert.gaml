@@ -75,6 +75,8 @@ experiment generate_graph type: gui {
 		display test_display type:opengl {
 			species nodeSpecy aspect: base ; 
 			species edgeSpecy aspect: base ;
-		}		
+		}	
+		
+	
 	}		
 }

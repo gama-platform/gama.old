@@ -64,7 +64,7 @@ global {
 	 		
 	 		let sorted_free_boids type: list of: boids value: (potentialBoidsNeighboursMap.keys) sort_by (length (list (potentialBoidsNeighboursMap at (boids (each)))));
 	 		loop one_boids over: sorted_free_boids {
-	 			let one_boids_neighbours type: list of: boids value: (potentialBoidsNeighboursMap at one_boids);
+	 			let one_boids_neighbours type: list of: boids value: list(potentialBoidsNeighboursMap at one_boids);
 	 			
 	 			if  (one_boids_neighbours != nil) {
 	 				loop one_neighbour over: one_boids_neighbours {
@@ -79,7 +79,7 @@ global {
 		 	}
 		 	
 		 	loop one_key over: (potentialBoidsNeighboursMap.keys) {
-		 		let micro_agents type: list of: boids value: (potentialBoidsNeighboursMap at one_key);
+		 		let micro_agents type: list of: boids value: list(potentialBoidsNeighboursMap at one_key);
 		 			
 		 		if ( (length (micro_agents)) > 1 ) {
 		 			create flock number: 1 with: [ color::[rnd (255), rnd (255), rnd (255)] ] { 

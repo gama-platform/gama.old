@@ -7,13 +7,7 @@ global{
 	graph myGraph;
 	int distance parameter: 'Distance' min: 1 <- 10 category: 'Model';
 			
-    /*reflex updateGraph{
-    	set myGraph <- list(node) as_distance_graph distance;
-    	ask node as list{
-    		let degree <-  myGraph degree_of(self);
-    		write "name:"  + self.name +  "degree:" + degree;
-    	}
-    }*/
+
 
 	reflex updateEdge{
 		ask edge as list{

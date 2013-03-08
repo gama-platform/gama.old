@@ -161,11 +161,11 @@ entities {
 		
 		aspect base {
 			if(myState = "dry"){
-				draw shape: circle color: rgb('yellow') size:size border:rgb('yellow') ;
+				draw circle(size) color: rgb('yellow') border:rgb('yellow') ;
 			}
 			
 			if(myState = "adult"){
-				draw shape: circle color: rgb('red') size: size border:rgb('red') ;
+				draw circle(size) color: rgb('red') border:rgb('red') ;
 				set shape <- shape add_z 2;
 			}	
 		}

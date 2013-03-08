@@ -258,8 +258,8 @@ experiment generate_graph type: gui {
 					
 			species node aspect: base ; 
 			species edge aspect: base ;		
-			species macroNode aspect:sphere  position: {0,0} z:0.2;
-			species macroEdge aspect:base  position: {0,0} z:0.2;	
+			species macroNode aspect:sphere  position: {0,0} z:0.4;
+			species macroEdge aspect:base  position: {0,0} z:0.4;	
 			//text  text1 value:"Original graph" position: {50,110};
 			//text  text2 value:"Interaction graph" position: {170,110};
 			

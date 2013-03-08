@@ -168,7 +168,7 @@ entities {
 		aspect edgeGenericSpatialized{
 			loop i from:0 to: nbTypeOfClass-1{
 			  if ((src != nil) and (dest !=nil) ){
-				draw geometry: line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:color;
+				draw line( [ point(src.posVector[i]) , point(dest.posVector[i])] ) color:color;
 			  }
 			}
 		}
@@ -299,14 +299,14 @@ experiment generate_graph type: gui {
 		display MODAVI type:opengl ambiant_light: 0.4{
 			species node aspect: real z:0;
 			
-			species node aspect: proxy z:0.2; 
-			species edge aspect: base z:0.2;
+			species node aspect: proxy z:0.3; 
+			species edge aspect: base z:0.3;
 			
-			species node aspect: classGenericColored z:0.4; 
-			species edge aspect: edgeGenericSpatialized z:0.4;
+			species node aspect: classGenericColored z:0.6; 
+			species edge aspect: edgeGenericSpatialized z:0.6;
 			
-			species macroNode aspect:Generic z:0.6;
-			species macroEdge aspect:base z:0.6;	
+			species macroNode aspect:Generic z:0.9;
+			species macroEdge aspect:base z:0.9;	
 			
 			graphics arrow{
 				

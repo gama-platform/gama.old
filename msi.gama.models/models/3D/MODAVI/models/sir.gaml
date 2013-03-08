@@ -160,7 +160,6 @@ global {
 	
 	reflex updateMacroEdge{
 		ask macroEdges as list{
-				
 			let tmp <- interactionMatrix  at {src.class-1,dest.class-1};
 			write "macroEdge: " 	+ src.class + "<->" + dest.class + "interactionMatrix final  at {" + (src.class-1) + "," + (dest.class-1) +"} = " + tmp;		
 			set nbAggregatedLinks <-tmp;
@@ -182,6 +181,33 @@ environment width: 50 height: 50 {
   }
 
 entities {
+	
+	species node mirrors: list(Host) parent: graph_node edge_species:edge {
+		point location <- target.location update: target.location;
+		
+		bool related_to(node other){
+			//return flip(0.1);
+			//write "related to called between " + target + " and " + other.target;
+			//write " self location " + location;
+			//write " other location " + other.location;
+			using topology(target){
+			//write " computed distance " + target distance_to  other.target + " < " + distance;
+				return (target distance_to other.target) < neighbours_size;
+			}
+		}
+		
+		aspect sphere{
+		  draw sphere(1) color: rgb('blue');
+		}
+		
+	} 
+	
+	species graphedge parent:base_edge{	
+
+   	aspect base{
+   		draw shape color: rgb("blue");
+   	}
+   }
 	species Host  {
 		bool is_susceptible <- true;
 		bool is_infected <- false;
@@ -251,9 +277,8 @@ entities {
         }
                 
         aspect basic {
-	        //draw shape: circle color: color size: 1 depth:1; 
-	        draw (point(self.location)) color: color /*depth:neighbours_size/4*/;
-	        draw shape: circle color: color size: neighbours_size empty: true;
+	        draw (point(self.location)) color: color depth:neighbours_size/4;
+	        draw circle(neighbours_size) color: color empty: true;
         }
     }
 }
@@ -263,8 +288,11 @@ experiment simulation type: gui {
  		
  		 display modavi_display type:opengl ambiant_light: 0.2	{
  		 	species Host aspect: basic;	
-			species macroNode aspect:sphere z:0.2;
-			species macroEdge aspect:base z:0.2;	
+ 		 	species node aspect: sphere z:0.2;
+	        species edge aspect: base z:0.2;
+ 		 	
+			species macroNode aspect:sphere z:0.4;
+			species macroEdge aspect:base z:0.4;	
 					
 		}
  		 

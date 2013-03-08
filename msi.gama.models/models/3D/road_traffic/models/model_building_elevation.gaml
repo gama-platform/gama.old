@@ -95,7 +95,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw shape: circle color: color size: 10 ;
+			draw circle(10) color: color;
 		}
 	}
 }
@@ -115,7 +115,7 @@ experiment road_traffic type: gui {
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
 	
 	output {
-		display city_display refresh_every: 1 type: opengl ambiant_light:0.1{
+		display city_display refresh_every: 1 type: opengl ambiant_light:0.2{
 			species road aspect: base refresh:true ;
 			species people aspect: base ;
 			species building aspect:base ;
