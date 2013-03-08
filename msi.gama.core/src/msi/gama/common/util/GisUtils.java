@@ -115,7 +115,7 @@ public class GisUtils {
 			//begin ---------------------------------------------------------------------------------------------
 			//Thai.truongminh@gmail.com 
 			// 18-sep-2012: for create agen from:list
-			// for tracing nly
+			// for tracing only
 
 			if (DEBUG)
 				GuiUtils.informConsole("GisUtil.CRS="+crsInit.toString());
@@ -145,6 +145,7 @@ public class GisUtils {
 		return transfCRS;
 	}
 //Begin
+//Thai.truongminh@gmail.com 
 //-----------------------------------------------------------------------------------
 	public static MathTransform getTransformCRS(final String coordinateRS, final double latitude,
 			final double longitude) throws IOException {
