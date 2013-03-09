@@ -83,7 +83,7 @@ import msi.gaml.types.IType;
  */
 public class SqlConnection {
 		private static final boolean DEBUG = false; // Change DEBUG = false for release version
-		public static final String MYSQL ="MySQL";
+		public static final String MYSQL ="mysql";
 		public static final String POSTGRES="postgres";
 		public static final String POSTGIS="postgis";
 		public static final String MSSQL ="sqlserver";
@@ -93,10 +93,12 @@ public class SqlConnection {
 		public static final String VARCHAR="VARCHAR";
 		public static final String NVARCHAR="NVARCHAR";
 		public static final String TEXT="TEXT";
+
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
 		static final String POSTGRESDriver= new String("org.postgresql.Driver");
+		
 		static String vender="";
 		static String dbtype="";
 		static String url="";
@@ -104,15 +106,27 @@ public class SqlConnection {
 		static String dbName="";
 		static String userName="";
 		static String password="";
+		static Boolean transformed=false;
+		private static java.util.HashMap<String, String> tmap = new java.util.HashMap<String, String>();
 		public SqlConnection(String dbName)
 		{
 			this.dbName=dbName;
+			transformInit();
 		}
 		public SqlConnection(String venderName,String database)
 		{
 			this.vender=venderName;
 			this.dbName=database;
+			transformInit();
 		}
+		public SqlConnection(String venderName,String database, Boolean transformed)
+		{
+			this.vender=venderName;
+			this.dbName=database;
+			this.transformed = transformed;
+			transformInit();
+		}
+
 		public SqlConnection()
 		{
 		}
@@ -127,9 +141,33 @@ public class SqlConnection {
 			this.userName=userName;
 			this.password=password;	
 			this.dbtype=venderName;
+			transformInit();
 			//conn=connectDB();
 		}
-		
+		public SqlConnection(String venderName,String url,String port,
+				String dbName, String userName,String password, Boolean transformed)
+		{
+			this.vender=venderName;
+			this.url=url;
+			this.port=port;
+			this.dbName=dbName;
+			this.userName=userName;
+			this.password=password;	
+			this.dbtype=venderName;
+			this.transformed = transformed;
+			transformInit();
+			//conn=connectDB();
+		}
+		/*
+		 * Tranform function base on DBMS
+		 */
+		private void transformInit(){
+			tmap.put(MYSQL, "GeomFromText");
+			tmap.put(POSTGRES, "ST_GeomFromText");
+			tmap.put(POSTGIS, "ST_GeomFromText");
+			tmap.put(MSSQL, "geometry::STGeomFromText");
+			tmap.put(SQLITE, "GeomFromText");	
+		}
 		/*
 		 * Make a connection to BDMS
 		 * 
@@ -198,36 +236,9 @@ public class SqlConnection {
 		public GamaList<Object> selectDB(String selectComm) 
 		{
 			GamaList<Object> result=new GamaList<Object>();
-
-//			ResultSet rs;
-//			GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 			Connection conn=null;
 			try {
-				conn=connectDB();
-
-//				Statement st = conn.createStatement(); 
-//				rs = st.executeQuery(selectComm);
-//				ResultSetMetaData rsmd = rs.getMetaData();
-//				if (DEBUG){
-//					GuiUtils.debug("MetaData:"+rsmd.toString());
-//				}
-//				//repRequest=resultSet2GamaList(rs);
-//				
-//				//result.add(rsmd);
-//				result.add(getColumnName(rsmd));
-//				result.add(getColumnTypeName(rsmd));
-//				
-//				repRequest=resultSet2GamaList(rs);
-//				
-//				result.add(repRequest);
-//				
-//				if (DEBUG){
-//					GuiUtils.debug("list of column name:" + result.get(0) );
-//					GuiUtils.debug("list of column type:" + result.get(1) );
-//					GuiUtils.debug("list of data:" + result.get(2) );
-//				}
-//				rs.close();
-				
+				conn=connectDB();				
 				result=selectDB(conn,selectComm);
 				conn.close();
 			} catch (SQLException e) {
@@ -653,10 +664,6 @@ public class SqlConnection {
 			     return dbGeometry;			 }
 			
 			
-//			public Geometry read(ResultSet rs, int index) throws IOException
-//			{
-//				return new WKBAttributeIO().read(rs, index);
-//			}
 			public String getURL(){ return url; }
 			public String getVendor(){ return vender; }
 			public String getUser(){ return userName;}
@@ -781,7 +788,7 @@ public class SqlConnection {
 //			
 //			return rec_no;
 //		}
-		/*
+		/*-------------------------------------------------------------------------------------------------------------------------
 		 * Make Insert a reccord into table
 		 * 
 		 */
@@ -808,9 +815,22 @@ public class SqlConnection {
 			
 			return rec_no;
 		}
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
+				throws GamaRuntimeException
+		{
+			this.transformed=transformed;
+			int rec_no=-1;
+			//Get Insert command
+			rec_no=insertDB(conn,table_name,cols,values);
+			return rec_no;
+		}
 
-
-		/*
+		/*-------------------------------------------------------------------------------------------------------------------------
 		 * Make Insert a reccord into table
 		 * 
 		 */
@@ -839,6 +859,17 @@ public class SqlConnection {
 				e.printStackTrace();
 				throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
 			}
+			return rec_no;
+		}
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
+				throws GamaRuntimeException {
+			this.transformed=transformed;
+			int rec_no=-1;
+			rec_no=insertDB(table_name,cols,values);
 			return rec_no;
 		}
 	
@@ -912,6 +943,13 @@ public class SqlConnection {
 			return rec_no;
 		}
 		
+		public int insertDB(Connection conn, String table_name,GamaList<Object> values, Boolean transformed ) 
+				throws GamaRuntimeException
+		{
+			this.transformed=transformed;
+			return insertDB(conn,table_name,values);
+		}
+		
 		/*
 		 * Make Insert a reccord into table
 		 * 
@@ -944,6 +982,15 @@ public class SqlConnection {
 			return rec_no;
 		}
 	
+		/*
+		 * Make Insert a reccord into table
+		 * 
+		 */
+		public int insertDB(String table_name, GamaList<Object> values, Boolean transformed ) 
+				throws GamaRuntimeException {
+			this.transformed=transformed;
+			return insertDB(table_name,values);
+		}
 			
 
 		/*
@@ -1195,32 +1242,16 @@ public class SqlConnection {
 							//set parameter value
 							valueStr="";
 							for (int i=0; i<col_no;i++){
-//								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
-//									if (vender.equalsIgnoreCase(MYSQL)){
-//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
-//									}else if (vender.equalsIgnoreCase(MSSQL)){
-//										valueStr=valueStr+"geometry::STGeomFromText('"+values.get(i).toString()+"')";
-//									}else if (vender.equalsIgnoreCase(SQLITE)){
-//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
-//										
-//									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
-//										valueStr=valueStr+"ST_GeomFromText('"+values.get(i).toString()+"')";
-//									}
+								//Value list begin-------------------------------------------
 								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
 									    //Transform GAMA GIS TO NORMAL
-										WKTReader wkt = new WKTReader();
-										Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
-										
-										if (vender.equalsIgnoreCase(MYSQL)){
-											valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
-										}else if (vender.equalsIgnoreCase(MSSQL)){
-											valueStr=valueStr+"geometry::STGeomFromText('"+geo2.toString()+"')";
-										}else if (vender.equalsIgnoreCase(SQLITE)){
-											valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
-										}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
-											valueStr=valueStr+"ST_GeomFromText('"+geo2.toString()+"')";
+										if (transformed){
+											WKTReader wkt = new WKTReader();
+											Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
+										}else{
+											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
 										}
-
 								}else if (((String)col_Types.get(i)).equalsIgnoreCase(CHAR)
 										||((String)col_Types.get(i)).equalsIgnoreCase(VARCHAR)
 										||((String)col_Types.get(i)).equalsIgnoreCase(NVARCHAR)
@@ -1230,26 +1261,15 @@ public class SqlConnection {
 									temp=temp.replaceAll("'", "''");
 									//Add to value:
 									valueStr=valueStr+"'"+temp+"'";
-									}else { // For other type
+								}else { // For other type
 									valueStr=valueStr+values.get(i).toString();
 								}
 								if (i!=col_no-1){ // Add delimiter of each value 
 									valueStr=valueStr + ",";
 								}
-							}
-									//String geoWKT = prepareGeom(values.get(i).toString()) ;
-									//GuiUtils.debug("GEOM to TXT:" +geoWKT );	
-									//GuiUtils.debug("GEOM to SQL:" + "GeomFromText('"+geoWKT+"')" );	
-									//pstmt.setObject(i+1, "GeomFromText('"+geoWKT+"')");
-									//pstmt.setObject(i+1, WKBReader.hexToBytes(values.get(i).toString()));
-									//pstmt.setObject(i+1, "GeomFromText('"+values.get(i).toString()+"')");
-									//GuiUtils.debug("Statement1:" +pstmt.toString() );
-									//String value =pstmt.toString() ;
-									//value= value.replaceAll("\\*\\* NOT SPECIFIED \\*\\*", C);
-									//GuiUtils.debug("Statement2:" +value );
-									//GuiUtils.debug("Statement:" +"GeomFromText('"+values.get(i).toString()+"')" );	
-									//pstmt.setObject(i+1,(Object) "GeomFromText(\'"+values.get(i).toString()+"\')");
-									
+								//Value list end--------------------------------------------------------
+
+							}									
 							insertStr= insertStr + table_name +"("+colStr+") " +"VALUES("+valueStr+")";					
 
 							if(DEBUG) 
@@ -1315,44 +1335,30 @@ public class SqlConnection {
 							colStr="";
 							valueStr="";
 							for (int i=0; i<col_no;i++){
-//								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
-//									if (vender.equalsIgnoreCase(MYSQL)){
-//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
-//									}else if (vender.equalsIgnoreCase(MSSQL)){
-//										valueStr=valueStr+"geometry::STGeomFromText('"+values.get(i).toString()+"')";
-//									}else if (vender.equalsIgnoreCase(SQLITE)){
-//										valueStr=valueStr+"GeomFromText('"+values.get(i).toString()+"')";
-//									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
-//										valueStr=valueStr+"ST_GeomFromText('"+values.get(i).toString()+"')";
-//									}
+								//Value list begin-------------------------------------------
 								if (((String)col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE)){ // for GEOMETRY type
-								    //Transform GAMA GIS TO NORMAL
-									WKTReader wkt = new WKTReader();
-									Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
-									
-									if (vender.equalsIgnoreCase(MYSQL)){
-										valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
-									}else if (vender.equalsIgnoreCase(MSSQL)){
-										valueStr=valueStr+"geometry::STGeomFromText('"+geo2.toString()+"')";
-									}else if (vender.equalsIgnoreCase(SQLITE)){
-										valueStr=valueStr+"GeomFromText('"+geo2.toString()+"')";
-									}else if (vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS)){
-										valueStr=valueStr+"ST_GeomFromText('"+geo2.toString()+"')";
-									}
-
-
+									    //Transform GAMA GIS TO NORMAL
+										if (transformed){
+											WKTReader wkt = new WKTReader();
+											Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
+										}else{ 
+											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
+										}
 								}else if (((String)col_Types.get(i)).equalsIgnoreCase(CHAR)
-										||((String)col_Types.get(i)).equalsIgnoreCase(VARCHAR)
-										||((String)col_Types.get(i)).equalsIgnoreCase(NVARCHAR)
-										||((String)col_Types.get(i)).equalsIgnoreCase(TEXT)){ // for String type
-									//Correct error string
-									String temp=values.get(i).toString();
-									temp=temp.replaceAll("'", "''");
-									//Add to value:
-									valueStr=valueStr+"'"+temp+"'";
+											||((String)col_Types.get(i)).equalsIgnoreCase(VARCHAR)
+											||((String)col_Types.get(i)).equalsIgnoreCase(NVARCHAR)
+											||((String)col_Types.get(i)).equalsIgnoreCase(TEXT))
+								{ // for String type
+										//Correct error string
+										String temp=values.get(i).toString();
+										temp=temp.replaceAll("'", "''");
+										//Add to value:
+										valueStr=valueStr+"'"+temp+"'";
 								}else { // For other type
-									valueStr=valueStr+values.get(i).toString();
+										valueStr=valueStr+values.get(i).toString();
 								}
+								//Value list end--------------------------------------------------------
 								//column list
 								colStr=colStr + col_Names.get(i).toString();
 
@@ -1379,5 +1385,8 @@ public class SqlConnection {
 						
 						return insertStr;
 					}
-
+					
+					public void setTransformed(Boolean tranformed){
+						this.transformed=tranformed;
+					}
 }
