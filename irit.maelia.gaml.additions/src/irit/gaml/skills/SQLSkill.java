@@ -268,7 +268,8 @@ public class SQLSkill extends Skill {
 		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
 		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),	
 		@arg(name = "columns", type = IType.LIST_STR, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
+		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 	})
 		
 	public int insert(final IScope scope) throws GamaRuntimeException
@@ -276,7 +277,10 @@ public class SQLSkill extends Skill {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols =(GamaList<Object>) scope.getArg("columns", IType.LIST);
-		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
+		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
+		//String tranformStr = (String) scope.getArg("transform", IType.BOOL);
+		//Boolean transform = ( (tranformStr != null) ? Boolean.parseBoolean(tranformStr) : false);
+		Boolean transform = ( (scope.getArg("transform", IType.BOOL) == null) ? false: (Boolean)scope.getArg("transform", IType.BOOL) );
 		String dbtype = (String) params.get("dbtype");
 		String host = (String)params.get("host");
 		String port = (String)params.get("port");
@@ -289,9 +293,9 @@ public class SQLSkill extends Skill {
 			String DBRelativeLocation =
 					scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			if (DEBUG) GuiUtils.debug("database sqlite:"+DBRelativeLocation);
-			sqlConn=new SqlConnection(dbtype,DBRelativeLocation);
+			sqlConn=new SqlConnection(dbtype,DBRelativeLocation,transform);
 		}else{
-			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd);
+			sqlConn=new SqlConnection(dbtype,host,port,database,user,passwd,transform);
 		}
 
 		int rec_no=-1;
