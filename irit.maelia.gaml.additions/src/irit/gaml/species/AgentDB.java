@@ -389,22 +389,23 @@ public class AgentDB extends GamlAgent {
 	args = {
 		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),	
 		@arg(name = "columns", type = IType.LIST_STR, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
-	})
-		
+		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
+		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	})		
 	public int insert(final IScope scope) throws GamaRuntimeException
 	{
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols =(GamaList<Object>) scope.getArg("columns", IType.LIST);
 		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
+		Boolean transform = ( (scope.getArg("transform", IType.BOOL) == null) ? false: (Boolean)scope.getArg("transform", IType.BOOL) );
 		int rec_no=-1;
 		 
 		try{
 			//Connection conn=sqlConn.connectDB();  
 			if (cols.size()>0){
-				rec_no = new SqlConnection().insertDB(conn,table_name,cols,values);
+				rec_no = new SqlConnection().insertDB(conn,table_name,cols,values,transform);
 			}else {
-				rec_no = new SqlConnection().insertDB(conn,table_name,values);
+				rec_no = new SqlConnection().insertDB(conn,table_name,values,transform);
 			}
 			//conn.close();
 		} catch (Exception e) {
