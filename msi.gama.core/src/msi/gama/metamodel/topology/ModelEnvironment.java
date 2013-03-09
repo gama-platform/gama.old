@@ -234,7 +234,8 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 		String passwd = (String) params.get("passwd");
 		String crs = (String) params.get("crs");
 		String srid=(String) params.get("srid");
-		String longitudeFirst= (String) params.get("longitudeFirst");
+		//String longitudeFirst= (String) params.get("longitudeFirst");
+		Boolean longitudeFirst= (params.get("longitudeFirst")==null) ? true: ( (Boolean)params.get("longitudeFirst") );
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
@@ -257,9 +258,13 @@ public class ModelEnvironment extends Symbol implements IEnvironment {
 			
 			if ((crs!=null) || (srid!=null)){
 				
+//				MathTransform transformCRSNew = ( (crs!=null) ? GisUtils.getTransformCRS(crs, latitude, longitude):
+//												  (longitudeFirst !=null ) ? GisUtils.getTransformCRS(srid, Boolean.parseBoolean(longitudeFirst), latitude, longitude):
+//												  GisUtils.getTransformCRS(srid, true, latitude, longitude)	);
 				MathTransform transformCRSNew = ( (crs!=null) ? GisUtils.getTransformCRS(crs, latitude, longitude):
-												  (longitudeFirst !=null ) ? GisUtils.getTransformCRS(srid, Boolean.parseBoolean(longitudeFirst), latitude, longitude):
-												  GisUtils.getTransformCRS(srid, true, latitude, longitude)	);
+					                           GisUtils.getTransformCRS(srid, longitudeFirst, latitude, longitude) );
+					
+
 				if ( DEBUG ) {
 					GuiUtils.debug("ModelEnvironment.LoadSQL: _latitude :" + latitude);
 					GuiUtils.debug("ModelEnvironment.LoadSQL: _longitude:" + longitude);
