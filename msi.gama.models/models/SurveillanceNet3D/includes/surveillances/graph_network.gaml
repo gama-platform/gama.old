@@ -35,7 +35,7 @@ global {
 
 entities {
 	
-	species UnitDiskGraph skills: [situated, visible] {
+	species UnitDiskGraph  {
 		var UDgraph type: graph init: nil;
 		var setup type: int init: 0;
 		
@@ -153,7 +153,7 @@ entities {
 				ask target: the_sigma_cell
 				{
 					set current_std_deviation value: estimation_std_deviation;
-				}
+				} 
 				
 				ask target: the_rho_cell
 				{
