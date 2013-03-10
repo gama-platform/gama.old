@@ -49,7 +49,10 @@ import msi.gaml.types.IType;
  *      Modify public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
  *      Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException
  *      Modify public int insert(final IScope scope) throws GamaRuntimeException      
- * Last Modified: 21-Feb-2013
+ *   10-Mar-2013:
+ *   	Modify select method: Add transform parameter  
+ *      Modify insert method: Add transform parameter 
+ * Last Modified: 10-Mar-2013
  */
 @species(name = "AgentDB")
 public class AgentDB extends GamlAgent {
@@ -213,40 +216,6 @@ public class AgentDB extends GamlAgent {
 	}
 	
 
-
-	/*
-	 * Make a connection to BDMS and execute the select statement
-	 * 
-	 * @syntax do action: 
-	 * 	select {
-	 *  	arg select value: "select string"
-	 *   }
-	 * 
-	 * @return GamaList<GamaList<Object>>
-	 */
-//	@action(name="select",
-//	args = {
-//		@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select command"))
-//	})
-//
-//	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
-//	{
-//		String selectComm = (String) scope.getArg("select", IType.STRING);
-//		GamaList<Object> repRequest = new GamaList<Object>();
-//		// get data
-//		try{
-//			  repRequest = new SqlConnection().selectDB(conn, selectComm);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
-//		}
-//		if ( DEBUG ) {
-//			GuiUtils.informConsole(selectComm + " was run");
-//		}
-//
-//		return repRequest;
-//	}
-
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 * 
@@ -261,12 +230,14 @@ public class AgentDB extends GamlAgent {
 	@action(name="select",
 		args = {
 			@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select string")),
-			@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks"))
+			@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))			
 	})
 	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
 	{
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
+		Boolean transform = ( scope.hasArg("transform") ?  (Boolean)scope.getArg("transform", IType.BOOL) :  false );
 		GamaList<Object> repRequest = new GamaList<Object>();		
 		// get data
 		try{
@@ -275,49 +246,19 @@ public class AgentDB extends GamlAgent {
 			}else{
 				repRequest =  new SqlConnection().selectDB(conn,selectComm);
 			}
+			if (transform){
+				return new SqlConnection().fromGisToAbsolute(repRequest);
+			}
+			else{
+				return repRequest;
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
 		}
-		if ( DEBUG ) {
-			GuiUtils.informConsole(selectComm + " was run");
-		}
-		return repRequest;
 	}	
 	
-	/*
-	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
-	 * 
-	 * @syntax: do action: executeUpdate {
-	 * arg params value:[
-	 *  	arg updateComm value: "update string"
-	 *   }
-	 *   
-	 *   */
-//	@action(name="executeUpdate",
-//	args = {
-//			@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop"))
-//	})
-//	
-//	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
-//		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-//		int n = 0;
-//		try {
-//			n = new SqlConnection().executeUpdateDB(conn, updateComm);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			throw new GamaRuntimeException("AgentDB.exexuteUpdate:" + e.toString());
-//		}
-//
-//		if ( DEBUG ) {
-//			GuiUtils.informConsole(updateComm + " was run");
-//		}
-//
-//		return n;
-//
-//	}
 
 	/*
 	 * - Make a connection to BDMS 
@@ -331,7 +272,8 @@ public class AgentDB extends GamlAgent {
 	@action(name="executeUpdate",
 			args = {
 				@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-				@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question mark"))
+				@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question mark")),
+				@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 	})
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException
 	{
@@ -397,7 +339,7 @@ public class AgentDB extends GamlAgent {
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols =(GamaList<Object>) scope.getArg("columns", IType.LIST);
 		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);			
-		Boolean transform = ( (scope.getArg("transform", IType.BOOL) == null) ? false: (Boolean)scope.getArg("transform", IType.BOOL) );
+		Boolean transform = ( scope.hasArg("transform") ?  (Boolean)scope.getArg("transform", IType.BOOL) :  false );
 		int rec_no=-1;
 		 
 		try{
