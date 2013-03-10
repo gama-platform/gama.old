@@ -19,13 +19,13 @@
 package msi.gama.runtime;
 
 import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class RuntimeScope extends AbstractScope {
 
 	final ISimulation simulation;
-	IAgent world;
+	WorldAgent world;
 
 	public RuntimeScope(final ISimulation sim, final String name) {
 		super(name);
@@ -38,7 +38,7 @@ public class RuntimeScope extends AbstractScope {
 	}
 
 	@Override
-	public final IAgent getWorldScope() {
+	public final WorldAgent getWorldScope() {
 		if ( world == null ) {
 			world = simulation.getWorld();
 		}

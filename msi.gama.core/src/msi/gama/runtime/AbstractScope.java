@@ -21,7 +21,7 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -121,7 +121,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public abstract IAgent getWorldScope();
+	public abstract WorldAgent getWorldScope();
 
 	@Override
 	public abstract ISimulation getSimulationScope();

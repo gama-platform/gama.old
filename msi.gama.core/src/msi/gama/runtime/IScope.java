@@ -21,7 +21,7 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -146,7 +146,7 @@ public interface IScope {
 	 * Return the current world of the simulation in which this scope is defined
 	 * @return
 	 */
-	public abstract IAgent getWorldScope();
+	public abstract WorldAgent getWorldScope();
 
 	/**
 	 * Returns the current simulation in which this scope is defined.
