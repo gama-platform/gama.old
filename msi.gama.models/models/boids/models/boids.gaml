@@ -23,10 +23,10 @@ global {
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds depends_on: [bounds];    
 	int ymin <- bounds depends_on: [bounds];  
-	int xmax <- (width_and_height_of_environment - bounds) depends_on: [bounds];    
-	int ymax <- (width_and_height_of_environment - bounds) depends_on: [bounds];   
+	int xmax <- (width_and_height_of_environment - bounds);    
+	int ymax <- (width_and_height_of_environment - bounds);   
 
-	init {
+	init { 
 		create boids number: number_of_agents { 
 			 location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		} 
