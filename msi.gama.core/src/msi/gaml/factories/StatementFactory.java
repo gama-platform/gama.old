@@ -171,7 +171,12 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				return ca;
 			}
 			ca.put(name, e);
-			IType type = sd.getTypeNamed(argFacets.getLabel(TYPE));
+			String typeName = argFacets.getLabel(TYPE);
+			if ( !isCreate &&
+				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				cd.flagError(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+			}
+			IType type = sd.getTypeNamed(typeName);
 			if ( type == Types.NO_TYPE && e != null ) {
 				type = e.getType();
 			}
