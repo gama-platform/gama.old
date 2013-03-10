@@ -20,8 +20,8 @@ package msi.gama.util.graph;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.runtime.GAMA;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * FloydWarshallStaticOptimizer.
@@ -278,7 +278,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 	@Override
 	GamaPoint computeCenterOfIntersections() {
-		IEnvironment env = GAMA.getModel().getModelEnvironment();
+		Envelope env = GAMA.getFrontmostSimulation().getWorld().getEnvelope();
 		center = new GamaPoint(env.getWidth() / 2, env.getHeight() / 2);
 		return center;
 	}
