@@ -6,7 +6,6 @@ package msi.gama.lang.utils;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.descriptions.IGamlDescription;
@@ -234,7 +233,7 @@ public class EGaml {
 			serializer.append(")").append(":");
 			serialize(((If) expr).getIfFalse());
 		} else if ( expr instanceof StringLiteral ) {
-			serializer.append(StringUtils.toGamlString(((StringLiteral) expr).getOp()));
+			serializer.append(((StringLiteral) expr).getOp());
 		} else if ( expr instanceof TerminalExpression ) {
 			serializer.append(((TerminalExpression) expr).getOp());
 		} else if ( expr instanceof Point ) {

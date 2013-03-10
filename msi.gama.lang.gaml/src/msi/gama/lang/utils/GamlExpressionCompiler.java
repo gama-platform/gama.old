@@ -382,20 +382,20 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
-		@Override
-		public IExpression caseStatement(final Statement object) {
-
-			// WHAT IF THE NAME IS NULL ?
-
-			return factory.createConst(StringUtils.unescapeJava(EGaml.getNameOf(object)),
-				Types.get(IType.STRING));
-		}
-
-		@Override
-		public IExpression caseFacet(final Facet object) {
-			return factory.createConst(StringUtils.unescapeJava(object.getName()),
-				Types.get(IType.STRING));
-		}
+		// @Override
+		// public IExpression caseStatement(final Statement object) {
+		//
+		// // WHAT IF THE NAME IS NULL ?
+		//
+		// return factory.createConst(StringUtils.unescapeJava(EGaml.getNameOf(object)),
+		// Types.get(IType.STRING));
+		// }
+		//
+		// @Override
+		// public IExpression caseFacet(final Facet object) {
+		// return factory.createConst(StringUtils.unescapeJava(object.getName()),
+		// Types.get(IType.STRING));
+		// }
 
 		@Override
 		public IExpression caseExpression(final Expression object) {
