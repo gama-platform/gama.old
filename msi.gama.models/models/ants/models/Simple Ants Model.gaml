@@ -21,21 +21,21 @@ global {
 	}
 	action release
 	{
-		arg location type: String;
+		arg location type: point;
   		arg selected_agents type: list;
   	
 		write("release");
 	}
 	action click
 	{
-		arg location type: String;
+		arg location type: point;
   		arg selected_agents type: list;
   	
 		write("click");
 	}
 	action click2
 	{
-		arg location type: String;
+		arg location type: point;
   		arg selected_agents type: list;
   	
 		write("click2");
