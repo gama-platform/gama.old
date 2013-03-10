@@ -49,8 +49,8 @@ import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 	@var(name = "contour", type = IType.GEOM_STR) })
 public class GamaShape implements IShape {
 
-	private Geometry geometry;
-	private ILocation location;
+	protected Geometry geometry;
+	protected ILocation location;
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
@@ -286,7 +286,6 @@ public class GamaShape implements IShape {
 		}
 
 		public boolean covers(final IShape g) {
-			// TODO Eliminate toCoordinate() by doing a casting (Coordinate)
 			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
 				.covers(g.getInnerGeometry());
 		}
@@ -295,12 +294,12 @@ public class GamaShape implements IShape {
 			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
 				.intersects(g.getInnerGeometry());
 		}
-		
+
 		public boolean crosses(final IShape g) {
-			return g.isPoint() ?pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
 				.crosses(g.getInnerGeometry());
 		}
-		
+
 	}
 
 	@Override
@@ -503,7 +502,8 @@ public class GamaShape implements IShape {
 	public boolean intersects(final IShape g) {
 		return operations().intersects(g);
 	}
-	
+
+	@Override
 	public boolean crosses(final IShape g) {
 		return operations().crosses(g);
 	}
