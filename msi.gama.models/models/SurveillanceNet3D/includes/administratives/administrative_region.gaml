@@ -30,7 +30,7 @@ entities {
 	species db skills:[SQLSKILL]{
 		
 	}
-	species district_region skills: [situated, visible] {
+	species district_region  {
 		var id_1 type: string ;
 		var region_name type: string ;
 		var id_2 type: string ;
@@ -52,7 +52,7 @@ entities {
 		var estimated_density_max type: float init: 0.0 ;
 	}
 
-	species smalltown_region skills: [situated, visible] {
+	species smalltown_region  {
 		var id_1 type: string ;
 		var region_name type: string ;
 		var id_2 type: string ;
@@ -66,7 +66,7 @@ entities {
 			set color value: (id_2 = '38253') ? 'blue' : 'white' ;
 		}
 	}
-	species administrative_region skills: [situated, visible] {
+	species administrative_region  {
 		var id_1 type: string ;
 		var region_name type: string ;
 		var id_2 type: string ;
