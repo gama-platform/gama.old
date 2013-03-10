@@ -19,7 +19,7 @@
 package msi.gama.kernel.experiment;
 
 import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -57,7 +57,7 @@ public class ExperimentScope extends AbstractScope {
 	}
 
 	@Override
-	public IAgent getWorldScope() {
+	public WorldAgent getWorldScope() {
 		ISimulation sim = getSimulationScope();
 		return sim == null ? null : sim.getWorld();
 	}
