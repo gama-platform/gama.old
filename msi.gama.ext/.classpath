@@ -47,6 +47,6 @@
 	<classpathentry exported="true" kind="lib" path="janino.jar"/>
 	<classpathentry exported="true" kind="lib" path="jdom-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jme-collada.jar"/>
-	<classpathentry exported="true" kind="lib" path="jts-1.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="jts-1.13.jar" sourcepath="sources/jts-1-13.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
