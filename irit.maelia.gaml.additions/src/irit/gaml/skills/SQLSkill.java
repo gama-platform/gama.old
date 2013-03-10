@@ -53,7 +53,10 @@ import msi.gaml.types.IType;
  *      Remove method:public int executeUpdate(final IScope scope) throws GamaRuntimeException
  *      Remove method:public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
  *      Add method:public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException
- * Last Modified: 21-Feb-2013
+  *   10-Mar-2013:
+ *   	Modify select method: Add transform parameter  
+ *      Modify insert method: Add transform parameter 
+ * Last Modified: 10-Mar-2013
 */
 
 @skill(name = "SQLSKILL")
@@ -280,7 +283,7 @@ public class SQLSkill extends Skill {
 		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
 		//String tranformStr = (String) scope.getArg("transform", IType.BOOL);
 		//Boolean transform = ( (tranformStr != null) ? Boolean.parseBoolean(tranformStr) : false);
-		Boolean transform = ( (scope.getArg("transform", IType.BOOL) == null) ? false: (Boolean)scope.getArg("transform", IType.BOOL) );
+		Boolean transform = ( scope.hasArg("transform") ?  (Boolean)scope.getArg("transform", IType.BOOL) :  false );
 		String dbtype = (String) params.get("dbtype");
 		String host = (String)params.get("host");
 		String port = (String)params.get("port");
@@ -459,13 +462,16 @@ public class SQLSkill extends Skill {
 		args = {
 			@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
 			@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select string with question marks")),
-			@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks"))
+			@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+
 	})
 	public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException
 	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values =(GamaList<Object>) scope.getArg("values", IType.LIST);	
+		Boolean transform = ( scope.hasArg("transform") ?   (Boolean)scope.getArg("transform", IType.BOOL):false );
 		String dbtype = (String) params.get("dbtype");
 		String host = (String)params.get("host");
 		String port = (String)params.get("port");
@@ -490,15 +496,19 @@ public class SQLSkill extends Skill {
 			}else{
 				repRequest = sqlConn.selectDB(selectComm);
 			}
+			// Transform GIS to Absolute (Geometry in GAMA)
+			if (transform){
+				return sqlConn.fromGisToAbsolute(repRequest);
+			}
+			else{
+				return repRequest;
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new GamaRuntimeException("SQLSkill.select_QM: " + e.toString());
 		}
-		if ( DEBUG ) {
-			GuiUtils.debug(selectComm + " was run");
-		}
-		return repRequest;
+		
 	}	
 	
 	@action(name="list2Matrix",
