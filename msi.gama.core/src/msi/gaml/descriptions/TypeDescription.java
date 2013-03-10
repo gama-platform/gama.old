@@ -235,6 +235,24 @@ public class TypeDescription extends SymbolDescription {
 		}
 	}
 
+	public void resortVarName(final VariableDescription var) {
+		var.usedVariablesIn(getVariables());
+		var.expandDependencies(new GamaList());
+		sortedVariableNames.remove(var.getName());
+		int index = 0;
+		for ( int j = 0, n = sortedVariableNames.size(); j < n; j++ ) {
+			VariableDescription vd = getVariable(sortedVariableNames.get(j));
+			if ( var.getDependencies().contains(vd) ) {
+				index = j;
+			};
+		}
+		if ( index == sortedVariableNames.size() ) {
+			sortedVariableNames.add(var.getName());
+		} else {
+			sortedVariableNames.add(index + 1, var.getName());
+		}
+	}
+
 	@Override
 	public void dispose() {
 		if ( actions != null ) {
