@@ -31,10 +31,10 @@ global {
 		do description ; 
 		do initialize_places ;      
 		set number_of_people value: length(all_places) * density_of_people ; 
-		do initialize_people ; 
-	}
-	action initialize_places;  
-	action initialize_people;  
+		do initialize_people ;
+	}  
+	action initialize_places virtual: true ;  
+	action initialize_people virtual: true;  
 }   
 entities {
 	species base {
