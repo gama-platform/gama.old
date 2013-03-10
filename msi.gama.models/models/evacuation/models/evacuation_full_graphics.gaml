@@ -39,7 +39,7 @@ global {
 	int pedestrians_reach_target -> { self compute_pedestrians_reach_target [] };
 	int pedestrians_reach_shelter -> { length(pedestrian where each.reach_shelter) };
 	
-	list not_reach_schelters <- (pedestrian) update: (pedestrian) where !(((each)).reach_shelter);
+	list not_reach_schelters <- list(pedestrian) update: (pedestrian) where !(((each)).reach_shelter);
 	
 	int captured_pedestrians <- sum(list(road) collect ( length((each.members))) );
 	int not_captured_pedestrians <- length(list(pedestrian));
@@ -124,31 +124,31 @@ entities {
 	  	}
 	  	
 	  	aspect base {
-	  		draw shape: geometry color: color;
+	  		draw shape color: color;
 	  	}
 	}
 	
 	species shelter {
 		aspect base {
-			draw shape: geometry color: shelter_color;
+			draw shape color: shelter_color;
 		}
 	}
 	
 	species road_width {
 		aspect base {
-			draw shape: geometry color: road_width_color;
+			draw shape color: road_width_color;
 		}
 	}
 	
 	species beach {
 		aspect base {
-			draw shape: geometry color: beach_color;
+			draw shape color: beach_color;
 		}
 	}
 	
 	species river {
 		aspect base {
-			draw shape: geometry color: river_color;
+			draw shape color: river_color;
 		}
 	}
 
@@ -219,13 +219,13 @@ entities {
 		}
 		
 	 	aspect base {
-	 		draw shape: geometry color: road_color;
+	 		draw shape color: road_color;
 	 	}
 	}
 	
 	species macro_patch_viewer {
 		aspect base {
-			draw shape: geometry color: rgb('red');
+			draw shape color: rgb('red');
 		}
 	}	
 	
@@ -285,7 +285,7 @@ entities {
 		}
 		
  		aspect base {
- 			draw shape: circle size: 20 color: pedestrian_color;
+ 			draw circle(20) color: pedestrian_color;
  		}
 	}
 	
