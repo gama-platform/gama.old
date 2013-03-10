@@ -54,7 +54,7 @@ entities {
 		float surface;
 		int capacity  <- 1 + int(surface / square_meters_per_people);    
 		action accept {
-			arg one_people;
+			arg one_people type: people;
 			add one_people to: insiders of self;
 			set location of (one_people as people) <- any_location_in(shape);
 			set capacity <- capacity - 1;

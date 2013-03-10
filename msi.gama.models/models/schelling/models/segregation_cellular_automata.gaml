@@ -42,7 +42,7 @@ environment width: dimensions height: dimensions {
 	}
 }
 experiment schelling type: gui {	
-	output {
+	output { 
 		display Segregation {
 			grid space;
 		}	

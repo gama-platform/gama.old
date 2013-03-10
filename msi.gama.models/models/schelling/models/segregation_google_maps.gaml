@@ -37,7 +37,7 @@ entities {
 			set location <- (one_of(free_places)).location; 
 			remove location as space from: free_places;
 		} 
-		reflex migrate when: !is_happy {
+		reflex migrate when: !is_happy { 
 			add location as space to: free_places;
 			set location <- any(free_places).location;
 			remove location as space from: free_places;

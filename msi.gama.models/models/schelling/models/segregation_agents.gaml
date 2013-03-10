@@ -5,7 +5,8 @@ import "../include/schelling_common.gaml"
 global {
 	list free_places <- [] of: space;   
 	list all_places <- [] of: space; 
-	action initialize_people {
+	
+	action initialize_people { 
 		create people number: number_of_people;     
 		set all_people <- people as list;  
 	} 
@@ -20,6 +21,8 @@ environment width: dimensions height: dimensions {
 	}
 } 
 entities {
+
+	
 	species people parent: base  {
 		const color type: rgb <- colors at (rnd (number_of_groups - 1));
 		list my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} of: people;
