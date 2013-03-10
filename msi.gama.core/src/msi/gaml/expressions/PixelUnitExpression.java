@@ -32,8 +32,7 @@ public class PixelUnitExpression extends ConstantExpression {
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		return scope.getSimulationScope().getModel().getModelEnvironment().getWidth() /
-			g.getDisplayWidth();
+		return scope.getWorldScope().getEnvelope().getWidth() / g.getDisplayWidth();
 	}
 
 	@Override
