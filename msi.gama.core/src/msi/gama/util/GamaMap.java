@@ -37,9 +37,7 @@ import msi.gaml.types.*;
 public class GamaMap extends LinkedHashMap implements IContainer {
 
 	public static final String KEYS = "keys";
-
 	public static final String VALUES = "values";
-
 	public static final String PAIRS = "pairs";
 
 	private static final GamaMap.ToStringProcedure toStringProcedure = new ToStringProcedure();
@@ -54,15 +52,10 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return result;
 	}
 
-	public GamaMap() {
-		// instances++;
-		// OutputManager.debug("Maps created " + instances);
-	}
+	public GamaMap() {}
 
 	public GamaMap(final int capacity) {
 		super(capacity);
-		// instances++;
-		// OutputManager.debug("Maps created " + instances);
 	}
 
 	public GamaMap(final Map arg0) {
@@ -108,24 +101,6 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return "(" + listValue(null).toGaml() + " as map )";
 	}
 
-	//
-	// @Override
-	// public String toJava() {
-	// final StringBuilder sb = new StringBuilder(size() * 10);
-	// sb.append(GamaMapType.class.getCanonicalName()).append("from(new ")
-	// .append(GamaList.class.getCanonicalName()).append('(');
-	// int i = 0;
-	// for ( Object o : keySet() ) {
-	// if ( i != 0 ) {
-	// sb.append(',');
-	// }
-	// sb.append(Cast.toJava(o)).append(Cast.toJava(get(o)));
-	// i++;
-	// }
-	// sb.append("))");
-	// return sb.toString();
-	// }
-
 	@Override
 	public IType type() {
 		return Types.get(IType.MAP);
@@ -155,7 +130,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 
 	@Override
 	public void add(final Object value, final Object param) {
-		// Exception if value not GamaPair !
+		// TODO Exception if value not GamaPair !
 		add(null, value, param);
 	}
 
@@ -195,18 +170,23 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	public Object first(final IScope scope) {
 		Iterator<Map.Entry<Object, Object>> it = entrySet().iterator();
 		Map.Entry entry = it.hasNext() ? it.next() : null;
-		return entry == null ? new GamaPair(null, null) : new GamaPair(entry.getKey(),
-			entry.getValue());
+		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
+	}
+
+	public GamaPair getAtIndex(Integer index) {
+		if ( index >= size() ) { return null; }
+		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
+		Map.Entry entry = list.get(index);
+		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
+
 	}
 
 	@Override
 	public Object last(final IScope scope) {
+		if ( size() == 0 ) { return null; }
 		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
-		Collections.reverse(list);
-		Iterator<Map.Entry<Object, Object>> it = list.iterator();
-		Map.Entry entry = it.hasNext() ? it.next() : null;
-		return entry == null ? new GamaPair(null, null) : new GamaPair(entry.getKey(),
-			entry.getValue());
+		Map.Entry entry = list.get(list.size() - 1);
+		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
 	}
 
 	@Override
