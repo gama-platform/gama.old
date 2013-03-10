@@ -12,9 +12,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>msi.gama.application.gamaNature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>msi.gama.application.gamaNature</nature>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
 </projectDescription>
