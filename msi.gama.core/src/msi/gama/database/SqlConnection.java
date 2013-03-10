@@ -29,6 +29,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
 
 /*
@@ -79,7 +81,12 @@ import msi.gaml.types.IType;
  *    	Add public GamaList<Object> executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
  *      Add public GamaList<Object> executeQueryDB(String queryStr, GamaList<Object> condition_values)
  *      
- * Last Modified: 28-Feb-2013
+ *   10-Mar-2013:
+ *   	Modify select methods: Add transform parameter  
+ *      Modify insert methods: Add transform parameter 
+ *      Add fromAbsoluteToGis methods
+ *      Add fromGisToAbsolute methods
+ * Last Modified: 10-Mar-2013
  */
 public class SqlConnection {
 		private static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -107,6 +114,7 @@ public class SqlConnection {
 		static String userName="";
 		static String password="";
 		static Boolean transformed=false;
+		
 		private static java.util.HashMap<String, String> tmap = new java.util.HashMap<String, String>();
 		public SqlConnection(String dbName)
 		{
@@ -192,13 +200,8 @@ public class SqlConnection {
 						Class.forName(SQLITEDriver).newInstance();
 						conn =
 							DriverManager.getConnection("jdbc:sqlite:" + dbName);
-						if (DEBUG){
-							GuiUtils.debug("SQLlite:"+conn.toString());
-						}
 					} else if ( vender.equalsIgnoreCase(POSTGRES) || vender.equalsIgnoreCase(POSTGIS) ) {
 						Class.forName(POSTGRESDriver).newInstance();
-						//Class.forName("org.postgresql.Driver");
-						//GuiUtils.debug("Postgres:OK");
 						conn =
 							DriverManager.getConnection("jdbc:postgresql://"+url+":"+port+"/"+ dbName + "?user="+ userName + "&password=" + password);
 					}  else {
@@ -375,10 +378,6 @@ public class SqlConnection {
 				e.printStackTrace();
 				throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
 			}
-			if ( DEBUG ) {
-				GuiUtils.informConsole(updateComm + " was run");
-			}
-
 			return n;
 		}
 		
@@ -1195,7 +1194,7 @@ public class SqlConnection {
 					 * Make insert command string with columns and values
 					 * 
 					 */
-					public String getInsertString(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+					private String getInsertString(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
 							throws GamaRuntimeException
 					{
 						int col_no=cols.size();
@@ -1294,7 +1293,7 @@ public class SqlConnection {
 					 * 
 					 */
 
-					public String getInsertString(Connection conn, String table_name,GamaList<Object> values ) 
+					private String getInsertString(Connection conn, String table_name,GamaList<Object> values ) 
 							throws GamaRuntimeException
 					{
 						String insertStr= "INSERT INTO ";
@@ -1310,7 +1309,7 @@ public class SqlConnection {
 							selectStr=selectStr +" * " + " FROM " + table_name +" LIMIT 1 ;";
 						}
 						
-						//if (DEBUG)
+						if (DEBUG)
 							GuiUtils.debug("SqlConnection.getInsertString.select command:"+selectStr);
 						
 						try{
@@ -1370,7 +1369,7 @@ public class SqlConnection {
 									
 							insertStr= insertStr + table_name +"("+colStr+") " +"VALUES("+valueStr+")";					
 
-							//if(DEBUG) 
+							if(DEBUG) 
 								GuiUtils.debug("SqlConection.getInsertString:" +insertStr );
 							
 						}catch (SQLException e) {
@@ -1389,4 +1388,103 @@ public class SqlConnection {
 					public void setTransformed(Boolean tranformed){
 						this.transformed=tranformed;
 					}
+
+					public static Geometry fromGisToAbsolute(Geometry geom){
+						return GisUtils.fromGISToAbsolute(geom);
+
+					}
+					
+					public static Geometry fromAbsoluteToGis(Geometry geom){
+						return GisUtils.fromAbsoluteToGis(geom);
+
+					}
+
+
+					/*
+					 * Gis2Absolute: transform all geometry values to absolute geometry in GAMA
+					 */
+					public GamaList<Object> fromGisToAbsolute(GamaList<Object> dataset) throws GamaRuntimeException{
+						try{
+							GamaList<Object> response = new GamaList<Object>();	
+							GamaList<Object> records_new = new GamaList<Object>();	
+							GamaList<Object> columnNames=(GamaList<Object>) dataset.get(0);
+							GamaList<Object> columnTypes=(GamaList<Object>) dataset.get(1);
+							GamaList<Object> records=(GamaList<Object>) dataset.get(2);
+							int columnSize=columnNames.size();
+							int lineSize=records.size();
+							
+							response.add(columnNames);
+							response.add(columnTypes);
+							
+							//transform
+							for ( int i = 0; i < lineSize; i++ ) {
+								GamaList<Object> rec_old=(GamaList<Object>) records.get(i);
+								GamaList<Object> rec_new= new GamaList<Object>();
+								for ( int j = 0; j < columnSize; j++ ) {
+									if (((String)columnTypes.get(j)).equalsIgnoreCase(GEOMETRYTYPE)){
+										//WKTReader wkt = new WKTReader();
+										//Geometry geo2 =fromGisToAbsolute(wkt.read(rec_old.get(j).toString()));
+										Geometry geo2 =fromGisToAbsolute((Geometry)rec_old.get(j));
+										rec_new.add(geo2);
+									}else{
+										rec_new.add(rec_old.get(j));
+									}
+									
+								}
+								records_new.add(rec_new);
+							}
+							response.add(records_new);
+							return response;
+						}catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.Gis2Absolute: " + e.toString());
+			
+						}
+						
+					}
+					/*
+					 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry 
+					 */
+					public GamaList<Object> fromAbsoluteToGIS(GamaList<Object> dataset) throws GamaRuntimeException{
+						try{
+							GamaList<Object> response = new GamaList<Object>();	
+							GamaList<Object> records_new = new GamaList<Object>();	
+							GamaList<Object> columnNames=(GamaList<Object>) dataset.get(0);
+							GamaList<Object> columnTypes=(GamaList<Object>) dataset.get(1);
+							GamaList<Object> records=(GamaList<Object>) dataset.get(2);
+							int columnSize=columnNames.size();
+							int lineSize=records.size();
+							
+							response.add(columnNames);
+							response.add(columnTypes);
+							
+							//transform
+							for ( int i = 0; i < lineSize; i++ ) {
+								GamaList<Object> rec_old=(GamaList<Object>) records.get(i);
+								GamaList<Object> rec_new= new GamaList<Object>();
+								for ( int j = 0; j < columnSize; j++ ) {
+									if (((String)columnTypes.get(j)).equalsIgnoreCase(GEOMETRYTYPE)){
+										//WKTReader wkt = new WKTReader();
+										//Geometry geo2 =fromGisToAbsolute(wkt.read(rec_old.get(j).toString()));
+										Geometry geo2 =fromAbsoluteToGis((Geometry)rec_old.get(j));
+										rec_new.add(geo2);
+									}else{
+										rec_new.add(rec_old.get(j));
+									}
+									
+								}
+								records_new.add(rec_new);
+							}
+							response.add(records_new);
+							return response;
+						}catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new GamaRuntimeException("SQLConnection.Gis2Absolute: " + e.toString());
+			
+						}
+						
+					}
+
 }
