@@ -8,22 +8,22 @@ global {
 	rgb pedestrian_red <- rgb ('red');
 	
 	float pedestrian_size <- 1.0;
-	geometry pedestrian_shape <- circle (pedestrian_size) depends_on: pedestrian_size;
+	geometry pedestrian_shape <- circle (pedestrian_size) ;
 	float pedestrian_speed <- 2.0;
-
+ 
 	rgb corridor_color <- rgb ('blue');
-	int corridor_width <- int(160) depends_on: [environment_width];
-	int corridor_height <- (int(environment_height * 0.05)) depends_on: [environment_height];
+	int corridor_width <- 160 depends_on: [environment_width];
+	int corridor_height <- (int(environment_height * 0.05));
 
-	point corridor_location_0 <- {environment_width / 2, environment_height / 4} depends_on: [environment_width, environment_height];
-	geometry corridor_shape_0 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) depends_on: [corridor_width, corridor_height, corridor_location_0];
+	point corridor_location_0 <- {environment_width / 2, environment_height / 4};
+	geometry corridor_shape_0 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) ;
 
-	point corridor_location_1 <- {environment_width / 2, environment_height * 0.75} depends_on: [environment_width, environment_height];
-	geometry corridor_shape_1 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_1) depends_on: [corridor_width, corridor_height, corridor_location_1];
+	point corridor_location_1 <- {environment_width / 2, environment_height * 0.75};
+	geometry corridor_shape_1 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_1) ;
 
 	int new_pedestian_generate_frequency <- 8;
-	point pedestrian_source_0 <- {0, corridor_location_0.y} depends_on: [corridor_location_0];
-	point pedestrian_source_1 <- {0, corridor_location_1.y} depends_on: [corridor_location_1];
+	point pedestrian_source_0 <- {0, corridor_location_0.y} ;
+	point pedestrian_source_1 <- {0, corridor_location_1.y} ;
 	
 	int red_pedestrian_frequency <- 5;
 	 
@@ -71,7 +71,7 @@ global {
 }
 
 entities {
-	species pedestrian skills: moving {
+	species pedestrian skills: [moving] {
 //		var shape type: geometry init: copy (pedestrian_shape);
 		geometry shape init: circle(pedestrian_size);
 		rgb color;
@@ -106,11 +106,11 @@ entities {
 		}
 	}
 
-	species corridor skills: situated {
+	species corridor  {
 		bool capture_pedestrians;
 		
 		action init_corridor {
-			arg corridor_shape type: shape;
+			arg corridor_shape type: geometry;
 			arg is_hybrid type: bool;
 			
 			set shape value: corridor_shape;
@@ -118,13 +118,13 @@ entities {
 		}
 
 		float max_speed value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
-		float macro_length min: 0 <- corridor_width; // the length of macro_patch
+		float macro_length min: 0.0 <- float(corridor_width); // the length of macro_patch
 		
 		float incoming_density; // Pr (formula 5)
 		float incoming_average_speed;
 		
 		float Pr value: incoming_density;
-		float Pl <- 0 const: true; // formula 5
+		float Pl <- 0.0 const: true; // formula 5
 		float Pmax <- 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
@@ -223,7 +223,7 @@ entities {
 		}
 		
 		aspect default {
-			draw geometry color: corridor_color;
+			draw shape color: corridor_color;
 		}
 	}
  
