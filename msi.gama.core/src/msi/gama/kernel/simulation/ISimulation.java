@@ -20,7 +20,7 @@ package msi.gama.kernel.simulation;
 
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,7 +35,7 @@ public interface ISimulation {
 
 	public abstract IScheduler getScheduler();
 
-	public abstract IAgent getWorld();
+	public abstract WorldAgent getWorld();
 
 	public abstract String getName();
 

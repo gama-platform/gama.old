@@ -19,10 +19,10 @@
 package msi.gama.kernel.simulation;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -92,6 +92,7 @@ public abstract class AbstractSimulation implements ISimulation {
 		// GUI.debug("Disposing the agent managers");
 		worldPopulation.dispose();
 		worldPopulation = null;
+		GisUtils.setTransformCRS(null);
 		// GUI.debug("Disposing the environment");
 		// if ( environment != null ) {
 		// environment.dispose();
@@ -141,8 +142,8 @@ public abstract class AbstractSimulation implements ISimulation {
 	}
 
 	@Override
-	public IAgent getWorld() {
-		return worldPopulation.getAgent(0);
+	public WorldAgent getWorld() {
+		return (WorldAgent) worldPopulation.getAgent(0);
 	}
 
 	protected void initializeWorldPopulation() {
@@ -170,6 +171,7 @@ public abstract class AbstractSimulation implements ISimulation {
 		// Here, the link is being made with the experimentator agent, which becomes the "host" of
 		// the world population
 		experiment.getAgent().addMicroPopulation(g);
+		// Here
 		List<? extends IAgent> newAgents =
 			g.createAgents(getGlobalScope(), 1, GamaList.with(parameters), false);
 		IAgent world = newAgents.get(0);
