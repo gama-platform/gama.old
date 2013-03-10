@@ -25,7 +25,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -40,6 +39,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * The Class LayerDisplayOutput.
@@ -58,7 +58,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true),
-	@facet(name = IKeyword.OUTPUT3D, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.OUTPUT3D, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
@@ -90,7 +90,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void prepare(final ISimulation sim) throws GamaRuntimeException {
 		super.prepare(sim);
-		
+
 		IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getOwnScope(), color.value(getOwnScope())));
@@ -99,7 +99,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setBackgroundColor(Cast.asColor(getOwnScope(), "white"));
 			}
 		}
-		
+
 		IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
@@ -108,8 +108,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			} else {
 				autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
 			}
-		}	
-		
+		}
+
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
 				layer.prepare(this, getOwnScope());
@@ -128,20 +128,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( light != null ) {
 			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
 		}
-		
+
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
 			polygonmode = Cast.asBool(getOwnScope(), poly.value(getOwnScope()));
 		}
-		
+
 		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
 			output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
-		}	
-		
+		}
+
 		createSurface(sim);
-		
-		
 
 	}
 
@@ -195,7 +193,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	protected void createSurface(final ISimulation sim) {
-		IEnvironment env = sim.getModel().getModelEnvironment();
+		Envelope env = sim.getWorld().getEnvelope();
 		double w = env.getWidth();
 		double h = env.getHeight();
 		if ( surface != null ) {
