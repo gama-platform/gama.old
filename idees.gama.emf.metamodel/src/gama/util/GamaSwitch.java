@@ -195,6 +195,27 @@ public class GamaSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case GamaPackage.EWORLD_AGENT: {
+				EWorldAgent eWorldAgent = (EWorldAgent)theEObject;
+				T result = caseEWorldAgent(eWorldAgent);
+				if (result == null) result = caseESpecies(eWorldAgent);
+				if (result == null) result = caseEGamaObject(eWorldAgent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case GamaPackage.ELAYER: {
+				ELayer eLayer = (ELayer)theEObject;
+				T result = caseELayer(eLayer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case GamaPackage.EGRAPH: {
+				EGraph eGraph = (EGraph)theEObject;
+				T result = caseEGraph(eGraph);
+				if (result == null) result = caseEGamaObject(eGraph);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -466,6 +487,51 @@ public class GamaSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseEVariable(EVariable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>EWorld Agent</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>EWorld Agent</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEWorldAgent(EWorldAgent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>ELayer</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>ELayer</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseELayer(ELayer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>EGraph</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>EGraph</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEGraph(EGraph object) {
 		return null;
 	}
 

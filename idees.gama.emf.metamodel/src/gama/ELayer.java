@@ -6,25 +6,25 @@
  */
 package gama;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>EAction</b></em>'.
+ * A representation of the model object '<em><b>ELayer</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link gama.EAction#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.ELayer#getGamlCode <em>Gaml Code</em>}</li>
  * </ul>
  * </p>
  *
- * @see gama.GamaPackage#getEAction()
+ * @see gama.GamaPackage#getELayer()
  * @model
  * @generated
  */
-public interface EAction extends EGamaObject {
-
+public interface ELayer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -35,14 +35,14 @@ public interface EAction extends EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Gaml Code</em>' attribute.
 	 * @see #setGamlCode(String)
-	 * @see gama.GamaPackage#getEAction_GamlCode()
+	 * @see gama.GamaPackage#getELayer_GamlCode()
 	 * @model derived="true"
 	 * @generated
 	 */
 	String getGamlCode();
 
 	/**
-	 * Sets the value of the '{@link gama.EAction#getGamlCode <em>Gaml Code</em>}' attribute.
+	 * Sets the value of the '{@link gama.ELayer#getGamlCode <em>Gaml Code</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Gaml Code</em>' attribute.
@@ -50,4 +50,5 @@ public interface EAction extends EGamaObject {
 	 * @generated
 	 */
 	void setGamlCode(String value);
-} // EAction
+
+} // ELayer

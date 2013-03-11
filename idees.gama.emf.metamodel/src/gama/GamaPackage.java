@@ -216,13 +216,40 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__VARIABLES = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Topology</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__TOPOLOGY = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Reflex List</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__REFLEX_LIST = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Torus</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__TORUS = EGAMA_OBJECT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>ESpecies</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
+	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -271,13 +298,22 @@ public interface GamaPackage extends EPackage {
 	int EACTION__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>EAction</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
@@ -326,13 +362,22 @@ public interface GamaPackage extends EPackage {
 	int EASPECT__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>EAspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EReflexImpl <em>EReflex</em>}' class.
@@ -381,13 +426,22 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>EReflex</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
@@ -877,13 +931,22 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Layers</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__LAYERS = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>EDisplay</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGridImpl <em>EGrid</em>}' class.
@@ -939,6 +1002,33 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRID__VARIABLES = ESPECIES__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Topology</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__TOPOLOGY = ESPECIES__TOPOLOGY;
+
+	/**
+	 * The feature id for the '<em><b>Reflex List</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__REFLEX_LIST = ESPECIES__REFLEX_LIST;
+
+	/**
+	 * The feature id for the '<em><b>Torus</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__TORUS = ESPECIES__TORUS;
 
 	/**
 	 * The feature id for the '<em><b>Nb columns</b></em>' attribute.
@@ -1060,6 +1150,199 @@ public interface GamaPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EWorldAgentImpl
+	 * @see gama.impl.GamaPackageImpl#getEWorldAgent()
+	 * @generated
+	 */
+	int EWORLD_AGENT = 18;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__NAME = ESPECIES__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__MODEL = ESPECIES__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__INCOMING_LINKS = ESPECIES__INCOMING_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__OUTCOMING_LINKS = ESPECIES__OUTCOMING_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__VARIABLES = ESPECIES__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Topology</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__TOPOLOGY = ESPECIES__TOPOLOGY;
+
+	/**
+	 * The feature id for the '<em><b>Reflex List</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__REFLEX_LIST = ESPECIES__REFLEX_LIST;
+
+	/**
+	 * The feature id for the '<em><b>Torus</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__TORUS = ESPECIES__TORUS;
+
+	/**
+	 * The number of structural features of the '<em>EWorld Agent</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT_FEATURE_COUNT = ESPECIES_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link gama.impl.ELayerImpl <em>ELayer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.ELayerImpl
+	 * @see gama.impl.GamaPackageImpl#getELayer()
+	 * @generated
+	 */
+	int ELAYER = 19;
+
+	/**
+	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__GAML_CODE = 0;
+
+	/**
+	 * The number of structural features of the '<em>ELayer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_FEATURE_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link gama.impl.EGraphImpl <em>EGraph</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EGraphImpl
+	 * @see gama.impl.GamaPackageImpl#getEGraph()
+	 * @generated
+	 */
+	int EGRAPH = 20;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__NAME = EGAMA_OBJECT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Node</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__NODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Edge</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH__EDGE = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>EGraph</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGamaModel <em>EGama Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1178,6 +1461,39 @@ public interface GamaPackage extends EPackage {
 	EReference getESpecies_Variables();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getTopology <em>Topology</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Topology</em>'.
+	 * @see gama.ESpecies#getTopology()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Topology();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gama.ESpecies#getReflexList <em>Reflex List</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Reflex List</em>'.
+	 * @see gama.ESpecies#getReflexList()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_ReflexList();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getTorus <em>Torus</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Torus</em>'.
+	 * @see gama.ESpecies#getTorus()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Torus();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EAction <em>EAction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1186,6 +1502,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEAction();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EAction#getGamlCode <em>Gaml Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gaml Code</em>'.
+	 * @see gama.EAction#getGamlCode()
+	 * @see #getEAction()
+	 * @generated
+	 */
+	EAttribute getEAction_GamlCode();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EAspect <em>EAspect</em>}'.
@@ -1198,6 +1525,17 @@ public interface GamaPackage extends EPackage {
 	EClass getEAspect();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EAspect#getGamlCode <em>Gaml Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gaml Code</em>'.
+	 * @see gama.EAspect#getGamlCode()
+	 * @see #getEAspect()
+	 * @generated
+	 */
+	EAttribute getEAspect_GamlCode();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EReflex <em>EReflex</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1206,6 +1544,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEReflex();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EReflex#getGamlCode <em>Gaml Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gaml Code</em>'.
+	 * @see gama.EReflex#getGamlCode()
+	 * @see #getEReflex()
+	 * @generated
+	 */
+	EAttribute getEReflex_GamlCode();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EExperiment <em>EExperiment</em>}'.
@@ -1341,6 +1690,17 @@ public interface GamaPackage extends EPackage {
 	EClass getEDisplay();
 
 	/**
+	 * Returns the meta object for the reference list '{@link gama.EDisplay#getLayers <em>Layers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Layers</em>'.
+	 * @see gama.EDisplay#getLayers()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EReference getEDisplay_Layers();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGrid <em>EGrid</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1471,6 +1831,69 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEVariable_Type();
 
 	/**
+	 * Returns the meta object for class '{@link gama.EWorldAgent <em>EWorld Agent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EWorld Agent</em>'.
+	 * @see gama.EWorldAgent
+	 * @generated
+	 */
+	EClass getEWorldAgent();
+
+	/**
+	 * Returns the meta object for class '{@link gama.ELayer <em>ELayer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>ELayer</em>'.
+	 * @see gama.ELayer
+	 * @generated
+	 */
+	EClass getELayer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getGamlCode <em>Gaml Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gaml Code</em>'.
+	 * @see gama.ELayer#getGamlCode()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_GamlCode();
+
+	/**
+	 * Returns the meta object for class '{@link gama.EGraph <em>EGraph</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EGraph</em>'.
+	 * @see gama.EGraph
+	 * @generated
+	 */
+	EClass getEGraph();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EGraph#getNode <em>Node</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Node</em>'.
+	 * @see gama.EGraph#getNode()
+	 * @see #getEGraph()
+	 * @generated
+	 */
+	EReference getEGraph_Node();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EGraph#getEdge <em>Edge</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Edge</em>'.
+	 * @see gama.EGraph#getEdge()
+	 * @see #getEGraph()
+	 * @generated
+	 */
+	EReference getEGraph_Edge();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1587,6 +2010,30 @@ public interface GamaPackage extends EPackage {
 		EReference ESPECIES__VARIABLES = eINSTANCE.getESpecies_Variables();
 
 		/**
+		 * The meta object literal for the '<em><b>Topology</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__TOPOLOGY = eINSTANCE.getESpecies_Topology();
+
+		/**
+		 * The meta object literal for the '<em><b>Reflex List</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__REFLEX_LIST = eINSTANCE.getESpecies_ReflexList();
+
+		/**
+		 * The meta object literal for the '<em><b>Torus</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__TORUS = eINSTANCE.getESpecies_Torus();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1595,6 +2042,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EACTION = eINSTANCE.getEAction();
+
+		/**
+		 * The meta object literal for the '<em><b>Gaml Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EACTION__GAML_CODE = eINSTANCE.getEAction_GamlCode();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
@@ -1607,6 +2062,14 @@ public interface GamaPackage extends EPackage {
 		EClass EASPECT = eINSTANCE.getEAspect();
 
 		/**
+		 * The meta object literal for the '<em><b>Gaml Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EASPECT__GAML_CODE = eINSTANCE.getEAspect_GamlCode();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EReflexImpl <em>EReflex</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1615,6 +2078,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EREFLEX = eINSTANCE.getEReflex();
+
+		/**
+		 * The meta object literal for the '<em><b>Gaml Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EREFLEX__GAML_CODE = eINSTANCE.getEReflex_GamlCode();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
@@ -1741,6 +2212,14 @@ public interface GamaPackage extends EPackage {
 		EClass EDISPLAY = eINSTANCE.getEDisplay();
 
 		/**
+		 * The meta object literal for the '<em><b>Layers</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EDISPLAY__LAYERS = eINSTANCE.getEDisplay_Layers();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EGridImpl <em>EGrid</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1839,6 +2318,60 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EVARIABLE__TYPE = eINSTANCE.getEVariable_Type();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EWorldAgentImpl <em>EWorld Agent</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EWorldAgentImpl
+		 * @see gama.impl.GamaPackageImpl#getEWorldAgent()
+		 * @generated
+		 */
+		EClass EWORLD_AGENT = eINSTANCE.getEWorldAgent();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.ELayerImpl <em>ELayer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.ELayerImpl
+		 * @see gama.impl.GamaPackageImpl#getELayer()
+		 * @generated
+		 */
+		EClass ELAYER = eINSTANCE.getELayer();
+
+		/**
+		 * The meta object literal for the '<em><b>Gaml Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__GAML_CODE = eINSTANCE.getELayer_GamlCode();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EGraphImpl <em>EGraph</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EGraphImpl
+		 * @see gama.impl.GamaPackageImpl#getEGraph()
+		 * @generated
+		 */
+		EClass EGRAPH = eINSTANCE.getEGraph();
+
+		/**
+		 * The meta object literal for the '<em><b>Node</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EGRAPH__NODE = eINSTANCE.getEGraph_Node();
+
+		/**
+		 * The meta object literal for the '<em><b>Edge</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EGRAPH__EDGE = eINSTANCE.getEGraph_Edge();
 
 	}
 

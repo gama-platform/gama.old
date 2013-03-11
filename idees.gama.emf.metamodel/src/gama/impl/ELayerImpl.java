@@ -6,27 +6,30 @@
  */
 package gama.impl;
 
-import gama.EAction;
+import gama.ELayer;
 import gama.GamaPackage;
 
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>EAction</b></em>'.
+ * An implementation of the model object '<em><b>ELayer</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gama.impl.EActionImpl#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getGamlCode <em>Gaml Code</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class EActionImpl extends EGamaObjectImpl implements EAction {
+public class ELayerImpl extends EObjectImpl implements ELayer {
 	/**
 	 * The default value of the '{@link #getGamlCode() <em>Gaml Code</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -36,6 +39,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	 * @ordered
 	 */
 	protected static final String GAML_CODE_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getGamlCode() <em>Gaml Code</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -51,7 +55,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected EActionImpl() {
+	protected ELayerImpl() {
 		super();
 	}
 
@@ -62,7 +66,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return GamaPackage.Literals.EACTION;
+		return GamaPackage.Literals.ELAYER;
 	}
 
 	/**
@@ -83,7 +87,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 		String oldGamlCode = gamlCode;
 		gamlCode = newGamlCode;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EACTION__GAML_CODE, oldGamlCode, gamlCode));
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__GAML_CODE, oldGamlCode, gamlCode));
 	}
 
 	/**
@@ -94,7 +98,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case GamaPackage.EACTION__GAML_CODE:
+			case GamaPackage.ELAYER__GAML_CODE:
 				return getGamlCode();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -108,7 +112,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case GamaPackage.EACTION__GAML_CODE:
+			case GamaPackage.ELAYER__GAML_CODE:
 				setGamlCode((String)newValue);
 				return;
 		}
@@ -123,7 +127,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case GamaPackage.EACTION__GAML_CODE:
+			case GamaPackage.ELAYER__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
 				return;
 		}
@@ -138,7 +142,7 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case GamaPackage.EACTION__GAML_CODE:
+			case GamaPackage.ELAYER__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
 		}
 		return super.eIsSet(featureID);
@@ -160,4 +164,4 @@ public class EActionImpl extends EGamaObjectImpl implements EAction {
 		return result.toString();
 	}
 
-} //EActionImpl
+} //ELayerImpl

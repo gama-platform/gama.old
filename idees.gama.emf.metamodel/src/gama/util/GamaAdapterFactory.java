@@ -144,6 +144,18 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 				return createEVariableAdapter();
 			}
 			@Override
+			public Adapter caseEWorldAgent(EWorldAgent object) {
+				return createEWorldAgentAdapter();
+			}
+			@Override
+			public Adapter caseELayer(ELayer object) {
+				return createELayerAdapter();
+			}
+			@Override
+			public Adapter caseEGraph(EGraph object) {
+				return createEGraphAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -412,6 +424,48 @@ public class GamaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createEVariableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gama.EWorldAgent <em>EWorld Agent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gama.EWorldAgent
+	 * @generated
+	 */
+	public Adapter createEWorldAgentAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gama.ELayer <em>ELayer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gama.ELayer
+	 * @generated
+	 */
+	public Adapter createELayerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link gama.EGraph <em>EGraph</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see gama.EGraph
+	 * @generated
+	 */
+	public Adapter createEGraphAdapter() {
 		return null;
 	}
 

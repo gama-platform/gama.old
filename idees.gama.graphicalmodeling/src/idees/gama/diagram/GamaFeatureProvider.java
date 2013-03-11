@@ -116,7 +116,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          			 newClass.setName("World");
          			 
          			 CreateContext ac = new CreateContext();
-         			 ac.setLocation(50, 10);
+         			 ac.setLocation(100, 50);
          			 ac.setSize(0, 0);
          			 ac.setTargetContainer(diagram);
          			 

@@ -188,6 +188,33 @@ public interface GamaFactory extends EFactory {
 	EVariable createEVariable();
 
 	/**
+	 * Returns a new object of class '<em>EWorld Agent</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EWorld Agent</em>'.
+	 * @generated
+	 */
+	EWorldAgent createEWorldAgent();
+
+	/**
+	 * Returns a new object of class '<em>ELayer</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>ELayer</em>'.
+	 * @generated
+	 */
+	ELayer createELayer();
+
+	/**
+	 * Returns a new object of class '<em>EGraph</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EGraph</em>'.
+	 * @generated
+	 */
+	EGraph createEGraph();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
