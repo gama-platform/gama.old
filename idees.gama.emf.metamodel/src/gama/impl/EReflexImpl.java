@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gama.impl.EReflexImpl#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.impl.EReflexImpl#getCondition <em>Condition</em>}</li>
  * </ul>
  * </p>
  *
@@ -45,6 +46,25 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 	 * @ordered
 	 */
 	protected String gamlCode = GAML_CODE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCondition() <em>Condition</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCondition()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONDITION_EDEFAULT = null;
+	/**
+	 * The cached value of the '{@link #getCondition() <em>Condition</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCondition()
+	 * @generated
+	 * @ordered
+	 */
+	protected String condition = CONDITION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -91,11 +111,34 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getCondition() {
+		return condition;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCondition(String newCondition) {
+		String oldCondition = condition;
+		condition = newCondition;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EREFLEX__CONDITION, oldCondition, condition));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case GamaPackage.EREFLEX__GAML_CODE:
 				return getGamlCode();
+			case GamaPackage.EREFLEX__CONDITION:
+				return getCondition();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -110,6 +153,9 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 		switch (featureID) {
 			case GamaPackage.EREFLEX__GAML_CODE:
 				setGamlCode((String)newValue);
+				return;
+			case GamaPackage.EREFLEX__CONDITION:
+				setCondition((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -126,6 +172,9 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 			case GamaPackage.EREFLEX__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
 				return;
+			case GamaPackage.EREFLEX__CONDITION:
+				setCondition(CONDITION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -140,6 +189,8 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 		switch (featureID) {
 			case GamaPackage.EREFLEX__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
+			case GamaPackage.EREFLEX__CONDITION:
+				return CONDITION_EDEFAULT == null ? condition != null : !CONDITION_EDEFAULT.equals(condition);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -156,6 +207,8 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (gamlCode: ");
 		result.append(gamlCode);
+		result.append(", condition: ");
+		result.append(condition);
 		result.append(')');
 		return result.toString();
 	}

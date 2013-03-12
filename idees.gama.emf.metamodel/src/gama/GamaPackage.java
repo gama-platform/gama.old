@@ -435,13 +435,22 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__CONDITION = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EReflex</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
+	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
@@ -1557,6 +1566,17 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEReflex_GamlCode();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.EReflex#getCondition <em>Condition</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Condition</em>'.
+	 * @see gama.EReflex#getCondition()
+	 * @see #getEReflex()
+	 * @generated
+	 */
+	EAttribute getEReflex_Condition();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EExperiment <em>EExperiment</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2086,6 +2106,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EREFLEX__GAML_CODE = eINSTANCE.getEReflex_GamlCode();
+
+		/**
+		 * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EREFLEX__CONDITION = eINSTANCE.getEReflex_Condition();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
