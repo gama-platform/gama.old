@@ -109,11 +109,11 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 			cycle_length = Integer.parseInt(""
 					+ getFacet("cycle_length").value(scope));
 		}
-		time_initial = scope.getClock().getCycle() - 1;
+		time_initial = scope.getClock().getCycle();
 		if (getFacet("time_initial") != null) {
 			time_initial = Double.parseDouble("" + getFacet("time_initial"));
 		}
-		time_final = scope.getClock().getCycle();
+		time_final = scope.getClock().getCycle()+1;
 		if (getFacet("time_final") != null) {
 			time_final = Double.parseDouble("" + getFacet("time_final"));
 		}

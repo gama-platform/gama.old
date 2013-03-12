@@ -3,11 +3,17 @@ package ummisco.gaml.extensions.maths.statements;
 import java.util.*;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,7 +49,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	public final IList<IVarExpression> variables = new GamaList<IVarExpression>();
 	public final GamaList<IAgent> equations_ext = new GamaList<IAgent>();
 	public final GamaList<IAgent> equaAgents = new GamaList<IAgent>();
-
+	public double equa_t=0;
 	public IScope currentScope;
 	IExpression simultan = null;
 
@@ -53,7 +59,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		simultan = getFacet(IKeyword.SIMULTANEOUSLY);
 
 	}
-
 	/**
 	 * This method separates regular statements and equations.
 	 * 
@@ -242,11 +247,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			SingleEquationStatement s = equations.get(i);
 			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
-
 			if (equaAgents.size() > 0)
 				currentScope.push(equaAgents.get(i));
 			try {
+				s.var_t.setVal(currentScope, time, false);
 				ydot[i] = (Double) s.executeOn(currentScope);
+				GuiUtils.informConsole("t="+time+" val="+ydot[i]);
 			} catch (Exception ex1) {
 			} finally {
 
@@ -258,7 +264,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			IVarExpression v = variables.get(i);
-
+			
 			// if (equaAgents.size() > 0)
 			// currentScope.push(equaAgents.get(i));
 			// try {

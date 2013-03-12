@@ -7,6 +7,7 @@ import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
 import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
 import ummisco.gaml.extensions.maths.utils.Solver;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IVarExpression;
@@ -17,26 +18,24 @@ public class Rk4Solver extends Solver {
 	double cycle_length;
 	double time_initial;
 	double time_final;
-
+	public StepHandler stepHandler;
 	public Rk4Solver(double S) {
 		// initialize the integrator, the step handler, etc.
 		// This class has access to the facets of the statement
 		// ie. getFacet(...)
 		//
-
 		// Just a trial
 		step = S;
 		integrator = new ClassicalRungeKuttaIntegrator(step);
-		StepHandler stepHandler = new StepHandler() {
+		stepHandler = new StepHandler() {
 			public void init(double t0, double[] y0, double t) {
 			}
 
 			@Override
 			public void handleStep(StepInterpolator interpolator, boolean isLast) {
-//				double t = interpolator.getCurrentTime();
+				double time = interpolator.getCurrentTime();
 //				double[] y = interpolator.getInterpolatedState();
-				// GuiUtils.informConsole("time="+t + " S=" + y[0] + " I=" +
-				// y[1]);
+//				 GuiUtils.informConsole("time="+time);
 			}
 		};
 		integrator.addStepHandler(stepHandler);
@@ -85,7 +84,6 @@ public class Rk4Solver extends Solver {
 			// GuiUtils.informConsole(""+y);
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
-
 				integrator.integrate(eq, time_initial * cycle_length, y,
 						time_final * cycle_length, y);
 			} catch (Exception ex) {

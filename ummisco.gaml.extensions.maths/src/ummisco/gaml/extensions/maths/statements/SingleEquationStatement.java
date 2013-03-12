@@ -34,12 +34,16 @@ public class SingleEquationStatement extends AbstractStatement {
 
 	final IExpression function, expression;
 	IVarExpression var;
+	public IVarExpression var_t;
+	IVarExpression _time;
 	int order;
 
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
 		function = getFacet(IKeyword.EQUATION_LEFT);
 		var = (IVarExpression) ((AbstractNAryOperator) function).arg(0);
+
+		var_t = (IVarExpression) ((AbstractNAryOperator) function).arg(1);
 		expression = getFacet(IKeyword.EQUATION_RIGHT);
 	}
 
