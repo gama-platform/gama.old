@@ -252,7 +252,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			try {
 				s.var_t.setVal(currentScope, time, false);
 				ydot[i] = (Double) s.executeOn(currentScope);
-				GuiUtils.informConsole("t="+time+" val="+ydot[i]);
+//				GuiUtils.informConsole("t="+time+" val="+ydot[i]);
 			} catch (Exception ex1) {
 			} finally {
 
