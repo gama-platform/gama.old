@@ -16,6 +16,7 @@ import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
+import gama.EWorldAgent;
 import idees.gama.features.add.AddActionFeature;
 import idees.gama.features.add.AddActionLinkFeature;
 import idees.gama.features.add.AddAspectFeature;
@@ -29,6 +30,7 @@ import idees.gama.features.add.AddReflexFeature;
 import idees.gama.features.add.AddReflexLinkFeature;
 import idees.gama.features.add.AddSpeciesFeature;
 import idees.gama.features.add.AddSubSpecieLinkFeature;
+import idees.gama.features.add.AddWorldFeature;
 import idees.gama.features.create.CreateActionLinkFeature;
 import idees.gama.features.create.CreateAspectLinkFeature;
 import idees.gama.features.create.CreateBatchExperimentFeature;
@@ -76,6 +78,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     public IAddFeature getAddFeature(IAddContext context) {
     	if (context.getNewObject() instanceof EGrid) {
             return new AddGridFeature(this);
+    	} else if (context.getNewObject() instanceof EWorldAgent) {
+             return new AddWorldFeature(this);
         } else if (context.getNewObject() instanceof ESpecies) {
             return new AddSpeciesFeature(this);
         } else if (context.getNewObject() instanceof EAction) {
@@ -111,7 +115,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(diagram);
          	domain.getCommandStack().execute(new RecordingCommand(domain) {
          	     public void doExecute() {
-         	    	ESpecies newClass = gama.GamaFactory.eINSTANCE.createESpecies();
+         	    	ESpecies newClass = gama.GamaFactory.eINSTANCE.createEWorldAgent();
          			diagram.eResource().getContents().add(newClass);
          			 newClass.setName("World");
          			 

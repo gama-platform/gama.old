@@ -1,5 +1,6 @@
 package idees.gama.features.modelgeneration;
 
+import gama.EAction;
 import gama.EActionLink;
 import gama.EAspectLink;
 import gama.EBatchExperiment;
@@ -7,6 +8,7 @@ import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EGamaLink;
 import gama.EGrid;
+import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
@@ -98,9 +100,11 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
        
     static String defineSpecies(ESpecies species, int level) {
     	String model = "\n";
+    	String sp = "";
     	for (int i =0; i < level;i++) {
-    		model += "\t";
+    		sp += "\t";
     	}
+    	model += sp;
     	if(species instanceof EGrid) 
     		model += "grid " + species.getName() + " {\n";
     	else 
@@ -120,10 +124,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
          		model += defineSpecies((ESpecies) link.getTarget(),level+1); 
          	}
          }
-    	 for (int i =0; i < level;i++) {
-     		model += "\t";
-     	}
-    	 model += "}\n";
+    	 model += sp+ "}\n";
     	 
     	 return model;
     }
@@ -153,47 +154,48 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
     static String defineAction(EActionLink link, int level) {
     	String result = "";
+    	String sp = "";
     	for (int i =0; i < level;i++) {
-    		result += "\t";
+    		sp += "\t";
     	}
-    	result += "action " + link.getTarget().getName() + " {\n";
-    	for (int i =0; i < level;i++) {
-    		result += "\t";
+    	result += sp + "action " + link.getTarget().getName() + " {\n";
+    	for (String line : ((EAction)link.getTarget()).getGamlCode().split("\n")) {
+    		result += sp + "\t"+ line+"\n";
     	}
-    	result +="}\n";
+    	result +=sp + "}\n";
     	return result;
     }
     
     static String defineReflex(EReflexLink link, int level) {
     	String result = "";
+    	String sp = "";
     	for (int i =0; i < level;i++) {
-    		result += "\t";
+    		sp += "\t";
     	}
-    	result += "reflex " + link.getTarget().getName() + " {\n";
-    	for (int i =0; i < level;i++) {
-    		result += "\t";
+    	if (((EReflex)link.getTarget()).getCondition() != null && ((EReflex)link.getTarget()).getCondition().isEmpty()) {
+    		result += sp + "reflex " + link.getTarget().getName() + " when: "+ ((EReflex)link.getTarget()).getCondition() + " {\n";
+    	} else {
+    		result += sp + "reflex " + link.getTarget().getName() + " {\n";
     	}
-    	result +="}\n";
+    	
+    	for (String line : ((EReflex)link.getTarget()).getGamlCode().split("\n")) {
+    		result += sp+ "\t" + line+"\n";
+    	}
+    	result +=sp + "}\n";
     	return result;
     }
     
     static String defineAspect(EAspectLink link, int level) {
     	String result = "";
+    	String sp = "";
     	for (int i =0; i < level;i++) {
-    		result += "\t";
+    		sp += "\t";
     	}
-    	result += "aspect " + link.getTarget().getName() + " {\n";
-    	for (int i =0; i < level;i++) {
-    		result += "\t";
-    	}
-    	result +="}\n";
+    	result += sp + "aspect " + link.getTarget().getName() + " {\n";
+    	result +=sp + "}\n";
     	return result;
     }
-    
-    static String defineEnvironment() {
-    	return "\n\nenvironment {}";
-    }
-    
+      
     static String defineExperiment(EExperiment exp) {
     	String model = "";
     	if (exp instanceof EBatchExperiment) {
@@ -260,7 +262,6 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
             }
             
             gamlModel += "\n}";
-            gamlModel += defineEnvironment();
             for (Shape obj : contents) {
             	Object bo = fp.getBusinessObjectForPictogramElement(obj);
             	if (bo instanceof EExperiment) {

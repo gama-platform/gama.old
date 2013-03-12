@@ -8,7 +8,9 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -40,6 +42,22 @@ public class AddSubSpecieLinkFeature extends AbstractAddFeature {
  
         // create link and wire it
         link(connection, addedEReference);
+        
+        // add dynamic text decorator for the association name
+        ConnectionDecorator textDecorator =
+            peCreateService.createConnectionDecorator(connection, true,
+            0.5, true);
+        Text text = gaService.createText(textDecorator);
+        		//createDefaultText(textDecorator);
+        text.setForeground(manageColor(IColorConstant.BLACK));
+        gaService.setLocation(text, 10, 0);
+        text.setValue("is macro agent of");
+ 
+        // add static graphical decorator (composition and navigable)
+        ConnectionDecorator cd;
+        cd = peCreateService
+              .createConnectionDecorator(connection, false, 1.0, true);
+        createArrow(cd);
  
         return connection;
     }

@@ -7,9 +7,10 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
-import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -41,6 +42,16 @@ public class AddDisplayLinkFeature extends AbstractAddFeature {
  
         // create link and wire it
         link(connection, addedEReference);
+        
+        // add dynamic text decorator for the association name
+        ConnectionDecorator textDecorator =
+            peCreateService.createConnectionDecorator(connection, true,
+            0.5, true);
+        Text text = gaService.createText(textDecorator);
+        		//createDefaultText(textDecorator);
+        text.setForeground(manageColor(IColorConstant.BLACK));
+        gaService.setLocation(text, 10, 0);
+        text.setValue("has the display");
  
         return connection;
     }
@@ -55,14 +66,4 @@ public class AddDisplayLinkFeature extends AbstractAddFeature {
     	return false;
     }
     
-    private Polyline createArrow(GraphicsAlgorithmContainer gaContainer) {
-        
-        IGaService gaService = Graphiti.getGaService();
-        Polyline polyline =
-            gaService.createPolyline(gaContainer, new int[] { -15, 10, 0, 0, -15,
-                -10 });
-        polyline.setForeground(manageColor(IColorConstant.BLACK));
-        polyline.setLineWidth(2);
-        return polyline;
-    }
 }

@@ -1,7 +1,11 @@
 package idees.gama.diagram;
 
+import gama.EAction;
+import gama.EReflex;
 import gama.ESpecies;
-import idees.gama.features.editSpecies.EditSpeciesFeature;
+import idees.gama.features.edit.EditActionFeature;
+import idees.gama.features.edit.EditReflexFeature;
+import idees.gama.features.edit.EditSpeciesFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
@@ -25,7 +29,12 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 	       
 		        if (bo instanceof ESpecies ) {
 		        	customFeature = new EditSpeciesFeature(getFeatureProvider());
-		        } else {
+		        } 
+		        else if (bo instanceof EAction ) {
+		        	customFeature = new EditActionFeature(getFeatureProvider());
+		        } else if (bo instanceof EReflex ) {
+				    customFeature = new EditReflexFeature(getFeatureProvider());
+				} else {
 		        	customFeature = new RenameEGamaObjectFeature(getFeatureProvider());
 		        }
 		        // canExecute() tests especially if the context contains a EClass

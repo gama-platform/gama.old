@@ -1,7 +1,7 @@
 package idees.gama.features.add;
 
-import gama.EGrid;
 import gama.EVariable;
+import gama.EWorldAgent;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -20,7 +20,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class AddGridFeature extends AbstractAddShapeFeature {
+public class AddWorldFeature extends AbstractAddShapeFeature {
  
 	public static final int INIT_WIDTH = 100;
 	public static final int INIT_HEIGHT = 50;
@@ -29,18 +29,18 @@ public class AddGridFeature extends AbstractAddShapeFeature {
         new ColorConstant(0, 0, 0);
  
     private static final IColorConstant SPECIES_FOREGROUND =
-    	new ColorConstant(205,155,29);
+        new ColorConstant(205,173,0);
 
     private static final IColorConstant SPECIES_BACKGROUND =
-        new ColorConstant(255,255,0);
+    	new ColorConstant(255,255,210);
  
-    public AddGridFeature(IFeatureProvider fp) {
+    public AddWorldFeature(IFeatureProvider fp) {
         super(fp);
     }
  
     public boolean canAdd(IAddContext context) {
         // check if user wants to add a EClass
-        if (context.getNewObject() instanceof EGrid) {
+        if (context.getNewObject() instanceof EWorldAgent) {
             // check if user wants to add to a diagram
             if (context.getTargetContainer() instanceof Diagram) {
                 return true;
@@ -50,7 +50,7 @@ public class AddGridFeature extends AbstractAddShapeFeature {
     }
  
     public PictogramElement add(IAddContext context) {
-    	EGrid addedClass = (EGrid) context.getNewObject();
+    	EWorldAgent addedClass = (EWorldAgent) context.getNewObject();
          Diagram targetDiagram = (Diagram) context.getTargetContainer();
   
          // CONTAINER SHAPE WITH ROUNDED RECTANGLE
