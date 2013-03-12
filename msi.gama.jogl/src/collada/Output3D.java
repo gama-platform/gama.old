@@ -48,6 +48,8 @@ public class Output3D {
 		sceneElt.setAttribute("ambient_color", "#666");
 		sceneElt.setAttribute("fog_type", "FOG_NONE");
 
+		Element groupElt = doc.createElement("group");
+		groupElt.setAttribute("id", "objects");
 		for(MyJTSGeometry myGeom : myJTSGeometries){
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName()+"material";
@@ -60,24 +62,30 @@ public class Output3D {
 			// object element in the scene
 			Element objectElt = doc.createElement("object");
 			objectElt.setAttribute("id", myGeom.agent.getName());
+			objectElt.setAttribute("name", myGeom.agent.getName());
 			objectElt.setAttribute("mesh","#"+myGeom.agent.getName());
 			objectElt.setAttribute("scale_x", "1");
 			objectElt.setAttribute("scale_y", "1");
 			objectElt.setAttribute("scale_z", "1");
 			objectElt.setAttribute("material", "#"+materialID);
-			sceneElt.appendChild(objectElt);
+			groupElt.appendChild(objectElt);
 			
 			// the material
 			Element materialElt = doc.createElement("material");
 			materialElt.setAttribute("id", materialID);
+			materialElt.setAttribute("name", materialID);
 			materialElt.setAttribute("specular", "0.5");
-			materialElt.setAttribute("colorR", ""+myGeom.color.getRed());
-			materialElt.setAttribute("colorG", ""+myGeom.color.getGreen());			
-			materialElt.setAttribute("colorB", ""+myGeom.color.getBlue());
+			materialElt.setAttribute("colorR", ""+(myGeom.color.getRed()/255));
+			materialElt.setAttribute("colorG", ""+(myGeom.color.getGreen()/255));			
+			materialElt.setAttribute("colorB", ""+(myGeom.color.getBlue()/255));
 			// materialElt.setAttribute("animation", "#"+animationID);
 			root.appendChild(materialElt);
 		}
+		sceneElt.appendChild(groupElt);
+		
 //		defining the camera
+		Element cameraGroupElt = doc.createElement("group");
+		cameraGroupElt.setAttribute("id", "cameraOffset");
 		Element cameraElt = doc.createElement("camera");
 		cameraElt.setAttribute("id", "maincamera");
 		cameraElt.setAttribute("loc_x", "1");		
@@ -88,17 +96,19 @@ public class Output3D {
 		cameraElt.setAttribute("rot_x", "1.56");		
 		cameraElt.setAttribute("rot_y", "3.141");	
 		cameraElt.setAttribute("rot_z", "0");			
-		root.appendChild(cameraElt);
-
-		Element lightElt = doc.createElement("light");
-		lightElt.setAttribute("id", "mainlight");
-		lightElt.setAttribute("loc_x","0");
-		lightElt.setAttribute("loc_y","15");
-		lightElt.setAttribute("loc_z","10");
-		lightElt.setAttribute("rot_x","-1.3");
-		lightElt.setAttribute("attenuation_constant","0.5");
-		lightElt.setAttribute("type","L_POINT");	
-		sceneElt.appendChild(lightElt);
+		cameraGroupElt.appendChild(cameraElt);
+		sceneElt.appendChild(cameraGroupElt);
+		
+		// A remettre avec les normals
+//		Element lightElt = doc.createElement("light");
+//		lightElt.setAttribute("id", "mainlight");
+//		lightElt.setAttribute("loc_x","0");
+//		lightElt.setAttribute("loc_y","15");
+//		lightElt.setAttribute("loc_z","10");
+//		lightElt.setAttribute("rot_x","-1.3");
+//		lightElt.setAttribute("attenuation_constant","0.5");
+//		lightElt.setAttribute("type","L_POINT");	
+//		sceneElt.appendChild(lightElt);
 		
 		root.appendChild(sceneElt);
 		
@@ -122,22 +132,45 @@ public class Output3D {
 		String positionsText = "";
 		String facesText = "";
 		if(myGeom.height>0){
+//			for(Coordinate vertex : geom.getCoordinates()){
+//				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
+//						 		 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
+//						 		 ","+(((Double)Double.NaN).equals(vertex.z)?0.0:vertex.z)+ ",\n";
+//			}
+//			for(Coordinate vertex : geom.getCoordinates()){
+//				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
+//						 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
+//						 ","+myGeom.height+ ",\n";
+//			}
+//			facesText = Output3D.facesFromVertices3D(geom.getCoordinates().length);
+	
 			Coordinate vertex;
-			// -2 because the last one = he first one
-			for(int i=0;i<geom.getCoordinates().length-2;i++){
+//			// -2 because the last one = he first one
+			for(int i=0;i<geom.getCoordinates().length-1;i++){
 				vertex = geom.getCoordinates()[i];
-				positionsText += " "+vertex.x+","+vertex.y+","+vertex.z + ",\n";
+				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
+								 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
+								 ","+(((Double)Double.NaN).equals(vertex.z)?0.0:vertex.z)+ ",\n";				
 			}
 			for(int i=0;i<geom.getCoordinates().length-1;i++){
 				vertex = geom.getCoordinates()[i];
-				positionsText += ""+vertex.x+","+vertex.y+","+myGeom.height+ ",\n";
+				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
+						 		 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
+						 		 ","+myGeom.height+ ",\n";
 			}
+			facesText = Output3D.facesFromVertices3D(geom.getCoordinates().length - 1);			
 		}
 		else {
-			for(Coordinate vertex : geom.getCoordinates()){
-				positionsText += ""+vertex.x+","+vertex.y+","+vertex.z+ ",\n";
+			//for(Coordinate vertex : geom.getCoordinates()){
+			Coordinate vertex;
+//			// -2 because the last one = he first one
+			for(int i=0;i<geom.getCoordinates().length-1;i++){	
+				vertex = geom.getCoordinates()[i];				
+				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
+								 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
+								 ","+(((Double)Double.NaN).equals(vertex.z)?0.0:vertex.z)+ ",\n";
 			}				
-			facesText = Output3D.facesFromVertices(geom.getCoordinates().length);
+			facesText = Output3D.facesFromVertices(geom.getCoordinates().length - 1);
 		}
 		// remove the ,\n at the end of the last Coordinate
 		positionsText = positionsText.substring(0, positionsText.length()-2); 			
@@ -152,14 +185,41 @@ public class Output3D {
 		
 		return meshElt;
 	}
+
+	// nbVertrices is the number of vertices of both top and bottom faces
+	public static String facesFromVertices3D(int nbVertices){
+		String res = "";
+		res += facesFromVertices(0,nbVertices - 1);
+		res += facesFromVertices(nbVertices, 2*nbVertices - 1);
+		for(int i = 0; i < nbVertices - 2; i++){
+			res += i + "," + (i+1) + "," + (i+nbVertices) + ",";
+			res += (i+1) + "," + (i+nbVertices) + "," + (i+nbVertices + 1);
+		}
+		// the last face: hand-made
+		res += ",0," + (nbVertices -1) + "," + (2*nbVertices - 1) + ",";
+		res += "0," + (nbVertices) + "," + (2*nbVertices - 1);		
+		return res;
+	}	
 	
 	public static String facesFromVertices(int nbVertices){
+//		String res = "";
+//		for(int i = 1; i<(nbVertices-1);i++){
+//			res+= "0,"+i+","+(i+1)+",";
+//		}
+//		// To remove the last ","
+//		res = res.substring(0, res.length()-1); 			
+//		return res;
+		return facesFromVertices(0,nbVertices-1);
+	}
+	
+	public static String facesFromVertices(int firstVertex, int lastVertex){
 		String res = "";
-		for(int i = 1; i<(nbVertices-1);i++){
-			res+= "0,"+i+","+(i+1)+",";
+		for(int i = (firstVertex + 1); i<(lastVertex-1);i++){
+			res+= firstVertex+","+i+","+(i+1)+",";
 		}
+		// To remove the last ","
 		res = res.substring(0, res.length()-1); 			
-		return res;
+		return res;		
 	}
 	
 	public static Document createXML() {
