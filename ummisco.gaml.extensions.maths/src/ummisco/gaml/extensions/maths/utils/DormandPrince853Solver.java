@@ -72,7 +72,7 @@ public class DormandPrince853Solver extends Solver {
 				if (eq.equaAgents.size() > 0)
 					scope.push(eq.equaAgents.get(i));
 				try {
-					y[i] = (Double) v.value(scope);
+					y[i]=Double.parseDouble(""+v.value(scope));
 				} catch (Exception ex1) {
 				} finally {
 					if (eq.equaAgents.size() > 0) {

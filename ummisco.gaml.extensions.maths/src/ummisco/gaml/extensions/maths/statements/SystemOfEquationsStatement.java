@@ -221,60 +221,42 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
 	 *      double[], double[])
 	 */
-	// double alpha=0.8;
-	// double beta=0.2;
-	// double gamma=0.2;
-	// double delta=0.85;
+	 double alpha=0.8;
+	 double beta=0.2;
+	 double gamma=0.2;
+	 double delta=0.85;
 	@Override
 	public void computeDerivatives(final double time, final double[] y,
 			final double[] ydot) throws MaxCountExceededException,
 			DimensionMismatchException {
 		// and the time ?
 		// we first initialize the vars with the y vector
+		//		 ydot[0] = y[0] * (alpha - beta * y[1]);
+		//		 ydot[1] =- y[1] * (delta - gamma * y[0]);
 		// for ( int i = 0, n = getDimension(); i < n; i++ ) {
 		// IVarExpression v = variables.get(i);
 		// v.setVal(currentScope, y[i], false);
 		// }
-		// ydot[0] = y[0] * (alpha - beta * y[1]);
-		// ydot[1] =- y[1] * (delta - gamma * y[0]);
+		/*
+		ydot[0]=-3*y[0];
+		ydot[1]=0.0;
+		ydot[2]=0.0;
+		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
+		
+		*/
+		
+		
+		
+		
 		// then we ask the equation(s) to compute and we store their results in
 		// the ydot vector
-
 		/*
-		 * loop through equations (internal and external) to get singleequation
-		 * value
+		 * the y value is calculed automatically inside integrator's algorithm
+		 * just get y, and assign value to Variables in GAMA, which is use by GAMA modeler
 		 */
-		for (int i = 0, n = getDimension(); i < n; i++) {
-			SingleEquationStatement s = equations.get(i);
-			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
-			if (equaAgents.size() > 0)
-				currentScope.push(equaAgents.get(i));
-			try {
-				s.var_t.setVal(currentScope, time, false);
-				ydot[i] = (Double) s.executeOn(currentScope);
-//				GuiUtils.informConsole("t="+time+" val="+ydot[i]);
-			} catch (Exception ex1) {
-			} finally {
-
-				if (equaAgents.size() > 0)
-					currentScope.pop(equaAgents.get(i));
-			}
-		}
-		// // finally, we update the value of the variables
-		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			IVarExpression v = variables.get(i);
 			
-			// if (equaAgents.size() > 0)
-			// currentScope.push(equaAgents.get(i));
-			// try {
-			// v.setVal(currentScope, y[i], false);
-			// } catch (Exception ex1) {
-			// } finally {
-			//
-			// if (equaAgents.size() > 0)
-			// currentScope.pop(equaAgents.get(i));
-			// }
 
 			try {
 				v.setVal(currentScope, y[i], false);
@@ -309,8 +291,41 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 					}
 				}
 			}
-
 		}
+		
+		
+		
+		
+		
+		
+		
+
+		/*
+		 * with variables assigned, calcul new value of expression in function
+		 * loop through equations (internal and external) to get singleequation
+		 * value
+		 */
+		for (int i = 0, n = getDimension(); i < n; i++) {
+			SingleEquationStatement s = equations.get(i);
+			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
+			if (equaAgents.size() > 0)
+				currentScope.push(equaAgents.get(i));
+			try {
+				s.var_t.setVal(currentScope, time, false);
+				ydot[i] = Double.parseDouble(""+s.executeOn(currentScope));
+			} catch (Exception ex1) {
+			} finally {
+
+				if (equaAgents.size() > 0)
+					currentScope.pop(equaAgents.get(i));
+			}
+		}
+
+//		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
+		// // finally, we update the value of the variables
+		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
+		
+	
 	}
 
 	/**

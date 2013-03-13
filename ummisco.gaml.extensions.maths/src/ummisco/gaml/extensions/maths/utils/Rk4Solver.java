@@ -72,7 +72,7 @@ public class Rk4Solver extends Solver {
 				if (eq.equaAgents.size() > 0)
 					scope.push(eq.equaAgents.get(i));
 				try {
-					y[i]=(Double)v.value(scope);
+					y[i]=Double.parseDouble(""+v.value(scope));
 				} catch (Exception ex1) {
 				} finally {
 					if (eq.equaAgents.size() > 0){
@@ -84,8 +84,8 @@ public class Rk4Solver extends Solver {
 			// GuiUtils.informConsole(""+y);
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
-				integrator.integrate(eq, time_initial * cycle_length, y,
-						time_final * cycle_length, y);
+				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
+				
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
