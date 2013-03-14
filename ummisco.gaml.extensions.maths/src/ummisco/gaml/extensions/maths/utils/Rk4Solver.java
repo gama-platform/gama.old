@@ -85,7 +85,8 @@ public class Rk4Solver extends Solver {
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
 				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
-				
+				eq.assignValue(y);
+				GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}

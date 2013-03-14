@@ -221,39 +221,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
 	 *      double[], double[])
 	 */
-	 double alpha=0.8;
-	 double beta=0.2;
-	 double gamma=0.2;
-	 double delta=0.85;
-	@Override
-	public void computeDerivatives(final double time, final double[] y,
-			final double[] ydot) throws MaxCountExceededException,
-			DimensionMismatchException {
-		// and the time ?
-		// we first initialize the vars with the y vector
-		//		 ydot[0] = y[0] * (alpha - beta * y[1]);
-		//		 ydot[1] =- y[1] * (delta - gamma * y[0]);
-		// for ( int i = 0, n = getDimension(); i < n; i++ ) {
-		// IVarExpression v = variables.get(i);
-		// v.setVal(currentScope, y[i], false);
-		// }
-		/*
-		ydot[0]=-3*y[0];
-		ydot[1]=0.0;
-		ydot[2]=0.0;
-		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
-		
-		*/
-		
-		
-		
-		
-		// then we ask the equation(s) to compute and we store their results in
-		// the ydot vector
-		/*
-		 * the y value is calculed automatically inside integrator's algorithm
-		 * just get y, and assign value to Variables in GAMA, which is use by GAMA modeler
-		 */
+//	 double alpha=0.8;
+//	 double beta=0.2;
+//	 double gamma=0.2;
+//	 double delta=0.85;
+	
+	
+	public void assignValue(double[] y){
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			IVarExpression v = variables.get(i);
 			
@@ -292,12 +266,41 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 				}
 			}
 		}
+	}
+	
+	
+	@Override
+	public void computeDerivatives(final double time, final double[] y,
+			final double[] ydot) throws MaxCountExceededException,
+			DimensionMismatchException {
+		// and the time ?
+		// we first initialize the vars with the y vector
+		//		 ydot[0] = y[0] * (alpha - beta * y[1]);
+		//		 ydot[1] =- y[1] * (delta - gamma * y[0]);
+		// for ( int i = 0, n = getDimension(); i < n; i++ ) {
+		// IVarExpression v = variables.get(i);
+		// v.setVal(currentScope, y[i], false);
+		// }
+		/*
+		ydot[0]=-3*y[0];
+		ydot[1]=0.0;
+		ydot[2]=0.0;
+		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
+		
+		*/
 		
 		
 		
 		
+		// then we ask the equation(s) to compute and we store their results in
+		// the ydot vector
+		/*
+		 * the y value is calculed automatically inside integrator's algorithm
+		 * just get y, and assign value to Variables in GAMA, which is use by GAMA modeler
+		 */
 		
 		
+		assignValue(y);
 		
 
 		/*
@@ -321,7 +324,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			}
 		}
 
-//		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
+		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
 		// // finally, we update the value of the variables
 		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
 		
