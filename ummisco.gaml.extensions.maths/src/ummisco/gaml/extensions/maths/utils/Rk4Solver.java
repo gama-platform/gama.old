@@ -5,6 +5,7 @@ import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
+import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
 import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
 import ummisco.gaml.extensions.maths.utils.Solver;
 import msi.gama.common.util.GuiUtils;
@@ -81,12 +82,17 @@ public class Rk4Solver extends Solver {
 				}
 				
 			}
+			
+			
+			
+			
 			// GuiUtils.informConsole(""+y);
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
+//				GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
 				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
-				eq.assignValue(y);
-				GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
+				eq.assignValue(time_final * cycle_length, y);
+//				GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}

@@ -75,18 +75,23 @@ public class DormandPrince853Solver extends Solver {
 					y[i]=Double.parseDouble(""+v.value(scope));
 				} catch (Exception ex1) {
 				} finally {
-					if (eq.equaAgents.size() > 0) {
-						scope.pop(eq.equaAgents.get(i));
-					}
+					if (eq.equaAgents.size() > 0){
+						scope.pop(eq.equaAgents.get(i));						
+						}
 				}
-
+				
 			}
+			
+			
+			
+			
 			// GuiUtils.informConsole(""+y);
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
-
-				integrator.integrate(eq, time_initial * cycle_length, y,
-						time_final * cycle_length, y);
+//				GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
+				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
+				eq.assignValue(time_final * cycle_length, y);
+//				GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
 			} catch (Exception ex) {
 				System.out.println(ex);
 			}
