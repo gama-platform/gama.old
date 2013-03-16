@@ -47,6 +47,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();
 	public final IList<IVarExpression> variables = new GamaList<IVarExpression>();
+//	public final GamaMap variables=new GamaMap();
 	public final GamaList<IAgent> equations_ext = new GamaList<IAgent>();
 	public final GamaList<IAgent> equaAgents = new GamaList<IAgent>();
 	public double equa_t=0;
@@ -69,8 +70,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		List<ISymbol> others = new ArrayList<ISymbol>();
 		for (ISymbol s : commands) {
 			if (s instanceof SingleEquationStatement) {
-				equations.add((SingleEquationStatement) s);
+				equations.add((SingleEquationStatement) s);	
 				variables.add(((SingleEquationStatement) s).var);
+//				variables.add(new GamaPair<Object, IVarExpression >("", ((SingleEquationStatement) s).var));
 			} else {
 				others.add(s);
 			}
@@ -92,8 +94,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		// IVarExpression v = variables.get(i);
 		// ydottmp[i]=(Double)v.value(scope);
 		// }
+//		for(IVarExpression v:vars){
+//			variables.add(new GamaPair<IAgent, IVarExpression>(scope.getAgentScope(), v));
+//		}
+		for(int i=0; i<variables.size(); i++){
+			equaAgents.add(i, scope.getAgentScope());
+		}
 		if (simultan != null) {
-			equaAgents.add(0, scope.getAgentScope());
 			equations_ext.clear();
 			Object t = simultan.value(scope);
 			if (t != null) {
@@ -143,9 +150,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 				equaAgents.add(n + i, remoteAgent);
 			}
 
-			if (!equations.containsAll(ses.equations))
+//			if (!equations.containsAll(ses.equations))
 				equations.addAll(ses.equations);
-			if (!variables.containsAll(ses.variables))
+//			if (!variables.containsAll(ses.variables))
 				variables.addAll(ses.variables);
 			// System.out.println(equaAgents+"\n eq "+equations+"\n var "+variables+"\n");
 		}
@@ -160,9 +167,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 			// equaAgents.remove(ses);
 			// if (!equations.containsAll(ses.equations))
-			equations.remove(ses.equations);
+			equations.removeAll((Collection<?>)ses.equations);
 			// if (!variables.containsAll(ses.variables))
-			variables.remove(ses.variables);
+			variables.removeAll((Collection<?>)ses.variables);
 		}
 
 	}
@@ -227,11 +234,32 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 //	 double delta=0.85;
 	
 	
-	public void assignValue(double[] y){
+	public void assignValue(double time, double[] y){
+//		GamaList vcc=(GamaList)currentScope.getAgentVarValue("myv");
+//		vcc.add(y[0]);
+//		GamaList tcc=(GamaList)currentScope.getAgentVarValue("myt");
+//		tcc.add(time);
+//		currentScope.setAgentVarValue("myv", vcc);
+//		currentScope.setAgentVarValue("myt", tcc);
+		
+		
 		for (int i = 0, n = getDimension(); i < n; i++) {
+			SingleEquationStatement s = equations.get(i);
 			IVarExpression v = variables.get(i);
-			
-
+			Object o = equaAgents.get(i);
+			final IAgent remoteAgent = (IAgent) o;
+			if (!remoteAgent.dead()) {
+				currentScope.push(remoteAgent);
+				try {
+					
+					s.var_t.setVal(currentScope, time, false);	
+					v.setVal(currentScope, y[i], false);
+				} catch (Exception ex1) {
+				} finally {
+					currentScope.pop(remoteAgent);
+				}
+			}
+			/*
 			try {
 				v.setVal(currentScope, y[i], false);
 			} catch (Exception ex) {
@@ -265,7 +293,23 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 					}
 				}
 			}
+			*/
 		}
+		
+		
+//		for (int i = 0, n = getDimension(); i < n; i++) {
+//			SingleEquationStatement s = equations.get(i);
+//			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
+//			if (equaAgents.size() > 0)
+//				currentScope.push(equaAgents.get(i));
+//			try {
+//				s.var_t.setVal(currentScope, time, false);					
+//			} catch (Exception ex1) {
+//			} finally {
+//				if (equaAgents.size() > 0)
+//					currentScope.pop(equaAgents.get(i));
+//			}
+//		}
 	}
 	
 	
@@ -300,7 +344,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		 */
 		
 		
-		assignValue(y);
+		assignValue(time, y);
 		
 
 		/*
@@ -314,7 +358,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			if (equaAgents.size() > 0)
 				currentScope.push(equaAgents.get(i));
 			try {
-				s.var_t.setVal(currentScope, time, false);
 				ydot[i] = Double.parseDouble(""+s.executeOn(currentScope));
 			} catch (Exception ex1) {
 			} finally {
@@ -324,7 +367,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			}
 		}
 
-		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
+//		GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
 		// // finally, we update the value of the variables
 		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
 		
