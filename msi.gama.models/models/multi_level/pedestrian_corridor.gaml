@@ -31,19 +31,19 @@ global {
 	int new_pedestian_generate_frequency <- 1;
 	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
 	
-	list pedestrians  of: pedestrian <- [] value: list (pedestrian);
+	list pedestrians of: pedestrian <- [] value: list(pedestrian); 
 	float start_time <- machine_time;
 	init {
-		create species: corridor number: 1;
+		create corridor number: 1;
 		 
-		create species: corridor_wall number: 2 returns: corridor_walls;
+		create corridor_wall number: 2 returns: corridor_walls; 
 		set (corridor_walls at 0).shape value: corridor_wall_0_shape;
 		set (corridor_walls at 1).shape value: corridor_wall_1_shape;
 		
 	}
 	
-	reflex generate_pedestrians when: (time mod new_pedestian_generate_frequency) = 0 {
-		create species: pedestrian number: new_pedestrian_rate returns: new_pedestrians;
+	reflex generate_pedestrians when: ((time mod new_pedestian_generate_frequency) = 0) {
+		create pedestrian number: new_pedestrian_rate returns: new_pedestrians; 
 		
 		let loop_times type: int value: 0;
 		loop p over: new_pedestrians {
@@ -68,7 +68,7 @@ global {
 		}
 	}
 	*/
-}
+} 
 
 environment bounds: environment_bounds;
 
@@ -120,7 +120,7 @@ entities {
 		}
 		 
 		aspect default {
-			draw shape: geometry color: pedestrian_color;
+			draw shape color: pedestrian_color;
 		}
 	}
 	
@@ -134,7 +134,7 @@ entities {
 		}
 		
 		init {
-			create species: corridor_info_drawer number: 1 with: [target :: self];
+			create corridor_info_drawer number: 1 with: [target :: self];
 		}
 		
 		
@@ -160,7 +160,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: corridor_color;
+			draw shape color: corridor_color;
 		}
 	}
 	
@@ -170,7 +170,7 @@ entities {
 		}
 		
 		aspect name: default {
-			draw shape: geometry color: corridor_wall_color;
+			draw shape color: corridor_wall_color;
 		}
 	}
 	

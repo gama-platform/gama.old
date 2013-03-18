@@ -51,7 +51,7 @@ entities {
 			draw circle(3) color: color ;
 		} 
 		 		
-		reflex removing_node when : flip(0.1) {
+		reflex removing_node when: flip(0.1) {
 			set my_graph <- remove_node_from(self, my_graph);
 		}
 		

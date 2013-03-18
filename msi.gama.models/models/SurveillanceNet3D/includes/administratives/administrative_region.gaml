@@ -63,7 +63,7 @@ entities {
 		var smalltown_name type: string ;
 		var color type: rgb init: rgb('white') ;
 		init {
-			set color value: (id_2 = '38253') ? 'blue' : 'white' ;
+			set color value: rgb((id_2 = '38253') ? 'blue' : 'white') ;
 		}
 	}
 	species administrative_region  {
@@ -77,7 +77,7 @@ entities {
 		var smalltown_name type: string ;
 		var color type: rgb init: rgb('white') ;
 		init {
-			set color value: (id_2 = '38253') ? 'blue' : 'white' ;
+			set color value: rgb((id_2 = '38253') ? 'blue' : 'white') ;
 		}
 	}
 	
@@ -86,4 +86,4 @@ entities {
 		var color type: rgb init: rgb('blue') ;
 	}
 }
-output ;
+output {}

@@ -22,7 +22,7 @@ entities {
 		var name type: string ;
 		var id_0 type: string ;
 		var id_1 type: string ;
-		var id_2 type: string ;
+		var id_2 type: string ;  
 		var province_name type: string ;
 		var id_3 type: string ;
 		var district_name type: string ;
@@ -83,12 +83,12 @@ entities {
 					*/
 		aspect default {
 			//draw shape: circle color: rgb([255, 0, 255]) size: 1500 ;
-			draw shape: circle color: nodecolor size: 500;
+			draw circle(500) color: nodecolor;
 		}
 		
 		aspect ThreeDirections {
 			//draw shape: circle color: rgb([255, 0, 255]) size: 1500 ;
-			draw shape: circle color: nodecolor size: 500;
+			draw  circle(500) color: nodecolor;
 			set z value: 50;
 		}
 		
@@ -124,7 +124,7 @@ entities {
 		// Chua kiem chung:
 		action getCorrelationCoefficient
 		{
-			let type: list name: list_neighbors value: (list (cellula_correlation)) where (each overlaps(self));
+			let  list_neighbors value: (list (cellula_correlation)) where (each overlaps(self));
 			loop var: i from: 0 to: length(list_neighbors) - 1
 			{
 				let the_cell type: cellula_correlation value: list_neighbors at i;
@@ -136,5 +136,3 @@ entities {
 		}
 	}
 }
-output;
-

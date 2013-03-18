@@ -9,7 +9,7 @@ model shape_visualization
 
 import "../../PrimitiveAgent/rain_agent.gaml"
 
-global {
+global { 
 	
 	//Parameter
     file shape_file_locality parameter: 'Shapefile' <- file('../includes/GIS/Localites.shp') category: 'GIS';

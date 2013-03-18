@@ -48,7 +48,7 @@ entities {
 						*/
 		
 		aspect default {
-			draw shape: geometry color: rgb ([128, 128, 0]) size:  2;
+			draw shape color: rgb ([128, 128, 0]) size:  2;
 			
 			
 			//draw text: "ABCABCABCABCABCABCABCABCABCABCABCABC" color: rgb('black') size: 10 at: {10000, 100000};

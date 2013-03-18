@@ -92,7 +92,7 @@ entities {
 				let tmp_location type: point value: {(rnd (xmax - xmin)) + xmin, (rnd (ymax - ymin)) + ymin} ;
 				let potential_geom type: geometry value: ball_shape at_location tmp_location ; 
 				
-				if ( empty ( (ball as list) where  ( each.shape intersects potential_geom ) ) )  {
+				if ( empty ( ball where  ( each.shape intersects potential_geom ) ) )  {
 					set location value: tmp_location ;
 					set continue_loop value: false ;
 				}
@@ -165,7 +165,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color size: ball_size ;
+			draw shape color: color size: ball_size ;
 		}
 	}
 	
@@ -176,7 +176,7 @@ entities {
 		
 		float speed value: float(group_base_speed) ;
 		float perception_range value: float(base_perception_range + (rnd(5))) ;
-		ball nearest_free_ball value: ( (ball as list) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
+		ball nearest_free_ball value: ( (ball) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		group nearest_smaller_group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
 		base target value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
@@ -219,7 +219,7 @@ entities {
 			state chaos { }
 			
 			aspect default {
-				draw shape: circle color: ((host as group).color).darker size: my_age ;
+				draw circle(my_age) color: ((host as group).color).darker ;
 			}
 		}
 		
@@ -312,7 +312,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color;
+			draw shape color: color;
 		}
 	}
 	
@@ -421,7 +421,7 @@ entities {
 		}
 	 	 
 		aspect default {
-			draw shape: geometry color: color  empty: true;
+			draw shape color: color  empty: true;
 			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color style: bold at: {location.x - 65, location.y};
 		}
 	}

@@ -15,30 +15,29 @@ global {
 	var SIMULATION_STEP type: int init: 0;
 	
 	// Thresholds:
-	var MAX_DENSITY type: float value: 1000000;
-	var MAX_DENSITY type: float value: 0;
+	var MAX_DENSITY type: float init: 0.0;
 	
 	// Disk graph radius:
-	var DISK_RADIUS type: float value: 15000.0;
-	var LOWEST_RADIUS type: float value: 5000.0;
-	var CORRELATION_THRESHOLD type: float value: 0.3;
+	var DISK_RADIUS type: float init: 15000.0;
+	var LOWEST_RADIUS type: float init: 5000.0;
+	var CORRELATION_THRESHOLD type: float init: 0.3;
 	
 	// IDW_RANGE:
-	var IDW_RANGE type: float value: 40000.0;
+	var IDW_RANGE type: float init: 40000.0;
 	
 	// Density data
-	var HISTORICAL_DURATION type: int value: 365;
+	var HISTORICAL_DURATION type: int init: 365;
 	
 	// LIFE CYCLE OF BROWN PLANT HOPPER
-	var BPH_LIFE_DURATION type: int value: 32;
-	var ADULT_EGG_RATE type: float value: 250; // Long wing: 100; Short wing: 400
-	var EGG_NYMPH_RATE type: float value: 0.3;
-	var NYMPH_ADULT_RATE type: float value: 0.4;
-	var NATURAL_MORTALITY_RATE type: float value: 0.05; //0.035;
-	var EGG_DURATION type: float value: 7;
-	var NYMPH_DURATION type: float value: 13;
-	var ADULT_DURATION type: float value: 12;
-	var ADULT_DURATION_GIVING_BIRTH_DURATION type: float value: 6;
+	var BPH_LIFE_DURATION type: int <- 32;
+	var ADULT_EGG_RATE type: float <- 250.0; // Long wing: 100; Short wing: 400
+	var EGG_NYMPH_RATE type: float <- 0.3;
+	var NYMPH_ADULT_RATE type: float <- 0.4;
+	var NATURAL_MORTALITY_RATE type: float <- 0.05; //0.035;
+	var EGG_DURATION type: float value: 7.0;
+	var NYMPH_DURATION type: float value: 13.0;
+	var ADULT_DURATION type: float value: 12.0;
+	var ADULT_DURATION_GIVING_BIRTH_DURATION type: float value: 6.0;
 	
 	
 		

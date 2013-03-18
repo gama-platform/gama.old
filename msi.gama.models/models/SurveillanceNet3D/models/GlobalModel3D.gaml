@@ -92,8 +92,8 @@ global {
 	// Temp variables:
 	var temp type: list init: nil;
 	var _month type: int init: 0;
-	var _id_Data type: string init: 0;
-	var _id type: string init: 0;
+	var _id_Data type: string init: "0";
+	var _id type: string init: "0";
 	var _count type: int init: 0;
 	
 	init{
@@ -130,8 +130,7 @@ global {
 		set current_natural_environment value: NaturalEnvironment at 0;
 	}
 
-	reflex main_reflex
-	{
+	reflex main_reflex {
 		
 		if condition: (current_udg.setup = 0)
 		{
@@ -309,18 +308,18 @@ global {
 	action loadLighttrapData
 	{
 		let no_of_rows value: lighttrap_data.rows - 1;
-		loop from: 0 to: length (node) - 1 var: cnt {
+		loop cnt from: 0 to: length (node) - 1  {
 			let the_node type: node value: node at cnt;
 			 
 			ask target: the_node
 			{
-				loop from: 1 to: no_of_rows var: i
+				loop i from: 1 to: no_of_rows
 				{
 					if condition: (id = lighttrap_data at {2, i})
 					{
-						loop from: 0 to: (HISTORICAL_DURATION - 1) var: j
+						loop j from: 0 to: (HISTORICAL_DURATION - 1) 
 						{
-							put item: lighttrap_data at {3 + j, i} at: {0, j} in: density_matrix;
+							put lighttrap_data at {3 + j, i} at: {0, j} in: density_matrix;
 						}
 						
 						// Choosing the first day for estimation & prediction 
@@ -344,7 +343,7 @@ global {
 			
 				ask target: cellula_std_deviation at ((j - 1) * 60 + (i - 1))
 				{
-					set estimation_std_deviation value: standard_deviation_data at {1, ((60 - j) * 60 + (i - 1)) + 1};
+					set estimation_std_deviation <-  standard_deviation_data at {1, ((60 - j) * 60 + (i - 1)) + 1};
 					do aspect_by_std_deviation;
 				}
 			}
@@ -366,7 +365,7 @@ global {
 			
 				ask target: cellula_std_deviation at ((j - 1) * 60 + (i - 1))
 				{
-					set estimation_std_deviation value: rs at (((60 - j) * 60 + (i - 1)));
+					set estimation_std_deviation <- rs at (((60 - j) * 60 + (i - 1)));
 					do aspect_by_std_deviation;
 				}
 			}
@@ -379,13 +378,13 @@ global {
 	{
 		let no_of_months value: 12;
 		ask target: current_natural_environment{ 
-			loop from: 0 to: (no_of_months - 1) var: i
+			loop i from: 0 to: (no_of_months - 1)
 			{
-				put item: genaral_weather_data at {i + 1, 0} at: i in: Mean_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 1} at: i in: Min_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 2} at: i in: Max_Wind_Speed;
-				put item: genaral_weather_data at {i + 1, 3} at: i in: Wind_Direction_From;
-				put item: genaral_weather_data at {i + 1, 4} at: i in: Wind_Direction_To;
+				put genaral_weather_data at {i + 1, 0} at: i in: Mean_Wind_Speed;
+				put genaral_weather_data at {i + 1, 1} at: i in: Min_Wind_Speed;
+				put genaral_weather_data at {i + 1, 2} at: i in: Max_Wind_Speed;
+				put genaral_weather_data at {i + 1, 3} at: i in: Wind_Direction_From;
+				put genaral_weather_data at {i + 1, 4} at: i in: Wind_Direction_To;
 			}
 		}
 	}
@@ -396,33 +395,33 @@ global {
 		let no_of_months value: 12;
 		let no_of_stations value: length (weather_region);
 		
-		loop from: 0 to: no_of_stations - 1 var: j {
+		loop j from: 0 to: no_of_stations - 1 {
 			let the_weather_region type: weather_region value: weather_region at j;
 			ask target: the_weather_region{
-				loop from: 1 to: (no_of_months * no_of_stations) var: i {
+				loop i from: 1 to: (no_of_months * no_of_stations) {
 					if condition: the_weather_region.id = (station_weather_data at {0, i})
 					{
 						set _month  value: int (station_weather_data at {3, i});
 						// Temperature:
-						put item: station_weather_data at {5, i} at: _month - 1 in: Temp_Mean;
-						put item: station_weather_data at {6, i} at: _month - 1 in: Temp_Max;
-						put item: station_weather_data at {7, i} at: _month - 1 in: Temp_Min;
+						put station_weather_data at {5, i} at: _month - 1 in: Temp_Mean;
+						put station_weather_data at {6, i} at: _month - 1 in: Temp_Max;
+						put station_weather_data at {7, i} at: _month - 1 in: Temp_Min;
 						
 						// Rainning
-						put item: station_weather_data at {8, i} at: _month - 1 in: Rain_Amount;
-						put item: station_weather_data at {9, i} at: _month - 1 in: Rain_Max;
-						put item: station_weather_data at {10, i} at: _month - 1 in: Rain_No_Days_Max;
-						put item: station_weather_data at {11, i} at: _month - 1 in: Rain_No_Days;
-						put item: station_weather_data at {12, i} at: _month - 1 in: Rain_Mean;
+						put station_weather_data at {8, i} at: _month - 1 in: Rain_Amount;
+						put station_weather_data at {9, i} at: _month - 1 in: Rain_Max;
+						put station_weather_data at {10, i} at: _month - 1 in: Rain_No_Days_Max;
+						put station_weather_data at {11, i} at: _month - 1 in: Rain_No_Days;
+						put station_weather_data at {12, i} at: _month - 1 in: Rain_Mean;
 								
 						// Humidity
-						put item: station_weather_data at {13, i} at: _month - 1 in: Hum_Mean;
-						put item: station_weather_data at {14, i} at: _month - 1 in: Hum_Min;
-						put item: station_weather_data at {15, i} at: _month - 1 in: Hum_No_Days;
+						put station_weather_data at {13, i} at: _month - 1 in: Hum_Mean;
+						put station_weather_data at {14, i} at: _month - 1 in: Hum_Min;
+						put station_weather_data at {15, i} at: _month - 1 in: Hum_No_Days;
 								
 						// Sunning
-						put item: station_weather_data at {16, i} at: _month - 1 in: Sunning_Hours;
-						put item: station_weather_data at {17, i} at: _month - 1 in: Sunning_Hours_Mean;
+						put station_weather_data at {16, i} at: _month - 1 in: Sunning_Hours;
+						put station_weather_data at {17, i} at: _month - 1 in: Sunning_Hours_Mean;
 					}
 				}
 			}
@@ -446,11 +445,11 @@ global {
 		set no_of_nodes value: length (node);
 		
 		let cnt type: int value: 0;
-		loop var: cnt from: 0 to: no_of_nodes - 1 {
+		loop cnt  from: 0 to: no_of_nodes - 1 {
 			
-			put item: 0.0 at: {0, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {1, cnt} in: orthogonal_vector;
-			put item: 0.0 at: {2, cnt} in: orthogonal_vector;
+			put  0.0 at: {0, cnt} in: orthogonal_vector;
+			put  0.0 at: {1, cnt} in: orthogonal_vector;
+			put  0.0 at: {2, cnt} in: orthogonal_vector;
 		}
 		
 
@@ -991,11 +990,11 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 	{
 		var estimation_std_deviation type: float init: 0.001;
 		var color type: rgb init: rgb('white') ;
-		var maximum_std_deviation type: float init: 2200;
+		var maximum_std_deviation type: float init: 2200.0;
 		var z type: float init: 0.0;
 		
 		aspect elevation{
-			draw shape: geometry color: color;
+			draw shape color: color;
 		}
 		
 		
@@ -1133,7 +1132,7 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 		{
 			//let shape_to_display type: geometry <- (shape + 1.0) add_z hinder_index * 100;
 			//draw geometry: shape_to_display color: rgb('red');
-			draw shape: geometry color: color;
+			draw shape color: color;
 		} 
 						
 		reflex Step
@@ -1266,11 +1265,11 @@ environment bounds: SHAPE_ADMINISTRATIVE_THREE_PROVINCES //SHAPE_ADMINISTRATIVE_
 			
 			
 			// Set up the general weather parameters (homogeneous):
-			let Mean_Wind_Speed type: float value: current_natural_environment.Mean_Wind_Speed;
-			let Min_Wind_Speed type: float value: current_natural_environment.Min_Wind_Speed;
-			let Max_Wind_Speed type: float value: current_natural_environment.Max_Wind_Speed;
-			let Wind_Direction_From type: float value: current_natural_environment.Wind_Direction_From;
-			let Wind_Direction_To type: float value: current_natural_environment.Wind_Direction_To;
+			let Mean_Wind_Speed  value: current_natural_environment.Mean_Wind_Speed;
+			let Min_Wind_Speed  value: current_natural_environment.Min_Wind_Speed;
+			let Max_Wind_Speed  value: current_natural_environment.Max_Wind_Speed;
+			let Wind_Direction_From  value: current_natural_environment.Wind_Direction_From;
+			let Wind_Direction_To  value: current_natural_environment.Wind_Direction_To;
 			
 			/*if condition: (rice_area = 0.0) //(!in_land)  
 			{
@@ -1437,7 +1436,7 @@ output {
 	
 	display MovingCorrelationChart_Graph
 	{
-		chart name: "BPHs density via days (from dd/mm/yyyy)" type: "series"
+		chart name: "BPHs density via days (from dd/mm/yyyy)" type: series
 		{
 			data name: "Correlation between all two consecutive days" value: twoDaysCorrelation color: rgb('blue');
 			data name: "Accumulative average of correlation" value: twoDaysCorrelationAVG color: rgb('red');
@@ -1446,7 +1445,7 @@ output {
 	
 	display EdgesCorrelationChart_Graph
 	{
-		chart name: "BPHs density via days (from dd/mm/yyyy)" type: "series"
+		chart name: "BPHs density via days (from dd/mm/yyyy)" type: series
 		{
 			data name: "Correlation between all edges" value: edgesCorrelation color: rgb('blue');
 			data name: "Accumulative average of correlation" value: edgesCorrelationAVG color: rgb('red');

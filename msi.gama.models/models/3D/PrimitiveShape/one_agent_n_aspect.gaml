@@ -14,7 +14,7 @@ global {
 
 	init { 		
 		create myAgent number:number_of_agents;
-		save species: myAgent to: ('./shapefile.shp') type: "collada" ; 
+		save myAgent to: ('./shapefile.shp') type: "collada" ; 
 	}  
 } 
  

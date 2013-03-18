@@ -157,7 +157,7 @@ global {
 			
 		}
 				
-		create Physical3DWorld{
+		create Physical3DWorld {
 			set gravity <-true;
 		}
 		set world2 <- first(Physical3DWorld as list);

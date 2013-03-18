@@ -24,7 +24,7 @@ global{
  
 entities{
 	
-	species node mirrors: list(bug){
+	species node mirrors: list(bug) {
 		point location <- target.location value: target.location;
 		aspect base{
 		  int degree <-myGraph = nil ? 0.0 : myGraph degree_of(self);

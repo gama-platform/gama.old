@@ -7,7 +7,7 @@ global {
 	geometry boids_shape <- circle (boids_size) ;
 	float boids_separation <- 4 * boids_size; 
 	int flock_creation_distance <- int(boids_separation + 1);
-	int min_group_member <- 3;
+	int min_group_member <- 3; 
 	
 	int update_frequency <- 3;
 	int merge_frequency <- 5;

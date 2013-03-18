@@ -35,6 +35,8 @@ global {
 
 entities {
 	
+
+	
 	species UnitDiskGraph  {
 		var UDgraph type: graph init: nil;
 		var setup type: int init: 0;
@@ -91,7 +93,7 @@ entities {
 			
 			if(location_found)
 			{
-				create species: node number: 1
+				create node number: 1
 				{
 					set existing_status value: false;
 					set location value: the_potential_cell.location;
@@ -100,7 +102,7 @@ entities {
 				
 				// CREATE NEW EDGE:
 						
-				create species: edge number: 1;
+				create edge number: 1;
 				set current_edge value: edge at (length(edge) - 1);
 				set current_edge.source value: center_node;
 				
@@ -162,7 +164,7 @@ entities {
 				
 				ask target: the_cell
 				{
-					set current_attractive_index value: attractive_index;
+					set current_attractive_index <- attractive_index;
 					set current_hinder_index value: hinder_index;
 					set current_being_monitored value: is_monitored;
 				}
@@ -221,7 +223,7 @@ entities {
 			}
 			if(location_found)
 			{
-				create species: node number: 1
+				create node number: 1
 				{
 					set existing_status value: false;
 					set location value: the_potential_cell.location;
@@ -245,7 +247,7 @@ entities {
 				// CREATE NEW EDGE:
 				if(abs(center_correlation - selected_correlation) <= CORRELATION_THRESHOLD)
 				{
-					create species: edge number: 1;
+					create edge number: 1;
 					set current_edge value: edge at (length(edge) - 1);
 					set current_edge.source value: center_node;
 					ask center_node{
@@ -278,7 +280,7 @@ entities {
 				let the_outside_node value: node at i;  
 				
 				let j type: int value: 0;
-				loop from: i + 1 to: length (node) - 1 var: j 
+				loop j from: i + 1 to: length (node) - 1 
 				{
 					
 					let the_inside_node value: node at j;
@@ -337,7 +339,7 @@ entities {
 							if correlationW >= CORRELATION_THRESHOLD
 							{
 								
-								create species: edge number: 1;
+								create edge number: 1;
 								set current_edge value: edge at lasted_edge_id;
 								set current_edge.source value: the_outside_node;
 								
@@ -390,7 +392,7 @@ entities {
 							set correlationAVG value: correlationW + correlationAVG;
 							if correlationW >= CORRELATION_THRESHOLD
 							{
-								create species: edge number: 1;
+								create  edge number: 1;
 								set current_edge value: edge at lasted_edge_id;
 								set current_edge.source value: the_inside_node;
 								set current_edge.destination value: the_outside_node;
@@ -414,6 +416,5 @@ entities {
 		}
 	} 
 }
-output{
-}
+
 

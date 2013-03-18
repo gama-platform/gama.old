@@ -135,12 +135,12 @@ entities {
 			}
 		}
 		
-		aspect classGenericSpatialized{
+		aspect classGenericSpatialized {
 			loop i from:0 to: nbTypeOfClass-1{
 				let tmpradius <- rnd(25)+25;
 			    colorList[i]<- color hsb_to_rgb ([classVector[i]/nbValuePerClass,1.0,1.0]);					
 			    posVector[i] <- {((cos (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)+i*110)*(1/zoomFactor),(sin (float((classVector[i]-1)/nbValuePerClass)*360)*tmpradius +50)*(1/zoomFactor),0}; 
-			    draw geometry (point(posVector[i])) color: rgb(colorList[i])  depth:nodeSize/zoomFactor ;
+			    draw geometry(point(posVector[i])) color: rgb(colorList[i])  depth:nodeSize/zoomFactor ;
 			    //draw sphere(nodeSize/zoomFactor) color: rgb(colorList[i]) at: point(posVector[i]) ; 
 			}
 		}	
